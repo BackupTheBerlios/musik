@@ -68,6 +68,8 @@ public:
 
 	// message maps
 	afx_msg void OnAppAbout();
+	CString GetUserDir();
+	CString GetWorkingDir( bool include_filename = false );
 
 	// macros
 	DECLARE_MESSAGE_MAP()

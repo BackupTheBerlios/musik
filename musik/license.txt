@@ -99,6 +99,7 @@ a legal notice, here is a blessing:
 ----------------------------------------------------------------------------
 id3lib (http://www.id3lib.org) License Agreement
 vcedit (http://www.vorbis.com) License Agreement
+musikAmp
 ----------------------------------------------------------------------------
 
 GNU GENERAL PUBLIC LICENSE

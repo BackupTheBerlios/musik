@@ -168,32 +168,28 @@ void CmusikPrefsInterfaceWorkflow::CommitChanges()
 
 bool CmusikPrefsInterfaceWorkflow::GetStartup()
 {
-	CmusikString userdir;
-
-	char buffer[2000];
-	GetEnvironmentVariable( _T( "USERPROFILE" ), buffer, sizeof( buffer ) );
-
-	userdir = buffer;
+	CmusikApp* app = (CmusikApp*)AfxGetApp();
+	CmusikString userdir = app->GetUserDir();
 	userdir += _T( "\\Start Menu\\Programs\\Startup\\musikCube.lnk" );
+
 	return CmusikFilename::FileExists( userdir );
 }
 
 void CmusikPrefsInterfaceWorkflow::EnableStartup()
 {
-	CmusikString shortcut_path, program_path;
-	char buffer[2000];
+	CmusikApp* app = (CmusikApp*)AfxGetApp();
 
 	// where we want to store the startup shortcut
-	GetEnvironmentVariable( _T( "USERPROFILE" ), buffer, sizeof( buffer ) );
-	shortcut_path = buffer;
+	CmusikString shortcut_path;
+	shortcut_path = app->GetUserDir();
 	shortcut_path += _T( "\\Start Menu\\Programs\\Startup\\musikCube.lnk" );
 	
 	if ( CmusikFilename::FileExists( shortcut_path ) )
 		return;
 
 	// path to musik's exe
-	GetModuleFileName( NULL, buffer, sizeof( buffer ) );
-	program_path = buffer;
+	CmusikString program_path;
+	program_path = app->GetWorkingDir( true );
 
 	// start code 
 	HRESULT hRes = E_FAIL;

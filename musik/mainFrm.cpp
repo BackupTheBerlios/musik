@@ -518,9 +518,9 @@ CMainFrame::~CMainFrame()
 
 void CMainFrame::InitPaths()
 {
-	char buffer[2000];
-	GetEnvironmentVariable( _T( "USERPROFILE" ), buffer, sizeof( buffer ) );
-	m_UserDir = buffer;
+	CmusikApp* app = (CmusikApp*)AfxGetApp();
+
+	m_UserDir = app->GetUserDir();
 	m_UserDir += _T( "\\.musikCube\\" );
 
 	RecurseMkDir( m_UserDir.GetBuffer() );
@@ -3336,10 +3336,14 @@ void CMainFrame::OnWinampvisualizationsEnabled()
 
 bool CMainFrame::ImportWinamp()
 {
+	// deinitialize first
 	if ( m_WinampVis )
 		DeinitWinamp();
 
-	if ( !CmusikFilename::FileExists( _T( "./winamp.dll" ) ) )
+	// assure the module can be loaded
+	CmusikApp* app = (CmusikApp*)AfxGetApp();
+	CmusikString dll = app->GetWorkingDir() +  _T( "\\winamp.dll" );
+	if ( !CmusikFilename::FileExists( dll ) )
 	{
 		MessageBox( _T( "winamp.dll not found. This dll must be in the same directory as musik.exe for winamp visualization support to work." ), MUSIK_VERSION_STR, MB_ICONWARNING );
 		return false;

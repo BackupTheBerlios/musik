@@ -157,7 +157,7 @@ BEGIN
     BEGIN
         MENUITEM "&About musik...",             ID_APP_ABOUT
         MENUITEM SEPARATOR
-        MENUITEM "Cube: a3 CVS",                ID_HELP_VERSION, GRAYED
+        MENUITEM "Cube: pre-a4 CVS",            ID_HELP_VERSION, GRAYED
         MENUITEM "Core: 0.3.0 CVS",             ID_HELP_CORE, GRAYED
     END
 END

@@ -79,10 +79,37 @@ CmusikApp theApp;
 
 ///////////////////////////////////////////////////
 
+CString CmusikApp::GetUserDir()
+{
+	CString userdir;
+
+	char buffer[2000];
+	GetEnvironmentVariable( _T( "USERPROFILE" ), buffer, sizeof( buffer ) );
+
+	userdir = buffer;
+	return userdir;
+}
+
+///////////////////////////////////////////////////
+
+CString CmusikApp::GetWorkingDir( bool include_filename )
+{
+	CString path;
+
+	char buffer[2000];
+	GetModuleFileName( NULL, buffer, sizeof( buffer ) );
+	path = buffer;
+
+	if ( !include_filename )
+		path = path.Left( path.ReverseFind( '\\' ) );
+
+	return path;
+}
+
+///////////////////////////////////////////////////
+
 BOOL CmusikApp::InitInstance()
 {
-
-
 	// only allow a single instance to run
 	if ( !CWinAppEx::InitInstance( _T( "{340277AE-C62B-41de-89DF-90191D8950CF}" ) ) )
 		return FALSE;
