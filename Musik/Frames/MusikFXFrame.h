@@ -7,6 +7,8 @@
 	#include "wx/wx.h"
 #endif 
 
+#include "../Classes/MusikFXGauge.h"
+
 enum EMUSIK_FX_OBJECT_ID
 {
 };
@@ -64,6 +66,8 @@ public:
 	
 	DECLARE_EVENT_TABLE()
 private:
+
+	float p;	//--- delete me ---//
 
 };
 

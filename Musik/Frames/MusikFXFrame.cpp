@@ -168,6 +168,9 @@ MusikFXFrame::MusikFXFrame( wxFrame *pParent, const wxString &sTitle, const wxPo
 	slPitch->SetToolTip( _("Pitch control, right-click to reset") );
 	hsControls->Add( slPitch );
 
+	MusikFXGauge *pGauge = new MusikFXGauge( this, 0, &p );
+	hsControls->Add( pGauge );
+
 	//--------------//
 	//--- Layout ---//
 	//--------------//

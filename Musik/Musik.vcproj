@@ -210,6 +210,12 @@
 				<File
 					RelativePath=".\Frames\MusikFXFrame.h">
 				</File>
+				<File
+					RelativePath=".\Classes\MusikFXGauge.cpp">
+				</File>
+				<File
+					RelativePath=".\Classes\MusikFXGauge.h">
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
