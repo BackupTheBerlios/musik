@@ -244,7 +244,7 @@ CPlaylistCtrl::CPlaylistCtrl( wxWindow *parent, const wxWindowID id, const wxPoi
 	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_LAST_PLAYED,	_( "Last Played" ),		wxT( "" ), wxITEM_CHECK );
 	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_TIME,			_( "Time" ),			wxT( "" ), wxITEM_CHECK );
 	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_BITRATE,		_( "Bitrate" ),			wxT( "" ), wxITEM_CHECK );
-	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_FILENAME,		_( "Year" ),			wxT( "" ), wxITEM_CHECK );
+	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_FILENAME,		_( "Filename" ),		wxT( "" ), wxITEM_CHECK );
 
 	//--- main context menu ---//
 	playlist_context_menu = new wxMenu;
