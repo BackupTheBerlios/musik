@@ -11,7 +11,6 @@
 #include "MusikNowPlayingInfo.h"
 
 #include "../Musik.Core/include/MusikPlayer.h"
-#include ".\musiknowplayingctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -71,6 +70,8 @@ int CMusikNowPlayingCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if ( !m_Info->Create( NULL, NULL, WS_CHILD | WS_VISIBLE, rcClient, this, 123, NULL ) )
 		return -1;
 
+	m_Info->Set( "%f20 %cthe song %a1" );
+
 	return 0;
 }
 
@@ -78,7 +79,7 @@ int CMusikNowPlayingCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CMusikNowPlayingCtrl::UpdateInfo( bool refresh )
 {
-
+	m_Info->UpdateInfo();
 }
 
 ///////////////////////////////////////////////////

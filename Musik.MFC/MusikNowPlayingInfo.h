@@ -1,15 +1,26 @@
+// %a 1 <-- attribute
+// %f 2 <-- regular font size
+// %c from the album <-- comment
+
 ///////////////////////////////////////////////////
 
 #pragma once
 
 ///////////////////////////////////////////////////
 
-#include "MusikNowPlayingStatic.h"
+#include <vector>
+
+#include "MusikDynamicText.h"
 
 ///////////////////////////////////////////////////
 
 class CMusikPlayer;
 class CMusikPrefs;
+
+///////////////////////////////////////////////////
+
+typedef std::vector<CMusikDynamicText*> CMusikDynamicTextArray;
+typedef std::vector<CString> CCStringArray;
 
 ///////////////////////////////////////////////////
 
@@ -20,9 +31,19 @@ public:
 	CMusikNowPlayingInfo( CMusikPlayer* player, CMusikPrefs *prefs );
 	virtual ~CMusikNowPlayingInfo();
 
+	// getting
+	CSize GetSize();
+	int GetHeight();
+	int GetWidth();
+	int GetBaseline();
+
+	// setting
+	void Set( CString mask );
+
 	// updating
 	void UpdateInfo( bool refresh = true );
 	void Layout( bool refresh = true );
+
 
 protected:
 
@@ -30,24 +51,22 @@ protected:
 	CMusikPlayer* m_Player;
 	CMusikPrefs* m_Prefs;
 
-	// font stuff
-	void InitFonts();
-	CFont m_ArtistFont;
-	CFont m_AlbumFont;
-	CFont m_TitleFont;
-	CFont m_DefaultFont;
-	int m_DefaultHeight;
+	// initalizing the objects
+	void InitObjects();
 
-	// artist / album / title
-	CNowPlayingStatic m_Artist;
-	CNowPlayingStatic m_Album;
-	CNowPlayingStatic m_Title;
-	CNowPlayingStatic m_By;
-	CNowPlayingStatic m_From;
+	// current font size
+	int m_FontSize;
+
+	// arrays so we can easily keep track
+	// of which font goes to which item...
+	CMusikDynamicTextArray m_Captions;
+	CMusikDynamicTextArray m_Comments;
+	CCStringArray m_Items;
 
 	// macros
 	DECLARE_DYNAMIC(CMusikNowPlayingInfo)
 	DECLARE_MESSAGE_MAP()
+
 public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 };

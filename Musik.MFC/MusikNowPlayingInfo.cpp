@@ -7,7 +7,6 @@
 #include "MusikNowPlayingInfo.h"
 
 #include "../Musik.Core/include/MusikPlayer.h"
-#include ".\musiknowplayinginfo.h"
 
 ///////////////////////////////////////////////////
 
@@ -25,6 +24,11 @@ CMusikNowPlayingInfo::CMusikNowPlayingInfo( CMusikPlayer* player, CMusikPrefs *p
 
 CMusikNowPlayingInfo::~CMusikNowPlayingInfo()
 {
+	for ( size_t i = 0; i < m_Captions.size(); i++ )
+		delete m_Captions.at( i );
+
+	for ( size_t i = 0; i < m_Comments.size(); i++ )
+		delete m_Comments.at( i );
 }
 
 ///////////////////////////////////////////////////
@@ -37,109 +41,22 @@ END_MESSAGE_MAP()
 
 void CMusikNowPlayingInfo::UpdateInfo( bool refresh )
 {
-	CString str;
-
-	// update title
-	str = (CString)m_Player->GetCurrPlaying()->GetTitle();
-	str.Replace( _T( "&" ), _T( "&&" ) );
-	m_Title.SetDynText( str );
-
-	// artist
-	str = (CString)m_Player->GetCurrPlaying()->GetArtist();
-	str.Replace( _T( "&" ), _T( "&&" ) );
-	m_Artist.SetDynText( str );
-
-	// album
-	str = (CString)m_Player->GetCurrPlaying()->GetAlbum();
-	str.Replace( _T( "&" ), _T( "&&" ) );
-	m_Album.SetDynText( str );
-
-	// redraw
-	Layout( refresh );
+	int type;
+	for ( size_t i = 0; i < m_Captions.size(); i++ )
+	{
+		type = m_Captions.at( i )->GetType();
+		m_Captions.at( i )->SetDynText( (CString)m_Player->GetCurrPlaying()->GetField( type ) );		
+	}
 }
 
 ///////////////////////////////////////////////////
 
 void CMusikNowPlayingInfo::Layout( bool refresh )
 {
-	CString str;
-	CRect size;
-	
-	// get client rect
-	CRect rcClient;
-	GetClientRect( rcClient );
+	CSize rect = GetSize();
 
-	// move artist to correct place
-	m_Title.GetClientRect( &size );
-	int last_y = size.bottom + 2;
-	m_Title.MoveWindow( rcClient.left + 2, rcClient.top + 2, size.Width(), size.Height() );
-
-	// pixels separating the bottom of
-	// the default font and album artist
-	// font. 
-	int diff = m_Prefs->GetNowPlayingAlbumArtistFontSize() - m_DefaultHeight;
-	diff /= 2;
-
-	// move the "by"
-	m_By.GetClientRect( &size );
-	m_By.MoveWindow( rcClient.left + 2, last_y + diff, size.Width(), size.Height() );
-
-	// move artist 
-	int last_x = size.right + 2;
-	m_Artist.GetClientRect( &size );
-	m_Artist.MoveWindow( last_x + 2, last_y, size.Width(), size.Height() );
-
-	// move the "from"
-	last_x += size.right + 2;
-	m_From.GetClientRect( &size );
-	m_From.MoveWindow( last_x + 2, last_y + diff, size.Width(), size.Height() );
-
-	// move the album
-	last_x += size.right + 2;
-	m_Album.GetClientRect( &size );
-	m_Album.MoveWindow( last_x + 2, last_y, size.Width(), size.Height() );
-
-	if ( refresh )
-	{
-		CRect rcClient;
-		GetClientRect( rcClient );
-		this->RedrawWindow( rcClient, NULL );
-	}
-}
-
-///////////////////////////////////////////////////
-
-void CMusikNowPlayingInfo::InitFonts()
-{
-	// create default font
-	m_DefaultFont.CreateStockObject( DEFAULT_GUI_FONT );
-
-	// get default font size
-	LOGFONT pBoldFont;
-	m_DefaultFont.GetLogFont( &pBoldFont );
-	m_DefaultHeight = abs( pBoldFont.lfHeight );
-
-	// create title font
-	if ( m_Prefs->IsNowPlayingTitleFontBold() )
-		pBoldFont.lfWeight = FW_BOLD;
-	else
-		pBoldFont.lfWeight = FW_NORMAL;
-	pBoldFont.lfHeight = m_Prefs->GetNowPlayingTitleFontSize();
-
-	m_TitleFont.CreateFontIndirect( &pBoldFont );
-
-	// create artist and album font
-	if ( m_Prefs->IsNowPlayingAlbumArtistFontBold() )
-		pBoldFont.lfWeight = FW_BOLD;
-	else
-		pBoldFont.lfWeight = FW_NORMAL;
-	pBoldFont.lfHeight = m_Prefs->GetNowPlayingAlbumArtistFontSize();
-
-	m_ArtistFont.CreateFontIndirect( &pBoldFont );
-	m_AlbumFont.CreateFontIndirect( &pBoldFont );
-
-	// set the window to the default font
-	SetFont( &m_DefaultFont );
+	// basics, heres the baseline
+	int nBaseline = GetBaseline();
 }
 
 ///////////////////////////////////////////////////
@@ -149,29 +66,166 @@ int CMusikNowPlayingInfo::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CWnd::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-	InitFonts();
-
-	m_Title.Create( _T( "" ), WS_CHILD | WS_VISIBLE | SS_LEFT, CRect( 0, 0, 0, 0 ), this );
-	m_Title.SetFont( &m_TitleFont );
-	m_Title.SetDynText( _T( "No Song" ) );
-
-	m_By.Create( _T( "" ), WS_CHILD | WS_VISIBLE | SS_LEFT, CRect( 0, 0, 0, 0 ), this );
-	m_By.SetFont( &m_DefaultFont );
-	m_By.SetDynText( _T( "by " ) );
-
-	m_Artist.Create( _T( "" ), WS_CHILD | WS_VISIBLE | SS_LEFT, CRect( 0, 0, 0, 0 ), this );
-	m_Artist.SetFont( &m_ArtistFont );
-	m_Artist.SetDynText( _T( "No Artist" ) );
-
-	m_From.Create( _T( "" ), WS_CHILD | WS_VISIBLE | SS_LEFT, CRect( 0, 0, 0, 0 ), this );
-	m_From.SetFont( &m_DefaultFont );
-	m_From.SetDynText( _T( " from " ) );
-
-	m_Album.Create( _T( "" ), WS_CHILD | WS_VISIBLE | SS_LEFT, CRect( 0, 0, 0, 0 ), this );
-	m_Album.SetFont( &m_AlbumFont );
-	m_Album.SetDynText( _T( "No Album" ) );
-
 	return 0;
+}
+
+///////////////////////////////////////////////////
+
+void CMusikNowPlayingInfo::Set( CString mask )
+{
+	// clear old items
+	m_Items.clear();
+
+	// separate them out
+	int pos = 0;
+	CString resToken;
+	resToken = mask.Tokenize( _T( "%" ), pos);
+	while ( resToken != "" )
+	{
+		resToken.Replace( _T( "%" ), _T( "" ) );
+		m_Items.push_back( resToken.GetBuffer() );
+		resToken = mask.Tokenize( _T( "%" ), pos );
+	};
+
+	// reinitalize the objects
+	if ( !mask.IsEmpty() )
+		InitObjects();
+}
+
+///////////////////////////////////////////////////
+
+void CMusikNowPlayingInfo::InitObjects()
+{
+	// clear the old items
+	for ( size_t i = 0; i < m_Captions.size(); i++ )
+	{	
+		delete m_Captions.at( i );
+		delete m_Comments.at( i );
+	}
+	
+	m_Captions.clear();
+	m_Comments.clear();
+
+	// make new items
+    size_t nObjs = m_Items.size();
+	CString sCheck, sCurr;
+	for ( size_t i = 0; i < nObjs; i++ )
+	{
+		sCheck = m_Items.at( i ).Left( 1 );
+		sCheck.MakeLower();
+
+		// we found a new font
+		if ( sCheck == _T( "f" ) )
+		{
+			sCurr = m_Items.at( i ).Right( m_Items.at( i ).GetLength()  - 1 );
+			sCurr.TrimLeft();
+			sCurr.TrimRight();
+
+			m_FontSize = atoi( sCurr.GetBuffer() );
+		}
+
+		// found a comment (default font)
+		else if ( sCheck == _T( "c" ) )
+		{
+			// find the comment
+			sCurr = m_Items.at( i ).Right( m_Items.at( i ).GetLength()  - 1 );
+
+			// create the object
+			CMusikDynamicText* pTemp;
+			pTemp = new CMusikDynamicText();
+			pTemp->Create( NULL, WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0 ), this );
+
+			// set it to the right values
+			pTemp->SetDynFont( -1 );
+			pTemp->SetDynText( sCurr );
+			pTemp->SetType( -1 );
+
+			// add to comment array
+			m_Comments.push_back( pTemp );
+		}
+
+		// found a new object, so create it
+		// with the current font and text
+		else
+		{
+			sCurr = m_Items.at( i ).Right( m_Items.at( i ).GetLength()  - 1 );
+			sCurr.TrimLeft();
+			sCurr.TrimRight();
+
+			CMusikDynamicText* pTemp;
+			pTemp = new CMusikDynamicText();
+			pTemp->Create( NULL, WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0 ), this );
+
+			pTemp->SetDynFont( m_FontSize );
+			pTemp->SetDynText( "Null" );
+			pTemp->SetType( atoi( sCurr.GetBuffer() ) );
+
+			m_Captions.push_back( pTemp );
+		}
+	}
+}
+
+///////////////////////////////////////////////////
+
+int CMusikNowPlayingInfo::GetHeight()
+{
+	int largest = -1;
+	for ( size_t i = 0; i < m_Captions.size(); i++ )
+	{
+		if ( m_Captions.at( i )->GetFontSize() > largest )
+			largest = m_Captions.at( i )->GetFontSize();
+	}
+
+	return largest;
+}
+
+///////////////////////////////////////////////////
+
+int CMusikNowPlayingInfo::GetWidth()
+{
+	int width = 0;
+
+	for ( size_t i = 0; i < m_Captions.size(); i++ )
+		width += m_Captions.at( i )->GetWidth();
+
+	for ( size_t i = 0; i < m_Comments.size(); i++ )
+		width += m_Comments.at ( i )->GetWidth();
+
+	return width;
+}
+
+///////////////////////////////////////////////////
+
+CSize CMusikNowPlayingInfo::GetSize()
+{
+	return CSize( GetWidth(), GetHeight() ); 
+}
+
+///////////////////////////////////////////////////
+
+int CMusikNowPlayingInfo::GetBaseline()
+{
+	CFont *temp_font;
+
+	temp_font = new CFont();
+	temp_font->CreateStockObject( DEFAULT_GUI_FONT );	
+	
+	LOGFONT temp_log_font;
+	temp_font->GetLogFont( &temp_log_font );
+	temp_log_font.lfHeight = GetHeight();
+
+	delete temp_font;
+	temp_font = new CFont();
+	temp_font->CreateFontIndirect( &temp_log_font );
+    
+	TEXTMETRIC metrics;
+	CFont* pOldFont = GetDC()->SelectObject( temp_font );
+	GetDC()->GetTextMetrics( &metrics );
+	GetDC()->SelectObject( pOldFont );
+
+	delete temp_font;
+
+	return metrics.tmAscent;
 }
 
 ///////////////////////////////////////////////////

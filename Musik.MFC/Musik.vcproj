@@ -216,16 +216,16 @@
 						Name="MusikNowPlayingInfo"
 						Filter="">
 						<File
+							RelativePath=".\MusikDynamicText.cpp">
+						</File>
+						<File
+							RelativePath=".\MusikDynamicText.h">
+						</File>
+						<File
 							RelativePath=".\MusikNowPlayingInfo.cpp">
 						</File>
 						<File
 							RelativePath=".\MusikNowPlayingInfo.h">
-						</File>
-						<File
-							RelativePath=".\MusikNowPlayingStatic.cpp">
-						</File>
-						<File
-							RelativePath=".\MusikNowPlayingStatic.h">
 						</File>
 					</Filter>
 				</Filter>
