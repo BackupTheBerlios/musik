@@ -84,6 +84,7 @@ public:
 	wxString		GetSelFiles		();
 	wxArrayInt		GetSelItems		();
 	wxArrayString	GetSelFilesList	();
+	wxArrayString	GetAllFilesList ();
 	CMusikSongArray GetSelSongs		();
 	wxString		GetFilename		( int nItem );
 	int				GetTotalPlayingTimeInSeconds();

@@ -536,6 +536,18 @@ wxArrayString CPlaylistCtrl::GetSelFilesList()
 	return aResult;
 }
 
+wxArrayString CPlaylistCtrl::GetAllFilesList()
+{
+	wxArrayString result;
+
+	for ( int i = 0; i < GetItemCount(); i++ )
+	{
+		result.Add( GetFilename( i ) );
+	}
+
+	return result;
+}
+
 CMusikSongArray CPlaylistCtrl::GetSelSongs()
 {
 	CMusikSongArray aResult;
