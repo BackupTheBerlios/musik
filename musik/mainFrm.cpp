@@ -1611,7 +1611,14 @@ LRESULT CMainFrame::OnSongChange( WPARAM wParam, LPARAM lParam )
 		SetWindowText( s );
 
 		if ( visSetVisPlaying )
+		{
 			visSetVisPlaying( TRUE );
+
+			s.Format( _T("%s - %s"),
+				m_Player->GetCurrPlaying()->GetTitle().c_str(), 
+				m_Player->GetCurrPlaying()->GetArtist().c_str() );
+			visSetSongTitle( (LPCSTR) s );
+		}
 	}
 	else
 	{
@@ -3328,6 +3335,7 @@ void CMainFrame::ImportWinamp()
 	visGetVisModuleCount = ( lpfnGetVisModuleCount )GetProcAddress( m_WinampVis, _T( "_GetVisModuleCount@4" ) );
 	visGetVisModuleInfo = ( lpfnGetVisModuleInfo )GetProcAddress( m_WinampVis, _T( "_GetVisModuleInfo@8" ) );
 	visSetVisPlaying = ( lpfnSetVisPlaying )GetProcAddress( m_WinampVis, _T( "_IsPlaying@4" ) );
+	visSetSongTitle = ( lpfnVisSetSongTitle )GetProcAddress( m_WinampVis, _T( "_SetSongTitle@4" ) );
 
 	// make sure the DLL has our HWND
 	visSetVisHwnd( GetSafeHwnd() );

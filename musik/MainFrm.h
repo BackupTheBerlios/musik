@@ -140,6 +140,7 @@ typedef HWND	( WINAPI* lpfnGetVisHwnd )();
 typedef void	( WINAPI* lpfnSetVisHwnd )( HWND hwnd );
 typedef void	( WINAPI* lpfnConfigVis )( int, int );
 typedef void	( WINAPI* lpfnSetVisPlaying ) ( int );
+typedef void	( WINAPI* lpfnVisSetSongTitle ) ( LPCSTR title );
 
 ///////////////////////////////////////////////////
 
@@ -460,6 +461,7 @@ protected:
 	lpfnSetVisHwnd visSetVisHwnd;
 	lpfnConfigVis visConfigVis;
 	lpfnSetVisPlaying visSetVisPlaying;
+	lpfnVisSetSongTitle visSetSongTitle;
 
 	CmusikWinampVisDlg* m_VisDlg;
 
