@@ -175,7 +175,7 @@ void CPropTreeList::OnPaint()
 	memdc.DrawEdge(&rc, BDR_SUNKENOUTER, BF_RECT);
 
 	CPropTreeItem* pItem;
-	LONG nTotal = 0;
+	LONG nTotal = 2;
 
 	ASSERT(m_pProp->GetRootItem()!=NULL);
 
@@ -193,8 +193,10 @@ void CPropTreeList::OnPaint()
 	}
 
 	// remove clip region
+	/*
 	SelectClipRgn(memdc.m_hDC, NULL);
 	DeleteObject(hRgn);
+	*/
 
 	// copy back buffer to the display
 	dc.GetClipBox(&rc);

@@ -398,7 +398,7 @@ LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 
 		//the gutter
 		hOld = pDC->SelectObject( GetSysColorBrush(COLOR_BTNFACE) );
-		pDC->PatBlt( 0, drc.top, 14, drc.Height(), PATCOPY);
+		pDC->PatBlt( rc.left, drc.top, 14, drc.Height(), PATCOPY);
 
 		pDC->SelectObject(hOld);
 	}
