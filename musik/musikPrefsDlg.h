@@ -102,6 +102,7 @@ protected:
 	CButton m_StartWithWindows;
 	CButton m_AutoSynchronize;
 	CButton m_LibraryShowAll;
+	CButton m_AddEntireToNP;
 };
 
 ///////////////////////////////////////////////////

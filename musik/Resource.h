@@ -72,6 +72,7 @@
 #define IDC_FIELDSTRING2                1018
 #define IDC_CLOSE                       1018
 #define IDC_SAVE_ACTIVE_AS_SELECTED     1018
+#define IDC_CHECK6                      1018
 #define IDC_REMEMBER                    1019
 #define IDC_ENABLE_QUERY3               1019
 #define IDC_BUTTON4                     1019
