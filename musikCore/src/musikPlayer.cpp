@@ -753,13 +753,12 @@ bool CmusikPlayer::Play( int index, int fade_type, int start_pos )
 		// functor... else do it when the
 		// crossfade completes
 		if ( IsEqualizerActive() )
-		{
 			m_EQ->SetNewSong( m_Playlist->GetSongID( index ) );
-			m_Functor->OnNewSong();
-		}
 
 		FSOUND_SetVolume( GetCurrChannel(), m_Volume );
 		CleanOldStreams();
+
+		m_Functor->OnNewSong();
 	}
 
 	// if we got a valid crossfade type, flag it
