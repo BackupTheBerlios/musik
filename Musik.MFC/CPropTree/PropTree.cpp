@@ -718,24 +718,34 @@ CPropTreeItem* CPropTree::FocusNext()
 
 	pChange = m_pFocus;
 
-	if (m_pFocus==NULL)
+	// if there is no current focus, set
+	// it to the first item?
+	if ( m_pFocus == NULL )
 		pNext = m_pVisbleList;
-	else
-	if (m_pFocus->GetNextVisible())
+
+	// else, get the next visible item
+	else if ( m_pFocus->GetNextVisible() )
 		pNext = m_pFocus->GetNextVisible();
+
+	// else, no next item is availble
 	else
 		pNext = NULL;
 
-	if (pNext)
-		SetFocusedItem(pNext);
+	// if there is a next item, focus it
+	if ( pNext )
+		SetFocusedItem( pNext );
 
-	if (m_pFocus)
+	// if there is a currently focused item,
+	// all appeared to go ok, so select it
+	if ( m_pFocus )
 	{
-		SelectItems(NULL, FALSE);
+		SelectItems( NULL, FALSE );
 		m_pFocus->Select();
 	}
 
-	if (pChange!=m_pFocus)
+	// if the selection has updated, send
+	// a notify event
+	if ( pChange != m_pFocus )
 		SendNotify(PTN_SELCHANGE, m_pFocus);
 
 	return pNext;

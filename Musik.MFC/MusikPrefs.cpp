@@ -175,6 +175,7 @@ inline bool StringToBool( const string str )
 {
 	if ( str.empty() )
 		return false;
+
 	if ( str == _T( "1" ) )
 		return true;
 
@@ -219,6 +220,7 @@ void CMusikPrefs::LoadPrefs()
 	m_Dlg_Size		= StringToCSize( config->GetValue( "Dialog", "Dialog Size", "800x600" ) );
 	m_Dlg_Pos		= StringToCPoint( config->GetValue( "Dialog", "Dialog Position", "50,50" ) );
 	m_Dlg_Maximized	= StringToBool( config->GetValue( "Dialog", "Maximized", "0" ) );
+	m_Dlg_ResetUI	= StringToBool( config->GetValue( "Dialog", "Reset UI", "1" ) );
 
 	// selection area
 	m_SelectionBox_Count = StringToInt( config->GetValue( "Selection Area", "Count", "2" ) );
@@ -229,7 +231,6 @@ void CMusikPrefs::LoadPrefs()
 	m_Playlist_Stripe_Color	= StringToCOLORREF( config->GetValue( "Playlist", "Stripe Color", GetDefPlaylistStripeColor() ) );
 
 	// now playing
-	m_NowPlaying_Height					= StringToInt( config->GetValue( "Now Playing", "Height", "72" ) );
 	m_NowPlaying_TitleFont				= StringToInt( config->GetValue( "Now Playing", "Title Font Size", "20" ) );
 	m_NowPlaying_AlbumArtistFont		= StringToInt( config->GetValue( "Now Playing", "Album Artist Font Size", "16" ) );
 	m_NowPlaying_IsTitleFontBold		= StringToBool( config->GetValue( "Now Playing", "Title Font Bold", "1" ) );
@@ -250,6 +251,7 @@ void CMusikPrefs::SavePrefs()
 	config->SetValue( "Dialog", "Dialog Size", CSizeToString( m_Dlg_Size ) );
 	config->SetValue( "Dialog", "Dialog Position", CPointToString( m_Dlg_Pos ) );
 	config->SetValue( "Dialog", "Maximized", BoolToString( m_Dlg_Maximized ) );
+	config->SetValue( "Dialog", "Reset UI", BoolToString( m_Dlg_ResetUI ) );
 
 	// selection area
 	config->SetValue( "Selection Area", "Count", IntToString( (int)m_SelectionBox_Count ) );

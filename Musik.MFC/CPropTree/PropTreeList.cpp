@@ -250,6 +250,9 @@ void CPropTreeList::OnLButtonDown(UINT, CPoint point)
 			{
 				CPropTreeItem* pOldFocus = m_pProp->GetFocusedItem();
 
+				if ( pItem->IsRootLevel() )
+					return;
+
 				m_pProp->SelectItems(NULL, FALSE);
 				m_pProp->SetFocusedItem(pItem);
 

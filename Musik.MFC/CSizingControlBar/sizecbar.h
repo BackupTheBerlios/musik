@@ -120,6 +120,8 @@ public:
 // Implementation
 public:
     virtual ~CSizingControlBar();
+
+	void SetSize( const CSize& size, bool layout = true );
     
 protected:
     // implementation helpers

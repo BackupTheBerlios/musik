@@ -282,6 +282,15 @@ CSize CSizingControlBar::CalcFixedLayout(BOOL bStretch, BOOL bHorz)
                  max(m_szMinVert.cy, m_szVert.cy));
 }
 
+void CSizingControlBar::SetSize( const CSize& size, bool layout )
+{
+	m_szHorz = size;
+	m_szVert = size;
+
+	if ( layout )
+		CalcDynamicLayout( NULL, LM_VERTDOCK | LM_HORZDOCK );
+}
+
 CSize CSizingControlBar::CalcDynamicLayout(int nLength, DWORD dwMode)
 {
     if (dwMode & (LM_HORZDOCK | LM_VERTDOCK)) // docked ?

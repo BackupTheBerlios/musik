@@ -448,7 +448,7 @@ LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 			HGDIOBJ oPen = pDC->SelectObject(GetStockObject(NULL_PEN));
 			HGDIOBJ oBrush;
 			if ( !IsRootLevel() )
-				oBrush = pDC->SelectObject(GetSysColorBrush(COLOR_INFOBK));
+				oBrush = pDC->SelectObject(GetSysColorBrush(COLOR_BTNFACE));
 			else
 				oBrush = pDC->SelectObject(GetSysColorBrush(COLOR_INACTIVECAPTION));
 			
@@ -462,7 +462,7 @@ LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 			pDC->SelectObject(oBrush);
 
 			if ( !IsRootLevel() )
-				pDC->SetTextColor(GetSysColor(COLOR_INFOTEXT));
+				pDC->SetTextColor(GetSysColor(COLOR_BTNTEXT));
 		}
 
 		// check if we need to draw the text as disabled

@@ -42,6 +42,9 @@ public:
 	CMainFrame();
 	virtual ~CMainFrame();
 
+	// ui related functions
+	void ResetUI();
+
 	// overrides
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 	virtual BOOL OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
@@ -61,8 +64,7 @@ protected:
 	void CleanMusik();
 
 	// resetting controls
-	void ResetDialogRect();
-	void ResetNowPlaying();
+	void LoadDlgSize();
 
 	// icons
 	HICON m_hIcon16;

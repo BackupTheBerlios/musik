@@ -13,7 +13,6 @@
 
 #include <io.h>
 #include <Direct.h>
-#include ".\mainfrm.h"
 
 ///////////////////////////////////////////////////
 
@@ -111,7 +110,7 @@ void CMainFrame::CleanMusik()
 
 ///////////////////////////////////////////////////
 
-void CMainFrame::ResetDialogRect()
+void CMainFrame::LoadDlgSize()
 {
 	CSize dlg_size = m_Prefs->GetDlgSize();
 	CPoint dlg_pos = m_Prefs->GetDlgPos();
@@ -129,12 +128,27 @@ void CMainFrame::ResetDialogRect()
 
 ///////////////////////////////////////////////////
 
-void CMainFrame::ResetNowPlaying()
+void CMainFrame::ResetUI()
 {
-	CRect rc;
-	GetClientRect( &rc );
+	MoveWindow( 0, 0, 800, 600 );
+
+	CSize size;
 	
-	//m_wndNowPlaying.SetWindowPos( this, 0, rc.Height() - m_Prefs->GetNowPlayingHeight(), rc.Width(), m_Prefs->GetNowPlayingHeight(), NULL );
+	// now playing
+	size.cx = NULL;
+	size.cy = 48;
+	m_wndNowPlaying->SetSize( size );
+
+	// sources
+	size.cx = 160;
+	size.cy = NULL;
+	m_wndSources->SetSize( size );
+
+	// selection box
+	size.cx = NULL;
+	size.cy = 160;
+	for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
+		m_wndSelectionBars[i]->SetSize( size );
 }
 
 ///////////////////////////////////////////////////
@@ -227,7 +241,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// now playing control
 	m_wndNowPlaying = new CMusikNowPlayingBar( m_Player, m_Prefs );
 	m_wndNowPlaying->Create( _T( "Musik Now Playing" ), this, ID_NOWPLAYING );
-	m_wndNowPlaying->SetBarStyle( m_wndNowPlaying->GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC & ~SCBS_EDGEALL );
+	m_wndNowPlaying->SetBarStyle( m_wndNowPlaying->GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC );
 	m_wndNowPlaying->EnableDocking( CBRS_ALIGN_BOTTOM );
 	m_wndNowPlaying->ShowGripper( false );
 	DockControlBar( m_wndNowPlaying, AFX_IDW_DOCKBAR_BOTTOM );
@@ -254,12 +268,17 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
     m_wndSources->SetBarStyle( m_wndSources->GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC );
 	DockControlBar( m_wndSources, AFX_IDW_DOCKBAR_LEFT );
 
-
-	// rescale dialog based on prefs
-	ResetDialogRect();
-
-	//--- load dockbar sizes and positions
-	CSizingControlBar::GlobalLoadState( this, "MusikDockBars" );
+	// load dockbar sizes and positions
+	if ( m_Prefs->ResetUI() )
+	{
+		ResetUI();
+		m_Prefs->SetDlgResetUI( false );
+	}
+	else
+	{
+		LoadDlgSize();
+		CSizingControlBar::GlobalLoadState( this, "MusikDockBars" );
+	}
 
 	return 0;
 }

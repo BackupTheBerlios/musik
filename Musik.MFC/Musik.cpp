@@ -42,12 +42,8 @@ BOOL CMusikApp::InitInstance()
 
 	CWinApp::InitInstance();
 
-	// Standard initialization
-	// If you are not using these features and wish to reduce the size
-	// of your final executable, you should remove from the following
-	// the specific initialization routines you do not need
-	// Change the registry key under which our settings are stored
-	// TODO: You should modify this string to be something appropriate
+	SetRegistryKey(_T("Musik.MFC"));
+
 	// such as the name of your company or organization
 	// To create the main window, this code creates a new frame window
 	// object and then sets it as the application's main window object
