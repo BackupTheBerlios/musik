@@ -49,6 +49,7 @@ ADD_EXECUTABLE(wxMusik
         ${wxMusik_SOURCE_DIR}/Classes/MusikEQCtrl
         ${wxMusik_SOURCE_DIR}/Classes/MusikEQGauge
         ${wxMusik_SOURCE_DIR}/Classes/Tunage
+        ${wxMusik_SOURCE_DIR}/Classes/PictureBox
 
         ${wxMusik_SOURCE_DIR}/Classes/Library/CFrameHeader
         ${wxMusik_SOURCE_DIR}/Classes/Library/CMP3Info

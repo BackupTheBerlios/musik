@@ -13,7 +13,8 @@ WX_LINGUAS := `ls *.po 2> /dev/null | sed -n 's/\(wxMusik\)\?\.po//p'`
 MSGFMT=msgfmt --verbose
 MSGMERGE=msgmerge
 XGETTEXT=xgettext
-XARGS=xargs
+XARGS=xargs -ixxx echo "\"xxx\""|xargs 
+
 
 # common xgettext args: C++ syntax, use the specified macro names as markers
 XGETTEXT_ARGS=-C -k_ -kwxGetTranslation -kwxTRANSLATE -s -j
@@ -60,4 +61,4 @@ FORCE:
 
 .PHONY: allpo allmo force-update percentage FORCE
 
-# $Id: Makefile,v 1.9 2004/06/30 14:49:39 gunnar67 Exp $
+# $Id: Makefile,v 1.10 2004/07/15 22:35:16 gunnar67 Exp $
