@@ -27,7 +27,7 @@
 //
 // Filename(s): 
 //
-//   MusikMp3Info.h, MusikMp3Info.cpp
+//   MusikFileDialog.h, MusikFileDialog.cpp
 //
 // Information:
 //

@@ -27,7 +27,7 @@
 //
 // Filename(s): 
 //
-//   MusikMp3Info.h, MusikMp3Info.cpp
+//   MusikFileDialog.h, MusikFileDialog.cpp
 //
 // Information:
 //
@@ -201,5 +201,4 @@ BEGIN_MESSAGE_MAP(CMusikFileDialog, CFileDialog)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
-
 
