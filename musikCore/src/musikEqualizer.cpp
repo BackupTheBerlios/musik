@@ -133,6 +133,10 @@ void CmusikEqualizer::GetSongEq( int songid )
 			m_EQ.Set( MUSIK_EQ_SETTINGS_LEFT_BAND, eq.m_Left );
 			m_EQ.Set( MUSIK_EQ_SETTINGS_RIGHT_BAND, eq.m_Right );
 		}
+		else
+		{
+			// TODO: load default equalizer!
+		}
 	}
 }
 
