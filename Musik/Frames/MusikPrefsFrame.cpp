@@ -231,7 +231,6 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//--------------------------//
 	chkAutoScan				=	new wxCheckBox( this, -1,	_("Automatically scan for new songs on startup"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 	chkAutoDelta			=	new wxCheckBox( this, -1,	_("Automatically scan for new files in library setup"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
-	chkExtendedPlaylist		=	new wxCheckBox( this, -1,	_("Show extended playlist information"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 	chkShowAllSongs			=	new wxCheckBox( this, -1,	_("Selecting library shows all songs in playlist"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 	chkBlankSwears			=	new wxCheckBox( this, -1,	_("Censor common swearwords"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 	chkPlaylistStripes		=	new wxCheckBox( this, -1,	_("Show \"stripes\" in playlist"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
@@ -248,7 +247,6 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	vsOptions_Interface = new wxBoxSizer( wxVERTICAL );
 	vsOptions_Interface->Add( chkAutoScan,				0, wxALL, 4 );
 	vsOptions_Interface->Add( chkAutoDelta,				0, wxALL, 4 );
-	vsOptions_Interface->Add( chkExtendedPlaylist,		0, wxALL, 4 );
 	vsOptions_Interface->Add( chkShowAllSongs,			0, wxALL, 4 );
 	vsOptions_Interface->Add( chkBlankSwears,			0, wxALL, 4 );
 	vsOptions_Interface->Add( chkPlaylistStripes,		0, wxALL, 4 );
@@ -414,7 +412,6 @@ void MusikPrefsFrame::LoadPrefs()
 	//--------------------------//
 	chkAutoScan->SetValue			( g_Prefs.nAutoAdd	);
 	chkAutoDelta->SetValue			( g_Prefs.nAutoDelta );
-	chkExtendedPlaylist->SetValue	( g_Prefs.nExtendedPlaylist );
 	chkShowAllSongs->SetValue		( g_Prefs.nShowAllSongs );
 	chkBlankSwears->SetValue		( g_Prefs.nBlankSwears );
 	chkPlaylistStripes->SetValue	( g_Prefs.nPLStripes );
@@ -555,11 +552,6 @@ void MusikPrefsFrame::SavePrefs()
 	//--------------------------//
 	g_Prefs.nAutoDelta	= chkAutoDelta->GetValue();
 	g_Prefs.nAutoAdd	= chkAutoScan->GetValue();
-	if ( chkExtendedPlaylist->GetValue() != g_Prefs.nExtendedPlaylist )
-	{
-		g_Prefs.nExtendedPlaylist = chkExtendedPlaylist->GetValue();
-		g_PlaylistCtrl->ResetColumns( true );
-	}
 	g_Prefs.nShowAllSongs = chkShowAllSongs->GetValue();
 	g_Prefs.nBlankSwears = chkBlankSwears->GetValue();
 

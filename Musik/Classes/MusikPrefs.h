@@ -84,8 +84,6 @@ public:
 
 	int nAutoDelta;
 
-	int nExtendedPlaylist;
-
 	int nBlankSwears;
 
 	int nWebServerEnable;
@@ -96,7 +94,7 @@ public:
 	wxString sAutoRename;
 	wxString sAutoTag;
 
-	int nPlaylistColumSize[NPLAYLISTCOLUMS];
+	int nPlaylistColumnSize[NPLAYLISTCOLUMNS];
 };
 
 class CMusikPaths

@@ -61,11 +61,11 @@ public:
 	void ClickGenre		( wxCommandEvent& WXUNUSED(event) )	{ EditTag( 4 ); }
 	void ClickYear		( wxCommandEvent& WXUNUSED(event) )	{ EditTag( 5 ); }
 	//--- other ---//
-	void UpdateSel		( wxListEvent& event	);
+	void UpdateSel		( wxListEvent&		event			);
 	void ShowMenu		( wxCommandEvent&	WXUNUSED(event) );
 	void BeginDrag		( wxEvent&			WXUNUSED(event)	);
-	void TranslateKeys	( wxKeyEvent& pEvent	);
-	void DragCol		( wxListEvent& event	);
+	void TranslateKeys	( wxKeyEvent&		pEvent			);
+	void DragCol		( wxListEvent&		event			);
 	void PlaySel		( wxListEvent&		WXUNUSED(event)	);
 
 	//------------------------//
@@ -113,6 +113,7 @@ public:
 	bool ViewDirtyTags	();
 	void ToggleIcons	();
 	void ShowIcons		();
+	void SaveColumns	();
 
 	//---------------------------------------------//
 	//---          drag and drop stuff.         ---//

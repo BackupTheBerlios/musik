@@ -128,7 +128,12 @@ void MusikFrame::OnClose( wxCloseEvent& WXUNUSED(event) )
     g_Library.Shutdown();
 
 	//-------------------------------------------------//
-	//--- save paths and prefs						---//
+	//--- write playlist columns to prefs			---//
+	//-------------------------------------------------//
+	g_PlaylistCtrl->SaveColumns();
+
+	//-------------------------------------------------//
+	//--- save prefs and paths,						---//
 	//-------------------------------------------------//
 	g_Prefs.SavePrefs();
 	g_Paths.Save();

@@ -56,7 +56,6 @@ void CMusikPrefs::LoadPrefs()
 	config->Read( wxT( "ShowRating" ),								&nShowRatings,			1						);
 	config->Read( wxT( "StayOnTop" ),								&nStayOnTop,			0						);
 	config->Read( wxT( "AutomaticallyScanDelta" ),					&nAutoDelta,			1						);
-	config->Read( wxT( "ExtendedPlaylistInfo" ),					&nExtendedPlaylist,		0						);
 	config->Read( wxT( "ActivityBoxWrite" ),						&nActBoxWrite,			0						);
 	config->Read( wxT( "ActivityBoxClear" ),						&nActBoxClear,			0						);
 	config->Read( wxT( "ActivityBoxRename" ),						&nActBoxRename,			0						);
@@ -78,10 +77,10 @@ void CMusikPrefs::LoadPrefs()
 	config->Read( wxT( "EnableWebserver" ),							&nWebServerEnable,		0						);
 	config->Read( wxT( "Webserverport" ),							&nWebServerPort,		6395					);
 	config->Read( wxT( "FramePlacement" ),							&sFramePlacement,		wxT("")					);
-	for(int i=0;i < NPLAYLISTCOLUMS;i++)
-	{
-		config->Read( wxString::Format(wxT("PlaylistColum%dSize"),i),&nPlaylistColumSize[i],50);
-	}
+
+	//--- playlist columns ---//
+	for( int i = 0;i < NPLAYLISTCOLUMNS; i++ )
+		config->Read( wxString::Format(wxT("PlaylistColumn%dSize"),i),&nPlaylistColumnSize[i],50);
 
 	g_FX.LoadBands( config );
 
@@ -145,7 +144,6 @@ void CMusikPrefs::SavePrefs()
 	config->Write( wxT( "ShowRating" ),								nShowRatings			);
 	config->Write( wxT( "StayOnTop" ),								nStayOnTop				);
 	config->Write( wxT( "AutomaticallyScanDelta" ),					nAutoDelta				);
-	config->Write( wxT( "ExtendedPlaylistInfo" ),					nExtendedPlaylist		);
 	config->Write( wxT( "ActivityBoxWrite" ),						nActBoxWrite			);
 	config->Write( wxT( "ActivityBoxClear" ),						nActBoxClear			);
 	config->Write( wxT( "ActivityBoxRename" ),						nActBoxRename			);
@@ -167,10 +165,10 @@ void CMusikPrefs::SavePrefs()
 	config->Write( wxT( "EnableWebserver" ),						nWebServerEnable		);
 	config->Write( wxT( "WebserverPort" ),							nWebServerPort			);
 	config->Write( wxT( "FramePlacement" ),							sFramePlacement			);
-	for(int i=0;i < NPLAYLISTCOLUMS;i++)
-	{
-		config->Write( wxString::Format(wxT("PlaylistColum%dSize"),i),nPlaylistColumSize[i]);
-	}
+
+	//--- playlist columns ---//
+	for( int i = 0; i < NPLAYLISTCOLUMNS; i++ )
+		config->Write( wxString::Format(wxT("PlaylistColumn%dSize"),i),nPlaylistColumnSize[i]);
 
 	g_FX.SaveBands( config );
 

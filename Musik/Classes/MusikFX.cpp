@@ -52,8 +52,7 @@ void CMusikFX::ResetBands()
 
 void CMusikFX::InitEQ()
 {
-	// why 14?  I don't know.  It's magic.
-	equ_init( 14 );
+	equ_init( 14 );		//--- no one knows why, 14 is the magic number ---//
 	MakeTable( 44100 );
 }
 
