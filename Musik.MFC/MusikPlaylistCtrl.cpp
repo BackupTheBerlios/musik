@@ -713,24 +713,46 @@ void CMusikPlaylistCtrl::OnDropFiles(HDROP hDropInfo)
 {
 	size_t nNumFiles;
 	TCHAR szNextFile [MAX_PATH];
+	SHFILEINFO  rFileInfo;
 	
 	nNumFiles = DragQueryFile ( hDropInfo, -1, NULL, 0 );
 	CStdStringArray* files = NULL;
 
 	// if the thread exists, pause it
 	if ( m_BatchAddThr )
+	{
 		m_BatchAddThr->Pause();
+		files = m_BatchAddThr->m_Files;
+	}
 
 	// otherwise create a new list of files
 	else
 		files = new CStdStringArray();
 
+	CStdString sTemp;
 	for ( size_t i = 0; i < nNumFiles; i++ )
 	{
 		if ( DragQueryFile( hDropInfo, i, szNextFile, MAX_PATH ) > 0 )
 		{
-			if ( m_BatchAddThr )
-				m_BatchAddThr->m_Files->push_back( szNextFile );
+			// get the filetype. if its a directory
+			// that was dropped, we'll want to 
+			// recurse it and add all the supported 
+			// media files...
+			SHGetFileInfo( szNextFile, 0, &rFileInfo, sizeof( rFileInfo ), SHGFI_ATTRIBUTES );
+			if ( rFileInfo.dwAttributes & FILE_ATTRIBUTE_DIRECTORY )
+			{
+
+				sTemp = szNextFile;
+				sTemp += "\\*.*";
+
+				m_Dir.m_Dir = sTemp;
+				m_Dir.m_Threaded = false;
+				m_Dir.m_Target = files;
+
+				m_Dir.Run();
+			}		
+
+			// otherwise it was just a file... add it...
 			else
 				files->push_back( szNextFile );
 		}

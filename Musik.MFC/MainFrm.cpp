@@ -563,7 +563,7 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 		}
 
 		pParent->SetParent( false );
-		pSender->UpdateV();
+		pSender->UpdateV( true );
 
 		CMusikSelectionCtrl::SetUpdating( false );
 

@@ -527,6 +527,16 @@
 					RelativePath="..\Musik.Core\include\MusikBatchAdd.h">
 				</File>
 			</Filter>
+			<Filter
+				Name="MusikDir"
+				Filter="">
+				<File
+					RelativePath="..\Musik.Core\src\MusikDir.cpp">
+				</File>
+				<File
+					RelativePath="..\Musik.Core\include\MusikDir.h">
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Prefs"

@@ -8,6 +8,7 @@
 
 #include "../Musik.Core/include/StdString.h"
 #include "../Musik.Core/include/MusikFunctor.h"
+#include "../Musik.Core/include/MusikDir.h"
 
 ///////////////////////////////////////////////////
 
@@ -18,6 +19,7 @@ class CMusikPlaylist;
 class CMusikDynDspInfo;
 class CMusikBatchAdd;
 class CMusikBatchAddFunctor;
+class CMusikDir;
 
 ///////////////////////////////////////////////////
 
@@ -46,6 +48,14 @@ protected:
 
 	// is dnd active
 	UINT m_DropID;
+
+	// for some reason creating a CMusikDir
+	// object during a drop operation causes
+	// it to fail. i can't imagine why, its 
+	// just initializing a few variables to 
+	// NULL in the constructor. at any rate,
+	// its created here...
+	CMusikDir m_Dir;
 
 	// pointer to main window
 	CFrameWnd* m_MainWnd;
