@@ -682,7 +682,8 @@ bool CmusikPlayer::Play( int index, int fade_type, int start_pos )
 	// verify song can is within the playlist's range 
 	if ( ( index >= (int)m_Playlist->GetCount() || index < 0 ) && fade_type != MUSIK_CROSSFADER_SEEK )
 	{
-		TRACE0( "Playlist song out of range.\n" );
+		TRACE0( "Playlist song out of range or finished.\n" );
+		Stop();
 		return false;
 	}
 
