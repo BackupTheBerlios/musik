@@ -135,7 +135,6 @@ public:
 	void InsertAt( const CIntArray& songids, int pos );
 	void Clear();
 
-private:
 	int m_ID;
 	CmusikSongArray m_Songs;
 };

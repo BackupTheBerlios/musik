@@ -869,7 +869,7 @@ bool CmusikPlayer::Next( bool expired )
 	// it is, start it over from the beginning
 	else if ( m_Playmode & MUSIK_PLAYER_PLAYMODE_REPEAT_PLAYLIST )
 	{
-		if ( m_Index + 1 > (int)m_Playlist->GetCount() )
+		if ( m_Index + 1 >= (int)m_Playlist->GetCount() )
 			m_Index = 0;
 		else
 			m_Index++;
