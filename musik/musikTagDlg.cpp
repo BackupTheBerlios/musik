@@ -60,6 +60,8 @@ CmusikTagDlg::CmusikTagDlg( CWnd* parent, CmusikPlaylist* playlist, CmusikLibrar
 	m_Playlist = playlist;
 	m_Library = library;
 	m_Parent = parent;
+	m_Modified = false;
+	m_Updating = false;
 	m_SongIndex = 0;
 }
 
@@ -88,6 +90,8 @@ void CmusikTagDlg::UpdateSel( int index )
 
 void CmusikTagDlg::UpdateDlg()
 {
+	m_Updating = true;
+
 	CStatic* ptrCurr;
 	CString temp;
 
@@ -154,7 +158,68 @@ void CmusikTagDlg::UpdateDlg()
 		ptrCurr->SetWindowText( _T( "Unknown" ) );
 		break;
 	}
-	
+
+	ptrCurr = (CStatic*)GetDlgItem( IDC_APPLY );
+	ptrCurr->EnableWindow( FALSE );
+
+	m_Updating = false;
+	m_Modified = false;
+}
+
+///////////////////////////////////////////////////
+
+void CmusikTagDlg::SaveCurr()
+{
+	m_Updating = true;
+	if ( m_Modified )
+	{
+		CString curr;
+		CWnd* ptrCurr;
+
+		// get new info
+		ptrCurr = (CStatic*)GetDlgItem( IDC_TITLE );
+		ptrCurr->GetWindowText( curr );
+		m_Song.SetTitle( curr.GetBuffer() );
+
+		ptrCurr = (CStatic*)GetDlgItem( IDC_TRACK );
+		ptrCurr->GetWindowText( curr );
+		m_Song.SetTrackNum( curr.GetBuffer() );
+
+		ptrCurr = (CStatic*)GetDlgItem( IDC_ARTIST );
+		ptrCurr->GetWindowText( curr );
+		m_Song.SetArtist( curr.GetBuffer() );
+
+		ptrCurr = (CStatic*)GetDlgItem( IDC_ALBUM );
+		ptrCurr->GetWindowText( curr );
+		m_Song.SetAlbum( curr.GetBuffer() );
+
+		ptrCurr = (CStatic*)GetDlgItem( IDC_GENRE );
+		ptrCurr->GetWindowText( curr );
+		m_Song.SetGenre( curr.GetBuffer() );
+
+		ptrCurr = (CStatic*)GetDlgItem( IDC_YEAR );
+		ptrCurr->GetWindowText( curr );
+		m_Song.SetYear( curr.GetBuffer() );
+
+		ptrCurr = (CStatic*)GetDlgItem( IDC_RATING );
+		ptrCurr->GetWindowText( curr );
+		if ( curr == _T( "Unrated" ) )
+			curr = _T( "0" );
+		m_Song.SetRating( curr.GetBuffer() );
+
+		ptrCurr = (CStatic*)GetDlgItem( IDC_APPLY );
+		ptrCurr->EnableWindow( FALSE );
+
+		// save it
+		m_Library->SetSongInfo( &m_Song );
+
+		// send a message to update the playlist ctrl
+		int WM_TAGUPDATE = RegisterWindowMessage( _T( "TAGUPDATE" ) );
+		m_Parent->PostMessage( WM_TAGUPDATE, (WPARAM)m_Song.GetID() );
+
+		m_Modified = false;
+	}
+	m_Updating = false;
 }
 
 ///////////////////////////////////////////////////
@@ -171,6 +236,16 @@ BEGIN_MESSAGE_MAP(CmusikTagDlg, CDialog)
 	ON_BN_CLICKED(IDC_CLOSE, OnBnClickedClose)
 	ON_BN_CLICKED(IDC_NEXT, OnBnClickedNext)
 	ON_BN_CLICKED(IDC_PREV, OnBnClickedPrev)
+	ON_EN_CHANGE(IDC_TITLE, OnChangeField)
+	ON_EN_CHANGE(IDC_TRACK, OnChangeField)
+	ON_EN_CHANGE(IDC_ARTIST, OnChangeField)
+	ON_EN_CHANGE(IDC_ALBUM, OnChangeField)
+	ON_EN_CHANGE(IDC_YEAR, OnChangeField)
+	ON_CBN_EDITCHANGE(IDC_GENRE, OnChangeField)
+	ON_CBN_EDITCHANGE(IDC_RATING, OnChangeField)
+	ON_CBN_SELCHANGE(IDC_GENRE, OnChangeField)
+	ON_CBN_SELCHANGE(IDC_RATING, OnChangeField)
+	ON_BN_CLICKED(IDC_APPLY, OnBnClickedApply)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -178,7 +253,7 @@ END_MESSAGE_MAP()
 void CmusikTagDlg::OnClose()
 {
 	int WM_TAGPROPERTIESDESTROY = RegisterWindowMessage( "TAGPROPERTIESDESTROY" );
-	m_Parent->SendMessage( WM_TAGPROPERTIESDESTROY );
+	m_Parent->PostMessage( WM_TAGPROPERTIESDESTROY );
 }
 
 ///////////////////////////////////////////////////
@@ -196,13 +271,13 @@ BOOL CmusikTagDlg::PreTranslateMessage(MSG* pMsg)
 		{
 			if ( pMsg->wParam == VK_RETURN )
 			{
-				if ( !GetKeyState( VK_SHIFT ) )
-					OnBnClickedNext();
+				if ( GetKeyState( VK_SHIFT ) < 0 )
+					OnShiftEnter();
 				else
-					OnBnClickedPrev();
+					OnEnter();
+			
+				return true;
 			}
-
-			return true;
 		}
 	}
 
@@ -241,6 +316,7 @@ void CmusikTagDlg::OnBnClickedClose()
 
 void CmusikTagDlg::OnBnClickedNext()
 {
+	PromptSave();
 	int WM_TAGNEXT = RegisterWindowMessage( "TAGNEXT" );
 	m_Parent->SendMessage( WM_TAGNEXT );
 }
@@ -249,8 +325,60 @@ void CmusikTagDlg::OnBnClickedNext()
 
 void CmusikTagDlg::OnBnClickedPrev()
 {
+	PromptSave();
 	int WM_TAGPREV = RegisterWindowMessage( "TAGPREV" );
 	m_Parent->SendMessage( WM_TAGPREV );
 }
 
 ///////////////////////////////////////////////////
+
+void CmusikTagDlg::OnEnter()
+{
+	SaveCurr();
+	int WM_TAGNEXT = RegisterWindowMessage( "TAGNEXT" );
+	m_Parent->SendMessage( WM_TAGNEXT );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikTagDlg::OnShiftEnter()
+{
+	SaveCurr();
+	int WM_TAGPREV = RegisterWindowMessage( "TAGPREV" );
+	m_Parent->SendMessage( WM_TAGPREV );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikTagDlg::PromptSave()
+{
+	if ( m_Modified )
+	{
+		if ( MessageBox( _T( "Save current changes to song information?" ), MUSIK_VERSION_STR, MB_YESNO ) == IDYES )
+			SaveCurr();
+	}
+}
+
+///////////////////////////////////////////////////
+
+void CmusikTagDlg::OnChangeField()
+{
+	if ( !m_Updating && !m_Modified )
+	{
+		CWnd* ptrCurr = (CWnd*)GetDlgItem( IDC_APPLY );
+		ptrCurr->EnableWindow( TRUE );
+
+		m_Modified = true;
+	}
+}
+
+///////////////////////////////////////////////////
+
+void CmusikTagDlg::OnBnClickedApply()
+{
+	SaveCurr();
+}
+
+///////////////////////////////////////////////////
+
+

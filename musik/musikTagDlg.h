@@ -70,11 +70,23 @@ public:
 
 	// mfc messages
 	afx_msg void OnBnClickedClose();
+	afx_msg void OnBnClickedNext();
+	afx_msg void OnBnClickedPrev();
+	afx_msg void OnChangeField();
+	afx_msg void OnBnClickedApply();
 
 protected:
 
 	// update info
 	void UpdateDlg();
+	void SaveCurr();
+	void PromptSave();
+
+	void OnEnter();
+	void OnShiftEnter();
+
+	bool m_Modified;
+	bool m_Updating;
 
 	// from parent
 	CWnd* m_Parent;
@@ -89,8 +101,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
-	afx_msg void OnBnClickedNext();
-	afx_msg void OnBnClickedPrev();
+
 };
 
 ///////////////////////////////////////////////////

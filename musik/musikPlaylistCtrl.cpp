@@ -70,6 +70,7 @@ IMPLEMENT_DYNAMIC( CmusikPlaylistCtrl, CWnd )
 int WM_TAGPROPERTIESDESTROY = RegisterWindowMessage( "TAGPROPERTIESDESTROY" );
 int WM_TAGNEXT = RegisterWindowMessage( "TAGNEXT" );
 int WM_TAGPREV = RegisterWindowMessage( "TAGPREV" );
+int WM_TAGUPDATE = RegisterWindowMessage( "TAGUPDATE" );
 
 ///////////////////////////////////////////////////
 
@@ -119,6 +120,7 @@ BEGIN_MESSAGE_MAP(CmusikPlaylistCtrl, CmusikListCtrl)
 	ON_REGISTERED_MESSAGE( WM_TAGPROPERTIESDESTROY, OnTagEditDestroy )
 	ON_REGISTERED_MESSAGE( WM_TAGNEXT, OnTagNext )
 	ON_REGISTERED_MESSAGE( WM_TAGPREV, OnTagPrev )
+	ON_REGISTERED_MESSAGE( WM_TAGUPDATE, OnTagUpdate )
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -1933,6 +1935,7 @@ void CmusikPlaylistCtrl::OnPlaylistcontextmenuProperties()
 
 LRESULT CmusikPlaylistCtrl::OnTagEditDestroy( WPARAM wParam, LPARAM lParam )
 {
+	m_TagEdit->DestroyWindow();
 	delete m_TagEdit;
 	m_TagEdit = NULL;
 
@@ -1988,3 +1991,17 @@ LRESULT CmusikPlaylistCtrl::OnTagPrev( WPARAM wParam, LPARAM lParam )
 }
 
 ///////////////////////////////////////////////////
+
+LRESULT CmusikPlaylistCtrl::OnTagUpdate( WPARAM wParam, LPARAM lParam )
+{
+	if ( wParam )
+	{
+		int songid = (int)wParam;
+		ResyncItem( songid );
+	}
+
+	return 0L;
+}
+
+///////////////////////////////////////////////////
+
