@@ -29,10 +29,6 @@ protected:
 public:
 
 private:
-	CSplitterWnd m_MainSplit;
-	CSplitterWnd m_SourcesSplit;
-	CSplitterWnd m_PlaylistSplit;
-	bool m_Split;
 
 protected:
 
@@ -52,7 +48,6 @@ public:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 	virtual BOOL OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
 	virtual BOOL OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* pContext );
-	virtual void OnSize( UINT nType, int cx, int cy );
 
 //-------------------------------------------------//
 //--- message maps								---//
@@ -60,6 +55,8 @@ public:
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSetFocus(CWnd *pOldWnd);
+	afx_msg void OnSize(UINT nType, int cx, int cy);
+
 	DECLARE_MESSAGE_MAP()
 };
 

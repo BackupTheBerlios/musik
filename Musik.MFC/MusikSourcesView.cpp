@@ -8,9 +8,10 @@
 
 // CMusikSourcesView
 
-IMPLEMENT_DYNCREATE(CMusikSourcesView, CView)
+IMPLEMENT_DYNCREATE(CMusikSourcesView, CFormView)
 
 CMusikSourcesView::CMusikSourcesView()
+	: CFormView(CMusikSourcesView::IDD)
 {
 }
 
@@ -18,17 +19,13 @@ CMusikSourcesView::~CMusikSourcesView()
 {
 }
 
-BEGIN_MESSAGE_MAP(CMusikSourcesView, CView)
-END_MESSAGE_MAP()
-
-
-// CMusikSourcesView drawing
-
-void CMusikSourcesView::OnDraw(CDC* pDC)
+void CMusikSourcesView::DoDataExchange(CDataExchange* pDX)
 {
-	CDocument* pDoc = GetDocument();
-	// TODO: add draw code here
+	CFormView::DoDataExchange(pDX);
 }
+
+BEGIN_MESSAGE_MAP(CMusikSourcesView, CFormView)
+END_MESSAGE_MAP()
 
 
 // CMusikSourcesView diagnostics
@@ -36,20 +33,14 @@ void CMusikSourcesView::OnDraw(CDC* pDC)
 #ifdef _DEBUG
 void CMusikSourcesView::AssertValid() const
 {
-	CView::AssertValid();
+	CFormView::AssertValid();
 }
 
 void CMusikSourcesView::Dump(CDumpContext& dc) const
 {
-	CView::Dump(dc);
+	CFormView::Dump(dc);
 }
 #endif //_DEBUG
 
-void CMusikSourcesView::OnSize( UINT nType, int cx, int cy )
-{
-	CView::OnSize( nType, cx, cy );
 
-	if ( ::IsWindow( m_SourcesCtrl.m_hWnd ) )
-		m_SourcesCtrl.MoveWindow( 0, 0, cx, cy, TRUE );
-}
 // CMusikSourcesView message handlers

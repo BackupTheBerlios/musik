@@ -1,29 +1,28 @@
 #pragma once
 
-#include "MusikSourcesCtrl.h"
 
-class CMusikSourcesView : public CView
+
+// CMusikSourcesView form view
+
+class CMusikSourcesView : public CFormView
 {
 	DECLARE_DYNCREATE(CMusikSourcesView)
-
-public:
-	virtual void OnDraw(CDC* pDC);
-	virtual void OnSize( UINT nType, int cx, int cy );
-
-	#ifdef _DEBUG
-		virtual void AssertValid() const;
-		virtual void Dump(CDumpContext& dc) const;
-	#endif
 
 protected:
 	CMusikSourcesView();           // protected constructor used by dynamic creation
 	virtual ~CMusikSourcesView();
 
+public:
+	enum { IDD = IDD_SOURCES_VIEW };
+#ifdef _DEBUG
+	virtual void AssertValid() const;
+	virtual void Dump(CDumpContext& dc) const;
+#endif
+
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+
 	DECLARE_MESSAGE_MAP()
-
-private:
-	CMusikSourcesCtrl m_SourcesCtrl;
-
 };
 
 

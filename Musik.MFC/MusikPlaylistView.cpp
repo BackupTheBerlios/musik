@@ -8,9 +8,10 @@
 
 // CMusikPlaylistView
 
-IMPLEMENT_DYNCREATE(CMusikPlaylistView, CView)
+IMPLEMENT_DYNCREATE(CMusikPlaylistView, CFormView)
 
 CMusikPlaylistView::CMusikPlaylistView()
+	: CFormView(CMusikPlaylistView::IDD)
 {
 }
 
@@ -18,17 +19,13 @@ CMusikPlaylistView::~CMusikPlaylistView()
 {
 }
 
-BEGIN_MESSAGE_MAP(CMusikPlaylistView, CView)
-END_MESSAGE_MAP()
-
-
-// CMusikPlaylistView drawing
-
-void CMusikPlaylistView::OnDraw(CDC* pDC)
+void CMusikPlaylistView::DoDataExchange(CDataExchange* pDX)
 {
-	CDocument* pDoc = GetDocument();
-	// TODO: add draw code here
+	CFormView::DoDataExchange(pDX);
 }
+
+BEGIN_MESSAGE_MAP(CMusikPlaylistView, CFormView)
+END_MESSAGE_MAP()
 
 
 // CMusikPlaylistView diagnostics
@@ -36,12 +33,12 @@ void CMusikPlaylistView::OnDraw(CDC* pDC)
 #ifdef _DEBUG
 void CMusikPlaylistView::AssertValid() const
 {
-	CView::AssertValid();
+	CFormView::AssertValid();
 }
 
 void CMusikPlaylistView::Dump(CDumpContext& dc) const
 {
-	CView::Dump(dc);
+	CFormView::Dump(dc);
 }
 #endif //_DEBUG
 
