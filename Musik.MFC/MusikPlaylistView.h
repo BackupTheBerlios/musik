@@ -20,7 +20,7 @@ class CMusikPlaylistView : public CWnd
 public:
 
 	// construct and destruct
-	CMusikPlaylistView( CFrameWnd* parent, CMusikLibrary* library, CMusikPlayer* player, CMusikPrefs* prefs, CMusikPlaylist* playlist );
+	CMusikPlaylistView( CFrameWnd* parent, CMusikLibrary* library, CMusikPlayer* player, CMusikPrefs* prefs );
 	virtual ~CMusikPlaylistView();
 
 	// get the playlist control

@@ -22,12 +22,12 @@ IMPLEMENT_DYNAMIC(CMusikPlaylistCtrl, CListCtrl)
 
 ///////////////////////////////////////////////////
 
-CMusikPlaylistCtrl::CMusikPlaylistCtrl( CFrameWnd* mainwnd, CMusikLibrary* library, CMusikPlayer* player, CMusikPrefs* prefs, CMusikPlaylist* playlist )
+CMusikPlaylistCtrl::CMusikPlaylistCtrl( CFrameWnd* mainwnd, CMusikLibrary* library, CMusikPlayer* player, CMusikPrefs* prefs )
 {
 	// core
+	m_Playlist	= NULL;
 	m_Library	= library;
 	m_Prefs		= prefs;
-	m_Playlist	= playlist;
 	m_Player	= player;
 
 	// main window
@@ -36,7 +36,7 @@ CMusikPlaylistCtrl::CMusikPlaylistCtrl( CFrameWnd* mainwnd, CMusikLibrary* libra
 	// misc
 	m_RatingWidth = -1;
 	m_Changed = true;
-	m_SongInfoCache = new CMusikDynDspInfo( m_Playlist, m_Library );
+	m_SongInfoCache = new CMusikDynDspInfo( NULL, m_Library );
 
 	// dnd variables
 	m_IsWinNT = ( 0 == ( GetVersion() & 0x80000000 ) );
@@ -52,6 +52,7 @@ CMusikPlaylistCtrl::CMusikPlaylistCtrl( CFrameWnd* mainwnd, CMusikLibrary* libra
 CMusikPlaylistCtrl::~CMusikPlaylistCtrl()
 {
 	delete m_SongInfoCache;
+	CleanNowPlaying();
 }
 
 ///////////////////////////////////////////////////
@@ -129,14 +130,17 @@ void CMusikPlaylistCtrl::SetPlaylist( CMusikPlaylist* playlist )
 
 void CMusikPlaylistCtrl::UpdateV()
 {
-	SetRedraw( false );
-	m_SongInfoCache->Set( 0, 0, true );
-	SetItemCountEx( m_Playlist->GetCount(), LVSICF_NOINVALIDATEALL | LVSICF_NOSCROLL );
+	if ( m_Playlist )
+	{
+		SetRedraw( false );
+		m_SongInfoCache->Set( 0, 0, true );
+		SetItemCountEx( m_Playlist->GetCount(), LVSICF_NOINVALIDATEALL | LVSICF_NOSCROLL );
 
-	CRect rcClient;
-	GetClientRect( &rcClient );
-	SetRedraw( true );
-	RedrawWindow( rcClient );
+		CRect rcClient;
+		GetClientRect( &rcClient );
+		SetRedraw( true );
+		RedrawWindow( rcClient );
+	}
 }
 
 ///////////////////////////////////////////////////
@@ -464,6 +468,16 @@ void CMusikPlaylistCtrl::OnNMClick(NMHDR *pNMHDR, LRESULT *pResult)
 	*pResult = 0;
 }
 
+void CMusikPlaylistCtrl::CleanNowPlaying()
+{
+	CMusikPlaylist* playlist = m_Player->GetPlaylist();
+	if ( playlist )
+	{
+		delete playlist;
+		playlist = NULL;
+	}
+}
+
 ///////////////////////////////////////////////////
 
 void CMusikPlaylistCtrl::OnLvnItemActivate(NMHDR *pNMHDR, LRESULT *pResult)
@@ -472,7 +486,32 @@ void CMusikPlaylistCtrl::OnLvnItemActivate(NMHDR *pNMHDR, LRESULT *pResult)
 	
 	if ( m_Changed )
 	{
+		// clear out the old CMusikPlayer's
+		// now playing...
+		CleanNowPlaying();
+
+		// set the CMusikPlayer as the new owner for
+		// the playlist
 		m_Player->SetPlaylist( m_Playlist );
+
+		// the player now owns the old playlist,
+		// so just create a new blank one here,
+		// so it's owner can delete it
+		m_Playlist = new CMusikPlaylist();
+
+		// send a message to the main frame with
+		// the new address of the new playlist
+		int MW_NEWPLAYLISTOWNER = RegisterWindowMessage( "NEWPLAYLISTOWNER" );
+		m_MainWnd->SendMessage( MW_NEWPLAYLISTOWNER, (WPARAM)m_Playlist );
+
+		// becuase the new playlist we created is
+		// blank, it doesn't contain the info we
+		// want. so we set the current playlist
+		// to the playlist inside the CMusikPlayer
+		SetPlaylist( m_Player->GetPlaylist() );
+
+		// playlist is now updated, so flag
+		// it as unchanged
 		m_Changed = false;
 	}			
 

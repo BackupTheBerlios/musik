@@ -481,6 +481,16 @@
 					RelativePath="..\Musik.Core\include\MusikMP3Info.h">
 				</File>
 			</Filter>
+			<Filter
+				Name="MusikThread"
+				Filter="">
+				<File
+					RelativePath="..\Musik.Core\src\MusikThread.cpp">
+				</File>
+				<File
+					RelativePath="..\Musik.Core\include\MusikThread.h">
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Prefs"

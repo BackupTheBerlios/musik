@@ -59,6 +59,8 @@
 
 int WM_SELBOXUPDATE = RegisterWindowMessage( "SELBOXUPDATE" );
 
+int MW_NEWPLAYLISTOWNER = RegisterWindowMessage( "NEWPLAYLISTOWNER" );
+
 int WM_SONGCHANGE = RegisterWindowMessage( "SONGCHANGE" );
 int WM_SONGSTOP = RegisterWindowMessage( "SONGSTOP" );
 
@@ -84,6 +86,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_SOURCESDYNPLAYLIST, OnSourcesDynPlaylist )
 	ON_REGISTERED_MESSAGE( WM_DRAGSTART, OnDragStart )
 	ON_REGISTERED_MESSAGE( WM_DRAGEND, OnDragEnd )
+	ON_REGISTERED_MESSAGE( MW_NEWPLAYLISTOWNER, OnNewPlaylistOwner )
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -93,6 +96,7 @@ CMainFrame::CMainFrame()
 	InitPaths();
 	InitMusik();
 
+	m_CurPlaylist = NULL;
 	m_DynPlaylist = NULL;
 	m_StdPlaylist = NULL;
 
@@ -135,11 +139,10 @@ void CMainFrame::InitPaths()
 void CMainFrame::InitMusik()
 {
 	m_NewSong		= new CMusikFrameFunctor( this );
-	m_LibPlaylist	= new CMusikPlaylist();	
+	m_SelPlaylist	= new CMusikPlaylist();	
 	m_Library		= new CMusikLibrary( ( CStdString )m_Database );
 	m_Prefs			= new CMusikPrefs( m_PrefsIni );
-
-	m_Player		= new CMusikPlayer( m_NewSong, m_Library, m_LibPlaylist );
+	m_Player		= new CMusikPlayer( m_NewSong, m_Library );
 	m_Player->InitSound( m_Prefs->GetPlayerDevice(), m_Prefs->GetPlayerDriver(), m_Prefs->GetPlayerRate(), m_Prefs->GetPlayerMaxChannels() );
 	
 	if ( m_Prefs->IsCrossfaderEnabled() )
@@ -152,7 +155,7 @@ void CMainFrame::CleanMusik()
 {
 	if ( m_Library )		delete m_Library;
 	if ( m_Prefs )			delete m_Prefs;
-	if ( m_LibPlaylist )	delete m_LibPlaylist;
+	if ( m_SelPlaylist )	delete m_SelPlaylist;
 	if ( m_DynPlaylist )	delete m_DynPlaylist;
 	if ( m_StdPlaylist )	delete m_StdPlaylist;
 	if ( m_Player )			delete m_Player;
@@ -279,7 +282,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	SetIcon( m_hIcon16, false );
 
 	// create the background window, which is the playlist
-	m_wndView = new CMusikPlaylistView( this, m_Library, m_Player, m_Prefs, m_LibPlaylist );
+	m_wndView = new CMusikPlaylistView( this, m_Library, m_Player, m_Prefs );
 	m_wndView->Create( NULL, NULL, AFX_WS_DEFAULT_VIEW, CRect(0, 0, 0, 0), this, AFX_IDW_PANE_FIRST, NULL );
 	m_wndView->ModifyStyleEx( WS_EX_STATICEDGE, NULL );
 	m_wndView->ModifyStyle( WS_BORDER, 0 );
@@ -544,13 +547,21 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 	CMusikSelectionCtrl::SetUpdating( false );
 
 	// get the songs
-	m_Library->GetRelatedSongs( sSender, pSender->GetType(), *m_LibPlaylist );
+	m_Library->GetRelatedSongs( sSender, pSender->GetType(), *m_SelPlaylist );
 
 	// make sure the correct playlist is set
-	if ( m_wndView->GetCtrl()->GetPlaylist() != m_LibPlaylist )
+	if ( m_wndView->GetCtrl()->GetPlaylist() != m_SelPlaylist )
 	{
+		// delete any old playlists we don't
+		// need in memory any more
 		CleanPlaylists();
-		m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist );
+
+		// make sure our current playlist is
+		// correct, so the playlist can let
+		// us know the new address of it once
+		// the CMusikPlayer takes ownership
+		m_CurPlaylist = m_SelPlaylist;
+		m_wndView->GetCtrl()->SetPlaylist( m_SelPlaylist );
 
 		// deselect any sources item
 		m_wndSources->GetCtrl()->KillFocus();
@@ -609,6 +620,12 @@ LRESULT CMainFrame::OnSourcesStdPlaylist( WPARAM wParam, LPARAM lParam )
 {
 	TRACE0( "A standard playlist was clicked\n" );
 
+	// make sure our current playlist is
+	// correct, so the playlist can let
+	// us know the new address of it once
+	// the CMusikPlayer takes ownership
+	m_CurPlaylist = m_StdPlaylist;
+
 	CleanPlaylists();
 	m_StdPlaylist = new CMusikPlaylist();
 
@@ -629,6 +646,9 @@ LRESULT CMainFrame::OnSourcesDynPlaylist( WPARAM wParam, LPARAM lParam )
 {
 	TRACE0( "A dynamic playlist was clicked\n" );
 
+	
+	//m_CurPlaylist = m_DynPlaylist;
+
 	return 0L;
 }
 
@@ -646,6 +666,25 @@ LRESULT CMainFrame::OnDragStart( WPARAM wParam, LPARAM lParam )
 LRESULT CMainFrame::OnDragEnd( WPARAM wParam, LPARAM lParam )
 {
 	TRACE0( "DND Ended.\n" );
+
+	return 0L;
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CMainFrame::OnNewPlaylistOwner( WPARAM wParam, LPARAM lParam )
+{
+	if ( m_CurPlaylist == m_SelPlaylist )
+		m_SelPlaylist = (CMusikPlaylist*)wParam;
+
+	else if ( m_CurPlaylist == m_DynPlaylist )
+		m_DynPlaylist = (CMusikPlaylist*)wParam;
+
+	else if ( m_CurPlaylist == m_StdPlaylist )
+		m_StdPlaylist = (CMusikPlaylist*)wParam;
+
+	else
+		TRACE0( "No previous playlist found. Musik will crash at some point.\n" );
 
 	return 0L;
 }

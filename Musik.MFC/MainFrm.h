@@ -119,9 +119,12 @@ protected:
 	// functor that CMusikPlayer will use
 	CMusikFrameFunctor* m_NewSong;
 
+	// current playlist, only a pointer
+	CMusikPlaylist* m_CurPlaylist;
+
 	// various playlist objects that the 
 	// sources box will switch around
-	CMusikPlaylist* m_LibPlaylist;
+	CMusikPlaylist* m_SelPlaylist;
 	CMusikPlaylist* m_DynPlaylist;
 	CMusikPlaylist* m_StdPlaylist;
 
@@ -155,6 +158,7 @@ protected:
 	afx_msg LRESULT OnSourcesDynPlaylist( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnDragStart(  WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnDragEnd(  WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnNewPlaylistOwner( WPARAM wParam, LPARAM lParam );
 	afx_msg void OnDestroy();
 
 	// macros

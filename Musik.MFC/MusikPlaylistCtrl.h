@@ -21,7 +21,7 @@ class CMusikPlaylistCtrl : public CListCtrl
 public:
 
 	// construct and destruct
-	CMusikPlaylistCtrl( CFrameWnd* mainwnd, CMusikLibrary* library, CMusikPlayer* player, CMusikPrefs* prefs, CMusikPlaylist* playlist );
+	CMusikPlaylistCtrl( CFrameWnd* mainwnd, CMusikLibrary* library, CMusikPlayer* player, CMusikPrefs* prefs );
 	virtual ~CMusikPlaylistCtrl();
 
 	// update the virtual list control
@@ -43,7 +43,11 @@ protected:
 	CMusikLibrary* m_Library;
 	CMusikPlayer* m_Player;
 	CMusikPrefs* m_Prefs;
+
+	// playlist stuff
+	void CleanNowPlaying();
 	CMusikPlaylist* m_Playlist;
+	CMusikPlaylist* m_NowPlaying;
 	CMusikDynDspInfo* m_SongInfoCache;
 
 	// fonts

@@ -15,9 +15,9 @@
 ///////////////////////////////////////////////////
 
 IMPLEMENT_DYNAMIC(CMusikPlaylistView, CWnd)
-CMusikPlaylistView::CMusikPlaylistView( CFrameWnd* mainwnd, CMusikLibrary* library, CMusikPlayer* player, CMusikPrefs* prefs, CMusikPlaylist* playlist )
+CMusikPlaylistView::CMusikPlaylistView( CFrameWnd* mainwnd, CMusikLibrary* library, CMusikPlayer* player, CMusikPrefs* prefs )
 {
-	m_Playlist = new CMusikPlaylistCtrl( mainwnd, library, player, prefs, playlist );
+	m_Playlist = new CMusikPlaylistCtrl( mainwnd, library, player, prefs );
 	m_Library = library;
 }
 
