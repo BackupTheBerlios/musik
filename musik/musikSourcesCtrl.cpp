@@ -964,10 +964,8 @@ LRESULT CmusikSourcesCtrl::OnEditCancel( WPARAM wParam, LPARAM lParam )
 	CmusikEditInPlace* sender = (CmusikEditInPlace*)wParam;
 
 	if ( cmd == MUSIK_SOURCES_EDITINPLACE_NEWSTDPLAYLIST )
-	{
 		m_StdPlaylists.at( m_StdPlaylists.size() - 1 )->SetLabelText( _T( "Create..." ) );
-		FocusLibrary();
-	}
+
 	else if ( cmd == MUSIK_SOURCES_EDITINPLACE_QUICKSEARCH )
 	{
 		FinishQuickSearch();
