@@ -65,7 +65,6 @@ void CMusikNowPlayingBar::OnSize(UINT nType, int cx, int cy)
 	GetClientRect( &rcClient );
 
 	m_wndChild->MoveWindow( &rcClient );
-	m_wndChild->Layout();
 }
 
 ///////////////////////////////////////////////////
