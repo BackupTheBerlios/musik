@@ -15,12 +15,10 @@ public:
 	CMainFrame();
 	virtual ~CMainFrame();
 
-
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 #endif
-	CChildView    m_wndView;	
 
 protected: 
 	DECLARE_DYNAMIC(CMainFrame)
