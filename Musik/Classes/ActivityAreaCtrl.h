@@ -41,7 +41,7 @@ public:
 	bool Create();
 	void Delete();
 	void ResetAllContents( bool bUpdatePlaylist = true );
-
+	CActivityBox* GetActivityBox(EMUSIK_ACTIVITY_TYPE eType);
 	bool Show(bool show = true);
 	void SetParent( int ACTIVITY_BOX_ID, bool bUpdate = false );
 
@@ -53,7 +53,7 @@ public:
 private:
 	int m_ParentId;
 	CActivityBox *m_ParentBox;
-
+	CActivityBox *m_pLastSelectedBox;
 	CActivityBox *m_ActivityBox[ActivityBoxesMaxCount];		
 	wxBoxSizer* pTopSizer;
 	wxPanel	  * m_pPanel;

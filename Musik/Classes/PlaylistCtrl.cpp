@@ -135,6 +135,8 @@ BEGIN_EVENT_TABLE(CPlaylistCtrl, CMusikListCtrl)
 	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_PLAY_ASNEXT,									CPlaylistCtrl::OnPlayAsNext			)
 	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_PLAY_ENQUEUED,									CPlaylistCtrl::OnPlayEnqueued		)
 	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_PLAY_REPLACE_PLAYERLIST,						CPlaylistCtrl::OnPlayReplace		)
+	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_PLAY_REPLACE_PLAYERLIST_WITH_SELECTION,		CPlaylistCtrl::OnPlayReplaceWithSel	)
+	EVT_MENU_RANGE				( MUSIK_PLAYLIST_CONTEXT_SHOW_IN_LIBRARY_ARTIST,MUSIK_PLAYLIST_CONTEXT_SHOW_IN_LIBRARY_YEAR, CPlaylistCtrl::OnShowInLibrary)
 	EVT_MENU					( MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FROM_PLAYLIST,					CPlaylistCtrl::OnDelSel				)
 	EVT_MENU					( MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FILES,							CPlaylistCtrl::OnDelFiles			)
 	EVT_MENU					( MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FROM_DB,							CPlaylistCtrl::OnDelFilesDB			)
@@ -256,6 +258,7 @@ bool PlaylistDropTarget::HighlightSel( const  wxPoint & pPos )
 	g_DragInProg	= true;
 	int nFlags;
 	long n = m_pPlaylistCtrl->HitTest( pPos, nFlags );
+	m_pPlaylistCtrl->SetFocus();
 	long topitem = m_pPlaylistCtrl->GetTopItem();
 	long countperpage = m_pPlaylistCtrl->GetCountPerPage();
 	if( n == topitem && n > 0)
@@ -265,10 +268,10 @@ bool PlaylistDropTarget::HighlightSel( const  wxPoint & pPos )
 	//--- highlight what we're over, deselect old ---//
 	if ( n != nLastHit && n!= -1 )
 	{
-		if ( !m_pPlaylistCtrl->DNDIsSel( nLastHit ) )
-			m_pPlaylistCtrl->SetItemState( nLastHit, 0, wxLIST_STATE_SELECTED );
+		//if ( !m_pPlaylistCtrl->DNDIsSel( nLastHit ) )
+			m_pPlaylistCtrl->SetItemState( nLastHit, 0, wxLIST_STATE_FOCUSED );
 
-		m_pPlaylistCtrl->SetItemState( n, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
+		m_pPlaylistCtrl->SetItemState( n, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED );
 	}
 
 	//--- this is a quick way to check if we need to update ---//
@@ -365,17 +368,36 @@ wxMenu * CPlaylistCtrl::CreateContextMenu()
 		playlist_context_play_menu->Append( MUSIK_PLAYLIST_CONTEXT_PLAY_ASNEXT , _( "Next" ), wxT( "" ) );
 		playlist_context_play_menu->Append( MUSIK_PLAYLIST_CONTEXT_PLAY_ENQUEUED, _( "Enqueue" ), wxT( "" ) );
 		playlist_context_play_menu->Append( MUSIK_PLAYLIST_CONTEXT_PLAY_INSTANTLY , _( "Instantly" ), wxT( "" ));
-		playlist_context_play_menu->Append( MUSIK_PLAYLIST_CONTEXT_PLAY_REPLACE_PLAYERLIST, _( "Replace current playlist" ), wxT( "" ) );
+		playlist_context_play_menu->Append( MUSIK_PLAYLIST_CONTEXT_PLAY_REPLACE_PLAYERLIST_WITH_SELECTION, _( "Replace current playlist with selection" ), wxT( "" ) );
+		playlist_context_play_menu->Append( MUSIK_PLAYLIST_CONTEXT_PLAY_REPLACE_PLAYERLIST, _( "Replace current playlist with all" ), wxT( "" ) );
 
 		playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_PLAYNODE,			_( "&Play" ),					playlist_context_play_menu );
 	}
 	else
 		playlist_context_menu->Append( MUSIK_PLAYLIST_CLEARPLAYERLIST,			_( "&Clear List" ),					wxT("") );
 
+	wxMenu *  playlist_context_show_in_library_menu = new wxMenu;
+
+	if(g_ActivityAreaCtrl->GetActivityBox(MUSIK_LBTYPE_ARTISTS))
+		playlist_context_show_in_library_menu->Append( MUSIK_PLAYLIST_CONTEXT_SHOW_IN_LIBRARY_ARTIST,_( "This artist" ),	wxT("") );
+	if(g_ActivityAreaCtrl->GetActivityBox(MUSIK_LBTYPE_ALBUMS))
+		playlist_context_show_in_library_menu->Append( MUSIK_PLAYLIST_CONTEXT_SHOW_IN_LIBRARY_ALBUM,_( "This album" ),	wxT("") );
+	if(g_ActivityAreaCtrl->GetActivityBox(MUSIK_LBTYPE_GENRES))
+		playlist_context_show_in_library_menu->Append( MUSIK_PLAYLIST_CONTEXT_SHOW_IN_LIBRARY_GENRE,_( "This genre" ),	wxT("") );
+	if(g_ActivityAreaCtrl->GetActivityBox(MUSIK_LBTYPE_YEARS))
+		playlist_context_show_in_library_menu->Append( MUSIK_PLAYLIST_CONTEXT_SHOW_IN_LIBRARY_YEAR,_( "This year" ),	wxT("") );
+
+
+
+	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_SHOW_IN_LIBRARY_NODE,_( "&Show in Library" ),	playlist_context_show_in_library_menu );
+
+
+	
+
 	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_RATENODE,			_( "&Rating" ),					playlist_context_rating_menu );
 	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_DISPLAYNODE,		_( "Display" ),					playlist_context_display_menu );
 	playlist_context_menu->AppendSeparator();
-	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_DELETENODE,		_( "F&ile Operations" ),		playlist_context_delete_menu );
+	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_DELETENODE,		_( "Delete" ),		playlist_context_delete_menu );
 	playlist_context_menu->AppendSeparator();
 	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_TAGNODE,			_( "Edit &Tag" ),				playlist_context_edit_tag_menu );
 
@@ -699,10 +721,15 @@ wxString CPlaylistCtrl::OnGetItemText(long item, long column) const
 	//--- so go ahead and add the items.				---//
 	//-----------------------------------------------------//
 
-	size_t nCurrType = m_ColumnOrder.Item( column );
+	EPLAYLISTCOLUMNS eCurrType = (EPLAYLISTCOLUMNS)m_ColumnOrder.Item( column );
+	return GetItemText(item,eCurrType);
 
-    const CMusikSong & song = g_Playlist.Item ( item );
-	switch ( nCurrType )
+}
+
+wxString CPlaylistCtrl::GetItemText(long item, EPLAYLISTCOLUMNS eColumnType) const
+{
+	const CMusikSong & song = g_Playlist.Item ( item );
+	switch ( eColumnType )
 	{
 	case PLAYLISTCOLUMN_RATING:
 		break;
@@ -750,7 +777,7 @@ wxString CPlaylistCtrl::OnGetItemText(long item, long column) const
 
 	case PLAYLISTCOLUMN_TIMES_PLAYED:
 		{
-			
+
 			return (song.TimesPlayed > 0) ? IntToString(song.TimesPlayed) : wxT("-");
 		}
 		break;
@@ -791,8 +818,8 @@ wxString CPlaylistCtrl::OnGetItemText(long item, long column) const
 	}
 
 	return wxT( "" );
-}
 
+}
 void CPlaylistCtrl::FindColumnOrder()
 {
 	m_ColumnOrder.Clear();
@@ -1383,7 +1410,7 @@ bool CPlaylistCtrl::ViewDirtyTags()
 	{
 
 		g_Playlist = dirty;
-		g_SourcesCtrl->SelectLibrary();
+		g_SourcesCtrl->SelectLibrary(false);  // only change selection, not the view( to protect playlist from being changed. ok that is a hack, but else i would have to much of the structure. this will be done sometime later)
 		Update();
 		return true;
 	}
@@ -1564,3 +1591,47 @@ void CPlaylistCtrl::OnPlayReplace	( wxCommandEvent& WXUNUSED(event) )
 		wxGetApp().Player.PlayReplaceList(nCurSel,g_Playlist);
 	}
 }
+
+void CPlaylistCtrl::OnPlayReplaceWithSel( wxCommandEvent& WXUNUSED(event) )
+{	
+	int nCurSel = GetNextItem( -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED );
+	if ( nCurSel > -1 )
+	{
+		CMusikSongArray aResult;
+		GetSelectedSongs(aResult);
+		wxGetApp().Player.PlayReplaceList(0,aResult);
+	}
+}
+
+void CPlaylistCtrl::OnShowInLibrary( wxCommandEvent& event )
+{
+	int id = event.GetId() - MUSIK_PLAYLIST_CONTEXT_SHOW_IN_LIBRARY_ARTIST;
+
+	int nCurSel = GetNextItem( -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED );
+	CActivityBox * pBox = g_ActivityAreaCtrl->GetActivityBox((EMUSIK_ACTIVITY_TYPE)(MUSIK_LBTYPE_ARTISTS + id));
+	wxString sEntry;
+	if ( nCurSel > -1 && pBox)
+	{
+		EPLAYLISTCOLUMNS column = PLAYLISTCOLUMN_ARTIST;
+		switch(MUSIK_LBTYPE_ARTISTS + id)
+		{
+		case MUSIK_LBTYPE_ARTISTS:
+			column = PLAYLISTCOLUMN_ARTIST;
+			break;
+		case MUSIK_LBTYPE_ALBUMS:
+			column = PLAYLISTCOLUMN_ALBUM;
+			break;
+		case MUSIK_LBTYPE_GENRES:
+			column = PLAYLISTCOLUMN_GENRE;
+			break;
+		case MUSIK_LBTYPE_YEARS:
+			column = PLAYLISTCOLUMN_YEAR;
+			break;
+		}
+		sEntry = GetItemText( nCurSel, column);
+		g_SourcesCtrl->SelectLibrary();
+		g_ActivityAreaCtrl->ResetAllContents();
+		pBox->SetSel(sEntry);
+	}
+}
+

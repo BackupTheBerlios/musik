@@ -55,7 +55,7 @@ public:
 	//--- sets ---//
 	void SetList		(const  wxArrayString & );
 	void SetSel			( const  wxArrayString & aList );
-	void SetSel			( const wxString & sel, bool bDeselectAllFirst = true);
+	void SetSel			( const wxString & sel, bool bEnsureVisible = true,bool bDeselectAllFirst = true);
 	void SetRelated		( int n ){ m_Related = n; }
 
 	//--- others ---//
@@ -138,7 +138,8 @@ public:
 	void OnPlayInstantly( wxCommandEvent& event );	
 	void OnPlayAsNext	( wxCommandEvent& event );
 	void OnPlayEnqueued	( wxCommandEvent& event );
-
+	void OnPlayReplaceWithSel( wxCommandEvent& event );
+   
 
 	//other
 	void OnRename(wxCommandEvent& WXUNUSED(event)) { EditBegin();}

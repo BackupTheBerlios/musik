@@ -70,7 +70,6 @@ class CMusikPaths;
 
 extern CMusikPaths			g_Paths;			
 extern CMusikSongArray		g_Playlist;	
-extern CMusikSongArray		g_LibPlaylist;	
 extern wxCriticalSection	g_protectingStreamArrays;
 extern CMusikStreamArray	g_ActiveStreams;
 extern wxArrayInt			g_ActiveChannels;

@@ -86,7 +86,6 @@ extern const wxString g_PlaylistColumnDBNames[NPLAYLISTCOLUMNS] =
 
 CMusikPaths			g_Paths;
 CMusikSongArray		g_Playlist;	
-CMusikSongArray		g_LibPlaylist;
 
 
 wxCriticalSection	g_protectingStreamArrays; // to protect access to ActiveStreams and ActiveChannels

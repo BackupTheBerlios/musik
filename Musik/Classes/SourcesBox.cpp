@@ -181,14 +181,14 @@ wxDragResult SourcesDropTarget::OnDragOver(wxCoord x, wxCoord y, wxDragResult de
 		return wxDragNone;
 
 	const wxPoint& pt = wxPoint( x, y );
-	HighlightSel( pt );
-	return wxDragMove;
+	return HighlightSel( pt )? def : wxDragNone;
 }
 
 bool SourcesDropTarget::HighlightSel( const wxPoint &pPos )
 {
 	int nFlags;
 	long n = m_SourcesListBox->HitTest( pPos, nFlags );
+	m_SourcesListBox->SetFocus();
 	if(n == m_SourcesListBox->FindInSources(wxT( "Musik Library" ),MUSIK_SOURCES_LIBRARY))
 	{
 		return false;
@@ -203,8 +203,8 @@ bool SourcesDropTarget::HighlightSel( const wxPoint &pPos )
 	if ( n != nLastHit )
 	{
 		g_DragInProg = true;
-		wxListCtrlSelNone( m_SourcesListBox );
-		m_SourcesListBox->SetItemState( n, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
+//		wxListCtrlSelNone( m_SourcesListBox );
+		m_SourcesListBox->SetItemState( n, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED );
 		g_DragInProg = false;
 	}
 	nLastHit = n;
@@ -216,11 +216,13 @@ bool SourcesDropTarget::HighlightSel( const wxPoint &pPos )
 //-----------------------//
 BEGIN_EVENT_TABLE(CSourcesListBox, CMusikListCtrl)
 	EVT_CONTEXT_MENU			(												CSourcesListBox::ShowMenu				)
+	EVT_MENU					(MUSIK_PLAYLIST_CLEARPLAYERLIST,				CSourcesListBox::OnClearPlayerlist		)	// Sources Context -> Create -> Create from Current
 	EVT_MENU					(MUSIK_SOURCE_CONTEXT_CREATE_CURRENT_PLAYLIST,	CSourcesListBox::CreateCurPlaylist		)	// Sources Context -> Create -> Create from Current
 	EVT_MENU					(MUSIK_SOURCE_CONTEXT_STANDARD_PLAYLIST,		CSourcesListBox::StandardPlaylist		)	// Sources Context -> Create -> Standard Playlist
 	EVT_MENU					(MUSIK_SOURCE_CONTEXT_DYNAMIC_PLAYLIST,			CSourcesListBox::DynamicPlaylist		)	// Sources Context -> Create -> Dynamic Playlist
 	EVT_MENU					(MUSIK_SOURCE_CONTEXT_CREATE_NETSTREAM,			CSourcesListBox::NetStream				)	// Sources Context -> Create -> Net Stream
 	EVT_MENU					(MUSIK_SOURCE_CONTEXT_EDIT_QUERY,				CSourcesListBox::EditQuery				)	// Sources Context -> Edit Query
+	EVT_MENU					(MUSIK_SOURCE_CONTEXT_EDIT_URL,					CSourcesListBox::EditURL				)	// Sources Context -> Edit Query
 	EVT_MENU					(MUSIK_SOURCE_CONTEXT_DELETE,					CSourcesListBox::Delete					)	// Sources Context -> Delete
 	EVT_MENU					(MUSIK_SOURCE_CONTEXT_RENAME,					CSourcesListBox::Rename					)	// Sources Context -> Rename
 	EVT_MENU					(MUSIK_SOURCE_CONTEXT_SHOW_ICONS,				CSourcesListBox::ToggleIconsEvt			)	// Sources Context -> Show Icons
@@ -242,25 +244,6 @@ CSourcesListBox::CSourcesListBox( wxWindow* parent )
 	//--- initialize variables ---//
 	m_CurSel = 0;
 	m_DragIndex	= -1;
-
-	//--- setup context menus ---//
-	sources_context_menu_new = new wxMenu;
-	sources_context_menu_new->Append( MUSIK_SOURCE_CONTEXT_CREATE_CURRENT_PLAYLIST, _( "Playlist from Current" ) );
-	sources_context_menu_new->AppendSeparator();
-	sources_context_menu_new->Append( MUSIK_SOURCE_CONTEXT_STANDARD_PLAYLIST, _( "Standard Playlist" ) );
-	sources_context_menu_new->Append( MUSIK_SOURCE_CONTEXT_DYNAMIC_PLAYLIST, _( "Dynamic Playlist" ) );
-	sources_context_menu_new->Append( MUSIK_SOURCE_CONTEXT_CREATE_NETSTREAM, _( "Net Stream" ) );
-
-	sources_context_menu = new wxMenu;
-	sources_context_menu->Append( MUSIK_SOURCE_CONTEXT_CREATE, _( "&Create New" ), sources_context_menu_new );
-	sources_context_menu->Append( MUSIK_SOURCE_CONTEXT_EDIT_QUERY, _( "&Edit Query" ) );
-	sources_context_menu->Append( MUSIK_SOURCE_CONTEXT_RENAME, _( "&Rename" ) );
-	sources_context_menu->Append( MUSIK_SOURCE_CONTEXT_DELETE, _( "&Delete" ) );
-	sources_context_menu->AppendSeparator();
-	sources_context_menu->Append( MUSIK_SOURCE_CONTEXT_SHOW_ICONS, _( "&Show Icons" ), wxT( "" ), wxITEM_CHECK );
-	sources_context_menu->Check( MUSIK_SOURCE_CONTEXT_SHOW_ICONS, ( bool )wxGetApp().Prefs.bShowSourcesIcons );
-	sources_context_menu->AppendSeparator();
-	sources_context_menu->Append( MUSIK_SOURCE_CONTEXT_COPY_FILES, _("Copy files to directory") );
 	
 
 	InsertColumn( 0, _( "Sources" ), wxLIST_FORMAT_LEFT );
@@ -278,29 +261,73 @@ CSourcesListBox::CSourcesListBox( wxWindow* parent )
 CSourcesListBox::~CSourcesListBox()
 {
 	Save();
-	delete sources_context_menu;
 }
 
-void CSourcesListBox::ShowMenu( wxContextMenuEvent &WXUNUSED(event) )
+wxMenu * CSourcesListBox::CreateContextMenu()
 {
-	wxPoint pos = ScreenToClient( wxGetMousePosition() );
-
 	int nSelIndex = GetNextItem( -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED );
+
+	//--- setup context menus ---//
+	wxMenu *context_menu = new wxMenu;
 	
 	//---------------------------------------------------------//
 	//--- if a dynamic playlist is selected, it can have	---//
 	//--- its query edited. other playlists cannot.			---//
 	//---------------------------------------------------------//
-	sources_context_menu->Enable( MUSIK_SOURCE_CONTEXT_EDIT_QUERY, GetSelType() == MUSIK_SOURCES_PLAYLIST_DYNAMIC );
+	if(nSelIndex != -1 && GetSelType() == MUSIK_SOURCES_PLAYLIST_DYNAMIC)
+		context_menu->Append( MUSIK_SOURCE_CONTEXT_EDIT_QUERY, _( "&Edit Query" ) );
+	else if((nSelIndex != -1) && (GetSelType() == MUSIK_SOURCES_NETSTREAM))
+	{
+		context_menu->Append( MUSIK_SOURCE_CONTEXT_EDIT_URL, _( "&Edit URL" ) );
+	}
+	else if(GetSelType() == MUSIK_SOURCES_NOW_PLAYING)
+	{
+		context_menu->Append( MUSIK_PLAYLIST_CLEARPLAYERLIST,			_( "&Clear List" ),					wxT("") );
+	}
 
 	//---------------------------------------------------------//
-	//--- if a library is selected, it can't be deleted		---//
+	//--- if  library or now playing entry is selected, it can't be deleted	or renamed	---//
 	//---------------------------------------------------------//
-	sources_context_menu->Enable( MUSIK_SOURCE_CONTEXT_DELETE, (GetSelType() != MUSIK_SOURCES_LIBRARY) && (GetSelType() != MUSIK_SOURCES_NOW_PLAYING) );
-	
-	sources_context_menu->Enable( MUSIK_SOURCE_CONTEXT_RENAME, nSelIndex !=  -1 );
+	if((nSelIndex != -1 )&& (GetSelType() != MUSIK_SOURCES_LIBRARY) && (GetSelType() != MUSIK_SOURCES_NOW_PLAYING))
+	{
+		context_menu->Append( MUSIK_SOURCE_CONTEXT_RENAME, _( "&Rename" ) );
+		context_menu->Append( MUSIK_SOURCE_CONTEXT_DELETE, _( "&Delete" ) );
+	}
+	if(context_menu->GetMenuItemCount())
+		context_menu->AppendSeparator();
 
-	PopupMenu( sources_context_menu, pos );
+	wxMenu * submenu_new = new wxMenu;
+	submenu_new->Append( MUSIK_SOURCE_CONTEXT_CREATE_CURRENT_PLAYLIST, _( "Playlist from Current" ) );
+	submenu_new->AppendSeparator();
+	submenu_new->Append( MUSIK_SOURCE_CONTEXT_STANDARD_PLAYLIST, _( "Standard Playlist" ) );
+	submenu_new->Append( MUSIK_SOURCE_CONTEXT_DYNAMIC_PLAYLIST, _( "Dynamic Playlist" ) );
+	submenu_new->Append( MUSIK_SOURCE_CONTEXT_CREATE_NETSTREAM, _( "Net Stream" ) );
+
+	context_menu->Append( MUSIK_SOURCE_CONTEXT_CREATE, _( "&Create New" ), submenu_new );
+
+	context_menu->AppendSeparator();
+
+	context_menu->Append( MUSIK_SOURCE_CONTEXT_SHOW_ICONS, _( "&Show Icons" ), wxT( "" ), wxITEM_CHECK );
+	context_menu->Check( MUSIK_SOURCE_CONTEXT_SHOW_ICONS, ( bool )wxGetApp().Prefs.bShowSourcesIcons );
+	if((nSelIndex != -1 ) &&  (GetSelType() != MUSIK_SOURCES_NETSTREAM))
+	{
+		context_menu->AppendSeparator();
+		context_menu->Append( MUSIK_SOURCE_CONTEXT_COPY_FILES, _("Copy files to directory") );
+	}
+	return context_menu;
+
+}
+void CSourcesListBox::ShowMenu( wxContextMenuEvent &WXUNUSED(event) )
+{
+	wxPoint pos = ScreenToClient( wxGetMousePosition() );
+
+	wxMenu *context_menu = CreateContextMenu();
+	PopupMenu( context_menu, pos );
+	delete context_menu;
+}
+void CSourcesListBox::OnClearPlayerlist( wxCommandEvent& event )
+{
+	g_PlaylistBox->PlaylistCtrl().OnClearPlayerlist(event);
 }
 
 void CSourcesListBox::CreateCurPlaylist( wxCommandEvent& WXUNUSED(event) )
@@ -347,6 +374,12 @@ void CSourcesListBox::EditQuery( wxCommandEvent& WXUNUSED(event) )
 	UpdateDynPlaylist( nSelPos );
 }
 
+void CSourcesListBox::EditURL( wxCommandEvent& WXUNUSED(event) )
+{
+	int nSelPos = GetNextItem( -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED );
+	UpdateNetStream( nSelPos );
+}
+
 void CSourcesListBox::ToggleIconsEvt( wxCommandEvent& WXUNUSED(event) )
 {
 	ToggleIcons();
@@ -366,7 +399,7 @@ void CSourcesListBox::CopyFiles( wxCommandEvent& WXUNUSED(event) )
 	//--- first choose a directory ---//
 	//--------------------------------//
 	wxString destdir;
-	wxDirDialog dirdlg( this, _("Please choose location to copy songs to:"), _(""), wxDD_NEW_DIR_BUTTON );
+	wxDirDialog dirdlg( this, _("Please choose location to copy songs to:"), wxT(""), wxDD_NEW_DIR_BUTTON );
 	if ( dirdlg.ShowModal() == wxID_OK )
 		destdir = dirdlg.GetPath();
 	else
@@ -381,17 +414,20 @@ void CSourcesListBox::CopyFiles( wxCommandEvent& WXUNUSED(event) )
 	wxString sourcebasename, sourceext;
 	for ( size_t n = 0; n < filenames.GetCount(); n++ )
 	{
-		wxString sourcename( filenames.Item( n ) );
-		wxFileName::SplitPath( sourcename, NULL, NULL, &sourcebasename, &sourceext );
-
-		//--------------------------------------------------//
-		//--- Note that the / will still work on Windows ---//
-		//--------------------------------------------------//
-		wxString destname( destdir + _("/") + sourcebasename + _(".") + sourceext );
-		wxCopyFile( sourcename, destname );
+		wxFileName sourcename( filenames.Item( n ) );
+		wxFileName destname( sourcename );
+		destname.SetPath(destdir);
+		if(!wxCopyFile( sourcename.GetFullPath(), destname.GetFullPath()))
+		{
+			
+			wxString errmsg = wxString::Format(_("Failed to copy file %s. Continue?"),sourcename.GetFullPath());
+			if(wxMessageBox(errmsg,	_("File copy error"),wxYES|wxNO|wxCENTER|wxICON_ERROR ) == wxNO)
+				break;
+		}
 	}
 
 }
+
 
 void CSourcesListBox::BeginDrag( wxListEvent &event )
 {
@@ -434,8 +470,11 @@ void CSourcesListBox::UpdateSel( size_t index )
 	if(	bInFunction )
 		return;
 	bInFunction = true;
-	if(index == (size_t)-2)
-	{	// protect playlists from being accidently changed
+	if((index == (size_t)-2) || (index == (size_t)-4))
+	{	// IF -2, this is used to protect playlists from being accidently changed
+		// if -4 we actually want to change ciew(not only selection)
+
+		bInFunction = (index == (size_t)-4); // HACK!!,
 		wxListCtrlSelNone( this );
         m_CurSel = FindInSources(wxT( "Musik Library" ),MUSIK_SOURCES_LIBRARY);
 		SetItemState( m_CurSel, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
@@ -472,19 +511,7 @@ void CSourcesListBox::UpdateSel( size_t index )
 	//--- library selected ---//
 	else if ( nSelType == MUSIK_SOURCES_LIBRARY )
 	{
-		//--- show old songs ---//
-		if ( wxGetApp().Prefs.bShowAllSongs == 0 )
-			g_Playlist = g_LibPlaylist;
-
-		//--- show all songs ---//
-		else if ( wxGetApp().Prefs.bShowAllSongs == 1 )
-		{
-				if ( g_ActivityAreaCtrl->GetParentBox() != NULL )
-					g_ActivityAreaCtrl->UpdateSel( g_ActivityAreaCtrl->GetParentBox() );
-				else
-					wxGetApp().Library.GetAllSongs( g_Playlist );
-		}
-		g_LibPlaylist.Clear();
+		g_ActivityAreaCtrl->UpdateSel( g_ActivityAreaCtrl->GetParentBox() );
 		g_PlaylistBox->Update();
 		g_MusikFrame->ShowActivityArea( wxGetApp().Prefs.bShowActivities );
 		
@@ -492,9 +519,6 @@ void CSourcesListBox::UpdateSel( size_t index )
 
 	else 
 	{
-		//--- backup playlist so we can revert later ---//
-		g_LibPlaylist = g_Playlist;
-
 		//--- standard playlist selected ---//
 		if (m_CurSel != -1 && nSelType == MUSIK_SOURCES_PLAYLIST_STANDARD )
 		{
@@ -861,9 +885,6 @@ void CSourcesListBox::ToggleIcons()
 		wxGetApp().Prefs.bShowSourcesIcons = 0;
 
 	ShowIcons();
-
-	//--- check menu items accordingly ---//
-	sources_context_menu->Check( MUSIK_SOURCE_CONTEXT_SHOW_ICONS, ( bool )wxGetApp().Prefs.bShowSourcesIcons );
 }
 
 void CSourcesListBox::NewPlaylist( wxString sName, wxString sVal, int nType )
@@ -876,10 +897,6 @@ void CSourcesListBox::NewPlaylist( wxString sName, wxString sVal, int nType )
 		wxMessageBox( _( "Invalid playlist name." ), MUSIKAPPNAME_VERSION, wxOK | wxICON_INFORMATION );
 		return;
 	}
-
-	//--- backup old playlist ---//
-	if ( GetSelType() == MUSIK_SOURCES_LIBRARY )
-		g_LibPlaylist = g_Playlist;
 
 	switch ( nType )
 	{
@@ -1114,7 +1131,7 @@ bool CSourcesListBox::CreateNetStream( wxString sName)
 	return false;
 	
 }
-wxString CSourcesListBox::PromptNetStreamAddress( wxString sAddress )
+wxString CSourcesListBox::PromptNetStreamAddress( const wxString &sAddress )
 {
 	wxTextEntryDialog dlg( this, _( "Enter net stream address(URL):" ), MUSIKAPPNAME_VERSION, sAddress );
 
@@ -1122,6 +1139,24 @@ wxString CSourcesListBox::PromptNetStreamAddress( wxString sAddress )
 		return dlg.GetValue();	
 
 	return wxT( "" );
+}
+void CSourcesListBox::UpdateNetStream( int nIndex )
+{
+	wxString sName	= GetPlaylistName( nIndex );
+	CMusikSong song;
+	LoadNetStream( sName,song );
+
+	wxString sAddress = PromptNetStreamAddress( FilenameAsUrl(song.MetaData.Filename) );
+
+	if ( sAddress != wxT( "" ) )
+	{
+		m_SourcesList.Item( nIndex ) = wxT( "[u] " ) + sName;
+		PlaylistToFile( sName, &sAddress, MUSIK_SOURCES_NETSTREAM );
+		g_Playlist.Clear();
+		song.MetaData.Filename =  sAddress;
+		g_Playlist.Add(song);
+		g_PlaylistBox->Update();
+	}
 }
 wxString CSourcesListBox::GetPlaylistName( int nIndex )
 {
@@ -1324,10 +1359,6 @@ void CSourcesListBox::SourcesToFilename( wxString* sSources, int nType )
 	*sSources = MUSIK_PLAYLIST_DIR + sName + sExt;
 }
 
-void CSourcesListBox::ShowIconsChecked( bool bCheck )
-{
-	sources_context_menu->Check( MUSIK_SOURCE_CONTEXT_SHOW_ICONS, bCheck );
-}
 
 bool CSourcesListBox::AddSourceContentToNowPlaying(int nIndex)
 {

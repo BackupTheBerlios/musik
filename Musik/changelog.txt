@@ -1,6 +1,8 @@
 
 0.3.0.2 to 0.3.1 CVS
-
+- if selecting the library after another source was active, its the displayed netries are preserved in the playlistctrl, in al selection styles ( not only standard)
++ while drag and dropping instead of selecting entrys where the mouse is over, focussing is used.
++ you can let you show the artist( album genre) in the library with the context menu in the playlistctrl
 - vorbis comments are read as utf-8 and the tags which wxMusik does not edit, are preserved now.
 - now playing list is properly updated, if the data of the songs has changed somehow.
 + now you can easily rate the selected song(s) with the keyboard ( simply press a key from 0-5 )

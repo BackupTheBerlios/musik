@@ -43,6 +43,7 @@ CActivityAreaCtrl::CActivityAreaCtrl( wxWindow *pParent )
 	m_Selected = m_bFocused = m_Selecting = false;
 	m_UpdatePlaylist = true;
 	m_bContentInvalid = true;
+	m_pLastSelectedBox = NULL;
 	Create();
 }
 
@@ -139,13 +140,21 @@ void CActivityAreaCtrl::SetParent( int nID, bool bUpdate )
 
 void CActivityAreaCtrl::UpdateSel( CActivityBox *pSelectedBox )
 {
+	if(pSelectedBox == NULL)
+	{
+	   pSelectedBox =  m_pLastSelectedBox;
+	}
+	else
+		m_pLastSelectedBox = pSelectedBox;
 	//-- avoid updating playlists when dragging over activity area --//
 	if ( g_DragInProg )
 		return;
 
 	if ( !pSelectedBox )
+	{
+		wxGetApp().Library.GetAllSongs( g_Playlist );
 		return;
-
+	}
 	//-------------------------------------//
 	//--- which box are we?             ---//
 	//--- and which are the other ones? ---//
@@ -343,6 +352,18 @@ void CActivityAreaCtrl::OnActivityBoxSelected( wxListEvent& event )
 	wxListEvent ev(wxEVT_COMMAND_LIST_ITEM_ACTIVATED,event.GetId());
 	m_Selected = true;
 	::wxPostEvent( this, ev );
+}
+
+CActivityBox* CActivityAreaCtrl::GetActivityBox(EMUSIK_ACTIVITY_TYPE eType)
+{
+	for(size_t i = 0; i < ActivityBoxesMaxCount; i++)
+	{
+		if( m_ActivityBox[i] && m_ActivityBox[i]->GetActivityType() == eType )
+		{
+			return m_ActivityBox[i];
+		}
+	}
+	return NULL;
 }
 
 //----------------------------//

@@ -61,8 +61,11 @@ public:
 	void OnPlayInstantly( wxCommandEvent& event );	
 	void OnPlayAsNext	( wxCommandEvent& event );
 	void OnPlayEnqueued	( wxCommandEvent& event );
+	void OnPlayReplaceWithSel	( wxCommandEvent& event );
 	void OnPlayReplace	( wxCommandEvent& event );
-
+	//---- other---//
+	void OnShowInLibrary	( wxCommandEvent& event );
+	
 	//--- deleting ---//
 	void OnClearPlayerlist( wxCommandEvent& event );
 	void OnDelSel		( wxCommandEvent& WXUNUSED(event) )	{ DelSelSongs();	}
@@ -184,6 +187,7 @@ private:
 	//--- virtual functions ---//
 	//-------------------------//
     virtual	wxString		OnGetItemText	(long item, long column) const;
+	virtual	wxString		GetItemText(long item, EPLAYLISTCOLUMNS eColumnType) const;
     virtual int				OnGetItemImage	(long item) const;
     virtual	wxListItemAttr*	OnGetItemAttr	(long item) const;
 

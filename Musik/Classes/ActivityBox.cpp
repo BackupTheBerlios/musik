@@ -240,18 +240,29 @@ void CActivityListBox::SetSel( const  wxArrayString & aList )
 	DeselectAll();
 	for ( size_t i = 0; i < aList.GetCount(); i++ )
 	{
-		SetSel(aList.Item( i ), false);
+		SetSel(aList.Item( i ), false,false);
 	}
 }
 
-void CActivityListBox::SetSel( const wxString & sel, bool bDeselectAllFirst )
+void CActivityListBox::SetSel( const wxString & sel,bool bEnsureVisible , bool bDeselectAllFirst )
 {
 	if(bDeselectAllFirst)
 		DeselectAll();
+	bool bFound = false;
 	for ( size_t i = 0; i < GetRowCount(); i++ )
 	{
 		if (GetRowText(i) == sel )
+		{
 			SetItemState( i, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
+			if(bEnsureVisible && !bFound)
+				EnsureVisible(i);
+			bFound = true;
+		}
+		else if(bFound)
+		{  // not what we search for, but we have found one before
+			// so break here.
+			break;
+		}
 	}
 }
 
@@ -301,6 +312,7 @@ BEGIN_EVENT_TABLE(CActivityBox, wxPanel)
 	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_PLAY_INSTANTLY,			CActivityBox::OnPlayInstantly		)
 	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_PLAY_ASNEXT,				CActivityBox::OnPlayAsNext			)
 	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_PLAY_ENQUEUED,				CActivityBox::OnPlayEnqueued		)
+	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_PLAY_REPLACE_PLAYERLIST_WITH_SELECTION,CActivityBox::OnPlayReplaceWithSel		)
 	EVT_MENU					( MUSIK_SOURCE_CONTEXT_RENAME,						CActivityBox::OnRename				)	
 
 END_EVENT_TABLE()
@@ -373,8 +385,8 @@ void ActivityDropTarget::HighlightSel( wxPoint pPos )
 	if ( ( n > 0 ) && ( n != nLastHit ) )
 	{
 		g_DragInProg = true;
-		wxListCtrlSelNone( pList );
-		pList->SetItemState( n, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
+		//wxListCtrlSelNone( pList );
+		pList->SetItemState( n, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED );
 		g_DragInProg = false;
 
 	}
@@ -533,7 +545,7 @@ void CActivityBox::GetFullList( wxArrayString & aReturn )
 void CActivityBox::GetSelectedSongs( CMusikSongArray& array )
 {
 	//-----------------------------------------------------//
-	//--- if we have "highlight" entires, ore this is	---//
+	//--- if we have "highlight" entries, or this is	---//
 	//--- the parent box, select all the related		---//
 	//--- material without special regard.				---//
 	//-----------------------------------------------------//
@@ -759,7 +771,7 @@ wxMenu * CActivityBox::CreateContextMenu()
 	context_play_menu->Append( MUSIK_PLAYLIST_CONTEXT_PLAY_ASNEXT , _( "Next" ), wxT( "" ) );
 	context_play_menu->Append( MUSIK_PLAYLIST_CONTEXT_PLAY_ENQUEUED, _( "Enqueue" ), wxT( "" ) );
 	context_play_menu->Append( MUSIK_PLAYLIST_CONTEXT_PLAY_INSTANTLY , _( "Instantly" ), wxT( "" ));
-	context_play_menu->Append( MUSIK_PLAYLIST_CONTEXT_PLAY_REPLACE_PLAYERLIST, _( "Replace current playlist" ), wxT( "" ) );
+	context_play_menu->Append( MUSIK_PLAYLIST_CONTEXT_PLAY_REPLACE_PLAYERLIST_WITH_SELECTION, _( "Replace current playlist with selection" ), wxT( "" ) );
 	//--- main context menu ---//
 	wxMenu *context_menu = new wxMenu;
 	context_menu->Append( MUSIK_PLAYLIST_CONTEXT_PLAYNODE,	_( "&Play" ),	context_play_menu );
@@ -786,6 +798,12 @@ void CActivityBox::OnPlayEnqueued	( wxCommandEvent& WXUNUSED(event) )
 	CMusikSongArray aResult;
 	GetSelectedSongs(aResult);
 	wxGetApp().Player.AddToPlaylist(aResult,wxGetApp().Player.IsPlaying() ? false : true);
+}
+void CActivityBox::OnPlayReplaceWithSel	( wxCommandEvent& WXUNUSED(event) )
+{
+	CMusikSongArray aResult;
+	GetSelectedSongs(aResult);
+	wxGetApp().Player.PlayReplaceList(0,aResult);
 }
 
 //-----------------------------//

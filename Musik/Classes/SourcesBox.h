@@ -49,16 +49,18 @@ public:
 	//--------------//
 	//--- events ---//
 	//--------------//
-	void ShowMenu				( wxContextMenuEvent& WXUNUSED(event) );
-	void CreateCurPlaylist		( wxCommandEvent& WXUNUSED(event) );
-	void StandardPlaylist		( wxCommandEvent& WXUNUSED(event) );
-	void DynamicPlaylist		( wxCommandEvent& WXUNUSED(event) );
-	void NetStream				( wxCommandEvent& WXUNUSED(event) );
-	void EditQuery				( wxCommandEvent& WXUNUSED(event) );
+	void ShowMenu				( wxContextMenuEvent& event );
+	void CreateCurPlaylist		( wxCommandEvent& event );
+	void OnClearPlayerlist		( wxCommandEvent& event );
+	void StandardPlaylist		( wxCommandEvent& event );
+	void DynamicPlaylist		( wxCommandEvent& event );
+	void NetStream				( wxCommandEvent& event );
+	void EditQuery				( wxCommandEvent& event );
+	void EditURL				( wxCommandEvent& event );
 	void Delete					( wxCommandEvent& WXUNUSED(event) )	{ DelSel();		};
 	void Rename					( wxCommandEvent& WXUNUSED(event) )	{ RenameSel();	};
-	void ToggleIconsEvt			( wxCommandEvent& WXUNUSED(event) );
-	void CopyFiles				( wxCommandEvent& WXUNUSED(event) );
+	void ToggleIconsEvt			( wxCommandEvent& event );
+	void CopyFiles				( wxCommandEvent& event );
 	void BeginDrag				( wxListEvent& event );
 	void OnUpdateSel			( wxListEvent& event );
 	void BeginEditLabel			( wxListEvent& event );
@@ -77,12 +79,12 @@ public:
 	//--------------------------//
 	//--- standard functions ---//
 	//--------------------------//
+	wxMenu * CreateContextMenu();
 	void DelSel					( );
 	void RenameSel				( );
 	int  GetIndex				( )						{ return m_CurSel;		}
 	int  GetDragIndex			( )						{ return m_DragIndex;	}
 	void ResetAll				( )						{ ClearAll(); InsertColumn( 0, _( "Sources" ) );	}	
-	void ShowIconsChecked		( bool bCheck );
 	int  GetSelType				( )						{ return  GetType( m_CurSel );	}
 	int  GetType				( long index ) const ;
 	bool GetTypeAsString		( int nType, wxString &sType ) const ;
@@ -113,9 +115,10 @@ public:
 	void LoadStdPlaylist			( wxString sName, wxArrayString & aReturn );
 	wxString LoadDynPlaylist		( wxString sName );
 	void LoadNetStream				(wxString sName, CMusikSong & song );
+	void UpdateNetStream			( int nIndex );
 	bool PlaylistToFile				( wxString sName, wxString* sItems, int type, bool bDelOld = true );
 	wxString PromptDynamicPlaylist	( wxString sQuery );
-	wxString PromptNetStreamAddress	( wxString sAddress );
+	wxString PromptNetStreamAddress	( const wxString & sAddress );
 	wxString GetPlaylistName		( int nIndex );
 	bool AddSourceContentToNowPlaying(int nIndex);
 	DECLARE_EVENT_TABLE()
@@ -135,9 +138,6 @@ private:
 	wxListItemAttr m_DarkBold;
 	wxListItemAttr m_Dark;
 
-	//--- popup menus ---//
-	wxMenu	*sources_context_menu;
-	wxMenu	*sources_context_menu_new;
 
 	//--- if deleting, make sure events don't go through ---//
 	bool m_Deleting;
@@ -158,13 +158,13 @@ public:
 	~CSourcesBox();
 
 	//-------------------------------------------------------------//
-	//--- abastraction, so other controls can use g_SourcesCtrl ---//
+	//--- abstraction, so other controls can use g_SourcesCtrl ---//
 	//--- only place needed functions here to reduce overhead	---//
 	//-------------------------------------------------------------//
 	int  GetSelType				( )	{ return pListBox->GetSelType();	}
 	void Update					( ) { pListBox->Update();				}
 	void UpdateCurrent			( ) { pListBox->UpdateSel(pListBox->GetIndex()); }
-	void SelectLibrary			( ) { pListBox->UpdateSel((size_t) -2); }
+	void SelectLibrary			( bool bSwitchView = true ) { pListBox->UpdateSel(bSwitchView ? (size_t) -2:(size_t) -4); }
 	void SelectNowPlaying		( ) { pListBox->UpdateSel((size_t) -3); }
 	void OnSashDragged	(wxSashEvent & ev);
 

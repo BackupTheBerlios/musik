@@ -46,6 +46,8 @@ CMusikSong::CMusikSong()
 	TimesPlayed = 0;
 	Check1 		= 0;
 	songid		= -1;
+	LastPlayed = TimeAdded	= 0.0;
+
 }
 
 CMusikLibrary::CMusikLibrary()
