@@ -191,6 +191,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_COMMAND(ID_VIEW_FULLSCREEN, OnViewFullscreen)
 	ON_COMMAND(ID_WINAMPVISUALIZATIONS_CONFIGURE, OnWinampvisualizationsConfigure)
 	ON_COMMAND(ID_WINAMPVISUALIZATIONS_ENABLED, OnWinampvisualizationsEnabled)
+	ON_COMMAND(ID_WINAMPVISUALIZATIONS_ACTIVATE, OnWinampvisualizationsActivate)
 
 	// update ui
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SOURCES, OnUpdateViewSources)
@@ -216,6 +217,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_FULLSCREEN, OnUpdateViewFullscreen)
 	ON_UPDATE_COMMAND_UI(ID_WINAMPVISUALIZATIONS_CONFIGURE, OnUpdateWinampvisualizationsConfigure)
 	ON_UPDATE_COMMAND_UI(ID_WINAMPVISUALIZATIONS_ENABLED, OnUpdateWinampvisualizationsEnabled)
+	ON_UPDATE_COMMAND_UI(ID_WINAMPVISUALIZATIONS_ACTIVATE, OnUpdateWinampvisualizationsActivate)
 
 	// custom message maps
 	ON_REGISTERED_MESSAGE( WM_SELBOXUPDATE, OnUpdateSel )
@@ -252,8 +254,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_GETWINAMPVISMODULES, OnGetWinampVisModules )
 	ON_REGISTERED_MESSAGE( WM_CONFIGWINAMPVIS, OnConfigWinampVis )
 
-	ON_COMMAND(ID_WINAMPVISUALIZATIONS_ACTIVATE, OnWinampvisualizationsActivate)
-	END_MESSAGE_MAP()
+END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
 
@@ -883,8 +884,11 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		InitTrans();
 
 	// winamp vis support
-	ImportWinamp();
-	GetVisList();
+	if ( m_Prefs->IsWinampVisActive() )
+	{
+		ImportWinamp();
+		GetVisList();
+	}
 
 	// always on top?
 	if ( m_Prefs->IsAlwaysOnTop() )
@@ -1612,7 +1616,7 @@ LRESULT CMainFrame::OnSongChange( WPARAM wParam, LPARAM lParam )
 
 		SetWindowText( s );
 
-		if ( visSetVisPlaying )
+		if ( m_Prefs->IsWinampVisActive() && visSetVisPlaying )
 		{
 			visSetVisPlaying( TRUE );
 
@@ -3269,7 +3273,13 @@ LRESULT CMainFrame::OnCloseWinampVisConfig( WPARAM wParam, LPARAM lParam )
 ///////////////////////////////////////////////////
 
 void CMainFrame::OnUpdateWinampvisualizationsConfigure(CCmdUI *pCmdUI)
-{
+{	
+	if ( !m_Prefs->IsWinampVisActive() )
+	{
+		pCmdUI->Enable( FALSE );
+		return;
+	}
+
 	pCmdUI->SetCheck( (bool)m_VisDlg );
 }
 
@@ -3277,15 +3287,18 @@ void CMainFrame::OnUpdateWinampvisualizationsConfigure(CCmdUI *pCmdUI)
 
 LRESULT CMainFrame::OnGetWinampVisModules( WPARAM wParam, LPARAM lParam )
 {
-	int vis_id = (int)wParam;
-	CmusikStringArray* ptrList = (CmusikStringArray*)lParam;
+	if ( m_WinampVis )
+	{
+		int vis_id = (int)wParam;
+		CmusikStringArray* ptrList = (CmusikStringArray*)lParam;
 
-	visLoadVis( vis_id );
+		visLoadVis( vis_id );
 
-	for ( size_t i = 0; i < visGetVisModuleCount( vis_id ); i++ )
-		ptrList->push_back( visGetVisModuleInfo( vis_id, i ) );
+		for ( size_t i = 0; i < visGetVisModuleCount( vis_id ); i++ )
+			ptrList->push_back( visGetVisModuleInfo( vis_id, i ) );
 
-	visFreeVis( vis_id );
+		visFreeVis( vis_id );
+	}
 
 	return 0L;
 }
@@ -3294,25 +3307,28 @@ LRESULT CMainFrame::OnGetWinampVisModules( WPARAM wParam, LPARAM lParam )
 
 void CMainFrame::OnWinampvisualizationsEnabled()
 {
-	if ( !(BOOL)visGetVisHwnd() )
+	if ( m_WinampVis )
 	{
-		if ( m_Prefs->GetWinampVisModule() != -1 && m_Prefs->GetWinampVis() != -1 )
+		if ( !(BOOL)visGetVisHwnd() )
 		{
-			visSetVisModule( m_Prefs->GetWinampVisModule() );
-			visStartVis( m_Prefs->GetWinampVis() );
+			if ( m_Prefs->GetWinampVisModule() != -1 && m_Prefs->GetWinampVis() != -1 )
+			{
+				visSetVisModule( m_Prefs->GetWinampVisModule() );
+				visStartVis( m_Prefs->GetWinampVis() );
 
-			if ( m_Player->IsPlaying() )
-				visSetVisPlaying( TRUE );
-		}	
+				if ( m_Player->IsPlaying() )
+					visSetVisPlaying( TRUE );
+			}	
+			else
+				MessageBox( "Invalid Winamp visualization configuration.", MUSIK_VERSION_STR, MB_ICONINFORMATION );
+
+			return;
+		}
 		else
-			MessageBox( "Invalid Winamp visualization configuration.", MUSIK_VERSION_STR, MB_ICONINFORMATION );
-
-		return;
-	}
-	else
-	{
-		visSetVisPlaying( FALSE );
-		visStopVis( m_Prefs->GetWinampVis() );	
+		{
+			visSetVisPlaying( FALSE );
+			visStopVis( m_Prefs->GetWinampVis() );	
+		}
 	}
 }
 
@@ -3392,6 +3408,13 @@ void CMainFrame::DeinitWinamp()
 
 void CMainFrame::OnUpdateWinampvisualizationsEnabled(CCmdUI *pCmdUI)
 {
+	if ( !m_Prefs->IsWinampVisActive() )
+	{
+		pCmdUI->Enable( FALSE );
+		pCmdUI->SetCheck( FALSE );
+		return;
+	}
+
 	pCmdUI->SetCheck( (BOOL)visGetVisHwnd() );
 }
 
@@ -3399,11 +3422,14 @@ void CMainFrame::OnUpdateWinampvisualizationsEnabled(CCmdUI *pCmdUI)
 
 LRESULT CMainFrame::OnConfigWinampVis( WPARAM wParam, LPARAM lParam )
 {
-	int vis_id = (int)wParam;
-	int vis_mod = (int)lParam;
+	if ( m_WinampVis )
+	{
+		int vis_id = (int)wParam;
+		int vis_mod = (int)lParam;
 
-	if ( vis_id != -1 && vis_mod != -1 )
-		visConfigVis( vis_id, vis_mod );
+		if ( vis_id != -1 && vis_mod != -1 )
+			visConfigVis( vis_id, vis_mod );
+	}
 
 	return 0L;
 }
@@ -3414,16 +3440,38 @@ void CMainFrame::OnWinampvisualizationsActivate()
 {
 	if ( !m_Prefs->IsWinampVisActive() )
 	{
-		MessageBox( 
-			_T( "You are about to enable an experimental and unsupported feature of musik. " )
+		if ( MessageBox( 
+			_T( "You are about to enable an experimental and unsupported feature of Cube. " )
 			_T( "If you find that Cube\nbecomes unstable, please deactivate this feature at once. " )
-			_T( "Some general tips for stability include:\n\n" )
-			_T( "  - Do not use Alt+Enter to enter full screen mode\n" )
+			_T( "Some notes for stability:\n\n" )
+			_T( "  - Full screen mode via Alt+Enter is NOT supported. It WILL crash.\n" )
 			_T( "  - If the visualization has a separate window (e.g. MilkDrop), do not close it -- " )
-			_T( "disable it by unchecking\n    \"Enable\" in the musik View menu." ),
+			_T( "disable it by unchecking\n    \"Enable\" in the View menu.\n\n" )
+			_T( "Are you sure you wish to enable this feature?" ),
 			MUSIK_VERSION_STR,
-			MB_ICONINFORMATION );
+			MB_ICONINFORMATION | MB_YESNO ) == IDYES )
+		{
+			ImportWinamp();
+			GetVisList();
+
+			m_Prefs->SetWinampVisActive( true );
+		}
 	}
+	else
+	{
+		DeinitWinamp();
+		m_Prefs->SetWinampVisActive( false );
+	}
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnUpdateWinampvisualizationsActivate(CCmdUI *pCmdUI)
+{
+	if ( !m_Prefs->IsWinampVisActive() )
+		pCmdUI->SetText( _T( "Activate" ) );
+	else
+		pCmdUI->SetText( _T( "Deactivate" ) );
 }
 
 ///////////////////////////////////////////////////

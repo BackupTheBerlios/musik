@@ -396,6 +396,8 @@ protected:
 	afx_msg void OnUpdateWinampvisualizationsConfigure(CCmdUI *pCmdUI);
 	afx_msg void OnWinampvisualizationsEnabled();
 	afx_msg void OnUpdateWinampvisualizationsEnabled(CCmdUI *pCmdUI);
+	afx_msg void OnWinampvisualizationsActivate();
+	afx_msg void OnUpdateWinampvisualizationsActivate(CCmdUI *pCmdUI);
 
 	// list of all taskss running
 	int FreeTask( CmusikTask* pTask );
@@ -465,8 +467,6 @@ protected:
 
 	CmusikWinampVisDlg* m_VisDlg;
 
-public:
-	afx_msg void OnWinampvisualizationsActivate();
 };
 
 ///////////////////////////////////////////////////
