@@ -257,7 +257,7 @@ static void MainFrameWorker( CmusikThread* thread )
 			++cnt;
 			if ( cnt == 6 )
 			{
-				parent->ResetSelBoxes( true, true );
+				parent->ResetSelBoxes( true );
 				parent->m_wndView->GetCtrl()->UpdateV();
 				cnt = 0;
 			}
@@ -962,6 +962,7 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 	CmusikSelectionCtrl* pParent	= NULL;
 
 	int nSender = (int)wParam;
+	bool force_all_updatev = (bool)lParam;
 
 	// find the sender and parent
 	for ( size_t i = 0; i < selbox_count; i++ )
@@ -1040,7 +1041,7 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 	for( size_t i = 0; i < selbox_count; i++ )
 	{
 		pCurr = m_wndSelectionBars[i]->GetCtrl();
-		if ( pCurr != pSender )
+		if ( pCurr != pSender || force_all_updatev )
 		{
 			if ( pCurr != pParent )
 				pCurr->UpdateV( sSender );
@@ -1408,7 +1409,7 @@ LRESULT CMainFrame::OnThreadEnd( WPARAM wParam, LPARAM lParam )
 	
 	if ( FreeThread( ptr_thr ) )
 	{
-		ResetSelBoxes( true );
+		ResetSelBoxes( true, true );
 		m_wndView->GetCtrl()->UpdateV( true );
 	}
 
