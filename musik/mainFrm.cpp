@@ -247,30 +247,14 @@ END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
 
-int CMainFrameWorker::open( void* parent )
-{
-	m_Parent = (CMainFrame*)parent;
-	int ret_code = activate( THR_NEW_LWP | THR_JOINABLE | THR_USE_AFX );
-
-	return ret_code;
-}
-
-///////////////////////////////////////////////////
-
-int CMainFrameWorker::svc()
+void CMainFrameWorker::run()
 {
 	m_Stop = false;
 	m_Active = true;
 	m_Finished = false;
 
 	size_t pos = 0;
-	size_t cnt = 0;
 	CString turn;
-
-	// sleep if we go idle
-	ACE_Time_Value suspend, sleep;
-	suspend.set( 0.1f );
-	sleep.set( 1.0f );
 
 	int last_task_count = 0, task_count = 0;;
 
@@ -294,45 +278,24 @@ int CMainFrameWorker::svc()
 				last_task_count = task_count;
 			}
 
-			// requery every 3 seconds
-			cnt++;
-			if ( cnt == 12 )
-			{
-				m_Parent->RequerySelBoxes( NULL, true, true );
-				cnt = 0;
-			}
+			m_Parent->RequerySelBoxes( NULL, true, true );
+			Sleep( 100 );
 		}
 	
 		last_task_count = 0;
-		ACE_OS::sleep( sleep );
+		Sleep( 1000 );
 
 	}
 
 	m_Finished = true;
-
-	return 0;
 }
 
 ///////////////////////////////////////////////////
 
-CMainFrameFader::open( void* parent )
-{
-	m_Parent = (CMainFrame*)parent;
-	int ret_code = activate( THR_NEW_LWP | THR_JOINABLE | THR_USE_AFX );
-
-	return ret_code;
-}
-
-///////////////////////////////////////////////////
-
-CMainFrameFader::svc()
+void CMainFrameFader::run()
 {
 	// we are a friend CMainFrame
 	CmusikPrefs* m_Prefs = m_Parent->m_Prefs;
-
-	// sleep if we go idle
-	ACE_Time_Value suspend, sleep;
-	sleep.set( 0.25f );
 
 	m_Stop = false;
 	m_Active = true;
@@ -358,7 +321,7 @@ CMainFrameFader::svc()
 				// if the user has a good video card.
 				if ( m_Prefs->IsTransAdaptive() )
 				{
-					suspend.set( m_Prefs->GetTransDur() / (float)( 1 + ( m_Prefs->GetTransFocus() - m_Prefs->GetTransUnFocus() ) ) );
+					int adaptive_sleep = (int)( m_Prefs->GetTransDur() / (float)( 1 + ( m_Prefs->GetTransFocus() - m_Prefs->GetTransUnFocus() ) ) );
 					for ( int i = trans; i < m_Prefs->GetTransFocus(); i++ )
 					{
 						if ( m_Stop || !m_Parent->IsTransEnb() ) 
@@ -370,13 +333,13 @@ CMainFrameFader::svc()
 							trans = m_Prefs->GetTransFocus();
 
 						m_Parent->SetTransparency( trans );
-						ACE_OS::sleep( suspend );
+						Sleep( adaptive_sleep );
 					}
 				}
 				else	// non adaptive
 				{
 					int interval = ( m_Prefs->GetTransFocus() - m_Prefs->GetTransUnFocus() ) / fade_steps;
-					suspend.set( m_Prefs->GetTransDur() / (float)( fade_steps ) );
+					int adaptive_sleep = (int)( m_Prefs->GetTransDur() / (float)( fade_steps ) );
 
 					for ( int i = 0; i < fade_steps; i++ )
 					{
@@ -389,7 +352,7 @@ CMainFrameFader::svc()
 							trans = m_Prefs->GetTransFocus();
 
 						m_Parent->SetTransparency( trans );
-						ACE_OS::sleep( suspend );
+						Sleep( adaptive_sleep );
 					}
 				}
 
@@ -406,7 +369,7 @@ CMainFrameFader::svc()
 
 				if ( m_Prefs->IsTransAdaptive() )
 				{
-					suspend.set( m_Prefs->GetTransDur() / ( 1 + ( m_Prefs->GetTransFocus() - m_Prefs->GetTransUnFocus() ) ) );
+					int adaptive_sleep = (int)( m_Prefs->GetTransDur() / ( 1 + ( m_Prefs->GetTransFocus() - m_Prefs->GetTransUnFocus() ) ) );
 					for ( int i = 1; i < m_Prefs->GetTransFocus() - m_Prefs->GetTransUnFocus(); i++ )
 					{
 						if ( m_Stop || !m_Parent->IsTransEnb() )
@@ -418,13 +381,13 @@ CMainFrameFader::svc()
 							trans = m_Prefs->GetTransUnFocus();
 
 						m_Parent->SetTransparency( trans );
-						ACE_OS::sleep( suspend );
+						Sleep( adaptive_sleep );
 					}
 				}
 				else	// non adaptive
 				{
 					int interval = ( m_Prefs->GetTransFocus() - m_Prefs->GetTransUnFocus() ) / fade_steps;
-					suspend.set( m_Prefs->GetTransDur() / (float)( fade_steps ) );
+					int adaptive_sleep = (int)( m_Prefs->GetTransDur() / (float)( fade_steps ) );
 
 					for ( int i = 0; i < fade_steps; i++ )
 					{
@@ -437,7 +400,7 @@ CMainFrameFader::svc()
 							trans = m_Prefs->GetTransUnFocus();
 
 						m_Parent->SetTransparency( trans );
-						ACE_OS::sleep( suspend );
+						Sleep( adaptive_sleep );
 					}
 				}
 
@@ -447,12 +410,10 @@ CMainFrameFader::svc()
 			}
 		}
 
-		ACE_OS::sleep( sleep );
+		Sleep( 250 );
 	}
 
 	m_Finished = true;
-
-	return 0;
 }
 
 ///////////////////////////////////////////////////
@@ -849,10 +810,11 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 
 	// fire the updater task off
-	m_ProtectingTasks.acquire();
+	m_ProtectingTasks.lock();
 		m_Updater = new CMainFrameWorker;
-		m_Updater->open( this );
-	m_ProtectingTasks.release();
+		m_Updater->m_Parent = this;
+		m_Updater->start();
+	m_ProtectingTasks.unlock();
 
 
 	// tray icon stuff
@@ -863,10 +825,11 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		SynchronizeDirs();
 
 	// fire off the fader task
-	m_ProtectingTasks.acquire();
+	m_ProtectingTasks.lock();
 		m_Fader = new CMainFrameFader;
-		m_Fader->open( this );
-	m_ProtectingTasks.release();
+		m_Fader->m_Parent = this;
+		m_Fader->start();
+	m_ProtectingTasks.unlock();
 
 	ImportTrans();
 	if ( m_Prefs->IsTransEnabled() )
@@ -1148,16 +1111,17 @@ LRESULT CMainFrame::OnSelBoxEditCommit( WPARAM wParam, LPARAM lParam )
 		params->m_WriteToFile = m_Prefs->WriteTagsToFile();
 
 		// spawn the task
-		m_ProtectingTasks.acquire();
+		m_ProtectingTasks.lock();
 
 			CmusikBatchRetagTask* task = new CmusikBatchRetagTask;
-			
+			task->m_Params = params;
+
 			m_Tasks.push_back( task );
 			m_TaskCount++;
 
-			task->open( params );
+			task->start();
 
-		m_ProtectingTasks.release();
+		m_ProtectingTasks.unlock();
 
 		return 1L;
 	}
@@ -1605,7 +1569,7 @@ LRESULT CMainFrame::OnSongChange( WPARAM wParam, LPARAM lParam )
 
 		SetWindowText( s );
 
-		if ( m_Prefs->IsWinampVisActive() && visSetVisPlaying )
+		if ( m_WinampVis && visSetVisPlaying )
 		{
 			visSetVisPlaying( TRUE );
 
@@ -1898,16 +1862,17 @@ void CMainFrame::OnAddFiles()
 			CmusikBatchAdd* params = new CmusikBatchAdd( files, NULL, m_Library, NULL, m_BatchAddFnct, 0, 0, 1 );
 
 			// spawn task
-			m_ProtectingTasks.acquire();
+			m_ProtectingTasks.lock();
 
 				CmusikBatchAddTask* task = new CmusikBatchAddTask;
+				task->m_Params = params;
 
 				m_Tasks.push_back( task );
 				m_TaskCount++;
 
-				task->open( params );
+				task->start();
 
-			m_ProtectingTasks.release();
+			m_ProtectingTasks.unlock();
 
 		}
 		else
@@ -1923,17 +1888,19 @@ LRESULT CMainFrame::OnBatchAddNew( WPARAM wParam, LPARAM lParam )
 
 	if ( params )
 	{
-		m_ProtectingTasks.acquire();
+		m_ProtectingTasks.lock();
 
 			params->m_Functor = m_BatchAddFnct;
+
 			CmusikBatchAddTask* task = new CmusikBatchAddTask;
-			
+			task->m_Params = params;
+
 			m_Tasks.push_back( task );
 			m_TaskCount++;
 
-			task->open( params );
+			task->start();
 
-		m_ProtectingTasks.release();
+		m_ProtectingTasks.unlock();
 	}
 
 	return 0L;
@@ -1972,7 +1939,7 @@ int CMainFrame::FreeTask( CmusikTask* pTask )
 {
 	int ret = -2;
 
-	m_ProtectingTasks.acquire();
+	m_ProtectingTasks.lock();
 
 	for ( size_t i = 0; i < m_Tasks.size(); i++ )
 	{
@@ -2006,7 +1973,7 @@ int CMainFrame::FreeTask( CmusikTask* pTask )
 	if ( ret != -2 )
 		m_TaskCount--;
 
-	m_ProtectingTasks.release();
+	m_ProtectingTasks.unlock();
 
 	return ret;
 }
@@ -2049,16 +2016,17 @@ void CMainFrame::OnAddDirectory()
 			CmusikBatchAdd* params = new CmusikBatchAdd( files, NULL, m_Library, NULL, m_BatchAddFnct, 0, 0, 1 );
 			
 			// start it up
-			m_ProtectingTasks.acquire();
+			m_ProtectingTasks.lock();
 
 				CmusikBatchAddTask* task = new CmusikBatchAddTask;
+				task->m_Params = params;
 
 				m_Tasks.push_back( task );
 				m_TaskCount++;
 
-				task->open( params );
+				task->start();
 
-			m_ProtectingTasks.release();
+			m_ProtectingTasks.unlock();
 		}
 		else 
 			delete files;
@@ -2379,16 +2347,17 @@ void CMainFrame::OnUnsynchronizedtagsWritetofile()
 		params->m_WriteToFile = true;
 
 		// setup and fire off task
-		m_ProtectingTasks.acquire();
+		m_ProtectingTasks.lock();
 
 			CmusikBatchRetagTask* task = new CmusikBatchRetagTask;
+			task->m_Params = params;
 
 			m_Tasks.push_back( task );
 			m_TaskCount++;
 
-			task->open( params );
+			task->start();
 
-		m_ProtectingTasks.release();
+		m_ProtectingTasks.unlock();
 	}
 	else
 		delete playlist;
@@ -2482,9 +2451,9 @@ size_t CMainFrame::GetTaskCount()
 {
 	size_t count;
 
-	m_ProtectingTasks.acquire();
+	m_ProtectingTasks.lock();
 		count = m_Tasks.size();
-	m_ProtectingTasks.release();
+	m_ProtectingTasks.unlock();
 
 	return count;
 }
@@ -2639,31 +2608,33 @@ void CMainFrame::SynchronizeDirs()
 		CmusikBatchAdd* params = new CmusikBatchAdd( files, NULL, m_Library, NULL, m_BatchAddFnct, 0, 0, 1 );
 		
 		// setup and start task
-		m_ProtectingTasks.acquire();
+		m_ProtectingTasks.lock();
 
 			CmusikBatchAddTask* task = new CmusikBatchAddTask;
+			task->m_Params = params;
 
 			m_Tasks.push_back( task );
 			m_TaskCount++;
 
-			task->open( params );
+			task->start();
 
-		m_ProtectingTasks.release();
+		m_ProtectingTasks.unlock();
 	}	
 
 	// task to remove obselete entries
 	CmusikRemoveOld* params = new CmusikRemoveOld( m_Library, m_RemoveOldFnct );
 	
-	m_ProtectingTasks.acquire();
+	m_ProtectingTasks.lock();
 
 		CmusikRemoveOldTask* task = new CmusikRemoveOldTask();
-		
+		task->m_Params = params;
+
 		m_Tasks.push_back( task );
 		m_TaskCount++;
 
-		task->open( params );
+		task->start();
 
-	m_ProtectingTasks.release();	
+	m_ProtectingTasks.unlock();	
 }
 
 ///////////////////////////////////////////////////
@@ -2844,7 +2815,7 @@ LRESULT CMainFrame::OnSelBoxAddRemove( WPARAM wParam, LPARAM lParam )
 
 void CMainFrame::KillTasks( bool updater, bool fader, bool helpers, bool setwindowtext )
 {
-	m_ProtectingTasks.acquire();
+	m_ProtectingTasks.lock();
 
 		if ( updater )
 		{
@@ -2879,7 +2850,7 @@ void CMainFrame::KillTasks( bool updater, bool fader, bool helpers, bool setwind
 			m_Tasks.clear();
 		}
 
-	m_ProtectingTasks.release();
+	m_ProtectingTasks.unlock();
 
 		if ( setwindowtext )
 			SetWindowText( m_Caption );
@@ -2930,10 +2901,11 @@ void CMainFrame::OnFileClearlibrary()
 	ResetSelBoxes();
 
 	// start the updater again
-	m_ProtectingTasks.acquire();
+	m_ProtectingTasks.lock();
 		m_Updater = new CMainFrameWorker;
-		m_Updater->open( this );
-	m_ProtectingTasks.release();
+		m_Updater->m_Parent = this;
+		m_Updater->start();
+	m_ProtectingTasks.unlock();
 }
 
 ///////////////////////////////////////////////////
@@ -3404,14 +3376,17 @@ void CMainFrame::DeinitWinamp()
 
 void CMainFrame::OnUpdateWinampvisualizationsEnabled(CCmdUI *pCmdUI)
 {
-	if ( !m_Prefs->IsWinampVisActive() )
+	if ( m_WinampVis )
 	{
-		pCmdUI->Enable( FALSE );
-		pCmdUI->SetCheck( FALSE );
-		return;
-	}
+		if ( !m_Prefs->IsWinampVisActive() )
+		{
+			pCmdUI->Enable( FALSE );
+			pCmdUI->SetCheck( FALSE );
+			return;
+		}
 
-	pCmdUI->SetCheck( (BOOL)visGetVisHwnd() );
+		pCmdUI->SetCheck( (BOOL)visGetVisHwnd() );
+	}
 }
 
 ///////////////////////////////////////////////////

@@ -88,11 +88,8 @@ public:
 	~CmusikBatchRetagTask();
 
 	// virtual overrides
-	int open( void* params );
-	int close( u_long flags );
-	int svc();
-
-private:
+	void close();
+	void run();
 
 	CmusikBatchRetag* m_Params;
 

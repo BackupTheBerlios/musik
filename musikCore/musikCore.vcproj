@@ -22,7 +22,7 @@
 				AdditionalOptions="/D ID3LIB_LINKOPTION=1"
 				Optimization="0"
 				AdditionalIncludeDirectories="../_inc/"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;ACE_AS_STATIC_LIBS;NO_TCL"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;NO_TCL"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -34,8 +34,9 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="../_lib/aced.lib ../_lib/fmodvc.lib ../_lib/vorbis_static_d.lib ../_lib/vorbisfile_static_d.lib ../_lib/ogg_static_d.lib ../_lib/id3libD.lib"
+				AdditionalDependencies="fmodvc.lib vorbis_static_d.lib vorbisfile_static_d.lib ogg_static_d.lib id3libD.lib"
 				OutputFile="$(OutDir)/$(ProjectName)D.lib"
+				AdditionalLibraryDirectories=""
 				IgnoreAllDefaultLibraries="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -67,7 +68,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/D ID3LIB_LINKOPTION=1"
 				AdditionalIncludeDirectories="../_inc/"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;ACE_AS_STATIC_LIBS;NO_TCL"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;NO_TCL"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -77,7 +78,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="../_lib/ace.lib ../_lib/fmodvc.lib ../_lib/vorbis_static.lib ../_lib/vorbisfile_static.lib ../_lib/ogg_static.lib ../_lib/id3lib.lib"
+				AdditionalDependencies="fmodvc.lib vorbis_static.lib vorbisfile_static.lib ogg_static.lib id3lib.lib"
 				IgnoreAllDefaultLibraries="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"/>

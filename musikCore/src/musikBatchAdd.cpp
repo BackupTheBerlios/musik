@@ -107,16 +107,7 @@ CmusikBatchAddTask::~CmusikBatchAddTask()
 
 ///////////////////////////////////////////////////
 
-int CmusikBatchAddTask::open( void* params )
-{
-	m_Params = (CmusikBatchAdd*)params;
-	int ret_code = activate( THR_NEW_LWP | THR_JOINABLE );
-	return ret_code;
-}
-
-///////////////////////////////////////////////////
-
-int CmusikBatchAddTask::close( u_long flags )
+void CmusikBatchAddTask::close()
 {
 	// clean up
 	if ( m_Params->m_DeleteFilelist )
@@ -126,13 +117,11 @@ int CmusikBatchAddTask::close( u_long flags )
 
 	if ( m_Params->m_Functor && ( ( m_Stop && m_Params->m_CallFunctorOnAbort ) || !m_Stop ) )
 		m_Params->m_Functor->OnTaskEnd( this );
-	
-	return 0;
 }
 
 ///////////////////////////////////////////////////
 
-int CmusikBatchAddTask::svc()
+void CmusikBatchAddTask::run()
 {
 	m_Stop = false;
 	m_Finished = false;
@@ -201,7 +190,7 @@ int CmusikBatchAddTask::svc()
 	}
 
 	m_Params->m_Library->EndTransaction();
-	return 0;
+	close();
 }
 
 ///////////////////////////////////////////////////

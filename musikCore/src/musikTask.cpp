@@ -50,19 +50,18 @@ using namespace musik;
 
 ///////////////////////////////////////////////////
 
-CmusikTask::CmusikTask()
-	: ACE_Task<ACE_MT_SYNCH>()
+CmusikTask::~CmusikTask()
 {
-	m_Stop = true;
-	m_Finished = true;
-	m_Active = false;
+	close();
 }
 
 ///////////////////////////////////////////////////
 
-int CmusikTask::close( u_long flags )
+CmusikTask::CmusikTask()
 {
-	return NULL;
+	m_Stop = true;
+	m_Finished = true;
+	m_Active = false;
 }
 
 ///////////////////////////////////////////////////
@@ -85,7 +84,7 @@ void CmusikTask::StopWait( int timeout_secs )
 
 			if ( timeout == ( timeout_secs * 2 ) )
 			{
-				TRACE0( "CmusikRemoveOldTask: I appear to be deadlocked. Terminating\n" );
+				TRACE0( "CmusikTask: I appear to be deadlocked. Terminating\n" );
 				m_Finished = true;
 			}
 		}

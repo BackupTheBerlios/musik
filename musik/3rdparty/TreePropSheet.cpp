@@ -8,7 +8,7 @@
 * Redistribution is appreciated.
 *
 * $Workfile:$
-* $Revision: 1.3 $
+* $Revision: 1.4 $
 * $Modtime:$
 * $Author: avatar5d $
 *
@@ -352,7 +352,7 @@ void CTreePropSheet::RefillPageTree()
 			return;
 
 		pTabCtrl->GetItem(nPage, &ti);
-		strPagePath.ReleaseBuffer();
+		//strPagePath.unlockBuffer(); // compiler error? why?
 
 		// Create an item in the tree for the page
 		HTREEITEM	hItem = CreatePageTreeItem(ti.pszText);

@@ -84,14 +84,10 @@ public:
 	CmusikRemoveOldTask();
 	~CmusikRemoveOldTask();
 
-	int open( void* params );
-	int close( u_long flags );
-	int svc();
-
-private:
+	void close();
+	void run();
 
 	CmusikRemoveOld* m_Params;
-
 };
 
 ///////////////////////////////////////////////////

@@ -47,7 +47,9 @@
 ///////////////////////////////////////////////////
 
 #include "musikConfig.h"
-#include "ace/Task.h"
+
+#include <OpenThreads/Thread>
+using namespace OpenThreads;
 
 ///////////////////////////////////////////////////
 
@@ -67,19 +69,18 @@ enum
 
 ///////////////////////////////////////////////////
 
-class CmusikTask : public ACE_Task<ACE_MT_SYNCH>
+class CmusikTask : public Thread
 {
-
 public:
 
 	CmusikTask();
+	virtual ~CmusikTask();
 
 	int GetType(){ return m_Type; }
 	void StopWait( int timeout_secs );
-	int close( u_long flags = 0 );
+	void close(){}
 
 protected:
-
 	bool m_Active;
 	bool m_Finished;
 	bool m_Stop;

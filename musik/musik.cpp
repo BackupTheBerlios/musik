@@ -43,7 +43,8 @@
 #include "musik.h"
 #include "MainFrm.h"
 
-#include "ace/ACE.h"
+#include <OpenThreads/Thread>
+using namespace OpenThreads;
 
 ///////////////////////////////////////////////////
 
@@ -61,14 +62,13 @@ END_MESSAGE_MAP()
 
 CmusikApp::CmusikApp()
 {
-	ACE::init();
+	Thread::Init();
 }
 
 ///////////////////////////////////////////////////
 
 CmusikApp::~CmusikApp()
 {
-	ACE::fini();
 }
 
 ///////////////////////////////////////////////////

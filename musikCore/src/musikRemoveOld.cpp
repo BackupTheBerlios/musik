@@ -100,28 +100,17 @@ CmusikRemoveOldTask::~CmusikRemoveOldTask()
 
 ///////////////////////////////////////////////////
 
-int CmusikRemoveOldTask::open( void* params )
-{
-	m_Params = (CmusikRemoveOld*)params;
-	int ret_code = activate( THR_NEW_LWP | THR_JOINABLE );
-	return ret_code;
-}
-
-///////////////////////////////////////////////////
-
-int CmusikRemoveOldTask::close( u_long flags )
+void CmusikRemoveOldTask::close()
 {
 	m_Finished = true;
 
 	if ( ( m_Params->m_Functor && !m_Stop ) || ( m_Stop && m_Params->m_CallFunctorOnAbort ) )
 		m_Params->m_Functor->OnTaskEnd( this );
-
-	return 0;
 }
 
 ///////////////////////////////////////////////////
 
-int CmusikRemoveOldTask::svc()
+void CmusikRemoveOldTask::run()
 {
 	m_Stop = false;
 	m_Finished = false;
@@ -165,8 +154,7 @@ int CmusikRemoveOldTask::svc()
 
 	}
 	m_Params->m_Library->EndTransaction();
-
-	return 0;
+	close();
 }
 
 ///////////////////////////////////////////////////

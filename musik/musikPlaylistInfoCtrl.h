@@ -50,8 +50,6 @@
 #include "../musikCore/include/musikDir.h"
 #include "../musikCore/include/musikTask.h"
 
-#include "ace/Mutex.h"
-
 ///////////////////////////////////////////////////
 
 using namespace musik;
@@ -81,10 +79,7 @@ class CmusikPlaylistInfoWorker : public CmusikTask
 
 public:
 
-	int open( void* parent );
-	int svc();
-
-private:
+	void run();
 
 	CmusikPlaylistInfoCtrl* m_Parent;
 
@@ -138,7 +133,7 @@ protected:
 	// worker thread
 	void UpdateStr( bool is_calc = false );
 	CmusikPlaylistInfoWorker* m_InfoWorker;
-	ACE_Mutex m_ProtectingUpdate;
+	Mutex m_ProtectingUpdate;
 
 	// macros
 	DECLARE_DYNAMIC(CmusikPlaylistInfoCtrl)

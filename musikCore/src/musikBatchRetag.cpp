@@ -101,16 +101,7 @@ CmusikBatchRetagTask::~CmusikBatchRetagTask()
 
 ///////////////////////////////////////////////////
 
-int CmusikBatchRetagTask::open( void* params )
-{
-	m_Params = (CmusikBatchRetag*)params;
-	int ret_code = activate( THR_NEW_LWP | THR_JOINABLE );
-	return ret_code;
-}
-
-///////////////////////////////////////////////////
-
-int CmusikBatchRetagTask::close( u_long flags )
+void CmusikBatchRetagTask::close()
 {
 	if ( m_Params->m_DeleteUpdatedTags )
 		delete m_Params->m_UpdatedTags;
@@ -119,13 +110,11 @@ int CmusikBatchRetagTask::close( u_long flags )
 
 	if ( m_Params->m_Functor && ( !m_Stop || ( m_Stop && m_Params->m_CallFunctorOnAbort ) ) )
 		m_Params->m_Functor->OnTaskEnd( this );
-
-	return 0;
 }
 
 ///////////////////////////////////////////////////
 
-int CmusikBatchRetagTask::svc()
+void CmusikBatchRetagTask::run()
 {
 	m_Stop = false;
 	m_Finished = false;
@@ -183,8 +172,7 @@ int CmusikBatchRetagTask::svc()
 
 	}
 	m_Params->m_Library->EndTransaction();
-
-	return 0;
+	close();
 }
 
 ///////////////////////////////////////////////////

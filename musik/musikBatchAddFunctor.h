@@ -52,7 +52,7 @@ class CmusikBatchAddFunctor : public CmusikFunctor
 {
 public:
 
-	CmusikBatchAddFunctor( CWnd* parent)
+	CmusikBatchAddFunctor( CWnd* parent )
 	{ 
 		m_Parent = parent; 
 	}

@@ -54,17 +54,7 @@ IMPLEMENT_DYNAMIC(CmusikPlaylistInfoCtrl, CWnd)
 
 ///////////////////////////////////////////////////
 
-int CmusikPlaylistInfoWorker::open( void* parent )
-{
-	m_Parent = (CmusikPlaylistInfoCtrl*)parent;
-	int ret_code = activate( THR_NEW_LWP | THR_JOINABLE | THR_USE_AFX );
-
-	return ret_code;
-}
-
-///////////////////////////////////////////////////
-
-int CmusikPlaylistInfoWorker::svc()
+void CmusikPlaylistInfoWorker::run()
 {
 	// set flags
 	m_Stop = false;
@@ -85,14 +75,12 @@ int CmusikPlaylistInfoWorker::svc()
 			if ( m_Prefs->GetPlaylistInfoVizStyle() != PLAYLIST_INFO_VIZ_STYLE_NONE )
 				m_Parent->Invalidate();
 		}
-		// HEY SIMON DO WORK HERE
+
 		Sleep( 100 );
 	}
 
 	// be sure to flag as finished
 	m_Finished = true;
-
-	return 0;
 }
 
 ///////////////////////////////////////////////////
@@ -138,7 +126,7 @@ END_MESSAGE_MAP()
 
 void CmusikPlaylistInfoCtrl::OnPaint()
 {
-	m_ProtectingUpdate.acquire();
+	m_ProtectingUpdate.lock();
 
 	CPaintDC dc(this);
 
@@ -178,7 +166,7 @@ void CmusikPlaylistInfoCtrl::OnPaint()
 		memDC.SelectObject( oldfont );
 	}
 
-	m_ProtectingUpdate.release();
+	m_ProtectingUpdate.unlock();
 }
 
 ///////////////////////////////////////////////////
@@ -238,8 +226,9 @@ int CmusikPlaylistInfoCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	FSOUND_DSP_SetActive( FSOUND_DSP_GetFFTUnit(), TRUE );
 
 	// startup task
-	m_InfoWorker = new CmusikPlaylistInfoWorker();
-	m_InfoWorker->open( (void*)this );
+	m_InfoWorker = new CmusikPlaylistInfoWorker;
+	m_InfoWorker->m_Parent = this;
+	m_InfoWorker->start();
 
 	return 0;
 }

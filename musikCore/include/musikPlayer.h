@@ -122,19 +122,18 @@ public:
 
 	CmusikPlayerWorker();
 
-	int open( void* player );
-	int svc();
+	virtual void run();
 
 	bool IsCrossfadeActive(){ return m_CrossfadeActive; }
 	void AbortCrossfade( bool wait = true );
 
 	void StopWait();
 
+	CmusikPlayer* m_Player;
+
 private:
 
 	bool m_CrossfadeActive, m_AbortCrossfade;
-	CmusikPlayer* m_Player;
-
 };
 
 ///////////////////////////////////////////////////

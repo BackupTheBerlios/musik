@@ -59,7 +59,9 @@
 #include "musikEQSettings.h"
 
 #include "sqlite.h"
-#include "ace/Mutex.h"
+
+#include <OpenThreads/Mutex>
+using namespace OpenThreads;
 
 #include <iostream>
 
@@ -289,7 +291,7 @@ private:
 
 	// the mutex that will be used to protect the
 	// library within any given scope.
-	ACE_Mutex m_ProtectingLibrary;
+	Mutex m_ProtectingLibrary;
 	
 	// fields... artist/title/album/etc
 	void InitFields();

@@ -58,6 +58,9 @@
 
 #include <vector>
 
+#include <OpenThreads/Mutex>
+using namespace OpenThreads;
+
 ///////////////////////////////////////////////////
 
 using namespace musik;
@@ -148,13 +151,8 @@ class CMainFrameWorker : public CmusikTask
 
 public:
 
-	int open( void* parent );
-	int svc();
-
-private:
-
+	void run();
 	CMainFrame* m_Parent;
-
 };
 
 ///////////////////////////////////////////////////
@@ -164,13 +162,8 @@ class CMainFrameFader : public CmusikTask
 
 public:
 
-	int open( void* parent );
-	int svc();
-
-private:
-
+	void run();
 	CMainFrame* m_Parent;
-
 };
 
 ///////////////////////////////////////////////////
@@ -399,7 +392,7 @@ protected:
 	CmusikTaskPtrArray m_Tasks;
 
 	// mutex to synchronize task array
-	ACE_Mutex m_ProtectingTasks;
+	Mutex m_ProtectingTasks;
 	int m_TaskCount;
 	void KillTasks( bool updater = true, bool fader = true, bool childtasks = true, bool setwindowtext = true );
 
