@@ -596,6 +596,23 @@ LONG CPropTree::HitTest(const POINT& pt)
 
 ///////////////////////////////////////////////////
 
+CPropTreeItem* CPropTree::HitTestEx( const POINT& pt )
+{
+	POINT p = pt;
+
+	CPropTreeItem* pItem;
+
+	// convert screen to tree coordinates
+	p.y += m_Origin.y;
+
+	if ((pItem = FindItem(pt))!=NULL)
+		return pItem;
+
+	return NULL;
+}
+
+///////////////////////////////////////////////////
+
 CPropTreeItem* CPropTree::FindItem(const POINT& pt)
 {
 	CPropTreeItem* pItem;

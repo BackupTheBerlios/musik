@@ -140,6 +140,9 @@ public:
 	// do a hit test on the control (returns a HTxxxx code)
 	LONG HitTest(const POINT& pt);
 
+	// do a hit test and return the current item...
+	CPropTreeItem* HitTestEx(const POINT& pt);
+
 	// enable or disable tree input
 	void DisableInput(BOOL bDisable = TRUE);
 	BOOL IsDisableInput();

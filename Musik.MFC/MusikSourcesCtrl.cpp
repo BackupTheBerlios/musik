@@ -6,6 +6,7 @@
 #include "MusikSourcesCtrl.h"
 
 #include "../Musik.Core/include/MusikLibrary.h"
+#include ".\musiksourcesctrl.h"
 
 ///////////////////////////////////////////////////
 

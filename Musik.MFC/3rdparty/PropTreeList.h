@@ -59,12 +59,6 @@ protected:
 	// current diminsions of the back buffer
 	CSize			m_BackBufferSize;
 
-	// splitter pevious position
-	LONG			m_nPrevCol;
-
-	// TRUE if we are dragging the splitter
-	BOOL			m_bColDrag;
-
 	// misc
 	void RecreateBackBuffer(int cx, int cy);
 	void CheckVisibleFocus();

@@ -49,9 +49,7 @@ extern HINSTANCE ghInst;
 
 CPropTreeList::CPropTreeList() :
 	m_pProp(NULL),
-	m_BackBufferSize(0,0),
-	m_bColDrag(FALSE),
-	m_nPrevCol(0)
+	m_BackBufferSize(0,0)
 {
 }
 
@@ -298,22 +296,7 @@ void CPropTreeList::OnLButtonDown(UINT, CPoint point)
 
 void CPropTreeList::OnLButtonUp(UINT, CPoint point) 
 {
-	if (m_bColDrag)
-	{
-		CDC* pDC = GetDC();
-		CRect rc;
 
-		GetClientRect(rc);
-		pDC->PatBlt(m_nPrevCol - PROPTREEITEM_COLRNG/2, 0, PROPTREEITEM_COLRNG, rc.bottom, PATINVERT);
-		ReleaseDC(pDC);
-
-		m_bColDrag = FALSE;
-		ReleaseCapture();
-
-		m_pProp->SetColumn(point.x);
-		m_pProp->UpdateMoveAllItems();
-		Invalidate();
-	}
 }
 
 ///////////////////////////////////////////////////
@@ -370,17 +353,7 @@ void CPropTreeList::OnLButtonDblClk(UINT, CPoint point)
 
 void CPropTreeList::OnMouseMove(UINT, CPoint point)
 {
-	if (m_bColDrag)
-	{
-		CDC* pDC = GetDC();
-		CRect rc;
-
-		GetClientRect(rc);
-		pDC->PatBlt(m_nPrevCol - PROPTREEITEM_COLRNG/2, 0, PROPTREEITEM_COLRNG, rc.bottom, PATINVERT);
-		pDC->PatBlt(point.x - PROPTREEITEM_COLRNG/2, 0, PROPTREEITEM_COLRNG, rc.bottom, PATINVERT);
-		m_nPrevCol = point.x;
-		ReleaseDC(pDC);
-	}
+	// nothing needed at this point
 }
 
 ///////////////////////////////////////////////////
