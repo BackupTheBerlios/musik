@@ -319,6 +319,18 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 	// a list of all the selected items from the control
 	// that triggered the event
 	CStdString sSender = pSender->GetSelQuery();
+	if ( pSender != pParent )
+	{
+		for ( size_t i = 0; i < selbox_count; i++ )
+		{
+			pCurr = m_wndSelectionBars[i]->GetCtrl();
+			if ( pCurr != pSender && pCurr->GetSelectedCount() )
+			{
+				sSender += _T( " and " );
+				sSender += pCurr->GetSelQuery();
+			}
+		}
+	}
 
 	// go through each box that isn't the sender and
 	// update based on the new information we got
