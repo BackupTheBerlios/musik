@@ -1,33 +1,110 @@
-// MusikSourcesCtrl.cpp : implementation file
-//
+///////////////////////////////////////////////////
 
 #include "stdafx.h"
+
 #include "Musik.h"
 #include "MusikSourcesCtrl.h"
 
-// CMusikSourcesCtrl
+///////////////////////////////////////////////////
 
 IMPLEMENT_DYNAMIC( CMusikSourcesCtrl, CPropTree )
 
-CMusikSourcesCtrl::CMusikSourcesCtrl()
+///////////////////////////////////////////////////
+
+CMusikSourcesCtrl::CMusikSourcesCtrl( CMusikLibrary* library )
 {
+	m_LibrariesRoot		= NULL;
+	m_StdPlaylistRoot	= NULL;
+	m_DynPlaylistRoot	= NULL;;
+	m_Library			= library;
 }
+
+///////////////////////////////////////////////////
 
 CMusikSourcesCtrl::~CMusikSourcesCtrl()
 {
+	DeleteItems();
+	DeleteHeaders();
 }
 
+///////////////////////////////////////////////////
 
 BEGIN_MESSAGE_MAP( CMusikSourcesCtrl, CPropTree )
 	ON_WM_CREATE()
 END_MESSAGE_MAP()
 
-// CMusikSourcesCtrl message handlers
+///////////////////////////////////////////////////
+
+void CMusikSourcesCtrl::CreateHeaders()
+{
+	// libraries / devices
+	if ( m_LibrariesRoot )
+	{
+		DeleteItem( m_LibrariesRoot );
+		delete m_LibrariesRoot;
+	}
+
+	m_LibrariesRoot = InsertItem( new CPropTreeItem() );
+	m_LibrariesRoot->SetLabelText( _T( "Libraries / Devices" ) );
+	m_LibrariesRoot->SetInfoText(_T(""));
+	m_LibrariesRoot->Expand( true );
+
+	// standard playlists
+	if ( m_StdPlaylistRoot )
+	{
+		DeleteItem( m_StdPlaylistRoot );
+		delete m_StdPlaylistRoot;
+	}
+
+	m_StdPlaylistRoot = InsertItem( new CPropTreeItem() );
+	m_StdPlaylistRoot->SetLabelText( _T( "Standard Playlists" ) );
+	m_StdPlaylistRoot->SetInfoText(_T(""));
+	m_StdPlaylistRoot->Expand( true );
+
+	// dynamic playlists
+	if ( m_DynPlaylistRoot )
+	{
+		DeleteItem( m_DynPlaylistRoot );
+		delete m_DynPlaylistRoot;
+	}
+
+	m_DynPlaylistRoot = InsertItem( new CPropTreeItem() );
+	m_DynPlaylistRoot->SetLabelText( _T( "Dynamic Playlists" ) );
+	m_DynPlaylistRoot->SetInfoText(_T(""));
+	m_DynPlaylistRoot->Expand( true );
+}
+
+///////////////////////////////////////////////////
+
+void CMusikSourcesCtrl::DeleteHeaders()
+{
+
+}
+
+///////////////////////////////////////////////////
+
+void CMusikSourcesCtrl::DeleteItems()
+{
+	for ( size_t i = 0; i < m_Libraries.size(); i++ )
+		delete m_Libraries.at( i );
+
+	for ( size_t i = 0; i < m_StdPlaylists.size(); i++ )
+		delete m_StdPlaylists.at( i );
+
+	for ( size_t i = 0; i < m_DynPlaylists.size(); i++ )
+		delete m_DynPlaylists.at( i );
+}
+
+///////////////////////////////////////////////////
+
 int CMusikSourcesCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if ( CPropTree::OnCreate(lpCreateStruct) == -1 )
 		return -1;
 
+	CreateHeaders();
+
+	/*
 	CPropTreeItem* pSourcesRoot;
 	pSourcesRoot = InsertItem( new CPropTreeItem() );
 	pSourcesRoot->SetLabelText( _T( "Libraries / Devices" ) );
@@ -70,6 +147,9 @@ int CMusikSourcesCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	pDynamicHighRated = InsertItem( new CPropTreeItem(), pDynamicRoot );
 	pDynamicHighRated->SetLabelText( _T( "High Rated" ) );
 	pDynamicHighRated->SetInfoText( _T( "" ) );
+	*/
 
 	return 0;
 }
+
+///////////////////////////////////////////////////

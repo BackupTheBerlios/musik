@@ -1,42 +1,42 @@
+///////////////////////////////////////////////////
+
 #pragma once
 
 #include "MusikSourcesCtrl.h"
 
+///////////////////////////////////////////////////
+
+class CMusikLibrary;
+
+///////////////////////////////////////////////////
+
 #ifndef baseCMusikSourcesBar
-#define baseCMusikSourcesBar CSizingControlBarCF
+	#define baseCMusikSourcesBar CSizingControlBarCF
 #endif
+
+///////////////////////////////////////////////////
 
 class CMusikSourcesBar : public baseCMusikSourcesBar
 {
-//-------------------------------------------------//
-//--- implementation							---//
-//-------------------------------------------------//
 public:
-	CMusikSourcesBar();
+
+	// construct / destruct
+	CMusikSourcesBar( CMusikLibrary* library );
 	virtual ~CMusikSourcesBar();
 
-//-------------------------------------------------//
-//--- variables									---//
-//-------------------------------------------------//
 protected:
-	CMusikSourcesCtrl m_wndChild;
+
+	// children
+	CMusikSourcesCtrl* m_wndChild;
 	CFont m_Font;
 
-//-------------------------------------------------//
-//--- operations								---//
-//-------------------------------------------------//
-
-//-------------------------------------------------//
-//--- overrides									---//
-//-------------------------------------------------//
-
-//-------------------------------------------------//
-//--- message maps								---//
-//-------------------------------------------------//
-protected:
+	// message maps
 	afx_msg int OnCreate( LPCREATESTRUCT lpCreateStruct );
-	DECLARE_MESSAGE_MAP()
-public:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
+
+	// macros
+	DECLARE_MESSAGE_MAP()
 };
+
+///////////////////////////////////////////////////
 

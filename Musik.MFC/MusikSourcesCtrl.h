@@ -1,23 +1,59 @@
+///////////////////////////////////////////////////
+
 #pragma once
+
+///////////////////////////////////////////////////
 
 #include "CPropTree/PropTree.h"
 
-// CMusikSourcesCtrl
+#include <vector>
+
+///////////////////////////////////////////////////
+
+typedef std::vector<CPropTreeItem*> CMusikSourcesItemPtrArray;
+
+///////////////////////////////////////////////////
+
+class CMusikLibrary;
+
+///////////////////////////////////////////////////
 
 class CMusikSourcesCtrl : public CPropTree
 {
-	DECLARE_DYNAMIC(CMusikSourcesCtrl)
-
 public:
-	CMusikSourcesCtrl();
+
+	// construct / destruct
+	CMusikSourcesCtrl( CMusikLibrary* m_Library );
 	virtual ~CMusikSourcesCtrl();
 
 protected:
-	DECLARE_MESSAGE_MAP()
-public:
 
-
+	// message maps
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+
+	// create default headers
+	void CreateHeaders();
+	void DeleteHeaders();
+	CPropTreeItem* m_LibrariesRoot;
+	CPropTreeItem* m_StdPlaylistRoot;
+	CPropTreeItem* m_DynPlaylistRoot;
+
+	// macros
+	DECLARE_DYNAMIC(CMusikSourcesCtrl)
+	DECLARE_MESSAGE_MAP()
+
+private:
+
+	// stuff relating to the core
+	CMusikLibrary* m_Library;
+
+	// items that will show up in the list
+	void DeleteItems();
+	CMusikSourcesItemPtrArray m_Libraries;
+	CMusikSourcesItemPtrArray m_StdPlaylists;
+	CMusikSourcesItemPtrArray m_DynPlaylists;
 };
+
+///////////////////////////////////////////////////
 
 
