@@ -336,7 +336,7 @@ size_t unicodeToUtf8 ( const wchar_t * lpWideCharStr, char* lpMultiByteStr, int 
             *pmb++ = (char)(0x80 |  (wc        & 0x3F));
             cBytes++;
         } else
-        if ( wc < 0x00010000 ) {
+        /*if ( wc < 0x00010000 )*/ {
             *pmb++ = (char)(0xE0 | ((wc >> 12) & 0x0F));
             cBytes++;
             *pmb++ = (char)(0x80 | ((wc >>  6) & 0x3F));
@@ -408,7 +408,7 @@ int ConvertANSIToUTF8 ( const char* ansi, char* utf8 )
 {
     wchar_t*  wszValue;          // Unicode value
     int  ansi_len;
-    size_t  len;
+    int  len;
 
     *utf8 = '\0';
     if ( ansi == NULL )
@@ -440,7 +440,7 @@ int ConvertANSIToUTF8 ( const char* ansi, char* utf8 )
 int CSimpleTagReader::ConvertTagFieldToUTF8 ( size_t itemnum )
 {
     char*   uszValue;          // UTF-8 value
-    size_t  len;
+    int  len;
     int     error;
 
     if ( tagitems[itemnum].Flags & 1<<1 )                             // data in binary
@@ -1176,7 +1176,7 @@ Read_LE_Uint32 ( const unsigned char* p )
            ((unsigned long)p[2] << 16) |
            ((unsigned long)p[3] << 24);
 }
-
+/*
 static void
 Write_LE_Uint32 ( unsigned char* p, const unsigned long value )
 {
@@ -1185,7 +1185,7 @@ Write_LE_Uint32 ( unsigned char* p, const unsigned long value )
     p[2] = (unsigned char) (value >> 16);
     p[3] = (unsigned char) (value >> 24);
 }
-
+*/
 int
 CSimpleTagReader::ReadAPE1Tag ( CSimpleTagReader::CFile & fp,long TagOffset)
 {

@@ -305,9 +305,8 @@ void equ_quit(void)
   rfft(0,0,NULL);
 }
 
-void equ_clearbuf(int bps,int srate)
+void equ_clearbuf(int /*bps*/,int /*srate*/)
 {
-	bps,srate;//unused
 	int i;
 
 	nbufsamples = 0;

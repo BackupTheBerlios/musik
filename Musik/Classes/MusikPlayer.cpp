@@ -225,12 +225,12 @@ int CMusikPlayer::InitializeFMOD( int nFunction )
 			if( FSOUND_SetOutput( FSOUND_OUTPUT_MAC ) == FALSE )
 				return FMOD_INIT_ERROR_MAC;
 		#endif
-		if(wxGetApp().Prefs.nSndDevice > 0)
+		if(wxGetApp().Prefs.nSndDevice >= 0)
 		{
 		//---------------------//
 		//--- setup device	---//
 		//---------------------//
-			if (  FSOUND_SetDriver( wxGetApp().Prefs.nSndDevice ) == FALSE )
+			if (  FSOUND_SetDriver(wxGetApp().Prefs.nSndDevice ) == FALSE )
 				return FMOD_INIT_ERROR_DEVICE_NOT_READY;
 		}
 
@@ -876,12 +876,12 @@ size_t CMusikPlayer::GetShuffledSong()
 	do {
 		repeat = false;
 		
-		r = (int) m_Playlist.GetCount() * (GetRandomNumber() / (RandomMax + 1.0));  // random range  [0 , m_Playlist.GetCount()-1] 
+		r = (size_t) (m_Playlist.GetCount() * (GetRandomNumber() / (RandomMax + 1.0)) + 0.5);  // random range  [0 , m_Playlist.GetCount()-1] 
 
 		if(m_arrHistory.GetCount() == m_Playlist.GetCount())
 		{	// history is as large as the playlist
 			// clear half of the history 
-			for(int i = 0; i < m_arrHistory.GetCount()/2;i++)
+			for(size_t i = 0; i < m_arrHistory.GetCount()/2;i++)
 			{
 				m_arrHistory.RemoveAt(0);
 			}
@@ -1049,7 +1049,7 @@ void CMusikPlayer::_ChooseRandomSongs(int nSongsToAdd,CMusikSongArray &arrSongs)
 		wxT("where lastplayed < julianday('now','-%d hours');"),(int)wxGetApp().Prefs.nAutoDjDoNotPlaySongPlayedTheLastNHours);	 //(int) cast to make gcc 2.95 happy
 	wxArrayInt arrSongIds;
 	wxGetApp().Library.Query(sQuerySongs,arrSongIds);
-	if(arrSongIds.GetCount() < nSongsToAdd )
+	if(arrSongIds.GetCount() < (size_t)nSongsToAdd )
 	{  // not enough songs found, so relax the DoNotPlaySongPlayedTheLastNHours condition to 2 hours
 		sQuerySongs = wxString::Format(wxT(" select autodj_songs.songid from autodj_songs ") 
 			wxT("where lastplayed < julianday('now','-2 hours');"));	 //(int) cast to make gcc 2.95 happy
@@ -1057,7 +1057,7 @@ void CMusikPlayer::_ChooseRandomSongs(int nSongsToAdd,CMusikSongArray &arrSongs)
 	}
 	while (arrSongIds.GetCount() && (arrSongs.GetCount() < (size_t)nSongsToAdd))
 	{
-		int r = (int) arrSongIds.GetCount() * (GetRandomNumber() / (RandomMax + 1.0));  // random range  [0 , arrSongIds.GetCount()-1] 
+		int r = (size_t) (arrSongIds.GetCount() * (GetRandomNumber() / (RandomMax + 1.0)) + 0.5);  // random range  [0 , arrSongIds.GetCount()-1] 
 		CMusikSong song;
 		if(wxGetApp().Library.GetSongFromSongid(arrSongIds[r],&song))
 		{
@@ -1081,7 +1081,7 @@ void CMusikPlayer::_ChooseRandomAlbumSongs(int nAlbumsToAdd,CMusikSongArray &arr
 	wxArrayString arrAlbums;
 	while ( (nMaxRepeatCount > 0) && ( arrAlbums.GetCount() < (size_t)nAlbumsToAdd ))
 	{
-		int r = (int) albums_count * (GetRandomNumber() / (RandomMax + 1.0));  // random range  [0 , albums_count-1] 
+		int r = (size_t) (albums_count * (GetRandomNumber() / (RandomMax + 1.0)) + 0.5);  // random range  [0 , albums_count-1] 
 		wxString sQueryRandomAlbum = wxString::Format(wxT("select album||'|'||artist from autodj_albums where most_lastplayed < julianday('now','-%d hours') limit 1 offset %d;") 
 											,nMaxRepeatCount < 5 ? 1 : (int)wxGetApp().Prefs.nAutoDjDoNotPlaySongPlayedTheLastNHours,r);
 

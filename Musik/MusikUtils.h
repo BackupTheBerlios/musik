@@ -414,7 +414,24 @@ inline void InternalErrorMessageBox( const wxString &sText)
 	wxMessageBox( sMessage,MUSIKAPPNAME_VERSION, wxOK|wxICON_ERROR );
 
 }
+inline wxString MusikGetStaticDataPath()
+{
+#ifdef __WXMSW__
+	return wxT("data/");		
+#else
+	wxString sDataPath(wxT("/usr/local/share/") MUSIKAPPNAME wxT("/data/"));
+	if(wxDirExists(sDataPath))
+		return sDataPath;
+	sDataPath = wxT("/usr/share/") MUSIKAPPNAME wxT("/data/");	
+	if(wxDirExists(sDataPath))
+		return sDataPath;
+	sDataPath = wxT("~/") MUSIKAPPNAME wxT("/data/");	
+	if(wxDirExists(sDataPath))
+		return sDataPath;
+	return wxT("data/");
 
+#endif	
+}
 double CharStringToDouble(const char *z);
 void DoubleToCharString(double r, char *z);
 wxString GetForbiddenChars(wxPathFormat format = wxPATH_NATIVE);

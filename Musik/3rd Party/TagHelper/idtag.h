@@ -98,7 +98,7 @@ public:
 		bool m_bOwner;
 	public:
 		CFile(FILE * _f,bool bOwner = true) {f=_f;m_bOwner=bOwner;}
-		~CFile() {if (m_bOwner && f) fclose(f);}
+		virtual ~CFile() {if (m_bOwner && f) fclose(f);}
 		virtual size_t read(void * ptr,size_t size) {return fread(ptr,1,size,f);}
 		virtual int seek(int offset,int origin) {return fseek(f,offset,origin);}
 		virtual long tell() {return ftell(f);}

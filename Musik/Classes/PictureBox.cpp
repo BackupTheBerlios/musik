@@ -166,7 +166,7 @@ void CPictureBox::OnPaint(wxPaintEvent &)
 
 	if(m_DefImage.Ok() == false && m_bDefaultImageFailed == false)
 	{
-		m_image = m_DefImage = wxImage(_T("data/musik.png"), wxBITMAP_TYPE_PNG);
+		m_image = m_DefImage = wxImage(MusikGetStaticDataPath() + wxT("musik.png"), wxBITMAP_TYPE_PNG);
 		if(!m_DefImage.Ok())
 		{
 			m_bDefaultImageFailed = true;

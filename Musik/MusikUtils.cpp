@@ -265,7 +265,7 @@ const wxChar * BeginsWithPreposition( const wxString & s )
 		int prefixlen = wxStrlen(pPrefixArray[i]);
 		if(wxStrnicmp(pPrefixArray[i],s.c_str(),prefixlen) == 0)
 		{
-			if(s.size() >= prefixlen)
+			if(s.size() >= (size_t)prefixlen)
 			{
 				return pPrefixArray[i];
 			}

@@ -1,6 +1,7 @@
 
 PROJECT(wxMusik)
 
+SUBDIRS(data locale)
 # Configure for a wxWindows build
 INCLUDE(${CMAKE_ROOT}/Modules/FindwxWindows.cmake)
 
@@ -16,13 +17,13 @@ ENDIF(CMAKE_WX_CXX_FLAGS)
 FIND_LIBRARY(OGG_LIBRARY NAMES ogg PATHS /usr/lib /usr/local/lib)
 
 # SQLite library
-FIND_LIBRARY(SQLITE_LIBRARY NAMES sqlite PATHS /usr/lib /usr/local/lib)
+FIND_LIBRARY(SQLITE_LIBRARY NAMES sqlite PATHS .)
 
 # id3 library
 FIND_LIBRARY(ID3_LIBRARY NAMES id3 PATHS /usr/lib /usr/local/lib)
 
 # fmod library
-FIND_LIBRARY(FMOD_LIBRARY NAMES fmod PATHS /usr/lib /usr/local/lib)
+FIND_LIBRARY(FMOD_LIBRARY NAMES fmod-3.74 PATHS /usr/lib /usr/local/lib)
 
 # Vorbis library
 FIND_LIBRARY(VORBIS_LIBRARY NAMES vorbis PATHS /usr/lib /usr/local/lib)
@@ -109,5 +110,6 @@ IF(APPLE)
 ENDIF(APPLE)
 
 # Set install options
-INSTALL_TARGETS(/usr/local/bin wxMusik)
+
+INSTALL_TARGETS(/bin wxMusik)
 

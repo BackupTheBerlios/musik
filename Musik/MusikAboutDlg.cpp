@@ -99,12 +99,12 @@ CMusikAboutDlg::CMusikAboutDlg(wxWindow *pParent)
 {
 	wxBoxSizer *topsizer;
 	wxHtmlWindow *html;
-
+	
 	topsizer = new wxBoxSizer(wxVERTICAL);
 
 	html = new wxHtmlWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize/* , 0wxHW_SCROLLBAR_NEVER*/);
 	html -> SetBorders(0);
-	html -> LoadPage(wxT("data/about.htm"));
+	html -> LoadPage(MusikGetStaticDataPath() + wxT("about.htm"));
 	html -> SetSize(html -> GetInternalRepresentation() -> GetWidth()+wxSystemSettings::GetMetric(wxSYS_VSCROLL_X), 
 		400);//html -> GetInternalRepresentation() -> GetHeight());
 

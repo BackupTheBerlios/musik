@@ -93,11 +93,11 @@ CNowPlayingCtrl::CNowPlayingCtrl( wxWindow *parent )
 	bmVolumeDown	= wxBitmap( volume_down_xpm );
 
 	//--- buttons ---//
-	btnPrev			= new wxBitmapButton( this, MUSIK_NOWPLAYINGCTRL_PREV, bmPrev, wxDefaultPosition, wxSize( 40, 20 ), 0 );
-	btnNext			= new wxBitmapButton( this, MUSIK_NOWPLAYINGCTRL_NEXT, bmNext, wxDefaultPosition, wxSize( 40, 20 ), 0 );
-	btnPlayPause	= new wxBitmapButton( this, MUSIK_NOWPLAYINGCTRL_PLAYPAUSE, bmPlay, wxDefaultPosition, wxSize( 40, 20 ), 0 );	
-	btnStop			= new wxBitmapButton( this, MUSIK_NOWPLAYINGCTRL_STOP, bmStop, wxDefaultPosition, wxSize( 40, 20 ), 0 );
-	btnVolume		= new wxBitmapButton( this, MUSIK_NOWPLAYINGCTRL_VOLUME, bmVolume, wxDefaultPosition, wxSize( 40, 20 ), 0 );
+	btnPrev			= new wxBitmapButton( this, MUSIK_NOWPLAYINGCTRL_PREV, bmPrev, wxDefaultPosition, wxSize( 40, -1 ), 0 );
+	btnNext			= new wxBitmapButton( this, MUSIK_NOWPLAYINGCTRL_NEXT, bmNext, wxDefaultPosition, wxSize( 40, -1 ), 0 );
+	btnPlayPause	= new wxBitmapButton( this, MUSIK_NOWPLAYINGCTRL_PLAYPAUSE, bmPlay, wxDefaultPosition, wxSize( 40, -1 ), 0 );	
+	btnStop			= new wxBitmapButton( this, MUSIK_NOWPLAYINGCTRL_STOP, bmStop, wxDefaultPosition, wxSize( 40, -1), 0 );
+	btnVolume		= new wxBitmapButton( this, MUSIK_NOWPLAYINGCTRL_VOLUME, bmVolume, wxDefaultPosition, wxSize( 40, -1), 0 );
 
 	//--- events ---//
 	btnPrev->SetBitmapLabel				( bmPrev );

@@ -2658,7 +2658,7 @@ void rfft(int n,int isign,REAL x[])
     return;
   }
 
-  newipsize = 2+sqrt(n/2.0);
+  newipsize = (int)(2.0+sqrt(n/2.0));
   if (newipsize > ipsize) {
     ipsize = newipsize;
     ip = (int *)realloc(ip,sizeof(int)*ipsize);

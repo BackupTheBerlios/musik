@@ -333,7 +333,7 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle )
 			bool bRegisterdForwxMusik = false;
 			wxString sDesc = wxGetTranslation(pSongClass->szDescription);
 			GetFileTypeAssociationInfo(pSongClass->szExtension,NULL,&bRegisterdForwxMusik);
-			chklbFileAssocs->Append(wxString::Format(wxT("%s %s"),pSongClass->szExtension,sDesc));
+			chklbFileAssocs->Append(wxString::Format(wxT("%s %s"),pSongClass->szExtension,sDesc.c_str()));
 			if(bRegisterdForwxMusik)
 				chklbFileAssocs->Check(chklbFileAssocs->GetCount()-1);
 		}
