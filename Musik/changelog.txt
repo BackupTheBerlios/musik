@@ -1,3 +1,10 @@
+Hotfix1 0.3.1.6
+- Fixed linux segfault on prefs win open
+- Fixed linux data path access for about and picture view
+- Fixed make install target in CMake generated makefile
++ Data and locale files are now installed on make install
+- Fixed linux bug: alsa works now with fmod-3.74 and hotfix1
+
 0.3.1.5 to 0.3.1.6
 + On windows a balloon tooltip is shown above the trayicon on each song change with the song info.
 + Reads APE Tags (V1 and V2) and id3v1 tag for all files, if no other tags are present.
