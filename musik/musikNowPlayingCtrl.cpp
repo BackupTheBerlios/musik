@@ -141,9 +141,11 @@ void CmusikNowPlayingCtrl::UpdateInfo( bool refresh )
 void CmusikNowPlayingCtrl::UpdateButtonStates()
 {
 	if ( m_Player->IsPlaying() && m_Player->IsPaused() )
-		m_Play->SetWindowText( "play" );
-	else 
+		m_Play->SetWindowText( "resume" );
+	else if ( m_Player->IsPlaying() && !m_Player->IsPaused() )
 		m_Play->SetWindowText( "pause" );
+	else 
+		m_Play->SetWindowText( "play" );
 }
 
 ///////////////////////////////////////////////////
