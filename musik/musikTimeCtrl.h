@@ -51,7 +51,6 @@ protected:
 
 	// size
 	CSize m_Size;
-	CSize m_CapSize;
 
 	// we seeking playback time?
 	bool m_TimeDrag;

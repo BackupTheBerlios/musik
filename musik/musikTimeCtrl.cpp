@@ -97,8 +97,6 @@ int CmusikTimeCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return false;
 	m_TotalTime->SetDynFont( 11, 1, 0 );
 	m_TotalTime->SetDynText( _T( "0:00" ), false, false );
-
-	m_CapSize = m_TotalTime->GetTextSize( _T( "XX:XX:XX" ) );
 	
 	m_TimerID = SetTimer( MUSIK_SEEK_TIMER, 1000, NULL );
 
@@ -126,29 +124,42 @@ void CmusikTimeCtrl::RescaleInfo( int cx )
 	CRect rcStatic;
 	m_CurTime->GetClientRect( &rcStatic );
 	CPoint ptCurr;
-	CSize szCurr, szTemp;
+	CSize szCurr, szUpdate;
+	CString sCurTime, sTotalTime;
+	size_t text_width = 0;
+	size_t track_start = 0;
+
+	// figure out how big to make
+	// the windows...
+	m_CurTime->GetWindowText( sCurTime );
+	m_TotalTime->GetWindowText( sTotalTime );
+
+	if ( sCurTime.GetLength() < sTotalTime.GetLength() )
+		szUpdate = m_TotalTime->GetTextSize( sTotalTime );
+	else
+		szUpdate = m_CurTime->GetTextSize( sCurTime );
 
 	// current time
-	szTemp = m_CurTime->GetDynSize();
-	ptCurr.x = m_CapSize.cx - szTemp.cx;
+	ptCurr.x = 0;
 	ptCurr.y = ( rcClient.Height() - rcStatic.Height() ) / 2;
+	m_CurTime->MoveWindow( CRect( ptCurr, szUpdate ) );
 
-	m_CurTime->MoveWindow( CRect( ptCurr, szTemp ) );
-
-	// seeker
-	ptCurr.x = m_CapSize.cx;
-	ptCurr.y = 0;
-	
-	szCurr.cx = rcClient.Width() - ( m_CapSize.cx * 2 );
-	szCurr.cy = 16;
-
-	m_TimeCtrl->MoveWindow( CRect( ptCurr, szCurr ) );
+	text_width += szUpdate.cx;
+	track_start = text_width;
 
 	// total time
-	ptCurr.x = rcClient.Width() - m_CapSize.cx;
+	ptCurr.x = rcClient.Width() - szUpdate.cx;
 	ptCurr.y = ( rcClient.Height() - rcStatic.Height() ) / 2;
+	m_TotalTime->MoveWindow( CRect( ptCurr, szUpdate ) );
 
-	m_TotalTime->MoveWindow( CRect( ptCurr, m_CapSize ) );
+	text_width += szUpdate.cx;
+
+	// seeker
+	ptCurr.x = track_start;
+	ptCurr.y = 0;
+	szCurr.cx = rcClient.Width() - text_width;
+	szCurr.cy = 16;
+	m_TimeCtrl->MoveWindow( CRect( ptCurr, szCurr ) );
 }
 
 ///////////////////////////////////////////////////

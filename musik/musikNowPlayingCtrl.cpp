@@ -11,6 +11,7 @@
 #include "musikNowPlayingInfo.h"
 #include "musikVolumeCtrl.h"
 #include "musikTimeCtrl.h."
+#include "3rdparty/BtnST.h"
 
 #include "../musikCore/include/musikPlayer.h"
 
@@ -99,21 +100,27 @@ int CmusikNowPlayingCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if ( !m_Track->Create( NULL, NULL, WS_CLIPCHILDREN | WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0 ), this, 123 ) )
 		return -1;
 
-	m_Prev = new CButton();
-	if ( !m_Prev->Create( "|<", WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0 ), this, MUSIK_NOWPLAYING_BTN_PREV ) )
-		return -1;
+	m_Font.CreateStockObject( DEFAULT_GUI_FONT );
 
-	m_Play = new CButton();
-	if ( !m_Play->Create( "|>", WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0 ), this, MUSIK_NOWPLAYING_BTN_PLAY ) )
+	m_Prev = new CButtonST();
+	if ( !m_Prev->Create( "prev", WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0 ), this, MUSIK_NOWPLAYING_BTN_PREV ) )
 		return -1;
+	m_Prev->SetFont( &m_Font );
 
-	m_Stop = new CButton();
-	if ( !m_Stop->Create( "[ ]", WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0 ), this, MUSIK_NOWPLAYING_BTN_STOP ) )
+	m_Play = new CButtonST();
+	if ( !m_Play->Create( "play", WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0 ), this, MUSIK_NOWPLAYING_BTN_PLAY ) )
 		return -1;
+	m_Play->SetFont( &m_Font );
 
-	m_Next = new CButton();
-	if ( !m_Next->Create( ">|", WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0 ), this, MUSIK_NOWPLAYING_BTN_NEXT ) )
+	m_Stop = new CButtonST();
+	if ( !m_Stop->Create( "stop", WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0 ), this, MUSIK_NOWPLAYING_BTN_STOP ) )
 		return -1;
+	m_Stop->SetFont( &m_Font );
+
+	m_Next = new CButtonST();
+	if ( !m_Next->Create( "next", WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0 ), this, MUSIK_NOWPLAYING_BTN_NEXT ) )
+		return -1;
+	m_Next->SetFont( &m_Font );
 
 	GetDC()->SetBkColor( GetSysColor( COLOR_BTNHILIGHT ) );
 
@@ -134,9 +141,9 @@ void CmusikNowPlayingCtrl::UpdateInfo( bool refresh )
 void CmusikNowPlayingCtrl::UpdateButtonStates()
 {
 	if ( m_Player->IsPlaying() && m_Player->IsPaused() )
-		m_Play->SetWindowText( "|>" );
+		m_Play->SetWindowText( "play" );
 	else 
-		m_Play->SetWindowText( "||" );
+		m_Play->SetWindowText( "pause" );
 }
 
 ///////////////////////////////////////////////////
@@ -173,14 +180,15 @@ void CmusikNowPlayingCtrl::RescaleInfo()
 	lpRect = CRect( CPoint( rcClient.right - 16, rcClient.top ), CSize( 16, rcClient.bottom ) );
 	m_Volume->MoveWindow( lpRect );
 
-	CPoint ptTemp( rcClient.right - 240 - 16, rcClient.bottom - 16 );
+	CPoint ptTemp( rcClient.right - 240 - 16 - 8, rcClient.bottom - 16 );
 	CSize szTemp( 240, 16 );
 	m_Track->MoveWindow( CRect( ptTemp, szTemp ) );
 
-	m_Prev->MoveWindow( rcClient.right - 16 - ( 24 * 4 ) - ( 240 / 24 ), 0, 24, 24 );
-	m_Play->MoveWindow( rcClient.right - 16 - ( 24 * 3 ) - ( 240 / 24 ), 0, 24, 24 );
-	m_Stop->MoveWindow( rcClient.right - 16 - ( 24 * 2 ) - ( 240 / 24 ), 0, 24, 24 );
-	m_Next->MoveWindow( rcClient.right - 16 - ( 24 * 1 ) - ( 240 / 24 ), 0, 24, 24 );
+	const int nWidth = 240 / 4;
+	m_Prev->MoveWindow( rcClient.right - 16 - ( nWidth * 4 ) - 8, 0, nWidth, 20 );
+	m_Play->MoveWindow( rcClient.right - 16 - ( nWidth * 3 ) - 8, 0, nWidth, 20 );
+	m_Stop->MoveWindow( rcClient.right - 16 - ( nWidth * 2 ) - 8, 0, nWidth, 20 );
+	m_Next->MoveWindow( rcClient.right - 16 - ( nWidth * 1 ) - 8, 0, nWidth, 20 );
 }
 
 ///////////////////////////////////////////////////

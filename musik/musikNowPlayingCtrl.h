@@ -9,6 +9,7 @@ class CmusikPrefs;
 class CmusikNowPlayingInfo;
 class CmusikVolumeCtrl;
 class CmusikTimeCtrl;
+class CButtonST;
 
 ///////////////////////////////////////////////////
 
@@ -66,10 +67,13 @@ protected:
 	CmusikTimeCtrl* m_Track;
 
 	// buttons
-	CButton* m_Play;
-	CButton* m_Stop;
-	CButton* m_Prev;
-	CButton* m_Next;
+	CButtonST* m_Play;
+	CButtonST* m_Stop;
+	CButtonST* m_Prev;
+	CButtonST* m_Next;
+
+	// default font
+	CFont m_Font;
 
 	// our player and prefs
 	CmusikPlayer* m_Player;
