@@ -43,15 +43,7 @@ WX_DECLARE_STRING_HASH_MAP( CMusikSong *, myStringToMusikSongPtrMap );
 
 CMusikSong::CMusikSong()
 {
-	Filename 	= wxT("");
-	Title 		= _("<unknown>");
 	TrackNum 	= 0;
-	Artist 		= _("<unknown>");
-	Album 		= _("<unknown>");
-	Genre 		= _("<unknown>");
-	Year 		= wxT("");
-	LastPlayed 	= wxT("");
-	TimeAdded	= wxT("");
 	Filesize	= 0;
 	Format 		= 0;
 	Duration	= 0;
@@ -59,13 +51,13 @@ CMusikSong::CMusikSong()
 	TimesPlayed = 0;
 	Bitrate 	= 0;
 	VBR 		= false;
-	Notes 		= wxT("");
 	Check1 		= 0;
 }
 
 CMusikLibrary::CMusikLibrary()
 	: wxEvtHandler()
 {
+	m_nCachedSongCount = -1;
 	SetSortOrderField( PLAYLISTCOLUMN_ARTIST );
 }
 
@@ -135,6 +127,8 @@ bool CMusikLibrary::Load()
 		sqlite_exec( m_pDB, szCreateDBQuery, NULL, NULL, NULL );
 		sqlite_exec( m_pDB, szCreateIdxQuery, NULL, NULL, NULL );
 		CreateDBFuncs();
+		sqlite_exec( m_pDB, "PRAGMA synchronous = OFF;", NULL, NULL, NULL );
+		sqlite_exec( m_pDB, "PRAGMA cache_size = 10000;", NULL, NULL, NULL );
 	}
 	if ( errmsg )
 			free( errmsg );
@@ -265,125 +259,139 @@ bool CMusikLibrary::FileInLibrary( const wxString & filename, bool fullpath )
 	return result;
 }
 
-void CMusikLibrary::AddItem( const wxString & filename )
+void CMusikLibrary::AddSongDataFromFile( const wxString & filename )
 {
 	//-----------------------------------------------------//
 	//--- we don't need to worry about duplicate files	---//
-	//--- becuase the MusikLibraryFrame will take care	---//
+	//--- because the MusikLibraryFrame will take care	---//
 	//--- of any conflicts.								---//
 	//-----------------------------------------------------//
 
 	if ( filename.IsEmpty() )
 		return;
 
-	//--- get format ---//
-	wxFileName fn( filename );
-	wxString ext = fn.GetExt();
-	ext.MakeLower();
 	
-	if ( ext == wxT("mp3") )
-		AddMP3( filename );
-	else if ( ext == wxT("ogg") )
-		AddOgg( filename );
-	else if ( ( ext == wxT("mod") ) || ( ext == wxT("it") ) || ( ext == wxT("s3m") ) || ( ext == wxT("xm") ) )
-		AddMod( filename );
-	else if ( ext == wxT("wma"))
-		AddWMA( filename );
-	else if ( ext == wxT("wav"))
-		AddWav( filename );
-	else if ( ( ext == wxT("aiff") ) || ( ext == wxT("iff")) )
-		AddAIFF( filename );
+	CSongMetaData MetaData;
+	MetaData.Filename = filename;
+	bool bRet = GetMetaData( MetaData );
+	if(bRet)
+	{
+
+		//--- run the query ---//
+		wxCriticalSectionLocker lock( m_csDBAccess );
+		m_nCachedSongCount = -1;
+		sqlite_exec_printf( m_pDB, "insert into songs values ( %Q, %d, %d, %Q, %Q, %Q, %Q, %d, %Q, %Q, %d, %d, %Q, %Q, %d, %d, %Q, %d, %d );", NULL, NULL, NULL, NULL,	
+			(int)MetaData.eFormat,	
+			MetaData.bVBR, 
+			( const char* )ConvFNToFieldMB(MetaData.Filename.GetFullPath()) ,
+			( const char* )MetaData.Artist, 
+			( const char* )MetaData.Title, 
+			( const char* )MetaData.Album, 
+			MetaData.nTracknum, 
+			( const char* )MetaData.Year, 
+			( const char* )MetaData.Genre, 
+			0,//rating 
+			MetaData.nBitrate, 
+			"",//lastplayed 
+			"",//notes 
+			0,//timesplayed 
+			MetaData.nDuration_ms, 
+			( const char* )ConvDBFieldToMB( m_TimeAdded ), 
+			MetaData.nFilesize,
+			0); //dirty
+	
+	}
+
 }
 
+void CMusikLibrary::UpdateSongDataFromFile( const wxString & filename )
+{
+	if ( filename.IsEmpty() )
+		return;
+
+	
+	CSongMetaData MetaData;
+	MetaData.Filename = filename;
+	bool bRet = GetMetaData( MetaData );
+	if(bRet)
+	{
+
+		//--- run the query ---//
+		wxCriticalSectionLocker lock( m_csDBAccess );
+		sqlite_exec_printf( m_pDB, "update songs set format=%d, vbr=%d, artist=%Q, title=%Q, album=%Q, tracknum=%d, year=%Q, genre=%Q, bitrate=%d, duration=%d, filesize=%d, dirty=0 where filename = %Q;", NULL, NULL, NULL, 
+			(int)MetaData.eFormat,	
+			MetaData.bVBR, 
+			( const char* )MetaData.Artist, 
+			( const char* )MetaData.Title, 
+			( const char* )MetaData.Album, 
+			MetaData.nTracknum, 
+			( const char* )MetaData.Year, 
+			( const char* )MetaData.Genre, 
+			MetaData.nBitrate, 
+			MetaData.nDuration_ms, 
+			MetaData.nFilesize,
+			( const char* )ConvFNToFieldMB(MetaData.Filename.GetFullPath())
+			);
+	
+	}
+}
 void CMusikLibrary::InitTimeAdded()
 {
 	wxDateTime currtime = wxDateTime::Now();
 	m_TimeAdded = currtime.Format();
 }
-
-void CMusikLibrary::AddMP3( const wxString & filename )
+bool CMusikLibrary::GetMetaData( CSongMetaData & MetaData  )
 {
-	wxFileName fn( filename );
-	wxString fullname = fn.GetFullName();
-	wxString justfilename = fullname.Left( fullname.Length() - fn.GetExt().Len()-1 );
+	
+	//--- get format ---//
+	wxString ext = MetaData.Filename.GetExt().MakeLower();
+    bool bRet = false;
+	if ( ext == wxT("mp3") )
+		bRet = GetMP3MetaData( MetaData );
+	else if ( ext == wxT("ogg") )
+		bRet = GetOggMetaData( MetaData );
 
-	int format		= MUSIK_FORMAT_MP3;
-	char * szTitle	= NULL;
-	char * szArtist	= NULL;
-	char * szAlbum	= NULL;
-	char * szGenre	= NULL;
-	char * szYear	= NULL;
-	char * szTrack	= NULL;
-	int rating		= 0;
-	int bitrate		= 0;
-	int tracknum	= 0;
-	int duration	= 0;
-	int vbr			= 0;
-	int timesplayed = 0;
-	int filesize = 0;
-	int dirty = 0;
+	if ( MetaData.Title.Length() == 0 )
+			MetaData.Title = MetaData.Filename.GetName();
+	return bRet;
 
+}
+bool CMusikLibrary::GetMP3MetaData( CSongMetaData & MetaData )
+{
 	//--- first get the things that can be gleaned from the header ---//
 	CMP3Info mp3info;
-	if ( mp3info.loadInfo( filename ) == 0 )
+	wxString sFilename = MetaData.Filename.GetFullPath();
+	if ( mp3info.loadInfo( sFilename ) == 0 )
 	{
-		duration	= mp3info.getLengthInSeconds() * 1000;
-		bitrate		= mp3info.getBitrate();
-		vbr			= mp3info.isVBitRate();
-		filesize	= mp3info.getFileSize();
+		MetaData.eFormat = MUSIK_FORMAT_MP3;
+		MetaData.nDuration_ms = mp3info.getLengthInSeconds() * 1000;
+		MetaData.nBitrate     = mp3info.getBitrate();
+		MetaData.bVBR         = mp3info.isVBitRate();
+		MetaData.nFilesize	  = mp3info.getFileSize();
 		
 		//--- link and load mp3 ---//
-//		char* pFilename = StringToANSI( filename );
 		ID3_Tag		id3Tag;
-		id3Tag.Link( ( const char* )ConvFNToFieldMB( filename ), ID3TT_ALL );
+		id3Tag.Link( ( const char* )ConvFNToFieldMB( sFilename ), ID3TT_ALL );
 		
-		szArtist 	=  ID3_GetArtist	( &id3Tag );
-		szTitle 	=  ID3_GetTitle		( &id3Tag );
-		szAlbum 	=  ID3_GetAlbum		( &id3Tag );
-		szGenre 	=  ID3_GetGenre		( &id3Tag );
-		szYear 		=  ID3_GetYear		( &id3Tag );
-		szTrack 	=  ID3_GetTrack		( &id3Tag );
+		MetaData.Artist.Attach	( ID3_GetArtist	( &id3Tag ));
+		MetaData.Title.Attach	( ID3_GetTitle	( &id3Tag ));
+		MetaData.Album.Attach	( ID3_GetAlbum	( &id3Tag ));
+		MetaData.Year.Attach	( ID3_GetYear	( &id3Tag ));
+
+		MetaData.Genre = ID3_V1GENRE2DESCRIPTION(ID3_GetGenreNum( &id3Tag ));
+		if(MetaData.Genre.IsEmpty())
+            MetaData.Genre.Attach	( ID3_GetGenre	( &id3Tag ));
+
+		char *szTrack = ID3_GetTrack( &id3Tag );
 		if(szTrack)
 		{
-			tracknum = atol(szTrack);
+			MetaData.nTracknum = atol(szTrack);
+			ID3_FreeString(szTrack);
 		}
-		
-		//--- get correct genre from (X) / (XX) / (XXX) format ---//
-		wxString sGenre = ConvDBFieldToWX( szGenre );
-		sGenre = GetGenre( sGenre );
-
-		//--- run the query ---//
-		{
-			wxCriticalSectionLocker lock( m_csDBAccess );
-			sqlite_exec_printf( m_pDB, "insert into songs values ( %Q, %d, %d, %Q, %Q, %Q, %Q, %d, %Q, %Q, %d, %d, %Q, %Q, %d, %d, %Q, %d, %d );", NULL, NULL, NULL, NULL,
-				format,	
-				vbr, 
-				( const char* )ConvFNToFieldMB( filename ), 
-				szArtist 	?	szArtist	:	"<unknown>",
-				szTitle 	?	szTitle		:	( const char* )ConvFNToFieldMB(justfilename),
-				szAlbum 	?	szAlbum		:	"<unknown>",
-				tracknum, 
-				szYear 		?	szYear		:	"<unknown>", 
-				szGenre 	?	( const char* )ConvDBFieldToMB( sGenre )	:	"<unknown>", 
-				rating, 
-				bitrate, 
-				"",//lastplayed 
-				"",//notes 
-				timesplayed, 
-				duration, 
-				( const char* )ConvDBFieldToMB( m_TimeAdded ),
-				filesize,
-				dirty );
-		}
-		ID3_FreeString(szArtist);
-		ID3_FreeString(szTitle);
-		ID3_FreeString(szAlbum);
-		ID3_FreeString(szGenre);
-		ID3_FreeString(szYear);
-		ID3_FreeString(szTrack);
-
-
+	
+		return true;
 	}
+	return false;
 }
 
 void CMusikLibrary::WriteTag(  CMusikSong & song, bool ClearAll , bool bUpdateDB )
@@ -515,12 +523,10 @@ bool CMusikLibrary::WriteOGGTag( const CMusikSong & song, bool WXUNUSED(ClearAll
 
 int CMusikLibrary::ClearDirtyTags()
 {
-	wxCriticalSectionLocker lock( m_csDBAccess );
 	int nCount = QueryCount("select count(*) from songs where dirty = 1;");
+	wxCriticalSectionLocker lock( m_csDBAccess );
 	sqlite_exec_printf( m_pDB, "update songs set dirty = 0 where dirty = 1;",
 			NULL, NULL, NULL);
-
-
 	return nCount;
 }
 
@@ -529,76 +535,16 @@ void CMusikLibrary::AddMod( const wxString & WXUNUSED(filename) )
 	//int format = MUSIK_FORMAT_MOD;
 }
 
-void CMusikLibrary::AddOgg( const wxString & filename )
+bool CMusikLibrary::GetOggMetaData( CSongMetaData & MetaData )
 {	
-	wxFileName fn( filename );
-	wxString fullname = fn.GetFullName();
-	wxString justfilename = fullname.Left( fullname.Length() - fn.GetExt().Len()-1 );
 
-	int format		= MUSIK_FORMAT_OGG;
-	wxString title	= _( "<unknown>" );
-	wxString artist	= _( "<unknown>" );
-	wxString album	= _( "<unknown>" );
-	wxString genre	= _( "<unknown>" );
-	wxString year;
-	int rating		= 0;
-	int bitrate		= 0;
-	int tracknum	= 0;
-	wxString lastplayed;
-	int duration	= 0;
-	int vbr			= 0;
-	wxString notes;
-	int timesplayed = 0;
-	int dirty 		= 0;
-	int filesize	= 0;
-
-	COggInfo oggInfo;
-	if ( oggInfo.loadInfo( filename ) )
+	if ( loadOGGInfo( MetaData) )
 	{
-		filesize	= g_Player.GetFilesize( filename );
-		duration	= g_Player.GetFileDuration( filename, FMOD_MSEC );
-		bitrate		= oggInfo.GetBitrate();
-		vbr			= true;
-
-		artist		= oggInfo.GetArtist();
-		title		= oggInfo.GetTitle();
-		album		= oggInfo.GetAlbum();
-		year		= oggInfo.GetYear();
-		genre		= oggInfo.GetGenre();
-		tracknum	= oggInfo.GetTrackNum();
-
-		if ( artist.Length() < 0 )
-			artist = justfilename;
-
-		if ( album.Length() < 0 )
-			album = justfilename;
-
-		if ( title.Length() < 0 )
-			title = justfilename;
-
-		//--- run the query ---//
-		wxCriticalSectionLocker lock( m_csDBAccess );
-		sqlite_exec_printf( m_pDB, "insert into songs values ( %Q, %d, %d, %Q, %Q, %Q, %Q, %d, %Q, %Q, %d, %d, %Q, %Q, %d, %d, %Q, %d, %d );", NULL, NULL, NULL, NULL,	
-			format,	
-			vbr, 
-			( const char* )ConvFNToFieldMB( filename ),
-			( const char* )ConvDBFieldToMB( artist ), 
-			( const char* )ConvDBFieldToMB( title ), 
-			( const char* )ConvDBFieldToMB( album ), 
-			tracknum, 
-			( const char* )ConvDBFieldToMB( year ), 
-			( const char* )ConvDBFieldToMB( genre ), 
-			rating, 
-			bitrate, 
-			( const char* )ConvDBFieldToMB( lastplayed ), 
-			( const char* )ConvDBFieldToMB( notes ), 
-			timesplayed, 
-			duration, 
-			( const char* )ConvDBFieldToMB( m_TimeAdded ), 
-			filesize,
-			dirty );
-	
+		MetaData.eFormat = MUSIK_FORMAT_OGG;
+		MetaData.bVBR = true;
+		return true;
 	}
+	return false;
 }
 
 void CMusikLibrary::AddWav( const wxString & WXUNUSED(filename) )
@@ -846,7 +792,7 @@ static int sqlite_callbackAddToSongMap(void *args, int WXUNUSED(numCols), char *
 
     return 0;
 }
-void CMusikLibrary::GetStdPlaylistSongs( const wxArrayString & aFiles, CMusikSongArray & aReturn )
+void CMusikLibrary::GetFilelistSongs( const wxArrayString & aFiles, CMusikSongArray & aReturn )
 {
 	aReturn.Clear();
 	
@@ -1064,7 +1010,14 @@ void CMusikLibrary::UpdateItemLastPlayed( const wxString & filename )
 			NULL, NULL, NULL, ( const char* )ConvDBFieldToMB( timestr ), timesplayed, ( const char* )ConvFNToFieldMB( filename ) );
 	}
 }
-
+void CMusikLibrary::UpdateItemResetDirty( const wxString & filename )
+{
+	{
+		wxCriticalSectionLocker lock( m_csDBAccess );
+		sqlite_exec_printf( m_pDB, "update songs set dirty = 0 where filename = %Q;",
+			NULL, NULL, NULL,  ( const char* )ConvFNToFieldMB( filename ) );
+	}
+}
 int CMusikLibrary::GetTimesPlayed( const wxString & filename )
 {
 	char *query = sqlite_mprintf( "select timesplayed from songs where filename = %Q;", ( const char* )ConvFNToFieldMB( filename ) );
@@ -1075,10 +1028,13 @@ int CMusikLibrary::GetTimesPlayed( const wxString & filename )
 
 int CMusikLibrary::GetSongCount()
 {
-	char *query = sqlite_mprintf( "select count(*) from songs;" );
-	int result = QueryCount(query);
-	sqlite_freemem( query );
-	return result;
+
+	if(m_nCachedSongCount == -1 )
+	{
+		char *query = "select count(*) from songs;";
+		m_nCachedSongCount = QueryCount(query);
+	}
+	return m_nCachedSongCount;
 }
 
 bool CMusikLibrary::GetSongFromFilename( const wxString& filename, CMusikSong *pSong )
@@ -1177,6 +1133,8 @@ void CMusikLibrary::DeleteItem( const wxString & fn )
 		{// keep lock as short as possible by using {} scope
 			wxCriticalSectionLocker lock( m_csDBAccess );
 			result = sqlite_exec_printf( m_pDB, "delete from songs where filename=%Q;", NULL, NULL, NULL, ( const char* )ConvFNToFieldMB(filename) );
+			m_nCachedSongCount = -1;
+
 		}
 		if ( result != SQLITE_OK )
 			wxMessageBox( _( "An error occurred when attempting to delete a song from the database" ), MUSIKAPPNAME_VERSION, wxOK | wxICON_ERROR );
@@ -1226,28 +1184,35 @@ void CMusikLibrary::SetRating( const wxString & sFile, int nVal )
 
 }
 
-void CMusikLibrary::CheckAndPurge( const wxString & filename )
+bool CMusikLibrary::CheckAndPurge( const wxString & filename )
 {
 	if ( !wxFileExists( filename ) )
+	{   
 		RemoveSong( filename );
+		return true;
+	}
+	return false;
 }
 
 void CMusikLibrary::RemoveSongDir( const wxString &  sDir )
 {
 	wxCriticalSectionLocker lock( m_csDBAccess );
 	sqlite_exec_printf( m_pDB, "delete from songs where filename like '%q%%'", NULL, NULL, NULL, ( const char* )ConvFNToFieldMB(sDir) );	
+	m_nCachedSongCount = -1;
 }
 
 void CMusikLibrary::RemoveSong( const wxString & sSong	)	
 {
 	wxCriticalSectionLocker lock( m_csDBAccess );
 	sqlite_exec_printf( m_pDB, "delete from songs where filename = '%q'", NULL, NULL, NULL, ( const char* )ConvFNToFieldMB( sSong ) );
+	m_nCachedSongCount = -1;
 }
 
 void CMusikLibrary::RemoveAll()
 { 
 	wxCriticalSectionLocker lock( m_csDBAccess );
-	sqlite_exec_printf( m_pDB, "delete from songs;", NULL, NULL, NULL );		
+	sqlite_exec_printf( m_pDB, "delete from songs;", NULL, NULL, NULL );	
+	m_nCachedSongCount = 0;
 }
 
 bool CMusikLibrary::ReplaceMask( wxString *sSrc, wxString sMask, wxString sTarget, bool bReplaceAll )
@@ -1255,7 +1220,7 @@ bool CMusikLibrary::ReplaceMask( wxString *sSrc, wxString sMask, wxString sTarge
 	wxString sCheck( *sSrc ); 
 	sCheck.Replace( wxT( " " ), wxT( "" ), true );
 
-	if ( !sCheck.IsEmpty() && sCheck != _( "<unknown>" ) )
+	if ( !sCheck.IsEmpty() && sCheck != wxT( "<unknown>" ) )
 	{
 		sSrc->Replace( sMask, sTarget, bReplaceAll );
 		return true;
@@ -1353,7 +1318,8 @@ bool CMusikLibrary::RenameFile( CMusikSong* song, bool bClearCheck )
 	//--- any sort of filename modification	---//
 	//--- that is needed					---//
 	//-----------------------------------------//
-	wxArrayString aPaths = DelimitStr( sFile, wxString( MUSIK_PATH_SEPARATOR ), false );
+	wxArrayString aPaths;
+	DelimitStr( sFile, wxString( MUSIK_PATH_SEPARATOR ),aPaths, false );
 	wxString sFinalPath = sRootPath;
 	for ( size_t i = 0; i < aPaths.GetCount() - 1; i++ )
 	{
