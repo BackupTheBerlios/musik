@@ -136,9 +136,9 @@ public:
 	void SynchronizeDirs();
 	void RestoreFromTray();
 	void SaveWindowState();
-	void RequeryPlaylist( CmusikString query = "", CmusikSelectionCtrl* sender = NULL, bool focus_library = true );
-	void RequerySelBoxes( CmusikString query = "", CmusikSelectionCtrl* parent = NULL, CmusikSelectionCtrl* sender = NULL );
-	CmusikString GetSelQuery( CmusikSelectionCtrl* sender = NULL, CmusikSelectionCtrl* parent = NULL, bool query_sender = true );
+	void RequeryPlaylist( CmusikSelectionCtrl* sender = NULL, bool focus_library = true );
+	void RequerySelBoxes( CmusikSelectionCtrl* sender = NULL );
+	CmusikString GetSelQuery( CmusikSelectionCtrl* target = NULL );
 
 	// tray icon
 	void ShowTrayIcon();

@@ -11,6 +11,9 @@
 #include "../musikCore/include/StdString.h"
 #include "../musikCore/include/musikArrays.h"
 
+#include "ace/Thread.h"
+#include "ace/Synch.h"
+
 ///////////////////////////////////////////////////
 
 class CmusikLibrary;
@@ -46,6 +49,19 @@ public:
 	afx_msg int OnCreate( LPCREATESTRUCT lpCreateStruct );
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnSelectionboxRename();
+	afx_msg void OnSelectionboxRemove();
+	afx_msg void OnSelectionboxAddnew();
+	afx_msg void OnChangetypeArtist();
+	afx_msg void OnChangetypeAlbum();
+	afx_msg void OnChangetypeYear();
+	afx_msg void OnChangetypeGenre();
+	afx_msg void OnChangetypeTracknumber();
+	afx_msg void OnChangetypeTimeadded();
+	afx_msg void OnChangetypeLastplayed();
+	afx_msg void OnChangetypeFormat();
+	afx_msg void OnChangetypeRating();
+	afx_msg void OnChangetypeTimesplayed();
+	afx_msg void OnChangetypeBitrate();
 
 	// misc
 	void ShowMenu();
@@ -62,20 +78,6 @@ protected:
 	// macros
 	DECLARE_DYNAMIC(CmusikSelectionBar)
 	DECLARE_MESSAGE_MAP()
-public:
-	afx_msg void OnSelectionboxRemove();
-	afx_msg void OnSelectionboxAddnew();
-	afx_msg void OnChangetypeArtist();
-	afx_msg void OnChangetypeAlbum();
-	afx_msg void OnChangetypeYear();
-	afx_msg void OnChangetypeGenre();
-	afx_msg void OnChangetypeTracknumber();
-	afx_msg void OnChangetypeTimeadded();
-	afx_msg void OnChangetypeLastplayed();
-	afx_msg void OnChangetypeFormat();
-	afx_msg void OnChangetypeRating();
-	afx_msg void OnChangetypeTimesplayed();
-	afx_msg void OnChangetypeBitrate();
 };
 
 ///////////////////////////////////////////////////
@@ -88,6 +90,7 @@ class CmusikSelectionCtrl : public CmusikListCtrl
 {
 	friend class CmusikSelectionBar;
 	static bool m_Updating;
+	static int m_Count;
 
 public:
 
@@ -101,13 +104,20 @@ public:
 	CString GetTypeStr();
 	int	GetType(){ return m_Type; }
 	void GetSelItems( CmusikStringArray& items, bool format_query = true );
-	CmusikString GetSelQuery( CmusikString other_sel_query = _T( "" ) );
+	CmusikString GetSelQuery();
 	CmusikString GetEditCommitStr();
 
 	// sets
 	void SetParent( bool parent = true ){ m_ParentBox = parent; }
 	static void SetUpdating( bool updating = true ){ m_Updating = updating; }
 	void SetType( int type, bool update = true );
+
+	// order
+	int GetChildOrder() { return m_ChildOrder; }
+	void ResetOrder() { m_ChildOrder = -1; }
+
+	static void IncChildOrder() { m_Count++; }
+	static void ResetChildOrder() { m_Count = -1; }
 
 	// misc
 	void RescaleColumn();
@@ -141,6 +151,9 @@ public:
 
 protected:
 
+	// 
+	int m_ChildOrder;
+
 	// inits
 	void InitFonts();
 
@@ -153,6 +166,10 @@ protected:
 
 	// tracking mouse
 	bool m_MouseTrack;
+
+	// bg color if child
+	void InitColors();
+	COLORREF clrChild;
 
 	// F2...
 	CmusikEditInPlace m_EditInPlace;
@@ -173,6 +190,9 @@ protected:
 	CFont m_Regular;
 	CFont m_Bold;
 	CFont m_StarFont;
+
+	// mutex to protect items...
+	ACE_Thread_Mutex m_ProtectingItems;
 
 	// macros
 	DECLARE_DYNAMIC(CmusikSelectionCtrl)

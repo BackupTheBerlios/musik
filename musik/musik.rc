@@ -92,8 +92,6 @@ BEGIN
             MENUITEM SEPARATOR
             MENUITEM "Synchronize Directories Now", ID_LIBRARY_SYNCHRONIZEDIRECTORIESNOW
 
-            MENUITEM "Scan for Missing Files Now",  ID_LIBRARY_SCANFORMISSINGFILESNOW
-
             MENUITEM SEPARATOR
             POPUP "Unsynchronized Tags"
             BEGIN

@@ -907,9 +907,12 @@ LRESULT CMainFrame::OnSelBoxEditCommit( WPARAM wParam, LPARAM lParam )
 	CmusikPlaylist* playlist = new CmusikPlaylist();
 	
 	//CmusikString sub_query = pSel->GetSelQuery();
-	CmusikString sub_query = GetSelQuery( pSel, NULL );
+	CmusikString partial_query = GetSelQuery( pSel );
+	bool sub_query = true;
+	if ( partial_query.Left( 1 ) == _T( "W" ) )
+		sub_query = false;
 
-	m_Library->GetRelatedSongs( sub_query, pSel->GetType(), *playlist );
+	m_Library->GetRelatedSongs( partial_query, pSel->GetType(), *playlist, sub_query );
 
 	// create a new CmusikSongInfoArray and update
 	// all the respective values...
@@ -975,27 +978,23 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 	if ( !pSender )
 		return 0L;
 
-	// no parent found, so we have a new parent!
-	if ( !pParent )
-	{
-		pParent = pSender;
-		pParent->SetParent( true );
-	}
-
 	// if the first item was clicked, the user wants
 	// to display all the info
 	if ( pSender->IsItemSelected( 0 ) )
 	{
 		CmusikSelectionCtrl::SetUpdating( true );
 
+		if ( pParent )
+			pParent->SetParent( false );
+
+		pSender->SetParent( true );
+
 		for( size_t i = 0; i < selbox_count; i++ )
 		{
 			pCurr = m_wndSelectionBars.at( i )->GetCtrl();
 			pCurr->SetItemState( -1, 0, LVIS_SELECTED );
+			pCurr->UpdateV( true );
 		}
-
-		pParent->SetParent( false );
-		pSender->UpdateV( true );
 
 		CmusikSelectionCtrl::SetUpdating( false );
 
@@ -1018,62 +1017,109 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 		return 0L;
 	}	
 
-	// construct first part of query... this is basically
-	// a list of all the selected items from the control
-	// that triggered the event
-	CmusikString sQuery = GetSelQuery( pSender, pParent );
-
+	// no parent found, so we have a new parent!
+	if ( !pParent )
+	{
+		pParent = pSender;
+		pParent->SetParent( true );
+		pParent->RedrawWindow();
+	}
+	
 	// update all the selection controls
-	RequerySelBoxes( sQuery, pParent, pSender );
+	RequerySelBoxes( pSender );
 
 	// update playlist control
-	RequeryPlaylist( sQuery, pSender );
+	CmusikString sQuery = GetSelQuery( pSender );
+	RequeryPlaylist( pSender );
 
 	return 0L;
 }
 
 ///////////////////////////////////////////////////
 
-void CMainFrame::RequerySelBoxes( CmusikString query, CmusikSelectionCtrl* parent, CmusikSelectionCtrl* sender )
+void CMainFrame::RequerySelBoxes( CmusikSelectionCtrl* sender )
 {
 	// first find if a parent exists
-	if ( !parent )
+	CmusikSelectionCtrl* pParent = NULL;
+	for ( size_t i = 0; i < m_wndSelectionBars.size(); i++ )
 	{
-		for ( size_t i = 0; i < m_wndSelectionBars.size(); i++ )
+		if ( m_wndSelectionBars.at( i )->GetCtrl()->IsParent() )
 		{
-			if ( m_wndSelectionBars.at( i )->GetCtrl()->IsParent() )
-			{
-				parent = m_wndSelectionBars.at( i )->GetCtrl();
-				break;
-			}
+			pParent = m_wndSelectionBars.at( i )->GetCtrl();
+			break;
 		}
 	}
 
-	// update parent if there is one
 	CmusikSelectionCtrl::SetUpdating( true );
 
-	if ( parent )
+	// if there is no parent then do a full
+	// reset of each box
+	CmusikSelectionCtrl* pCurr = NULL;
+	if ( !pParent ) 
 	{
-		// update parent
-		parent->UpdateV( true );
-
-		// get query
-		if ( query.IsEmpty() )
-			query = GetSelQuery( NULL, parent );
-
-		// update children
-		CmusikSelectionCtrl* pCurr = NULL;
 		for ( size_t i = 0; i < m_wndSelectionBars.size(); i++ )
 		{
 			pCurr = m_wndSelectionBars.at( i )->GetCtrl();
-			if ( !pCurr->IsParent() && pCurr != sender )
-				pCurr->UpdateV( query, true );	            
+			pCurr->UpdateV( true );
 		}
 	}
+
+	// we have a parent box, so the children
+	// must be updated in relation
 	else
 	{
-		for ( size_t i = 0; i < m_wndSelectionBars.size(); i++ )
-			m_wndSelectionBars.at( i )->GetCtrl()->UpdateV( true );
+		pParent->UpdateV();
+
+		// parent sent the event
+		if ( pParent == sender || sender == NULL )
+		{
+			// kill any selections, and reset the
+			// child ordering. all children order's
+			// are at -1 ...
+			for ( size_t i = 0; i < m_wndSelectionBars.size(); i++ )
+			{
+				pCurr = m_wndSelectionBars.at( i )->GetCtrl();
+				if ( pCurr != pParent )
+				{
+					pCurr->SetItemState( -1, 0, LVIS_SELECTED );
+					pCurr->ResetOrder();
+				}
+			}
+
+			CmusikSelectionCtrl::ResetChildOrder();
+
+			// step through all the children and requery
+			// based on the parent...
+			for ( size_t i = 0; i < m_wndSelectionBars.size(); i++ )
+			{
+				pCurr = m_wndSelectionBars.at( i )->GetCtrl();
+
+				if ( pCurr != pParent )
+				{
+					CmusikString query = GetSelQuery( NULL );
+					pCurr->UpdateV( query, true );
+				}
+			}
+		}
+
+		// a child sent the event
+		else
+		{
+			for ( size_t i = 0; i < m_wndSelectionBars.size(); i++ )
+			{
+				pCurr = m_wndSelectionBars.at( i )->GetCtrl();
+				
+				if ( pCurr->IsParent() || sender == pCurr )
+					continue;
+
+				if ( pCurr->GetChildOrder() > sender->GetChildOrder() || pCurr->GetChildOrder() == -1 )
+				{
+					CmusikString query = GetSelQuery( pCurr );
+					pCurr->UpdateV( query, true );
+				}
+			}
+		}
+
 	}
 
 	CmusikSelectionCtrl::SetUpdating( false );
@@ -1081,56 +1127,38 @@ void CMainFrame::RequerySelBoxes( CmusikString query, CmusikSelectionCtrl* paren
 
 ///////////////////////////////////////////////////
 
-void CMainFrame::RequeryPlaylist( CmusikString query, CmusikSelectionCtrl* sender, bool focus_library )
+void CMainFrame::RequeryPlaylist( CmusikSelectionCtrl* sender, bool focus_library )
 {
-	if ( !sender )
-	{
-		// get parent -- our last hope
-		bool no_parent = true;
-		for ( size_t i = 0; i < m_wndSelectionBars.size(); i++ )
-		{
-			if ( m_wndSelectionBars.at( i )->GetCtrl()->IsParent() )
-			{
-				sender = m_wndSelectionBars.at( i )->GetCtrl();
-				query = GetSelQuery( NULL, sender );
-				no_parent = true;
-				break;
-			}
-		}
-
-		if ( no_parent )
-			query = GetSelQuery( NULL, NULL );
-	}
+	// make sure the playlist window has the right
+	// CmusikPlaylist...
+	if ( !m_LibPlaylist )
+		m_LibPlaylist = new CmusikPlaylist();
 	else
-		query = GetSelQuery( sender );
+		m_LibPlaylist->Clear();
 
-	if ( !query.IsEmpty() )
-	{
-		// make sure the playlist window has the right
-		// CmusikPlaylist...
-		if ( !m_LibPlaylist )
-			m_LibPlaylist = new CmusikPlaylist();
-		else
-			m_LibPlaylist->Clear();
+	if ( m_wndView->GetCtrl()->GetPlaylist() != m_LibPlaylist )
+		m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, MUSIK_SOURCES_TYPE_LIBRARY );
 
-		if ( m_wndView->GetCtrl()->GetPlaylist() != m_LibPlaylist )
-			m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, MUSIK_SOURCES_TYPE_LIBRARY );
+	// see what the order should be by...
+	int order_by = -1;
 
-		// see what the order should be by...
-		int order_by = -1;
+	if ( sender )
+		order_by = sender->GetType();
 
-		if ( sender )
-			order_by = sender->GetType();
+	// determine query type
+	CmusikString sQuery = GetSelQuery( sender );
+	bool sub_query = true;
+	if ( sQuery.Left( 1 ) == _T( "W" ) )
+		sub_query = false;
 
-		// do it
-		m_Library->GetRelatedSongs( query, order_by, *m_LibPlaylist );
-		m_wndView->GetCtrl()->UpdateV();
-		m_wndView->GetCtrl()->HideSortArrow();
+	// do it
+	m_Library->GetRelatedSongs( sQuery, order_by, *m_LibPlaylist, sub_query );
+	m_wndView->GetCtrl()->UpdateV();
+	m_wndView->GetCtrl()->HideSortArrow();
 
-		// set focus to library in sources
-		if ( focus_library )
-			m_wndSources->GetCtrl()->FocusLibrary();
-	}	
+	// set focus to library in sources
+	if ( focus_library )
+		m_wndSources->GetCtrl()->FocusLibrary();
 
 }
 
@@ -1140,7 +1168,7 @@ LRESULT CMainFrame::OnSelBoxRequestUpdate( WPARAM wParam, LPARAM lParam )
 {
 	CmusikSelectionCtrl* pSender = (CmusikSelectionCtrl*)wParam;
 
-	CmusikString query = GetSelQuery( pSender, NULL );
+	CmusikString query = GetSelQuery( pSender );
 	query += _T( "'%'" );
 
 	pSender->UpdateV( query, true );
@@ -1150,42 +1178,70 @@ LRESULT CMainFrame::OnSelBoxRequestUpdate( WPARAM wParam, LPARAM lParam )
 
 ///////////////////////////////////////////////////
 
-CmusikString CMainFrame::GetSelQuery( CmusikSelectionCtrl* pSender, CmusikSelectionCtrl* pParent, bool query_sender )
+CmusikString CMainFrame::GetSelQuery( CmusikSelectionCtrl* target )
 {
 	// get parent
+	CmusikSelectionCtrl* pParent = NULL;
+	for ( size_t i = 0; i < m_wndSelectionBars.size(); i++ )
+	{
+		if ( m_wndSelectionBars.at( i )->GetCtrl()->IsParent() )
+		{
+			pParent = m_wndSelectionBars.at( i )->GetCtrl();
+			break;
+		}
+	}
+
 	if ( !pParent )
+		return "";
+
+	CmusikString sChildQuery, sParent;
+	CmusikSelectionCtrl* pCurr = NULL;
+
+	// get the child queries from the other
+	// selection boxes... if the target is
+	// NULL then we got an update from the parent
+	// box, which means all the children need
+	// to be reset...
+	if ( target != NULL )
 	{
 		for ( size_t i = 0; i < m_wndSelectionBars.size(); i++ )
 		{
-			if ( m_wndSelectionBars.at( i )->GetCtrl()->IsParent() )
+			pCurr = m_wndSelectionBars.at( i )->GetCtrl();
+
+			if ( pCurr != pParent && pCurr->GetSelectedCount() )
 			{
-				pParent = m_wndSelectionBars.at( i )->GetCtrl();
-				break;
+				if ( sChildQuery.IsEmpty() )
+					sChildQuery += _T( " WHERE (" );
+				else
+					sChildQuery += _T( " AND ( " );
+
+				sChildQuery += pCurr->GetSelQuery();
+				sChildQuery += _T( ")" );
 			}
 		}
 	}
 
-	// query of the currently selected
-	// item... may be parent, may be child.
-	CmusikString sel_query;
-	
-	if ( pSender && query_sender )
-		sel_query = pSender->GetSelQuery();
-
-	// find full query
-	CmusikString sQuery;
-	if ( pParent != 0 && pParent != pSender )
+	// parent portion of the query
+	if ( pParent->GetSelectedCount() )
 	{
-		CmusikSelectionCtrl* pCurr;
-		for ( size_t i = 0; i < m_wndSelectionBars.size(); i++ )
+		if ( sChildQuery.IsEmpty() )
 		{
-			pCurr = m_wndSelectionBars.at( i )->GetCtrl();
-			if ( pCurr != pSender && pCurr->GetSelectedCount() )
-				sQuery += pCurr->GetSelQuery( sel_query );
+			sParent += _T( "WHERE (" );
+			sParent += pParent->GetSelQuery();
+			sParent += _T( ")" );
+		}
+		else
+		{
+			sParent += _T( "( SELECT %T FROM songs WHERE " );
+			sParent += pParent->GetSelQuery();
+			sParent += _T( ")" );
 		}
 	}
 	else
-		return sel_query;
+		sChildQuery.Trim();
+	
+	// combined portion
+	CmusikString sQuery = sParent + sChildQuery;
 
 	return sQuery;
 }
@@ -1544,10 +1600,7 @@ LRESULT CMainFrame::OnThreadEnd( WPARAM wParam, LPARAM lParam )
 	CmusikThread* ptr_thr = (CmusikThread*)wParam;
 	
 	if ( FreeThread( ptr_thr ) )
-	{
 		RequerySelBoxes();
-		RequeryPlaylist();
-	}
 
 	if ( !m_ThreadCount )
 		SetWindowText( m_Caption );

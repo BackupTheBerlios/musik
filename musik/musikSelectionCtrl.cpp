@@ -275,6 +275,7 @@ void CmusikSelectionBar::OnChangetypeBitrate()
 ///////////////////////////////////////////////////
 
 bool CmusikSelectionCtrl::m_Updating = false;
+int CmusikSelectionCtrl::m_Count = 1;
 
 ///////////////////////////////////////////////////
 
@@ -289,6 +290,8 @@ int WM_SELECTION_EDIT_CANCEL = RegisterWindowMessage( "MUSIKEDITCANCEL" );
 
 CmusikSelectionCtrl::CmusikSelectionCtrl( CFrameWnd* parent, CmusikLibrary* library, CmusikPrefs* prefs, int type, int ctrlid, int dropid )
 {
+	m_Prefs = prefs;
+
 	m_Library = library;
 	m_Type = type;
 	m_Parent = parent;
@@ -296,11 +299,14 @@ CmusikSelectionCtrl::CmusikSelectionCtrl( CFrameWnd* parent, CmusikLibrary* libr
 	m_DropID = dropid;
 	m_ParentBox = false;
 	m_MouseTrack = false;
+	m_ChildOrder = -1;
+
 	m_IsWinNT = ( 0 == ( GetVersion() & 0x80000000 ) );
 	HideScrollBars( LCSB_NCOVERRIDE, SB_HORZ );
-	InitFonts();
 
-	m_Prefs = prefs;
+
+	InitFonts();
+	InitColors();
 }
 
 ///////////////////////////////////////////////////
@@ -388,10 +394,10 @@ void CmusikSelectionCtrl::UpdateV( bool update_count )
 		case MUSIK_LIBRARY_TYPE_TIMEADDED:
 		case MUSIK_LIBRARY_TYPE_LASTPLAYED:
 		case MUSIK_LIBRARY_TYPE_TIMESPLAYED:
-			top.Format( _T( "Show all %s (%d visible)" ), type, m_Items.size() );
+			top.Format( _T( "Select by %s (%d)" ), type, m_Items.size() );
 			break;
 		default:
-			top.Format( _T( "Show all %ss (%d visible)" ), type, m_Items.size() );
+			top.Format( _T( "Select by %ss (%d)" ), type, m_Items.size() );
 			break;
 		}
 	}
@@ -399,7 +405,7 @@ void CmusikSelectionCtrl::UpdateV( bool update_count )
 	m_Items.insert( m_Items.begin(), top );
 	SetItemCountEx( m_Items.size(), LVSICF_NOINVALIDATEALL | LVSICF_NOSCROLL );
 
-	SetScrollPos( SB_VERT, nPos, false );
+		SetScrollPos( SB_VERT, nPos, 0 );
 
 	RedrawWindow();
 }
@@ -408,6 +414,8 @@ void CmusikSelectionCtrl::UpdateV( bool update_count )
 
 void CmusikSelectionCtrl::UpdateV( CmusikString query, bool update_count )
 {
+	int nPos = GetScrollPos( SB_VERT );
+
 	CmusikString top;
 	if ( !update_count )
 	{
@@ -415,21 +423,25 @@ void CmusikSelectionCtrl::UpdateV( CmusikString query, bool update_count )
 			top = m_Items.at( 0 );
 	}
 
-	m_Library->GetRelatedItems( query, m_Type, m_Items );
+	bool sub_query = true;
+	if ( query.Left( 1 ) == "W" )
+		sub_query = false;
+
+	m_Library->GetRelatedItems( query, m_Type, m_Items, sub_query );
 
 	if ( update_count )
 	{
 		CString type = GetTypeStr();
 		type.MakeLower();
-		top.Format( _T( "Show all %ss (%d visible)" ), type, m_Items.size() );
+		top.Format( _T( "Select by %ss (%d)" ), type, m_Items.size() );
 	}
 
 	m_Items.insert( m_Items.begin(), top );
 	SetItemCountEx( m_Items.size(), LVSICF_NOINVALIDATEALL | LVSICF_NOSCROLL );
 
-	CRect rcClient;
-	GetClientRect( &rcClient );
-	RedrawWindow( rcClient );
+	SetScrollPos( SB_VERT, nPos, 0 );
+
+	RedrawWindow();
 }
 
 ///////////////////////////////////////////////////
@@ -448,7 +460,6 @@ void CmusikSelectionCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 		switch( pItem->iSubItem )
 		{
 		case 0:
-
 			if ( pItem->iItem > 0 )
 			{
 				// a safeguard... just make sure the item we're
@@ -563,6 +574,13 @@ void CmusikSelectionCtrl::OnLvnItemchanged(NMHDR *pNMHDR, LRESULT *pResult)
 		}
 	}
 
+	// set the new order of presedence
+	if ( !IsParent() && GetChildOrder() == -1 )
+	{
+		CmusikSelectionCtrl::IncChildOrder();
+		m_ChildOrder = m_Count;
+	}
+
 	*pResult = 0;
 }
 
@@ -592,6 +610,7 @@ void CmusikSelectionCtrl::GetSelItems( CmusikStringArray& items, bool format_que
 	int count = 0;
 
 	CString item_str;
+
 	for ( int i = -1 ; ; )
 	{
 		item = GetNextItem( i, LVNI_SELECTED );
@@ -624,45 +643,41 @@ void CmusikSelectionCtrl::GetSelItems( CmusikStringArray& items, bool format_que
 		i = item;
 		count++;
 	}
+
 }
 
 ///////////////////////////////////////////////////
 
-CmusikString CmusikSelectionCtrl::GetSelQuery( CmusikString other_sel_query )
+CmusikString CmusikSelectionCtrl::GetSelQuery()
 {
+	CmusikString sQuery;
+	
 	CmusikStringArray selected_items;
 	GetSelItems( selected_items );
 
-	CmusikString sQuery;
-	sQuery += GetTypeDB();
-	sQuery += _T( " like " );
-	for ( size_t i = 0; i < selected_items.size(); i++ )
-	{
-		if ( i == selected_items.size() - 1 )
-		{
-			sQuery += _T( "'" );
-			sQuery += selected_items.at( i );
-			sQuery += _T( "' " );
-			if ( !other_sel_query.IsEmpty() )
-			{
-				sQuery += _T( " and " );
-				sQuery += other_sel_query;
-			}
-		}
+	// parent:
+	//{select songid from song} where album like ... and 
 
-		else
+	// child:
+	//{select songid from song} album like {album1} and ( artist = 'a' or artist = 'b' or artist = 'c' ) or album like {album2} and ( artist = 'a'... ) 
+
+	if ( selected_items.size() )
+	{
+		CmusikString sSel;
+		for ( size_t i = 0; i < selected_items.size(); i++ )
 		{
+			sSel = selected_items.at( i );
+			if ( sSel.IsEmpty() )
+				sSel = _T( "%" );
+
+			sQuery += m_Library->GetSongFieldDB( m_Type );
+			sQuery += _T( " like " );	
 			sQuery += _T( "'" );
-			sQuery += selected_items.at( i );
+			sQuery += sSel;
 			sQuery += _T( "'" );
-			if ( !other_sel_query.IsEmpty() )
-			{
-				sQuery += _T( " and " );
-				sQuery += other_sel_query;
-			}
-			sQuery += _T( " or " );
-			sQuery += GetTypeDB();
-			sQuery += _T( " like " );
+
+			if ( i < selected_items.size() - 1 )
+				sQuery += _T( " or " );
 		}
 	}
 	
@@ -707,10 +722,15 @@ void CmusikSelectionCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 		else
 			pDC->SelectObject( m_Regular );
 
-		pLVCD->clrTextBk = m_Prefs->MUSIK_COLOR_LISTCTRL;
+		if ( IsParent() )
+			pLVCD->clrTextBk = m_Prefs->MUSIK_COLOR_LISTCTRL;
+		else
+			pLVCD->clrTextBk = clrChild;
+
 		pLVCD->clrText = m_Prefs->MUSIK_COLOR_LISTCTRLTEXT;
 			
 		*pResult = CDRF_NEWFONT;
+
 		return;
 	}
 }
@@ -728,6 +748,46 @@ void CmusikSelectionCtrl::InitFonts()
 	pBoldFont.lfWeight = FW_BOLD;
 
 	m_Bold.CreateFontIndirect( &pBoldFont );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionCtrl::InitColors()
+{
+	int r, g, b;
+	
+	r = GetRValue( m_Prefs->MUSIK_COLOR_LISTCTRL );
+	g = GetGValue( m_Prefs->MUSIK_COLOR_LISTCTRL );
+	b = GetBValue( m_Prefs->MUSIK_COLOR_LISTCTRL );
+	int avg = ( r + g + b ) / 3;
+
+	// color is more bright than dim, so the stripe 
+	// color will be slightly darker
+	if ( avg > 128 )
+	{
+		r -= 10;
+		g -= 10;
+		b -= 10;
+
+		if ( r < 0 ) r = 0;
+		if ( g < 0 ) g = 0;
+		if ( b < 0 ) b = 0;
+	}
+
+	// opposite
+	else
+	{
+		r += 10;
+		g += 10;
+		b += 10;
+
+		if ( r > 255 ) r = 255;
+		if ( g > 255 ) g = 255;
+		if ( b > 255 ) b = 255;
+	}
+
+	// set color 
+	clrChild = RGB( r, g, b );
 }
 
 ///////////////////////////////////////////////////
@@ -754,7 +814,11 @@ void CmusikSelectionCtrl::OnPaint()
 	   
 	CRect clip;
 	memDC.GetClipBox(&clip);
-	memDC.FillSolidRect( clip, m_Prefs->MUSIK_COLOR_LISTCTRL );
+
+	if ( IsParent() )
+		memDC.FillSolidRect( clip, m_Prefs->MUSIK_COLOR_LISTCTRL );
+	else
+		memDC.FillSolidRect( clip, clrChild );
 	   
 	DefWindowProc(WM_PAINT, (WPARAM)memDC->m_hDC, (LPARAM)0);
 }
@@ -1011,6 +1075,8 @@ LRESULT CmusikSelectionCtrl::OnEditCommit( WPARAM wParam, LPARAM lParam )
 
 	m_CommitStr = m_EditInPlace.GetString();
 
+	bool failed = false;
+
 	switch( m_Type )
 	{
 	case MUSIK_LIBRARY_TYPE_YEAR:
@@ -1020,7 +1086,8 @@ LRESULT CmusikSelectionCtrl::OnEditCommit( WPARAM wParam, LPARAM lParam )
 			if ( year == 0 || year < 1000 || year > 9999 )
 			{
 				MessageBox( _T( "Invalid year entered. Please enter a four digit number, such as 2004." ), MUSIK_VERSION_STR, MB_ICONINFORMATION );
-				return 0L;
+				failed = true;
+				break;
 			}
 		}
 
@@ -1033,11 +1100,13 @@ LRESULT CmusikSelectionCtrl::OnEditCommit( WPARAM wParam, LPARAM lParam )
 			if ( track == 0 )
 			{
 				MessageBox( _T( "Invalid track number entered. Please enter any number greater than 0, or leave the field blank for no track number." ), MUSIK_VERSION_STR, MB_ICONINFORMATION );
-				return 0L;
+				failed = true;
+				break;
 			}
 		}
 		else
 			m_CommitStr = "0";
+
 		break;
 
 	}
@@ -1045,10 +1114,10 @@ LRESULT CmusikSelectionCtrl::OnEditCommit( WPARAM wParam, LPARAM lParam )
 	if ( GetSelectedCount() == 1 )
 	{
 		if ( m_Items.at( GetSelectionMark() ) == m_CommitStr )
-			return 0L;
+			failed = true;
 	}
 
-	if ( !m_CommitStr.IsEmpty() )
+	if ( !m_CommitStr.IsEmpty() && !failed )
 	{
 		int WM_SELBOXEDITCOMMIT = RegisterWindowMessage( "SELBOXEDITCOMMIT" );
 		m_Parent->SendMessage( WM_SELBOXEDITCOMMIT, (WPARAM)this, (LPARAM)GetType() );
