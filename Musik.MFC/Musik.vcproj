@@ -33,7 +33,8 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="sqlite.lib fmodvc.lib acesd.lib"
+				AdditionalOptions="/nodefaultlib:libcmtd"
+				AdditionalDependencies="sqlite.lib fmodvc.lib acesd.lib vorbis_static_d.lib vorbisfile_static_d.lib ogg_static_d.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
@@ -344,13 +345,10 @@
 			Name="Core"
 			Filter="">
 			<File
-				RelativePath="..\Musik.Core\src\Equ.cpp">
-			</File>
-			<File
-				RelativePath="..\Musik.Core\src\Fftsg_fl.cpp">
-			</File>
-			<File
 				RelativePath="..\Musik.Core\include\MusikArrays.h">
+			</File>
+			<File
+				RelativePath="..\Musik.Core\include\MusikConfig.h">
 			</File>
 			<File
 				RelativePath="..\Musik.Core\include\MusikCrossfader.h">
@@ -362,41 +360,100 @@
 				RelativePath="..\Musik.Core\include\MusikEQSettings.h">
 			</File>
 			<File
-				RelativePath="..\Musik.Core\src\MusikEqualizer.cpp">
-			</File>
-			<File
-				RelativePath="..\Musik.Core\include\MusikEqualizer.h">
-			</File>
-			<File
 				RelativePath="..\Musik.Core\include\MusikFunctor.h">
-			</File>
-			<File
-				RelativePath="..\Musik.Core\src\MusikLibrary.cpp">
-			</File>
-			<File
-				RelativePath="..\Musik.Core\include\MusikLibrary.h">
-			</File>
-			<File
-				RelativePath="..\Musik.Core\src\MusikPlayer.cpp">
-			</File>
-			<File
-				RelativePath="..\Musik.Core\include\MusikPlayer.h">
-			</File>
-			<File
-				RelativePath="..\Musik.Core\src\MusikPlaylist.cpp">
-			</File>
-			<File
-				RelativePath="..\Musik.Core\include\MusikPlaylist.h">
-			</File>
-			<File
-				RelativePath="..\Musik.Core\include\paramlist.hpp">
-			</File>
-			<File
-				RelativePath="..\Musik.Core\src\stdafx.h">
 			</File>
 			<File
 				RelativePath="..\Musik.Core\include\StdString.h">
 			</File>
+			<Filter
+				Name="MusikLibrary"
+				Filter="">
+				<File
+					RelativePath="..\Musik.Core\src\MusikLibrary.cpp">
+				</File>
+				<File
+					RelativePath="..\Musik.Core\include\MusikLibrary.h">
+				</File>
+			</Filter>
+			<Filter
+				Name="MusikPlaylist"
+				Filter="">
+				<File
+					RelativePath="..\Musik.Core\src\MusikPlaylist.cpp">
+				</File>
+				<File
+					RelativePath="..\Musik.Core\include\MusikPlaylist.h">
+				</File>
+			</Filter>
+			<Filter
+				Name="MusikPlayer"
+				Filter="">
+				<File
+					RelativePath="..\Musik.Core\src\MusikPlayer.cpp">
+				</File>
+				<File
+					RelativePath="..\Musik.Core\include\MusikPlayer.h">
+				</File>
+			</Filter>
+			<Filter
+				Name="MusikEqualizer"
+				Filter="">
+				<File
+					RelativePath="..\Musik.Core\src\MusikEqualizer.cpp">
+				</File>
+				<File
+					RelativePath="..\Musik.Core\include\MusikEqualizer.h">
+				</File>
+				<Filter
+					Name="Shibatch"
+					Filter="">
+					<File
+						RelativePath="..\Musik.Core\src\Equ.cpp">
+					</File>
+					<File
+						RelativePath="..\Musik.Core\src\Fftsg_fl.cpp">
+					</File>
+					<File
+						RelativePath="..\Musik.Core\include\paramlist.hpp">
+					</File>
+				</Filter>
+			</Filter>
+			<Filter
+				Name="MusikOggInfo"
+				Filter="">
+				<File
+					RelativePath="..\Musik.Core\src\MusikOggInfo.cpp">
+				</File>
+				<File
+					RelativePath="..\Musik.Core\include\MusikOggInfo.h">
+				</File>
+				<File
+					RelativePath="..\Musik.Core\src\vcedit.c">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\Musik.Core\include\vcedit.h">
+				</File>
+			</Filter>
+			<Filter
+				Name="MusikFilename"
+				Filter="">
+				<File
+					RelativePath="..\Musik.Core\src\MusikFilename.cpp">
+				</File>
+				<File
+					RelativePath="..\Musik.Core\include\MusikFilename.h">
+				</File>
+			</Filter>
+			<Filter
+				Name="MusikMP3Info"
+				Filter="">
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Prefs"

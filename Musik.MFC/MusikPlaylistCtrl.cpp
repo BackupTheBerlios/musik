@@ -15,11 +15,13 @@
 #include "../Musik.Core/include/MusikPlayer.h"
 
 #include "MEMDC.H"
-#include ".\musikplaylistctrl.h"
 
 ///////////////////////////////////////////////////
 
 IMPLEMENT_DYNAMIC(CMusikPlaylistCtrl, CListCtrl)
+
+///////////////////////////////////////////////////
+
 CMusikPlaylistCtrl::CMusikPlaylistCtrl( CMusikLibrary* library, CMusikPlayer* player, CMusikPrefs* prefs, CMusikPlaylist* playlist )
 {
 	// core
@@ -35,7 +37,7 @@ CMusikPlaylistCtrl::CMusikPlaylistCtrl( CMusikLibrary* library, CMusikPlayer* pl
 
 	// dnd variables
 	m_IsWinNT = ( 0 == ( GetVersion() & 0x80000000 ) );
-	m_ClipboardFormat = RegisterClipboardFormat ( _T("MusikMFC_3BCFE9D1_6D61_4cb6_9D0B_3BB3F643CA82") );
+	m_ClipboardFormat = RegisterClipboardFormat ( _T("MusikMFCPlaylist_3BCFE9D1_6D61_4cb6_9D0B_3BB3F643CA82") );
 
 	// fonts and colors
 	InitFonts();
