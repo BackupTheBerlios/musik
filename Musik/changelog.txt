@@ -1,4 +1,6 @@
 0.2.1 to 0.2.2
+ + Selection Boxes are now case-insensitively sorted (gunnar)
+ + Optimized Column sorting code a bit (gunnar)
  - Fixed Bug: Playlists could be overwritten with empty file when exiting
  + Added playlist sorting by column
  + Made headers look better (avatar)

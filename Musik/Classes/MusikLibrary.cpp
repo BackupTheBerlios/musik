@@ -541,15 +541,15 @@ void CMusikLibrary::GetInfo( const wxArrayString & aList, int nInType, int nOutT
 	switch ( nOutType )
 	{
 	case MUSIK_LIB_ARTIST:
-		query = wxT("select distinct artist from songs where ");
+		query = wxT("select distinct artist,UPPER(artist) as UP from songs where ");
 		break;
 
 	case MUSIK_LIB_ALBUM:
-		query = wxT("select distinct album from songs where ");
+		query = wxT("select distinct album,UPPER(album) as UP from songs where ");
 		break;
 
 	case MUSIK_LIB_GENRE:
-		query = wxT("select distinct genre from songs where ");
+		query = wxT("select distinct genre,UPPER(genre) as UP from songs where ");
 		break;
 
 	case MUSIK_LIB_YEAR:
@@ -598,15 +598,9 @@ void CMusikLibrary::GetInfo( const wxArrayString & aList, int nInType, int nOutT
 	switch ( nOutType )
 	{
 	case MUSIK_LIB_ARTIST:
-		query += wxT("order by artist");
-		break;
-
 	case MUSIK_LIB_ALBUM:
-		query += wxT("order by album");
-		break;
-
 	case MUSIK_LIB_GENRE:
-		query += wxT("order by genre");
+		query += wxT("order by UP");
 		break;
 
 	case MUSIK_LIB_YEAR:
@@ -834,25 +828,19 @@ void CMusikLibrary::SortPlaylist( const wxString& sortstr, bool descending )
 	else
 		sQuery = wxT("select filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize from songs where filename in (");
 
-	wxArrayString aFiles;
-	for ( size_t n = 0; n < g_Playlist.GetCount(); n++ )
-	{
-		const CMusikSong& song = g_Playlist.Item ( n );
-		aFiles.Add( song.Filename );
-	}
-	g_Playlist.Clear();
-	
-	sQuery.Alloc(sQuery.Len() + aFiles.GetCount() * 30); // optimization ( the 30 is a wild guess)
-	for ( size_t i = 0; i < aFiles.GetCount(); i++ )
+	int count = g_Playlist.GetCount();
+	sQuery.Alloc(sQuery.Len() + count * 30); // optimization ( the 30 is a wild guess)
+	for ( size_t i = 0; i < count ; i++ )
 	{
 		//--- if song has a ' ---//	
-		wxString filename( aFiles.Item( i ) );
+		const CMusikSong& song = g_Playlist.Item ( i );
+		wxString filename(  song.Filename );
 		filename.Replace( wxT("'"), wxT("''"), TRUE );
 
 		sQuery += wxT("'");
 		sQuery += filename;
 		//--- not at the end ---//
-		if ( i != aFiles.GetCount() - 1 )
+		if ( i != count - 1 )
 			sQuery += wxT("', ");
 		//--- at the end ---//
 		else
@@ -868,7 +856,10 @@ void CMusikLibrary::SortPlaylist( const wxString& sortstr, bool descending )
 		}
 	}
 
-	g_Playlist.Alloc(aFiles.GetCount());
+
+    g_Playlist.Clear();
+
+	g_Playlist.Alloc( count );
 	{
 		wxCriticalSectionLocker lock( m_csDBAccess );
 		sqlite_exec( m_pDB, ConvQueryToMB( sQuery ), &sqlite_callbackAddToSongArray, &g_Playlist, NULL );
@@ -1388,17 +1379,17 @@ void CMusikLibrary::GetAllSongs( CMusikSongArray & aReturn )
 
 void CMusikLibrary::GetAllArtists( wxArrayString & aReturn )	
 { 
-	Query( wxT("select distinct artist from songs order by artist;"), aReturn );			
+	Query( wxT("select distinct artist,UPPER(artist) as UP from songs order by UP;"), aReturn );
 }
 
 void CMusikLibrary::GetAllAlbums( wxArrayString & aReturn )	
 { 
-	Query( wxT("select distinct album from songs order by album;"), aReturn );					
+	Query( wxT("select distinct album,UPPER(album) as UP from songs order by UP;"), aReturn );					
 }
 
 void CMusikLibrary::GetAllGenres( wxArrayString & aReturn )	
 { 
-	Query( wxT("select distinct genre from songs order by genre;"), aReturn );					
+	Query( wxT("select distinct genre,UPPER(genre) as UP from songs order by UP;"), aReturn );					
 }
 
 void CMusikLibrary::GetArtistAlbums( const wxArrayString & aArtists, wxArrayString & aReturn )	
