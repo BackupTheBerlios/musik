@@ -141,11 +141,11 @@ CNowPlayingCtrl::CNowPlayingCtrl( wxWindow *parent )
 
 	//--- buttons, seek bar panel ---//
 	wxGridSizer *hsButtons = new wxGridSizer(1,5,2,2);
-	hsButtons->Add( btnPrev ,0,wxALIGN_CENTRE_HORIZONTAL );
-	hsButtons->Add( btnPlayPause ,0,wxALIGN_CENTRE_HORIZONTAL );
-	hsButtons->Add( btnStop ,0,wxALIGN_CENTRE_HORIZONTAL );
-	hsButtons->Add( btnNext ,0,wxALIGN_CENTRE_HORIZONTAL );
-	hsButtons->Add( btnVolume,0,wxALIGN_CENTRE_HORIZONTAL );
+	hsButtons->Add( btnPrev ,0,wxALIGN_CENTRE_HORIZONTAL | wxLEFT ,10);
+	hsButtons->Add( btnPlayPause ,0,wxALIGN_CENTRE_HORIZONTAL | wxLEFT ,10);
+	hsButtons->Add( btnStop ,0,wxALIGN_CENTRE_HORIZONTAL | wxLEFT ,10);
+	hsButtons->Add( btnNext ,0,wxALIGN_CENTRE_HORIZONTAL | wxLEFT ,10);
+	hsButtons->Add( btnVolume,0,wxALIGN_CENTRE_HORIZONTAL | wxLEFT ,10);
 
 	vsRightCol = new wxBoxSizer( wxVERTICAL );
 
@@ -360,9 +360,7 @@ void CNowPlayingCtrl::PlayerPlayPause( wxCommandEvent& WXUNUSED(event) )
 
 void CNowPlayingCtrl::PlayerNext( wxCommandEvent& WXUNUSED(event) )	
 {	
-	Freeze();
 	wxGetApp().Player.NextSong();
-	Thaw();
 }
 
 void CNowPlayingCtrl::PlayerPrev( wxCommandEvent& WXUNUSED(event) )	

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-06-01 11:06+0200\n"
+"POT-Creation-Date: 2004-06-02 00:07+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -89,7 +89,7 @@ msgid " will not delete empty directories!"
 msgstr ""
 
 #: ../Classes/SourcesBox.cpp:979 ../Classes/SourcesBox.cpp:1053
-#: ../Classes/SourcesBox.cpp:1159
+#: ../Classes/SourcesBox.cpp:1157
 msgid ""
 "\" already exists, but does not appear to be visible in the panel.\n"
 "\n"
@@ -286,19 +286,19 @@ msgstr ""
 msgid "&View"
 msgstr ""
 
-#: ../Classes/SourcesBox.cpp:1131
+#: ../Classes/SourcesBox.cpp:1130
 msgid "(all low quality, non-VBR)\n"
 msgstr ""
 
-#: ../Classes/SourcesBox.cpp:1135
+#: ../Classes/SourcesBox.cpp:1134
 msgid "(all songs played this month)"
 msgstr ""
 
-#: ../Classes/SourcesBox.cpp:1129
+#: ../Classes/SourcesBox.cpp:1128
 msgid "(all titles containing funky)\n"
 msgstr ""
 
-#: ../Classes/SourcesBox.cpp:1133
+#: ../Classes/SourcesBox.cpp:1132
 msgid "(your popular tracks)\n"
 msgstr ""
 
@@ -620,11 +620,11 @@ msgstr ""
 msgid "Enter name of the net stream:"
 msgstr ""
 
-#: ../Classes/SourcesBox.cpp:1185
+#: ../Classes/SourcesBox.cpp:1183
 msgid "Enter net stream address(URL):"
 msgstr ""
 
-#: ../Classes/SourcesBox.cpp:1127
+#: ../Classes/SourcesBox.cpp:1126
 msgid "Examples:\n"
 msgstr ""
 
@@ -750,11 +750,11 @@ msgstr ""
 msgid "Musik Library"
 msgstr ""
 
-#: ../Classes/SourcesBox.cpp:314 ../Classes/SourcesBox.cpp:1299
+#: ../Classes/SourcesBox.cpp:314 ../Classes/SourcesBox.cpp:1297
 msgid "Net Stream"
 msgstr ""
 
-#: ../Classes/SourcesBox.cpp:1159
+#: ../Classes/SourcesBox.cpp:1157
 msgid "Net Stream \""
 msgstr ""
 

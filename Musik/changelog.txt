@@ -1,4 +1,5 @@
 0.3.1.0 to 0.3.1.1
+- quick fix for linux bug, if log window is about to be opened, if a warning occurs while scanning this gives an xlib error. feature disabled on linux for now
 - Loop song is now Repeat Song, same for loop list.
 - fixed bug concerning Simple Query and Custom Query from menu, when the library view was not the active one.
 + AutoDj/Shuffle Settings are now changeable in the preferences. 

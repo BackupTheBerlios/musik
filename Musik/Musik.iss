@@ -66,18 +66,16 @@ Name: {app}\Musik.exe; Type: files
 [UninstallDelete]
 Name: {userappdata}\..\.Musik; Type: filesandordirs; MinVersion: 0,4.0.1381
 [Registry]
-Root: HKCR; SubKey: .mp3; ValueType: string; ValueData: Mp3 File; Flags: uninsdeletekey; Languages: en
+Root: HKCR; SubKey: .mp3; ValueType: string; ValueData: Mp3 File; Flags: uninsdeletekey
 Root: HKCR; SubKey: Mp3 File; ValueType: string; ValueData: Mp3 File; Flags: uninsdeletekey; Languages: en
 Root: HKCR; SubKey: Mp3 File\Shell\Open\Command; ValueType: string; ValueData: """{app}\wxMusik.exe"" ""%1"""; Flags: uninsdeletevalue
 Root: HKCR; Subkey: Mp3 File\DefaultIcon; ValueType: string; ValueData: {app}\wxMusik.exe,0; Flags: uninsdeletevalue
-Root: HKCR; SubKey: .ogg; ValueType: string; ValueData: Ogg File; Flags: uninsdeletekey; Languages: en
 Root: HKCR; SubKey: Ogg File; ValueType: string; ValueData: Ogg File; Flags: uninsdeletekey; Languages: en
 Root: HKCR; SubKey: Ogg File\Shell\Open\Command; ValueType: string; ValueData: """{app}\wxMusik.exe"" ""%1"""; Flags: uninsdeletevalue
 Root: HKCR; Subkey: Ogg File\DefaultIcon; ValueType: string; ValueData: {app}\wxMusik.exe,0; Flags: uninsdeletevalue
 Root: HKCR; SubKey: Mp3 File; ValueType: string; ValueData: Mp3 Datei; Flags: uninsdeletekey; Languages: de
-Root: HKCR; SubKey: .mp3; ValueType: string; ValueData: Mp3 Datei; Flags: uninsdeletekey; Languages: de
 Root: HKCR; SubKey: Ogg File; ValueType: string; ValueData: Ogg Datei; Flags: uninsdeletekey; Languages: de
-Root: HKCR; SubKey: .ogg; ValueType: string; ValueData: Ogg Datei; Flags: uninsdeletekey; Languages: de
+Root: HKCR; SubKey: .ogg; ValueType: string; ValueData: Ogg File; Flags: uninsdeletekey
 [Languages]
 Name: en; MessagesFile: compiler:Default.isl
 Name: de; MessagesFile: compiler:Languages\German.isl
