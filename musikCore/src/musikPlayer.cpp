@@ -255,7 +255,7 @@ static void musikPlayerWorker( CmusikThread* thread )
 						{
 							if ( ( nChildCount > 0 && ( i == ( nFadeCount / 2 ) ) ) || ( nChildCount == 0 && i == 0 ) )
 							{		
-								if ( nFadeType == MUSIK_CROSSFADER_NEW_SONG || nFadeType == MUSIK_CROSSFADER_STOP || nFadeType == MUSIK_CROSSFADER_EXIT )
+								if ( nFadeType == MUSIK_CROSSFADER_NEW_SONG || nFadeType == MUSIK_CROSSFADER_STOP )
 								{
 									if ( player->IsEqualizerActive() )
 										player->UpdateEqualizer();
