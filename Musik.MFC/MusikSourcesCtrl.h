@@ -1,8 +1,10 @@
 #pragma once
 
+#include "PropTree.h"
+
 // CMusikSourcesCtrl
 
-class CMusikSourcesCtrl : public CListCtrl
+class CMusikSourcesCtrl : public CPropTree
 {
 	DECLARE_DYNAMIC(CMusikSourcesCtrl)
 

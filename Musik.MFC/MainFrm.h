@@ -41,6 +41,7 @@ protected:
 //--- operations								---//
 //-------------------------------------------------//
 public:
+	void DockBarLeftOf( CSizingControlBarG* Bar, CSizingControlBarG* LeftOf );
 
 private:
 

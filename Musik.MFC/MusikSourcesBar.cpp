@@ -29,7 +29,7 @@ int CMusikSourcesBar::OnCreate( LPCREATESTRUCT lpCreateStruct )
 
 	SetSCBStyle( GetSCBStyle() | SCBS_SHOWEDGES | SCBS_SIZECHILD );
 
-	if ( !m_wndChild.Create( WS_CHILD|WS_VISIBLE|LVS_REPORT, CRect(0,0,0,0), this, 123) )
+	if ( !m_wndChild.Create( WS_CHILD|WS_VISIBLE, CRect(0,0,0,0), this, 123) )
 		return -1;
 
 	m_wndChild.ModifyStyleEx( 0, WS_EX_CLIENTEDGE );
