@@ -1681,15 +1681,13 @@ void CMainFrame::OnViewSelectionboxes()
 	if ( allvisible )
 	{
 		for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
-			ShowControlBar( m_wndSelectionBars.at( i ), FALSE, TRUE );
+			ShowControlBar( m_wndSelectionBars.at( i ), FALSE, FALSE );
 	}
 	else
 	{
 		for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
-			ShowControlBar( m_wndSelectionBars.at( i ), TRUE, TRUE );
+			ShowControlBar( m_wndSelectionBars.at( i ), TRUE, FALSE );
 	}
-
-	RecalcLayout();
 }
 
 ///////////////////////////////////////////////////
@@ -2332,6 +2330,8 @@ LRESULT CMainFrame::OnSelBoxAddRemove( WPARAM wParam, LPARAM lParam )
 
 		m_Prefs->SetSelBoxTypes( new_selboxes );
 	}
+
+	ResetSelBoxes( true );
 
 	return 0L;
 }
