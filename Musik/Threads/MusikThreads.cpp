@@ -41,18 +41,10 @@ void MusikFaderThread::SetCrossfaderActive( bool active )
 	m_CrossfaderActive = active;
 }
 
-void MusikFaderThread::CrossfaderAbort( bool bStopPlayer )
+void MusikFaderThread::CrossfaderAbort()
 {
 	if ( IsCrossfaderActive() )
 	{
-		//---------------------------------------------------------//
-		//--- tell the player to send a "stop playback" event	---//
-		//--- to the player when done. this is used when using	---//
-		//--- a STOP crossfade.									---//
-		//---------------------------------------------------------//
-		if ( bStopPlayer )
-			pCrossfader->SetStopPlayer();
-
 		//---------------------------------------------------------//
 		//--- Abort() tells fader NOT to clean up old streams	---//
 		//---------------------------------------------------------//
@@ -61,15 +53,10 @@ void MusikFaderThread::CrossfaderAbort( bool bStopPlayer )
 	}
 }
 
-void MusikFaderThread::CrossfaderStop( bool bStopPlayer )
+void MusikFaderThread::CrossfaderStop()
 {
 	if ( IsCrossfaderActive() )
-	{
-		if ( bStopPlayer )
-			pCrossfader->SetStopPlayer();
-
 		pCrossfader->Delete();
-	}
 }
 
 void *MusikFaderThread::Entry()
@@ -158,6 +145,11 @@ void MusikCrossfaderThread::Abort()
 	m_Aborted = true;
 }
 
+void MusikCrossfaderThread::SetStopPlayer()
+{
+	m_StopPlayer = true;
+}
+
 void *MusikCrossfaderThread::Entry()
 {
 	//---------------------------------------------//
@@ -174,7 +166,7 @@ void *MusikCrossfaderThread::Entry()
 	//---------------------------------------------//
 	//--- how many channels to fade out			---//
 	//---------------------------------------------//
-	size_t m_FadeType = g_Player.GetCrossfadeType();
+	m_FadeType = g_Player.GetCrossfadeType();
 	int nFadeInStreamID	= -1;
 	size_t nFadeOutStreams = 0;
 	
@@ -291,11 +283,21 @@ void MusikCrossfaderThread::OnExit()
 		Yield();
 	}
 
-	if ( m_StopPlayer )
+	if ( m_FadeType == CROSSFADE_STOP || m_FadeType == CROSSFADE_EXIT )
 	{
 		wxCommandEvent StopPlayerEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYER_STOP );	
 		wxPostEvent( &g_Player, StopPlayerEvt );
 		Yield();
+	}
+
+	if ( m_FadeType == CROSSFADE_EXIT )
+	{
+		m_Parent->Delete();
+		Yield();
+
+		wxCommandEvent ExitPlayerEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_FRAME_EXIT_FADE_DONE );
+		wxPostEvent( g_MusikFrame, ExitPlayerEvt );
+		Yield();		
 	}
 }
 

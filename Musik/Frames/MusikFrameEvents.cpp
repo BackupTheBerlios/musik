@@ -64,6 +64,7 @@ BEGIN_EVENT_TABLE(MusikFrame, wxFrame)
     EVT_MENU					( MUSIK_FRAME_THREAD_START,		MusikFrame::OnStartProgress			) 
 	EVT_MENU					( MUSIK_FRAME_THREAD_END,		MusikFrame::OnEndProgress			) 
 	EVT_MENU					( MUSIK_FRAME_THREAD_PROG,		MusikFrame::OnUpdateProgress		)
+	EVT_MENU					( MUSIK_FRAME_EXIT_FADE_DONE,	MusikFrame::OnExitFadeDone			)
 END_EVENT_TABLE()
 
 
@@ -106,13 +107,18 @@ void MusikFrame::OnCloseEvt( wxCommandEvent& WXUNUSED(event) )
 {
 	//-------------------------------------------------//
 	//--- use Close() in GTK and you get a segfault	---//
-	//--- use Destroy() in MSW you get mem leaks		---//
+	//--- use Destroy() in MSW you get mem leaks	---//
 	//-------------------------------------------------//
 	#ifdef __WXMSW__
 		Close();
 	#elif defined __WXGTK__
 		Destroy();
 	#endif
+}
+
+void MusikFrame::OnExitFadeDone( wxCommandEvent& WXUNUSED(event) )
+{
+	Destroy();
 }
 
 void MusikFrame::OnClose( wxCloseEvent& WXUNUSED(event) )
@@ -142,7 +148,7 @@ void MusikFrame::OnClose( wxCloseEvent& WXUNUSED(event) )
     //--- stop webserver if necessary				---//
     //-------------------------------------------------//
     if ( g_Prefs.nWebServerEnable )
-            g_WebServer.Stop();
+		g_WebServer.Stop();
 
     //-------------------------------------------------//
     //--- clear up the image lists					---//
@@ -150,19 +156,33 @@ void MusikFrame::OnClose( wxCloseEvent& WXUNUSED(event) )
     DeleteImageLists();
 
     //-------------------------------------------------//
-    //--- these threads will always be active		---//
-    //--- so just delete them, no checks required	---//
+    //--- make sure the SQL database is shut down	---//
+    //--- cleanly									---//
     //-------------------------------------------------//
-    g_FaderThread->Delete();
-	
-    //-------------------------------------------------//
-    //--- make sure the SQL database and the player ---//
-    //--- shut down cleanly							---//
-    //-------------------------------------------------//
-    g_Player.Shutdown();
-    g_Library.Shutdown();
+     g_Library.Shutdown();
 
-	Destroy();	
+    //-------------------------------------------------//
+    //--- if fade out on exit is enabled, let the	---//
+    //--- thread delete itself. otherwise kill it	---//
+	//--- to avoid memleaks.						---//
+    //-------------------------------------------------//
+	//---					ALSO					---//
+	//-------------------------------------------------//
+	//--- if we fade on exit, send the stop signal	---//
+	//--- with the exit flag and let the player		---//
+	//--- clean itself up. otherwise just shutdown.	---//
+	//-------------------------------------------------//
+	if ( g_Prefs.nFadeExitEnable == 0 || ( g_Prefs.nFadeExitEnable == 1 && !g_Player.IsPlaying() ) )
+	{
+	    g_FaderThread->Delete();
+		g_Player.Shutdown();
+		Destroy();
+	}
+	else
+	{
+		Show( false );
+		g_Player.Stop( true, true );
+	}
 }
 
 void MusikFrame::OnSetupPaths( wxCommandEvent& WXUNUSED(event) )

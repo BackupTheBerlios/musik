@@ -38,8 +38,8 @@ public:
 	virtual void *Entry();
 	virtual void OnExit();
 
-	void CrossfaderAbort		( bool bStopPlayer = false );
-	void CrossfaderStop			( bool bStopPlayer = false );
+	void CrossfaderAbort		();
+	void CrossfaderStop			();
 
 	bool IsCrossfaderActive		(){ return m_CrossfaderActive; }
 	void SetCrossfaderActive	( bool active = true );
@@ -61,7 +61,7 @@ public:
 	MusikCrossfaderThread( MusikFaderThread* pParent );
 
 	void Abort();
-	void SetStopPlayer(){ m_StopPlayer = true; }
+	void SetStopPlayer();
 
 	virtual void *Entry();
 	virtual void OnExit();
@@ -69,6 +69,7 @@ private:
 	MusikFaderThread *m_Parent;
 	bool m_StopPlayer;
 	bool m_Aborted;
+	size_t m_FadeType;
 };
 
 //---------------------------------------------------------//
