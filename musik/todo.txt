@@ -10,6 +10,7 @@ musik Todo list:
 
 Stuff Added 
 
+15. Complete threading system rewrite
 14. Standard playlist save confirmation
 13. Standard playlist drag and drop rearrange
 12. Volume slider

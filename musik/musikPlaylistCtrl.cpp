@@ -8,7 +8,6 @@
 
 #include "musikPlaylistCtrl.h"
 #include "musikSourcesCtrl.h"
-#include "musikBatchAddFunctor.h"
 #include "musikFileDrop.h"
 
 #include "musikSaveStdPlaylist.h"
@@ -28,12 +27,6 @@ IMPLEMENT_DYNAMIC(CmusikPlaylistCtrl, CmusikListCtrl)
 
 ///////////////////////////////////////////////////
 
-int WM_BATCHADD_PROGRESS_PLAYLIST	= RegisterWindowMessage( "BATCHADD_PROGRESS" );
-int WM_BATCHADD_END_PLAYLIST		= RegisterWindowMessage( "BATCHADD_END" );
-int WM_BATCHADD_VERIFY_PLAYLIST		= RegisterWindowMessage( "BATCHADD_VERIFY_PLAYLIST" );
-
-///////////////////////////////////////////////////
-
 BEGIN_MESSAGE_MAP(CmusikPlaylistCtrl, CmusikListCtrl)
 	// mfc message maps
 	ON_WM_CREATE()
@@ -48,11 +41,6 @@ BEGIN_MESSAGE_MAP(CmusikPlaylistCtrl, CmusikListCtrl)
 	ON_NOTIFY_REFLECT(LVN_BEGINDRAG, OnLvnBegindrag)
 	ON_WM_KEYDOWN()
 	ON_NOTIFY_REFLECT(LVN_MARQUEEBEGIN, OnLvnMarqueeBegin)
-
-	// custom messages
-	ON_REGISTERED_MESSAGE( WM_BATCHADD_PROGRESS_PLAYLIST, OnBatchAddProgress )
-	ON_REGISTERED_MESSAGE( WM_BATCHADD_END_PLAYLIST, OnBatchAddEnd )
-	ON_REGISTERED_MESSAGE( WM_BATCHADD_VERIFY_PLAYLIST, OnBatchAddVerifyPlaylist)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -74,10 +62,6 @@ CmusikPlaylistCtrl::CmusikPlaylistCtrl( CFrameWnd* mainwnd, CmusikLibrary* libra
 
 	// dnd drop id
 	m_DropID = dropid;
-
-	// batch add thread
-	m_BatchAddThr = NULL;
-	m_BatchAddFnct = NULL;
 
 	// main window
 	m_MainWnd = mainwnd;
@@ -867,7 +851,6 @@ void CmusikPlaylistCtrl::OnDropFiles( HDROP hDropInfo )
 				sTemp += "\\*.*";
 
 				m_Dir.m_Dir = sTemp;
-				m_Dir.m_Threaded = false;
 				m_Dir.m_Target = files;
 
 				m_Dir.Run();
@@ -881,61 +864,20 @@ void CmusikPlaylistCtrl::OnDropFiles( HDROP hDropInfo )
 
 	if ( files->size() > 0 )
 	{
-		m_BatchAddFnct = new CmusikBatchAddFunctor( this );
+		CmusikBatchAdd* params;
 
 		if ( nRet == MUSIK_FILEDROP_ADDNOWPLAYING )
-			m_BatchAddThr = new CmusikBatchAdd( files, m_Player->GetPlaylist(), m_Library, m_Player, m_BatchAddFnct, 0, 1, 1 );
+			params = new CmusikBatchAdd( files, m_Player->GetPlaylist(), m_Library, m_Player, NULL, 0, 1, 1 );
 
 		else if ( nRet == MUSIK_FILEDROP_ADDPLAYLIST )
-			m_BatchAddThr = new CmusikBatchAdd( files, m_Playlist, m_Library, NULL, m_BatchAddFnct, 1, 0, 1 );
+			params = new CmusikBatchAdd( files, m_Playlist, m_Library, NULL, NULL, 1, 0, 1 );
 
 		else if ( nRet == MUSIK_FILEDROP_ADDLIBRARY )
-			m_BatchAddThr = new CmusikBatchAdd( files, m_Player->GetPlaylist(), m_Library, NULL, m_BatchAddFnct );
+			params = new CmusikBatchAdd( files, m_Player->GetPlaylist(), m_Library, NULL, NULL );
 
-		
-		m_BatchAddThr->Run();
+		int WM_BATCHADD_NEW = RegisterWindowMessage( "BATCHADD_NEW" );
+		m_MainWnd->SendMessage( WM_BATCHADD_NEW, (WPARAM)params );
 	}
-}
-
-///////////////////////////////////////////////////
-
-LRESULT CmusikPlaylistCtrl::OnBatchAddProgress( WPARAM wParam, LPARAM lParam )
-{
-	return 0L;
-}
-
-///////////////////////////////////////////////////
-
-LRESULT CmusikPlaylistCtrl::OnBatchAddEnd( WPARAM wParam, LPARAM lParam )
-{
-	bool update = false;
-
-	if ( wParam )
-	{
-		CmusikBatchAdd* pBatch = (CmusikBatchAdd*)wParam;
-		CmusikBatchAddFunctor* pFunctor = (CmusikBatchAddFunctor*)pBatch->m_Functor;
-
-		if ( pBatch->m_AddToPlayer || pBatch->m_UpdatePlaylist )
-			update = true;
-
-		if ( pFunctor )
-			delete pFunctor;
-
-        delete pBatch;
-	}
-	else
-	{
-		TRACE0( "Oh shit, we couldn't find a CmusikPlaylistCtrl's CmusikBatchAdd thread to delete!\n" );
-		ASSERT( -1 );
-	}
-
-	int WM_SELBOXRESET = RegisterWindowMessage( "SELBOXRESET" );
-	m_MainWnd->PostMessage( WM_SELBOXRESET );
-
-	if ( update )
-		UpdateV();
-
-	return 0L;
 }
 
 ///////////////////////////////////////////////////
@@ -1092,18 +1034,6 @@ void CmusikPlaylistCtrl::OnDragColumn( int source, int dest )
 	m_Arranging = false;
 
     ResetColumns();
-}
-
-///////////////////////////////////////////////////
-
-LRESULT CmusikPlaylistCtrl::OnBatchAddVerifyPlaylist( WPARAM wParam, LPARAM lParam )
-{
-	CmusikPlaylist* playlist = (CmusikPlaylist*)wParam;
-
-	if ( playlist && playlist == m_Playlist )
-		return 1L;
-
-	return 0L;
 }
 
 ///////////////////////////////////////////////////

@@ -55,8 +55,13 @@ CmusikThread::CmusikThread()
 	m_ThreadHND = NULL;
 
 	m_Running = false;
-	m_Paused = false;
+	m_Suspended = false;
 	m_Joined = false;
+	m_Finished = false;
+	m_Abort = false;
+	m_Asleep = false;
+	
+	m_Args = NULL;
 }
 
 ///////////////////////////////////////////////////
@@ -64,10 +69,13 @@ CmusikThread::CmusikThread()
 CmusikThread::CmusikThread( ACE_THR_FUNC func, void* args, bool join )
 {
 	m_Running = false;
-	m_Paused = false;
+	m_Suspended = false;
 	m_Joined = false;
+	m_Finished = false;
+	m_Abort = false;
+	m_Asleep = false;
 
-	Start( func, args, join );
+	m_Args = args;
 }
 
 ///////////////////////////////////////////////////
@@ -81,6 +89,8 @@ CmusikThread::~CmusikThread()
 
 void CmusikThread::Start( ACE_THR_FUNC func, void* args, bool join )
 {
+	m_Args = args;
+
 	// kill the old thread if it 
 	// is running...
 	Kill();
@@ -91,7 +101,7 @@ void CmusikThread::Start( ACE_THR_FUNC func, void* args, bool join )
 
 	// spawn the thread function
 	ACE_Thread::spawn( (ACE_THR_FUNC)func,
-		args,
+		this,
 		THR_JOINABLE | THR_NEW_LWP,
 		m_ThreadID,
 		m_ThreadHND );
@@ -109,7 +119,8 @@ void CmusikThread::Start( ACE_THR_FUNC func, void* args, bool join )
 
 	m_Joined = join;
 	m_Running = true;
-	m_Paused = false;
+	m_Suspended = false;
+	m_Finished = false;
 }
 
 ///////////////////////////////////////////////////
@@ -117,31 +128,41 @@ void CmusikThread::Start( ACE_THR_FUNC func, void* args, bool join )
 void CmusikThread::Kill()
 {
 	if ( m_Running )
-	{
-		Pause();
+		Suspend();
 
-		// delete 'em
-		if ( m_ThreadID )
-		{
-			delete m_ThreadID;
-			m_ThreadID = NULL;
-		}
-		if ( m_ThreadHND ) 
-		{
-			delete m_ThreadHND;
-			m_ThreadHND = NULL;
-		}
+	// delete 'em
+	if ( m_ThreadID )
+	{
+		delete m_ThreadID;
+		m_ThreadID = NULL;
+	}
+	if ( m_ThreadHND ) 
+	{
+		delete m_ThreadHND;
+		m_ThreadHND = NULL;
 	}
 }
 
 ///////////////////////////////////////////////////
 
-void CmusikThread::Pause()
+void CmusikThread::Abort()
 {
-	if ( m_Running && !m_Paused )
+	m_Abort = true;
+}
+
+///////////////////////////////////////////////////
+
+void CmusikThread::Suspend( bool wait )
+{
+	if ( m_Running && !m_Suspended )
 	{
-		ACE_Thread::suspend( *m_ThreadHND );
-		m_Paused = true;
+		m_Suspended = true;
+
+		if ( wait )
+		{
+			while ( !m_Asleep )
+				Sleep( 100 );
+		}
 	}
 }
 
@@ -149,10 +170,9 @@ void CmusikThread::Pause()
 
 void CmusikThread::Resume()
 {
-	if ( m_Paused )
+	if ( m_Running & m_Suspended )
 	{
-		ACE_Thread::resume( *m_ThreadHND );
-		m_Paused = false;
+		m_Suspended = false;
 	}
 }
 

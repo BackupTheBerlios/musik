@@ -57,7 +57,6 @@
 #include <Direct.h>
 
 #include "3rdparty/TreePropSheet.h"
-#include ".\mainfrm.h"
 
 ///////////////////////////////////////////////////
 
@@ -70,6 +69,7 @@
 int WM_SELBOXUPDATE			= RegisterWindowMessage( "SELBOXUPDATE" );
 int WM_SELBOXRESET			= RegisterWindowMessage( "SELBOXRESET" );
 
+int WM_BATCHADD_NEW			= RegisterWindowMessage( "BATCHADD_NEW" );
 int WM_BATCHADD_PROGRESS	= RegisterWindowMessage( "BATCHADD_PROGRESS" );
 int WM_BATCHADD_END			= RegisterWindowMessage( "BATCHADD_END" );
 
@@ -135,6 +135,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_DRAGEND, OnDragEnd )
 	ON_REGISTERED_MESSAGE( WM_PLAYERNEWPLAYLIST, OnPlayerNewPlaylist )
 	ON_REGISTERED_MESSAGE( WM_SELBOXRESET, OnSelBoxesReset )
+	ON_REGISTERED_MESSAGE( WM_BATCHADD_NEW, OnBatchAddNew )
 	ON_REGISTERED_MESSAGE( WM_BATCHADD_PROGRESS, OnBatchAddProgress )
 	ON_REGISTERED_MESSAGE( WM_BATCHADD_END, OnBatchAddEnd )
 	ON_REGISTERED_MESSAGE( WM_PLAYER_PLAYSEL, OnPlayerPlaySel )
@@ -203,8 +204,7 @@ void CMainFrame::Initmusik()
 	m_NewSong		= new CmusikFrameFunctor( this );
 	m_LibPlaylist	= NULL;	
 	m_StdPlaylist	= NULL;
-	m_BatchAddThr	= NULL;
-	m_BatchAddFnct	= NULL;
+	m_BatchAddFnct	= new CmusikBatchAddFunctor( this );
 	m_Library		= new CmusikLibrary( ( CStdString )m_Database );
 	m_Prefs			= new CmusikPrefs( m_PrefsIni );
 
@@ -237,6 +237,23 @@ void CMainFrame::Initmusik()
 
 void CMainFrame::Cleanmusik()
 {
+	// the threads need to be cleaned first becuase
+	// they are attached to nearly everything: the 
+	// player, library, etc, etc... so we need to:
+	// suspend, set abort switch, and then
+	// resume any remaning threads...
+	for ( size_t i = 0; i < m_Threads.size(); i++ )
+	{
+		m_Threads.at( i )->Suspend( true );
+		m_Threads.at( i )->Abort();
+		m_Threads.at( i )->Resume();
+
+		while ( !m_Threads.at( i )->m_Finished )
+			Sleep( 50 );
+
+		delete m_Threads.at( i );
+	}
+
 	if ( m_Library )	
 	{
 		delete m_Library;
@@ -271,6 +288,12 @@ void CMainFrame::Cleanmusik()
 	{
 		delete m_LibPlaylist;
 		m_LibPlaylist = NULL;
+	}
+
+	if ( m_BatchAddFnct )
+	{
+		delete m_BatchAddFnct;
+		m_BatchAddFnct = NULL;
 	}
 }
 
@@ -923,42 +946,42 @@ void CMainFrame::OnOpenFiles()
 
 	if ( opendlg.DoModal() == IDOK )
 	{
-		CStdStringArray* files;
-
-		if ( m_BatchAddThr )
-		{
-			m_BatchAddThr->Pause();
-			files = m_BatchAddThr->m_Files;
-		}
-		else
-			files = new CStdStringArray();
+		CStdStringArray* files = new CStdStringArray();
 
 		POSITION posCurr = opendlg.GetStartPosition();
 		while ( posCurr )
 			files->push_back( (CStdString)opendlg.GetNextPathName( posCurr ) );
 
-		if ( m_BatchAddThr )
-			m_BatchAddThr->Resume();
-
-		else if ( !m_BatchAddThr )
+		if ( files->size() > 0 )
 		{
-			if ( files->size() > 0 )
-			{
-				if ( m_BatchAddFnct )
-				{
-					TRACE0( "Last thread ended but functor still active? This is a bug...\n" );
-					delete m_BatchAddFnct;
-					m_BatchAddFnct = NULL;
-				}	
+			CmusikBatchAdd* params = new CmusikBatchAdd( files, NULL, m_Library, NULL, m_BatchAddFnct, 0, 0, 1 );
+			CmusikThread* thread = new CmusikThread();
+			thread->Start( (ACE_THR_FUNC)musikBatchAddWorker, (void*)params );
 
-				m_BatchAddFnct = new CmusikBatchAddFunctor( this );
-				m_BatchAddThr = new CmusikBatchAdd( files, m_Player->GetPlaylist(), m_Library, NULL, m_BatchAddFnct );
-				m_BatchAddThr->Run();
-			}
-			else
-				delete files;
+			m_Threads.push_back( thread );
 		}
+		else
+			delete files;
 	}
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CMainFrame::OnBatchAddNew( WPARAM wParam, LPARAM lParam )
+{
+	CmusikBatchAdd* params = (CmusikBatchAdd*)wParam;
+
+	if ( params )
+	{
+		params->m_Functor = m_BatchAddFnct;
+
+		CmusikThread* thread = new CmusikThread();
+		thread->Start( (ACE_THR_FUNC)musikBatchAddWorker, (void*)params );
+
+		m_Threads.push_back( thread );		
+	}
+
+	return 0L;
 }
 
 ///////////////////////////////////////////////////
@@ -972,16 +995,22 @@ LRESULT CMainFrame::OnBatchAddProgress( WPARAM wParam, LPARAM lParam )
 
 LRESULT CMainFrame::OnBatchAddEnd( WPARAM wParam, LPARAM lParam )
 {
-	if ( m_BatchAddThr )
-	{
-		delete m_BatchAddThr;
-		m_BatchAddThr = NULL;
-	}
+	CmusikThread* ptr_thr = (CmusikThread*)wParam;
 
-	if ( m_BatchAddFnct )
+	// if we get here, a batch add thread
+	// has finished successfully, so go
+	// ahead and clean it up
+	for ( size_t i = 0; i < m_Threads.size(); i++ )
 	{
-		delete m_BatchAddFnct;
-		m_BatchAddFnct = NULL;
+		if ( ptr_thr == m_Threads.at( i ) )
+		{
+			// delete the completed thread
+			delete m_Threads.at( i );
+
+			// erase from array
+			m_Threads.erase( m_Threads.begin() + i );
+			break;
+		}
 	}
 
 	ResetSelBoxes();
@@ -1011,48 +1040,26 @@ void CMainFrame::OnOpenDirectory()
 			imalloc->Release ( );
 		}
 
-		// files... if there is a thread already
-		// running then pause it and add the relevant
-		// data to it's file list, otherwise make
-		// a new list...
-		CStdStringArray* files;
-		if ( m_BatchAddThr )
-		{
-			m_BatchAddThr->Pause();
-			files = m_BatchAddThr->m_Files;
-		}
-		else
-			files = new CStdStringArray();
+		CStdStringArray* files = new CStdStringArray();
 
         // get all the musik related files
 		// in the directory we just found...
 		CStdString sPath = path;
 		sPath += "\\*.*";
-		CmusikDir dir( sPath, files, NULL, false, false );
+		CmusikDir dir( sPath, files, NULL );
 		dir.Run();
 
         // now fire the thread up...
-		if ( m_BatchAddThr )
-			m_BatchAddThr->Resume();
-
-		else if ( !m_BatchAddThr )
+		if ( files->size() > 0 )
 		{
-			if ( files->size() > 0 )
-			{
-				if ( m_BatchAddFnct )
-				{
-					TRACE0( "Last thread ended but functor still active? This is a bug...\n" );
-					delete m_BatchAddFnct;
-					m_BatchAddFnct = NULL;
-				}	
+			CmusikBatchAdd* params = new CmusikBatchAdd( files, NULL, m_Library, NULL, m_BatchAddFnct, 0, 0, 1 );
+			CmusikThread* thread = new CmusikThread();
+			thread->Start( (ACE_THR_FUNC)musikBatchAddWorker, (void*)params );
 
-				m_BatchAddFnct = new CmusikBatchAddFunctor( this );
-				m_BatchAddThr = new CmusikBatchAdd( files, m_Player->GetPlaylist(), m_Library, NULL, m_BatchAddFnct );
-				m_BatchAddThr->Run();
-			}
-			else 
-				delete files;
+			m_Threads.push_back( thread );
 		}
+		else 
+			delete files;
 	}
 }
 
@@ -1112,3 +1119,4 @@ LRESULT CMainFrame::OnPlayerPlaySel( WPARAM wParam, LPARAM lParam )
 }
 
 ///////////////////////////////////////////////////
+

@@ -17,8 +17,6 @@ class CmusikPlayer;
 class CmusikPrefs;
 class CmusikPlaylist;
 class CmusikDynDspInfo;
-class CmusikBatchAdd;
-class CmusikBatchAddFunctor;
 class CmusikDir;
 
 ///////////////////////////////////////////////////
@@ -136,11 +134,6 @@ protected:
 	bool m_DropArrange;
 	void OnDropFiles(HDROP hDropInfo);
 
-	// custom message maps
-	afx_msg LRESULT OnBatchAddProgress( WPARAM wParam, LPARAM lParam );
-	afx_msg LRESULT OnBatchAddEnd( WPARAM wParam, LPARAM lParam );
-	afx_msg LRESULT OnBatchAddVerifyPlaylist( WPARAM wParam, LPARAM lParam );
-
 	// macros
 	DECLARE_DYNAMIC(CmusikPlaylistCtrl)
 	DECLARE_MESSAGE_MAP()
@@ -156,10 +149,6 @@ private:
 	// dnd stuff
 	bool m_IsWinNT;
 	size_t m_ClipboardFormat;
-
-	// batch add files thread
-	CmusikBatchAdd* m_BatchAddThr;
-	CmusikBatchAddFunctor* m_BatchAddFnct;
 };
 
 ///////////////////////////////////////////////////

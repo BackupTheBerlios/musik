@@ -220,15 +220,6 @@ void CmusikSourcesCtrl::OnDropFiles(HDROP hDropInfo)
 			if ( pSel != pItem && pSel->GetPlaylistType() == pItem->GetPlaylistType() )
 			{
 				MessageBox( "Successful drag" );
-				/*
-				int nSrcIdx, nDstIdx;
-				switch ( pSel->GetPlaylistType() )
-				{
-				case MUSIK_PLAYLIST_TYPE_STANDARD:
-					
-
-				}
-				*/
 			}
 		}
 				
@@ -272,7 +263,6 @@ void CmusikSourcesCtrl::OnDropFiles(HDROP hDropInfo)
 				sTemp += "\\*.*";
 
 				m_Dir.m_Dir = sTemp;
-				m_Dir.m_Threaded = false;
 				m_Dir.m_Target = &files;
 
 				m_Dir.Run();

@@ -468,6 +468,9 @@
 				RelativePath="..\musikCore\include\musikArrays.h">
 			</File>
 			<File
+				RelativePath="..\musikCore\include\musikBatchAdd.h">
+			</File>
+			<File
 				RelativePath="..\musikCore\include\musikConfig.h">
 			</File>
 			<File
@@ -594,16 +597,6 @@
 				</File>
 				<File
 					RelativePath="..\musikCore\include\musikThread.h">
-				</File>
-			</Filter>
-			<Filter
-				Name="musikBatchAdd"
-				Filter="">
-				<File
-					RelativePath="..\musikcore\src\musikBatchAdd.cpp">
-				</File>
-				<File
-					RelativePath="..\musikCore\include\musikBatchAdd.h">
 				</File>
 			</Filter>
 			<Filter

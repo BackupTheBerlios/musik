@@ -41,6 +41,9 @@
 //
 ///////////////////////////////////////////////////
 
+#include "../include/musikLibrary.h"
+#include "../include/musikPlayer.h"
+#include "../include/musikFunctor.h"
 #include "../include/musikPlaylist.h"
 
 ///////////////////////////////////////////////////
@@ -49,11 +52,6 @@ class CmusikLibrary;
 class CmusikPlaylist;
 class CmusikFunctor;
 class CmusikPlayer;
-class CmusikBatchAdd;
-
-///////////////////////////////////////////////////
-
-static void musikBatchAddWorker( CmusikBatchAdd* params );
 
 ///////////////////////////////////////////////////
 
@@ -62,17 +60,37 @@ class CmusikBatchAdd
 public: 
 
 	// construct / destruct
-	CmusikBatchAdd();
+	CmusikBatchAdd()
+	{
+		m_Files					= NULL;
+		m_Playlist				= NULL;
+		m_Functor				= NULL;
+		m_UpdatePlaylist		= false;
+		m_DeleteFilelist		= true;
+		m_AddToPlayer			= false;
+		m_Library				= NULL;
+		m_Player				= NULL;
+		m_CallFunctorOnAbort	= false;
+		m_Abort					= false;
+
+	}
+
 	CmusikBatchAdd( CStdStringArray* pFiles, CmusikPlaylist* pPlaylist, CmusikLibrary* pLibrary, CmusikPlayer* pPlayer, 
-		CmusikFunctor* pFunctor, bool bUpdatePlaylist = false, bool bAddToPlayer = false, bool bDeleteFilelist = true );
+		CmusikFunctor* pFunctor, bool bUpdatePlaylist = false, bool bAddToPlayer = false, bool bDeleteFilelist = true )
+	{
+		m_Files					= pFiles;
+		m_Playlist				= pPlaylist;
+		m_Functor				= pFunctor;
+		m_Library				= pLibrary;
+		m_UpdatePlaylist		= bUpdatePlaylist;
+		m_DeleteFilelist		= bDeleteFilelist;
+		m_Player				= pPlayer;
+		m_AddToPlayer			= bAddToPlayer;
+		m_CallFunctorOnAbort	= false;
+		m_Abort					= false;
+	}
 
 	~CmusikBatchAdd();
-
-	// thread execution
-	void Run();
-	void Kill(){ m_Kill = true; }
-	void Pause();
-	void Resume();
 
 	// we'll allow users to manually set
 	// these variables.
@@ -84,16 +102,88 @@ public:
 	bool m_UpdatePlaylist;
 	bool m_DeleteFilelist;
 	bool m_AddToPlayer;				// negates UpdatePlaylist() and m_Playlist()... will add files to player's playlist
-	bool m_Kill;
+	bool m_CallFunctorOnAbort;
 
-	// user shouldn't call these, they should
-	// be left to the thread...
-	bool IsKilling(){ return m_Kill; }
-
-
-private:
-
-    CmusikThread* m_pThread;	
+	bool m_Abort;
 };
+
+///////////////////////////////////////////////////
+
+static void musikBatchAddWorker( CmusikThread* thread )
+{
+	CmusikBatchAdd* params = (CmusikBatchAdd*)thread->GetArgs();
+
+	size_t curr_prog = 0;
+	size_t last_prog = 0;
+
+	CmusikSong song;
+
+	// sleep if we go idle
+	ACE_Time_Value sleep;
+	sleep.set( 0.1f );
+
+	params->m_Library->BeginTransaction();
+	for( size_t i = 0; i < params->m_Files->size(); i++ )
+	{
+		if ( thread->IsSuspended() )
+		{
+			thread->m_Asleep = true;
+			while ( thread->IsSuspended() )
+				ACE_OS::sleep( sleep );
+			thread->m_Asleep = false;
+		}
+
+		if ( thread->m_Abort )
+		{
+			TRACE0( "CmusikBatchAdd worker function terminated...\n" );
+			break;
+		}
+
+		// add the song
+		params->m_Library->AddSong( params->m_Files->at( i ) );
+
+		if ( params->m_AddToPlayer && params->m_Player && params->m_Player->GetPlaylist() )
+		{
+			params->m_Library->GetSongFromFilename( params->m_Files->at( i ), song );
+			params->m_Player->GetPlaylist()->Add( song );
+		}
+
+		else if ( params->m_UpdatePlaylist && params->m_Playlist )
+		{
+			if ( params->m_Functor->VerifyPlaylist( (void*)params->m_Playlist ) )
+			{
+				params->m_Library->GetSongFromFilename( params->m_Files->at( i ), song );
+				params->m_Playlist->Add( song );
+			}
+			else
+			{
+				CStdString s;
+				s.Format( "Failed to add song to playlist at address %d becuase it couldn't be verified", params->m_Playlist );
+				TRACE0( s.c_str() );
+			}
+		}
+
+		// post progress to the functor
+		curr_prog = ( 100 * i ) / params->m_Files->size();
+		if ( curr_prog != last_prog )
+		{
+			params->m_Functor->OnThreadProgress( curr_prog );
+			last_prog = curr_prog;
+		}
+
+	}
+	params->m_Library->EndTransaction();
+
+
+	// delete thread
+	// trigger functor (to delete file list)
+	if ( params->m_DeleteFilelist )
+		delete params->m_Files;
+
+	if ( ( params->m_Abort && params->m_CallFunctorOnAbort ) || !params->m_Abort )
+		params->m_Functor->OnThreadEnd( (void*)thread );
+
+	thread->m_Finished = true;
+}
 
 ///////////////////////////////////////////////////

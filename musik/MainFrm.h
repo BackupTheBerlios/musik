@@ -67,8 +67,8 @@ class CmusikLibrary;
 class CmusikPlaylist;
 class CmusikPlayer;
 class CmusikFrameFunctor;
-class CmusikBatchAdd;
 class CmusikBatchAddFunctor;
+//class CmusikThreadPtrArray;
 
 ///////////////////////////////////////////////////
 
@@ -164,6 +164,7 @@ protected:
 	afx_msg LRESULT OnBatchAddProgress( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnBatchAddEnd( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnPlayerPlaySel( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnBatchAddNew( WPARAM wParam, LPARAM lParam );
 
 	// mfc message maps
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -180,8 +181,10 @@ protected:
 	// updating ui
 	void OnUpdateMainMenu( CCmdUI* pCmd );
 
-	// batch add files thread
-	CmusikBatchAdd* m_BatchAddThr;
+	// list of all threads running
+	CmusikThreadPtrArray m_Threads;
+
+	// batch add files threads to use
 	CmusikBatchAddFunctor* m_BatchAddFnct;
 
 	// macros

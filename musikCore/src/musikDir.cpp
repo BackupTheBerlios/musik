@@ -6,52 +6,25 @@
 
 ///////////////////////////////////////////////////
 
-static void musikDirAddWorker( CmusikDir* params )
-{
-	if ( params->m_Functor )
-		params->m_Functor->OnThreadStart();
-
-	OpenDir( params->m_Dir, params->m_Target, params->m_Functor, true );
-
-	if ( params->m_Functor )
-		params->m_Functor->OnThreadEnd();
-}
-
-///////////////////////////////////////////////////
-
 CmusikDir::CmusikDir()
 {
 	m_Target = NULL;
 	m_Functor = NULL;
-	m_Threaded = false;
-
-	m_pThread = NULL;
 }
 
 ///////////////////////////////////////////////////
 
-CmusikDir::CmusikDir( CStdString dir, CStdStringArray* target, CmusikFunctor* functor, bool threaded, bool start )
+CmusikDir::CmusikDir( CStdString dir, CStdStringArray* target, CmusikFunctor* functor )
 {
 	m_Target = target;
 	m_Dir = dir;
 	m_Functor = functor;
-	m_Threaded = threaded;
-
-	m_pThread = NULL;
-
-	if ( dir && start )
-		Run();
 }
 
 ///////////////////////////////////////////////////
 
 CmusikDir::~CmusikDir()
 {
-	if ( m_pThread )
-	{
-		m_pThread->Kill();
-		delete m_pThread;
-	}
 }
 
 
@@ -59,6 +32,7 @@ CmusikDir::~CmusikDir()
 
 // avoid multiple constructor calls
 // during file find recursion...
+
 CStdStringArray* g_Target;
 CmusikFunctor* g_Functor;
 int g_Count;
@@ -154,46 +128,8 @@ void OpenDir( CStdString dir, CStdStringArray* target, CmusikFunctor* functor, b
 
 void CmusikDir::Run()
 {
-	if ( m_Threaded && !m_pThread )
-	{
-		if ( m_Target && !m_Dir.IsEmpty() && m_Functor )
-		{
-			m_pThread = new CmusikThread();
-			m_pThread->Start( (ACE_THR_FUNC)musikDirAddWorker, this );
-			return;
-		}
-
-		TRACE0( "CmusikDir::Run() thread failed\n" );
-	}
-	else
-	{
-		OpenDir( m_Dir, m_Target, m_Functor, true );
-		return;
-	}
-}
-
-///////////////////////////////////////////////////
-
-void CmusikDir::Pause()
-{
-	if ( m_pThread )
-		m_pThread->Pause();
-}
-
-///////////////////////////////////////////////////
-
-void CmusikDir::Resume()
-{
-	if ( m_pThread )
-		m_pThread->Resume();
-}
-
-///////////////////////////////////////////////////
-
-void CmusikDir::Kill()
-{
-	if ( m_pThread )
-		m_pThread->Kill();
+	OpenDir( m_Dir, m_Target, m_Functor, true );
+	return;
 }
 
 ///////////////////////////////////////////////////

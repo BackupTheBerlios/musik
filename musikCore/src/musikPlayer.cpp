@@ -57,9 +57,13 @@
 
 ///////////////////////////////////////////////////
 
-static void musikPlayerWorker( CmusikPlayer* player )
+static void musikPlayerWorker( CmusikThread* thread )
 {
-	TRACE0( "Player thread initialized\n" );
+	TRACE0( "Player worker thread function started...\n" );
+
+	void *pArgs = thread->GetArgs();
+
+	CmusikPlayer* player = (CmusikPlayer*)thread->GetArgs();
 
 	ACE_Thread_Mutex m_ProtectingStreams;
 
@@ -67,10 +71,21 @@ static void musikPlayerWorker( CmusikPlayer* player )
 	sleep_regular.set( 0.1 );
 	sleep_tight.set( 0.1 );
 
-	while ( !player->IsShuttingDown() )
+	bool m_Exit = false;
+	while ( !thread->m_Abort && !m_Exit )
 	{
-		// check every half second
-		if ( player->IsPlaying() )
+		// suspended? go to sleep until the flag
+		if ( thread->IsSuspended() )
+		{
+			thread->m_Asleep = true;
+			while ( thread->IsSuspended() )
+				ACE_OS::sleep( sleep_regular );
+			thread->m_Asleep = false;
+		}
+
+		// check every half second if we're plaing
+		// and not aborting. 
+		if ( player->IsPlaying() && !thread->m_Abort && !m_Exit && !thread->IsSuspended() )
 		{
 			// start a tighter loop if the crossfader 
 			// is inactive and there is less than
@@ -233,8 +248,10 @@ static void musikPlayerWorker( CmusikPlayer* player )
 						else if ( player->GetFadeType() == MUSIK_CROSSFADER_EXIT )
 						{
 							player->FinalizeExit();
-							player->SetSafeShutdown();
-							return;
+
+							// set the kill switch
+							m_Exit = true;
+							continue;
 						}
 
 						else if ( player->GetFadeType() == MUSIK_CROSSFADER_NEW_SONG  )
@@ -246,13 +263,11 @@ static void musikPlayerWorker( CmusikPlayer* player )
 			}			
 		}
 
-		else if ( !player->IsPlaying() && player->IsShuttingDown() )
-			player->SetSafeShutdown();
-
 		ACE_OS::sleep( sleep_regular );
 	}
 
-	TRACE0( "Player thread terminated\n" );	
+	TRACE0( "Player thread worker function complete...\n" );	
+	thread->m_Finished = true;
 }
 
 ///////////////////////////////////////////////////
@@ -283,7 +298,6 @@ CmusikPlayer::CmusikPlayer( CmusikFunctor* functor, CmusikLibrary* library )
 
 	m_IsPlaying			= false;
 	m_IsPaused			= false;
-	m_ShutDown			= false;
 	m_IsCrossfaderReady	= false;
 
 	m_EQ				= NULL;
@@ -312,16 +326,18 @@ CmusikPlayer::CmusikPlayer( CmusikFunctor* functor, CmusikLibrary* library )
 
 CmusikPlayer::~CmusikPlayer()
 {
+	// flag shutdown crossfade
 	Exit();
 
-	// thread will trigger this back
-	// once it has exited
-	if ( IsPlaying() && IsCrossfaderEnabled() )
+	// wait until the thread is complete
+	if ( m_pThread )
 	{
-		while ( !m_ShutDown )
+		if ( !IsPlaying() || !IsCrossfaderEnabled() )
+			m_pThread->Abort();
+
+		while ( !m_pThread->m_Finished )
 			Sleep( 100 );
 	}
-
 
 	FSOUND_Close();
 	
@@ -338,7 +354,10 @@ CmusikPlayer::~CmusikPlayer()
 void CmusikPlayer::InitThread()
 {
 	if ( !m_pThread )
-		m_pThread = new CmusikThread( (ACE_THR_FUNC)musikPlayerWorker, this );
+	{
+		m_pThread = new CmusikThread();
+		m_pThread->Start( (ACE_THR_FUNC)musikPlayerWorker, (void*)this );
+	}
 }
 
 ///////////////////////////////////////////////////
@@ -347,7 +366,16 @@ void CmusikPlayer::CleanThread()
 {
 	if ( m_pThread )
 	{
-		m_pThread->Kill();
+		// assure thread has abort flag, although
+		// it is probably already finished
+		if ( !m_pThread->m_Abort )
+			m_pThread->Abort();
+
+		// don't delete anything until it's done
+		while ( !m_pThread->m_Finished )
+			Sleep( 100 );
+
+		// finish up
 		delete m_pThread;
 		m_pThread = NULL;
 	}
@@ -712,10 +740,7 @@ void CmusikPlayer::Exit()
 		FlagCrossfade();
 	}
 	else
-	{
-		m_ShutDown = true;
-		CleanOldStreams( true );
-	}
+		FinalizeExit();
 }
 
 ///////////////////////////////////////////////////
@@ -796,6 +821,9 @@ void CmusikPlayer::CleanEQ_DSP()
 void CmusikPlayer::CleanOldStreams( bool kill_primary )
 {
 	ASSERT( m_ActiveStreams->size() == m_ActiveChannels->size() );
+
+	if ( !m_ActiveStreams->size() )
+		return;
 
 	size_t nStreamCount = m_ActiveStreams->size();
 

@@ -46,7 +46,6 @@ ADD_LIBRARY( musikCore
 	${musikCore_SOURCE_DIR}/src/musikOggInfo	
 	${musikCore_SOURCE_DIR}/src/musikMp3Info
 	${musikCore_SOURCE_DIR}/src/musikThread
-	${musikCore_SOURCE_DIR}/src/musikBatchAdd
 	${musikCore_SOURCE_DIR}/src/musikDir
 	${musikCore_SOURCE_DIR}/src/vcedit
 	)

@@ -212,16 +212,6 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="musikBatchAdd"
-			Filter="">
-			<File
-				RelativePath=".\src\musikBatchAdd.cpp">
-			</File>
-			<File
-				RelativePath=".\include\musikBatchAdd.h">
-			</File>
-		</Filter>
-		<Filter
 			Name="musikDir"
 			Filter="">
 			<File
@@ -233,6 +223,9 @@
 		</Filter>
 		<File
 			RelativePath=".\include\musikArrays.h">
+		</File>
+		<File
+			RelativePath=".\include\musikBatchAdd.h">
 		</File>
 		<File
 			RelativePath=".\include\musikConfig.h">

@@ -64,24 +64,40 @@ public:
 
 	// functions
 	void Start( ACE_THR_FUNC func, void* args, bool join = true );
-	void Pause();
+	void Suspend( bool wait = false );
 	void Resume();
+	void Abort();
 	void Kill();
-	void Wait();
+
+	void* GetArgs(){ return m_Args; }
 
 	// attributes
 	bool IsRunning(){ return m_Running; }
-	bool IsPaused(){ return m_Paused; }
+	bool IsSuspended(){ return m_Suspended; }
 	bool IsJoined(){ return m_Joined; }
+
+	// this tells the thread to break whatever
+	// it is doing and cleanup. 
+	bool m_Abort;
+
+	// should not be set except by a worker
+	// function!
+	bool m_Finished;
+
+	// the worker thread should exclusivly set
+	// this one
+	bool m_Asleep;
 
 private:
 
 	bool m_Running;
-	bool m_Paused;
+	bool m_Suspended;
 	bool m_Joined;
 
 	ACE_thread_t* m_ThreadID;
 	ACE_hthread_t* m_ThreadHND;
+
+	void* m_Args;
 
 };
 

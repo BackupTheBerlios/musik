@@ -28,29 +28,19 @@ class CmusikDir
 {
 public:
 
+	// construct and destruct
 	CmusikDir();
-	CmusikDir( CStdString dir, CStdStringArray* target = NULL, CmusikFunctor* functor = NULL, bool threaded = false, bool start = false );
+	CmusikDir( CStdString dir, CStdStringArray* target = NULL, CmusikFunctor* functor = NULL );
 	~CmusikDir();
 
+	// the few functions we have
 	void SetTarget( CStdStringArray* target ){	m_Target = target;	}
-
-	// thread execution
 	void Run();
-	void Kill();
-	void Pause();
-	void Resume();
 
 	// values we need
 	CStdStringArray* m_Target;
 	CStdString m_Dir;
 	CmusikFunctor* m_Functor;
-	bool m_Threaded;
-
-protected:
-
-	// thread it will run on
-	CmusikThread* m_pThread;
-
 };
 
 ///////////////////////////////////////////////////
