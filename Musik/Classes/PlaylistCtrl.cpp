@@ -470,7 +470,7 @@ void CPlaylistCtrl::EndDragCol( wxListEvent& event )
 void CPlaylistCtrl::PlaySel( wxListEvent& WXUNUSED(event) )
 {
 	// need to update to clear some repainting issues
-	Refresh( false );
+	// Refresh( false );
 	g_Player.PlayCurSel();
 }
 

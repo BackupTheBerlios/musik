@@ -250,7 +250,7 @@ void MusikFrame::DeleteImageLists()
 	//-------------------------------------------------//
 	//--- wxListCtrl::SetImageList() is supposed to	---//
 	//--- NOT delete the image list, but in wxGTK	---//
-	//--- it apparently does. 							---//
+	//--- it apparently does. 						---//
 	//-------------------------------------------------//
 	#ifdef __WXMSW__
 		g_SourcesImages->RemoveAll();

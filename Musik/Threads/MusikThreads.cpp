@@ -68,8 +68,6 @@ void MusikFaderThread::StartNew()
 	pCrossfader = new MusikCrossfaderThread( this );
 	pCrossfader->Create();
 	pCrossfader->Run();
-
-	SetCrossfaderActive();
 }
 
 void *MusikFaderThread::Entry()
@@ -87,25 +85,27 @@ void *MusikFaderThread::Entry()
 			if ( g_Player.BeginFade() )	
 			{
 				//-------------------------------------------------//
-				//--- let the player know we got the message	---//
-				//-------------------------------------------------//
- 				g_Player.CaughtBeginFade();
-
-				//-------------------------------------------------//
 				//--- kill the existing crossfade thread (if	---//
 				//--- it exists still)							---//
 				//-------------------------------------------------//
 				if ( IsCrossfaderActive() )
 					CrossfaderAbort();
 
-				//-------------------------------------------------//
-				//--- if no old crossfader is active, fire up a	---//
-				//--- new one. if there was one active, once it	---//
-				//--- cleans up, an event will be posted to		---//
-				//--- start a new one.							---//
-				//-------------------------------------------------//
 				else
+				{
+					//-------------------------------------------------//
+					//--- let the player know we got the message	---//
+					//-------------------------------------------------//
+ 					g_Player.CaughtBeginFade();
+
+					//-------------------------------------------------//
+					//--- if no old crossfader is active, fire up a	---//
+					//--- new one. if there was one active, once it	---//
+					//--- cleans up, an event will be posted to		---//
+					//--- start a new one.							---//
+					//-------------------------------------------------//
 					StartNew();
+				}
 			}
 
 			if ( ( !g_Player.IsStartingNext() ) && ( !g_Player.IsFading() ) && ( g_Player.GetTimeLeft( FMOD_MSEC ) <= ( g_Prefs.nFadeDuration + 1000 ) ) )
@@ -155,6 +155,7 @@ void MusikFaderThread::OnExit()
 //---------------------------------------------------------//
 MusikCrossfaderThread::MusikCrossfaderThread( MusikFaderThread *pParent )
 {
+	m_FadeType		= g_Player.GetCrossfadeType();
 	m_Parent		= pParent;
 	m_StopPlayer	= false;
 	m_Aborted		= false;
@@ -172,6 +173,8 @@ void MusikCrossfaderThread::SetStopPlayer()
 
 void *MusikCrossfaderThread::Entry()
 {
+	m_Parent->SetCrossfaderActive();
+
 	//-------------------------------------------------//
 	//--- if the fade duration * 2 (fade in and		---//
 	//--- fade out) is shorter than the stream 		---//
@@ -187,7 +190,6 @@ void *MusikCrossfaderThread::Entry()
 	//--- how many and which channels will be faded	---//
 	//--- in and/or out.							---//
 	//-------------------------------------------------//
-	m_FadeType = g_Player.GetCrossfadeType();
 	int nFadeInStreamID		= -1;
 	size_t nFadeOutStreams	= 0;
 	
@@ -310,8 +312,6 @@ void *MusikCrossfaderThread::Entry()
 
 void MusikCrossfaderThread::OnExit()
 {
-	m_Parent->SetCrossfaderActive( false );
-
 	//-------------------------------------------------//
 	//--- if we ended naturally, that means no		---//
 	//--- other crossfader spawned. tell the player	---//
@@ -353,8 +353,7 @@ void MusikCrossfaderThread::OnExit()
 	//--- signal. the thread was just killed, so	---//
 	//--- start a new one up.						---//
 	//-------------------------------------------------//
-	if ( m_Aborted )
-		m_Parent->StartNew();
+	m_Parent->SetCrossfaderActive( false );
 }
 
 //---------------------------------------------------------//

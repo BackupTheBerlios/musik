@@ -428,7 +428,7 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 //--- event will be called twice. no good. thats why there are three events that do the same	---//
 //--- thing.																					---//
 //--- to save the #ifdef code on linux and win is the same, would not be						---//
-//--- neccessary but doesnt harm.																	---//
+//--- neccessary but doesnt harm.																---//
 //-------------------------------------------------------------------------------------------------//
 
 void CActivityAreaCtrl::OnActivityBoxFocused( wxListEvent& event )
