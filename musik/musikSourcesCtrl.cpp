@@ -229,7 +229,7 @@ void CmusikSourcesCtrl::OnDropFiles(HDROP hDropInfo)
 	}
 
 	// make sure the item isn't root
-	if ( pItem != NULL && pItem->IsRootLevel() )
+	if ( pItem != NULL && pItem != m_StdPlaylistRoot )
 		return;
 
 	if ( pItem )
@@ -301,20 +301,16 @@ void CmusikSourcesCtrl::OnDropFiles(HDROP hDropInfo)
 		}
 	}
 
-	// else make a new playlist
-	else
+	// didn't hit an item, a new 
+	// playlist was created, so it
+	// was pushed to the back of the list
+	if ( !pItem || pItem == m_StdPlaylistRoot )
 	{
 		CStdString playlist_str;
 		playlist_str.Format( _T( "New Playlist %d" ), m_StdPlaylists.size() );
 		m_Library->CreateStdPlaylist( playlist_str.c_str(), files );
 		LoadStdPlaylists();
-	}
 
-	// didn't hit an item, a new 
-	// playlist was created, so it
-	// was pushed to the back of the list
-	if ( !pItem )
-	{
 		pItem = m_StdPlaylists.at( m_StdPlaylists.size() - 1 );
 
 		// focus
