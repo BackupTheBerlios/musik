@@ -887,7 +887,7 @@ void CPlaylistCtrl::Update( bool bSelFirst, bool  bRescaleColumns)
 	wxListCtrlSelNone( this );
 
 	//--- sel first item, if we're supposed to ---//
-	if ( bSelFirst )
+	if ( bSelFirst && GetItemCount() )
 		SetItemState( 0, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );	
 	Thaw();
 	Refresh( false );

@@ -187,7 +187,6 @@ CSourcesListBox::CSourcesListBox( wxPanel* parent, wxWindowID id )
 
 	InsertColumn( 0, _( "Sources" ), wxLIST_FORMAT_LEFT );
 	SetDropTarget( new SourcesDropTarget( this ) );
-	SetItemState( 0, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
 
 	m_Deleting = false;
 
