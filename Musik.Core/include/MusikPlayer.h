@@ -44,6 +44,13 @@
 //   Create the class and using the basic playback controls,
 //   such as CMusikPlayer::Play(), CMusikPlayer::Next(), etc.
 //
+//   To make things easy, CMusikPlayer will manage it's own
+//   playlist. Once it takes control of the playlist, via
+//   SetPlaylist(), it will take on freeing, creating, and
+//   maintaining it... this includes deleting it. Once a user
+//   has passed the playlist to the player, he should never, ever
+//   delete it manually, unless he calls CleanPlaylist().
+//
 ///////////////////////////////////////////////////
 
 #ifndef C_MUSIK_PLAYER_H
@@ -122,6 +129,7 @@ public:
 	// deinitialization stuff
 	int  InitSound( int device, int driver, int rate, int channels, int mode = MUSIK_PLAYER_INIT_START );
 	void CleanSound();
+	void CleanPlaylist();
 
 	// crossfader stuff
 	void InitCrossfader();
@@ -130,10 +138,6 @@ public:
 	CMusikCrossfader* GetCrossfader(){ return m_Crossfader; }
 	void FinishCrossfade();
 	void SetCrossfader( CMusikCrossfader fader, bool force_init = true );
-
-	// playlist management
-	void CleanPlaylist();
-	void InitBlankPlaylist();
 
 	// equalizer stuff
 	void InitEQ_DSP();

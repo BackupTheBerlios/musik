@@ -476,6 +476,7 @@ void CMusikPlayer::StopSound()
 
 void CMusikPlayer::SetPlaylist( CMusikPlaylist* playlist )
 {
+	CleanPlaylist();
 	m_Playlist = playlist;
 }
 
@@ -483,7 +484,14 @@ void CMusikPlayer::SetPlaylist( CMusikPlaylist* playlist )
 
 bool CMusikPlayer::Play( int index, int fade_type, int start_pos )
 {
-	// verify song can even 
+	// verify playlist even exists
+	if ( !m_Playlist )
+	{
+		TRACE0( "Playlist does not exist.\n" );
+		return false;
+	}
+
+	// verify song can is within the playlist's range 
 	if ( index >= (int)m_Playlist->GetCount() || index < 0 )
 	{
 		TRACE0( "Playlist song out of range.\n" );
@@ -566,6 +574,9 @@ bool CMusikPlayer::Play( int index, int fade_type, int start_pos )
 
 bool CMusikPlayer::Next()
 {
+	if ( !m_Playlist )
+		return false;
+
 	if ( GetPlaymode() == MUSIK_PLAYER_PLAYMODE_LOOP || GetPlaymode() == MUSIK_PLAYER_PLAYMODE_NORMAL )
 	{
 		if ( m_Index + 1 == (int)m_Playlist->GetCount() )
@@ -589,6 +600,9 @@ bool CMusikPlayer::Next()
 
 bool CMusikPlayer::Prev()
 {
+	if ( !m_Playlist )
+		return false;
+
 	if ( GetTimeNow( MUSIK_TIME_MS ) > 2000 )
 	{
 		if ( GetPlaymode() == MUSIK_PLAYER_PLAYMODE_LOOP || GetPlaymode() == MUSIK_PLAYER_PLAYMODE_NORMAL )
@@ -844,14 +858,6 @@ void CMusikPlayer::CleanPlaylist()
 		delete m_Playlist;
 		m_Playlist = NULL;
 	}
-}
-
-///////////////////////////////////////////////////
-
-void CMusikPlayer::InitBlankPlaylist()
-{
-	CleanPlaylist();
-	m_Playlist = new CMusikPlaylist();
 }
 
 ///////////////////////////////////////////////////
