@@ -73,6 +73,7 @@ private:
 
 CPlaylistBox::CPlaylistBox( wxWindow *parent )
 	: wxPanel( parent, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ),  wxTAB_TRAVERSAL|wxCLIP_CHILDREN|wxSUNKEN_BORDER )
+	
 {
 	SetBackgroundColour( WXSYSTEMCOLOUR(wxT("LIGHT STEEL BLUE")));
 
@@ -186,7 +187,6 @@ wxDragResult PlaylistDropTarget::OnData(wxCoord x, wxCoord y, wxDragResult def)
 		else if( dobj == (wxDataObjectSimple *)m_pFileDObj )
 			bRes = OnDropFiles(x, y, m_pFileDObj->GetFilenames());
 	}
-	g_DragInProg = false;
 	return bRes ? def : wxDragNone;
 }
 
@@ -210,7 +210,6 @@ bool PlaylistDropTarget::OnDropSonglist( wxCoord x, wxCoord y, const wxString &s
 		if ( m_pPlaylistCtrl->DNDIsSel( n ) )
 		{
 			m_pPlaylistCtrl->aCurSel.Clear();
-			g_DragInProg = false;
 			return false;
 		}
 
@@ -228,7 +227,6 @@ bool PlaylistDropTarget::OnDropSonglist( wxCoord x, wxCoord y, const wxString &s
 			if ( n == -2 )
 			{	//--- error, couldn't locate our position ---//
 				InternalErrorMessageBox(wxT("Could not find previous item's position."));
-				g_DragInProg = false;
 				return false;
 			}
 			if(n >= nLastSelItem)
@@ -249,13 +247,20 @@ wxDragResult PlaylistDropTarget::OnDragOver(wxCoord x, wxCoord y, wxDragResult d
 	//--- calls HighlightSel() to highlight the item the mouse is over ---//
 	//m_pPlaylistCtrl->SetFocus();
 	const wxPoint& pt = wxPoint( x, y );
+	if(m_pPlaylistCtrl->m_bInternalDragInProcess)
+	{	 // check if dnd makes sense
+		if((g_SourcesCtrl->GetSelType() == MUSIK_SOURCES_LIBRARY) 
+			|| (g_SourcesCtrl->GetSelType() == MUSIK_SOURCES_NOW_PLAYING)
+			|| (g_SourcesCtrl->GetSelType() == MUSIK_SOURCES_PLAYLIST_DYNAMIC)
+			)
+			return wxDragNone;
+	}
 	return HighlightSel( pt ) ? def : wxDragNone;
 }
 
 bool PlaylistDropTarget::HighlightSel( const  wxPoint & pPos )
 {
 	//--- gotta set this so stuff doesn't keep updating ---//
-	g_DragInProg	= true;
 	int nFlags;
 	long n = m_pPlaylistCtrl->HitTest( pPos, nFlags );
 	m_pPlaylistCtrl->SetFocus();
@@ -276,7 +281,6 @@ bool PlaylistDropTarget::HighlightSel( const  wxPoint & pPos )
 
 	//--- this is a quick way to check if we need to update ---//
 	nLastHit = n;
-	g_DragInProg	= false;
 	return true;
 }
 
@@ -286,6 +290,7 @@ bool PlaylistDropTarget::HighlightSel( const  wxPoint & pPos )
 CPlaylistCtrl::CPlaylistCtrl( CPlaylistBox *parent, const wxWindowID id, const wxPoint& pos, const wxSize& size )
 	:	CMusikListCtrl		( parent, id, pos, size,wxNO_BORDER)
 	,m_pParent(parent)
+	,m_bInternalDragInProcess(false)
 {
 	SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ) );
 
@@ -298,8 +303,7 @@ CPlaylistCtrl::CPlaylistCtrl( CPlaylistBox *parent, const wxWindowID id, const w
 	SetDropTarget( new PlaylistDropTarget( this ) );
 
 	//--- not dragging, no selections ---//
-	g_DragInProg = false;
-	nCurSel = -1;
+	m_nCurSel = -1;
 	m_Overflow = 0;
 	m_bColDragging = false;
 
@@ -401,13 +405,15 @@ wxMenu * CPlaylistCtrl::CreateContextMenu()
 	playlist_context_menu->AppendSeparator();
 	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_TAGNODE,			_( "Edit &Tag" ),				playlist_context_edit_tag_menu );
 
-	if(!bIsNowPlayingSelected)
-		playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_PLAYNODE,		!bNetStreamSel );
-	//	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_DELETENODE,	!bNetStreamSel );
+	//if(!bIsNowPlayingSelected)
+	//	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_PLAYNODE,		!bNetStreamSel );
+	if(!bIsNowPlayingSelected)	
+		playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_DELETENODE,	!bNetStreamSel );
 	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_RENAME_FILES, !bNetStreamSel );
 	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_RETAG_FILES,	!bNetStreamSel );
 	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_RATENODE,		!bNetStreamSel );
 	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_TAGNODE,		!bNetStreamSel );
+	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_SHOW_IN_LIBRARY_NODE,	!bNetStreamSel );
 
 
 	return playlist_context_menu;
@@ -579,9 +585,6 @@ void CPlaylistCtrl::OnDisplaySmart( wxCommandEvent& WXUNUSED(event) )
 
 void CPlaylistCtrl::BeginDrag( wxListEvent& WXUNUSED(event) )
 {
-	//--- let program know we're dragging ---//
-	g_DragInProg = true;
-
 	//--- pass selected items ---//
 	wxString sValidSelFiles = GetSelFiles();
 	if(!sValidSelFiles.IsEmpty())
@@ -593,10 +596,10 @@ void CPlaylistCtrl::BeginDrag( wxListEvent& WXUNUSED(event) )
 		wxDropSource dragSource( this );
 		CMusikSonglistDataObject song_data( sDrop );
 		dragSource.SetData( song_data );
+		m_bInternalDragInProcess = true;
 		dragSource.DoDragDrop( TRUE );
+		m_bInternalDragInProcess = false;
 	}
-	//--- tell program we're done dragging ---//
-	g_DragInProg = false;
 }
 void CPlaylistCtrl::BeginDragCol(wxListEvent& WXUNUSED(event))
 {
@@ -815,8 +818,8 @@ wxString CPlaylistCtrl::GetItemText(long item, EPLAYLISTCOLUMNS eColumnType) con
 		return ConvFromUTF8(song.MetaData.Notes);
 	case PLAYLISTCOLUMN_TIMEADDED:
 		{
-			wxDateTime dt(song.TimeAdded);
-			return dt.Format(wxT("%x %X"));
+		wxDateTime dt(song.TimeAdded);
+		return dt.Format(wxT("%x %X"));
 		}
 		break;
 	
@@ -1035,8 +1038,7 @@ void CPlaylistCtrl::ShowIcons()
 
 void CPlaylistCtrl::UpdateSel( wxListEvent& event )
 {
-	if ( !g_DragInProg ) 
-		nCurSel = event.GetIndex();
+	m_nCurSel = event.GetIndex();
 }
 
 void CPlaylistCtrl::ResynchItem( int item, int lastitem, bool refreshonly )
@@ -1509,9 +1511,6 @@ void CPlaylistCtrl::DNDDone()
 {
 	//--- finalize dragging ---//
 	Update(false);
-	g_DragInProg = false;
-	
-
 	//--- clean up ---//
 	aCurSel.Clear();
 }
@@ -1594,18 +1593,15 @@ void CPlaylistCtrl::OnPlayEnqueued	( wxCommandEvent& WXUNUSED(event) )
 }
 void CPlaylistCtrl::OnPlayReplace	( wxCommandEvent& WXUNUSED(event) )
 {	
-	
-	int nCurSel = GetNextItem( -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED );
-	if ( nCurSel > -1 )
+	if ( m_nCurSel > -1 )
 	{
-		wxGetApp().Player.PlayReplaceList(nCurSel,g_Playlist);
+		wxGetApp().Player.PlayReplaceList(m_nCurSel,g_Playlist);
 	}
 }
 
 void CPlaylistCtrl::OnPlayReplaceWithSel( wxCommandEvent& WXUNUSED(event) )
 {	
-	int nCurSel = GetNextItem( -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED );
-	if ( nCurSel > -1 )
+	if ( m_nCurSel > -1 )
 	{
 		CMusikSongArray aResult;
 		GetSelectedSongs(aResult);
@@ -1617,10 +1613,9 @@ void CPlaylistCtrl::OnShowInLibrary( wxCommandEvent& event )
 {
 	int id = event.GetId() - MUSIK_PLAYLIST_CONTEXT_SHOW_IN_LIBRARY_ARTIST;
 
-	int nCurSel = GetNextItem( -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED );
 	CActivityBox * pBox = g_ActivityAreaCtrl->GetActivityBox((EMUSIK_ACTIVITY_TYPE)(MUSIK_LBTYPE_ARTISTS + id));
 	wxString sEntry;
-	if ( nCurSel > -1 && pBox)
+	if ( m_nCurSel > -1 && pBox)
 	{
 		EPLAYLISTCOLUMNS column = PLAYLISTCOLUMN_ARTIST;
 		switch(MUSIK_LBTYPE_ARTISTS + id)
@@ -1638,7 +1633,7 @@ void CPlaylistCtrl::OnShowInLibrary( wxCommandEvent& event )
 			column = PLAYLISTCOLUMN_YEAR;
 			break;
 		}
-		sEntry = GetItemText( nCurSel, column);
+		sEntry = GetItemText( m_nCurSel, column);
 		g_ActivityAreaCtrl->ResetAllContents();
 		g_SourcesCtrl->SelectLibrary();
 		pBox->SetFocus();

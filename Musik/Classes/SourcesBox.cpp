@@ -78,7 +78,6 @@ wxDragResult SourcesDropTarget::OnData(wxCoord x, wxCoord y, wxDragResult def)
 			bRes = OnDropSonglist(x, y, m_pSonglistDObj->GetText());
 		}
 	}
-	g_DragInProg = false;
 	return bRes ? def : wxDragNone;
 }
 
@@ -192,13 +191,20 @@ bool SourcesDropTarget::HighlightSel( const wxPoint &pPos )
 	EMUSIK_SOURCES_TYPE Type = m_SourcesListBox->GetType(n);
 	if(n != m_SourcesListBox->m_CurSel)
 		m_SourcesListBox->SetItemState( m_SourcesListBox->m_CurSel, 0, wxLIST_STATE_FOCUSED );
-	if(Type == MUSIK_SOURCES_NONE)
-		return true;// drag over non, means create new playlist from drag data
-	else if((Type != MUSIK_SOURCES_NOW_PLAYING) && (Type != MUSIK_SOURCES_PLAYLIST_STANDARD) )
+	if(m_SourcesListBox->GetDragIndex() == -1)
+	{// NOT dragging from source to source
+		if(Type == MUSIK_SOURCES_NONE)
+			return true;// drag over non, means create new playlist from drag data
+		else if((Type != MUSIK_SOURCES_NOW_PLAYING) && (Type != MUSIK_SOURCES_PLAYLIST_STANDARD) )
+		{
+			return false;
+		}
+	}
+	else if(Type == MUSIK_SOURCES_LIBRARY)
 	{
+		// do not move library source entry
 		return false;
 	}
-
 	long topitem = m_SourcesListBox->GetTopItem();
 	long countperpage = m_SourcesListBox->GetCountPerPage();
 	if( n == topitem && n > 0)
@@ -208,10 +214,7 @@ bool SourcesDropTarget::HighlightSel( const wxPoint &pPos )
 	
 	if ( n != nLastHit )
 	{
-		g_DragInProg = true;
-//		wxListCtrlSelNone( m_SourcesListBox );
 		m_SourcesListBox->SetItemState( n, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED );
-		g_DragInProg = false;
 	}
 	nLastHit = n;
 	return true;
@@ -304,6 +307,7 @@ wxMenu * CSourcesListBox::CreateContextMenu()
 
 	wxMenu * submenu_new = new wxMenu;
 	submenu_new->Append( MUSIK_SOURCE_CONTEXT_CREATE_CURRENT_PLAYLIST, _( "Playlist from Current" ) );
+	submenu_new->Enable(MUSIK_SOURCE_CONTEXT_CREATE_CURRENT_PLAYLIST,g_PlaylistBox->PlaylistCtrl().GetCount());
 	submenu_new->AppendSeparator();
 	submenu_new->Append( MUSIK_SOURCE_CONTEXT_STANDARD_PLAYLIST, _( "Standard Playlist" ) );
 	submenu_new->Append( MUSIK_SOURCE_CONTEXT_DYNAMIC_PLAYLIST, _( "Dynamic Playlist" ) );
@@ -319,6 +323,8 @@ wxMenu * CSourcesListBox::CreateContextMenu()
 	{
 		context_menu->AppendSeparator();
 		context_menu->Append( MUSIK_SOURCE_CONTEXT_COPY_FILES, _("Copy files to directory") );
+		context_menu->Enable( MUSIK_SOURCE_CONTEXT_COPY_FILES,g_PlaylistBox->PlaylistCtrl().GetCount());
+
 	}
 	return context_menu;
 
@@ -439,8 +445,6 @@ void CSourcesListBox::BeginDrag( wxListEvent &event )
 {
 	if ( m_CurSel != -1 )
 	{
-		g_DragInProg = true;
-
 		//-------------------------//
 		//--- get selected item	---//
 		//-------------------------//
@@ -458,13 +462,12 @@ void CSourcesListBox::BeginDrag( wxListEvent &event )
 
 		Update();
 		m_DragIndex		= -1;
-		g_DragInProg = false;
 	}
 }
 
 void CSourcesListBox::OnUpdateSel( wxListEvent& pEvent )
 {
-	if ( !g_DragInProg && !m_Deleting )
+	if (  !m_Deleting )
         UpdateSel( pEvent.GetIndex() );	
 }
 

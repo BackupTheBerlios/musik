@@ -99,9 +99,7 @@ extern CSourcesBox			*g_SourcesCtrl;
 //------------//
 //--- misc ---//
 //------------//
-extern bool g_DragInProg;
 extern bool g_SelInProg;
-extern bool g_FocusDone;
 extern bool g_TimeSeeking;
 extern bool g_DisablePlacement;
 

@@ -146,9 +146,6 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSelectedBox )
 	}
 	else
 		m_pLastSelectedBox = pSelectedBox;
-	//-- avoid updating playlists when dragging over activity area --//
-	if ( g_DragInProg )
-		return;
 
 	if ( !pSelectedBox )
 	{

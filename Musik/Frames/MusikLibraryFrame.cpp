@@ -650,9 +650,12 @@ void MusikLibraryFrame::OnThreadEnd( wxCommandEvent& event )
 		{
 			CMusikSongArray songs;
 			wxGetApp().Library.GetFilelistSongs( m_arrScannedFiles, songs );
-			wxGetApp().Player.InsertToPlaylist(songs,true);
-			g_SourcesCtrl->SelectNowPlaying();
-			g_PlaylistBox->Update();
+			if(	songs.GetCount())
+			{
+				wxGetApp().Player.InsertToPlaylist(songs,true);
+				g_SourcesCtrl->SelectNowPlaying();
+				g_PlaylistBox->Update();
+			}
 		}
 		else if (bDatabaseChanged && wxGetApp().Prefs.bShowAllSongs == 1 && (g_SourcesCtrl->GetSelType() == MUSIK_SOURCES_LIBRARY))
 		{
@@ -707,7 +710,7 @@ void MusikLibraryFrame::OnThreadProg( wxCommandEvent& event )
 			//--- MusikLibraryFrame::OnThreadScanProg will set title ---//
 			//----------------------------------------------------------//
 			lcPaths->SetItem( event.GetExtraLong(), 1, IntTowxString( m_Total ), -1 );
-			lcPaths->SetItem( event.GetExtraLong(), 2, IntTowxString( m_New ), -1 );
+			lcPaths->SetItem( event.GetExtraLong(), 2, (m_New >= 0) ? IntTowxString( m_New ): wxT("-"), -1 );
 			gProgress->SetValue( ( event.GetExtraLong() * 100 ) /  g_Paths.GetCount() );
 		}
 

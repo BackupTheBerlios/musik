@@ -333,7 +333,6 @@ wxString GetFramePlacement( wxFrame* frame )
 	bool maximized = frame->IsMaximized();
 	bool iconized = frame->IsIconized();
 	wxString s = wxString::Format( wxT("%d,%d,%d,%d,%d,%d"), pos.x, pos.y, size.x, size.y, maximized, iconized );
-	wxLogDebug( s );
 	return s;
 }
 
@@ -859,3 +858,39 @@ wxString GetForbiddenChars(wxPathFormat format)
 
 	return strForbiddenChars;
 }
+
+
+// MusikLogWindow
+// -----------
+
+MusikLogWindow::MusikLogWindow(wxFrame *pParent,
+						 const wxChar *szTitle,
+						 long style)
+						 :m_Style(style)
+						 ,wxLogWindow(pParent,szTitle,style & MUSIK_LW_ShowInitial,style & MUSIK_LW_DoPass)
+{
+}
+
+
+
+void MusikLogWindow::DoLogString(const wxChar *szString, time_t t)
+{
+
+	wxLogWindow::DoLogString(szString,t);
+
+	if(m_Style & MUSIK_LW_ShowOnLog)
+		Show(TRUE);
+}
+
+
+bool MusikLogWindow::OnFrameClose(wxFrame * frame)
+{
+	if(m_Style & MUSIK_LW_ClearContentOnClose)
+	{
+		wxCommandEvent ev(wxEVT_COMMAND_MENU_SELECTED,wxID_CLEAR);
+		frame->ProcessEvent(ev);
+	}
+	// allow to close
+	return TRUE;
+}
+

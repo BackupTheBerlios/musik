@@ -63,8 +63,8 @@ public:
 	//---------------//
 	bool Load		();
 	void Shutdown	();
-	void AddSongDataFromFile	( const wxString & filename );
-	void UpdateSongDataFromFile	( const wxString & filename );
+	bool AddSongDataFromFile	( const wxString & filename );
+	bool UpdateSongDataFromFile	( const wxString & filename );
 	void BeginTransaction()
 	{ 	wxCriticalSectionLocker lock( m_csDBAccess );
 		sqlite_exec_printf( m_pDB, "begin transaction;", NULL, NULL, NULL );
@@ -89,7 +89,7 @@ public:
 	bool RetagFile			( const CMusikTagger & tagger, CMusikSong* song );
 	bool ReplaceMask		( wxString *sSrc, wxString sMask, wxString sTarget, bool bReplaceAll = true  );
 	int  ClearDirtyTags		( );
-	void WriteTag			(  CMusikSong & song, bool ClearAll, bool bUpdateDB = true );
+	bool WriteTag			(  CMusikSong & song, bool ClearAll, bool bUpdateDB = true );
 	
 	//----------------//
 	//--- removing ---//
@@ -156,7 +156,7 @@ private:
 	void AddWMA				( const wxString & filename );
 	void AddAIFF			( const wxString & filename );
 
-	void WriteMP3Tag		( const CSongMetaData & MetaData, bool ClearAll );
+	bool WriteMP3Tag		( const CSongMetaData & MetaData, bool ClearAll );
 	bool WriteOGGTag		( const CSongMetaData & MetaData, bool ClearAll );
 
 	wxString  m_sSortAllSongsQuery;

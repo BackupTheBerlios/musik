@@ -159,7 +159,7 @@ inline wxString FilenameAsUrl(const wxFileName &fn)
 {
 	wxString url = fn.GetFullPath(wxPATH_NATIVE);
 #ifdef __WXMSW__
-	url.Replace(wxT("\\"), wxT("/"));
+  	url.Replace(wxT("\\"), wxT("/"));
 	url.Replace(wxT("//http/"),wxT("http://"));
 #else
 	url.Replace(wxT("http:/"),wxT("http://"));
@@ -327,6 +327,30 @@ class CMusikTagger
 public:
 	CMusikTagger(const wxString &sMask, bool bConvertUnderscoresToSpaces);
 	bool Retag(CMusikSong * Song) const;
+};
+
+// styles
+#define	 MUSIK_LW_ClearContentOnClose 0x00000001
+#define	 MUSIK_LW_DoPass			  0x00000002
+#define	 MUSIK_LW_ShowInitial		  0x00000004
+#define	 MUSIK_LW_ShowOnLog			  0x00000008
+
+
+class  MusikLogWindow : public wxLogWindow
+{
+public:
+	MusikLogWindow(wxFrame *pParent,         // the parent frame (can be NULL)
+		const wxChar *szTitle,    // the title of the frame
+		long style);  //see above  (MUSIK_LW_XXX)
+
+	virtual bool OnFrameClose(wxFrame *frame);
+
+protected:
+	virtual void DoLogString(const wxChar *szString, time_t t);
+
+private:
+	long	m_Style;	
+	DECLARE_NO_COPY_CLASS(MusikLogWindow)
 };
 
 #endif

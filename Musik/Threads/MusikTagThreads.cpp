@@ -83,13 +83,13 @@ void *MusikTagApplyThread::Entry()
 						//--- rename will update the lib, so if	---//
 						//--- we're not renaming, update db too	---//
 						//-----------------------------------------//
-						wxGetApp().Library.WriteTag( m_Songs.Item( i ),(bool)wxGetApp().Prefs.bTagDlgClear ,wxGetApp().Prefs.bTagDlgRename == 0 );
+						wxGetApp().Library.WriteTag( m_Songs.Item( i ),wxGetApp().Prefs.bTagDlgClear ,wxGetApp().Prefs.bTagDlgRename == false );
 					}
 
 					//-----------------------------//
 					//--- write tag for db only ---//
 					//-----------------------------//
-					if ( wxGetApp().Prefs.bTagDlgWrite == 0 && wxGetApp().Prefs.bTagDlgRename == 0 )
+					if ( wxGetApp().Prefs.bTagDlgWrite == false && wxGetApp().Prefs.bTagDlgRename == false )
 					{
 						wxGetApp().Library.UpdateItem( m_Songs.Item( i ), true );
 					}

@@ -91,7 +91,7 @@ bool  COggInfo::WriteMetaData(const CSongMetaData & MetaData,bool bClearAll)
 		return false;
 	}
 
-	//--- if the file *DID* load, but is *NOT* and ogg, return ---//
+	//--- if the file *DID* load, but is *NOT* an ogg, return ---//
 	if( vcedit_open( state, inFile ) < 0 )
 	{
 		fclose(inFile);
@@ -137,8 +137,21 @@ bool  COggInfo::WriteMetaData(const CSongMetaData & MetaData,bool bClearAll)
 		fclose(outFile);
 	//--- clean up ---//
 	vcedit_clear( state );
-	// rename tempfile to origninal file
-	return ( bTagWritingSucceded && wxRenameFile( outfilename, MetaData.Filename.GetFullPath() ) );
+	if( bTagWritingSucceded )
+	{
+		// rename tempfile to original file
+		if(wxRenameFile( outfilename, MetaData.Filename.GetFullPath() ))
+		{
+			return true;
+		}
+		else
+		{// delete the tempfile
+			::wxRemoveFile(outfilename);
+			return false;
+		}
+	}
+	else
+		return false;
 }
 
 void COggInfo::CVCTagMap::AddTagsFromVC(vorbis_comment *pComment)

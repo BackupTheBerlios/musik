@@ -42,12 +42,15 @@ public:
 	wxThread * Thread() { return m_pThread;}
 	wxThread::ExitCode Join()
 	{
-		wxASSERT(m_pThread);
-		wxThread::ExitCode rc = m_pThread->Wait();
-		if(m_bThreadDeleteCalled)// we have called thread->Delete() ( see Empty() method)  so we dont delete the object right now. we are called recursive, because ->Delete() dispaches messyage while wyiting for thread ending
-			return rc;
-		delete m_pThread;
-		m_pThread = NULL;
+		wxThread::ExitCode rc = 0;
+		if(m_pThread)
+		{
+			rc = m_pThread->Wait();
+			if(m_bThreadDeleteCalled)// we have called thread->Delete() ( see Empty() method)  so we dont delete the object right now. we are called recursive, because ->Delete() dispaches messyage while wyiting for thread ending
+				return rc;
+			delete m_pThread;
+			m_pThread = NULL;
+		}
 		return rc;
 	}
 

@@ -152,9 +152,6 @@ void MusikTaskBarIcon::OnLButtonDClick(wxEvent&)
 MusikFrame::MusikFrame() 
 	: wxFrame( (wxFrame*)NULL, -1, MUSIKAPPNAME_VERSION, wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE | wxTAB_TRAVERSAL | wxCLIP_CHILDREN )
 {
-	//--- no selection in progress / no dragging yet ---//
-	g_DragInProg		= false;
-
 	//--- pointer to main dialog, defined in MusikGlobals ---//
 	g_MusikFrame = this;
 

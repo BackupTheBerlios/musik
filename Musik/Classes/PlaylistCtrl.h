@@ -105,7 +105,7 @@ public:
 	//------------//
 	//--- gets ---//
 	//------------//
-	int				GetIndex		() { return nCurSel; }
+	int				GetIndex		() { return m_nCurSel; }
 	wxString		GetSubitemText	( int nItem, int Subitem );
 	wxString		GetAllFiles		();
 	wxString		GetSelFiles		();
@@ -123,7 +123,7 @@ public:
 	//--- sets ---//
 	//------------//
 	
-	void			SetIndex			( int n ){ nCurSel = n; }
+	void			SetIndex			( int n ){ m_nCurSel = n; }
 
 	//--------------//
 	//--- others ---//
@@ -162,7 +162,12 @@ public:
 
 	int GetProgress				()						{ return m_Progress;		}
 	int GetProgressType			()						{ return m_ProgressType;	}
+	DECLARE_EVENT_TABLE()
 
+protected:
+	virtual bool OnRescaleColumns() {RescaleColumns(false); return true;}
+	void RescaleColumns		( bool bFreeze = true, bool bSave = false, bool bAutoFit = false );
+	wxMenu * CreateContextMenu();
 	//--- vars ---//
 	wxArrayInt		aCurSel;
 
@@ -170,13 +175,9 @@ public:
 	//--- selection index. gets called ---//
 	//--- whenever a selection is made ---//
 	//------------------------------------//
-	int				nCurSel;
+	int				m_nCurSel;
+	bool m_bInternalDragInProcess;
 
-	DECLARE_EVENT_TABLE()
-protected:
-	virtual bool OnRescaleColumns() {RescaleColumns(false); return true;}
-	void RescaleColumns		( bool bFreeze = true, bool bSave = false, bool bAutoFit = false );
-	wxMenu * CreateContextMenu();
 
 private:
 
@@ -217,7 +218,8 @@ private:
 	CThreadController m_ActiveThreadController;
 	int m_Progress;
 	int m_ProgressType;
-	
+
+	friend class PlaylistDropTarget;
 
 };
 

@@ -86,7 +86,7 @@ public:
 	size_t	GetTotal			()	{ return m_Total;			}
 
 	void SetTotal				( size_t n )	{ m_Total = n;		}
-	void SetNew					( size_t n )	{ m_New = n;		}
+	void SetNew					( long n )	{ m_New = n;		}
 
 	wxListCtrl		*lcPaths;
 	wxGauge			*gProgress;
@@ -120,7 +120,7 @@ private:
 
 	wxArrayString m_arrScannedFiles;
 	size_t m_Total;
-	size_t m_New;
+	long m_New;
 	size_t m_ScanCount;
 	
 

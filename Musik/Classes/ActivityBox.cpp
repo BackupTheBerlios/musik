@@ -341,7 +341,7 @@ BEGIN_EVENT_TABLE(CActivityBox, wxPanel)
 	EVT_MENU					( MUSIK_SOURCE_CONTEXT_RENAME,						CActivityBox::OnRename				)	
 
 END_EVENT_TABLE()
-
+#if 0 // old code
 //-----------------//
 //--- dnd stuff ---//
 //-----------------//
@@ -409,15 +409,11 @@ void ActivityDropTarget::HighlightSel( wxPoint pPos )
 	long n = pList->HitTest( pPos, nFlags );
 	if ( ( n > 0 ) && ( n != nLastHit ) )
 	{
-		g_DragInProg = true;
-		//wxListCtrlSelNone( pList );
 		pList->SetItemState( n, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED );
-		g_DragInProg = false;
-
 	}
 	nLastHit = n;
 }
-
+#endif // 0 old code
 CActivityBox::CActivityBox( wxWindow *parent, wxWindowID id, EMUSIK_ACTIVITY_TYPE nType )
 	:  wxPanel( parent, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ),wxTAB_TRAVERSAL | wxNO_BORDER | wxCLIP_CHILDREN )
 {
@@ -751,8 +747,6 @@ void CActivityBox::EditDone()
 //-------------------//
 void CActivityBox::DNDBegin()
 {
-	g_DragInProg = true;
-
 	wxString sDrop = DNDGetList();
 
 	//-------------------------------------------------------//
@@ -763,8 +757,6 @@ void CActivityBox::DNDBegin()
 	CMusikSonglistDataObject song_data( sDrop );
 	dragSource.SetData( song_data );
 	dragSource.DoDragDrop( TRUE );
-
-	g_DragInProg = false;
 }
 
 wxString CActivityBox::DNDGetList()

@@ -394,7 +394,7 @@ bool CMusikLibrary::FileInLibrary( const wxString & filename, bool fullpath )
 	return result;
 }
 
-void CMusikLibrary::AddSongDataFromFile( const wxString & filename )
+bool CMusikLibrary::AddSongDataFromFile( const wxString & filename )
 {
 	//-----------------------------------------------------//
 	//--- we don't need to worry about duplicate files	---//
@@ -403,7 +403,7 @@ void CMusikLibrary::AddSongDataFromFile( const wxString & filename )
 	//-----------------------------------------------------//
 
 	if ( filename.IsEmpty() )
-		return;
+		return true;
 
 	
 	CSongMetaData MetaData;
@@ -437,12 +437,13 @@ void CMusikLibrary::AddSongDataFromFile( const wxString & filename )
 	
 	}
 
+	return bRet;
 }
 
-void CMusikLibrary::UpdateSongDataFromFile( const wxString & filename )
+bool CMusikLibrary::UpdateSongDataFromFile( const wxString & filename )
 {
 	if ( filename.IsEmpty() )
-		return;
+		return true;
 
 	
 	CSongMetaData MetaData;
@@ -470,6 +471,7 @@ void CMusikLibrary::UpdateSongDataFromFile( const wxString & filename )
 			);
 	
 	}
+	return bRet;
 }
 
 bool CMusikLibrary::GetMetaData( CSongMetaData & MetaData  )
@@ -485,6 +487,11 @@ bool CMusikLibrary::GetMetaData( CSongMetaData & MetaData  )
 
 	if ( MetaData.Title.Length() == 0 )
 			MetaData.Title = ConvToUTF8( MetaData.Filename.GetFullPath() );
+	if(bRet == false)
+	{
+		::wxLogWarning(_("Parsing of file %s failed."),(const wxChar *)MetaData.Filename.GetFullPath());
+	}
+
 	return bRet;
 
 }
@@ -531,25 +538,30 @@ bool CMusikLibrary::GetMP3MetaData( CSongMetaData & MetaData )
 	return false;
 }
 
-void CMusikLibrary::WriteTag(  CMusikSong & song, bool ClearAll , bool bUpdateDB )
+bool CMusikLibrary::WriteTag(  CMusikSong & song, bool ClearAll , bool bUpdateDB )
 {
 
+	bool bRet = true;
 	if ( song.MetaData.eFormat == MUSIK_FORMAT_MP3 )
-		WriteMP3Tag( song.MetaData, ClearAll );
+		bRet = WriteMP3Tag( song.MetaData, ClearAll );
 	else if ( song.MetaData.eFormat == MUSIK_FORMAT_OGG )
-		WriteOGGTag( song.MetaData, ClearAll );
+		bRet = WriteOGGTag( song.MetaData, ClearAll );
 	else
-		return;
-	if( bUpdateDB )
+		return false;
+
+	if( bRet && bUpdateDB )
 	{
 		//-----------------------------//
 		//--- flag item as clean	---//
 		//-----------------------------//
 		UpdateItem( song , false );
 	}
+	else if(bRet == false)
+		::wxLogWarning(_("Writing tags to file %s failed."),(const wxChar *)song.MetaData.Filename.GetFullPath());
+   return bRet;
 }
 
-void CMusikLibrary::WriteMP3Tag( const CSongMetaData & MetaData, bool ClearAll )
+bool CMusikLibrary::WriteMP3Tag( const CSongMetaData & MetaData, bool ClearAll )
 {
 	ID3_Tag	id3Tag;
 	id3Tag.Link( ( const char* )ConvW2A( MetaData.Filename.GetFullPath () ) , (flags_t)ID3TT_ALL );
@@ -594,7 +606,7 @@ void CMusikLibrary::WriteMP3Tag( const CSongMetaData & MetaData, bool ClearAll )
 		ID3_AddGenre( &id3Tag, genreid,	true );											// write ID3V1 integer genre id
 
 	//--- write to file ---//
-	id3Tag.Update();	
+	return (id3Tag.Update() != ID3TT_NONE);
 }
 
 bool CMusikLibrary::WriteOGGTag( const CSongMetaData & MetaData, bool bClearAll )

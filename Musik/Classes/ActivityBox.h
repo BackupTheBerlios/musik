@@ -221,7 +221,7 @@ private:
 	int m_Progress;
 	int m_ProgressType;
 };
-
+#if 0
 class ActivityDropTarget : public wxTextDropTarget
 {
 public:
@@ -236,5 +236,5 @@ private:
 	CActivityListBox *pList;
 	int nLastHit;
 };
-
+#endif // 0
 #endif

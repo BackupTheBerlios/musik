@@ -400,8 +400,8 @@ void *MusikWriteDirtyThread::Entry()
 			//-----------------------------//
 			//--- write the tag to file	---//
 			//-----------------------------//
-			wxGetApp().Library.WriteTag( aDirty.Item( i ), m_Clear ,false); // no db update
-			wxGetApp().Library.UpdateItemResetDirty( aDirty.Item( i )); // just clear dirty flag
+			if(wxGetApp().Library.WriteTag( aDirty.Item( i ), m_Clear ,false)) // no db update
+				wxGetApp().Library.UpdateItemResetDirty( aDirty.Item( i )); // just clear dirty flag, if WriteTag was successfull
 
 		}
 

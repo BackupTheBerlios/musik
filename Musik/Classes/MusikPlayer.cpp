@@ -1434,6 +1434,8 @@ void CMusikPlayer::RefreshInternalPlaylist()
 	for(int i = m_Playlist.GetCount() - 1 ;i >= 0 ;i--)
 	{
 		CMusikSong & refSong = m_Playlist[i];
+		if(refSong.MetaData.eFormat == MUSIK_FORMAT_NETSTREAM)
+			continue; // skip net streams
 		if(false == wxGetApp().Library.GetSongFromSongid(refSong.songid,&refSong))
 			m_Playlist.RemoveAt(i);
 	}

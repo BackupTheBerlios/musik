@@ -59,8 +59,8 @@ public:
 	virtual void OnExit();
 
 private:
-	wxArrayString* m_Add;
-	wxArrayString* m_Del;
+	wxArrayString* m_pPathesToAdd;
+	wxArrayString* m_pPathesDel;
 	bool m_bCompleteRebuild;
 };
 

@@ -172,6 +172,8 @@ bool MusikApp::OnInit()
 	pMain->SetTitle( MUSIKAPPNAME_VERSION );
 	pMain->Show();
 
+	new MusikLogWindow(pMain,wxString::Format(_("%s Logging Window"),MUSIKAPPNAME),MUSIK_LW_ClearContentOnClose|MUSIK_LW_ShowOnLog); 
+
 	SetTopWindow( pMain );
 
 	//--- start webserver if necessary ---//
