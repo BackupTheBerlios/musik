@@ -1,10 +1,5 @@
-#if !defined(AFX_PROPTREELIST_H__2E09E831_09F5_44AA_B41D_9C4BF495873C__INCLUDED_)
-#define AFX_PROPTREELIST_H__2E09E831_09F5_44AA_B41D_9C4BF495873C__INCLUDED_
-
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
-// PropTreeList.h : header file
+///////////////////////////////////////////////////
+// PropTree.h : header file
 //
 //  Copyright (C) 1998-2001 Scott Ramsay
 //	sramsay@gonavi.com
@@ -24,24 +19,35 @@
 //
 //  Modified by Casey Langen for Musik MFC port...
 //  Rather than linking to a dll or external lib, it compiles in.
+//  Changes default look and behavior as well. Much thanks to the
+//  Author Scott Ramsay.
+///////////////////////////////////////////////////
+
+#pragma once
+
+///////////////////////////////////////////////////
 
 class CPropTree;
 
-/////////////////////////////////////////////////////////////////////////////
-// CPropTreeList window
+///////////////////////////////////////////////////
 
 class CPropTreeList : public CWnd
 {
-// Construction
 public:
+
+	// construct / destruct
 	CPropTreeList();
 	virtual ~CPropTreeList();
 
+	// overrides
 	BOOL Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID);
 
-// Attributes
-public:
+	// misc
+	void UpdateResize();
 	void SetPropOwner(CPropTree* pProp);
+
+	// public message maps
+	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 
 protected:
 	// CPropTree class that this class belongs
@@ -59,25 +65,11 @@ protected:
 	// TRUE if we are dragging the splitter
 	BOOL			m_bColDrag;
 
-// Operations
-public:
-	void UpdateResize();
-
-protected:
+	// misc
 	void RecreateBackBuffer(int cx, int cy);
 	void CheckVisibleFocus();
 
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CPropTreeList)
-	//}}AFX_VIRTUAL
-
-// Implementation
-public:
-
-	// Generated message map functions
-protected:
-	//{{AFX_MSG(CPropTreeList)
+	// protected message maps
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnPaint();
 	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
@@ -88,15 +80,9 @@ protected:
 	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg UINT OnGetDlgCode();
-	//}}AFX_MSG
-public:
-	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+
+	// macros
 	DECLARE_MESSAGE_MAP()
 };
 
-/////////////////////////////////////////////////////////////////////////////
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_PROPTREELIST_H__2E09E831_09F5_44AA_B41D_9C4BF495873C__INCLUDED_)
+///////////////////////////////////////////////////

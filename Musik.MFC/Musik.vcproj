@@ -141,28 +141,6 @@
 				RelativePath=".\MainFrmFunctor.h">
 			</File>
 			<Filter
-				Name="CPropTree"
-				Filter="">
-				<File
-					RelativePath=".\CPropTree\PropTree.cpp">
-				</File>
-				<File
-					RelativePath=".\CPropTree\PropTree.h">
-				</File>
-				<File
-					RelativePath=".\CPropTree\PropTreeItem.cpp">
-				</File>
-				<File
-					RelativePath=".\CPropTree\PropTreeItem.h">
-				</File>
-				<File
-					RelativePath=".\CPropTree\PropTreeList.cpp">
-				</File>
-				<File
-					RelativePath=".\CPropTree\PropTreeList.h">
-				</File>
-			</Filter>
-			<Filter
 				Name="Controls"
 				Filter="">
 				<Filter
@@ -180,6 +158,28 @@
 					<File
 						RelativePath=".\MusikSourcesCtrl.h">
 					</File>
+					<Filter
+						Name="CPropTree"
+						Filter="">
+						<File
+							RelativePath=".\CPropTree\PropTree.cpp">
+						</File>
+						<File
+							RelativePath=".\CPropTree\PropTree.h">
+						</File>
+						<File
+							RelativePath=".\CPropTree\PropTreeItem.cpp">
+						</File>
+						<File
+							RelativePath=".\CPropTree\PropTreeItem.h">
+						</File>
+						<File
+							RelativePath=".\CPropTree\PropTreeList.cpp">
+						</File>
+						<File
+							RelativePath=".\CPropTree\PropTreeList.h">
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="MusikPlaylistCtrl"

@@ -1,4 +1,5 @@
-// PropTreeItem.h
+///////////////////////////////////////////////////
+// PropTree.h : header file
 //
 //  Copyright (C) 1998-2001 Scott Ramsay
 //	sramsay@gonavi.com
@@ -18,38 +19,46 @@
 //
 //  Modified by Casey Langen for Musik MFC port...
 //  Rather than linking to a dll or external lib, it compiles in.
+//  Changes default look and behavior as well. Much thanks to the
+//  Author Scott Ramsay.
+///////////////////////////////////////////////////
 
-#ifndef _PROPTREEITEM_H
-#define _PROPTREEITEM_H
+#pragma once
+
+///////////////////////////////////////////////////
 
 class CPropTree;
 
+///////////////////////////////////////////////////
+
 class CPropTreeItem
 {
-// Construction
 public:
+
+	// construct / destruct
 	CPropTreeItem();
 	virtual ~CPropTreeItem();
 
-// Attributes/Operations
-public:
-	// TreeItem states
+	// treeItem states
 	BOOL IsExpanded();
 	BOOL IsSelected();
 	BOOL IsReadOnly();
 	BOOL IsActivated();
 
+	// set states
 	void Select(BOOL bSelect = TRUE);
 	void Expand(BOOL bExpand = TRUE);
 	void ReadOnly(BOOL bReadOnly = TRUE);
 
-	// Returns TRUE if the point is on the expand button
+	// returns TRUE if the point is on the expand button
 	BOOL HitExpand(const POINT& pt);
 
-	// Returns TRUE if the item is on the root level. Root level items don't have attribute areas
+	// returns TRUE if the item is on the root level. 
+	// root level items don't have attribute areas
 	BOOL IsRootLevel();
 
-	// Returns the total height of the item and all its children
+	// returns the total height of the item and 
+	// all its children
 	LONG GetTotalHeight();
 
 	// Set the items label text
@@ -122,12 +131,14 @@ public:
 	CPropTreeItem* GetChild();
 	CPropTreeItem* GetNextVisible();
 
+	// misc
 	void SetParent(CPropTreeItem* pParent);
 	void SetSibling(CPropTreeItem* pSibling);
 	void SetChild(CPropTreeItem* pChild);
 	void SetNextVisible(CPropTreeItem* pVis);
 
 protected:
+
 	// CPropTree class that this class belongs
 	CPropTree*			m_pProp;
 
@@ -177,4 +188,4 @@ private:
 	CPropTreeItem*		m_pVis;
 };
 
-#endif // _PROPTREEITEM_H
+///////////////////////////////////////////////////

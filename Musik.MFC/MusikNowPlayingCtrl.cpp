@@ -11,7 +11,6 @@
 #include "MusikNowPlayingInfo.h"
 
 #include "../Musik.Core/include/MusikPlayer.h"
-#include ".\musiknowplayingctrl.h"
 
 ///////////////////////////////////////////////////
 

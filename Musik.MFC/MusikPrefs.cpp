@@ -277,13 +277,13 @@ string CMusikPrefs::GetDefPlaylistOrder()
 {
 	CString CRet;
 	CRet.Format( _T( "%d,%d,%d,%d,%d,%d,%d" ), 
-		MUSIK_LIBRARY_TYPE_RATING,
 		MUSIK_LIBRARY_TYPE_TRACKNUM,
 		MUSIK_LIBRARY_TYPE_TITLE,
 		MUSIK_LIBRARY_TYPE_ARTIST,
 		MUSIK_LIBRARY_TYPE_ALBUM,
 		MUSIK_LIBRARY_TYPE_GENRE,
-		MUSIK_LIBRARY_TYPE_DURATION );
+		MUSIK_LIBRARY_TYPE_DURATION,
+		MUSIK_LIBRARY_TYPE_RATING );
 	
 	string sRet = CRet.GetBuffer();
 	return sRet;
@@ -294,7 +294,7 @@ string CMusikPrefs::GetDefPlaylistOrder()
 string CMusikPrefs::GetDefPlaylistSizes()
 {
 	CString CRet;
-	CRet.Format( _T( "50,50,50,50,50,50,50" ) );
+	CRet.Format( _T( "50,168,100,100,80,60,70" ) );
 	
 	string sRet = CRet.GetBuffer();
 	return sRet;

@@ -1,4 +1,5 @@
-// PropTree.cpp : implementation file
+///////////////////////////////////////////////////
+// PropTree.h : header file
 //
 //  Copyright (C) 1998-2001 Scott Ramsay
 //	sramsay@gonavi.com
@@ -18,9 +19,14 @@
 //
 //  Modified by Casey Langen for Musik MFC port...
 //  Rather than linking to a dll or external lib, it compiles in.
+//  Changes default look and behavior as well. Much thanks to the
+//  Author Scott Ramsay.
+///////////////////////////////////////////////////
 
 #include "stdafx.h"
 #include "PropTree.h"
+
+///////////////////////////////////////////////////
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -28,16 +34,26 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+///////////////////////////////////////////////////
+
 #define PROPTREEITEM_EXPANDCOLUMN		16			// width of the expand column
 #define PROPTREEITEM_COLRNG				5			// width of splitter
+
+///////////////////////////////////////////////////
 
 #pragma warning (disable : 4311) // pointer truncation from 'HMENU' to 'UINT'
 #pragma warning (disable : 4312) // conversion from 'DWORD' to 'HBRUSH' of greater size
 
+///////////////////////////////////////////////////
+
 static const CString strOfficeFontName	= _T("Tahoma");
 static const CString strDefaultFontName = _T("MS Sans Serif");
 
+///////////////////////////////////////////////////
+
 HINSTANCE ghInst;
+
+///////////////////////////////////////////////////
 
 static int CALLBACK FontFamilyProcFonts(const LOGFONT FAR* lplf, const TEXTMETRIC FAR*, ULONG, LPARAM)
 {
@@ -46,13 +62,14 @@ static int CALLBACK FontFamilyProcFonts(const LOGFONT FAR* lplf, const TEXTMETRI
 	return strFont.CollateNoCase (strOfficeFontName) == 0 ? 0 : 1;
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// CPropTree
+///////////////////////////////////////////////////
 
 UINT CPropTree::s_nInstanceCount;
 CFont* CPropTree::s_pNormalFont;
 CFont* CPropTree::s_pBoldFont;
 CPropTreeItem* CPropTree::s_pFound;
+
+///////////////////////////////////////////////////
 
 CPropTree::CPropTree() :
 	m_bShowInfo(TRUE),
@@ -67,9 +84,11 @@ CPropTree::CPropTree() :
 	// init global resources only once
 	if (!s_nInstanceCount)
 		InitGlobalResources();
+
 	s_nInstanceCount++;
 }
 
+///////////////////////////////////////////////////
 
 CPropTree::~CPropTree()
 {
@@ -82,25 +101,23 @@ CPropTree::~CPropTree()
 		FreeGlobalResources();
 }
 
+///////////////////////////////////////////////////
 
 BEGIN_MESSAGE_MAP(CPropTree, CWnd)
-	//{{AFX_MSG_MAP(CPropTree)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
 	ON_WM_ENABLE()
 	ON_WM_SYSCOLORCHANGE()
-	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-
-/////////////////////////////////////////////////////////////////////////////
-// CPropTree message handlers
+///////////////////////////////////////////////////
 
 const POINT& CPropTree::GetOrigin()
 {
 	return m_Origin;
 }
 
+///////////////////////////////////////////////////
 
 BOOL CPropTree::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID)
 {
@@ -111,6 +128,7 @@ BOOL CPropTree::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT n
 	return pWnd->Create(pszCreateClass, _T(""), dwStyle, rect, pParentWnd, nID);
 }
 
+///////////////////////////////////////////////////
 
 int CPropTree::OnCreate(LPCREATESTRUCT lpCreateStruct) 
 {
@@ -135,12 +153,14 @@ int CPropTree::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
+///////////////////////////////////////////////////
 
 CWnd* CPropTree::GetCtrlParent()
 {
 	return &m_List;
 }
 
+///////////////////////////////////////////////////
 
 void CPropTree::OnSize(UINT nType, int cx, int cy) 
 {
@@ -148,6 +168,7 @@ void CPropTree::OnSize(UINT nType, int cx, int cy)
 	ResizeChildWindows(cx, cy);
 }
 
+///////////////////////////////////////////////////
 
 void CPropTree::ResizeChildWindows(int cx, int cy)
 {
@@ -155,6 +176,7 @@ void CPropTree::ResizeChildWindows(int cx, int cy)
 		m_List.MoveWindow(0, 0, cx, cy);
 }
 
+///////////////////////////////////////////////////
 
 void CPropTree::InitGlobalResources()
 {
@@ -200,6 +222,7 @@ void CPropTree::InitGlobalResources()
 	s_pBoldFont->CreateFontIndirect(&lf);
 }
 
+///////////////////////////////////////////////////
 
 void CPropTree::FreeGlobalResources()
 {
@@ -216,42 +239,49 @@ void CPropTree::FreeGlobalResources()
 	}
 }
 
+///////////////////////////////////////////////////
 
 CFont* CPropTree::GetNormalFont()
 {
 	return s_pNormalFont;
 }
 
+///////////////////////////////////////////////////
 
 CFont* CPropTree::GetBoldFont()
 {
 	return s_pBoldFont;
 }
 
+///////////////////////////////////////////////////
 
 CPropTreeItem* CPropTree::GetFocusedItem()
 {
 	return m_pFocus;
 }
 
+///////////////////////////////////////////////////
 
 CPropTreeItem* CPropTree::GetRootItem()
 {
 	return &m_Root;
 }
 
+///////////////////////////////////////////////////
 
 void CPropTree::ClearVisibleList()
 {
 	m_pVisbleList = NULL;
 }
 
+///////////////////////////////////////////////////
 
 CPropTreeItem* CPropTree::GetVisibleList()
 {
 	return m_pVisbleList;
 }
 
+///////////////////////////////////////////////////
 
 void CPropTree::AddToVisibleList(CPropTreeItem* pItem)
 {
@@ -276,6 +306,7 @@ void CPropTree::AddToVisibleList(CPropTreeItem* pItem)
 	pItem->SetNextVisible(NULL);
 }
 
+///////////////////////////////////////////////////
 
 BOOL CPropTree::EnumItems(CPropTreeItem* pItem, ENUMPROPITEMPROC proc, LPARAM lParam)
 {
@@ -302,12 +333,14 @@ BOOL CPropTree::EnumItems(CPropTreeItem* pItem, ENUMPROPITEMPROC proc, LPARAM lP
 	return TRUE;
 }
 
+///////////////////////////////////////////////////
 
 void CPropTree::SetOriginOffset(LONG nOffset)
 {
 	m_Origin.y = nOffset;
 }
 
+///////////////////////////////////////////////////
 	
 void CPropTree::UpdatedItems()
 {
@@ -320,6 +353,7 @@ void CPropTree::UpdatedItems()
 	m_List.Invalidate();
 }
 
+///////////////////////////////////////////////////
 
 void CPropTree::DeleteAllItems()
 {
@@ -328,6 +362,7 @@ void CPropTree::DeleteAllItems()
 	m_nLastUID = 1; // reset uid counter
 }
 
+///////////////////////////////////////////////////
 
 void CPropTree::DeleteItem(CPropTreeItem* pItem)
 {
@@ -335,12 +370,14 @@ void CPropTree::DeleteItem(CPropTreeItem* pItem)
 	UpdatedItems();
 }
 
+///////////////////////////////////////////////////
 
 LONG CPropTree::GetColumn()
 {
 	return m_Origin.x;
 }
 
+///////////////////////////////////////////////////
 
 void CPropTree::SetColumn(LONG nColumn)
 {
@@ -358,6 +395,7 @@ void CPropTree::SetColumn(LONG nColumn)
 	Invalidate();
 }
 
+///////////////////////////////////////////////////
 
 void CPropTree::Delete(CPropTreeItem* pItem)
 {
@@ -405,6 +443,7 @@ void CPropTree::Delete(CPropTreeItem* pItem)
 	}
 }
 
+///////////////////////////////////////////////////
 
 void CPropTree::SetFocusedItem(CPropTreeItem* pItem)
 {
@@ -417,6 +456,7 @@ void CPropTree::SetFocusedItem(CPropTreeItem* pItem)
 	Invalidate();
 }
 
+///////////////////////////////////////////////////
 
 void CPropTree::ShowInfoText(BOOL bShow)
 {
@@ -428,6 +468,7 @@ void CPropTree::ShowInfoText(BOOL bShow)
 	ResizeChildWindows(rc.Width(), rc.Height());
 }
 
+///////////////////////////////////////////////////
 
 BOOL CPropTree::IsItemVisible(CPropTreeItem* pItem)
 {
@@ -443,6 +484,7 @@ BOOL CPropTree::IsItemVisible(CPropTreeItem* pItem)
 	return FALSE;
 }
 
+///////////////////////////////////////////////////
 
 void CPropTree::EnsureVisible(CPropTreeItem* pItem)
 {
@@ -490,6 +532,7 @@ void CPropTree::EnsureVisible(CPropTreeItem* pItem)
 	}
 }
 
+///////////////////////////////////////////////////
 
 CPropTreeItem* CPropTree::InsertItem(CPropTreeItem* pItem, CPropTreeItem* pParent)
 {
@@ -526,7 +569,7 @@ CPropTreeItem* CPropTree::InsertItem(CPropTreeItem* pItem, CPropTreeItem* pParen
 	return pItem;
 }
 
-
+///////////////////////////////////////////////////
 
 LONG CPropTree::HitTest(const POINT& pt)
 {
@@ -551,6 +594,7 @@ LONG CPropTree::HitTest(const POINT& pt)
 	return HTCLIENT;
 }
 
+///////////////////////////////////////////////////
 
 CPropTreeItem* CPropTree::FindItem(const POINT& pt)
 {
@@ -572,6 +616,7 @@ CPropTreeItem* CPropTree::FindItem(const POINT& pt)
 	return NULL;
 }
 
+///////////////////////////////////////////////////
 
 CPropTreeItem* CPropTree::FindItem(UINT nCtrlID)
 {
@@ -582,6 +627,7 @@ CPropTreeItem* CPropTree::FindItem(UINT nCtrlID)
 	return s_pFound;
 }
 
+///////////////////////////////////////////////////
 
 BOOL CALLBACK CPropTree::EnumFindItem(CPropTree*, CPropTreeItem* pItem, LPARAM lParam)
 {
@@ -596,12 +642,14 @@ BOOL CALLBACK CPropTree::EnumFindItem(CPropTree*, CPropTreeItem* pItem, LPARAM l
 	return TRUE;
 }
 
+///////////////////////////////////////////////////
 
 BOOL CPropTree::IsDisableInput()
 {
 	return m_bDisableInput;
 }
 
+///////////////////////////////////////////////////
 
 void CPropTree::DisableInput(BOOL bDisable)
 {
@@ -613,6 +661,7 @@ void CPropTree::DisableInput(BOOL bDisable)
 		pWnd->EnableWindow(!bDisable);
 }
 
+///////////////////////////////////////////////////
 
 void CPropTree::SelectItems(CPropTreeItem* pItem, BOOL bSelect)
 {
@@ -622,6 +671,7 @@ void CPropTree::SelectItems(CPropTreeItem* pItem, BOOL bSelect)
 	EnumItems(pItem, EnumSelectAll, (LPARAM)bSelect);
 }
 
+///////////////////////////////////////////////////
 
 CPropTreeItem* CPropTree::FocusFirst()
 {
@@ -643,6 +693,7 @@ CPropTreeItem* CPropTree::FocusFirst()
 	return m_pFocus;
 }
 
+///////////////////////////////////////////////////
 
 CPropTreeItem* CPropTree::FocusLast()
 {
@@ -673,6 +724,7 @@ CPropTreeItem* CPropTree::FocusLast()
 	return pNext;
 }
 
+///////////////////////////////////////////////////
 
 CPropTreeItem* CPropTree::FocusPrev()
 {
@@ -710,6 +762,7 @@ CPropTreeItem* CPropTree::FocusPrev()
 	return pNext;
 }
 
+///////////////////////////////////////////////////
 
 CPropTreeItem* CPropTree::FocusNext()
 {
@@ -751,12 +804,14 @@ CPropTreeItem* CPropTree::FocusNext()
 	return pNext;
 }
 
+///////////////////////////////////////////////////
 
 void CPropTree::UpdateMoveAllItems()
 {
 	EnumItems(&m_Root, EnumMoveAll);
 }
 
+///////////////////////////////////////////////////
 
 void CPropTree::RefreshItems(CPropTreeItem* pItem)
 {
@@ -768,6 +823,7 @@ void CPropTree::RefreshItems(CPropTreeItem* pItem)
 	UpdatedItems();
 }
 
+///////////////////////////////////////////////////
 
 BOOL CALLBACK CPropTree::EnumSelectAll(CPropTree*, CPropTreeItem* pItem, LPARAM lParam)
 {
@@ -779,6 +835,7 @@ BOOL CALLBACK CPropTree::EnumSelectAll(CPropTree*, CPropTreeItem* pItem, LPARAM 
 	return TRUE;
 }
 
+///////////////////////////////////////////////////
 
 BOOL CALLBACK CPropTree::EnumRefreshAll(CPropTree*, CPropTreeItem* pItem, LPARAM)
 {
@@ -790,6 +847,7 @@ BOOL CALLBACK CPropTree::EnumRefreshAll(CPropTree*, CPropTreeItem* pItem, LPARAM
 	return TRUE;
 }
 
+///////////////////////////////////////////////////
 
 BOOL CALLBACK CPropTree::EnumMoveAll(CPropTree*, CPropTreeItem* pItem, LPARAM)
 {
@@ -801,6 +859,7 @@ BOOL CALLBACK CPropTree::EnumMoveAll(CPropTree*, CPropTreeItem* pItem, LPARAM)
 	return TRUE;
 }
 
+///////////////////////////////////////////////////
 
 LRESULT CPropTree::SendNotify(UINT nNotifyCode, CPropTreeItem* pItem)
 {
@@ -844,6 +903,7 @@ LRESULT CPropTree::SendNotify(UINT nNotifyCode, CPropTreeItem* pItem)
 	return 0L;
 }
 
+///////////////////////////////////////////////////
 
 void CPropTree::OnEnable(BOOL bEnable) 
 {
@@ -851,6 +911,7 @@ void CPropTree::OnEnable(BOOL bEnable)
 	Invalidate();
 }
 
+///////////////////////////////////////////////////
 
 void CPropTree::OnSysColorChange() 
 {
@@ -859,9 +920,12 @@ void CPropTree::OnSysColorChange()
 	Invalidate();	
 }
 
+///////////////////////////////////////////////////
 
 BOOL CPropTree::IsSingleSelection()
 {
 	// right now only support single selection
 	return TRUE;
 }
+
+///////////////////////////////////////////////////

@@ -1,4 +1,5 @@
-// PropTreeItem.cpp
+///////////////////////////////////////////////////
+// PropTree.h : header file
 //
 //  Copyright (C) 1998-2001 Scott Ramsay
 //	sramsay@gonavi.com
@@ -18,11 +19,16 @@
 //
 //  Modified by Casey Langen for Musik MFC port...
 //  Rather than linking to a dll or external lib, it compiles in.
+//  Changes default look and behavior as well. Much thanks to the
+//  Author Scott Ramsay.
+///////////////////////////////////////////////////
 
 #include "stdafx.h"
-#include "PropTree.h"
 
+#include "PropTree.h"
 #include "PropTreeItem.h"
+
+///////////////////////////////////////////////////
 
 #define PROPTREEITEM_DEFHEIGHT			21			// default heigt of an item
 #define PROPTREEITEM_SPACE				5			// default horz spacing
@@ -33,11 +39,8 @@
 #define PROPTREEITEM_EXPANDBOXHALF		(PROPTREEITEM_EXPANDBOX/2)
 
 
-/////////////////////////////////////////////////////////////////////////////
-// drawing helper functions
-//
+///////////////////////////////////////////////////
 
-// draw a dotted horizontal line
 static void HLine(HDC hdc, LONG x, LONG y, LONG w, COLORREF color)
 {
 	for (; w>0; w--, x++)
@@ -45,8 +48,6 @@ static void HLine(HDC hdc, LONG x, LONG y, LONG w, COLORREF color)
 	
 }
 
-
-// draw the plus/minus button
 static void _DrawExpand(HDC hdc, LONG x, LONG y, BOOL bExpand, BOOL bFill)
 {
 	HPEN hPen;
@@ -74,9 +75,7 @@ static void _DrawExpand(HDC hdc, LONG x, LONG y, BOOL bExpand, BOOL bFill)
 	DeleteObject(hPen);
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// CPropTreeItem
-//
+///////////////////////////////////////////////////
 
 CPropTreeItem::CPropTreeItem() :
 	m_pProp(NULL),
@@ -97,35 +96,41 @@ CPropTreeItem::CPropTreeItem() :
 {
 }
 
+///////////////////////////////////////////////////
 
 CPropTreeItem::~CPropTreeItem()
 {
 }
 
+///////////////////////////////////////////////////
 
 BOOL CPropTreeItem::IsExpanded()
 {
 	return (m_dwState & TreeItemExpanded) ? TRUE : FALSE;
 }
 
+///////////////////////////////////////////////////
 
 BOOL CPropTreeItem::IsSelected()
 {
 	return (m_dwState & TreeItemSelected) ? TRUE : FALSE;
 }
 
+///////////////////////////////////////////////////
 
 BOOL CPropTreeItem::IsReadOnly()
 {
 	return (m_dwState & TreeItemReadOnly) ? TRUE : FALSE;
 }
 
+///////////////////////////////////////////////////
 
 BOOL CPropTreeItem::IsActivated()
 {
 	return (m_dwState & TreeItemActivated) ? TRUE : FALSE;
 }
 
+///////////////////////////////////////////////////
 
 void CPropTreeItem::Select(BOOL bSelect)
 {
@@ -135,6 +140,7 @@ void CPropTreeItem::Select(BOOL bSelect)
 		m_dwState &= ~TreeItemSelected;
 }
 
+///////////////////////////////////////////////////
 
 void CPropTreeItem::Expand(BOOL bExpand)
 {
@@ -144,6 +150,7 @@ void CPropTreeItem::Expand(BOOL bExpand)
 		m_dwState &= ~TreeItemExpanded;
 }
 
+///////////////////////////////////////////////////
 
 void CPropTreeItem::ReadOnly(BOOL bReadOnly)
 {
@@ -153,11 +160,14 @@ void CPropTreeItem::ReadOnly(BOOL bReadOnly)
 		m_dwState &= ~TreeItemReadOnly;
 }
 
+///////////////////////////////////////////////////
+
 BOOL CPropTreeItem::HitExpand(const POINT& pt)
 {
 	return m_rcExpand.PtInRect(pt);
 }
 
+///////////////////////////////////////////////////
 
 BOOL CPropTreeItem::IsRootLevel()
 {
@@ -165,6 +175,7 @@ BOOL CPropTreeItem::IsRootLevel()
 	return GetParent() == m_pProp->GetRootItem();
 }
 
+///////////////////////////////////////////////////
 
 LONG CPropTreeItem::GetTotalHeight()
 {
@@ -182,48 +193,56 @@ LONG CPropTreeItem::GetTotalHeight()
 	return nHeight;
 }
 
+///////////////////////////////////////////////////
 
 void CPropTreeItem::SetLabelText(LPCTSTR sLabel)
 {
 	m_sLabel = sLabel;
 }
 
+///////////////////////////////////////////////////
 
 LPCTSTR CPropTreeItem::GetLabelText()
 {
 	return m_sLabel;
 }
 
+///////////////////////////////////////////////////
 
 void CPropTreeItem::SetInfoText(LPCTSTR sInfo)
 {
 	m_sInfo = sInfo;
 }
 
+///////////////////////////////////////////////////
 
 LPCTSTR CPropTreeItem::GetInfoText()
 {
 	return m_sInfo;
 }
 
+///////////////////////////////////////////////////
 
 void CPropTreeItem::SetCtrlID(UINT nCtrlID)
 {
 	m_nCtrlID = nCtrlID;
 }
 
+///////////////////////////////////////////////////
 
 UINT CPropTreeItem::GetCtrlID()
 {
 	return m_nCtrlID;
 }
 
+///////////////////////////////////////////////////
 
 LONG CPropTreeItem::GetHeight()
 {
 	return PROPTREEITEM_DEFHEIGHT;
 }
 
+///////////////////////////////////////////////////
 
 LPARAM CPropTreeItem::GetItemValue()
 {
@@ -231,30 +250,35 @@ LPARAM CPropTreeItem::GetItemValue()
 	return 0L;
 }
 
+///////////////////////////////////////////////////
 
 void CPropTreeItem::SetItemValue(LPARAM)
 {
 	// no items are assocatied with this type
 }
 
+///////////////////////////////////////////////////
 
 void CPropTreeItem::OnMove()
 {
 	// no attributes, do nothing
 }
 
+///////////////////////////////////////////////////
 
 void CPropTreeItem::OnRefresh()
 {
 	// no attributes, do nothing
 }
 
+///////////////////////////////////////////////////
 
 void CPropTreeItem::OnCommit()
 {
 	// no attributes, do nothing
 }
 
+///////////////////////////////////////////////////
 
 void CPropTreeItem::Activate()
 {
@@ -264,6 +288,7 @@ void CPropTreeItem::Activate()
 	OnActivate();
 }
 
+///////////////////////////////////////////////////
 
 void CPropTreeItem::CommitChanges()
 {
@@ -282,59 +307,70 @@ void CPropTreeItem::CommitChanges()
 	m_pProp->RefreshItems(this);
 }
 
+///////////////////////////////////////////////////
 
 void CPropTreeItem::OnActivate()
 {
 	// no attributes, do nothing
 }
 
+///////////////////////////////////////////////////
 
 void CPropTreeItem::SetPropOwner(CPropTree* pProp)
 {
 	m_pProp = pProp;
 }
 
+///////////////////////////////////////////////////
 
 const POINT& CPropTreeItem::GetLocation()
 {
 	return m_loc;
 }
 
+///////////////////////////////////////////////////
 
 CPropTreeItem* CPropTreeItem::GetParent()
 {
 	return m_pParent;
 }
 
+///////////////////////////////////////////////////
 
 CPropTreeItem* CPropTreeItem::GetSibling()
 {
 	return m_pSibling;
 }
 
+///////////////////////////////////////////////////
 
 CPropTreeItem* CPropTreeItem::GetChild()
 {
 	return m_pChild;
 }
 
+///////////////////////////////////////////////////
 
 CPropTreeItem* CPropTreeItem::GetNextVisible()
 {
 	return m_pVis;
 }
 
+///////////////////////////////////////////////////
 
 void CPropTreeItem::SetParent(CPropTreeItem* pParent)
 {
 	m_pParent = pParent;
 }
 
+///////////////////////////////////////////////////
 
 void CPropTreeItem::SetSibling(CPropTreeItem* pSibling)
 {
 	m_pSibling = pSibling;
 }
+
+///////////////////////////////////////////////////
 
 
 void CPropTreeItem::SetChild(CPropTreeItem* pChild)
@@ -342,12 +378,14 @@ void CPropTreeItem::SetChild(CPropTreeItem* pChild)
 	m_pChild = pChild;
 }
 
+///////////////////////////////////////////////////
 
 void CPropTreeItem::SetNextVisible(CPropTreeItem* pVis)
 {
 	m_pVis = pVis;
 }
 
+///////////////////////////////////////////////////
 
 LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 {
@@ -503,8 +541,11 @@ LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 	return nTotal;
 }
 
+///////////////////////////////////////////////////
 
 void CPropTreeItem::DrawAttribute(CDC*, const RECT&)
 {
 	// no attributes are assocatied with this type
 }
+
+///////////////////////////////////////////////////

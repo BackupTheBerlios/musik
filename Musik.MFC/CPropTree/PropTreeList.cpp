@@ -1,4 +1,5 @@
-// PropTreeList.cpp : implementation file
+///////////////////////////////////////////////////
+// PropTree.h : header file
 //
 //  Copyright (C) 1998-2001 Scott Ramsay
 //	sramsay@gonavi.com
@@ -18,11 +19,17 @@
 //
 //  Modified by Casey Langen for Musik MFC port...
 //  Rather than linking to a dll or external lib, it compiles in.
+//  Changes default look and behavior as well. Much thanks to the
+//  Author Scott Ramsay.
+///////////////////////////////////////////////////
 
 #include "stdafx.h"
+
 #include "PropTree.h"
 #include "Resource.h"
 #include "PropTreeList.h"
+
+///////////////////////////////////////////////////
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -36,8 +43,7 @@ static char THIS_FILE[] = __FILE__;
 
 extern HINSTANCE ghInst;
 
-/////////////////////////////////////////////////////////////////////////////
-// CPropTreeList
+///////////////////////////////////////////////////
 
 CPropTreeList::CPropTreeList() :
 	m_pProp(NULL),
@@ -47,13 +53,15 @@ CPropTreeList::CPropTreeList() :
 {
 }
 
+///////////////////////////////////////////////////
+
 CPropTreeList::~CPropTreeList()
 {
 }
 
+///////////////////////////////////////////////////
 
 BEGIN_MESSAGE_MAP(CPropTreeList, CWnd)
-	//{{AFX_MSG_MAP(CPropTreeList)
 	ON_WM_SIZE()
 	ON_WM_PAINT()
 	ON_WM_SETCURSOR()
@@ -65,18 +73,16 @@ BEGIN_MESSAGE_MAP(CPropTreeList, CWnd)
 	ON_WM_KEYDOWN()
 	ON_WM_GETDLGCODE()
 	ON_WM_VSCROLL()
-	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-
-/////////////////////////////////////////////////////////////////////////////
-// CPropTreeList message handlers
+///////////////////////////////////////////////////
 
 void CPropTreeList::SetPropOwner(CPropTree* pProp)
 {
 	m_pProp = pProp;
 }
 
+///////////////////////////////////////////////////
 
 BOOL CPropTreeList::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID)
 {
@@ -87,6 +93,7 @@ BOOL CPropTreeList::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UI
 	return pWnd->Create(pszCreateClass, _T(""), dwStyle, rect, pParentWnd, nID);
 }
 
+///////////////////////////////////////////////////
 
 void CPropTreeList::OnSize(UINT nType, int cx, int cy) 
 {
@@ -105,6 +112,7 @@ void CPropTreeList::OnSize(UINT nType, int cx, int cy)
 	}
 }
 
+///////////////////////////////////////////////////
 
 void CPropTreeList::RecreateBackBuffer(int cx, int cy)
 {
@@ -122,6 +130,7 @@ void CPropTreeList::RecreateBackBuffer(int cx, int cy)
 	}
 }
 
+///////////////////////////////////////////////////
 
 void CPropTreeList::UpdateResize()
 {
@@ -150,6 +159,7 @@ void CPropTreeList::UpdateResize()
 	m_pProp->SetColumn(m_pProp->GetColumn());
 }
 
+///////////////////////////////////////////////////
 
 void CPropTreeList::OnPaint() 
 {
@@ -202,12 +212,14 @@ void CPropTreeList::OnPaint()
 	memdc.DeleteDC();
 }
 
+///////////////////////////////////////////////////
 
 BOOL CPropTreeList::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message) 
 {
 	return CWnd::OnSetCursor(pWnd, nHitTest, message);
 }
 
+///////////////////////////////////////////////////
 
 void CPropTreeList::OnLButtonDown(UINT, CPoint point) 
 {
@@ -280,6 +292,7 @@ void CPropTreeList::OnLButtonDown(UINT, CPoint point)
 	}
 }
 
+///////////////////////////////////////////////////
 
 void CPropTreeList::OnLButtonUp(UINT, CPoint point) 
 {
@@ -301,6 +314,7 @@ void CPropTreeList::OnLButtonUp(UINT, CPoint point)
 	}
 }
 
+///////////////////////////////////////////////////
 
 void CPropTreeList::OnLButtonDblClk(UINT, CPoint point)
 {
@@ -347,6 +361,7 @@ void CPropTreeList::OnLButtonDblClk(UINT, CPoint point)
 	}
 }
 
+///////////////////////////////////////////////////
 
 void CPropTreeList::OnMouseMove(UINT, CPoint point)
 {
@@ -363,6 +378,7 @@ void CPropTreeList::OnMouseMove(UINT, CPoint point)
 	}
 }
 
+///////////////////////////////////////////////////
 
 BOOL CPropTreeList::OnMouseWheel(UINT, short zDelta, CPoint) 
 {
@@ -386,6 +402,7 @@ BOOL CPropTreeList::OnMouseWheel(UINT, short zDelta, CPoint)
 	return TRUE;
 }
 
+///////////////////////////////////////////////////
 
 void CPropTreeList::OnKeyDown(UINT nChar, UINT, UINT) 
 {
@@ -466,12 +483,14 @@ void CPropTreeList::OnKeyDown(UINT nChar, UINT, UINT)
 	}
 }
 
+///////////////////////////////////////////////////
 
 UINT CPropTreeList::OnGetDlgCode() 
 {
 	return DLGC_WANTARROWS|DLGC_WANTCHARS|DLGC_WANTALLKEYS;
 }
 
+///////////////////////////////////////////////////
 
 void CPropTreeList::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar*) 
 {
@@ -525,6 +544,7 @@ void CPropTreeList::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar*)
 	Invalidate();
 }
 
+///////////////////////////////////////////////////
 
 void CPropTreeList::CheckVisibleFocus()
 {
@@ -546,3 +566,5 @@ void CPropTreeList::CheckVisibleFocus()
 		Invalidate();
 	}
 }
+
+///////////////////////////////////////////////////
