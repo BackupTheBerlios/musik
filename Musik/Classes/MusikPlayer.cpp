@@ -956,6 +956,7 @@ void CMusikPlayer::PrevSong()
 		switch ( m_Playmode )
 		{
 		case MUSIK_PLAYMODE_AUTO_DJ:
+		case MUSIK_PLAYMODE_AUTO_DJ_ALBUM:
 		case MUSIK_PLAYMODE_NORMAL:
 			if( m_SongIndex > 0 )
 				m_SongIndex--;
