@@ -441,6 +441,30 @@ void CMusikLibrary::GetRelatedItems( int source_type, const CStdStringArray& sou
 		VerifyYearList( target );
 }
 
+void CMusikLibrary::GetRelatedItems( CStdString sub_query, int order_by, CStdStringArray& target )
+{
+	target.clear();
+	sub_query += GetOrder( order_by );
+    
+	//-----------------------------------------------------//
+	//--- get sorting order								---//
+	//-----------------------------------------------------//
+	sub_query += GetOrder( order_by );
+
+	//-----------------------------------------------------//
+	//--- lock it up and run the query					---//
+	//-----------------------------------------------------//
+	boost::mutex::scoped_lock scoped_lock( m_ProtectingLibrary );
+	sqlite_exec(m_pDB, sub_query.c_str(), &sqlite_AddSongToStringArray, &target, NULL);
+
+	//-----------------------------------------------------//
+	//--- if target is years, verify only years			---//
+	//--- get displayed.								---//
+	//-----------------------------------------------------//
+	if ( order_by == MUSIK_LIBRARY_TYPE_YEAR )
+		VerifyYearList( target );
+}
+
 void CMusikLibrary::GetAllDistinct( int source_type, CStdStringArray& target, bool clear_target )
 {
 	if ( clear_target )

@@ -67,7 +67,7 @@ public:
 	//-----------------------------------------------------//
 	void push_back( const CMusikSong& song ){ m_Songs.push_back( song ); }
 	void clear(){ m_Songs.clear(); }
-	int size(){ return m_Songs.size(); }
+	size_t size(){ return m_Songs.size(); }
 	CMusikSongArray* items(){ return &m_Songs; }
 
 private:
