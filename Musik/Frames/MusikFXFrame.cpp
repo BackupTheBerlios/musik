@@ -153,9 +153,9 @@ void MusikFXFrame::SlidersFromBands()
 
 	for ( int n = 0; n < 18; n++ )
 	{
-		slLeft[n]->SetValue( (int)( 100.0f - ( ldata[n] * 50.0f ) ) );
+		slLeft[n]->SetValue( (int)( ldata[n] * 50.0f ) );
 		slLeft[n]->Colourize();
-		slRight[n]->SetValue( (int)( 100.0f - ( rdata[n] * 50.0f ) ) );
+		slRight[n]->SetValue( (int)( rdata[n] * 50.0f ) );
 		slRight[n]->Colourize();
 	}
 }
@@ -164,8 +164,8 @@ void MusikFXFrame::BandsFromSliders()
 {
 	for ( int n = 0; n < 18; n++ )
 	{
-		ldata[n] = (100.0f - (float)slLeft[n]->GetValue()) / 50.0f;
-		rdata[n] = (100.0f - (float)slRight[n]->GetValue()) / 50.0f;
+		ldata[n] = (float)slLeft[n]->GetValue() / 50.0f;
+		rdata[n] = (float)slRight[n]->GetValue() / 50.0f;
 	}
 
 	g_FX.SetLeftBands( ldata );
