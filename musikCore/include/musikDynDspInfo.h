@@ -56,10 +56,17 @@
 #ifndef C_MUSIK_SONG_INFO_CACHE
 #define C_MUSIK_SONG_INFO_CACHE
 
+///////////////////////////////////////////////////
+
 #include "musikArrays.h"
 #include "musikLibrary.h"
 
+///////////////////////////////////////////////////
+
 class CmusikSong;
+class CmusikDynDspInfo;
+
+///////////////////////////////////////////////////
 
 class CmusikDynDspInfoRange
 {
@@ -74,9 +81,10 @@ public:
 	int GetLast(){ return m_Last; }
 	bool IsNull(){ return ( GetDistance() == 0 ? true : false ); }
 
-private:
 	int m_First, m_Last;
 };
+
+///////////////////////////////////////////////////
 
 class CmusikDynDspInfo
 {
@@ -99,15 +107,19 @@ public:
 		m_Songs = playlist;
 	}
 
-	void Set( int from, int to, bool force_update = false )
+	void Set( int from, int to, bool force_update )
 	{ 
 		// set the current item range
 		m_ItemRange.Set( from, to + 1 );
 
-		// same item range as before, just return.
-		if ( !force_update && m_ItemRange.GetFirst() == m_LastItemRange.GetFirst() && 
-			 m_ItemRange.GetLast() == m_LastItemRange.GetLast() )
-			 return;
+		// see if our new item range is the same as our 
+		// last item range... if so, return
+		if ( !force_update )
+		{
+			if ( m_ItemRange.GetFirst() == m_LastItemRange.GetFirst() &&
+				m_ItemRange.GetLast() == m_LastItemRange.GetLast() )
+				return;
+		}
 
 		// we got a 0,0 range, so check to see if there
 		// are any songs in the playlist. if there are
@@ -186,11 +198,17 @@ public:
 		return m_ItemRange.GetLast();
 	}
 
+	CmusikDynDspInfoRange m_LastItemRange;
+
 private:
-	CmusikDynDspInfoRange m_ItemRange, m_LastItemRange;
+	CmusikDynDspInfoRange m_ItemRange;
 	CmusikSongInfoArray m_Items;
 	CmusikPlaylist* m_Songs;
 	CmusikLibrary* m_Library;
 };
 
+///////////////////////////////////////////////////
+
 #endif
+
+///////////////////////////////////////////////////
