@@ -69,85 +69,35 @@ preferences.indent.closing=0
 module.include.name=.
 module.include.type=
 module.include.files=\
-	Classes/Library/CFrameHeader.h\
-	Classes/Library/CMP3Info.h\
-	Classes/Library/COggInfo.h\
-	Classes/Library/CVBitRate.h\
-	Classes/Library/i18n.h\
-	Classes/Library/vcedit.h\
-	Classes/ActivityAreaCtrl.h\
-	Classes/ActivityBox.h\
-	Classes/BtnDown.h\
-	Classes/GaugeSeek.h\
-	Classes/ListHeader.h\
-	Classes/MusikLibrary.h\
-	Classes/MusikPlayer.h\
-	Classes/MusikPrefs.h\
-	Classes/NowPlayingCtrl.h\
-	Classes/PlaylistCtrl.h\
-	Classes/PlaylistInfoCtrl.h\
-	Classes/SourcesBox.h\
-	Classes/WebServer.h\
-	MusikApp.h\
-	MusikGlobals.h\
-	MusikUtils.h\
-	Frames/MusikFrame.h\
-	Frames/MusikLibraryFrame.h\
-	Frames/MusikPrefsFrame.h\
-	Frames/MusikTagFrame.h\
-	Frames/MusikVolumeFrame.h\
-	Threads/ActivityBoxThreads.h\
-	Threads/MusikLibraryThreads.h\
-	Threads/MusikTagThreads.h\
-	Threads/MusikThreads.h\
-	Threads/PlaylistCtrlThreads.h\
-	shibatch/paramlist.hpp\
-	Classes/MusikFX.h\
-	Classes/MusikEQCtrl.h\
-	Frames/MusikFXFrame.h\
-	Classes/MusikEQGauge.h
+	src/MusikApp.h\
+	src/MusikDragGaugeCtrl.h\
+	src/MusikFrame.h\
+	src/MusikLibrary.h\
+	src/MusikListCtrl.h\
+	src/MusikNowPlayingCtrl.h\
+	src/MusikPlayer.h\
+	src/MusikPlaylistCtrl.h\
+	src/MusikSeekCtrl.h\
+	src/MusikSelectionAreaCtrl.h\
+	src/MusikSelectionCtrl.h\
+	src/MusikSimpleQueryCtrl.h
 
 module.source.name=.
 module.source.type=
 module.source.files=\
-	Classes/Library/CFrameHeader.cpp\
-	Classes/Library/CMP3Info.cpp\
-	Classes/Library/COggInfo.cpp\
-	Classes/Library/CVBitRate.cpp\
-	Classes/Library/vcedit.c\
-	Classes/ActivityAreaCtrl.cpp\
-	Classes/ActivityBox.cpp\
-	Classes/BtnDown.cpp\
-	Classes/GaugeSeek.cpp\
-	Classes/ListHeader.cpp\
-	Classes/MusikLibrary.cpp\
-	Classes/MusikPlayer.cpp\
-	Classes/MusikPrefs.cpp\
-	Classes/NowPlayingCtrl.cpp\
-	Classes/PlaylistCtrl.cpp\
-	Classes/PlaylistInfoCtrl.cpp\
-	Classes/SourcesBox.cpp\
-	Classes/WebServer.cpp\
-	MusikApp.cpp\
-	MusikGlobals.cpp\
-	MusikUtils.cpp\
-	Frames/MusikFrame.cpp\
-	Frames/MusikFrameEvents.cpp\
-	Frames/MusikLibraryFrame.cpp\
-	Frames/MusikPrefsFrame.cpp\
-	Frames/MusikTagFrame.cpp\
-	Frames/MusikVolumeFrame.cpp\
-	Threads/ActivityBoxThreads.cpp\
-	Threads/MusikLibraryThreads.cpp\
-	Threads/MusikTagThreads.cpp\
-	Threads/MusikThreads.cpp\
-	Threads/PlaylistCtrlThreads.cpp\
-	shibatch/Fftsg_fl.cpp\
-	shibatch/Equ.cpp\
-	Frames/MusikFXFrame.cpp\
-	Classes/MusikFX.cpp\
-	Classes/MusikEQCtrl.cpp\
-	Classes/MusikEQGauge.cpp
+	src/MusikApp.cpp\
+	src/MusikDragGaugeCtrl.cpp\
+	src/MusikFrame.cpp\
+	src/MusikLibrary.cpp\
+	src/MusikListCtrl.cpp\
+	src/MusikNowPlayingCtrl.cpp\
+	src/MusikPlayer.cpp\
+	src/MusikPlaylistCtrl.cpp\
+	src/MusikSeekCtrl.cpp\
+	src/MusikSelectionAreaCtrl.cpp\
+	src/MusikSelectionCtrl.cpp\
+	src/MusikSimpleQueryCtrl.cpp\
+	src/wxprec.cpp
 
 module.pixmap.name=.
 module.pixmap.type=

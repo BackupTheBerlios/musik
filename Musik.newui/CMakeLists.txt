@@ -28,48 +28,19 @@ FIND_LIBRARY(FMOD_LIBRARY NAMES fmod PATHS /usr/lib /usr/local/lib)
 FIND_LIBRARY(VORBIS_LIBRARY NAMES vorbis PATHS /usr/lib /usr/local/lib)
 
 ADD_EXECUTABLE(Musik
-        MusikApp
-        MusikGlobals
-        MusikUtils
-
-        ${Musik_SOURCE_DIR}/Classes/ActivityBox
-        ${Musik_SOURCE_DIR}/Classes/ActivityAreaCtrl
-        ${Musik_SOURCE_DIR}/Classes/BtnDown
-        ${Musik_SOURCE_DIR}/Classes/GaugeSeek
-        ${Musik_SOURCE_DIR}/Classes/MusikLibrary
-        ${Musik_SOURCE_DIR}/Classes/MusikPlayer
-        ${Musik_SOURCE_DIR}/Classes/MusikPrefs
-        ${Musik_SOURCE_DIR}/Classes/NowPlayingCtrl
-        ${Musik_SOURCE_DIR}/Classes/PlaylistCtrl
-	${Musik_SOURCE_DIR}/Classes/PlaylistInfoCtrl
-        ${Musik_SOURCE_DIR}/Classes/SourcesBox
-        ${Musik_SOURCE_DIR}/Classes/WebServer
-        ${Musik_SOURCE_DIR}/Classes/MusikFX
-        ${Musik_SOURCE_DIR}/Classes/MusikEQCtrl
-        ${Musik_SOURCE_DIR}/Classes/MusikEQGauge
-
-        ${Musik_SOURCE_DIR}/Classes/Library/CFrameHeader
-        ${Musik_SOURCE_DIR}/Classes/Library/CMP3Info
-        ${Musik_SOURCE_DIR}/Classes/Library/COggInfo
-        ${Musik_SOURCE_DIR}/Classes/Library/CVBitRate
-        ${Musik_SOURCE_DIR}/Classes/Library/vcedit
-
-        ${Musik_SOURCE_DIR}/Frames/MusikFrame
-        ${Musik_SOURCE_DIR}/Frames/MusikFrameEvents
-        ${Musik_SOURCE_DIR}/Frames/MusikLibraryFrame
-        ${Musik_SOURCE_DIR}/Frames/MusikPrefsFrame
-        ${Musik_SOURCE_DIR}/Frames/MusikTagFrame
-        ${Musik_SOURCE_DIR}/Frames/MusikVolumeFrame
-        ${Musik_SOURCE_DIR}/Frames/MusikFXFrame
-
- 	${Musik_SOURCE_DIR}/Threads/ActivityBoxThreads
-        ${Musik_SOURCE_DIR}/Threads/PlaylistCtrlThreads
-        ${Musik_SOURCE_DIR}/Threads/MusikLibraryThreads
-        ${Musik_SOURCE_DIR}/Threads/MusikTagThreads
-        ${Musik_SOURCE_DIR}/Threads/MusikThreads
-
-        ${Musik_SOURCE_DIR}/shibatch/Equ.cpp
-        ${Musik_SOURCE_DIR}/shibatch/Fftsg_fl.cpp
+        ${Musik_SOURCE_DIR}/src/MusikApp
+        ${Musik_SOURCE_DIR}/src/MusikDragGaugeCtrl
+        ${Musik_SOURCE_DIR}/src/MusikFrame
+        ${Musik_SOURCE_DIR}/src/MusikLibrary
+        ${Musik_SOURCE_DIR}/src/MusikListCtrl
+        ${Musik_SOURCE_DIR}/src/MusikNowPlayingCtrl       
+	${Musik_SOURCE_DIR}/src/MusikPlayer
+        ${Musik_SOURCE_DIR}/src/MusikPlaylistCtrl
+        ${Musik_SOURCE_DIR}/src/MusikSeekCtrl
+        ${Musik_SOURCE_DIR}/src/MusikSelectionAreaCtrl
+        ${Musik_SOURCE_DIR}/src/MusikSimpleQueryCtrl
+        ${Musik_SOURCE_DIR}/src/MusikSourcesCtrl
+        ${Musik_SOURCE_DIR}/src/wxprec
     )
 
 TARGET_LINK_LIBRARIES(Musik 
