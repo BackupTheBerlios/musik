@@ -175,6 +175,75 @@ END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
 
+static void MainFrameWorker( CmusikThread* thread )
+{
+	CMainFrame* parent = (CMainFrame*)thread->GetArgs();
+
+	size_t pos = 0;
+	char turn;
+
+	// sleep if we go idle
+	ACE_Time_Value suspend, sleep;
+	suspend.set( 0.1f );
+	sleep.set( 0.5f );
+
+	CString sCaption;
+	while ( !thread->m_Abort )
+	{
+		// sleep if we're told
+		if ( thread->IsSuspended() )
+		{
+			thread->m_Asleep = true;
+
+			while ( thread->IsSuspended() )
+				ACE_OS::sleep( suspend );
+
+			thread->m_Asleep = false;
+		}	
+
+		if ( thread->m_Abort )
+			break;
+
+		if ( parent->m_Threads.size() )
+		{
+			switch ( pos )
+			{
+			case 0:
+				turn = '|';
+				++pos;
+				break;
+			case 1:
+				turn = '/';
+				++pos;
+				break;
+			case 2:
+				turn = '-';
+				++pos;
+				break;
+			case 3:
+				turn = '\\';
+				pos = 0;
+				break;			
+			}
+
+			sCaption = parent->m_Caption;
+			for ( size_t i = 0; i < parent->m_Threads.size(); i++ )
+			{
+				sCaption += _T( "  " );
+				sCaption += turn;
+			}
+
+			parent->SetWindowText( sCaption );
+		}
+
+		ACE_OS::sleep( sleep );
+	}
+
+	thread->m_Finished = true;
+}
+
+///////////////////////////////////////////////////
+
 CMainFrame::CMainFrame()
 {
 	InitPaths();
@@ -238,6 +307,7 @@ void CMainFrame::Initmusik()
 	m_NewSong		= new CmusikFrameFunctor( this );
 	m_LibPlaylist	= NULL;	
 	m_StdPlaylist	= NULL;
+	m_Caption		= MUSIK_VERSION_STR;
 	m_BatchAddFnct	= new CmusikBatchAddFunctor( this );
 	m_RemoveOldFnct	= new CmusikRemoveOldFunctor( this );
 	m_Library		= new CmusikLibrary( ( CStdString )m_Database );
@@ -296,6 +366,18 @@ void CMainFrame::Cleanmusik()
 			Sleep( 50 );
 
 		delete m_Threads.at( i );
+	}
+
+	if ( m_Updater )
+	{
+		m_Updater->Suspend( true );
+		m_Updater->Abort();
+		m_Updater->Resume();
+
+		while ( !m_Updater->m_Finished )
+			Sleep( 50 );
+
+        delete m_Updater;
 	}
 
 	if ( m_Library )	
@@ -532,6 +614,9 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 			LoadBarState( sProfile );
 		}
 	}
+
+	m_Updater = new CmusikThread();
+	m_Updater->Start( (ACE_THR_FUNC)MainFrameWorker, this );
 
 	return 0;
 }
@@ -813,6 +898,8 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 
 LRESULT CMainFrame::OnSongChange( WPARAM wParam, LPARAM lParam )
 {
+	CString s;
+
 	// tell the child windows to redraw their
 	// state accordingly
 	m_wndView->GetCtrl()->RedrawWindow();
@@ -825,7 +912,6 @@ LRESULT CMainFrame::OnSongChange( WPARAM wParam, LPARAM lParam )
 	// to do our own updating
 	if ( m_Player->IsPlaying() )
 	{
-		CString s;
 		s.Format( _T( "%s [ %s - %s ]" ), 
 			MUSIK_VERSION_STR,
 			m_Player->GetCurrPlaying()->GetTitle().c_str(), 
@@ -834,7 +920,12 @@ LRESULT CMainFrame::OnSongChange( WPARAM wParam, LPARAM lParam )
 		SetWindowText( s );
 	}
 	else
-		SetWindowText( MUSIK_VERSION_STR );	
+	{
+		s = MUSIK_VERSION_STR;
+		SetWindowText( s );	
+	}
+
+	m_Caption = s;
 
 	return 0L;
 }	
@@ -1120,6 +1211,8 @@ LRESULT CMainFrame::OnThreadEnd( WPARAM wParam, LPARAM lParam )
 		ResetSelBoxes();
 		m_wndView->GetCtrl()->UpdateV( true );
 	}
+	if ( !m_Threads.size() )
+		SetWindowText( m_Caption );
 
 	return 0L;
 }

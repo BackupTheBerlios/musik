@@ -75,6 +75,7 @@ class CmusikRemoveOldFunctor;
 class CMainFrame : public CFrameWnd
 {
 	friend void CmusikSourcesCtrl::DoDrag( CmusikPropTreeItem* pItem );
+	friend static void MainFrameWorker( CmusikThread* thread );
 
 public:
 
@@ -104,9 +105,13 @@ public:
 	virtual BOOL DestroyWindow();
 	BOOL VerifyBarState( LPCTSTR lpszProfileName );
 
+	// unique drag identifiers
 	UINT m_uSelectionDrop;
 	UINT m_uPlaylistDrop;
 	UINT m_uSourcesDrop;
+
+	// current window text
+	CString m_Caption;
 
 protected: 
 
@@ -210,6 +215,7 @@ protected:
 	// batch functors threads will use
 	CmusikBatchAddFunctor* m_BatchAddFnct;
 	CmusikRemoveOldFunctor* m_RemoveOldFnct;
+	CmusikThread* m_Updater;
 
 	// macros
 	DECLARE_DYNAMIC(CMainFrame)
