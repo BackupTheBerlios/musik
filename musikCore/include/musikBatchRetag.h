@@ -120,13 +120,9 @@ static void musikBatchRetagWorker( CmusikThread* thread )
 			break;
 		}
 
-
 		//
 		//
-		// do what we need here
 		//
-		//
-
 
 		// post progress to the functor
 		curr_prog = ( 100 * i ) / params->m_UpdatedTags->size();
@@ -141,17 +137,22 @@ static void musikBatchRetagWorker( CmusikThread* thread )
 	}
 	params->m_Library->EndTransaction();
 
-	// finish
-	thread->m_Finished = true;
-
-	if ( params->m_Functor && ( !thread->m_Abort || ( thread->m_Abort && params->m_CallFunctorOnAbort ) ) )
-		params->m_Functor->OnThreadEnd( (void*)thread );
-	
 	// clean up
+	CmusikFunctor* fnct = params->m_Functor;
+	bool call_functor = false;
+	if ( params->m_Functor && ( !thread->m_Abort || ( thread->m_Abort && params->m_CallFunctorOnAbort ) ) )
+		call_functor = true;
+
 	if ( params->m_DeleteUpdatedTags )
 		delete params->m_UpdatedTags;
 
 	delete params;
+
+	if ( call_functor )		
+		fnct->OnThreadEnd( (void*)thread );
+
+	// flag as finished
+	thread->m_Finished = true;
 }
 
 ///////////////////////////////////////////////////

@@ -135,11 +135,19 @@ static void musikRemoveOldWorker( CmusikThread* thread )
 	}
 	params->m_Library->EndTransaction();
 
+	// clean up
+	CmusikFunctor* fnct = params->m_Functor;
+
+	bool call_functor = false;
 	if ( params->m_Functor && ( !thread->m_Abort || ( thread->m_Abort && params->m_CallFunctorOnAbort ) ) )
-		params->m_Functor->OnThreadEnd( (void*)thread );
-	
+		call_functor = true;
+
 	delete params;
 
+	if ( call_functor )
+		fnct->OnThreadEnd( (void*)thread );
+	
+	// flag as finished
 	thread->m_Finished = true;
 }
 
