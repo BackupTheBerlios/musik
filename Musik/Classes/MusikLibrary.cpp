@@ -868,6 +868,75 @@ void CMusikLibrary::SortPlaylist( const wxString& sortstr, bool descending )
 	return;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
+wxString CMusikLibrary::GetTotalPlaylistSize()
+{
+	wxString sQuery;
+	
+	sQuery = wxT("select sum(filesize) from songs where filename in (");
+
+	int count = g_Playlist.GetCount();
+	if ( count < 1 )
+		return wxString( wxT("0.0 MB") );
+
+	sQuery.Alloc(sQuery.Len() + count * 30); // optimization ( the 30 is a wild guess)
+	for ( size_t i = 0; i < count ; i++ )
+	{
+		//--- if song has a ' ---//	
+		const CMusikSong& song = g_Playlist.Item ( i );
+		wxString filename(  song.Filename );
+		filename.Replace( wxT("'"), wxT("''"), TRUE );
+
+		sQuery += wxT("'");
+		sQuery += filename;
+		//--- not at the end ---//
+		if ( i != count - 1 )
+			sQuery += wxT("', ");
+		//--- at the end ---//
+		else
+		{
+			sQuery += wxT("' );");
+		}
+	}
+
+
+	//--- run query ---//
+	const char *pTail;
+	sqlite_vm *pVM;
+
+	wxCriticalSectionLocker lock( m_csDBAccess );
+	sqlite_compile( m_pDB, ConvQueryToMB( sQuery ), &pTail, &pVM, NULL );
+	char *errmsg;
+	int numcols = 0;
+	const char **coldata;
+	const char **coltypes;
+
+	float totsize = 0.0f;
+	if ( sqlite_step( pVM, &numcols, &coldata, &coltypes ) == SQLITE_ROW )
+	{
+		totsize = atof( coldata[0] );		
+	}
+
+	//--- close up ---//
+	sqlite_finalize( pVM, &errmsg );
+
+	wxString strsize( wxT("0.0 mb") );
+
+	if ( totsize < 1024.0f )
+		strsize = wxString::Format( wxT("%.2f b"), totsize );
+	else if ( totsize < ( 1024.0f * 1024.0f ) )
+		strsize = wxString::Format( wxT("%.2f kb"), totsize / 1024.0f );
+	else if ( totsize < ( 1024.0f * 1024.0f * 1024.0f ) )
+		strsize = wxString::Format( wxT("%.2f mb"), totsize / 1024.0f / 1024.0f );
+	else if ( totsize < ( 1024.0f * 1024.0f * 1024.0f * 1024.0f ) )
+		strsize = wxString::Format( wxT("%.2f gb"), totsize / 1024.0f / 1024.0f / 1024.0f );
+
+	return strsize;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
 void CMusikLibrary::QuerySongs( const wxString & queryWhere, CMusikSongArray & aReturn )
 {
 	aReturn.Clear();

@@ -776,7 +776,9 @@ void CPlaylistCtrl::GetSelSongs(CMusikSongArray & aResult)
 
 wxString CPlaylistCtrl::GetTotalFilesize()
 {
-	CNiceFilesize filesize;
+	// just leaving this here until we're sure the new way is working,
+	// then we can get rid of it, and the CNiceFilesize class
+	/*CNiceFilesize filesize;
 
 	for ( int i = 0; i < GetItemCount(); i++ )
 	{
@@ -784,7 +786,8 @@ wxString CPlaylistCtrl::GetTotalFilesize()
 		filesize.AddB( song.Filesize );
 	}
 
-	return filesize.GetFormatted();
+	return filesize.GetFormatted();*/
+	return g_Library.GetTotalPlaylistSize();
 }
 
 int CPlaylistCtrl::GetTotalPlayingTimeInSeconds()

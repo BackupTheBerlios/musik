@@ -132,6 +132,7 @@ public:
 	bool 			GetSongFromFilename	( const wxString& filename, CMusikSong *pSong );
 
 	void SortPlaylist( const wxString& sortstr, bool descending );
+	wxString GetTotalPlaylistSize();
 
 	//--------------------//
 	//--- getting info ---//
