@@ -304,11 +304,7 @@ Version 0.3.1.6 compiles on linux, but not the new version 0.4)<br>
     </tr>
     <tr>
       <td>
-      <h4>Note: there is no "make install" directive yet.</h4>
-      <h4>if you want wxMusik to be used system wide, just manually
-copy the executable named "wxMusik" in the root of the source dir </h4>
-      <h4>to <code>/usr/bin/</code> or <code>/usr/local/bin/</code>.
-this will be fixed in the&nbsp; one of the next release.</h4>
+      <h4>Note: a "make install" target is available now.</h4>
       </td>
     </tr>
     <tr>
@@ -405,20 +401,18 @@ the devel packages</h4>
       <td>
       <h3>fmod sound system: <a href="http://www.fmod.org/"
  target="_blank">homepage</a> or <a
- href="http://www.fmod.org/files/fmodapi371linux.tar.gz" target="_blank">download</a></h3>
+ href="http://www.fmod.org/files/fmodapi374linux.tar.gz" target="_blank">download</a></h3>
       </td>
     </tr>
     <tr>
       <td>
       <ul>
-        <li> download the 3.73version </li>
+        <li> download the 3.74 version (alsa should work with this version finally)</li>
         <li> unarchive </li>
-        <li> <code>cp fmodapi373linux/api/inc/* /usr/include</code>
+        <li> <code>cp fmodapi374linux/api/inc/* /usr/include</code>
 (or your prefered include path) </li>
-        <li> <code>cp fmodapi373linux/api/libfmod-3.73.so /usr/lib</code>
+        <li> <code>cp fmodapi374linux/api/libfmod-3.74.so /usr/lib</code>
 (or your prefered lib path) </li>
-        <li> <code>ln -s /usr/lib/libfmod-3.73.so /usr/lib/libfmod.so</code>
-        </li>
         <li> <code>ldconfig</code> </li>
       </ul>
       </td>
@@ -446,7 +440,7 @@ packages is in an include path.</h4>
       <ul>
         <li> download sqlite 2.8.15 or later </li>
         <li> unarchive </li>
-        <li> ./configure;make; make install </li>
+        <li> ./configure --enable-utf8;make; make install </li>
         <li> move enclosed library to a library path </li>
         <li> <code>ldconfig</code> </li>
         <li> get <code>sqlite.h</code> from the source distribution </li>
@@ -519,11 +513,11 @@ if possible!<br>
       <td>
       <ul>
         <li> unarchive the source </li>
-        <li> <code>cd wxMusik-0.3.1.5/</code> </li>
+        <li> <code>cd wxMusik-0.3.1.6/</code> </li>
         <li> execute " <code>ccmake ."</code>, and assure all the
 libraries listed above are found. </li>
         <li> while inside "ccmake", set CMAKE_BUILD_TYPE to Release (or
-Debug if you want a Debug Build) </li>
+Debug if you want a Debug Build) and CMAKE_INSTALL_PREFIX</li>
         <li> ( unicode or not unicode build depends on the installed
 version wxGtk respective the current wx-config script)<br>
         </li>
@@ -534,15 +528,10 @@ option apears), then "g" to generate the makefile </li>
 generated. </li>
         <li> run <code>./wxMusik</code> in the root source dir to try
 it out </li>
-        <li> install executable wherever you want, by copying wxMusik
-executable ( to /usr/local/bin for example)</li>
+        <li> do a 'make install' to install binary and data to CMAKE_INSTALL_PREFIX. All languages will be installed</li>
         <li>copy the example playlists and radio channels from
-wxMusik-0.3.1.5/contrib/playlists to ~/.Musik/playlists<br>
+wxMusik-0.3.1.6/contrib/playlists to ~/.Musik/playlists<br>
         </li>
-        <li> copy wxMusik.mo from wxMusik-0.3.1.5/locale/de to
-/usr/share/locale/de/LC_MESSAGES/</li>
-&nbsp;if you want german language.(your environment must be set to
-german for this to work)<br>
         <br>
         <br>
       </ul>
