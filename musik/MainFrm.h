@@ -126,7 +126,6 @@ protected:
 
 	// current playlist, only a pointer
 	CmusikPlaylist* m_LibPlaylist;
-	CmusikPlaylist* m_NowPlaylist;
 	CmusikPlaylist* m_StdPlaylist;
 
 	// library, player, and prefs

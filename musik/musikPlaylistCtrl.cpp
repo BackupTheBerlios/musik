@@ -489,13 +489,20 @@ void CmusikPlaylistCtrl::OnNMClick(NMHDR *pNMHDR, LRESULT *pResult)
 
 void CmusikPlaylistCtrl::SetPlaylist( CmusikPlaylist* playlist, int m_Type )
 {
-	if ( m_SongInfoCache )
-		m_SongInfoCache->SetPlaylist( playlist );
-    
-	m_Playlist = playlist;
-	m_PlaylistType = m_Type;
-	
-	m_Changed = true;
+	if ( playlist == NULL )
+	{
+		TRACE0( "Well, something messed up, our playlist is now NULL...\n" );
+	}
+	else if ( playlist != m_Playlist )
+	{
+		if ( m_SongInfoCache )
+			m_SongInfoCache->SetPlaylist( playlist );
+	    
+		m_Playlist = playlist;
+		m_PlaylistType = m_Type;
+		
+		m_Changed = true;
+	}
 }
 
 ///////////////////////////////////////////////////
@@ -503,6 +510,7 @@ void CmusikPlaylistCtrl::SetPlaylist( CmusikPlaylist* playlist, int m_Type )
 void CmusikPlaylistCtrl::OnLvnItemActivate(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMITEMACTIVATE pNMIA = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+	*pResult = NULL;
 	
 	// give the current playlist to the player,
 	// unless the player already owns it.
@@ -512,40 +520,34 @@ void CmusikPlaylistCtrl::OnLvnItemActivate(NMHDR *pNMHDR, LRESULT *pResult)
 		// if it does not belong to the player. otherwise,
 		// it will delete itself, then try to copy itself.
 		// confused yet? i am...
-		if ( m_PlaylistType != MUSIK_SOURCES_TYPE_NOWPLAYING )
-			GivePlaylistToPlayer();		
+		if ( m_Playlist != m_Player->GetPlaylist() )
+		{
+			// the player now owns the playlist, we
+			// just continue to point to it. later,
+			// a message will be sent back to it's previous
+			// owner, letting it know its ok to create
+			// a new one in it's place.
+			m_Player->SetPlaylist( m_Playlist );
+		}
+
+		// post a message to our parent, letting it
+		// know the player owns the playlist.
+		int WM_PLAYERNEWPLAYLIST = RegisterWindowMessage( "PLAYERNEWPLAYLIST" );
+		m_MainWnd->SendMessage( WM_PLAYERNEWPLAYLIST, (WPARAM)m_PlaylistType );
 
 		// the current playlist always becomes the
 		// now playing after an item is activated,
 		// so our type is now "now playing" and our
 		// playlist points to the player
 		m_PlaylistType = MUSIK_SOURCES_TYPE_NOWPLAYING;
-		m_Playlist = m_Player->GetPlaylist();
+
+		// playlist up to date!
+		m_Changed = false;
 	}
 
+	// play the song in the (new) playlist at
+	// the acitvated item.
 	m_Player->Play( pNMIA->iItem, MUSIK_CROSSFADER_NEW_SONG );
-
-	*pResult = 0;
-}
-
-///////////////////////////////////////////////////
-
-void CmusikPlaylistCtrl::GivePlaylistToPlayer()
-{
-	// if the type was now playing, then we don't
-	// need to post any messages to clean up
-	// the playlist... as its just a pointer to
-	// the player's internal playlist -- which 
-	// itself, not an object. 
-	m_Player->SetPlaylist( m_Playlist );
-	m_Playlist = NULL;
-
-	int WM_PLAYERNEWPLAYLIST = RegisterWindowMessage( "PLAYERNEWPLAYLIST" );
-	m_MainWnd->SendMessage( WM_PLAYERNEWPLAYLIST, (WPARAM)m_PlaylistType );
-
-	// playlist is now updated, so flag
-	// it as unchanged
-	m_Changed = false;
 }
 
 ///////////////////////////////////////////////////

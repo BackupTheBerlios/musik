@@ -264,7 +264,7 @@ CmusikPlayer::CmusikPlayer( CmusikFunctor* functor, CmusikLibrary* library )
 	m_Functor			= functor;
 	m_Library			= library;
 
-	m_Playlist			= new CmusikPlaylist();
+	m_Playlist			= NULL;
 
 	m_IsPlaying			= false;
 	m_IsPaused			= false;

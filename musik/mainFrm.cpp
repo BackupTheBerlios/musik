@@ -180,7 +180,6 @@ void CMainFrame::Initmusik()
 	m_NewSong		= new CmusikFrameFunctor( this );
 	m_LibPlaylist	= NULL;	
 	m_StdPlaylist	= NULL;
-	m_NowPlaylist	= NULL;
 	m_BatchAddThr	= NULL;
 	m_BatchAddFnct	= NULL;
 	m_Library		= new CmusikLibrary( ( CStdString )m_Database );
@@ -222,6 +221,12 @@ void CMainFrame::Cleanmusik()
 	{
 		delete m_Prefs;
 		m_Prefs = NULL;
+	}
+
+	if ( m_StdPlaylist && m_StdPlaylist != m_Player->GetPlaylist() )
+	{
+		delete m_StdPlaylist;
+		m_StdPlaylist = NULL;
 	}
 
 	if ( m_Player )
@@ -683,10 +688,7 @@ LRESULT CMainFrame::OnSourcesLibrary( WPARAM wParam, LPARAM lParam )
 	TRACE0( "A musik Library was clicked\n" );
 
 	if ( !m_LibPlaylist )
-	{
 		m_LibPlaylist = new CmusikPlaylist();
-		TRACE0( "You should only see this once.\n" );
-	}
 
 	m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, MUSIK_SOURCES_TYPE_LIBRARY );
 	m_wndView->GetCtrl()->UpdateV();
@@ -719,19 +721,14 @@ LRESULT CMainFrame::OnSourcesStdPlaylist( WPARAM wParam, LPARAM lParam )
 {
 	TRACE0( "A standard playlist was clicked\n" );
 
-	if ( m_StdPlaylist )
-		ASSERT( 1 );
+	if ( !m_StdPlaylist )
+		m_StdPlaylist = new CmusikPlaylist();
 
 	int nID = m_wndSources->GetCtrl()->GetFocusedItem()->GetPlaylistID();
-	m_StdPlaylist = new CmusikPlaylist();
-
 	m_Library->GetStdPlaylist( nID, *m_StdPlaylist, true );
 
 	m_wndView->GetCtrl()->SetPlaylist( m_StdPlaylist, MUSIK_PLAYLIST_TYPE_STANDARD );
-
 	m_wndView->GetCtrl()->UpdateV();
-
-	m_StdPlaylist = NULL;
 
 	return 0L;
 }
@@ -784,6 +781,11 @@ LRESULT CMainFrame::OnPlayerNewPlaylist( WPARAM wParam, LPARAM lParam )
 		m_LibPlaylist = new CmusikPlaylist();
 		*m_LibPlaylist = *m_Player->GetPlaylist();
 	}
+
+	// player just took ownership of us! thats ok,
+	// we were only temporary, anyway.
+	if ( (int)wParam == MUSIK_PLAYLIST_TYPE_STANDARD )
+		m_StdPlaylist = new CmusikPlaylist();
 
 	m_wndSources->GetCtrl()->FocusNowPlaying();
 

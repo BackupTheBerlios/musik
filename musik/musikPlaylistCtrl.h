@@ -126,12 +126,6 @@ private:
 	// batch add files thread
 	CmusikBatchAdd* m_BatchAddThr;
 	CmusikBatchAddFunctor* m_BatchAddFnct;
-
-	// gives the player ownership of
-	// the current playlist, then
-	// creates a blank one in its place
-	// for the UI to add to
-	void GivePlaylistToPlayer();
 };
 
 ///////////////////////////////////////////////////
