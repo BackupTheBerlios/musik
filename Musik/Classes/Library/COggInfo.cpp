@@ -35,53 +35,30 @@ bool COggInfo::loadInfo( const wxString &filename )
 	{
 		vorbis_comment *pComment = ov_comment( &vorbisfile, -1 );
 
-		wxString artist		= ConvDBFieldToWX( vorbis_comment_query( pComment, "artist", 		0 ) );
-		wxString album		= ConvDBFieldToWX( vorbis_comment_query( pComment, "album", 		0 ) );
-		wxString title		= ConvDBFieldToWX( vorbis_comment_query( pComment, "title", 		0 ) );
-		wxString tracknum	= ConvDBFieldToWX( vorbis_comment_query( pComment, "tracknumber",	0 ) );
-		wxString genre		= ConvDBFieldToWX( vorbis_comment_query( pComment, "genre", 		0 ) );
-		wxString year		= ConvDBFieldToWX( vorbis_comment_query( pComment, "date", 			0 ) );
+		m_Song.Artist		= ConvDBFieldToWX( vorbis_comment_query( pComment, "artist",	0 ) );
+		m_Song.Album		= ConvDBFieldToWX( vorbis_comment_query( pComment, "album",		0 ) );
+		m_Song.Title		= ConvDBFieldToWX( vorbis_comment_query( pComment, "title",		0 ) );
+		m_Song.Genre		= ConvDBFieldToWX( vorbis_comment_query( pComment, "genre",		0 ) );
+		m_Song.Year			= ConvDBFieldToWX( vorbis_comment_query( pComment, "date", 		0 ) );
+		m_Song.TrackNum		= wxStringToInt( ConvDBFieldToWX( vorbis_comment_query( pComment, "tracknumber", 0 ) ) );
 
-		// remove any spaces that poor taggers might have left
-		artist.Trim();		artist.Trim( false );
-		album.Trim();		album.Trim( false );
-		title.Trim();		title.Trim( false );
-		tracknum.Trim();	tracknum.Trim( false );
-		genre.Trim();		genre.Trim( false );
-		year.Trim();		year.Trim( false );
-
-		// only set the song info for non-empty strings
-		if ( artist.Length() > 0 )
-			m_Song.Artist = artist;
-		if ( album.Length() > 0 )
-			m_Song.Album = album;
-		if ( title.Length() > 0 )
-			m_Song.Title = title;
-		else
+		//--- if the title is empty, make it the filenaem ---//
+		if ( m_Song.Title.IsEmpty() )
 		{
 			wxFileName fn( filename );
 			wxString fullname = fn.GetFullName();
 			wxString justfilename = fullname.Left( fullname.Length() - fn.GetExt().Len()-1 );
 			m_Song.Title = justfilename;
 		}
-		if ( tracknum.Length() > 0 )
-			m_Song.TrackNum = wxStringToInt( tracknum );
-		if ( genre.Length() > 0 )
-			m_Song.Genre = genre;
-		if ( year.Length() > 0 )
-			m_Song.Year = year;
 
-		// and now the other stuff
+		//--- grab the bitrate ---//
 		vorbis_info *pInfo = ov_info( &vorbisfile,-1 );
-
 		m_Song.Bitrate = (int)pInfo->bitrate_nominal / 1000;
 
-		// cleanup
+		//--- cleanup ---//
 		vorbis_comment_clear( pComment );
 		vorbis_info_clear( pInfo );
-
-		// ov_clear also closes the file
-		ov_clear( &vorbisfile );
+		ov_clear( &vorbisfile );	//--- will also close the FILE (audiofile) ---//
 
 		return true;
 	}
