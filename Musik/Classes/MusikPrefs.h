@@ -94,7 +94,7 @@ public:
 	int nAutoDelta;
 
 	int nBlankSwears;
-
+	int nSortArtistWithoutPrefix;
 	int nWebServerEnable;
 	int nWebServerPort;
 

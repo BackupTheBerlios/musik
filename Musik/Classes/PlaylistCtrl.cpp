@@ -583,7 +583,9 @@ wxString CPlaylistCtrl::OnGetItemText(long item, long column) const
 		if ( song.Artist == wxT( "<unknown>" ) )
 			return wxT( "-" );
 		else 
+		{
 			return SanitizedString( song.Artist );
+		}
 		break;
 
 	case PLAYLISTCOLUMN_ALBUM:

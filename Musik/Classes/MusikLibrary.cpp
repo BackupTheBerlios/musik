@@ -132,12 +132,87 @@ bool CMusikLibrary::Load()
 		// always create table, if it exists can error will be returned by sqlite_exec, but we dont care.
 		sqlite_exec( m_pDB, szCreateDBQuery, NULL, NULL, NULL );
 		sqlite_exec( m_pDB, szCreateIdxQuery, NULL, NULL, NULL );
+		CreateDBFuncs();
 	}
 	if ( errmsg )
 			free( errmsg );
 	return m_pDB != NULL;
 }
+void CMusikLibrary::CreateDBFuncs()
+{
+	wxASSERT(m_pDB);
+	static struct 
+	{
+		char *zName;
+		int nArg;
+		int dataType;
+		void (*xFunc)(sqlite_func*,int,const char**);
+		void * userdata;
+	} aFuncs[] = 
+			{
+				{ "remprefix",      1, SQLITE_TEXT, remprefixFunc, 0 },
+			};
+	/*  static struct {
+	char *zName;
+	int nArg;
+	int dataType;
+	void (*xStep)(sqlite_func*,int,const char**);
+	void (*xFinalize)(sqlite_func*);
+	} aAggs[] = {
+	{ "min",    1, 0,              minStep,      minMaxFinalize },
+	{ "max",    1, 0,              maxStep,      minMaxFinalize },
+	{ "sum",    1, SQLITE_NUMERIC, sumStep,      sumFinalize    },
+	{ "avg",    1, SQLITE_NUMERIC, sumStep,      avgFinalize    },
+	{ "count",  0, SQLITE_NUMERIC, countStep,    countFinalize  },
+	{ "count",  1, SQLITE_NUMERIC, countStep,    countFinalize  },
+	};
+	*/
+	int i;
 
+	for(i=0; i<sizeof(aFuncs)/sizeof(aFuncs[0]); i++)
+	{
+		sqlite_create_function(m_pDB, aFuncs[i].zName,aFuncs[i].nArg, aFuncs[i].xFunc, aFuncs[i].userdata);
+		if( aFuncs[i].xFunc )
+		{
+			sqlite_function_type(m_pDB, aFuncs[i].zName, aFuncs[i].dataType);
+		}
+	}
+	/* 
+	for(i=0; i<sizeof(aAggs)/sizeof(aAggs[0]); i++){
+	sqlite_create_aggregate(m_pDB, aAggs[i].zName,
+			aAggs[i].nArg, aAggs[i].xStep, aAggs[i].xFinalize, 0);
+	sqlite_function_type(m_pDB, aAggs[i].zName, aAggs[i].dataType);
+	}
+	*/
+}
+void CMusikLibrary::remprefixFunc(sqlite_func *context, int argc, const char **argv)
+{
+	char *z;
+	int i;
+	if( argc<1 || argv[0]==0 ) return;
+//	char * pPrefixArray[] = sqlite_user_data(context);
+	static const char * pPrefixArray[] =
+					{
+						"The ",
+						"Der ",
+						"Die ",
+						"Das ",
+					};
+	int argvlen = strlen(argv[0]);
+	for(i=0; i<sizeof(pPrefixArray)/sizeof(pPrefixArray[0]); i++)
+	{
+		int prefixlen = strlen(pPrefixArray[i]);
+		if(strnicmp(pPrefixArray[i],argv[0],prefixlen) == 0)
+		{
+			if(argvlen >= prefixlen)
+			{
+				sqlite_set_result_string(context, argv[0]+ prefixlen, argvlen - prefixlen);
+				return;
+			}
+		}
+	}
+  sqlite_set_result_string(context, argv[0], argvlen);
+}
 //---  if true, compares the full path, if false, just looks for the filename itself   ---//
 //--- obviously the filename you pass will either be full or just filename accordingly ---//
 bool CMusikLibrary::FileInLibrary( const wxString & filename, bool fullpath )
@@ -550,7 +625,10 @@ void CMusikLibrary::GetInfo( const wxArrayString & aList, int nInType, int nOutT
 	switch ( nOutType )
 	{
 	case MUSIK_LIB_ARTIST:
-		query = wxT("select distinct artist,UPPER(artist) as UP from songs where ");
+		if( g_Prefs.nSortArtistWithoutPrefix)
+			query = wxT("select distinct artist,UPPER(REMPREFIX(artist)) as UP from songs where ");
+		else
+			query = wxT("select distinct artist,UPPER(artist) as UP from songs where ");
 		break;
 
 	case MUSIK_LIB_ALBUM:
@@ -830,7 +908,15 @@ void CMusikLibrary::SortPlaylist( const wxString& sortstr, bool descending )
 	if ( !numeric )
 	{
 		sQuery = wxT("select filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize, UPPER(");
-		sQuery += sortstr;
+		if(g_Prefs.nSortArtistWithoutPrefix && (sortstr == wxT("artist")) )
+		{
+			sQuery += wxT("REMPREFIX(");
+			sQuery += sortstr;
+			sQuery += wxT(")");
+		}
+		else
+			sQuery += sortstr;
+
 		sQuery += wxT(") as up");
 		sQuery += sortstr;		
 		sQuery += wxT(" from songs where filename in (");
@@ -1368,7 +1454,11 @@ void CMusikLibrary::GetAllSongs( CMusikSongArray & aReturn )
 
 void CMusikLibrary::GetAllArtists( wxArrayString & aReturn )
 {
-	Query( wxT("select distinct artist,UPPER(artist) as UP from songs order by UP;"), aReturn );
+	if(g_Prefs.nSortArtistWithoutPrefix)
+		Query( wxT("select distinct artist,UPPER(REMPREFIX(artist)) as UP from songs order by UP;"), aReturn );
+	else
+		Query( wxT("select distinct artist,UPPER(artist) as UP from songs order by UP;"), aReturn );
+
 }
 
 void CMusikLibrary::GetAllAlbums( wxArrayString & aReturn )

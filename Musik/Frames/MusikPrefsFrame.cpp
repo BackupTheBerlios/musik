@@ -237,6 +237,7 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	chkAutoScan				=	new wxCheckBox( this, -1,	_("Automatically scan for new songs on startup"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 	chkShowAllSongs			=	new wxCheckBox( this, -1,	_("Selecting library shows all songs in playlist"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 	chkBlankSwears			=	new wxCheckBox( this, -1,	_("Censor common swearwords"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+	chkSortArtistWithoutPrefix	=	new wxCheckBox( this, -1,	_("Sort Artist without prefix"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 	chkPlaylistStripes		=	new wxCheckBox( this, -1,	_("Show \"stripes\" in playlist"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 	chkActivityBoxStripes	=	new wxCheckBox( this, -1,	_("Show \"stripes\" in selection boxes"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 	chkSourcesBoxStripes	=	new wxCheckBox( this, -1,	_("Show \"stripes\" in sources box"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
@@ -252,6 +253,7 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	vsOptions_Interface->Add( chkAutoScan,				0, wxALL, 4 );
 	vsOptions_Interface->Add( chkShowAllSongs,			0, wxALL, 4 );
 	vsOptions_Interface->Add( chkBlankSwears,			0, wxALL, 4 );
+	vsOptions_Interface->Add( chkSortArtistWithoutPrefix,0, wxALL, 4 );
 	vsOptions_Interface->Add( chkPlaylistStripes,		0, wxALL, 4 );
 	vsOptions_Interface->Add( btnPlaylistStripeColour,	0, wxALL, 4 );
 	vsOptions_Interface->Add( chkActivityBoxStripes,	0, wxALL, 4 );
@@ -575,6 +577,7 @@ void MusikPrefsFrame::LoadPrefs()
 	chkAutoScan->SetValue			( g_Prefs.nAutoAdd	);
 	chkShowAllSongs->SetValue		( g_Prefs.nShowAllSongs );
 	chkBlankSwears->SetValue		( g_Prefs.nBlankSwears );
+	chkSortArtistWithoutPrefix->SetValue( g_Prefs.nSortArtistWithoutPrefix );
 	chkPlaylistStripes->SetValue	( g_Prefs.nPLStripes );
 	chkActivityBoxStripes->SetValue	( g_Prefs.nActStripes );
 	chkSourcesBoxStripes->SetValue	( g_Prefs.nSourcesStripes );
@@ -792,6 +795,8 @@ void MusikPrefsFrame::SavePrefs()
 	bool bShowUnselChange	= false;
 	bool bActivityChange	= false;
 	bool bPlaymodeChange	= false;
+	bool bPlaylistUpdate = false;
+	bool bActivityUpdate = false;
 
 	//--------------------------//
 	//--- Options -> general ---//
@@ -800,7 +805,12 @@ void MusikPrefsFrame::SavePrefs()
 	g_Prefs.nShowAllSongs	= chkShowAllSongs->GetValue();
 	g_Prefs.nBlankSwears	= chkBlankSwears->GetValue();
 
-	bool bPlaylistUpdate = false;
+	if(g_Prefs.nSortArtistWithoutPrefix != chkSortArtistWithoutPrefix->GetValue())
+	{
+		bPlaylistUpdate = true;
+		bActivityUpdate = true;
+		g_Prefs.nSortArtistWithoutPrefix = chkSortArtistWithoutPrefix->GetValue();
+	}
 	if ( chkPlaylistStripes->GetValue() != g_Prefs.nPLStripes )
 	{
 		g_Prefs.nPLStripes = chkPlaylistStripes->GetValue();
@@ -814,7 +824,6 @@ void MusikPrefsFrame::SavePrefs()
 	if ( bPlaylistUpdate )
 		g_PlaylistCtrl->Update();
 
-	bool bActivityUpdate = false;
 	if ( chkActivityBoxStripes->GetValue() != g_Prefs.nActStripes )
 	{
 		g_Prefs.nActStripes = chkActivityBoxStripes->GetValue();

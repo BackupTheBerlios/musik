@@ -81,6 +81,7 @@ public:
 	wxCheckBox	*chkExtendedPlaylist;
 	wxCheckBox	*chkShowAllSongs;
 	wxCheckBox	*chkBlankSwears;
+	wxCheckBox	*chkSortArtistWithoutPrefix;
 	wxCheckBox	*chkPlaylistStripes;
 	wxButton	*btnPlaylistStripeColour;
 	wxCheckBox	*chkActivityBoxStripes;
@@ -100,6 +101,7 @@ public:
 	//-----------------------------//
 	//--- options -> playlist	---//
 	//-----------------------------//
+
 	wxCheckBox* chkRatingEnable;
 	wxCheckBox* chkTrackEnable;
 	wxCheckBox* chkTitleEnable;

@@ -110,7 +110,7 @@ MusikFrame::MusikFrame()
 	//--- simple query ---//
 	//--------------------//
 	m_TextSimpleQuery = new wxTextCtrl( this, MUSIK_SIMPLEQUERY, wxT( "" ), wxPoint( 0, 0 ), wxSize( -1, -1 ), wxSIMPLE_BORDER );
-	
+
 	//-----------------------//
 	//--- left area sizer ---//
 	//-----------------------//
@@ -230,7 +230,11 @@ void MusikFrame::LoadImageLists()
 	g_SourcesImages->Add( bmpLibrary );
 	g_SourcesImages->Add( bmpPlaylist );
 	g_SourcesImages->Add( bmpDynamic );
-	
+///// just to fill it up
+	g_SourcesImages->Add( bmpPlaylist );
+	g_SourcesImages->Add( bmpPlaylist );
+	g_SourcesImages->Add( bmpPlaylist );
+
 	//--- ratings image list ---//
 	g_RatingImages = new wxImageList( 32, 14, true );
 	bmpRating0 = wxIcon( rating0_xpm );

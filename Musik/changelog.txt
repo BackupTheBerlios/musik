@@ -1,4 +1,7 @@
 0.2.1 to 0.2.2
+ + You can search in activity list boxes for artist etc. by entering more than one char now (gunnar)
+ + New option to sort the artist without prefix (e.g The Beatles become Beatles concerning sorting order) (gunnar)
+ + New permanent sources entry "Now Playing" showing which playlist the internal player works on. If selected it is scrolled to the actually played song (gunnar)
  - Fixed Bug: Color of Text in ListViews uses now the window text system setting(gunnar)
  + More AutoTagging enhancements (gunnar)
  - Fixed bug in window placement on tsart, if Musik was closed iconized before. (on restart the window was not visible)(gunnar)

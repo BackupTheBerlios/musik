@@ -83,6 +83,7 @@ void CMusikPrefs::LoadPrefs()
 	config->Read( wxT( "ActivityStripeColour" ),				&sActStripeColour,			wxT("244, 244, 244")	);
 	config->Read( wxT( "SourcesStripeColour" ),					&sSourcesStripeColour,		wxT("244, 244, 244")	);
 	config->Read( wxT( "BlankSwears" ),							&nBlankSwears,				0						);
+	config->Read( wxT( "SortArtistWithoutPrefix" ),				&nSortArtistWithoutPrefix,	0						);
 	config->Read( wxT( "EnableWebserver" ),						&nWebServerEnable,			0						);
 	config->Read( wxT( "Webserverport" ),						&nWebServerPort,			6395					);
 	config->Read( wxT( "FramePlacement" ),						&sFramePlacement,			wxT("0,0,800,600,0,0")	);
@@ -311,6 +312,7 @@ void CMusikPrefs::SavePrefs()
 	config->Write( wxT( "ActivityStripeColour" ),			sActStripeColour			);
 	config->Write( wxT( "SourcesStripeColour" ),			sSourcesStripeColour		);
 	config->Write( wxT( "BlankSwears" ),					nBlankSwears				);
+	config->Write( wxT( "SortArtistWithoutPrefix" ),		nSortArtistWithoutPrefix	);
 	config->Write( wxT( "EnableWebserver" ),				nWebServerEnable			);
 	config->Write( wxT( "WebserverPort" ),					nWebServerPort				);
 	config->Write( wxT( "FramePlacement" ),					sFramePlacement				);

@@ -79,24 +79,32 @@ END_EVENT_TABLE()
 void CActivityListBox::OnChar( wxKeyEvent& event )
 {
   int keycode = event.GetKeyCode();
-  if (wxIsalnum(keycode))
+//  if (wxIsalnum(keycode))
   {
+	if(m_OnCharStopWatch.Time() > 1000)
+	{// more than 1000 ms have been passed
+		// reset search string
+		m_sSearch.Empty();// 
+	}
+	m_sSearch+=keycode;
   	for ( size_t i = HasShowAllRow() ? 1 : 0; i < GetItemCount(); i++ )
 	{
-	  if (GetRowText(i).Left(1).IsSameAs(keycode,false))
+	  if (GetRowText(i,false).Left(m_sSearch.Len()).IsSameAs(m_sSearch,false))
       { // make this item the top item
         int up = GetCountPerPage() -1;
         int topitem = GetTopItem();
         int showitem = (i + up > GetItemCount() - 1 ) ?  GetItemCount() - 1 : i + up;
         if(showitem < topitem)
            showitem = i; // EnsureVisible(m) will scroll backwards, this will bring the item m automatically to the top
-			  EnsureVisible(showitem);// if showitem is visible, i is now the top item
-        break;
+		EnsureVisible(showitem);// if showitem is visible, i is now the top item
+   
+		break;
       }
 	}
+	m_OnCharStopWatch.Start();
   }
-  else
-    event.Skip();
+//  else
+//    event.Skip();
 }  
 
 void CActivityListBox::RescaleColumns( bool bFreeze )
@@ -168,13 +176,16 @@ inline bool CActivityListBox::HasShowAllRow() const
 { 
 	return (g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_STANDARD || g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_SLOPPY);
 }
-wxString CActivityListBox::GetRowText( long row ) const
+wxString CActivityListBox::GetRowText( long row, bool bPure ) const
 {
 		if( row == 0 && HasShowAllRow())
 			return _("Show all ") + m_pParent->GetActivityTypeStr() + wxT( "s" );
 		if(HasShowAllRow())
 			row--;
-		return SanitizedString( m_Items.Item( row ) );
+		if(g_Prefs.nSortArtistWithoutPrefix && !bPure && m_pParent->GetActivityType() == MUSIK_LBTYPE_ARTISTS)
+			return MoveArtistPrefixToEnd(SanitizedString( m_Items.Item( row ) ));
+		else
+			return SanitizedString( m_Items.Item( row ) );
 }
 wxListItemAttr* CActivityListBox::OnGetItemAttr(long item) const
 {

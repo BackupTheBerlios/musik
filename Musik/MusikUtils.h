@@ -36,6 +36,7 @@ wxString		MStoStr				( int timems );
 wxArrayString	FileToStringArray	(  const wxString &  sFilename );
 int				MusikRound			( float x );
 int				FindStrInArray		( wxArrayString* array, wxString pattern );
+wxString		MoveArtistPrefixToEnd( const wxString & str );
 wxString		SanitizedString		( const wxString & str );
 void			wxListCtrlSelAll	( wxListCtrl* listctrl );
 void			wxListCtrlSelNone	( wxListCtrl* listctrl );

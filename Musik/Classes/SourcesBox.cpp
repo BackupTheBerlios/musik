@@ -94,6 +94,10 @@ bool SourcesDropTarget::OnDropText( wxCoord x, wxCoord y, const wxString &text )
 			{
 				wxMessageBox( _( "Cannot drag songs into the library, they already exist here." ), MUSIK_VERSION, wxOK | wxICON_INFORMATION );
 			}
+			else if ( m_SourcesListBox->GetType( n ) == MUSIK_SOURCES_NOW_PLAYING )
+			{
+				wxMessageBox( _( "Cannot drag songs into Now Playing." ), MUSIK_VERSION, wxOK | wxICON_INFORMATION );
+			}
 
 			//--- drag over an existing item, append ---//
 			else if ( n > 0 )
@@ -220,7 +224,7 @@ void CSourcesListBox::ShowMenu( wxCommandEvent &WXUNUSED(event) )
 	//---------------------------------------------------------//
 	//--- if a library is selected, it can't be deleted		---//
 	//---------------------------------------------------------//
-	sources_context_menu->Enable( MUSIK_SOURCE_CONTEXT_DELETE, GetSelType() != MUSIK_SOURCES_LIBRARY  );
+	sources_context_menu->Enable( MUSIK_SOURCE_CONTEXT_DELETE, (GetSelType() != MUSIK_SOURCES_LIBRARY) && (GetSelType() != MUSIK_SOURCES_NOW_PLAYING) );
 	
 	sources_context_menu->Enable( MUSIK_SOURCE_CONTEXT_RENAME, nSelIndex !=  -1 );
 
@@ -397,9 +401,17 @@ void CSourcesListBox::UpdateSel( size_t index )
 			wxString sQuery = LoadDynPlaylist( GetItemText( m_CurSel ) );
 			 g_Library.QuerySongs( sQuery, g_Playlist );
 		}
+		else if ( m_CurSel != 0 && m_CurSel != -1 && nSelType == MUSIK_SOURCES_NOW_PLAYING )
+		{
+			g_Playlist = g_Player.GetPlaylist();
+		}
 
 		//--- update ui with new list ---//
 		g_PlaylistCtrl->Update(true);
+		if ( m_CurSel != 0 && m_CurSel != -1 && nSelType == MUSIK_SOURCES_NOW_PLAYING )
+		{
+			g_PlaylistCtrl->EnsureVisible(g_Player.GetCurIndex());
+		}
 		g_MusikFrame->ShowActivityArea( false );
 		
 	}
@@ -415,18 +427,27 @@ void CSourcesListBox::BeginEditLabel( wxListEvent& pEvent )
 
 void CSourcesListBox::EndEditLabel( wxListEvent& pEvent )
 {
+	if(pEvent.IsEditCancelled())
+		return;
+	int nType = GetType( m_SourcesEditIndex );
 
 	//--- Musik Library entry edited ---//
-	if ( m_SourcesEditIndex == 0 )
+	if ( nType == MUSIK_SOURCES_LIBRARY )
 	{
         wxString sCheck = pEvent.GetText();
 		sCheck.Replace( wxT( " " ), wxT( "" ), TRUE );
 		if ( sCheck != wxT( "" ) )
 			g_SourcesList.Item( m_SourcesEditIndex ) = wxT( "[l] " ) + pEvent.GetText();
 	}
-
+	//--- Now Playing entry edited ---//
+	if ( nType == MUSIK_SOURCES_NOW_PLAYING )
+	{
+        wxString sCheck = pEvent.GetText();
+		sCheck.Replace( wxT( " " ), wxT( "" ), TRUE );
+		if ( sCheck != wxT( "" ) )
+			g_SourcesList.Item( m_SourcesEditIndex ) = wxT( "[n] " ) + pEvent.GetText();
+	}
 	//--- standard or dyanmic playlist renamed ---//
-	int nType = GetType( m_SourcesEditIndex );
 	if ( nType == MUSIK_SOURCES_PLAYLIST_STANDARD || nType == MUSIK_SOURCES_PLAYLIST_DYNAMIC )
 	{
 		//--- rename file ---//
@@ -465,12 +486,13 @@ void CSourcesListBox::Create()
 	wxTextFile Out( MUSIK_SOURCES_FILENAME );
 
 	Out.Create();
-	if ( Out.Open() )
+/*	if ( Out.Open() )
 	{
 		Out.AddLine( wxT( "[l] Musik Library" ) );
 		Out.Write();
 		Out.Close();
 	}
+*/
 }
 
 void CSourcesListBox::Load()
@@ -479,6 +501,26 @@ void CSourcesListBox::Load()
 		Create();
 
 	g_SourcesList = FileToStringArray( MUSIK_SOURCES_FILENAME );
+
+	int i = 0;
+	for(i = 0; i < g_SourcesList.GetCount();i++)
+	{
+		if(g_SourcesList[i].Left(3) == wxT( "[n]" ))
+			break;
+	}
+	if((g_SourcesList.GetCount() == i) )
+	{// no [n] found
+		g_SourcesList.Insert(wxT( "[n] Now Playing"),0);
+	}
+	for(i = 0; i < g_SourcesList.GetCount();i++)
+	{
+		if(g_SourcesList[i].Left(3) == wxT( "[l]" ))
+			break;
+	}
+	if((g_SourcesList.GetCount() == i) )
+	{// no [n] found
+		g_SourcesList.Insert(wxT( "[l] Musik Library"), 0);
+	}
 }
 
 void CSourcesListBox::Save()
@@ -569,6 +611,8 @@ int	CSourcesListBox::OnGetItemImage	(long item) const
 		return MUSIK_SOURCES_ALARM;
 	else if ( type == wxT( "[c]" ) )
 		return MUSIK_SOURCES_CDROM_DRIVE;
+	else if ( type == wxT( "[n]" ) )
+		return  MUSIK_SOURCES_NOW_PLAYING;
     
 	return MUSIK_SOURCES_NONE;	
 }

@@ -203,6 +203,8 @@ private:
 	wxCriticalSection m_csDBAccess; // to lock all accesses to m_pDB. 
 									// used instead of wxMutex, because this is faster on windows. on linux 
 									// a wxMutex is used automatically instead
+	void CreateDBFuncs();
+	static void remprefixFunc(sqlite_func *context, int argc, const char **argv);
 };
 
 #endif

@@ -322,7 +322,18 @@ void ReplaceNoCase( wxString& str, const wxString& oldstr, const wxString& newst
 		str.insert( pos, newstr );
 	}
 }
-
+wxString MoveArtistPrefixToEnd( const wxString & str )
+{
+	wxString Artist = str;
+	wxString Prefix = Artist.Left(4);
+	if(Prefix.IsSameAs(wxT("The "),false))
+	{
+		Artist = Artist.Right(Artist.Len()-Prefix.Len());
+		Artist += wxT(", ");
+		Artist += Prefix.Left(Prefix.Len()-1);
+	}
+	return Artist;
+}
 wxString SanitizedString( const wxString & str )
 {
 	if ( !g_Prefs.nBlankSwears )

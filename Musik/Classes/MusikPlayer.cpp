@@ -13,12 +13,11 @@
  *  of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 */
 
-//--- For compilers that support precompilation, includes "wx/wx.h". ---//
+// For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
 
 #include "MusikPlayer.h"
 #include "../Frames/MusikFrame.h"
-
 //--- globals: library / player / prefs ---//
 #include "../MusikGlobals.h"
 #include "../MusikUtils.h"
@@ -69,7 +68,6 @@ CMusikPlayer::CMusikPlayer()
 	//--- initialize random playback ---//
 	long RandomSeed = wxGetLocalTime();
 	SeedRandom( RandomSeed );
-
 	//--- clear history ---//
 	m_History[0] = m_History[1] = m_History[2] = m_History[3] = m_History[4] = ~0;
 }
@@ -153,14 +151,11 @@ int CMusikPlayer::InitializeFMOD( int nFunction )
 		if ( FSOUND_SetDriver( g_Prefs.nSndDevice ) == FALSE )
 			return FMOD_INIT_ERROR_DEVICE_NOT_READY;
 
-		//-------------------------//
-		//--- initialize system	---//
-		//-------------------------//
+		// initialize system
 		FSOUND_SetBufferSize( 100 );
 		if ( FSOUND_Init( g_Prefs.nSndRate , g_Prefs.nSndMaxChan, 0 ) == FALSE )
 			return FMOD_INIT_ERROR_INIT;
 	}
-
 	return FMOD_INIT_SUCCESS;
 }
 
@@ -177,7 +172,7 @@ void CMusikPlayer::SetPlaymode( )
 void CMusikPlayer::PlayCurSel()
 {
 	m_LastSong	= m_SongIndex;
-
+	
 	if ( IsPaused() )
 	{
 		ClearOldStreams();
@@ -198,6 +193,7 @@ void CMusikPlayer::PlayCurSel()
 
 bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 {
+
 	//--- check for an invalid playlist ---//
 	if ( ( nItem >= m_Playlist.GetCount() ) || ( m_Playlist.GetCount() < 1 ) )
 	{
@@ -215,9 +211,8 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 		m_CurrentFile	= m_Playlist.Item( nItem ).Filename;
 
 		//---------------------------------------------//
-		//--- set the fade type, let the thread 	---//
-		//--- worry about cleaning any existing		---//
-		//--- fades.								---//
+		//--- if there is already a fade in			---//
+		//--- progress, then we need to abort it	---//
 		//---------------------------------------------//
 		SetCrossfadeType( nFadeType );
 
@@ -230,11 +225,11 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 		if( _CurrentSongNeedsMPEGACCURATE())
 			nFlags |= FSOUND_MPEGACCURATE;
 
-		#if ( MUSIK_FMOD_VERSION >= 0x0370 )
+#if ( MUSIK_FMOD_VERSION >= 0x0370 )
 		FSOUND_STREAM* pNewStream = FSOUND_Stream_Open( ( const char* )ConvFNToFieldMB( m_CurrentFile ), nFlags , 0, 0 );
-		#else
+#else
 		FSOUND_STREAM* pNewStream = FSOUND_Stream_OpenFile( ( const char* )ConvFNToFieldMB( m_CurrentFile ), nFlags , 0);
-		#endif
+#endif
 		if(pNewStream == NULL)
 		{
 			wxMessageBox( _( "Playback will be stopped, because loading failed.\n Filename:" ) + m_CurrentFile, MUSIK_VERSION, wxICON_STOP );
@@ -244,14 +239,14 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 		InitDSP();
 		
 		//---------------------------------------------//
-		//--- start playback of the new stream on	---//
+		//--- start playback on the new stream on	---//
 		//--- the designated channel.				---//
 		//---------------------------------------------//
 		IncNextChannel();
 		FSOUND_Stream_Play( GetCurrChannel(), pNewStream );
 		FSOUND_SetVolume( GetCurrChannel(), 0 );
 		FSOUND_Stream_SetTime( pNewStream, nStartPos * 1000 );
-
+		
 		g_FaderThread->CrossfaderAbort();
 		//---------------------------------------------//
 		//--- update the global arrays containing	---//
@@ -277,6 +272,7 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 
 		SetFrequency();
 
+		
 		//---------------------------------------------//
 		//--- playback has been started, update the	---//
 		//--- user interface to reflect it			---//
@@ -302,7 +298,6 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 		else if ( g_Prefs.nFadeEnable && g_Prefs.nGlobalFadeEnable )
 			SetFadeStart();		
 	}
-
 	return true;
 }
 
@@ -344,6 +339,7 @@ void CMusikPlayer::SetFrequency()
 
 void CMusikPlayer::UpdateUI()
 {
+
 	//-------------------------------------------------//
 	//--- this will resynch the current item if the	---//
 	//--- playlist appears to be the same. a better	---//
@@ -375,8 +371,8 @@ void CMusikPlayer::ClearOldStreams( bool bClearAll )
 	{
 		if(g_ActiveStreams.Item( 0 ))
 		{
-			FSOUND_Stream_Stop	( g_ActiveStreams.Item( 0 ) );
-			FSOUND_Stream_Close	( g_ActiveStreams.Item( 0 ) );
+		FSOUND_Stream_Stop	( g_ActiveStreams.Item( 0 ) );
+		FSOUND_Stream_Close	( g_ActiveStreams.Item( 0 ) );
 		}
 		g_ActiveStreams.RemoveAt( 0 );
 		g_ActiveChannels.RemoveAt( 0 );
@@ -429,12 +425,12 @@ void CMusikPlayer::Resume( bool bCheckFade )
 	FSOUND_SetPaused( FSOUND_ALL, FALSE );
 	m_Paused = false;
 
-	//-------------------------------------------------//
-	//--- setup crossfader and return, if the prefs	---//
-	//--- say so.									---//
-	//-------------------------------------------------//
+	//-----------------------------------------------------//
+	//--- setup crossfader and return, if	the prefs	---//
+	//--- say so.										---//
+	//-----------------------------------------------------//
 	if ( bCheckFade && g_Prefs.nFadePauseResumeEnable && g_Prefs.nGlobalFadeEnable )
-		SetFadeStart();
+			SetFadeStart();
 	else
 		FinalizeResume();
 }
@@ -499,10 +495,6 @@ void CMusikPlayer::FinalizeStop()
 	m_Playing = false;
 	m_Stopping = false;
 
-	//-----------------------------------------//
-	//--- stop and close all streams that	---//
-	//--- are not the main stream.			---//
-	//-----------------------------------------//
 	int nStreamCount = g_ActiveStreams.GetCount();
 	for ( int i = 0; i < nStreamCount; i++ )
 	{
@@ -526,6 +518,7 @@ size_t CMusikPlayer::GetRandomSong()
 	if( m_Playlist.GetCount() == 0 )
 		return 0;
 
+	
 	bool repeat = false;
 	int nMaxRepeatCount = 10;
 	do {
@@ -562,7 +555,7 @@ void CMusikPlayer::NextSong()
 	{
 	case MUSIK_PLAYMODE_NORMAL:
 		m_SongIndex++;
-		if ( m_SongIndex >= g_Playlist.GetCount() )
+		if ( m_SongIndex >= m_Playlist.GetCount() )
 			Stop();
 		else
 			Play( m_SongIndex );
@@ -628,11 +621,11 @@ void CMusikPlayer::PrevSong()
 int CMusikPlayer::GetFilesize( wxString sFilename )
 {
 	int filesize = -1;
-	#if ( MUSIK_FMOD_VERSION >= 0x0370 )
-		FSOUND_STREAM *pStream = FSOUND_Stream_Open( ( const char* )ConvFNToFieldMB( sFilename ), FSOUND_2D, 0, 0 );
-	#else
-		FSOUND_STREAM* pStream = FSOUND_Stream_OpenFile( ( const char* )ConvFNToFieldMB( sFilename ), FSOUND_2D, 0);
-	#endif
+#if ( MUSIK_FMOD_VERSION >= 0x0370 )
+	FSOUND_STREAM *pStream = FSOUND_Stream_Open( ( const char* )ConvFNToFieldMB( sFilename ), FSOUND_2D, 0, 0 );
+#else
+	FSOUND_STREAM* pStream = FSOUND_Stream_OpenFile( ( const char* )ConvFNToFieldMB( sFilename ), FSOUND_2D, 0);
+#endif
 
 	if ( pStream )
 	{
@@ -734,14 +727,14 @@ int CMusikPlayer::GetFileDuration( wxString sFilename, int nType )
 	int duration = -1;
 
 	//-------------------------------------------------//
-	//--- this should be FSOUND_MPEGACCURATE to get	---++//
+	//--- this should be FSOUND_MPEGACCURATE to get	---//
 	//--- an accurate length, but it's way slower..	---//
 	//-------------------------------------------------//
-	#if (MUSIK_FMOD_VERSION >= 0x0370)
-		FSOUND_STREAM *pStream = FSOUND_Stream_Open( ( const char* )ConvFNToFieldMB( sFilename ), FSOUND_2D, 0, 0 );
-	#else
-		FSOUND_STREAM* pStream = FSOUND_Stream_OpenFile( ( const char* )ConvFNToFieldMB( sFilename ), FSOUND_2D, 0);
-	#endif
+#if (MUSIK_FMOD_VERSION >= 0x0370)
+	FSOUND_STREAM *pStream = FSOUND_Stream_Open( ( const char* )ConvFNToFieldMB( sFilename ), FSOUND_2D, 0, 0 );
+#else
+	FSOUND_STREAM* pStream = FSOUND_Stream_OpenFile( ( const char* )ConvFNToFieldMB( sFilename ), FSOUND_2D, 0);
+#endif
 
 	if ( pStream )
 	{

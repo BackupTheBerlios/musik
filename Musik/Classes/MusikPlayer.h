@@ -146,8 +146,9 @@ public:
 	int GetCrossfadeType		() { return m_CrossfadeType; }
 	size_t GetRandomSong		();
 	EMUSIK_PLAYMODE GetPlaymode () { return m_Playmode; }
+	CMusikSongArray &			GetPlaylist	( ) {return  m_Playlist;}
 
-
+	
 	//------------//
 	//--- sets ---//
 	//------------//
@@ -157,7 +158,7 @@ public:
 	void SetPlaymode		( );
 	void SetVolume			( );
 	void SetTime			( int nSec );
-	void SetPlaylist		( CMusikSongArray playlist ) { m_Playlist = playlist; }
+	void SetPlaylist		(const  CMusikSongArray &playlist ) { m_Playlist = playlist; }
 	void SetStartingNext	( bool bStart = true ){ m_StartingNext = bStart; }
 	void SetCrossfadeType	( int nType ){ m_CrossfadeType = nType; }
 	void SetCurSel			( size_t index ){ m_SongIndex = index; }
@@ -173,7 +174,7 @@ public:
 private:
 	bool _IsSeekCrossFadingDisabled();
 	bool _CurrentSongNeedsMPEGACCURATE();
-	
+
 	CMusikSongArray m_Playlist;			//--- heart and soul.								---//
 	EMUSIK_PLAYMODE	m_Playmode;			//--- repeat, shuffle, etc							---//
 	size_t			m_SongIndex;		//--- current index in playlist						---//

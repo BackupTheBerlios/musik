@@ -83,7 +83,7 @@ private:
 
 	inline bool		HasShowAllRow	() const; 
 	size_t			GetRowCount		() const { return HasShowAllRow()?( size_t )m_Items.GetCount()+ 1: ( size_t )m_Items.GetCount(); }
-	inline wxString GetRowText		( long row ) const ;
+	inline wxString GetRowText		( long row, bool bPure = true ) const ;
 
 	//--- stripe colors ---//
 	wxListItemAttr m_LightAttr;
@@ -92,7 +92,8 @@ private:
 	wxListItemAttr m_AllReset;
 	
 	int m_Related;
-
+	wxStopWatch m_OnCharStopWatch;
+	wxString m_sSearch;
 	wxArrayString m_Items;
 	CActivityBox *m_pParent;
 };
