@@ -342,13 +342,13 @@ END
 
 IDD_DIR_SYNC DIALOGEX 0, 0, 294, 127
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
-CAPTION "musik:Cube Directory Synchronization (not done yet)"
+CAPTION "musik:Cube Directory Synchronization"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     PUSHBUTTON      "add",IDC_ADD,6,108,50,14
     PUSHBUTTON      "remove",IDC_REMOVE,60,108,50,14
     LISTBOX         IDC_DIRS,6,5,282,97,LBS_SORT | LBS_NOINTEGRALHEIGHT | 
-                    WS_VSCROLL | WS_TABSTOP
+                    LBS_EXTENDEDSEL | WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "close",IDC_CLOSE,238,108,50,14
 END
 

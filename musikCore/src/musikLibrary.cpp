@@ -518,8 +518,7 @@ bool CmusikLibrary::InitPathTable()
 	// all the standard playlist names
 	static const char *szCreateDBQuery  = 
 		"CREATE TABLE " MANAGED_PATH " ( "	
-		"path_id INTEGER AUTO_INCREMENT PRIMARY KEY, "
-		"path_name varchar(1024) );";
+		"path_name varchar(1024) PRIMARY KEY );";
 
 	// put a lock on the library and open it up
 	char *pErr = NULL;
@@ -2213,6 +2212,65 @@ int CmusikLibrary::FinalizeDirtySongs()
 	int nRet = sqlite_exec_printf( m_pDB, "UPDATE %Q SET dirty = 0 WHERE dirty = 1",
 		NULL, NULL, NULL,
 		SONG_TABLE_NAME );
+
+	m_ProtectingLibrary->release();
+
+	return nRet;
+}
+
+///////////////////////////////////////////////////
+
+int CmusikLibrary::AddPath( const CStdString& path )
+{
+	if ( !m_pDB )
+		return -1;
+
+	m_ProtectingLibrary->acquire();
+
+	int nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q );",
+		NULL, NULL, NULL,
+		MANAGED_PATH,
+		path.c_str() );
+
+	m_ProtectingLibrary->release();
+
+	return nRet;
+}
+
+///////////////////////////////////////////////////
+
+int CmusikLibrary::RemovePath( const CStdString& path )
+{
+	if ( !m_pDB )
+		return -1;
+
+	m_ProtectingLibrary->acquire();
+
+	int nRet = sqlite_exec_printf( m_pDB, "DELETE FROM %Q WHERE path_name = %Q;",
+		NULL, NULL, NULL,
+		MANAGED_PATH,
+		path.c_str() );
+
+	m_ProtectingLibrary->release();
+
+	return nRet;
+}
+
+///////////////////////////////////////////////////
+
+int CmusikLibrary::GetAllPaths( CStdStringArray* target, bool clear_target )
+{
+	if ( !m_pDB )
+		return -1;
+
+	if ( clear_target )
+		target->clear();
+
+	m_ProtectingLibrary->acquire();
+
+	int nRet = sqlite_exec_printf( m_pDB, "SELECT path_name FROM %Q WHERE path_name <> '';",
+		&sqlite_AddRowToStringArray, target, NULL,
+		MANAGED_PATH );
 
 	m_ProtectingLibrary->release();
 

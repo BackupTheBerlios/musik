@@ -711,6 +711,26 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_Updater->Start( (ACE_THR_FUNC)MainFrameWorker, this );
 	m_ProtectingThreads->release();
 
+	// start all necessary synchronization threads
+	CStdStringArray synchs;
+	m_Library->GetAllPaths( &synchs, false );
+	for ( size_t i = 0; i < synchs.size(); i++ )
+	{
+		CStdStringArray* files = new CStdStringArray();
+		CmusikDir scan( synchs.at( i ) + _T( "\\*.*" ), files, NULL );
+		scan.Run();
+
+		CmusikBatchAdd* params = new CmusikBatchAdd( files, NULL, m_Library, NULL, m_BatchAddFnct, 0, 0, 1 );
+		CmusikThread* thread = new CmusikThread();
+
+		m_ProtectingThreads->acquire();
+		m_Threads.push_back( thread );
+		m_ThreadCount++;
+		m_ProtectingThreads->release();
+
+		thread->Start( (ACE_THR_FUNC)musikBatchAddWorker, (void*)params );	
+	}	
+
 	// startup a thread in the background
 	// to remove old files...
 	if ( m_Prefs->PurgeOnStartup() )
@@ -1933,7 +1953,7 @@ void CMainFrame::OnFileSynchronizeddirectories()
 {
 	if ( !m_DirSyncDlg )
 	{
-		m_DirSyncDlg = new CmusikDirSync( this );
+		m_DirSyncDlg = new CmusikDirSync( this, m_Library );
 		m_DirSyncDlg->Create( IDD_DIR_SYNC, this );
 		m_DirSyncDlg->ShowWindow( SW_SHOW );
 	}

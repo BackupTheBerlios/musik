@@ -208,7 +208,9 @@ public:
 	int  GetEqualizerIDFromSongID	( int id );
 
 	// paths
-	// NOTHING IS HERE YET!
+	int	 AddPath					( const CStdString& path );
+	int  RemovePath					( const CStdString& path );
+	int  GetAllPaths				( CStdStringArray* target, bool clear_target = true );
 
 	// misc stuff
 	static int GetFilesize( const CStdString& fn );
