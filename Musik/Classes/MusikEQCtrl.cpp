@@ -32,7 +32,7 @@ CMusikEQCtrl::CMusikEQCtrl( wxFrame* pParent )
 	//--- initialize the sizers			---//
 	//-------------------------------------//
 	pBandsSizer		= new wxFlexGridSizer	( 2, 18, 2, 2 );
-	pOptionsSizer	= new wxFlexGridSizer	( 3, 1, 2, 2 );
+	pOptionsSizer	= new wxBoxSizer		( wxHORIZONTAL );
 	pMainSizer		= new wxBoxSizer		( wxVERTICAL );
 
 	//-------------------------------------//
@@ -56,23 +56,23 @@ CMusikEQCtrl::CMusikEQCtrl( wxFrame* pParent )
 	//-------------------------------------//
 	chkEQEnable = new wxCheckBox( this, CHK_EQENABLE, _("Enable EQ") );
 	chkEQEnable->SetValue( g_Prefs.nUseEQ );
-	pOptionsSizer->Add( chkEQEnable, 1 );
+	pOptionsSizer->Add( chkEQEnable, 1, wxALIGN_CENTER | wxALIGN_CENTER_VERTICAL );
 
 	//-------------------------------------//
 	//--- lock channels					---//
 	//-------------------------------------//
 	chkLock = new wxCheckBox( this, -1, _("Lock channels") );
 	chkLock->SetValue( true );
-	pOptionsSizer->Add( chkLock, 1 );
+	pOptionsSizer->Add( chkLock, 1, wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL );
 
 	//-------------------------------------//
 	//--- reset bands					---//
 	//-------------------------------------//
 	btnReset = new wxButton( this, BTN_RESET, _("Reset bands") );
-	pOptionsSizer->Add( btnReset, 1 );
+	pOptionsSizer->Add( btnReset, 1, wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL );
 
-	pMainSizer->Add( pBandsSizer, 1, wxRIGHT, 4 );
-	pMainSizer->Add( pOptionsSizer, 0 );
+	pMainSizer->Add( pOptionsSizer, 0, wxEXPAND | wxBOTTOM, 4 );
+	pMainSizer->Add( pBandsSizer, 1 );
 
 	SetSizerAndFit( pMainSizer );
 	

@@ -58,7 +58,7 @@ public:
 	//--- sizers ---//
 	//--------------//
 	wxFlexGridSizer			*pBandsSizer;
-	wxFlexGridSizer			*pOptionsSizer;
+	wxBoxSizer				*pOptionsSizer;
 	wxBoxSizer				*pMainSizer;
 
 	//-------------//
