@@ -554,7 +554,7 @@ void CMusikLibrary::GetSongInfoFromID( int id, CMusikSongInfo* info )
 {
 	CStdString query;
 
-	query.Format( _T( "select filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize from songs where songid = %d;" ), id );
+	query.Format( _T( "select tracknum,artist,album,genre,title,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize,filename from songs where songid = %d;" ), id );
 	info->SetID( id );
 
 	// lock it up and run the query

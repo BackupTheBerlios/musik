@@ -54,7 +54,7 @@ public:
 	CMusikDynDspInfoRange(){ m_First = m_Last = 0; }
 	~CMusikDynDspInfoRange(){}
 
-	Set( int first, int last ){ m_First = first; m_Last = last; }
+	void Set( int first, int last ){ m_First = first; m_Last = last; }
 
 	int GetDistance(){ return m_Last - m_First; }
 	int GetFirst(){ return m_First; }
@@ -87,27 +87,25 @@ public:
 		m_ItemRange.Set( from, to + 1 );
 
 		// same item range as before, just return.
-		/*
 		if ( m_ItemRange.GetFirst() == m_LastItemRange.GetFirst() && 
 			 m_ItemRange.GetLast() == m_LastItemRange.GetLast() )
 			 return;
-			 */
 
 		// we got a 0,0 range, so check to see if there
 		// are any songs in the playlist. if there are
 		// not then that means nothing has been selected,
 		// and this cache hint was sent even though its not
 		// needed. just return.
-		if ( m_ItemRange.GetLast() > m_Songs->size() )
+		if ( m_ItemRange.GetLast() > (int)m_Songs->size() )
 			return;
 
-		//
+		/*
 		char buffer[32];
 		TRACE0 ( itoa( from, buffer, 10 ) );
 		TRACE0 ( ", " );
 		TRACE0 ( itoa( to, buffer, 10 ) );
 		TRACE0 ( "\n" );
-		//
+		*/
 
 		// grab all the new items
 		m_Items.clear();
