@@ -1128,7 +1128,6 @@ void CPlaylistCtrl::DelSelSongs(bool bDeleteFromDB, bool bDeleteFromComputer)
 	//--- find which songs are selected, delete as we go along ---//
 	wxString sFile;
 	nIndex = -1;
-	int n = 0;
 	int nFirstSel = GetNextItem( nIndex, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
 	g_PlaylistChanged = true;  // playlist will be changed, else we would not be here
 	for ( int i = 0; i < nSelCount; i++ )
