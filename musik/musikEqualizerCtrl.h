@@ -65,6 +65,7 @@ protected:
 	afx_msg void OnEqualizerState18band();
 	afx_msg void OnEqualizerState6band();
 	afx_msg void OnEqualizerSetAsDefault();
+	afx_msg void OnEqualizerResetdefault();
 
 	// custom message maps
 	afx_msg LRESULT OnClosePresets( WPARAM wParam, LPARAM lParam );
@@ -112,6 +113,7 @@ public:
 	void LoadDefault();
 	void SetAsDefault();
 	void DisplayChanged();
+	void ResetDefault();
 
 	// message maps
 	afx_msg void OnPaint();

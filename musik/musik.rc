@@ -149,6 +149,7 @@ BEGIN
         END
         MENUITEM "Lock Channels",               ID_EQUALIZER_LOCKCHANNELS
         MENUITEM SEPARATOR
+        MENUITEM "Reset Default",               ID_EQUALIZER_RESETDEFAULT
         MENUITEM "Set as Default",              ID_EQUALIZER_SET_AS_DEFAULT
         MENUITEM SEPARATOR
         MENUITEM "Presets",                     ID_EQUALIZER_PRESETS

@@ -61,6 +61,7 @@ BEGIN_MESSAGE_MAP(CmusikEqualizerBar, baseCmusikEqualizerBar)
 	ON_COMMAND(ID_EQUALIZER_STATE_18BAND, OnEqualizerState18band)
 	ON_COMMAND(ID_EQUALIZER_STATE_6BAND, OnEqualizerState6band)
 	ON_COMMAND(ID_EQUALIZER_SET_AS_DEFAULT, OnEqualizerSetAsDefault)
+	ON_COMMAND(ID_EQUALIZER_RESETDEFAULT, OnEqualizerResetdefault)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -189,6 +190,14 @@ void CmusikEqualizerBar::OnEqualizerState6band()
 void CmusikEqualizerBar::OnEqualizerSetAsDefault()
 {
 	GetCtrl()->SetAsDefault();
+}
+
+///////////////////////////////////////////////////
+
+void CmusikEqualizerBar::OnEqualizerResetdefault()
+{
+	CmusikEQSettings settings;
+	GetCtrl()->ResetDefault();
 }
 
 ///////////////////////////////////////////////////
@@ -423,6 +432,13 @@ void CmusikEqualizerCtrl::LoadCurrSong()
 	if ( m_Player->IsPlaying() && m_Player->IsEqualizerActive() )
 	{
 		CmusikEQSettings& curr_song = m_Player->GetEqualizer()->m_EQ_Values;
+	
+		if ( m_Player->GetEqualizer()->m_EQ_Values.m_ID == -1 )
+		{
+			LoadDefault();
+			return;
+		}
+
 		BandsFromEQSettings( curr_song );
 	}
 }
@@ -432,7 +448,10 @@ void CmusikEqualizerCtrl::LoadCurrSong()
 void CmusikEqualizerCtrl::LoadDefault()
 {
 	if ( m_Player->IsEqualizerActive() )
+	{
 		m_Library->GetDefaultEqualizer( &m_Player->GetEqualizer()->m_EQ_Values );
+		m_Player->GetEqualizer()->UpdateTable();
+	}
 
 	BandsFromEQSettings( m_Player->GetEqualizer()->m_EQ_Values );
 }
@@ -588,6 +607,20 @@ void CmusikEqualizerCtrl::DisplayChanged()
 {
 	if ( m_Player->IsEqualizerActive() )
 		BandsFromEQSettings( m_Player->GetEqualizer()->m_EQ_Values );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikEqualizerCtrl::ResetDefault()
+{
+	if ( m_Player->IsEqualizerActive() )
+	{
+		CmusikEQSettings reset;
+		BandsFromEQSettings( reset );
+		m_Player->GetEqualizer()->m_EQ_Values = reset;
+		m_Library->UpdateDefaultEqualizer( reset );
+		m_Player->UpdateEqualizer();
+	}
 }
 
 ///////////////////////////////////////////////////
