@@ -152,14 +152,16 @@ void CMusikBatchAdd::Run()
 
 void CMusikBatchAdd::Pause()
 {
-	m_pThread->Pause();
+	if ( m_pThread )
+		m_pThread->Pause();
 }
 
 ///////////////////////////////////////////////////
 
 void CMusikBatchAdd::Resume()
 {
-	m_pThread->Resume();
+	if ( m_pThread )
+		m_pThread->Resume();
 }
 
 ///////////////////////////////////////////////////

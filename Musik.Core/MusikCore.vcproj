@@ -222,13 +222,13 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="MusikDspEngine"
+			Name="MusikDir"
 			Filter="">
 			<File
-				RelativePath=".\src\MusikDspEngine.cpp">
+				RelativePath=".\src\MusikDir.cpp">
 			</File>
 			<File
-				RelativePath=".\include\MusikDspEngine.h">
+				RelativePath=".\include\MusikDir.h">
 			</File>
 		</Filter>
 		<File

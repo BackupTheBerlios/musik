@@ -167,7 +167,7 @@ public:
 	bool SetLastPlayedToNow	( int songid );
 	bool SetSongRating		( int songid, int rating );
 
-	// querying playlists
+	// querying playlist
 	void GetAllStdPlaylists ( CMusikPlaylistInfoArray* target, bool clear_target = true );
 	void GetAllDynPlaylists	( CMusikPlaylistInfoArray* target, bool clear_target = true );
 	void GetStdPlaylist		( int id, CMusikPlaylist& target, bool clear_target = true );

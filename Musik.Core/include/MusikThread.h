@@ -67,6 +67,7 @@ public:
 	void Pause();
 	void Resume();
 	void Kill();
+	void Wait();
 
 	// attributes
 	bool IsRunning(){ return m_Running; }
