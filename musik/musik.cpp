@@ -40,16 +40,14 @@ BOOL CmusikApp::InitInstance()
 	if ( !CWinAppEx::InitInstance( _T( "{340277AE-C62B-41de-89DF-90191D8950CF}" ) ) )
 		return FALSE;
 
-	AfxOleInit();
-
 	// InitCommonControls() is required on Windows XP if an application
 	// manifest specifies use of ComCtl32.dll version 6 or later to enable
 	// visual styles.  Otherwise, any window creation will fail.
 	InitCommonControls();
 
-	CWinApp::InitInstance();
+	CWinAppEx::InitInstance();
 
-	SetRegistryKey(_T("musik.MFC"));
+	SetRegistryKey(_T("musikCube"));
 
 	// such as the name of your company or organization
 	// To create the main window, this code creates a new frame window
@@ -76,7 +74,7 @@ BOOL CmusikApp::InitInstance()
 	{
 		sCmdLine.Delete( 0 );
 		sCmdLine.Delete( sCmdLine.GetLength() - 1 );
-		pFrame->PlayCmd( sCmdLine );
+		Play( sCmdLine );
 	}
 
 	// call DragAcceptFiles only if there's a suffix
