@@ -63,6 +63,30 @@
 
 ///////////////////////////////////////////////////
 
+int freqs[] = 
+{
+	55,
+	77,
+	110,
+	156,
+	220,
+	311,
+	440,
+	622,
+	880,
+	1244,
+	1760,
+	2489,
+	3520,
+	4978,
+	7040,
+	9956,
+	14080,
+	19912
+};
+
+///////////////////////////////////////////////////
+
 static int sqlite_AddSongToPlaylist(void *args, int numCols, char **results, char ** columnNames )
 {
 	// this is a callback for sqlite to use when
@@ -105,7 +129,7 @@ static int sqlite_GetCrossfader( void *args, int numCols, char **results, char *
 	double stop			= atof( results[3] );
 	double exit			= atof( results[4] );
 
-	p->Set( newsong, pauseresume, seek, stop, exit );
+	p->Set( (float)newsong, (float)pauseresume, (float)seek, (float)stop, (float)exit );
 
     return 0;
 }
@@ -366,6 +390,91 @@ bool CmusikLibrary::InitStdTables()
 
 ///////////////////////////////////////////////////
 
+bool CmusikLibrary::InitEqTable()
+{
+	if ( !m_pDB )
+		return false;
+
+	bool error = false;
+
+	// construct the table that contains a list of
+	// all the standard playlist names
+	static const char *szCreateDBQuery  = 
+		"CREATE TABLE " EQUALIZER_PRESET " ( "	
+		"equalizer_id INTEGER AUTO_INCREMENT PRIMARY KEY, "
+		"hz55 INTEGER, "
+		"hz77 INTEGER, "
+		"hz110 INTEGER, "
+		"hz156 INTEGER, "
+		"hz220 INTEGER, "
+		"hz311 INTEGER, "
+		"hz440 INTEGER, "
+		"hz622 INTEGER, "
+		"hz880 INTEGER, "
+		"hz1244 INTEGER, "
+		"hz1760 INTEGER, "
+		"hz2489 INTEGER, "
+		"hz3520 INTEGER, "
+		"hz4978 INTEGER, "
+		"hz7040 INTEGER, "
+		"hz9956 INTEGER, "
+		"hz14080 INTEGER, "
+		"hz19912 INTEGER ); ";
+
+	// put a lock on the library and open it up
+	m_ProtectingLibrary->acquire();
+
+	char *pErr = NULL;
+
+	sqlite_exec( m_pDB, szCreateDBQuery, NULL, NULL, NULL );
+
+	if ( pErr )
+	{
+		error = true;
+		sqlite_freemem( pErr );
+	}
+
+	m_ProtectingLibrary->release();
+
+	return error;
+}
+
+///////////////////////////////////////////////////
+
+bool CmusikLibrary::InitPathTable()
+{
+	if ( !m_pDB )
+		return false;
+
+	bool error = false;
+
+	// construct the table that contains a list of
+	// all the standard playlist names
+	static const char *szCreateDBQuery  = 
+		"CREATE TABLE " MANAGED_PATH " ( "	
+		"path_id INTEGER AUTO_INCREMENT PRIMARY KEY, "
+		"path_name varchar(1024) );";
+
+	// put a lock on the library and open it up
+	m_ProtectingLibrary->acquire();
+
+	char *pErr = NULL;
+
+	sqlite_exec( m_pDB, szCreateDBQuery, NULL, NULL, NULL );
+
+	if ( pErr )
+	{
+		error = true;
+		sqlite_freemem( pErr );
+	}
+
+	m_ProtectingLibrary->release();
+
+	return error;
+}
+
+///////////////////////////////////////////////////
+
 bool CmusikLibrary::InitDynTable()
 {
 	if ( !m_pDB )
@@ -518,16 +627,34 @@ bool CmusikLibrary::Startup()
    if ( m_pDB && !pErr )
    {
 		if ( !InitLibTable() )
+		{
 			error = true;
+			TRACE0( "Library table creation failed.\n" );
+		}
 
 		if ( !InitStdTables() )
+		{
+			TRACE0( "Standard playlist table creation failed.\n" );		
 			error = true;  
+		}
 
 		if ( !InitDynTable() )
+		{
 			error = true;
+			TRACE0( "Dynamic playlist table creation failed.\n" );
+		}
 
-		if ( !InitCrossfaderTable() )
+		if ( !InitEqTable() )
+		{
 			error = true;
+			TRACE0( "Equalizer preset table creation failed.\n" );
+		}
+
+		if ( !InitPathTable() )
+		{
+			TRACE0( "Managed paths table creation failed.\n" );		
+			error = true;
+		}
    }
    else
 	   error = true;

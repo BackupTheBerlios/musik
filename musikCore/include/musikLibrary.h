@@ -113,6 +113,8 @@ enum
 #define STD_PLAYLIST_SONGS "std_playlist_song"
 #define DYN_PLAYLIST_TABLE_NAME "dyn_playlist"
 #define CROSSFADER_PRESET "crossfader_preset"
+#define EQUALIZER_PRESET "equalizer_preset"
+#define MANAGED_PATH "managed_path"
 
 ///////////////////////////////////////////////////
 
@@ -189,6 +191,11 @@ public:
 	void DeleteCrossfader	( CmusikCrossfader* fader );
 	void DeleteCrossfader	( const CStdString& name );
 
+	// paths
+
+
+	// equalizers
+
 	// misc stuff
 	static int GetFilesize( const CStdString& fn );
 
@@ -220,7 +227,8 @@ private:
 	bool InitLibTable();
 	bool InitStdTables();
 	bool InitDynTable();
-	//bool InitEqTable();
+	bool InitEqTable();
+	bool InitPathTable();
 	bool InitCrossfaderTable();
 
 	// only needs to be initialized once
