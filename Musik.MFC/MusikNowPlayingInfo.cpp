@@ -56,20 +56,21 @@ void CMusikNowPlayingInfo::Layout( bool refresh )
 {
 	CSize rect = GetSize();
 
-	int nBaseline = GetBaseline( GetHeight() );
+	CMusikFontBaseline blLargest, blCurrent;
+	GetBaseline( GetHeight(), &blLargest );
 
 	int nCurrX = 0;
 	int nCurrY = 0;
-	int nCurrBase;
+
 	CRect rcClient;
 	for ( size_t i = 0; i < m_LayoutOrder.size(); i++ )
 	{
-		nCurrBase = GetBaseline( m_LayoutOrder.at( i )->GetFontSize() );
-		nCurrY = nBaseline - nCurrBase;
+		GetBaseline( m_LayoutOrder.at( i )->GetFontSize(), &blCurrent );
+		nCurrY = blLargest.m_Ascending - blCurrent.m_Ascending - blCurrent.m_Descending;
 
 		m_LayoutOrder.at( i )->GetClientRect( rcClient );
 		m_LayoutOrder.at( i )->MoveWindow( CRect( CPoint( nCurrX, nCurrY ), CSize( rcClient.Width(), rcClient.Height() ) ) );
-
+		
 		if ( refresh )
 			m_LayoutOrder.at( i )->RedrawWindow();
 
@@ -177,13 +178,16 @@ void CMusikNowPlayingInfo::InitObjects()
 			pTemp->Create( NULL, WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0 ), this );
 
 			pTemp->SetDynFont( m_FontSize );
-			pTemp->SetDynText( "Null" );
+			pTemp->SetDynText( "Playback Stopped" );
 			pTemp->SetType( atoi( sCurr.GetBuffer() ) );
 
 			m_Captions.push_back( pTemp );
 			m_LayoutOrder.push_back( pTemp );
 		}
 	}
+
+	if ( m_Player->IsPlaying() )
+		UpdateInfo();
 }
 
 ///////////////////////////////////////////////////
@@ -224,7 +228,7 @@ CSize CMusikNowPlayingInfo::GetSize()
 
 ///////////////////////////////////////////////////
 
-int CMusikNowPlayingInfo::GetBaseline( int font_size )
+void CMusikNowPlayingInfo::GetBaseline( int font_size, CMusikFontBaseline* baseline )
 {
 	CFont *temp_font;
 
@@ -247,7 +251,9 @@ int CMusikNowPlayingInfo::GetBaseline( int font_size )
 
 	delete temp_font;
 
-	return metrics.tmAscent;
+	baseline->m_Ascending = metrics.tmAscent;
+	baseline->m_Descending = metrics.tmDescent;
+	baseline->m_Height = metrics.tmHeight;
 }
 
 ///////////////////////////////////////////////////

@@ -24,6 +24,29 @@ typedef std::vector<CString> CCStringArray;
 
 ///////////////////////////////////////////////////
 
+class CMusikFontBaseline
+{
+public:
+
+	CMusikFontBaseline()
+	{
+		m_Height = -1;
+		m_Ascending = -1;
+		m_Descending = -1;
+	}
+
+    ~CMusikFontBaseline()
+	{
+
+	}
+
+	int m_Height;
+	int m_Ascending;
+	int m_Descending;
+};
+
+///////////////////////////////////////////////////
+
 class CMusikNowPlayingInfo : public CWnd
 {
 public:
@@ -35,7 +58,7 @@ public:
 	CSize GetSize();
 	int GetHeight();
 	int GetWidth();
-	int GetBaseline( int font_size );
+	void GetBaseline( int font_size, CMusikFontBaseline* baseline );
 
 	// setting
 	void Set( CString mask );
