@@ -84,7 +84,7 @@ bool  COggInfo::WriteMetaData(const CSongMetaData & MetaData,bool bClearAll)
 	vcedit_state *state = vcedit_new_state();
 
 	//--- if file couldn't be openend, return ---//
-	inFile = _tfopen( MetaData.Filename.GetFullPath(), wxT("r+b") );
+	inFile = wxFopen( MetaData.Filename.GetFullPath(), wxT("r+b") );
 	if (!inFile)
 	{
 		return false;
@@ -125,7 +125,7 @@ bool  COggInfo::WriteMetaData(const CSongMetaData & MetaData,bool bClearAll)
 	//--- write new file ---//
 	wxString outfilename = wxFileName::CreateTempFileName(MUSIKAPPNAME);
 	bool bTagWritingSucceded = false;
-	outFile = _tfopen( outfilename, wxT("w+b") );
+	outFile = wxFopen( outfilename, wxT("w+b") );
 	if ( outFile )
 	{
 		bTagWritingSucceded = vcedit_write( state, outFile ) >= 0;
