@@ -766,4 +766,5 @@ void MusikTagFrame::SetActiveThread( wxThread* newactivethread)
 		wxASSERT(pCurrThread == NULL); // ATTENTION!!! there is an active thread. someone forgot to call SetActiveThread(NULL)
 	}
 	m_ActiveThread = newactivethread;
-}	
+}
+	

@@ -149,7 +149,7 @@ void CTunage::ParseTags( wxString& str )
 	if ( m_Song.Filesize == -1 )
 		str.Replace( wxT("$NAME"), g_Prefs.sTunageStoppedText );
 	else
-		str.Replace( wxT("$NAME"), wxString::Format( wxT("%s - %s"), m_Song.Artist, m_Song.Title ) );
+		str.Replace( wxT("$NAME"), wxString::Format( wxT("%s - %s"),(const wxChar*) m_Song.Artist, (const wxChar *)m_Song.Title ) );
 
 	str.Replace( wxT("$FILENAME"), m_Song.Filename );
 	str.Replace( wxT("$FILESIZE"), sFilesize );

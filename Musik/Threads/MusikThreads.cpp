@@ -46,7 +46,7 @@ void MusikFaderThread::CrossfaderAbort()
 		//--- Abort() tells fader NOT to clean up old streams	---//
 		//---------------------------------------------------------//
 		pCrossfader->Abort();		
-		CrossfaderStop();
+//		CrossfaderStop();
 	}
 }
 
@@ -63,6 +63,7 @@ void MusikFaderThread::CrossfaderStop()
 
 void MusikFaderThread::StartNew()
 {
+	CrossfaderStop();
 	//--------------------------------//
 	//--- fire up a new crossfader ---//
 	//--------------------------------//
@@ -93,6 +94,7 @@ void *MusikFaderThread::Entry()
 				if ( IsCrossfaderActive() )
 				{
 					CrossfaderAbort();
+					CrossfaderStop();
 				}
 				else
 				{
@@ -100,7 +102,6 @@ void *MusikFaderThread::Entry()
 					//--- let the player know we got the message	---//
 					//-------------------------------------------------//
  					g_Player.CaughtBeginFade();
-
 					//-------------------------------------------------//
 					//--- if no old crossfader is active, fire up a	---//
 					//--- new one. if there was one active, once it	---//
@@ -283,7 +284,7 @@ void *MusikCrossfaderThread::Entry()
 	//-------------------------------------------------//
     for ( int i = 0; i < nFadeCount; i++ )
 	{
-		if ( TestDestroy() )
+		if ( TestDestroy() || m_Aborted )
 			return NULL;
 
 		//-----------------------------------------//

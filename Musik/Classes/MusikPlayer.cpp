@@ -259,6 +259,17 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 		//---------------------------------------------//
 		{
 			wxMutexLocker lock(g_protectingStreamArrays);
+			for(int i = 0; i < g_ActiveChannels.GetCount();i++)
+			{
+				if(g_ActiveChannels[i] == GetCurrChannel())
+				{
+					FSOUND_Stream_Stop ( g_ActiveStreams[i] );
+					FSOUND_Stream_Close( g_ActiveStreams[i] );
+					g_ActiveStreams.RemoveAt(i);
+					g_ActiveChannels.RemoveAt(i);
+					break;
+				}
+			}
 			g_ActiveStreams.Add( pNewStream );
 			g_ActiveChannels.Add( GetCurrChannel() );
 		}
@@ -362,9 +373,11 @@ void CMusikPlayer::ClearOldStreams( bool bClearAll )
 
 	for ( int i = 0; i < nStreamCount; i++ )
 	{
-		FSOUND_Stream_Stop	( g_ActiveStreams.Item( 0 ) );
-		FSOUND_Stream_Close	( g_ActiveStreams.Item( 0 ) );
-		
+		if(g_ActiveStreams.Item( 0 ))
+		{
+			FSOUND_Stream_Stop	( g_ActiveStreams.Item( 0 ) );
+			FSOUND_Stream_Close	( g_ActiveStreams.Item( 0 ) );
+		}
 		g_ActiveStreams.RemoveAt( 0 );
 		g_ActiveChannels.RemoveAt( 0 );
 	}
