@@ -4,29 +4,31 @@
 
 CMusikPrefs::CMusikPrefs( CString filename )
 {
-	config = new CIniReader( filename );
-	VerifyFile( filename );
+	config = new CIniFile( filename.GetBuffer() );
+
+	if ( !config->ReadFile() )
+		config->WriteFile();
+
+	m_Filename = filename;
+
 	LoadPrefs();
 }
 
 CMusikPrefs::~CMusikPrefs()
 {
-    delete config;
+	delete config;
 }
 
 void CMusikPrefs::LoadPrefs()
 {
-	m_SelectionBox_Count = CStringToInt( config->getKeyValue( "Selection Area", "Count", "4" ) );
+	m_SelectionBox_Count = StringToInt( config->GetValue( "Selection Area", "Count", "2" ) );
+
+	SavePrefs();
 }
 
 void CMusikPrefs::SavePrefs()
 {
-	config->setKey( "Selection Area", "Count", IntToCString( GetSelBoxCount() ) );
-}
+	config->SetValue( "Selection Area", "Count", IntToString( m_SelectionBox_Count ) );
 
-void CMusikPrefs::VerifyFile( CString filename )
-{
-	CStdioFile file;
-	file.Open( filename, CFile::modeCreate | CFile::modeRead, NULL );
-	file.Close();
+	config->WriteFile();
 }

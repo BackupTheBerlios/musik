@@ -350,13 +350,13 @@
 				RelativePath=".\MusikPrefs.h">
 			</File>
 			<Filter
-				Name="CIniReader"
+				Name="CIniFile"
 				Filter="">
 				<File
-					RelativePath=".\CIniReader\INI.cpp">
+					RelativePath=".\CIniEx\iniFile.cpp">
 				</File>
 				<File
-					RelativePath=".\CIniReader\INI.h">
+					RelativePath=".\CIniEx\iniFile.h">
 				</File>
 			</Filter>
 		</Filter>

@@ -1,16 +1,22 @@
 #pragma once
 
-
 #include "stdafx.h"
-#include "CIniReader/INI.h"
+#include "CIniReader/iniFile.h"
 
-#define CStringToInt atoi
+using namespace std;
 
-inline CString IntToCString( int n )
+inline int StringToInt( const string str )
+{
+	return atoi( str.c_str() );	
+}
+
+
+inline string IntToString( int n )
 {
 	char buffer[20];
 	itoa( n, buffer, 10 );
-	return (CString)buffer;
+	string str = buffer;
+    return str;	
 }
 
 class CMusikPrefs
@@ -25,9 +31,9 @@ public:
 	int GetSelBoxCount(){ return m_SelectionBox_Count; }
 
 protected:
-	void VerifyFile( CString filename );
-	CIniReader* config;
+	CIniFile* config;
 
 private:
+	CString m_Filename;
 	int m_SelectionBox_Count;
 };
