@@ -1096,27 +1096,33 @@ void CMainFrame::RequerySelBoxes( CStdString query, CmusikSelectionCtrl* parent 
 		}
 	}
 
-	if ( !parent )
-		return;
-
-	// get query...
+	// update parent if there is one
 	CmusikSelectionCtrl::SetUpdating( true );
-	parent->UpdateV( true );
-	CmusikSelectionCtrl::SetUpdating( false );
 
-	if ( query.IsEmpty() )
-		query = GetSelQuery( NULL, parent );
-
-	// requery them all
-	CmusikSelectionCtrl* pCurr = NULL;
-	CmusikSelectionCtrl::SetUpdating( true );
-	for ( size_t i = 0; i < m_wndSelectionBars.size(); i++ )
+	if ( parent )
 	{
-		pCurr = m_wndSelectionBars.at( i )->GetCtrl();
-		if ( !pCurr->IsParent() )
-			pCurr->UpdateV( query, true );
-            
+		// update parent
+		parent->UpdateV( true );
+
+		// get query
+		if ( query.IsEmpty() )
+			query = GetSelQuery( NULL, parent );
+
+		// update children
+		CmusikSelectionCtrl* pCurr = NULL;
+		for ( size_t i = 0; i < m_wndSelectionBars.size(); i++ )
+		{
+			pCurr = m_wndSelectionBars.at( i )->GetCtrl();
+			if ( !pCurr->IsParent() )
+				pCurr->UpdateV( query, true );	            
+		}
 	}
+	else
+	{
+		for ( size_t i = 0; i < m_wndSelectionBars.size(); i++ )
+			m_wndSelectionBars.at( i )->GetCtrl()->UpdateV( true );
+	}
+
 	CmusikSelectionCtrl::SetUpdating( false );
 }
 
@@ -2513,8 +2519,8 @@ void CMainFrame::OnFileClearlibrary()
 				m_Threads.at( i )->Abort();
 				m_Threads.at( i )->Resume();
 
-				while ( !m_Threads.at( i )->m_Finished )
-					Sleep( 50 );
+					while ( !m_Threads.at( i )->m_Finished )
+						Sleep( 50 );
 
 				delete m_Threads.at( i );
 			}
