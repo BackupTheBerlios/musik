@@ -268,60 +268,70 @@ void *MusikCrossfaderThread::Entry()
 
 void MusikCrossfaderThread::OnExit()
 {
+	m_Parent->SetCrossfaderActive( false );
+
 	//-------------------------------------------------//
 	//--- if we ended naturally, that means no		---//
 	//--- other crossfader spawned. tell the player	---//
 	//--- no other fading is going on, so it can	---//
 	//--- manage and clean up any orphan streams	---//
 	//-------------------------------------------------//
-	m_Parent->SetCrossfaderActive( false );
-
 	if ( !m_Aborted )
 	{
 		wxCommandEvent FadeCompleteEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYER_FADE_COMPLETE );	
 		wxPostEvent( &g_Player, FadeCompleteEvt );
 		Yield();
+
+		return;
 	}
 
-	if ( m_FadeType == CROSSFADE_STOP || m_FadeType == CROSSFADE_EXIT )
+	//-------------------------------------------------//
+	//--- otherwise, something sent us the abort	---//
+	//--- signal. so kill the thread, then recall	---//
+	//--- whatever function aborted it.				---//
+	//-------------------------------------------------//
+	else
 	{
-		wxCommandEvent StopPlayerEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYER_STOP );	
-		wxPostEvent( &g_Player, StopPlayerEvt );
-		Yield();
-
-		//-----------------------------------------------------//
-		//--- and if its an exit, clean up. this probably	---//
-		//--- needs work.									---//
-		//-----------------------------------------------------//
-		if ( m_FadeType == CROSSFADE_EXIT )
+		if ( m_FadeType == CROSSFADE_STOP || m_FadeType == CROSSFADE_EXIT )
 		{
-			m_Parent->Delete();
+			wxCommandEvent StopPlayerEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYER_STOP );	
+			wxPostEvent( &g_Player, StopPlayerEvt );
 			Yield();
 
-			wxCommandEvent ExitPlayerEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_FRAME_EXIT_FADE_DONE );
-			wxPostEvent( g_MusikFrame, ExitPlayerEvt );
-			Yield();	
+			//-----------------------------------------------------//
+			//--- and if its an exit, clean up. this probably	---//
+			//--- needs work.									---//
+			//-----------------------------------------------------//
+			if ( m_FadeType == CROSSFADE_EXIT )
+			{
+				m_Parent->Delete();
+				Yield();
+
+				wxCommandEvent ExitPlayerEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_FRAME_EXIT_FADE_DONE );
+				wxPostEvent( g_MusikFrame, ExitPlayerEvt );
+				Yield();	
+			}
+
+			return;
 		}
 
-		return;
-	}
+		else if ( m_FadeType == CROSSFADE_PAUSE )
+		{
+			wxCommandEvent PausePlayerEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYER_PAUSE );	
+			wxPostEvent( &g_Player, PausePlayerEvt );
+			Yield();
 
-	else if ( m_FadeType == CROSSFADE_PAUSE )
-	{
-		wxCommandEvent PausePlayerEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYER_PAUSE );	
-		wxPostEvent( &g_Player, PausePlayerEvt );
-		Yield();
+			return;
+		}
 
-		return;
-	}
+		else if ( m_FadeType == CROSSFADE_RESUME )
+		{
+			wxCommandEvent ResumePlayerEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYER_RESUME );	
+			wxPostEvent( &g_Player, ResumePlayerEvt );
+			Yield();
 
-	else if ( m_FadeType == CROSSFADE_RESUME )
-	{
-		wxCommandEvent ResumePlayerEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYER_RESUME );	
-		wxPostEvent( &g_Player, ResumePlayerEvt );
-		Yield();
-
-		return;
+			return;
+		}
 	}
 }
 

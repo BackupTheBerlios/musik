@@ -206,7 +206,10 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 		//--- progress, then we need to abort it	---//
 		//---------------------------------------------//
 		if ( g_FaderThread->IsCrossfaderActive() )
+		{
 			g_FaderThread->CrossfaderAbort();
+			//return;
+		}
 
 		//---------------------------------------------//
 		//--- open a new stream and push it to the	---//
@@ -333,6 +336,8 @@ void CMusikPlayer::Pause( bool bCheckFade )
 		g_FaderThread->CrossfaderAbort();
 		return;
 	}
+
+	g_NowPlayingCtrl->PauseBtnToPlayBtn();
 	
 	//-------------------------------------------------//
 	//--- if this type of crossfade is enabled,		---//
@@ -342,7 +347,7 @@ void CMusikPlayer::Pause( bool bCheckFade )
 	//-------------------------------------------------//
 	if ( bCheckFade )
 	{
-		if ( g_Prefs.nFadePauseResumeEnable == 1 && IsPlaying() )
+		if ( g_Prefs.nFadePauseResumeEnable == 1 )
 		{
 			SetFadeStart();
 			return;
@@ -354,10 +359,8 @@ void CMusikPlayer::Pause( bool bCheckFade )
 	//--- fading is disabled. so actually pause the	---//
 	//--- stream and update the UI.					---//
 	//-------------------------------------------------//
-	m_Paused = true;
 	FSOUND_SetPaused( FSOUND_ALL, TRUE );
-
-	g_NowPlayingCtrl->PauseBtnToPlayBtn();
+	m_Paused = true;
 }
 
 void CMusikPlayer::Resume( bool bCheckFade )
@@ -377,26 +380,21 @@ void CMusikPlayer::Resume( bool bCheckFade )
 		return;
 	}
 
-	m_Paused = false;
+	g_NowPlayingCtrl->PlayBtnToPauseBtn();
 	FSOUND_SetPaused( FSOUND_ALL, FALSE );
-	
+	m_Paused = false;
+
 	//-----------------------------------------------------//
 	//--- setup crossfader and return, if	the prefs	---//
 	//--- say so.										---//
 	//-----------------------------------------------------//
 	if ( bCheckFade )
 	{
-		if ( g_Prefs.nFadePauseResumeEnable == 1 && IsPaused() )
-		{
+		if ( g_Prefs.nFadePauseResumeEnable == 1 )
 			SetFadeStart();
-			return;
-		}
 	}
-	
 	else
 		SetVolume();
-	
-	g_NowPlayingCtrl->PlayBtnToPauseBtn();
 }
 
 void CMusikPlayer::Stop( bool bCheckFade, bool bExit )
