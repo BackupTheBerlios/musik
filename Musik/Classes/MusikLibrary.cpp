@@ -1038,9 +1038,9 @@ void CMusikLibrary::UpdateItem( const wxString & fn, CMusikSong & newsonginfo, b
 			( const char* )ConvDBFieldToMB( newsonginfo.LastPlayed ), 
 			( const char* )ConvDBFieldToMB( newsonginfo.Notes ), 
 			newsonginfo.TimesPlayed, 
+			newsonginfo.Duration, 
 			( const char* )ConvDBFieldToMB( newsonginfo.TimeAdded ), 
 			newsonginfo.Filesize,
-			newsonginfo.Duration, 
 			(int)bDirty, 
 			( const char* )ConvDBFieldToMB( OldFilename ) );
 
