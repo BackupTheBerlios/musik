@@ -310,6 +310,8 @@ void CPlaylistCtrl::DragCol( wxListEvent& event )
 
 void CPlaylistCtrl::PlaySel( wxListEvent& WXUNUSED(event) )
 {
+	// need to update to clear some repainting issues
+	Refresh( false );
 	g_Player.PlayCurSel();
 }
 
@@ -841,6 +843,7 @@ void CPlaylistCtrl::DelSelSongs()
 				nFirstSel = nIndex;
 
 			g_Playlist.RemoveAt( nIndex - n, 1 );
+			g_PlaylistChanged = true;
 
 			n++;
 		}
@@ -883,6 +886,7 @@ void CPlaylistCtrl::DelSelFilesDB()
 				sFile = g_Playlist.Item( nIndex - n ).Filename;
 				g_Library.RemoveSong( sFile );
 				g_Playlist.RemoveAt( nIndex - n, 1 );
+				g_PlaylistChanged = true;
 
 				if ( i == 0 )
 					nFirstSel = nIndex;
@@ -929,6 +933,7 @@ void CPlaylistCtrl::DelSelFiles()
 			{
 				sFile = g_Playlist.Item( nIndex - n ).Filename;
 				g_Playlist.RemoveAt( nIndex - n, 1 );
+				g_PlaylistChanged = true;
 
 				if ( wxRemoveFile( sFile ) )
 					g_Library.RemoveSong( sFile );
