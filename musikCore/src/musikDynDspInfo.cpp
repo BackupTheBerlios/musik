@@ -58,6 +58,10 @@
 
 ///////////////////////////////////////////////////
 
+using namespace musik;
+
+///////////////////////////////////////////////////
+
 CmusikDynDspInfo::CmusikDynDspInfo( CmusikPlaylist* songs, CmusikLibrary* library )
 {
 	m_Songs = songs;

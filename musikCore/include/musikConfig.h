@@ -48,6 +48,12 @@
 #include "StdString.h"
 #include <vector>
 
+///////////////////////////////////////////////////
+
+namespace musik {
+
+///////////////////////////////////////////////////
+
 typedef CStdString CmusikString;	
 typedef std::vector<CmusikString> CmusikStringArray;
 typedef std::vector<int> CIntArray;
@@ -106,6 +112,10 @@ inline char *int2str( char *buff, int i )
 	
 	return buff;
 }
+
+///////////////////////////////////////////////////
+
+} // namespace
 
 ///////////////////////////////////////////////////
 

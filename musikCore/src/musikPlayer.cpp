@@ -53,6 +53,10 @@
 
 ///////////////////////////////////////////////////
 
+using namespace musik;
+
+///////////////////////////////////////////////////
+
 #ifdef WIN32
 #pragma warning (disable : 4312)		// conversion of int to * of greater size
 #endif

@@ -179,7 +179,7 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="musikPlaylist.h"
+			Name="musikPlaylist"
 			Filter="">
 			<File
 				RelativePath=".\src\musikPlaylist.cpp">

@@ -69,6 +69,10 @@
 
 ///////////////////////////////////////////////////
 
+using namespace musik;
+
+///////////////////////////////////////////////////
+
 static int sqlite_AddSongToPlaylist( void *args, int numCols, char **results, char ** columnNames )
 {
 	CmusikSong *pLibItem = new CmusikSong();
