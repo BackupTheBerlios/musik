@@ -211,7 +211,7 @@ static int sqlite_GetSongInfoFromID( void *args, int numCols, char **results, ch
 }
 
 ///////////////////////////////////////////////////
-
+ 
 static int sqlite_AddSongToStringArray( void *args, int numCols, char **results, char ** columnNames )
 {
 	CmusikStringArray* p = (CmusikStringArray*)args;

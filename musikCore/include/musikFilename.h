@@ -42,6 +42,7 @@
 ///////////////////////////////////////////////////
 
 #include "musikConfig.h"
+#include "musikPlaylist.h"
 
 ///////////////////////////////////////////////////
 
@@ -70,8 +71,14 @@ public:
 	CmusikString GetPathSeparator();
 	CmusikString GetJustFilename();
 	CmusikString GetPath();
+	CmusikString GetTrimPath();
 	CmusikString GetFullFilename();
+	CmusikString GetTrimFilename();
 	CmusikString GetExtension( bool make_lower = true );
+	CmusikString GetJustFilenameNoExt();
+
+    bool GetSongInfo( CmusikStringArray mask, CmusikString fn_delimiter, CmusikSongInfo& target, bool accept_partial = true );
+	void GetDelimitedPath( CmusikStringArray& target, bool reverse = false, bool trimfilename = false );
 
 	// sets
 	void SetFilename( const CmusikString& fn );
@@ -82,6 +89,7 @@ public:
 
 private:
 
+	void DelimitStr( CmusikString path, CmusikString delimiter, CmusikStringArray& array, bool reverse, int count = -1 );
 	CmusikString m_Filename;
 };
 
