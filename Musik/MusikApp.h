@@ -19,6 +19,7 @@
 #endif 
 #include <wx/snglinst.h>
 #include <wx/ipc.h>
+#include "wx/intl.h"
 
 #include "Classes/MusikLibrary.h"
 #include "Classes/MusikPlayer.h"
@@ -44,7 +45,6 @@ public:
 	virtual bool OnInit();
 	virtual int OnExit();
 	void OnPlayFiles(const wxArrayString &aFilelist);
-	
 public:
 	CMusikPrefs			Prefs;
 	CMusikLibrary		Library;
@@ -56,6 +56,7 @@ private:
 
 	wxSingleInstanceChecker *m_pSingleInstanceChecker;
 	MusikAppServer *m_pServer;
+	wxLocale m_locale; // locale we'll be using
 };
 
 DECLARE_APP(MusikApp)

@@ -84,6 +84,11 @@ void MusikApp::OnPlayFiles(const wxArrayString &aFilelist)
 }
 bool MusikApp::OnInit()
 {
+	m_locale.AddCatalogLookupPathPrefix(wxT("locale"));
+
+	m_locale.Init(wxLANGUAGE_DEFAULT);
+	m_locale.AddCatalog(MUSIKAPPNAME);
+
 	static const wxCmdLineEntryDesc cmdLineDesc[] =
 	{
 		{ wxCMD_LINE_PARAM,  NULL, NULL, wxT("mp3/ogg file"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE | wxCMD_LINE_PARAM_OPTIONAL},

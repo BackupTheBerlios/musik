@@ -166,6 +166,7 @@ public:
 	int			GetSelectedItemCount	()													{ return pListBox->GetSelectedItemCount();				}
 	void		GetRelatedList			( CActivityBox *pDst, wxArrayString & aReturn );
 	wxString	GetActivityTypeStr		();
+	wxString	GetActivityTypeStringTranslated		();
 	void		GetSelectedSongs		( CMusikSongArray& array );
 
 	CActivityListBox*		GetListBox		()												{ return pListBox;										}

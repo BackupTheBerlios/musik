@@ -1,3 +1,9 @@
+0.3.1.0 to 0.3.1.1
++ AutoDj/Shuffle Settings are now changeable in the preferences. 
++ New AutoDJ Filter setting available. for example you can filter out all songs with genre Comedy and negative rating.
++ Now you are able to rate the songs from -9 to +9. Use shift + number for negative rating
+- Tunage Run on stop was always executed, regardless of the prefs setting
++ wxMusik is localized now. A german localization is available now as the first one ( simply because i am german ;-)) 
 
 0.3.0.2 to 0.3.1.0
 - On linux CTRL + a and CTRL + d in the playlist to select all/nothing did not work.

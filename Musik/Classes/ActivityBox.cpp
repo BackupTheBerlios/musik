@@ -208,7 +208,7 @@ bool CActivityListBox::HasShowAllRow() const
 wxString CActivityListBox::GetRowText( long row, bool bPure ) const
 {
 		if( row == 0 && HasShowAllRow())
-			return _("Show all ") + m_pParent->GetActivityTypeStr() + wxT( "s" );
+			return _("Show all ") + m_pParent->GetActivityTypeStringTranslated();
 		if(HasShowAllRow())
 			row--;
 		if(wxGetApp().Prefs.bSortArtistWithoutPrefix && !bPure && m_pParent->GetActivityType() == MUSIK_LBTYPE_ARTISTS)
@@ -495,6 +495,29 @@ wxString CActivityBox::GetActivityTypeStr()
 	}
 	return wxT( "" );
 }
+wxString CActivityBox::GetActivityTypeStringTranslated()
+{
+	switch ( GetActivityType() )
+	{
+	case MUSIK_LBTYPE_ARTISTS:
+		return _( "Artists" );
+		break;
+	case MUSIK_LBTYPE_ALBUMS:
+		return _( "Albums" );
+		break;
+	case MUSIK_LBTYPE_GENRES:
+		return _( "Genres" );
+		break;
+	case MUSIK_LBTYPE_YEARS:
+		return _( "Years" );
+		break;
+	case MUSIK_LBTYPE_NULL:
+		wxASSERT(0);
+		break;  
+	}
+	return wxT( "" );
+}
+
 EMUSIK_LIB_TYPE CActivityBox::ACTIVITY_TYPE2LIB_TYPE( EMUSIK_ACTIVITY_TYPE lbtype )
 {
 	switch (lbtype)

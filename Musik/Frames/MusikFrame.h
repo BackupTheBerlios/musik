@@ -123,12 +123,7 @@ public:
 	wxBitmap		bmpNetstream;
 
 	//--- rating bitmaps ---//
-	wxBitmap		bmpRating0;
-	wxBitmap		bmpRating1;
-	wxBitmap		bmpRating2;
-	wxBitmap		bmpRating3;
-	wxBitmap		bmpRating4;
-	wxBitmap		bmpRating5;
+	wxBitmap		bmpRating[(MUSIK_MAX_RATING - MUSIK_MIN_RATING) + 1];
 
 	//--- sizers ---//
 	wxBoxSizer *vsTopBottom;

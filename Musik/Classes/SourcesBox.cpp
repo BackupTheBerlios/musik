@@ -485,7 +485,7 @@ void CSourcesListBox::UpdateSel( size_t index )
 
 		bInFunction = (index == (size_t)-4); // HACK!!,
 		wxListCtrlSelNone( this );
-        m_CurSel = FindInSources(wxT( "Musik Library" ),MUSIK_SOURCES_LIBRARY);
+        m_CurSel = FindInSources(wxT( "" ),MUSIK_SOURCES_LIBRARY);
 		SetItemState( m_CurSel, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
 		bInFunction = false;
 		return;
@@ -705,13 +705,10 @@ void CSourcesListBox::Save()
 //---------------------------------------------------//
 wxString CSourcesListBox::OnGetItemText(long item, long column) const
 {
-	wxString sItem = m_SourcesList.Item( item ).Right( m_SourcesList.Item( item ).Length() - 3 );
-	sItem.Trim( true ); sItem.Trim( false );
-
 	switch ( column )
 	{
 	case 0:
-		return sItem;
+		return GetSourceEntry(item);
 		break;
 	}
 
@@ -754,6 +751,25 @@ int	CSourcesListBox::OnGetItemImage	(long item) const
 {
 
 	return GetType(item);	
+}
+
+
+wxString CSourcesListBox::GetSourceEntry(long i) const
+{
+	switch(i)
+	{
+	case 0:
+		return _("Musik Library");
+	case 1:
+		return _("Now Playing");
+		
+	default:
+		{
+			wxString sItem = m_SourcesList.Item( i ).Right( m_SourcesList.Item( i ).Length() - 3 );
+			sItem.Trim();sItem.Trim(false);
+			return sItem;
+		}
+	}
 }
 
 void CSourcesListBox::Update()
@@ -975,7 +991,7 @@ bool CSourcesListBox::CreateStdPlaylist( wxString sName, wxString sSongs )
 		//-----------------------------------------------------//
 		if ( sSongs != wxT( "" ) )
 		{
-			if ( wxMessageBox( _( "A playlist with this name already exists, would you like to append the existing one?" ), MUSIKAPPNAME_VERSION, wxYES_NO | wxICON_QUESTION ) == wxYES )
+			if ( wxMessageBox( _( "A playlist with this name already exists, would you like to append to the existing one?" ), MUSIKAPPNAME_VERSION, wxYES_NO | wxICON_QUESTION ) == wxYES )
 				AppendStdPlaylist( sName, sSongs );
 		}
 
@@ -1094,7 +1110,30 @@ void CSourcesListBox::UpdateDynPlaylist( int nIndex )
 
 wxString CSourcesListBox::PromptDynamicPlaylist( wxString sQuery )
 {
-	wxTextEntryDialog dlg( this, _( "Examples:\ntitle like '%funky%'    (all titles containing funky)\nbitrate < 128, vbr = 0    (all low quality, non-VBR)\ntimesplayed > 10 order by artist    (your popular tracks)" ), MUSIKAPPNAME_VERSION, sQuery );
+	wxString sInfo;
+	sInfo += _("The following fields can be used in your query");
+	sInfo +=wxT(":\n");
+	for( size_t i = 0; i < NPLAYLISTCOLUMNS ; i ++)
+	{
+		sInfo += g_PlaylistColumnDBNames[i];
+		if(i < NPLAYLISTCOLUMNS - 1)
+			sInfo += wxT(", ");
+		if((i % 8) == 7)
+			sInfo += wxT("\n");
+
+	}
+	sInfo += wxT("\n\n");
+	sInfo += wxGetTranslation( 
+		_T("Examples:\ntitle like '%funky%'\n")    
+		_T("(all titles containing funky)\n")
+		_T("bitrate < 128, vbr = 0\n")    
+		_T("(all low quality, non-VBR)\n")
+		_T("timesplayed > 10 order by artist\n")    
+		_T("(your popular tracks)\n") 
+		_T("lastplayed !='' and lastplayed >= julianday('now','start of month')\n")   
+		_T("(all songs played this month)")
+		);
+	wxTextEntryDialog dlg( this,sInfo , MUSIKAPPNAME_VERSION, sQuery );
 
 	if ( dlg.ShowModal() == wxID_OK )
 		return dlg.GetValue();	
@@ -1185,7 +1224,7 @@ void CSourcesListBox::AppendStdPlaylist( wxString sName, wxString sSongs )
 	if ( !In.IsOpened() )
 			return;
 
-	sSongs = wxT( "\n" ) + sSongs;
+	sSongs = wxT( "\n")  + sSongs;
 	In.AddLine( sSongs );
 	In.Write();
 	In.Close();
@@ -1263,7 +1302,8 @@ void CSourcesListBox::LoadNetStream(wxString sName, CMusikSong & song )
 	}
 	In.Close();
 
-	return;}
+	return;
+}
 void CSourcesListBox::AddMissing( const wxArrayString & playlists )
 {
 	wxString sExt, sName, sAdd;
@@ -1328,25 +1368,35 @@ bool CSourcesListBox::GetTypeAsString(int nType,wxString &sType)  const
 }
 int CSourcesListBox::FindInSources( wxString sName, int nType )
 {
-	wxString sFind;
-	if( !GetTypeAsString( nType, sFind))
-		return -1;
-	sFind += sName;
-	sFind.MakeLower();
-
-	for ( size_t i = 0; i < m_SourcesList.GetCount(); i++ )
+	switch( nType )
 	{
-		if ( sFind == m_SourcesList.Item( i ).Lower() )
-			return i;
-	}
+	case MUSIK_SOURCES_LIBRARY:
+		return 0;
+		break;
+	case MUSIK_SOURCES_NOW_PLAYING:
+		return 1;
+		break;
+	default:
+		{
+			wxString sFind;
+			if( !GetTypeAsString( nType, sFind))
+				return -1;
+			sFind += sName;
+			sFind.MakeLower();
 
+			for ( size_t i = 0; i < m_SourcesList.GetCount(); i++ )
+			{
+				if ( sFind == m_SourcesList.Item( i ).Lower() )
+					return i;
+			}
+		}
+	}
 	return -1;
 }
 
 void CSourcesListBox::SourcesToFilename( wxString* sSources, int nType )
 {
 	wxString sName = *sSources;
-
 	sName.Replace( wxT( " " ), wxT( "_" ), TRUE );
 	sName = sName.Lower();	
 

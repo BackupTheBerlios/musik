@@ -60,9 +60,9 @@ CNowPlayingCtrl::CNowPlayingCtrl( wxWindow *parent )
 	//--- title / artist / time ---//
 	//-----------------------------//
 	//--- now playing static text objects ---//
-	stSong			= new wxStaticText	( this, -1, _( "" ),	wxDefaultPosition, wxDefaultSize, 0 );
-	stArtist		= new wxStaticText	( this, -1, _( "" ),	wxDefaultPosition, wxDefaultSize, 0 );
-	stCurtime		= new wxStaticText	( this,MUSIK_NOWPLAYINGCTRL_TIMEDISPLAY, _( "" ),	wxDefaultPosition, wxDefaultSize, 0 );	
+	stSong			= new wxStaticText	( this, -1, wxT(""),	wxDefaultPosition, wxDefaultSize, 0 );
+	stArtist		= new wxStaticText	( this, -1, wxT(""),	wxDefaultPosition, wxDefaultSize, 0 );
+	stCurtime		= new wxStaticText	( this,MUSIK_NOWPLAYINGCTRL_TIMEDISPLAY, wxT(""),	wxDefaultPosition, wxDefaultSize, 0 );	
 
 	//--- fonts ---//
 	stSong->SetFont		( g_fntSong );
@@ -304,7 +304,7 @@ void CNowPlayingCtrl::ResetInfo()
 {
 	stSong->SetLabel	( _( "Playback Stopped" )	);
 	stArtist->SetLabel	( _( "Playback Stopped" )	);
-	stCurtime->SetLabel	( _( " - 0:00" )			);
+	stCurtime->SetLabel	( wxT( " - 0:00" )			);
 	#ifndef __WXGTK__
 		gSeek->SetValue( 0 );
 	#else

@@ -129,6 +129,18 @@ public:
 	wxStaticBox *sbTunageApp;
 	wxStaticBox *sbTunageMisc;
 
+	//-------------------------//
+	//--- options -> Auto DJ ---//
+	//-------------------------//
+
+	wxTextCtrl*	tcAutoDjFilter;
+	wxTextCtrl* tcAutoDjDoNotPlaySongPlayedTheLastNHours;
+	wxTextCtrl* tcAutoDJChooseSongsToPlayInAdvance;
+	
+	wxTextCtrl* tcMaxShuffleHistory;
+
+	wxStaticBox *sbShuffle;
+	wxStaticBox *sbAutoDj;
 	//--------------------------//
 	//--- tagging -> general ---//
 	//--------------------------//
@@ -194,6 +206,7 @@ public:
 	wxBoxSizer		*vsOptions_Interface;
 	wxBoxSizer		*vsOptions_Misc;
 	wxBoxSizer		*vsOptions_Tunage;
+	wxBoxSizer		*vsOptions_AutoDj;
 	wxBoxSizer		*vsTagging_General;
 	wxBoxSizer		*vsTagging_Auto;
 	wxBoxSizer		*hsSplitter;
@@ -215,6 +228,7 @@ private:
 	wxTreeItemId nOptionsRootID;
 	wxTreeItemId nTagRootID;
 	wxTreeItemId nTunageID;
+	wxTreeItemId nAutoDjID;
 	wxTreeItemId nPlaybackID;
 	wxTreeItemId nDriverID;
 	wxTreeItemId nSelectionsID;

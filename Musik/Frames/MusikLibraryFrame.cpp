@@ -731,7 +731,7 @@ void MusikLibraryFrame::OnThreadProg( wxCommandEvent& event )
 	{
 		if(SET_CURRENT == event.GetInt())
 		{
-			m_Title.sprintf( _( "Scanning library for obselete files: %d / %d (ESC to abort)" ), event.GetExtraLong(), GetTotal() );
+			m_Title.sprintf( _( "Scanning library for obsolete files: %d / %d (ESC to abort)" ), event.GetExtraLong(), GetTotal() );
 			SetTitle( m_Title );
 			gProgress->SetValue( ( event.GetExtraLong() * 100 ) / GetTotal() );
 

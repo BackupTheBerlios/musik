@@ -276,6 +276,8 @@ public:
 		,nMaxShuffleHistory(this,wxT( "MaxShuffleHistory" ),500)
 		,nAutoDjDoNotPlaySongPlayedTheLastNHours(this,wxT( "AutoDjDoNotPlaySongPlayedTheLastNHours" ),5*24)
 		,nAutoDJChooseSongsToPlayInAdvance(this,wxT( "AutoDJChooseSongsToPlayInAdvance" ),15)
+		,sAutoDjFilter(this,wxT( "AutoDjFilter" ), wxT("rating >= 0 and genre != 'Speech' and genre != 'Comedy'"))
+
 		,bGlobalFadeEnable(this,wxT( "GlobalFaderEnabled" ),true)
 		,bFadeEnable(this,wxT( "CrossfaderEnabled" ),true)
 		,bFadeSeekEnable(this,wxT( "CrossfaderSeekEnabled" ),true)
@@ -382,6 +384,7 @@ public:
 	CConfigSettingInt nMaxShuffleHistory;
 	CConfigSettingInt nAutoDjDoNotPlaySongPlayedTheLastNHours;
 	CConfigSettingInt nAutoDJChooseSongsToPlayInAdvance;
+	CConfigSettingString sAutoDjFilter;
 	CConfigSettingBool bGlobalFadeEnable;
 	CConfigSettingBool bFadeEnable;
 	CConfigSettingBool bFadeSeekEnable;

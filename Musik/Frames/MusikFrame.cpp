@@ -35,12 +35,28 @@
 #include "../images/sources/standard.xpm"
 #include "../images/sources/netstream.xpm"
 #include "../images/sources/nowplaying.xpm"
+
 #include "../images/ratings/rating0.xpm"
 #include "../images/ratings/rating1.xpm"
 #include "../images/ratings/rating2.xpm"
 #include "../images/ratings/rating3.xpm"
 #include "../images/ratings/rating4.xpm"
 #include "../images/ratings/rating5.xpm"
+#include "../images/ratings/rating6.xpm"
+#include "../images/ratings/rating7.xpm"
+#include "../images/ratings/rating8.xpm"
+#include "../images/ratings/rating9.xpm"
+
+#include "../images/ratings/rating-1.xpm"
+#include "../images/ratings/rating-2.xpm"
+#include "../images/ratings/rating-3.xpm"
+#include "../images/ratings/rating-4.xpm"
+#include "../images/ratings/rating-5.xpm"
+#include "../images/ratings/rating-6.xpm"
+#include "../images/ratings/rating-7.xpm"
+#include "../images/ratings/rating-8.xpm"
+#include "../images/ratings/rating-9.xpm"
+
 #include "../images/tray.xpm"
 DECLARE_APP( MusikApp )
 
@@ -347,19 +363,32 @@ void MusikFrame::LoadImageLists()
 
 	//--- ratings image list ---//
 	g_RatingImages = new wxImageList( 32, 14, true );
-	bmpRating0 = wxIcon( rating0_xpm );
-	bmpRating1 = wxIcon( rating1_xpm );
-	bmpRating2 = wxIcon( rating2_xpm );
-	bmpRating3 = wxIcon( rating3_xpm );
-	bmpRating4 = wxIcon( rating4_xpm );
-	bmpRating5 = wxIcon( rating5_xpm );
+	int rateidx = 0;
+	bmpRating[rateidx++] = wxIcon( ratingminus9_xpm);
+	bmpRating[rateidx++] = wxIcon( ratingminus8_xpm);
+	bmpRating[rateidx++] = wxIcon( ratingminus7_xpm);
+	bmpRating[rateidx++] = wxIcon( ratingminus6_xpm);
+	bmpRating[rateidx++] = wxIcon( ratingminus5_xpm);
+	bmpRating[rateidx++] = wxIcon( ratingminus4_xpm);
+	bmpRating[rateidx++] = wxIcon( ratingminus3_xpm);
+	bmpRating[rateidx++] = wxIcon( ratingminus2_xpm);
+	bmpRating[rateidx++] = wxIcon( ratingminus1_xpm);
+	bmpRating[rateidx++] = wxIcon( rating0_xpm);
+	bmpRating[rateidx++] = wxIcon( rating1_xpm);
+	bmpRating[rateidx++] = wxIcon( rating2_xpm);
+	bmpRating[rateidx++] = wxIcon( rating3_xpm);
+	bmpRating[rateidx++] = wxIcon( rating4_xpm);
+	bmpRating[rateidx++] = wxIcon( rating5_xpm);
+	bmpRating[rateidx++] = wxIcon( rating6_xpm);
+	bmpRating[rateidx++] = wxIcon( rating7_xpm);
+	bmpRating[rateidx++] = wxIcon( rating8_xpm);
+	bmpRating[rateidx++] = wxIcon( rating9_xpm);
 
-	g_RatingImages->Add( bmpRating0 );
-	g_RatingImages->Add( bmpRating1 );
-	g_RatingImages->Add( bmpRating2 );
-	g_RatingImages->Add( bmpRating3 );
-	g_RatingImages->Add( bmpRating4 );
-	g_RatingImages->Add( bmpRating5 );
+	wxASSERT(rateidx == (MUSIK_MAX_RATING - MUSIK_MIN_RATING) + 1);
+	for(int i = 0 ;  i < (MUSIK_MAX_RATING - MUSIK_MIN_RATING) + 1;i ++)
+	{
+		g_RatingImages->Add( bmpRating[i] );
+	}
 }
 
 void MusikFrame::DeleteImageLists()

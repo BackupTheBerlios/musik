@@ -153,6 +153,9 @@ bool CMusikLibrary::Load()
 							"select album,artist,sum(duration) as sum_duration,max(lastplayed+0) as most_lastplayed "  
 							"from songs where album != '' group by album) where sum_duration > 1500000;"
 							, NULL, NULL, NULL );	
+		sqlite_exec_printf( m_pDB,	"CREATE VIEW autodj_songs as select * from songs where %s;"
+			, NULL, NULL, NULL ,( const char* )ConvToUTF8(wxGetApp().Prefs.sAutoDjFilter ));	
+
 		CreateDBFuncs();
 		sqlite_exec( m_pDB, "PRAGMA synchronous = OFF;", NULL, NULL, NULL );
 		sqlite_exec( m_pDB, "PRAGMA cache_size = 10000;", NULL, NULL, NULL );
@@ -168,7 +171,7 @@ bool CMusikLibrary::Load()
 
 void CMusikLibrary::CheckVersion()
 {
-	bool bVersionInfoPresent = false;
+	
 	int ver_major = -1;
 	int ver_majorsub = -1;
 	int ver_minor = -1;
@@ -182,41 +185,38 @@ void CMusikLibrary::CheckVersion()
 	int numcols = 0;
 	const char **coldata;
 	const char **coltypes;
+	unsigned long oldversion = 0;
 
 	//--- look and see if there's one row ---//
 	if ( sqlite_step( pVM, &numcols, &coldata, &coltypes ) == SQLITE_ROW )
 	{
-		bVersionInfoPresent= true;
 		ver_major = atoi(coldata[1]);
 		ver_majorsub = atoi(coldata[2]);
 		ver_minor = atoi(coldata[3]);
 		ver_minorsub = atoi(coldata[4]);
+		oldversion = MUSIK_VERSION(ver_major,ver_majorsub,ver_minor,ver_minorsub);
 	}
 	//--- close up ---//
 	sqlite_finalize( pVM, &errmsg );
 	sqlite_freemem(errmsg);
 
-	if(bVersionInfoPresent)
+	if(oldversion > 0)
 	{
-		// update version info
-		sqlite_exec_printf( m_pDB,	"update version set major=%d,majorsub=%d,minor=%d,minorsub=%d,where name = 'wxMusik';",
-			NULL,NULL,NULL,MUSIK_VERSION_MAJOR,MUSIK_VERSION_MAJORSUB,MUSIK_VERSION_MINOR,MUSIK_VERSION_MINORSUB
-			);
-		// 
-		if((ver_major == MUSIK_VERSION_MAJOR) &&
-			(ver_majorsub == MUSIK_VERSION_MAJORSUB) &&
-			(ver_minor == MUSIK_VERSION_MINOR)	 )
+		
+		if(MUSIK_VERSION_CURRENT == oldversion)
 		{
 			// nothing to do
 			return;
 		}
-		// maybe  we call sometime conversion routines from here
-
+		// update version info
+		sqlite_exec_printf( m_pDB,	"update version set major=%d,majorsub=%d,minor=%d,minorsub=%d where name = 'wxMusik';",
+			NULL,NULL,NULL,MUSIK_VERSION_MAJOR,MUSIK_VERSION_MAJORSUB,MUSIK_VERSION_MINOR,MUSIK_VERSION_MINORSUB
+			);
 	}
 	else
 	{
 	   // version must be before 0.3.1.0
-
+	   // bring it to version 0.3.1.0
 		// check for old datetime format 
 		wxArrayString aOldDateStrings;
 		Query(wxT(" select timeadded  from songs where timeadded like '%:%' limit 1;"),aOldDateStrings);// does an entry contains a colon?
@@ -253,6 +253,15 @@ void CMusikLibrary::CheckVersion()
 			);
 
 	}
+	// now lets do conversion depending on the version number
+
+	if(oldversion < MUSIK_VERSION(0,3,1,1))
+	{
+	   // rating is from -9 to 9 now instead of 0 - 5
+		sqlite_exec_printf( m_pDB,	"UPDATE songs set rating = ((rating * 9)/5 )% 10;",
+			NULL,NULL,NULL);
+	}
+
 }
 void CMusikLibrary::CreateDBFuncs()
 {
@@ -1180,10 +1189,7 @@ int CMusikLibrary::QueryCount(const char * szQuery )
 
 void CMusikLibrary::SetRating( int songid, int nVal )
 {
-	if ( nVal < 0 )
-		nVal = 0;
-	if ( nVal > 5 )
-		nVal = 5;
+	nVal = wxMin(wxMax(nVal,MUSIK_MIN_RATING),MUSIK_MAX_RATING);
 
 	wxCriticalSectionLocker lock( m_csDBAccess );
 	sqlite_exec_printf( m_pDB, "update songs set rating = %d where songid = %d;",
@@ -1398,3 +1404,11 @@ void CMusikLibrary::GetAllGenres( wxArrayString & aReturn )
 	Query( wxT("select distinct genre,UPPER(genre) as UP from songs order by UP;"), aReturn );					
 }
 
+bool CMusikLibrary::SetAutoDjFilter(const wxString & sFilter)
+{ 
+	wxCriticalSectionLocker lock( m_csDBAccess );
+	sqlite_exec( m_pDB,	"DROP VIEW autodj_songs;", NULL, NULL, NULL );
+	int res = sqlite_exec_printf( m_pDB,	"CREATE VIEW autodj_songs as select * from songs where %s;"
+				   , NULL, NULL, NULL ,( const char* )ConvToUTF8(sFilter));	
+	return res == SQLITE_OK;
+}

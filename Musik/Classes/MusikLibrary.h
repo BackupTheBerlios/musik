@@ -142,6 +142,9 @@ public:
 	void GetInfo			( const wxArrayString & aInfo, int nInType, int nOutType, wxArrayString & aReturn );
 	void GetSongs			( const wxArrayString & aInfo, int nInType, CMusikSongArray & aReturn );
 	int QueryCount			(const char * szQuery );
+
+	//misc
+	bool SetAutoDjFilter(const wxString & sFilter);
 private:
 
 	void CheckVersion();

@@ -104,7 +104,7 @@ public:
 	void FilenameToSources	( wxString* sFilename );
 	void SourcesToFilename	( wxString* sSources, int type = MUSIK_SOURCES_PLAYLIST_STANDARD );
 	int  FindInSources		( wxString sName, int nType );
-
+	wxString GetSourceEntry(long i) const;
 	//---standard / dynamic ---//
 	bool CreateStdPlaylist			( wxString sName, wxString sSongs );
 	bool CreateDynPlaylist			( wxString sName );

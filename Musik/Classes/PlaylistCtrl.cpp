@@ -144,8 +144,8 @@ BEGIN_EVENT_TABLE(CPlaylistCtrl, CMusikListCtrl)
 	EVT_UPDATE_UI_RANGE			( MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FROM_PLAYLIST, MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FROM_DB,	CPlaylistCtrl::OnUpdateUIDelete	)
 	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_RENAME_FILES,									CPlaylistCtrl::OnRenameFiles		)
 	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_RETAG_FILES,									CPlaylistCtrl::OnRetagFiles			)
-	EVT_MENU_RANGE				( MUSIK_PLAYLIST_CONTEXT_UNRATED, MUSIK_PLAYLIST_CONTEXT_RATE5,			CPlaylistCtrl::OnRateSel			) 	
-	EVT_UPDATE_UI_RANGE			( MUSIK_PLAYLIST_CONTEXT_UNRATED, MUSIK_PLAYLIST_CONTEXT_RATE5,			CPlaylistCtrl::OnUpdateUIRateSel	)
+	EVT_MENU_RANGE				( MUSIK_PLAYLIST_CONTEXT_RATING, MUSIK_PLAYLIST_CONTEXT_RATING + (MUSIK_MAX_RATING - MUSIK_MIN_RATING) + 1,			CPlaylistCtrl::OnRateSel			) 	
+	EVT_UPDATE_UI_RANGE			( MUSIK_PLAYLIST_CONTEXT_RATING, MUSIK_PLAYLIST_CONTEXT_RATING + (MUSIK_MAX_RATING - MUSIK_MIN_RATING) + 1,			CPlaylistCtrl::OnUpdateUIRateSel	)
 	EVT_MENU_RANGE				( MUSIK_PLAYLIST_CONTEXT_TAG_TITLE,	MUSIK_PLAYLIST_CONTEXT_TAG_NOTES,	CPlaylistCtrl::OnClickEditTag		)
 	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_SMART,											CPlaylistCtrl::OnDisplaySmart		)
 	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_FIT,											CPlaylistCtrl::OnDisplayFit			)
@@ -319,13 +319,10 @@ wxMenu * CPlaylistCtrl::CreateContextMenu()
 
 	//--- rating menu ---//
 	wxMenu *playlist_context_rating_menu = new wxMenu;
-	playlist_context_rating_menu->Append( MUSIK_PLAYLIST_CONTEXT_UNRATED, _( "Unrated" ), wxT( "" ), wxITEM_CHECK );
-	playlist_context_rating_menu->Append( MUSIK_PLAYLIST_CONTEXT_RATE1, wxT( "1" ), wxT( "" ), wxITEM_CHECK );
-	playlist_context_rating_menu->Append( MUSIK_PLAYLIST_CONTEXT_RATE2, wxT( "2" ), wxT( "" ), wxITEM_CHECK );
-	playlist_context_rating_menu->Append( MUSIK_PLAYLIST_CONTEXT_RATE3, wxT( "3" ), wxT( "" ), wxITEM_CHECK );
-	playlist_context_rating_menu->Append( MUSIK_PLAYLIST_CONTEXT_RATE4, wxT( "4" ), wxT( "" ), wxITEM_CHECK );
-	playlist_context_rating_menu->Append( MUSIK_PLAYLIST_CONTEXT_RATE5, wxT( "5" ), wxT( "" ), wxITEM_CHECK );
-
+	for(int i = MUSIK_MIN_RATING; i <= MUSIK_MAX_RATING ;i++)
+	{
+		playlist_context_rating_menu->Append(  MUSIK_PLAYLIST_CONTEXT_RATING  + (i - MUSIK_MIN_RATING), (i == 0) ? _( "Unrated" ) : IntToString(i), wxT( "" ), wxITEM_CHECK );
+	}
 	//--- tag edit menu ---//
 	wxMenu *playlist_context_edit_tag_menu = new wxMenu;
 	playlist_context_edit_tag_menu->Append( MUSIK_PLAYLIST_CONTEXT_TAG_TITLE,		_( "Edit Title\tF2" ) );
@@ -349,7 +346,7 @@ wxMenu * CPlaylistCtrl::CreateContextMenu()
 	wxMenu *playlist_context_display_menu = new wxMenu;
 	for(size_t i = 0 ; i < NPLAYLISTCOLUMNS;i ++)
 	{
-		playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_FIRST + i,g_PlaylistColumnLabels[i] );
+		playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_FIRST + i,wxGetTranslation(g_PlaylistColumnLabels[i]) );
 	}
 	playlist_context_display_menu->AppendSeparator();
 	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_FIT,				_( "Fit Columns" ) );
@@ -512,7 +509,7 @@ int CPlaylistCtrl::DisplayEventId2ColumnId( int evid)
 }
 void CPlaylistCtrl::OnRateSel( wxCommandEvent& event )
 {
-	RateSel( event.GetId() - MUSIK_PLAYLIST_CONTEXT_UNRATED );
+	RateSel( (event.GetId() - MUSIK_PLAYLIST_CONTEXT_RATING) + MUSIK_MIN_RATING );
 }
 void CPlaylistCtrl::OnClickEditTag( wxCommandEvent& event )
 {
@@ -572,8 +569,8 @@ void CPlaylistCtrl::OnUpdateUIRateSel ( wxUpdateUIEvent &event)
 	if(item > -1)
 	{
 		int nRating = g_Playlist.Item( item ).Rating;
-		wxASSERT(nRating >= 0 && nRating <= 5);
-		event.Check( event.GetId() == MUSIK_PLAYLIST_CONTEXT_UNRATED + nRating);
+		wxASSERT(nRating >= MUSIK_MIN_RATING && nRating <= MUSIK_MAX_RATING);
+		event.Check( event.GetId() == (MUSIK_PLAYLIST_CONTEXT_RATING + (nRating  - MUSIK_MIN_RATING)));
 	}
 }
 
@@ -662,22 +659,12 @@ void CPlaylistCtrl::OnKeyDown( wxKeyEvent& event )
 			switch( nKeyCode )
 			{
 				case WXK_F2:
-					EditTag( 0 );
-					break;
 				case WXK_F3:
-					EditTag( 1 );
-					break;
 				case WXK_F4:
-					EditTag( 2 );
-					break;
 				case WXK_F5:
-					EditTag( 3 );
-					break;
 				case WXK_F6:
-					EditTag( 4 );
-					break;
 				case WXK_F7:
-					EditTag( 5 );
+					EditTag( nKeyCode -  WXK_F2);
 					break;
 				case WXK_DELETE:
 				case WXK_BACK:
@@ -689,7 +676,14 @@ void CPlaylistCtrl::OnKeyDown( wxKeyEvent& event )
 				case '3':
 				case '4':
 				case '5':
-					RateSel(nKeyCode - '0');
+				case '6':
+				case '7':
+				case '8':
+				case '9':
+					if(event.ShiftDown())
+						RateSel(-(nKeyCode - '0'));
+					else
+						RateSel(nKeyCode - '0');
 					break;
 				case 'e':
 					{
@@ -847,7 +841,7 @@ void CPlaylistCtrl::FindColumnOrder()
 
 int CPlaylistCtrl::OnGetItemImage(long item) const
 {
-	return g_Playlist.Item ( item ).Rating;
+	return g_Playlist.Item ( item ).Rating - MUSIK_MIN_RATING;
 }
 
 wxListItemAttr* CPlaylistCtrl::OnGetItemAttr(long item) const
@@ -1252,7 +1246,7 @@ void CPlaylistCtrl::ResetColumns( bool update, bool rescale )
 	for ( size_t i = 0; i < m_ColumnOrder.GetCount(); i++ )
 	{
 		nCurrType = m_ColumnOrder.Item( i );
-		InsertColumn( i, g_PlaylistColumnLabels[nCurrType], g_PlaylistColumnAlign[nCurrType], 50 );
+		InsertColumn( i, wxGetTranslation(g_PlaylistColumnLabels[nCurrType]), g_PlaylistColumnAlign[nCurrType], 50 );
 	}
 
 	ShowIcons();
@@ -1266,6 +1260,7 @@ void CPlaylistCtrl::ResetColumns( bool update, bool rescale )
 
 void CPlaylistCtrl::RateSel( int nVal )
 {
+	wxASSERT(nVal >= MUSIK_MIN_RATING && nVal <= MUSIK_MAX_RATING);
 	int nIndex = -1;
 	//--- yeah, we can rate multiple items. find whats selected ---//
 	wxGetApp().Library.BeginTransaction();
@@ -1312,7 +1307,7 @@ void CPlaylistCtrl::DelSelSongs(bool bDeleteFromDB, bool bDeleteFromComputer)
 	}
 	else if( bDeleteFromDB )
 	{
-		wxMessageDialog confirm( this, _( "Delete the selected songs from Musik's internal database?" ), MUSIKAPPNAME_VERSION, wxYES_NO | wxICON_QUESTION );
+		wxMessageDialog confirm( this, _( "Delete the selected songs from wxMusik's internal database?" ), MUSIKAPPNAME_VERSION, wxYES_NO | wxICON_QUESTION );
 		if ( confirm.ShowModal() == wxID_NO )
 			return;
 	}

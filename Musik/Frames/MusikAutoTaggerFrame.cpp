@@ -22,6 +22,7 @@
 
 ////@begin includes
 #include "wx/wx.h"
+
 #include "wx/valgen.h"
 ////@end includes
 #include "../MusikGlobals.h"
@@ -140,7 +141,7 @@ void CMusikAutoTaggerFrame::CreateControls()
     wxStaticBoxSizer* item11 = new wxStaticBoxSizer(item11Static, wxHORIZONTAL);
     item4->Add(item11, 1, wxGROW|wxALL, 5);
 
-    wxStaticText* item12 = new wxStaticText( item1, wxID_STATIC, _("%t for Title, %a for Artist, %b for album,%n for tracknumber \nand %y for year.\n%u can be use for unused parts of the filename.\nIf you use the uppercase variants surrounding spaces\nwill be ignored.\n(A mask %A-%T will match artist - title and artist-title)\n\nIf Convert '_' to Space option is active, you must use\nspaces in the mask to match '_'. \n\n"), wxDefaultPosition, wxDefaultSize, 0 );
+    wxStaticText* item12 = new wxStaticText( item1, wxID_STATIC, _("%t for Title, %a for Artist, %b for album,%n for tracknumber \nand %y for year.\n%u can be used for unused parts of the filename.\nIf you use the uppercase variants surrounding spaces\nwill be ignored.\n(A mask %A-%T will match artist - title and artist-title)\n\nIf Convert '_' to Space option is active, you must use\nspaces in the mask to match '_'. \n\n"), wxDefaultPosition, wxDefaultSize, 0 );
     item11->Add(item12, 0, wxGROW|wxALL|wxADJUST_MINSIZE, 5);
 
     wxBoxSizer* item13 = new wxBoxSizer(wxHORIZONTAL);

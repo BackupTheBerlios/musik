@@ -55,9 +55,12 @@ void CTunage::Execute(const CMusikSong& song )
 
 void CTunage::Stopped()
 {
-	CMusikSong stopsong;
-	stopsong.MetaData.nFilesize = -1;
-	Execute( stopsong );
+	if ( wxGetApp().Prefs.bTunageRunOnStop)
+	{
+		CMusikSong stopsong;
+		stopsong.MetaData.nFilesize = -1;
+		Execute( stopsong );
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////

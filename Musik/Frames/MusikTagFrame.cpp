@@ -50,7 +50,7 @@ BEGIN_EVENT_TABLE( MusikTagFrame, wxFrame )
 END_EVENT_TABLE()
 
 MusikTagFrame::MusikTagFrame( wxFrame* pParent, CPlaylistCtrl * pPlaylistctrl, int nCurFrame)
-	: wxFrame ( pParent, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), wxRESIZE_BORDER|wxCAPTION | wxTAB_TRAVERSAL | wxFRAME_FLOAT_ON_PARENT | wxFRAME_NO_TASKBAR )
+	: wxFrame ( pParent, -1, wxT(""), wxDefaultPosition, wxDefaultSize, wxRESIZE_BORDER|wxCAPTION | wxTAB_TRAVERSAL | wxFRAME_FLOAT_ON_PARENT | wxFRAME_NO_TASKBAR )
 	, m_Songs(*pPlaylistctrl->GetPlaylist())
 {
 	pPlaylistctrl->GetSelItems(m_arrSongsSelected);
@@ -99,48 +99,48 @@ MusikTagFrame::MusikTagFrame( wxFrame* pParent, CPlaylistCtrl * pPlaylistctrl, i
 	//---------------//
 	//--- objects ---//
 	//---------------//
-	wxStaticText *stFilename	=	new wxStaticText	( this, -1, _("File"), wxPoint( 0, 0 ), wxSize( 40, -1 ), wxALIGN_LEFT );
-	tcFilename					=	new wxTextCtrl		( this, -1,	wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), wxTE_READONLY );
+	wxStaticText *stFilename	=	new wxStaticText	( this, -1, _("File"), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
+	tcFilename					=	new wxTextCtrl		( this, -1,	wxT(""), wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
 
-	wxStaticText *stTitle		=	new wxStaticText	( this, -1, _("Title"), wxPoint( 0, 0 ), wxSize( 40, -1 ), wxALIGN_LEFT );
-	tcTitle						=	new wxTextCtrl		( this, MUSIK_TAG_TITLE, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ) );
-	chkTitle					=	new wxCheckBox		( this, MUSIK_TAG_CHK_TITLE, wxT(""), wxPoint( -1, -1 ), wxSize( -1, -1 ) ); 
+	wxStaticText *stTitle		=	new wxStaticText	( this, -1, _("Title"), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
+	tcTitle						=	new wxTextCtrl		( this, MUSIK_TAG_TITLE, wxT(""), wxDefaultPosition, wxDefaultSize );
+	chkTitle					=	new wxCheckBox		( this, MUSIK_TAG_CHK_TITLE, wxT(""), wxDefaultPosition, wxDefaultSize ); 
 	
-	wxStaticText *stTrackNum	=	new wxStaticText	( this, -1, _("Track #  "), wxPoint( 0, 0 ), wxSize( 50, -1 ), wxALIGN_RIGHT );
-	tcTrackNum					=	new wxTextCtrl		( this, MUSIK_TAG_TRACKNUM,	wxT(""), wxPoint( 0, 0 ), wxSize( 22, -1 ) );
-	chkTrackNum					=	new wxCheckBox		( this, MUSIK_TAG_CHK_TRACKNUM,	wxT(""), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+	wxStaticText *stTrackNum	=	new wxStaticText	( this, -1, _("Track #  "), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
+	tcTrackNum					=	new wxTextCtrl		( this, MUSIK_TAG_TRACKNUM,	wxT(""), wxDefaultPosition, wxDefaultSize );
+	chkTrackNum					=	new wxCheckBox		( this, MUSIK_TAG_CHK_TRACKNUM,	wxT(""), wxDefaultPosition, wxDefaultSize );
 
-	wxStaticText *stArtist		=	new wxStaticText	( this, -1, _("Artist"), wxPoint( 0, 0 ), wxSize( 40, -1 ), wxALIGN_LEFT );
-	tcArtist					=	new wxTextCtrl		( this, MUSIK_TAG_ARTIST, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ) );
-	chkArtist					=	new wxCheckBox		( this, MUSIK_TAG_CHK_ARTIST,	wxT(""), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+	wxStaticText *stArtist		=	new wxStaticText	( this, -1, _("Artist"), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
+	tcArtist					=	new wxTextCtrl		( this, MUSIK_TAG_ARTIST, wxT(""), wxDefaultPosition, wxDefaultSize );
+	chkArtist					=	new wxCheckBox		( this, MUSIK_TAG_CHK_ARTIST,	wxT(""), wxDefaultPosition, wxDefaultSize );
 
-	wxStaticText *stAlbum		=	new wxStaticText	( this, -1, _("Album"), wxPoint( 0, 0 ), wxSize( 40, -1 ), wxALIGN_LEFT );
-	tcAlbum						=	new wxTextCtrl		( this, MUSIK_TAG_ALBUM, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ) );
-	chkAlbum					=	new wxCheckBox		( this, MUSIK_TAG_CHK_ALBUM, wxT(""), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+	wxStaticText *stAlbum		=	new wxStaticText	( this, -1, _("Album"), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
+	tcAlbum						=	new wxTextCtrl		( this, MUSIK_TAG_ALBUM, wxT(""), wxDefaultPosition, wxDefaultSize );
+	chkAlbum					=	new wxCheckBox		( this, MUSIK_TAG_CHK_ALBUM, wxT(""), wxDefaultPosition, wxDefaultSize );
 
-	wxStaticText *stGenre		=	new wxStaticText	( this, -1, _("Genre"), wxPoint( 0, 0 ), wxSize( 40, -1 ), wxALIGN_LEFT );
-	cmbGenre					=	new wxComboBox		( this, MUSIK_TAG_GENRE, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_DROPDOWN );
-	chkGenre					=	new wxCheckBox		( this, MUSIK_TAG_CHK_GENRE, wxT(""), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+	wxStaticText *stGenre		=	new wxStaticText	( this, -1, _("Genre"), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
+	cmbGenre					=	new wxComboBox		( this, MUSIK_TAG_GENRE, wxT(""), wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_DROPDOWN );
+	chkGenre					=	new wxCheckBox		( this, MUSIK_TAG_CHK_GENRE, wxT(""), wxDefaultPosition, wxDefaultSize );
 
-	wxStaticText *stYear		=	new wxStaticText	( this, -1, _("Year  "),	wxPoint( 0, 0 ), wxSize( -1, -1 ), wxALIGN_RIGHT );
-	tcYear						=	new wxTextCtrl		( this, MUSIK_TAG_YEAR,	wxT(""), wxPoint( 0, 0 ), wxSize( 36, -1 ) );
-	chkYear						=	new wxCheckBox		( this, MUSIK_TAG_CHK_YEAR,	wxT(""), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+	wxStaticText *stYear		=	new wxStaticText	( this, -1, _("Year  "),	wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
+	tcYear						=	new wxTextCtrl		( this, MUSIK_TAG_YEAR,	wxT(""), wxDefaultPosition, wxDefaultSize );
+	chkYear						=	new wxCheckBox		( this, MUSIK_TAG_CHK_YEAR,	wxT(""), wxDefaultPosition, wxDefaultSize );
 
-	wxStaticText *stNotes		=	new wxStaticText	( this, -1, _("Notes "),	wxPoint( 0, 0 ), wxSize( -1, -1 ), wxALIGN_RIGHT );
-	tcNotes						=	new wxTextCtrl		( this, MUSIK_TAG_NOTES,	wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ) );
-	chkNotes					=	new wxCheckBox		( this, MUSIK_TAG_CHK_NOTES,wxT(""), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+	wxStaticText *stNotes		=	new wxStaticText	( this, -1, _("Notes "),	wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
+	tcNotes						=	new wxTextCtrl		( this, MUSIK_TAG_NOTES,	wxT(""), wxDefaultPosition, wxDefaultSize );
+	chkNotes					=	new wxCheckBox		( this, MUSIK_TAG_CHK_NOTES,wxT(""), wxDefaultPosition, wxDefaultSize );
 
-	chkWriteTag					=	new wxCheckBox		( this, MUSIK_TAG_CHK_WRITETAG, _("Write tags to file    "), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
-	chkClear					=	new wxCheckBox		( this, MUSIK_TAG_CHK_WRITETAG_CLEAR, _("Clear old tags    "), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
-	chkRename					=	new wxCheckBox		( this, MUSIK_TAG_CHK_RENAME, _("Rename files"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+	chkWriteTag					=	new wxCheckBox		( this, MUSIK_TAG_CHK_WRITETAG, _("Write tags to file    "), wxDefaultPosition, wxDefaultSize );
+	chkClear					=	new wxCheckBox		( this, MUSIK_TAG_CHK_WRITETAG_CLEAR, _("Clear old tags    "), wxDefaultPosition, wxDefaultSize );
+	chkRename					=	new wxCheckBox		( this, MUSIK_TAG_CHK_RENAME, _("Rename files"), wxDefaultPosition, wxDefaultSize );
 
-	gProgress					=	new wxGauge			( this, -1, 100, wxPoint( -1, -1 ), wxSize( -1, 18 ), wxGA_SMOOTH );
+	gProgress					=	new wxGauge			( this, -1, 100, wxDefaultPosition, wxSize( -1, 18 ), wxGA_SMOOTH );
 
-	btnNext		= new wxButton( this, MUSIK_TAG_NEXT,	wxT(">"),		wxPoint( 0, 0 ), wxSize( 20, 24 ) );
-	btnPrev		= new wxButton( this, MUSIK_TAG_PREV,	wxT("<"),		wxPoint( 0, 0 ), wxSize( 20, 24 ) );
-	btnCancel	= new wxButton( this, MUSIK_TAG_CANCEL,	_("Cancel"),	wxPoint( 0, 0 ), wxSize( 60, 24 ) );
-	btnApply	= new wxButton( this, MUSIK_TAG_APPLY,	_("Apply"),	wxPoint( 0, 0 ), wxSize( 60, 24 ) );
-	btnOK		= new wxButton( this, MUSIK_TAG_OK,		_("OK"),		wxPoint( 0, 0 ), wxSize( 60, 24 ) );
+	btnNext		= new wxButton( this, MUSIK_TAG_NEXT,	wxT(">"),		wxDefaultPosition, wxDefaultSize );
+	btnPrev		= new wxButton( this, MUSIK_TAG_PREV,	wxT("<"),		wxDefaultPosition,wxDefaultSize );
+	btnCancel	= new wxButton( this, MUSIK_TAG_CANCEL,	_("Cancel"),	wxDefaultPosition, wxDefaultSize );
+	btnApply	= new wxButton( this, MUSIK_TAG_APPLY,	_("Apply"),	wxDefaultPosition, wxDefaultSize );
+	btnOK		= new wxButton( this, MUSIK_TAG_OK,		_("OK"),		wxDefaultPosition, wxDefaultSize );
 
 
 	//-------------------------//
@@ -156,20 +156,20 @@ MusikTagFrame::MusikTagFrame( wxFrame* pParent, CPlaylistCtrl * pPlaylistctrl, i
 	//--- title, track, num ---//
 	//-------------------------//
 	wxBoxSizer* hsRow1 = new wxBoxSizer( wxHORIZONTAL );
-	hsRow1->Add( stTitle,		0, wxALIGN_CENTER_VERTICAL				);
-	hsRow1->Add( tcTitle,		1, wxALIGN_CENTER_VERTICAL				);
-	hsRow1->Add( chkTitle,		0, wxALIGN_CENTER_VERTICAL | wxLEFT, 2	);
-	hsRow1->Add( stTrackNum,	0, wxALIGN_CENTER_VERTICAL				);
-	hsRow1->Add( tcTrackNum,	0, wxALIGN_CENTER_VERTICAL				);
-	hsRow1->Add( chkTrackNum,	0, wxALIGN_CENTER_VERTICAL | wxLEFT, 2	);
+	hsRow1->Add( stTitle,		0, wxALIGN_CENTER_VERTICAL| wxRIGHT, 2	);
+	hsRow1->Add( tcTitle,		1, wxALIGN_CENTER_VERTICAL| wxRIGHT, 2	);
+	hsRow1->Add( chkTitle,		0, wxALIGN_CENTER_VERTICAL |wxRIGHT| wxLEFT, 2	);
+	hsRow1->Add( stTrackNum,	0, wxALIGN_CENTER_VERTICAL| wxRIGHT, 2	);
+	hsRow1->Add( tcTrackNum,	0, wxALIGN_CENTER_VERTICAL| wxRIGHT, 2	);
+	hsRow1->Add( chkTrackNum,	0, wxALIGN_CENTER_VERTICAL |wxRIGHT| wxLEFT, 2	);
 
 	//------------------------//
 	//--- second row sizer ---//
 	//---      artist      ---//
 	//------------------------//
 	wxBoxSizer* hsRow2 = new wxBoxSizer( wxHORIZONTAL	);
-	hsRow2->Add( stArtist,		0, wxCENTER				);
-	hsRow2->Add( tcArtist,		1, wxEXPAND				);
+	hsRow2->Add( stArtist,		0, wxCENTER	| wxRIGHT, 2	);
+	hsRow2->Add( tcArtist,		1, wxEXPAND	| wxRIGHT, 2	);
 	hsRow2->Add( chkArtist,		0, wxCENTER | wxLEFT, 2 );
 
 	//-----------------------//
@@ -177,30 +177,30 @@ MusikTagFrame::MusikTagFrame( wxFrame* pParent, CPlaylistCtrl * pPlaylistctrl, i
 	//---      album      ---//
 	//-----------------------//
 	wxBoxSizer* hsRow3 = new wxBoxSizer( wxHORIZONTAL	);
-	hsRow3->Add( stAlbum,		0, wxCENTER				);
-	hsRow3->Add( tcAlbum,		1, wxEXPAND				);
-	hsRow3->Add( chkAlbum,		0, wxCENTER | wxLEFT, 2 );
+	hsRow3->Add( stAlbum,		0, wxCENTER	| wxRIGHT, 2	);
+	hsRow3->Add( tcAlbum,		1, wxEXPAND	| wxRIGHT, 2	);
+	hsRow3->Add( chkAlbum,		0, wxCENTER |wxRIGHT| wxLEFT, 2	);
 
 	//------------------------//
 	//--- fourth row sizer ---//
 	//---    genre, year   ---//
 	//------------------------//
 	wxBoxSizer* hsRow4 = new wxBoxSizer( wxHORIZONTAL	);
-	hsRow4->Add( stGenre,		0, wxCENTER				);
-	hsRow4->Add( cmbGenre,		1, wxEXPAND				);
-	hsRow4->Add( chkGenre,		0, wxCENTER | wxLEFT, 2 );
-	hsRow4->Add( stYear,		0, wxCENTER				);
-	hsRow4->Add( tcYear,		0, wxCENTER				);
-	hsRow4->Add( chkYear,		0, wxCENTER | wxLEFT, 2 );
+	hsRow4->Add( stGenre,		0, wxCENTER	| wxRIGHT, 2	);
+	hsRow4->Add( cmbGenre,		1, wxEXPAND	| wxRIGHT, 2	);
+	hsRow4->Add( chkGenre,		0, wxCENTER |wxRIGHT| wxLEFT, 2	);
+	hsRow4->Add( stYear,		0, wxCENTER	| wxRIGHT, 2	);
+	hsRow4->Add( tcYear,		0, wxCENTER	| wxRIGHT, 2	);
+	hsRow4->Add( chkYear,		0, wxCENTER |wxRIGHT| wxLEFT, 2	);
 
 	//-------------------------//
 	//--- fifth row sizer   ---//
 	//---    notes			---//
 	//------------------------//
 	wxBoxSizer* hsRow5 = new wxBoxSizer( wxHORIZONTAL	);
-	hsRow5->Add( stNotes,		0, wxCENTER				);
-	hsRow5->Add( tcNotes,		1, wxEXPAND				);
-	hsRow5->Add( chkNotes,		0, wxCENTER | wxLEFT, 2 );
+	hsRow5->Add( stNotes,		0, wxCENTER	| wxRIGHT, 2	);
+	hsRow5->Add( tcNotes,		1, wxEXPAND	| wxRIGHT, 2	);
+	hsRow5->Add( chkNotes,		0, wxCENTER |wxRIGHT| wxLEFT, 2	);
 
 	//-----------------------//
 	//--- sixth row sizer ---//
@@ -239,8 +239,8 @@ MusikTagFrame::MusikTagFrame( wxFrame* pParent, CPlaylistCtrl * pPlaylistctrl, i
 	hsNav = new wxBoxSizer( wxHORIZONTAL );
 	hsNav->Add( btnCancel,	0, wxALIGN_LEFT | wxLEFT,			2	);
 	hsNav->Add( -1,-1,	1, wxEXPAND								);
-	hsNav->Add( btnPrev,	0, wxALIGN_LEFT							);
-	hsNav->Add( btnNext,	0, wxALIGN_LEFT							);
+	hsNav->Add( btnPrev,	0, wxALIGN_LEFT|wxADJUST_MINSIZE		);
+	hsNav->Add( btnNext,	0, wxALIGN_LEFT|wxADJUST_MINSIZE		);
 	hsNav->Add( -1,-1,	1, wxEXPAND								);
 	hsNav->Add( btnApply,	0, wxALIGN_RIGHT						);
 	hsNav->Add( btnOK,		0, wxALIGN_RIGHT | wxLEFT | wxRIGHT, 2	);

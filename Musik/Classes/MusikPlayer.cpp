@@ -984,21 +984,21 @@ void CMusikPlayer::_ChooseRandomSongs(int nSongsToAdd,CMusikSongArray &arrSongs)
 		return;
 	int nMaxRepeatCount = 30;
 	bool repeat = true;
-	int maxsongid = wxGetApp().Library.QueryCount("select max(songid) from songs;");
+	int maxsongid = wxGetApp().Library.QueryCount("select max(songid) from autodj_songs;");
 
 	while ( nMaxRepeatCount-- && (repeat || (arrSongs.GetCount() < (size_t)nSongsToAdd)))
 	{
 		repeat = false;
 #if 0
 		int r = GetRandomNumber() % (wxGetApp().Library.GetSongCount());
-		wxString sQueryRandomSong = wxString::Format(wxT(" select songs.songid from songs " 
+		wxString sQueryRandomSong = wxString::Format(wxT(" select autodj_songs.songid from autodj_songs " 
 					"where songs.songid not in(select songid from songhistory "
 					"where date_played > julianday('now','-%d hours')) limit 1 offset %d;"),nMaxRepeatCount == 5 ? 1 : wxGetApp().Prefs.nAutoDjDoNotPlaySongPlayedTheLastNHours,r);
 	
 #else
 		int r = GetRandomNumber() % (maxsongid + 1);
-	   wxString sQueryRandomSong = wxString::Format(wxT(" select songs.songid from songs ") 
-		   wxT("where songs.songid = %d and songid not in(select songid from songhistory ")
+	   wxString sQueryRandomSong = wxString::Format(wxT(" select autodj_songs.songid from autodj_songs ") 
+		   wxT("where autodj_songs.songid = %d and autodj_songs.songid not in(select songid from songhistory ")
 		   wxT("where date_played > julianday('now','-%d days'));"),r,nMaxRepeatCount == 5 ? 1 : wxGetApp().Prefs.nAutoDjDoNotPlaySongPlayedTheLastNHours);
 
 

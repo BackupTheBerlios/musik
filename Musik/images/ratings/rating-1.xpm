@@ -1,21 +1,22 @@
 /* XPM */
-static char *rating0_xpm[] = {
+static char *ratingminus1_xpm[] = {
 /* columns rows colors chars-per-pixel */
-"32 14 3 1",
+"32 14 4 1",
 "  c None",
-". c #C0C0C0",
-"X c gray100",
+". c red",
+"X c #C0C0C0",
+"o c gray100",
 /* pixels */
 "                                ",
 "                                ",
 "                                ",
 "                                ",
-"    ....................        ",
-"    .XXXXXXXXXXXXXXXXXX.        ",
-"    .XXXXXXXXXXXXXXXXXX.        ",
-"    .XXXXXXXXXXXXXXXXXX.        ",
-"    .XXXXXXXXXXXXXXXXXX.        ",
-"    ....................        ",
+"    XXXXXXXXXXXXXXXXXXXX        ",
+"    X..ooooooooooooooooX        ",
+"    X..ooooooooooooooooX        ",
+"    X..ooooooooooooooooX        ",
+"    X..ooooooooooooooooX        ",
+"    XXXXXXXXXXXXXXXXXXXX        ",
 "                                ",
 "                                ",
 "                                ",
