@@ -259,12 +259,6 @@
 					Name="musikSelectionCtrl"
 					Filter="">
 					<File
-						RelativePath=".\musikSelectionBar.cpp">
-					</File>
-					<File
-						RelativePath=".\musikSelectionBar.h">
-					</File>
-					<File
 						RelativePath=".\musikSelectionCtrl.cpp">
 					</File>
 					<File
