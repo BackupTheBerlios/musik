@@ -550,7 +550,7 @@ void CActivityBox::SetPlaylist()
 
 				//--- not last item, so format string for another ---//
 				else
-					sParent += wxT(" or ") + sParentType + wxT( " like " );
+					sParent += wxT("' or ") + sParentType + wxT( " like " );
 
 			}
 
