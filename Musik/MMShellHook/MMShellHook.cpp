@@ -19,8 +19,14 @@
 //-------------------------------------------------//
 //--- Storage for the global data in the DLL	---//
 //-------------------------------------------------//
+#pragma data_seg(".shared") // create a section named .shared. 
+						    //#pragma section(".shared",read,write,shared), 
+							// makes this section shared between all instances of this dll in all processes
 HWND	hNotifyWnd = NULL;
 HHOOK	hShellHook = NULL;	//--- Handle to the Shell hook	---//
+#pragma data_seg( )
+
+#pragma section(".shared",read,write,shared)
 
 //-------------------------------------------------//
 //--- Per-instance DLL variables				---//
