@@ -26,6 +26,7 @@
 #include <wx/dnd.h>
 
 class MusikPlaylistRenameThread;
+class MusikPlaylistRetagThread;
 
 class CPlaylistCtrl : public wxListCtrl
 {
@@ -44,6 +45,7 @@ public:
 	void OnDelFiles		( wxCommandEvent& WXUNUSED(event) )	{ DelSelFiles();	}
 	void OnDelFilesDB	( wxCommandEvent& WXUNUSED(event) )	{ DelSelFilesDB();	}
 	void OnRenameFiles	( wxCommandEvent& WXUNUSED(event) )	{ RenameSelFiles();	}
+	void OnRetagFiles	( wxCommandEvent& WXUNUSED(event) ) { RetagSelFiles();	}
 	//--- rating ---//
 	void UnrateSel		( wxCommandEvent& WXUNUSED(event) )	{ RateSel( 0 ); }
 	void Rate1Sel		( wxCommandEvent& WXUNUSED(event) )	{ RateSel( 1 ); }
@@ -69,9 +71,9 @@ public:
 	//------------------------//
 	//--- threading events ---//
 	//------------------------//
-	void OnRenameThreadStart	( wxCommandEvent& WXUNUSED(event) );
-	void OnRenameThreadEnd		( wxCommandEvent& WXUNUSED(event) );
-	void OnRenameThreadProg		( wxCommandEvent& WXUNUSED(event) );
+	void OnThreadStart	( wxCommandEvent& WXUNUSED(event) );
+	void OnThreadEnd		( wxCommandEvent& WXUNUSED(event) );
+	void OnThreadProg		( wxCommandEvent& WXUNUSED(event) );
 
 	//------------//
 	//--- gets ---//
@@ -105,6 +107,7 @@ public:
 	void DelSelFiles	();
 	void DelSelFilesDB	();
 	void RenameSelFiles	();
+	void RetagSelFiles	();
 	bool ViewDirtyTags	();
 	void ToggleIcons	();
 	void ShowIcons		();
@@ -170,7 +173,8 @@ private:
 	//--------------//
 	//--- thread ---//
 	//--------------//
-	MusikPlaylistRenameThread* pRenameThread;
+	MusikPlaylistRenameThread*	pRenameThread;
+	MusikPlaylistRetagThread*	pRetagThread;
 	int m_Progress;
 	int m_ProgressType;
 	wxThread* m_ActiveThread;

@@ -35,6 +35,7 @@ BEGIN_EVENT_TABLE(CPlaylistCtrl, wxListCtrl)
 	EVT_MENU					( MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FILES,				CPlaylistCtrl::OnDelFiles		)
 	EVT_MENU					( MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FROM_DB,				CPlaylistCtrl::OnDelFilesDB		)
 	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_RENAME_FILES,						CPlaylistCtrl::OnRenameFiles	)
+	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_RETAG_FILES,						CPlaylistCtrl::OnRetagFiles		)
 	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_UNRATED,							CPlaylistCtrl::UnrateSel		) 	
 	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_RATE1,								CPlaylistCtrl::Rate1Sel			) 	
 	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_RATE2,								CPlaylistCtrl::Rate2Sel			) 
@@ -55,9 +56,9 @@ BEGIN_EVENT_TABLE(CPlaylistCtrl, wxListCtrl)
 	//--- nice and simple, and gets the job done. this may	---//
 	//--- become a little prettier later, but it works.		---//
 	//---------------------------------------------------------//
-    EVT_MENU			( MUSIK_PLAYLIST_RENAME_THREAD_START,	CPlaylistCtrl::OnRenameThreadStart	)
-	EVT_MENU			( MUSIK_PLAYLIST_RENAME_THREAD_END,		CPlaylistCtrl::OnRenameThreadEnd	)
-	EVT_MENU			( MUSIK_PLAYLIST_RENAME_THREAD_PROG,	CPlaylistCtrl::OnRenameThreadProg	)
+    EVT_MENU			( MUSIK_PLAYLIST_THREAD_START,	CPlaylistCtrl::OnThreadStart)
+	EVT_MENU			( MUSIK_PLAYLIST_THREAD_END,	CPlaylistCtrl::OnThreadEnd	)
+	EVT_MENU			( MUSIK_PLAYLIST_THREAD_PROG,	CPlaylistCtrl::OnThreadProg	)
 END_EVENT_TABLE()
 
 //-----------------//
@@ -219,7 +220,8 @@ CPlaylistCtrl::CPlaylistCtrl( wxWindow *parent, const wxWindowID id, const wxPoi
 	//--- main context menu ---//
 	playlist_context_menu = new wxMenu;
 	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_DELETENODE,	_( "&Delete" ),		playlist_context_delete_menu );
-	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_RENAME_FILES, _( "A&uto Rename" ) );
+	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_RENAME_FILES, _( "&Auto Rename" ) );
+	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_RETAG_FILES,	_( "A&uto Retag" ) );
 	playlist_context_menu->AppendSeparator();
 	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_RATENODE,		_( "&Rating" ),		playlist_context_rating_menu );
 	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_TAGNODE,		_( "Edit &Tag" ),	playlist_context_edit_tag_menu );
@@ -960,6 +962,18 @@ void CPlaylistCtrl::RenameSelFiles()
 
 }
 
+void CPlaylistCtrl::RetagSelFiles()
+{
+	if ( GetActiveThread() == 0 )
+	{
+		pRetagThread = new MusikPlaylistRetagThread( GetSelSongs() );
+		pRetagThread->Create();
+		pRetagThread->Run();
+	}
+	else
+		wxMessageBox( _( "An internal error has occured.\nPrevious thread not terminated correctly.\n\nPlease contact the Musik development team with this error." ), MUSIK_VERSION, wxICON_STOP );
+}
+
 bool CPlaylistCtrl::ViewDirtyTags()
 {
 	CMusikSongArray dirty = g_Library.QuerySongs( wxT( "dirty = 1" ) );
@@ -1078,7 +1092,7 @@ void CPlaylistCtrl::DNDDone( int nNewPos )
 //----------------------------------------//
 //--- MusikPlaylistRenameThread events ---//
 //----------------------------------------//
-void CPlaylistCtrl::OnRenameThreadStart( wxCommandEvent& WXUNUSED(event) )
+void CPlaylistCtrl::OnThreadStart( wxCommandEvent& WXUNUSED(event) )
 {
 	//--- update locally ---//
 	SetActiveThread	( pRenameThread );
@@ -1095,7 +1109,7 @@ void CPlaylistCtrl::OnRenameThreadStart( wxCommandEvent& WXUNUSED(event) )
 	wxPostEvent( g_MusikFrame, MusikStartProgEvt );
 }
 
-void CPlaylistCtrl::OnRenameThreadProg( wxCommandEvent& WXUNUSED(event) )
+void CPlaylistCtrl::OnThreadProg( wxCommandEvent& WXUNUSED(event) )
 {
 	//--- relay thread progress message to g_MusikFrame ---//
 	g_MusikFrame->SetProgress( GetProgress() );
@@ -1103,7 +1117,7 @@ void CPlaylistCtrl::OnRenameThreadProg( wxCommandEvent& WXUNUSED(event) )
 	wxPostEvent( g_MusikFrame, MusikEndProgEvt );
 }
 
-void CPlaylistCtrl::OnRenameThreadEnd( wxCommandEvent& WXUNUSED(event) )
+void CPlaylistCtrl::OnThreadEnd( wxCommandEvent& WXUNUSED(event) )
 {
 	g_PlaylistCtrl->Update();
 
