@@ -100,6 +100,8 @@ public:
 	void GetFieldFromID		( int id, int field, CStdString& string );
 	void GetSongInfoFromID	( int id, CMusikSongInfo* info );
 	int  GetIDFromFilename	( const CStdString& fn );
+	void GetSongFromFilename( const CStdString& fn, CMusikSong& song );
+	bool IsSongInLibrary	( const CStdString& fn );
 
 	// updating songs
 	bool SetSongInfo		( int songid, CMusikSongInfo* info );
@@ -124,6 +126,7 @@ public:
 	static int GetFilesize( const CStdString& fn );
 
 	// adding and removing files
+	bool AddSong	( const CStdString& fn );
 	bool AddOGG		( const CStdString& fn );
 	bool AddMP3		( const CStdString& fn );
 	bool RemoveSong	( int songid );

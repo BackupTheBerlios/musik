@@ -1005,6 +1005,13 @@ int CMusikLibrary::GetIDFromFilename( const CStdString& fn )
 
 ///////////////////////////////////////////////////
 
+void CMusikLibrary::GetSongFromFilename( const CStdString& fn, CMusikSong& song )
+{
+	song.SetID( GetIDFromFilename( fn ) );	
+}
+
+///////////////////////////////////////////////////
+
 int CMusikLibrary::GetFilesize( const CStdString& fn )
 {
 	FILE* pFile = fopen( fn.c_str(), "rb" );
@@ -1053,6 +1060,23 @@ bool CMusikLibrary::RemoveSong( const CStdString& fn )
 
 	return false;
 }	
+
+///////////////////////////////////////////////////
+
+bool CMusikLibrary::AddSong( const CStdString& fn )
+{
+	bool result = true;
+
+	CMusikFilename MFN( fn );
+	CString sExt = MFN.GetExtension();
+
+	if ( sExt == "mp3" )
+		result = AddMP3( fn );
+	else if ( sExt == "ogg" )
+		result = AddOGG( fn );
+
+	return result;
+}
 
 ///////////////////////////////////////////////////
 
@@ -1132,6 +1156,40 @@ bool CMusikLibrary::AddMP3( const CStdString& fn )
 	}
 
 	return false;
+}
+
+///////////////////////////////////////////////////
+
+bool CMusikLibrary::IsSongInLibrary( const CStdString & fn )
+{
+	bool result = false;
+
+	char *query = sqlite_mprintf( "SELECT filename FROM %Q WHERE filename = %Q;", 
+		SONG_TABLE_NAME,
+		fn.c_str() );
+	
+	m_ProtectingLibrary->acquire();
+
+	// run query
+	const char *pTail;
+	sqlite_vm *pVM;
+	sqlite_compile( m_pDB, query, &pTail, &pVM, NULL );
+	char *errmsg;
+	int numcols = 0;
+	const char **coldata;
+	const char **coltypes;
+
+	// see if theres a row
+	if ( sqlite_step( pVM, &numcols, &coldata, &coltypes ) == SQLITE_ROW )
+		result = true;
+
+	// clean up
+	sqlite_finalize( pVM, &errmsg );
+	sqlite_freemem( query );
+
+	m_ProtectingLibrary->release();
+
+	return result;
 }
 
 ///////////////////////////////////////////////////
