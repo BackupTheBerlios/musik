@@ -27,24 +27,25 @@
 //
 // Filename(s): 
 //
-//   CmusikBatchAdd.h, CmusikBatchAdd.cpp
+//   CmusikBatchAdd.h
 //
 // Information:
 //
-//   A thread to add files to a given library. 
+//   A worker thread function and class to batch add
+//   files or directories to the library...
 //
 // Usage: 
 //
-//   Create the class and call Run(). Upon completion,
-//   the functor's OnThreadComplete() function will be
-//   called.
+//   Create the new CmusikThread and a CmusikBatch add.
+//   pass the CmusikBatchAdd to the thread's argument,
+//   and use musikBatchAddWorker as the worker
 //
 ///////////////////////////////////////////////////
 
-#include "../include/musikLibrary.h"
-#include "../include/musikPlayer.h"
-#include "../include/musikFunctor.h"
-#include "../include/musikPlaylist.h"
+#include "musikLibrary.h"
+#include "musikPlayer.h"
+#include "musikFunctor.h"
+#include "musikPlaylist.h"
 
 ///////////////////////////////////////////////////
 
