@@ -50,6 +50,7 @@ BEGIN_EVENT_TABLE(CPlaylistCtrl, wxListCtrl)
 	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_TAG_ALBUM,							CPlaylistCtrl::ClickAlbum		)
 	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_TAG_GENRE,							CPlaylistCtrl::ClickGenre		)
 	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_TAG_YEAR,							CPlaylistCtrl::ClickYear		)
+	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_SMART,								CPlaylistCtrl::OnDisplaySmart	)
 	EVT_CONTEXT_MENU			(															CPlaylistCtrl::ShowMenu			)
 	EVT_CHAR					(															CPlaylistCtrl::TranslateKeys	)
 
@@ -248,6 +249,8 @@ CPlaylistCtrl::CPlaylistCtrl( wxWindow *parent, const wxWindowID id, const wxPoi
 	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_TIME,			_( "Time" ),			wxT( "" ), wxITEM_CHECK );
 	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_BITRATE,		_( "Bitrate" ),			wxT( "" ), wxITEM_CHECK );
 	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_FILENAME,		_( "Filename" ),		wxT( "" ), wxITEM_CHECK );
+	playlist_context_display_menu->AppendSeparator();
+	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_SMART,		_( "Smart Resizing" ),	wxT( "" ), wxITEM_CHECK );
 
 	//--- main context menu ---//
 	playlist_context_menu = new wxMenu;
@@ -394,6 +397,7 @@ void CPlaylistCtrl::ShowMenu( wxCommandEvent& WXUNUSED(event) )
 	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_TIME,			g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TIME]			);
 	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_BITRATE,		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_BITRATE]		);
 	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_FILENAME,		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_FILENAME]		);
+	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_SMART,			g_Prefs.nPlaylistSmartColumns								);
 
 	PopupMenu( playlist_context_menu, pos );
 }
@@ -442,6 +446,16 @@ void CPlaylistCtrl::OnDisplayMenu( wxCommandEvent& event )
 		break;
 	}
 	ResetColumns( false, true );
+}
+
+void CPlaylistCtrl::OnDisplaySmart( wxCommandEvent& event )
+{
+	if ( g_Prefs.nPlaylistSmartColumns == 0 )
+		g_Prefs.nPlaylistSmartColumns = 1;
+	else
+		g_Prefs.nPlaylistSmartColumns = 0;
+
+	RescaleColumns();
 }
 
 void CPlaylistCtrl::BeginDrag( wxEvent& WXUNUSED(event) )

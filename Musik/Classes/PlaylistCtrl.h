@@ -62,6 +62,7 @@ public:
 	void ClickYear		( wxCommandEvent& WXUNUSED(event) )	{ EditTag( 5 ); }
 	//--- columns ---//
 	void OnDisplayMenu	( wxCommandEvent& event				);
+	void OnDisplaySmart	( wxCommandEvent& WXUNUSED(event)	);
 	//--- other ---//
 	void UpdateSel		( wxListEvent&		event			);
 	void ShowMenu		( wxCommandEvent&	WXUNUSED(event) );

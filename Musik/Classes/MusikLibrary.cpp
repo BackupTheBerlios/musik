@@ -681,14 +681,16 @@ void CMusikLibrary::GetSongs( const wxArrayString & aList, int nInType, CMusikSo
 	//--- for each item in the input list, we're going to query the database ---//
 	for ( size_t i = 0; i < aList.GetCount(); i++ )
 	{	
-    	 	aList.Item( i ).Replace( wxT( "'" ), wxT( "''" ), true );
+    	aList.Item( i ).Replace( wxT( "'" ), wxT( "''" ), true );
   	 	sQuery += wxT("'");
-		 sQuery += aList.Item( i );
-		 //--- not at the end ---//
-		 if ( i != aList.GetCount() - 1 )
+		sQuery += aList.Item( i );
+		
+		//--- not at the end ---//
+		if ( i != aList.GetCount() - 1 )
 			sQuery += wxT("', ");
-		 //--- at the end ---//
-		 else
+		 
+		//--- at the end ---//
+		else
 			sQuery += wxT("' ) ");
  	}
 	if ( nInType == MUSIK_LIB_ARTIST )
@@ -715,11 +717,12 @@ void CMusikLibrary::Query( const wxString & query, wxArrayString & aReturn )
 	aReturn.Clear();
 	wxString sInfo;
 
-	aReturn.Alloc( GetSongCount() );
 	//--- run the query ---//
+	aReturn.Alloc( GetSongCount() );
 	wxCriticalSectionLocker lock( m_csDBAccess );
 	sqlite_exec(m_pDB, ConvQueryToMB( query ), &sqlite_callbackAddToStringArray, &aReturn, NULL);
 }
+
 static int sqlite_callbackAddToSongMap(void *args, int numCols, char **results, char **columnNames)
 {
 	//-------------------------------------------------------------------------//
@@ -776,6 +779,7 @@ void CMusikLibrary::GetStdPlaylistSongs( const wxArrayString & aFiles, CMusikSon
 		else
 			sQuery += wxT("' );");
 	}
+
 	myStringToMusikSongPtrMap theMap;
 	//---------------------------------------------------------------------//
 	//--- we fill the map and afterwards a array from the map because	---//
@@ -807,7 +811,6 @@ void CMusikLibrary::GetStdPlaylistSongs( const wxArrayString & aFiles, CMusikSon
 	WX_CLEAR_HASH_MAP(myStringToMusikSongPtrMap, theMap); 
 
 	return;
-
 }
 
 
