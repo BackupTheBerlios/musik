@@ -574,30 +574,36 @@ void MusikPrefsFrame::LoadPrefs()
 	//-------------------------//
 	//--- sound -> playback ---//
 	//-------------------------//
-	float		fDuration, fSeekDuration, fPauseResumeDuration, fStopDuration, fExitDuration;
-	wxString	sDuration, sSeekDuration, sPauseResumeDuration, sStopDuration, sExitDuration;
 	chkRepeat->SetValue					( g_Prefs.nRepeat );
 	chkShuffle->SetValue				( g_Prefs.nShuffle );
+	
+	float		fDuration;
+	wxString	sDuration;
+
 	chkCrossfade->SetValue				( g_Prefs.nFadeEnable );
 	fDuration =							(float)g_Prefs.nFadeDuration / 1000;
 	sDuration.sprintf					( wxT("%.1f"), fDuration );
 	tcDuration->SetValue				( sDuration );
+
 	chkCrossfadeSeek->SetValue			( g_Prefs.nFadeSeekEnable );
-	fSeekDuration =						(float)g_Prefs.nFadeSeekDuration / 1000;
-	sSeekDuration.sprintf				( wxT("%.1f"), fSeekDuration );
-	tcSeekDuration->SetValue			( sSeekDuration );
+	fDuration =							(float)g_Prefs.nFadeSeekDuration / 1000;
+	sDuration.sprintf					( wxT("%.1f"), fDuration );
+	tcSeekDuration->SetValue			( sDuration );
+
 	chkCrossfadePauseResume->SetValue	( g_Prefs.nFadePauseResumeEnable );
-	fPauseResumeDuration =				(float)g_Prefs.nFadePauseResumeDuration / 1000;
-	sPauseResumeDuration.sprintf		( wxT("%.1f"), fPauseResumeDuration );
-	tcPauseResumeDuration->SetValue		( sPauseResumeDuration );
+	fDuration =							(float)g_Prefs.nFadePauseResumeDuration / 1000;
+	sDuration.sprintf					( wxT("%.1f"), fDuration );
+	tcPauseResumeDuration->SetValue		( sDuration );
+
 	chkCrossfadeStop->SetValue			( g_Prefs.nFadeStopEnable );
-	fStopDuration =						(float)g_Prefs.nFadeStopDuration / 1000;
-	sStopDuration.sprintf				( wxT("%.1f"), fStopDuration );
-	tcStopDuration->SetValue			( sStopDuration );
+	fDuration =							(float)g_Prefs.nFadeStopDuration / 1000;
+	sDuration.sprintf					( wxT("%.1f"), fDuration );
+	tcStopDuration->SetValue			( sDuration );
+
 	chkCrossfadeExit->SetValue			( g_Prefs.nFadeExitEnable );
-	fExitDuration =						(float)g_Prefs.nFadeExitDuration / 1000;
-	sExitDuration.sprintf				( wxT("%.1f"), fExitDuration );
-	tcExitDuration->SetValue			( sExitDuration );
+	fDuration =							(float)g_Prefs.nFadeExitDuration / 1000;
+	sDuration.sprintf					( wxT("%.1f"), fDuration );
+	tcExitDuration->SetValue			( sDuration );
 
 	//-----------------------//
 	//--- sound -> driver ---//
