@@ -71,32 +71,22 @@ void CMusikPlaylistCtrl::OnNcPaint()
     rcClient.OffsetRect(-rcBar.TopLeft());
     rcBar.OffsetRect(-rcBar.TopLeft());
 
-    CDC mdc;
-    mdc.CreateCompatibleDC(&dc);
-    
-    CBitmap bm;
-    bm.CreateCompatibleBitmap(&dc, rcBar.Width(), rcBar.Height());
-    CBitmap* pOldBm = mdc.SelectObject(&bm);
+	CMemDC pDC( &dc );
 
     // draw borders in non-client area
     CRect rcDraw = rcBar;
 
     // erase the NC background
 	CBrush *back = CBrush::FromHandle( GetSysColorBrush( COLOR_BTNFACE ) );
-    mdc.FillRect(rcDraw, back );
-	mdc.Draw3dRect( 3, 3, rcClient.Width() + 2, rcClient.Height() + 2, GetSysColor( COLOR_BTNSHADOW ), GetSysColor( COLOR_BTNHILIGHT ) );
+    pDC.FillRect(rcDraw, back );
+	pDC.Draw3dRect( 3, 3, rcClient.Width() + 2, rcClient.Height() + 2, GetSysColor( COLOR_BTNSHADOW ), GetSysColor( COLOR_BTNHILIGHT ) );
 
     // client area is not our bussiness :)
     dc.IntersectClipRect(rcBar);
     dc.ExcludeClipRect(rcClient);
 
-    dc.BitBlt(0, 0, rcBar.Width(), rcBar.Height(), &mdc, 0, 0, SRCCOPY);
+    dc.BitBlt(0, 0, rcBar.Width(), rcBar.Height(), &pDC, 0, 0, SRCCOPY);
 
-    ReleaseDC(&dc);
-
-    mdc.SelectObject(pOldBm);
-    bm.DeleteObject();
-    mdc.DeleteDC();
 }
 
 ///////////////////////////////////////////////////

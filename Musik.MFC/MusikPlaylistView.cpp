@@ -7,6 +7,7 @@
 
 #include "../Musik.Core/include/MusikLibrary.h"
 #include "../Musik.Core/include/MusikArrays.h"
+
 #include "MusikPrefs.h"
 
 // CMusikPlaylistView
@@ -38,9 +39,9 @@ int CMusikPlaylistView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if ( CWnd::OnCreate(lpCreateStruct) == -1 )
 		return -1;
 
-	long dwStyle = WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_OWNERDATA;
+	long dwStyle = WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_OWNERDATA | WS_VSCROLL | WS_HSCROLL;
 	long dwStyleEx = LVS_EX_FULLROWSELECT | LVS_EX_HEADERDRAGDROP;
-	
+
 	m_Playlist->Create( dwStyle, CRect( 0, 0, 0, 0 ), this, 123 );
 	m_Playlist->SetExtendedStyle( dwStyleEx );
 
