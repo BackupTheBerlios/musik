@@ -173,8 +173,8 @@ public:
 	void GetStdPlaylist		( int id, CMusikPlaylist& target, bool clear_target = true );
 	void GetStdPlaylistFns	( int id, CStdStringArray& target, bool clear_target = true );
 	void GetStdPlaylistFns	( CMusikPlaylist& playlist, CStdStringArray& target, bool clear_target = true );
-	void CreateStdPlaylist	( const CStdString& name, const CStdStringArray& files, bool verify = false );
-	void AppendStdPlaylist	( int id, const CStdStringArray& files, bool verify = false );
+	void CreateStdPlaylist	( const CStdString& name, const CStdStringArray& files );
+	void AppendStdPlaylist	( int id, const CStdStringArray& files );
 	void CreateDynPlaylist	( const CStdString& name, const CStdString& query );
 	void DeleteStdPlaylist	( const CStdString& name );
 	void DeleteStdPlaylist	( int id );

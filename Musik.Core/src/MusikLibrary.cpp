@@ -614,7 +614,7 @@ void CMusikLibrary::DeleteCrossfader( CMusikCrossfader* fader )
 
 ///////////////////////////////////////////////////
 
-void CMusikLibrary::CreateStdPlaylist( const CStdString& name, const CStdStringArray& songids, bool verify )
+void CMusikLibrary::CreateStdPlaylist( const CStdString& name, const CStdStringArray& songids )
 {
 	if ( !m_pDB )
 		return;
@@ -643,11 +643,7 @@ void CMusikLibrary::CreateStdPlaylist( const CStdString& name, const CStdStringA
 		BeginTransaction();
 		for ( size_t i = 0; i < songids.size(); i++ )
 		{
-			if ( verify )
-			{
-				if ( !IsSongInLibrary( songids.at( i ) ) )
-					AddSong( songids.at( i ) );
-			}
+			AddSong( songids.at( i ) );
 
 			sqlite_exec_printf( m_pDB, "INSERT INTO %q VALUES ( %Q, %d, %d );",
 				NULL, NULL, NULL, 
@@ -665,7 +661,7 @@ void CMusikLibrary::CreateStdPlaylist( const CStdString& name, const CStdStringA
 
 ///////////////////////////////////////////////////
 
-void CMusikLibrary::AppendStdPlaylist( int id, const CStdStringArray& files, bool verify )
+void CMusikLibrary::AppendStdPlaylist( int id, const CStdStringArray& files )
 {
 	if ( !m_pDB ) 
 		return;
@@ -677,11 +673,7 @@ void CMusikLibrary::AppendStdPlaylist( int id, const CStdStringArray& files, boo
 		BeginTransaction();	
 		for ( size_t i = 0; i < files.size(); i++ )
 		{
-			if ( verify )
-			{
-				if ( !IsSongInLibrary( files.at( i ) ) )
-					AddSong( files.at( i ) );
-			}
+			AddSong( files.at( i ) );
 
 			sqlite_exec_printf( m_pDB, "INSERT INTO %q VALUES ( %Q, %d, %d );",
 			NULL, NULL, NULL, 
@@ -1380,13 +1372,16 @@ bool CMusikLibrary::AddSong( const CStdString& fn )
 {
 	bool result = true;
 
-	CMusikFilename MFN( fn );
-	CStdString sExt = MFN.GetExtension();
+	if ( !IsSongInLibrary( fn ) )
+	{
+		CMusikFilename MFN( fn );
+		CStdString sExt = MFN.GetExtension();
 
-	if ( sExt == "mp3" )
-		result = AddMP3( fn );
-	else if ( sExt == "ogg" )
-		result = AddOGG( fn );
+		if ( sExt == "mp3" )
+			result = AddMP3( fn );
+		else if ( sExt == "ogg" )
+			result = AddOGG( fn );
+	}
 
 	return result;
 }
