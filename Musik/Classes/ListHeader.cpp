@@ -29,14 +29,14 @@ CListHeader::CListHeader( wxPanel *pParent, wxString sCaption )
 	
 	#ifdef __WXGTK__
 		if ( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNSHADOW ) == wxSystemSettings::GetColour( wxSYS_COLOUR_GRAYTEXT ) )
-			background.Set( background.Red() - 30, background.Green() - 30, background.Blue() - 30 );
+			background.Set( background.Red() + 20, background.Green() + 20, background.Blue() + 20 );
 	#endif
 	
 	wxColour white = wxColour( 255, 255, 255 );
 	wxColour black = wxColour( 0, 0, 0 );
 	int nAvg = ( background.Red() + background.Blue() + background.Green() ) / 3;
 	this->SetBackgroundColour( background );
-
+		
 	//--- header object ---//
 	pHeader = new wxStaticText( this, -1, sCaption, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_CENTRE | wxTRANSPARENT_WINDOW );
 	pHeader->SetBackgroundColour( background );

@@ -207,6 +207,8 @@ void CSourcesListBox::ShowMenu( wxCommandEvent &WXUNUSED(event) )
 {
 	wxPoint pos = ScreenToClient( wxGetMousePosition() );
 
+	int nSelIndex = GetNextItem( -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED );
+	
 	//---------------------------------------------------------//
 	//--- if a dynamic playlist is selected, it can have	---//
 	//--- its query edited. other playlists cannot.			---//
@@ -223,6 +225,11 @@ void CSourcesListBox::ShowMenu( wxCommandEvent &WXUNUSED(event) )
 		sources_context_menu->Enable( MUSIK_SOURCE_CONTEXT_DELETE, false );
 	else
 		sources_context_menu->Enable( MUSIK_SOURCE_CONTEXT_DELETE, true );
+	
+	if ( nSelIndex ==  -1 )
+		sources_context_menu->Enable( MUSIK_SOURCE_CONTEXT_RENAME, false );
+	else
+		sources_context_menu->Enable( MUSIK_SOURCE_CONTEXT_RENAME, true );
 
 	PopupMenu( sources_context_menu, pos );
 }
