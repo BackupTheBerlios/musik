@@ -75,7 +75,7 @@ void CMusikDockBar::NcCalcClient( LPRECT pRc, UINT nDockBarID )
     // subtract edges
     baseMusikDockBar::NcCalcClient(pRc, nDockBarID);
 
-    if ( !HasGripper() || !m_ShowGripper )
+    if ( !IsFloating() && ( !HasGripper() || !m_ShowGripper ) )
         return;
 
 	// the client rect as calculated by 
@@ -166,7 +166,7 @@ BOOL CMusikDockBar::Create(LPCTSTR lpszWindowName, CWnd* pParentWnd, UINT nID, D
 
 void CMusikDockBar::NcPaintGripper( CDC* pDC, CRect rcClient )
 {
-	if ( !HasGripper() || !m_ShowGripper )
+	if ( !IsFloating() && ( !HasGripper() || !m_ShowGripper )  )
         return;
 
     // compute the caption rectangle
@@ -175,7 +175,7 @@ void CMusikDockBar::NcPaintGripper( CDC* pDC, CRect rcClient )
 
 	// gripper at top
 	rcGrip.left -= 1;
-    rcGrip.top -= m_cyGripper + 1;
+    rcGrip.top -= m_cyGripper + 2;
     rcGrip.bottom = rcGrip.top + 11;
     rcGrip.right = rcBtn.left - 3;
     rcGrip.InflateRect( 0, 1 );
