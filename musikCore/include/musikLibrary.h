@@ -143,6 +143,11 @@ public:
 	bool Startup();
 	void Shutdown();
 
+	// clears all songs by default,
+	// but will clear everything if the right flag
+	// is passed
+	void ClearLibrary( bool clear_all_tables = false );
+
 	// functions that external threads should use
 	// if they attempt to modify the database directly
 	void InitTimeAdded();

@@ -2530,3 +2530,22 @@ int CmusikLibrary::GetAllPaths( CStdStringArray* target, bool clear_target )
 }
 
 ///////////////////////////////////////////////////
+
+void CmusikLibrary::ClearLibrary( bool clear_all_tables )
+{
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
+	{
+		sqlite_exec( m_pDB, "delete from songs;", NULL, NULL, NULL );
+
+		if ( clear_all_tables )
+		{
+			sqlite_exec( m_pDB, "delete from std_playlist;", NULL, NULL, NULL );
+			sqlite_exec( m_pDB, "delete from std_playlist_song;", NULL, NULL, NULL );
+			sqlite_exec( m_pDB, "delete from dyn_playlist;", NULL, NULL, NULL );
+			sqlite_exec( m_pDB, "delete from crossfader_preset;", NULL, NULL, NULL );
+			sqlite_exec( m_pDB, "delete from equalizer_preset;", NULL, NULL, NULL );
+			sqlite_exec( m_pDB, "delete from equalizer_default;", NULL, NULL, NULL );
+			sqlite_exec( m_pDB, "delete from managed_path;", NULL, NULL, NULL );
+		}
+	}
+}
