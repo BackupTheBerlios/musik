@@ -1,0 +1,199 @@
+# Anjuta Version 1.1.97 
+Compatibility Level: 1 
+
+<PROJECT_DESCRIPTION_START>
+Some description<PROJECT_DESCRIPTION_END>
+<CONFIG_PROGS_START>
+<CONFIG_PROGS_END>
+<CONFIG_LIBS_START>
+<CONFIG_LIBS_END>
+<CONFIG_HEADERS_START>
+<CONFIG_HEADERS_END>
+<CONFIG_CHARACTERISTICS_START>
+<CONFIG_CHARACTERISTICS_END>
+<CONFIG_LIB_FUNCS_START>
+<CONFIG_LIB_FUNCS_END>
+<CONFIG_ADDITIONAL_START>
+<CONFIG_ADDITIONAL_END>
+<CONFIG_FILES_START>
+<CONFIG_FILES_END>
+<MAKEFILE_AM_START>
+<MAKEFILE_AM_END>
+
+props.file.type=project
+
+anjuta.version=1.1.97
+anjuta.compatibility.level=1
+
+project.name=Musik
+project.type=wxWINDOWS
+project.target.type=EXECUTABLE
+project.version=0.1.3 CVS
+project.author=Casey Langen
+project.source.target=Musik
+project.has.gettext=0
+project.gui.command=
+project.programming.language=C_C++
+project.excluded.modules=intl
+
+project.config.extra.modules.before=
+project.config.extra.modules.after=
+project.config.blocked=1
+project.config.disable.overwriting=1 1 1 1 1 1 1 1 1 
+
+project.menu.entry=Musik Version 0.1.3 CVS
+project.menu.group=Application
+project.menu.comment=Musik Version 0.1.3 CVS
+project.menu.icon=
+project.menu.need.terminal=0
+
+project.configure.options=
+anjuta.program.arguments=
+preferences.build.option.jobs=0
+preferences.build.option.silent=0
+preferences.build.option.autosave=0
+preferences.anjuta.make.options=-k
+preferences.make=make
+preferences.build.option.keep.going=1
+preferences.build.option.warn.undef=0
+preferences.autoformat.custom.style= -i8 -sc -bli0 -bl0 -cbi0 -ss
+preferences.autoformat.style=Style of Kangleipak
+preferences.indent.opening=0
+preferences.autoformat.disable=0
+preferences.indent.automatic=1
+preferences.use.tabs=1
+preferences.indent.size=4
+preferences.tabsize=4
+preferences.indent.closing=0
+
+module.include.name=.
+module.include.type=
+module.include.files=\
+	Classes/Library/CFrameHeader.h\
+	Classes/Library/CMP3Info.h\
+	Classes/Library/COggInfo.h\
+	Classes/Library/CVBitRate.h\
+	Classes/Library/i18n.h\
+	Classes/Library/vcedit.h\
+	Classes/ActivityAreaCtrl.h\
+	Classes/ActivityBox.h\
+	Classes/BtnDown.h\
+	Classes/GaugeSeek.h\
+	Classes/ListHeader.h\
+	Classes/MusikLibrary.h\
+	Classes/MusikPlayer.h\
+	Classes/MusikPrefs.h\
+	Classes/NowPlayingCtrl.h\
+	Classes/PlaylistCtrl.h\
+	Classes/PlaylistInfoCtrl.h\
+	Classes/SourcesBox.h\
+	Classes/WebServer.h\
+	MusikApp.h\
+	MusikGlobals.h\
+	MusikUtils.h\
+	Frames/MusikFrame.h\
+	Frames/MusikLibraryFrame.h\
+	Frames/MusikPrefsFrame.h\
+	Frames/MusikTagFrame.h\
+	Frames/MusikVolumeFrame.h\
+	Threads/ActivityBoxThreads.h\
+	Threads/MusikLibraryThreads.h\
+	Threads/MusikTagThreads.h\
+	Threads/MusikThreads.h\
+	Threads/PlaylistCtrlThreads.h
+
+module.source.name=.
+module.source.type=
+module.source.files=\
+	Classes/Library/CFrameHeader.cpp\
+	Classes/Library/CMP3Info.cpp\
+	Classes/Library/COggInfo.cpp\
+	Classes/Library/CVBitRate.cpp\
+	Classes/Library/vcedit.c\
+	Classes/ActivityAreaCtrl.cpp\
+	Classes/ActivityBox.cpp\
+	Classes/BtnDown.cpp\
+	Classes/GaugeSeek.cpp\
+	Classes/ListHeader.cpp\
+	Classes/MusikLibrary.cpp\
+	Classes/MusikPlayer.cpp\
+	Classes/MusikPrefs.cpp\
+	Classes/NowPlayingCtrl.cpp\
+	Classes/PlaylistCtrl.cpp\
+	Classes/PlaylistInfoCtrl.cpp\
+	Classes/SourcesBox.cpp\
+	Classes/WebServer.cpp\
+	MusikApp.cpp\
+	MusikGlobals.cpp\
+	MusikUtils.cpp\
+	Frames/MusikFrame.cpp\
+	Frames/MusikFrameEvents.cpp\
+	Frames/MusikLibraryFrame.cpp\
+	Frames/MusikPrefsFrame.cpp\
+	Frames/MusikTagFrame.cpp\
+	Frames/MusikVolumeFrame.cpp\
+	Threads/ActivityBoxThreads.cpp\
+	Threads/MusikLibraryThreads.cpp\
+	Threads/MusikTagThreads.cpp\
+	Threads/MusikThreads.cpp\
+	Threads/PlaylistCtrlThreads.cpp
+
+module.pixmap.name=.
+module.pixmap.type=
+module.pixmap.files=\
+	musik.ico\
+	musik.png\
+	images/playback/next.xpm\
+	images/playback/next_down.xpm\
+	images/playback/pause.xpm\
+	images/playback/pause_down.xpm\
+	images/playback/play.xpm\
+	images/playback/play_down.xpm\
+	images/playback/prev.xpm\
+	images/playback/prev_down.xpm\
+	images/playback/stop.xpm\
+	images/playback/stop_down.xpm\
+	images/playback/volume.xpm\
+	images/playback/volume_down.xpm\
+	images/ratings/rating0.xpm\
+	images/ratings/rating1.xpm\
+	images/ratings/rating2.xpm\
+	images/ratings/rating3.xpm\
+	images/ratings/rating4.xpm\
+	images/ratings/rating5.xpm\
+	images/sources/dynamic.xpm\
+	images/sources/library.xpm\
+	images/sources/standard.xpm
+
+module.data.name=.
+module.data.type=
+module.data.files=
+
+module.help.name=.
+module.help.type=
+module.help.files=
+
+module.doc.name=.
+module.doc.type=
+module.doc.files=
+
+module.po.files=
+
+compiler.options.supports=
+compiler.options.include.paths=\
+	.\
+	..
+compiler.options.library.paths=
+compiler.options.libraries=
+compiler.options.libraries.selected=
+compiler.options.defines=\
+	HAVE_CONFIG_H
+compiler.options.defines.selected=
+compiler.options.warning.buttons=0 0 1 1 0 1 0 0 0 0 0 0 0 1 0 0 
+compiler.options.optimize.buttons=0 0 1 0 
+compiler.options.other.buttons=1 0 
+compiler.options.other.c.flags=
+compiler.options.other.l.flags=
+compiler.options.other.l.libs=
+
+project.src.paths=
