@@ -74,13 +74,27 @@ bool CmusikMp3Info::LoadInfo( const CStdString& fn )
 	char* pYear		= ID3_GetYear	( &id3Tag );
 	char* pTrackNum	= ID3_GetTrack	( &id3Tag );
 
+	// validate year and track num...
+	CStdString year_temp = pYear;
+	CStdString track_num = pTrackNum;
+
+	year_temp.Replace( "(", "" );
+	year_temp.Replace( ")", "" );
+	if ( atoi( year_temp.c_str() ) == 0 || year_temp.GetLength() != 4 || year_temp.IsEmpty() )
+		year_temp = "0";
+		
+	track_num.Replace( "(", "" );
+	track_num.Replace( ")", "" );
+	if ( atoi( track_num.c_str() ) == 0 || track_num.IsEmpty() )
+		track_num = "0";
+
 	// tag
 	m_Info.SetArtist	( pArtist );
 	m_Info.SetAlbum		( pAlbum );
 	m_Info.SetTitle		( pTitle );
 	m_Info.SetGenre		( GetGenre( pGenre ) );
-	m_Info.SetYear		( pGenre );
-	m_Info.SetTrackNum	( pTrackNum );
+	m_Info.SetYear		( year_temp );
+	m_Info.SetTrackNum	( track_num );
 
 	// free the info
 	ID3_FreeString( pArtist );

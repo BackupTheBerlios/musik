@@ -69,13 +69,32 @@ bool CmusikOggInfo::LoadInfo( const CStdString& fn )
 	{
 		vorbis_comment *pComment = ov_comment( &vorbisfile, -1 );
 
+		// need to be validated
+		CStdString year_temp;
+		CStdString track_num;
+
 		// tag
 		m_Info.SetArtist	( vorbis_comment_query( pComment, "artist",			0 ) );
 		m_Info.SetAlbum		( vorbis_comment_query( pComment, "album",			0 ) );
 		m_Info.SetTitle		( vorbis_comment_query( pComment, "title",			0 ) );
 		m_Info.SetGenre		( vorbis_comment_query( pComment, "genre",			0 ) );
-		m_Info.SetYear		( vorbis_comment_query( pComment, "date",			0 ) );
-		m_Info.SetTrackNum	( vorbis_comment_query( pComment, "tracknumber",	0 ) );
+		year_temp =			( vorbis_comment_query( pComment, "date",			0 ) );
+		track_num =			( vorbis_comment_query( pComment, "tracknumber",	0 ) );
+
+		// validate
+		year_temp.Replace( "(", "" );
+		year_temp.Replace( ")", "" );
+		if ( atoi( year_temp.c_str() ) == 0 || year_temp.GetLength() != 4 || year_temp.IsEmpty() )
+			year_temp = "0";
+			
+		track_num.Replace( "(", "" );
+		track_num.Replace( ")", "" );
+		if ( atoi( track_num.c_str() ) == 0 || track_num.IsEmpty() )
+			track_num = "0";
+
+		// set year and track num
+		m_Info.SetYear( year_temp );
+		m_Info.SetTrackNum( track_num.c_str() );
 
 		CStdString temp;
 

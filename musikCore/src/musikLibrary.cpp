@@ -683,7 +683,7 @@ bool CmusikLibrary::InitLibTable()
 		"title varchar(255), "	
 		"album varchar(255), "	
 		"tracknum number(3), "	
-		"year varchar(255), "		
+		"year number(4), "		
 		"genre varchar(255), "	
 		"rating number(1), "		
 		"bitrate number(10), "	
@@ -1479,12 +1479,11 @@ int CmusikLibrary::QueryCount( const char* pQueryResult )
 
 void CmusikLibrary::VerifyYearList( CStdStringArray & list )
 {
-	list.clear();
 	size_t count = list.size();
 
 	for ( size_t i = 0; i < count ; i++ )
 	{
-		if ( list.at( i ).IsEmpty() )
+		if ( list.at( i ).IsEmpty() || list.at( i ) == "0" )
 		{
 			list.erase( list.begin() + i );
 			count--;
@@ -1673,6 +1672,9 @@ int CmusikLibrary::GetAllDistinct( int source_type, CStdStringArray& target, boo
 			SONG_TABLE_NAME );
 	}
 
+	if ( source_type == MUSIK_LIBRARY_TYPE_YEAR )
+		VerifyYearList( target );
+
 	return nRet;
 }
 
@@ -1749,7 +1751,7 @@ bool CmusikLibrary::SetSongInfo( CmusikSongInfo* info, int songid )
 	// lock it up and run the query
 	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
-		result = sqlite_exec_printf( m_pDB, "UPDATE %Q SET format = %d, vbr = %d, filename = %Q, artist = %Q, title = %Q, album = %Q, tracknum = %d, year = %Q, genre = %Q, rating = %d, bitrate = %d, lastplayed = %Q, notes = %Q, timesplayed = %d, duration = %d, timeadded = %Q, filesize = %d, dirty = %d WHERE songid = %d;",
+		result = sqlite_exec_printf( m_pDB, "UPDATE %Q SET format = %d, vbr = %d, filename = %Q, artist = %Q, title = %Q, album = %Q, tracknum = %d, year = %d, genre = %Q, rating = %d, bitrate = %d, lastplayed = %Q, notes = %Q, timesplayed = %d, duration = %d, timeadded = %Q, filesize = %d, dirty = %d WHERE songid = %d;",
 			NULL, NULL, NULL,
 			SONG_TABLE_NAME,
 			atoi( info->GetFormat().c_str() ),
@@ -1759,7 +1761,7 @@ bool CmusikLibrary::SetSongInfo( CmusikSongInfo* info, int songid )
 			info->GetTitle().c_str(),
 			info->GetAlbum().c_str(),
 			atoi( info->GetTrackNum().c_str() ),
-			info->GetYear().c_str(),
+			atoi( info->GetYear().c_str() ),
 			info->GetGenre().c_str(),
 			atoi( info->GetRating().c_str() ),
 			atoi( info->GetBitrate().c_str() ),
@@ -2057,7 +2059,7 @@ bool CmusikLibrary::AddOGG( const CStdString& fn )
 		int nRet;
 		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 		{
-			nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %d, %d, %Q, %Q, %Q, %Q, %d, %Q, %Q, %d, %d, %Q, %Q, %d, %d, %Q, %d, %d, %d );", NULL, NULL, NULL, 
+			nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %d, %d, %Q, %Q, %Q, %Q, %d, %d, %Q, %d, %d, %Q, %Q, %d, %d, %Q, %d, %d, %d );", NULL, NULL, NULL, 
 				SONG_TABLE_NAME,								// song table 		
 				NULL,											// id
 				MUSIK_LIBRARY_FORMAT_OGG,						// format
@@ -2067,7 +2069,7 @@ bool CmusikLibrary::AddOGG( const CStdString& fn )
 				info.Get()->GetTitle().c_str(),					// title
 				info.Get()->GetAlbum().c_str(),					// album
 				atoi( info.Get()->GetTrackNum().c_str() ),		// tracknum
-				info.Get()->GetYear().c_str(),					// year
+				atoi( info.Get()->GetYear().c_str() ),			// year
 				info.Get()->GetGenre().c_str(),					// genre
 				0,												// rating
 				atoi( info.Get()->GetBitrate() ),				// bitrate
