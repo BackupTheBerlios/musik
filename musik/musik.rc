@@ -533,24 +533,26 @@ STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Sound::Crossfader"
 FONT 8, "MS Shell Dlg", 0, 0, 0x0
 BEGIN
-    EDITTEXT        IDC_NEWSONG,66,35,24,12,ES_AUTOHSCROLL
-    EDITTEXT        IDC_PAUSERESUME,66,51,24,12,ES_AUTOHSCROLL
-    EDITTEXT        IDC_SEEK,66,67,24,12,ES_AUTOHSCROLL
-    EDITTEXT        IDC_STOP,66,83,24,12,ES_AUTOHSCROLL
-    EDITTEXT        IDC_EXIT,66,99,24,12,ES_AUTOHSCROLL
-    LISTBOX         IDC_PRESETBOX,112,35,92,76,LBS_SORT | 
+    EDITTEXT        IDC_NEWSONG,66,49,24,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_PAUSERESUME,66,65,24,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_SEEK,66,81,24,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_STOP,66,97,24,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EXIT,66,113,24,12,ES_AUTOHSCROLL
+    LISTBOX         IDC_PRESETBOX,112,49,92,76,LBS_SORT | 
                     LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "add",IDC_ADD,112,117,44,14
-    PUSHBUTTON      "delete",IDC_DELETE,162,117,42,14
-    RTEXT           "New Song:",IDC_STATIC,0,37,60,8
-    RTEXT           "Pause / Resume:",IDC_STATIC,0,53,60,8
-    RTEXT           "Seek:",IDC_STATIC,0,70,60,8
-    RTEXT           "Program Exit:",IDC_STATIC,0,101,60,8
-    RTEXT           "Stop:",IDC_STATIC,0,86,60,8
-    CTEXT           "Presets:",IDC_STATIC,113,17,89,8
-    LTEXT           "",IDC_STATIC,101,14,1,122,0,WS_EX_STATICEDGE
-    CTEXT           "Intervals (sec):",IDC_STATIC,6,17,89,8
-    PUSHBUTTON      "reset",IDC_RESET,30,117,44,14
+    PUSHBUTTON      "add",IDC_ADD,112,131,44,14
+    PUSHBUTTON      "delete",IDC_DELETE,162,131,42,14
+    RTEXT           "New Song:",IDC_STATIC,0,51,60,8
+    RTEXT           "Pause / Resume:",IDC_STATIC,0,67,60,8
+    RTEXT           "Seek:",IDC_STATIC,0,84,60,8
+    RTEXT           "Program Exit:",IDC_STATIC,0,115,60,8
+    RTEXT           "Stop:",IDC_STATIC,0,100,60,8
+    CTEXT           "Presets:",IDC_STATIC,113,31,89,8
+    LTEXT           "",IDC_STATIC,101,28,1,122,0,WS_EX_STATICEDGE
+    CTEXT           "Intervals (sec):",IDC_STATIC,6,31,89,8
+    PUSHBUTTON      "reset",IDC_RESET,30,131,44,14
+    CTEXT           "The crossfader can be toggled on and off from the ""Audio"" menu in the main interface",
+                    IDC_STATIC,6,6,192,18
 END
 
 
