@@ -23,7 +23,7 @@
 	#include "wx/wx.h"
 #endif 
 
-#include "../Classes/MusikFXGauge.h"
+#include "../Classes/MusikEQCtrl.h"
 
 enum EMUSIK_FX_OBJECT_ID
 {
@@ -39,49 +39,27 @@ public:
 	//--------------//
 	void OnClose			( wxCommandEvent& WXUNUSED(event) );
 	void OnSlidePitch		( wxScrollEvent& event );
-	void OnClickReset		( wxCommandEvent& WXUNUSED(event) );
 	void OnRightClick		( wxCommandEvent& event );
-	void OnToggleEQEnable	( wxCommandEvent& WXUNUSED(event) );
+
 	
 	//-------------------------//
 	//--- utility functions ---//
 	//-------------------------//
 	void Close();
-	void SlidersFromBands();
-	void BandsFromSliders();
 	
 	//----------------//
 	//--- controls ---//
 	//----------------//
-	wxCheckBox	*chkLock;
-	wxCheckBox	*chkEQEnable;
-	wxButton	*btnReset;
-	wxSlider	*slPitch;
-	
-	//------------------//
-	//--- eq sliders ---//
-	//------------------//
-	CMusikFXGauge	*slLeft[18];
-	CMusikFXGauge	*slRight[18];
+	CMusikEQCtrl			*pEQ;
+	wxSlider				*slPitch;
 	
 	//--------------//
 	//--- sizers ---//
 	//--------------//
-	wxBoxSizer	*hsLeftSliders;
-	wxBoxSizer	*hsRightSliders;
-	wxBoxSizer	*vsSliders;
-	wxBoxSizer	*vsEQControls;
-	wxBoxSizer	*hsEQ;
-	wxBoxSizer	*hsControls;
-	wxBoxSizer	*vsMain;
-
-	//-------------//
-	//--- bands ---//
-	//-------------//
-	float ldata[18];	
-	float rdata[18];
+	wxBoxSizer				*vsMain;
 	
 	DECLARE_EVENT_TABLE()
+
 private:
 
 

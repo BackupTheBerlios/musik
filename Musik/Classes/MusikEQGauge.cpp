@@ -1,3 +1,14 @@
+/*
+ *  MusikEQGauge.cpp
+ *
+ *  Subclasses wxGauge used by equalizer. Has special nifty functions.
+ *
+ *  Copyright (c) 2003 Casey Langen (casey@bak.rr.com)
+ *	Contributors: Simon Windmill, Dustin Carter, Gunnar Roth, Wade Brainerd
+ *
+ *  See the file "license.txt" for information on usage and redistribution
+ *  of this file, and for a DISCLAIMER OF ALL WARRANTIES.
+*/
 
 //--- For compilers that support precompilation, includes "wx/wx.h". ---//
 #include "wx/wxprec.h"
@@ -6,20 +17,19 @@
 #include "../MusikGlobals.h"
 #include "../MusikUtils.h"
 
-#include "MusikFXGauge.h"
-#include "../Frames/MusikFXFrame.h"
+#include "MusikEQGauge.h"
+#include "MusikEQCtrl.h"
 
 //-----------------------------------------//
 //--- this is the gauge					---//
 //-----------------------------------------//
-BEGIN_EVENT_TABLE(CMusikFXGauge, wxEvtHandler)
-	//EVT_ERASE_BACKGROUND		( CMusikFXGauge::OnEraseBackground ) 
-	EVT_LEFT_DOWN				( CMusikFXGauge::OnLeftDown	) 
-	EVT_LEFT_UP					( CMusikFXGauge::OnLeftUp		)
-	EVT_MOTION					( CMusikFXGauge::OnMouseMove	) 
+BEGIN_EVENT_TABLE(CMusikEQGauge, wxEvtHandler)
+	EVT_LEFT_DOWN				( CMusikEQGauge::OnLeftDown		) 
+	EVT_LEFT_UP					( CMusikEQGauge::OnLeftUp		)
+	EVT_MOTION					( CMusikEQGauge::OnMouseMove	) 
 END_EVENT_TABLE()
 
-CMusikFXGauge::CMusikFXGauge( MusikFXFrame* parent, size_t nChannel, size_t nBandID )
+CMusikEQGauge::CMusikEQGauge( CMusikEQCtrl* parent, size_t nChannel, size_t nBandID )
 	: wxGauge( parent, -1, 100, wxPoint( 0, 0 ), wxSize( wxSystemSettings::GetMetric( wxSYS_HSCROLL_Y ), 100 ), wxGA_SMOOTH | wxGA_VERTICAL | wxCLIP_CHILDREN )
 {
 	m_Channel = nChannel;
@@ -28,16 +38,16 @@ CMusikFXGauge::CMusikFXGauge( MusikFXFrame* parent, size_t nChannel, size_t nBan
 	m_Dragging = false;
 }
 
-CMusikFXGauge::~CMusikFXGauge()
+CMusikEQGauge::~CMusikEQGauge()
 {
 }
 
-void CMusikFXGauge::OnEraseBackground( wxEraseEvent& event )
+void CMusikEQGauge::OnEraseBackground( wxEraseEvent& event )
 {
 	Refresh( FALSE );
 }
 
-void CMusikFXGauge::SetPos( size_t m_Pos )
+void CMusikEQGauge::SetPos( size_t m_Pos )
 {
 	SetValue( (int)m_Pos );
 	Colourize();
@@ -56,7 +66,7 @@ void CMusikFXGauge::SetPos( size_t m_Pos )
 	}
 }
 
-void CMusikFXGauge::Colourize()
+void CMusikEQGauge::Colourize()
 {
 	/*
 	if ( g_Prefs.nEQColourize != 1 )
@@ -66,25 +76,25 @@ void CMusikFXGauge::Colourize()
 	SetForegroundColour( wxColour( 200 - nGreen, nGreen, 0 ) );
 }
 
-void CMusikFXGauge::SetEQ()
+void CMusikEQGauge::SetEQ()
 {
 	m_Parent->BandsFromSliders();
 }
 
-void CMusikFXGauge::OnLeftDown( wxMouseEvent& event )
+void CMusikEQGauge::OnLeftDown( wxMouseEvent& event )
 {
 	m_Dragging = true;
 	CaptureMouse();
     SetFromMousePos( event );
 }
 
-void CMusikFXGauge::OnMouseMove( wxMouseEvent& event )
+void CMusikEQGauge::OnMouseMove( wxMouseEvent& event )
 {
 	if ( event.LeftIsDown() )
 		SetFromMousePos( event );
 }
 
-void CMusikFXGauge::OnLeftUp( wxMouseEvent& event )
+void CMusikEQGauge::OnLeftUp( wxMouseEvent& event )
 {
 	if ( m_Dragging )
 	{
@@ -94,7 +104,7 @@ void CMusikFXGauge::OnLeftUp( wxMouseEvent& event )
 	}
 }
 
-void CMusikFXGauge::SetFromMousePos( wxMouseEvent& event )
+void CMusikEQGauge::SetFromMousePos( wxMouseEvent& event )
 {
 	//--- stuff we'll need for calculation ---//
 	m_MousePos	= ScreenToClient( wxGetMousePosition() );

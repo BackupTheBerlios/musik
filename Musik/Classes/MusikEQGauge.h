@@ -1,5 +1,17 @@
-#ifndef MUSIKFXGAUGE_H
-#define MUSIKFXGAUGE_H
+/*
+ *  MusikEQGauge.h
+ *
+ *  Subclasses wxGauge used by equalizer. Has special nifty functions.
+ *
+ *  Copyright (c) 2003 Casey Langen (casey@bak.rr.com)
+ *	Contributors: Simon Windmill, Dustin Carter, Gunnar Roth, Wade Brainerd
+ *
+ *  See the file "license.txt" for information on usage and redistribution
+ *  of this file, and for a DISCLAIMER OF ALL WARRANTIES.
+*/
+
+#ifndef MUSIK_FX_GAUGE_H
+#define MUSIK_FX_GAUGE_H
 
 //--- wx ---//
 #include "wx/wxprec.h"
@@ -13,14 +25,13 @@ enum EMUSIK_FX_CHANNEL
 	MUSIK_FX_RIGHT
 };
 
-class CMusikFXHandler;
-class MusikFXFrame;
+class CMusikEQCtrl;
 
-class CMusikFXGauge : public wxGauge
+class CMusikEQGauge : public wxGauge
 {
 public:
-	CMusikFXGauge( MusikFXFrame* parent, size_t nChannel, size_t nBandID );
-	~CMusikFXGauge();
+	CMusikEQGauge( CMusikEQCtrl* parent, size_t nChannel, size_t nBandID );
+	~CMusikEQGauge();
 
 	void OnEraseBackground ( wxEraseEvent& event );
 	void OnLeftDown			( wxMouseEvent& event );
@@ -37,7 +48,7 @@ public:
 private:
 	bool m_Dragging;
 
-	MusikFXFrame *m_Parent;
+	CMusikEQCtrl *m_Parent;
 	size_t m_Channel;
 	size_t m_BandID;
 

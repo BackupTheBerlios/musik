@@ -210,12 +210,6 @@
 				<File
 					RelativePath=".\Frames\MusikFXFrame.h">
 				</File>
-				<File
-					RelativePath=".\Classes\MusikFXGauge.cpp">
-				</File>
-				<File
-					RelativePath=".\Classes\MusikFXGauge.h">
-				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -255,18 +249,22 @@
 		<Filter
 			Name="Events"
 			Filter="">
-			<File
-				RelativePath=".\Classes\BtnDown.cpp">
-			</File>
-			<File
-				RelativePath=".\Classes\BtnDown.h">
-			</File>
-			<File
-				RelativePath=".\Classes\GaugeSeek.cpp">
-			</File>
-			<File
-				RelativePath=".\Classes\GaugeSeek.h">
-			</File>
+			<Filter
+				Name="NowPlayingCtrl"
+				Filter="">
+				<File
+					RelativePath=".\Classes\BtnDown.cpp">
+				</File>
+				<File
+					RelativePath=".\Classes\BtnDown.h">
+				</File>
+				<File
+					RelativePath=".\Classes\GaugeSeek.cpp">
+				</File>
+				<File
+					RelativePath=".\Classes\GaugeSeek.h">
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Controls"
@@ -335,6 +333,22 @@
 				</File>
 				<File
 					RelativePath=".\Classes\ListHeader.h">
+				</File>
+			</Filter>
+			<Filter
+				Name="MusikEQ"
+				Filter="">
+				<File
+					RelativePath=".\Classes\MusikEQCtrl.cpp">
+				</File>
+				<File
+					RelativePath=".\Classes\MusikEQCtrl.h">
+				</File>
+				<File
+					RelativePath=".\Classes\MusikEQGauge.cpp">
+				</File>
+				<File
+					RelativePath=".\Classes\MusikEQGauge.h">
 				</File>
 			</Filter>
 		</Filter>
