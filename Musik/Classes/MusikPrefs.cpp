@@ -78,6 +78,7 @@ void CMusikPrefs::LoadPrefs()
 	config->Read( wxT( "Webserverport" ),							&nWebServerPort,		6395					);
 	config->Read( wxT( "FramePlacement" ),							&sFramePlacement,		wxT("0,0,800,600,0,0")	);
 	config->Read( wxT( "MusikVersion" ),							&sMusikVersion,			wxT("Musik 0.1.2")		);
+	config->Read( wxT( "SmartPlaylistColumns" ),					&nPlaylistSmartColumns,	1						);
 
 	//-----------------------------------------------------//
 	//--- we gotta load these by hand (not with a loop)	---//
@@ -219,7 +220,7 @@ void CMusikPrefs::SavePrefs()
 	config->Write( wxT( "WebserverPort" ),							nWebServerPort			);
 	config->Write( wxT( "FramePlacement" ),							sFramePlacement			);
 	config->Write( wxT( "MusikVersion" ),							sMusikVersion			);
-
+	config->Write( wxT( "SmartPlaylistColumns" ),					nPlaylistSmartColumns	);
     //--- playlist columns ---//
 	for( int i = 0; i < NPLAYLISTCOLUMNS; i++ )
 	{

@@ -787,12 +787,19 @@ void CPlaylistCtrl::RescaleColumns()
 	//-------------------------------------------------//
 	//--- size of the client area.					---//
 	//-------------------------------------------------//
-	int nWidth, nHeight;
-	GetClientSize( &nWidth, &nHeight );
-	size_t nOrigWidth		= nWidth;
+	wxSize client_size		= GetClientSize();
+	size_t nTotalPercent	= 0;
+	size_t nRemainingWidth	= 0;
 	size_t nStaticWidth		= 0;
 	size_t nDynamicWidth	= 0;
 	size_t nCurrItem;
+	
+	//-------------------------------------------------//
+	//--- if gtk, add width of scrollbar to static	---//
+	//-------------------------------------------------//
+	#ifdef __WXGTK__
+		nStaticWidth += wxSystemSettings::GetMetric(wxSYS_HSCROLL_Y);	
+	#endif 	
 
 	//-------------------------------------------------//
     //--- find the size of all the static members	---//
@@ -801,23 +808,35 @@ void CPlaylistCtrl::RescaleColumns()
 	{
 		nCurrItem = m_ColumnOrder.Item( i );
 		if ( g_Prefs.nPlaylistColumnDynamic[nCurrItem] == 0 )
-			nStaticWidth += GetColumnWidth( i );
+			nStaticWidth += g_Prefs.nPlaylistColumnSize[nCurrItem];
 	}
 
 	//-------------------------------------------------//
-	//--- window width - static width = remaining	---//
-	//--- client area for the dynamic items.		---//
+	//--- if using smart columns, we need to find	---//
+	//--- what percentages mean.					---//
 	//-------------------------------------------------//
-	#ifdef __WXGTK__
-		nStaticWidth -= wxSystemSettings::GetMetric(wxSYS_HSCROLL_Y);	
-	#endif 
-	nWidth -= nStaticWidth;
+	if ( g_Prefs.nPlaylistSmartColumns == 1 )
+	{
+		for ( size_t i = 0; i < m_ColumnOrder.GetCount(); i++ )
+		{
+			nCurrItem = m_ColumnOrder.Item( i );
+			if ( g_Prefs.nPlaylistColumnDynamic[nCurrItem] == 1 )
+				nTotalPercent += g_Prefs.nPlaylistColumnSize[nCurrItem];
+		}
+	}
 
 	//-------------------------------------------------//
-	//--- calculate an array of dynamic widths		---//
-	//--- based on the remaining client area.		---//
+	//--- remaining width = window width - static	---//
+	//--- width. (this is width for dynamic items)	---//		
+	//-------------------------------------------------//
+	nRemainingWidth = client_size.GetWidth() - nStaticWidth;
+
+	//-------------------------------------------------//
+	//--- go in and set all the column widths, both	---//
+	//--- static and dynamic.						---//
 	//-------------------------------------------------//
 	float f_Per;
+	int n_Per;
 	for ( size_t i = 0; i < m_ColumnOrder.GetCount(); i++ )
 	{
 		nCurrItem = m_ColumnOrder.Item( i );
@@ -833,10 +852,20 @@ void CPlaylistCtrl::RescaleColumns()
 		//-------------------------//
 		else
 		{
-			f_Per = (float)g_Prefs.nPlaylistColumnSize[nCurrItem] / 100.0f;
-			f_Per *= nWidth;
-			nDynamicWidth += (int)f_Per;
-			SetColumnWidth( i, (int)f_Per );
+			if ( g_Prefs.nPlaylistSmartColumns == 1 )
+			{
+				f_Per = ( (float)g_Prefs.nPlaylistColumnSize[nCurrItem] / (float)nTotalPercent ) * nRemainingWidth;
+				n_Per = (int)f_Per;
+			}
+
+			else
+			{
+				f_Per = ( (float)g_Prefs.nPlaylistColumnSize[nCurrItem] / 100.0f ) * nRemainingWidth;
+				n_Per = (int)f_Per;		
+			}
+
+			nDynamicWidth += (int)n_Per;
+			SetColumnWidth( i, n_Per );
 		}
 	}
 	
@@ -844,8 +873,12 @@ void CPlaylistCtrl::RescaleColumns()
 	//--- remaining pixels, that may have been		---//
 	//--- lost by integer division.					---//
 	//-------------------------------------------------//
-	size_t nOverflow = nOrigWidth - ( nStaticWidth + nDynamicWidth );
-	SetColumnWidth( nCurrItem, nOverflow );
+	if ( g_Prefs.nPlaylistSmartColumns == 1 && nTotalPercent )
+	{
+		size_t nOverflow = client_size.GetWidth() - ( nStaticWidth + nDynamicWidth );
+		size_t nLastSize = GetColumnWidth( 0 ) + nOverflow;
+		SetColumnWidth( 0, nLastSize );
+	}
 
 	//-------------------------------------------------//
 	//--- make sure window is properly refreshed.	---//
