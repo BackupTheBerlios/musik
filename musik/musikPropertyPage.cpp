@@ -53,6 +53,7 @@ CmusikPropertyPage::CmusikPropertyPage( UINT nIDTemplate, CmusikPrefs* prefs )
 	: CPropertyPage( nIDTemplate )
 {
 	m_Prefs = prefs;
+	m_Modified = false;
 }
 
 ///////////////////////////////////////////////////
@@ -105,9 +106,12 @@ void CmusikPropertySheet::CommitChanges()
 	for ( int i = 0; i < GetPageCount(); i++ )
 	{
 		ptrPage = (CmusikPropertyPage*)GetPage( i );
-		ptrPage->CommitChanges();
-		ptrPage->SetModified( FALSE );
-	}
+		if ( ptrPage->IsModified() )
+		{
+			ptrPage->CommitChanges();
+			ptrPage->SetModified( FALSE );
+		}
+	}	
 }
 
 ///////////////////////////////////////////////////

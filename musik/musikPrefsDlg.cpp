@@ -58,6 +58,7 @@ END_MESSAGE_MAP()
 BOOL CmusikPrefsInterfaceGeneral::OnCommand(WPARAM wParam, LPARAM lParam)
 {
 	SetModified( TRUE );
+	m_Modified = true;
 
 	return CmusikPropertyPage::OnCommand(wParam, lParam);
 }
@@ -103,6 +104,9 @@ void CmusikPrefsInterfaceGeneral::CommitChanges()
 
 	m_Prefs->SetSynchronizeOnStartup( m_AutoSynchronize.GetCheck() );
 	m_Prefs->SetLibraryShowsAllSongs( m_LibraryShowAll.GetCheck() );
+
+	m_Modified = false;
+	SetModified( FALSE );
 }
 
 ///////////////////////////////////////////////////
@@ -318,6 +322,9 @@ void CmusikPrefsSoundDriver::CommitChanges()
 			AfxGetApp()->m_pMainWnd->SendMessage( WM_RESTARTSOUNDSYSTEM );
 		}	
 	}
+
+	m_Modified = false;
+	SetModified( FALSE );
 }
 
 ///////////////////////////////////////////////////
@@ -410,6 +417,8 @@ void CmusikPrefsSoundDriver::GetSoundPlaybackRates( bool populate )
 BOOL CmusikPrefsSoundDriver::OnCommand(WPARAM wParam, LPARAM lParam)
 {
 	SetModified( TRUE );
+	m_Modified = true;
+
 	return CmusikPropertyPage::OnCommand(wParam, lParam);
 }
 

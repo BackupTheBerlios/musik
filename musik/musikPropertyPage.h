@@ -63,11 +63,14 @@ public:
 	CmusikPropertyPage( UINT nIDTemplate, CmusikPrefs* prefs );
 	virtual ~CmusikPropertyPage(){}
 
+	bool IsModified(){ return m_Modified; }
+
 	virtual void CommitChanges(){}
 	virtual void LoadPrefs(){}
 
 protected:
 
+	bool m_Modified;
 	CmusikPrefs* m_Prefs;
 };
 
