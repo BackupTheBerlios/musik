@@ -28,7 +28,7 @@
 WX_DEFINE_OBJARRAY( CMusikStreamArray );
 
 
-void *dspcallback(void *originalbuffer, void *newbuffer, int length, int param)
+void * F_CALLBACKAPI dspcallback(void *originalbuffer, void *newbuffer, int length, int param)
 {
 	// 2 channels (stereo), 16 bit sound
 	g_FX.ProcessSamples( newbuffer, length, 2, 16 );
