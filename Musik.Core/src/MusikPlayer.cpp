@@ -9,7 +9,8 @@
 
 CMusikPlayer::CMusikPlayer()
 {
-
+	m_IsPlaying = false;
+	m_IsPaused = false;
 }
 
 ///////////////////////////////////////////////////
