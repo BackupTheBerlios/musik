@@ -37,6 +37,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+///////////////////////////////////////////////////
+
 #define PROPTREEITEM_EXPANDCOLUMN		16			// width of the expand column
 #define PROPTREEITEM_COLRNG				5			// width of splitter
 #define PROPTREEITEM_DEFHEIGHT			21			// default heigt of an item

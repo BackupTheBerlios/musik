@@ -93,6 +93,7 @@ CPropTreeItem::CPropTreeItem() :
 	m_pChild(NULL),
 	m_pVis(NULL)
 {
+	m_SourcesType = -1;
 }
 
 ///////////////////////////////////////////////////
@@ -491,7 +492,6 @@ LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 		if (IsSelected())
 		{
 			HGDIOBJ oPen = pDC->SelectObject(GetStockObject(NULL_PEN));
-			HGDIOBJ oBrush;
 
 			CRect dr;
 			dr = drc;

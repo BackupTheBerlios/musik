@@ -17,10 +17,9 @@ static char THIS_FILE[] = __FILE__;
 
 ///////////////////////////////////////////////////
 
-CMusikSourcesBar::CMusikSourcesBar( CMusikLibrary* library, int id )
+CMusikSourcesBar::CMusikSourcesBar( CMusikLibrary* library )
 {
 	m_wndChild = new CMusikSourcesCtrl( library );
-	m_ChildID = id;
 }
 
 ///////////////////////////////////////////////////
@@ -35,6 +34,7 @@ CMusikSourcesBar::~CMusikSourcesBar()
 BEGIN_MESSAGE_MAP(CMusikSourcesBar, baseCMusikSourcesBar)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
+	ON_NOTIFY( PTN_SELCHANGE, IDC_SOURCES, OnItemChanged )
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -44,7 +44,7 @@ int CMusikSourcesBar::OnCreate( LPCREATESTRUCT lpCreateStruct )
 	if ( baseCMusikSourcesBar::OnCreate(lpCreateStruct) == -1 )
 		return -1;
 
-	if ( !m_wndChild->Create( WS_CHILD | WS_VISIBLE | PTS_NOTIFY, CRect( 0, 0, 0, 0 ), this, m_ChildID ) )
+	if ( !m_wndChild->Create( WS_CHILD | WS_VISIBLE | PTS_NOTIFY, CRect( 0, 0, 0, 0 ), this, IDC_SOURCES ) )
 		return -1;
 
 	if ( !m_Font.CreateStockObject( DEFAULT_GUI_FONT ) )
@@ -65,6 +65,41 @@ void CMusikSourcesBar::OnSize(UINT nType, int cx, int cy)
 	GetClientRect( &client_size );
 
 	m_wndChild->MoveWindow( 0, 0, client_size.Width(), client_size.Height() );
+}
+
+///////////////////////////////////////////////////
+
+void CMusikSourcesBar::OnItemChanged( NMHDR* pNotifyStruct, LRESULT* plResult )
+{
+	LPNMPROPTREE pNMPropTree = (LPNMPROPTREE)pNotifyStruct;
+    
+	if ( pNMPropTree->pItem )
+	{
+		// we don't care about root level items,
+		// they just act as headers.
+		if ( pNMPropTree->pItem->IsRootLevel() )
+			return;
+
+		// library or device selected
+		if ( pNMPropTree->pItem->GetSourcesType() == MUSIK_SOURCES_LIBRARY_OR_DEVICE )
+		{
+
+		}
+
+		// standard playlist selected
+		if ( pNMPropTree->pItem->GetSourcesType() == MUSIK_SOURCES_STANDARD_PLAYLIST )
+		{
+
+		}
+
+		// standard playlist selected
+		if ( pNMPropTree->pItem->GetSourcesType() == MUSIK_SOURCES_DYNAMIC_PLAYLIST )
+		{
+
+		}
+	}
+
+	*plResult = 0;
 }
 
 ///////////////////////////////////////////////////

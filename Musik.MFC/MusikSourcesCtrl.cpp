@@ -113,6 +113,7 @@ void CMusikSourcesCtrl::LoadStdPlaylists()
 		temp = InsertItem( new CPropTreeItem(), m_StdPlaylistRoot );
 		temp->SetLabelText( (CString)items.at( i ) );
 		temp->SetInfoText( _T( "" ) );
+		temp->SetSourcesType( MUSIK_SOURCES_STANDARD_PLAYLIST );
 
 		m_StdPlaylists.push_back( temp );
 	}

@@ -23,11 +23,6 @@
 #define ID_SOURCESBOX 1345
 #define ID_SELECTIONBOX_START 1346
 
-// these are the ids for the controls
-// themselves
-
-#define IDC_SOURCES 1000
-
 ///////////////////////////////////////////////////
 
 // forward declarations, the headers files

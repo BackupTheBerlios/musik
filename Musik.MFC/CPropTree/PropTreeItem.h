@@ -39,6 +39,13 @@ public:
 	CPropTreeItem();
 	virtual ~CPropTreeItem();
 
+	// MUSIK SPECIFIC -- get the current
+	// item's type. it will either be
+	// a library / device, standard playlist,
+	// or dynamic playlist
+	int  GetSourcesType()			{ return m_SourcesType; }
+	void SetSourcesType( int n )	{ m_SourcesType = n; }
+
 	// treeItem states
 	BOOL IsExpanded();
 	BOOL IsSelected();
@@ -159,6 +166,9 @@ protected:
 
 	// ID of control item (should be unique)
 	UINT				m_nCtrlID;
+
+	// MUSIK SPECIFIC: sources type
+	int					m_SourcesType;
 
 private:
 	enum TreeItemStates
