@@ -37,6 +37,7 @@ END_MESSAGE_MAP()
 
 void CmusikEditInPlace::Commit()
 {
+	GetWindowText( m_Str );
 	ShowWindow( SW_HIDE );
 
 	if ( GetParent() )
@@ -50,6 +51,7 @@ void CmusikEditInPlace::Commit()
 
 void CmusikEditInPlace::Cancel()
 {
+	GetWindowText( m_Str );
 	ShowWindow( SW_HIDE );
 
 	if ( GetParent() )
@@ -81,15 +83,12 @@ BOOL CmusikEditInPlace::PreTranslateMessage(MSG* pMsg)
 
 ///////////////////////////////////////////////////
 
-
-
 void CmusikEditInPlace::OnShowWindow(BOOL bShow, UINT nStatus)
 {
 	CEdit::OnShowWindow(bShow, nStatus);
 
-	if ( bShow )
-	{
-		SetWindowText( m_Str );
-		SetSel( 0, m_Str.GetLength() );
-	}
+	SetWindowText( m_Str );
+	SetSel( 0, m_Str.GetLength() );
 }
+
+///////////////////////////////////////////////////

@@ -133,7 +133,8 @@ int CmusikSourcesCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 
 	// edit in place
-	m_EditInPlace.Create( WS_CHILD, CRect( 0, 0, 0, 0 ), this, 123 );
+	m_EditInPlace.Create( WS_CHILD | WS_CLIPCHILDREN, CRect( 0, 0, 0, 0 ), this, 123 );
+	m_EditInPlace.EnableWindow( FALSE );
 
 	CFont font;
 	font.CreateStockObject( DEFAULT_GUI_FONT );
@@ -584,6 +585,16 @@ void CmusikSourcesCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	if ( nChar == VK_F2 )
 	{
 		CmusikPropTreeItem* pItem = GetFocusedItem();
+	
+		// not trying to rename a root
+		if ( pItem->IsRootLevel() )
+			return;
+
+		// not renaming the library or the
+		// now playing...
+		if ( pItem == m_Libraries.at( 0 ) || pItem == m_Libraries.at( 1 ) )
+			return;
+
 		if ( pItem )
 		{
 			CPoint nPos = pItem->GetLocation();		
@@ -593,10 +604,11 @@ void CmusikSourcesCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			
 			CRect rect( 20, nPos.y + 1, rcClient.Width(), nPos.y + PROPTREEITEM_DEFHEIGHT - 2 );
 
-			m_EditInPlace.SetString( pItem->GetLabelText() );
-			m_EditInPlace.ShowWindow( SW_SHOWDEFAULT );
+			m_EditInPlace.EnableWindow( TRUE );
 			m_EditInPlace.MoveWindow( rect );
 			m_EditInPlace.SetFocus();
+			m_EditInPlace.SetString( pItem->GetLabelText() );
+			m_EditInPlace.ShowWindow( SW_SHOWDEFAULT );
 		}
 	}
 
@@ -755,6 +767,9 @@ void CmusikSourcesCtrl::OnMouseMove(UINT nFlags, CPoint point)
 LRESULT CmusikSourcesCtrl::OnEditCancel( WPARAM wParam, LPARAM lParam )
 {
 	SetFocus();
+
+	m_EditInPlace.EnableWindow( FALSE );
+
 	return 0L;
 }
 
@@ -762,12 +777,21 @@ LRESULT CmusikSourcesCtrl::OnEditCancel( WPARAM wParam, LPARAM lParam )
 
 LRESULT CmusikSourcesCtrl::OnEditCommit( WPARAM wParam, LPARAM lParam )
 {
-	CString str;
-	m_EditInPlace.GetWindowText( str );
-
-	MessageBox( str );
-
+	CString sName = m_EditInPlace.GetString();
 	
+    CmusikPropTreeItem* pItem = GetFocusedItem();
+	if ( GetFocusedItem() )
+	{
+		if ( pItem->GetPlaylistType() == MUSIK_PLAYLIST_TYPE_STANDARD )
+		{
+			m_Library->RenameStdPlaylist( pItem->GetPlaylistID(), (CStdString)sName );
+			pItem->SetLabelText( sName );
+			Invalidate();
+		}
+	}
+
+	m_EditInPlace.EnableWindow( FALSE );
+
 	SetFocus();
 	return 0L;
 }

@@ -14,6 +14,7 @@ public:
 
 	// set string
 	void SetString( CString str ){ m_Str = str; }
+	CStdString GetString(){ return m_Str; }
 
 	// overrides
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
