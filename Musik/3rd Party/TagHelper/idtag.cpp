@@ -25,26 +25,45 @@
 #define _MAX_FNAME 256
 #endif
 
-void splitpath (const char *inpath, char *outpath, char *outname) 
+// split inpath to  path(with trailing /) and filename   and extension
+void splitpath (const char *inpath, char *outpath, char *outname, char * ext) 
 {
-	outpath[0] = 0;
-	outname[0] = 0;
-#ifdef _WIN32
+	if(outpath)
+		outpath[0] = 0;
+	if(outname)
+		outname[0] = 0;
+	if(ext)
+		ext[0] = 0;
+	char * extdot = strrchr(inpath,'.');
+	if(extdot)
+	{
+		if(ext)
+			strcpy(ext,extdot + 1);
+	}
+	
 	char * lastslash = strrchr(inpath,'/');
-	if(!lastslash)	
-		lastslash = strrchr(inpath,'\\');
-#else
-	char * lastslash = strrchr(inpath,'/');
-#endif
 	if(lastslash)
 	{
-		strncpy(outpath, inpath, lastslash - inpath);
-		outpath[lastslash - inpath + 1] = 0;
-		strcpy(outname, lastslash + 1);
+		if(outpath)
+		{
+			strncpy(outpath, inpath, lastslash - inpath + 1);
+			outpath[lastslash - inpath + 1] = 0;
+		}
+		if(outname)
+		{
+			if(extdot)
+			{
+				strncpy(outname, lastslash + 1,extdot - (lastslash + 1));
+				outname[extdot - (lastslash + 1)]=0;
+			}
+			else
+				strcpy(outname, lastslash + 1);
+		}
 	}
 	else
 	{
-		strcpy(outname, inpath);
+		if(outname)
+			strcpy(outname, inpath);
 	}
 	
 }
@@ -77,34 +96,34 @@ const char *SchemeList[] = {
     "%A/%L/[%N] - %T",
     "%A/%L/[%N] %T",
     "%L/%A -- %T",
-    "%A_-_%L_-_%Y\\%N_-_%A_-_%T",
-    "%A_-_%L-%Y\\%N_-_%A_-_%T",
-    "%A_-_%L\\%N_-_%A_-_%T",
-    "%L-%Y\\%N_-_%A_-_%T",
-    "%L\\%N_-_%A_-_%T",
-    "%A_%L\\%A_%N_%T",
-    "%L\\%A_%N_%T",
-    "%L\\%N_%A - %T",
-    "%A_%L\\%A_%T",
-    "%L\\%A_%T",
-    "(%Y) %L\\%A - %L - [%N] - %T",
-    "(%Y) %L\\%A - %L - (%N) - %T",
-    "(%Y) %L\\%A - %L - %N - %T",
-    "(%Y) %L\\%A - %L [%N] - %T",
-    "(%Y) %L\\%A - %L (%N) - %T",
-    "(%Y) %L\\%A - %L - [%N] %T",
-    "(%Y) %L\\%A - %L - (%N) %T",
-    "(%Y) %L\\%A - %L [%N] %T",
-    "(%Y) %L\\%A - %L (%N) %T",
-    "%L (%Y)\\%L - [%N] - %A - %T",
-    "%L (%Y)\\%L - (%N) - %A - %T",
-    "%L (%Y)\\%L - %N - %A - %T",
-    "%L (%Y)\\%L [%N] - %A - %T",
-    "%L (%Y)\\%L (%N) - %A - %T",
-    "%L (%Y)\\%L - [%N] %A %T",
-    "%L (%Y)\\%L - (%N) %A %T",
-    "%L (%Y)\\%L [%N] %A - %T",
-    "%L (%Y)\\%L (%N) %A - %T",
+    "%A_-_%L_-_%Y/%N_-_%A_-_%T",
+    "%A_-_%L-%Y/%N_-_%A_-_%T",
+    "%A_-_%L/%N_-_%A_-_%T",
+    "%L-%Y/%N_-_%A_-_%T",
+    "%L/%N_-_%A_-_%T",
+    "%A_%L/%A_%N_%T",
+    "%L/%A_%N_%T",
+    "%L/%N_%A - %T",
+    "%A_%L/%A_%T",
+    "%L/%A_%T",
+    "(%Y) %L/%A - %L - [%N] - %T",
+    "(%Y) %L/%A - %L - (%N) - %T",
+    "(%Y) %L/%A - %L - %N - %T",
+    "(%Y) %L/%A - %L [%N] - %T",
+    "(%Y) %L/%A - %L (%N) - %T",
+    "(%Y) %L/%A - %L - [%N] %T",
+    "(%Y) %L/%A - %L - (%N) %T",
+    "(%Y) %L/%A - %L [%N] %T",
+    "(%Y) %L/%A - %L (%N) %T",
+    "%L (%Y)/%L - [%N] - %A - %T",
+    "%L (%Y)/%L - (%N) - %A - %T",
+    "%L (%Y)/%L - %N - %A - %T",
+    "%L (%Y)/%L [%N] - %A - %T",
+    "%L (%Y)/%L (%N) - %A - %T",
+    "%L (%Y)/%L - [%N] %A %T",
+    "%L (%Y)/%L - (%N) %A %T",
+    "%L (%Y)/%L [%N] %A - %T",
+    "%L (%Y)/%L (%N) %A - %T",
     "%A - %L - [%N] - %T",
     "%A - %L - (%N) - %T",
     "%A - %L - %N - %T",
@@ -114,27 +133,27 @@ const char *SchemeList[] = {
     "%A - %L - (%N) %T",
     "%A - %L [%N] %T",
     "%A - %L (%N) %T",
-    "%A - %L\\%N - %A - %T",
-    "%A - %L\\%A - %N - %T",
-    "%A - %L\\%N- %A - %T",
-    "%L\\%A - [%N] - %T",
-    "%L\\%A - (%N) - %T",
-    "%L\\%A - [%N] %T",
-    "%L\\%A - (%N) %T",
-    "%L\\%A [%N] - %T",
-    "%L\\%A (%N) - %T",
-    "%L\\%A (%N) %T",
-    "%L\\%A [%N] %T",
-    "%L\\%N - %A - %T",
-    "%L\\%A - %N - %T",
-    "%L\\%N- %A - %T",
-    "%A - %L\\%N %A - %T",
-    "%L\\%N %A - %T",
-    "%A - %L\\%N - %T",
-    "%A\\%L\\%N - %T",
-    "%A - %L\\%A - %T",
-    "%L\\%A - %T",
-    "%A\\%L\\%N. %T",
+    "%A - %L/%N - %A - %T",
+    "%A - %L/%A - %N - %T",
+    "%A - %L/%N- %A - %T",
+    "%L/%A - [%N] - %T",
+    "%L/%A - (%N) - %T",
+    "%L/%A - [%N] %T",
+    "%L/%A - (%N) %T",
+    "%L/%A [%N] - %T",
+    "%L/%A (%N) - %T",
+    "%L/%A (%N) %T",
+    "%L/%A [%N] %T",
+    "%L/%N - %A - %T",
+    "%L/%A - %N - %T",
+    "%L/%N- %A - %T",
+    "%A - %L/%N %A - %T",
+    "%L/%N %A - %T",
+    "%A - %L/%N - %T",
+    "%A/%L/%N - %T",
+    "%A - %L/%A - %T",
+    "%L/%A - %T",
+    "%A/%L/%N. %T",
 };
 
 /* V A R I A B L E S */
@@ -663,22 +682,27 @@ int CSimpleTagReader::GuessTagFromName ( const char* filename, const char* namin
 
     strcpy ( name, filename );
     for ( i = 0; i < strlen (name) - 5; i++ ) {
-        if ( name[i] != '\\' && name[i] != '/' ) continue;
-
+#ifdef _WIN32
+		if( name[i] == '\\')
+		{
+			name[i] = '/';
+		}
+#endif
+        if (name[i] != '/' ) continue;
         if ( strncasecmp ( (char *)(name+i+1), "(CD", 3 ) == 0 || strncasecmp ( (char *)(name+i+1), "(DVD", 4 ) == 0 )
             name[i] = ' ';
+		
     }
 
-    splitpath( name, dir, fname );
+    splitpath( name, dir, fname ,NULL);
 
     if ( strlen ( fname ) == 0 || strlen (naming_scheme) >= _MAX_PATH )
         return 1;
 
     for ( i = 0; i <= strlen (naming_scheme); i++ ) {
         char c = naming_scheme[i];
-        if ( c == '\\' || c == '/' ) {
-            c = '\\';
-            if ( scheme[i + 1] == '\\' ) i++;
+        if ( c == '/' ) {
+            if ( scheme[i + 1] == '/' ) i++;
             paths++;
         }
         scheme[i] = c;
@@ -688,7 +712,7 @@ int CSimpleTagReader::GuessTagFromName ( const char* filename, const char* namin
         int path_pos = strlen ( dir ) - 1;
 
         while ( paths > 0 && path_pos >= 0 ) {
-            if ( dir[--path_pos] == '\\' ) paths--;
+            if ( dir[--path_pos] == '/' ) paths--;
         }
         path_pos++;
 
@@ -868,22 +892,26 @@ int GuessTagFromName_Test ( const char* filename, const char* naming_scheme, cha
 
     strcpy ( name, filename );
     for ( i = 0; i < strlen (name) - 5; i++ ) {
-        if ( name[i] != '\\' && name[i] != '/' ) continue;
-
+#ifdef _WIN32
+		if( name[i] == '\\')
+		{
+			name[i] = '/';
+		}
+#endif
+        if ( name[i] != '/' ) continue;
         if ( strncasecmp ( (char *)(name+i+1), "(CD", 3 ) == 0 || strncasecmp ( (char *)(name+i+1), "(DVD", 4 ) == 0 )
             name[i] = ' ';
     }
 
-    splitpath( name, dir, fname );
+    splitpath( name, dir, fname ,NULL);
 
     if ( strlen ( fname ) == 0 || strlen (naming_scheme) >= _MAX_PATH )
         return 1;
 
     for ( i = 0; i <= strlen (naming_scheme); i++ ) {
         char c = naming_scheme[i];
-        if ( c == '\\' || c == '/' ) {
-            c = '\\';
-            if ( scheme[i + 1] == '\\' ) i++;
+        if ( c == '/' ) {
+            if ( scheme[i + 1] == '/' ) i++;
             paths++;
         }
         scheme[i] = c;
@@ -893,7 +921,7 @@ int GuessTagFromName_Test ( const char* filename, const char* naming_scheme, cha
         int path_pos = strlen ( dir ) - 1;
 
         while ( paths > 0 && path_pos >= 0 ) {
-            if ( dir[--path_pos] == '\\' ) paths--;
+            if ( dir[--path_pos] == '/' ) paths--;
         }
         path_pos++;
 
