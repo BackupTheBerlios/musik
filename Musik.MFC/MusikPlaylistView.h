@@ -27,7 +27,13 @@ public:
 	CMusikPlaylistCtrl* GetCtrl(){ return m_Playlist; }
 
 protected:
+
+	// playlist GUI object
 	CMusikPlaylistCtrl* m_Playlist;
+
+	// a pointer to the library, so we can
+	// use it in file dropped operations
+	CMusikLibrary* m_Library;
 
 	// message maps
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -38,6 +44,8 @@ protected:
 	// macros
 	DECLARE_DYNAMIC(CMusikPlaylistView)
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnDropFiles(HDROP hDropInfo);
 };
 
 ///////////////////////////////////////////////////

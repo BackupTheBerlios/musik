@@ -18,6 +18,7 @@ IMPLEMENT_DYNAMIC(CMusikPlaylistView, CWnd)
 CMusikPlaylistView::CMusikPlaylistView( CMusikLibrary* library, CMusikPlayer* player, CMusikPrefs* prefs, CMusikPlaylist* playlist )
 {
 	m_Playlist = new CMusikPlaylistCtrl( library, player, prefs, playlist );
+	m_Library = library;
 }
 
 ///////////////////////////////////////////////////
@@ -34,6 +35,7 @@ BEGIN_MESSAGE_MAP(CMusikPlaylistView, CWnd)
 	ON_WM_SIZE()
 	ON_WM_NCPAINT()
 	ON_WM_ERASEBKGND()
+	ON_WM_DROPFILES()
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -42,6 +44,8 @@ int CMusikPlaylistView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if ( CWnd::OnCreate(lpCreateStruct) == -1 )
 		return -1;
+
+	DragAcceptFiles( true );
 
 	long dwStyle = WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_OWNERDATA | WS_VSCROLL | WS_HSCROLL | LVS_SHOWSELALWAYS;
 	long dwStyleEx = LVS_EX_FULLROWSELECT | LVS_EX_HEADERDRAGDROP;
@@ -123,4 +127,36 @@ BOOL CMusikPlaylistView::OnEraseBkgnd(CDC* pDC)
 }
 
 ///////////////////////////////////////////////////
-	
+
+void CMusikPlaylistView::OnDropFiles(HDROP hDropInfo)
+{
+	CIntArray existing_files;
+	CStdStringArray new_files;
+
+	size_t nCount = DragQueryFile ( hDropInfo, -1, NULL, 0 );
+	TCHAR szNextFile [MAX_PATH];
+
+	int nCurrID;
+	for ( size_t i = 0; i < nCount; i++ )
+	{
+		if ( DragQueryFile ( hDropInfo, i, szNextFile, MAX_PATH ) > 0 )
+		{
+			nCurrID = m_Library->GetIDFromFilename( szNextFile );
+
+			// file is in library, just display it...
+			if ( nCurrID > 0 )
+				existing_files.push_back( nCurrID );
+
+			// file is not in library, we must add it...
+			else
+				new_files.push_back( szNextFile );
+		}
+	}
+
+	// Free up memory.
+	DragFinish ( hDropInfo );
+
+
+}
+
+///////////////////////////////////////////////////

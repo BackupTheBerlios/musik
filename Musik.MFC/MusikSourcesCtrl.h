@@ -65,8 +65,8 @@ private:
 	CMusikSourcesItemPtrArray m_Libraries;
 	CMusikSourcesItemPtrArray m_StdPlaylists;
 	CMusikSourcesItemPtrArray m_DynPlaylists;
+public:
+	afx_msg void OnDropFiles(HDROP hDropInfo);
 };
 
 ///////////////////////////////////////////////////
-
-

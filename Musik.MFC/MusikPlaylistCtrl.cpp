@@ -254,6 +254,8 @@ void CMusikPlaylistCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 
 		if ( pLVCD->nmcd.dwItemSpec % 2 != 0 )
 			pLVCD->clrTextBk = clrStripe;
+		else
+			pLVCD->clrTextBk = GetSysColor( COLOR_BTNHILIGHT );
 			
 		*pResult = CDRF_NEWFONT;
 		return;

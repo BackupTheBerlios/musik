@@ -6,6 +6,7 @@
 #include "MusikSourcesCtrl.h"
 
 #include "../Musik.Core/include/MusikLibrary.h"
+#include ".\musiksourcesctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -32,6 +33,7 @@ CMusikSourcesCtrl::~CMusikSourcesCtrl()
 
 BEGIN_MESSAGE_MAP( CMusikSourcesCtrl, CPropTree )
 	ON_WM_CREATE()
+	ON_WM_DROPFILES()
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -83,6 +85,7 @@ int CMusikSourcesCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if ( CPropTree::OnCreate(lpCreateStruct) == -1 )
 		return -1;
 
+	DragAcceptFiles( true );
 	InitItems();
 
 	return 0;
@@ -127,3 +130,23 @@ void CMusikSourcesCtrl::LoadDynPlaylists()
 }
 
 ///////////////////////////////////////////////////
+
+void CMusikSourcesCtrl::OnDropFiles(HDROP hDropInfo)
+{
+	size_t nNumFiles;
+	TCHAR szNextFile [MAX_PATH];
+	
+	nNumFiles = DragQueryFile ( hDropInfo, -1, NULL, 0 );
+
+	for ( size_t i = 0; i < nNumFiles; i++ )
+	{
+		if ( DragQueryFile( hDropInfo, i, szNextFile, MAX_PATH ) > 0 )
+		{
+			MessageBox( szNextFile );
+		}
+	}
+
+	DragFinish( hDropInfo );
+
+	CPropTree::OnDropFiles(hDropInfo);
+}
