@@ -30,7 +30,8 @@
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
-				Name="VCLibrarianTool"/>
+				Name="VCLibrarianTool"
+				AdditionalDependencies="fmodvc.lib sqlite.lib boost_threadd.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -67,7 +68,8 @@
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
-				Name="VCLibrarianTool"/>
+				Name="VCLibrarianTool"
+				AdditionalDependencies="fmodvc.lib sqlite.lib boost_thread.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
