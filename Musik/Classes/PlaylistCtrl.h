@@ -64,6 +64,7 @@ public:
 	void OnPlayReplace	( wxCommandEvent& event );
 
 	//--- deleting ---//
+	void OnClearPlayerlist( wxCommandEvent& event );
 	void OnDelSel		( wxCommandEvent& WXUNUSED(event) )	{ DelSelSongs();	}
 	void OnDelFiles		( wxCommandEvent& WXUNUSED(event) )	{ DelSelSongs(true,true);	}
 	void OnDelFilesDB	( wxCommandEvent& WXUNUSED(event) )	{ DelSelSongs(true);	}

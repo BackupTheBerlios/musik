@@ -177,7 +177,7 @@ public:
 	wxString	Album;
 	wxString	Genre;
 	wxString	Year;
-	wxString	LastPlayed;
+	double		LastPlayed;
 	int			Format;
 	int			Duration;
 	int			Rating;
@@ -185,7 +185,7 @@ public:
 	int			Bitrate;
 	bool		VBR;
 	wxString	Notes;
-	wxString	TimeAdded;
+	double		TimeAdded;
 	int			Filesize;
 	int			Check1;		//--- for tag dlg stuff, checks to see if it needs to be written to file / db ---//
 };
@@ -221,7 +221,6 @@ public:
 	void UpdateItemLastPlayed	( const CMusikSong & song  );
 	void UpdateItemResetDirty	( const CMusikSong & song );
 	void SetRating				( int songid, int nVal );
-	void InitTimeAdded			( );
 
 	//--------------------//
 	//--- writing tags ---//
@@ -282,11 +281,11 @@ public:
 
 	void GetInfo			( const wxArrayString & aInfo, int nInType, int nOutType, wxArrayString & aReturn );
 	void GetSongs			( const wxArrayString & aInfo, int nInType, CMusikSongArray & aReturn );
+	int QueryCount			(const char * szQuery );
 private:
 
 	sqlite		  *m_pDB;
 	void CreateDB();
-	int QueryCount			(const char * szQuery );
 	bool GetMetaData		( CSongMetaData & MetaData  );
 	bool GetMP3MetaData		( CSongMetaData & MetaData );
 	void AddMod				( const wxString & filename );
@@ -297,8 +296,6 @@ private:
 
 	void WriteMP3Tag		( const CMusikSong & song, bool ClearAll );
 	bool WriteOGGTag		( const CMusikSong & song, bool ClearAll );
-
-	wxString m_TimeAdded;
 
 	wxString  m_sSortAllSongsQuery;
 	wxString m_lastQueryWhere;
@@ -312,6 +309,32 @@ private:
 	void CreateDBFuncs();
 	static void remprefixFunc(sqlite_func *context, int argc, const char **argv);
 	static void wxjuliandayFunc(sqlite_func *context, int argc, const char **argv);
+	static void cnvMusikOldDTFormatToJuliandayFunc(sqlite_func *context, int argc, const char **argv);
+
+	inline static void _AssignSongTableColumnDataToSong(CMusikSong * pSong, const char **coldata)
+	{
+		pSong->songid		= StringToInt		( coldata[0] );
+		pSong->Filename		= wxConvertMB2WX	( coldata[1] );
+		pSong->Title		= ConvDBFieldToWX	( coldata[2] );
+		pSong->TrackNum		= StringToInt		( coldata[3] );
+		pSong->Artist		= ConvDBFieldToWX	( coldata[4] );
+		pSong->Album		= ConvDBFieldToWX	( coldata[5] );
+		pSong->Genre		= ConvDBFieldToWX	( coldata[6] );
+		pSong->Duration		= StringToInt		( coldata[7] );
+		pSong->Format		= StringToInt		( coldata[8] );
+		pSong->VBR			= StringToInt		( coldata[9] );
+		pSong->Year			= ConvDBFieldToWX	( coldata[10] );
+		pSong->Rating		= StringToInt		( coldata[11] );
+		pSong->Bitrate		= StringToInt		( coldata[12] );
+		pSong->LastPlayed	= CharStringToDouble( coldata[13] );
+		pSong->Notes		= ConvDBFieldToWX	( coldata[14] );
+		pSong->TimesPlayed	= StringToInt		( coldata[15] );	
+		pSong->TimeAdded	= CharStringToDouble( coldata[16] );
+		pSong->Filesize		= StringToInt		( coldata[17] );
+	}
+	static int sqlite_callbackAddToStringArray(void *args, int numCols, char **results, char ** columnNames);
+	static int sqlite_callbackAddToSongArray(void *args, int numCols, char **results, char ** columnNames);
+	static int sqlite_callbackAddToSongMap(void *args, int numCols, char **results, char ** columnNames);
 };
 
 #endif

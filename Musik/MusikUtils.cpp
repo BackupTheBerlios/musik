@@ -676,3 +676,156 @@ bool CMusikTagger::Retag(CMusikSong * Song) const
 		return false;
 	}
 }
+
+/* (stolen from sqlite source)
+** The string z[] is an ascii representation of a real number.
+** Convert this string to a double.
+**
+** This routine assumes that z[] really is a valid number.  If it
+** is not, the result is undefined.
+**
+** This routine is used instead of the library atof() function because
+** the library atof() might want to use "," as the decimal point instead
+** of "." depending on how locale is set.  But that would cause problems
+** for SQL.  So this routine always uses "." regardless of locale.
+*/
+#define LONGDOUBLE_TYPE long double
+
+double CharStringToDouble(const char *z){
+	if(z == NULL)
+		return 0.0;
+	int sign = 1;
+	LONGDOUBLE_TYPE v1 = 0.0;
+	if( *z=='-' ){
+		sign = -1;
+		z++;
+	}else if( *z=='+' ){
+		z++;
+	}
+	while( isdigit(*z) ){
+		v1 = v1*10.0 + (*z - '0');
+		z++;
+	}
+	if( *z=='.' ){
+		LONGDOUBLE_TYPE divisor = 1.0;
+		z++;
+		while( isdigit(*z) ){
+			v1 = v1*10.0 + (*z - '0');
+			divisor *= 10.0;
+			z++;
+		}
+		v1 /= divisor;
+	}
+	if( *z=='e' || *z=='E' ){
+		int esign = 1;
+		int eval = 0;
+		LONGDOUBLE_TYPE scale = 1.0;
+		z++;
+		if( *z=='-' ){
+			esign = -1;
+			z++;
+		}else if( *z=='+' ){
+			z++;
+		}
+		while( isdigit(*z) ){
+			eval = eval*10 + *z - '0';
+			z++;
+		}
+		while( eval>=64 ){ scale *= 1.0e+64; eval -= 64; }
+		while( eval>=16 ){ scale *= 1.0e+16; eval -= 16; }
+		while( eval>=4 ){ scale *= 1.0e+4; eval -= 4; }
+		while( eval>=1 ){ scale *= 1.0e+1; eval -= 1; }
+		if( esign<0 ){
+			v1 /= scale;
+		}else{
+			v1 *= scale;
+		}
+	}
+	return sign<0 ? -v1 : v1;
+}
+/*
+** Some powers of 64.  These constants are needed in the
+** DoubleToCharString() routine below.
+*/
+#define _64e3  (64.0 * 64.0 * 64.0)
+#define _64e4  (64.0 * 64.0 * 64.0 * 64.0)
+#define _64e15 (_64e3 * _64e4 * _64e4 * _64e4)
+#define _64e16 (_64e4 * _64e4 * _64e4 * _64e4)
+#define _64e63 (_64e15 * _64e16 * _64e16 * _64e16)
+#define _64e64 (_64e16 * _64e16 * _64e16 * _64e16)
+
+/*
+** The following procedure converts a double-precision floating point
+** number into a string.  The resulting string has the property that
+** two such strings comparied using strcmp() or memcmp() will give the
+** same results as a numeric comparison of the original floating point
+** numbers.
+**
+** This routine is used to generate database keys from floating point
+** numbers such that the keys sort in the same order as the original
+** floating point numbers even though the keys are compared using
+** memcmp().
+**
+** The calling function should have allocated at least 14 characters
+** of space for the buffer z[].
+*/
+void DoubleToCharString(double r, char *z){
+	int neg;
+	int exp;
+	int cnt = 0;
+
+	/* This array maps integers between 0 and 63 into base-64 digits.
+	** The digits must be chosen such at their ASCII codes are increasing.
+	** This means we can not use the traditional base-64 digit set. */
+	static const char zDigit[] = 
+		"0123456789"
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+		"abcdefghijklmnopqrstuvwxyz"
+		"|~";
+	if( r<0.0 ){
+		neg = 1;
+		r = -r;
+		*z++ = '-';
+	} else {
+		neg = 0;
+		*z++ = '0';
+	}
+	exp = 0;
+
+	if( r==0.0 ){
+		exp = -1024;
+	}else if( r<(0.5/64.0) ){
+		while( r < 0.5/_64e64 && exp > -961  ){ r *= _64e64;  exp -= 64; }
+		while( r < 0.5/_64e16 && exp > -1009 ){ r *= _64e16;  exp -= 16; }
+		while( r < 0.5/_64e4  && exp > -1021 ){ r *= _64e4;   exp -= 4; }
+		while( r < 0.5/64.0   && exp > -1024 ){ r *= 64.0;    exp -= 1; }
+	}else if( r>=0.5 ){
+		while( r >= 0.5*_64e63 && exp < 960  ){ r *= 1.0/_64e64; exp += 64; }
+		while( r >= 0.5*_64e15 && exp < 1008 ){ r *= 1.0/_64e16; exp += 16; }
+		while( r >= 0.5*_64e3  && exp < 1020 ){ r *= 1.0/_64e4;  exp += 4; }
+		while( r >= 0.5        && exp < 1023 ){ r *= 1.0/64.0;   exp += 1; }
+	}
+	if( neg ){
+		exp = -exp;
+		r = -r;
+	}
+	exp += 1024;
+	r += 0.5;
+	if( exp<0 ) return;
+	if( exp>=2048 || r>=1.0 ){
+		strcpy(z, "~~~~~~~~~~~~");
+		return;
+	}
+	*z++ = zDigit[(exp>>6)&0x3f];
+	*z++ = zDigit[exp & 0x3f];
+	while( r>0.0 && cnt<10 ){
+		int digit;
+		r *= 64.0;
+		digit = (int)r;
+		assert( digit>=0 && digit<64 );
+		*z++ = zDigit[digit & 0x3f];
+		r -= digit;
+		cnt++;
+	}
+	*z = 0;
+}

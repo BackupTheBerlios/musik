@@ -150,9 +150,10 @@ public:
 	int	 GetTimeLeft			( int nType );
 	int	 GetCurrChannel			( );
 	wxString GetTimeStr			( );
-	wxString GetCurrentFile		() { return m_CurrentSong.Filename; }
+	wxString GetTimeLeftStr		( );
+	int GetCurrentSongid		() { return m_CurrentSong.songid; }
 	int GetCrossfadeType		() { return m_CrossfadeType; }
-	size_t GetRandomSong		();
+	size_t GetShuffledSong		();
 	EMUSIK_PLAYMODE GetPlaymode () { return m_Playmode; }
 	const CMusikSongArray &	GetPlaylist	( ) {return  m_Playlist;}
 
@@ -207,7 +208,6 @@ private:
 	int				m_CrossfadeType;	
 	wxArrayInt		m_arrHistory;		//--- history of songs played, to avoid repeats		---//
 	size_t			m_nMaxHistory;
-
 	FSOUND_DSPUNIT	*m_DSP;
 
 	int m_Channels;

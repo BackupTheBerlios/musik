@@ -359,7 +359,7 @@ void MusikFrame::LibrarySimpleQuery( wxString sQueryVal )
 	{
 		
 		wxString sString = wxT("'%") + sTokens[i] + wxT("%'");
-		sQuery+= wxString::Format( wxT("(artist like %s or album like %s or title like %s or filename like %s )"),
+		sQuery+= wxString::Format( wxT("(artist like %s or album like %s or title like %s or filename like %s or notes like %s)"),
 			( const wxChar *)sString, (const wxChar *) sString, (const wxChar *)sString,(const wxChar*) sString );
 		if(i != sTokens.GetCount() - 1)
 		{

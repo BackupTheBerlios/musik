@@ -127,11 +127,13 @@ void *MusikFaderThread::Entry()
 				//--- time left, go ahead and start up the next	---//
 				//--- track										---//
 				//-------------------------------------------------//
-				if ( ( g_Prefs.bGlobalFadeEnable == 0 ) || ( ( g_Prefs.bFadeEnable == 0 ) && ( g_Player.GetTimeLeft( FMOD_MSEC ) <= 10 ) ) )
+				if ( (( g_Prefs.bGlobalFadeEnable == 0 ) ||  ( g_Prefs.bFadeEnable == 0 )) && ( g_Player.GetTimeLeft( FMOD_MSEC ) <= 10 ) )
 				{
-					g_Player.SetStartingNext( true );
-					wxPostEvent( &g_Player, NextSongEvt );
-					Yield();
+					if(g_Player.IsPlaying())
+					{
+						g_Player.SetStartingNext( true );
+						wxPostEvent( &g_Player, NextSongEvt );
+					}
 				}
 				//-------------------------------------------------//
 				//--- if currently we are not fading, but the	---//
@@ -139,7 +141,7 @@ void *MusikFaderThread::Entry()
 				//--- the duration is such that we should		---//
 				//--- queue up the next song and start the fade	---//
 				//-------------------------------------------------//
-				else if ( ( g_Prefs.bFadeEnable == 1 ) && ( g_Player.GetTimeLeft( FMOD_MSEC ) <= g_Prefs.nFadeDuration ) )
+				else if ( ( g_Prefs.bGlobalFadeEnable == 1 ) && ( g_Prefs.bFadeEnable == 1 ) && ( g_Player.GetTimeLeft( FMOD_MSEC ) <= g_Prefs.nFadeDuration ) )
 				{
 					g_Player.SetStartingNext( true );
 					wxPostEvent( &g_Player, NextSongEvt );

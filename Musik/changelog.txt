@@ -1,5 +1,9 @@
 
 0.3.0.2 to 0.3.1 CVS
+- fixed bug: songs were not played until the end( last n seconds , depending on setting of crossfading duration were missing), if crossfading was disabled.
++ New Context Menu item "Clear List" if your are viewing the NOW Playing playlist.
++ New Playmode Auto DJ. Shuffle only randomizes the current NOW Playing playlist. Auto DJ selects 15 songs randomly from the whole library in advance if active. 
+  as default only songs are selected which have not been played for 5 days. ( the setting can be changed in the prefs or ini file only for now)
 + New Option "Hide On Minimize". This behaviour is now optional, and default is false. ( some uers had problems understanding the previous default behaviour)
 + New option, to automatically (re)start playing on startup, at the point where you have exit wxMusik before.
 + On start, now playing list is shown instead of Musik Library, this way startup time is faster.

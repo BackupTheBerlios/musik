@@ -196,6 +196,7 @@ static const bool DefaultPlaylistColumnEnable[NPLAYLISTCOLUMNS] = {
 	true,
 	false,
 	false,
+	false,
 	false
 };
 static const int DefaultPlaylistColumnSize[NPLAYLISTCOLUMNS]   ={
@@ -210,6 +211,7 @@ static const int DefaultPlaylistColumnSize[NPLAYLISTCOLUMNS]   ={
 		50,
 		50,
 		50,
+		40,
 		40,
 		40
 };
@@ -227,7 +229,8 @@ static const bool DefaultPlaylistColumnDynamic[NPLAYLISTCOLUMNS] = {
 		false,
 		false,
 		true,
-		true
+		false,
+		false
 };
 static const EMUSIK_ACTIVITY_TYPE DefaultActBoxType[ActivityBoxesMaxCount] = {MUSIK_LBTYPE_ARTISTS,MUSIK_LBTYPE_ALBUMS,MUSIK_LBTYPE_NULL,MUSIK_LBTYPE_NULL};
 #pragma warning(disable : 4355)	
@@ -270,8 +273,9 @@ public:
 		,bTagDlgRename(this,wxT( "TagDialogRename" ),false)
 
 		,ePlaymode(this,wxT( "Playmode" ),MUSIK_PLAYMODE_NORMAL)
-		,nMaxRandomHistory(this,wxT( "MaxRandomHistory" ),500)
-
+		,nMaxShuffleHistory(this,wxT( "MaxShuffleHistory" ),500)
+		,nAutoDjDoNotPlaySongPlayedTheLastNHours(this,wxT( "AutoDjDoNotPlaySongPlayedTheLastNHours" ),5*24)
+		,nAutoDJChooseSongsToPlayInAdvance(this,wxT( "AutoDJChooseSongsToPlayInAdvance" ),15)
 		,bGlobalFadeEnable(this,wxT( "GlobalFaderEnabled" ),true)
 		,bFadeEnable(this,wxT( "CrossfaderEnabled" ),true)
 		,bFadeSeekEnable(this,wxT( "CrossfaderSeekEnabled" ),true)
@@ -439,7 +443,9 @@ public:
 
 	wxString sDataPath;
 
-	CConfigSettingInt nMaxRandomHistory;
+	CConfigSettingInt nMaxShuffleHistory;
+	CConfigSettingInt nAutoDjDoNotPlaySongPlayedTheLastNHours;
+	CConfigSettingInt nAutoDJChooseSongsToPlayInAdvance;
 
 };
 

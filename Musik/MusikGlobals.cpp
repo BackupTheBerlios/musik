@@ -64,7 +64,9 @@ extern const wxString g_PlaylistColumnLabels[NPLAYLISTCOLUMNS] =
 	_( "Time"			),
 	_( "Bitrate"		),
 	_( "Filename"		),
-	_( "Notes"			)
+	_( "Notes"			),
+	_( "Added on"		)
+
 };
 extern const wxString g_PlaylistColumnDBNames[NPLAYLISTCOLUMNS] =
 {
@@ -80,7 +82,9 @@ extern const wxString g_PlaylistColumnDBNames[NPLAYLISTCOLUMNS] =
 	wxT( "duration"		),
 	wxT( "bitrate"		),
 	wxT( "filename"		),
-	wxT( "notes"		)
+	wxT( "notes"		),
+	wxT( "timeadded"	)
+
 };
 //------------------------//
 //--- internal objects ---//

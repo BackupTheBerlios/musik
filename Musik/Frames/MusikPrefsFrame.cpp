@@ -754,7 +754,6 @@ void MusikPrefsFrame::SavePrefs()
 	bool bRestartFMOD		= false;
 	bool bShowUnselChange	= false;
 	bool bActivityChange	= false;
-	bool bPlaymodeChange	= false;
 	bool bPlaylistUpdate = false;
 	bool bActivityUpdate = false;
 
@@ -986,9 +985,6 @@ void MusikPrefsFrame::SavePrefs()
 	}
 
 	g_Player.InitFMOD_ProxyServer();
-	//--- if playmode ( repeat / etc ) ---//
-	if ( bPlaymodeChange )
-		g_Player.SetPlaymode(g_Prefs.ePlaymode);
 
 	if ( bActivityChange )
 	{

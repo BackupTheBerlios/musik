@@ -55,9 +55,6 @@ void *MusikUpdateLibThread::Entry()
 		}
 	}
 
-	//--- init the database add time varaible ---//
-	g_Library.InitTimeAdded();
-
 	//--- search / add new songs ---//
 	if(m_refFiles.IsEmpty())
 		GetMusicDirs( *m_Add,m_refFiles);

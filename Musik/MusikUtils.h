@@ -120,6 +120,9 @@ inline double StringToDouble( wxString str )
 	return ret;
 }
 
+double CharStringToDouble(const char *z);
+void DoubleToCharString(double r, char *z);
+
 
 class CNiceFilesize
 {

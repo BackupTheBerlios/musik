@@ -75,14 +75,13 @@ CMusikPlayer::CMusikPlayer()
 	//--- initialize random playback ---//
 	long RandomSeed = wxGetLocalTime();
 	SeedRandom( RandomSeed );
-	m_arrHistory.Alloc(g_Prefs.nMaxRandomHistory);
+	m_arrHistory.Alloc(g_Prefs.nMaxShuffleHistory);
 	//set stop watch into pause mode.
 	m_bStreamIsWorkingStopWatchIsRunning = false ;
 	m_NETSTREAM_last_read_percent = 0;
 	m_nLastSongTime = 0;
-
-
 }
+
 void CMusikPlayer::Init()
 {
 	int nPlayStartPos = 0;
@@ -375,30 +374,27 @@ void CMusikPlayer::OnPlayRestart( wxCommandEvent& event )
 }
 bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 {
-	//--- check for an invalid playlist ---//
-	if ( ( nItem >= m_Playlist.GetCount() ) || ( m_Playlist.GetCount() == 0 ) )
+	if(m_Playlist.GetCount() < g_Prefs.nAutoDJChooseSongsToPlayInAdvance && MUSIK_PLAYMODE_AUTO_DJ == m_Playmode)
 	{
-		if(m_Playlist.GetCount() == 0 && MUSIK_PLAYMODE_AUTO_DJ == m_Playmode)
-		{
+		if(m_Playlist.GetCount() == 0)
 			nItem = 0;
-			_AddRandomSongs();
-			if(m_Playlist.GetCount() == 0)   // no songs could be chosen
-			{
-				m_Playing = false;
-				return false;
-			}
-
-		}
-		else
+		_AddRandomSongs();
+		if(m_Playlist.GetCount() == 0)   // no songs could be chosen
 		{
 			m_Playing = false;
 			return false;
 		}
 	}
+	//--- check for an invalid playlist ---//
+	if ( ( nItem >= m_Playlist.GetCount() ) || ( m_Playlist.GetCount() == 0 ) )
+	{
+		m_Playing = false;
+		return false;
+	}
 
 	if (IsPlaying() && _CurrentSongIsNetStream())
 	{	
-		if(GetCurrentFile() == m_Playlist.Item( nItem ).Filename)
+		if(m_CurrentSong.Filename == m_Playlist.Item( nItem ).Filename)
 		{
 			return true; // already playing this stream
 		}
@@ -851,7 +847,7 @@ void CMusikPlayer::FinalizeStop()
 	FreeDSP();
 }
 
-size_t CMusikPlayer::GetRandomSong()
+size_t CMusikPlayer::GetShuffledSong()
 {
 	size_t r = 0;
 
@@ -892,7 +888,7 @@ size_t CMusikPlayer::GetRandomSong()
 		}
 	} while ( repeat );
 
-	if( m_arrHistory.GetCount() >= g_Prefs.nMaxRandomHistory )
+	if( m_arrHistory.GetCount() >= g_Prefs.nMaxShuffleHistory )
 	{
 	//--- rotate history ---//
 		m_arrHistory.RemoveAt(0);
@@ -906,7 +902,9 @@ void CMusikPlayer::NextSong()
 	switch ( m_Playmode )
 	{
 	case MUSIK_PLAYMODE_AUTO_DJ:
+
 		_AddRandomSongs();
+		
 		// fall through
 	case MUSIK_PLAYMODE_NORMAL:
 		m_SongIndex++;
@@ -931,7 +929,7 @@ void CMusikPlayer::NextSong()
 		break;
 
 	case MUSIK_PLAYMODE_SHUFFLE:
-		Play( GetRandomSong() );
+		Play( GetShuffledSong() );
 		break;
 	}
 }
@@ -977,9 +975,60 @@ void CMusikPlayer::PrevSong()
 
 void CMusikPlayer::_AddRandomSongs()
 {
-	static int nSongsToAddMax = 10;
+
+	CMusikSongArray  arrSongs;
+	int nSongsToAdd = (g_Prefs.nAutoDJChooseSongsToPlayInAdvance - (m_Playlist.GetCount() - m_SongIndex) + 1);
+	if(nSongsToAdd <= 0)
+		return;
+	int nMaxRepeatCount = 30;
+	bool repeat = true;
+	int maxsongid = g_Library.QueryCount("select max(songid) from songs;");
+
+	while ( nMaxRepeatCount-- && (repeat || (arrSongs.GetCount() < nSongsToAdd)))
+	{
+		repeat = false;
+#if 0
+		int r = GetRandomNumber() % (g_Library.GetSongCount());
+		wxString sQueryRandomSong = wxString::Format(wxT(" select songs.songid from songs " 
+					"where songs.songid not in(select songid from songhistory "
+					"where date_played > julianday('now','-%d hours')) limit 1 offset %d;"),nMaxRepeatCount == 5 ? 1 : g_Prefs.nAutoDjDoNotPlaySongPlayedTheLastNHours,r);
+	
+#else
+		int r = GetRandomNumber() % (maxsongid + 1);
+	   wxString sQueryRandomSong = wxString::Format(wxT(" select songs.songid from songs " 
+		   "where songs.songid = %d and songid not in(select songid from songhistory "
+		   "where date_played > julianday('now','-%d days'));"),r,nMaxRepeatCount == 5 ? 1 : g_Prefs.nAutoDjDoNotPlaySongPlayedTheLastNHours);
 
 
+#endif
+		int songid = g_Library.QueryCount(ConvQueryToMB(sQueryRandomSong));
+		if(songid > -1)
+		{
+			CMusikSong song;
+			if(g_Library.GetSongFromSongid(songid,&song))
+			{
+					if(::wxFileExists(song.Filename))
+					{
+						//--- check for repeats ---//
+						for ( size_t j = 0;  j < arrSongs.GetCount(); j++ )
+						{
+							if ( songid == arrSongs[j].songid )
+							{
+								repeat = true; 
+								break;
+							}
+						}
+						if(!repeat)
+							arrSongs.Add(song);
+					}
+					else
+					{
+						repeat = true; 
+					}
+			}
+		}
+	}; 
+	AddToPlaylist(arrSongs,false);
 }
 int CMusikPlayer::GetFilesize( wxString sFilename )
 {
@@ -1012,12 +1061,11 @@ int CMusikPlayer::GetDuration( int nType )
 	}
 	if(g_ActiveChannels.GetCount() == 0)
 		return 0;
+	int nDuration = FSOUND_Stream_GetLengthMs( g_ActiveStreams.Item( g_ActiveStreams.GetCount()-1 ) );
 	if ( nType == FMOD_SEC )
-		return ( FSOUND_Stream_GetLengthMs( g_ActiveStreams.Item( g_ActiveStreams.GetCount()-1 ) ) / 1000 );
-	else if ( nType == FMOD_MSEC )
-		return ( FSOUND_Stream_GetLengthMs( g_ActiveStreams.Item( g_ActiveStreams.GetCount()-1 ) ) );
-	else
-		return ( -1 );
+		nDuration /= 1000;
+
+	return nDuration;
 }
 
 int CMusikPlayer::GetTime( int nType )
@@ -1074,15 +1122,14 @@ int CMusikPlayer::GetTime( int nType )
 		}
 		return m_NETSTREAM_read_percent;
 	}
-	// critical section here, because crossfader thread is stopped before g_ActiveStreams array is changed(add/remove)
+	// no critical section here, because crossfader thread is stopped before g_ActiveStreams array is changed(add/remove)
 	if(g_ActiveStreams.GetCount() == 0)
 		m_nLastSongTime = 0;
 	else 
 		m_nLastSongTime = FSOUND_Stream_GetTime( g_ActiveStreams.Item( g_ActiveStreams.GetCount()-1 ));
 	if ( nType == FMOD_SEC )
-		return m_nLastSongTime / 1000;
-	else
-		return  m_nLastSongTime;
+		 m_nLastSongTime /= 1000;
+	return  m_nLastSongTime;
 }
 
 int CMusikPlayer::GetTimeLeft( int nType )
@@ -1092,12 +1139,10 @@ int CMusikPlayer::GetTimeLeft( int nType )
 	{
 		return 10000000;
 	}
+	int nTimeLeft = GetDuration( FMOD_MSEC ) - GetTime( FMOD_MSEC ); 
 	if ( nType == FMOD_SEC )
-		return ( GetDuration( FMOD_SEC ) - GetTime( FMOD_SEC ) );
-	else if ( nType == FMOD_MSEC )
-		return ( GetDuration( FMOD_MSEC ) - GetTime( FMOD_MSEC ) );
-	else
-		return ( -1 );
+		nTimeLeft /= 1000;
+	return nTimeLeft;
 }
 
 wxString CMusikPlayer::GetTimeStr()
@@ -1112,7 +1157,18 @@ wxString CMusikPlayer::GetTimeStr()
 	else
 		return SecToStr( GetTime( FMOD_SEC ) );
 }
-
+wxString CMusikPlayer::GetTimeLeftStr()
+{
+	if(_CurrentSongIsNetStream())
+	{
+		wxString sProgress;
+		// Notes field is (ab)used for (buffering, connecting ) message
+		sProgress.sprintf( wxT( "%s (%d%%)"), (const wxChar *)m_CurrentSong.Notes, GetTime( FMOD_SEC ));
+		return sProgress;
+	}
+	else
+		return SecToStr( GetTimeLeft( FMOD_SEC ) );
+}
 void CMusikPlayer::SetTime( int nSec )
 {
 	if(_IsSeekCrossFadingDisabled())
@@ -1210,18 +1266,26 @@ int CMusikPlayer::GetCurrChannel()
 
 void CMusikPlayer::AddToPlaylist( CMusikSongArray & songstoadd ,bool bPlayFirstAdded )
 {
-	wxCriticalSectionLocker locker( m_critInternalData);
 	size_t size = songstoadd.GetCount();
-	int plsize = m_Playlist.GetCount();
-	for(size_t i = 0; i < size ; i++)
+	if(size)
 	{
-		m_Playlist.Add(songstoadd.Detach(0));
-	}
-	if(bPlayFirstAdded && size)
-	{
-		Stop();
-		m_SongIndex = plsize;
-		Play(m_SongIndex);
+		wxCriticalSectionLocker locker( m_critInternalData);
+		int plsize = m_Playlist.GetCount();
+		for(size_t i = 0; i < size ; i++)
+		{
+			m_Playlist.Add(songstoadd.Detach(0));
+		}
+		if(bPlayFirstAdded)
+		{
+			Stop();
+			m_SongIndex = plsize;
+			Play(m_SongIndex);
+		}
+		if(g_SourcesCtrl->GetSelType() == MUSIK_SOURCES_NOW_PLAYING)
+		{
+			g_Playlist = m_Playlist;
+			g_PlaylistBox->Update(false);
+		}
 	}
 }
 void CMusikPlayer::InsertToPlaylist( CMusikSongArray & songstoadd ,bool bPlayFirstInserted)

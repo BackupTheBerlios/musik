@@ -44,6 +44,7 @@ BEGIN_EVENT_TABLE(CNowPlayingCtrl, wxPanel)
 	EVT_TIMER	(MUSIK_NOWPLAYING_TIMER,				CNowPlayingCtrl::OnTimer				)	// timer
 	EVT_CHOICE	(MUSIK_NOWPLAYINGCTRL_PLAYMODE,			CNowPlayingCtrl::OnPlayMode) 
 	EVT_CHECKBOX(MUSIK_CHK_CROSSFADE,					CNowPlayingCtrl::OnCheckCrossfade)
+	EVT_LEFT_DOWN(CNowPlayingCtrl::OnClickTimeDisplay)
 END_EVENT_TABLE()
 
 CNowPlayingCtrl::CNowPlayingCtrl( wxWindow *parent )
@@ -60,7 +61,7 @@ CNowPlayingCtrl::CNowPlayingCtrl( wxWindow *parent )
 	//--- now playing static text objects ---//
 	stSong			= new wxStaticText	( this, -1, _( "" ),	wxDefaultPosition, wxDefaultSize, 0 );
 	stArtist		= new wxStaticText	( this, -1, _( "" ),	wxDefaultPosition, wxDefaultSize, 0 );
-	stCurtime		= new wxStaticText	( this, -1, _( "" ),	wxDefaultPosition, wxDefaultSize, 0 );	
+	stCurtime		= new wxStaticText	( this,MUSIK_NOWPLAYINGCTRL_TIMEDISPLAY, _( "" ),	wxDefaultPosition, wxDefaultSize, 0 );	
 
 	//--- fonts ---//
 	stSong->SetFont		( g_fntSong );
@@ -129,11 +130,11 @@ CNowPlayingCtrl::CNowPlayingCtrl( wxWindow *parent )
 	//---------------------------------//
 	hsArtistTime = new wxBoxSizer( wxHORIZONTAL );
 	hsArtistTime->Add( stArtist, 0, wxADJUST_MINSIZE | wxALIGN_CENTRE_VERTICAL  );
-	hsArtistTime->Add( stCurtime, 0, wxADJUST_MINSIZE | wxALIGN_CENTRE_VERTICAL );
+	hsArtistTime->Add( stCurtime, 0, wxADJUST_MINSIZE | wxALIGN_CENTRE_VERTICAL|wxLEFT,3 );
 
 	//--- song title, artist and time ---//
 	vsLeftCol = new wxBoxSizer( wxVERTICAL );
-	vsLeftCol->Add( stSong, 0, wxADJUST_MINSIZE | wxBOTTOM , 4 );
+	vsLeftCol->Add( stSong, 0, wxADJUST_MINSIZE | wxBOTTOM , 3 );
 	vsLeftCol->Add( hsArtistTime, 0, wxADJUST_MINSIZE );
 
 
@@ -152,7 +153,7 @@ CNowPlayingCtrl::CNowPlayingCtrl( wxWindow *parent )
 	vsPlayModeCol->Add( hsButtons, 1,wxEXPAND|wxALL,2 );
 
 //	vsPlayModeCol->Add( new wxStaticText	( this, -1, _( "Play mode" ) ), 1 );
-	const wxString playmode_choices[] ={_("Normal"),_("Loop"),_("Shuffle")};
+	const wxString playmode_choices[] ={_("Normal"),_("Loop Song"),_("Loop List"),_("Shuffle"),_("Auto DJ")};
 	
 	wxChoice *choicePlaymode = new wxChoice(this,MUSIK_NOWPLAYINGCTRL_PLAYMODE,wxDefaultPosition,wxDefaultSize,WXSIZEOF(playmode_choices),playmode_choices);
 	int playmode = g_Prefs.ePlaymode;
@@ -255,8 +256,20 @@ void CNowPlayingCtrl::PauseBtnToPlayBtn()
 	btnPlayPause->Refresh();
 }
 
+static int nTimeDisplayMode = 0;
+
+void CNowPlayingCtrl::OnClickTimeDisplay(wxMouseEvent & event)
+{
+	
+	//if(stCurtime && stCurtime->GetRect().Inside(event.GetPosition()))
+	{
+		nTimeDisplayMode++;
+		nTimeDisplayMode %= 2;
+	}
+}
 void CNowPlayingCtrl::UpdateTime()
 {
+
 	if ( !g_TimeSeeking )
 	{
 	 	float fPos = (float)100* ( (float)g_Player.GetTime( FMOD_SEC ) / (float)g_Player.GetDuration( FMOD_SEC ) );
@@ -272,7 +285,7 @@ void CNowPlayingCtrl::UpdateTime()
 		gSeek->SetValue( (int)fPos );
 		
 		//--- time label ---//
-		stCurtime->SetLabel( wxT( " - " ) + g_Player.GetTimeStr() );
+		stCurtime->SetLabel( wxT( " - " ) + ((nTimeDisplayMode== 0) ? g_Player.GetTimeStr():g_Player.GetTimeLeftStr()) );
 		Layout();
 	}
 }

@@ -28,7 +28,8 @@ enum EMUSIK_NOWPLAYINGCTRL_ID
 	MUSIK_NOWPLAYINGCTRL_PREV,
 	MUSIK_NOWPLAYINGCTRL_STOP,
 	MUSIK_NOWPLAYINGCTRL_VOLUME,
-	MUSIK_NOWPLAYINGCTRL_PLAYMODE
+	MUSIK_NOWPLAYINGCTRL_PLAYMODE,
+	MUSIK_NOWPLAYINGCTRL_TIMEDISPLAY
 
 };
 
@@ -50,6 +51,7 @@ public:
 	void PlayerVolume		( wxCommandEvent&	WXUNUSED(event) );	
 	void OnTimer			( wxTimerEvent&		WXUNUSED(event) );
 	void OnPlayMode			( wxCommandEvent&	event );
+	void OnClickTimeDisplay		( wxMouseEvent&	event );
 	void OnCheckCrossfade	( wxCommandEvent&	event );
 	//--- play control bitmaps ---//
 	wxBitmap	bmPrev,		bmPrevDown;
