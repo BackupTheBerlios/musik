@@ -27,7 +27,7 @@
 #ifdef __WXMSW__
 	#include "../MMShellHook/MMShellHook.h"
 #endif
-#include "../images/sources/library.xpm"
+#include "../images/tray.xpm"
 
 DECLARE_APP( MusikApp )
 //--- wx stuff we need ---//
@@ -94,7 +94,7 @@ void MusikFrame::OnIconize( wxIconizeEvent& event )
 	if(event.Iconized())
 	{
 		Show(FALSE);
-		wxGetApp().TaskBarIcon.SetIcon(wxIcon(library_xpm), GetTitle());
+		wxGetApp().TaskBarIcon.SetIcon(wxIcon(tray_xpm), GetTitle());
 	}
 	event.Skip(FALSE);
 }

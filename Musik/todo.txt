@@ -8,7 +8,7 @@ TODO:
 - Controls to toggle activities and sources, built into the main frame. Not sure what they would look like.
 - Drop down boxes on the activity titles to change the type without going into preferences.
 - Preference to change the every-other-line highlight color
-- Taskbar icon, preference to minimize to taskbar, basic playlist controls via taskbar popup menu.
+- Trayicon icon exists now,but maybe add a preference to minimize to taskbar or tray(now it minimizes to tray only, banishes from taskbar).
 - It could use some kind of a wizard on first startup
 - Event to "light up" currently moused over area (activity boxes/sources) as a preference
 - Store playlists, etc in the database, rather than external files.

@@ -40,7 +40,7 @@
 #include "../images/ratings/rating3.xpm"
 #include "../images/ratings/rating4.xpm"
 #include "../images/ratings/rating5.xpm"
-
+#include "../images/tray.xpm"
 DECLARE_APP( MusikApp )
 
 
@@ -396,7 +396,7 @@ void MusikFrame::EnableProgress( bool enable )
 
 void MusikFrame::SetTitle(const wxString& title)
 {
-	wxGetApp().TaskBarIcon.SetIcon(wxIcon(library_xpm), title);
+	wxGetApp().TaskBarIcon.SetIcon(wxIcon(tray_xpm), title);
 	wxFrame::SetTitle(title);
 }
 

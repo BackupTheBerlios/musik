@@ -40,7 +40,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib id3libd.lib fmodvc.lib sqlite.lib vorbisfile_static_d.lib ogg_static_d.lib vorbis_static_d.lib MMShellHook.lib wxmsw25d_core.lib wxbase25d.lib wxbase25d_net.lib wxzlibd.lib wxregexd.lib wxmsw25d_adv.lib"
 				ShowProgress="2"
-				OutputFile="$(OutDir)/Musik.exe"
+				OutputFile="$(OutDir)/wxMusik.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(SQLITEDIR)\Debug;&quot;$(WXDIR)\lib\vc_lib&quot;;$(FMODDIR)\api\lib;$(VORBISDIR)\win32\Vorbis_Static_Debug;&quot;$(ID3LIBDIR)\libprj&quot;;$(VORBISDIR)\win32\VorbisFile_Static_Debug;$(VORBISDIR)\win32\VorbisEnc_Static_Debug;$(OGGDIR)\win32\Static_Debug;_Debug;..\MMShellHook\Debug"
 				GenerateDebugInformation="TRUE"
@@ -111,7 +111,7 @@
 				AdditionalOptions="/NODEFAULTLIB:libcmt.lib"
 				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib wxzlib.lib wxregex.lib wxpng.lib wxjpeg.lib wxtiff.lib wxmsw25_core.lib wxbase25.lib wxbase25_net.lib wxmsw25_adv.lib id3lib.lib fmodvc.lib sqlite.lib vorbisfile_static.lib ogg_static.lib vorbis_static.lib MMShellHook.lib"
 				ShowProgress="2"
-				OutputFile="$(OutDir)/Musik.exe"
+				OutputFile="$(OutDir)/wxMusik.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(SQLITEDIR)\Release;&quot;$(WXDIR)\lib\vc_lib&quot;;$(FMODDIR)\api\lib;$(VORBISDIR)\win32\Vorbis_Static_Release;&quot;$(ID3LIBDIR)\libprj&quot;;$(VORBISDIR)\win32\VorbisFile_Static_Release;$(VORBISDIR)\win32\VorbisEnc_Static_Release;$(OGGDIR)\win32\Static_Release;_Release;..\MMShellHook\Release"
 				IgnoreAllDefaultLibraries="FALSE"
@@ -175,7 +175,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib zlibd.lib regexd.lib pngd.lib jpegd.lib tiffd.lib wxmswud.lib id3libd.lib fmodvc.lib sqlite.lib vorbisfile_static_d.lib ogg_static_d.lib vorbis_static_d.lib MMShellHook.lib"
-				OutputFile="$(OutDir)/Musik.exe"
+				OutputFile="$(OutDir)/wxMusik.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(SQLITEDIR)\Debug;..\wx2\wxWindows\lib\;..\fmodapi\api\lib;$(VORBISDIR)\win32\Vorbis_Static_Debug;&quot;$(ID3LIBDIR)\libprj&quot;;$(VORBISDIR)\win32\VorbisFile_Static_Debug;$(VORBISDIR)\win32\VorbisEnc_Static_Debug;$(OGGDIR)\win32\Static_Debug;_Debug"
 				GenerateDebugInformation="TRUE"
@@ -242,7 +242,7 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/NODEFAULTLIB:libcmt.lib"
 				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib zlib.lib regex.lib png.lib jpeg.lib tiff.lib wxmswu.lib id3lib.lib fmodvc.lib sqlite.lib vorbisfile_static.lib ogg_static.lib vorbis_static.lib MMShellHook.lib"
-				OutputFile="$(OutDir)/Musik.exe"
+				OutputFile="$(OutDir)/wxMusik.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(SQLITEDIR)\Release;..\wx2\wxWindows\lib\;..\fmodapi\api\lib;$(VORBISDIR)\win32\Vorbis_Static_Release;&quot;$(ID3LIBDIR)\libprj&quot;;$(VORBISDIR)\win32\VorbisFile_Static_Release;$(VORBISDIR)\win32\VorbisEnc_Static_Release;$(OGGDIR)\win32\Static_Release;_Release"
 				IgnoreAllDefaultLibraries="FALSE"
@@ -330,6 +330,9 @@
 		<Filter
 			Name="Frames"
 			Filter="">
+			<File
+				RelativePath=".\resource.h">
+			</File>
 			<Filter
 				Name="Musik"
 				Filter="">

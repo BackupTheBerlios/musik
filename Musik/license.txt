@@ -1,7 +1,7 @@
 ----------------------------------------------------------------------------
-Musik (http://musik.sourceforge.net) License Agreement
+Musik (http://musik.berlios.de) License Agreement
 ----------------------------------------------------------------------------
-Copyright (c) 2003, Casey Langen
+Copyright (c) 2004, Casey Langen, Gunnar Roth, Simon Windmill
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

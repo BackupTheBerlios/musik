@@ -2,42 +2,70 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 [Setup]
-AppName=Musik
-AppVerName=Musik 0.2.1
+AppName=wxMusik
+AppVerName=wxMusik 0.3.0
 AppPublisherURL=http://musik.berlios.de
 AppSupportURL=http://musik.berlios.de
 AppUpdatesURL=http://musik.berlios.de
-DefaultDirName={pf}\Musik
-DefaultGroupName=Musik
-AllowNoIcons=yes
+DefaultDirName={pf}\wxMusik
+DefaultGroupName=wxMusik
+AllowNoIcons=true
 LicenseFile=license.txt
 
+OutputBaseFilename=wxMusikSetup
+VersionInfoVersion=0.3.0
+VersionInfoDescription=A music player and library application
+Compression=lzma/ultra
+ShowLanguageDialog=yes
+AppID={9EB87F75-0968-42F8-AD3F-01C2B13A1FE2}
+AlwaysShowDirOnReadyPage=true
+AlwaysShowGroupOnReadyPage=true
+AppCopyright=© 2004, Casey Langen, Gunnar Roth, Simon Windmill
+DisableStartupPrompt=false
+DisableFinishedPage=true
+FlatComponentsList=false
+ShowTasksTreeLines=true
 [Tasks]
 ; NOTE: The following entry contains English phrases ("Create a desktop icon" and "Additional icons"). You are free to translate them into another language if required.
-Name: "desktopicon"; Description: "Create a &desktop icon"; GroupDescription: "Additional icons:"
+Name: desktopicon; Description: Create a &desktop icon; GroupDescription: Additional icons:
 ; NOTE: The following entry contains English phrases ("Create a Quick Launch icon" and "Additional icons"). You are free to translate them into another language if required.
-Name: "quicklaunchicon"; Description: "Create a &Quick Launch icon"; GroupDescription: "Additional icons:"; Flags: unchecked
+Name: quicklaunchicon; Description: Create a &Quick Launch icon; GroupDescription: Additional icons:; Flags: unchecked
 
 [Files]
-Source: "Musik.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "changelog.txt"; DestDir: "{app}"; Flags: ignoreversion
-Source: "fmod.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "id3lib.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "license.txt"; DestDir: "{app}"; Flags: ignoreversion
-Source: "MMShellHook.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "msvcp71.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "msvcr71.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "sqlite.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: _release\wxMusik.exe; DestDir: {app}; Flags: ignoreversion
+Source: changelog.txt; DestDir: {app}; Flags: ignoreversion
+Source: _release\fmod.dll; DestDir: {app}; Flags: ignoreversion
+Source: license.txt; DestDir: {app}; Flags: ignoreversion
+Source: _release\MMShellHook.dll; DestDir: {app}; Flags: ignoreversion
+Source: ..\..\WINDOWS\SYSTEM32\msvcp71.dll; DestDir: {app}; Flags: promptifolder onlyifdoesntexist
+Source: ..\..\WINDOWS\SYSTEM32\msvcr71.dll; DestDir: {app}; Flags: promptifolder onlyifdoesntexist
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
+Source: contrib\playlists\top_10_rated_songs_played_this_year.mpd; DestDir: {userappdata}\.Musik\playlists; Flags: onlyifdoesntexist; Components: Dynamic_Playlist_Examples
+Source: contrib\playlists\added_in_the_last_2_days.mpd; DestDir: {userappdata}\.Musik\playlists; Flags: onlyifdoesntexist; Components: Dynamic_Playlist_Examples
+Source: contrib\playlists\energy_club.mpu; DestDir: {userappdata}\.Musik\playlists; Flags: onlyifdoesntexist; Components: Radio_Channels
+Source: contrib\playlists\mistagged_files.mpd; DestDir: {userappdata}\.Musik\playlists; Flags: onlyifdoesntexist; Components: Dynamic_Playlist_Examples
+Source: contrib\playlists\mp3_vbr_files.mpd; DestDir: {userappdata}\.Musik\playlists; Flags: onlyifdoesntexist; Components: Dynamic_Playlist_Examples
+Source: contrib\playlists\not_played_for_at_least_3_months.mpd; DestDir: {userappdata}\.Musik\playlists; Flags: onlyifdoesntexist; Components: Dynamic_Playlist_Examples
+Source: contrib\playlists\played_this_month.mpd; DestDir: {userappdata}\.Musik\playlists; Flags: onlyifdoesntexist; Components: Dynamic_Playlist_Examples
+Source: contrib\playlists\progrock_radio.mpu; DestDir: {userappdata}\.Musik\playlists; Flags: onlyifdoesntexist; Components: Radio_Channels
+Source: contrib\playlists\snakemetal.mpu; DestDir: {userappdata}\.Musik\playlists; Flags: onlyifdoesntexist; Components: Radio_Channels
+Source: contrib\playlists\songs_you_never_played.mpd; DestDir: {userappdata}\.Musik\playlists; Flags: onlyifdoesntexist; Components: Dynamic_Playlist_Examples
+Source: contrib\playlists\top_10_most_played_in_last_2_weeks.mpd; DestDir: {userappdata}\.Musik\playlists; Flags: onlyifdoesntexist; Components: Dynamic_Playlist_Examples
 [Icons]
-Name: "{group}\Musik"; Filename: "{app}\Musik.exe"
+Name: {group}\wxMusik; Filename: {app}\wxMusik.exe
 ; NOTE: The following entry contains an English phrase ("Uninstall"). You are free to translate it into another language if required.
-Name: "{group}\Uninstall Musik"; Filename: "{uninstallexe}"
-Name: "{userdesktop}\Musik"; Filename: "{app}\Musik.exe"; Tasks: desktopicon
-Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\Musik"; Filename: "{app}\Musik.exe"; Tasks: quicklaunchicon
+Name: {group}\Uninstall wxMusik; Filename: {uninstallexe}
+Name: {userdesktop}\wxMusik; Filename: {app}\wxMusik.exe; Tasks: desktopicon
+Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\wxMusik; Filename: {app}\wxMusik.exe; Tasks: quicklaunchicon
 
 [Run]
 ; NOTE: The following entry contains an English phrase ("Launch"). You are free to translate it into another language if required.
-Filename: "{app}\Musik.exe"; Description: "Launch Musik"; Flags: nowait postinstall skipifsilent
-
+Filename: {app}\wxMusik.exe; Description: Launch Musik; Flags: nowait postinstall skipifsilent
+[Components]
+Name: Dynamic_Playlist_Examples; Description: Examples of Dynamic Playlists; Types: custom full
+Name: Radio_Channels; Description: Examples of Net Radio Channels; Types: custom full
+[InstallDelete]
+Name: {app}\Musik.exe; Type: files
+[UninstallDelete]
+Name: {userappdata}\.Musik; Type: filesandordirs

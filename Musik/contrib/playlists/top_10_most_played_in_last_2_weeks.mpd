@@ -1,0 +1,1 @@
+wxjulianday(lastplayed) >=  julianday('now','-14 days') order by timesplayed desc limit 10
