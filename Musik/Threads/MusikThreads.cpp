@@ -42,19 +42,21 @@ MusikFaderThread::MusikFaderThread()
 
 void MusikFaderThread::CrossfaderAbort()
 {
-	if ( IsCrossfaderActive() )
+	wxCriticalSectionLocker locker( m_critCrossfader) ;
+	if ( pCrossfader )
 	{
 		//---------------------------------------------------------//
 		//--- Abort() tells fader NOT to clean up old streams	---//
 		//---------------------------------------------------------//
 		pCrossfader->Abort();		
-//		CrossfaderStop();
+		CrossfaderStop();
 	}
 }
 
 void MusikFaderThread::CrossfaderStop()
 {
-	if ( IsCrossfaderActive() )
+	wxCriticalSectionLocker locker( m_critCrossfader);
+	if ( pCrossfader )
 	{
 		pCrossfader->Delete();
 		pCrossfader->Wait();
@@ -118,10 +120,10 @@ void *MusikFaderThread::Entry()
 			if ( ( !g_Player.IsStartingNext() ) && ( !g_Player.IsFading() ) && ( g_Player.GetTimeLeft( FMOD_MSEC ) <= ( g_Prefs.nFadeDuration + 1000 ) ) )
 			{
 				//-------------------------------------------------//
-				//--- if currently we are not fading, but the	---//
-				//--- crossfader is enabled, check to see if	---//
-				//--- the duration is such that we should		---//
-				//--- queue up the next song and start the fade	---//
+				//--- if there is no fading at all going on,	---//
+				//--- and there is 10 mseconds or less playback	---//
+				//--- time left, go ahead and start up the next	---//
+				//--- track										---//
 				//-------------------------------------------------//
 				if ( ( g_Prefs.nGlobalFadeEnable == 0 ) || ( ( g_Prefs.nFadeEnable == 0 ) && ( g_Player.GetTimeLeft( FMOD_MSEC ) <= 10 ) ) )
 				{
@@ -129,12 +131,11 @@ void *MusikFaderThread::Entry()
 					wxPostEvent( &g_Player, NextSongEvt );
 					Yield();
 				}
-
 				//-------------------------------------------------//
-				//--- if there is no fading at all going on,	---//
-				//--- and there is 10 mseconds or less playback	---//
-				//--- time left, go ahead and start up the next	---//
-				//--- track										---//
+				//--- if currently we are not fading, but the	---//
+				//--- crossfader is enabled, check to see if	---//
+				//--- the duration is such that we should		---//
+				//--- queue up the next song and start the fade	---//
 				//-------------------------------------------------//
 				else if ( ( g_Prefs.nFadeEnable == 1 ) && ( g_Player.GetTimeLeft( FMOD_MSEC ) <= g_Prefs.nFadeDuration ) )
 				{
@@ -347,8 +348,8 @@ void MusikCrossfaderThread::OnExit()
 		Yield();
 		if(m_FadeType != CROSSFADE_EXIT)// if we would send the FadeCompleteEvt on exit we get in trouble with the CMusikPlayer::ClearOldStreams() which tries to stop the fader thread( while it waits the ExitCompleteEvt is dispatched by wx and g_FaderThread is deleted, if CrossfaderStop returns from wait it will crash)
 		{
-		wxCommandEvent FadeCompleteEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYER_FADE_COMPLETE );	
-		wxPostEvent( &g_Player, FadeCompleteEvt );
+			wxCommandEvent FadeCompleteEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYER_FADE_COMPLETE );	
+			wxPostEvent( &g_Player, FadeCompleteEvt );
 		}
 		Yield();
 
@@ -388,7 +389,7 @@ void *MusikWriteDirtyThread::Entry()
 	wxPostEvent( g_MusikFrame, WriteTagStartEvt );
 
 	CMusikSongArray aDirty;
-	g_Library.QuerySongs( wxT("dirty = 1"), aDirty );
+	g_Library.QuerySongsWhere( wxT("dirty = 1"), aDirty );
 
 	if ( aDirty.GetCount() > 0 )
 	{

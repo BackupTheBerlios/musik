@@ -52,6 +52,7 @@ private:
 	int m_Worker;
 
 	MusikCrossfaderThread *pCrossfader;
+	wxCriticalSection m_critCrossfader;
 
 };
 
