@@ -446,6 +446,16 @@
 					RelativePath=".\Classes\WebServer.h">
 				</File>
 			</Filter>
+			<Filter
+				Name="Tunage"
+				Filter="">
+				<File
+					RelativePath=".\Classes\Tunage.cpp">
+				</File>
+				<File
+					RelativePath=".\Classes\Tunage.h">
+				</File>
+			</Filter>
 		</Filter>
 		<File
 			RelativePath=".\Musik.rc">

@@ -104,6 +104,8 @@ wxImageList*		g_NullImageList;
 wxImageList*		g_RatingImages;
 CMusikFX			g_FX;
 
+CTunage				g_Tunage;
+
 //----------------//
 //--- controls ---//
 //----------------//

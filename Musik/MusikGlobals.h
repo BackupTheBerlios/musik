@@ -272,6 +272,7 @@ extern MusikLibraryFrame *g_MusikLibraryFrame;
 #include <wx/image.h>
 #include <wx/imaglist.h>
 #include "Classes/MusikFX.h"
+#include "Classes/Tunage.h"
 
 //forward declarations
 class CMusikPrefs;
@@ -293,6 +294,7 @@ extern wxImageList*			g_SourcesImages;
 extern wxImageList*			g_NullImageList;
 extern wxImageList*			g_RatingImages;
 extern CMusikFX				g_FX;
+extern CTunage				g_Tunage;
 
 //----------------//
 //--- controls ---//

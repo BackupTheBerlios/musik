@@ -778,7 +778,10 @@ void MusikPrefsFrame::OnTranslateKeys( wxKeyEvent& event )
 {
 	if ( event.GetKeyCode() == WXK_ESCAPE )
 		Close( true );
-	// swallow all keys => no event.Skip();
+	
+	// we have to event.Skip() here because otherwise the text controls
+	// won't allow you to enter certain chars like space, colon, etc.
+	event.Skip();
 }
 
 void MusikPrefsFrame::SavePrefs()

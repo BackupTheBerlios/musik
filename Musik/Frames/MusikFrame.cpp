@@ -110,7 +110,7 @@ MusikFrame::MusikFrame()
 	//--- simple query ---//
 	//--------------------//
 	m_TextSimpleQuery = new wxTextCtrl( this, MUSIK_SIMPLEQUERY, wxT( "" ), wxPoint( 0, 0 ), wxSize( -1, -1 ), wxSIMPLE_BORDER );
-
+	
 	//-----------------------//
 	//--- left area sizer ---//
 	//-----------------------//

@@ -300,6 +300,9 @@ void CNowPlayingCtrl::UpdateInfo( wxString sFilename )
 	if ( song.Title == _( "<unknown> " ) )
 		song.Title = _( "Unknown Song" );
 
+	// tell Tunage to do it's thing
+	g_Tunage.Execute( song );
+
 	//--- caption bar title ---//
 	g_MusikFrame->SetTitle( wxString( MUSIK_VERSION ) + wxT( " [ " ) + song.Artist + wxT( " - " ) +  song.Title + wxT( " ]" ) );
 
