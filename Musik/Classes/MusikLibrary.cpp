@@ -34,11 +34,11 @@
 
 #include <wx/arrimpl.cpp>
 
-WX_DEFINE_OBJARRAY( CMusikSongArray );
+WX_DEFINE_OBJARRAY( CMusikSongArray )
 WX_DECLARE_STRING_HASH_MAP( CMusikSong *, myStringToMusikSongPtrMap );
 
 //--- frames ---//
-#include "../Frames/MusikFrame.h"
+//#include "../Frames/MusikFrame.h"
 
 CMusikSong::CMusikSong()
 {

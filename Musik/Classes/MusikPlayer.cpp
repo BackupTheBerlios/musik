@@ -27,7 +27,7 @@
 
 //--- CMusikStreamArray ---//
 #include <wx/arrimpl.cpp>
-WX_DEFINE_OBJARRAY( CMusikStreamArray );
+WX_DEFINE_OBJARRAY( CMusikStreamArray )
 
 #define MUSIK_FMOD_VERSION 0x0370 //--- 0x0363 or 0x0370 ---//
 
