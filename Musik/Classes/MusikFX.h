@@ -1,3 +1,19 @@
+/*
+ *  MusikFX.h
+ *
+ *  Musik's special FX engine.
+ *
+ *  Uses FMOD sound API and Shibatch EQ.
+ *  Information about FMOD is available at http://www.fmod.org
+ *	Information about Shibatch is available at http://shibatch.sourceforge.net
+ *  
+ *  Copyright (c) 2003 Casey Langen (casey@bak.rr.com)
+ *	Contributors: Simon Windmill, Dustin Carter
+ *
+ *  See the file "license.txt" for information on usage and redistribution
+ *  of this file, and for a DISCLAIMER OF ALL WARRANTIES.
+*/
+
 #ifndef MUSIKFX_H
 #define MUSIKFX_H
 
@@ -13,8 +29,6 @@
 class CMusikFX
 {
 public:
-
-
 	void	SetLeftBands( float data[18] );
 	void	SetRightBands( float data[18] );
 	void	GetLeftBands( float *data );
