@@ -21,6 +21,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/D ID3LIB_LINKOPTION=1"
 				Optimization="0"
+				AdditionalIncludeDirectories="../_inc/"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;ACE_AS_STATIC_LIBS"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
