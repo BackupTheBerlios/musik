@@ -668,17 +668,18 @@ void CMusikLibrary::AppendStdPlaylist( int id, const CStdStringArray& files )
 	{
 		m_ProtectingLibrary->acquire();
 
+		BeginTransaction();	
 		for ( size_t i = 0; i < files.size(); i++ )
 		{
-			BeginTransaction();
+
 			sqlite_exec_printf( m_pDB, "INSERT INTO %q VALUES ( %Q, %d, %d );",
 			NULL, NULL, NULL, 
 			STD_PLAYLIST_SONGS,
 			NULL,
 			id,
 			GetIDFromFilename( files.at( i ) ) );
-			EndTransaction();
 		}
+		EndTransaction();
 
 		m_ProtectingLibrary->release();
 	}
