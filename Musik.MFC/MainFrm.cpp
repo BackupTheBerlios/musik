@@ -7,9 +7,10 @@
 #include "MainFrmFunctor.h"
 
 #include "../Musik.Core/include/StdString.h"
-
 #include "../Musik.Core/include/MusikLibrary.h"
 #include "../Musik.Core/include/MusikPlayer.h"
+
+#include "../Musik.Core/include/MusikMp3Info.h"
 
 #include <io.h>
 #include <Direct.h>

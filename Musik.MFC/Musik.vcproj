@@ -19,6 +19,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/D ID3LIB_LINKOPTION=1"
 				Optimization="0"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;ACE_AS_STATIC_LIBS"
 				MinimalRebuild="TRUE"
@@ -33,8 +34,8 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="/nodefaultlib:libcmtd"
-				AdditionalDependencies="sqlite.lib fmodvc.lib acesd.lib vorbis_static_d.lib vorbisfile_static_d.lib ogg_static_d.lib"
+				AdditionalOptions="/NODEFAULTLIB:libcmtd"
+				AdditionalDependencies="sqlite.lib fmodvc.lib acesd.lib vorbis_static_d.lib vorbisfile_static_d.lib ogg_static_d.lib id3libD.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
@@ -75,6 +76,7 @@
 			WholeProgramOptimization="TRUE">
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/D ID3LIB_LINKOPTION=1"
 				Optimization="3"
 				GlobalOptimizations="TRUE"
 				FavorSizeOrSpeed="1"
@@ -92,7 +94,8 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="sqlite.lib fmodvc.lib aces.lib"
+				AdditionalOptions="/NODEFAULTLIB:libcmt"
+				AdditionalDependencies="sqlite.lib fmodvc.lib aces.lib vorbis_static.lib vorbisfile_static.lib ogg_static.lib id3lib.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="FALSE"
 				SubSystem="2"
@@ -435,6 +438,12 @@
 							Name="VCCLCompilerTool"
 							UsePrecompiledHeader="0"/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\Musik.Core\include\vcedit.h">
@@ -453,6 +462,12 @@
 			<Filter
 				Name="MusikMP3Info"
 				Filter="">
+				<File
+					RelativePath="..\Musik.Core\src\MusikMp3Info.cpp">
+				</File>
+				<File
+					RelativePath="..\Musik.Core\include\MusikMP3Info.h">
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
