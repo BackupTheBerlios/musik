@@ -286,7 +286,7 @@ static void MainFrameWorker( CmusikThread* thread )
 			++cnt;
 			if ( cnt == 6 )
 			{
-				parent->RequerySelBoxes();
+				parent->RequerySelBoxes( NULL, false );
 				parent->m_wndView->GetCtrl()->UpdateV();
 				cnt = 0;
 			}
@@ -1045,7 +1045,7 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 
 ///////////////////////////////////////////////////
 
-void CMainFrame::RequerySelBoxes( CmusikSelectionCtrl* sender )
+void CMainFrame::RequerySelBoxes( CmusikSelectionCtrl* sender, bool deselect_items )
 {
 	// first find if a parent exists
 	CmusikSelectionCtrl* pParent = NULL;
@@ -1122,7 +1122,9 @@ void CMainFrame::RequerySelBoxes( CmusikSelectionCtrl* sender )
 
 				if ( pCurr->GetChildOrder() > sender->GetChildOrder() || pCurr->GetChildOrder() == -1 )
 				{
-					pCurr->SetItemState(  -1, 0, LVIS_SELECTED );
+					if ( deselect_items )
+						pCurr->SetItemState(  -1, 0, LVIS_SELECTED );
+
 					CmusikString query = GetSelQuery( pCurr );
 					pCurr->UpdateV( query );
 				}
@@ -1162,7 +1164,7 @@ void CMainFrame::RequeryPlaylist( CmusikSelectionCtrl* sender, bool focus_librar
 			sub_query = false;
 
 		m_Library->GetRelatedSongs( sQuery, order_by, *m_LibPlaylist, sub_query );
-	}
+	} 
 
 	// do it
 	m_wndView->GetCtrl()->UpdateV( true, true );
@@ -1613,7 +1615,10 @@ LRESULT CMainFrame::OnThreadEnd( WPARAM wParam, LPARAM lParam )
 
 	if ( type != -2 )
 	{
-		RequerySelBoxes();
+		if ( type == MUSIK_THREAD_TYPE_REMOVEOLD )
+			RequerySelBoxes( NULL, false );
+		else
+			RequerySelBoxes();
 		
 		if ( type == MUSIK_THREAD_TYPE_BATCHADD )
 		{
@@ -2483,7 +2488,7 @@ LRESULT CMainFrame::OnSelBoxAddRemove( WPARAM wParam, LPARAM lParam )
 		m_wndSelectionBars.push_back( pBar );
 		save = true;
 
-		RequerySelBoxes();
+		RequerySelBoxes( NULL, false );
 	}
 
 	else

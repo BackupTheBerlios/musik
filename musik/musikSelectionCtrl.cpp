@@ -341,6 +341,7 @@ CmusikSelectionCtrl::CmusikSelectionCtrl( CFrameWnd* parent, CmusikLibrary* libr
 	m_ParentBox = false;
 	m_ChildOrder = -1;
 	m_ShiftDown = false;
+	m_IsFocused = false;
 
 	m_IsWinNT = ( 0 == ( GetVersion() & 0x80000000 ) );
 	HideScrollBars( LCSB_NCOVERRIDE, SB_HORZ );
@@ -375,11 +376,12 @@ BEGIN_MESSAGE_MAP(CmusikSelectionCtrl, CmusikListCtrl)
 	ON_WM_KEYUP()
 	ON_WM_KILLFOCUS()
 	ON_WM_CHAR()
+	ON_WM_LBUTTONDOWN()
+	ON_WM_SETFOCUS()
 
 	// custom message maps
 	ON_REGISTERED_MESSAGE(WM_SELECTION_EDIT_COMMIT,OnEditCommit)
 	ON_REGISTERED_MESSAGE(WM_SELECTION_EDIT_CANCEL,OnEditCancel)
-	ON_WM_SETFOCUS()
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -594,8 +596,7 @@ void CmusikSelectionCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 void CmusikSelectionCtrl::OnLvnItemchanged(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
-
-	m_NeedsUpdate = false;
+	*pResult = 0;
 
 	// set the new order of presedence
 	if ( !IsParent() && GetChildOrder() == -1 )
@@ -617,7 +618,6 @@ void CmusikSelectionCtrl::OnLvnItemchanged(NMHDR *pNMHDR, LRESULT *pResult)
 		}
 	}
 
-	*pResult = 0;
 }
 
 ///////////////////////////////////////////////////
@@ -838,7 +838,6 @@ BOOL CmusikSelectionCtrl::OnEraseBkgnd(CDC* pDC)
 }
 
 ///////////////////////////////////////////////////
-
 
 void CmusikSelectionCtrl::OnPaint()
 {
@@ -1248,7 +1247,7 @@ void CmusikSelectionCtrl::OnKillFocus(CWnd* pNewWnd)
 	CmusikListCtrl::OnKillFocus(pNewWnd);
 
 	m_ShiftDown = false;
-	m_NeedsUpdate = true;
+	m_IsFocused = false;
 }
 
 ///////////////////////////////////////////////////
@@ -1275,17 +1274,37 @@ void CmusikSelectionCtrl::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 ///////////////////////////////////////////////////
 
+
+void CmusikSelectionCtrl::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	// catch this before the focus event, and 
+	// test the one possible case clicking on
+	// an unfocused list control would cause the
+	// update not to trigger
+	if ( !m_IsFocused )
+	{
+		if ( GetSelectedCount() == 1 )
+		{
+			CRect rcItem;
+			GetItemRect( GetSelectionMark(), rcItem, LVIR_BOUNDS );
+
+			if ( rcItem.PtInRect( point ) )
+			{
+				int WM_SELBOXUPDATE = RegisterWindowMessage( "SELBOXUPDATE" );
+				m_Parent->SendMessage( WM_SELBOXUPDATE, GetCtrlID() );
+			}
+		}
+	}
+
+	CmusikListCtrl::OnLButtonDown(nFlags, point);
+}
+
+///////////////////////////////////////////////////
+
 void CmusikSelectionCtrl::OnSetFocus(CWnd* pOldWnd)
 {
 	CmusikListCtrl::OnSetFocus(pOldWnd);
-
-	if ( m_NeedsUpdate )
-	{
-		m_NeedsUpdate = false;
-	
-		int WM_SELBOXUPDATE = RegisterWindowMessage( "SELBOXUPDATE" );
-		m_Parent->SendMessage( WM_SELBOXUPDATE, GetCtrlID() );
-	}
+	m_IsFocused = true;
 }
 
 ///////////////////////////////////////////////////

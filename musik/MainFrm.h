@@ -137,7 +137,7 @@ public:
 	void RestoreFromTray();
 	void SaveWindowState();
 	void RequeryPlaylist( CmusikSelectionCtrl* sender = NULL, bool focus_library = true );
-	void RequerySelBoxes( CmusikSelectionCtrl* sender = NULL );
+	void RequerySelBoxes( CmusikSelectionCtrl* sender = NULL, bool deselect_items = true );
 	CmusikString GetSelQuery( CmusikSelectionCtrl* target = NULL );
 
 	// tray icon

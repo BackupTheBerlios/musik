@@ -146,6 +146,8 @@ public:
 	afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
 	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnSetFocus(CWnd* pOldWnd);
 
 	// custom message maps
 	LRESULT OnEditCommit( WPARAM wParam, LPARAM lParam );
@@ -169,7 +171,8 @@ protected:
 	void BeginDrag( bool right_button );
 
 	bool m_ShiftDown;
-	bool m_NeedsUpdate;
+	bool m_IsFocused;
+	bool m_Updated;
 
 	// bg color if child
 	void InitColors();
@@ -197,8 +200,6 @@ protected:
 	// macros
 	DECLARE_DYNAMIC(CmusikSelectionCtrl)
 	DECLARE_MESSAGE_MAP()
-public:
-	afx_msg void OnSetFocus(CWnd* pOldWnd);
 };
 
 ///////////////////////////////////////////////////
