@@ -16,11 +16,17 @@
 ///////////////////////////////////////////////////
 
 // these need to remain constant, or
-// problems may arise.
+// problems may arise. they are the
+// ids for the dock bars
 
 #define ID_NOWPLAYING 1344
 #define ID_SOURCESBOX 1345
 #define ID_SELECTIONBOX_START 1346
+
+// these are the ids for the controls
+// themselves
+
+#define IDC_SOURCES 1000
 
 ///////////////////////////////////////////////////
 

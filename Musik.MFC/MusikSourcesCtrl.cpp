@@ -23,8 +23,7 @@ CMusikSourcesCtrl::CMusikSourcesCtrl( CMusikLibrary* library )
 
 CMusikSourcesCtrl::~CMusikSourcesCtrl()
 {
-	DeleteItems();
-	DeleteHeaders();
+	// items will delete themselves
 }
 
 ///////////////////////////////////////////////////
@@ -72,27 +71,6 @@ void CMusikSourcesCtrl::CreateHeaders()
 	m_DynPlaylistRoot->SetLabelText( _T( "Dynamic Playlists" ) );
 	m_DynPlaylistRoot->SetInfoText(_T(""));
 	m_DynPlaylistRoot->Expand( true );
-}
-
-///////////////////////////////////////////////////
-
-void CMusikSourcesCtrl::DeleteHeaders()
-{
-
-}
-
-///////////////////////////////////////////////////
-
-void CMusikSourcesCtrl::DeleteItems()
-{
-	for ( size_t i = 0; i < m_Libraries.size(); i++ )
-		delete m_Libraries.at( i );
-
-	for ( size_t i = 0; i < m_StdPlaylists.size(); i++ )
-		delete m_StdPlaylists.at( i );
-
-	for ( size_t i = 0; i < m_DynPlaylists.size(); i++ )
-		delete m_DynPlaylists.at( i );
 }
 
 ///////////////////////////////////////////////////
@@ -150,6 +128,27 @@ int CMusikSourcesCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	*/
 
 	return 0;
+}
+
+///////////////////////////////////////////////////
+
+void CMusikSourcesCtrl::LoadLibraries()
+{
+
+}
+
+///////////////////////////////////////////////////
+
+void CMusikSourcesCtrl::LoadStdPlaylists()
+{
+
+}
+
+///////////////////////////////////////////////////
+
+void CMusikSourcesCtrl::LoadDynPlaylists()
+{
+
 }
 
 ///////////////////////////////////////////////////

@@ -33,10 +33,14 @@ protected:
 
 	// create default headers
 	void CreateHeaders();
-	void DeleteHeaders();
 	CPropTreeItem* m_LibrariesRoot;
 	CPropTreeItem* m_StdPlaylistRoot;
 	CPropTreeItem* m_DynPlaylistRoot;
+
+	// loading the items
+	void LoadLibraries();
+	void LoadStdPlaylists();
+	void LoadDynPlaylists();
 
 	// macros
 	DECLARE_DYNAMIC(CMusikSourcesCtrl)
@@ -48,7 +52,6 @@ private:
 	CMusikLibrary* m_Library;
 
 	// items that will show up in the list
-	void DeleteItems();
 	CMusikSourcesItemPtrArray m_Libraries;
 	CMusikSourcesItemPtrArray m_StdPlaylists;
 	CMusikSourcesItemPtrArray m_DynPlaylists;
