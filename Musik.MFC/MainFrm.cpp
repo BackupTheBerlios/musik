@@ -41,10 +41,6 @@ CMainFrame::CMainFrame()
 	m_LibPlaylist = new CMusikPlaylist();
 	m_Library->GetAllSongs( *m_LibPlaylist );
 
-	CString s;
-	s.Format( "%d", m_LibPlaylist->size() );
-	MessageBox( s );
-
 	m_DynPlaylist = NULL;
 	m_StdPlaylist = NULL;
 
