@@ -11,7 +11,7 @@
  - swapped ordering of activity box stripes.
  - fixed some flashing problems when updating some progress bars
  - threading routines completely redone and now complete. 
- - auto rename now supports renaming to nested directories.. like <root dir>\Artist\Album\Song.mp3.. or whatever [BROKEN]
+ - auto rename now supports renaming to nested directories.. like <root dir>\Artist\Album\Song.mp3.. or whatever
    other combo you can dream up.
  - fixed uninstall problem where changelog wasn't getting removed
  - new selection routine to assure that, for example, if two artists share a common album name (such as "unplugged"), 
