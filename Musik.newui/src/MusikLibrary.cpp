@@ -47,6 +47,7 @@ CMusikLibrary::~CMusikLibrary()
 	Shutdown();
 }
 
+
 void CMusikLibrary::InitFields()
 {
 	m_Fields.Add( wxT( "Filename" ) );
@@ -165,10 +166,54 @@ void CMusikLibrary::EndTransaction()
 	sqlite_exec_printf( m_pDB, "end transaction;", NULL, NULL, NULL );
 }
 
+void CMusikLibrary::GetSongs( int source_type, const wxArrayString& source_items, CMusikPlaylist& target )
+{
+	target.Clear();
+	target.Alloc( GetSongCount() );
+
+  	wxString sQuery(wxT( "select filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize from songs where "));
+	sQuery += GetSongFieldDB( source_type );
+	sQuery += wxT( " in(" );
+	sQuery.Alloc( sQuery.Len() + 30 + source_items.GetCount() * 30 );
+
+	//-------------------------------------------------//
+	//--- we need to setup the query for each item	---//
+	//--- in sources_items							---//
+	//-------------------------------------------------//
+	for ( size_t i = 0; i < source_items.GetCount(); i++ )
+	{	
+    	source_items.Item( i ).Replace( wxT( "'" ), wxT( "''" ), true );
+  	 	sQuery += wxT("'");
+		sQuery += source_items.Item( i );
+		
+		if ( i != source_items.GetCount() - 1 )
+			sQuery += wxT("', ");
+		else
+			sQuery += wxT("' ) ");
+ 	}
+
+	/*
+	if ( nInType == MUSIK_LIB_ARTIST )
+    	sQuery +=wxT("order by artist,album,tracknum;");
+	else if ( nInType == MUSIK_LIB_ALBUM )
+		sQuery += wxT( "order by album,tracknum,artist;");
+	else if ( nInType == MUSIK_LIB_GENRE )
+		sQuery += wxT( "order by genre,artist,album,tracknum;");
+	else if ( nInType == MUSIK_LIB_YEAR )
+		sQuery += wxT( "order by year,artist,album,tracknum;");
+	*/
+
+	{
+		wxCriticalSectionLocker lock( m_csDBAccess );
+		sqlite_exec(m_pDB, wxStringToMB( sQuery ), &sqlite_AddSongCallback, &target, NULL);
+	}
+
+	target.Shrink();
+}
+
 void CMusikLibrary::QuerySongs( const wxString& query, CMusikPlaylist& target )
 {
 	target.Clear();
-	wxString sInfo;
 
 	wxString queryWhere( wxT( "select filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize from songs where " ) );
 	queryWhere += query + wxT(";");

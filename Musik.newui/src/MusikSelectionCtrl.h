@@ -3,46 +3,34 @@
 
 #include "wx/wxprec.h"
 #include "MusikListCtrl.h"
+#include "MusikLibrary.h"
 
-enum E_MUSIK_SELECTION_TYPE
+//---------------------------------------------------------//
+//--- these are the types of activity boxes that are	---//
+//--- allowed.											---//
+//---------------------------------------------------------//
+enum
 {
-	MUSIK_SELECTION_ARTISTS = 0,
-	MUSIK_SELECTION_ALBUMS,
-	MUSIK_SELECTION_GENRES,
-	MUSIK_SELECTION_YEARS,
-	NSELECTIONCOUNT
-};
-
-const wxString E_MUSIK_SELECTION_COLUMN_LABELS[NSELECTIONCOUNT] = 
-{
-	wxT( "Artists" ),
-	wxT( "Albums" ),
-	wxT( "Genres" ),
-	wxT( "Years" )
-};
-
-const wxString E_MUSIK_SELECTION_DB_NAMES[NSELECTIONCOUNT] =
-{
-	wxT( "artists" ),
-	wxT( "albums" ),
-	wxT( "genres" ),
-	wxT( "years" )
+	MUSIK_SELECTION_ARTISTS = MUSIK_LIBRARY_TYPE_ARTIST,
+	MUSIK_SELECTION_ALBUMS = MUSIK_LIBRARY_TYPE_ALBUM,
+	MUSIK_SELECTION_GENRES = MUSIK_LIBRARY_TYPE_GENRE,
+	MUSIK_SELECTION_YEARS = MUSIK_LIBRARY_TYPE_YEAR
 };
 
 class CMusikSelectionCtrl : public CMusikListCtrl
 {
 public:
-	CMusikSelectionCtrl( wxWindow* parent, wxWindowID id );
+	CMusikSelectionCtrl( wxWindow* parent, CMusikLibrary* library, wxWindowID id );
 	~CMusikSelectionCtrl();
 
 	//---------------------------------------------------------//
 	//--- functions having to do with getting and setting	---//
 	//--- selectionctrl type.								---//
 	//---------------------------------------------------------//
-	wxString GetDBName				( )	{ return E_MUSIK_SELECTION_DB_NAMES[(int)m_Type]; }
-	wxString GetColumnName			( )	{ return E_MUSIK_SELECTION_COLUMN_LABELS[(int)m_Type]; }
-	E_MUSIK_SELECTION_TYPE GetType	( )	{ return m_Type; }
-	void SetType					( E_MUSIK_SELECTION_TYPE type, bool reset = true );
+	wxString GetDBName		( )	{ return m_MusikLibrary->GetSongFieldDB( m_Type ); }
+	wxString GetColumnName	( )	{ return m_MusikLibrary->GetSongField( m_Type ); }
+	int  GetType			( )	{ return m_Type; }
+	void SetType			( int type, bool reset = true );
 
 protected:
 	//---------------------------------------------------------//
@@ -58,7 +46,8 @@ protected:
 
 private:
 
-	E_MUSIK_SELECTION_TYPE m_Type;
+	int m_Type;
+	CMusikLibrary* m_MusikLibrary;
 
 };
 

@@ -6,6 +6,30 @@
 #include "sqlite.h"
 #include "MusikPlaylist.h"
 
+//-----------------------------------------------------//
+//--- enumerated value list to the types of entires	---//
+//--- stored within every CMusikSong				---//
+//-----------------------------------------------------//
+enum
+{
+	MUSIK_LIBRARY_TYPE_NONE = -1,
+	MUSIK_LIBRARY_TYPE_FILENAME,
+	MUSIK_LIBRARY_TYPE_TITLE,
+	MUSIK_LIBRARY_TYPE_ARTIST,
+	MUSIK_LIBRARY_TYPE_ALBUM,
+    MUSIK_LIBRARY_TYPE_YEAR,
+	MUSIK_LIBRARY_TYPE_GENRE,
+	MUSIK_LIBRARY_TYPE_TRACKNUM,
+	MUSIK_LIBRARY_TYPE_TIMEADDED,
+	MUSIK_LIBRARY_TYPE_LASTPLAYED,
+	MUSIK_LIBRARY_TYPE_FILESIZE,
+	MUSIK_LIBRARY_TYPE_FORMAT,
+	MUSIK_LIBRARY_TYPE_DURATION,
+	MUSIK_LIBRARY_TYPE_RATING,
+	MUSIK_LIBRARY_TYPE_TIMESPLAYED,
+	MUSIK_LIBRARY_TYPE_BITRATE,
+};
+
 class CMusikLibrary
 {
 public:

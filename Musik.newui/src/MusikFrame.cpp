@@ -146,7 +146,7 @@ void CMusikFrame::CreateControls()
 	//--- rest										---//
 	//-------------------------------------------------//
 	m_SourcesCtrl		= new CMusikSourcesCtrl			( m_SourcesSash, -1 );
-	m_SelectionCtrl		= new CMusikSelectionAreaCtrl	( m_SelectionAreaSash, -1 );
+	m_SelectionCtrl		= new CMusikSelectionAreaCtrl	( m_SelectionAreaSash, m_MusikLibrary, -1 );
 	m_PlaylistCtrl		= new CMusikPlaylistCtrl		( m_PlaylistSash, -1 );
 	m_SimpleQueryCtrl	= new CMusikSimpleQueryCtrl		( m_SimpleQuerySash, -1 );
 	m_NowPlayingCtrl	= new CMusikNowPlayingCtrl		( m_NowPlayingSash, -1 );

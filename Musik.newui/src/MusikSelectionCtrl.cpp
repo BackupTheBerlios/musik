@@ -1,9 +1,11 @@
 #include "wx/wxprec.h"
 #include "MusikSelectionCtrl.h"
 
-CMusikSelectionCtrl::CMusikSelectionCtrl( wxWindow* parent, wxWindowID id )
+CMusikSelectionCtrl::CMusikSelectionCtrl( wxWindow* parent, CMusikLibrary* library, wxWindowID id )
 	: CMusikListCtrl( parent, id, wxNO_FULL_REPAINT_ON_RESIZE | wxLC_ALIGN_LEFT | wxLC_REPORT | wxLC_VIRTUAL | wxSIMPLE_BORDER & ~wxHSCROLL )
 {
+	m_MusikLibrary = library;
+
 	SetType( MUSIK_SELECTION_ARTISTS, false );	//--- this is where we will set the box type
 	Reset( true, true );
 }
@@ -36,12 +38,12 @@ void CMusikSelectionCtrl::Reset( bool rescale, bool refresh )
 	//--- hide it.											---//
 	//---------------------------------------------------------//
 	InsertColumn( 0, wxT( "" ) );
-	InsertColumn( 1, GetColumnName() );
+	InsertColumn( 1, m_MusikLibrary->GetSongField( m_Type ) );
 	if ( rescale )
 		RescaleColumns( refresh );
 }
 
-void CMusikSelectionCtrl::SetType( E_MUSIK_SELECTION_TYPE type, bool reset )
+void CMusikSelectionCtrl::SetType( int type, bool reset )
 {
 	m_Type = type;
 	if ( reset )
