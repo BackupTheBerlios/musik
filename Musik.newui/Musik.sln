@@ -4,7 +4,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Musik", "Musik.vcproj", "{C
 		{C372ABA2-E90B-459B-B5B2-A9A181DFE807} = {C372ABA2-E90B-459B-B5B2-A9A181DFE807}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MMShellHook", "MMShellHook\MMShellHook.vcproj", "{C372ABA2-E90B-459B-B5B2-A9A181DFE807}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MMShellHook", "src\MMShellHook\MMShellHook.vcproj", "{C372ABA2-E90B-459B-B5B2-A9A181DFE807}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject

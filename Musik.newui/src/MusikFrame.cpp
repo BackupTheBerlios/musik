@@ -6,15 +6,15 @@
 #endif
 
 //--- images ---//
-#include "../images/sources/dynamic.xpm"
-#include "../images/sources/library.xpm"
-#include "../images/sources/standard.xpm"
-#include "../images/ratings/rating0.xpm"
-#include "../images/ratings/rating1.xpm"
-#include "../images/ratings/rating2.xpm"
-#include "../images/ratings/rating3.xpm"	
-#include "../images/ratings/rating4.xpm"
-#include "../images/ratings/rating5.xpm"
+#include "images/sources/dynamic.xpm"
+#include "images/sources/library.xpm"
+#include "images/sources/standard.xpm"
+#include "images/ratings/rating0.xpm"
+#include "images/ratings/rating1.xpm"
+#include "images/ratings/rating2.xpm"
+#include "images/ratings/rating3.xpm"	
+#include "images/ratings/rating4.xpm"
+#include "images/ratings/rating5.xpm"
 
 // main dialog constructor
 MusikFrame::MusikFrame() 

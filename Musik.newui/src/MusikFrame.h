@@ -2,8 +2,8 @@
 #define C_MUSIK_FRAME_H
 
 #include <wx/socket.h>
-#include "../Classes/MusikSourcesCtrl.h"
-#include "../Classes/MusikSelectionCtrl.h"
+#include "MusikSourcesCtrl.h"
+#include "MusikSelectionCtrl.h"
 
 class MusikFrame : public wxFrame
 {
