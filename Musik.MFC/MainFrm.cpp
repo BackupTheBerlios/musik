@@ -336,6 +336,8 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 		pSender->SetParent( false );
 		pSender->UpdateV();
 
+		ASSERT( pSender );
+
 		CMusikSelectionCtrl::SetUpdating( false );
 
 		return 0L;
