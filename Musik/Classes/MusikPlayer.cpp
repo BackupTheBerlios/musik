@@ -89,10 +89,7 @@ void CMusikPlayer::Shutdown()
 int CMusikPlayer::InitializeFMOD( int nFunction, int nSndOutput, int nSndDevice, int nSndRate )
 {
 	if ( ( nFunction == FMOD_INIT_RESTART ) || ( nFunction == FMOD_INIT_STOP ) )
-	{
-		FSOUND_Close();
-		g_FX.EndEQ();
-	}
+		Shutdown();
 
 	g_FX.InitEQ();
 	g_FX.SetFrequency( 44100 );
@@ -223,16 +220,8 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 		FSOUND_Stream_SetBufferSize( g_Prefs.nSndBuffer );
 		FSOUND_STREAM* pNewStream = FSOUND_Stream_OpenFile( ( const char* )ConvFNToFieldMB( m_CurrentFile ), FSOUND_2D, 0 );
 
-		if ( !m_DSP )
-		{
-			m_DSP = FSOUND_DSP_Create( &dspcallback, FSOUND_DSP_DEFAULTPRIORITY_USER, 0 );			
-		}
-
-		if ( m_DSP )
-		{
-			FSOUND_DSP_SetActive( m_DSP, g_Prefs.nUseEQ );
-		}
-
+		InitDSP();
+		
 		//---------------------------------------------//
 		//--- start playback of the new stream on	---//
 		//--- the designated channel.				---//
@@ -281,9 +270,27 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 	return true;
 }
 
-void CMusikPlayer::SetFX()
+void CMusikPlayer::InitDSP()
+{
+	if ( !m_DSP )
+		m_DSP = FSOUND_DSP_Create( &dspcallback, FSOUND_DSP_DEFAULTPRIORITY_USER, 0 );			
+
+	if ( m_DSP )
+		FSOUND_DSP_SetActive( m_DSP, g_Prefs.nUseEQ );
+}
+
+void CMusikPlayer::ActivateDSP()
 {
 	FSOUND_DSP_SetActive( m_DSP, g_Prefs.nUseEQ );
+}
+
+void CMusikPlayer::FreeDSP()
+{
+	if ( m_DSP )
+	{
+		FSOUND_DSP_Free( m_DSP );
+		m_DSP = NULL;
+	}
 }
 
 void CMusikPlayer::SetFrequency()
@@ -455,11 +462,7 @@ void CMusikPlayer::FinalizeStop()
 	//-----------------------------------------//
 	//--- free up the DSP object. FX stuff.	---//
 	//-----------------------------------------//
-	if ( m_DSP )
-	{
-		FSOUND_DSP_Free( m_DSP );
-		m_DSP = NULL;
-	}
+	FreeDSP();
 
 	m_SongIndex	= 0;
 	m_LastSong	= 0;

@@ -84,11 +84,13 @@ public:
 	//--------------------//
 	//--- sound system ---//
 	//--------------------//
-	int		InitializeFMOD	( int nFunction, int nSndOutput, int nSndDevice, int nSndRate );
-	void	Shutdown		( );
-	void	ClearOldStreams	( );
-	void	SetFX		( );
-	void	SetFrequency	( );
+	int	 InitializeFMOD		( int nFunction, int nSndOutput, int nSndDevice, int nSndRate );
+	void Shutdown			( );
+	void ClearOldStreams	( );
+	void SetFrequency		( );
+	void InitDSP			( );
+	void ActivateDSP		( );
+	void FreeDSP			( );
 
 	//------------------------------//
 	//--- events threads may use ---//

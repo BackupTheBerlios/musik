@@ -156,7 +156,7 @@ void MusikFXFrame::OnRightClick( wxCommandEvent& event )
 void MusikFXFrame::OnToggleEQEnable( wxCommandEvent& WXUNUSED(event) )
 {
 	g_Prefs.nUseEQ = chkEQEnable->IsChecked();
-	g_Player.SetFX();
+	g_Player.ActivateDSP();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
