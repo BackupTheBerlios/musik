@@ -243,6 +243,16 @@
 							RelativePath=".\musikNowPlayingInfo.h">
 						</File>
 					</Filter>
+					<Filter
+						Name="musikVolumeCtrl"
+						Filter="">
+						<File
+							RelativePath=".\musikVolumeCtrl.cpp">
+						</File>
+						<File
+							RelativePath=".\musikVolumeCtrl.h">
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="musikSelectionCtrl"

@@ -33,6 +33,7 @@ protected:
 	bool m_LeftDown;
 	bool m_IsCapturing;
 	void SetPosFromMouse();
+	virtual void OnPosChanged();
 
 	// use this to get colors...
 	CmusikPrefs* m_Prefs;

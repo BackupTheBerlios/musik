@@ -73,12 +73,14 @@ public:
 	int			GetPlayerDevice						( )					{ return m_Player_Device; }
 	int			GetPlayerRate						( )					{ return m_Player_Rate; }
 	int			GetPlayerMaxChannels				( )					{ return m_Player_Max_Channels; }
+	int			GetPlayerVolume						( )					{ return m_Player_Volume; }
 
 	// player sets
 	void		SetPlayerDrive						( int n )			{ m_Player_Driver = n; }
 	void		SetPlayerDevice						( int n )			{ m_Player_Device = n; }
 	void		SetPlayerRate						( int n )			{ m_Player_Rate = n; }
 	void		SetPlayerMaxChannels				( int n )			{ m_Player_Max_Channels = n; }
+	void		SetPlayerVolume						( int n )			{ m_Player_Volume = n; }
 
 	// default crossfader get
 	int  GetCrossfader								()					{ return m_Crossfader_Current; }
@@ -137,6 +139,7 @@ private:
 	int m_Player_Driver;
 	int m_Player_Rate;
 	int m_Player_Max_Channels;
+	int m_Player_Volume;
 
 	// crossfader
 	int m_Crossfader_Current;

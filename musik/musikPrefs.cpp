@@ -250,6 +250,7 @@ void CmusikPrefs::LoadPrefs()
 	m_Player_Device			= StringToInt( config->GetValue( "Player", "Device", "0" ) );
 	m_Player_Rate			= StringToInt( config->GetValue( "Player", "Rate", "44100" ) );
 	m_Player_Max_Channels	= StringToInt( config->GetValue( "Player", "Maximum Channels", "6" ) );
+	m_Player_Volume			= StringToInt( config->GetValue( "Player", "Volume", "200" ) );
 
 	// crossfader
 	m_Crossfader_Enabled	= StringToBool( config->GetValue( "Crossfader", "Enabled", "1" ) );
@@ -303,6 +304,7 @@ void CmusikPrefs::SavePrefs()
 	config->SetValue( "Player", "Device", IntToString( m_Player_Device ) );
 	config->SetValue( "Player", "Rate", IntToString( m_Player_Rate ) );
 	config->SetValue( "Player", "Maximum Channels", IntToString( m_Player_Max_Channels ) );
+	config->SetValue( "Player", "Volume", IntToString( m_Player_Volume ) );	
 
 	// crossfader
 	config->SetValue( "Crossfader", "Enabled", BoolToString( m_Crossfader_Enabled ) );

@@ -303,12 +303,16 @@ void CmusikTrackCtrl::SetPosFromMouse()
 		if ( pos.y >= rcClient.bottom && GetPos() != GetRangeMax() )
 		{
 			SetPos( GetRangeMax() );
+			m_LastPos = GetRangeMax();
+			OnPosChanged();
 			return;
 		}
 
 		else if ( pos.y <= rcClient.top && GetPos() != GetRangeMin() )
 		{
 			SetPos( GetRangeMin() );
+			m_LastPos = GetRangeMin();
+			OnPosChanged();
 			return;
 		}
 		
@@ -318,7 +322,14 @@ void CmusikTrackCtrl::SetPosFromMouse()
 			float fRatio = (float)nLoc / rcClient.Height();
 			float nPos = (float)fRatio * (float)GetRangeMax();
 
-			SetPos( GetRangeMax() - (int)nPos );
+			int nFinal = GetRangeMax() - (int)nPos;
+
+			if ( nFinal != m_LastPos )
+			{
+				SetPos( nFinal );
+				m_LastPos = nFinal;
+				OnPosChanged();
+			}
 			return;
 		}
 	}
@@ -329,12 +340,16 @@ void CmusikTrackCtrl::SetPosFromMouse()
 		if ( pos.x >= rcClient.right && GetPos() != GetRangeMax() )
 		{
 			SetPos( GetRangeMax() );
+			m_LastPos = GetRangeMax();
+			OnPosChanged();
 			return;
 		}
 
 		else if ( pos.x <= rcClient.left && GetPos() != GetRangeMin() )
 		{
 			SetPos( GetRangeMin() );
+			m_LastPos = GetRangeMin();
+			OnPosChanged();
 			return;
 		}
 
@@ -344,10 +359,25 @@ void CmusikTrackCtrl::SetPosFromMouse()
 			float fRatio = (float)nLoc / rcClient.Width();
 			float nPos = (float)fRatio * (float)GetRangeMax();
 
-			SetPos( GetRangeMax() - (int)nPos );
+			int nFinal = GetRangeMax() - (int)nPos;
+
+			if ( nFinal != m_LastPos )
+			{
+                SetPos( nFinal );
+				m_LastPos = nFinal;
+				OnPosChanged();
+			}
+
 			return;
 		}
 	}
+}
+
+///////////////////////////////////////////////////
+
+void CmusikTrackCtrl::OnPosChanged()
+{
+	TRACE0( "CmusikTrackCtrl::OnPosChanged()\n" );
 }
 
 ///////////////////////////////////////////////////
