@@ -17,7 +17,7 @@ ENDIF(CMAKE_WX_CXX_FLAGS)
 FIND_LIBRARY(OGG_LIBRARY NAMES ogg PATHS /usr/lib /usr/local/lib)
 
 # SQLite library
-FIND_LIBRARY(SQLITE_LIBRARY NAMES sqlite PATHS ./binlibs)
+FIND_LIBRARY(SQLITE_LIBRARY NAMES sqlite PATHS /usr/lib /usr/local/lib)
 
 # id3 library
 FIND_LIBRARY(ID3_LIBRARY NAMES id3 PATHS /usr/lib /usr/local/lib)
