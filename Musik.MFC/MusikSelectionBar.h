@@ -14,8 +14,10 @@ class CMusikSelectionBar : public baseCMusikSelectionBar
 //--- implementation							---//
 //-------------------------------------------------//
 public:
-	CMusikSelectionBar( CFrameWnd* parent, CMusikLibrary* library, int type );
+	CMusikSelectionBar( CFrameWnd* parent, CMusikLibrary* library, int type, int ctrl_id );
 	virtual ~CMusikSelectionBar();
+
+	int GetCtrlID(){ return m_wndChild->GetCtrlID(); }
 
 //-------------------------------------------------//
 //--- variables									---//

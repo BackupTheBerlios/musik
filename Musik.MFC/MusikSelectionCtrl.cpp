@@ -11,11 +11,12 @@
 // CMusikSelectionCtrl
 
 IMPLEMENT_DYNAMIC(CMusikSelectionCtrl, CMusikListCtrl)
-CMusikSelectionCtrl::CMusikSelectionCtrl( CFrameWnd* parent, CMusikLibrary* library, int type )
+CMusikSelectionCtrl::CMusikSelectionCtrl( CFrameWnd* parent, CMusikLibrary* library, int type, int ctrl_id )
 {
 	m_Library = library;
 	m_Type = type;
 	m_Parent = parent;
+	m_ID = ctrl_id;
 	HideScrollBars( LCSB_NCOVERRIDE, /*SB_HORZ*/ SB_BOTH );
 }
 

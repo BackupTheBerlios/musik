@@ -87,13 +87,10 @@ void CMusikPlaylistCtrl::OnNcPaint()
 
 void CMusikPlaylistCtrl::ResetColumns()
 {
-	CIntArray order = m_Prefs->GetPlaylistOrder();
-	CIntArray sizes = m_Prefs->GetPlaylistSizes();
-
-	for ( int i = 0; i < order.size(); i++ )
+	for ( int i = 0; i < m_Prefs->GetPlaylistColCount(); i++ )
 	{
-		InsertColumn( i, m_Library->GetSongField( order.at( i ) ) );
-		SetColumnWidth( i, sizes.at( i ) );
+		InsertColumn( i, m_Library->GetSongField( m_Prefs->GetPlaylistCol( i ) ) );
+		SetColumnWidth( i, m_Prefs->GetPlaylistColWidth( i ) );
 	}
 }
 

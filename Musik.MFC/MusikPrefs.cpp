@@ -110,7 +110,7 @@ inline string CIntArrayToString( const CIntArray &array )
 {
 	CString CRet;
 	char buffer[10];
-	for ( int i = 0; i < array.size(); i++ )
+	for ( size_t i = 0; i < array.size(); i++ )
 	{
 		CRet += itoa( array.at( i ), buffer, 10 );
 		if ( i != ( array.size() - 1 ) )

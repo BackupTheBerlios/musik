@@ -6,9 +6,9 @@
 #include "../Musik.Core/include/MusikLibrary.h"
 
 
-CMusikSelectionBar::CMusikSelectionBar( CFrameWnd* parent, CMusikLibrary* library, int type )
+CMusikSelectionBar::CMusikSelectionBar( CFrameWnd* parent, CMusikLibrary* library, int type, int ctrl_id )
 {
-	m_wndChild = new CMusikSelectionCtrl( parent, library, type );
+	m_wndChild = new CMusikSelectionCtrl( parent, library, type, ctrl_id );
 }
 
 CMusikSelectionBar::~CMusikSelectionBar()

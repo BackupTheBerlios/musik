@@ -27,7 +27,7 @@ public:
 	//-----------------------------------------------------//
 	//--- selection area								---//
 	//-----------------------------------------------------//
-	int		GetSelBoxCount()					{ return m_SelectionBox_Count; }
+	size_t	GetSelBoxCount()					{ return m_SelectionBox_Count; }
 
 	void	SetSelBoxCount( size_t n )			{ m_SelectionBox_Count = n; }
 
@@ -36,6 +36,9 @@ public:
 	//-----------------------------------------------------//
 	CIntArray	GetPlaylistOrder()				{ return m_Playlist_Order; }
 	CIntArray	GetPlaylistSizes()				{ return m_Playlist_Sizes; }
+	int			GetPlaylistCol( int n )			{ return m_Playlist_Order.at( n ); }
+	int			GetPlaylistColWidth( int n )	{ return m_Playlist_Sizes.at( n ); }
+	size_t		GetPlaylistColCount()			{ return m_Playlist_Order.size(); }
 	
 	void		SetPlaylistOrder( CIntArray n )	{ m_Playlist_Order = n; }	
 	void		SetPlaylistSizes( CIntArray n )	{ m_Playlist_Sizes = n; }

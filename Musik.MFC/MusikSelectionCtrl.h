@@ -12,14 +12,17 @@ class CMusikSelectionCtrl : public CMusikListCtrl
 	DECLARE_DYNAMIC(CMusikSelectionCtrl)
 
 public:
-	CMusikSelectionCtrl( CFrameWnd* parent, CMusikLibrary* library, int type );
+	CMusikSelectionCtrl( CFrameWnd* parent, CMusikLibrary* library, int type, int ctrl_id );
 	virtual ~CMusikSelectionCtrl();
+
+	int GetCtrlID(){ return m_ID; }
 
 protected:
 	CFrameWnd* m_Parent;
 	CMusikLibrary* m_Library;
 	CStdStringArray m_Items;
 	int m_Type;
+	int m_ID;
 
 	DECLARE_MESSAGE_MAP()
 

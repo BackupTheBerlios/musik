@@ -159,6 +159,12 @@
 					Name="MusikSourcesCtrl"
 					Filter="">
 					<File
+						RelativePath=".\MusikSourcesBar.cpp">
+					</File>
+					<File
+						RelativePath=".\MusikSourcesBar.h">
+					</File>
+					<File
 						RelativePath=".\MusikSourcesCtrl.cpp">
 					</File>
 					<File
@@ -174,10 +180,22 @@
 					<File
 						RelativePath=".\MusikPlaylistCtrl.h">
 					</File>
+					<File
+						RelativePath=".\MusikPlaylistView.cpp">
+					</File>
+					<File
+						RelativePath=".\MusikPlaylistView.h">
+					</File>
 				</Filter>
 				<Filter
 					Name="MusikNowPlayingCtrl"
 					Filter="">
+					<File
+						RelativePath=".\MusikNowPlayingBar.cpp">
+					</File>
+					<File
+						RelativePath=".\MusikNowPlayingBar.h">
+					</File>
 					<File
 						RelativePath=".\MusikNowPlayingCtrl.cpp">
 					</File>
@@ -188,6 +206,12 @@
 				<Filter
 					Name="MusikSelectionCtrl"
 					Filter="">
+					<File
+						RelativePath=".\MusikSelectionBar.cpp">
+					</File>
+					<File
+						RelativePath=".\MusikSelectionBar.h">
+					</File>
 					<File
 						RelativePath=".\MusikSelectionCtrl.cpp">
 					</File>
@@ -203,46 +227,6 @@
 					</File>
 					<File
 						RelativePath=".\MusikListCtrl.h">
-					</File>
-				</Filter>
-				<Filter
-					Name="MusikSourcesBar"
-					Filter="">
-					<File
-						RelativePath=".\MusikSourcesBar.cpp">
-					</File>
-					<File
-						RelativePath=".\MusikSourcesBar.h">
-					</File>
-				</Filter>
-				<Filter
-					Name="MusikPlaylistView"
-					Filter="">
-					<File
-						RelativePath=".\MusikPlaylistView.cpp">
-					</File>
-					<File
-						RelativePath=".\MusikPlaylistView.h">
-					</File>
-				</Filter>
-				<Filter
-					Name="MusikSelectionBar"
-					Filter="">
-					<File
-						RelativePath=".\MusikSelectionBar.cpp">
-					</File>
-					<File
-						RelativePath=".\MusikSelectionBar.h">
-					</File>
-				</Filter>
-				<Filter
-					Name="MusikNowPlayingBar"
-					Filter="">
-					<File
-						RelativePath=".\MusikNowPlayingBar.cpp">
-					</File>
-					<File
-						RelativePath=".\MusikNowPlayingBar.h">
 					</File>
 				</Filter>
 			</Filter>
