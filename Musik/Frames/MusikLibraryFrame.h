@@ -69,7 +69,7 @@ public:
 	void OnThreadStart			( wxCommandEvent& event );
 	void OnThreadEnd			( wxCommandEvent& event );
 	void OnThreadProg			( wxCommandEvent& event );
-	void OnFileScanThreadProg	( wxCommandEvent& event );
+	void OnThreadScanProg		( wxCommandEvent& event );
 	
 	//--- overrides ---//
 	virtual bool Show( bool show = true );
@@ -79,14 +79,16 @@ public:
 	void SetActiveThread		( wxThread* thread)	{ m_ActiveThread = thread;	}	
 	void SetProgressStr			( wxString s )		{ m_ProgressStr = s;		}
 
-	int  GetProgress			()	{ return m_Progress;		}
-	int  GetProgressType		()	{ return m_ProgressType;	}
+	size_t  GetProgress			()	{ return m_Progress;		}
+	size_t  GetProgressType		()	{ return m_ProgressType;	}
+	size_t	GetScanCount		()	{ return m_ScanCount;		}
 	wxThread* GetActiveThread	()	{ return m_ActiveThread;	}
 	wxString GetProgressStr		()	{ return m_ProgressStr;		}
 
-	void SetTotal				( int n ){ m_Total = n;		}
-	void SetListItem			( int n ){ m_ListItem = n;	}
-	void SetNew					( int n ){ m_New = n;		}
+	void SetTotal				( size_t n )	{ m_Total = n;		}
+	void SetListItem			( size_t n )	{ m_ListItem = n;	}
+	void SetNew					( size_t n )	{ m_New = n;		}
+	void SetScanCount			( size_t n )	{ m_ScanCount = n;	}
 
 	wxListCtrl		*lcPaths;
 	wxGauge			*gProgress;
@@ -123,9 +125,10 @@ private:
 
 	wxThread* m_ActiveThread;
 
-	int m_ListItem;
-	int m_Total;
-	int m_New;
+	size_t m_ListItem;
+	size_t m_Total;
+	size_t m_New;
+	size_t m_ScanCount;
 
 	bool m_FirstStart;
 	bool m_AutoStart;

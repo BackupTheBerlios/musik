@@ -13,6 +13,8 @@
 
 //--- For compilers that support precompilation, includes "wx/wx.h" ---//
 #include "wx/wxprec.h"
+
+//--- globals ---//
 #include "MusikGlobals.h"
 #include "MusikUtils.h"
 
@@ -21,14 +23,14 @@
 #include <id3/tag.h>
 
 //--- wx ---//
-#include <wx/filename.h>
-#include <wx/dir.h>
 #include <wx/textfile.h>
 #include <wx/file.h>
 #include <wx/filename.h>
-#include "Frames/MusikLibraryFrame.h"
 #include <wx/tokenzr.h>
-//--- class that will be used to search directories for media files only ---//
+#include <wx/dir.h>
+#include <wx/filename.h>
+
+//--- media traverser ---//
 class wxMusicTraverser : public wxDirTraverser
 {
 public:
@@ -41,17 +43,16 @@ public:
 		wxString ext = fn.GetExt();
 		ext.MakeLower();
 
-		if ( 
-			( ext == wxT("mp3") ) ||
-			( ext == wxT("ogg") ) /*||
-			( ( ext == wxT("mod") ) || ( ext == wxT("it") ) || ( ext == wxT("s3m") ) || ( ext == wxT("xm") ) ) ||
-			( ext == wxT("wma") ) ||
-			( ext == wxT("wav") ) ||
-			( ( ext == wxT("aiff") ) || ( ext == wxT("iff") ) )
-			*/
-			)
+		if ( ext == wxT( "mp3" ) || ext == wxT( "ogg" ) ) 
 		{
 			m_files.Add( filename );
+
+			if ( m_files.GetCount() % 100 == 0 )
+			{
+				wxCommandEvent UpdateScanProg( wxEVT_COMMAND_MENU_SELECTED, MUSIK_LIBRARY_THREAD_SCAN_PROG );
+				g_MusikLibraryFrame->SetScanCount( m_files.GetCount() );
+				wxPostEvent( g_MusikLibraryFrame, UpdateScanProg );
+			}
 		}
         
         return wxDIR_CONTINUE;
@@ -66,6 +67,7 @@ private:
 	wxArrayString& m_files;
 };
 
+//--- playlist traverser classes ---//
 class wxPlaylistTraverser : public wxDirTraverser
 {
 public:
@@ -94,6 +96,52 @@ public:
 private:
     wxArrayString& m_files;
 };
+
+
+wxArrayString GetMusicDirs( wxArrayString *aDirs )
+{
+	wxArrayString aFiles;
+	for ( int i = 0; i < (int)aDirs->GetCount(); i++ )
+	{
+		wxString sPath = aDirs->Item( i );
+		sPath.Replace( wxT( " " ), wxT( "" ), true );
+		if ( sPath != wxT( "" ) )
+		{
+			wxDir dir( aDirs->Item( i ) );
+			if ( dir.IsOpened() )
+			{
+				wxMusicTraverser traverser( aFiles );
+				dir.Traverse( traverser );
+
+				//-----------------------------------------//
+				//--- the traverser will post update	---//
+				//--- scan new events					---//
+				//-----------------------------------------//
+			}
+		}
+	}
+	return aFiles;
+}
+
+wxArrayString GetMusicDir( wxString* sDir )
+{
+	wxArrayString aFiles;
+	if ( *sDir != wxT( "" ) )
+	{
+		wxDir dir( *sDir );
+		if ( dir.IsOpened() )
+		{
+			wxMusicTraverser traverser( aFiles );
+			dir.Traverse( traverser );
+		}
+
+		//-----------------------------------------//
+		//--- the traverser will post update	---//
+		//--- scan new events					---//
+		//-----------------------------------------//
+	}
+	return aFiles;
+}
 
 //--- takes an input, delimited string and returns the value at position (nIndex) ---//
 wxString DelimitedInfoAt( wxString sStr, int nIndex )
@@ -215,44 +263,6 @@ int TimeToSec( wxString sTime )
 		nResult += StringToInt( aTime.Item( 0 ) );				//--- second ---//
 	}
 	return nResult;
-}
-
-//--- return all the musik supported files contained within an array of directories ---//
-wxArrayString GetMusicDirs( wxArrayString *aDirs )
-{
-	wxArrayString aFiles;
-	for ( int i = 0; i < (int)aDirs->GetCount(); i++ )
-	{
-		wxString sPath = aDirs->Item( i );
-		sPath.Replace( wxT( " " ), wxT( "" ), true );
-		if ( sPath != wxT( "" ) )
-		{
-			wxDir dir( aDirs->Item( i ) );
-			if ( dir.IsOpened() )
-			{
-				wxMusicTraverser traverser( aFiles );
-				dir.Traverse( traverser );
-			}
-		}
-	}
-	return aFiles;
-}
-
-wxArrayString GetMusicDir( wxString* sDir )
-{
-	wxArrayString aFiles;
-
-	if ( *sDir != wxT( "" ) )
-	{
-		wxDir dir( *sDir );
-		if ( dir.IsOpened() )
-		{
-			wxMusicTraverser traverser( aFiles );
-			dir.Traverse( traverser );
-		}
-	}
-
-	return aFiles;
 }
 
 //--- return all the playlist files in the playlist dir ---//

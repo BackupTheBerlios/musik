@@ -19,38 +19,40 @@
 	#include "wx/wx.h"
 #endif
 
-#include "wx/listctrl.h"
-class MusikLibraryFrame;
+#include <wx/listctrl.h>
+
 //------------------------------------------------------------------//
 //--- misc utility functions, see implementation for description ---//
 //------------------------------------------------------------------//
-wxString			DelimitedInfoAt		( wxString sStr, int nIndex );
-wxString			GetGenre			( wxString sGenre );
-int					GetGenreID			( wxString sGenre );
-wxArrayString		DelimitStr			( wxString sStr, wxString sDel, bool bRemoveDelimiter = true );
-wxArrayString		GetMusicDirs		( wxArrayString *aDirs );
-wxArrayString		GetMusicDir			( wxString* sDir );
-wxArrayString		GetPlaylistDir		();
-wxString			MStoStr				( int timems );
-int					TimeToSec			( wxString sTime );
-wxArrayString		FileToStringArray	( wxString sFilename );
-bool				FileExists			( wxString sName );
-int					MusikRound			( float x );
-int					FindStrInArray		( wxArrayString* array, wxString pattern );
-wxString			SanitizedString		( wxString str );
-void				wxListCtrlSelAll	( wxListCtrl* listctrl );
-void				wxListCtrlSelNone	( wxListCtrl* listctrl );
-wxString			GenTempFilename		( wxString filename, int nsize );
-wxString			ColourToString		( const wxColour& color );
-wxColour			StringToColour		( const wxString& string );
+wxString		DelimitedInfoAt		( wxString sStr, int nIndex );
+wxString		GetGenre			( wxString sGenre );
+int				GetGenreID			( wxString sGenre );
+wxArrayString	DelimitStr			( wxString sStr, wxString sDel, bool bRemoveDelimiter = true );
+wxArrayString	GetPlaylistDir		();
+wxString		MStoStr				( int timems );
+int				TimeToSec			( wxString sTime );
+wxArrayString	FileToStringArray	( wxString sFilename );
+bool			FileExists			( wxString sName );
+int				MusikRound			( float x );
+int				FindStrInArray		( wxArrayString* array, wxString pattern );
+wxString		SanitizedString		( wxString str );
+void			wxListCtrlSelAll	( wxListCtrl* listctrl );
+void			wxListCtrlSelNone	( wxListCtrl* listctrl );
+wxString		GenTempFilename		( wxString filename, int nsize );
+wxString		ColourToString		( const wxColour& color );
+wxColour		StringToColour		( const wxString& string );
 
-wxString			GetFramePlacement	( wxFrame* frame );
-bool				SetFramePlacement	( wxFrame* frame, wxString place );
+wxArrayString	GetMusicDirs	( wxArrayString *aDirs );
+wxArrayString	GetMusicDir		( wxString* sDir );
 
-void				SeedRandom			( unsigned long s );
-long				GetRandomNumber		();
+wxString		GetFramePlacement	( wxFrame* frame );
+bool			SetFramePlacement	( wxFrame* frame, wxString place );
+
+void			SeedRandom			( unsigned long s );
+long			GetRandomNumber		();
 
 #if 0
+
 //-------------------------//
 //--- unicode functions ---//
 //-------------------------//

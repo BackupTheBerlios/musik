@@ -20,12 +20,13 @@
 #endif 
 
 #include "wx/thread.h"
+#include <wx/dir.h>
+#include <wx/filename.h>
 
 //---------------------------------------------//
 //--- NOTE: use g_MusikLibraryFrame as the	---//
 //--- parent window.						---//
 //---------------------------------------------//
-
 class MusikUpdateLibThread : public wxThread
 {
 public:

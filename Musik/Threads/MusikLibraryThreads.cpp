@@ -228,3 +228,8 @@ void MusikPurgeLibThread::OnExit()
 	wxCommandEvent PurgeEndEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_FRAME_THREAD_END );	
 	wxPostEvent( g_MusikLibraryFrame, PurgeEndEvt );
 }
+
+//------------------------//
+//--- helper functions ---//
+//------------------------//
+

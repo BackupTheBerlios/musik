@@ -47,6 +47,7 @@ BEGIN_EVENT_TABLE(MusikLibraryFrame, wxFrame)
     EVT_MENU			( MUSIK_LIBRARY_THREAD_START,		MusikLibraryFrame::OnThreadStart		)
 	EVT_MENU			( MUSIK_LIBRARY_THREAD_END,			MusikLibraryFrame::OnThreadEnd			)
 	EVT_MENU			( MUSIK_LIBRARY_THREAD_PROG,		MusikLibraryFrame::OnThreadProg			)
+	EVT_MENU			( MUSIK_LIBRARY_THREAD_SCAN_PROG,	MusikLibraryFrame::OnThreadScanProg		)
 END_EVENT_TABLE()
 
 
@@ -587,3 +588,10 @@ void MusikLibraryFrame::OnThreadProg( wxCommandEvent& WXUNUSED(event) )
 	gProgress->SetValue( GetProgress() );
 }
 
+//-------------------------------------------------------------------//
+//--- got a scan prog event, update to show users x files scanned ---//
+//-------------------------------------------------------------------//
+void MusikLibraryFrame::OnThreadScanProg( wxCommandEvent& WXUNUSED(event) )
+{
+	SetTitle( _( "Scanning directory for audio files: " ) + IntTowxString( GetScanCount() ) );
+}
