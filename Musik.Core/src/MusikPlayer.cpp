@@ -365,7 +365,7 @@ void CMusikPlayer::CleanEqualizer()
 
 int CMusikPlayer::InitSound( int device, int driver, int rate, int channels, int mode )
 {
-	TRACE0( "Attempting to initialize FMOD... " );
+	TRACE0( "Attempting to initialize FMOD...\n" );
 
 	if ( mode == MUSIK_PLAYER_INIT_RESTART || mode == MUSIK_PLAYER_INIT_STOP )
 		StopSound();
