@@ -26,7 +26,7 @@ class CmusikNowPlayingBar : public baseCmusikNowPlayingBar
 public:
 
 	// construct and destruct
-	CmusikNowPlayingBar( CmusikPlayer* player, CmusikPrefs* prefs );
+	CmusikNowPlayingBar( CFrameWnd* parent, CmusikPlayer* player, CmusikPrefs* prefs );
 	virtual ~CmusikNowPlayingBar();
 
 	// get control
@@ -43,8 +43,6 @@ protected:
 
 	// macros
 	DECLARE_MESSAGE_MAP()
-public:
-
 };
 
 ///////////////////////////////////////////////////

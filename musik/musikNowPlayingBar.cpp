@@ -18,10 +18,10 @@ static char THIS_FILE[] = __FILE__;
 
 ///////////////////////////////////////////////////
 
-CmusikNowPlayingBar::CmusikNowPlayingBar( CmusikPlayer* player, CmusikPrefs* prefs )
+CmusikNowPlayingBar::CmusikNowPlayingBar( CFrameWnd* parent, CmusikPlayer* player, CmusikPrefs* prefs )
 	: CmusikDockBar( prefs )
 {
-	m_wndChild = new CmusikNowPlayingCtrl( player, prefs );
+	m_wndChild = new CmusikNowPlayingCtrl( parent, player, prefs );
 }
 
 ///////////////////////////////////////////////////

@@ -34,6 +34,18 @@ public:
 		m_Parent->PostMessage( WM_SONGSTOP, NULL );
 	}
 
+	virtual void OnPause()
+	{
+		int WM_SONGPAUSERESUME = RegisterWindowMessage( "SONGPAUSERESUME" );
+		m_Parent->PostMessage( WM_SONGPAUSERESUME, NULL );
+	}
+
+	virtual void OnResume()
+	{
+		int WM_SONGPAUSERESUME = RegisterWindowMessage( "SONGPAUSERESUME" );
+		m_Parent->PostMessage( WM_SONGPAUSERESUME, NULL );
+	}
+
 private:
 	CWnd* m_Parent;
 };

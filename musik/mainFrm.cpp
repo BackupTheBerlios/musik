@@ -75,9 +75,6 @@ int WM_BATCHADD_END			= RegisterWindowMessage( "BATCHADD_END" );
 
 int WM_PLAYERNEWPLAYLIST	= RegisterWindowMessage( "PLAYERNEWPLAYLIST" );
 
-int WM_SONGCHANGE			= RegisterWindowMessage( "SONGCHANGE" );
-int WM_SONGSTOP				= RegisterWindowMessage( "SONGSTOP" );
-
 int WM_DRAGSTART			= RegisterWindowMessage( "DRAGSTART" );
 int WM_DRAGEND				= RegisterWindowMessage( "DRAGEND" );
 
@@ -85,6 +82,24 @@ int WM_SOURCESLIBRARY		= RegisterWindowMessage( "SOURCESLIBRARY" );
 int WM_SOURCESNOWPLAYING	= RegisterWindowMessage( "SOURCESNOWPLAYING" );
 int WM_SOURCESSTDPLAYLIST	= RegisterWindowMessage( "SOURCESSTDPLAYLIST" );
 int WM_SOURCESDYNPLAYLIST	= RegisterWindowMessage( "SOURCESDYNDPLAYLIST" );
+
+// we get these ones from the player
+// via a CmusikFrmFunctor after a
+// certain operation as completed
+int WM_SONGCHANGE			= RegisterWindowMessage( "SONGCHANGE" );
+int WM_SONGSTOP				= RegisterWindowMessage( "SONGSTOP" );
+int WM_SONGPAUSE			= RegisterWindowMessage( "SONGPAUSERESUME" );
+
+// these will come from all over the UI,
+// such as the now playing control and 
+// task tray button. they are commands to
+// send the player.
+int WM_PLAYER_PLAYSEL		= RegisterWindowMessage( "PLAYER_PLAYSEL" );
+int WM_PLAYER_NEXT			= RegisterWindowMessage( "PLAYER_NEXT" );
+int WM_PLAYER_PREV			= RegisterWindowMessage( "PLAYER_PREV" );
+int WM_PLAYER_STOP			= RegisterWindowMessage( "PLAYER_STOP" );
+int WM_PLAYER_PAUSE			= RegisterWindowMessage( "PLAYER_PAUSE" );
+int WM_PLAYER_RESUME		= RegisterWindowMessage( "PLAYER_RESUME" );
 
 ///////////////////////////////////////////////////
 
@@ -113,6 +128,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_SELBOXUPDATE, OnUpdateSel )
 	ON_REGISTERED_MESSAGE( WM_SONGCHANGE, OnSongChange )
 	ON_REGISTERED_MESSAGE( WM_SONGSTOP, OnSongStop )
+	ON_REGISTERED_MESSAGE( WM_SONGPAUSE, OnSongPauseResume )
 	ON_REGISTERED_MESSAGE( WM_SOURCESLIBRARY, OnSourcesLibrary )
 	ON_REGISTERED_MESSAGE( WM_SOURCESNOWPLAYING, OnSourcesNowPlaying )
 	ON_REGISTERED_MESSAGE( WM_SOURCESSTDPLAYLIST, OnSourcesStdPlaylist )
@@ -123,6 +139,9 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_SELBOXRESET, OnSelBoxesReset )
 	ON_REGISTERED_MESSAGE( WM_BATCHADD_PROGRESS, OnBatchAddProgress )
 	ON_REGISTERED_MESSAGE( WM_BATCHADD_END, OnBatchAddEnd )
+	ON_REGISTERED_MESSAGE( WM_PLAYER_PLAYSEL, OnPlayerPlaySel )
+	ON_REGISTERED_MESSAGE( WM_PLAYER_PAUSE, OnPlayerPause )
+	ON_REGISTERED_MESSAGE( WM_PLAYER_RESUME, OnPlayerResume )
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -407,7 +426,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndView->GetCtrl()->UpdateV();
 
 	// now playing control
-	m_wndNowPlaying = new CmusikNowPlayingBar( m_Player, m_Prefs );
+	m_wndNowPlaying = new CmusikNowPlayingBar( this, m_Player, m_Prefs );
 	m_wndNowPlaying->Create( _T( "musik Now Playing" ), this, ID_NOWPLAYING );
 	DockControlBar( m_wndNowPlaying, AFX_IDW_DOCKBAR_BOTTOM );
 
@@ -678,10 +697,11 @@ LRESULT CMainFrame::OnSongChange( WPARAM wParam, LPARAM lParam )
 
 		SetWindowText( s );
 		
-		m_wndNowPlaying->GetCtrl()->UpdateInfo();
 		m_wndView->GetCtrl()->RedrawWindow();
 
 		m_wndNowPlaying->GetCtrl()->GetTimeCtrl()->OnNewSong();
+		m_wndNowPlaying->GetCtrl()->UpdateInfo();
+		m_wndNowPlaying->GetCtrl()->UpdateButtonStates();
 	}
 	else
 		SetWindowText( MUSIK_VERSION_STR );	
@@ -694,6 +714,17 @@ LRESULT CMainFrame::OnSongChange( WPARAM wParam, LPARAM lParam )
 LRESULT CMainFrame::OnSongStop( WPARAM wParam, LPARAM lParam )
 {
 	TRACE0( "Song stop signal caught\n" );
+
+	return 0L;
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CMainFrame::OnSongPauseResume( WPARAM wParam, LPARAM lParam )
+{
+	TRACE0( "Pause song signal caught\n" );
+
+	m_wndNowPlaying->GetCtrl()->UpdateButtonStates();
 
 	return 0L;
 }
@@ -1061,6 +1092,41 @@ void CMainFrame::OnViewPlaylistinformation()
 	m_wndView->GetClientRect( &lpRect );
 	m_wndView->OnSize( NULL, lpRect.Width(), lpRect.Height() );
 	RedrawWindow();
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CMainFrame::OnPlayerPlaySel( WPARAM wParam, LPARAM lParam )
+{
+	// player is paused, so resume...
+	if ( m_Player->IsPlaying() && m_Player->IsPaused() )
+		m_Player->Resume();
+	
+	// player is not paused, so trigger the playlist
+	// to activate the current item, which will
+	// start playback...
+	else
+		m_wndView->GetCtrl()->PlayItem();
+
+	return 0L;
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CMainFrame::OnPlayerPause( WPARAM wParam, LPARAM lParam )
+{
+	m_Player->Pause();
+
+	return 0L;
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CMainFrame::OnPlayerResume( WPARAM wParam, LPARAM lParam )
+{
+	m_Player->Resume();
+
+	return 0L;
 }
 
 ///////////////////////////////////////////////////

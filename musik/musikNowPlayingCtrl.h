@@ -27,7 +27,7 @@ class CmusikNowPlayingCtrl : public CWnd
 public:
 
 	// construct and destruct
-	CmusikNowPlayingCtrl( CmusikPlayer* player, CmusikPrefs* prefs );
+	CmusikNowPlayingCtrl( CFrameWnd* parent, CmusikPlayer* player, CmusikPrefs* prefs );
 	virtual ~CmusikNowPlayingCtrl();
 
 	// getting children
@@ -37,8 +37,12 @@ public:
 	// layout and update
 	void UpdateInfo( bool redraw = true );
 	void RescaleInfo();
+	void UpdateButtonStates();
 
 protected:
+
+	// pointer to the main dialog
+	CFrameWnd* m_MainWnd;
 
 	// message maps
 	afx_msg void OnPaint();

@@ -152,6 +152,7 @@ protected:
 	afx_msg LRESULT OnUpdateSel( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSongChange( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSongStop( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnSongPauseResume( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSourcesLibrary( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSourcesNowPlaying( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSourcesStdPlaylist( WPARAM wParam, LPARAM lParam );
@@ -162,6 +163,9 @@ protected:
 	afx_msg LRESULT OnPlayerNewPlaylist( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnBatchAddProgress( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnBatchAddEnd( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnPlayerPlaySel( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnPlayerPause( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnPlayerResume( WPARAM wParam, LPARAM lParam );
 
 	// mfc message maps
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);

@@ -538,11 +538,17 @@ void CmusikPlaylistCtrl::SetPlaylist( CmusikPlaylist* playlist, int m_Type )
 
 ///////////////////////////////////////////////////
 
-void CmusikPlaylistCtrl::OnLvnItemActivate(NMHDR *pNMHDR, LRESULT *pResult)
+void CmusikPlaylistCtrl::PlayItem( int n )
 {
-	LPNMITEMACTIVATE pNMIA = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
-	*pResult = NULL;
-	
+	if ( !m_Playlist )
+		return;
+
+	if ( n == -1 )
+	{
+		POSITION pos = GetFirstSelectedItemPosition();
+		n = GetNextSelectedItem ( pos );
+	}	
+
 	// give the current playlist to the player,
 	// unless the player already owns it.
 	if ( m_Changed )
@@ -578,7 +584,20 @@ void CmusikPlaylistCtrl::OnLvnItemActivate(NMHDR *pNMHDR, LRESULT *pResult)
 
 	// play the song in the (new) playlist at
 	// the acitvated item.
-	m_Player->Play( pNMIA->iItem, MUSIK_CROSSFADER_NEW_SONG );
+	if ( n > -1 )
+		m_Player->Play( n, MUSIK_CROSSFADER_NEW_SONG );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::OnLvnItemActivate(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMITEMACTIVATE pNMIA = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+	*pResult = NULL;
+
+	int item = pNMIA->iItem;
+	
+	PlayItem( item );
 }
 
 ///////////////////////////////////////////////////

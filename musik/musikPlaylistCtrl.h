@@ -54,6 +54,10 @@ public:
 	// return false if non standard playlist
 	bool SavePlaylist();
 
+	// used by the main UI to trigger an "item activate"
+	// event..
+	void PlayItem( int n = -1 );
+
 protected:
 
 	// is dnd active

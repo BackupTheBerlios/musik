@@ -35,8 +35,8 @@ int CmusikSelectionBar::OnCreate( LPCREATESTRUCT lpCreateStruct )
 	EnableDocking( CBRS_ALIGN_ANY );
 
 	// child
-	long dwStyle = WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_OWNERDATA | LVS_NOCOLUMNHEADER;
-	long dwStyleEx =  LVS_EX_FULLROWSELECT;
+	long dwStyle = WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_OWNERDATA | LVS_NOCOLUMNHEADER | LVS_SHOWSELALWAYS;
+	long dwStyleEx = LVS_EX_FULLROWSELECT;
 
 	if ( !m_wndChild->Create( dwStyle, CRect( 0, 0, 0, 0), this, 123 ) )
 		return -1;

@@ -65,7 +65,7 @@ int CmusikPlaylistView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_DropTarget->Register( this );
 
 	// child
-	long dwStyle = WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_OWNERDATA | WS_VSCROLL | WS_HSCROLL;
+	long dwStyle = WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_OWNERDATA | WS_VSCROLL | WS_HSCROLL | LVS_SHOWSELALWAYS;
 	long dwStyleEx = LVS_EX_FULLROWSELECT | LVS_EX_HEADERDRAGDROP;
 
 	m_Playlist->Create( dwStyle, CRect( 0, 0, 0, 0 ), this, 123 );

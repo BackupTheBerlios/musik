@@ -20,10 +20,11 @@ IMPLEMENT_DYNAMIC(CmusikNowPlayingCtrl, CWnd)
 
 ///////////////////////////////////////////////////
 
-CmusikNowPlayingCtrl::CmusikNowPlayingCtrl( CmusikPlayer* player, CmusikPrefs* prefs )
+CmusikNowPlayingCtrl::CmusikNowPlayingCtrl( CFrameWnd* parent, CmusikPlayer* player, CmusikPrefs* prefs )
 {
 	m_Player = player;
 	m_Prefs = prefs;
+	m_MainWnd = parent;
 }
 
 ///////////////////////////////////////////////////
@@ -125,6 +126,16 @@ void CmusikNowPlayingCtrl::UpdateInfo( bool refresh )
 
 ///////////////////////////////////////////////////
 
+void CmusikNowPlayingCtrl::UpdateButtonStates()
+{
+	if ( m_Player->IsPlaying() && m_Player->IsPaused() )
+		m_Play->SetWindowText( "|>" );
+	else 
+		m_Play->SetWindowText( "||" );
+}
+
+///////////////////////////////////////////////////
+
 void CmusikNowPlayingCtrl::OnSize(UINT nType, int cx, int cy)
 {
 	RescaleInfo();
@@ -176,16 +187,42 @@ BOOL CmusikNowPlayingCtrl::OnEraseBkgnd(CDC* pDC)
 
 ///////////////////////////////////////////////////
 
+// send the play command to the main UI, it will
+// translate messages and (hopefully) send us
+// an event back so we know it started..
+
 void CmusikNowPlayingCtrl::OnBtnPlay()
 {
-	MessageBox( "Play" );
+	// if it's not playing, play a song
+	if ( !m_Player->IsPlaying() )
+	{
+		int WM_PLAYER_PLAYSEL = RegisterWindowMessage( "PLAYER_PLAYSEL" );
+		m_MainWnd->SendMessage( WM_PLAYER_PLAYSEL );
+	}
+
+	else if ( m_Player->IsPlaying() )
+	{
+		// if it is playing, pause...
+		if ( !m_Player->IsPaused() )
+		{
+			int WM_PLAYER_PAUSE	= RegisterWindowMessage( "PLAYER_PAUSE" );
+			m_MainWnd->SendMessage( WM_PLAYER_PAUSE );
+		}
+
+		// is paused, resume
+		else
+		{
+			int WM_PLAYER_RESUME = RegisterWindowMessage( "PLAYER_RESUME" );
+			m_MainWnd->SendMessage( WM_PLAYER_RESUME );
+		}
+	}
 }
 
 ///////////////////////////////////////////////////
 
 void CmusikNowPlayingCtrl::OnBtnPrev()
 {
-	MessageBox( "Prev" );
+
 }
 
 ///////////////////////////////////////////////////
