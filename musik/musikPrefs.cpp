@@ -194,41 +194,6 @@ inline string BoolToString( const bool val )
 
 ///////////////////////////////////////////////////
 
-inline CmusikCrossfader StringToCrossfader( const string& str )
-{
-	CmusikCrossfader ret;
-	CString CStr = str.c_str();
-
-	int pos = 0;
-
-	double new_song		= atof( CStr.Tokenize( ",", pos ) );
-	double pause_resume	= atof( CStr.Tokenize( ",", pos ) );
-	double seek			= atof( CStr.Tokenize( ",", pos ) );
-	double stop			= atof( CStr.Tokenize( ",", pos ) );
-	double exit			= atof( CStr.Tokenize( ",", pos ) );
-
-	ret.Set( (float)new_song, (float)pause_resume, (float)seek, (float)stop, (float)exit );
-
-	return ret;
-}
-
-///////////////////////////////////////////////////
-
-inline string CrossfaderToString( CmusikCrossfader& fader )
-{
-	CStdString sRet;
-	sRet.Format( _T( "%f, %f, %f, %f, %f" ), 
-		fader.GetDuration( MUSIK_CROSSFADER_NEW_SONG ),
-		fader.GetDuration( MUSIK_CROSSFADER_PAUSE_RESUME ),
-		fader.GetDuration( MUSIK_CROSSFADER_SEEK ),
-		fader.GetDuration( MUSIK_CROSSFADER_STOP ),
-		fader.GetDuration( MUSIK_CROSSFADER_EXIT ) );
-
-	return sRet.c_str();
-}
-
-///////////////////////////////////////////////////
-
 CmusikPrefs::CmusikPrefs( CString filename )
 {
 	config = new CIniFile( filename.GetBuffer() );
@@ -288,8 +253,7 @@ void CmusikPrefs::LoadPrefs()
 
 	// crossfader
 	m_Crossfader_Enabled	= StringToBool( config->GetValue( "Crossfader", "Enabled", "1" ) );
-	m_Crossfader_Current	= config->GetValue( "Crossfader", "Set Name", "Default" );
-	m_Crossfader_Default	= StringToCrossfader( config->GetValue( "Crossfader", "Values", "2.0,0.5,1.0,3.0" ) );
+	m_Crossfader_Current	= StringToInt( config->GetValue( "Crossfader", "Set Name", "-1" ) );
 
 	// dialog colors
 	MUSIK_COLOR_ACTIVECAPTION		= StringToCOLORREF( config->GetValue( "Dialog Colors", "Active Caption", "255,0,255" ) );
@@ -338,8 +302,7 @@ void CmusikPrefs::SavePrefs()
 
 	// crossfader
 	config->SetValue( "Crossfader", "Enabled", BoolToString( m_Crossfader_Enabled ) );
-	config->SetValue( "Crossfader", "Set Name", m_Crossfader_Current );	
-	config->SetValue( "Crossfader", "Values", CrossfaderToString( m_Crossfader_Default ) );
+	config->SetValue( "Crossfader", "Set Name", IntToString( m_Crossfader_Current ) );	
 
 	// dialog colors
 	config->SetValue( "Dialog Colors", "Active Caption", COLORREFToString( MUSIK_COLOR_ACTIVECAPTION ) );

@@ -81,8 +81,7 @@ public:
 	void		SetPlayerMaxChannels				( int n )			{ m_Player_Max_Channels = n; }
 
 	// default crossfader get
-	CmusikCrossfader GetDefaultCrossfader			()					{ return m_Crossfader_Default; }
-	CStdString GetCurrCrossfader					()					{ return m_Crossfader_Current; }
+	int  GetCrossfader								()					{ return m_Crossfader_Current; }
 	bool IsCrossfaderEnabled						()					{ return m_Crossfader_Enabled; }
 
 	COLORREF MUSIK_COLOR_ACTIVECAPTION;
@@ -128,8 +127,7 @@ private:
 	int m_Player_Max_Channels;
 
 	// crossfader
-	CmusikCrossfader m_Crossfader_Default;
-	CStdString m_Crossfader_Current;
+	int m_Crossfader_Current;
 	bool m_Crossfader_Enabled;
 
 	// theme aware stuff

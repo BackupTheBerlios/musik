@@ -49,6 +49,7 @@
 #include "../musikCore/include/musikPlayer.h"
 #include "../musikCore/include/musikFilename.h"
 #include "../musikCore/include/musikBatchAdd.h"
+#include "../musikCore/include/musikCrossfader.h"
 
 #include <io.h>
 #include <Direct.h>
@@ -187,8 +188,19 @@ void CMainFrame::Initmusik()
 	m_Player		= new CmusikPlayer( m_NewSong, m_Library );
 	m_Player->InitSound( m_Prefs->GetPlayerDevice(), m_Prefs->GetPlayerDriver(), m_Prefs->GetPlayerRate(), m_Prefs->GetPlayerMaxChannels() );
 	
+
 	if ( m_Prefs->IsCrossfaderEnabled() )
-		m_Player->SetCrossfader( m_Prefs->GetDefaultCrossfader() );
+	{
+		int nFader = m_Prefs->GetCrossfader();
+
+		if ( nFader == -1 )
+		{
+			CmusikCrossfader fade;
+			fade.Set( 2.0, 0.5, 0.2, 1.0, 3.0 );
+
+			m_Player->SetCrossfader( fade );
+		}
+	}
 }
 
 ///////////////////////////////////////////////////
