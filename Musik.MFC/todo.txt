@@ -1,0 +1,11 @@
+Musik.MFC Todo list:
+
+1. Time seek bar
+2. Playback buttons
+3. Preferences Dialog
+4. Edit Tag Dialog
+5. Dynamic Playlist Dialog
+6. Selection Box "edit in place"
+7. Sources Box "edit in place"
+8. Jukebox playlist type
+9. Drag files into existing playlist

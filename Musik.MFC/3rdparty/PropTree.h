@@ -52,7 +52,6 @@ typedef BOOL (CALLBACK* ENUMPROPITEMPROC)(CPropTree*, CPropTreeItem*, LPARAM);
 
 // CPropTree HitTest return codes
 #define HTPROPFIRST					50
-
 #define HTLABEL						(HTPROPFIRST + 0)
 #define HTEXPAND					(HTPROPFIRST + 2)
 #define HTATTRIBUTE					(HTPROPFIRST + 3)

@@ -144,7 +144,13 @@ void CMusikSourcesCtrl::OnDropFiles(HDROP hDropInfo)
 
 	DragFinish( hDropInfo );
 
-	m_Library->CreateStdPlaylist( "New Playlist 1", files );
+	// insert into library
+	CStdString playlist_str;
+	playlist_str.Format( _T( "New Playlist %d" ), m_StdPlaylists.size() );
+	m_Library->CreateStdPlaylist( playlist_str.c_str(), files );
+
+	// show
+	LoadStdPlaylists();
 
 	CPropTree::OnDropFiles(hDropInfo);
 }
