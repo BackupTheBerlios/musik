@@ -1140,7 +1140,7 @@ LRESULT CmusikSourcesCtrl::OnEditChange( WPARAM wParam, LPARAM lParam )
 		CString curr_query;
 		m_QuickSearchCtrl.GetWindowText( curr_query );
 
-		if ( curr_query.GetLength() >= 4 || curr_query.Left( 1 ) == "!" )
+		if ( curr_query.GetLength() >= 2 || curr_query.Left( 1 ) == "!" )
 		{
 			if ( curr_query.Left( 1 ) == "!" )
 				curr_query = curr_query.Right( curr_query.GetLength() - 1 );
