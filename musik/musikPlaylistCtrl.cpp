@@ -18,6 +18,7 @@
 #include "../musikCore/include/musikBatchAdd.h"
 
 #include "MEMDC.H"
+#include ".\musikplaylistctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -46,6 +47,7 @@ BEGIN_MESSAGE_MAP(CmusikPlaylistCtrl, CmusikListCtrl)
 	// custom messages
 	ON_REGISTERED_MESSAGE( WM_BATCHADD_PROGRESS_PLAYLIST, OnBatchAddProgress )
 	ON_REGISTERED_MESSAGE( WM_BATCHADD_END_PLAYLIST, OnBatchAddEnd )
+	ON_NOTIFY_REFLECT(LVN_MARQUEEBEGIN, OnLvnMarqueeBegin)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -833,3 +835,9 @@ LRESULT CmusikPlaylistCtrl::OnBatchAddEnd( WPARAM wParam, LPARAM lParam )
 }
 
 ///////////////////////////////////////////////////
+void CmusikPlaylistCtrl::OnLvnMarqueeBegin(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
+	// TODO: Add your control notification handler code here
+	*pResult = 0;
+}

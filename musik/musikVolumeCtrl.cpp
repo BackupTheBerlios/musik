@@ -40,6 +40,8 @@ int CmusikVolumeCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if ( m_Prefs )
 		SetPos( m_Prefs->GetPlayerVolume() );
 
+	
+
 	return 0;
 }
 
@@ -48,10 +50,10 @@ int CmusikVolumeCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 void CmusikVolumeCtrl::OnPosChanged()
 {
 	if ( m_Player )
-		m_Player->SetVolume( m_Player->GetCurrChannel(), GetPos() );
+		m_Player->SetVolume( m_Player->GetCurrChannel(), 255 - GetPos() );
 
 	if ( m_Prefs )
-		m_Prefs->SetPlayerVolume( GetPos() );
+		m_Prefs->SetPlayerVolume( 255 - GetPos() );
 }
 
 ///////////////////////////////////////////////////

@@ -82,7 +82,7 @@ int CmusikNowPlayingCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_Volume = new CmusikVolumeCtrl( m_Prefs, m_Player );
 	
-	if ( !m_Volume->Create( TBS_HORZ | TBS_NOTICKS | WS_CHILD | WS_VISIBLE, CRect( 50, 50, 100, 200 ), this, 123 ) )
+	if ( !m_Volume->Create( TBS_VERT | TBS_NOTICKS | WS_CHILD | WS_VISIBLE, CRect( 50, 50, 100, 200 ), this, 123 ) )
 		return -1;
 
 	GetDC()->SetBkColor( GetSysColor( COLOR_BTNHILIGHT ) );
@@ -125,11 +125,14 @@ void CmusikNowPlayingCtrl::RescaleInfo()
 	m_Info1->MoveWindow( lpRect );
 	m_Info1->Layout();
 
-	lpRect = CRect( CPoint( 0, m_Info1->GetHeight() ), m_Info2->GetSize() );
+	lpRect = CRect( CPoint( 0, m_Info1->GetHeight() + 2 ), m_Info2->GetSize() );
 	m_Info2->MoveWindow( lpRect );
 	m_Info2->Layout();
 
-	m_Volume->MoveWindow( CRect( 50, 50, 100, 66 ) );
+	CRect rcClient;
+	GetClientRect( &rcClient );
+	lpRect = CRect( CPoint( rcClient.right - 16, rcClient.top ), CSize( 16, rcClient.bottom ) );
+	m_Volume->MoveWindow( lpRect );
 }
 
 ///////////////////////////////////////////////////

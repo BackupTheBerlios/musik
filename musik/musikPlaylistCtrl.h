@@ -126,6 +126,8 @@ private:
 	// batch add files thread
 	CmusikBatchAdd* m_BatchAddThr;
 	CmusikBatchAddFunctor* m_BatchAddFnct;
+public:
+	afx_msg void OnLvnMarqueeBegin(NMHDR *pNMHDR, LRESULT *pResult);
 };
 
 ///////////////////////////////////////////////////
