@@ -43,7 +43,7 @@
 
 #include "stdafx.h"
 #include "../include/musikBatchRetag.h"
-#include "../include/musikMP3Info.h"
+#include "../include/musikMp3Info.h"
 #include "../include/musikOggInfo.h"
 
 ///////////////////////////////////////////////////

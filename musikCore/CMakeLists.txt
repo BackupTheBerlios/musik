@@ -24,7 +24,7 @@ ENDIF(CMAKE_WX_CXX_FLAGS)
 
 FIND_LIBRARY(SQLITE_LIBRARY NAMES sqlite PATHS /usr/lib /usr/local/lib)
 FIND_LIBRARY(FMOD_LIBRARY NAMES fmod PATHS /usr/lib /usr/local/lib)
-FIND_LIBRARY(ACE_LIBRARY NAMES ACE PATHS /usr/lib /usr/local/lib)
+FIND_LIBRARY(OPENTHREADS_LIBRARY NAMES OpenThreads PATHS /usr/lib /usr/local/lib)
 FIND_LIBRARY(ID3_LIBRARY NAMES id3 PATHS /usr/lib /usr/local/lib)
 FIND_LIBRARY(VORBIS_LIBRARY NAMES vorbis PATHS /usr/lib /usr/local/lib)
 FIND_LIBRARY(OGG_LIBRARY NAMES ogg PATHS /usr/lib /usr/local/lib)
@@ -38,14 +38,22 @@ FIND_LIBRARY(OGG_LIBRARY NAMES ogg PATHS /usr/lib /usr/local/lib)
 ADD_LIBRARY( musikCore
 	${musikCore_SOURCE_DIR}/src/Equ
 	${musikCore_SOURCE_DIR}/src/Fftsg_fl
+	${musikCore_SOURCE_DIR}/src/musikBatchAdd
+	${musikCore_SOURCE_DIR}/src/musikBatchRetag
+	${musikCore_SOURCE_DIR}/src/musikCrossfader
+	${musikCore_SOURCE_DIR}/src/musikDir
+	${musikCore_SOURCE_DIR}/src/musikDynDspInfo
+	${musikCore_SOURCE_DIR}/src/musikEQSettings
 	${musikCore_SOURCE_DIR}/src/musikEqualizer
 	${musikCore_SOURCE_DIR}/src/musikFilename
+	${musikCore_SOURCE_DIR}/src/musikFunctor
 	${musikCore_SOURCE_DIR}/src/musikLibrary
+	${musikCore_SOURCE_DIR}/src/musikMp3Info
+	${musikCore_SOURCE_DIR}/src/musikOggInfo
 	${musikCore_SOURCE_DIR}/src/musikPlayer
 	${musikCore_SOURCE_DIR}/src/musikPlaylist
-	${musikCore_SOURCE_DIR}/src/musikOggInfo	
-	${musikCore_SOURCE_DIR}/src/musikMp3Info
-	${musikCore_SOURCE_DIR}/src/musikDir
+	${musikCore_SOURCE_DIR}/src/musikRemoveOld
+	${musikCore_SOURCE_DIR}/src/musikTask
 	${musikCore_SOURCE_DIR}/src/vcedit
 	)
 
@@ -58,7 +66,7 @@ ADD_LIBRARY( musikCore
 TARGET_LINK_LIBRARIES(musikCore
 	${SQLITE_LIBRARY}
 	${FMOD_LIBRARY}
-	${ACE_LIBRARY}
+	${OPENTHREADS_LIBRARY}
 	${ID3_LIBRARY}
 	${VORBIS_LIBRARY}
 	)

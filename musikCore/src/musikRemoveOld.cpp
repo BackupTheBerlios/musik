@@ -122,8 +122,6 @@ void CmusikRemoveOldTask::run()
 	CmusikStringArray all_files;
 	m_Params->m_Library->GetAllDistinct( MUSIK_LIBRARY_TYPE_FILENAME, all_files, false );
 
-	bool verify_failed = false;
-
 	// wait until previous transaction has finished
 	while ( m_Params->m_Library->GetOpenTransactions() )
 		Sleep( 500 );
