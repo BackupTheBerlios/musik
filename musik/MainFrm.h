@@ -192,9 +192,8 @@ protected:
 	afx_msg void OnUpdateAudioEqualizerEnabled(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateAudioCrossfaderEnabled(CCmdUI *pCmdUI);
 	afx_msg void OnAudioCrossfaderEnabled();
-
-	// updating ui
-	void OnUpdateMainMenu( CCmdUI* pCmd );
+	afx_msg void OnUpdateViewPlaylistinformation(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateFileSaveplaylist(CCmdUI *pCmdUI);
 
 	// list of all threads running
 	CmusikThreadPtrArray m_Threads;

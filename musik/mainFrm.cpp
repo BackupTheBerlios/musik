@@ -127,13 +127,13 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_COMMAND(ID_AUDIO_CROSSFADER_ENABLED, OnAudioCrossfaderEnabled)
 
 	// update ui
-	ON_UPDATE_COMMAND_UI(ID_FILE_SAVEPLAYLIST,OnUpdateMainMenu)
-	ON_UPDATE_COMMAND_UI(ID_VIEW_PLAYLISTINFORMATION,OnUpdateMainMenu)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SOURCES, OnUpdateViewSources)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SELECTIONBOXES, OnUpdateViewSelectionboxes)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_NOWPLAYING, OnUpdateViewNowplaying)
 	ON_UPDATE_COMMAND_UI(ID_AUDIO_EQUALIZER_ENABLED, OnUpdateAudioEqualizerEnabled)
 	ON_UPDATE_COMMAND_UI(ID_AUDIO_CROSSFADER_ENABLED, OnUpdateAudioCrossfaderEnabled)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_PLAYLISTINFORMATION, OnUpdateViewPlaylistinformation)
+	ON_UPDATE_COMMAND_UI(ID_FILE_SAVEPLAYLIST, OnUpdateFileSaveplaylist)
 
 	// custom message maps
 	ON_REGISTERED_MESSAGE( WM_SELBOXUPDATE, OnUpdateSel )
@@ -1167,36 +1167,6 @@ void CMainFrame::OnFileSaveplaylist()
 
 ///////////////////////////////////////////////////
 
-void CMainFrame::OnUpdateMainMenu( CCmdUI* pCmd )
-{
-	if ( pCmd->m_nID == ID_FILE_SAVEPLAYLIST )
-		pCmd->Enable( m_wndView->GetCtrl()->PlaylistNeedsSave() );
-
-	else if ( pCmd->m_nID == ID_VIEW_PLAYLISTINFORMATION )
-		pCmd->SetCheck( m_Prefs->PlaylistInfoVisible() );
-}
-
-///////////////////////////////////////////////////
-
-
-void CMainFrame::OnViewPlaylistinformation()
-{
-	if ( m_Prefs->PlaylistInfoVisible() )
-		m_Prefs->SetPlaylistInfoVisible( false );
-	else
-		m_Prefs->SetPlaylistInfoVisible( true );
-
-	// send a "dummy" size event to the
-	// window, so it re-creates or removes
-	// the now playing window.
-	CRect lpRect;
-	m_wndView->GetClientRect( &lpRect );
-	m_wndView->OnSize( NULL, lpRect.Width(), lpRect.Height() );
-	RedrawWindow();
-}
-
-///////////////////////////////////////////////////
-
 LRESULT CMainFrame::OnPlayerPlaySel( WPARAM wParam, LPARAM lParam )
 {
 	// player is paused, so resume...
@@ -1348,6 +1318,38 @@ void CMainFrame::OnAudioCrossfaderEnabled()
 		m_Player->EnableCrossfader( true );
 		m_Player->SetCrossfader( fade );
 	}
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnViewPlaylistinformation()
+{
+	if ( m_Prefs->PlaylistInfoVisible() )
+		m_Prefs->SetPlaylistInfoVisible( false );
+	else
+		m_Prefs->SetPlaylistInfoVisible( true );
+
+	// send a "dummy" size event to the
+	// window, so it re-creates or removes
+	// the now playing window.
+	CRect lpRect;
+	m_wndView->GetClientRect( &lpRect );
+	m_wndView->OnSize( NULL, lpRect.Width(), lpRect.Height() );
+	RedrawWindow();
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnUpdateViewPlaylistinformation(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck( m_Prefs->PlaylistInfoVisible() );
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnUpdateFileSaveplaylist(CCmdUI *pCmdUI)
+{
+	pCmdUI->Enable( m_wndView->GetCtrl()->PlaylistNeedsSave() );
 }
 
 ///////////////////////////////////////////////////

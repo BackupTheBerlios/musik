@@ -78,30 +78,31 @@ IDR_MAINFRAME MENU
 BEGIN
     POPUP "&File"
     BEGIN
-        POPUP "Open"
+        POPUP "&Open"
         BEGIN
-            MENUITEM "Files",                       ID_OPEN_FILES
-            MENUITEM "Directory",                   ID_OPEN_DIRECTORY
+            MENUITEM "F&iles\tCtrl+O",              ID_OPEN_FILES
+            MENUITEM "&Directory\tCtrl+D",          ID_OPEN_DIRECTORY
         END
         MENUITEM SEPARATOR
-        MENUITEM "Save Playlist",               ID_FILE_SAVEPLAYLIST
+        MENUITEM "&Save Playlist\tCtrl+S",      ID_FILE_SAVEPLAYLIST
         MENUITEM SEPARATOR
-        MENUITEM "Manage Directories",          ID_FILE_MANAGEDIRECTORIES
+        MENUITEM "&Manage Directories",         ID_FILE_MANAGEDIRECTORIES
         MENUITEM "&Preferences\tCtrl+P",        ID_FILE_PREFERENCES
         MENUITEM SEPARATOR
         MENUITEM "E&xit",                       ID_APP_EXIT
     END
-    POPUP "View"
+    POPUP "&View"
     BEGIN
-        MENUITEM "Sources",                     ID_VIEW_SOURCES
-        MENUITEM "Selection Boxes",             ID_VIEW_SELECTIONBOXES
-        MENUITEM "Playlist Information",        ID_VIEW_PLAYLISTINFORMATION
-        MENUITEM "Now Playing",                 ID_VIEW_NOWPLAYING
+        MENUITEM "&Sources\tCtrl+Shift+S",      ID_VIEW_SOURCES
+        MENUITEM "Selection &Boxes\tCtrl+Shift+B", ID_VIEW_SELECTIONBOXES
+        MENUITEM "Playlist &Information\tCtrl+Shift+I", 
+                                                ID_VIEW_PLAYLISTINFORMATION
+        MENUITEM "&Now Playing\tCtrl+Shift+N",  ID_VIEW_NOWPLAYING
         MENUITEM SEPARATOR
         MENUITEM "Crossfader",                  ID_VIEW_CROSSFADER
         MENUITEM "Equalizer",                   ID_VIEW_EQUALIZER
     END
-    POPUP "Audio"
+    POPUP "&Audio"
     BEGIN
         POPUP "Playback Mode"
         BEGIN
@@ -140,9 +141,20 @@ BEGIN
     VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT, NOINVERT
     VK_BACK,        ID_EDIT_UNDO,           VIRTKEY, ALT, NOINVERT
     "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL, NOINVERT
+    "P",            ID_FILE_PREFERENCES,    VIRTKEY, CONTROL, NOINVERT
     VK_F6,          ID_NEXT_PANE,           VIRTKEY, NOINVERT
     VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
-    "P",            ID_FILE_PREFERENCES,    VIRTKEY, CONTROL, NOINVERT
+    "S",            ID_FILE_SAVEPLAYLIST,   VIRTKEY, CONTROL, NOINVERT
+    "O",            ID_OPEN_FILES,          VIRTKEY, CONTROL, NOINVERT
+    "D",            ID_OPEN_DIRECTORY,      VIRTKEY, CONTROL, NOINVERT
+    "S",            ID_VIEW_SOURCES,        VIRTKEY, SHIFT, CONTROL, 
+                                                    NOINVERT
+    "B",            ID_VIEW_SELECTIONBOXES, VIRTKEY, SHIFT, CONTROL, 
+                                                    NOINVERT
+    "I",            ID_VIEW_PLAYLISTINFORMATION, VIRTKEY, SHIFT, CONTROL, 
+                                                    NOINVERT
+    "N",            ID_VIEW_NOWPLAYING,     VIRTKEY, SHIFT, CONTROL, 
+                                                    NOINVERT
 END
 
 
