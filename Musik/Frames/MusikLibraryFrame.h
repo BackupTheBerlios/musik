@@ -21,6 +21,8 @@
 #include "wx/listctrl.h"
 #include "wx/thread.h"
 
+#include "../ThreadController.h"
+
 //--- forward declarations for threads ---//
 class MusikUpdateLibThread;
 class MusikPurgeLibThread;
@@ -36,7 +38,7 @@ enum EMUSIK_Library_OBJECT_ID
 class MusikLibraryFrame : public wxFrame
 {
 public:
-	MusikLibraryFrame( wxFrame* pParent );
+	MusikLibraryFrame( wxFrame* pParent ,const wxArrayString &arrFilenamesToScan = wxArrayString(),bool bFilesWereDropped = false);
 	MusikLibraryFrame( wxFrame* pParent, const wxPoint &pos, const wxSize &size );
 
 	//--- functions ---//
@@ -44,7 +46,7 @@ public:
 	void PathsLoad		();
 	void PathsSave		();
 	void ClearLibrary	();
-	void UpdateLibrary	( bool bConfirm );
+	void UpdateLibrary	( bool bConfirm, bool bCompleteRebuild = false );
 	void ScanNew		();
 	void PurgeLibrary	();
 	void EnableProgress	( bool );
@@ -61,6 +63,7 @@ public:
 	void OnClickCancel			( wxCommandEvent  &WXUNUSED(event)	)		{ Close( true );												}
 	void OnClickClearLibrary	( wxCommandEvent  &WXUNUSED(event)	)		{ ClearLibrary();												}
 	void OnClickScan			( wxCommandEvent  &WXUNUSED(event)	)		{ ScanNew();													}
+	void OnUpdateAll			( wxCommandEvent  &WXUNUSED(event)	);
 	void OnRebuildAll			( wxCommandEvent  &WXUNUSED(event)	);
 	void OnPurgeLibrary			( wxCommandEvent  &WXUNUSED(event)	)		{ PurgeLibrary();												}
 	void TranslateKeys			( wxKeyEvent	  &WXUNUSED(event)	);
@@ -76,12 +79,11 @@ public:
 
 	void SetProgress			( int n )			{ m_Progress = n;			}
 	void SetProgressType		( int n )			{ m_ProgressType = n;		}
-	void SetActiveThread		( wxThread* thread);
 
 	size_t  GetProgress			()	{ return m_Progress;		}
 	size_t  GetProgressType		()	{ return m_ProgressType;	}
 	size_t	GetScanCount		()	{ return m_ScanCount;		}
-	wxThread* GetActiveThread	()	{ return m_ActiveThread;	}
+	
 	size_t	GetCurrent			()	{ return m_Current;			}
 	size_t	GetTotal			()	{ return m_Total;			}
 
@@ -114,17 +116,14 @@ public:
 
 	DECLARE_EVENT_TABLE()
 private:
-	//--- thread stuffs ---//
-	MusikUpdateLibThread	*pUpdateLibThread;
-	MusikPurgeLibThread		*pPurgeLibThread;
-	MusikScanNewThread		*pScanNewThread;
 
 	//--- variables the threads use to talk to the main ui ---//
 	int m_Progress;
 	int m_ProgressType;
 
-	wxThread* m_ActiveThread;
+	CThreadController m_ActiveThreadController;
 
+	wxArrayString m_arrScannedFiles;
 	size_t m_ListItem;
 	size_t m_Total;
 	size_t m_New;
@@ -135,7 +134,7 @@ private:
 	bool m_AutoStart;
 	bool m_Close;
 	bool m_MenuCreated;
-
+	bool m_bFilesWereDropped;
 	wxString m_Title; //--- so it doesn't have to be recreated millions of times ---//
 
 	wxArrayString aDelDirs;

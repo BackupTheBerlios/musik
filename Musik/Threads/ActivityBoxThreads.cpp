@@ -33,6 +33,10 @@ MusikActivityRenameThread::MusikActivityRenameThread( CActivityBox* parent_box, 
 
 void* MusikActivityRenameThread::Entry()
 {
+	//--- setup thread to begin in g_MusikFrame ---//
+	g_MusikFrame->SetActiveThread	( this );
+	g_MusikFrame->SetProgressType	( MUSIK_ACTIVITY_RENAME_THREAD );
+	g_MusikFrame->SetProgress		( 0 );
 	//----------------------------------------//
 	//--- events we'll post as we go along ---//
 	//----------------------------------------//

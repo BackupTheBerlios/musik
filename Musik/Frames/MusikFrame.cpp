@@ -268,34 +268,33 @@ MusikFrame::~MusikFrame()
 #endif 
 }
 
+void MusikFrame::AutoUpdate	( const wxArrayString & Filenames ,bool bFilesWereDropped)
+{
+	g_MusikLibraryFrame = new MusikLibraryFrame( ( wxFrame* )this, Filenames,bFilesWereDropped );
+	this->Enable	( FALSE );
+	g_MusikLibraryFrame->Show	( TRUE	); 
+}
 bool MusikFrame::Show( bool show )
 {
 	bool bRet = false;
+    bRet =	 wxWindow::Show( show );
 	
 	if ( g_FirstRun && show )
 	{
 		g_FirstRun = false;
 
-		//--- startup the crossfader			---//
-		g_FaderThread = new MusikFaderThread();
-		g_FaderThread->Create();
-		g_FaderThread->Run();
 
 		//--- autostart stuff ---//
-		if ( g_Prefs.nFirstRun == 1 )
+		if ( g_Prefs.nFirstRun || g_Prefs.nAutoAdd )
 		{
-            bRet =	 wxWindow::Show( show );
+			if(g_Prefs.nFirstRun)
+		{
 			g_MusikLibraryFrame = new MusikLibraryFrame( ( wxFrame* )this, wxPoint( 0, 0 ), wxSize( 480, 240 ) );
 			this->Enable	( FALSE );
 			g_MusikLibraryFrame->Show	( TRUE	);
-            return bRet;
 		}
-		else if ( g_Prefs.nAutoAdd == 1 )
-		{
-            bRet =	 wxWindow::Show( show );
-			g_MusikLibraryFrame = new MusikLibraryFrame( ( wxFrame* )this );
-			this->Enable	( FALSE );
-			g_MusikLibraryFrame->Show	( TRUE	);
+			else
+				AutoUpdate();
             return bRet;
 		}
 		else
@@ -304,12 +303,15 @@ bool MusikFrame::Show( bool show )
 			if ( g_Prefs.nShowAllSongs == 1 )
 			{
 				g_Library.GetAllSongs( g_Playlist );
+				g_SourcesCtrl->SelectLibrary();
 				g_PlaylistBox->Update(true);
-				g_Player.SetPlaylist( g_Playlist );
 			}
 		}
+		//--- startup the crossfader			---//
+		g_FaderThread = new MusikFaderThread();
+		g_FaderThread->Create();
+		g_FaderThread->Run();
 	}
-    bRet =	 wxWindow::Show( show );
 	return bRet;	
 }
 

@@ -290,9 +290,9 @@ void CNowPlayingCtrl::UpdateInfo( CMusikSong song )
 	//--- first things first, verify data in song ---//
 	song.Artist = SanitizedString( song.Artist );
 	song.Title = SanitizedString( song.Title );
-	if ( song.Artist == _( "<unknown>" ) )
+	if ( song.Artist.IsEmpty())
 		song.Artist = _( "Unknown Artist" );
-	if ( song.Title == _( "<unknown> " ) )
+	if ( song.Title.IsEmpty() )
 		song.Title = _( "Unknown Song" );
 
 	// tell Tunage to do it's thing if file has changed

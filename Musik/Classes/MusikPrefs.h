@@ -131,6 +131,8 @@ public:
 
 	wxString sDataPath;
 
+	int nMaxRandomHistory;
+
 };
 
 class CMusikPaths

@@ -23,14 +23,34 @@
 #include <wx/dir.h>
 #include <wx/filename.h>
 
+class wxMusicTraverser;
 //---------------------------------------------//
 //--- NOTE: use g_MusikLibraryFrame as the	---//
 //--- parent window.						---//
 //---------------------------------------------//
-class MusikUpdateLibThread : public wxThread
+
+class MusikScanNewThread : public wxThread
 {
 public:
-	MusikUpdateLibThread( wxArrayString* del );
+	MusikScanNewThread(wxArrayString & m_refFiles);
+
+	virtual void *Entry();
+	virtual void OnExit();
+protected:
+
+	void GetMusicDirs (  const wxArrayString & aDirs, wxArrayString & aFiles );
+	void GetMusicDir  ( const wxString & sDir, wxArrayString & aFiles );
+
+
+	wxArrayString & m_refFiles;
+	
+	friend class wxMusicTraverser;
+};
+
+class MusikUpdateLibThread : public MusikScanNewThread
+{
+public:
+	MusikUpdateLibThread( wxArrayString* del , wxArrayString & m_refFiles, bool bCompleteRebuild );
 
 	virtual void *Entry();
 	virtual void OnExit();
@@ -38,17 +58,10 @@ public:
 private:
 	wxArrayString* m_Add;
 	wxArrayString* m_Del;
+	bool m_bCompleteRebuild;
 };
 
-class MusikScanNewThread : public wxThread
-{
-public:
-	MusikScanNewThread();
 
-	virtual void *Entry();
-	virtual void OnExit();
-
-};
 
 class MusikPurgeLibThread : public wxThread
 {

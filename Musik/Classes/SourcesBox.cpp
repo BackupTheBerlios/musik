@@ -55,19 +55,19 @@ bool SourcesDropTarget::OnDropText( wxCoord x, wxCoord y, const wxString &text )
 				return TRUE;
 			else
 			{
-				g_SourcesList.RemoveAt	( m_SourcesListBox->GetDragIndex() );
+				m_SourcesListBox->m_SourcesList.RemoveAt	( m_SourcesListBox->GetDragIndex() );
 
 			//--- if its -1, we will just push it to the bottom ---//
 			if ( n == -1 )
-				g_SourcesList.Insert	( sFiles, g_SourcesList.GetCount() );
+				m_SourcesListBox->m_SourcesList.Insert	( sFiles, m_SourcesListBox->m_SourcesList.GetCount() );
 	
 			//--- dragged above old pos, insert, push down... old item is + 1 ---//
 			else if ( n < m_SourcesListBox->GetDragIndex() )		
-				g_SourcesList.Insert	( sFiles, n );
+				m_SourcesListBox->m_SourcesList.Insert	( sFiles, n );
 
 			//--- dragged below old pos, insert there, then push all others down ---//
 			else if ( n > m_SourcesListBox->GetDragIndex() )	
-					g_SourcesList.Insert	( sFiles, n );
+					m_SourcesListBox->m_SourcesList.Insert	( sFiles, n );
 			}
 			
 			//--- update ---//
@@ -96,7 +96,14 @@ bool SourcesDropTarget::OnDropText( wxCoord x, wxCoord y, const wxString &text )
 			}
 			else if ( m_SourcesListBox->GetType( n ) == MUSIK_SOURCES_NOW_PLAYING )
 			{
-				wxMessageBox( _( "Cannot drag songs into Now Playing." ), MUSIKAPPNAME_VERSION, wxOK | wxICON_INFORMATION );
+			//	wxMessageBox( _( "Cannot drag songs into Now Playing." ), MUSIKAPPNAME_VERSION, wxOK | wxICON_INFORMATION );
+
+				wxArrayString aFilelist;
+				DelimitStr(sFiles,wxString("\n"),aFilelist);
+				CMusikSongArray arrSongs;
+				g_Library.GetFilelistSongs( aFilelist, arrSongs );
+				g_Player.AddToPlaylist(arrSongs);
+				
 			}
 			else if ( m_SourcesListBox->GetType( n ) == MUSIK_SOURCES_NETSTREAM )
 			{
@@ -126,8 +133,11 @@ bool SourcesDropTarget::OnDropText( wxCoord x, wxCoord y, const wxString &text )
 	return TRUE;
 }
 
-wxDragResult SourcesDropTarget::OnDragOver(wxCoord x, wxCoord y, wxDragResult WXUNUSED(def))
+wxDragResult SourcesDropTarget::OnDragOver(wxCoord x, wxCoord y, wxDragResult def)
 {
+	if(def == wxDragNone)
+		return wxDragNone;
+
 	const wxPoint& pt = wxPoint( x, y );
 	HighlightSel( pt );
 	return wxDragMove;
@@ -135,13 +145,14 @@ wxDragResult SourcesDropTarget::OnDragOver(wxCoord x, wxCoord y, wxDragResult WX
 
 void SourcesDropTarget::HighlightSel( wxPoint pPos )
 {
-	g_DragInProg = true;
 	int nFlags;
 	long n = m_SourcesListBox->HitTest( pPos, nFlags );
 	if ( n != nLastHit )
 	{
+		g_DragInProg = true;
 		wxListCtrlSelNone( m_SourcesListBox );
 		m_SourcesListBox->SetItemState( n, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
+		g_DragInProg = false;
 	}
 	nLastHit = n;
 }
@@ -170,7 +181,7 @@ BEGIN_EVENT_TABLE(CSourcesListBox, CMusikListCtrl)
 END_EVENT_TABLE()
 
 CSourcesListBox::CSourcesListBox( wxWindow* parent )
-	: CMusikListCtrl( parent, MUSIK_SOURCES, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxLC_ALIGN_LEFT |wxLC_EDIT_LABELS | wxLC_SINGLE_SEL | wxNO_BORDER)
+	: CMusikListCtrl( parent, MUSIK_SOURCES, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxLC_ALIGN_LEFT |wxLC_EDIT_LABELS | wxLC_SINGLE_SEL | wxNO_BORDER|wxLC_NO_SORT_HEADER)
 {
 	SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ) );
 
@@ -338,7 +349,7 @@ void CSourcesListBox::BeginDrag( wxListEvent &event )
 		//--- get selected item	---//
 		//-------------------------//
 		m_DragIndex		= event.GetIndex();
-		wxString sDrop	= wxT( "s\n" ) + g_SourcesList.Item( m_DragIndex );
+		wxString sDrop	= wxT( "s\n" ) + m_SourcesList.Item( m_DragIndex );
 
 		//------------------------------------------------------//
 		//--- initialize drag and drop                       ---//
@@ -378,6 +389,16 @@ void CSourcesListBox::UpdateSel( size_t index )
 		bInFunction = false;
 		return;
     }
+	if(index == (size_t)-3)
+	{	//select now playing
+		bInFunction = false;// HACK!!, this leads to recursive execution of this function (	call of SetItemState() will generate an event)
+		wxListCtrlSelNone( this );
+        int sel = FindInSources(wxT( "Now Playing" ),MUSIK_SOURCES_NOW_PLAYING);
+		SetItemState( sel, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
+		g_PlaylistChanged = true; 
+		return;
+    }
+
 	//--- save std playlist. if deleting, no need to worry ---//
 	int nLastSel = m_CurSel;
 	if ( !m_Deleting )
@@ -405,8 +426,12 @@ void CSourcesListBox::UpdateSel( size_t index )
 
 		//--- show all songs ---//
 		else if ( g_Prefs.nShowAllSongs == 1 && !g_FirstRun )
-			g_Library.GetAllSongs( g_Playlist );
-
+		{
+				if ( g_ActivityAreaCtrl->GetParentBox() != NULL )
+					g_ActivityAreaCtrl->UpdateSel( g_ActivityAreaCtrl->GetParentBox() );
+				else
+					g_Library.GetAllSongs( g_Playlist );
+		}
 		g_LibPlaylist.Clear();
 		g_PlaylistBox->Update();
 		g_MusikFrame->ShowActivityArea( g_Prefs.nShowActivities );
@@ -423,7 +448,7 @@ void CSourcesListBox::UpdateSel( size_t index )
 		{
 			wxArrayString aFilelist;
 			LoadStdPlaylist( GetItemText( m_CurSel ), aFilelist );
-			g_Library.GetStdPlaylistSongs( aFilelist, g_Playlist );
+			g_Library.GetFilelistSongs( aFilelist, g_Playlist );
 		}
 
 		//--- dynamic playlist selected ---//
@@ -460,7 +485,17 @@ void CSourcesListBox::UpdateSel( size_t index )
 
 void CSourcesListBox::BeginEditLabel( wxListEvent& event )
 {
-	
+	int nType = GetType( event.GetIndex() );
+	//--- Musik Library entry edited ---//
+	if ( nType == MUSIK_SOURCES_LIBRARY )
+	{
+ 		event.Veto();
+	}
+	//--- Now Playing entry edited ---//
+	else if ( nType == MUSIK_SOURCES_NOW_PLAYING )
+	{
+		event.Veto();   
+	}
 }
 
 void CSourcesListBox::EndEditLabel( wxListEvent& event )
@@ -505,7 +540,7 @@ void CSourcesListBox::EndEditLabel( wxListEvent& event )
 		wxRenameFile( sOldFile, sNewFile );
 	}
 	//--- rename in musiksources.dat ---//
-	g_SourcesList.Item( event.GetIndex() ) = sType + event.GetText();
+	m_SourcesList.Item( event.GetIndex() ) = sType + event.GetText();
 }
 
 void CSourcesListBox::TranslateKeys( wxListEvent& event )
@@ -537,26 +572,26 @@ void CSourcesListBox::Load()
 	if ( !wxFileExists( MUSIK_SOURCES_FILENAME ) )
 		Create();
 
-	g_SourcesList = FileToStringArray( MUSIK_SOURCES_FILENAME );
+	m_SourcesList = FileToStringArray( MUSIK_SOURCES_FILENAME );
 
 	int i = 0;
-	for(i = 0; i < g_SourcesList.GetCount();i++)
+	for(i = 0; i < m_SourcesList.GetCount();i++)
 	{
-		if(g_SourcesList[i].Left(3) == wxT( "[l]" ))
+		if(m_SourcesList[i].Left(3) == wxT( "[l]" ))
 			break;
 	}
-	if((g_SourcesList.GetCount() == i) )
+	if((m_SourcesList.GetCount() == i) )
 	{// no [l] found
-		g_SourcesList.Insert(wxT( "[l] Musik Library"), 0);
+		m_SourcesList.Insert(wxT( "[l] Musik Library"), 0);
 	}
-	for(i = 0; i < g_SourcesList.GetCount();i++)
+	for(i = 0; i < m_SourcesList.GetCount();i++)
 	{
-		if(g_SourcesList[i].Left(3) == wxT( "[n]" ))
+		if(m_SourcesList[i].Left(3) == wxT( "[n]" ))
 			break;
 	}
-	if((g_SourcesList.GetCount() == i) )
+	if((m_SourcesList.GetCount() == i) )
 	{// no [n] found
-		g_SourcesList.Insert(wxT( "[n] Now Playing"),1);
+		m_SourcesList.Insert(wxT( "[n] Now Playing"),1);
 	}
 
 }
@@ -575,8 +610,8 @@ void CSourcesListBox::Save()
 	Out.Create();
 	if ( Out.Open() )
 	{
-		for ( size_t i = 0; i < g_SourcesList.GetCount(); i++ )
-			Out.AddLine( g_SourcesList.Item( i ) );
+		for ( size_t i = 0; i < m_SourcesList.GetCount(); i++ )
+			Out.AddLine( m_SourcesList.Item( i ) );
 		Out.Write( Out.GuessType() );
 		Out.Close();
 	}
@@ -588,7 +623,7 @@ void CSourcesListBox::Save()
 //---------------------------------------------------//
 wxString CSourcesListBox::OnGetItemText(long item, long column) const
 {
-	wxString sItem = g_SourcesList.Item( item ).Right( g_SourcesList.Item( item ).Length() - 3 );
+	wxString sItem = m_SourcesList.Item( item ).Right( m_SourcesList.Item( item ).Length() - 3 );
 	sItem.Trim( true ); sItem.Trim( false );
 
 	switch ( column )
@@ -603,7 +638,7 @@ wxString CSourcesListBox::OnGetItemText(long item, long column) const
 
 wxListItemAttr* CSourcesListBox::OnGetItemAttr(long item) const
 {
-	wxString type = g_SourcesList.Item( item ).Left( 3 );
+	wxString type = m_SourcesList.Item( item ).Left( 3 );
 	type.MakeLower();
 
 	//--- stripes ---//
@@ -652,7 +687,7 @@ void CSourcesListBox::Update()
 	m_Dark		= wxListItemAttr( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT), StringToColour( g_Prefs.sSourcesStripeColour ), wxNullFont );
 	m_DarkBold	= wxListItemAttr( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT), StringToColour( g_Prefs.sSourcesStripeColour ), g_fntListBold );
 
-	SetItemCount( g_SourcesList.GetCount() );
+	SetItemCount( m_SourcesList.GetCount() );
 	RescaleColumns();
 	Refresh();
 
@@ -689,7 +724,7 @@ void CSourcesListBox::DelSel()
 	}
 	
 	//--- remove item from list ---//
-	g_SourcesList.RemoveAt( nIndex );
+	m_SourcesList.RemoveAt( nIndex );
 	Update();
 
 	//--- reselect item ---//
@@ -717,7 +752,7 @@ int CSourcesListBox::GetType(long index) const
 {
 	if( index < 0)
 		return MUSIK_SOURCES_NONE;
-	wxString sType = g_SourcesList.Item( index ).Left( 3 );
+	wxString sType = m_SourcesList.Item( index ).Left( 3 );
 	
 	if ( sType == wxT( "[l]" ) )
 		return MUSIK_SOURCES_LIBRARY;
@@ -853,7 +888,7 @@ bool CSourcesListBox::CreateStdPlaylist( wxString sName, wxString sSongs )
 		{
 			if ( wxMessageBox( _( "Standard playlist \"" ) + sName + _( "\" already exists, but does not appear to be visible in the panel.\n\nWould you like to show it?" ), MUSIKAPPNAME_VERSION, wxYES_NO | wxICON_QUESTION ) == wxYES )
 			{		
-				g_SourcesList.Add( wxT( "[s] " ) + sName );
+				m_SourcesList.Add( wxT( "[s] " ) + sName );
 				Update();
 			}
 		}
@@ -880,7 +915,7 @@ bool CSourcesListBox::CreateStdPlaylist( wxString sName, wxString sSongs )
 	//-------------------------------------------------------------//
 	if ( PlaylistToFile( sName, &sSongs, MUSIK_SOURCES_PLAYLIST_STANDARD ) )
 	{    
-		g_SourcesList.Add( wxT( "[s] " ) + sName );
+		m_SourcesList.Add( wxT( "[s] " ) + sName );
 		Update();
 	}
 	
@@ -927,8 +962,8 @@ bool CSourcesListBox::CreateDynPlaylist( wxString sName )
 		{
 			if ( wxMessageBox( _( "Dynamic playlist \"" ) + sName + _( "\" already exists, but does not appear to be visible in the panel.\n\nWould you like to show it?" ), MUSIKAPPNAME_VERSION, wxYES_NO | wxICON_QUESTION ) == wxYES )
 			{		
-				nItemPos = g_SourcesList.GetCount();
-				g_SourcesList.Add( wxT( "[d] " ) + sName );
+				nItemPos = m_SourcesList.GetCount();
+				m_SourcesList.Add( wxT( "[d] " ) + sName );
 				Update();
 			}
 		}
@@ -956,7 +991,7 @@ bool CSourcesListBox::CreateDynPlaylist( wxString sName )
 		if ( sQuery != wxT( "" ) )
 		{
 			PlaylistToFile( sName, &sQuery, MUSIK_SOURCES_PLAYLIST_DYNAMIC );
-			g_SourcesList.Add( wxT( "[d] " ) + sName );
+			m_SourcesList.Add( wxT( "[d] " ) + sName );
 			Update();
 			
 			return true;
@@ -964,8 +999,6 @@ bool CSourcesListBox::CreateDynPlaylist( wxString sName )
 		else
 			return false;
 	}
-
-	return false;
 }
 
 void CSourcesListBox::UpdateDynPlaylist( int nIndex )
@@ -977,7 +1010,7 @@ void CSourcesListBox::UpdateDynPlaylist( int nIndex )
 
 	if ( sQuery != wxT( "" ) )
 	{
-		g_SourcesList.Item( nIndex ) = wxT( "[d] " ) + sName;
+		m_SourcesList.Item( nIndex ) = wxT( "[d] " ) + sName;
 		PlaylistToFile( sName, &sQuery, MUSIK_SOURCES_PLAYLIST_DYNAMIC );
 
 		g_Library.QuerySongsWhere( sQuery, g_Playlist );
@@ -1011,7 +1044,7 @@ bool CSourcesListBox::CreateNetStream( wxString sName)
 		{
 			if ( wxMessageBox( _( "Net Stream \"" ) + sName + _( "\" already exists, but does not appear to be visible in the panel.\n\nWould you like to show it?" ), MUSIKAPPNAME_VERSION, wxYES_NO | wxICON_QUESTION ) == wxYES )
 			{		
-				g_SourcesList.Add( wxT( "[u] " ) + sName );
+				m_SourcesList.Add( wxT( "[u] " ) + sName );
 				Update();
 			}
 		}
@@ -1026,7 +1059,7 @@ bool CSourcesListBox::CreateNetStream( wxString sName)
 	wxString sAddress = PromptNetStreamAddress(wxT(""));
 	if ((sAddress.IsEmpty() == false) && PlaylistToFile( sName, &sAddress, MUSIK_SOURCES_NETSTREAM ) )
 	{    
-		g_SourcesList.Add( wxT( "[u] " ) + sName );
+		m_SourcesList.Add( wxT( "[u] " ) + sName );
 		Update();
 		return true;
 	}
@@ -1044,7 +1077,7 @@ wxString CSourcesListBox::PromptNetStreamAddress( wxString sAddress )
 }
 wxString CSourcesListBox::GetPlaylistName( int nIndex )
 {
-	wxString sRet = g_SourcesList.Item( nIndex );
+	wxString sRet = m_SourcesList.Item( nIndex );
 	sRet = sRet.Right( sRet.Length() - 4 );
 	return sRet;
 }
@@ -1171,7 +1204,7 @@ void CSourcesListBox::AddMissing( const wxArrayString & playlists )
 	    GetTypeAsString( nType, sAdd);
 		sAdd += sName;
 		if ( FindInSources( sName, nType ) == -1 )
-			g_SourcesList.Add( sAdd );
+			m_SourcesList.Add( sAdd );
 	}
 }
 bool CSourcesListBox::GetTypeAsString(int nType,wxString &sType)  const
@@ -1209,9 +1242,9 @@ int CSourcesListBox::FindInSources( wxString sName, int nType )
 	sFind += sName;
 	sFind.MakeLower();
 
-	for ( size_t i = 0; i < g_SourcesList.GetCount(); i++ )
+	for ( size_t i = 0; i < m_SourcesList.GetCount(); i++ )
 	{
-		if ( sFind == g_SourcesList.Item( i ).Lower() )
+		if ( sFind == m_SourcesList.Item( i ).Lower() )
 			return i;
 	}
 

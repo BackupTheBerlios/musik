@@ -73,7 +73,6 @@ void CPlaylistBox::Update( bool bSelFirstItem )
 	if ( g_Prefs.nShowPLInfo )
 	{
 		m_pPlaylistInfoCtrl->Update();
-		m_pPlaylistInfoCtrl->Refresh();//HACK why is this needed?
 	}
 	Layout();
 
@@ -123,6 +122,28 @@ END_EVENT_TABLE()
 //-----------------//
 //--- dnd stuff ---//
 //-----------------//
+
+wxDragResult PlaylistDropTarget::OnData(wxCoord x, wxCoord y, wxDragResult def)
+{
+	bool bRes = false;
+	if (GetData() )
+	{
+			
+		wxDataObjectSimple *dobj = ((wxDataObjectCompositeEx *)GetDataObject())->GetActualDataObject();
+		
+		if( dobj == (wxDataObjectSimple *)m_pTextDObj )
+			bRes = OnDropText(x, y, m_pTextDObj->GetText());
+		else if( dobj == (wxDataObjectSimple *)m_pFileDObj )
+			bRes = OnDropFiles(x, y, m_pFileDObj->GetFilenames());
+	}
+	g_DragInProg = false;
+	return bRes ? def : wxDragNone;
+}
+
+bool PlaylistDropTarget::OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames)
+{
+	return m_pPlaylistCtrl->OnDropFiles( x,  y,  filenames);
+}
 bool PlaylistDropTarget::OnDropText( wxCoord x, wxCoord y, const wxString &text )
 {
 	wxString sFiles = text;
@@ -210,10 +231,13 @@ bool PlaylistDropTarget::OnDropText( wxCoord x, wxCoord y, const wxString &text 
 	return TRUE;
 }
 
-wxDragResult PlaylistDropTarget::OnDragOver(wxCoord x, wxCoord y, wxDragResult WXUNUSED(def))
+wxDragResult PlaylistDropTarget::OnDragOver(wxCoord x, wxCoord y, wxDragResult def)
 {
+	if(def == wxDragNone)
+		return wxDragNone;
+
 	//--- calls HighlightSel() to highlight the item the mouse is over ---//
-	m_pPlaylistCtrl->SetFocus();
+	//m_pPlaylistCtrl->SetFocus();
 	const wxPoint& pt = wxPoint( x, y );
 	HighlightSel( pt );
 	return wxDragMove;
@@ -237,13 +261,15 @@ void PlaylistDropTarget::HighlightSel( wxPoint pPos )
 
 	//--- this is a quick way to check if we need to update ---//
 	nLastHit = n;
+	g_DragInProg	= false;
 }
 
 //----------------------------//
 //--- construct / destruct ---//
 //----------------------------//
-CPlaylistCtrl::CPlaylistCtrl( wxWindow *parent, const wxWindowID id, const wxPoint& pos, const wxSize& size )
+CPlaylistCtrl::CPlaylistCtrl( CPlaylistBox *parent, const wxWindowID id, const wxPoint& pos, const wxSize& size )
 	:	CMusikListCtrl		( parent, id, pos, size,wxNO_BORDER)
+	,m_pParent(parent)
 {
 	SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ) );
 
@@ -313,7 +339,6 @@ CPlaylistCtrl::CPlaylistCtrl( wxWindow *parent, const wxWindowID id, const wxPoi
 	g_DragInProg = false;
 	nCurSel = -1;
 	m_Overflow = 0;
-	m_ActiveThread  = NULL;
 	m_bColDragging = false;
 
 }
@@ -613,6 +638,9 @@ void CPlaylistCtrl::TranslateKeys( wxKeyEvent& event )
 				case WXK_BACK:
 					DelSelSongs();
 					break;
+				default:
+					event.Skip();
+					return;
 			}
 		}
 	}
@@ -651,8 +679,8 @@ wxString CPlaylistCtrl::OnGetItemText(long item, long column) const
 		break;
 
 	case PLAYLISTCOLUMN_ARTIST:
-		if ( song.Artist == wxT( "<unknown>" ) )
-			return wxT( "-" );
+		if ( song.Artist.IsEmpty() )
+			return _( "<unknown>" );
 		else 
 		{
 			return SanitizedString( song.Artist );
@@ -660,22 +688,22 @@ wxString CPlaylistCtrl::OnGetItemText(long item, long column) const
 		break;
 
 	case PLAYLISTCOLUMN_ALBUM:
-		if ( song.Album == _( "<unknown>" ) )
-			return wxT( "-" );
+		if ( song.Album.IsEmpty() )
+			return _( "<unknown>" );
 		else
 			return SanitizedString( song.Album );
 		break;
 
 	case PLAYLISTCOLUMN_YEAR:
-		if ( song.Year == _( "<unknown>" ) )
-			return wxT( "-" );
+		if ( song.Year.IsEmpty() )
+			return _( "<unknown>" );
 		else
 			return song.Year;
 		break;
 
 	case PLAYLISTCOLUMN_GENRE:
-		if ( song.Genre == _( "<unknown>" ) )
-			return wxT( "-" );
+		if ( song.Genre.IsEmpty() )
+			return _( "<unknown>" );
 		else
 			return SanitizedString( song.Genre );
 		break;
@@ -798,9 +826,9 @@ wxString CPlaylistCtrl::GetSelFiles()
 	return sResult.IsEmpty() ? sResult : sResult.Truncate( sResult.Length() - 1 );	
 }
 
-wxArrayInt CPlaylistCtrl::GetSelItems()
+void  CPlaylistCtrl::GetSelItems(wxArrayInt & aResult)
 {
-	wxArrayInt aResult;
+	aResult.Clear();
 	int nIndex = -1;
 	for ( int i = 0; i < GetSelectedItemCount(); i++ )
 	{
@@ -809,7 +837,7 @@ wxArrayInt CPlaylistCtrl::GetSelItems()
 			break;
 		aResult.Add( nIndex );
 	}
-	return aResult;	
+	return;	
 }
 
 void CPlaylistCtrl::GetSelFilesList( wxArrayString & aResult )
@@ -862,18 +890,14 @@ void CPlaylistCtrl::GetSelSongs(CMusikSongArray & aResult)
 
 double CPlaylistCtrl::GetTotalFilesize()
 {
-	// just leaving this here until we're sure the new way is working,
-	// then we can get rid of it, and the CNiceFilesize class
-	/*CNiceFilesize filesize;
-
-	for ( int i = 0; i < GetItemCount(); i++ )
+	double filesize = 0.0;
+	for ( int i = 0; i < g_Playlist.GetCount(); i++ )
 	{
-		CMusikSong song = g_Playlist.Item( i );
-		filesize.AddB( song.Filesize );
+		const CMusikSong &song = g_Playlist.Item( i );
+		filesize += song.Filesize;
 	}
 
-	return filesize.GetFormatted();*/
-	return g_Library.GetTotalPlaylistSize();
+	return filesize;
 }
 
 int CPlaylistCtrl::GetTotalPlayingTimeInSeconds()
@@ -1156,22 +1180,20 @@ void CPlaylistCtrl::RateSel( int nVal )
 void CPlaylistCtrl::EditTag( int i )
 {
 	int nSelCount = GetSelectedItemCount();
-	CMusikSongArray songs;
+	g_Playlist;
 	int nEditType = 0;
 	int nIndex = -1;
 
 	//--- if there are less than 2 songs selected, setup for single edit mode ---//
 	if ( nSelCount < 2 )
 	{
-		songs = g_Playlist;
 		nEditType = MUSIK_TAG_SINGLE;
 		nIndex = GetNextItem( -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED );
 	}
 
 	//--- more than 1 song, setup for batch edit mode ---//
-	else if ( nSelCount >= 2 )
+	else if ( nSelCount > 1)
 	{
-		GetSelSongs( songs );
 		nEditType = MUSIK_TAG_MULTIPLE;
 	}
 
@@ -1179,7 +1201,7 @@ void CPlaylistCtrl::EditTag( int i )
 	//---  tag dialog will re-enable when complete  ---//
 	if ( nEditType != 0 )
 	{
-		MusikTagFrame* pMusikTagFrame = new MusikTagFrame( g_MusikFrame, songs, i, nEditType, nIndex );
+		MusikTagFrame* pMusikTagFrame = new MusikTagFrame( g_MusikFrame, this, i, nEditType, nIndex );
 		g_MusikFrame->Enable( FALSE );
 		pMusikTagFrame->Show();
 	}
@@ -1231,8 +1253,10 @@ void CPlaylistCtrl::DelSelSongs(bool bDeleteFromDB, bool bDeleteFromComputer)
 		// which have been already deleted from the array
 		// because GetNextItem() still returns the old index values
 		if(g_Playlist.Item( nIndex - nDeletedSongs).Format == MUSIK_FORMAT_NETSTREAM)
-			continue;// net streams cannot be deleted from the playlist ( they are deleted in the sources box)
-  		
+		{
+			if( MUSIK_SOURCES_NOW_PLAYING != g_SourcesCtrl->GetSelType() )
+				continue;// net streams cannot be deleted from the playlist, except from now playing list  ( they are deleted in the sources box)
+		}
 	   //--- if its valid, delete ---//
 		if( bDeleteFromDB )
 		{
@@ -1245,6 +1269,11 @@ void CPlaylistCtrl::DelSelSongs(bool bDeleteFromDB, bool bDeleteFromComputer)
 			g_Library.RemoveSong( sFile );
 		}
 		g_Playlist.RemoveAt( nIndex - nDeletedSongs, 1 );
+		if(g_SourcesCtrl->GetSelType() == MUSIK_SOURCES_NOW_PLAYING)
+		{
+			// active playlist is "now playing" list => delete songs from players playlist too
+			g_Player.RemovePlaylistEntry(nIndex - nDeletedSongs);
+		}
 		nDeletedSongs ++;
 	}
 	g_PlaylistChanged = (nDeletedSongs > 0);  
@@ -1253,7 +1282,7 @@ void CPlaylistCtrl::DelSelSongs(bool bDeleteFromDB, bool bDeleteFromComputer)
 	if ( !sError.IsEmpty() )
 		wxMessageBox( _( "Failed to delete the following files from your computer:\n\n " ) + sError, MUSIKAPPNAME_VERSION, wxICON_STOP );
 
-	Update( false );
+	m_pParent->Update( false );
 
 	//--- select the last known item ---//
 	if ( nFirstSel > ( GetItemCount() - 1 ) )
@@ -1261,7 +1290,7 @@ void CPlaylistCtrl::DelSelSongs(bool bDeleteFromDB, bool bDeleteFromComputer)
 	SetItemState( nFirstSel, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
 
 	Thaw();
-
+	if(bDeleteFromDB)
 	g_ActivityAreaCtrl->ResetAllContents();
 
 	
@@ -1269,14 +1298,11 @@ void CPlaylistCtrl::DelSelSongs(bool bDeleteFromDB, bool bDeleteFromComputer)
 
 void CPlaylistCtrl::RenameSelFiles()
 {
-	if ( GetActiveThread() == 0 )
+	if ( m_ActiveThreadController.IsAlive() == false )
 	{
 		CMusikSongArray songs;
 		GetSelSongs( songs );
-		pRenameThread = new MusikPlaylistRenameThread(this, songs );
-		pRenameThread->Create();
-		SetActiveThread(pRenameThread);
-		pRenameThread->Run();
+		m_ActiveThreadController.AttachAndRun( new MusikPlaylistRenameThread(this, songs ) );
 	}
 	else
 		wxMessageBox( _( "An internal error has occured.\nPrevious thread not terminated correctly.\n\nPlease contact the "MUSIKAPPNAME" development team with this error." ), MUSIKAPPNAME_VERSION, wxICON_STOP );
@@ -1285,7 +1311,7 @@ void CPlaylistCtrl::RenameSelFiles()
 
 void CPlaylistCtrl::RetagSelFiles()
 {
-	if ( GetActiveThread() == 0 )
+	if ( m_ActiveThreadController.IsAlive() == false )
 	{
 		CMusikAutoTaggerFrame dlg(this);
 		dlg.SetConvertUnderscoresToSpaces((bool)g_Prefs.nAutoTagConvertUnderscoresToSpaces);
@@ -1294,10 +1320,7 @@ void CPlaylistCtrl::RetagSelFiles()
 		g_Prefs.nAutoTagConvertUnderscoresToSpaces = dlg.GetConvertUnderscoresToSpaces() ?1:0;
 		CMusikSongArray songs;
 		GetSelSongs( songs );
-		pRetagThread = new MusikPlaylistRetagThread(this, dlg.GetMask(), songs );
-		pRetagThread->Create();
-		SetActiveThread	( pRetagThread );
-		pRetagThread->Run();
+		m_ActiveThreadController.AttachAndRun( new MusikPlaylistRetagThread(this, dlg.GetMask(), songs ) );
 	}
 	else
 		wxMessageBox( _( "An internal error has occured.\nPrevious thread not terminated correctly.\n\nPlease contact the "MUSIKAPPNAME" development team with this error." ), MUSIKAPPNAME_VERSION, wxICON_STOP );
@@ -1423,6 +1446,14 @@ void CPlaylistCtrl::DNDDone( int nNewPos )
 	aCurSelSongs.Clear();
 }
 
+
+bool CPlaylistCtrl::OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames)
+{
+   g_MusikFrame->AutoUpdate(filenames,true);
+
+   return true;
+}
+
 //----------------------------------------//
 //--- MusikPlaylistRenameThread events ---//
 //----------------------------------------//
@@ -1430,10 +1461,6 @@ void CPlaylistCtrl::OnThreadStart( wxCommandEvent& event )
 {
 	SetProgressType(event.GetExtraLong());
 	SetProgress(0);
-	//--- setup thread to begin in g_MusikFrame ---//
-	g_MusikFrame->SetActiveThread	( GetActiveThread() );
-	g_MusikFrame->SetProgressType	( GetProgressType() );
-	g_MusikFrame->SetProgress		( GetProgress() );
 
 	//--- post the event. we're up and running now! ---//
 	wxCommandEvent MusikStartProgEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_FRAME_THREAD_START );
@@ -1452,13 +1479,14 @@ void CPlaylistCtrl::OnThreadProg( wxCommandEvent& event )
 
 void CPlaylistCtrl::OnThreadEnd( wxCommandEvent& WXUNUSED(event) )
 {
+	m_ActiveThreadController.Join();
+
 	if( GetProgressType() == MUSIK_PLAYLIST_RETAG_THREAD )
 	{
 		//g_Playlist = pRetagThread->GetReTaggedSongs();
   		g_ActivityAreaCtrl->ResetAllContents();
 		g_SourcesCtrl->UpdateCurrent();
 	}
-	SetActiveThread	( NULL );
 	Update();
 
 	//--- update locally ---//
@@ -1469,20 +1497,8 @@ void CPlaylistCtrl::OnThreadEnd( wxCommandEvent& WXUNUSED(event) )
 	wxCommandEvent MusikEndProgEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_FRAME_THREAD_END );
 	wxPostEvent( g_MusikFrame, MusikEndProgEvt );
 }
-void CPlaylistCtrl::SetActiveThread( wxThread* newactivethread)
-{
-	wxThread * pCurrThread = GetActiveThread();
-	if(newactivethread == NULL)
-	{
 		
-		wxASSERT(pCurrThread);
-		pCurrThread->Wait();// wait until thread has completed
-		delete pCurrThread;
-		m_ActiveThread = NULL;
-	}
-	else
+CMusikSongArray * CPlaylistCtrl::GetPlaylist()
 	{
-		wxASSERT(pCurrThread == NULL); // ATTENTION!!! there is an active thread. someone forgot to call SetActiveThread(NULL)
-	}
-	m_ActiveThread = newactivethread;
+	return &g_Playlist;
 }

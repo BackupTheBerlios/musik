@@ -143,6 +143,7 @@ public:
 	void	LibrarySimpleQueryDlg	();
 	void	LibrarySimpleQueryEdit	();
 
+	void	AutoUpdate	( const wxArrayString & Filenames = wxArrayString(),bool bFilesWereDropped = false);
 	//--- tag related ---//
 	void	WriteTags				();
 

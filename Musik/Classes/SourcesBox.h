@@ -38,6 +38,8 @@ enum EMUSIK_LIBRARY_TYPE
 
 #include "MusikListCtrl.h"
 
+class SourcesDropTarget;
+
 class CSourcesListBox : public CMusikListCtrl
 {
 public:
@@ -143,6 +145,10 @@ private:
 	//--- some of these may go ---//
 	int			m_CurSel;
 	int			m_DragIndex;
+
+	wxArrayString m_SourcesList;
+
+	friend class SourcesDropTarget;
 };
 
 class CSourcesBox : public wxSashLayoutWindow
@@ -159,6 +165,7 @@ public:
 	void Update					( ) { pListBox->Update();				}
 	void UpdateCurrent			( ) { pListBox->UpdateSel(pListBox->GetIndex()); }
 	void SelectLibrary			( ) { pListBox->UpdateSel((size_t) -2); }
+	void SelectNowPlaying		( ) { pListBox->UpdateSel((size_t) -3); }
 	void OnSashDragged	(wxSashEvent & ev);
 
 	wxString PromptDynamicPlaylist( wxString sQuery )	{ return pListBox->PromptDynamicPlaylist( sQuery ); }

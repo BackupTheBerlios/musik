@@ -49,9 +49,12 @@ BEGIN_EVENT_TABLE( MusikTagFrame, wxFrame )
 	EVT_MENU			( MUSIK_TAG_THREAD_PROG,	MusikTagFrame::OnTagThreadProg			)
 END_EVENT_TABLE()
 
-MusikTagFrame::MusikTagFrame( wxFrame* pParent, CMusikSongArray aSongs, int nCurFrame, int nEditType, int n )
+MusikTagFrame::MusikTagFrame( wxFrame* pParent, CPlaylistCtrl * pPlaylistctrl, int nCurFrame, int nEditType, int n )
 	: wxFrame ( pParent, -1, wxT(""), wxPoint( 0, 0 ), wxSize( 420, 230 ), wxCAPTION | wxTAB_TRAVERSAL | wxFRAME_FLOAT_ON_PARENT | wxFRAME_NO_TASKBAR )
+	, m_Songs(*pPlaylistctrl->GetPlaylist())
 {
+	pPlaylistctrl->GetSelItems(m_arrSongsSelected);
+
 	m_bDirty = true;
 	//---------------//
  	//--- colours ---//
@@ -71,27 +74,17 @@ MusikTagFrame::MusikTagFrame( wxFrame* pParent, CMusikSongArray aSongs, int nCur
 	//----------------------------//
 	m_WriteTag	= false;
 	m_Close		= false;
-	m_Songs		= aSongs;
 	nFrame		= nCurFrame;
 	nIndex		= 0;
 	m_EditType	= nEditType;
-	m_ActiveThread =  NULL;
 
 	//-----------------//
 	//--- set title ---//
 	//-----------------//
 	SetCaption();
 
-	//-------------------------------------------------//
-	//--- setup right index, if in single edit mode ---//
-	//-------------------------------------------------//
-	if ( m_EditType == MUSIK_TAG_SINGLE )
-	{
-		if ( m_Songs.GetCount() < 2 )
-			nIndex = 0;
-		else
-			nIndex = n;
-	}
+    nIndex = m_arrSongsSelected[0];
+
 
 	//---------------//
 	//--- objects ---//
@@ -116,7 +109,7 @@ MusikTagFrame::MusikTagFrame( wxFrame* pParent, CMusikSongArray aSongs, int nCur
 	chkAlbum					=	new wxCheckBox		( this, MUSIK_TAG_CHK_ALBUM, wxT(""), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 
 	wxStaticText *stGenre		=	new wxStaticText	( this, -1, _("Genre"), wxPoint( 0, 0 ), wxSize( 40, -1 ), wxALIGN_LEFT );
-	cmbGenre					=	new wxComboBox		( this, MUSIK_TAG_GENRE, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY | wxCB_SORT );
+	cmbGenre					=	new wxComboBox		( this, MUSIK_TAG_GENRE, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_DROPDOWN );
 	chkGenre					=	new wxCheckBox		( this, MUSIK_TAG_CHK_GENRE, wxT(""), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 
 	wxStaticText *stYear		=	new wxStaticText	( this, -1, _("Year  "),	wxPoint( 0, 0 ), wxSize( 40, -1 ), wxALIGN_RIGHT );
@@ -247,8 +240,20 @@ MusikTagFrame::MusikTagFrame( wxFrame* pParent, CMusikSongArray aSongs, int nCur
 	//-------------------//
 	//--- other stuff ---//
 	//-------------------//	
+	// get genre from db
+	wxArrayString arrGenre;
+	g_Library.GetAllGenres(arrGenre);
+
+	// add standard id3v1 genres to array
 	for ( int i = 0; i < ID3_NR_OF_V1_GENRES; i++ )
-		cmbGenre->Append( ConvA2W( ID3_v1_genre_description[i] ) );
+		arrGenre.Add(ConvA2W( ID3_v1_genre_description[i] )	);
+	arrGenre.Sort();
+	for ( int i = 0; i < arrGenre.GetCount(); i++ )	
+	{
+		if( i > 0 && arrGenre[i] == arrGenre[i-1])
+			continue; // skip double entrys
+		cmbGenre->Append( arrGenre[i]);
+	}
 }
 
 void MusikTagFrame::SetCaption()
@@ -347,14 +352,9 @@ void MusikTagFrame::PopulateTagDlg()
 
 	//--- genre ---//
 	wxString sGenre = m_Songs.Item( nIndex ).Genre;
-	int nGenre = GetGenreID( sGenre );
-	if ( nGenre != -1 )
-		cmbGenre->SetValue( sGenre );
-	else
-		cmbGenre->SetValue( _("Other") );
-
+	cmbGenre->SetValue( sGenre );
     //--- year ---//
-	if( m_Songs.Item( nIndex ).Year.IsEmpty() || m_Songs.Item( nIndex ).Year == _("<unknown>") )
+	if( m_Songs.Item( nIndex ).Year.IsEmpty() )
 		tcYear->SetValue( wxT("") );
 	else
 		tcYear->SetValue( m_Songs.Item( nIndex ).Year );
@@ -512,9 +512,11 @@ void MusikTagFrame::SaveCurSong()
 
 void MusikTagFrame::CheckChangesBatch()
 {
+
 	int nTrackNum = wxStringToInt( tcTitle->GetValue() );
-	for ( size_t i = 0; i < m_Songs.GetCount(); i++ )
+	for ( size_t j = 0; j < m_arrSongsSelected.GetCount(); j++ )
 	{
+		size_t i = m_arrSongsSelected[j];
 		//--- title ---//
 		if ( tcTitle->IsEnabled() && m_Songs.Item( i ).Title != tcTitle->GetValue() )
 		{
@@ -556,7 +558,7 @@ void MusikTagFrame::CheckChangesBatch()
 			m_Songs.Item( i ).Year = tcYear->GetValue();
 			m_Songs.Item( i ).Check1 = 1;
 		}
-		if(!m_bDirty && m_Songs.Item( nIndex ).Check1)
+		if(!m_bDirty && m_Songs.Item( i ).Check1)
 			m_bDirty =true; // set to dirty if one of the songs is dirty
 	}
 }
@@ -572,7 +574,7 @@ void MusikTagFrame::Apply( bool close )
 	m_Close = close;
 
 	//--- start the approperiate thread running ---//
-	if ( GetActiveThread() == NULL )
+	if ( m_ActiveThreadController.IsAlive() == false )
 	{
 		SetTitle( _( "Scanning for changed attributes" ) );
 
@@ -584,11 +586,8 @@ void MusikTagFrame::Apply( bool close )
 			CheckChangesBatch();
 		if(m_bDirty)
 		{
-			pApplyThread = new MusikTagApplyThread(this,m_Songs);
-			pApplyThread->Create();
-			SetActiveThread( pApplyThread );
 			EnableProgress( true );
-			pApplyThread->Run();
+			m_ActiveThreadController.AttachAndRun( new MusikTagApplyThread(this,m_Songs) );
 		}
 		else
 		{
@@ -645,9 +644,8 @@ void MusikTagFrame::OnTranslateKeys( wxKeyEvent& event )
 	//--- escape is pressed ---//
  	if ( event.GetKeyCode() == WXK_ESCAPE )
 	{
-		if ( GetActiveThread() != NULL )
-			GetActiveThread()->Delete();
-
+		if ( m_ActiveThreadController.IsAlive() )
+			m_ActiveThreadController.Cancel();
 		else
 		{
 			g_MusikFrame->Enable( TRUE );
@@ -658,13 +656,13 @@ void MusikTagFrame::OnTranslateKeys( wxKeyEvent& event )
 	//--- enter, go next ---//
 	else if ( event.GetKeyCode() == WXK_RETURN && !event.ShiftDown() )
 	{
-		if ( GetActiveThread() == NULL )
+		if ( m_ActiveThreadController.IsAlive() == false )
 		{
 			if ( m_EditType == MUSIK_TAG_SINGLE )
-		{
-			if ( nIndex + 1 < (int)m_Songs.GetCount() )
-				Next();
-		}
+			{
+				if ( nIndex + 1 < (int)m_Songs.GetCount() )
+					Next();
+			}
 			else if ( m_EditType ==  MUSIK_TAG_MULTIPLE )
 			{
 				Apply( true );
@@ -675,7 +673,7 @@ void MusikTagFrame::OnTranslateKeys( wxKeyEvent& event )
 	//--- shift-enter, go back ---//
 	else if ( event.GetKeyCode() == WXK_RETURN && event.ShiftDown() && m_EditType == MUSIK_TAG_SINGLE )
 	{
-		if ( GetActiveThread() == NULL )
+		if ( m_ActiveThreadController.IsAlive() == false )
 		{
 			if ( nIndex > 0 )
 				Prev();
@@ -701,30 +699,9 @@ void MusikTagFrame::OnTagThreadStart( wxCommandEvent& WXUNUSED(event) )
 void MusikTagFrame::OnTagThreadEnd( wxCommandEvent& WXUNUSED(event) )
 {
 	m_bDirty = false;
-	SetActiveThread	( NULL );
-	//------------------------------------------//
-	//--- if the frame is a single edit mode ---//
-	//------------------------------------------//
-	if ( m_EditType == MUSIK_TAG_SINGLE )
-	{
-		g_Playlist = m_Songs;
-		g_PlaylistBox->Update();
-		g_ActivityAreaCtrl->ResetAllContents();
-	}
-
-	//-----------------------------------------//
-	//--- if the frame is a batch edit mode ---//
-	//-----------------------------------------//
-	else if ( m_EditType == MUSIK_TAG_MULTIPLE )
-	{
-	//--- give the playlist back ---//
-	wxArrayInt sel = g_PlaylistBox->PlaylistCtrl().GetSelItems();
-	for ( size_t i = 0; i < sel.GetCount(); i++ )
-		g_Playlist.Item( sel.Item( i ) ) = 	m_Songs.Item( i );
-	
-		g_PlaylistBox->Update();
-		g_ActivityAreaCtrl->ResetAllContents();
-	}
+	m_ActiveThreadController.Join();
+	g_PlaylistBox->Update();
+	g_ActivityAreaCtrl->ResetAllContents();
 
 	//------------------------------------------//
 	//--- make sure these are back to normal ---//
@@ -751,21 +728,3 @@ void MusikTagFrame::OnTagThreadProg( wxCommandEvent& event )
 {
 	gProgress->SetValue( event.GetExtraLong() );
 }
-void MusikTagFrame::SetActiveThread( wxThread* newactivethread)
-{
-	wxThread * pCurrThread = GetActiveThread();
-	if(newactivethread == NULL)
-	{
-		
-		wxASSERT(pCurrThread);
-		pCurrThread->Wait();// wait until thread has completed
-		delete pCurrThread;
-		m_ActiveThread = NULL;
-	}
-	else
-	{
-		wxASSERT(pCurrThread == NULL); // ATTENTION!!! there is an active thread. someone forgot to call SetActiveThread(NULL)
-	}
-	m_ActiveThread = newactivethread;
-}
-	

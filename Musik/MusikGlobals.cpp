@@ -88,7 +88,6 @@ CMusikPrefs			g_Prefs;
 CMusikPaths			g_Paths;
 CMusikSongArray		g_Playlist;	
 CMusikSongArray		g_LibPlaylist;
-wxArrayString		g_SourcesList;
 CMusikWebServer		g_WebServer;
 
 wxCriticalSection	g_protectingStreamArrays; // to protect access to ActiveStreams and ActiveChannels

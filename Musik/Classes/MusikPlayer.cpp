@@ -75,8 +75,7 @@ CMusikPlayer::CMusikPlayer()
 	//--- initialize random playback ---//
 	long RandomSeed = wxGetLocalTime();
 	SeedRandom( RandomSeed );
-	//--- clear history ---//
-	m_History[0] = m_History[1] = m_History[2] = m_History[3] = m_History[4] = ~0;
+	m_arrHistory.Alloc(g_Prefs.nMaxRandomHistory);
 	//set stop watch into pause mode.
 	m_bStreamIsWorkingStopWatchIsRunning = false ;
 	m_NETSTREAM_last_read_percent = 0;
@@ -265,7 +264,7 @@ signed char F_CALLBACKAPI CMusikPlayer::MetadataCallback(char *name, char *value
 void CMusikPlayer::_SetMetaData(char *name, char *value)
 {
 	wxCriticalSectionLocker locker( m_critMetadata );
-	wxString sMetadataName = ConvA2W(name);
+	wxString sMetadataName = ConvA2W(name).MakeUpper();
 	wxString sMetadataValue = ConvA2W(value);
 	if (wxT("ARTIST") == sMetadataName)
 	{
@@ -319,6 +318,13 @@ void CMusikPlayer::OnPlayRestart( wxCommandEvent& WXUNUSED(event) )
 }
 bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 {
+	//--- check for an invalid playlist ---//
+	if ( ( nItem >= m_Playlist.GetCount() ) || ( m_Playlist.GetCount() < 1 ) )
+	{
+		m_Playing = false;
+		return false;
+	}
+
 	if (IsPlaying() && _CurrentSongIsNetStream())
 	{	
 		if(GetCurrentFile() == m_Playlist.Item( nItem ).Filename)
@@ -326,8 +332,8 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 			return true; // already playing this stream
 		}
 
-		_PostPlayRestart(); // will restart playing postponed
-		return true;
+//		_PostPlayRestart(); // will restart playing postponed
+//		return true;
 	}
 	else if (_IsNETSTREAMConnecting())
 	{
@@ -338,167 +344,159 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 		// and
 		// file does not exist
 			wxMessageBox( _( "Cannot find file.\n Filename:" ) + m_Playlist.Item( nItem ).Filename, MUSIKAPPNAME_VERSION, wxICON_STOP );
+			Stop();
 			return false;
 	}
 
-	//--- check for an invalid playlist ---//
-	if ( ( nItem >= m_Playlist.GetCount() ) || ( m_Playlist.GetCount() < 1 ) )
+	//---------------------------------------------//
+	//--- start with the basics					---//
+	//---------------------------------------------//
+	m_Stopping		= false;
+	m_SongIndex		= nItem;	
+	m_CurrentFile	= m_Playlist.Item( m_SongIndex ).Filename;
+
+	//---------------------------------------------//
+	//--- if there is already a fade in			---//
+	//--- progress, then we need to abort it	---//
+	//---------------------------------------------//
+	SetCrossfadeType( nFadeType );
+
+	//---------------------------------------------//
+	//--- open a new stream and push it to the	---//
+	//--- bottom of the g_ActiveStreams array	---//
+	//---------------------------------------------//
+	FSOUND_Stream_SetBufferSize( g_Prefs.nSndBuffer );
+	int nFlags = FSOUND_NORMAL;
+	if( _CurrentSongNeedsMPEGACCURATE())
+		nFlags |= FSOUND_MPEGACCURATE;
+	if(_CurrentSongIsNetStream())
+		nFlags |= FSOUND_NONBLOCKING;
+
+#if ( MUSIK_FMOD_VERSION >= 0x0370 )
+	FSOUND_STREAM* pNewStream = FSOUND_Stream_Open( ( const char* )ConvFNToFieldMB( m_CurrentFile ), nFlags , 0, 0 );
+#else
+	FSOUND_STREAM* pNewStream = FSOUND_Stream_OpenFile( ( const char* )ConvFNToFieldMB( m_CurrentFile ), nFlags , 0);
+#endif
+	if(pNewStream == NULL)
 	{
-		m_Playing = false;
+		wxMessageBox( _( "Playback will be stopped, because loading failed.\n Filename:" ) + m_CurrentFile, MUSIKAPPNAME_VERSION, wxICON_STOP );
+		Stop(false);
 		return false;
 	}
-
-	else
+	InitDSP();
+	if(_CurrentSongIsNetStream()&& _IsNETSTREAMConnecting() == false)
 	{
-		//---------------------------------------------//
-		//--- start with the basics					---//
-		//---------------------------------------------//
-		m_Stopping		= false;
-		m_SongIndex		= nItem;	
-		m_CurrentFile	= m_Playlist.Item( m_SongIndex ).Filename;
-
-		//---------------------------------------------//
-		//--- if there is already a fade in			---//
-		//--- progress, then we need to abort it	---//
-		//---------------------------------------------//
-		SetCrossfadeType( nFadeType );
-
-		//---------------------------------------------//
-		//--- open a new stream and push it to the	---//
-		//--- bottom of the g_ActiveStreams array	---//
-		//---------------------------------------------//
-		FSOUND_Stream_SetBufferSize( g_Prefs.nSndBuffer );
-		int nFlags = FSOUND_NORMAL;
-		if( _CurrentSongNeedsMPEGACCURATE())
-			nFlags |= FSOUND_MPEGACCURATE;
-		if(_CurrentSongIsNetStream())
-			nFlags |= FSOUND_NONBLOCKING;
-	
-#if ( MUSIK_FMOD_VERSION >= 0x0370 )
-		FSOUND_STREAM* pNewStream = FSOUND_Stream_Open( ( const char* )ConvFNToFieldMB( m_CurrentFile ), nFlags , 0, 0 );
-#else
-		FSOUND_STREAM* pNewStream = FSOUND_Stream_OpenFile( ( const char* )ConvFNToFieldMB( m_CurrentFile ), nFlags , 0);
-#endif
-		if(pNewStream == NULL)
+		ClearOldStreams(true);// clear all streams
+		m_MetaDataSong = CMusikSong();
+		m_p_NETSTREAM_Connecting = pNewStream;
+		m_Playing = true;
+		m_b_NETSTREAM_AbortConnect = false;
+		bool bExit = false;
+		do
 		{
-			wxMessageBox( _( "Playback will be stopped, because loading failed.\n Filename:" ) + m_CurrentFile, MUSIKAPPNAME_VERSION, wxICON_STOP );
-			Stop(false);
-			return false;
-		}
-		InitDSP();
-		if(_CurrentSongIsNetStream()&& _IsNETSTREAMConnecting() == false)
-		{
-			ClearOldStreams(true);// clear all streams
-			m_p_NETSTREAM_Connecting = pNewStream;
-			m_Playing = true;
-			m_b_NETSTREAM_AbortConnect = false;
-			bool bExit = false;
-			do
+			int  openstate = FSOUND_Stream_GetOpenState(pNewStream);
+			if ((openstate == -1) || (openstate == -3))
 			{
-				int  openstate = FSOUND_Stream_GetOpenState(pNewStream);
-				if ((openstate == -1) || (openstate == -3))
-				{
-					wxMessageBox(_("ERROR: failed to open stream:")+ ConvA2W(FSOUND_Stream_Net_GetLastServerStatus()));
-					m_b_NETSTREAM_AbortConnect = true;
-					break;
-				}
-				
-		        switch(_NetStreamStatusUpdate(pNewStream))
-				{
-				case FSOUND_STREAM_NET_READY:
-					if(openstate == 0)
-						bExit = true;
-					break;
-				case FSOUND_STREAM_NET_ERROR:
-					m_b_NETSTREAM_AbortConnect = true;
-					break;
-				}
-				wxGetApp().Yield();
-
-			} while (!bExit && !m_b_NETSTREAM_AbortConnect);
-			m_p_NETSTREAM_Connecting = NULL;
-			if( m_b_NETSTREAM_AbortConnect )
-			{
-				FSOUND_Stream_Close( pNewStream );
-				Stop(false);
-				m_b_NETSTREAM_AbortConnect = false;
-				return false;
+				wxMessageBox(_("ERROR: failed to open stream:")+ ConvA2W(FSOUND_Stream_Net_GetLastServerStatus()));
+				m_b_NETSTREAM_AbortConnect = true;
+				break;
 			}
 			
-		}
-		//---------------------------------------------//
-		//--- start playback on the new stream on	---//
-		//--- the designated channel.				---//
-		//---------------------------------------------//
-		m_Channels = FSOUND_Stream_PlayEx( FSOUND_FREE, pNewStream,NULL,TRUE);//start paused
-		if(m_Channels  == -1)
+		    switch(_NetStreamStatusUpdate(pNewStream))
+			{
+			case FSOUND_STREAM_NET_READY:
+				if(openstate == 0)
+					bExit = true;
+				break;
+			case FSOUND_STREAM_NET_ERROR:
+				m_b_NETSTREAM_AbortConnect = true;
+				break;
+			}
+			wxGetApp().Yield();
+
+		} while (!bExit && !m_b_NETSTREAM_AbortConnect);
+		m_p_NETSTREAM_Connecting = NULL;
+		if( m_b_NETSTREAM_AbortConnect )
 		{
-			wxMessageBox(_("Play failed, please try again."));
-			wxLogDebug(wxT("play failed:%s"),(const wxChar *) ConvA2W(FMOD_ErrorString(FSOUND_GetError())));
 			FSOUND_Stream_Close( pNewStream );
 			Stop(false);
+			m_b_NETSTREAM_AbortConnect = false;
 			return false;
-
 		}
-		if(_CurrentSongIsNetStream())
-		{
-			FSOUND_Stream_Net_SetMetadataCallback(pNewStream, MetadataCallback, (int)this);
-		}
-		FSOUND_SetVolume( GetCurrChannel(), 0 );
-		FSOUND_Stream_SetTime( pNewStream, nStartPos * 1000 );
-		FSOUND_SetPaused(GetCurrChannel(), FALSE);
-		g_FaderThread->CrossfaderAbort();
-		//---------------------------------------------//
-		//--- update the global arrays containing	---//
-		//--- active channels and streams			---//
-		//---------------------------------------------//
-		{
-			wxCriticalSectionLocker lock(g_protectingStreamArrays);
-			for(int i = 0; i < g_ActiveChannels.GetCount();i++)
-			{
-				if(g_ActiveChannels[i] == GetCurrChannel())
-				{
-					FSOUND_Stream_Stop ( g_ActiveStreams[i] );
-					FSOUND_Stream_Close( g_ActiveStreams[i] );
-					g_ActiveStreams.RemoveAt(i);
-					g_ActiveChannels.RemoveAt(i);
-					break;
-				}
-			}
-			g_ActiveStreams.Add( pNewStream );
-			g_ActiveChannels.Add( GetCurrChannel() );
-		}
-		m_Playing = true;
-
-		SetFrequency();
-
 		
-		//---------------------------------------------//
-		//--- playback has been started, update the	---//
-		//--- user interface to reflect it			---//
-		//---------------------------------------------//
-		g_NowPlayingCtrl->PlayBtnToPauseBtn();
-		UpdateUI();
-
-		//---------------------------------------------//
-		//--- if fading is not enabled, shut down	---//
-		//--- all of the old channels, and set the	---//
-		//--- active stream to full volume			---//
-		//---------------------------------------------//
-		if ( g_Prefs.nFadeEnable == 0 || g_Prefs.nGlobalFadeEnable == 0 )
-		{
-			if(g_ActiveChannels.GetCount())
-				FSOUND_SetVolume( g_ActiveChannels.Item( g_ActiveChannels.GetCount() - 1 ), g_Prefs.nSndVolume );
-			ClearOldStreams();
-		}
-
-		//---------------------------------------------//
-		//--- tell the listening thread its time to	---//
-		//--- start fading							---//
-		//---------------------------------------------//
-		else if ( g_Prefs.nFadeEnable && g_Prefs.nGlobalFadeEnable )
-			SetFadeStart();		
 	}
+	//---------------------------------------------//
+	//--- start playback on the new stream on	---//
+	//--- the designated channel.				---//
+	//---------------------------------------------//
+	m_Channels = FSOUND_Stream_PlayEx( FSOUND_FREE, pNewStream,NULL,TRUE);//start paused
+	if(m_Channels  == -1)
+	{
+		wxMessageBox(_("Play failed, please try again."));
+		wxLogDebug(wxT("play failed:%s"),(const wxChar *) ConvA2W(FMOD_ErrorString(FSOUND_GetError())));
+		FSOUND_Stream_Close( pNewStream );
+		Stop(false);
+		return false;
+
+	}
+	if(_CurrentSongIsNetStream())
+	{
+		FSOUND_Stream_Net_SetMetadataCallback(pNewStream, MetadataCallback, (int)this);
+	}
+	FSOUND_SetVolume( GetCurrChannel(), 0 );
+	FSOUND_Stream_SetTime( pNewStream, nStartPos * 1000 );
+	FSOUND_SetPaused(GetCurrChannel(), FALSE);
+	g_FaderThread->CrossfaderAbort();
+	//---------------------------------------------//
+	//--- update the global arrays containing	---//
+	//--- active channels and streams			---//
+	//---------------------------------------------//
+	{
+		wxCriticalSectionLocker lock(g_protectingStreamArrays);
+		for(int i = 0; i < g_ActiveChannels.GetCount();i++)
+		{
+			if(g_ActiveChannels[i] == GetCurrChannel())
+			{
+				FSOUND_Stream_Stop ( g_ActiveStreams[i] );
+				FSOUND_Stream_Close( g_ActiveStreams[i] );
+				g_ActiveStreams.RemoveAt(i);
+				g_ActiveChannels.RemoveAt(i);
+				break;
+			}
+		}
+		g_ActiveStreams.Add( pNewStream );
+		g_ActiveChannels.Add( GetCurrChannel() );
+	}
+	m_Playing = true;
+
+	SetFrequency();
+
+	
+	//---------------------------------------------//
+	//--- playback has been started, update the	---//
+	//--- user interface to reflect it			---//
+	//---------------------------------------------//
+	g_NowPlayingCtrl->PlayBtnToPauseBtn();
+	UpdateUI();
+
+	//---------------------------------------------//
+	//--- if fading is not enabled, shut down	---//
+	//--- all of the old channels, and set the	---//
+	//--- active stream to full volume			---//
+	//---------------------------------------------//
+	if ( g_Prefs.nFadeEnable == 0 || g_Prefs.nGlobalFadeEnable == 0 )
+	{
+		if(g_ActiveChannels.GetCount())
+			FSOUND_SetVolume( g_ActiveChannels.Item( g_ActiveChannels.GetCount() - 1 ), g_Prefs.nSndVolume );
+		ClearOldStreams();
+	}
+
+	//---------------------------------------------//
+	//--- tell the listening thread its time to	---//
+	//--- start fading							---//
+	//---------------------------------------------//
+	else if ( g_Prefs.nFadeEnable && g_Prefs.nGlobalFadeEnable )
+		SetFadeStart();		
 	return true;
 }
 int CMusikPlayer::_NetStreamStatusUpdate(FSOUND_STREAM * pStream)
@@ -703,6 +701,7 @@ void CMusikPlayer::FinalizeResume()
 
 void CMusikPlayer::Stop( bool bCheckFade, bool bExit )
 {
+	if(m_Stopping) return;
 	m_b_NETSTREAM_AbortConnect = true;
 	m_Stopping = true;
 	//-------------------------------------------------//
@@ -789,14 +788,20 @@ size_t CMusikPlayer::GetRandomSong()
 		repeat = false;
 		r = GetRandomNumber() % m_Playlist.GetCount();
 
+		if(m_arrHistory.GetCount() == m_Playlist.GetCount())
+		{	// history is as large as the playlist
+			// clear the history and start anew
+			m_arrHistory.Clear();
+			break;
+		}
 		if(nMaxRepeatCount--) // only check for repeats nMaxRepeatCount times, to prevent endless do loop
 		{
 			if(::wxFileExists(m_Playlist.Item( r ).Filename))
 			{
 				//--- check for repeats ---//
-				for ( size_t j = 0; j < m_Playlist.GetCount()-1 && j < WXSIZEOF(m_History); j++ )
+				for ( size_t j = 0;  j < m_arrHistory.GetCount(); j++ )
 				{
-					if ( r == m_History[j] )
+					if ( r == m_arrHistory[j] )
 					{
 						repeat = true; 
 						break;
@@ -810,11 +815,12 @@ size_t CMusikPlayer::GetRandomSong()
 		}
 	} while ( repeat );
 
+	if( m_arrHistory.GetCount() >= g_Prefs.nMaxRandomHistory )
+	{
 	//--- rotate history ---//
-	for ( int j = WXSIZEOF(m_History) - 1; j > 0; j-- )
-		m_History[j] = m_History[j-1];
-	m_History[0] = r;
-
+		m_arrHistory.RemoveAt(0);
+	}
+	m_arrHistory.Add(r);
 	return r;
 }
 
@@ -1113,4 +1119,29 @@ void CMusikPlayer::SetFadeStart()
 int CMusikPlayer::GetCurrChannel()
 {
 	return m_Channels;
+}
+
+void CMusikPlayer::AddToPlaylist( CMusikSongArray & songstoadd )
+{
+	wxCriticalSectionLocker locker( m_critInternalData);
+	size_t size = songstoadd.GetCount();
+	for(int i = 0; i < size ; i++)
+	{
+		m_Playlist.Add(songstoadd.Detach(0));
+	}
+}
+void CMusikPlayer::RemovePlaylistEntry( int index )
+{
+	wxCriticalSectionLocker locker( m_critInternalData);
+	wxASSERT(index < m_Playlist.GetCount()); 
+	
+	if(index < m_SongIndex)
+	{
+		m_SongIndex--;
+	}
+	else if(m_SongIndex == index)
+	{
+		Stop();
+	}
+	m_Playlist.RemoveAt(index);
 }

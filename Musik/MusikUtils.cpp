@@ -28,43 +28,8 @@
 #include <wx/filename.h>
 #include <wx/tokenzr.h>
 #include <wx/dir.h>
-#include <wx/filename.h>
 
-class wxMusicTraverser : public wxDirTraverser
-{
-public:
 
-	wxMusicTraverser(wxArrayString& files ) : m_files(files) { }
-
-    virtual wxDirTraverseResult OnFile(const wxString& filename)
-    {
-		wxFileName fn( filename );
-		wxString ext = fn.GetExt();
-		ext.MakeLower();
-
-		if ( ext == wxT( "mp3" ) || ext == wxT( "ogg" ) ) 
-		{
-			m_files.Add( filename );
-
-			if ( m_files.GetCount() % 100 == 0 )
-			{
-				wxCommandEvent UpdateScanProg( wxEVT_COMMAND_MENU_SELECTED, MUSIK_LIBRARY_THREAD_SCAN_PROG );
-				g_MusikLibraryFrame->SetScanCount( m_files.GetCount() );
-				wxPostEvent( g_MusikLibraryFrame, UpdateScanProg );
-			}
-		}
-        
-        return wxDIR_CONTINUE;
-    }
-
-    virtual wxDirTraverseResult OnDir(const wxString& WXUNUSED(dirname))
-    {
-        return wxDIR_CONTINUE;
-    }
-
-private:
-	wxArrayString& m_files;
-};
 
 class wxPlaylistTraverser : public wxDirTraverser
 {
@@ -96,52 +61,10 @@ private:
 };
 
 
-void GetMusicDirs( const wxArrayString & aDirs, wxArrayString & aFiles )
+
+void  DelimitStr( wxString sStr, wxString sDel, wxArrayString &aReturn, bool bRemoveDelimiter )
 {
-	aFiles.Clear();
-	for ( int i = 0; i < (int)aDirs.GetCount(); i++ )
-	{
-		wxString sPath = aDirs.Item( i );
-		sPath.Replace( wxT( " " ), wxT( "" ), true );
-		if ( sPath != wxT( "" ) )
-		{
-			wxDir dir( aDirs.Item( i ) );
-			if ( dir.IsOpened() )
-			{
-				wxMusicTraverser traverser( aFiles );
-				dir.Traverse( traverser );
-
-				//-----------------------------------------//
-				//--- the traverser will post update	---//
-				//--- scan new events					---//
-				//-----------------------------------------//
-			}
-		}
-	}
-}
-
-void GetMusicDir( const wxString & sDir, wxArrayString & aFiles )
-{
-	aFiles.Clear();
-	if ( sDir != wxT( "" ) )
-	{
-		wxDir dir( sDir );
-		if ( dir.IsOpened() )
-		{
-			wxMusicTraverser traverser( aFiles );
-			dir.Traverse( traverser );
-		}
-
-		//-----------------------------------------//
-		//--- the traverser will post update	---//
-		//--- scan new events					---//
-		//-----------------------------------------//
-	}
-}
-
-wxArrayString DelimitStr( wxString sStr, wxString sDel, bool bRemoveDelimiter )
-{
-	wxArrayString aReturn;
+	aReturn.Clear();
 	wxStringTokenizer toke( sStr, sDel );
 
 	while( toke.HasMoreTokens() )
@@ -158,7 +81,7 @@ wxArrayString DelimitStr( wxString sStr, wxString sDel, bool bRemoveDelimiter )
 	//--- strip last delimiter ---//
 	aReturn.Item( aReturn.GetCount()-1 ).Replace( sDel, wxT( "" ), true );
 
-	return aReturn;
+	return;
 }
 
 void SortArrayByLength ( wxArrayString* pArray )
@@ -179,17 +102,11 @@ void SortArrayByLength ( wxArrayString* pArray )
 	}
 }
 
-size_t GetDelimitCount ( wxString sStr, wxString sDel )
-{
-	wxArrayString aTemp = DelimitStr( sStr, sDel, false );
-	return aTemp.GetCount();
-}
-
 wxString GetGenre ( const wxString & sGenre ) 
 { 
 	// if sGenre is a number, the name will be returned
 	// if sGenre is something like (nnn) XXXXX , the name of the number nnn will be returned
-	// if nothing matches the sGenre will be returned, but if sGenre is an empty string, _("<unknown>") will be returned
+	// if nothing matches the sGenre will be returned, but if sGenre is an empty string, wxT("<unknown>") will be returned
 	wxString aReturn(sGenre);
 	if ( sGenre.Length() > 0 )
 	{
@@ -204,8 +121,6 @@ wxString GetGenre ( const wxString & sGenre )
 		if (nGenreID >=0 && nGenreID < ID3_NR_OF_V1_GENRES )
 			aReturn = ConvA2W( ID3_v1_genre_description[nGenreID] );
 	}
-	else
-		aReturn = _("<unknown>");
 
 	return aReturn;
 }
@@ -242,7 +157,8 @@ wxString MStoStr( int timems )
 
 wxString GetJustFilename( const wxString & filename )
 {
-	wxArrayString paths = DelimitStr( filename, wxString( MUSIK_PATH_SEPARATOR ), false );
+	wxArrayString paths;
+	DelimitStr( filename, wxString( MUSIK_PATH_SEPARATOR ), paths, false );
 	return paths.Item( paths.GetCount() - 1 );	
 }
 

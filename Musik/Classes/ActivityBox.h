@@ -26,6 +26,7 @@
 
 #define MUSIK_ACT_TEXT 9998
 
+#include "../ThreadController.h"
 //--- for CMusikSongArray ---//
 #include "MusikLibrary.h"
 
@@ -183,11 +184,9 @@ public:
 	//--- custom, thread event handlers ---//
 	void SetProgress			( int n )				{ m_Progress = n; }
 	void SetProgressType		( int n )				{ m_ProgressType = n;		}
-	void SetActiveThread		( wxThread* newactivethread );
 
 	int GetProgress()			{ return m_Progress;		}
 	int GetProgressType()		{ return m_ProgressType;	}
-	wxThread* GetActiveThread()	{ return m_ActiveThread;	}
 
 	DECLARE_EVENT_TABLE()
 
@@ -205,10 +204,9 @@ private:
 	CActivityEditEvt	*pActivityEditEvt;
 
 	//--- thread stuff ---//
-	MusikActivityRenameThread	*pRenameThread;
+	CThreadController m_ActiveThreadController;
 	int m_Progress;
 	int m_ProgressType;
-	wxThread* m_ActiveThread;
 };
 
 class ActivityDropTarget : public wxTextDropTarget

@@ -21,6 +21,7 @@
 
 //--- CMusikSongArray defined here ---//
 #include "../Classes/MusikLibrary.h"
+#include "../ThreadController.h"
 
 class MusikTagApplyThread;
 
@@ -54,10 +55,12 @@ enum EMUSIK_TAG_OBJECT_ID
 const EMUSIK_TAG_OBJECT_ID	MUSIK_TAG_CHK_TAGFIRST =  MUSIK_TAG_CHK_TITLE;
 const EMUSIK_TAG_OBJECT_ID	MUSIK_TAG_CHK_TAGLAST =  MUSIK_TAG_CHK_YEAR;
 
+class  CPlaylistCtrl;
+
 class MusikTagFrame : public wxFrame
 {
 public:
-	MusikTagFrame( wxFrame* pParent, CMusikSongArray aSongs, int nCurFrame, int nEditType, int n );
+	MusikTagFrame( wxFrame* pParent, CPlaylistCtrl * playlistctrl, int nCurFrame, int nEditType, int n );
 
 	//--- objects ---//
 	wxTextCtrl  *tcFilename;
@@ -132,25 +135,27 @@ public:
 
 	void Close();
 	//--- thread related functions ---//
-	void SetActiveThread		( wxThread* newactivethread	);
-	wxThread* GetActiveThread	()						{ return m_ActiveThread;	}
 	CMusikSongArray* GetSongs	()						{ return &m_Songs;			}
 
 	void EnableProgress			( bool enable = true );
 
-	CMusikSongArray m_Songs;
+
+	DECLARE_EVENT_TABLE()
+private:
+
+	CThreadController m_ActiveThreadController;
+
+	CMusikSongArray & m_Songs;
 	bool			m_WriteTag;
 	int				nIndex;
 	int				nFrame;
 
-	DECLARE_EVENT_TABLE()
-private:
 	int m_EditType;
-
+	
+	wxArrayInt m_arrSongsSelected;
 	//--- thread related stuff ---//
-	MusikTagApplyThread	*pApplyThread;
 	int m_ProgressType;
-	wxThread* m_ActiveThread;
+
 
 	bool m_Close;
 	bool m_bDirty;

@@ -79,14 +79,14 @@ END_EVENT_TABLE()
 void CActivityListBox::OnChar( wxKeyEvent& event )
 {
   int keycode = event.GetKeyCode();
-//  if (wxIsalnum(keycode))
+  if (keycode >= WXK_SPACE && keycode <=0xff )
   {
 	if(m_OnCharStopWatch.Time() > 1000)
 	{// more than 1000 ms have been passed
 		// reset search string
 		m_sSearch.Empty();// 
 	}
-	m_sSearch+=keycode;
+	m_sSearch+=(char)(keycode&0xff);
   	for ( size_t i = HasShowAllRow() ? 1 : 0; i < GetItemCount(); i++ )
 	{
 	  if (GetRowText(i,false).Left(m_sSearch.Len()).IsSameAs(m_sSearch,false))
@@ -103,8 +103,8 @@ void CActivityListBox::OnChar( wxKeyEvent& event )
 	}
 	m_OnCharStopWatch.Start();
   }
-//  else
-//    event.Skip();
+  else
+    event.Skip();
 }  
 
 void CActivityListBox::RescaleColumns( bool bFreeze )
@@ -327,8 +327,10 @@ bool ActivityDropTarget::OnDropText( wxCoord x, wxCoord y, const wxString &text 
 	return TRUE;
 }
 
-wxDragResult ActivityDropTarget::OnDragOver(wxCoord x, wxCoord y, wxDragResult WXUNUSED(def))
+wxDragResult ActivityDropTarget::OnDragOver(wxCoord x, wxCoord y, wxDragResult def)
 {
+	if(def == wxDragNone)
+		return wxDragNone;
 	// Disallow further drag and drop if a thread is happening.
 	if ( g_MusikFrame->GetActiveThread() )
 		return wxDragNone;
@@ -340,19 +342,21 @@ wxDragResult ActivityDropTarget::OnDragOver(wxCoord x, wxCoord y, wxDragResult W
 
 void ActivityDropTarget::HighlightSel( wxPoint pPos )
 {
-	g_DragInProg = true;
 	int nFlags;
 	long n = pList->HitTest( pPos, nFlags );
 	if ( ( n > 0 ) && ( n != nLastHit ) )
 	{
+		g_DragInProg = true;
 		wxListCtrlSelNone( pList );
 		pList->SetItemState( n, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
+		g_DragInProg = false;
+
 	}
 	nLastHit = n;
 }
 
 CActivityBox::CActivityBox( wxWindow *parent, wxWindowID id, EMUSIK_ACTIVITY_TYPE nType )
-	:  wxPanel( parent, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxNO_BORDER | wxCLIP_CHILDREN )
+	:  wxPanel( parent, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ),wxTAB_TRAVERSAL | wxNO_BORDER | wxCLIP_CHILDREN )
 {
 	//--- CActivityListBox ---//
 	pListBox	= new CActivityListBox	( this, id );
@@ -391,7 +395,6 @@ CActivityBox::CActivityBox( wxWindow *parent, wxWindowID id, EMUSIK_ACTIVITY_TYP
 
 	m_EditVisible = false;
 	m_ActivityType = nType;
-	m_ActiveThread  = NULL;
 }
 
 CActivityBox::~CActivityBox()
@@ -563,7 +566,7 @@ void CActivityBox::GetSelectedSongs( CMusikSongArray& array )
 			//--- query. will be something like "select		---//
 			//--- [all this box'es artists]" from...		---//
 			//-------------------------------------------------//
-			sThis += sThisType + wxT(" like ");
+			sThis += sThisType + wxT(" = ");
 			for ( size_t i = 0; i < aThisSel.GetCount(); i++ )
 			{
 				aThisSel.Item( i ).Replace( wxT( "'" ), wxT( "''" ), true );
@@ -576,7 +579,7 @@ void CActivityBox::GetSelectedSongs( CMusikSongArray& array )
 				{
 				      sThis += wxT("' or ");
 				      sThis += sThisType;
-				      sThis += wxT(" like ");
+				      sThis += wxT(" = ");
 				}
 			}
 
@@ -585,7 +588,7 @@ void CActivityBox::GetSelectedSongs( CMusikSongArray& array )
 			//--- corresponding entries are selected in the	---//
 			//--- other box?								---//
 			//-------------------------------------------------//
-			sParent = sParentType + wxT(" like "); 
+			sParent = sParentType + wxT(" = "); 
 			for ( size_t i = 0; i < aParentSel.GetCount(); i++ )
 			{
 				aParentSel.Item( i ).Replace( wxT( "'" ), wxT( "''" ), true );
@@ -598,10 +601,10 @@ void CActivityBox::GetSelectedSongs( CMusikSongArray& array )
 				{
 					sParent += wxT(" or ");
 					sParent += sParentType;
-					sParent += wxT(" like ");
+					sParent += wxT(" = ");
 				}
 			}
-			g_Library.QuerySongsWhere( sParent, array );
+			g_Library.QuerySongsWhere( sParent, array ,true);
 			return;
 		}
 	}
@@ -725,12 +728,9 @@ wxString CActivityBox::DNDGetList()
 void CActivityBox::StartRenameThread( int mode, const wxArrayString &WXUNUSED(sel), wxString newvalue )
 {
 	
-	if ( g_MusikFrame->GetActiveThread() == NULL )
+	if ( m_ActiveThreadController.IsAlive() == false )
      {
-		pRenameThread = new MusikActivityRenameThread( this, mode, newvalue );
-		pRenameThread->Create();
-		SetActiveThread	( pRenameThread );
-		pRenameThread->Run();
+		m_ActiveThreadController.AttachAndRun( new MusikActivityRenameThread( this, mode, newvalue ) );
     }
 	else
 		wxMessageBox( _( "An internal error has occured.\nPrevious thread not terminated correctly.\n\nPlease contact the "MUSIKAPPNAME" development team with this error." ), MUSIKAPPNAME_VERSION, wxICON_STOP );
@@ -746,10 +746,6 @@ void CActivityBox::OnRenameThreadStart( wxCommandEvent& WXUNUSED(event) )
 	SetProgressType	( MUSIK_ACTIVITY_RENAME_THREAD );
 	SetProgress		( 0 );
 
-	//--- setup thread to begin in g_MusikFrame ---//
-	g_MusikFrame->SetActiveThread	( pRenameThread );
-	g_MusikFrame->SetProgressType	( MUSIK_ACTIVITY_RENAME_THREAD );
-	g_MusikFrame->SetProgress		( 0 );
 
 	//--- post the event. we're up and running now! ---//
 	wxCommandEvent MusikStartProgEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_FRAME_THREAD_START );
@@ -766,7 +762,7 @@ void CActivityBox::OnRenameThreadProg( wxCommandEvent& WXUNUSED(event) )
 
 void CActivityBox::OnRenameThreadEnd( wxCommandEvent& WXUNUSED(event) )
 {
-	SetActiveThread	( NULL );// waits until threads really ends
+	m_ActiveThreadController.Join();// waits until threads really ends
 	if ( g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_HIGHLIGHT || g_ActivityAreaCtrl->GetParentBox() == this )
 		ResetContents();
 	else
@@ -787,20 +783,3 @@ void CActivityBox::OnRenameThreadEnd( wxCommandEvent& WXUNUSED(event) )
 	wxPostEvent( g_MusikFrame, MusikEndProgEvt );
 }
 
-void CActivityBox::SetActiveThread( wxThread* newactivethread)
-{
-	wxThread * pCurrThread = GetActiveThread();
-	if(newactivethread == NULL)
-	{
-		
-		wxASSERT(pCurrThread);
-		pCurrThread->Wait();// wait until thread has completed
-		delete pCurrThread;
-		m_ActiveThread = NULL;
-	}
-	else
-	{
-		wxASSERT(pCurrThread == NULL); // ATTENTION!!! there is an active thread. someone forgot to call SetActiveThread(NULL)
-	}
-	m_ActiveThread = newactivethread;
-}

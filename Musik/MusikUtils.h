@@ -28,8 +28,7 @@
 wxString		GetGenre			(  const wxString & sGenre );
 int				GetGenreID			(  const wxString & sGenre );
 
-wxArrayString	DelimitStr			( wxString sStr, wxString sDel, bool bRemoveDelimiter = true );
-size_t			GetDelimitCount		( wxString sStr, wxString sDel );
+void			DelimitStr			( wxString sStr, wxString sDel, wxArrayString &aReturn, bool bRemoveDelimiter = true );
 
 void			GetPlaylistDir		( wxArrayString & aFiles );
 wxString		MStoStr				( int timems );
@@ -44,8 +43,6 @@ wxString		GenTempFilename		( wxString filename, int nsize );
 wxString		ColourToString		( const wxColour& color );
 wxColour		StringToColour		( const wxString& string );
 
-void			GetMusicDirs		(  const wxArrayString & aDirs, wxArrayString & aFiles );
-void			GetMusicDir			( const wxString & sDir, wxArrayString & aFiles );
 
 void			SortArrayByLength	( wxArrayString* pArray );
 
@@ -151,5 +148,6 @@ public:
 	CMusikTagger(const wxString &sMask, bool bConvertUnderscoresToSpaces);
 	bool Retag(CMusikSong * Song) const;
 };
+
 
 #endif

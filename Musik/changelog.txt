@@ -1,3 +1,20 @@
+
+0.3.0.2 to 0.3.1 CVS
+
++ Genre comboxbox in Tag dialog offers standard id3v1 genres plus all used genres, and you can enter your own genre name.
++ Drag and Drop of files from a Filemanager is supported now. New songs will automaticvally be added to the library. The dropped songs are appended to the "Now Playing" source playlist
++ songs can be deleted from  "Now Playing" playlist, and you can reorder songs by drag on drop there. 
++ you can now drag songs from playlist( or artist, album etc from selection boxes)  to the "Now Playing" sources entry and they will be appended
++ speed of tag writing to db has been enhanced.
++ random play history buffer is enlarged from 30 to 500 and you can set it to your liking in the prefs file (MaxRandomHistory)
+- fixed bug: threading is now made easier (nad less buggy) with a Thread controler class, which takes into acount that wxwidgets dispatches messages while waiting for a thread
+- fixed bug: cursor keys work now in all listctrl
+- fixed bug: when you tried to drag files from outside, the gui was blocked
++ new option to rebuild library, which rereads the tags from all songs ( lastplayed etc. entrys will be preserved)
++ scanning songs cannot be interrupted by pressing ESC
++ make library song parsing easier to extend,simpler and faster 
++ changed net stream,now playing  and library bitmaps
+
 0.3.0.1 to 0.3.0.2
 - fix bug with TaskBArIcon on linux. the way i did implement worked only
   okay on windows. the new way works on both linux and windows( taskbaricon
@@ -8,6 +25,7 @@
 - workaorund for a bug in the datetime functions of wxwidgets, so date
   queries do now work on linux too. (see some example playlist in contrib
   dir of src distribution)
+
 0.3.0 to 0.3.0.1
 - fixed installation of prepacked radio channels and dynamic playlists on win9x
 + sorting order is now kept if selection in the selection boxes are made.

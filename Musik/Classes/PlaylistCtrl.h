@@ -20,6 +20,8 @@
 #ifndef WX_PRECOMP
 	#include "wx/wx.h"
 #endif
+#include "../ThreadController.h"
+
 #include "PlaylistInfoCtrl.h"
 //--- definition CMusikSongArray is here ---//
 #include "MusikLibrary.h"
@@ -30,6 +32,7 @@
 
 class MusikPlaylistRenameThread;
 class MusikPlaylistRetagThread;
+class CPlaylistBox;
 
 class IPlaylistInfo
 {
@@ -45,7 +48,7 @@ public:
 	//--------------------------------//
 	//--- constructor / destructor ---//
 	//--------------------------------//
-	CPlaylistCtrl( wxWindow *parent, const wxWindowID id, const wxPoint& pos, const wxSize& size );
+	CPlaylistCtrl( CPlaylistBox *parent, const wxWindowID id, const wxPoint& pos, const wxSize& size );
 	~CPlaylistCtrl();
 
 	//--------------//
@@ -77,6 +80,8 @@ public:
 	void BeginDragCol	( wxListEvent&		event			);
 	void PlaySel		( wxListEvent&		WXUNUSED(event)	);
 
+
+	bool OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames);
 	//------------------------//
 	//--- threading events ---//
 	//------------------------//
@@ -90,11 +95,12 @@ public:
 	wxString		GetSubitemText	( int nItem, int Subitem );
 	wxString		GetAllFiles		();
 	wxString		GetSelFiles		();
-	wxArrayInt		GetSelItems		();
+	void			GetSelItems		(wxArrayInt & aResult);
 	void			GetSelFilesList	( wxArrayString & aResult );
 	void			GetAllFilesList ( wxArrayString & aResult );
 	void			GetSelSongs		( CMusikSongArray & aResult );
 	wxString		GetFilename		( int nItem );
+	CMusikSongArray * GetPlaylist	();
 //IPlaylistInfo
 	int				GetTotalPlayingTimeInSeconds();
 	double			GetTotalFilesize();
@@ -140,11 +146,9 @@ public:
 	//-----------------//
 	void SetProgress			( int n )				{ m_Progress = n;			}
 	void SetProgressType		( int n )				{ m_ProgressType = n;		}
-	void SetActiveThread		( wxThread* newactivethread );	
 
 	int GetProgress				()						{ return m_Progress;		}
 	int GetProgressType			()						{ return m_ProgressType;	}
-	wxThread* GetActiveThread	()						{ return m_ActiveThread;	}
 
 	//--- vars ---//
 	wxArrayInt		aCurSel;
@@ -163,6 +167,9 @@ protected:
 
 
 private:
+
+	CPlaylistBox *m_pParent;
+
 	int DisplayEventId2ColumnId(int evid);
 	//-------------------------//
 	//--- virtual functions ---//
@@ -201,25 +208,64 @@ private:
 	//--------------//
 	//--- thread ---//
 	//--------------//
-	MusikPlaylistRenameThread*	pRenameThread;
-	MusikPlaylistRetagThread*	pRetagThread;
+	
+	CThreadController m_ActiveThreadController;
 	int m_Progress;
 	int m_ProgressType;
-	wxThread* m_ActiveThread;
 
 };
 
-class PlaylistDropTarget : public wxTextDropTarget
+class wxDataObjectCompositeEx : public wxDataObjectComposite
+{
+public:
+	wxDataObjectCompositeEx()
+	{
+		m_dataObjectLast = NULL;
+	}
+
+	bool SetData(const wxDataFormat& format,
+								size_t len,
+							const void *buf)
+	{
+		m_dataObjectLast = GetObject(format);
+
+		wxCHECK_MSG( m_dataObjectLast, FALSE,
+                 wxT("unsupported format in wxDataObjectCompositeEx"));
+
+		return m_dataObjectLast->SetData(len, buf);
+	}
+
+	wxDataObjectSimple *GetActualDataObject()
+	{
+		return m_dataObjectLast;
+	}
+	private:
+		wxDataObjectSimple *m_dataObjectLast;
+};
+
+
+
+class PlaylistDropTarget : public wxDropTarget
 {
 public:
 	//-------------------//
 	//--- constructor ---//
 	//-------------------//
-	PlaylistDropTarget( CPlaylistCtrl *pPList )	{ m_pPlaylistCtrl = pPList;	}
+	PlaylistDropTarget( CPlaylistCtrl *pPList )	
+	{ 
+		m_pPlaylistCtrl = pPList;	
 
+		wxDataObjectCompositeEx * dobj = new wxDataObjectCompositeEx;
+		dobj->Add(m_pTextDObj = new wxTextDataObject(),true);
+		dobj->Add(m_pFileDObj = new wxFileDataObject());
+		SetDataObject(dobj);
+    }
+	wxDragResult OnData(wxCoord x, wxCoord y, wxDragResult def);
 	//-------------------------//
 	//--- virtual functions ---//
 	//-------------------------//
+    virtual bool OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames);
+
     virtual bool		 OnDropText(wxCoord x, wxCoord y, const wxString& text);
 	virtual wxDragResult OnDragOver(wxCoord x, wxCoord y, wxDragResult def);
 
@@ -228,6 +274,9 @@ public:
 	//-------------------------//
 	void HighlightSel( wxPoint );
 private:
+	wxTextDataObject * m_pTextDObj;
+	wxFileDataObject * m_pFileDObj;
+
 	CPlaylistCtrl *m_pPlaylistCtrl;	//--- pointer to the playlist ---//
 	int nLastHit;					//--- last item hit           ---//
 	long n;							//--- new pos                 ---//

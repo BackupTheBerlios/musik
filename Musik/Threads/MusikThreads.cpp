@@ -43,15 +43,15 @@ MusikFaderThread::MusikFaderThread()
 void MusikFaderThread::CrossfaderAbort()
 {
 	{
-		wxCriticalSectionLocker locker( m_critCrossfader) ;
-		if ( pCrossfader )
-		{
-			//---------------------------------------------------------//
-			//--- Abort() tells fader NOT to clean up old streams	---//
-			//---------------------------------------------------------//
-			pCrossfader->Abort();		
-		}
+	wxCriticalSectionLocker locker( m_critCrossfader) ;
+	if ( pCrossfader )
+	{
+		//---------------------------------------------------------//
+		//--- Abort() tells fader NOT to clean up old streams	---//
+		//---------------------------------------------------------//
+		pCrossfader->Abort();		
 	}
+}
 	CrossfaderStop();
 }
 
@@ -419,7 +419,9 @@ void *MusikWriteDirtyThread::Entry()
 			//-----------------------------//
 			//--- write the tag to file	---//
 			//-----------------------------//
-			g_Library.WriteTag( aDirty.Item( i ), m_Clear );
+			g_Library.WriteTag( aDirty.Item( i ), m_Clear ,false); // no db update
+			g_Library.UpdateItemResetDirty( aDirty.Item( i ).Filename ); // just clear dirty flag
+
 		}
 
 	}

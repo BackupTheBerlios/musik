@@ -288,6 +288,9 @@
 				RelativePath="MusikApp.h">
 			</File>
 			<File
+				RelativePath=".\MusikDefines.h">
+			</File>
+			<File
 				RelativePath="MusikGlobals.cpp">
 			</File>
 			<File
@@ -298,6 +301,9 @@
 			</File>
 			<File
 				RelativePath="MusikUtils.h">
+			</File>
+			<File
+				RelativePath=".\ThreadController.h">
 			</File>
 			<File
 				RelativePath=".\wxprec.cpp">

@@ -18,6 +18,8 @@
 #include "../MusikGlobals.h"
 #include "../MusikUtils.h"
 
+#include "../Frames/MusikFrame.h"
+
 MusikPlaylistRenameThread::MusikPlaylistRenameThread(wxEvtHandler * pEvtHandler, const  CMusikSongArray & songs )
 	:wxThread(wxTHREAD_JOINABLE)
 	,m_pEvtHandler(pEvtHandler)
@@ -27,6 +29,10 @@ MusikPlaylistRenameThread::MusikPlaylistRenameThread(wxEvtHandler * pEvtHandler,
 
 void* MusikPlaylistRenameThread::Entry()
 {
+	//--- setup thread to begin in g_MusikFrame ---//
+	g_MusikFrame->SetActiveThread	( this );
+	g_MusikFrame->SetProgressType	( MUSIK_PLAYLIST_RENAME_THREAD );
+	g_MusikFrame->SetProgress		( 0 );
 	//----------------------------------------//
 	//--- events we'll post as we go along ---//
 	//----------------------------------------//
@@ -78,6 +84,10 @@ MusikPlaylistRetagThread::MusikPlaylistRetagThread(wxEvtHandler * pEvtHandler, c
 
 void* MusikPlaylistRetagThread::Entry()
 {
+	//--- setup thread to begin in g_MusikFrame ---//
+	g_MusikFrame->SetActiveThread	( this );
+	g_MusikFrame->SetProgressType	( MUSIK_PLAYLIST_RETAG_THREAD );
+	g_MusikFrame->SetProgress		( 0 );
 	//----------------------------------------//
 	//--- events we'll post as we go along ---//
 	//----------------------------------------//

@@ -32,7 +32,8 @@ BEGIN_EVENT_TABLE(MusikLibraryFrame, wxFrame)
 	EVT_MENU			( MUSIK_PATHS_MENU_REMOVESEL,		MusikLibraryFrame::OnClickRemoveSel			)
 	EVT_MENU			( MUSIK_PATHS_MENU_REMOVEALL,		MusikLibraryFrame::OnClickRemoveAll			)
 	EVT_MENU			( MUSIK_PATHS_MENU_CLEAR_LIBRARY,	MusikLibraryFrame::OnClickClearLibrary		)
-	EVT_MENU			( MUSIK_PATHS_MENU_UPDATE_LIBRARY,	MusikLibraryFrame::OnRebuildAll				)
+	EVT_MENU			( MUSIK_PATHS_MENU_REBUILD_LIBRARY,	MusikLibraryFrame::OnRebuildAll				)
+	EVT_MENU			( MUSIK_PATHS_MENU_UPDATE_LIBRARY,	MusikLibraryFrame::OnUpdateAll				)
 	EVT_MENU			( MUSIK_PATHS_MENU_PURGE_LIBRARY,	MusikLibraryFrame::OnPurgeLibrary			)
 	EVT_BUTTON			( MUSIK_PATHS_OK,					MusikLibraryFrame::OnClickOK				)
 	EVT_BUTTON			( MUSIK_PATHS_CANCEL,				MusikLibraryFrame::OnClickCancel			)
@@ -57,18 +58,19 @@ END_EVENT_TABLE()
 //---  gets called automatically  ---//
 //--- on startup to add new files ---//
 //-----------------------------------//
-MusikLibraryFrame::MusikLibraryFrame( wxFrame* pParent )
+MusikLibraryFrame::MusikLibraryFrame( wxFrame* pParent ,const wxArrayString &arrFilenamesToScan, bool bFilesWereDropped)
 	: wxFrame( pParent, -1, _("Searching for and Adding New Files"), wxPoint( -1, -1 ), wxSize( 480, 48 ), wxCAPTION | wxFRAME_FLOAT_ON_PARENT | wxFRAME_NO_TASKBAR | wxCLIP_CHILDREN )
 {
+	m_arrScannedFiles = arrFilenamesToScan;
 	//------------------------------//
 	//--- initialize needed vars ---//
 	//------------------------------//
+	m_bFilesWereDropped =  bFilesWereDropped;
 	m_Close			= true;
 	m_AutoStart		= true;
 	m_FirstStart	= false;
 	m_MenuCreated	= false;
 	bRebuild		= false;
-	m_ActiveThread  = NULL;
 
 	//-----------------------//
 	//--- create controls ---//
@@ -112,6 +114,7 @@ MusikLibraryFrame::MusikLibraryFrame( wxFrame* pParent, const wxPoint &pos, cons
 	//---------------------//	
     paths_update_menu = new wxMenu;
 	paths_update_menu->Append( MUSIK_PATHS_MENU_UPDATE_LIBRARY, _("&Update Library") );
+	paths_update_menu->Append( MUSIK_PATHS_MENU_REBUILD_LIBRARY, _("&Rebuild Library") );
 	paths_update_menu->Append( MUSIK_PATHS_MENU_PURGE_LIBRARY, _("Purge &Missing Songs") );
 	paths_update_menu->AppendSeparator();
 	paths_update_menu->Append( MUSIK_PATHS_MENU_CLEAR_LIBRARY, _("Clear &Library") );
@@ -132,6 +135,7 @@ MusikLibraryFrame::MusikLibraryFrame( wxFrame* pParent, const wxPoint &pos, cons
 	paths_context_menu->Append( MUSIK_PATHS_MENU_REMOVEALL, _("Remove All Directories") );
 	paths_context_menu->AppendSeparator();
 	paths_context_menu->Append( MUSIK_PATHS_MENU_UPDATE_LIBRARY, _("&Update Library") );
+	paths_context_menu->Append( MUSIK_PATHS_MENU_REBUILD_LIBRARY, _("&Rebuild Library") );
 	paths_context_menu->Append( MUSIK_PATHS_MENU_PURGE_LIBRARY, _("Purge &Missing Songs") );
 	paths_context_menu->AppendSeparator();
 	paths_context_menu->Append( MUSIK_PATHS_MENU_CLEAR_LIBRARY, _("Clear &Library") );
@@ -156,8 +160,7 @@ MusikLibraryFrame::MusikLibraryFrame( wxFrame* pParent, const wxPoint &pos, cons
 	m_AutoStart		= false;
 	m_Close			= false;
 	m_MenuCreated	= true;
-	m_ActiveThread  = NULL;
-
+	m_bFilesWereDropped = false;
 	//--------------------//
 	//--- center frame ---//
 	//--------------------//
@@ -222,15 +225,23 @@ void MusikLibraryFrame::CreateControls()
 	SetSizer( vsTopSizer );
 }
 
-void MusikLibraryFrame::OnRebuildAll( wxCommandEvent& WXUNUSED(event) )	
+void MusikLibraryFrame::OnUpdateAll( wxCommandEvent& WXUNUSED(event) )	
 { 
-	if ( wxMessageBox( _( "Would you like to clear Musik's library database?" ), MUSIKAPPNAME_VERSION, wxYES_NO | wxICON_QUESTION ) == wxYES )
-		g_Library.RemoveAll();
+//	if ( wxMessageBox( _( "Would you like to clear Musik's library database?" ), MUSIKAPPNAME_VERSION, wxYES_NO | wxICON_QUESTION ) == wxYES )
+//		g_Library.RemoveAll();
 
 	PathsSave(); 
 	UpdateLibrary( false );	
 }
 
+void MusikLibraryFrame::OnRebuildAll( wxCommandEvent& WXUNUSED(event) )	
+{ 
+//	if ( wxMessageBox( _( "Would you like to clear Musik's library database?" ), MUSIKAPPNAME_VERSION, wxYES_NO | wxICON_QUESTION ) == wxYES )
+//		g_Library.RemoveAll();
+
+	PathsSave(); 
+	UpdateLibrary( false ,true);	
+}
 bool MusikLibraryFrame::Show( bool show )
 {
 	bool bRet = wxWindow::Show( show );
@@ -241,7 +252,7 @@ bool MusikLibraryFrame::Show( bool show )
 	if ( g_Prefs.nFirstRun )
 	{
 		wxString sMessage = 	wxT( "This is the first time "MUSIKAPPNAME" has been run.\n\nTo begin, you must first add directories " 	)
-								wxT( "to the database. Select \"Add Directory\" from the \"Songs\" menu, then press the " 		)
+								wxT( "to the database. Select \"Add Directory\" from the \"Directories\" menu, then press the " 		)
 								wxT( "\"OK\" button to rebuild the library.\n\nTo display this window again, press " 			) 
 								wxT( "CTRL+L in the main window, or select \"Library Setup\" from the \"Library\" menu."		);
 							
@@ -543,19 +554,16 @@ void MusikLibraryFrame::ScanNew()
 {
 	if ( g_Paths.GetCount() == 0 )
 		return;
-
-	if ( GetActiveThread() == NULL )
+	m_arrScannedFiles.Clear();
+	if ( m_ActiveThreadController.IsAlive() == NULL )
 	{
-		pScanNewThread = new MusikScanNewThread();
-		pScanNewThread->Create();
-		SetActiveThread	( pScanNewThread );
-		pScanNewThread->Run();
+		m_ActiveThreadController.AttachAndRun( new MusikScanNewThread(m_arrScannedFiles) );
 	}
 	else
 		wxMessageBox( _("An internal error has occured.\nPrevious thread not terminated correctly.\n\nPlease contact the "MUSIKAPPNAME" development team with this error."), MUSIKAPPNAME_VERSION, wxICON_STOP );
 }
 
-void MusikLibraryFrame::UpdateLibrary( bool bConfirm )
+void MusikLibraryFrame::UpdateLibrary( bool bConfirm , bool bCompleteRebuild)
 {
 	if ( bConfirm )
 	{	
@@ -563,12 +571,9 @@ void MusikLibraryFrame::UpdateLibrary( bool bConfirm )
 			return;
 	}
     
-	if ( GetActiveThread() == NULL )
+	if ( m_ActiveThreadController.IsAlive() == NULL )
 	{
-		pUpdateLibThread = new MusikUpdateLibThread( &aDelDirs );
-		pUpdateLibThread->Create();
-		SetActiveThread	( pUpdateLibThread );
-		pUpdateLibThread->Run();
+		m_ActiveThreadController.AttachAndRun( new MusikUpdateLibThread( &aDelDirs,m_arrScannedFiles ,bCompleteRebuild) );
 	}
 	else
 		wxMessageBox( _("An internal error has occured.\nPrevious thread not terminated correctly.\n\nPlease contact the "MUSIKAPPNAME" development team with this error."), MUSIKAPPNAME_VERSION, wxICON_STOP );
@@ -576,12 +581,9 @@ void MusikLibraryFrame::UpdateLibrary( bool bConfirm )
 
 void MusikLibraryFrame::PurgeLibrary()
 {
-	if ( GetActiveThread() == NULL )
+	if ( m_ActiveThreadController.IsAlive() == NULL )
 	{
-		pPurgeLibThread = new MusikPurgeLibThread();
-		pPurgeLibThread->Create();
-		SetActiveThread	( pPurgeLibThread );
-		pPurgeLibThread->Run();
+		m_ActiveThreadController.AttachAndRun( new MusikPurgeLibThread() );
 	}
 	else
 		wxMessageBox( _("An internal error has occured.\nPrevious thread not terminated correctly.\n\nPlease contact the "MUSIKAPPNAME" development team with this error."), MUSIKAPPNAME_VERSION, wxICON_STOP );
@@ -604,8 +606,8 @@ void MusikLibraryFrame::TranslateKeys( wxKeyEvent& event )
 {
  	if ( event.GetKeyCode() == WXK_ESCAPE )
 	{
-		if ( GetActiveThread() != NULL )
-			GetActiveThread()->Delete();
+		if ( m_ActiveThreadController.IsAlive() )
+			m_ActiveThreadController.Cancel();
 		else
 			Close( true );
 	}
@@ -626,7 +628,7 @@ void MusikLibraryFrame::OnThreadStart( wxCommandEvent& WXUNUSED(event) )
 //-----------------------------------------------------//
 void MusikLibraryFrame::OnThreadEnd( wxCommandEvent& WXUNUSED(event) )
 {
-	SetActiveThread	( NULL );
+	m_ActiveThreadController.Join();
 	EnableProgress( false );
 
 	if ( GetProgressType() == MUSIK_LIBRARY_SCANNEW_THREAD )
@@ -639,7 +641,15 @@ void MusikLibraryFrame::OnThreadEnd( wxCommandEvent& WXUNUSED(event) )
 			Close( true );
 
 		g_ActivityAreaCtrl->ResetAllContents();
-		if ( g_Prefs.nShowAllSongs == 1 )
+		if(m_bFilesWereDropped)
+		{
+			CMusikSongArray songs;
+			g_Library.GetFilelistSongs( m_arrScannedFiles, songs );
+			g_Player.AddToPlaylist(songs);
+			g_SourcesCtrl->SelectNowPlaying();
+			g_PlaylistBox->Update();
+		}
+		else if ( g_Prefs.nShowAllSongs == 1 )
 		{
 			g_Library.GetAllSongs( g_Playlist );
 			g_PlaylistBox->Update();
@@ -703,21 +713,5 @@ void MusikLibraryFrame::OnThreadScanProg( wxCommandEvent& WXUNUSED(event) )
 	SetTitle( m_Title );
 }
 
-void MusikLibraryFrame::SetActiveThread( wxThread* newactivethread)
-{
-	wxThread * pCurrThread = GetActiveThread();
-	if(newactivethread == NULL)
-	{
-		
-		wxASSERT(pCurrThread);
-		pCurrThread->Wait();// wait until thread has completed
-		delete pCurrThread;
-		m_ActiveThread = NULL;
-	}
-	else
-	{
-		wxASSERT(pCurrThread == NULL); // ATTENTION!!! there is an active thread. someone forgot to call SetActiveThread(NULL)
-	}
-	m_ActiveThread = newactivethread;
-}
+
 

@@ -22,11 +22,12 @@
 //---------------------------------//
 //---		update library		---//
 //---------------------------------//
-MusikUpdateLibThread::MusikUpdateLibThread( wxArrayString* del )
-        : wxThread(wxTHREAD_JOINABLE)
+MusikUpdateLibThread::MusikUpdateLibThread( wxArrayString* del, wxArrayString & m_refFiles, bool bCompleteRebuild)
+	:MusikScanNewThread(m_refFiles)
 {
 	m_Add	= g_Paths.GetList();
 	m_Del	= del;
+	m_bCompleteRebuild = bCompleteRebuild;
 }
 
 void *MusikUpdateLibThread::Entry()
@@ -43,7 +44,7 @@ void *MusikUpdateLibThread::Entry()
 
 	if ( m_Del->GetCount() <= 0 && m_Add->GetCount() <= 0 )
 		return NULL;
-
+   g_Library.BeginTransaction();
 	//--- remove old songs ---//
 	if ( m_Del->GetCount() > 0 )
 	{
@@ -58,17 +59,17 @@ void *MusikUpdateLibThread::Entry()
 	g_Library.InitTimeAdded();
 
 	//--- search / add new songs ---//
-	wxArrayString aFileList;
-	GetMusicDirs( *m_Add,aFileList);
+	if(m_refFiles.IsEmpty())
+		GetMusicDirs( *m_Add,m_refFiles);
 
 	float fPos;
 	int nLastProg = 0;
 	int nCurrProg = 0;
 	wxString sProgress;
-	size_t nTotal = aFileList.GetCount();
+	size_t nTotal = m_refFiles.GetCount();
 
 	g_MusikLibraryFrame->SetTotal( nTotal );
-	g_Library.BeginTransaction();
+	
 	for ( size_t i = 0; i < nTotal; i++ )
 	{
 		if ( TestDestroy() )
@@ -89,8 +90,14 @@ void *MusikUpdateLibThread::Entry()
 			nLastProg = nCurrProg;
 			
 			//--- add the item ---//
-			if ( !g_Library.FileInLibrary( aFileList.Item( i ), true ) )
-				g_Library.AddItem( aFileList.Item( i ) );
+			if (!g_Library.FileInLibrary( m_refFiles.Item( i ), true ) )
+				g_Library.AddSongDataFromFile( m_refFiles.Item( i ) );
+			else if(m_bCompleteRebuild)
+			{
+				g_Library.UpdateSongDataFromFile( m_refFiles.Item( i ) );
+			}
+
+
 		}
 
 	}
@@ -110,8 +117,9 @@ void MusikUpdateLibThread::OnExit()
 //---------------------------------//
 //---	scan for new files		---//
 //---------------------------------//
-MusikScanNewThread::MusikScanNewThread()
+MusikScanNewThread::MusikScanNewThread(wxArrayString & refFiles)
         : wxThread(wxTHREAD_JOINABLE)
+		,m_refFiles(refFiles)
 {
 }
 
@@ -130,7 +138,6 @@ void *MusikScanNewThread::Entry()
 	if ( g_Paths.GetCount() <= 0 )
 		return NULL;
 
-	wxArrayString aFiles;
 	wxString sCurrPath;
 	
 	float fPos;
@@ -143,11 +150,11 @@ void *MusikScanNewThread::Entry()
 			sCurrPath = g_Paths.Item( i );
 
 			//--- get directory ---//
-
-			GetMusicDir( sCurrPath, aFiles );
+			int nLastCount = m_refFiles.GetCount();
+			GetMusicDir( sCurrPath, m_refFiles );
 
 			//--- do math ---//
-			int nTotal		= aFiles.GetCount();
+			int nTotal		= m_refFiles.GetCount() - nLastCount;
 			int nCompare	= g_Library.GetSongDirCount( sCurrPath );
 			int nResult		= nTotal - nCompare;
 
@@ -169,6 +176,86 @@ void MusikScanNewThread::OnExit()
 {
 	wxCommandEvent ScanNewEndEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_LIBRARY_THREAD_END );	
 	wxPostEvent( g_MusikLibraryFrame, ScanNewEndEvt );
+}
+
+class wxMusicTraverser : public wxDirTraverser
+{
+public:
+
+	wxMusicTraverser(MusikScanNewThread * pThread,wxArrayString& files ) 
+		: m_files(files) 
+		,m_pThread(pThread)
+	{ }
+
+    virtual wxDirTraverseResult OnFile(const wxString& filename)
+    {
+		if(m_pThread->TestDestroy())
+		{
+			m_files.Clear();
+			return wxDIR_STOP;
+		}
+		wxFileName fn( filename );
+		wxString ext = fn.GetExt();
+		ext.MakeLower();
+
+		if ( ext == wxT( "mp3" ) || ext == wxT( "ogg" ) ) 
+		{
+			m_files.Add( filename );
+
+			if ( m_files.GetCount() % 100 == 0 )
+			{
+
+				wxCommandEvent UpdateScanProg( wxEVT_COMMAND_MENU_SELECTED, MUSIK_LIBRARY_THREAD_SCAN_PROG );
+				g_MusikLibraryFrame->SetScanCount( m_files.GetCount() );
+				wxPostEvent( g_MusikLibraryFrame, UpdateScanProg );
+			}
+		}
+        
+        return wxDIR_CONTINUE;
+    }
+
+    virtual wxDirTraverseResult OnDir(const wxString& WXUNUSED(dirname))
+    {
+ 		if(m_pThread->TestDestroy())
+		{
+			m_files.Clear();
+			return wxDIR_STOP;
+		}
+       return wxDIR_CONTINUE;
+    }
+
+private:
+	wxArrayString& m_files;
+	MusikScanNewThread *m_pThread;
+};
+
+void MusikScanNewThread::GetMusicDirs( const wxArrayString & aDirs, wxArrayString & aFiles )
+{
+	aFiles.Clear();
+	for ( int i = 0; i < (int)aDirs.GetCount(); i++ )
+	{
+		GetMusicDir( aDirs[i], aFiles );
+	}
+}
+
+void MusikScanNewThread::GetMusicDir( const wxString & sDir, wxArrayString & aFiles )
+{
+	wxString sPath = sDir;
+	sPath.Replace( wxT( " " ), wxT( "" ), true );
+	if ( !sPath.IsEmpty() )
+	{
+		wxDir dir( sDir );
+		if ( dir.IsOpened() )
+		{
+			wxMusicTraverser traverser(this, aFiles );
+			dir.Traverse( traverser );
+
+			//-----------------------------------------//
+			//--- the traverser will post update	---//
+			//--- scan new events					---//
+			//-----------------------------------------//
+		}
+	}
 }
 
 //---------------------------------//

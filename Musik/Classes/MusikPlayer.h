@@ -151,7 +151,7 @@ public:
 	int GetCrossfadeType		() { return m_CrossfadeType; }
 	size_t GetRandomSong		();
 	EMUSIK_PLAYMODE GetPlaymode () { return m_Playmode; }
-	CMusikSongArray &			GetPlaylist	( ) {return  m_Playlist;}
+	const CMusikSongArray &	GetPlaylist	( ) {return  m_Playlist;}
 
 	
 	//------------//
@@ -163,7 +163,9 @@ public:
 	void SetPlaymode		( );
 	void SetVolume			( );
 	void SetTime			( int nSec );
-	void SetPlaylist		(const  CMusikSongArray &playlist ) {wxCriticalSectionLocker locker( m_critInternalData) ; m_Playlist = playlist; }
+	void SetPlaylist		(const  CMusikSongArray &playlist ) {wxCriticalSectionLocker locker( m_critInternalData) ; m_Playlist = playlist;m_arrHistory.Clear(); }
+	void AddToPlaylist		( CMusikSongArray &songstoadd );	// NOTE this method, empties the songstoadd array.
+	void RemovePlaylistEntry( int index );
 	void SetStartingNext	( bool bStart = true ){ m_StartingNext = bStart; }
 	void SetCrossfadeType	( int nType ){ m_CrossfadeType = nType; }
 
@@ -198,7 +200,8 @@ private:
 	bool			m_Stopping;			//--- is the player currently stopping?				---//
 	wxString		m_CurrentFile;		//--- filename of current song						---//0
 	int				m_CrossfadeType;	
-	size_t			m_History[25];		//--- history of songs played, to avoid repeats		---//
+	wxArrayInt		m_arrHistory;		//--- history of songs played, to avoid repeats		---//
+	size_t			m_nMaxHistory;
 
 	FSOUND_DSPUNIT	*m_DSP;
 

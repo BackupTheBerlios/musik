@@ -168,7 +168,8 @@ void CMusikPrefs::LoadPrefs()
 	config->Read( wxT("TunageRunOnStop"),		&nTunageRunOnStop,		1 );
 	config->Read( wxT("TunageStoppedText"),		&sTunageStoppedText,	wxString(MUSIKAPPNAME) + _(" is not running") );
 	config->Read( wxT("AlternativeDataPath"),	&sDataPath,	MUSIK_HOME_DIR );
-
+	config->Read( wxT("MaxRandomHistory"),		&nMaxRandomHistory,	500 );
+	 
 	if(sDataPath.IsEmpty())
 		  sDataPath = MUSIK_HOME_DIR;
 	if(sDataPath.Right(1) != MUSIK_PATH_SEPARATOR)
@@ -369,6 +370,8 @@ void CMusikPrefs::SavePrefs()
 	config->Write( wxT("TunageCmdLine"),		sTunageCmdLine );
 	config->Write( wxT("TunageRunOnStop"),		nTunageRunOnStop );
 	config->Write( wxT("TunageStoppedText"),	sTunageStoppedText );
+
+	config->Write( wxT("MaxRandomHistory"),		nMaxRandomHistory );
 
 	g_FX.SaveBands( config );
 
