@@ -268,7 +268,7 @@ void CSourcesListBox::BeginDrag( wxListEvent &event )
 		g_DragInProg = true;
 
 		//-------------------------//
-		//--- get selected item ---//
+		//--- get selected item	---//
 		//-------------------------//
 		m_DragIndex		= event.GetIndex();
 		wxString sDrop	= wxT( "s\n" ) + g_SourcesList.Item( m_DragIndex );

@@ -451,7 +451,7 @@ wxArrayString CActivityBox::GetFullList()
 void CActivityBox::SetPlaylist()
 {
 	//--- if we show unselected entries ---//
-	if ( g_Prefs.nSelStyle == 2 || ( g_ActivityAreaCtrl->GetParentBox() == this ) )
+	if ( g_Prefs.nSelStyle == 1 || g_Prefs.nSelStyle == 2 || ( g_ActivityAreaCtrl->GetParentBox() == this ) )
 	{
 	  wxArrayString list;
 	  list = GetSelected();

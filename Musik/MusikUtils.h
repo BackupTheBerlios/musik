@@ -47,7 +47,7 @@ wxArrayString	GetMusicDir			( wxString* sDir );
 
 void			SortArrayByLength	( wxArrayString* pArray );
 
-wxString		GetJustFilename	( const wxString & filename );
+wxString		GetJustFilename		( const wxString & filename );
 
 wxString		GetFramePlacement	( wxFrame* frame );
 bool			SetFramePlacement	( wxFrame* frame, wxString place );
