@@ -100,7 +100,10 @@ module.include.files=\
 	Threads/MusikLibraryThreads.h\
 	Threads/MusikTagThreads.h\
 	Threads/MusikThreads.h\
-	Threads/PlaylistCtrlThreads.h
+	Threads/PlaylistCtrlThreads.h\
+	shibatch/paramlist.hpp\
+	Classes/MusikFX.h\
+	Frames/MusikFXFrame.h
 
 module.source.name=.
 module.source.type=
@@ -136,7 +139,11 @@ module.source.files=\
 	Threads/MusikLibraryThreads.cpp\
 	Threads/MusikTagThreads.cpp\
 	Threads/MusikThreads.cpp\
-	Threads/PlaylistCtrlThreads.cpp
+	Threads/PlaylistCtrlThreads.cpp\
+	shibatch/Fftsg_fl.cpp\
+	shibatch/Equ.cpp\
+	Frames/MusikFXFrame.cpp\
+	Classes/MusikFX.cpp
 
 module.pixmap.name=.
 module.pixmap.type=
