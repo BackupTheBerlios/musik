@@ -761,7 +761,7 @@ bool CmusikPlaylistCtrl::PlayItem( int n )
 
 		// if the player is playing, then just add
 		// it as the next song.
-		if ( m_Player->IsPlaying() )
+		if ( m_Player->IsPlaying() && m_Playlist != m_Player->GetPlaylist() )
 		{
 			CmusikSong song;
 			song.SetID( m_Playlist->GetSongID( n ) );
