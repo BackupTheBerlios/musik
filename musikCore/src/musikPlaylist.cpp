@@ -231,6 +231,46 @@ int CmusikPlaylist::GetSongID( int index )
 
 ///////////////////////////////////////////////////
 
+void CmusikPlaylist::DeleteAt( size_t pos )
+{
+	if ( pos > m_Songs.size() - 1 )
+		ASSERT( 1 );
+
+	m_Songs.erase( m_Songs.begin() + pos );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylist::InsertAt( int songid, int at )
+{
+	CmusikSong song;
+	song.SetID( songid );
+
+		if ( at == -1 )
+			m_Songs.push_back( song );
+		else
+			m_Songs.insert( m_Songs.begin() + at, song );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylist::InsertAt( const CIntArray& songids, int at )
+{
+	CmusikSong song;
+
+	for ( size_t i = 0; i < songids.size(); i++ )
+	{
+		song.SetID( songids.at( i ) );
+
+		if ( at == -1 )
+			m_Songs.push_back( song );
+		else
+			m_Songs.insert( m_Songs.begin() + at, song );
+	}
+}
+
+///////////////////////////////////////////////////
+
 // CmusikPlaylistInfo
 
 ///////////////////////////////////////////////////
