@@ -12,7 +12,6 @@
 #include "../Musik.Core/include/MusikDynDspInfo.h"
 
 #include "MEMDC.H"
-#include ".\musikplaylistctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -339,6 +338,7 @@ void CMusikPlaylistCtrl::OnNMClick(NMHDR *pNMHDR, LRESULT *pResult)
 	hit_test.pt = ptCurr;
 	SubItemHitTest( &hit_test );
 
+	// click column to rate
 	if( hit_test.flags & LVHT_ONITEMLABEL )
 	{
 		if ( m_Prefs->GetPlaylistCol( hit_test.iSubItem ) == MUSIK_LIBRARY_TYPE_RATING )
@@ -346,11 +346,8 @@ void CMusikPlaylistCtrl::OnNMClick(NMHDR *pNMHDR, LRESULT *pResult)
 			CRect sub_item_rect;
 			GetSubItemRect( hit_test.iItem, hit_test.iSubItem, LVIR_BOUNDS, sub_item_rect );
 
-			if ( hit_test.iSubItem > 0 )
-			{
-				for ( size_t i = 0; i < hit_test.iSubItem; i++ )
-					ptCurr.x -= m_Prefs->GetPlaylistColWidth( i );
-			}
+			for ( size_t i = 0; i < hit_test.iSubItem; i++ )
+				ptCurr.x -= m_Prefs->GetPlaylistColWidth( i );
 
 			int nRating;
 			if ( ptCurr.x <= 6 )
