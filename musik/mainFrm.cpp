@@ -1106,7 +1106,7 @@ void CMainFrame::RequerySelBoxes( CmusikSelectionCtrl* sender, bool deselect_ite
 				pCurr = m_wndSelectionBars.at( i )->GetCtrl();
 				if ( pCurr != pParent )
 				{
-					//pCurr->SetItemState( -1, 0, LVIS_SELECTED );
+					pCurr->SetItemState( -1, 0, LVIS_SELECTED );
 					pCurr->ResetOrder();
 				}
 			}
@@ -1139,10 +1139,8 @@ void CMainFrame::RequerySelBoxes( CmusikSelectionCtrl* sender, bool deselect_ite
 
 				if ( pCurr->GetChildOrder() > sender->GetChildOrder() || pCurr->GetChildOrder() == -1 )
 				{
-					/*
 					if ( deselect_items )
 						pCurr->SetItemState(  -1, 0, LVIS_SELECTED );
-					*/
 
 					CmusikString query = GetSelQuery( pCurr );
 					pCurr->UpdateV( query );
