@@ -1,4 +1,50 @@
 ///////////////////////////////////////////////////
+// 
+// Info:
+//
+//   musik is a cross platform, open source
+//   multimedia library. More information at:
+//
+//     http://musik.berlios.de
+//     http://musik.sourceforge.net
+//
+// Copyright and Credits:
+//
+//   Copyright      : Casey Langen, 2003
+//   Casey Langen   : Lead Developer, Project Manager. E-Mail: casey@bak.rr.com
+//   Dustin Carter  : Developer, pain in the ass
+//   Simon Windmill : Developer, the most helpful person thats immediately available ;)
+//
+// License:
+//
+//   See license.txt included with this distribution
+//
+///////////////////////////////////////////////////
+//
+// Class(es): 
+//
+//   CmusikSourcesDropTarget
+//
+// Filename(s): 
+//
+//   musikSourcesDropTarget.h, musikSourcesDropTarget.cpp
+//
+// Information:
+//
+//   A drop target for the "Sources" view to allow files from anywhere,
+//   including windows explorer, to be dropped onto a CmusikSourcesCtrl.
+// 
+// Usage: 
+//
+//   Construct in a CmusikSourcesCtrl, then use 
+//   CmusikSourcesDropTarget::Register() to invoke it, 
+//   CmusikSourcesDropTarget::Revoke() to remove it.
+//
+// Some code adapted from:
+//
+//   Michael Dunn: http://www.codeproject.com/shell/explorerdragdrop.asp?target=drag%7C%2Bdrop
+//
+///////////////////////////////////////////////////
 
 #include "stdafx.h"
 #include "musikSourcesDropTarget.h"

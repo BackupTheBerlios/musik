@@ -1,42 +1,45 @@
 ///////////////////////////////////////////////////
+// 
+// Info:
 //
-// Class(es): 
+//   musik is a cross platform, open source
+//   multimedia library. More information at:
 //
-//   CmusikDynamicText 
-//
-// Filename(s): 
-//
-//   musikDynamicText.h,
-//   musikDynamicText.cpp
-//
-// Information:
-//
-//   Just a window that dynamically sizes itself
-//   based on the window's text.
-//
-// Example: 
-//
-//   Used in CmusikNowPlayingInfo
-//
-// Usage: 
-//
-//	 SetDynText() to set the window text, 
-//   and UpdateDynSize() to manually resize
+//     http://musik.berlios.de
+//     http://musik.sourceforge.net
 //
 // Copyright and Credits:
 //
 //   Copyright      : Casey Langen, 2003
-//
-//   Casey Langen   : Lead Developer, Project Manager
+//   Casey Langen   : Lead Developer, Project Manager. E-Mail: casey@bak.rr.com
 //   Dustin Carter  : Developer, pain in the ass
 //   Simon Windmill : Developer, the most helpful person thats immediately available ;)
-// 
+//
 // License:
 //
 //   See license.txt included with this distribution
 //
 ///////////////////////////////////////////////////
-
+//
+// Class(es): 
+//
+//   CmusikNowPlayingCtrl, CmusikNowPlayingBar
+//
+// Filename(s): 
+//
+//   musikNowPlayingCtrl.h, musikNowPlayingCtrl.cpp
+//
+// Information:
+//
+//   Just a window that dynamically sizes itself
+//   based on the window's text.
+// 
+// Usage: 
+//
+//	 SetDynText() to set the window text, 
+//   and UpdateDynSize() to manually resize
+//
+///////////////////////////////////////////////////
 
 #pragma once
 

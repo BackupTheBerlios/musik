@@ -263,6 +263,31 @@ BEGIN
     END
 END
 
+IDR_PLAYLIST_COLUMNS_MENU MENU 
+BEGIN
+    POPUP "Playlist Columns"
+    BEGIN
+        MENUITEM "Artist",                      ID_PLAYLISTCOLUMNS_ARTIST
+        MENUITEM "Album",                       ID_PLAYLISTCOLUMNS_ALBUM
+        MENUITEM "Year",                        ID_PLAYLISTCOLUMNS_YEAR
+        MENUITEM "Genre",                       ID_PLAYLISTCOLUMNS_GENRE
+        MENUITEM "Title",                       ID_PLAYLISTCOLUMNS_TITLE
+        MENUITEM "Track Number",                ID_PLAYLISTCOLUMNS_TRACKNUMBER
+
+        MENUITEM "Time Added",                  ID_PLAYLISTCOLUMNS_TIMEADDED
+        MENUITEM "Last Played",                 ID_PLAYLISTCOLUMNS_LASTPLAYED
+
+        MENUITEM "Filesize",                    ID_PLAYLISTCOLUMNS_FILESIZE
+        MENUITEM "Format",                      ID_PLAYLISTCOLUMNS_FORMAT
+        MENUITEM "Duration",                    ID_PLAYLISTCOLUMNS_DURATION
+        MENUITEM "Rating",                      ID_PLAYLISTCOLUMNS_RATING
+        MENUITEM "Times Played",                ID_PLAYLISTCOLUMNS_TIMESPLAYED
+
+        MENUITEM "Bitrate",                     ID_PLAYLISTCOLUMNS_BITRATE
+        MENUITEM "Filename",                    ID_PLAYLISTCOLUMNS_FILENAME
+    END
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //

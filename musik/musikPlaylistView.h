@@ -71,6 +71,7 @@ public:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnNcPaint();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
 
 protected:
 
@@ -99,8 +100,6 @@ protected:
 	// macros
 	DECLARE_DYNAMIC(CmusikPlaylistView)
 	DECLARE_MESSAGE_MAP()
-public:
-	afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
 };
 
 ///////////////////////////////////////////////////
