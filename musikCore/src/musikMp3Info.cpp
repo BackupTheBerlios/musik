@@ -37,9 +37,6 @@
 ///////////////////////////////////////////////////
 
 #include "stdafx.h"
-
-#include "../include/musikConfig.h"
-
 #include "../include/musikMp3Info.h"
 #include "../include/musikFilename.h"
 

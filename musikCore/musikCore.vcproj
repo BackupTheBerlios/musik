@@ -103,80 +103,14 @@
 	</References>
 	<Files>
 		<Filter
-			Name="musikLibrary"
-			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
-			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
-			<File
-				RelativePath=".\src\musikLibrary.cpp">
-			</File>
-			<File
-				RelativePath=".\include\musikLibrary.h">
-			</File>
-		</Filter>
-		<Filter
-			Name="musikPlaylist"
-			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
-			<File
-				RelativePath=".\src\musikPlaylist.cpp">
-			</File>
-			<File
-				RelativePath=".\include\musikPlaylist.h">
-			</File>
-		</Filter>
-		<Filter
-			Name="musikPlayer"
-			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
-			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
-			<File
-				RelativePath=".\src\musikPlayer.cpp">
-			</File>
-			<File
-				RelativePath=".\include\musikPlayer.h">
-			</File>
-		</Filter>
-		<Filter
-			Name="musikEqualizer"
+			Name="musikTask"
 			Filter="">
 			<File
-				RelativePath=".\src\musikEqualizer.cpp">
+				RelativePath=".\src\musikTask.cpp">
 			</File>
 			<File
-				RelativePath=".\include\musikEqualizer.h">
+				RelativePath=".\include\musikTask.h">
 			</File>
-			<Filter
-				Name="Shibatch"
-				Filter="">
-				<File
-					RelativePath=".\src\Equ.cpp">
-				</File>
-				<File
-					RelativePath=".\src\Fftsg_fl.cpp">
-				</File>
-				<File
-					RelativePath=".\include\paramlist.hpp">
-				</File>
-			</Filter>
-		</Filter>
-		<Filter
-			Name="musikOggInfo"
-			Filter="">
-			<File
-				RelativePath=".\src\musikOggInfo.cpp">
-			</File>
-			<File
-				RelativePath=".\include\musikOggInfo.h">
-			</File>
-			<Filter
-				Name="Helpers"
-				Filter="">
-				<File
-					RelativePath=".\src\vcedit.c">
-				</File>
-				<File
-					RelativePath=".\include\vcedit.h">
-				</File>
-			</Filter>
 		</Filter>
 		<Filter
 			Name="musikFilename"
@@ -195,12 +129,34 @@
 				RelativePath=".\src\musikMp3Info.cpp">
 			</File>
 			<File
-				RelativePath=".\include\musikMP3Info.h">
+				RelativePath=".\include\musikMp3Info.h">
 			</File>
-			<Filter
-				Name="Helpers"
-				Filter="">
-			</Filter>
+		</Filter>
+		<Filter
+			Name="musikOGGInfo"
+			Filter="">
+			<File
+				RelativePath=".\src\musikOggInfo.cpp">
+			</File>
+			<File
+				RelativePath=".\include\musikOggInfo.h">
+			</File>
+			<File
+				RelativePath=".\src\vcedit.c">
+			</File>
+			<File
+				RelativePath=".\include\vcedit.h">
+			</File>
+		</Filter>
+		<Filter
+			Name="musikCrossfader"
+			Filter="">
+			<File
+				RelativePath=".\src\musikCrossfader.cpp">
+			</File>
+			<File
+				RelativePath=".\include\musikCrossfader.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="musikDir"
@@ -213,134 +169,112 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="sqlite"
+			Name="musikFunctor"
 			Filter="">
 			<File
-				RelativePath="..\sqlite\attach.c">
+				RelativePath=".\src\musikFunctor.cpp">
 			</File>
 			<File
-				RelativePath="..\sqlite\auth.c">
+				RelativePath=".\include\musikFunctor.h">
+			</File>
+		</Filter>
+		<Filter
+			Name="musikPlaylist.h"
+			Filter="">
+			<File
+				RelativePath=".\src\musikPlaylist.cpp">
 			</File>
 			<File
-				RelativePath="..\sqlite\btree.c">
+				RelativePath=".\include\musikPlaylist.h">
+			</File>
+		</Filter>
+		<Filter
+			Name="musikLibrary"
+			Filter="">
+			<File
+				RelativePath=".\src\musikLibrary.cpp">
 			</File>
 			<File
-				RelativePath="..\sqlite\btree_rb.c">
+				RelativePath=".\include\musikLibrary.h">
+			</File>
+		</Filter>
+		<Filter
+			Name="musikPlayer"
+			Filter="">
+			<File
+				RelativePath=".\src\musikPlayer.cpp">
 			</File>
 			<File
-				RelativePath="..\sqlite\build.c">
+				RelativePath=".\include\musikPlayer.h">
+			</File>
+		</Filter>
+		<Filter
+			Name="musikEqualizer"
+			Filter="">
+			<File
+				RelativePath=".\src\Equ.cpp">
 			</File>
 			<File
-				RelativePath="..\sqlite\copy.c">
+				RelativePath=".\src\Fftsg_fl.cpp">
 			</File>
 			<File
-				RelativePath="..\sqlite\date.c">
+				RelativePath=".\src\musikEQSettings.cpp">
 			</File>
 			<File
-				RelativePath="..\sqlite\delete.c">
+				RelativePath=".\include\musikEQSettings.h">
 			</File>
 			<File
-				RelativePath="..\sqlite\expr.c">
+				RelativePath=".\src\musikEqualizer.cpp">
 			</File>
 			<File
-				RelativePath="..\sqlite\func.c">
+				RelativePath=".\include\musikEqualizer.h">
 			</File>
 			<File
-				RelativePath="..\sqlite\hash.c">
+				RelativePath=".\include\paramlist.hpp">
+			</File>
+		</Filter>
+		<Filter
+			Name="musikDynDspInfo"
+			Filter="">
+			<File
+				RelativePath=".\src\musikDynDspInfo.cpp">
 			</File>
 			<File
-				RelativePath="..\sqlite\insert.c">
+				RelativePath=".\include\musikDynDspInfo.h">
+			</File>
+		</Filter>
+		<Filter
+			Name="musikBatchAdd"
+			Filter="">
+			<File
+				RelativePath=".\src\musikBatchAdd.cpp">
 			</File>
 			<File
-				RelativePath="..\sqlite\main.c">
+				RelativePath=".\include\musikBatchAdd.h">
+			</File>
+		</Filter>
+		<Filter
+			Name="musikBatchRetag"
+			Filter="">
+			<File
+				RelativePath=".\src\musikBatchRetag.cpp">
 			</File>
 			<File
-				RelativePath="..\sqlite\opcodes.c">
+				RelativePath=".\include\musikBatchRetag.h">
+			</File>
+		</Filter>
+		<Filter
+			Name="musikRemoveOld"
+			Filter="">
+			<File
+				RelativePath=".\src\musikRemoveOld.cpp">
 			</File>
 			<File
-				RelativePath="..\sqlite\os.c">
-			</File>
-			<File
-				RelativePath="..\sqlite\pager.c">
-			</File>
-			<File
-				RelativePath="..\sqlite\parse.c">
-			</File>
-			<File
-				RelativePath="..\sqlite\pragma.c">
-			</File>
-			<File
-				RelativePath="..\sqlite\printf.c">
-			</File>
-			<File
-				RelativePath="..\sqlite\random.c">
-			</File>
-			<File
-				RelativePath="..\sqlite\select.c">
-			</File>
-			<File
-				RelativePath="..\sqlite\shell.c">
-			</File>
-			<File
-				RelativePath="..\sqlite\table.c">
-			</File>
-			<File
-				RelativePath="..\sqlite\tclsqlite.c">
-			</File>
-			<File
-				RelativePath="..\sqlite\tokenize.c">
-			</File>
-			<File
-				RelativePath="..\sqlite\trigger.c">
-			</File>
-			<File
-				RelativePath="..\sqlite\update.c">
-			</File>
-			<File
-				RelativePath="..\sqlite\util.c">
-			</File>
-			<File
-				RelativePath="..\sqlite\vacuum.c">
-			</File>
-			<File
-				RelativePath="..\sqlite\vdbe.c">
-			</File>
-			<File
-				RelativePath="..\sqlite\vdbeaux.c">
-			</File>
-			<File
-				RelativePath="..\sqlite\where.c">
+				RelativePath=".\include\musikRemoveOld.h">
 			</File>
 		</Filter>
 		<File
-			RelativePath=".\include\musikArrays.h">
-		</File>
-		<File
-			RelativePath=".\include\musikBatchAdd.h">
-		</File>
-		<File
-			RelativePath=".\include\musikBatchRetag.h">
-		</File>
-		<File
 			RelativePath=".\include\musikConfig.h">
-		</File>
-		<File
-			RelativePath=".\include\musikCrossfader.h">
-		</File>
-		<File
-			RelativePath=".\include\musikDynDspInfo.h">
-		</File>
-		<File
-			RelativePath=".\include\musikEQSettings.h">
-		</File>
-		<File
-			RelativePath=".\include\musikFunctor.h">
-		</File>
-		<File
-			RelativePath=".\include\musikRemoveOld.h">
-		</File>
-		<File
-			RelativePath=".\include\musikTask.h">
 		</File>
 		<File
 			RelativePath=".\include\StdString.h">

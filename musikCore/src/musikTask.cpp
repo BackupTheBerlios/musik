@@ -27,7 +27,7 @@
 //
 // Filename(s): 
 //
-//   musikTask.h
+//   musikTask.cpp
 //
 // Information:
 //
@@ -41,52 +41,53 @@
 //
 ///////////////////////////////////////////////////
 
-#ifndef C_MUSIK_TASK
-#define C_MUSIK_TASK
+#include "stdafx.h"
+#include "../include/musikTask.h"
 
 ///////////////////////////////////////////////////
 
-#include "musikConfig.h"
-#include "ace/Task.h"
-
-///////////////////////////////////////////////////
-
-enum
+CmusikTask::CmusikTask()
+	: ACE_Task<ACE_MT_SYNCH>()
 {
-	MUSIK_TASK_TYPE_UNKNOWN = -1,
-	MUSIK_TASK_TYPE_BATCHADD = 0,
-	MUSIK_TASK_TYPE_BATCHRETAG,
-	MUSIK_TASK_TYPE_REMOVEOLD,
-	MUSIK_TASK_TYPE_PLAYER_WORKER,
-	MUSIK_TASK_TYPE_LAST
-};
+	m_Stop = true;
+	m_Finished = true;
+	m_Active = false;
+}
 
 ///////////////////////////////////////////////////
 
-class CmusikTask : public ACE_Task<ACE_MT_SYNCH>
+int CmusikTask::close( u_long flags )
 {
-
-public:
-
-	CmusikTask();
-
-	int GetType(){ return m_Type; }
-	void StopWait( int timeout_secs );
-	int close( u_long flags = 0 );
-
-protected:
-
-	bool m_Active;
-	bool m_Finished;
-	bool m_Stop;
-
-	int m_Type;
-};
-
-typedef std::vector<CmusikTask*> CmusikTaskPtrArray;
+	return NULL;
+}
 
 ///////////////////////////////////////////////////
 
-#endif
+void CmusikTask::StopWait( int timeout_secs )
+{
+	if ( m_Active )
+	{
+		m_Stop = true;
+
+		// wait for 20 seconds. if the thread
+		// has not shut down in 20 seconds, something
+		// bad happened. a string is logged and the
+		// deletion continues non-gracefully
+		int timeout = 0;
+		while ( !m_Finished )
+		{
+			timeout++;
+			Sleep( 500 );
+
+			if ( timeout == ( timeout_secs * 2 ) )
+			{
+				TRACE0( "CmusikRemoveOldTask: I appear to be deadlocked. Terminating\n" );
+				m_Finished = true;
+			}
+		}
+
+		m_Active = false;
+	}
+}
 
 ///////////////////////////////////////////////////

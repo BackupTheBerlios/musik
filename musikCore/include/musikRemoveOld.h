@@ -42,9 +42,14 @@
 //
 ///////////////////////////////////////////////////
 
+#ifndef C_MUSIK_REMOVEOLD_H
+#define C_MUSIK_REMOVEOLD_H
+
+///////////////////////////////////////////////////
+
+#include "musikConfig.h"
 #include "musikLibrary.h"
 #include "musikFunctor.h"
-#include "musikPlaylist.h"
 
 ///////////////////////////////////////////////////
 
@@ -53,23 +58,10 @@ class CmusikRemoveOld
 public: 
 
 	// construct / destruct
-	CmusikRemoveOld()
-	{
-		m_Functor = NULL;
-		m_Library = NULL;
-		m_CallFunctorOnAbort = false;
-	}
+	CmusikRemoveOld();
+	CmusikRemoveOld( CmusikLibrary* pLibrary, CmusikFunctor* pFunctor );
 
-	CmusikRemoveOld( CmusikLibrary* pLibrary, CmusikFunctor* pFunctor )
-	{
-		m_Functor = pFunctor;
-		m_Library = pLibrary;
-		m_CallFunctorOnAbort = false;
-	}
-
-	~CmusikRemoveOld()
-	{
-	}
+	~CmusikRemoveOld(){}
 
 	// we'll allow users to manually set
 	// these variables.
@@ -85,91 +77,12 @@ class CmusikRemoveOldTask : public CmusikTask
 
 public:
 
-	CmusikRemoveOldTask()
-		: CmusikTask()
-	{
-		m_Params = NULL;
-		m_Type = MUSIK_TASK_TYPE_REMOVEOLD;
-	}
+	CmusikRemoveOldTask();
+	~CmusikRemoveOldTask();
 
-	~CmusikRemoveOldTask()
-	{
-		if ( m_Params )
-			delete m_Params;
-	}
-
-	int open( void* params )
-	{
-		m_Params = (CmusikRemoveOld*)params;
-		
-#ifdef WIN32
-	int ret_code = activate( THR_NEW_LWP | THR_JOINABLE | THR_USE_AFX );
-#else 
-	int ret_code = activate( THR_NEW_LWP | THR_JOINABLE );
-#endif
-
-		return ret_code;
-	}
-
-	int close( u_long flags )
-	{
-		m_Finished = true;
-
-		if ( ( m_Params->m_Functor && !m_Stop ) || ( m_Stop && m_Params->m_CallFunctorOnAbort ) )
-			m_Params->m_Functor->OnTaskEnd( this );
-
-		return 0;
-	}
-
-	int svc()
-	{
-		m_Stop = false;
-		m_Finished = false;
-		m_Active = true;
-
-		size_t curr_prog = 0;
-		size_t last_prog = 0;
-
-		CmusikStringArray all_files;
-		m_Params->m_Library->GetAllDistinct( MUSIK_LIBRARY_TYPE_FILENAME, all_files, false );
-
-		bool verify_failed = false;
-
-		// wait until previous transaction has finished
-		ACE_Time_Value sleep_t;
-		sleep_t.set( 0.5 );
-		while ( m_Params->m_Library->GetOpenTransactions() )
-			ACE_OS::sleep( sleep_t );
-
-		m_Params->m_Library->BeginTransaction();
-		for( size_t i = 0; i < all_files.size(); i++ )
-		{
-			// check abort flag
-			if ( m_Stop )
-			{
-				TRACE0( "musikRemoveOldWorker worker function aborted\n" );
-				break;
-			}
-
-			// see if the file exists
-			if ( !CmusikFilename::FileExists( all_files.at ( i ) ) )
-				m_Params->m_Library->RemoveSong( all_files.at ( i ) );
-
-			// post progress to the functor
-			curr_prog = ( 100 * i ) / all_files.size();
-			if ( curr_prog != last_prog )
-			{
-				if ( m_Params->m_Functor )
-					m_Params->m_Functor->OnTaskProgress( curr_prog );
-
-				last_prog = curr_prog;
-			}
-
-		}
-		m_Params->m_Library->EndTransaction();
-
-		return 0;
-	}
+	int open( void* params );
+	int close( u_long flags );
+	int svc();
 
 private:
 
@@ -178,3 +91,8 @@ private:
 };
 
 ///////////////////////////////////////////////////
+
+#endif
+
+///////////////////////////////////////////////////
+

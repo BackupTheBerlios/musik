@@ -27,7 +27,7 @@
 //
 // Filename(s): 
 //
-//   musikDir.h, musikDir.cpp
+//   musikDir.h
 //
 // Information:
 //
@@ -44,20 +44,12 @@
 
 ///////////////////////////////////////////////////
 
-#include "musikArrays.h"
+#include "musikConfig.h"
 #include "musikFunctor.h"
 
 #ifndef WIN32
-#include <dirent.h>
+	#include <dirent.h>
 #endif
-
-///////////////////////////////////////////////////
-
-class CmusikDir;
-
-///////////////////////////////////////////////////
-
-void OpenDir( CmusikString dir, CmusikStringArray* target = NULL );
 
 ///////////////////////////////////////////////////
 
@@ -77,6 +69,11 @@ public:
 	// values we need
 	CmusikStringArray* m_Target;
 	CmusikString m_Dir;
+
+private:
+
+	void OpenDir( CmusikString dir, CmusikStringArray* target = NULL );
+
 };
 
 ///////////////////////////////////////////////////

@@ -74,24 +74,18 @@
 
 ///////////////////////////////////////////////////
 
-#include "sqlite.h"
-
 #include "musikConfig.h"
+
+#include "sqlite.h"
 
 #include <vector>
 #include <iostream>
-
-#include "musikArrays.h"
-
-///////////////////////////////////////////////////
-
-class CmusikLibrary;
 
 ///////////////////////////////////////////////////
 
 class CmusikSong
 {
-	static CmusikLibrary* m_musikLibrary;
+	static void* m_musikLibrary;
 
 public:
 	CmusikSong();
@@ -107,7 +101,7 @@ public:
 	void SetID( int id ){ m_ID = id; }
 	void SetDuration( int duration ){ m_Duration = duration; }
 	void SetFilesize( int filesize ){ m_Filesize = filesize; }
-	static void SetLibrary( CmusikLibrary* library ){ m_musikLibrary = library; }
+	static void SetLibrary( void* library ){ m_musikLibrary = library; }
 
 private:
 
@@ -115,6 +109,8 @@ private:
 	int m_Filesize;
 	int m_ID;
 };
+
+typedef std::vector<CmusikSong> CmusikSongArray;
 
 ///////////////////////////////////////////////////
 
@@ -161,6 +157,8 @@ protected:
 	
 };
 
+typedef std::vector<CmusikPlaylist> CmusikPlaylistArray;
+
 ///////////////////////////////////////////////////
 
 class CmusikPlaylistInfo
@@ -184,6 +182,8 @@ public:
 	int m_Type;
 	int m_ID;
 };
+
+typedef std::vector<CmusikPlaylistInfo> CmusikPlaylistInfoArray;
 
 ///////////////////////////////////////////////////
 
@@ -249,6 +249,8 @@ protected:
 					m_TimeAdded, m_Notes, m_Equalizer;
 
 };
+
+typedef std::vector<CmusikSongInfo> CmusikSongInfoArray;
 
 ///////////////////////////////////////////////////
 

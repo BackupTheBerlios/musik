@@ -47,14 +47,9 @@
 ///////////////////////////////////////////////////
 
 #include "stdafx.h"
+#include "../include/musikPlayer.h"
 
 #include <math.h>
-
-#include "../include/musikConfig.h"
-#include "../include/musikPlayer.h"
-#include "../include/musikLibrary.h"
-#include "../include/musikFunctor.h"
-#include "../include/musikEqualizer.h"
 
 ///////////////////////////////////////////////////
 
@@ -83,11 +78,8 @@ void CmusikPlayerWorker::StopWait()
 		if ( m_Player && ( !m_Player->IsCrossfaderEnabled() || !m_Player->IsPlaying() ) )
 			m_Stop = true;
 
-		ACE_Time_Value half_sec;
-		half_sec.set( (double)0.5 );
-
 		while ( !m_Finished )
-			ACE_OS::sleep( half_sec );
+			Sleep( 500 );
 
 		m_Active = false;
 	}
@@ -118,11 +110,7 @@ void CmusikPlayerWorker::AbortCrossfade( bool wait )
 		return;
 
 	while ( m_CrossfadeActive )
-	{
-		ACE_Time_Value sleep_t;
-		sleep_t.set( 0.1 );
-		ACE_OS::sleep( sleep_t );
-	}
+		Sleep( 100 );
 }	
 
 ///////////////////////////////////////////////////
@@ -136,10 +124,6 @@ int CmusikPlayerWorker::svc()
 	m_AbortCrossfade = false;
 
 	TRACE0( "Player worker function started\n" );
-
-	ACE_Time_Value sleep_regular, sleep_tight;
-	sleep_regular.set( 0.1 );
-	sleep_tight.set( 0.1 );
 
 	bool m_Exit = false;
 	int nTimeRemain;
@@ -189,7 +173,7 @@ int CmusikPlayerWorker::svc()
 								started = true;
 							}
 							else
-								ACE_OS::sleep( sleep_tight );
+								Sleep( 100 );
 						}
 					}
 				}
@@ -385,8 +369,8 @@ int CmusikPlayerWorker::svc()
 							m_Player->SetVolume( m_Player->GetChannelID( nMainStream ), nMainVol );
 						}
 
-						// sleep 10 ms
-						ACE_OS::sleep( sleep_tight );
+						// sleep 100 ms
+						Sleep( 100 );
 					}
 
 					m_CrossfadeActive = false;
@@ -424,7 +408,7 @@ int CmusikPlayerWorker::svc()
 			}			
 		}
 
-		ACE_OS::sleep( sleep_regular );
+		Sleep( 100 );
 	}
 
 	TRACE0( "Player worker function finished\n" );

@@ -41,8 +41,6 @@
 ///////////////////////////////////////////////////
 
 #include "stdafx.h"
-
-#include "../include/musikLibrary.h"
 #include "../include/musikEqualizer.h"
 #include "../include/paramlist.hpp"
 

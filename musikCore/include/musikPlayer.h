@@ -58,14 +58,15 @@
 
 ///////////////////////////////////////////////////
 
+#include "musikConfig.h"
+#include "musikLibrary.h"
+#include "musikFunctor.h"
+#include "musikEqualizer.h"
 #include "musikPlaylist.h"
-#include "musikArrays.h"
 #include "musikTask.h"
 #include "musikCrossfader.h"
 
 #include "fmod.h"
-
-#include "ace/Task.h"
 
 ///////////////////////////////////////////////////
 
@@ -102,14 +103,10 @@ enum
 
 ///////////////////////////////////////////////////
 
-class CmusikLibrary;
-class CmusikPlaylist;
-class CmusikFunctor;
-class CmusikPlayer;
-class CmusikSongInfo;
-class CmusikEqualizer;
-class CmusikCrossfader;
-class ACE_Mutex;
+typedef std::vector<FSOUND_STREAM*> CmusikStreamPtrArray;
+
+///////////////////////////////////////////////////
+
 class CmusikPlayer;
 
 ///////////////////////////////////////////////////
@@ -327,10 +324,6 @@ private:
 
 	// main task (OO thread)
 	CmusikPlayerWorker* m_PlayerWorker;
-
-	// mutex objects
-	ACE_Mutex m_ProtectingStreams;
-	ACE_Mutex m_ProtectingIndex;
 	
 	// pointer to library and playlist
 	CmusikLibrary* m_Library;

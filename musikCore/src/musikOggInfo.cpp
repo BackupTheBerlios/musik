@@ -37,11 +37,11 @@
 ///////////////////////////////////////////////////
 
 #include "stdafx.h"
-
 #include "../include/musikOggInfo.h"
-#include "../include/musikFilename.h"
 
+#include "../include/musikFilename.h"
 #include "../include/vcedit.h"
+
 #include <vorbis/codec.h>
 #include <vorbis/vorbisfile.h>
 

@@ -58,14 +58,14 @@
 ///////////////////////////////////////////////////
 
 #include "stdafx.h"
-#include "time.h"
-
-#include "../include/musikFilename.h"
-#include "../include/musikConfig.h"
-#include "../include/musikCrossfader.h"
 #include "../include/musikLibrary.h"
+
 #include "../include/musikMp3Info.h"
 #include "../include/musikOggInfo.h"
+#include "../include/musikFilename.h"
+
+#include "stdafx.h"
+#include "time.h"
 
 ///////////////////////////////////////////////////
 

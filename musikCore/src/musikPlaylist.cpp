@@ -75,7 +75,7 @@
 
 ///////////////////////////////////////////////////
 
-CmusikLibrary* CmusikSong::m_musikLibrary = NULL;
+void* CmusikSong::m_musikLibrary = NULL;
 
 ///////////////////////////////////////////////////
 
@@ -97,7 +97,10 @@ CmusikSong::~CmusikSong()
 CmusikString CmusikSong::GetField( int field )
 {
 	CmusikString ret;
-	m_musikLibrary->GetFieldFromID( m_ID, field, ret );
+
+	CmusikLibrary* ptrLib = (CmusikLibrary*)m_musikLibrary;
+	ptrLib->GetFieldFromID( m_ID, field, ret );
+
 	return ret;
 }
 

@@ -58,12 +58,11 @@
 
 ///////////////////////////////////////////////////
 
-#include "musikArrays.h"
+#include "musikConfig.h"
 #include "musikLibrary.h"
 
 ///////////////////////////////////////////////////
 
-class CmusikSong;
 class CmusikDynDspInfo;
 
 ///////////////////////////////////////////////////
@@ -90,126 +89,33 @@ class CmusikDynDspInfo
 {
 public:
 
-	CmusikDynDspInfo( CmusikPlaylist* songs, CmusikLibrary* library )
-	{
-		m_Songs = songs;
-		m_Library = library;
+	// construct and destruct
+	CmusikDynDspInfo( CmusikPlaylist* songs, CmusikLibrary* library );
+	~CmusikDynDspInfo(){}
 
-		m_LastItemRange.Set( -999, -999 );
-	}
+	// sets
+	void SetPlaylist( CmusikPlaylist* playlist );
+	void Set( int from, int to, bool force_update );
 
-	~CmusikDynDspInfo()
-	{	
-	}
+	// gets
+	CmusikString GetValue( int id, int field );	
+	CmusikSongInfoArray* items();
+	int GetDistance();
+	int GetFirst();
+	int GetLast();
 
-	void SetPlaylist( CmusikPlaylist* playlist )
-	{
-		m_Songs = playlist;
-	}
-
-	void Set( int from, int to, bool force_update )
-	{ 
-		// set the current item range
-		m_ItemRange.Set( from, to + 1 );
-
-		// see if our new item range is the same as our 
-		// last item range... if so, return
-		if ( !force_update )
-		{
-			if ( m_ItemRange.GetFirst() == m_LastItemRange.GetFirst() &&
-				m_ItemRange.GetLast() == m_LastItemRange.GetLast() )
-				return;
-		}
-
-		// we got a 0,0 range, so check to see if there
-		// are any songs in the playlist. if there are
-		// not then that means nothing has been selected,
-		// and this cache hint was sent even though its not
-		// needed. just return.
-		if ( m_ItemRange.GetLast() > (int)m_Songs->GetCount() )
-			return;
-
-		// grab all the new items
-		m_Items.clear();
-		CmusikSongInfo item;
-		int nID;
-		for ( int i = m_ItemRange.GetFirst(); i < m_ItemRange.GetLast(); i++ )
-		{
-			nID = m_Songs->GetSongID( i );
-			m_Library->GetSongInfoFromID( nID, &item );
-			m_Items.push_back( item );
-		}
-		
-		// store the last known range, so we
-		// can later compare it to anew one
-		m_LastItemRange = m_ItemRange;
-	}	
-
-	CmusikString GetValue( int id, int field )
-	{
-		if ( id > (int)m_Items.size() || id < 0 )
-		{
-			#ifdef _DEBUG
-				CmusikString sErr;
-				sErr.Format( "CmusikDynDspInfo failed. Item %d was requested, but there are only %d items\n", id, m_Items.size()-1 );
-				TRACE0( sErr.c_str() );
-			#endif
-			
-			return "[musik.cache]";
-		}
-
-		return 
-			m_Items.at( id ).GetField( field );
-	}	
-
-	bool ResyncItem( int songid )
-	{
-		if ( songid == -1 )
-		{
-			Set( m_LastItemRange.m_First, m_LastItemRange.m_Last - 1, true );
-			return true;
-		}
-		for ( size_t i = 0; i < m_Items.size(); i++ )
-		{
-			if ( m_Items.at( i ).GetID() == songid )
-			{
-				CmusikSongInfo item;
-				m_Library->GetSongInfoFromID( songid, &item );
-				m_Items.at( i ) = item;
-				return true;
-			}
-		}
-
-		return false;
-	}
-	
-	CmusikSongInfoArray* items()
-	{ 
-		return &m_Items; 
-	}
-
-	int GetDistance()
-	{
-		return m_ItemRange.GetDistance();
-	}
-
-	int GetFirst()
-	{
-		return m_ItemRange.GetFirst();
-	}
-
-	int GetLast()
-	{
-		return m_ItemRange.GetLast();
-	}
+	// actions
+	bool ResyncItem( int songid );
 
 	CmusikDynDspInfoRange m_LastItemRange;
 
 private:
+
 	CmusikDynDspInfoRange m_ItemRange;
 	CmusikSongInfoArray m_Items;
 	CmusikPlaylist* m_Songs;
 	CmusikLibrary* m_Library;
+
 };
 
 ///////////////////////////////////////////////////

@@ -27,7 +27,7 @@
 //
 // Filename(s): 
 //
-//   musikFunctor.h
+//   musikFunctor.cpp
 //
 // Information:
 //
@@ -46,40 +46,92 @@
 //
 ///////////////////////////////////////////////////
 
-#ifndef C_MUSIK_FUNCTOR
-#define C_MUSIK_FUNCTOR
+#include "stdafx.h"
+#include "../include/musikFunctor.h"
 
 ///////////////////////////////////////////////////
 
-#include "musikConfig.h"
-#include "musikTask.h"
-
-///////////////////////////////////////////////////
-
-class CmusikFunctor
+CmusikFunctor::CmusikFunctor()
 {
-public:
-
-	// construct / destruct
-	CmusikFunctor();
-	virtual ~CmusikFunctor();
-
-	// virtual functions
-	virtual void OnNewSong();
-	virtual void OnPause();
-	virtual void OnResume();
-	virtual void OnStop();
-	virtual void OnTaskStart();
-	virtual void OnTaskEnd( CmusikTask* task_addr = NULL );
-	virtual void OnTaskProgress( size_t progress );
-	virtual void OnPlaybackFailed();
-	virtual void OnNewEqualizer();
-	virtual bool VerifyPlaylist( void* pl_addr = NULL );
-
+	// pure virtual
 };
 
 ///////////////////////////////////////////////////
 
-#endif
+CmusikFunctor::~CmusikFunctor()
+{
+	// pure virtual
+}
 
 ///////////////////////////////////////////////////
+
+void CmusikFunctor::OnNewSong()
+{
+	// pure virtual
+}
+
+///////////////////////////////////////////////////
+
+void CmusikFunctor::OnPause()
+{
+	// pure virtual
+}
+
+///////////////////////////////////////////////////
+
+void CmusikFunctor::OnResume()
+{
+	// pure virtual
+}
+
+///////////////////////////////////////////////////
+
+void CmusikFunctor::OnStop()
+{
+	// pure virtual
+}
+
+///////////////////////////////////////////////////
+
+void CmusikFunctor::OnTaskStart()
+{
+	// pure virtual
+}
+
+///////////////////////////////////////////////////
+
+void CmusikFunctor::OnTaskEnd( CmusikTask* task_addr )
+{
+	// pure virtual
+}
+
+///////////////////////////////////////////////////
+
+void CmusikFunctor::OnTaskProgress( size_t progress )
+{
+	// pure virtual
+}
+
+///////////////////////////////////////////////////
+
+void CmusikFunctor::OnPlaybackFailed()
+{
+	// pure virtual
+}
+
+///////////////////////////////////////////////////
+
+void CmusikFunctor::OnNewEqualizer()
+{
+	// pure virtual
+}
+
+///////////////////////////////////////////////////
+
+bool CmusikFunctor::VerifyPlaylist( void* pl_addr )
+{
+	return true;
+}
+
+///////////////////////////////////////////////////
+

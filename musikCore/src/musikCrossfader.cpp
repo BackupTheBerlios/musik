@@ -1,4 +1,3 @@
-
 ///////////////////////////////////////////////////
 // 
 // Info:
@@ -28,7 +27,7 @@
 //
 // Filename(s): 
 //
-//   musikCrossfader.h
+//   musikCrossfader.cpp
 //
 // Information:
 //
@@ -49,57 +48,87 @@
 //
 ///////////////////////////////////////////////////
 
-#ifndef C_MUSIK_CROSSFADER
-#define C_MUSIK_CROSSFADER
+#include "stdafx.h"
+#include "../include/musikCrossfader.h"
 
 ///////////////////////////////////////////////////
 
-#include "musikConfig.h"
-
-///////////////////////////////////////////////////
-
-enum 
+CmusikCrossfader::CmusikCrossfader()
 {
-	MUSIK_CROSSFADER_NONE = -1,
-	MUSIK_CROSSFADER_NEW_SONG,
-	MUSIK_CROSSFADER_PAUSE_RESUME,
-	MUSIK_CROSSFADER_SEEK,
-	MUSIK_CROSSFADER_STOP,
-	MUSIK_CROSSFADER_EXIT
-};
+	m_NewSong		= 0.0f;
+	m_PauseResume	= 0.0f;
+	m_Seek			= 0.0f;
+	m_Stop			= 0.0f;
+	m_Exit			= 0.0f;
+
+	m_ID = -1;
+}
 
 ///////////////////////////////////////////////////
 
-class CmusikCrossfader
+void CmusikCrossfader::Set( int type, float duration )
 {
+	switch( type )
+	{
+	case MUSIK_CROSSFADER_NEW_SONG:
+		m_NewSong = duration;
+		return;
 
-public:
+	case MUSIK_CROSSFADER_PAUSE_RESUME:
+		m_PauseResume = duration;
+		return;
 
-	// construct and destruct
-	CmusikCrossfader();
-	~CmusikCrossfader(){}
+	case MUSIK_CROSSFADER_SEEK:
+		m_Seek = duration;
+		return;
 
-	// sets
-	void Set( int type, float duration );
-	void Set( float newsong, float pauseresume, float seek, float stop, float exit );
-	void SetName( const CmusikString& name ){ m_Name = name; }
+	case MUSIK_CROSSFADER_STOP:
+		m_Stop = duration;
+		return;
 
-	// gets
-	float GetDuration( int type );
-	CmusikString GetName(){	return m_Name;	}
-
-	// can be modified directly
-	float m_NewSong;
-	float m_PauseResume;
-	float m_Seek;
-	float m_Stop;
-	float m_Exit;
-	int m_ID;
-	CmusikString m_Name;
-};
+	case MUSIK_CROSSFADER_EXIT:
+		m_Exit = duration;
+		return;
+	}
+}
 
 ///////////////////////////////////////////////////
 
-#endif
+void CmusikCrossfader::Set( float newsong, float pauseresume, float seek, float stop, float exit )
+{
+	m_NewSong		= newsong;
+	m_PauseResume	= pauseresume;
+	m_Seek			= seek;
+	m_Stop			= stop;
+	m_Exit			= exit;
+}
+
+///////////////////////////////////////////////////
+
+float CmusikCrossfader::GetDuration( int type )
+{
+	switch( type )
+	{
+	case MUSIK_CROSSFADER_NONE:
+		return 0;
+
+	case MUSIK_CROSSFADER_NEW_SONG:
+		return m_NewSong;
+
+	case MUSIK_CROSSFADER_PAUSE_RESUME:
+		return m_PauseResume;
+
+	case MUSIK_CROSSFADER_SEEK:
+		return m_Seek;
+
+	case MUSIK_CROSSFADER_STOP:
+		return m_Stop;
+
+	case MUSIK_CROSSFADER_EXIT:
+		return m_Exit;
+	}
+
+	return 0.0f;
+}
 
 ///////////////////////////////////////////////////

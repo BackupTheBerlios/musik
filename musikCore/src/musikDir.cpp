@@ -27,7 +27,7 @@
 //
 // Filename(s): 
 //
-//   musikDir.h, musikDir.cpp
+//   musikDir.cpp
 //
 // Information:
 //
@@ -68,7 +68,7 @@ CmusikDir::~CmusikDir()
 
 #ifdef WIN32
 
-void OpenDir( CmusikString dir, CmusikStringArray* target )
+void CmusikDir::OpenDir( CmusikString dir, CmusikStringArray* target )
 {
 	// find the first file in the directory...
 	WIN32_FIND_DATA lpFindFileData;
@@ -118,7 +118,7 @@ void OpenDir( CmusikString dir, CmusikStringArray* target )
 
 #else
 
-void OpenDir( CmusikString dir, CmusikStringArray* target )
+void CmusikDir::OpenDir( CmusikString dir, CmusikStringArray* target )
 {
 	DIR* pDir = opendir ( dir.c_str() );
 

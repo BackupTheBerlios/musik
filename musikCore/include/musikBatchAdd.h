@@ -41,12 +41,15 @@
 //
 ///////////////////////////////////////////////////
 
+#ifndef C_MUSIK_BATCHADD_H
+#define C_MUSIK_BATCHADD_H
+
+///////////////////////////////////////////////////
+
 #include "musikLibrary.h"
 #include "musikPlayer.h"
 #include "musikFunctor.h"
-#include "musikPlaylist.h"
-
-#include "ace/Task.h"
+#include "musikTask.h"
 
 ///////////////////////////////////////////////////
 
@@ -55,36 +58,11 @@ class CmusikBatchAdd
 public: 
 
 	// construct / destruct
-	CmusikBatchAdd()
-	{
-		m_Files					= NULL;
-		m_Playlist				= NULL;
-		m_Functor				= NULL;
-		m_UpdatePlaylist		= false;
-		m_DeleteFilelist		= true;
-		m_AddToPlayer			= false;
-		m_Library				= NULL;
-		m_Player				= NULL;
-		m_CallFunctorOnAbort	= false;
-	}
-
+	CmusikBatchAdd();
 	CmusikBatchAdd( CmusikStringArray* pFiles, CmusikPlaylist* pPlaylist, CmusikLibrary* pLibrary, CmusikPlayer* pPlayer, 
-		CmusikFunctor* pFunctor, bool bUpdatePlaylist = false, bool bAddToPlayer = false, bool bDeleteFilelist = true )
-	{
-		m_Files					= pFiles;
-		m_Playlist				= pPlaylist;
-		m_Functor				= pFunctor;
-		m_Library				= pLibrary;
-		m_UpdatePlaylist		= bUpdatePlaylist;
-		m_DeleteFilelist		= bDeleteFilelist;
-		m_Player				= pPlayer;
-		m_AddToPlayer			= bAddToPlayer;
-		m_CallFunctorOnAbort	= false;
-	}
+		CmusikFunctor* pFunctor, bool bUpdatePlaylist = false, bool bAddToPlayer = false, bool bDeleteFilelist = true );
 
-	~CmusikBatchAdd()
-	{
-	}
+	~CmusikBatchAdd(){}
 
 	// we'll allow users to manually set
 	// these variables.
@@ -106,124 +84,21 @@ class CmusikBatchAddTask : public CmusikTask
 
 public:
 
-	CmusikBatchAddTask()
-		: CmusikTask()
-	{
-		m_Params = NULL;
-		m_Type = MUSIK_TASK_TYPE_BATCHADD;
-	}
+	CmusikBatchAddTask();
+	~CmusikBatchAddTask();
 
-	~CmusikBatchAddTask()
-	{
-		if ( m_Params )
-			delete m_Params;
-	}
-
-	int open( void* params )
-	{
-		m_Params = (CmusikBatchAdd*)params;
-		
-#ifdef WIN32
-	int ret_code = activate( THR_NEW_LWP | THR_JOINABLE | THR_USE_AFX );
-#else 
-	int ret_code = activate( THR_NEW_LWP | THR_JOINABLE );
-#endif
-
-		return ret_code;
-	}
-
-	int close( u_long flags )
-	{
-		// clean up
-		if ( m_Params->m_DeleteFilelist )
-			delete m_Params->m_Files;
-
-		m_Finished = true;
-
-		if ( m_Params->m_Functor && ( ( m_Stop && m_Params->m_CallFunctorOnAbort ) || !m_Stop ) )
-			m_Params->m_Functor->OnTaskEnd( this );
-		
-		return 0;
-	}
-
-	int svc()
-	{
-		m_Stop = false;
-		m_Finished = false;
-		m_Active = true;
-
-		size_t curr_prog = 0;
-		size_t last_prog = 0;
-
-		CmusikSong song;
-
-		bool verify_failed = false;
-
-		// wait until previous transaction has finished
-		ACE_Time_Value sleep_t;
-		sleep_t.set( 0.5 );
-		while ( m_Params->m_Library->GetOpenTransactions() )
-			ACE_OS::sleep( sleep_t );
-
-		m_Params->m_Library->BeginTransaction();
-		m_Params->m_Library->InitTimeAdded();
-		for( size_t i = 0; i < m_Params->m_Files->size(); i++ )
-		{
-			if ( m_Stop )
-			{
-				TRACE0( "CmusikBatchAdd worker function aborted, but ended gracefully\n" );
-				break;
-			}
-
-			// add the song
-			m_Params->m_Library->AddSong( m_Params->m_Files->at( i ) );
-
-			// adding to now playing
-			if ( m_Params->m_AddToPlayer && m_Params->m_Player && m_Params->m_Player->GetPlaylist() )
-			{
-				m_Params->m_Library->GetSongFromFilename( m_Params->m_Files->at( i ), song );
-				m_Params->m_Player->GetPlaylist()->Add( song );
-			}
-
-			// adding to current playlist
-			else if ( m_Params->m_UpdatePlaylist && m_Params->m_Playlist )
-			{
-				if ( !verify_failed )
-				{
-					if ( m_Params->m_Functor->VerifyPlaylist( (void*)m_Params->m_Playlist ) )
-					{
-						m_Params->m_Library->GetSongFromFilename( m_Params->m_Files->at( i ), song );
-						m_Params->m_Playlist->Add( song );
-					}
-				}
-				else
-				{
-					verify_failed = true;
-					CmusikString s;
-					s.Format( "Failed to add song to playlist at address %d becuase it couldn't be verified\n", m_Params->m_Playlist );
-					TRACE0( s.c_str() );
-				}
-			}
-
-			// post progress to the functor
-			curr_prog = ( 100 * i ) / m_Params->m_Files->size();
-			if ( curr_prog != last_prog )
-			{
-				if ( m_Params->m_Functor )
-					m_Params->m_Functor->OnTaskProgress( curr_prog );
-				last_prog = curr_prog;
-			}
-
-		}
-		m_Params->m_Library->EndTransaction();
-
-		return 0;
-	}
+	int open( void* params );
+	int close( u_long flags );
+	int svc();
 
 private:
 
 	CmusikBatchAdd* m_Params;
 
 };
+
+///////////////////////////////////////////////////
+
+#endif
 
 ///////////////////////////////////////////////////

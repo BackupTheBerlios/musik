@@ -53,18 +53,16 @@
 
 ///////////////////////////////////////////////////
 
-#include <iostream>
+#include "musikConfig.h"
+#include "musikPlaylist.h"
+#include "musikCrossfader.h"
+#include "musikEQSettings.h"
 
 #include "sqlite.h"
 
-#include "musikConfig.h"
-#include "musikArrays.h"
-#include "musikPlaylist.h"
-
-#include "../musikCore/include/musikEQSettings.h"
-
-#include "ace/Thread.h"
 #include "ace/Synch.h"
+
+#include <iostream>
 
 ///////////////////////////////////////////////////
 
@@ -149,14 +147,9 @@ enum
 
 ///////////////////////////////////////////////////
 
-class ACE_Mutex;
-class CmusikCrossfader;
-class CmusikBatchAdd;
-
-///////////////////////////////////////////////////
-
 class CmusikLibrary
 {
+	// we trust the player
 	friend class CmusikPlayer;
 
 public:
