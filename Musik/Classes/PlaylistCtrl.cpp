@@ -290,25 +290,38 @@ void CPlaylistCtrl::SaveColumns()
 	size_t nCurrCol;
 	float f_Pos;
 	int n_Pos;
+
+	//---------------------------------------------------------//
+	//--- sum up all the columns with a static size. the	---//
+	//--- remaining size will be used to calculate dynamic	---//
+	//--- column percentages.								---//
+	//---------------------------------------------------------//
+	size_t nStaticWidth = 0;
 	for ( size_t i = 0; i < m_ColumnOrder.GetCount(); i++ )
 	{
 		nCurrCol = m_ColumnOrder.Item( i );
-		
-		//-----------------------------------------//
-		//--- if this column is a static type	---//
-		//-----------------------------------------//
+
 		if ( g_Prefs.nPlaylistColumnDynamic[nCurrCol] == 0 )
 		{
 			g_Prefs.nPlaylistColumnSize[nCurrCol] = GetColumnWidth( i );
+			nStaticWidth += GetColumnWidth( i );
 		}
+	}
 
-		//-----------------------------------------//
-		//--- if this column is a dynamic type	---//
-		//-----------------------------------------//
-		else
+	//---------------------------------------------------------//
+	//--- calculate the dynamic size columns. these are		---//
+	//--- these are the percent of the window the current	---//
+	//--- column takes up.									---//
+	//---------------------------------------------------------//
+	size_t nRemaining = client_size.GetWidth() - nStaticWidth;
+	for ( size_t i = 0; i < m_ColumnOrder.GetCount(); i++ )
+	{
+		nCurrCol = m_ColumnOrder.Item( i );
+
+		if ( g_Prefs.nPlaylistColumnDynamic[nCurrCol] == 1 )
 		{
-			f_Pos = (float)GetColumnWidth( i ) / (float)client_size.GetWidth() * 100.0f;
-			n_Pos = (int)f_Pos;
+			f_Pos = (float)GetColumnWidth( i ) / (float)nRemaining * 100.0f;
+			n_Pos = MusikRound( f_Pos );
 
 			if ( n_Pos < 1 )
 				n_Pos = 1;
@@ -466,7 +479,7 @@ void CPlaylistCtrl::BeginDrag( wxEvent& WXUNUSED(event) )
 
 void CPlaylistCtrl::EndDragCol( wxListEvent& event )
 {
-	//SaveColumns();
+	SaveColumns();
 
 	//if ( g_Prefs.nPlaylistSmartColumns )
 		//RescaleColumns();
@@ -885,8 +898,6 @@ void CPlaylistCtrl::RescaleColumns( bool bFreeze )
 {
 	if ( g_DisablePlacement )
 		return;
-
-	SaveColumns();
 
 	if ( bFreeze )
 		Freeze();
