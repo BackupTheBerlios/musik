@@ -336,13 +336,16 @@ void CPropTreeList::OnLButtonDblClk(UINT, CPoint point)
 				// pass thru to default
 
 			default:
-				pOldFocus = m_pProp->GetFocusedItem();
-				m_pProp->SelectItems(NULL, FALSE);
-				m_pProp->SetFocusedItem(pItem);
-				pItem->Select();
+				if ( !pItem->IsRootLevel() )
+				{
+					pOldFocus = m_pProp->GetFocusedItem();
+					m_pProp->SelectItems(NULL, FALSE);
+					m_pProp->SetFocusedItem(pItem);
+					pItem->Select();
 
-				if (pItem!=pOldFocus)
-					m_pProp->SendNotify(PTN_SELCHANGE, pItem);
+					if (pItem!=pOldFocus)
+						m_pProp->SendNotify(PTN_SELCHANGE, pItem);
+				}
 
 				// pass thru to HTEXPAND
 

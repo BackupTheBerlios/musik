@@ -38,7 +38,6 @@
 
 #define PROPTREEITEM_EXPANDBOXHALF		(PROPTREEITEM_EXPANDBOX/2)
 
-
 ///////////////////////////////////////////////////
 
 static void HLine(HDC hdc, LONG x, LONG y, LONG w, COLORREF color)
