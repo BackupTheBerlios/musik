@@ -12,11 +12,20 @@
 
 #ifndef MUSIKDEFINES_H
 #define MUSIKDEFINES_H
+
+// wx 2.4.2 compatiblity macros
 #if wxVERSION_NUMBER >= 2500  
 #define WXSYSTEMCOLOUR(x)	wxTheColourDatabase->Find(x)
 #else
 #define WXSYSTEMCOLOUR(x)	*wxTheColourDatabase->FindColour(x)
 #endif
+
+#ifndef wxFULL_REPAINT_ON_RESIZE
+#define wxFULL_REPAINT_ON_RESIZE 0
+#endif
+
+
+// in case it is missing 
 #ifndef max
 #define max(a, b)   (((a) > (b)) ? (a) : (b))
 #endif
