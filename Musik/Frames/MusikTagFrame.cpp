@@ -50,7 +50,7 @@ BEGIN_EVENT_TABLE( MusikTagFrame, wxFrame )
 END_EVENT_TABLE()
 
 MusikTagFrame::MusikTagFrame( wxFrame* pParent, CPlaylistCtrl * pPlaylistctrl, int nCurFrame)
-	: wxFrame ( pParent, -1, wxT(""), wxPoint( 0, 0 ), wxSize( 420, 230 ), wxCAPTION | wxTAB_TRAVERSAL | wxFRAME_FLOAT_ON_PARENT | wxFRAME_NO_TASKBAR )
+	: wxFrame ( pParent, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), wxRESIZE_BORDER|wxCAPTION | wxTAB_TRAVERSAL | wxFRAME_FLOAT_ON_PARENT | wxFRAME_NO_TASKBAR )
 	, m_Songs(*pPlaylistctrl->GetPlaylist())
 {
 	pPlaylistctrl->GetSelItems(m_arrSongsSelected);
@@ -122,9 +122,13 @@ MusikTagFrame::MusikTagFrame( wxFrame* pParent, CPlaylistCtrl * pPlaylistctrl, i
 	cmbGenre					=	new wxComboBox		( this, MUSIK_TAG_GENRE, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_DROPDOWN );
 	chkGenre					=	new wxCheckBox		( this, MUSIK_TAG_CHK_GENRE, wxT(""), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 
-	wxStaticText *stYear		=	new wxStaticText	( this, -1, _("Year  "),	wxPoint( 0, 0 ), wxSize( 40, -1 ), wxALIGN_RIGHT );
+	wxStaticText *stYear		=	new wxStaticText	( this, -1, _("Year  "),	wxPoint( 0, 0 ), wxSize( -1, -1 ), wxALIGN_RIGHT );
 	tcYear						=	new wxTextCtrl		( this, MUSIK_TAG_YEAR,	wxT(""), wxPoint( 0, 0 ), wxSize( 36, -1 ) );
 	chkYear						=	new wxCheckBox		( this, MUSIK_TAG_CHK_YEAR,	wxT(""), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+
+	wxStaticText *stNotes		=	new wxStaticText	( this, -1, _("Notes "),	wxPoint( 0, 0 ), wxSize( -1, -1 ), wxALIGN_RIGHT );
+	tcNotes						=	new wxTextCtrl		( this, MUSIK_TAG_NOTES,	wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ) );
+	chkNotes					=	new wxCheckBox		( this, MUSIK_TAG_CHK_NOTES,wxT(""), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 
 	chkWriteTag					=	new wxCheckBox		( this, MUSIK_TAG_CHK_WRITETAG, _("Write tags to file    "), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 	chkClear					=	new wxCheckBox		( this, MUSIK_TAG_CHK_WRITETAG_CLEAR, _("Clear old tags    "), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
@@ -145,7 +149,7 @@ MusikTagFrame::MusikTagFrame( wxFrame* pParent, CPlaylistCtrl * pPlaylistctrl, i
 	//---  top row sizer    ---//
 	//---      filename     ---//
 	//-------------------------//
-	hsRow0 = new wxBoxSizer( wxHORIZONTAL );
+	wxBoxSizer* hsRow0 = new wxBoxSizer( wxHORIZONTAL );
 	hsRow0->Add( stFilename,		0, wxCENTER			);
 	hsRow0->Add( tcFilename,		1, wxEXPAND			);
 
@@ -153,7 +157,7 @@ MusikTagFrame::MusikTagFrame( wxFrame* pParent, CPlaylistCtrl * pPlaylistctrl, i
 	//---  first row sizer  ---//
 	//--- title, track, num ---//
 	//-------------------------//
-	hsRow1 = new wxBoxSizer( wxHORIZONTAL );
+	wxBoxSizer* hsRow1 = new wxBoxSizer( wxHORIZONTAL );
 	hsRow1->Add( stTitle,		0, wxALIGN_CENTER_VERTICAL				);
 	hsRow1->Add( tcTitle,		1, wxALIGN_CENTER_VERTICAL				);
 	hsRow1->Add( chkTitle,		0, wxALIGN_CENTER_VERTICAL | wxLEFT, 2	);
@@ -165,7 +169,7 @@ MusikTagFrame::MusikTagFrame( wxFrame* pParent, CPlaylistCtrl * pPlaylistctrl, i
 	//--- second row sizer ---//
 	//---      artist      ---//
 	//------------------------//
-	hsRow2 = new wxBoxSizer( wxHORIZONTAL	);
+	wxBoxSizer* hsRow2 = new wxBoxSizer( wxHORIZONTAL	);
 	hsRow2->Add( stArtist,		0, wxCENTER				);
 	hsRow2->Add( tcArtist,		1, wxEXPAND				);
 	hsRow2->Add( chkArtist,		0, wxCENTER | wxLEFT, 2 );
@@ -174,7 +178,7 @@ MusikTagFrame::MusikTagFrame( wxFrame* pParent, CPlaylistCtrl * pPlaylistctrl, i
 	//--- third row sizer ---//
 	//---      album      ---//
 	//-----------------------//
-	hsRow3 = new wxBoxSizer( wxHORIZONTAL	);
+	wxBoxSizer* hsRow3 = new wxBoxSizer( wxHORIZONTAL	);
 	hsRow3->Add( stAlbum,		0, wxCENTER				);
 	hsRow3->Add( tcAlbum,		1, wxEXPAND				);
 	hsRow3->Add( chkAlbum,		0, wxCENTER | wxLEFT, 2 );
@@ -183,7 +187,7 @@ MusikTagFrame::MusikTagFrame( wxFrame* pParent, CPlaylistCtrl * pPlaylistctrl, i
 	//--- fourth row sizer ---//
 	//---    genre, year   ---//
 	//------------------------//
-	hsRow4 = new wxBoxSizer( wxHORIZONTAL	);
+	wxBoxSizer* hsRow4 = new wxBoxSizer( wxHORIZONTAL	);
 	hsRow4->Add( stGenre,		0, wxCENTER				);
 	hsRow4->Add( cmbGenre,		1, wxEXPAND				);
 	hsRow4->Add( chkGenre,		0, wxCENTER | wxLEFT, 2 );
@@ -191,21 +195,30 @@ MusikTagFrame::MusikTagFrame( wxFrame* pParent, CPlaylistCtrl * pPlaylistctrl, i
 	hsRow4->Add( tcYear,		0, wxCENTER				);
 	hsRow4->Add( chkYear,		0, wxCENTER | wxLEFT, 2 );
 
-	//-----------------------//
-	//--- fifth row sizer ---//
-	//---  write to fle   ---//
-	//-----------------------//
-	hsRow5 = new wxBoxSizer( wxHORIZONTAL	);
-	hsRow5->Add( chkWriteTag,	0, wxTOP | wxLEFT, 4	);
-	hsRow5->Add( chkClear,		0, wxTOP, 4	);
-	hsRow5->Add( chkRename,		0, wxTOP, 4	);
+	//-------------------------//
+	//--- fifth row sizer   ---//
+	//---    notes			---//
+	//------------------------//
+	wxBoxSizer* hsRow5 = new wxBoxSizer( wxHORIZONTAL	);
+	hsRow5->Add( stNotes,		0, wxCENTER				);
+	hsRow5->Add( tcNotes,		1, wxEXPAND				);
+	hsRow5->Add( chkNotes,		0, wxCENTER | wxLEFT, 2 );
 
 	//-----------------------//
 	//--- sixth row sizer ---//
+	//---  write to file   ---//
+	//-----------------------//
+	wxBoxSizer *hsRow6 = new wxBoxSizer( wxHORIZONTAL	);
+	hsRow6->Add( chkWriteTag,	0, wxTOP | wxLEFT, 4	);
+	hsRow6->Add( chkClear,		0, wxTOP, 4	);
+	hsRow6->Add( chkRename,		0, wxTOP, 4	);
+
+	//-----------------------//
+	//--- seventh row sizer ---//
 	//---    progress     ---//
 	//-----------------------//
-	hsRow6 = new wxBoxSizer( wxHORIZONTAL	);
-	hsRow6->Add( gProgress,	1, wxLEFT | wxRIGHT, 2 );
+	hsRowProgress = new wxBoxSizer( wxHORIZONTAL	);
+	hsRowProgress->Add( gProgress,	1, wxLEFT | wxRIGHT, 2 );
 
 	//--------------------//
 	//--- row 1 thru 6 ---//
@@ -216,9 +229,10 @@ MusikTagFrame::MusikTagFrame( wxFrame* pParent, CPlaylistCtrl * pPlaylistctrl, i
 	vsRows->Add( hsRow2,	0, wxEXPAND | wxALL, 4 );
 	vsRows->Add( hsRow3,	0, wxEXPAND | wxALL, 4 );
 	vsRows->Add( hsRow4,	0, wxEXPAND | wxALL, 4 );
-	vsRows->Add( hsRow5,	0, wxADJUST_MINSIZE  | wxALIGN_CENTER_HORIZONTAL | wxBOTTOM, 16 );
-	vsRows->Add( hsRow6,	0, wxEXPAND | wxBOTTOM, 2 );
-	vsRows->Show( hsRow6, FALSE );
+	vsRows->Add( hsRow5,	0, wxEXPAND | wxALL, 4 );
+	vsRows->Add( hsRow6,	0, wxADJUST_MINSIZE  | wxALIGN_CENTER_HORIZONTAL | wxBOTTOM, 16 );
+	vsRows->Add( hsRowProgress,	0, wxEXPAND | wxBOTTOM, 2 );
+	vsRows->Show( hsRowProgress, FALSE );
 
 	//---------------------------//
 	//--- system button sizer ---//
@@ -236,14 +250,14 @@ MusikTagFrame::MusikTagFrame( wxFrame* pParent, CPlaylistCtrl * pPlaylistctrl, i
 	//-----------------//
 	//--- top sizer ---//
 	//-----------------//
-	vsTopSizer = new wxBoxSizer( wxVERTICAL );
+	wxBoxSizer* vsTopSizer = new wxBoxSizer( wxVERTICAL );
 	vsTopSizer->Add( vsRows,	1, wxEXPAND );
 	vsTopSizer->Add( hsNav,		0, wxEXPAND | wxBOTTOM, 2 );
 
 	//-------------------//
 	//--- layout, etc ---//
 	//-------------------//
-	SetSizer( vsTopSizer );
+	SetSizerAndFit( vsTopSizer );
 	Layout();
 	Centre();
 
@@ -307,6 +321,7 @@ void MusikTagFrame::SetChecks( const int i )
 		chkAlbum->SetValue		( true );
 		chkGenre->SetValue		( true );
 		chkYear->SetValue		( true );
+		chkNotes->SetValue		( true );
 	}
 	else if( i == MUSIK_TAG_MULTIPLE )
 	{
@@ -329,6 +344,9 @@ void MusikTagFrame::SetChecks( const int i )
 				break;
 			case 5:
 				chkYear->SetValue		( true );
+				break;
+			case 6:
+				chkNotes->SetValue		( true );
 				break;
 			default:
 				chkTitle->SetValue		( true );
@@ -363,6 +381,8 @@ void MusikTagFrame::PopulateTagDlg()
 	cmbGenre->SetValue( ConvFromUTF8( m_Songs.Item( nIndex ).MetaData.Genre ) );
     //--- year ---//
 	tcYear->SetValue(ConvFromUTF8( m_Songs.Item( nIndex ).MetaData.Year ));
+	//--- Notes ---//
+	tcNotes->SetValue(ConvFromUTF8( m_Songs.Item( nIndex ).MetaData.Notes ));
 
 	//--- if we are at beginning, disable back, enable forward ---//
 	if( nIndex == 0 )
@@ -393,30 +413,13 @@ void MusikTagFrame::PopulateTagDlg()
 
 void MusikTagFrame::SetEnabled()
 {
-	if( chkTitle->IsChecked() )
-		tcTitle->Enable( true );
-	else
-		tcTitle->Enable( false );
-	if( chkTrackNum->IsChecked() )
-		tcTrackNum->Enable( true );
-	else
-		tcTrackNum->Enable( false );
-	if( chkArtist->IsChecked() )
-		tcArtist->Enable( true );
-	else
-		tcArtist->Enable( false );
-	if( chkAlbum->IsChecked() )
-		tcAlbum->Enable( true );
-	else
-		tcAlbum->Enable( false );
-	if( chkGenre->IsChecked() )
-		cmbGenre->Enable( true );
-	else
-		cmbGenre->Enable( false );
-	if( chkYear->IsChecked() )
-		tcYear->Enable( true );
-	else
-		tcYear->Enable( false );
+	tcTitle->Enable( chkTitle->IsChecked() );
+	tcTrackNum->Enable( chkTrackNum->IsChecked() );
+	tcArtist->Enable( chkArtist->IsChecked() );
+	tcAlbum->Enable( chkAlbum->IsChecked() );
+	cmbGenre->Enable( chkGenre->IsChecked() );
+	tcYear->Enable( chkYear->IsChecked() );
+	tcNotes->Enable( chkNotes->IsChecked() );
 }
 
 void MusikTagFrame::SetFocus()
@@ -446,6 +449,10 @@ void MusikTagFrame::SetFocus()
 		case 5:
 			tcYear->SetFocus();
 			tcYear->SetSelection( -1, -1 );
+			break;
+		case 6:
+			tcNotes->SetFocus();
+			tcNotes->SetSelection( -1, -1 );
 			break;
 		default:
 			tcTitle->SetFocus();
@@ -511,6 +518,12 @@ void MusikTagFrame::SaveSong(int n)
 	if ( tcYear->IsEnabled() && tcYear->GetValue() != ConvFromUTF8(m_Songs.Item( n ).MetaData.Year) )
 	{
 		m_Songs.Item( n ).MetaData.Year = ConvW2A(tcYear->GetValue());
+		m_Songs.Item( n ).Check1 = 1;
+	}
+	//--- year ---//
+	if ( tcNotes->IsEnabled() && tcNotes->GetValue() != ConvFromUTF8(m_Songs.Item( n ).MetaData.Notes) )
+	{
+		m_Songs.Item( n ).MetaData.Notes = ConvW2A(tcNotes->GetValue());
 		m_Songs.Item( n ).Check1 = 1;
 	}
 	m_bDirty = m_bDirty || m_Songs.Item( n ).Check1 == 1;  // if m_bDirty is once set TRUE, it stays TRUE
@@ -585,20 +598,8 @@ void MusikTagFrame::OnClose( wxCloseEvent& WXUNUSED(event) )
 
 void MusikTagFrame::EnableProgress( bool enable )
 {
-	if ( enable )
-	{
-		SetSize( wxSize( 420, 224 ) );
-		vsRows->Show( hsRow6, TRUE );
-		vsRows->Show( hsRow5, FALSE );
-		Layout();
-	}
-	else if ( !enable )
-	{
-		SetSize( wxSize( 420, 230 ) );
-		vsRows->Show( hsRow6, FALSE );
-		vsRows->Show( hsRow5, TRUE );
-		Layout();
-	}
+	vsRows->Show( hsRowProgress, enable );
+	Layout();
 	Enable( !enable );
 }
 

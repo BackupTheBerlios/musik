@@ -41,7 +41,7 @@ BEGIN_EVENT_TABLE(MusikPrefsFrame, wxFrame)
 END_EVENT_TABLE()
 
 MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, const wxPoint &pos, const wxSize &size ) 
-	: wxFrame( pParent, -1, sTitle, pos, size, wxDEFAULT_FRAME_STYLE|wxCAPTION | wxTAB_TRAVERSAL | wxFRAME_FLOAT_ON_PARENT | wxFRAME_NO_TASKBAR )
+	: wxFrame( pParent, -1, sTitle, pos, size, wxDEFAULT_FRAME_STYLE|wxRESIZE_BORDER|wxCAPTION | wxTAB_TRAVERSAL | wxFRAME_FLOAT_ON_PARENT | wxFRAME_NO_TASKBAR )
 {
 	//---------------//
 	//--- colours ---//
@@ -484,8 +484,8 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//--------------//
 	
 	Centre();
-	HidePanels();
 	Layout();
+	HidePanels();
 	//--------------------//
 	//---  Load Prefs  ---//
 	//--- Set Defaults ---//

@@ -29,7 +29,7 @@
 #include <wx/arrimpl.cpp>
 WX_DEFINE_OBJARRAY( CMusikStreamArray )
 
-#define MUSIK_FMOD_VERSION 0x0370 //--- 0x0363 or 0x0370 ---//
+#define MUSIK_FMOD_VERSION 0x0372 //--- only latest cversion is supported ---//
 
 void * F_CALLBACKAPI dspcallback(void *WXUNUSED(originalbuffer), void *newbuffer, int length, void * WXUNUSED(userdata))
 {
@@ -206,11 +206,14 @@ int CMusikPlayer::InitializeFMOD( int nFunction )
 					return FMOD_INIT_ERROR_ALSA;
 			}
 		#endif
+		if(wxGetApp().Prefs.nSndDevice > 0)
+		{
 		//---------------------//
 		//--- setup device	---//
 		//---------------------//
-		if ( FSOUND_SetDriver( wxGetApp().Prefs.nSndDevice ) == FALSE )
-			return FMOD_INIT_ERROR_DEVICE_NOT_READY;
+			if (  FSOUND_SetDriver( wxGetApp().Prefs.nSndDevice ) == FALSE )
+				return FMOD_INIT_ERROR_DEVICE_NOT_READY;
+		}
 
 		// initialize system
 		FSOUND_SetBufferSize( 100 );
@@ -426,7 +429,7 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 	//--- bottom of the g_ActiveStreams array	---//
 	//---------------------------------------------//
 	FSOUND_Stream_SetBufferSize( wxGetApp().Prefs.nSndBuffer );
-	int nFlags = FSOUND_NORMAL;
+	int nFlags = 0;//FSOUND_HW2D;
 	if( _CurrentSongNeedsMPEGACCURATE())
 		nFlags |= FSOUND_MPEGACCURATE;
 	if(_CurrentSongIsNetStream())
@@ -438,11 +441,7 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 	else
 		sFilename = m_CurrentSong.MetaData.Filename.GetFullPath();
 
-#if ( MUSIK_FMOD_VERSION >= 0x0370 )
 	FSOUND_STREAM* pNewStream = FSOUND_Stream_Open( ( const char* )ConvW2A( sFilename ), nFlags , 0, 0 );
-#else
-	FSOUND_STREAM* pNewStream = FSOUND_Stream_OpenFile( ( const char* )ConvW2A( sFilename ), nFlags , 0);
-#endif
 	if(pNewStream == NULL)
 	{
 		wxMessageBox( _( "Playback will be stopped, because loading failed.\n Filename:" ) + sFilename, MUSIKAPPNAME_VERSION, wxICON_STOP );
@@ -1060,11 +1059,7 @@ void CMusikPlayer::_ChooseRandomAlbums(int nAlbumsToAdd,wxArrayString &arrAlbums
 int CMusikPlayer::GetFilesize( wxString sFilename )
 {
 	int filesize = -1;
-#if ( MUSIK_FMOD_VERSION >= 0x0370 )
 	FSOUND_STREAM *pStream = FSOUND_Stream_Open( ( const char* )ConvW2A( sFilename ), FSOUND_2D, 0, 0 );
-#else
-	FSOUND_STREAM* pStream = FSOUND_Stream_OpenFile( ( const char* )ConvW2A( sFilename ), FSOUND_2D, 0);
-#endif
 
 	if ( pStream )
 	{
@@ -1269,11 +1264,7 @@ int CMusikPlayer::GetFileDuration( wxString sFilename, int nType )
 	//--- this should be FSOUND_MPEGACCURATE to get	---//
 	//--- an accurate length, but it's way slower..	---//
 	//-------------------------------------------------//
-#if (MUSIK_FMOD_VERSION >= 0x0370)
 	FSOUND_STREAM *pStream = FSOUND_Stream_Open( ( const char* )ConvW2A( sFilename ), FSOUND_2D, 0, 0 );
-#else
-	FSOUND_STREAM* pStream = FSOUND_Stream_OpenFile( ( const char* )ConvW2A( sFilename ), FSOUND_2D, 0);
-#endif
 
 	if ( pStream )
 	{

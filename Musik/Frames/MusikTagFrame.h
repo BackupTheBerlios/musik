@@ -33,12 +33,14 @@ enum EMUSIK_TAG_OBJECT_ID
 	MUSIK_TAG_ALBUM,
 	MUSIK_TAG_GENRE,
 	MUSIK_TAG_YEAR,
+	MUSIK_TAG_NOTES,
 	MUSIK_TAG_CHK_TITLE,
 	MUSIK_TAG_CHK_TRACKNUM,
 	MUSIK_TAG_CHK_ARTIST,
 	MUSIK_TAG_CHK_ALBUM,
 	MUSIK_TAG_CHK_GENRE,
 	MUSIK_TAG_CHK_YEAR,
+	MUSIK_TAG_CHK_NOTES,
 	MUSIK_TAG_CHK_WRITETAG,
 	MUSIK_TAG_CHK_WRITETAG_CLEAR,
 	MUSIK_TAG_CHK_RENAME,
@@ -53,7 +55,7 @@ enum EMUSIK_TAG_OBJECT_ID
 };
 
 const EMUSIK_TAG_OBJECT_ID	MUSIK_TAG_CHK_TAGFIRST =  MUSIK_TAG_CHK_TITLE;
-const EMUSIK_TAG_OBJECT_ID	MUSIK_TAG_CHK_TAGLAST =  MUSIK_TAG_CHK_YEAR;
+const EMUSIK_TAG_OBJECT_ID	MUSIK_TAG_CHK_TAGLAST =  MUSIK_TAG_CHK_NOTES;
 
 class  CPlaylistCtrl;
 
@@ -74,6 +76,8 @@ public:
 	wxCheckBox	*chkAlbum;
 	wxTextCtrl	*tcYear;
 	wxCheckBox	*chkYear;
+	wxTextCtrl	*tcNotes;
+	wxCheckBox	*chkNotes;
 
 	wxCheckBox  *chkWriteTag;
 	wxCheckBox  *chkClear;
@@ -90,17 +94,9 @@ public:
 	wxButton	*btnNext;
 	wxButton	*btnPrev;
 
-	wxBoxSizer	*hsRow0;
-	wxBoxSizer	*hsRow1;
-	wxBoxSizer	*hsRow2;
-	wxBoxSizer	*hsRow3;
-	wxBoxSizer	*hsRow4;
-	wxBoxSizer	*hsRow5;
-	wxBoxSizer	*hsRow6;
-	wxBoxSizer	*vsRows;	
+	wxBoxSizer	*hsRowProgress;
+	wxBoxSizer	*vsRows;
 	wxBoxSizer	*hsNav;
-	wxBoxSizer	*vsTopSizer;
-
 	//--- regular event handlers ---//
 	void OnClickOK				( wxCommandEvent &WXUNUSED(event) );
 	void OnClickCancel			( wxCommandEvent &WXUNUSED(event) );

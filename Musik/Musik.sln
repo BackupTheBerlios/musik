@@ -72,10 +72,10 @@ Global
 		{C4650E41-AD5A-41D8-89D8-3ED472E4D10F}.Release Unicode.Build.0 = Release Unicode|Win32
 		{C4650E41-AD5A-41D8-89D8-3ED472E4D10F}.Release Unicode DLL.ActiveCfg = Release|Win32
 		{C4650E41-AD5A-41D8-89D8-3ED472E4D10F}.Release Unicode DLL.Build.0 = Release|Win32
-		{C4650E41-AD5A-41D8-89D8-3ED472E4D10F}.Unicode Debug.ActiveCfg = Debug|Win32
-		{C4650E41-AD5A-41D8-89D8-3ED472E4D10F}.Unicode Debug.Build.0 = Debug|Win32
-		{C4650E41-AD5A-41D8-89D8-3ED472E4D10F}.Unicode Release.ActiveCfg = Release|Win32
-		{C4650E41-AD5A-41D8-89D8-3ED472E4D10F}.Unicode Release.Build.0 = Release|Win32
+		{C4650E41-AD5A-41D8-89D8-3ED472E4D10F}.Unicode Debug.ActiveCfg = Debug Unicode|Win32
+		{C4650E41-AD5A-41D8-89D8-3ED472E4D10F}.Unicode Debug.Build.0 = Debug Unicode|Win32
+		{C4650E41-AD5A-41D8-89D8-3ED472E4D10F}.Unicode Release.ActiveCfg = Release Unicode|Win32
+		{C4650E41-AD5A-41D8-89D8-3ED472E4D10F}.Unicode Release.Build.0 = Release Unicode|Win32
 		{C4650E41-AD5A-41D8-89D8-3ED472E4D10F}.Universal Debug.ActiveCfg = Debug|Win32
 		{C4650E41-AD5A-41D8-89D8-3ED472E4D10F}.Universal Debug.Build.0 = Debug|Win32
 		{C4650E41-AD5A-41D8-89D8-3ED472E4D10F}.Universal Release.ActiveCfg = Release|Win32

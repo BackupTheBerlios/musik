@@ -26,7 +26,7 @@ BEGIN_EVENT_TABLE(CMusikEQCtrl, wxPanel)
 END_EVENT_TABLE()
 
 CMusikEQCtrl::CMusikEQCtrl( wxFrame* pParent )
-	: wxPanel( pParent, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxNO_BORDER | wxTRANSPARENT_WINDOW )
+	: wxPanel( pParent, -1, wxDefaultPosition, wxDefaultSize, wxNO_BORDER | wxTRANSPARENT_WINDOW )
 {
 	//-------------------------------------//
 	//--- initialize the sizers			---//
@@ -42,13 +42,13 @@ CMusikEQCtrl::CMusikEQCtrl( wxFrame* pParent )
 	{
 		slLeft[i] = new CMusikEQGauge( this, MUSIK_FX_LEFT, i );
 		slLeft[i]->SetToolTip( wxString::Format( _( "Left Channel: %d hz" ), freqs[i]) );
-		pBandsSizer->Add( slLeft[i] );
+		pBandsSizer->Add( slLeft[i],1,wxEXPAND );
 	}
 	for ( int i = 0; i < 18; i++ )
 	{
 		slRight[i] = new CMusikEQGauge( this, MUSIK_FX_RIGHT, i );
 		slRight[i]->SetToolTip( wxString::Format( _( "Right Channel: %d hz" ), freqs[i]) );
-		pBandsSizer->Add( slRight[i] );
+		pBandsSizer->Add( slRight[i],1,wxEXPAND );
 	}
 
 	//-------------------------------------//

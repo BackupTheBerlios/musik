@@ -143,7 +143,7 @@ BEGIN_EVENT_TABLE(CPlaylistCtrl, CMusikListCtrl)
 	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_RETAG_FILES,									CPlaylistCtrl::OnRetagFiles			)
 	EVT_MENU_RANGE				( MUSIK_PLAYLIST_CONTEXT_UNRATED, MUSIK_PLAYLIST_CONTEXT_RATE5,			CPlaylistCtrl::OnRateSel			) 	
 	EVT_UPDATE_UI_RANGE			( MUSIK_PLAYLIST_CONTEXT_UNRATED, MUSIK_PLAYLIST_CONTEXT_RATE5,			CPlaylistCtrl::OnUpdateUIRateSel	)
-	EVT_MENU_RANGE				( MUSIK_PLAYLIST_CONTEXT_TAG_TITLE,	MUSIK_PLAYLIST_CONTEXT_TAG_YEAR,	CPlaylistCtrl::OnClickEditTag		)
+	EVT_MENU_RANGE				( MUSIK_PLAYLIST_CONTEXT_TAG_TITLE,	MUSIK_PLAYLIST_CONTEXT_TAG_NOTES,	CPlaylistCtrl::OnClickEditTag		)
 	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_SMART,											CPlaylistCtrl::OnDisplaySmart		)
 	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_FIT,											CPlaylistCtrl::OnDisplayFit			)
 	EVT_MENU					( MUSIK_PLAYLIST_CLEARPLAYERLIST,										CPlaylistCtrl::OnClearPlayerlist	)
@@ -327,6 +327,7 @@ wxMenu * CPlaylistCtrl::CreateContextMenu()
 	playlist_context_edit_tag_menu->Append( MUSIK_PLAYLIST_CONTEXT_TAG_ALBUM,		_( "Edit Album\tF5" ) );
 	playlist_context_edit_tag_menu->Append( MUSIK_PLAYLIST_CONTEXT_TAG_GENRE,		_( "Edit Genre\tF6" ) );
 	playlist_context_edit_tag_menu->Append( MUSIK_PLAYLIST_CONTEXT_TAG_YEAR,		_( "Edit Year\tF7" ) );
+	playlist_context_edit_tag_menu->Append( MUSIK_PLAYLIST_CONTEXT_TAG_NOTES,		_( "Edit Notes\tF8" ) );
 	playlist_context_edit_tag_menu->AppendSeparator();
 	playlist_context_edit_tag_menu->Append( MUSIK_PLAYLIST_CONTEXT_RENAME_FILES,	_( "&Auto Rename" ) );
 	playlist_context_edit_tag_menu->Append( MUSIK_PLAYLIST_CONTEXT_RETAG_FILES,		_( "A&uto Retag..." ) );

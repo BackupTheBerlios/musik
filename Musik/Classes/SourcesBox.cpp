@@ -511,11 +511,6 @@ void CSourcesListBox::UpdateSel( size_t index )
 			wxString sQuery = LoadDynPlaylist( GetItemText( m_CurSel ) );
 			 wxGetApp().Library.QuerySongsWhere( sQuery, g_Playlist );
 		}
-		else if (  m_CurSel != -1 && nSelType == MUSIK_SOURCES_NOW_PLAYING )
-		{
-			wxGetApp().Player.RefreshInternalPlaylist();
-			g_Playlist = wxGetApp().Player.GetPlaylist();
-		}
 		else if ( m_CurSel != -1 && nSelType == MUSIK_SOURCES_NETSTREAM )
 		{
 			CMusikSong song;
@@ -523,7 +518,10 @@ void CSourcesListBox::UpdateSel( size_t index )
 			g_Playlist.Clear();
 			g_Playlist.Add(song);
 		}
-
+		else if ( m_CurSel != -1 && nSelType == MUSIK_SOURCES_NOW_PLAYING )
+		{
+			g_Playlist = wxGetApp().Player.GetPlaylist();
+		}
 		//--- update ui with new list ---//
 		g_PlaylistBox->Update(true);
 		if ( m_CurSel != -1 && nSelType == MUSIK_SOURCES_NOW_PLAYING )

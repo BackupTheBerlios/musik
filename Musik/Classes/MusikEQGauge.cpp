@@ -34,7 +34,7 @@ BEGIN_EVENT_TABLE(CMusikEQGauge, wxGauge)
 END_EVENT_TABLE()
 
 CMusikEQGauge::CMusikEQGauge( CMusikEQCtrl* parent, size_t nChannel, size_t nBandID )
-	: wxGauge( parent, -1, 100, wxPoint( 0, 0 ), wxSize( wxSystemSettings::GetMetric( wxSYS_HSCROLL_Y ), 100 ), wxGA_SMOOTH | wxGA_VERTICAL | wxCLIP_CHILDREN )
+	: wxGauge( parent, -1, 100, wxPoint( 0, 0 ), wxSize( wxSystemSettings::GetMetric( wxSYS_HSCROLL_Y ), 200 ), wxGA_SMOOTH | wxGA_VERTICAL | wxCLIP_CHILDREN )
 {
 	m_Channel = nChannel;
 	m_BandID = nBandID;
