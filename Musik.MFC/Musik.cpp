@@ -86,7 +86,7 @@ BOOL CMusikApp::InitInstance()
 
 BOOL CMusikApp::OnAnotherInstanceMessage( LPMSG pMsg )
 {
-	// make sure the sender is the sender...
+	// make sure the sender is the main frame...
 	if ( m_pMainWnd )
 	{
 		if ( pMsg->hwnd != m_pMainWnd->GetSafeHwnd() )
@@ -95,8 +95,15 @@ BOOL CMusikApp::OnAnotherInstanceMessage( LPMSG pMsg )
 
 	if( pMsg->wParam != NULL ) 
 	{
-		::GlobalGetAtomName( (ATOM)pMsg->wParam, m_lpCmdLine, _MAX_FNAME );			
-		::GlobalDeleteAtom(  (ATOM)pMsg->wParam );		
+		// get the contents of the atom, in
+		// this case, the command line sent
+		// to the last instance of the program
+		::GlobalGetAtomName( (ATOM)pMsg->wParam, m_lpCmdLine, _MAX_FNAME );	
+
+		// delete the atom
+		::SetLastError( ERROR_SUCCESS );
+		while ( ::GetLastError() == ERROR_SUCCESS )
+			::GlobalDeleteAtom(  (ATOM)pMsg->wParam );	
 	}
 
 	Play( m_lpCmdLine );

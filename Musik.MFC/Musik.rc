@@ -155,8 +155,9 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
+            VALUE "Comments", "Musik is a small, portable media library"
             VALUE "CompanyName", "Casey Langen"
-            VALUE "FileDescription", "Musik is a small, portable media library"
+            VALUE "FileDescription", "Musik"
             VALUE "FileVersion", "1.0.0.1"
             VALUE "InternalName", "Musik.exe"
             VALUE "LegalCopyright", "Copyright Casey Langen 2002-2003.  All rights reserved."

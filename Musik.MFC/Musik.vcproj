@@ -21,6 +21,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/D ID3LIB_LINKOPTION=1"
 				Optimization="0"
+				AdditionalIncludeDirectories="../_inc/"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;ACE_AS_STATIC_LIBS"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -35,7 +36,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/NODEFAULTLIB:libcmtd"
-				AdditionalDependencies="sqlite.lib fmodvc.lib acesd.lib vorbis_static_d.lib vorbisfile_static_d.lib ogg_static_d.lib id3libD.lib"
+				AdditionalDependencies="../_lib/sqlite.lib ../_lib/fmodvc.lib ../_lib/acesd.lib ../_lib/vorbis_static_d.lib ../_lib/vorbisfile_static_d.lib ../_lib/ogg_static_d.lib ../_lib/id3libD.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
@@ -82,6 +83,7 @@
 				FavorSizeOrSpeed="1"
 				EnableFiberSafeOptimizations="TRUE"
 				OptimizeForWindowsApplication="TRUE"
+				AdditionalIncludeDirectories="../_inc/"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;ACE_AS_STATIC_LIBS"
 				MinimalRebuild="FALSE"
 				RuntimeLibrary="2"
@@ -95,7 +97,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/NODEFAULTLIB:libcmt"
-				AdditionalDependencies="sqlite.lib fmodvc.lib aces.lib vorbis_static.lib vorbisfile_static.lib ogg_static.lib id3lib.lib"
+				AdditionalDependencies="../_lib/sqlite.lib ../_lib/fmodvc.lib ../_lib/aces.lib ../_lib/vorbis_static.lib ../_lib/vorbisfile_static.lib ../_lib/ogg_static.lib ../_lib/id3lib.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="FALSE"
 				SubSystem="2"
@@ -355,7 +357,7 @@
 			</Filter>
 		</Filter>
 		<Filter
-			Name="_Core"
+			Name="Core"
 			Filter="">
 			<File
 				RelativePath="..\Musik.Core\include\MusikArrays.h">

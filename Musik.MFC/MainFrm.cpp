@@ -342,6 +342,7 @@ bool CMainFrame::PlayCmd( const CStdString& fn )
 		if ( !m_Library->IsSongInLibrary( fn ) )
 			m_Library->AddSong( fn );
 
+
 		// get playlist's internal player
 		CMusikPlaylist* pPlaylist = m_wndView->GetCtrl()->GetPlaylist();
 		if ( pPlaylist )

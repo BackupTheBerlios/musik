@@ -59,7 +59,6 @@ BOOL CWinAppEx::InitInstance( LPCTSTR lpszUID /*NULL*/ )
 
 		if( this->FindAnotherInstance( lpszUID ) )
 		{
-			
 			CCommandLineInfo cmd;
 			ParseCommandLine( cmd );
 			
@@ -69,7 +68,7 @@ BOOL CWinAppEx::InitInstance( LPCTSTR lpszUID /*NULL*/ )
 				WPARAM wpCmdLine = NULL;
 				if( cmd.m_nShellCommand == CCommandLineInfo::FileOpen )
 					wpCmdLine = (ATOM)::GlobalAddAtom( cmd.m_strFileName );
-
+	
 				this->PostInstanceMessage( wpCmdLine, NULL );
 				return FALSE;
 			}
