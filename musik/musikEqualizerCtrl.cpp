@@ -14,6 +14,7 @@
 #include "../musikCore/include/musikLibrary.h"
 
 #include "MEMDC.H"
+#include ".\musikequalizerctrl.h"
 
 ///////////////////////////////////////////////////
 

@@ -1,24 +1,36 @@
+///////////////////////////////////////////////////
+
 #pragma once
 
-
-// CmusikEqualizerSets dialog
+///////////////////////////////////////////////////
 
 class CmusikEqualizerSets : public CDialog
 {
-	DECLARE_DYNAMIC(CmusikEqualizerSets)
-
 public:
-	CmusikEqualizerSets(CWnd* pParent = NULL);   // standard constructor
+
+	// construct and destruct
+	CmusikEqualizerSets(CWnd* pParent = NULL);
 	virtual ~CmusikEqualizerSets();
 
-// Dialog Data
+	// mfc message maps
+	afx_msg void OnBnClickedCloseDlg();
+
+	// misc
 	enum { IDD = IDD_EQUALIZER_SETS };
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
+	// misc
+	virtual void DoDataExchange(CDataExchange* pDX);  
+
+    // parent window to post events to
+	CWnd* m_Parent;
+
+	// macros
+	DECLARE_DYNAMIC(CmusikEqualizerSets)
 	DECLARE_MESSAGE_MAP()
-
-public:
-	afx_msg void OnBnClickedCloseDlg();
 };
+
+///////////////////////////////////////////////////
+
+
