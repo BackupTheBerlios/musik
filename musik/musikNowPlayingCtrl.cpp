@@ -189,7 +189,9 @@ int CmusikNowPlayingCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 	m_Next->SetFont( &m_Font );
 
-	GetDC()->SetBkColor( GetSysColor( COLOR_BTNHILIGHT ) );
+	CDC* pDC = GetDC();
+	pDC->SetBkColor( GetSysColor( COLOR_BTNHILIGHT ) );
+	ReleaseDC( pDC );
 
 	return 0;
 }

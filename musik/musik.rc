@@ -153,7 +153,7 @@ BEGIN
         MENUITEM "Lock Channels",               ID_EQUALIZER_LOCKCHANNELS
         MENUITEM SEPARATOR
         MENUITEM "Enabled",                     ID_EQUALIZER_ENABLED2
-        MENUITEM "Automatically Manage",        ID_EQUALIZER_AUTOMATICALLYSAVE
+        MENUITEM "Autosave Settings",           ID_EQUALIZER_AUTOMATICALLYSAVE
 
         MENUITEM SEPARATOR
         MENUITEM "Reset Default",               ID_EQUALIZER_RESETDEFAULT
@@ -173,19 +173,15 @@ BEGIN
             MENUITEM "Album",                       ID_CHANGETYPE_ALBUM
             MENUITEM "Year",                        ID_CHANGETYPE_YEAR
             MENUITEM "Genre",                       ID_CHANGETYPE_GENRE
-            MENUITEM "Title",                       ID_CHANGETYPE_TITLE
             MENUITEM "Track Number",                ID_CHANGETYPE_TRACKNUMBER
 
             MENUITEM "Time Added",                  ID_CHANGETYPE_TIMEADDED
             MENUITEM "Last Played",                 ID_CHANGETYPE_LASTPLAYED
-            MENUITEM "Filesize",                    ID_CHANGETYPE_FILESIZE
             MENUITEM "Format",                      ID_CHANGETYPE_FORMAT
-            MENUITEM "Duration",                    ID_CHANGETYPE_DURATION
             MENUITEM "Rating",                      ID_CHANGETYPE_RATING
             MENUITEM "Times Played",                ID_CHANGETYPE_TIMESPLAYED
 
             MENUITEM "Bitrate",                     ID_CHANGETYPE_BITRATE
-            MENUITEM "Equalizer",                   ID_CHANGETYPE_EQUALIZER
         END
         MENUITEM SEPARATOR
         MENUITEM "Rename\tF2",                  ID_SELECTIONBOX_RENAME

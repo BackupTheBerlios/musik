@@ -109,6 +109,49 @@ void CmusikSelectionBar::ShowMenu()
 	main_menu.LoadMenu( IDR_SELECTION_BOX_MENU );
 	popup_menu = main_menu.GetSubMenu( 0 );
 
+	int type = GetCtrl()->GetType();
+	switch( type )
+	{
+	case MUSIK_LIBRARY_TYPE_ARTIST:
+		popup_menu->CheckMenuItem( ID_CHANGETYPE_ARTIST, MF_CHECKED );
+		break;
+	case MUSIK_LIBRARY_TYPE_ALBUM:
+		popup_menu->CheckMenuItem( ID_CHANGETYPE_ALBUM, MF_CHECKED );
+		break;
+	case MUSIK_LIBRARY_TYPE_YEAR:
+		popup_menu->CheckMenuItem( ID_CHANGETYPE_YEAR, MF_CHECKED );
+		break;
+	case MUSIK_LIBRARY_TYPE_GENRE:
+		popup_menu->CheckMenuItem( ID_CHANGETYPE_GENRE, MF_CHECKED );
+		break;
+	case MUSIK_LIBRARY_TYPE_TRACKNUM:
+		popup_menu->CheckMenuItem( ID_CHANGETYPE_TRACKNUMBER, MF_CHECKED );
+		break;
+	case MUSIK_LIBRARY_TYPE_TIMEADDED:
+		popup_menu->CheckMenuItem( ID_CHANGETYPE_TIMEADDED, MF_CHECKED );
+		popup_menu->EnableMenuItem( ID_SELECTIONBOX_RENAME, MF_DISABLED | MF_GRAYED );
+		break;
+	case MUSIK_LIBRARY_TYPE_LASTPLAYED:
+		popup_menu->CheckMenuItem( ID_CHANGETYPE_LASTPLAYED, MF_CHECKED );
+		popup_menu->EnableMenuItem( ID_SELECTIONBOX_RENAME, MF_DISABLED | MF_GRAYED );
+		break;
+	case MUSIK_LIBRARY_TYPE_FORMAT:
+		popup_menu->CheckMenuItem( ID_CHANGETYPE_FORMAT, MF_CHECKED );
+		popup_menu->EnableMenuItem( ID_SELECTIONBOX_RENAME, MF_DISABLED | MF_GRAYED );
+		break;
+	case MUSIK_LIBRARY_TYPE_RATING:
+		popup_menu->CheckMenuItem( ID_CHANGETYPE_RATING, MF_CHECKED );
+		break;
+	case MUSIK_LIBRARY_TYPE_TIMESPLAYED:
+		popup_menu->CheckMenuItem( ID_CHANGETYPE_TIMESPLAYED, MF_CHECKED );
+		popup_menu->EnableMenuItem( ID_SELECTIONBOX_RENAME, MF_DISABLED | MF_GRAYED );
+		break;
+	case MUSIK_LIBRARY_TYPE_BITRATE:
+		popup_menu->CheckMenuItem( ID_CHANGETYPE_BITRATE, MF_CHECKED );
+		popup_menu->EnableMenuItem( ID_SELECTIONBOX_RENAME, MF_DISABLED | MF_GRAYED );
+		break;
+	}
+
 	popup_menu->TrackPopupMenu( 0, pos.x, pos.y, this );
 }
 
@@ -276,27 +319,46 @@ void CmusikSelectionCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 	// only need to worry about item text
 	if ( pItem->mask & LVIF_TEXT )
 	{
+		char* pStr = NULL;
+
 		switch( pItem->iSubItem )
 		{
 		case 0:
 
-			// a safeguard... just make sure the item we're
-			// getting passed has a respective value in the
-			// array of items.
-			if ( pItem->iItem >= (int)m_Items.size() )
+			if ( pItem->iItem > 0 )
 			{
-				CString sNull = _T( "[musik.caching]" );
-				char* pStr = sNull.GetBuffer();
+				// a safeguard... just make sure the item we're
+				// getting passed has a respective value in the
+				// array of items.
+				if ( pItem->iItem >= (int)m_Items.size() )
+				{
+					CString sNull = _T( "[musik.caching]" );
+					pStr = sNull.GetBuffer();
+				}
 
-				pItem->cchTextMax = sizeof( *pStr );
-				lstrcpy( pItem->pszText, pStr );
+				// got a valid item, so go ahead and add it.
+				else
+				{
+					switch ( m_Type )
+					{
+					case MUSIK_LIBRARY_TYPE_FORMAT:
+						if ( m_Items.at( pItem->iItem ) == _T( "0" ) )
+							pStr = _T( "mp3" );
+						else if ( m_Items.at( pItem->iItem ) == _T( "1" ) )
+							pStr = _T( "ogg" );
+						break;
+
+					default:
+						pStr = (char*)m_Items.at( pItem->iItem ).c_str();
+						break;
+					}
+				}
 			}
-
-			// got a valid item, so go ahead and add it.
 			else
-			{
-				const char* pStr = m_Items.at( pItem->iItem ).c_str();
+				pStr = (char*)m_Items.at( 0 ).c_str();
 
+			if ( pStr )
+			{
 				pItem->cchTextMax = sizeof( *pStr );
 				lstrcpy( pItem->pszText, pStr );
 			}
@@ -355,6 +417,7 @@ void CmusikSelectionCtrl::GetSelItems( CStdStringArray& items, bool format_query
 	int item;
 	int count = 0;
 
+	CString item_str;
 	for ( int i = -1 ; ; )
 	{
 		item = GetNextItem( i, LVNI_SELECTED );
@@ -364,9 +427,22 @@ void CmusikSelectionCtrl::GetSelItems( CStdStringArray& items, bool format_query
 
 		else
 		{
-			items.push_back( ( CStdString)GetItemText( item, 0 ) );
-			if ( format_query )
-				items.at( count ).Replace( _T( "'" ), _T( "''" ) );
+			switch( m_Type )
+			{
+			case MUSIK_LIBRARY_TYPE_FORMAT:
+				item_str = GetItemText( item, 0 );
+				if ( item_str == "mp3" )
+					items.push_back( "0" );
+				else if ( item_str == "ogg" )
+					items.push_back( "1" );
+
+			default:
+				items.push_back( ( CStdString)GetItemText( item, 0 ) );
+				if ( format_query )
+					items.at( count ).Replace( _T( "'" ), _T( "''" ) );
+
+			}
+
 		}
 
 		i = item;
@@ -710,30 +786,30 @@ void CmusikSelectionCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 void CmusikSelectionCtrl::RenameSel()
 {
-		CStdStringArray items;
-		GetSelItems( items );
+	CStdStringArray items;
+	GetSelItems( items );
 
-		// make sure somethign is selected
-		if ( !items.size() )
-			return;
+	// make sure somethign is selected
+	if ( !items.size() )
+		return;
 
-		// first selected item rect
-		CRect rcItem;
-		GetItemRect( GetSelectionMark(), rcItem, LVIR_BOUNDS );
-		rcItem.left += 2;
+	// first selected item rect
+	CRect rcItem;
+	GetItemRect( GetSelectionMark(), rcItem, LVIR_BOUNDS );
+	rcItem.left += 2;
 
-		if ( rcItem.top < 0 )
-		{
-			int height = rcItem.bottom - rcItem.top;
-			rcItem.top = 0 + 2;
-			rcItem.bottom = height + 2;
-		}
+	if ( rcItem.top < 0 )
+	{
+		int height = rcItem.bottom - rcItem.top;
+		rcItem.top = 0 + 2;
+		rcItem.bottom = height + 2;
+	}
 
-		m_EditInPlace.EnableWindow( TRUE );
-		m_EditInPlace.MoveWindow( rcItem );
-		m_EditInPlace.SetFocus();
-		m_EditInPlace.SetString( m_Items.at( GetSelectionMark() ).c_str() );
-		m_EditInPlace.ShowWindow( SW_SHOWDEFAULT );		
+	m_EditInPlace.EnableWindow( TRUE );
+	m_EditInPlace.MoveWindow( rcItem );
+	m_EditInPlace.SetFocus();
+	m_EditInPlace.SetString( m_Items.at( GetSelectionMark() ).c_str() );
+	m_EditInPlace.ShowWindow( SW_SHOWDEFAULT );		
 }
 
 ///////////////////////////////////////////////////

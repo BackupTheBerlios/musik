@@ -9,7 +9,6 @@
 #include "musik.h"
 #include "musikSourcesCtrl.h"
 #include "musikSourcesDropTarget.h"
-#include ".\musiksourcesctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -134,23 +133,48 @@ void CmusikSourcesBar::OnItemChanged( NMHDR* pNotifyStruct, LRESULT* plResult )
 
 void CmusikSourcesBar::OnOptions()
 {
-	ShowMenu();
+	ShowMenu( true );
 }
 
 ///////////////////////////////////////////////////
 
-void CmusikSourcesBar::ShowMenu()
+void CmusikSourcesBar::ShowMenu( bool force_show )
 {
-	CPoint pos;
-	::GetCursorPos( &pos );
+	CmusikPropTreeItem* pItem = GetCtrl()->GetFocusedItem();
 
-	CMenu main_menu;
-	CMenu* popup_menu;
+	if ( pItem || ( !pItem && force_show ) )
+	{
+		CPoint pos;
+		::GetCursorPos( &pos );
 
-	main_menu.LoadMenu( IDR_SOURCES_MENU );
-	popup_menu = main_menu.GetSubMenu( 0 );
+		CMenu main_menu;
+		CMenu* popup_menu;
 
-	popup_menu->TrackPopupMenu( 0, pos.x, pos.y, this );
+		main_menu.LoadMenu( IDR_SOURCES_MENU );
+		popup_menu = main_menu.GetSubMenu( 0 );
+
+		// update ui doesn't work...
+		int type = pItem->GetPlaylistType();
+
+		if ( type == MUSIK_PLAYLIST_TYPE_STANDARD || type == MUSIK_PLAYLIST_TYPE_DYNAMIC )
+		{
+			popup_menu->EnableMenuItem( ID_SOURCES_RENAME, MF_ENABLED );
+			popup_menu->EnableMenuItem( ID_SOURCES_DELETE, MF_ENABLED );
+
+			if ( type == MUSIK_PLAYLIST_TYPE_DYNAMIC )
+				popup_menu->EnableMenuItem( ID_SOURCES_EDITQUERY, MF_ENABLED );
+			else
+				popup_menu->EnableMenuItem( ID_SOURCES_EDITQUERY, MF_GRAYED | MF_DISABLED );
+		}
+		else
+		{
+			popup_menu->EnableMenuItem( ID_SOURCES_RENAME, MF_GRAYED | MF_DISABLED );
+			popup_menu->EnableMenuItem( ID_SOURCES_DELETE, MF_GRAYED | MF_DISABLED );
+			popup_menu->EnableMenuItem( ID_SOURCES_EDITQUERY, MF_GRAYED | MF_DISABLED );
+		}
+
+		popup_menu->TrackPopupMenu( 0, pos.x, pos.y, this );
+	}
 }
 
 

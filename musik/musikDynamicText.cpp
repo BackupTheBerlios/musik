@@ -115,6 +115,7 @@ CSize CmusikDynamicText::GetTextSize( const CString& str )
 			pOldFont = pDC->SelectObject( pOldFont );
 		}
 	}
+	DeleteDC( hMemDC );
 
 	return szText;
 }

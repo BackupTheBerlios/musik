@@ -271,6 +271,7 @@ void CmusikPrefs::LoadPrefs()
 
 	// selection area
 	m_SelectionBox_Count = StringToInt( config->GetValue( "Selection Area", "Count", "2" ) );
+	m_SelectionBox_Types = StringToCIntArray( config->GetValue( "Selection Area", "Types", "1,2" ) );
 
 	// playlist
 	m_Playlist_Order		= StringToCIntArray( config->GetValue( "Playlist", "Column Order", GetDefPlaylistOrder() ) );
@@ -336,6 +337,7 @@ void CmusikPrefs::SavePrefs()
 
 	// selection area
 	config->SetValue( "Selection Area", "Count", IntToString( (int)m_SelectionBox_Count ) );
+	config->SetValue( "Selection Area", "Types", CIntArrayToString( m_SelectionBox_Types ) );
 
 	// playlist
 	config->SetValue( "Playlist", "Column Order", CIntArrayToString( m_Playlist_Order ) );

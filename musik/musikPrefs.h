@@ -69,8 +69,13 @@ public:
 	//
 
 	size_t GetSelBoxCount(){ return m_SelectionBox_Count; }
-	void SetSelBoxCount( size_t n ){ m_SelectionBox_Count = n; }
+	int GetSelBoxType( int index ){ return m_SelectionBox_Types.at( index ); }
 
+	void SetSelBoxCount( size_t n ){ m_SelectionBox_Count = n; }
+	void SetSelBoxType( int index, int type ){ m_SelectionBox_Types.at( index ) = type; }
+	void SetNewSelBoxType( int type ){ m_SelectionBox_Types.push_back( type ); }
+	void SetSelBoxTypes( const CIntArray& types ){ m_SelectionBox_Types = types; }
+	
 	//
 	// playlist 
 	//
@@ -175,6 +180,7 @@ private:
 
 	// selection area
 	size_t	m_SelectionBox_Count;
+	CIntArray m_SelectionBox_Types;
 
 	// playlist
 	CIntArray m_Playlist_Order;

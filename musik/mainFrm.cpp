@@ -303,11 +303,14 @@ CMainFrame::CMainFrame()
 
 CMainFrame::~CMainFrame()
 {
+	CIntArray sel_modes;
 	for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
 	{
+		sel_modes.push_back( m_wndSelectionBars[i]->GetCtrl()->GetType() );
 		if ( m_wndSelectionBars[i] )
 			delete m_wndSelectionBars[i];
 	}
+	m_Prefs->SetSelBoxTypes( sel_modes );
 
 	if ( m_wndView )
 		delete m_wndView;
@@ -682,7 +685,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// selection controls
 	for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
 	{
-		m_wndSelectionBars[i] = new CmusikSelectionBar( this, m_Library, m_Prefs, i, i, m_uSelectionDrop );
+		m_wndSelectionBars[i] = new CmusikSelectionBar( this, m_Library, m_Prefs, m_Prefs->GetSelBoxType( i ), i, m_uSelectionDrop );
 		m_wndSelectionBars[i]->Create( _T( "musik Selection Box" ), this, ID_SELECTIONBOX_START + i );
 		if ( i == 0 )
 			DockControlBar( m_wndSelectionBars[i] );

@@ -1095,6 +1095,7 @@ void CmusikPlaylistCtrl::GetRatingExtent()
 			pOldFont = pDC->SelectObject( pOldFont );
 		}
 	}
+	DeleteDC( hMemDC );
 
 	m_RatingExtent = szText.cx;
 }

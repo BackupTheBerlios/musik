@@ -51,7 +51,7 @@ public:
 
 	// options
 	virtual void OnOptions();
-	void ShowMenu();
+	void ShowMenu( bool force_show = false );
 
 	// gets
 	CmusikSourcesCtrl* GetCtrl(){ return m_wndChild; }
