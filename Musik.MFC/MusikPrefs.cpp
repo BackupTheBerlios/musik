@@ -120,6 +120,32 @@ inline string CIntArrayToString( const CIntArray &array )
 	return sRet;
 }
 
+inline COLORREF StringToCOLORREF( const string str )
+{
+	int r = 0, g = 0, b = 0;
+	CString CStr = str.c_str();
+	int pos = 0;
+	CString resToken;
+	r = atoi( CStr.Tokenize( ",", pos ) );
+	g = atoi( CStr.Tokenize( ",", pos ) );
+	b = atoi( CStr.Tokenize( ",", pos ) );
+
+	COLORREF ret = RGB( r, g, b );
+	return ret;
+}
+
+inline string COLORREFToString( const COLORREF color )
+{
+	CString CRet;
+	CRet.Format( _T( "%d,%d,%d" ), 
+		GetRValue( color ), 
+		GetGValue( color ), 
+		GetBValue( color ) );
+
+	string sRet = CRet.GetBuffer();
+	return sRet;
+}
+
 CMusikPrefs::CMusikPrefs( CString filename )
 {
 	config = new CIniFile( filename.GetBuffer() );
@@ -154,6 +180,7 @@ void CMusikPrefs::LoadPrefs()
 	//-----------------------------------------------------//
 	m_Playlist_Order = StringToCIntArray( config->GetValue( "Playlist", "Column Order", GetDefPlaylistOrder() ) );
 	m_Playlist_Sizes = StringToCIntArray( config->GetValue( "Playlist", "Column Sizes", GetDefPlaylistSizes() ) );
+	m_Playlist_Stripe_Color = StringToCOLORREF( config->GetValue( "Playlist", "Stripe Color", GetDefPlaylistStripeColor() ) );
 
 	//-----------------------------------------------------//
 	//--- sources										---//
@@ -183,6 +210,7 @@ void CMusikPrefs::SavePrefs()
 	//-----------------------------------------------------//
 	config->SetValue( "Playlist", "Column Order", CIntArrayToString( m_Playlist_Order ) );
 	config->SetValue( "Playlist", "Column Sizes", CIntArrayToString( m_Playlist_Sizes ) );
+	config->SetValue( "Playlist", "Stripe Color", COLORREFToString( m_Playlist_Stripe_Color ) );
 
 	//-----------------------------------------------------//
 	//--- sources										---//
@@ -217,6 +245,15 @@ string CMusikPrefs::GetDefPlaylistSizes()
 	CString CRet;
 	CRet.Format( _T( "50,50,50,50,50,50,50" ) );
 	
+	string sRet = CRet.GetBuffer();
+	return sRet;
+}
+
+string CMusikPrefs::GetDefPlaylistStripeColor()
+{
+	CString CRet;
+	CRet.Format( _T( "244,244,244" ) );
+
 	string sRet = CRet.GetBuffer();
 	return sRet;
 }

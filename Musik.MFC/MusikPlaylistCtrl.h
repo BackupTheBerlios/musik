@@ -34,6 +34,8 @@ protected:
 //--- operations								---//
 //-------------------------------------------------//
 private:
+	void EnableHighlighting( HWND hWnd, int row, bool bHighlight );
+	bool IsRowSelected( HWND hWnd, int row );
 	void ResetColumns();
 	void SaveColumns();
 	
@@ -46,6 +48,9 @@ public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
 	afx_msg void OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnPaint();
+	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	afx_msg void OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult);
 };
 
 

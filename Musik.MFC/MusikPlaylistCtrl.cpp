@@ -10,6 +10,9 @@
 #include "../Musik.Core/include/MusikArrays.h"
 #include "../Musik.Core/include/MusikLibrary.h"
 
+#include "MEMDC.H"
+#include ".\musikplaylistctrl.h"
+
 // CMusikPlaylistCtrl
 
 IMPLEMENT_DYNAMIC(CMusikPlaylistCtrl, CListCtrl)
@@ -31,6 +34,9 @@ BEGIN_MESSAGE_MAP(CMusikPlaylistCtrl, CListCtrl)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_NOTIFY_REFLECT(LVN_GETDISPINFO, OnLvnGetdispinfo)
+	ON_WM_PAINT()
+	ON_WM_ERASEBKGND()
+	ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, OnNMCustomdraw)
 END_MESSAGE_MAP()
 
 void CMusikPlaylistCtrl::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp)
@@ -168,8 +174,99 @@ void CMusikPlaylistCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 
 	if ( pItem->mask & LVIF_TEXT )
 	{
+		
 		lstrcpy( pItem->pszText, m_Playlist->GetField( index, m_Prefs->GetPlaylistCol( pItem->iSubItem ) ) );
 	}
 
 	*pResult = 0;
+}
+
+void CMusikPlaylistCtrl::OnPaint()
+{
+	CPaintDC dc(this);
+	CRect rect;
+	GetClientRect(&rect);
+	CMemDC memDC(&dc, rect);
+	
+	CRect headerRect;
+	GetDlgItem(0)->GetWindowRect(&headerRect);
+	ScreenToClient(&headerRect);
+	dc.ExcludeClipRect(&headerRect);
+	   
+	CRect clip;
+	memDC.GetClipBox(&clip);
+	memDC.FillSolidRect( clip, GetSysColor( COLOR_BTNHILIGHT ) );
+
+	this->SetTextBkColor( GetSysColor( COLOR_BTNHILIGHT ) );
+	   
+	DefWindowProc(WM_PAINT, (WPARAM)memDC->m_hDC, (LPARAM)0);
+}
+
+BOOL CMusikPlaylistCtrl::OnEraseBkgnd(CDC* pDC)
+{
+	return false;
+	//return CListCtrl::OnEraseBkgnd(pDC);
+}
+
+void CMusikPlaylistCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	NMLVCUSTOMDRAW* pLVCD = reinterpret_cast<NMLVCUSTOMDRAW*>( pNMHDR );
+	static bool bHighlighted = false;
+	
+    // Take the default processing unless we set this to something else below.
+    *pResult = CDRF_DODEFAULT;
+	
+    // First thing - check the draw stage. If it's the control's prepaint
+    // stage, then tell Windows we want messages for every item.
+    if ( CDDS_PREPAINT == pLVCD->nmcd.dwDrawStage )
+        *pResult = CDRF_NOTIFYITEMDRAW;
+	
+	else if ( CDDS_ITEMPREPAINT == pLVCD->nmcd.dwDrawStage )
+	{
+        int iRow = (int)pLVCD->nmcd.dwItemSpec;
+		
+		bHighlighted = IsRowSelected( m_hWnd, iRow );
+		if ( bHighlighted )
+		{
+			/*
+			pLVCD->clrText   = GetSysColor( COLOR_HIGHLIGHT );
+			pLVCD->clrTextBk = GetSysColor( COLOR_HIGHLIGHTTEXT );
+			
+			// Turn off listview highlight otherwise it uses the system colors!
+			EnableHighlighting(m_hWnd, iRow, false);
+			*/
+		}
+		else if ( pLVCD->nmcd.dwItemSpec % 2 == 0 )
+		{
+			pLVCD->clrTextBk = m_Prefs->GetPlaylistStripeColor();
+		}
+		
+		
+		*pResult = CDRF_DODEFAULT | CDRF_NOTIFYPOSTPAINT;
+	}
+
+	else if(CDDS_ITEMPOSTPAINT == pLVCD->nmcd.dwDrawStage)
+	{
+		if ( bHighlighted )
+		{
+			int iRow = (int)pLVCD->nmcd.dwItemSpec;
+
+			// Turn listview control's highlighting back on now that we have
+			// drawn the row in the colors we want.
+			EnableHighlighting(m_hWnd, iRow, true);
+		}
+
+      *pResult = CDRF_DODEFAULT;
+
+	}
+}
+
+void CMusikPlaylistCtrl::EnableHighlighting( HWND hWnd, int row, bool bHighlight )
+{
+	ListView_SetItemState(hWnd, row, bHighlight? 0xff: 0, LVIS_SELECTED);
+}
+
+bool CMusikPlaylistCtrl::IsRowSelected( HWND hWnd, int row )
+{
+	return ListView_GetItemState(hWnd, row, LVIS_SELECTED) != 0;
 }

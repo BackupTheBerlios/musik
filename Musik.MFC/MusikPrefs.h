@@ -39,9 +39,11 @@ public:
 	int			GetPlaylistCol( int n )			{ return m_Playlist_Order.at( n ); }
 	int			GetPlaylistColWidth( int n )	{ return m_Playlist_Sizes.at( n ); }
 	size_t		GetPlaylistColCount()			{ return m_Playlist_Order.size(); }
+	COLORREF	GetPlaylistStripeColor()		{ return m_Playlist_Stripe_Color; }
 	
-	void		SetPlaylistOrder( CIntArray n )	{ m_Playlist_Order = n; }	
-	void		SetPlaylistSizes( CIntArray n )	{ m_Playlist_Sizes = n; }
+	void		SetPlaylistOrder( CIntArray n )		{ m_Playlist_Order = n; }	
+	void		SetPlaylistSizes( CIntArray n )		{ m_Playlist_Sizes = n; }
+	void		SetPlaylistStripColor( COLORREF c )	{ m_Playlist_Stripe_Color = c; }
 	
 	//-----------------------------------------------------//
 	//--- sources										---//
@@ -56,6 +58,7 @@ protected:
 	CIniFile* config;
 	string GetDefPlaylistOrder();
 	string GetDefPlaylistSizes();
+	string GetDefPlaylistStripeColor();
 
 private:
 	//-----------------------------------------------------//
@@ -74,6 +77,7 @@ private:
 	//-----------------------------------------------------//
 	CIntArray m_Playlist_Order;
 	CIntArray m_Playlist_Sizes;
+	COLORREF m_Playlist_Stripe_Color;
 
 	//-----------------------------------------------------//
 	//--- sources										---//
