@@ -54,6 +54,22 @@ BEGIN_EVENT_TABLE(CPlaylistCtrl, wxListCtrl)
 	EVT_CHAR					(															CPlaylistCtrl::TranslateKeys	)
 
 	//---------------------------------------------------------//
+	//--- column on off stuff.								---//
+	//---------------------------------------------------------//
+	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_RATING,							CPlaylistCtrl::OnDisplayMenu	)
+	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_TRACK,								CPlaylistCtrl::OnDisplayMenu	)
+	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_TITLE,								CPlaylistCtrl::OnDisplayMenu	)
+	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_ARTIST,							CPlaylistCtrl::OnDisplayMenu	)
+	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_ALBUM,								CPlaylistCtrl::OnDisplayMenu	)
+	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_YEAR,								CPlaylistCtrl::OnDisplayMenu	)
+	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_GENRE,								CPlaylistCtrl::OnDisplayMenu	)
+	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_TIMES_PLAYED,						CPlaylistCtrl::OnDisplayMenu	)
+	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_LAST_PLAYED,						CPlaylistCtrl::OnDisplayMenu	)
+	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_TIME,								CPlaylistCtrl::OnDisplayMenu	)
+	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_BITRATE,							CPlaylistCtrl::OnDisplayMenu	)
+	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_FILENAME,							CPlaylistCtrl::OnDisplayMenu	)
+
+	//---------------------------------------------------------//
 	//--- threading events.. we use EVT_MENU becuase its	---//
 	//--- nice and simple, and gets the job done. this may	---//
 	//--- become a little prettier later, but it works.		---//
@@ -364,20 +380,66 @@ void CPlaylistCtrl::ShowMenu( wxCommandEvent& WXUNUSED(event) )
 	}
 
 	//--- check which columns are displayed ---//
-	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_RATING,		g_Prefs.nPlaylistColumnEnable[0] );
-	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_TRACK,			g_Prefs.nPlaylistColumnEnable[1] );
-	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_TITLE,			g_Prefs.nPlaylistColumnEnable[2] );
-	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_ARTIST,		g_Prefs.nPlaylistColumnEnable[3] );
-	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_ALBUM,			g_Prefs.nPlaylistColumnEnable[4] );
-	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_YEAR,			g_Prefs.nPlaylistColumnEnable[5] );
-	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_GENRE,			g_Prefs.nPlaylistColumnEnable[6] );
-	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_TIMES_PLAYED,	g_Prefs.nPlaylistColumnEnable[7] );
-	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_LAST_PLAYED,	g_Prefs.nPlaylistColumnEnable[8] );
-	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_TIME,			g_Prefs.nPlaylistColumnEnable[9] );
-	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_BITRATE,		g_Prefs.nPlaylistColumnEnable[10] );
-	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_FILENAME,		g_Prefs.nPlaylistColumnEnable[11] );
+	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_RATING,		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_RATING]		);
+	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_TRACK,			g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TRACK]			);
+	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_TITLE,			g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TITLE]			);
+	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_ARTIST,		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_ARTIST]		);
+	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_ALBUM,			g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_ALBUM]			);
+	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_YEAR,			g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_YEAR]			);
+	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_GENRE,			g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_GENRE]			);
+	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_TIMES_PLAYED,	g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TIMES_PLAYED]	);
+	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_LAST_PLAYED,	g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_LAST_PLAYED]	);
+	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_TIME,			g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TIME]			);
+	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_BITRATE,		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_BITRATE]		);
+	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_FILENAME,		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_FILENAME]		);
 
 	PopupMenu( playlist_context_menu, pos );
+}
+
+void CPlaylistCtrl::OnDisplayMenu( wxCommandEvent& event )
+{
+	playlist_context_display_menu->Check( event.GetId(), !event.IsChecked() );
+
+	switch ( event.GetId() )
+	{
+	case MUSIK_PLAYLIST_DISPLAY_RATING:
+		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_RATING] = !event.IsChecked();
+		break;
+	case MUSIK_PLAYLIST_DISPLAY_TRACK:
+		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TRACK] = !event.IsChecked();
+		break;
+	case MUSIK_PLAYLIST_DISPLAY_TITLE:
+		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TITLE] = !event.IsChecked();
+		break;
+	case MUSIK_PLAYLIST_DISPLAY_ARTIST:
+		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_ARTIST] = !event.IsChecked();
+		break;
+	case MUSIK_PLAYLIST_DISPLAY_ALBUM:
+		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_ALBUM] = !event.IsChecked();
+		break;
+	case MUSIK_PLAYLIST_DISPLAY_YEAR:
+		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_YEAR] = !event.IsChecked();
+		break;
+	case MUSIK_PLAYLIST_DISPLAY_GENRE:
+		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_GENRE] = !event.IsChecked();
+		break;
+	case MUSIK_PLAYLIST_DISPLAY_TIMES_PLAYED:
+		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TIMES_PLAYED] = !event.IsChecked();
+		break;
+	case MUSIK_PLAYLIST_DISPLAY_LAST_PLAYED:
+		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_LAST_PLAYED] = !event.IsChecked();
+		break;
+	case MUSIK_PLAYLIST_DISPLAY_TIME:
+		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TIME] = !event.IsChecked();
+		break;
+	case MUSIK_PLAYLIST_DISPLAY_BITRATE:
+		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_BITRATE] = !event.IsChecked();
+		break;
+	case MUSIK_PLAYLIST_DISPLAY_FILENAME:
+		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_FILENAME] = !event.IsChecked();
+		break;
+	}
+	ResetColumns( false, true );
 }
 
 void CPlaylistCtrl::BeginDrag( wxEvent& WXUNUSED(event) )

@@ -60,6 +60,8 @@ public:
 	void ClickAlbum		( wxCommandEvent& WXUNUSED(event) )	{ EditTag( 3 );	}
 	void ClickGenre		( wxCommandEvent& WXUNUSED(event) )	{ EditTag( 4 ); }
 	void ClickYear		( wxCommandEvent& WXUNUSED(event) )	{ EditTag( 5 ); }
+	//--- columns ---//
+	void OnDisplayMenu	( wxCommandEvent& event				);
 	//--- other ---//
 	void UpdateSel		( wxListEvent&		event			);
 	void ShowMenu		( wxCommandEvent&	WXUNUSED(event) );
