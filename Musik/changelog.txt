@@ -1,3 +1,10 @@
+0.3.0 to 0.3.0a
++ sorting order is now kept if selection in the selection boxes are made.
++ changed library playlist view sorting code. the sorting order is now remomberd if view  has been changed. should be faster now too ( gunnar)
+- fixed small bug: subtle backcolor bug in playlist view. playling songs background was coloured even if stripes where switched off ( gunnar)
+- fixed serious bug: access to m_Playlist in musikplayer.cpp from different threads could lead to a crash( gunnar)
+- fixed serious bug: access to pCrossFader in musikthreads.cpp from different threads could lead to a crash( gunnar)
+
 0.2.2 to 0.3.0
 
 - clean up  vc.net project file (uses environment variables for additional libraries to make compiling easier for other people) (gunnar)
