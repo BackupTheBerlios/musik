@@ -1,3 +1,12 @@
+a2:
+
+  - changed rollover button behavior for playback
+    buttons
+  - fixed the problem with the rating selection boxes
+  - dustin's bug with shuffling then drag and dropping
+
+-------------------------------------------------------------------------
+
 a1: January 25, 2004, 2:15 AM
 
 don't expect another build for a few weeks. please
@@ -6,16 +15,18 @@ can confuse it into crashing.
 
 stuff that isn't implemented / doesn't work yet: 
 
-    - playlist information area 
-    - dynamic playlist creation
-    - dialog to view tag properties
-    - crossfader preset dialog
+  - playlist information area 
+  - dynamic playlist creation
+  - dialog to view tag properties
+  - crossfader preset dialog
+
+-------------------------------------------------------------------------
 
 known bugs:
  
-    - crashes on showing window: it has been impossible thus far 
-      to reproduce on command, and simon and i have each
-      seen it only once.
+  - crashes on showing window: it has been impossible thus far 
+    to reproduce on command, and simon and i have each
+    seen it only once.
 
 -------------------------------------------------------------------------
 
