@@ -68,17 +68,29 @@ bool CMusikMp3Info::LoadInfo( const CStdString& fn )
 	if ( !id3Tag.GetFileSize() )
 		return false;
 
-	// tag
-	m_Info.SetArtist	( ID3_GetArtist	( &id3Tag ) );
-	m_Info.SetAlbum		( ID3_GetAlbum	( &id3Tag ) );
-	m_Info.SetTitle		( ID3_GetTitle	( &id3Tag ) );
-	m_Info.SetGenre		( ID3_GetGenre	( &id3Tag ) );
-	m_Info.SetYear		( ID3_GetYear	( &id3Tag ) );
-	m_Info.SetTrackNum	( ID3_GetTrack	( &id3Tag ) );
+	// get the info...
+	char* pArtist	= ID3_GetArtist	( &id3Tag );
+	char* pAlbum	= ID3_GetAlbum	( &id3Tag );
+	char* pTitle	= ID3_GetTitle	( &id3Tag );
+	char* pGenre	= ID3_GetGenre	( &id3Tag );
+	char* pYear		= ID3_GetYear	( &id3Tag );
+	char* pTrackNum	= ID3_GetTrack	( &id3Tag );
 
-	// get the *real* genre of the
-	// just added value...
-	m_Info.SetGenre( GetGenre( m_Info.GetGenre() ) );
+	// tag
+	m_Info.SetArtist	( pArtist );
+	m_Info.SetAlbum		( pAlbum );
+	m_Info.SetTitle		( pTitle );
+	m_Info.SetGenre		( GetGenre( pGenre ) );
+	m_Info.SetYear		( pGenre );
+	m_Info.SetTrackNum	( pTrackNum );
+
+	// free the info
+	ID3_FreeString( pArtist );
+	ID3_FreeString( pAlbum );
+	ID3_FreeString( pTitle );
+	ID3_FreeString( pGenre );
+	ID3_FreeString( pYear );
+	ID3_FreeString( pTrackNum );
 
 	// bitrate
 	const Mp3_Headerinfo* mp3header = id3Tag.GetMp3HeaderInfo();

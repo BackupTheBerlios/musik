@@ -1177,7 +1177,7 @@ bool CMusikLibrary::AddMP3( const CStdString& fn )
 	{
 		m_ProtectingLibrary->acquire();
 
-		int result = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %d, %d, %Q, %Q, %Q, %Q, %d, %Q, %Q, %d, %d, %Q, %Q, %d, %d, %Q, %d, %d );", NULL, NULL, NULL, 
+		int result = sqlite_exec_printf( m_pDB, "INSERT INTO %q VALUES ( %Q, %d, %d, %Q, %Q, %Q, %Q, %d, %Q, %Q, %d, %d, %Q, %Q, %d, %d, %Q, %d, %d );", NULL, NULL, NULL, 
 			SONG_TABLE_NAME,								// song table 		
 			NULL,											// id
 			MUSIK_LIBRARY_FORMAT_MP3,						// format
@@ -1214,9 +1214,7 @@ bool CMusikLibrary::IsSongInLibrary( CStdString fn )
 {
 	bool result = false;
 
-	fn.Replace( "'", "''" );
-
-	char *query = sqlite_mprintf( "SELECT filename FROM %Q WHERE filename = %Q;", 
+	char *query = sqlite_mprintf( "SELECT filename FROM %q WHERE filename = %Q;", 
 		SONG_TABLE_NAME,
 		fn.c_str() );
 	
@@ -1226,7 +1224,7 @@ bool CMusikLibrary::IsSongInLibrary( CStdString fn )
 	const char *pTail;
 	sqlite_vm *pVM;
 	sqlite_compile( m_pDB, query, &pTail, &pVM, NULL );
-	char *errmsg;
+	char *errmsg = NULL;
 	int numcols = 0;
 	const char **coldata;
 	const char **coltypes;
@@ -1238,6 +1236,8 @@ bool CMusikLibrary::IsSongInLibrary( CStdString fn )
 	// clean up
 	sqlite_finalize( pVM, &errmsg );
 	sqlite_freemem( query );
+	if ( errmsg )
+		sqlite_freemem( errmsg );
 
 	m_ProtectingLibrary->release();
 
