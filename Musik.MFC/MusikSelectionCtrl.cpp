@@ -18,6 +18,7 @@ CMusikSelectionCtrl::CMusikSelectionCtrl( CFrameWnd* parent, CMusikLibrary* libr
 	m_Updating = false;
 	m_ParentBox = false;
 	HideScrollBars( LCSB_NCOVERRIDE, SB_HORZ );
+	InitFonts();
 }
 
 ///////////////////////////////////////////////////
@@ -111,19 +112,12 @@ void CMusikSelectionCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	NMLVDISPINFO *pDispInfo = reinterpret_cast<NMLVDISPINFO*>(pNMHDR);
 
-	LV_ITEM* pItem= &(pDispInfo)->item;
+	LV_ITEM* pItem = &(pDispInfo)->item;
 
-	int index= pItem->iItem;
+	const char* pStr = m_Items.at( pItem->iItem ).c_str();
 
-	if ( pItem->mask & LVIF_TEXT )
-	{
-		switch ( pItem->iSubItem )
-		{
-		case 0:
-			lstrcpy( pItem->pszText, m_Items.at( index ).c_str() );
-			break;
-		}
-	}
+	pItem->cchTextMax = sizeof( *pStr );
+	lstrcpy( pItem->pszText, pStr );
 
 	*pResult = 0;
 }
@@ -254,8 +248,6 @@ void CMusikSelectionCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 			
 		*pResult = CDRF_NEWFONT;
 	}
-
-	*pResult = 0;
 }
 
 ///////////////////////////////////////////////////
@@ -263,11 +255,12 @@ void CMusikSelectionCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 void CMusikSelectionCtrl::InitFonts()
 {
 	m_Regular.CreateStockObject( DEFAULT_GUI_FONT );
-	m_Bold.CreateStockObject( DEFAULT_GUI_FONT );
 
-	LOGFONT* pBold;
-	m_Bold.GetLogFont( pBold );
-	pBold->lfWeight = FW_BOLD;
+	LOGFONT pBoldFont;
+	m_Regular.GetLogFont( &pBoldFont );
+	pBoldFont.lfWeight = FW_BOLD;
+
+	m_Bold.CreateFontIndirect( &pBoldFont );
 }
 
 ///////////////////////////////////////////////////

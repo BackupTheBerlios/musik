@@ -1,5 +1,4 @@
-// MusikPlaylistView.cpp : implementation file
-//
+///////////////////////////////////////////////////
 
 #include "stdafx.h"
 #include "Musik.h"
@@ -10,7 +9,7 @@
 
 #include "MusikPrefs.h"
 
-// CMusikPlaylistView
+///////////////////////////////////////////////////
 
 IMPLEMENT_DYNAMIC(CMusikPlaylistView, CWnd)
 CMusikPlaylistView::CMusikPlaylistView( CMusikLibrary* library, CMusikPrefs* prefs, CMusikPlaylist* playlist )
@@ -18,21 +17,21 @@ CMusikPlaylistView::CMusikPlaylistView( CMusikLibrary* library, CMusikPrefs* pre
 	m_Playlist = new CMusikPlaylistCtrl( library, prefs, playlist );
 }
 
+///////////////////////////////////////////////////
+
 CMusikPlaylistView::~CMusikPlaylistView()
 {
 	delete m_Playlist;
 }
 
+///////////////////////////////////////////////////
 
 BEGIN_MESSAGE_MAP(CMusikPlaylistView, CWnd)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
-
-
-// CMusikPlaylistView message handlers
-
+///////////////////////////////////////////////////
 
 int CMusikPlaylistView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
@@ -48,9 +47,13 @@ int CMusikPlaylistView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
+///////////////////////////////////////////////////
+
 void CMusikPlaylistView::OnSize(UINT nType, int cx, int cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 
 	m_Playlist->MoveWindow( 0, 0, cx, cy );
 }
+
+///////////////////////////////////////////////////

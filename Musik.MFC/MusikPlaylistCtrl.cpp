@@ -81,7 +81,7 @@ void CMusikPlaylistCtrl::OnNcPaint()
     pDC.FillRect(rcDraw, back );
 	pDC.Draw3dRect( 3, 3, rcClient.Width() + 2, rcClient.Height() + 2, GetSysColor( COLOR_BTNSHADOW ), GetSysColor( COLOR_BTNHILIGHT ) );
 
-    // client area is not our bussiness :)
+    // client area is not our bussiness
 	dc.IntersectClipRect(rcBar);
     dc.ExcludeClipRect(rcClient);
 }
