@@ -131,7 +131,7 @@ public:
 	void SetPlaylistID( int id ){ m_ID = id;} 
 
 	// misc
-	void Add( const CmusikSong& song );
+	void Add( CmusikSong& song );
 	void DeleteAt( size_t pos );
 	void InsertAt( int songid, int pos );
 	void InsertAt( const CIntArray& songids, int pos );
@@ -140,6 +140,10 @@ public:
 	int m_ID;
 	int m_Type;
 	CmusikSongArray m_Songs;
+
+protected:
+	size_t	m_TotalRunningTime;
+	double  m_TotalDiskspace;
 };
 
 ///////////////////////////////////////////////////

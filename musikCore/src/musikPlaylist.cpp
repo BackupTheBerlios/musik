@@ -240,6 +240,8 @@ CmusikPlaylist::CmusikPlaylist()
 {
 	m_ID = -1;
 	m_Type = MUSIK_PLAYLIST_TYPE_UNKNOWN;
+	m_TotalRunningTime = 0;
+	m_TotalDiskspace = 0.0;
 }
 
 ///////////////////////////////////////////////////
@@ -261,13 +263,18 @@ CmusikString CmusikPlaylist::GetField( int index, int field )
 void CmusikPlaylist::Clear()
 {
 	m_Songs.clear();
+	m_TotalRunningTime = 0;
+	m_TotalDiskspace = 0.0;
 }	
 
 ///////////////////////////////////////////////////
 
-void CmusikPlaylist::Add( const CmusikSong& song )
+void CmusikPlaylist::Add( CmusikSong& song )
 { 
 	m_Songs.push_back( song ); 
+
+	m_TotalRunningTime += (atoi(song.GetField( 10 ) ) / 1000);
+	m_TotalDiskspace += (atof( song.GetField( 8 ) ) );
 }
 
 ///////////////////////////////////////////////////
@@ -280,29 +287,15 @@ size_t CmusikPlaylist::GetCount()
 ///////////////////////////////////////////////////
 
 size_t CmusikPlaylist::GetRunningTime()
-{
-	size_t TotTime = 0;
-	
-	for ( int n = 0; n < GetCount(); n++ )
-	{
-		TotTime += (atoi( m_Songs[n].GetField( 10 ) ) / 1000);
-	}
-	
-	return TotTime;
+{	
+	return m_TotalRunningTime;
 }
 
 ///////////////////////////////////////////////////
 
 double CmusikPlaylist::GetDiskspace()
-{
-	double space = 0.0f;
-	
-	for ( int n = 0; n < GetCount(); n++ )
-	{
-		space += (atof( m_Songs[n].GetField( 8 ) ) );
-	}
-	
-	return space;
+{	
+	return m_TotalDiskspace;
 }
 
 ///////////////////////////////////////////////////
@@ -322,6 +315,11 @@ void CmusikPlaylist::DeleteAt( size_t pos )
 	if ( pos > m_Songs.size() - 1 )
 		ASSERT( 1 );
 
+	CmusikSong song = m_Songs[pos];
+
+	m_TotalRunningTime -= (atoi(song.GetField( 10 ) ) / 1000);
+	m_TotalDiskspace -= (atof( song.GetField( 8 ) ) );
+
 	m_Songs.erase( m_Songs.begin() + pos );
 }
 
@@ -336,6 +334,9 @@ void CmusikPlaylist::InsertAt( int songid, int at )
 		m_Songs.push_back( song );
 	else
 		m_Songs.insert( m_Songs.begin() + at, song );
+
+	m_TotalRunningTime += (atoi(song.GetField( 10 ) ) / 1000);
+	m_TotalDiskspace += (atof( song.GetField( 8 ) ) );
 }
 
 ///////////////////////////////////////////////////
@@ -352,6 +353,9 @@ void CmusikPlaylist::InsertAt( const CIntArray& songids, int pos )
 			m_Songs.push_back( song );
 		else
 			m_Songs.insert( m_Songs.begin() + pos + i, song );
+
+		m_TotalRunningTime += (atoi(song.GetField( 10 ) ) / 1000);
+		m_TotalDiskspace += (atof( song.GetField( 8 ) ) );
 	}
 }
 
