@@ -192,16 +192,7 @@ void CMusikLibrary::GetSongs( int source_type, const wxArrayString& source_items
 			sQuery += wxT("' ) ");
  	}
 
-	/*
-	if ( nInType == MUSIK_LIB_ARTIST )
-    	sQuery +=wxT("order by artist,album,tracknum;");
-	else if ( nInType == MUSIK_LIB_ALBUM )
-		sQuery += wxT( "order by album,tracknum,artist;");
-	else if ( nInType == MUSIK_LIB_GENRE )
-		sQuery += wxT( "order by genre,artist,album,tracknum;");
-	else if ( nInType == MUSIK_LIB_YEAR )
-		sQuery += wxT( "order by year,artist,album,tracknum;");
-	*/
+	sQuery += GetOrder( source_type );
 
 	{
 		wxCriticalSectionLocker lock( m_csDBAccess );
@@ -209,6 +200,63 @@ void CMusikLibrary::GetSongs( int source_type, const wxArrayString& source_items
 	}
 
 	target.Shrink();
+}
+
+wxString CMusikLibrary::GetOrder( int type, bool terminate )
+{
+	wxString sTerminate = wxT( "" );
+	if ( terminate )
+		sTerminate = wxT( ";" );
+
+	switch( type )
+	{
+	case MUSIK_LIBRARY_TYPE_FILENAME:
+		return sTerminate;
+		break;
+	case MUSIK_LIBRARY_TYPE_TITLE:
+		return ( wxT( "order by title,artist,album,tracknum" ) + sTerminate );
+		break;
+	case MUSIK_LIBRARY_TYPE_ARTIST:
+		return ( wxT( "order by artist,album,tracknum,title" ) + sTerminate );
+		break;
+	case MUSIK_LIBRARY_TYPE_ALBUM:
+		return ( wxT( "order by album,tracknum,artist,title" ) + sTerminate );
+		break;
+	case MUSIK_LIBRARY_TYPE_YEAR:
+		return ( wxT( "order by year,artist,album,tracknum,title" ) + sTerminate );
+		break;
+	case MUSIK_LIBRARY_TYPE_GENRE:
+		return ( wxT( "order by genre,artist,album,tracknum,title" ) + sTerminate );
+		break;
+	case MUSIK_LIBRARY_TYPE_TRACKNUM:
+		return ( wxT( "order by tracknum,artist,album,title" ) + sTerminate );
+		break;
+	case MUSIK_LIBRARY_TYPE_TIMEADDED:
+		return ( wxT( "order by timeadded,artist,album,tracknum,title" ) + sTerminate );
+		break;
+	case MUSIK_LIBRARY_TYPE_LASTPLAYED:
+		return ( wxT( "order by lastplayed,artist,album,tracknum,title" ) + sTerminate );
+		break;
+	case MUSIK_LIBRARY_TYPE_FILESIZE:
+		return ( wxT( "order by filesize,artist,album,tracknum,title" ) + sTerminate );
+		break;
+	case MUSIK_LIBRARY_TYPE_FORMAT:
+		return ( wxT( "order by format,artist,album,tracknum,title" ) + sTerminate );
+		break;
+	case MUSIK_LIBRARY_TYPE_DURATION:
+		return ( wxT( "order by duration,artist,album,tracknum,title" ) + sTerminate );
+		break;
+	case MUSIK_LIBRARY_TYPE_RATING:
+		return ( wxT( "order by rating,artist,album,tracknum,title" ) + sTerminate );
+		break;
+	case MUSIK_LIBRARY_TYPE_TIMESPLAYED:
+		return ( wxT( "order by timesplayed,artist,album,tracknum,title" ) + sTerminate );
+		break;
+	case MUSIK_LIBRARY_TYPE_BITRATE:
+		return ( wxT( "order by bitrate,artist,album,tracknum,title" ) + sTerminate );
+		break;
+	}
+	return ( wxT( "" ) + sTerminate );
 }
 
 void CMusikLibrary::QuerySongs( const wxString& query, CMusikPlaylist& target )

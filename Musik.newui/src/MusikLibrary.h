@@ -76,7 +76,8 @@ private:
 	//--- private functions that relate to querying the	---//
 	//--- database.										---//
 	//-----------------------------------------------------//
-	int QueryCount( const char* pQueryResult );
+	int			QueryCount( const char* pQueryResult );
+	wxString	GetOrder( int type, bool terminate = true );
 
 	//-----------------------------------------------------//
 	//--- start / shutdown database.					---//
