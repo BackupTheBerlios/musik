@@ -1,5 +1,5 @@
 /*
- *  MusikFXFrame.h
+ *  MusikFXDialog.h
  *
  *  Front end to Musik's special FX engine.
  *
@@ -14,8 +14,8 @@
  *  of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 */
 
-#ifndef MUSIKFXFRAME_H
-#define MUSIKFXFRAME_H
+#ifndef MusikFXDialog_H
+#define MusikFXDialog_H
 
 //--- wx ---//
 #include "wx/wxprec.h"
@@ -30,10 +30,10 @@ enum EMUSIK_FX_OBJECT_ID
 	CHK_PITCHENABLE = wxID_HIGHEST
 };
 
-class MusikFXFrame : public wxFrame
+class MusikFXDialog : public wxDialog
 {
 public:
-	MusikFXFrame( wxFrame* pParent, const wxString &sTitle, const wxPoint &pos, const wxSize &size );
+	MusikFXDialog( wxWindow* pParent, const wxString &sTitle, const wxPoint &pos, const wxSize &size );
 
 	//--------------//
 	//--- events ---//

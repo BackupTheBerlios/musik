@@ -1,5 +1,5 @@
 /*
- *  MusikPrefsFrame.cpp
+ *  MusikPrefsDialog.cpp
  *
  *  Preferences frame
  *  
@@ -20,7 +20,7 @@
 //--- globals ---//
 #include "../MusikGlobals.h"
 #include "../MusikUtils.h"
-
+#include "../PrefUtil.h"
 //--- classes ---//
 #include "../Classes/MusikPlayer.h"
 #include "../Classes/Library/MetaDataHandler.h"
@@ -31,55 +31,27 @@
 #include <wx/valgen.h>
 #include <wx/mimetype.h>
 
-BEGIN_EVENT_TABLE(MusikPrefsFrame, wxFrame)
+BEGIN_EVENT_TABLE(MusikPrefsDialog, wxDialog)
 #ifdef __WXMSW__
-	EVT_CHAR_HOOK			(											MusikPrefsFrame::OnTranslateKeys	)
+	EVT_CHAR_HOOK			(											MusikPrefsDialog::OnTranslateKeys	)
 #else
-	EVT_CHAR	(											MusikPrefsFrame::OnTranslateKeys	)
+	EVT_CHAR	(											MusikPrefsDialog::OnTranslateKeys	)
 #endif
-	EVT_TREE_SEL_CHANGED	(MUSIK_PREFERENCES_TREE,					MusikPrefsFrame::OnTreeChange		)
-	EVT_BUTTON				(MUSIK_PREFERENCES_OK,						MusikPrefsFrame::OnClickOK			)
-	EVT_BUTTON				(MUSIK_PREFERENCES_APPLY,					MusikPrefsFrame::OnClickApply		)
-	EVT_BUTTON				(MUSIK_PREFERENCES_CANCEL,					MusikPrefsFrame::OnClickCancel		)
-	EVT_BUTTON				(MUSIK_PREFERENCES_PLAYLIST_STRIPE_COLOUR,	MusikPrefsFrame::OnClickColour		)
-	EVT_BUTTON				(MUSIK_PREFERENCES_ACTIVITY_STRIPE_COLOUR,	MusikPrefsFrame::OnClickColour		)
-	EVT_BUTTON				(MUSIK_PREFERENCES_SOURCES_STRIPE_COLOUR,	MusikPrefsFrame::OnClickColour		)
-	EVT_BUTTON				(MUSIK_PREFERENCES_PLAYLIST_BORDER_COLOUR,	MusikPrefsFrame::OnClickColour		)
-	EVT_COMBOBOX			(MUSIK_PREFERENCES_OUTPUT_DRV,				MusikPrefsFrame::OnOutputChanged	)
-	EVT_CLOSE				(											MusikPrefsFrame::OnClose			)
+	EVT_TREE_SEL_CHANGED	(MUSIK_PREFERENCES_TREE,					MusikPrefsDialog::OnTreeChange		)
+	EVT_BUTTON				(wxID_OK,						MusikPrefsDialog::OnClickOK			)
+	EVT_BUTTON				(wxID_APPLY,					MusikPrefsDialog::OnClickApply		)
+	EVT_BUTTON				(wxID_CANCEL,					MusikPrefsDialog::OnClickCancel		)
+	EVT_BUTTON				(MUSIK_PREFERENCES_PLAYLIST_STRIPE_COLOUR,	MusikPrefsDialog::OnClickColour		)
+	EVT_BUTTON				(MUSIK_PREFERENCES_ACTIVITY_STRIPE_COLOUR,	MusikPrefsDialog::OnClickColour		)
+	EVT_BUTTON				(MUSIK_PREFERENCES_SOURCES_STRIPE_COLOUR,	MusikPrefsDialog::OnClickColour		)
+	EVT_BUTTON				(MUSIK_PREFERENCES_PLAYLIST_BORDER_COLOUR,	MusikPrefsDialog::OnClickColour		)
+	EVT_COMBOBOX			(MUSIK_PREFERENCES_OUTPUT_DRV,				MusikPrefsDialog::OnOutputChanged	)
+	EVT_CLOSE				(											MusikPrefsDialog::OnClose			)
 END_EVENT_TABLE()
 
-#define PREF_CREATE_CHECKBOX(prefname,text) \
-	wxCheckBox *chk##prefname	=	new wxCheckBox_NoFlicker( this, -1,text,wxDefaultPosition,wxDefaultSize,0 \
-	,wxGenericValidator(&wxGetApp().Prefs.b##prefname));
 
-#define PREF_CREATE_SPINCTRL(prefname,minval,maxval,curval) \
-wxSpinCtrl *sc##prefname	= new wxSpinCtrl( this, -1,wxEmptyString,wxDefaultPosition,wxDefaultSize,wxSP_ARROW_KEYS,minval,maxval,curval);\
-{   	wxGenericIntValidator v(&wxGetApp().Prefs.n##prefname);		\
-	sc##prefname->SetValidator(v);								}
-#define PREF_CREATE_SPINCTRL2(prefname,minval,maxval,curval) \
-	sc2##prefname	= new wxSpinCtrl( this, -1,wxEmptyString,wxDefaultPosition,wxDefaultSize,wxSP_ARROW_KEYS,minval,maxval,curval);\
-{   	wxGenericIntValidator v(&wxGetApp().Prefs.n##prefname);		\
-	sc2##prefname->SetValidator(v);								}
-#define PREF_CREATE_TEXTCTRL(prefname,valmode)	 \
-	wxTextCtrl *tc##prefname	=	new wxTextCtrl_NoFlicker( this, -1,wxEmptyString,wxDefaultPosition,wxDefaultSize,0 \
-	,wxTextValidator(valmode,&wxGetApp().Prefs.s##prefname));
-#define PREF_CREATE_TEXTCTRL2(prefname,valmode)	 \
-	tc2##prefname	=	new wxTextCtrl_NoFlicker( this, -1,wxEmptyString,wxDefaultPosition,wxDefaultSize,0 \
-	,wxTextValidator(valmode,&wxGetApp().Prefs.s##prefname));
-
-#define PREF_CREATE_MULTILINETEXTCTRL(prefname,height,valmode)	 \
-	wxTextCtrl *tc##prefname	=	new wxTextCtrl_NoFlicker( this, -1,wxEmptyString,wxDefaultPosition,wxSize(-1,height),wxTE_MULTILINE \
-	,wxTextValidator(valmode,&wxGetApp().Prefs.s##prefname));
-#define PREF_CREATE_MULTILINETEXTCTRL2(prefname,height,valmode)	  \
-	tc2##prefname	=	new wxTextCtrl_NoFlicker( this, -1,wxEmptyString,wxDefaultPosition,wxSize(-1,height),wxTE_MULTILINE \
-	,wxTextValidator(valmode,&wxGetApp().Prefs.s##prefname));
-
-#define PREF_STATICTEXT(text)	\
-	new wxStaticText_NoFlicker( this, -1, text)
-
-MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle ) 
-	: wxFrame( pParent, -1, sTitle, wxDefaultPosition, wxSize(600,600), wxDEFAULT_FRAME_STYLE|wxRESIZE_BORDER|wxCAPTION | wxTAB_TRAVERSAL | wxFRAME_FLOAT_ON_PARENT | wxFRAME_NO_TASKBAR )
+MusikPrefsDialog::MusikPrefsDialog( wxWindow *pParent, const wxString &sTitle ) 
+	: wxDialog( pParent, -1, sTitle, wxDefaultPosition, wxSize(700,700), wxDEFAULT_FRAME_STYLE|wxRESIZE_BORDER|wxCAPTION | wxTAB_TRAVERSAL | wxFRAME_FLOAT_ON_PARENT | wxFRAME_NO_TASKBAR )
 {
 	//---------------//
 	//--- colours ---//
@@ -571,9 +543,9 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle )
 	//----------------------//
 	//--- System Buttons ---//
 	//----------------------//
-	wxButton* btnCancel =	new wxButton_NoFlicker( this, MUSIK_PREFERENCES_CANCEL,	_("Cancel"),	wxDefaultPosition, wxDefaultSize );
-	wxButton* btnApply =	new wxButton_NoFlicker( this, MUSIK_PREFERENCES_APPLY,	_("Apply"),		wxDefaultPosition, wxDefaultSize );
-	wxButton* btnOK =		new wxButton_NoFlicker( this, MUSIK_PREFERENCES_OK,		_("OK"),		wxDefaultPosition, wxDefaultSize );
+	wxButton* btnCancel =	new wxButton_NoFlicker( this, wxID_CANCEL,	_("Cancel"),	wxDefaultPosition, wxDefaultSize );
+	wxButton* btnApply =	new wxButton_NoFlicker( this, wxID_APPLY,	_("Apply"),		wxDefaultPosition, wxDefaultSize );
+	wxButton* btnOK =		new wxButton_NoFlicker( this, wxID_OK,		_("OK"),		wxDefaultPosition, wxDefaultSize );
 
 	//----------------------------//
 	//--- System Buttons Sizer ---//
@@ -628,21 +600,21 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle )
 //--------------//
 //--- Events ---//
 //--------------//
-void MusikPrefsFrame::OnTreeChange		( wxTreeEvent& WXUNUSED(event) )	{	UpdatePrefsPanel();		}
-void MusikPrefsFrame::OnOutputChanged	( wxCommandEvent& WXUNUSED(event) )	{	FindDevices();			}
-void MusikPrefsFrame::OnClickOK			( wxCommandEvent& WXUNUSED(event) )	{	Close( false );			}
-void MusikPrefsFrame::OnClickApply		( wxCommandEvent& WXUNUSED(event) )	{	SavePrefs();			}
-void MusikPrefsFrame::OnClickCancel		( wxCommandEvent& WXUNUSED(event) )	{	Close( true );			}
-void MusikPrefsFrame::OnClose			( wxCloseEvent& WXUNUSED(event) )	{	Close( true );			}
+void MusikPrefsDialog::OnTreeChange		( wxTreeEvent& WXUNUSED(event) )	{	UpdatePrefsPanel();		}
+void MusikPrefsDialog::OnOutputChanged	( wxCommandEvent& WXUNUSED(event) )	{	FindDevices();			}
+void MusikPrefsDialog::OnClickOK			( wxCommandEvent& WXUNUSED(event) )	{	Close( false );			}
+void MusikPrefsDialog::OnClickApply		( wxCommandEvent& WXUNUSED(event) )	{	SavePrefs();			}
+void MusikPrefsDialog::OnClickCancel		( wxCommandEvent& WXUNUSED(event) )	{	Close( true );			}
+void MusikPrefsDialog::OnClose			( wxCloseEvent& WXUNUSED(event) )	{	Close( true );			}
 
-void MusikPrefsFrame::OnClickColour		( wxCommandEvent &event )
+void MusikPrefsDialog::OnClickColour		( wxCommandEvent &event )
 {
 	//--- show the standard color dialog to change the background color of the button ---//
 	wxButton_NoFlicker* Button = (wxButton_NoFlicker*)event.GetEventObject();
 	Button->SetBackgroundColour( wxGetColourFromUser( this, Button->GetBackgroundColour() ) );
 }
 
-void MusikPrefsFrame::Close( bool bCancel )
+void MusikPrefsDialog::Close( bool bCancel )
 {
 	if ( !bCancel )
 		if(!SavePrefs())
@@ -653,7 +625,7 @@ void MusikPrefsFrame::Close( bool bCancel )
 	
 }
 
-void MusikPrefsFrame::LoadPrefs()
+void MusikPrefsDialog::LoadPrefs()
 {
 	TransferDataToWindow();
 	//--------------------------//
@@ -737,7 +709,7 @@ void MusikPrefsFrame::LoadPrefs()
 	tcProxyServerPassword->SetValue( wxGetApp().Prefs.sProxyServerPassword );	
 }
 
-void MusikPrefsFrame::FindDevices()
+void MusikPrefsDialog::FindDevices()
 {
 	cmbSndDevice->Clear();
 	for ( int i = 0; i < FSOUND_GetNumDrivers(); i++ )
@@ -747,7 +719,7 @@ void MusikPrefsFrame::FindDevices()
 	cmbSndDevice->SetSelection( 0 );
 }
 
-void MusikPrefsFrame::HidePanels()
+void MusikPrefsDialog::HidePanels()
 {
 	hsSplitter->Show( vsOptions_Selections,	false );
 	hsSplitter->Show( vsOptions_Interface,	false );
@@ -771,7 +743,7 @@ void MusikPrefsFrame::HidePanels()
 
 }
 
-void MusikPrefsFrame::UpdatePrefsPanel()
+void MusikPrefsDialog::UpdatePrefsPanel()
 {
 	if( tcPreferencesTree->GetSelection() == nPlaybackID )
 	{
@@ -844,7 +816,7 @@ void MusikPrefsFrame::UpdatePrefsPanel()
 	this->Layout();
 }
 
-void MusikPrefsFrame::OnTranslateKeys( wxKeyEvent& event )
+void MusikPrefsDialog::OnTranslateKeys( wxKeyEvent& event )
 {
 	if ( event.GetKeyCode() == WXK_ESCAPE )
 		Close( true );
@@ -852,7 +824,7 @@ void MusikPrefsFrame::OnTranslateKeys( wxKeyEvent& event )
 		event.Skip();
 }
 
-bool MusikPrefsFrame::SavePrefs()
+bool MusikPrefsDialog::SavePrefs()
 {
 	if(!Validate() )
 		return false;
@@ -1087,7 +1059,7 @@ bool MusikPrefsFrame::SavePrefs()
 	return true;
 }
 
-void MusikPrefsFrame::DoFileAssociations()
+void MusikPrefsDialog::DoFileAssociations()
 {
 
 	bool bNotifyExplorer = false;

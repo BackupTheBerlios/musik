@@ -1,5 +1,5 @@
 /*
- *  MusikFXFrame.cpp
+ *  MusikFXDialog.cpp
  *
  *  Front end to Musik's special FX engine.
  *
@@ -34,17 +34,17 @@ enum EMUSIK_FXFRAME_ID
 	SLD_PITCH = wxID_HIGHEST
 };
 
-BEGIN_EVENT_TABLE(MusikFXFrame, wxFrame)
-	EVT_CLOSE				(					MusikFXFrame::OnClose			)
-	EVT_CONTEXT_MENU		(					MusikFXFrame::OnRightClick		)
-	EVT_COMMAND_SCROLL		( SLD_PITCH,		MusikFXFrame::OnSlidePitch		)
-	EVT_CHECKBOX			( CHK_PITCHENABLE,	MusikFXFrame::OnTogglePitchEnable )
+BEGIN_EVENT_TABLE(MusikFXDialog, wxDialog)
+	EVT_CLOSE				(					MusikFXDialog::OnClose			)
+	EVT_CONTEXT_MENU		(					MusikFXDialog::OnRightClick		)
+	EVT_COMMAND_SCROLL		( SLD_PITCH,		MusikFXDialog::OnSlidePitch		)
+	EVT_CHECKBOX			( CHK_PITCHENABLE,	MusikFXDialog::OnTogglePitchEnable )
 #ifndef __WXMAC__
-	EVT_ERASE_BACKGROUND		( MusikFXFrame::OnEraseBackground )
+	EVT_ERASE_BACKGROUND		( MusikFXDialog::OnEraseBackground )
 #endif
 END_EVENT_TABLE()
 
-void MusikFXFrame::OnEraseBackground( wxEraseEvent& (event) )
+void MusikFXDialog::OnEraseBackground( wxEraseEvent& (event) )
 {	
 	// empty => no background erasing to avoid flicker
 
@@ -90,8 +90,8 @@ void MusikFXFrame::OnEraseBackground( wxEraseEvent& (event) )
 #define wxCLOSE_BOX 0
 #endif
 
-MusikFXFrame::MusikFXFrame( wxFrame *pParent, const wxString &sTitle, const wxPoint &pos, const wxSize &size ) 
-	: wxFrame ( pParent, MUSIK_FRAME_ID_FX, sTitle, pos, size, wxRESIZE_BORDER|wxCAPTION | wxTAB_TRAVERSAL |wxCLIP_CHILDREN| wxCLOSE_BOX | wxSYSTEM_MENU | wxFRAME_NO_TASKBAR )
+MusikFXDialog::MusikFXDialog( wxWindow *pParent, const wxString &sTitle, const wxPoint &pos, const wxSize &size ) 
+	: wxDialog ( pParent, MUSIK_FRAME_ID_FX, sTitle, pos, size, wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER |wxCLIP_CHILDREN )
 {
 	//---------------//
 	//--- colours ---//
@@ -151,22 +151,22 @@ MusikFXFrame::MusikFXFrame( wxFrame *pParent, const wxString &sTitle, const wxPo
 //--------------//
 //--- Events ---//
 //--------------//
-void MusikFXFrame::Close()
+void MusikFXDialog::Close()
 {
 	this->Destroy();
 }
 
-void MusikFXFrame::OnClose ( wxCloseEvent& WXUNUSED(event) )
+void MusikFXDialog::OnClose ( wxCloseEvent& WXUNUSED(event) )
 {
 	Close();
 }
 
-void MusikFXFrame::OnSlidePitch( wxScrollEvent &WXUNUSED(event) )
+void MusikFXDialog::OnSlidePitch( wxScrollEvent &WXUNUSED(event) )
 {
 	g_FX.SetFrequency( (( (float)slPitch->GetValue()) / 50.0f) * 44100.0f );
 }
 
-void MusikFXFrame::OnRightClick( wxContextMenuEvent& event )
+void MusikFXDialog::OnRightClick( wxContextMenuEvent& event )
 {
 	if ( event.m_id == SLD_PITCH )
 	{
@@ -175,7 +175,7 @@ void MusikFXFrame::OnRightClick( wxContextMenuEvent& event )
 	}
 }
 
-void MusikFXFrame::OnTogglePitchEnable( wxCommandEvent& WXUNUSED(event) )
+void MusikFXDialog::OnTogglePitchEnable( wxCommandEvent& WXUNUSED(event) )
 {
 	wxGetApp().Prefs.bUsePitch = chkPitchEnable->IsChecked();
 }

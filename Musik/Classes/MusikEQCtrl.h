@@ -1,7 +1,7 @@
 /*
  *  MusikEQCtrl.h
  *
- *  Equalizer control. Used by MusikFXFrame.
+ *  Equalizer control. Used by MusikFXDialog.
  *
  *  Copyright (c) 2003 Casey Langen (casey@bak.rr.com)
  *	Contributors: Simon Windmill, Dustin Carter, Gunnar Roth, Wade Brainerd
@@ -30,7 +30,7 @@ class CMusikEQCtrl : public wxPanel
 {
 public:
 
-	CMusikEQCtrl( wxFrame* pParent );
+	CMusikEQCtrl( wxWindow* pParent );
 	~CMusikEQCtrl();
 
 	//-----------------//

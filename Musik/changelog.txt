@@ -1,4 +1,13 @@
 0.3.1.7
++ tag guessing on library build is optional now
++ make most frame a dialog.
++ utilize buttons in Library setup instead of a menu.
++ use taglib from scott wheeler  for tag reading and writing
+. fix selection box scrolling on linux. Now it scrolls while you type a name
+- workaround for  a weird linux crash , if sources listctrl is in edit mode and right click is made.
++ on linux you can cancel library build now
+- fix hardcoded button sizes in library setup, which lead to unreadable labels on gtk
++ use system font ,not hardcoded font face name
 - fix crash while (re)building the library on systems where sizeof(wchar_t) != 2, bug in idtag.cpp
 - add files missing in hotfix1 tag.gz
 - fix bug in autodj,only at least once played songs were chosen.

@@ -189,7 +189,7 @@ void MusikTaskBarIcon::OnLButtonDown(wxTaskBarIconEvent&)
 	if(m_pFrame->IsShown())
 		m_pFrame->Show(FALSE);
 	else
-    RestoreFrame();
+		RestoreFrame();
 }
 
 
@@ -373,7 +373,7 @@ void MusikFrame::CreateMainMenu()
 }
 void MusikFrame::AutoUpdate	( const wxArrayString & Filenames ,unsigned long flags )
 {
-	MusikLibraryFrame *p= new MusikLibraryFrame( ( wxFrame* )this, Filenames,flags );
+	MusikLibraryDialog *p= new MusikLibraryDialog( this, Filenames,flags );
 	this->Enable	( FALSE );
 	p->Show	( TRUE	); 
 }

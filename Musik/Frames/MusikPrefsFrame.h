@@ -1,5 +1,5 @@
 /*
- *  MusikPrefsFrame.h
+ *  MusikPrefsDialog.h
  *
  *  Preferences frame
  *  
@@ -30,9 +30,6 @@ enum EMUSIK_PREFERENCES_OBJECT_ID
 	MUSIK_PREFERENCES_OUTPUT_DRV,
 	MUSIK_PREFERENCES_SND_DEVICE,
 	MUSIK_PREFERENCES_PLAY_RATE,
-	MUSIK_PREFERENCES_OK,
-	MUSIK_PREFERENCES_APPLY,
-	MUSIK_PREFERENCES_CANCEL,
 	MUSIK_PREFERENCES_PLAYLIST_STRIPE_COLOUR,
 	MUSIK_PREFERENCES_ACTIVITY_STRIPE_COLOUR,
 	MUSIK_PREFERENCES_SOURCES_STRIPE_COLOUR,
@@ -40,10 +37,10 @@ enum EMUSIK_PREFERENCES_OBJECT_ID
 	MUSIK_PREFERENCES_FILE_ASSOC_CHKLB
 };
 
-class MusikPrefsFrame : public wxFrame
+class MusikPrefsDialog : public wxDialog
 {
 public:
-	MusikPrefsFrame( wxFrame* pParent, const wxString &sTitle);
+	MusikPrefsDialog( wxWindow* pParent, const wxString &sTitle);
 
 	//--------------//
 	//--- events ---//
@@ -100,6 +97,9 @@ protected:
 	wxCheckBox* chkPLColumnEnable[NPLAYLISTCOLUMNS];
 
 	wxComboBox*	cmbPLColumnStatic[NPLAYLISTCOLUMNS];
+	//-------------------------------------//
+	//--- options -> file association	---//
+	//-------------------------------------//
 
 	wxCheckListBox *chklbFileAssocs;
 

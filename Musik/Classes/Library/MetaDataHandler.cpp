@@ -18,13 +18,19 @@
 //--- mp3 / ogg helpers ---//
 #include "../../MusikUtils.h"
 #include "../../3rd Party/TagHelper/idtag.h"
+#include "MetaDataHandler.h"
+#define USE_TAGLIB
+
+#ifdef USE_TAGLIB
+#include "TagLibInfo.h"
+static CTagLibInfo taglibinfo;
+#else
 #include "CMP3Info.h"
 #include "COggInfo.h"
-#include "CFMODInfo.h"
-#include "MetaDataHandler.h"
-
 static CMP3Info mp3info;
 static COggInfo ogginfo;
+#endif
+#include "CFMODInfo.h"
 static CFMODInfo fmodinfo;
 class CDummyInfo : public CInfoRead
 {
@@ -55,10 +61,17 @@ private:
 static CDummyInfo dummyinfo;
 static const tSongClass valid_SongClasses[] = 
 {
+#ifdef USE_TAGLIB
+	{wxT("mp3"),wxTRANSLATE("MPEG Layer 3 Audio File"),MUSIK_FORMAT_MP3,&taglibinfo,&taglibinfo}
+	,{wxT("ogg"),wxTRANSLATE("OGG Vorbis Audio File"),MUSIK_FORMAT_OGG,&taglibinfo,&taglibinfo}
+	,{wxT("mp2"),wxTRANSLATE("MPEG Layer 2 Audio File"),MUSIK_FORMAT_MP2,&taglibinfo,&taglibinfo}
+
+#else
 	{wxT("mp3"),wxTRANSLATE("MPEG Layer 3 Audio File"),MUSIK_FORMAT_MP3,&mp3info,&mp3info}
 	,{wxT("ogg"),wxTRANSLATE("OGG Vorbis Audio File"),MUSIK_FORMAT_OGG,&ogginfo,&ogginfo}
-	,{wxT("wav"),wxTRANSLATE("WAVE Audio File"),MUSIK_FORMAT_WAV,&fmodinfo,NULL}
 	,{wxT("mp2"),wxTRANSLATE("MPEG Layer 2 Audio File"),MUSIK_FORMAT_MP2,&mp3info,&mp3info}
+#endif
+	,{wxT("wav"),wxTRANSLATE("WAVE Audio File"),MUSIK_FORMAT_WAV,&fmodinfo,NULL}
 	,{wxT("aiff"),wxTRANSLATE("AIFF Audio File"),MUSIK_FORMAT_AIFF,&fmodinfo,NULL}
 	#ifdef __WXMSW__
 	,{wxT("wma"),wxTRANSLATE("Windows Media Audio File"),MUSIK_FORMAT_WMA,&fmodinfo,NULL}
@@ -99,7 +112,7 @@ CMetaDataHandler::RetCode CMetaDataHandler::GetMetaData( CSongMetaData & MetaDat
 	else
 		rc = notsupported;
 
-	if ( MetaData.Title.Length() == 0 )
+	if (wxGetApp().Prefs.bAllowTagGuessing && MetaData.Title.Length() == 0 )
 	{
 		dummyinfo.ReadMetaData(MetaData);
 		if ( MetaData.Title.Length() == 0 )

@@ -1,7 +1,7 @@
 /*
  *  MusikEQCtrl.cpp
  *
- *  Equalizer control. Used by MusikFXFrame.
+ *  Equalizer control. Used by MusikFXDialog.
  *
  *  Copyright (c) 2003 Casey Langen (casey@bak.rr.com)
  *	Contributors: Simon Windmill, Dustin Carter, Gunnar Roth, Wade Brainerd
@@ -31,7 +31,7 @@ void CMusikEQCtrl::OnEraseBackground( wxEraseEvent& WXUNUSED(event) )
 	// empty => no background erasing to avoid flicker
 }
 
-CMusikEQCtrl::CMusikEQCtrl( wxFrame* pParent )
+CMusikEQCtrl::CMusikEQCtrl( wxWindow* pParent )
 	: wxPanel( pParent, -1, wxDefaultPosition, wxDefaultSize, wxNO_BORDER |wxCLIP_CHILDREN| wxTRANSPARENT_WINDOW )
 {
 	//-------------------------------------//

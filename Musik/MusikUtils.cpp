@@ -18,9 +18,6 @@
 #include "MusikGlobals.h"
 #include "MusikUtils.h"
 
-//--- mp3 helper ---//
-#include "Classes/Library/CMP3Info.h"
-#include <id3/tag.h>
 
 //--- wx ---//
 #include <wx/textfile.h>
@@ -30,6 +27,7 @@
 #include <wx/dir.h>
 #include "wx/defs.h"
 #include <wx/mimetype.h>
+#include <mpeg\id3v1\id3v1genres.h>
 
 #if wxUSE_STATLINE
 #include "wx/statline.h"
@@ -132,12 +130,13 @@ void SortArrayByLength ( wxArrayString* pArray )
 
 int GetGenreID( const CSongMetaData::StringData & sGenre )
 {		
-	for ( int i = 0; i < ID3_NR_OF_V1_GENRES; i++ )
-	{
-		if(strcasecmp(sGenre,ID3_v1_genre_description[i]) == 0)
-			return i;
-	}
-	return -1; //--- return -1 if unknown ---//
+	return TagLib::ID3v1::genreIndex(TagLib::String(sGenre));
+//	for ( int i = 0; i < ID3_NR_OF_V1_GENRES; i++ )
+//	{
+//		if(strcasecmp(sGenre,ID3_v1_genre_description[i]) == 0)
+//			return i;
+//	}
+//	return -1; //--- return -1 if unknown ---//
 }
 
 wxString MStoStr( int timems )

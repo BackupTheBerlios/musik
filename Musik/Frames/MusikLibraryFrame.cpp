@@ -1,5 +1,5 @@
 /*
- *  MusikLibraryFrame.cpp
+ *  MusikLibraryDialog.cpp
  *
  *  Library setup frame
  *  
@@ -18,42 +18,42 @@
 //--- globals ---//
 #include "../MusikGlobals.h"
 #include "../MusikUtils.h"
-
+#include "../PrefUtil.h"
 //--- frames ---//
 #include "MusikFrame.h"
 
 //--- threads ---//
 #include "../Threads/MusikLibraryThreads.h"
 
-BEGIN_EVENT_TABLE(MusikLibraryFrame, wxFrame)
-	EVT_CONTEXT_MENU	( 									MusikLibraryFrame::PathsPopupMenu			)
+BEGIN_EVENT_TABLE(MusikLibraryDialog, wxDialog)
+	EVT_CONTEXT_MENU	( 									MusikLibraryDialog::PathsPopupMenu			)
 #ifdef 	__WXMSW__
-	EVT_CHAR_HOOK		(									MusikLibraryFrame::TranslateKeys			)
+	EVT_CHAR_HOOK		(									MusikLibraryDialog::TranslateKeys			)
 #else	
-	EVT_CHAR		(									MusikLibraryFrame::TranslateKeys			)
+	EVT_CHAR		(									MusikLibraryDialog::TranslateKeys			)
 #endif	
-	EVT_MENU			( MUSIK_PATHS_MENU_ADD,				MusikLibraryFrame::OnClickAdd				)
-	EVT_MENU			( MUSIK_PATHS_MENU_REMOVESEL,		MusikLibraryFrame::OnClickRemoveSel			)
-	EVT_MENU			( MUSIK_PATHS_MENU_REMOVEALL,		MusikLibraryFrame::OnClickRemoveAll			)
-	EVT_MENU			( MUSIK_PATHS_MENU_CLEAR_LIBRARY,	MusikLibraryFrame::OnClickClearLibrary		)
-	EVT_MENU			( MUSIK_PATHS_MENU_REBUILD_LIBRARY,	MusikLibraryFrame::OnRebuildAll				)
-	EVT_MENU			( MUSIK_PATHS_MENU_UPDATE_LIBRARY,	MusikLibraryFrame::OnUpdateAll				)
-	EVT_MENU			( MUSIK_PATHS_MENU_PURGE_LIBRARY,	MusikLibraryFrame::OnPurgeLibrary			)
-	EVT_BUTTON			( MUSIK_PATHS_OK,					MusikLibraryFrame::OnClickOK				)
-	EVT_BUTTON			( MUSIK_PATHS_CANCEL,				MusikLibraryFrame::OnClickCancel			)
-	EVT_LIST_KEY_DOWN	( MUSIK_PATHS_LIST,					MusikLibraryFrame::OnKeyPress				)
-	EVT_CLOSE			(									MusikLibraryFrame::OnClose					)
-	EVT_SIZE			(									MusikLibraryFrame::OnSize					)
+	EVT_MENU			( MUSIK_PATHS_MENU_ADD,				MusikLibraryDialog::OnClickAdd				)
+	EVT_MENU			( MUSIK_PATHS_MENU_REMOVESEL,		MusikLibraryDialog::OnClickRemoveSel			)
+	EVT_MENU			( MUSIK_PATHS_MENU_REMOVEALL,		MusikLibraryDialog::OnClickRemoveAll			)
+	EVT_BUTTON			( MUSIK_PATHS_CLEAR_LIBRARY,	MusikLibraryDialog::OnClickClearLibrary		)
+	EVT_BUTTON			( MUSIK_PATHS_REBUILD_LIBRARY,	MusikLibraryDialog::OnRebuildAll				)
+	EVT_BUTTON			( MUSIK_PATHS_UPDATE_LIBRARY,	MusikLibraryDialog::OnUpdateAll				)
+	EVT_BUTTON			( MUSIK_PATHS_PURGE_LIBRARY,	MusikLibraryDialog::OnPurgeLibrary			)
+	EVT_BUTTON			( wxID_OK,							MusikLibraryDialog::OnClickOK				)
+	EVT_BUTTON			( wxID_CANCEL,						MusikLibraryDialog::OnClickCancel			)
+	EVT_LIST_KEY_DOWN	( MUSIK_PATHS_LIST,					MusikLibraryDialog::OnKeyPress				)
+	EVT_CLOSE			(									MusikLibraryDialog::OnClose					)
+	EVT_SIZE			(									MusikLibraryDialog::OnSize					)
 
 	//---------------------------------------------------------//
-	//--- threading events.. we use EVT_MENU becuase its	---//
+	//--- threading events.. we use EVT_MENU because its	---//
 	//--- nice and simple, and gets the job done. this may	---//
 	//--- become a little prettier later, but it works.		---//
 	//---------------------------------------------------------//
-    EVT_MENU			( MUSIK_LIBRARY_THREAD_START,		MusikLibraryFrame::OnThreadStart		)
-	EVT_MENU			( MUSIK_LIBRARY_THREAD_END,			MusikLibraryFrame::OnThreadEnd			)
-	EVT_MENU			( MUSIK_LIBRARY_THREAD_PROG,		MusikLibraryFrame::OnThreadProg			)
-	EVT_MENU			( MUSIK_LIBRARY_THREAD_SCAN_PROG,	MusikLibraryFrame::OnThreadScanProg		)
+    EVT_MENU			( MUSIK_LIBRARY_THREAD_START,		MusikLibraryDialog::OnThreadStart		)
+	EVT_MENU			( MUSIK_LIBRARY_THREAD_END,			MusikLibraryDialog::OnThreadEnd			)
+	EVT_MENU			( MUSIK_LIBRARY_THREAD_PROG,		MusikLibraryDialog::OnThreadProg			)
+	EVT_MENU			( MUSIK_LIBRARY_THREAD_SCAN_PROG,	MusikLibraryDialog::OnThreadScanProg		)
 END_EVENT_TABLE()
 
 
@@ -62,8 +62,8 @@ END_EVENT_TABLE()
 //---  gets called automatically  ---//
 //--- on startup to add new files ---//
 //-----------------------------------//
-MusikLibraryFrame::MusikLibraryFrame( wxFrame* pParent ,const wxArrayString &arrFilenamesToScan,unsigned long flags)
-	: wxFrame( pParent, -1, _("Searching for and Adding New Files"), wxPoint( -1, -1 ), wxSize( 600, 48 ), wxCAPTION | wxFRAME_FLOAT_ON_PARENT | wxFRAME_NO_TASKBAR | wxCLIP_CHILDREN )
+MusikLibraryDialog::MusikLibraryDialog( wxWindow* pParent ,const wxArrayString &arrFilenamesToScan,unsigned long flags)
+	: wxDialog( pParent, -1, _("Searching for and Adding New Files"), wxDefaultPosition, wxSize( 600, 48 ))
 {
 	m_arrScannedFiles = arrFilenamesToScan;
 	//------------------------------//
@@ -73,7 +73,7 @@ MusikLibraryFrame::MusikLibraryFrame( wxFrame* pParent ,const wxArrayString &arr
 	m_Close			= true;
 	m_AutoStart		= true;
 	m_FirstStart	= false;
-	m_MenuCreated	= false;
+	paths_context_menu = NULL;
 	bRebuild		= false;
 
 	//-----------------------//
@@ -87,7 +87,7 @@ MusikLibraryFrame::MusikLibraryFrame( wxFrame* pParent ,const wxArrayString &arr
 	//------------------------------------------//
 	vsTopSizer->Show( lcPaths, false );
 	vsTopSizer->Show( hsSysButtons, true );
-	
+	hsLibraryButtons->Show(hsLibraryButtons,false);
 	#ifdef __WXGTK__
 	wxSize size = vsTopSizer->GetMinSize();
 	SetSize( 480, size.GetHeight() );
@@ -101,34 +101,9 @@ MusikLibraryFrame::MusikLibraryFrame( wxFrame* pParent ,const wxArrayString &arr
 //---  gets called from menu    ---//
 //--- or at program's first run ---//
 //---------------------------------//
-MusikLibraryFrame::MusikLibraryFrame( wxFrame* pParent, const wxPoint &pos, const wxSize & ) 
-	: wxFrame( pParent, -1, wxString(MUSIKAPPNAME) + _(" Library Setup"), pos, wxSize( 600, 400 ), wxCAPTION | wxTAB_TRAVERSAL | wxRESIZE_BORDER | wxFRAME_FLOAT_ON_PARENT | wxFRAME_NO_TASKBAR | wxCLIP_CHILDREN )
+MusikLibraryDialog::MusikLibraryDialog( wxWindow* pParent, const wxPoint &pos, const wxSize & ) 
+	: wxDialog( pParent, -1, wxString(MUSIKAPPNAME) + _(" Library Setup"), pos, wxSize( 600, 400 ), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER | wxCLIP_CHILDREN )
 {
-	//--------------------//
-	//--- "Songs" menu ---//
-	//--------------------//
-    paths_setup_menu = new wxMenu;
-    paths_setup_menu->Append( MUSIK_PATHS_MENU_ADD, _("&Add Directory") );
-	paths_setup_menu->AppendSeparator();
-	paths_setup_menu->Append( MUSIK_PATHS_MENU_REMOVESEL, _("&Remove &Selected Directories") );
-	paths_setup_menu->Append( MUSIK_PATHS_MENU_REMOVEALL, _("Remove A&ll Directories") );
-
-	//---------------------//
-	//--- "Update" menu ---//
-	//---------------------//	
-    paths_update_menu = new wxMenu;
-	paths_update_menu->Append( MUSIK_PATHS_MENU_UPDATE_LIBRARY, _("&Update Library") );
-	paths_update_menu->Append( MUSIK_PATHS_MENU_REBUILD_LIBRARY, _("&Rebuild Library") );
-	paths_update_menu->Append( MUSIK_PATHS_MENU_PURGE_LIBRARY, _("Purge &Missing Songs") );
-	paths_update_menu->AppendSeparator();
-	paths_update_menu->Append( MUSIK_PATHS_MENU_CLEAR_LIBRARY, _("Clear &Library") );
-
-	//--------------------//
-	//--- "Setup" menu ---//
-	//--------------------//	
-	wxMenuBar *menu_bar = new wxMenuBar;
-    menu_bar->Append( paths_setup_menu,_("&Directories") );
-    menu_bar->Append( paths_update_menu,_("&Library") );
 
 	//--------------------//
 	//--- Context menu ---//
@@ -137,24 +112,13 @@ MusikLibraryFrame::MusikLibraryFrame( wxFrame* pParent, const wxPoint &pos, cons
     paths_context_menu->Append( MUSIK_PATHS_MENU_ADD, _("&Add Directory") );
 	paths_context_menu->Append( MUSIK_PATHS_MENU_REMOVESEL, _("&Remove &Selected Directories") );
 	paths_context_menu->Append( MUSIK_PATHS_MENU_REMOVEALL, _("Remove All Directories") );
-	paths_context_menu->AppendSeparator();
-	paths_context_menu->Append( MUSIK_PATHS_MENU_UPDATE_LIBRARY, _("&Update Library") );
-	paths_context_menu->Append( MUSIK_PATHS_MENU_REBUILD_LIBRARY, _("&Rebuild Library") );
-	paths_context_menu->Append( MUSIK_PATHS_MENU_PURGE_LIBRARY, _("Purge &Missing Songs") );
-	paths_context_menu->AppendSeparator();
-	paths_context_menu->Append( MUSIK_PATHS_MENU_CLEAR_LIBRARY, _("Clear &Library") );
-
+	
 	//-----------------------//
 	//--- create controls ---//
 	//-----------------------//
 	CreateControls();
 	vsTopSizer->Show( gProgress, false );
 
-	//----------------//
-	//--- set menu ---//
-	//----------------//
-	SetMenuBar( menu_bar );
-	
 	//-----------------------------------//
 	//--- load paths, initialize vars ---//
 	//-----------------------------------//
@@ -163,7 +127,6 @@ MusikLibraryFrame::MusikLibraryFrame( wxFrame* pParent, const wxPoint &pos, cons
 	m_FirstStart	= true;
 	m_AutoStart		= false;
 	m_Close			= false;
-	m_MenuCreated	= true;
 	m_flagsUpdate = 0;
 	//--------------------//
 	//--- center frame ---//
@@ -171,7 +134,7 @@ MusikLibraryFrame::MusikLibraryFrame( wxFrame* pParent, const wxPoint &pos, cons
 	Centre();
 }
 
-void MusikLibraryFrame::CreateControls()
+void MusikLibraryDialog::CreateControls()
 {
 	//--------------//
 	//--- colors ---//
@@ -195,6 +158,21 @@ void MusikLibraryFrame::CreateControls()
 	lcPaths->InsertColumn( 1, _("Total"), wxLIST_FORMAT_RIGHT, -1 );
 	lcPaths->InsertColumn( 2, _("New"), wxLIST_FORMAT_RIGHT, -1 );
 
+	wxButton *btnUPDATE_LIBRARY  =	new wxButton( this, MUSIK_PATHS_UPDATE_LIBRARY, _("&Update Library") );
+	wxButton *btnREBUILD_LIBRARY =	new wxButton( this, MUSIK_PATHS_REBUILD_LIBRARY, _("&Rebuild Library") );
+	PREF_CREATE_CHECKBOX(AllowTagGuessing,_("Allow tag guessing from filename"));
+	wxButton *btnPURGE_LIBRARY   =	new wxButton( this, MUSIK_PATHS_PURGE_LIBRARY, _("Purge &Missing Songs") );
+	wxButton *btnCLEAR_LIBRARY   =	new wxButton( this, MUSIK_PATHS_CLEAR_LIBRARY, _("Clear &Library") );
+
+	hsLibraryButtons = new wxGridSizer(2,3,5,5);
+	hsLibraryButtons->Add(btnUPDATE_LIBRARY,0,wxEXPAND);
+	hsLibraryButtons->Add(btnREBUILD_LIBRARY,0,wxEXPAND);
+	hsLibraryButtons->Add(chkAllowTagGuessing,0,wxALIGN_CENTER_VERTICAL);
+
+	hsLibraryButtons->Add(btnPURGE_LIBRARY,0,wxEXPAND);
+	hsLibraryButtons->Add(btnCLEAR_LIBRARY,0,wxEXPAND);
+	hsLibraryButtons->Add(-1,-1,0,wxEXPAND);
+
 	//--------------------//
 	//--- progress bar ---//
 	//--------------------//
@@ -203,8 +181,8 @@ void MusikLibraryFrame::CreateControls()
 	//----------------------//
 	//--- system buttons ---//
 	//----------------------//
-	btnCancel =	new wxButton( this, MUSIK_PATHS_CANCEL,	_("Cancel"));
-	btnOK =		new wxButton( this, MUSIK_PATHS_OK,		_("OK"));
+	btnCancel =	new wxButton( this, wxID_CANCEL,	_("Cancel"));
+	btnOK =		new wxButton( this, wxID_OK,		_("OK"));
 
 	//----------------------------//
 	//--- system buttons sizer ---//
@@ -219,13 +197,14 @@ void MusikLibraryFrame::CreateControls()
 	//-----------------//
 	vsTopSizer = new wxBoxSizer( wxVERTICAL );
 	vsTopSizer->Add( lcPaths, 1, wxEXPAND | wxALL, 2 );
+	vsTopSizer->Add(hsLibraryButtons,0,wxALL,2);
 	vsTopSizer->Add( gProgress, 0, wxEXPAND | wxALL, 2 );
 	vsTopSizer->Add( hsSysButtons, 0, wxEXPAND | wxALL, 2 );
 
 	SetSizer( vsTopSizer );
 }
 
-void MusikLibraryFrame::OnUpdateAll( wxCommandEvent& WXUNUSED(event) )	
+void MusikLibraryDialog::OnUpdateAll( wxCommandEvent& WXUNUSED(event) )	
 { 
 //	if ( wxMessageBox( _( "Would you like to clear Musik's library database?" ), MUSIKAPPNAME_VERSION, wxYES_NO | wxICON_QUESTION ) == wxYES )
 //		wxGetApp().Library.RemoveAll();
@@ -234,7 +213,7 @@ void MusikLibraryFrame::OnUpdateAll( wxCommandEvent& WXUNUSED(event) )
 	UpdateLibrary( false );	
 }
 
-void MusikLibraryFrame::OnRebuildAll( wxCommandEvent& WXUNUSED(event) )	
+void MusikLibraryDialog::OnRebuildAll( wxCommandEvent& WXUNUSED(event) )	
 { 
 //	if ( wxMessageBox( _( "Would you like to clear Musik's library database?" ), MUSIKAPPNAME_VERSION, wxYES_NO | wxICON_QUESTION ) == wxYES )
 //		wxGetApp().Library.RemoveAll();
@@ -242,9 +221,9 @@ void MusikLibraryFrame::OnRebuildAll( wxCommandEvent& WXUNUSED(event) )
 	PathsSave(); 
 	UpdateLibrary( false ,true);	
 }
-bool MusikLibraryFrame::Show( bool show )
+bool MusikLibraryDialog::Show( bool show )
 {
-	bool bRet = wxFrame::Show( show );
+	bool bRet = wxDialog::Show( show );
 
 	//---------------------------//
 	//--- kill first run pref ---//
@@ -277,7 +256,7 @@ bool MusikLibraryFrame::Show( bool show )
 //------------------------------------------//
 //--- Loading / Saving Paths in ListCtrl ---//
 //------------------------------------------//
-void MusikLibraryFrame::PathsLoad()
+void MusikLibraryDialog::PathsLoad()
 {
 	for ( size_t i = 0; i < g_Paths.GetCount(); i++ )
 	{
@@ -290,7 +269,7 @@ void MusikLibraryFrame::PathsLoad()
 	}
 }
 
-void MusikLibraryFrame::PathsSave()
+void MusikLibraryDialog::PathsSave()
 {
 	g_Paths.Clear();
 	for ( int i = 0; i < lcPaths->GetItemCount(); i++ )
@@ -302,8 +281,10 @@ void MusikLibraryFrame::PathsSave()
 //---------------------//
 //--- Dialog Events ---//
 //---------------------//
-void MusikLibraryFrame::Close( bool bCancel )
+void MusikLibraryDialog::Close( bool bCancel )
 {
+	if ( m_ActiveThreadController.IsAlive() )
+		m_ActiveThreadController.Cancel();
 	//---------------------------------//
 	//--- if cancel / ok is pressed ---//
 	//---------------------------------//
@@ -328,18 +309,12 @@ void MusikLibraryFrame::Close( bool bCancel )
 		}
 	}
 
-	//--- we'll only have a menu if this is set ---//
-	if ( m_MenuCreated )
-	{
-		delete paths_context_menu;	
-		m_MenuCreated = false;
-	}
-
+	delete paths_context_menu;	
 	g_MusikFrame->Enable( TRUE );
 	Destroy();
 }
 
-void MusikLibraryFrame::PathsResize()
+void MusikLibraryDialog::PathsResize()
 {
 	Layout();
 
@@ -354,7 +329,7 @@ void MusikLibraryFrame::PathsResize()
 	lcPaths->SetColumnWidth( 2, nDelta );
 }
 
-void MusikLibraryFrame::PathsGetSel( wxArrayString &aReturn )
+void MusikLibraryDialog::PathsGetSel( wxArrayString &aReturn )
 {
 	aReturn.Clear();
 	for ( int i = 0; i < lcPaths->GetItemCount(); i++ )
@@ -365,7 +340,7 @@ void MusikLibraryFrame::PathsGetSel( wxArrayString &aReturn )
 	return;
 }
 
-void MusikLibraryFrame::PathsPopupMenu( wxContextMenuEvent& WXUNUSED(event) )
+void MusikLibraryDialog::PathsPopupMenu( wxContextMenuEvent& WXUNUSED(event) )
 {
 	int nSel = lcPaths->GetSelectedItemCount();
 
@@ -381,7 +356,7 @@ void MusikLibraryFrame::PathsPopupMenu( wxContextMenuEvent& WXUNUSED(event) )
 //-----------------------//
 //--- ListCtrl Events ---//
 //-----------------------//
-void MusikLibraryFrame::PathsListRemoveSel()
+void MusikLibraryDialog::PathsListRemoveSel()
 {
 	for ( int i = 0; i < lcPaths->GetItemCount(); i++ )
 	{
@@ -398,7 +373,7 @@ void MusikLibraryFrame::PathsListRemoveSel()
 	bRebuild = true;
 }
 
-void MusikLibraryFrame::PathsListRemoveAll()
+void MusikLibraryDialog::PathsListRemoveAll()
 {
 	if ( lcPaths->GetItemCount() )
 	{
@@ -408,7 +383,7 @@ void MusikLibraryFrame::PathsListRemoveAll()
 	m_arrScannedFiles.Clear(); // we have to rescan the files
 }
 
-void MusikLibraryFrame::PathsListProcessKeys( wxListEvent & event )
+void MusikLibraryDialog::PathsListProcessKeys( wxListEvent & event )
 {
 	if ( event.GetKeyCode() == WXK_DELETE || event.GetKeyCode() == WXK_BACK )
 		PathsListRemoveSel();
@@ -420,7 +395,7 @@ void MusikLibraryFrame::PathsListProcessKeys( wxListEvent & event )
 		event.Skip();
 }
 
-void MusikLibraryFrame::PathsListAdd()
+void MusikLibraryDialog::PathsListAdd()
 {
 	wxDirDialog *dlgBrowse = new wxDirDialog( this, _("Please choose music directory."));
 	if ( dlgBrowse->ShowModal() == wxID_OK )
@@ -454,7 +429,7 @@ void MusikLibraryFrame::PathsListAdd()
 //------------//
 //--- Misc ---//
 //------------//
-bool MusikLibraryFrame::ValidatePath( wxString sPath )
+bool MusikLibraryDialog::ValidatePath( wxString sPath )
 {
 	if ( g_Paths.GetCount() == 0 )
 		return true;
@@ -536,7 +511,7 @@ bool MusikLibraryFrame::ValidatePath( wxString sPath )
 	return true;
 }
 
-void MusikLibraryFrame::ClearLibrary()
+void MusikLibraryDialog::ClearLibrary()
 {
 	if ( wxMessageBox( _("This will wipe the library clean. Are you ABSOLUTELY SURE you want to do this?"), MUSIKAPPNAME_VERSION, wxYES_NO|wxICON_QUESTION  ) == wxYES )
 	{
@@ -549,7 +524,7 @@ void MusikLibraryFrame::ClearLibrary()
 	}
 }
 
-void MusikLibraryFrame::ScanNew()
+void MusikLibraryDialog::ScanNew()
 {
 	if ( g_Paths.GetCount() == 0 )
 		return;
@@ -562,7 +537,7 @@ void MusikLibraryFrame::ScanNew()
 		InternalErrorMessageBox(wxT("Previous thread not terminated correctly."));
 }
 
-void MusikLibraryFrame::UpdateLibrary( bool bConfirm , bool bCompleteRebuild)
+void MusikLibraryDialog::UpdateLibrary( bool bConfirm , bool bCompleteRebuild)
 {
 	if ( bConfirm )
 	{	
@@ -580,7 +555,7 @@ void MusikLibraryFrame::UpdateLibrary( bool bConfirm , bool bCompleteRebuild)
 		InternalErrorMessageBox(wxT("Previous thread not terminated correctly."));
 }
 
-void MusikLibraryFrame::PurgeLibrary()
+void MusikLibraryDialog::PurgeLibrary()
 {
 	if ( !m_ActiveThreadController.IsAlive())
 	{
@@ -591,25 +566,27 @@ void MusikLibraryFrame::PurgeLibrary()
 
 }
 
-void MusikLibraryFrame::EnableProgress( bool enable )
+void MusikLibraryDialog::EnableProgress( bool enable )
 {
 	vsTopSizer->Show( gProgress, enable );
 
-	lcPaths->Enable		( !enable );
-	btnOK->Enable		( !enable );
+	wxWindowList & children = GetChildren();
+	for ( wxWindowList::Node *node = children.GetFirst(); node; node = node->GetNext() )
+	{
+		wxWindow *current = (wxWindow *)node->GetData();
+		if(enable == true && current->GetId() == wxID_CANCEL)
+			continue;
+		current->Enable(!enable);
+	}	
+
+//	lcPaths->Enable		( !enable );
+//	btnOK->Enable		( !enable );
 //	btnCancel->Enable	( !enable );
 //	Enable( !enable );
-	if(GetMenuBar())
-	{
-		for(size_t i = 0;i < GetMenuBar()->GetMenuCount();i++)
-		{
-			GetMenuBar()->EnableTop(i,!enable);
-		}
-	}
 	Layout();
 }
 
-void MusikLibraryFrame::TranslateKeys( wxKeyEvent& event )
+void MusikLibraryDialog::TranslateKeys( wxKeyEvent& event )
 {
  	if ( event.GetKeyCode() == WXK_ESCAPE )
 	{
@@ -625,7 +602,7 @@ void MusikLibraryFrame::TranslateKeys( wxKeyEvent& event )
 //-----------------------------------------------------------//
 //--- got a new thread start event, figure out what to do ---//
 //-----------------------------------------------------------//
-void MusikLibraryFrame::OnThreadStart( wxCommandEvent& event )
+void MusikLibraryDialog::OnThreadStart( wxCommandEvent& event )
 {
 	EnableProgress( true );
 	SetProgress		( 0 );
@@ -637,7 +614,7 @@ void MusikLibraryFrame::OnThreadStart( wxCommandEvent& event )
 //-----------------------------------------------------//
 //--- got a thread end event, figure out what to do ---//
 //-----------------------------------------------------//
-void MusikLibraryFrame::OnThreadEnd( wxCommandEvent& event )
+void MusikLibraryDialog::OnThreadEnd( wxCommandEvent& event )
 {
 	m_ActiveThreadController.Join();
 	EnableProgress( false );
@@ -701,7 +678,7 @@ void MusikLibraryFrame::OnThreadEnd( wxCommandEvent& event )
 //---------------------------------------------------------//
 //--- got a thread process event, figure out what to do ---//
 //---------------------------------------------------------//
-void MusikLibraryFrame::OnThreadProg( wxCommandEvent& event )
+void MusikLibraryDialog::OnThreadProg( wxCommandEvent& event )
 {	
 	
 	if( SET_TOTAL == event.GetInt())
@@ -719,7 +696,7 @@ void MusikLibraryFrame::OnThreadProg( wxCommandEvent& event )
 		if(SET_CURRENT == event.GetInt())
 		{
 			//----------------------------------------------------------//
-			//--- MusikLibraryFrame::OnThreadScanProg will set title ---//
+			//--- MusikLibraryDialog::OnThreadScanProg will set title ---//
 			//----------------------------------------------------------//
 			lcPaths->SetItem( event.GetExtraLong(), 1, IntTowxString( m_Total ), -1 );
 			lcPaths->SetItem( event.GetExtraLong(), 2, (m_New >= 0) ? IntTowxString( m_New ): wxString(wxT("-")), -1 );
@@ -754,7 +731,7 @@ void MusikLibraryFrame::OnThreadProg( wxCommandEvent& event )
 //-------------------------------------------------------------------//
 //--- got a scan prog event, update to show users x files scanned ---//
 //-------------------------------------------------------------------//
-void MusikLibraryFrame::OnThreadScanProg( wxCommandEvent& event )
+void MusikLibraryDialog::OnThreadScanProg( wxCommandEvent& event )
 {
 	m_Title.sprintf( _( "Scanning directory for audio files: %d files scanned" ), event.GetExtraLong() );
 	SetTitle( m_Title );

@@ -189,7 +189,7 @@ void MusikFrame::OnClose( wxCloseEvent& WXUNUSED(event) )
 void MusikFrame::OnSetupPaths( wxCommandEvent& WXUNUSED(event) )
 {
 	wxSize mysize( 400, 300 );
-	MusikLibraryFrame* pMusikLibraryFrame = new MusikLibraryFrame( ( wxFrame* )this, wxDefaultPosition, mysize );
+	MusikLibraryDialog* pMusikLibraryFrame = new MusikLibraryDialog(this, wxDefaultPosition, mysize );
 	this->Enable( FALSE );	
 	pMusikLibraryFrame->Show();
 }
@@ -202,7 +202,7 @@ void MusikFrame::OnMenuAbout( wxCommandEvent &WXUNUSED(event) )
 }
 void MusikFrame::OnPreferences( wxCommandEvent &WXUNUSED(event) )
 {
-	wxFrame *pDlg = new MusikPrefsFrame( this, wxString(MUSIKAPPNAME) + _(" Preferences") );
+	wxDialog *pDlg = new MusikPrefsDialog( this, wxString(MUSIKAPPNAME) + _(" Preferences") );
 	this->Enable( FALSE );
 	pDlg->Show();
 }
@@ -216,7 +216,7 @@ void MusikFrame::OnFX( wxCommandEvent &WXUNUSED(event) )
 	}
 	else
 	{
-		w = new MusikFXFrame( this, wxString(MUSIKAPPNAME) + _(" FX"), wxDefaultPosition, wxDefaultSize );
+		w = new MusikFXDialog( this, wxString(MUSIKAPPNAME) + _(" FX"), wxDefaultPosition, wxDefaultSize );
 		w->Show();
 	}	
 }

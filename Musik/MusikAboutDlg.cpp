@@ -16,7 +16,7 @@
 #include "MusikUtils.h"
 #include <sqlite.h>
 #include <fmod.h>
-#include <id3/globals.h>
+
 
 TAG_HANDLER_BEGIN(MUSIK_TAG, "MUSIK")
 
@@ -58,14 +58,14 @@ TAG_HANDLER_PROC(tag)
 			sTextToInsert = wxString::Format(wxT("%.2f"),FSOUND_GetVersion());
 
 		}
-		else if(sParamValue == wxT("id3lib"))
-		{
-			sTextToInsert	<< ID3LIB_MAJOR_VERSION << wxT(".") 
-							<< ID3LIB_MINOR_VERSION << wxT(".") 
-							<< ID3LIB_PATCH_VERSION << wxT(".") 
-							<< ID3LIB_INTERFACE_AGE	;
-
-		}
+	//		else if(sParamValue == wxT("id3lib"))
+//		{
+//			sTextToInsert	<< ID3LIB_MAJOR_VERSION << wxT(".") 
+//							<< ID3LIB_MINOR_VERSION << wxT(".") 
+//							<< ID3LIB_PATCH_VERSION << wxT(".") 
+//							<< ID3LIB_INTERFACE_AGE	;
+//
+//		}
 		else if(sParamValue == wxT("OggVorbis"))
 		{
 			sTextToInsert = wxT("");
@@ -99,7 +99,7 @@ CMusikAboutDlg::CMusikAboutDlg(wxWindow *pParent)
 {
 	wxBoxSizer *topsizer;
 	wxHtmlWindow *html;
-	
+
 	topsizer = new wxBoxSizer(wxVERTICAL);
 
 	html = new wxHtmlWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize/* , 0wxHW_SCROLLBAR_NEVER*/);

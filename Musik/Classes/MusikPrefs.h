@@ -366,7 +366,7 @@ public:
 
 		,sFilemanagerCmd(this,wxT( "FilemanagerCmd" ),wxT("explorer.exe \"%s\""))			
 
-		
+		,bAllowTagGuessing(this,wxT("AllowTagGuessing"),true)		
 #ifdef wxUSE_HOTKEY
 		,bEnablePlayerHotkeys(this,	wxT("EnablePlayerHotkeys"),false)
 		,sPlayerHotkeys(this,wxT("PlayerHotkey%d"),DefaultPlayerHotkeys)
@@ -499,7 +499,7 @@ public:
 	CConfigSetting<Value<int>,EMUSIK_FUZZYSEARCHMODE> eFuzzySearchmode;
 
 	CConfigSettingString sFilemanagerCmd;			
-	
+	CConfigSettingBool bAllowTagGuessing;
 #ifdef wxUSE_HOTKEY
 	CConfigSettingBool bEnablePlayerHotkeys;			
 	CConfigSettingArray<wxString,MUSIK_HOTKEYID_LAST> sPlayerHotkeys;

@@ -12,11 +12,9 @@
 
 //--- For compilers that support precompilation, includes "wx/wx.h". ---//
 #include "wx/wxprec.h"
-
+#include <mpeg\id3v1\id3v1genres.h>
 #include "MusikTagFrame.h"
 
-//--- id3 tagging ( to populate genres box ) ---//
-#include <id3/tag.h>
 
 //--- related frames ---//
 #include "../Frames/MusikFrame.h"
@@ -273,8 +271,8 @@ MusikTagFrame::MusikTagFrame( wxFrame* pParent, CPlaylistCtrl * pPlaylistctrl, i
 	wxGetApp().Library.GetAllGenres(arrGenre);
 
 	// add standard id3v1 genres to array
-	for ( int i = 0; i < ID3_NR_OF_V1_GENRES; i++ )
-		arrGenre.Add(ConvA2W( ID3_v1_genre_description[i] )	);
+	for ( int i = 0; i < 148; i++ )
+		arrGenre.Add(ConvFromUTF8( TagLib::ID3v1::genre(i).toCString(true)));
 	// case sort first
 	arrGenre.Sort();
 	// eliminate  double entrys

@@ -1,5 +1,5 @@
 /*
- *  MusikLibraryFrame.h
+ *  MusikLibraryDialog.h
  *
  *  Library setup frame
  *  
@@ -31,16 +31,14 @@ class MusikScanNewThread;
 enum EMUSIK_Library_OBJECT_ID
 {
 	MUSIK_PATHS_LIST = 0,
-	MUSIK_PATHS_CANCEL,
-	MUSIK_PATHS_OK
 };
 
-class MusikLibraryFrame : public wxFrame
+class MusikLibraryDialog: public wxDialog
 {
 public:
 
-	MusikLibraryFrame( wxFrame* pParent ,const wxArrayString &arrFilenamesToScan = wxArrayString(),unsigned long flags = 0);
-	MusikLibraryFrame( wxFrame* pParent, const wxPoint &pos, const wxSize &size );
+	MusikLibraryDialog( wxWindow* pParent ,const wxArrayString &arrFilenamesToScan = wxArrayString(),unsigned long flags = 0);
+	MusikLibraryDialog( wxWindow* pParent, const wxPoint &pos, const wxSize &size );
 
 	//--- functions ---//
 	void CreateControls ();
@@ -63,9 +61,6 @@ public:
 	void OnClickOK				( wxCommandEvent  &WXUNUSED(event)	)		{ Close( false );												}
 	void OnClickCancel			( wxCommandEvent  &WXUNUSED(event)	)		
 	{
-		if ( m_ActiveThreadController.IsAlive() )
-			m_ActiveThreadController.Cancel();
- 		else	
 			Close( true );	
 	}
 	void OnClickClearLibrary	( wxCommandEvent  &WXUNUSED(event)	)		{ ClearLibrary();												}
@@ -100,6 +95,7 @@ public:
 	wxButton		*btnOK;
 	wxButton		*btnCancel;
 	wxBoxSizer		*hsSysButtons;
+	wxGridSizer		*hsLibraryButtons;
 	wxBoxSizer		*vsTopSizer;
 
     void PathsListRemoveSel		();
@@ -134,7 +130,6 @@ private:
 	bool m_FirstStart;
 	bool m_AutoStart;
 	bool m_Close;
-	bool m_MenuCreated;
 	unsigned long m_flagsUpdate;
 	wxString m_Title; //--- so it doesn't have to be recreated millions of times ---//
 
