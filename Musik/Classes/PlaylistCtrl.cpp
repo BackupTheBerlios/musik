@@ -51,6 +51,7 @@ BEGIN_EVENT_TABLE(CPlaylistCtrl, wxListCtrl)
 	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_TAG_GENRE,							CPlaylistCtrl::ClickGenre		)
 	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_TAG_YEAR,							CPlaylistCtrl::ClickYear		)
 	EVT_CONTEXT_MENU			(															CPlaylistCtrl::ShowMenu			)
+	EVT_CHAR_HOOK				(															CPlaylistCtrl::TranslateKeys	)
 	EVT_CHAR					(															CPlaylistCtrl::TranslateKeys	)
 
 	//---------------------------------------------------------//

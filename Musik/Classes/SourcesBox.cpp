@@ -654,11 +654,22 @@ void CSourcesListBox::RenameSel()
 
 int CSourcesListBox::GetType(long index)
 {
-	wxListItem item;
-	item.SetId( index );
-	item.SetMask( wxLIST_MASK_IMAGE );
-	GetItem( item );
-	return item.GetImage();
+	wxString sType = g_SourcesList.Item( index ).Left( 3 );
+
+	if ( sType == wxT( "[l]" ) )
+		return MUSIK_SOURCES_LIBRARY;
+	else if ( sType == wxT( "[s]" ) )
+		return MUSIK_SOURCES_PLAYLIST_STANDARD;
+	else if ( sType == wxT( "[d]" ) )
+		return MUSIK_SOURCES_PLAYLIST_DYNAMIC;
+	else if ( sType == wxT( "[c]" ) )
+		return MUSIK_SOURCES_CDROM_DRIVE;
+	else if ( sType == wxT( "[a]" ) )
+		return MUSIK_SOURCES_ALARM;
+	else if ( sType == wxT( "[n]" ) )
+		return MUSIK_SOURCES_NOW_PLAYING;
+	
+	return -1;
 }
 
 int CSourcesListBox::GetItemImage( long index )
