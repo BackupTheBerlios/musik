@@ -907,7 +907,7 @@ void CMainFrame::OnOpenFiles()
 		if ( m_BatchAddThr )
 			m_BatchAddThr->Resume();
 
-		else if ( m_BatchAddThr )
+		else if ( !m_BatchAddThr )
 		{
 			if ( files->size() > 0 )
 			{
