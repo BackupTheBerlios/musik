@@ -30,7 +30,7 @@
 
 BEGIN_EVENT_TABLE(MusikFrame, wxFrame)
 	EVT_MENU					(MUSIK_MENU_PREFERENCES,			MusikFrame::OnPreferences			)	// File->Preferences
-	EVT_MENU					(MUSIK_MENU_EXIT,					MusikFrame::OnClose					)	// File->Exit
+	EVT_MENU					(MUSIK_MENU_EXIT,					MusikFrame::OnCloseEvt				)	// File->Exit
 	EVT_MENU					(MUSIK_MENU_SOURCES_STATE,			MusikFrame::OnSourcesState			)	// View->Show Sources
 	EVT_MENU					(MUSIK_MENU_ACTIVITIES_STATE,		MusikFrame::OnActivitiesState		)	// View->Show Selections
 	EVT_MENU					(MUSIK_MENU_PLAYLISTINFO_STATE,		MusikFrame::OnPlaylistInfoState		)	// View->Show Playlist Info
@@ -97,6 +97,11 @@ void MusikFrame::OnSize	( wxCommandEvent& WXUNUSED(event) )
 	g_PlaylistCtrl->RescaleColumns();
 	g_SourcesCtrl->RescaleColumns();
 	g_ActivityAreaCtrl->RescaleColumns();	
+}
+
+void MusikFrame::OnCloseEvt( wxCommandEvent& WXUNUSED(event) )
+{
+	Close();
 }
 
 void MusikFrame::OnClose( wxCloseEvent& WXUNUSED(event) )

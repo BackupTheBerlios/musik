@@ -389,41 +389,42 @@ void MusikFrame::EnableProgress( bool enable )
 //--- support for microsoft windows multimedia keyboard ---//
 //---------------------------------------------------------//
 #ifdef __WXMSW__
-#ifndef WM_APPCOMMAND
-#define WM_APPCOMMAND                   0x0319
-#define FAPPCOMMAND_MASK  0xF000
-#define GET_APPCOMMAND_LPARAM(lParam) ((short)(HIWORD(lParam) & ~FAPPCOMMAND_MASK))
-#define APPCOMMAND_MEDIA_NEXTTRACK        11
-#define APPCOMMAND_MEDIA_PREVIOUSTRACK    12
-#define APPCOMMAND_MEDIA_STOP             13
-#define APPCOMMAND_MEDIA_PLAY_PAUSE       14
-#endif //WM_APPCOMMAND
 
-long MusikFrame::MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam)
-{
-	if(message == WM_APPCOMMAND)
+	#ifndef WM_APPCOMMAND
+		#define WM_APPCOMMAND                   0x0319
+		#define FAPPCOMMAND_MASK  0xF000
+		#define GET_APPCOMMAND_LPARAM(lParam) ((short)(HIWORD(lParam) & ~FAPPCOMMAND_MASK))
+		#define APPCOMMAND_MEDIA_NEXTTRACK        11
+		#define APPCOMMAND_MEDIA_PREVIOUSTRACK    12
+		#define APPCOMMAND_MEDIA_STOP             13
+		#define APPCOMMAND_MEDIA_PLAY_PAUSE       14
+	#endif //WM_APPCOMMAND
+
+	long MusikFrame::MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam)
 	{
-		wxCommandEvent cev;
-		switch(GET_APPCOMMAND_LPARAM(lParam))
+		if(message == WM_APPCOMMAND)
 		{
-		case APPCOMMAND_MEDIA_NEXTTRACK:
-			if(g_NowPlayingCtrl)
-				g_NowPlayingCtrl->PlayerNext(cev);
-			return 1;
-		case APPCOMMAND_MEDIA_PREVIOUSTRACK:
-			if(g_NowPlayingCtrl)
-				g_NowPlayingCtrl->PlayerPrev(cev);
-			return 1;
-		case APPCOMMAND_MEDIA_STOP:
-			if(g_NowPlayingCtrl)
-				g_NowPlayingCtrl->PlayerStop(cev);
-			return 1;
-		case APPCOMMAND_MEDIA_PLAY_PAUSE:
-			if(g_NowPlayingCtrl)
-				g_NowPlayingCtrl->PlayerPlayPause(cev);
-			return 1;		
+			wxCommandEvent cev;
+			switch( GET_APPCOMMAND_LPARAM( lParam ) )
+			{
+			case APPCOMMAND_MEDIA_NEXTTRACK:
+				if( g_Player.IsPlaying() )
+					g_NowPlayingCtrl->PlayerNext( cev );
+				return 1;
+			case APPCOMMAND_MEDIA_PREVIOUSTRACK:
+				if( g_Player.IsPlaying() )
+					g_NowPlayingCtrl->PlayerPrev( cev );
+				return 1;
+			case APPCOMMAND_MEDIA_STOP:
+				if( g_Player.IsPlaying() )
+					g_NowPlayingCtrl->PlayerStop( cev );
+				return 1;
+			case APPCOMMAND_MEDIA_PLAY_PAUSE:
+				if( g_Player.IsPaused() )
+					g_NowPlayingCtrl->PlayerPlayPause( cev );
+				return 1;		
+			}
 		}
-	}
-	return wxFrame::MSWWindowProc(message,wParam,lParam);
-}
+		return wxFrame::MSWWindowProc(message,wParam,lParam);
+	}	
 #endif

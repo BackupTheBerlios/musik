@@ -39,6 +39,7 @@ public:
 	void OnIconize					( wxIconizeEvent&	WXUNUSED(event) );
 	void OnSize						( wxCommandEvent&	WXUNUSED(event) );
 	void OnClose					( wxCloseEvent&		WXUNUSED(event) );
+	void OnCloseEvt					( wxCommandEvent&	WXUNUSED(event) );
 
 	void OnSetupPaths				( wxCommandEvent&	WXUNUSED(event) );
 	void OnPreferences				( wxCommandEvent&	event			);
