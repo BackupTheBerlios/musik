@@ -1209,9 +1209,22 @@ bool CMusikLibrary::RenameFile( CMusikSong* song, bool bClearCheck )
 	{
 		wxString sCur = aPaths.Item( i );
 		sCur.Trim( false ); sCur.Trim( true );
-		sFinalPath += sCur;
-		if ( !wxDirExists( sFinalPath ) )
-			wxMkdir( sFinalPath );
+
+		//---------------------------------------------//
+		//--- don't use a period "." for directory	---//
+		//--- names in windows unless you want a	---//
+		//--- headache								---//
+		//---------------------------------------------//
+		#ifdef __WXMSW__
+				sCur.Replace( wxT( "." ), wxT( "" ) );
+		#endif
+
+		if ( !sCur.IsEmpty() )
+		{
+			sFinalPath += sCur;
+			if ( !wxDirExists( sFinalPath ) )
+				wxMkdir( sFinalPath );
+		}
 	}
 	sFile = aPaths.Item( aPaths.GetCount() - 1 );
 	sFile.Trim( false ); sFile.Trim( true );
