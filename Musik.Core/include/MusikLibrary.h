@@ -60,11 +60,13 @@ public:
 	//-----------------------------------------------------//
 	//--- functions used to get fields and field types. ---//
 	//-----------------------------------------------------//
-	CStdStringArray*	GetSongFields	( )			{ return &m_Fields; }
-	CStdStringArray*	GetSongFieldsDB	( )			{ return &m_FieldsDB; }
-	const CStdString	GetSongField	( int n )	{ return m_Fields.at( n ); }
-	const CStdString	GetSongFieldDB	( int n )	{ return m_FieldsDB.at( n ); }
-	int					GetSongFieldCnt	( )			{ return MUSIK_LIBRARY_FIELD_COUNT; }
+	CStdStringArray*	GetSongFields	( )					{ return &m_Fields; }
+	CStdStringArray*	GetSongFieldsDB	( )					{ return &m_FieldsDB; }
+	const CStdString	GetSongField	( int n )			{ return m_Fields.at( n ); }
+	const CStdString	GetSongFieldDB	( int n )			{ return m_FieldsDB.at( n ); }
+	int					GetSongFieldCnt	( )					{ return MUSIK_LIBRARY_FIELD_COUNT; }
+	int					GetSongFieldID	( CStdString field );
+	int					GetSongFieldDBID( CStdString field );
 
 	//-----------------------------------------------------//
 	//--- for querying the database.					---//

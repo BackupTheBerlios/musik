@@ -130,6 +130,27 @@ void CMusikLibrary::InitFields()
 	m_FieldsDB.push_back( _T( "filename" ) );
 }
 
+int CMusikLibrary::GetSongFieldID( CStdString field )
+{
+	for ( size_t i = 0; i < m_Fields.size(); i++ )
+	{
+		if ( field == m_Fields.at( i ) )
+			return i;
+	}
+	return -1;
+}
+
+int CMusikLibrary::GetSongFieldDBID( CStdString field )
+{
+	for ( size_t i = 0; i < m_FieldsDB.size(); i++ )
+	{
+		if ( field == m_FieldsDB.at( i ) )
+			return i;
+	}
+	return -1;
+}
+
+
 bool CMusikLibrary::Startup()
 {
  	//-----------------------------------------------------//
