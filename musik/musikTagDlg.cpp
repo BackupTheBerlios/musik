@@ -162,6 +162,8 @@ void CmusikTagDlg::UpdateDlg()
 	ptrCurr = (CStatic*)GetDlgItem( IDC_APPLY );
 	ptrCurr->EnableWindow( FALSE );
 
+	SelectFocused();
+
 	m_Updating = false;
 	m_Modified = false;
 }
@@ -211,6 +213,7 @@ void CmusikTagDlg::SaveCurr()
 		ptrCurr->EnableWindow( FALSE );
 
 		// save it
+		m_Song.SetDirtyFlag( _T( "1" ) );
 		m_Library->SetSongInfo( &m_Song );
 
 		// send a message to update the playlist ctrl
@@ -377,6 +380,33 @@ void CmusikTagDlg::OnChangeField()
 void CmusikTagDlg::OnBnClickedApply()
 {
 	SaveCurr();
+}
+
+///////////////////////////////////////////////////
+
+void CmusikTagDlg::SelectFocused()
+{
+	CWnd* focus = GetFocus();
+	CEdit* editTemp = NULL;
+
+	// edit fields first
+	if ( focus == (CWnd*)GetDlgItem( IDC_TITLE ) )
+		editTemp = (CEdit*)GetDlgItem( IDC_TITLE );
+	if ( focus == (CWnd*)GetDlgItem( IDC_ARTIST ) )
+		editTemp = (CEdit*)GetDlgItem( IDC_ARTIST );
+	if ( focus == (CWnd*)GetDlgItem( IDC_ALBUM ) )
+		editTemp = (CEdit*)GetDlgItem( IDC_ALBUM );
+	if ( focus == (CWnd*)GetDlgItem( IDC_TRACK ) )
+		editTemp = (CEdit*)GetDlgItem( IDC_TRACK );
+	if ( focus == (CWnd*)GetDlgItem( IDC_YEAR ) )
+		editTemp = (CEdit*)GetDlgItem( IDC_YEAR );
+
+	if ( editTemp )
+	{
+		CString temp;
+		editTemp->GetWindowText( temp );
+		editTemp->SetSel( 0, temp.GetLength() );
+	}
 }
 
 ///////////////////////////////////////////////////

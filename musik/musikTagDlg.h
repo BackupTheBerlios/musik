@@ -85,6 +85,8 @@ protected:
 	void OnEnter();
 	void OnShiftEnter();
 
+	void SelectFocused();
+
 	bool m_Modified;
 	bool m_Updating;
 
@@ -99,8 +101,6 @@ protected:
 	// macros
 	DECLARE_DYNAMIC(CmusikTagDlg)
 	DECLARE_MESSAGE_MAP()
-
-public:
 
 };
 
