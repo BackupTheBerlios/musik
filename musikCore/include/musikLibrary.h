@@ -200,8 +200,10 @@ public:
 	bool SetSongEqualizer			( int songid, int eq_id );
 
 	// standard playlist
-	int  CreateStdPlaylist			( const CmusikString& name, const CmusikStringArray& files );
-	int  AppendStdPlaylist			( int id, const CmusikStringArray& files );
+	int  CreateStdPlaylist			( const CmusikString& name, const CmusikStringArray& files, bool add_to_library = true );
+	int  CreateStdPlaylist			( const CmusikString& name, CmusikPlaylist& files );
+	int  AppendStdPlaylist			( int id, const CmusikStringArray& files, bool add_to_library = true );
+	int  AppendStdPlaylist			( int id, CmusikPlaylist& playlist );
 	int  RenameStdPlaylist			( int id, const CmusikString& str );
 	int  DeleteStdPlaylist			( const CmusikString& name );
 	int  RewriteStdPlaylist			( int id, CmusikPlaylist* playlist );

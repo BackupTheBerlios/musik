@@ -869,7 +869,7 @@ int CmusikLibrary::DeleteCrossfader( int id )
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::CreateStdPlaylist( const CmusikString& name, const CmusikStringArray& songids )
+int CmusikLibrary::CreateStdPlaylist( const CmusikString& name, const CmusikStringArray& songids, bool add_to_library )
 {
 	if ( !m_DatabaseOpen )
 		return -1;
@@ -888,7 +888,7 @@ int CmusikLibrary::CreateStdPlaylist( const CmusikString& name, const CmusikStri
 	}
 
 	if ( nRet != SQLITE_OK )
-		return nRet;
+		return -1;
 
 	// get the ID of the newly created entry
 	{
@@ -902,7 +902,7 @@ int CmusikLibrary::CreateStdPlaylist( const CmusikString& name, const CmusikStri
 	}
 
 	if ( nRet != SQLITE_OK )
-		return nRet;
+		return -1;
 
 	// insert songs into playlist
 	if ( nID >= 0 )
@@ -910,7 +910,8 @@ int CmusikLibrary::CreateStdPlaylist( const CmusikString& name, const CmusikStri
 		BeginTransaction();
 		for ( size_t i = 0; i < songids.size(); i++ )
 		{
-			AddSong( songids.at( i ) );
+			if ( add_to_library )
+				AddSong( songids.at( i ) );
 
 			ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 			{
@@ -931,12 +932,77 @@ int CmusikLibrary::CreateStdPlaylist( const CmusikString& name, const CmusikStri
 		EndTransaction();
 	}	
 
-	return nRet;
+	return nID;
 }
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::AppendStdPlaylist( int id, const CmusikStringArray& files )
+int CmusikLibrary::CreateStdPlaylist( const CmusikString& name, CmusikPlaylist& playlist )
+{
+	if ( !m_DatabaseOpen )
+		return -1;
+
+	int nID, nRet;
+
+	// lock it up
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
+	{
+		// insert the new playlist name
+		nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %Q );", 
+			NULL, NULL, NULL, 
+			STD_PLAYLIST_TABLE_NAME,
+			NULL,
+			name.c_str() );
+	}
+
+	if ( nRet != SQLITE_OK )
+		return -1;
+
+	// get the ID of the newly created entry
+	{
+		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
+		{
+			nRet = sqlite_exec_printf( m_pDB, "SELECT std_playlist_id FROM %Q WHERE std_playlist_name = %Q;", 
+				&sqlite_GetIntFromRow, &nID, NULL,
+				STD_PLAYLIST_TABLE_NAME,
+				name.c_str() );
+		}
+	}
+
+	if ( nRet != SQLITE_OK )
+		return -1;
+
+	// insert songs into playlist
+	if ( nID >= 0 )
+	{
+		BeginTransaction();
+		for ( size_t i = 0; i < playlist.GetCount(); i++ )
+		{
+			ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
+			{
+				nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %d, %d );",
+					NULL, NULL, NULL, 
+					STD_PLAYLIST_SONGS,
+					NULL,
+					nID,
+					playlist.GetSongID( i ) );
+			}
+
+			if ( nRet != SQLITE_OK )
+			{
+				EndTransaction();
+				return nRet;
+			}
+		}
+		EndTransaction();
+	}	
+
+	return nID;
+}
+
+///////////////////////////////////////////////////
+
+int CmusikLibrary::AppendStdPlaylist( int id, const CmusikStringArray& files, bool add_to_library )
 {
 	if ( !m_DatabaseOpen ) 
 		return -1;
@@ -952,6 +1018,8 @@ int CmusikLibrary::AppendStdPlaylist( int id, const CmusikStringArray& files )
 
 			ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 			{
+				if ( add_to_library )
+					AddSong( files.at( i ) );
 
 				nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %d, %d );",
 				NULL, NULL, NULL, 
@@ -959,6 +1027,44 @@ int CmusikLibrary::AppendStdPlaylist( int id, const CmusikStringArray& files )
 				NULL,
 				id,
 				GetIDFromFilename( files.at( i ) ) );
+			}
+
+			if ( nRet != SQLITE_OK )
+			{
+				EndTransaction();
+				return nRet;
+			}
+		}
+		EndTransaction();
+	}
+	else
+		return SQLITE_ERROR;
+
+	return nRet;
+}
+
+///////////////////////////////////////////////////
+
+int CmusikLibrary::AppendStdPlaylist( int id, CmusikPlaylist& playlist )
+{
+	if ( !m_DatabaseOpen ) 
+		return -1;
+
+	int nRet;
+
+	if ( id >= 0 )
+	{
+		BeginTransaction();	
+		for ( size_t i = 0; i < playlist.GetCount(); i++ )
+		{
+			ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
+			{
+				nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %d, %d );",
+				NULL, NULL, NULL, 
+				STD_PLAYLIST_SONGS,
+				NULL,
+				id,
+				playlist.GetSongID( i ) );
 			}
 
 			if ( nRet != SQLITE_OK )
