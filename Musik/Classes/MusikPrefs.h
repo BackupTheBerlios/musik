@@ -41,6 +41,7 @@ public:
 	int nSndBuffer;
 
 	int nSndVolume;
+	int nUseEQ;
 
 	int nActBox1;
 	int nActBox2;

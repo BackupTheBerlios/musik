@@ -27,6 +27,23 @@
 #include <wx/arrimpl.cpp>
 WX_DEFINE_OBJARRAY( CMusikStreamArray );
 
+void *dspcallback(void *originalbuffer, void *newbuffer, int length, int param)
+{
+    int                count;
+    signed short      *stereo16bitbuffer = (signed short *)newbuffer;
+
+    for (count=0; count<length; count++)        // >>2 = 16bit stereo (4 bytes per sample)
+    {
+        *stereo16bitbuffer = 0;
+        *(stereo16bitbuffer+1) = 0;
+        
+        stereo16bitbuffer+=2;
+    }
+
+    return newbuffer;
+}
+
+
 BEGIN_EVENT_TABLE( CMusikPlayer, wxEvtHandler )
 	//---------------------------------------------------------//
 	//--- threading events.. we use EVT_MENU becuase its	---//
@@ -50,6 +67,7 @@ CMusikPlayer::CMusikPlayer()
 	m_Channels		= -1;
 	m_Playmode		= MUSIK_PLAYMODE_NORMAL;
 	m_CrossfadeType	= 0;
+	m_DSP			= NULL;
 
 	//--- initialize random playback ---//
 	m_RandomSeed = wxGetLocalTime();
@@ -183,6 +201,16 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 		FSOUND_Stream_SetBufferSize( g_Prefs.nSndBuffer );
 		FSOUND_STREAM* pNewStream = FSOUND_Stream_OpenFile( ( const char* )ConvFNToFieldMB( m_CurrentFile ), FSOUND_2D, 0 );
 
+		if ( !m_DSP )
+		{
+			m_DSP = FSOUND_DSP_Create( &dspcallback, FSOUND_DSP_DEFAULTPRIORITY_USER, 0 );			
+		}
+
+		if ( m_DSP )
+		{
+			FSOUND_DSP_SetActive( m_DSP, g_Prefs.nUseEQ );
+		}
+
 		//---------------------------------------------//
 		//--- set the crossfade type...				---//
 		//---------------------------------------------//
@@ -292,6 +320,7 @@ void CMusikPlayer::Stop()
 
 	m_Playing = false;
 
+
 	int nStreamCount = g_ActiveStreams.GetCount();
 	for ( int i = 0; i < nStreamCount; i++ )
 	{
@@ -300,6 +329,12 @@ void CMusikPlayer::Stop()
 	}
 	g_ActiveStreams.Clear();
 	g_ActiveChannels.Clear();
+
+	if ( m_DSP )
+	{
+		FSOUND_DSP_Free( m_DSP );
+		m_DSP = NULL;
+	}
 
 	m_SongIndex	= 0;
 	m_LastSong	= 0;

@@ -36,6 +36,7 @@ void CMusikPrefs::LoadPrefs()
 	config->Read( wxT( "SoundDevice" ),								&nSndDevice,			0						);
 	config->Read( wxT( "PlaybackRate" ),							&nSndRate,				44100					);
 	config->Read( wxT( "SoundVolume" ),								&nSndVolume,			200						);
+	config->Read( wxT( "UseEQ" ),									&nUseEQ,				0						);
 	config->Read( wxT( "SoundBufferMilliseconds" ),					&nSndBuffer,			1000					);
 	config->Read( wxT( "ActivityBox1" ),							&nActBox1,				1						);
 	config->Read( wxT( "ActivityBox2" ),							&nActBox2,				2						);
@@ -117,6 +118,7 @@ void CMusikPrefs::SavePrefs()
 	config->Write( wxT( "SoundDevice" ),							nSndDevice				);
 	config->Write( wxT( "PlaybackRate" ),							nSndRate				);
 	config->Write( wxT( "SoundVolume" ),							nSndVolume				);
+	config->Write( wxT( "UseEQ" ),									nUseEQ					);
 	config->Write( wxT( "SoundBufferMilliseconds" ),				nSndBuffer				);
 	config->Write( wxT( "ActivityBox1" ),							nActBox1				);
 	config->Write( wxT( "ActivityBox2" ),							nActBox2				);
