@@ -254,8 +254,16 @@ static void musikPlayerWorker( CmusikThread* thread )
 						if ( !eq_updated )
 						{
 							if ( ( nChildCount > 0 && ( i == ( nFadeCount / 2 ) ) ) || ( nChildCount == 0 && i == 0 ) )
-							{							
-								player->UpdateEqualizer();
+							{		
+								if ( nFadeType == MUSIK_CROSSFADER_NEW_SONG )
+								{
+									if ( player->GetFunctor() )
+										player->GetFunctor()->OnNewSong();
+								}
+
+								if ( player->IsEqualizerActive() )
+									player->UpdateEqualizer();
+
 								eq_updated = true;
 							}
 						}
@@ -268,7 +276,7 @@ static void musikPlayerWorker( CmusikThread* thread )
 							for ( size_t i = 0; i < nChildCount; i++ )
 							{
 								ftemp = (float)player->GetVolume( player->GetChannelID( i ) ) / fFadeCount;
-								ntemp = round( ftemp );
+								ntemp = (int)round( ftemp );
 
 								if ( ntemp < 1 )	
 									ntemp = 1;
@@ -738,7 +746,7 @@ bool CmusikPlayer::Play( int index, int fade_type, int start_pos )
 		// crossfade completes
 		if ( IsEqualizerActive() )
 		{
-			m_EQ->GetSongEq( m_Playlist->GetSongID( index ) );
+			m_EQ->SetNewSong( m_Playlist->GetSongID( index ) );
 			m_Functor->OnNewSong();
 		}
 
@@ -1169,11 +1177,6 @@ int CmusikPlayer::GetTimeRemain( int mode )
 
 void CmusikPlayer::FinalizeNewSong()
 {
-	// call the functor. this is sort of like
-	// a callback, but a bit easier.
-	if ( m_Functor )
-		m_Functor->OnNewSong();
-
 	SetVolume( m_Volume, true );
 	CleanOldStreams();
 }
@@ -1391,7 +1394,7 @@ void CmusikPlayer::UpdateEqualizer()
 {
 	if ( IsEqualizerActive() && IsEqualizerEnabled() )
 	{
-		GetEqualizer()->GetSongEq( GetPlaylist()->GetSongID( GetIndex() ) );
+		GetEqualizer()->SetNewSong( GetPlaylist()->GetSongID( GetIndex() ) );
 		GetEqualizer()->UpdateTable();						
 	}
 }

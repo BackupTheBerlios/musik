@@ -149,6 +149,9 @@ public:
 	// currently playing song
 	CmusikSongInfo* GetCurrPlaying(){ return &m_CurrSong; }
 
+	// functor
+	CmusikFunctor* GetFunctor(){ return m_Functor; }
+
 	// sets various attributes
 	void SetPlaylist( CmusikPlaylist* playlist );
 	void SetLibrary( CmusikLibrary* library );

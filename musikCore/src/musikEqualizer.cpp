@@ -130,7 +130,7 @@ void CmusikEqualizer::ProcessDSP( void* buffer, int length, int channels, int bi
 
 ///////////////////////////////////////////////////
 
-void CmusikEqualizer::GetSongEq( int songid )
+void CmusikEqualizer::SetNewSong( int songid )
 {
 	// save the old equalizer if it has been
 	// flagged as modified...
@@ -153,26 +153,25 @@ void CmusikEqualizer::GetSongEq( int songid )
 		}
 	}
 
+	// set the new one
+	m_SongID = songid;
+
 	// load the current equalizer
 	if ( m_Library )
 	{
-		int nID = m_Library->GetEqualizerIDFromSongID( songid );
+		int nEqualizerID = m_Library->GetEqualizerIDFromSongID( m_SongID );
 
-		if ( nID > -1 )
+		if ( nEqualizerID > -1 )
 		{
 			CmusikEQSettings eq;
-			m_Library->GetEqualizer( nID, &eq );
+			m_Library->GetEqualizer( nEqualizerID, &eq );
 
 			m_EQ_Values.Set( MUSIK_EQ_SETTINGS_LEFT_BAND, eq.m_Left );
 			m_EQ_Values.Set( MUSIK_EQ_SETTINGS_RIGHT_BAND, eq.m_Right );
 		}
 		else
-		{
 			m_Library->GetDefaultEqualizer( &m_EQ_Values );
-		}
 	}
-
-	m_SongID = songid;
 }
 
 ///////////////////////////////////////////////////

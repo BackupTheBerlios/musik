@@ -163,11 +163,16 @@ static int sqlite_GetEqualizer( void *args, int numCols, char **results, char **
 	p->m_Right[16]		= (float)atof( results[34] );
 	p->m_Right[17]		= (float)atof( results[35] );
 
-	if ( numCols > 36 )
+	TRACE0 ( results[37] );
+	TRACE0 ( results[36] );
+
+	/*
+	if ( numCols > 35 )
 	{
 		p->m_Name = results[36];
 		p->m_ID	= atoi( results[37] );
 	}
+	*/
 
 	return 0;
 }
@@ -1525,7 +1530,7 @@ int CmusikLibrary::GetRelatedSongs( CStdString sub_query, int source_type, Cmusi
 	// do it
 	m_ProtectingLibrary->acquire();
 
-	int nRet = sqlite_exec_printf(m_pDB, "SELECT DISTINCT songid FROM %Q WHERE %s %q", 
+	int nRet = sqlite_exec_printf(m_pDB, "SELECT DISTINCT songid FROM %Q WHERE %s %q;", 
 		&sqlite_AddSongToPlaylist, &target, NULL,
 		SONG_TABLE_NAME,
 		sub_query.c_str(),
@@ -2308,11 +2313,10 @@ int CmusikLibrary::GetDefaultEqualizer( CmusikEQSettings* target )
 
 	m_ProtectingLibrary->acquire();
 
-	int nRet = sqlite_exec_printf( m_pDB, "SELECT"
-								" hz55_left,  hz77_left,  hz110_left,  hz156_left,  hz220_left,  hz311_left,  hz440_left,  hz622_left,  hz880_left,  hz1244_left,  hz1760_left,  hz2489_left,  hz3520_left,  hz4978_left,  hz7040_left,  hz9956_left,  hz14080_left, hz19912_left,"
+	int nRet = sqlite_exec_printf( m_pDB, "SELECT hz55_left, hz77_left, hz110_left, hz156_left, hz220_left, hz311_left, hz440_left, hz622_left, hz880_left, hz1244_left, hz1760_left, hz2489_left, hz3520_left, hz4978_left, hz7040_left, hz9956_left, hz14080_left, hz19912_left,"
 								" hz55_right, hz77_right, hz110_right, hz156_right, hz220_right, hz311_right, hz440_right, hz622_right, hz880_right, hz1244_right, hz1760_right, hz2489_right, hz3520_right, hz4978_right, hz7040_right, hz9956_right, hz14080_right, hz19912_right"
 								" FROM %Q WHERE equalizer_id = -1;", 
-								&sqlite_GetEqualizer, &target, NULL, 
+								&sqlite_GetEqualizer, target, NULL, 
 								EQUALIZER_DEFAULT );
 	
 	m_ProtectingLibrary->release();
@@ -2351,7 +2355,7 @@ int CmusikLibrary::GetEqualizer( int eq_id, CmusikEQSettings* target )
 	int nRet = sqlite_exec_printf( m_pDB, "SELECT hz55_left, hz77_left, hz110_left, hz156_left, hz220_left, hz311_left, hz440_left, hz622_left, hz880_left, hz1244_left, hz1760_left, hz2489_left, hz3520_left, hz4978_left, hz7040_left, hz9956_left, hz14080_left, hz19912_left,"
 								" hz55_right, hz77_right, hz110_right, hz156_right, hz220_right, hz311_right, hz440_right, hz622_right, hz880_right, hz1244_right, hz1760_right, hz2489_right, hz3520_right, hz4978_right, hz7040_right, hz9956_right, hz14080_right, hz19912_right, equalizer_name, equalizer_id"
 								" FROM %Q WHERE equalizer_id = %d;", 
-								&sqlite_GetEqualizer, &target, NULL, 
+								&sqlite_GetEqualizer, target, NULL, 
 								EQUALIZER_PRESET,
 								eq_id );
 	

@@ -62,7 +62,7 @@ public:
 	CmusikEQSettings m_EQ_Values;
 	bool m_EQ_Values_Modified;
 
-	void GetSongEq( int songid );
+	void SetNewSong( int songid );
 	void SetLibrary( CmusikLibrary* library );
 
 	void UpdateTable();
