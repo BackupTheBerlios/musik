@@ -46,6 +46,14 @@
 //   Use the Set() and Get() functions to store and retrieve
 //   information.
 //
+// Notes:
+//
+//   FROM 		%Q
+//   INTO 		%Q 
+//   str =		%Q
+//   DISTINCT 	%q
+//   UPPER		%q
+//
 ///////////////////////////////////////////////////
 
 #include "stdafx.h"
@@ -1387,7 +1395,7 @@ int CmusikLibrary::GetRelatedItems( int source_type, const CStdStringArray& sour
 
 	// construct the query
 	CStdString query;
-	query.Format( "SELECT DISTINCT %s,UPPER(%s) AS UP FROM %s where ", 
+	query.Format( "SELECT DISTINCT %s, UPPER( %s ) AS UP FROM %s where ", 
 		sOutType.c_str(), 
 		sOutType.c_str(), 
 		SONG_TABLE_NAME );
