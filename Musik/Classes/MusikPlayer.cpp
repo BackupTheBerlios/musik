@@ -79,17 +79,21 @@ CMusikPlayer::~CMusikPlayer()
 	//---------------------------------------------------------//
 }
 
-void CMusikPlayer::Shutdown()
+void CMusikPlayer::Shutdown( bool bClose )
 {
-	Stop( true, true );
-	FSOUND_Close();
+	if ( bClose )
+		Stop( true, true );
+	else
+		Stop();
+
 	g_FX.EndEQ();
+	FSOUND_Close();
 }
 
 int CMusikPlayer::InitializeFMOD( int nFunction, int nSndOutput, int nSndDevice, int nSndRate )
 {
 	if ( ( nFunction == FMOD_INIT_RESTART ) || ( nFunction == FMOD_INIT_STOP ) )
-		Shutdown();
+		Shutdown( false );
 
 	g_FX.InitEQ();
 	g_FX.SetFrequency( 44100 );
@@ -312,9 +316,17 @@ void CMusikPlayer::UpdateUI()
 	g_NowPlayingCtrl->UpdateInfo	( m_CurrentFile );
 }
 
-void CMusikPlayer::ClearOldStreams()
+void CMusikPlayer::ClearOldStreams( bool bClearAll )
 {
-	int nStreamCount = g_ActiveStreams.GetCount() - 1;
+	int nStreamCount = g_ActiveStreams.GetCount();
+
+	//-------------------------------------------------//
+	//--- if we aren't clearing all streams, keep	---//
+	//--- the primary one going.					---//
+	//-------------------------------------------------//
+	if ( !bClearAll )
+		nStreamCount--;
+
 	for ( int i = 0; i < nStreamCount; i++ )
 	{
 		FSOUND_Stream_Stop	( g_ActiveStreams.Item( 0 ) );

@@ -85,8 +85,8 @@ public:
 	//--- sound system ---//
 	//--------------------//
 	int	 InitializeFMOD		( int nFunction, int nSndOutput, int nSndDevice, int nSndRate );
-	void Shutdown			( );
-	void ClearOldStreams	( );
+	void Shutdown			( bool bClose = true );
+	void ClearOldStreams	( bool bClearAll = false );
 	void SetFrequency		( );
 	void InitDSP			( );
 	void ActivateDSP		( );

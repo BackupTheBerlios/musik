@@ -68,14 +68,14 @@ void equ_init(int wb)
 {
   int i,j;
 
-  if (lires1 != NULL)   free(lires1);
-  if (lires2 != NULL)   free(lires2);
-  if (rires1 != NULL)   free(rires1);
-  if (rires2 != NULL)   free(rires2);
-  if (irest != NULL)    free(irest);
+  if (lires1 != NULL) free(lires1);
+  if (lires2 != NULL) free(lires2);
+  if (rires1 != NULL) free(rires1);
+  if (rires2 != NULL) free(rires2);
+  if (irest != NULL) free(irest);
   if (fsamples != NULL) free(fsamples);
-  if (inbuf != NULL)    free(inbuf);
-  if (outbuf != NULL)   free(outbuf);
+  if (inbuf != NULL) free(inbuf);
+  if (outbuf != NULL) free(outbuf);
   if (ditherbuf != NULL) free(ditherbuf);
 
   winlen = (1 << (wb-1))-1;
@@ -293,14 +293,15 @@ void equ_quit(void)
   free(outbuf);
   free(ditherbuf);
 
-  lires1   = NULL;
-  lires2   = NULL;
-  rires1   = NULL;
-  rires2   = NULL;
-  irest    = NULL;
-  fsamples = NULL;
-  inbuf    = NULL;
-  outbuf   = NULL;
+  lires1	= NULL;
+  lires2	= NULL;
+  rires1	= NULL;
+  rires2	= NULL;
+  irest		= NULL;
+  fsamples	= NULL;
+  inbuf		= NULL;
+  outbuf	= NULL;
+  ditherbuf	= NULL;
 
   rfft(0,0,NULL);
 }
