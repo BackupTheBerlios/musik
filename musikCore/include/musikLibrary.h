@@ -296,7 +296,7 @@ private:
 	// internal song query functions
 	int				QuerySongs		( const CmusikString & query, CmusikPlaylist & target );
 	int				RawQuerySongs	( const CmusikString & query, CmusikPlaylist & target );
-	CmusikString	GetOrder		( int type, bool terminate = true, bool by_upper = false );
+	CmusikString	GetOrder		( int type, bool terminate = true, bool by_upper = false, bool descend = false );
 	int				QueryCount		( const char* pQueryResult );
 	void			VerifyYearList	( CmusikStringArray & list );
 };

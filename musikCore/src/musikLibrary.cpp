@@ -1483,72 +1483,172 @@ int CmusikLibrary::DeleteDynPlaylist( int id )
 
 ///////////////////////////////////////////////////
 
-CmusikString CmusikLibrary::GetOrder( int type, bool terminate, bool by_upper )
+CmusikString CmusikLibrary::GetOrder( int type, bool terminate, bool by_upper, bool descend )
 {
 	CmusikString sTerminate = "";
 	if ( terminate )
 		sTerminate = ";";
+
+	CmusikString sDescend;
+	if ( descend )
+		sDescend = " desc";
+	else
+		sDescend = " asc";
 
 	if ( !by_upper )
 	{
 		switch( type )
 		{
 		case MUSIK_LIBRARY_TYPE_ARTIST:
-			sTerminate.Format( "ORDER BY artist,album,tracknum,title%s", sTerminate.c_str() );
+			sTerminate.Format( "ORDER BY artist%s,album%s,tracknum%s,title%s%s", 
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sTerminate.c_str() );
 			return sTerminate;
 			break;
+
 		case MUSIK_LIBRARY_TYPE_ALBUM:
-			sTerminate.Format( "ORDER BY album,tracknum,artist,title%s", sTerminate.c_str() );
+			sTerminate.Format( "ORDER BY album%s,tracknum%s,artist%s,title%s%s", 
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sTerminate.c_str() );
 			return sTerminate;
 			break;
+
 		case MUSIK_LIBRARY_TYPE_YEAR:
-			sTerminate.Format( "ORDER BY year,artist,album,tracknum,title%s", sTerminate.c_str() );
+			sTerminate.Format( "ORDER BY year%s,artist%s,album%s,tracknum%s,title%s%s",
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sTerminate.c_str() );
 			return sTerminate;
 			break;
+
 		case MUSIK_LIBRARY_TYPE_GENRE:
-			sTerminate.Format( "ORDER BY genre,artist,album,tracknum,title%s", sTerminate.c_str() );
+			sTerminate.Format( "ORDER BY genre%s,artist%s,album%s,tracknum%s,title%s%s",
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sTerminate.c_str() );
 			return sTerminate;
 			break;
+
 		case MUSIK_LIBRARY_TYPE_TITLE:
-			sTerminate.Format( "ORDER BY title,artist,album,tracknum%s", sTerminate.c_str() );
+			sTerminate.Format( "ORDER BY title%s,artist%s,album%s,tracknum%s%s", 
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sTerminate.c_str() );
 			return sTerminate;
 			break;
+
 		case MUSIK_LIBRARY_TYPE_TRACKNUM:
-			sTerminate.Format( "ORDER BY tracknum,artist,album,title%s", sTerminate.c_str() );
+			sTerminate.Format( "ORDER BY tracknum%s,artist%s,album%s,title%s%s", 
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sTerminate.c_str() );
 			return sTerminate;
 			break;
+
 		case MUSIK_LIBRARY_TYPE_TIMEADDED:
-			sTerminate.Format( "ORDER BY timeadded,artist,album,tracknum,title%s", sTerminate.c_str() );
+			sTerminate.Format( "ORDER BY timeadded%s,artist%s,album%s,tracknum%s,title%s%s", 
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sTerminate.c_str() );
 			return sTerminate;
 			break;
+
 		case MUSIK_LIBRARY_TYPE_LASTPLAYED:
-			sTerminate.Format( "ORDER BY lastplayed,artist,album,tracknum,title%s", sTerminate.c_str() );
+			sTerminate.Format( "ORDER BY lastplayed%s,artist%s,album%s,tracknum%s,title%s%s", 
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sTerminate.c_str() );
 			return sTerminate;
 			break;
+
 		case MUSIK_LIBRARY_TYPE_FILESIZE:
-			sTerminate.Format( "ORDER BY filesize,artist,album,tracknum,title%s", sTerminate.c_str() );
+			sTerminate.Format( "ORDER BY filesize%s,artist%s,album%s,tracknum%s,title%s%s", 
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sTerminate.c_str() );
 			return sTerminate;
 			break;
+
 		case MUSIK_LIBRARY_TYPE_FORMAT:
-			sTerminate.Format( "ORDER BY format,artist,album,tracknum,title%s", sTerminate.c_str() );
+			sTerminate.Format( "ORDER BY format%s,artist%s,album%s,tracknum%s,title%s%s", 
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sTerminate.c_str() );
 			return sTerminate;
 			break;
+
 		case MUSIK_LIBRARY_TYPE_DURATION:
-			sTerminate.Format( "ORDER BY duration,artist,album,tracknum,title%s", sTerminate.c_str() );
+			sTerminate.Format( "ORDER BY duration%s,artist%s,album%s,tracknum%s,title%s%s", 
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sTerminate.c_str() );
 			return sTerminate;
 			break;
+
 		case MUSIK_LIBRARY_TYPE_RATING:
-			sTerminate.Format( "ORDER BY rating,artist,album,tracknum,title%s", sTerminate.c_str() );
+			sTerminate.Format( "ORDER BY rating%s,artist%s,album%s,tracknum%s,title%s%s", 
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sTerminate.c_str() );
 			return sTerminate;
 			break;
+
 		case MUSIK_LIBRARY_TYPE_TIMESPLAYED:
-			sTerminate.Format( "ORDER BY timesplayed,artist,album,tracknum,title%s", sTerminate.c_str() );
+			sTerminate.Format( "ORDER BY timesplayed%s,artist%s,album%s,tracknum%s,title%s%s", 
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sTerminate.c_str() );
 			return sTerminate;
 			break;
+
 		case MUSIK_LIBRARY_TYPE_BITRATE:
-			sTerminate.Format( "ORDER BY bitrate,artist,album,tracknum,title%s", sTerminate.c_str() );
+			sTerminate.Format( "ORDER BY bitrate%s,artist%s,album%s,tracknum%s,title%s%s", 
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sTerminate.c_str() );
 			return sTerminate;
 			break;
+
 		case MUSIK_LIBRARY_TYPE_FILENAME:
 			break;
 		}
@@ -1559,61 +1659,155 @@ CmusikString CmusikLibrary::GetOrder( int type, bool terminate, bool by_upper )
 		switch( type )
 		{
 		case MUSIK_LIBRARY_TYPE_ARTIST:
-			sTerminate.Format( "ORDER BY UPPER(artist),UPPER(album),tracknum,UPPER(title)%s", sTerminate.c_str() );
+			sTerminate.Format( "ORDER BY UPPER(artist)%s,UPPER(album)%s,tracknum%s,UPPER(title)%s%s", 
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sTerminate.c_str() );
 			return sTerminate;
 			break;
+
 		case MUSIK_LIBRARY_TYPE_ALBUM:
-			sTerminate.Format( "ORDER BY UPPER(album),tracknum,UPPER(artist),UPPER(title)%s", sTerminate.c_str() );
+			sTerminate.Format( "ORDER BY UPPER(album)%s,tracknum%s,UPPER(artist)%s,UPPER(title)%s%s", 
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sTerminate.c_str() );
 			return sTerminate;
 			break;
+
 		case MUSIK_LIBRARY_TYPE_YEAR:
-			sTerminate.Format( "ORDER BY year,UPPER(artist),UPPER(album),tracknum,UPPER(title)%s", sTerminate.c_str() );
+			sTerminate.Format( "ORDER BY year%s,UPPER(artist)%s,UPPER(album)%s,tracknum%s,UPPER(title)%s%s",
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sTerminate.c_str() );
 			return sTerminate;
 			break;
+
 		case MUSIK_LIBRARY_TYPE_GENRE:
-			sTerminate.Format( "ORDER BY UPPER(genre),UPPER(artist),UPPER(album),tracknum,UPPER(title)%s", sTerminate.c_str() );
+			sTerminate.Format( "ORDER BY UPPER(genre)%s,UPPER(artist)%s,UPPER(album)%s,tracknum%s,UPPER(title)%s%s",
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sTerminate.c_str() );
 			return sTerminate;
 			break;
+
 		case MUSIK_LIBRARY_TYPE_TITLE:
-			sTerminate.Format( "ORDER BY UPPER(title),UPPER(artist),UPPER(album),tracknum%s", sTerminate.c_str() );
+			sTerminate.Format( "ORDER BY UPPER(title)%s,UPPER(artist)%s,UPPER(album)%s,tracknum%s%s", 
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sTerminate.c_str() );
 			return sTerminate;
 			break;
+
 		case MUSIK_LIBRARY_TYPE_TRACKNUM:
-			sTerminate.Format( "ORDER BY tracknum,UPPER(artist),UPPER(album),UPPER(title)%s", sTerminate.c_str() );
+			sTerminate.Format( "ORDER BY tracknum%s,UPPER(artist)%s,UPPER(album)%s,UPPER(title)%s%s", 
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sTerminate.c_str() );
 			return sTerminate;
 			break;
+
 		case MUSIK_LIBRARY_TYPE_TIMEADDED:
-			sTerminate.Format( "ORDER BY timeadded,UPPER(artist),UPPER(album),tracknum,UPPER(title)%s", sTerminate.c_str() );
+			sTerminate.Format( "ORDER BY timeadded%s,UPPER(artist)%s,UPPER(album)%s,tracknum%s,UPPER(title)%s%s", 
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sTerminate.c_str() );
 			return sTerminate;
 			break;
+
 		case MUSIK_LIBRARY_TYPE_LASTPLAYED:
-			sTerminate.Format( "ORDER BY lastplayed,UPPER(artist),UPPER(album),tracknum,UPPER(title)%s", sTerminate.c_str() );
+			sTerminate.Format( "ORDER BY lastplayed%s,UPPER(artist)%s,UPPER(album)%s,tracknum%s,UPPER(title)%s%s", 
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sTerminate.c_str() );
 			return sTerminate;
 			break;
+
 		case MUSIK_LIBRARY_TYPE_FILESIZE:
-			sTerminate.Format( "ORDER BY filesize,UPPER(artist),UPPER(album),tracknum,UPPER(title)%s", sTerminate.c_str() );
+			sTerminate.Format( "ORDER BY filesize%s,UPPER(artist)%s,UPPER(album)%s,tracknum%s,UPPER(title)%s%s", 
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sTerminate.c_str() );
 			return sTerminate;
 			break;
+
 		case MUSIK_LIBRARY_TYPE_FORMAT:
-			sTerminate.Format( "ORDER BY format,UPPER(artist),UPPER(album),tracknum,UPPER(title)%s", sTerminate.c_str() );
+			sTerminate.Format( "ORDER BY format%s,UPPER(artist)%s,UPPER(album)%s,tracknum%s,UPPER(title)%s%s", 
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sTerminate.c_str() );
 			return sTerminate;
 			break;
+
 		case MUSIK_LIBRARY_TYPE_DURATION:
-			sTerminate.Format( "ORDER BY duration,UPPER(artist),UPPER(album),tracknum,UPPER(title)%s", sTerminate.c_str() );
+			sTerminate.Format( "ORDER BY duration%s,UPPER(artist)%s,UPPER(album)%s,tracknum%s,UPPER(title)%s%s", 
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sTerminate.c_str() );
 			return sTerminate;
 			break;
+
 		case MUSIK_LIBRARY_TYPE_RATING:
-			sTerminate.Format( "ORDER BY rating,UPPER(artist),UPPER(album),tracknum,UPPER(title)%s", sTerminate.c_str() );
+			sTerminate.Format( "ORDER BY rating%s,UPPER(artist)%s,UPPER(album)%s,tracknum%s,UPPER(title)%s%s", 
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sTerminate.c_str() );
 			return sTerminate;
 			break;
+
 		case MUSIK_LIBRARY_TYPE_TIMESPLAYED:
-			sTerminate.Format( "ORDER BY timesplayed,UPPER(artist),UPPER(album),tracknum,UPPER(title)%s", sTerminate.c_str() );
+			sTerminate.Format( "ORDER BY timesplayed%s,UPPER(artist)%s,UPPER(album)%s,tracknum%s,UPPER(title)%s%s", 
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sTerminate.c_str() );
 			return sTerminate;
 			break;
+
 		case MUSIK_LIBRARY_TYPE_BITRATE:
-			sTerminate.Format( "ORDER BY bitrate,UPPER(artist),UPPER(album),tracknum,UPPER(title)%s", sTerminate.c_str() );
+			sTerminate.Format( "ORDER BY bitrate%s,UPPER(artist)%s,UPPER(album)%s,tracknum%s,UPPER(title)%s%s", 
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sDescend.c_str(),
+				sTerminate.c_str() );
 			return sTerminate;
 			break;
+
 		case MUSIK_LIBRARY_TYPE_FILENAME:
 			break;
 		}
@@ -2889,7 +3083,7 @@ int CmusikLibrary::IncLastPlayed( int songid )
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::SortPlaylist( CmusikPlaylist* playlist, int field, bool ascending )
+int CmusikLibrary::SortPlaylist( CmusikPlaylist* playlist, int field, bool descending )
 {
 	if ( !m_DatabaseOpen )
 		return -1;
@@ -2912,16 +3106,12 @@ int CmusikLibrary::SortPlaylist( CmusikPlaylist* playlist, int field, bool ascen
 	if ( field == MUSIK_LIBRARY_TYPE_FORMAT || field == MUSIK_LIBRARY_TYPE_TRACKNUM ||
 		field == MUSIK_LIBRARY_TYPE_YEAR || field == MUSIK_LIBRARY_TYPE_RATING || field == MUSIK_LIBRARY_TYPE_BITRATE ||
 		field == MUSIK_LIBRARY_TYPE_FILESIZE )
-		sCurr = GetOrder( field, false );
+		sCurr = GetOrder( field, false, true, descending );
 
 	else
-		sCurr = GetOrder( field, false, true );
+		sCurr = GetOrder( field, false, true, descending );
 
 	sQuery += sCurr;
-
-	if ( !ascending )
-		sQuery += " desc";
-
 	sQuery += ";";
 
 	playlist->Clear();
@@ -2930,4 +3120,3 @@ int CmusikLibrary::SortPlaylist( CmusikPlaylist* playlist, int field, bool ascen
 }
 
 ///////////////////////////////////////////////////
-
