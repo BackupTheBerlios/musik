@@ -139,7 +139,7 @@ wxString CActivityListBox::OnGetItemText(long item, long column) const
 wxListItemAttr* CActivityListBox::OnGetItemAttr(long item) const
 {
 	if ( g_Prefs.nSelStyle == 2 && item < m_Related )
-		return ( wxListItemAttr* )&m_DarkAttr;
+		return ( wxListItemAttr* )&m_AllReset;
 
 	else if ( ( g_Prefs.nSelStyle == 0 || g_Prefs.nSelStyle == 1 ) && item == 0 )
 		return ( wxListItemAttr* )&m_AllReset;
@@ -193,8 +193,8 @@ void CActivityListBox::SetSel( wxString sel )
 wxArrayString CActivityListBox::GetSelected()
 {
 	wxArrayString aReturn;
-	int nIndex = 0;
-	for ( ;; )
+	int nIndex = -1;
+	for( ;; )
 	{
 		nIndex = GetNextItem( nIndex, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
 		if ( nIndex == -1 )
@@ -388,32 +388,32 @@ wxArrayString CActivityBox::GetRelatedList( CActivityBox *pDst )
 {
 	int nDstType = pDst->GetActivityType();
 	wxArrayString sel = GetSelected();
-	if ( m_ActivityType == (int)MUSIK_LBTYPE_ARTISTS )
+	if ( m_ActivityType == MUSIK_LBTYPE_ARTISTS )
 	{
-		if		( nDstType == (int)MUSIK_LBTYPE_ALBUMS	)	return	g_Library.GetArtistAlbums	( &sel );
-		else if ( nDstType == (int)MUSIK_LBTYPE_GENRES	)	return	g_Library.GetArtistGenres	( &sel );
-		else if ( nDstType == (int)MUSIK_LBTYPE_YEARS	)	return	g_Library.GetArtistYears	( &sel );
+		if		( nDstType == MUSIK_LBTYPE_ALBUMS	)	return	g_Library.GetArtistAlbums	( &sel );
+		else if ( nDstType == MUSIK_LBTYPE_GENRES	)	return	g_Library.GetArtistGenres	( &sel );
+		else if ( nDstType == MUSIK_LBTYPE_YEARS	)	return	g_Library.GetArtistYears	( &sel );
 	}
 
-	else if ( m_ActivityType == (int)MUSIK_LBTYPE_ALBUMS )
+	else if ( m_ActivityType == MUSIK_LBTYPE_ALBUMS )
 	{
-		if		( nDstType == (int)MUSIK_LBTYPE_ARTISTS	)	return	g_Library.GetAlbumArtists	( &sel );
-		else if ( nDstType == (int)MUSIK_LBTYPE_GENRES	)	return	g_Library.GetAlbumGenres	( &sel );
-		else if ( nDstType == (int)MUSIK_LBTYPE_YEARS	)	return	g_Library.GetAlbumYears		( &sel );
+		if		( nDstType == MUSIK_LBTYPE_ARTISTS	)	return	g_Library.GetAlbumArtists	( &sel );
+		else if ( nDstType == MUSIK_LBTYPE_GENRES	)	return	g_Library.GetAlbumGenres	( &sel );
+		else if ( nDstType == MUSIK_LBTYPE_YEARS	)	return	g_Library.GetAlbumYears		( &sel );
 	}
 
-	else if ( m_ActivityType == (int)MUSIK_LBTYPE_GENRES )
+	else if ( m_ActivityType == MUSIK_LBTYPE_GENRES )
 	{
-		if		( nDstType == (int)MUSIK_LBTYPE_ARTISTS	)	return	g_Library.GetGenreArtists	( &sel );
-		else if ( nDstType == (int)MUSIK_LBTYPE_ALBUMS	)	return	g_Library.GetGenreAlbums	( &sel );
-		else if ( nDstType == (int)MUSIK_LBTYPE_YEARS	)	return	g_Library.GetGenreYears		( &sel );
+		if		( nDstType == MUSIK_LBTYPE_ARTISTS	)	return	g_Library.GetGenreArtists	( &sel );
+		else if ( nDstType == MUSIK_LBTYPE_ALBUMS	)	return	g_Library.GetGenreAlbums	( &sel );
+		else if ( nDstType == MUSIK_LBTYPE_YEARS	)	return	g_Library.GetGenreYears		( &sel );
 	}
 
-	else if ( m_ActivityType == (int)MUSIK_LBTYPE_YEARS )
+	else if ( m_ActivityType == MUSIK_LBTYPE_YEARS )
 	{
-		if		( nDstType == (int)MUSIK_LBTYPE_ARTISTS	)	return	g_Library.GetYearArtists	( &sel );
-		else if ( nDstType == (int)MUSIK_LBTYPE_ALBUMS	)	return	g_Library.GetYearAlbums		( &sel );
-		else if ( nDstType == (int)MUSIK_LBTYPE_GENRES	)	return	g_Library.GetYearGenres		( &sel );
+		if		( nDstType == MUSIK_LBTYPE_ARTISTS	)	return	g_Library.GetYearArtists	( &sel );
+		else if ( nDstType == MUSIK_LBTYPE_ALBUMS	)	return	g_Library.GetYearAlbums		( &sel );
+		else if ( nDstType == MUSIK_LBTYPE_GENRES	)	return	g_Library.GetYearGenres		( &sel );
 	}
 	wxArrayString aNullArray;
 	return aNullArray;
