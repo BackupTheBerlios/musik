@@ -328,8 +328,11 @@ void CMusikPlayer::UpdateUI()
 
 void CMusikPlayer::ClearOldStreams( bool bClearAll )
 {
-	if ( g_FaderThread->GetWorkerCount() )
-		return;
+	if ( g_FaderThread )
+	{
+		if ( g_FaderThread->GetWorkerCount() )
+			return;
+	}
 
 	int nStreamCount = g_ActiveStreams.GetCount();
 
