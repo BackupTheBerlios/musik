@@ -95,6 +95,7 @@ protected:
 	HBITMAP m_hBGBitmap;
 	COLORREF *m_pBGBitmapBits;
 	COLORREF m_EQColor;
+	COLORREF m_BGColor;
 
 	// timer
 	UINT_PTR m_TimerID;

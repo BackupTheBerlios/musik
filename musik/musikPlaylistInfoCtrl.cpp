@@ -144,21 +144,24 @@ int CmusikPlaylistInfoCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	// get a slightly darker version of the BTNFACE color
 	BYTE red = GetRValue( m_Prefs->MUSIK_COLOR_BTNFACE );
+	BYTE green = GetGValue( m_Prefs->MUSIK_COLOR_BTNFACE );
+	BYTE blue = GetBValue( m_Prefs->MUSIK_COLOR_BTNFACE );
+	m_BGColor = RGB( blue, green, red ); // notice it's swapped
 	if ( red > 30 )
 		red -= 30;
 	else
 		red = 0;
-	BYTE green = GetGValue( m_Prefs->MUSIK_COLOR_BTNFACE );
+	
 	if ( green > 30 )
 		green -= 30;
 	else
 		green = 0;
-	BYTE blue = GetBValue( m_Prefs->MUSIK_COLOR_BTNFACE );
+	
 	if ( blue > 30 )
 		blue -= 30;
 	else
 		blue = 0;
-	m_EQColor = RGB( red, green, blue );
+	m_EQColor = RGB( blue, green, red ); // notice it's swapped
 
 	BITMAPINFO bminfo;	
 	ZeroMemory ( &bminfo, sizeof (BITMAPINFO) );
@@ -185,7 +188,7 @@ int CmusikPlaylistInfoCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 
 
-	m_TimerID = SetTimer( MUSIK_VIZ_TIMER, 10, NULL );
+	m_TimerID = SetTimer( MUSIK_VIZ_TIMER, 50, NULL );
 
 	return 0;
 }
@@ -217,8 +220,10 @@ void CmusikPlaylistInfoCtrl::DrawEQ( HDC hdc )
         return;
 	
 	// fill the bitmap data with the background color
+	COLORREF bg;
+	
 	for ( int n = 0; n < (VIZ_WIDTH * VIZ_HEIGHT); n++ )
-		m_pBGBitmapBits[n] = m_Prefs->MUSIK_COLOR_BTNFACE;
+		m_pBGBitmapBits[n] = m_BGColor;
 
 	// now draw the viz directly to the bitmap bits
 
@@ -274,7 +279,7 @@ void CmusikPlaylistInfoCtrl::OnTimer(UINT nIDEvent)
 {
 	if ( nIDEvent == MUSIK_VIZ_TIMER )
 	{
-		if ( m_Player->IsPlaying() && !m_Player->IsPaused() )
+		if ( m_Player->IsPlaying() && !m_Player->IsPaused() && ( m_Prefs->GetPlaylistInfoVizStyle() != PLAYLIST_INFO_VIZ_STYLE_NONE ) )
 		{
 			UpdateBG();
 		}
