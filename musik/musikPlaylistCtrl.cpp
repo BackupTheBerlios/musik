@@ -961,7 +961,7 @@ void CmusikPlaylistCtrl::InsertItems( const CIntArray& items, int firstsel, int 
 	// are dragging up or down.
 	if ( firstsel < at )
 	{
-		at -= items.size();
+		at -= ( items.size() - 1 );
 		if ( at < -1 )
 			at = -1;
 	}
