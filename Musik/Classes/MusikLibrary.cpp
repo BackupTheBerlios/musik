@@ -1248,7 +1248,20 @@ bool CMusikLibrary::RenameFile( CMusikSong* song, bool bClearCheck )
 
 bool CMusikLibrary::RetagFile( CMusikSong* song, bool bClearCheck )
 {
-return true;
+	wxString	sPattern	= g_Prefs.sAutoTag;
+	wxFileName	filename	( song->Filename );
+	wxString	sPath		= filename.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR );
+	wxString	sFile		= filename.GetName();
+	wxString	sExt		= wxT(".") + filename.GetExt();
+
+	wxArrayString aPattern = DelimitStr( sPattern, wxT("-"), true );
+	wxArrayString aTagInfo = DelimitStr( sFile, wxT("-"), true );	
+
+	size_t nPatternDel	= GetDelimitCount( sPattern, wxT("-") );
+	size_t nFilenameDel = GetDelimitCount( sFile, wxT("-") );
+
+
+	return true;
 }
 
 

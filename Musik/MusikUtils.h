@@ -27,6 +27,7 @@
 wxString		GetGenre			( wxString sGenre );
 int				GetGenreID			( wxString sGenre );
 wxArrayString	DelimitStr			( wxString sStr, wxString sDel, bool bRemoveDelimiter = true );
+size_t			GetDelimitCount		( wxString sStr, wxString sDel );
 wxArrayString	GetPlaylistDir		();
 wxString		MStoStr				( int timems );
 wxArrayString	FileToStringArray	( wxString sFilename );

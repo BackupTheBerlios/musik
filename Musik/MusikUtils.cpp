@@ -163,6 +163,12 @@ wxArrayString DelimitStr( wxString sStr, wxString sDel, bool bRemoveDelimiter )
 	return aReturn;	
 }
 
+size_t GetDelimitCount ( wxString sStr, wxString sDel )
+{
+	wxArrayString aTemp = DelimitStr( sStr, sDel, false );
+	return aTemp.GetCount();
+}
+
 wxString GetGenre ( wxString sGenre ) 
 { 
 	if ( sGenre.Length() > 0 )
