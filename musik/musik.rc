@@ -628,26 +628,29 @@ STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Tunage"
 FONT 8, "MS Shell Dlg", 0, 0, 0x0
 BEGIN
+    GROUPBOX        "",IDC_STATIC,6,123,198,29
+    GROUPBOX        "",IDC_STATIC,6,69,198,50
+    GROUPBOX        "",IDC_STATIC,6,38,198,27
     CONTROL         "Enabled",IDC_TUNAGEENABLED,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,6,26,41,10
-    LTEXT           "URL:",IDC_STATIC,13,52,52,8
-    EDITTEXT        IDC_TUNAGEURL,67,50,137,12,ES_AUTOHSCROLL
+                    WS_TABSTOP,84,29,41,10
+    CONTROL         "Post URL:",IDC_TUNAGEURLENABLED,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,12,37,47,10
+    EDITTEXT        IDC_TUNAGEURL,72,48,126,12,ES_AUTOHSCROLL
+    CONTROL         "Write File:",IDC_TUNAGEFILEENABLED,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,12,69,49,10
+    LTEXT           "Filename:",IDC_STATIC,21,82,49,8
+    EDITTEXT        IDC_TUNAGEFILENAME,73,79,125,12,ES_AUTOHSCROLL
+    CONTROL         "Append",IDC_TUNAGEAPPEND,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,21,106,41,10
+    EDITTEXT        IDC_TUNAGEFILELINE,73,93,125,12,ES_AUTOHSCROLL
+    CONTROL         "Run program",IDC_TUNAGERUNAPPENABLED,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,12,122,54,10
+    EDITTEXT        IDC_TUNAGECOMMANDLINE,73,134,125,12,ES_AUTOHSCROLL
+    LTEXT           "URL:",IDC_STATIC,18,51,48,8
     CTEXT           "These settings allow you to perform an action when the currently-playing song changes",
                     IDC_STATIC,6,7,192,18
-    CONTROL         "Post URL",IDC_TUNAGEURLENABLED,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,6,41,45,10
-    LTEXT           "Filename:",IDC_STATIC,15,76,49,8
-    EDITTEXT        IDC_TUNAGEFILENAME,67,74,137,12,ES_AUTOHSCROLL
-    CONTROL         "Write file",IDC_TUNAGEFILEENABLED,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,6,65,45,10
-    LTEXT           "Line to write:",IDC_STATIC,15,90,49,8
-    EDITTEXT        IDC_TUNAGEFILELINE,67,88,137,12,ES_AUTOHSCROLL
-    CONTROL         "Append",IDC_TUNAGEAPPEND,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,15,101,41,10
-    LTEXT           "Command line:",IDC_STATIC,15,126,50,8
-    EDITTEXT        IDC_TUNAGECOMMANDLINE,67,123,137,12,ES_AUTOHSCROLL
-    CONTROL         "Run program",IDC_TUNAGERUNAPPENABLED,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,6,115,57,10
+    LTEXT           "Line to write:",IDC_STATIC,21,95,49,8
+    LTEXT           "Command line:",IDC_STATIC,21,137,50,8
 END
 
 IDD_WINAMP_VIS DIALOGEX 0, 0, 238, 119

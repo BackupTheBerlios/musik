@@ -3387,20 +3387,10 @@ void CMainFrame::GetVisList()
 
 void CMainFrame::DeinitWinamp()
 {
-	// TODO: if the vis is open when you close musik
-	// then it creates a small leak...
+	// there may be a memory leak here...	
 	if ( m_WinampVis )
 	{
 		visStopVis( -1 );
-		/*	
-		// wait for it to clean up
-		while ( visGetVisHwnd() )
-			Sleep( 25 );
-
-						
-		FreeLibrary( m_WinampVis );
-		m_WinampVis = NULL;
-		*/
 	}
 }
 
