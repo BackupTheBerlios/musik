@@ -6,6 +6,8 @@
 #include <vector>
 #include <iostream>
 
+#define BOOST_HAS_THREADS 1
+
 class CMusikLibrary;
 
 //-----------------------------------------------------//
