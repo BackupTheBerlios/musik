@@ -1,6 +1,7 @@
 #pragma once
 
 #include "MusikListCtrl.h"
+#include "StdString.h"
 
 class CMusikLibrary;
 
@@ -14,6 +15,7 @@ public:
 
 protected:
 	CMusikLibrary* m_Library;
+	CStdStringArray m_Items;
 	int m_Type;
 
 	DECLARE_MESSAGE_MAP()
@@ -21,6 +23,7 @@ protected:
 public:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult);
 };
 
 

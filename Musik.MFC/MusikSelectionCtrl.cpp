@@ -6,6 +6,7 @@
 #include "MusikSelectionCtrl.h"
 
 #include "MusikLibrary.h"
+#include ".\musikselectionctrl.h"
 
 // CMusikSelectionCtrl
 
@@ -25,6 +26,7 @@ CMusikSelectionCtrl::~CMusikSelectionCtrl()
 BEGIN_MESSAGE_MAP(CMusikSelectionCtrl, CMusikListCtrl)
 	ON_WM_SIZE()
 	ON_WM_CREATE()
+	ON_NOTIFY_REFLECT(LVN_GETDISPINFO, OnLvnGetdispinfo)
 END_MESSAGE_MAP()
 
 
@@ -50,5 +52,29 @@ int CMusikSelectionCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	GetClientRect( &client_size );
 
 	SetColumnWidth( 0, client_size.Width() );
+
+	m_Library->GetAllDistinct( m_Type, m_Items );
+	SetItemCountEx( m_Items.size(), LVSICF_NOINVALIDATEALL | LVSICF_NOSCROLL );
+
 	return 0;
+}
+
+void CMusikSelectionCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	NMLVDISPINFO *pDispInfo = reinterpret_cast<NMLVDISPINFO*>(pNMHDR);
+	LV_ITEM* pItem= &(pDispInfo)->item;
+
+	int index= pItem->iItem;
+
+	if ( pItem->mask & LVIF_TEXT )
+	{
+		switch ( pItem->iSubItem )
+		{
+		case 0:
+			lstrcpy( pItem->pszText, m_Items.at( index ).c_str() );
+			break;
+		}
+	}
+	
+	*pResult = 0;
 }

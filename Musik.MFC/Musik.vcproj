@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="MusikCoreD.lib"
+				AdditionalDependencies="boost_threadd.lib fmodvc.lib sqlite.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
@@ -85,7 +85,6 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="MusikCore.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
@@ -318,6 +317,31 @@
 			</File>
 			<File
 				RelativePath=".\CPropTree\PropTreeList.h">
+			</File>
+		</Filter>
+		<Filter
+			Name="Core"
+			Filter="">
+			<File
+				RelativePath="..\Musik.Core\src\MusikLibrary.cpp">
+			</File>
+			<File
+				RelativePath="..\Musik.Core\include\MusikLibrary.h">
+			</File>
+			<File
+				RelativePath="..\Musik.Core\src\MusikPlayer.cpp">
+			</File>
+			<File
+				RelativePath="..\Musik.Core\include\MusikPlayer.h">
+			</File>
+			<File
+				RelativePath="..\Musik.Core\src\MusikPlaylist.cpp">
+			</File>
+			<File
+				RelativePath="..\Musik.Core\include\MusikPlaylist.h">
+			</File>
+			<File
+				RelativePath="..\Musik.Core\include\StdString.h">
 			</File>
 		</Filter>
 		<File

@@ -17,6 +17,7 @@ CMusikSelectionBar::CMusikSelectionBar( CMusikLibrary* library, int type )
 
 CMusikSelectionBar::~CMusikSelectionBar()
 {
+	delete m_wndChild;
 }
 
 
@@ -32,7 +33,7 @@ int CMusikSelectionBar::OnCreate( LPCREATESTRUCT lpCreateStruct )
 
 	SetSCBStyle( GetSCBStyle() | SCBS_SIZECHILD );
 
-	if ( !m_wndChild->Create( WS_CHILD|WS_VISIBLE|LVS_REPORT, CRect(0,0,0,0), this, 123) )
+	if ( !m_wndChild->Create( WS_CHILD|WS_VISIBLE|LVS_REPORT|LVS_OWNERDATA|LVS_SHOWSELALWAYS, CRect(0,0,0,0), this, 123) )
 		return -1;
 
 	m_wndChild->ModifyStyleEx( 0, WS_EX_STATICEDGE );
