@@ -87,25 +87,30 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//--- Sound -> Playback ---//
 	//-------------------------//
 	//--- shuffle, repeat, and crossfade checkboxes ---//
-	chkRepeat			= new wxCheckBox( this, -1, _("Repeat"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
-	chkShuffle			= new wxCheckBox( this, -1, _("Shuffle"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
-	chkCrossfade		= new wxCheckBox( this, -1, _("Crossfade"), wxPoint( -1, -1 ), wxSize( 120, -1 ) );
-	chkCrossfadeSeek	= new wxCheckBox( this, -1, _("Crossfade Seek"), wxPoint( -1, -1 ), wxSize( 120, -1 ) );
-	//--- crossfade duration ---//
-	tcDuration = new wxTextCtrl		( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( 32, -1 ) );
-	wxStaticText *stDuration = new wxStaticText	( this, -1, _(" seconds"), wxPoint( 0, 0 ), wxSize( -1, -1 ), wxALIGN_RIGHT );
-	hsDuration = new wxBoxSizer( wxHORIZONTAL );
-	hsDuration->Add( chkCrossfade,	0, wxALIGN_CENTER | wxRIGHT, 3 );
-	hsDuration->Add( tcDuration,	0, wxALIGN_CENTER | wxRIGHT, 3 );
-	hsDuration->Add( stDuration,	0, wxALIGN_CENTER, 0);
-	//--- crossfade duration ---//
-	tcSeekDuration = new wxTextCtrl		( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( 32, -1 ) );
-	wxStaticText *stSeekDuration = new wxStaticText	( this, -1, _(" seconds"), wxPoint( 0, 0 ), wxSize( -1, -1 ), wxALIGN_RIGHT );
-	//--- duration sizer ---//
-	hsSeekDuration = new wxBoxSizer( wxHORIZONTAL );
-	hsSeekDuration->Add( chkCrossfadeSeek,	0, wxALIGN_CENTER | wxRIGHT, 3 );
-	hsSeekDuration->Add( tcSeekDuration,	0, wxALIGN_CENTER | wxRIGHT, 3 );
-	hsSeekDuration->Add( stSeekDuration,	0, wxALIGN_CENTER, 0);
+	chkRepeat				= new wxCheckBox( this, -1, _("Repeat"), 											wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+	chkShuffle				= new wxCheckBox( this, -1, _("Shuffle"), 										wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+	chkCrossfade			= new wxCheckBox( this, -1, _("Crossfade on new song (seconds)"), 			wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+	chkCrossfadeSeek		= new wxCheckBox( this, -1, _("Crossfade on track seek (seconds)"), 		wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+	chkCrossfadePauseResume	= new wxCheckBox( this, -1, _("Crossfade on pause or resume (seconds)"),	wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+	chkCrossfadeStop		= new wxCheckBox( this, -1, _("Crossfade on stop (seconds)"),				wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+	chkCrossfadeExit		= new wxCheckBox( this, -1, _("Crossfade on program exit (seconds)"),		wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+	tcDuration 				= new wxTextCtrl( this, -1, _(""), 												wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+	tcSeekDuration 			= new wxTextCtrl( this, -1, _(""), 												wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+	tcPauseResumeDuration	= new wxTextCtrl( this, -1, _(""), 												wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+	tcStopDuration			= new wxTextCtrl( this, -1, _(""), 												wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+	tcExitDuration			= new wxTextCtrl( this, -1, _(""), 												wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+	//--- crossfader sizer ---//
+	fsCrossfader = new wxFlexGridSizer( 5, 2, 2, 2 );
+	fsCrossfader->Add( chkCrossfade				);
+	fsCrossfader->Add( tcDuration 				);
+	fsCrossfader->Add( chkCrossfadeSeek			);
+	fsCrossfader->Add( tcSeekDuration		 	);
+	fsCrossfader->Add( chkCrossfadePauseResume	);
+	fsCrossfader->Add( tcPauseResumeDuration	);
+	fsCrossfader->Add( chkCrossfadeStop			);
+	fsCrossfader->Add( tcStopDuration			);
+	fsCrossfader->Add( chkCrossfadeExit			);
+	fsCrossfader->Add( tcExitDuration			);
 
 	//-------------------------------//
 	//--- Sound -> Playback Sizer ---//
@@ -113,8 +118,7 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	vsSound_Playback = new wxBoxSizer( wxVERTICAL );
 	vsSound_Playback->Add( chkRepeat,		0, wxALL, 4  );
 	vsSound_Playback->Add( chkShuffle,		0, wxALL, 4  );
-	vsSound_Playback->Add( hsDuration,		0, wxALL, 4  );
-	vsSound_Playback->Add( hsSeekDuration,	0, wxALL, 4  );
+	vsSound_Playback->Add( fsCrossfader,	0, wxALL, 4  );
 
 	//-----------------------//
 	//--- Sound -> Driver ---//
@@ -570,18 +574,30 @@ void MusikPrefsFrame::LoadPrefs()
 	//-------------------------//
 	//--- sound -> playback ---//
 	//-------------------------//
-	float		fDuration, fSeekDuration;
-	wxString	sDuration, sSeekDuration;
-	chkRepeat->SetValue				( g_Prefs.nRepeat );
-	chkShuffle->SetValue			( g_Prefs.nShuffle );
-	chkCrossfade->SetValue			( g_Prefs.nFadeEnable );
-	fDuration =						(float)g_Prefs.nFadeDuration / 1000;
-	sDuration.sprintf				( wxT("%.1f"), fDuration );
-	tcDuration->SetValue			( sDuration );
-	chkCrossfadeSeek->SetValue		( g_Prefs.nFadeSeekEnable );
-	fSeekDuration =					(float)g_Prefs.nFadeSeekDuration / 1000;
-	sSeekDuration.sprintf			( wxT("%.1f"), fSeekDuration );
-	tcSeekDuration->SetValue		( sSeekDuration );
+	float		fDuration, fSeekDuration, fPauseResumeDuration, fStopDuration, fExitDuration;
+	wxString	sDuration, sSeekDuration, sPauseResumeDuration, sStopDuration, sExitDuration;
+	chkRepeat->SetValue					( g_Prefs.nRepeat );
+	chkShuffle->SetValue				( g_Prefs.nShuffle );
+	chkCrossfade->SetValue				( g_Prefs.nFadeEnable );
+	fDuration =							(float)g_Prefs.nFadeDuration / 1000;
+	sDuration.sprintf					( wxT("%.1f"), fDuration );
+	tcDuration->SetValue				( sDuration );
+	chkCrossfadeSeek->SetValue			( g_Prefs.nFadeSeekEnable );
+	fSeekDuration =						(float)g_Prefs.nFadeSeekDuration / 1000;
+	sSeekDuration.sprintf				( wxT("%.1f"), fSeekDuration );
+	tcSeekDuration->SetValue			( sSeekDuration );
+	chkCrossfadePauseResume->SetValue	( g_Prefs.nFadePauseResumeEnable );
+	fPauseResumeDuration =				(float)g_Prefs.nFadePauseResumeDuration / 1000;
+	sPauseResumeDuration.sprintf		( wxT("%.1f"), fPauseResumeDuration );
+	tcPauseResumeDuration->SetValue		( sPauseResumeDuration );
+	chkCrossfadeStop->SetValue			( g_Prefs.nFadeStopEnable );
+	fStopDuration =						(float)g_Prefs.nFadeStopDuration / 1000;
+	sStopDuration.sprintf				( wxT("%.1f"), fStopDuration );
+	tcStopDuration->SetValue			( sStopDuration );
+	chkCrossfadeExit->SetValue			( g_Prefs.nFadeExitEnable );
+	fExitDuration =						(float)g_Prefs.nFadeExitDuration / 1000;
+	sExitDuration.sprintf				( wxT("%.1f"), fExitDuration );
+	tcExitDuration->SetValue			( sExitDuration );
 
 	//-----------------------//
 	//--- sound -> driver ---//
@@ -903,26 +919,42 @@ void MusikPrefsFrame::SavePrefs()
 		g_Prefs.nRepeat = chkRepeat->GetValue();
 		bPlaymodeChange = true;
 	}
+	
 	if ( chkShuffle->GetValue() != g_Prefs.nShuffle )
 	{
 		g_Prefs.nShuffle = chkShuffle->GetValue();
 		bPlaymodeChange = true;
 	}
-	if ( tcDuration->GetValue() != g_Prefs.nFadeDuration )
-	{
-        double fDuration = StringToDouble( tcDuration->GetValue() );
-		int nDuration = ( int )( fDuration * 1000 );
-		g_Prefs.nFadeDuration = nDuration;
-	}
-	g_Prefs.nFadeEnable = chkCrossfade->GetValue();
-	if ( tcSeekDuration->GetValue() != g_Prefs.nFadeSeekDuration )
-	{
-        double fSeekDuration = StringToDouble( tcSeekDuration->GetValue() );
-		int nSeekDuration = ( int )( fSeekDuration * 1000 );
-		g_Prefs.nFadeSeekDuration = nSeekDuration;
-	}
-	g_Prefs.nFadeSeekEnable = chkCrossfadeSeek->GetValue();
 
+	g_Prefs.nFadeEnable = chkCrossfade->GetValue();
+	g_Prefs.nFadeSeekEnable = chkCrossfadeSeek->GetValue();
+	g_Prefs.nFadePauseResumeEnable = chkCrossfadePauseResume->GetValue();
+	g_Prefs.nFadeStopEnable = chkCrossfadeStop->GetValue();
+	g_Prefs.nFadeExitEnable = chkCrossfadeExit->GetValue();
+	
+	double fDuration;
+	int nDuration;
+	
+	fDuration = StringToDouble( tcDuration->GetValue() );
+	nDuration = ( int )( fDuration * 1000 );
+	g_Prefs.nFadeDuration = nDuration;
+	
+    fDuration = StringToDouble( tcSeekDuration->GetValue() );
+	nDuration = ( int )( fDuration * 1000 );
+	g_Prefs.nFadeSeekDuration = nDuration;
+
+	fDuration = StringToDouble( tcPauseResumeDuration->GetValue() );
+	nDuration = ( int )( fDuration * 1000 );
+	g_Prefs.nFadePauseResumeDuration = nDuration;
+	
+	fDuration = StringToDouble( tcStopDuration->GetValue() );
+	nDuration = ( int )( fDuration * 1000 );
+	g_Prefs.nFadeStopDuration = nDuration;
+	
+	fDuration = StringToDouble( tcExitDuration->GetValue() );
+	nDuration = ( int )( fDuration * 1000 );
+	g_Prefs.nFadeExitDuration = nDuration;
+	
 	//-----------------------//
 	//--- sound -> driver ---//
 	//-----------------------//

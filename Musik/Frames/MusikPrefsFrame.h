@@ -151,6 +151,12 @@ public:
 	wxTextCtrl	*tcDuration;
 	wxCheckBox	*chkCrossfadeSeek;
 	wxTextCtrl	*tcSeekDuration;
+	wxCheckBox	*chkCrossfadePauseResume;
+	wxTextCtrl	*tcPauseResumeDuration;
+	wxCheckBox	*chkCrossfadeStop;
+	wxTextCtrl	*tcStopDuration;
+	wxCheckBox	*chkCrossfadeExit;
+	wxTextCtrl	*tcExitDuration;
 
 	//-----------------------//
 	//--- sound -> driver ---//
@@ -174,8 +180,7 @@ public:
 	wxBoxSizer		*hsSplitter;
 	wxBoxSizer		*hsSelectionStyle;
 	wxBoxSizer		*hsBufferLength;
-	wxBoxSizer		*hsDuration;
-	wxBoxSizer		*hsSeekDuration;
+	wxFlexGridSizer	*fsCrossfader;
 	wxBoxSizer		*vsOutputDrv;	
 	wxBoxSizer		*vsSndDevice;
 	wxBoxSizer		*vsPlayRate;

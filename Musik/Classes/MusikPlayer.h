@@ -27,8 +27,10 @@ enum EMUSIK_CROSSFADER_TYPE
 {
 	CROSSFADE_ERROR = 0,
 	CROSSFADE_NORMAL,
-	CROSSFADE_FADEIN,
-	CROSSFADE_FADEOUT,
+	CROSSFADE_PAUSE,
+	CROSSFADE_RESUME,
+	CROSSFADE_STOP,
+	CROSSFADE_EXIT,
 	CROSSFADE_SEEK
 };
 
@@ -109,11 +111,11 @@ public:
 	//-------------------------//
 	void PlayCurSel	( );
     bool Play		( size_t nItem, int nStartPos = 0, int nFadeType = CROSSFADE_NORMAL );
-	void Stop		( );
+	void Stop		( bool bFade = true, bool bExit = false );
 	void NextSong	( );		
 	void PrevSong	( );		
-	void Pause		( );
-	void Resume		( );
+	void Pause		( bool bFade = true );
+	void Resume		( bool bFade = true );
 
 	//------------//
 	//--- gets ---//

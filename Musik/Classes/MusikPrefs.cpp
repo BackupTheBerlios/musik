@@ -46,14 +46,19 @@ void CMusikPrefs::LoadPrefs()
 	config->Read( wxT( "Repeat" ),									&nRepeat,				1						);
 	config->Read( wxT( "Shuffle" ),									&nShuffle,				0						);
 	config->Read( wxT( "CrossfaderEnabled" ),						&nFadeEnable,			1						);
-	config->Read( wxT( "CrossfaderDurationMilliseconds" ),			&nFadeDuration,			2000					);
 	config->Read( wxT( "CrossfaderSeekEnabled" ),					&nFadeSeekEnable,		1						);
-	config->Read( wxT( "CrossfaderSeekDurationMilliseconds" ),		&nFadeSeekDuration,		200						);
+	config->Read( wxT( "CrossfaderPauseResumeEnabled" ),	&nFadePauseResumeEnable, 1				);
+	config->Read( wxT( "CrossfaderStopEnabled" ),			&nFadeStopEnable,	1 );
+	config->Read( wxT( "CrossfaderExitEnabled" ),			&nFadeExitEnable,	1 );
+	config->Read( wxT( "CrossfaderDuration" ),				&nFadeDuration,			2000					);
+	config->Read( wxT( "CrossfaderSeekDuration" ),			&nFadeSeekDuration,		200						);
+	config->Read( wxT( "CrossfaderPauseResumeDuration" ),	&nFadePauseResumeDuration, 100 );
+	config->Read( wxT( "CrossfaderStopDuration" ),	&nFadeStopDuration, 1000 );
+	config->Read( wxT( "CrossfaderExitDuration" ),	&nFadeExitDuration, 2000 );
 	config->Read( wxT( "ShowPlaylistInfo" ),						&nShowPLInfo,			1						);
 	config->Read( wxT( "ShowSources" ),								&nShowSources,			1						);
 	config->Read( wxT( "ShowSourcesIcons" ),						&nShowSourcesIcons,		1						);
 	config->Read( wxT( "ShowActivities" ),							&nShowActivities,		1						);
-	config->Read( wxT( "ShowRating" ),								&nShowRatings,			1						);
 	config->Read( wxT( "StayOnTop" ),								&nStayOnTop,			0						);
 	config->Read( wxT( "AutomaticallyScanDelta" ),					&nAutoDelta,			1						);
 	config->Read( wxT( "ActivityBoxWrite" ),						&nActBoxWrite,			0						);
@@ -188,14 +193,19 @@ void CMusikPrefs::SavePrefs()
 	config->Write( wxT( "Repeat" ),									nRepeat					);
 	config->Write( wxT( "Shuffle" ),								nShuffle				);
 	config->Write( wxT( "CrossfaderEnabled" ),						nFadeEnable				);
-	config->Write( wxT( "CrossfaderDurationMilliseconds" ),			nFadeDuration			);
 	config->Write( wxT( "CrossfaderSeekEnabled" ),					nFadeSeekEnable			);
-	config->Write( wxT( "CrossfaderSeekDurationMilliseconds" ),		nFadeSeekDuration		);
+	config->Write( wxT( "CrossfaderPauseResumeEnabled" ),	nFadePauseResumeEnable	);
+	config->Write( wxT( "CrossfaderStopEnabled" ),			nFadeStopEnable );
+	config->Write( wxT( "CrossfaderExitEnabled" ),			nFadeExitEnable );
+	config->Write( wxT( "CrossfaderDuration" ),						nFadeDuration			);
+	config->Write( wxT( "CrossfaderSeekDuration" ),						nFadeSeekDuration		);
+	config->Write( wxT( "CrossfaderPauseResumeDuration" ),	nFadePauseResumeDuration );
+	config->Write( wxT( "CrossfaderStopDuration" ),	nFadeStopDuration );
+	config->Write( wxT( "CrossfaderExitDuration" ),	nFadeExitDuration );
 	config->Write( wxT( "ShowPlaylistInfo" ),						nShowPLInfo				);
 	config->Write( wxT( "ShowSources" ),							nShowSources			);
 	config->Write( wxT( "ShowSourcesIcons" ),						nShowSourcesIcons		);
 	config->Write( wxT( "ShowActivities" ),							nShowActivities			);
-	config->Write( wxT( "ShowRating" ),								nShowRatings			);
 	config->Write( wxT( "StayOnTop" ),								nStayOnTop				);
 	config->Write( wxT( "AutomaticallyScanDelta" ),					nAutoDelta				);
 	config->Write( wxT( "ActivityBoxWrite" ),						nActBoxWrite			);
@@ -285,4 +295,3 @@ void CMusikPaths::Save()
 
 	return;
 }
-

@@ -61,7 +61,6 @@ public:
 	int nShowSources;
 	int nShowSourcesIcons;
 	int nShowActivities;
-	int nShowRatings;
 
 	int nStayOnTop;
 
@@ -78,10 +77,15 @@ public:
 
 	int nFadeEnable;
 	int nFadeSeekEnable;
+	int nFadePauseResumeEnable;
+	int nFadeStopEnable;
+	int nFadeExitEnable;
 	int nFadeDuration;
 	int nFadeSeekDuration;
-	int nFadeStopEnable;
-
+	int nFadePauseResumeDuration;
+	int nFadeStopDuration;
+	int nFadeExitDuration;
+	
 	int nAutoDelta;
 
 	int nBlankSwears;

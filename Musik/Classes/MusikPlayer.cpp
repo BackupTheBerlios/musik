@@ -32,8 +32,7 @@ void *dspcallback(void *originalbuffer, void *newbuffer, int length, int param)
 {
 	// 2 channels (stereo), 16 bit sound
 	g_FX.ProcessSamples( newbuffer, length, 2, 16 );
-
-    return newbuffer;
+	return newbuffer;
 }
 
 
@@ -315,8 +314,12 @@ void CMusikPlayer::ClearOldStreams()
 	}
 }
 
-void CMusikPlayer::Pause()
+void CMusikPlayer::Pause( bool bCheckFade )
 {
+	if ( bCheckFade )
+	{
+		
+	}
 	m_Paused = true;
 	FSOUND_SetPaused( FSOUND_ALL, TRUE );
 
@@ -330,7 +333,7 @@ void CMusikPlayer::Pause()
 	g_NowPlayingCtrl->PauseBtnToPlayBtn();
 }
 
-void CMusikPlayer::Resume()
+void CMusikPlayer::Resume( bool bCheckFade )
 {
 	m_Paused = false;
 	FSOUND_SetPaused( FSOUND_ALL, FALSE );
@@ -338,7 +341,7 @@ void CMusikPlayer::Resume()
 	g_NowPlayingCtrl->PlayBtnToPauseBtn();
 }
 
-void CMusikPlayer::Stop()
+void CMusikPlayer::Stop( bool bCheckFade, bool bExit )
 {
 	if ( g_FaderThread->IsCrossfaderActive() )
 		g_FaderThread->CrossfaderAbort();
