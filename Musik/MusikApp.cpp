@@ -150,7 +150,11 @@ bool MusikApp::OnInit()
 		wxMkdir( MUSIK_PLAYLIST_DIR );
 
 	//--- load library and paths ---//
-	g_Library.Load();
+	if(!g_Library.Load())
+	{
+		wxMessageBox( _("Initialization of library failed."), MUSIKAPPNAME_VERSION, wxOK | wxICON_ERROR );
+		return FALSE;
+	}
 	g_Paths.Load();
 
 	//--- initialize fmod ---//
@@ -292,15 +296,15 @@ wxString MusikApp::ReadVersion()
 void MusikApp::WriteVersion()
 {
 	wxTextFile ver;
-	if ( wxFileExists( MUSIK_VERSION_FILENAME ) )
-		ver.Open( MUSIK_VERSION_FILENAME );
-	else
+	if ( !wxFileExists( MUSIK_VERSION_FILENAME ) )
 	{
 		ver.Create( MUSIK_VERSION_FILENAME );
 	}
+	ver.Open( MUSIK_VERSION_FILENAME );
     
 	if ( ver.IsOpened() )
 	{
+		if ( ver.GetLineCount() != 0 )
     		ver.RemoveLine(0);
 		ver.AddLine( MUSIKAPPNAME_VERSION );
 		ver.Write();
