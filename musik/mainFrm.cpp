@@ -2314,9 +2314,7 @@ LRESULT CMainFrame::OnSelBoxAddRemove( WPARAM wParam, LPARAM lParam )
 			}
 		}
 
-		// call this the layout 
-		if ( m_wndSelectionBars.size() )
-			m_wndSelectionBars.at( 0 )->CalcDynamicLayout( 0, LM_HORZ | LM_HORZDOCK );
+		RecalcLayout();
 	}
 
 	// save new state to prefs
