@@ -638,19 +638,29 @@ bool CmusikPlayer::Prev()
 	if ( !m_Playlist )
 		return false;
 
+	// 2 second grace period... if the time right now
+	// is before 2000 ms (2 seconds), then start the
+	// previous song...
 	if ( GetTimeNow( MUSIK_TIME_MS ) < 2000 )
 	{
-		if ( m_Index -1 == 0 && GetPlaymode() == MUSIK_PLAYER_PLAYMODE_LOOP )
-			m_Index = (int)m_Playlist->GetCount() - 1;	
+		if ( GetPlaymode() == MUSIK_PLAYER_PLAYMODE_NORMAL )
+		{
+			if ( m_Index - 1 < 0 )
+				m_Index = 0;
+			else
+				m_Index--;
+		}
+		else if ( GetPlaymode() == MUSIK_PLAYER_PLAYMODE_LOOP )
+		{
+			if ( m_Index -1 < 0 )
+				m_Index = (int)m_Playlist->GetCount() - 1;				
+		}
 	}
 
-	if ( m_Index - 1 >= 0 )
-	{
-		if ( !IsCrossfaderActive() )
-			Play( m_Index );
-		else
-			Play( m_Index, MUSIK_CROSSFADER_NEW_SONG );
-	}
+	if ( !IsCrossfaderActive() )
+		Play( m_Index );
+	else
+		Play( m_Index, MUSIK_CROSSFADER_NEW_SONG );
 
 	return true;
 }
