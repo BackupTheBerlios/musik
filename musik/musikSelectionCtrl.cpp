@@ -216,6 +216,7 @@ void CmusikSelectionBar::OnSelectionboxAddnew()
 void CmusikSelectionBar::OnChangetypeArtist()
 {
 	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_ARTIST );
+	ReqSelBoxUpdate();
 }
 
 ///////////////////////////////////////////////////
@@ -223,6 +224,7 @@ void CmusikSelectionBar::OnChangetypeArtist()
 void CmusikSelectionBar::OnChangetypeAlbum()
 {
 	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_ALBUM );
+	ReqSelBoxUpdate();
 }
 
 ///////////////////////////////////////////////////
@@ -230,6 +232,7 @@ void CmusikSelectionBar::OnChangetypeAlbum()
 void CmusikSelectionBar::OnChangetypeYear()
 {
 	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_YEAR );
+	ReqSelBoxUpdate();
 }
 
 ///////////////////////////////////////////////////
@@ -237,6 +240,7 @@ void CmusikSelectionBar::OnChangetypeYear()
 void CmusikSelectionBar::OnChangetypeGenre()
 {
 	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_GENRE );
+	ReqSelBoxUpdate();
 }
 
 ///////////////////////////////////////////////////
@@ -244,6 +248,7 @@ void CmusikSelectionBar::OnChangetypeGenre()
 void CmusikSelectionBar::OnChangetypeTracknumber()
 {
 	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_TRACKNUM );
+	ReqSelBoxUpdate();
 }
 
 ///////////////////////////////////////////////////
@@ -251,6 +256,7 @@ void CmusikSelectionBar::OnChangetypeTracknumber()
 void CmusikSelectionBar::OnChangetypeTimeadded()
 {
 	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_TIMEADDED );
+	ReqSelBoxUpdate();
 }
 
 ///////////////////////////////////////////////////
@@ -258,6 +264,7 @@ void CmusikSelectionBar::OnChangetypeTimeadded()
 void CmusikSelectionBar::OnChangetypeLastplayed()
 {
 	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_LASTPLAYED );
+	ReqSelBoxUpdate();
 }
 
 ///////////////////////////////////////////////////
@@ -265,6 +272,7 @@ void CmusikSelectionBar::OnChangetypeLastplayed()
 void CmusikSelectionBar::OnChangetypeFormat()
 {
 	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_FORMAT );
+	ReqSelBoxUpdate();
 }
 
 ///////////////////////////////////////////////////
@@ -272,6 +280,7 @@ void CmusikSelectionBar::OnChangetypeFormat()
 void CmusikSelectionBar::OnChangetypeRating()
 {
 	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_RATING );
+	ReqSelBoxUpdate();
 }
 
 ///////////////////////////////////////////////////
@@ -279,6 +288,7 @@ void CmusikSelectionBar::OnChangetypeRating()
 void CmusikSelectionBar::OnChangetypeTimesplayed()
 {
 	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_TIMESPLAYED );
+	ReqSelBoxUpdate();
 }
 
 ///////////////////////////////////////////////////
@@ -286,6 +296,15 @@ void CmusikSelectionBar::OnChangetypeTimesplayed()
 void CmusikSelectionBar::OnChangetypeBitrate()
 {
 	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_BITRATE );
+	ReqSelBoxUpdate();
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionBar::ReqSelBoxUpdate()
+{
+	int WM_SELBOXREQUESTUPDATE = RegisterWindowMessage( "SELBOXREQUESTUPDATE" );
+	GetCtrl()->m_Parent->SendMessage( WM_SELBOXREQUESTUPDATE );
 }
 
 ///////////////////////////////////////////////////
@@ -1199,7 +1218,7 @@ void CmusikSelectionCtrl::OnLvnKeydown(NMHDR *pNMHDR, LRESULT *pResult)
 	if ( pLVKeyDow->wVKey == VK_F2 )
 		RenameSel();
 
-	else if ( ( pLVKeyDow->wVKey == VK_DOWN || pLVKeyDow->wVKey == VK_UP ) && m_ShiftDown )
+	else if ( ( pLVKeyDow->wVKey == VK_END || pLVKeyDow->wVKey == VK_HOME || pLVKeyDow->wVKey == VK_DOWN || pLVKeyDow->wVKey == VK_UP || pLVKeyDow->wVKey == VK_PRIOR || pLVKeyDow->wVKey == VK_NEXT ) && m_ShiftDown )
 	{
 		int WM_SELBOXUPDATE = RegisterWindowMessage( "SELBOXUPDATE" );
 		m_Parent->PostMessage( WM_SELBOXUPDATE, GetCtrlID() );

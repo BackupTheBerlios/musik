@@ -63,6 +63,7 @@ public:
 	// misc
 	void ShowOptionsMenu();
 	void ShowContextMenu();
+	void ReqSelBoxUpdate();
 
 	// showing options menu
 	virtual void OnOptions();

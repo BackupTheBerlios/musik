@@ -1178,13 +1178,7 @@ void CMainFrame::RequeryPlaylist( CmusikSelectionCtrl* sender, bool focus_librar
 
 LRESULT CMainFrame::OnSelBoxRequestUpdate( WPARAM wParam, LPARAM lParam )
 {
-	CmusikSelectionCtrl* pSender = (CmusikSelectionCtrl*)wParam;
-
-	CmusikString query = GetSelQuery( pSender );
-	query += _T( "'%'" );
-
-	pSender->UpdateV( query );
-
+	RequerySelBoxes();
 	return 0L;
 }
 
@@ -2487,7 +2481,7 @@ LRESULT CMainFrame::OnSelBoxAddRemove( WPARAM wParam, LPARAM lParam )
 		m_wndSelectionBars.push_back( pBar );
 		save = true;
 
-		OnSelBoxRequestUpdate( (WPARAM)pBar->GetCtrl(), NULL );
+		RequerySelBoxes();
 	}
 
 	else
@@ -2675,7 +2669,9 @@ LRESULT CMainFrame::OnRestartSoundSystem( WPARAM wParam, LPARAM lParam )
 
 void CMainFrame::OnPlaybackmodeShufflecurrentplaylist()
 {
+	int songid = m_Player->GetCurrPlaying()->GetID();
 	std::random_shuffle( m_Player->GetPlaylist()->m_Songs.begin(), m_Player->GetPlaylist()->m_Songs.end() );
+	m_Player->FindNewIndex( songid );
 
 	if ( m_wndView->GetCtrl()->GetPlaylist() == m_Player->GetPlaylist() )
 		m_wndView->GetCtrl()->UpdateV();

@@ -216,7 +216,10 @@ void CmusikSourcesBar::OnSourcesDelete()
 void CmusikSourcesBar::OnSourcesShuffleplaylist()
 {
 	CmusikPlaylist* playlist = GetCtrl()->m_Player->GetPlaylist();
+
+	int songid = GetCtrl()->m_Player->GetCurrPlaying()->GetID();
 	std::random_shuffle( playlist->m_Songs.begin(), playlist->m_Songs.end() );
+	GetCtrl()->m_Player->FindNewIndex( songid );
 
 	CmusikPropTreeItem* pItem = GetCtrl()->GetFocusedItem();
 	if ( pItem )
