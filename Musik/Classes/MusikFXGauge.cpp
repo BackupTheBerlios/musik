@@ -7,21 +7,20 @@
 
 #include "MusikFXGauge.h"
 
-
 //-----------------------------------------//
 //--- this is the gauge					---//
 //-----------------------------------------//
-MusikFXGauge::MusikFXGauge( wxFrame* parent, int nChannel, float *nBandID )
+CMusikFXGauge::CMusikFXGauge( wxFrame* parent, int nChannel, float *nBandID )
 	: wxGauge( parent, -1, 100, wxPoint( 0, 0 ), wxSize( wxSystemSettings::GetMetric( wxSYS_HSCROLL_Y ), 100 ), wxGA_SMOOTH | wxGA_VERTICAL | wxCLIP_CHILDREN )
 {
 	m_Channel = nChannel;
 	m_BandID = nBandID;
 
-	m_EvtHandler = new MusikFXHandler( this );
+	m_EvtHandler = new CMusikFXHandler( this );
 	PushEventHandler( m_EvtHandler );
 }
 
-MusikFXGauge::~MusikFXGauge()
+CMusikFXGauge::~CMusikFXGauge()
 {
 	PopEventHandler();
 	delete m_EvtHandler;
@@ -31,33 +30,33 @@ MusikFXGauge::~MusikFXGauge()
 //--- this is the gauge's event	handler	---//
 //-----------------------------------------//
 
-BEGIN_EVENT_TABLE(MusikFXHandler, wxEvtHandler)
-	EVT_LEFT_DOWN			(MusikFXHandler::OnLeftDown		) 
-	EVT_MOTION				(MusikFXHandler::OnMouseMove	) 
+BEGIN_EVENT_TABLE(CMusikFXHandler, wxEvtHandler)
+	EVT_LEFT_DOWN			(CMusikFXHandler::OnLeftDown	) 
+	EVT_MOTION				(CMusikFXHandler::OnMouseMove	) 
 END_EVENT_TABLE()
 
-MusikFXHandler::MusikFXHandler( MusikFXGauge *pParent )
+CMusikFXHandler::CMusikFXHandler( CMusikFXGauge *pParent )
 {
 	m_Parent = pParent;
 }
 
-MusikFXHandler::~MusikFXHandler()
+CMusikFXHandler::~CMusikFXHandler()
 {
 
 }
 
-void MusikFXHandler::OnLeftDown( wxMouseEvent& event )
+void CMusikFXHandler::OnLeftDown( wxMouseEvent& event )
 {
     SetFromMousePos( event );
 }
 
-void MusikFXHandler::OnMouseMove( wxMouseEvent& event )
+void CMusikFXHandler::OnMouseMove( wxMouseEvent& event )
 {
 	if ( event.LeftIsDown() )
 		SetFromMousePos( event );
 }
 
-void MusikFXHandler::SetFromMousePos( wxMouseEvent& event )
+void CMusikFXHandler::SetFromMousePos( wxMouseEvent& event )
 {
 	//--- stuff we'll need for calculation ---//
 	m_MousePos	= m_Parent->ScreenToClient( wxGetMousePosition() );
