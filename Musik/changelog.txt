@@ -1,5 +1,6 @@
 
-0.3.0.2 to 0.3.1 CVS
+0.3.0.2 to 0.3.1.0
+- On linux CTRL + a and CTRL + d in the playlist to select all/nothing did not work.
 - If you drag something to an inavlid target , this is now indictated by the cursor.
 + Failures of tag reading or writing are now output in a log window.
 - if selecting the library after another source was active, its the displayed netries are preserved in the playlistctrl, in al selection styles ( not only standard)
