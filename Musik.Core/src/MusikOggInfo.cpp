@@ -49,8 +49,8 @@ bool CMusikOggInfo::LoadInfo( const CStdString& fn )
 		m_Info.SetBitrate( temp );
 
 		// duration
-		int duration = ov_time_total ( &vorbisfile, -1 );
-		temp.Format( "%d",  duration * 1000 );
+		int duration = (int)( ov_time_total ( &vorbisfile, -1 ) );
+		temp.Format( "%d",  duration * 1000.0 );
 		m_Info.SetDuration( temp );
 
 		// cleanup, ov_clear closes audio file
@@ -76,6 +76,90 @@ bool CMusikOggInfo::LoadInfo( const CStdString& fn )
 		fclose( pAudioFile );
 		return false;
 	}
+}
+
+///////////////////////////////////////////////////
+
+bool CMusikOggInfo::WriteInfo( CMusikSongInfo info )
+{
+	FILE* pIn;
+	FILE* pOut;
+
+	CStdString sFilename = info.GetFilename();
+	CStdString sTempFilename = CMusikFilename::GetTempFilename( info.GetFilename(), true );
+
+	// make sure we can open the file in
+	// write mode..
+	pIn = fopen( sFilename.c_str(), "rb+" );
+	if ( !pIn )
+		return false;
+	fclose( pIn );
+
+	// now open it up in read only mode
+	pIn = fopen( sFilename.c_str(), "rb" );
+	if ( !pIn )
+		return false;
+
+	// open up the temp ogg file, this will
+	// be where the new tag gets written
+	pOut = fopen( sTempFilename.c_str(), "wb" );
+	if ( !pOut )
+		return false;
+
+	// setup the vc state stuff and make
+	// sure the file is ogg/vorbis
+	vcedit_state *state;
+	vorbis_comment *vc;
+	state = vcedit_new_state();
+
+	if ( vcedit_open( state, pIn ) < 0 )
+	{
+		fclose( pIn );
+		return false;
+	}
+
+	// load the comments and clear them
+	vc = vcedit_comments( state );
+    vorbis_comment_clear( vc );
+	vorbis_comment_init( vc );
+
+	// add comments
+	vorbis_comment_add_tag( vc, "ARTIST",		( char* )info.GetArtist().c_str()	);
+	vorbis_comment_add_tag( vc, "ALBUM",		( char* )info.GetAlbum().c_str()	);
+	vorbis_comment_add_tag( vc, "TITLE",		( char* )info.GetTitle().c_str()	);
+	vorbis_comment_add_tag( vc, "GENRE",		( char* )info.GetGenre().c_str()	);
+	vorbis_comment_add_tag( vc, "DATE",			( char* )info.GetYear().c_str()		);
+	vorbis_comment_add_tag( vc, "TRACKNUMBER",	( char* )info.GetTrackNum().c_str()	);
+
+	// write the tag
+	vcedit_write( state, pOut );
+
+	// clean up
+	vcedit_clear( state );
+	fclose( pIn );
+	fclose( pOut );
+
+    // remove old file, rename new file
+	CStdString sTempFilename2 = CMusikFilename::GetTempFilename( sFilename, true );
+
+	// attempt to rename the original file to 
+	// a new temporary filename
+	if ( !rename( sFilename.c_str(), sTempFilename2.c_str() ) ) 
+		return false;
+
+	// now rename the new file with the new
+	// comments the original filename
+	if ( !rename( sTempFilename.c_str(), sFilename.c_str() ) )
+	{
+		rename( sTempFilename2.c_str(), sFilename.c_str() );
+		return false;
+	}
+
+	// if we get this far, remove the old file
+	if ( !remove( sTempFilename2.c_str() ) )
+		return false;
+
+	return true;
 }
 
 ///////////////////////////////////////////////////

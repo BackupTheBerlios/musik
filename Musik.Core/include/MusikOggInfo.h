@@ -19,13 +19,15 @@ public:
 
 	// reading and writing tag
 	bool LoadInfo( const CStdString& fn );
-	static bool WriteInfo( CMusikSongInfo info, bool clear_old = true );
+	bool WriteInfo( CMusikSongInfo info );
 
 	// gets
 	CStdString GetField( int field );
 	CMusikSongInfo* Get(){ return &m_Info; }
 
 private:
+
+	CStdString GetTempFilename( CStdString fn, bool check_exists = true );
 	CMusikSongInfo m_Info;
 };
 

@@ -74,3 +74,38 @@ CStdString CMusikFilename::GetPath()
 }
 
 ///////////////////////////////////////////////////
+
+bool CMusikFilename::FileExists( const CStdString& fn )
+{
+	FILE* pIn = fopen( fn.c_str(), "rb" );
+	if ( pIn )
+	{
+		fclose( pIn );
+		return true;
+	}
+
+	return false;
+}
+
+///////////////////////////////////////////////////
+
+CStdString CMusikFilename::GetTempFilename( CStdString fn, bool check_exists )
+{
+	srand ( ( size_t )time( NULL ) );
+
+	CMusikFilename MFN( fn );
+	CStdString sPath = MFN.GetPath();
+	
+	CStdString sName;
+	sName.Format( "%s%d", sPath, rand() );
+	
+	if ( check_exists )
+	{
+		while ( CMusikFilename::FileExists( sName ) )
+			sName.Format( "%s%d", sPath, rand() );
+	}
+
+	return sName;
+}
+
+///////////////////////////////////////////////////

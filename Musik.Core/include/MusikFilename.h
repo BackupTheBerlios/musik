@@ -36,6 +36,10 @@ public:
 	// sets
 	void SetFilename( const CStdString& fn );
 
+	// misc
+	static bool FileExists( const CStdString& fn );
+	static CStdString GetTempFilename( CStdString fn, bool check_exists );
+
 private:
 
 	CStdString m_Filename;
