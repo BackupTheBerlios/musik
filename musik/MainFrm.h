@@ -39,19 +39,22 @@
 
 ///////////////////////////////////////////////////
 
-#include "../musikCore/include/musikTask.h"
-
+#include "MainFrmFunctor.h"
 #include "musikSourcesCtrl.h"
 #include "musikNowPlayingCtrl.h"
 #include "musikSelectionCtrl.h"
 #include "musikEqualizerCtrl.h"
-
 #include "musikPlaylistCtrl.h"
 #include "musikPlaylistView.h"
-
+#include "musikBatchAddFunctor.h"
+#include "musikRemoveOldFunctor.h"
 #include "musikPrefs.h"
+#include "musikWinampVisDlg.h"
+#include "musikDirSync.h"
 
-#include "ace/Task.h"
+#include "../musikCore/include/musikTask.h"
+#include "../musikCore/include/musikLibrary.h"
+#include "../musikCore/include/musikPlayer.h"
 
 #include <vector>
 
@@ -88,19 +91,7 @@ enum
 
 ///////////////////////////////////////////////////
 
-// forward declarations, the headers files
-// are included in the implmentation	
-
-class CmusikLibrary;
-class CmusikPlaylist;
-class CmusikPlayer;
-class CmusikFrameFunctor;
-class CmusikBatchAddFunctor;
-class CmusikRemoveOldFunctor;
-class CmusikWinampVisDlg;
-class CmusikDirSync;
 class CMainFrame;
-class ACE_Mutex;
 
 ///////////////////////////////////////////////////
 
@@ -414,9 +405,6 @@ protected:
 	CMainFrameWorker* m_Updater;
 	CMainFrameFader* m_Fader;
 
-	// dir sync dialog
-	CmusikDirSync* m_DirSyncDlg;
-
 	// macros
 	DECLARE_DYNAMIC(CMainFrame)
 	DECLARE_MESSAGE_MAP()
@@ -439,6 +427,7 @@ protected:
 	bool m_TransEnb;
 	int m_Trans;
 	void ImportTrans();
+	CmusikDirSync* m_DirSyncDlg;
 
 	// winamp vis emulation
 	bool m_WinampVisActive;

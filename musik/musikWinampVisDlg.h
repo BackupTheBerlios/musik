@@ -43,11 +43,8 @@
 
 ///////////////////////////////////////////////////
 
-#include "afxwin.h"
-
-///////////////////////////////////////////////////
-
-class CmusikPrefs;
+#include "Resource.h"
+#include "musikPrefs.h"
 
 ///////////////////////////////////////////////////
 
@@ -67,7 +64,8 @@ public:
 	afx_msg void OnBnClickedOk();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual BOOL OnInitDialog();
-
+	afx_msg void OnBnClickedSettings();
+	
 	// helpers
 	int GetIndex();
 
@@ -87,9 +85,6 @@ protected:
 	// macros
 	DECLARE_DYNAMIC(CmusikWinampVisDlg)
 	DECLARE_MESSAGE_MAP()
-
-public:
-	afx_msg void OnBnClickedSettings();
 };
 
 ///////////////////////////////////////////////////

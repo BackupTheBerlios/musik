@@ -49,7 +49,6 @@
 #include "musikPrefs.h"
 
 #include "../musikCore/include/musikFilename.h"
-#include "../musikCore/include/musikPlayer.h"
 
 ///////////////////////////////////////////////////
 

@@ -41,9 +41,7 @@
 
 #include "stdafx.h"
 #include "musik.h"
-#include "musikPrefs.h"
 #include "musikWinampVisDlg.h"
-#include ".\musikwinampvisdlg.h"
 
 ///////////////////////////////////////////////////
 

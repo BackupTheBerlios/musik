@@ -140,6 +140,7 @@
 #define IDC_OK                          1057
 #define IDC_TUNAGEURL                   1058
 #define IDC_SETTINGS                    1058
+#define IDC_SPIN1                       1059
 #define IDC_TUNAGEFILENAME              1060
 #define IDC_TUNAGEFILEENABLED           1061
 #define IDC_TUNAGEFILELINE              1062
@@ -282,7 +283,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        165
 #define _APS_NEXT_COMMAND_VALUE         32943
-#define _APS_NEXT_CONTROL_VALUE         1059
+#define _APS_NEXT_CONTROL_VALUE         1060
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif

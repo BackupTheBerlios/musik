@@ -40,19 +40,13 @@
 
 #include "musik.h"
 #include "MainFrm.h"
-#include "MainFrmFunctor.h"
-#include "musikBatchAddFunctor.h"
-#include "musikRemoveOldFunctor.h"
 #include "musikFileDialog.h"
 #include "musikTimeCtrl.h"
-#include "musikDirSync.h"
+
 #include "musikPrefsDlg.h"
 #include "musikPropertyPage.h"
 #include "musikTunage.h"
-#include "musikWinampVisDlg.h"
 
-#include "../musikCore/include/musikLibrary.h"
-#include "../musikCore/include/musikPlayer.h"
 #include "../musikCore/include/musikFilename.h"
 #include "../musikCore/include/musikBatchAdd.h"
 #include "../musikCore/include/musikRemoveOld.h"
@@ -3247,7 +3241,7 @@ void CMainFrame::OnWinampvisualizationsConfigure()
 	}
 
 	m_VisDlg = new CmusikWinampVisDlg( this, &m_VisList, m_Prefs );
-	m_VisDlg->Create( IDD_WINAMP_VIS, this );
+	m_VisDlg->Create( m_VisDlg->IDD, this );
 	m_VisDlg->ShowWindow( SW_SHOW );
 }
 

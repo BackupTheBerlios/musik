@@ -41,10 +41,8 @@
 ///////////////////////////////////////////////////
 
 #include "stdafx.h"
-#include "musik.h"
 #include "musikDirSync.h"
-
-#include "../musikCore/include/musikLibrary.h"
+#include "musik.h"
 
 ///////////////////////////////////////////////////
 
