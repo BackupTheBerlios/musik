@@ -147,7 +147,7 @@ public:
 	int	GetPlayerVolume(){ return m_Player_Volume; }
 	unsigned long GetPlayerPlaymode(){ return m_Player_Playmode; }
 
-	void SetPlayerDrive( int n ){ m_Player_Driver = n; }
+	void SetPlayerDriver( int n ){ m_Player_Driver = n; }
 	void SetPlayerDevice( int n ){ m_Player_Device = n; }
 	void SetPlayerRate( int n ){ m_Player_Rate = n; }
 	void SetPlayerMaxChannels( int n ){ m_Player_Max_Channels = n; }

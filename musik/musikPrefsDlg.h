@@ -154,6 +154,7 @@ protected:
 	// macros
 	DECLARE_DYNAMIC( CmusikPrefsSoundDriver )
 	DECLARE_MESSAGE_MAP()
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 };
 
 ///////////////////////////////////////////////////

@@ -8,6 +8,7 @@
 #include "musikPrefsDlg.h"
 
 #include "../musikCore/include/musikFilename.h"
+#include ".\musikprefsdlg.h"
 
 ///////////////////////////////////////////////////
 
@@ -303,7 +304,20 @@ void CmusikPrefsSoundDriver::CommitChanges()
 	if ( orig_device != new_device || orig_driver != new_driver || orig_chan != new_chan || orig_rate != new_rate )
 		fmod_needs_restart = true;
 
+	m_Prefs->SetPlayerDevice( new_device );
+	m_Prefs->SetPlayerDriver( new_driver );
+	m_Prefs->SetPlayerRate( new_rate );
+	m_Prefs->SetPlayerMaxChannels( new_chan );
 
+	if ( fmod_needs_restart )
+	{
+		int res = MessageBox( "The sound system must be stopped and restarted to apply the new changes. If you do not to restart now, the changes will not take effect until musikCube as been restarted. Restart sound system?", MUSIK_VERSION_STR, MB_ICONINFORMATION | MB_YESNO );
+		if ( res == IDYES )
+		{
+			int WM_RESTARTSOUNDSYSTEM = RegisterWindowMessage( "RESTARTSOUNDSYSTEM" );
+			AfxGetApp()->m_pMainWnd->SendMessage( WM_RESTARTSOUNDSYSTEM );
+		}	
+	}
 }
 
 ///////////////////////////////////////////////////
@@ -356,7 +370,7 @@ void CmusikPrefsSoundDriver::GetSoundDrivers( bool populate )
 		if ( m_DriverInfo.size() )
 		{
 			if ( m_Prefs->GetPlayerDriver() < (int)m_DriverInfo.size() )
-				m_SoundDriver.SelectString( -1, m_DriverInfo.at( m_Prefs->GetPlayerDevice() ) );
+				m_SoundDriver.SelectString( -1, m_DriverInfo.at( m_Prefs->GetPlayerDriver() ) );
 			else
 				m_SoundDriver.SelectString( -1, m_DriverInfo.at( 0 ) );
 		}
@@ -389,6 +403,14 @@ void CmusikPrefsSoundDriver::GetSoundPlaybackRates( bool populate )
 			m_SoundPlaybackRate.SelectString( -1, playback_mode_str );
 		}
 	}
+}
+
+///////////////////////////////////////////////////
+
+BOOL CmusikPrefsSoundDriver::OnCommand(WPARAM wParam, LPARAM lParam)
+{
+	SetModified( TRUE );
+	return CmusikPropertyPage::OnCommand(wParam, lParam);
 }
 
 ///////////////////////////////////////////////////

@@ -91,6 +91,8 @@ int WM_CLOSEDIRSYNC			= RegisterWindowMessage( "CLOSEDIRSYNC" );
 
 int WM_GETPLAYLIST			= RegisterWindowMessage( "GETPLAYLIST" );
 
+int WM_RESTARTSOUNDSYSTEM	= RegisterWindowMessage( "RESTARTSOUNDSYSTEM" );
+
 // we get these ones from the player
 // via a CmusikFrmFunctor after a
 // certain operation as completed
@@ -211,6 +213,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_SELBOXADDREMOVE, OnSelBoxAddRemove )
 	ON_REGISTERED_MESSAGE( WM_SELBOXREQUESTUPDATE, OnSelBoxRequestUpdate )
 	ON_REGISTERED_MESSAGE( WM_GETPLAYLIST, OnGetCurrPlaylist )
+	ON_REGISTERED_MESSAGE( WM_RESTARTSOUNDSYSTEM, OnRestartSoundSystem )
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -2628,6 +2631,21 @@ BOOL CMainFrame::PreTranslateMessage(MSG* pMsg)
 LRESULT CMainFrame::OnGetCurrPlaylist( WPARAM wParam, LPARAM lParam )
 {
 	return (LRESULT)m_wndView->GetCtrl()->GetPlaylist();
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CMainFrame::OnRestartSoundSystem( WPARAM wParam, LPARAM lParam )
+{
+	m_Player->Stop();
+
+	while ( m_Player->IsPlaying() )
+		Sleep( 50 );
+
+	m_Player->CleanSound();
+	m_Player->InitSound( m_Prefs->GetPlayerDevice(), m_Prefs->GetPlayerDriver(), m_Prefs->GetPlayerRate(), m_Prefs->GetPlayerMaxChannels() );
+
+	return 0L;
 }
 
 ///////////////////////////////////////////////////
