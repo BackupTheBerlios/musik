@@ -300,8 +300,11 @@ void CNowPlayingCtrl::UpdateInfo( wxString sFilename )
 	if ( song.Title == _( "<unknown> " ) )
 		song.Title = _( "Unknown Song" );
 
-	// tell Tunage to do it's thing
-	g_Tunage.Execute( song );
+	// tell Tunage to do it's thing if file has changed
+	if ( m_sLastFile != sFilename )
+		g_Tunage.Execute( song );
+
+	m_sLastFile = sFilename;
 
 	//--- caption bar title ---//
 	g_MusikFrame->SetTitle( wxString( MUSIK_VERSION ) + wxT( " [ " ) + song.Artist + wxT( " - " ) +  song.Title + wxT( " ]" ) );
@@ -318,6 +321,7 @@ void CNowPlayingCtrl::UpdateInfo( wxString sFilename )
 	stCurtime->SetLabel( wxT( " - 0:00 " ) );
 
 	Layout();
+
 }
 
 void CNowPlayingCtrl::PlayerStop( wxCommandEvent& WXUNUSED(event) )

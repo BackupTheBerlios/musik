@@ -316,9 +316,9 @@ void CMusikPlayer::SetFrequency()
 	//--- commented this out for the release.		---//
 	//--- See Also: MusikFXFrame::MusikFXFrame()	---//
 	//-------------------------------------------------//
-	/*
+	
 	FSOUND_SetFrequency( FSOUND_ALL, (int)g_FX.GetFrequency() );
-	*/
+	
 }
 
 void CMusikPlayer::UpdateUI()

@@ -107,6 +107,8 @@ private:
 	void StartTimer();
 	void KillTimer();
 	wxTimer *pSecTimer;
+
+	wxString m_sLastFile;
 };
 
 #endif

@@ -78,15 +78,15 @@ MusikFXFrame::MusikFXFrame( wxFrame *pParent, const wxString &sTitle, const wxPo
 	//--- for 0.1.3 release.						---//
 	//--- See Also: MusikPlayer::SetFrequency()		---//
 	//-------------------------------------------------//
-	/*
+	
 	slPitch = new wxSlider( this, SLD_PITCH, 50, 0, 100, wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 	slPitch->SetToolTip( _("Pitch control, right-click to reset") );
-	*/
+	
 
 	vsMain->Add( pEQ, 0, wxALL, 4 );
-	/*
+	
 	vsMain->Add( slPitch, 0, wxALL, 4 );
-	*/
+	
 
 	SetSizerAndFit( vsMain );
 
