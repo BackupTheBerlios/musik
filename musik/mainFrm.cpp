@@ -84,6 +84,7 @@ int WM_SOURCESLIBRARY		= RegisterWindowMessage( "SOURCESLIBRARY" );
 int WM_SOURCESNOWPLAYING	= RegisterWindowMessage( "SOURCESNOWPLAYING" );
 int WM_SOURCESSTDPLAYLIST	= RegisterWindowMessage( "SOURCESSTDPLAYLIST" );
 int WM_SOURCESDYNPLAYLIST	= RegisterWindowMessage( "SOURCESDYNDPLAYLIST" );
+int WM_SOURCESQUICKSEARCH	= RegisterWindowMessage( "SOURCESQUICKSEARCH" );
 
 int WM_CLOSEDIRSYNC			= RegisterWindowMessage( "CLOSEDIRSYNC" );
 
@@ -176,6 +177,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_SOURCESNOWPLAYING, OnSourcesNowPlaying )
 	ON_REGISTERED_MESSAGE( WM_SOURCESSTDPLAYLIST, OnSourcesStdPlaylist )
 	ON_REGISTERED_MESSAGE( WM_SOURCESDYNPLAYLIST, OnSourcesDynPlaylist )
+	ON_REGISTERED_MESSAGE( WM_SOURCESQUICKSEARCH, OnSourcesQuickSearch )
 	ON_REGISTERED_MESSAGE( WM_DRAGSTART, OnDragStart )
 	ON_REGISTERED_MESSAGE( WM_DRAGEND, OnDragEnd )
 	ON_REGISTERED_MESSAGE( WM_PLAYERNEWPLAYLIST, OnPlayerNewPlaylist )
@@ -1169,6 +1171,25 @@ LRESULT CMainFrame::OnSourcesLibrary( WPARAM wParam, LPARAM lParam )
 	}
 
 	m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, MUSIK_SOURCES_TYPE_LIBRARY );
+	m_wndView->GetCtrl()->UpdateV();
+
+	return 0L;
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CMainFrame::OnSourcesQuickSearch( WPARAM wParam, LPARAM lParam )
+{
+	if ( !m_LibPlaylist )
+		m_LibPlaylist = new CmusikPlaylist();
+
+	CString* sPattern = (CString*)wParam;
+	
+	m_Library->QuickQuery( (CStdString)*sPattern, *m_LibPlaylist );
+
+	if ( m_wndView->GetCtrl()->GetPlaylist() != m_LibPlaylist )
+		m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, MUSIK_SOURCES_TYPE_LIBRARY );
+
 	m_wndView->GetCtrl()->UpdateV();
 
 	return 0L;

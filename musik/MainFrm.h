@@ -198,6 +198,7 @@ protected:
 	afx_msg LRESULT OnSourcesNowPlaying( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSourcesStdPlaylist( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSourcesDynPlaylist( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnSourcesQuickSearch( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnDragStart(  WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnDragEnd(  WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSelBoxesReset( WPARAM wParam, LPARAM lParam );
