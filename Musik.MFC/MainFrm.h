@@ -56,9 +56,10 @@ protected:
 //--- operations								---//
 //-------------------------------------------------//
 public:
-	void DockBarLeftOf( CSizingControlBar* Bar, CSizingControlBar* LeftOf );
+	void ResetDialogRect();
 
 protected:
+	void DockBarLeftOf( CSizingControlBar* Bar, CSizingControlBar* LeftOf );
 	bool RecurseMkDir( char* pszDir );
 
 private:
@@ -77,9 +78,10 @@ public:
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSetFocus(CWnd *pOldWnd);
-	afx_msg void OnSize(UINT nType, int cx, int cy);
 
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnDestroy();
 };
 
 

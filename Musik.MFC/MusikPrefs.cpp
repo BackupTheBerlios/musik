@@ -2,6 +2,92 @@
 
 #include "MusikPrefs.h"
 
+inline int StringToInt( const string str )
+{
+	return atoi( str.c_str() );	
+}
+
+inline string IntToString( int n )
+{
+	char buffer[20];
+	itoa( n, buffer, 10 );
+	string str = buffer;
+    return str;	
+}
+
+inline CSize StringToCSize( string str )
+{
+	CSize ret;
+	CString cstr = str.c_str();
+	if ( cstr.Find( "x", 0 ) )
+	{
+		int currpos = 0;
+		CString strx = cstr.Tokenize( "x", currpos );
+		CString stry = cstr.Tokenize( "x", currpos );
+		ret.cx = atoi( strx );
+		ret.cy = atoi( stry );
+	}
+	else
+		ret.SetSize( 0, 0 );
+
+	return ret;
+}
+
+inline string CSizeToString( CSize size )
+{
+	string ret;
+	char buffer_w[10];
+	char buffer_h[10];
+
+	itoa( size.cx, buffer_w, 10 );
+	itoa( size.cy, buffer_h, 10 );
+
+	string str;
+	str += buffer_w;
+	str += "x";
+	str += buffer_h;
+
+	return str;
+}
+
+inline CPoint StringToCPoint( string str )
+{
+	CPoint ret;
+	CString cstr = str.c_str();
+	if ( cstr.Find( ",", 0 ) )
+	{
+		int currpos = 0;
+		CString strx = cstr.Tokenize( ",", currpos );
+		CString stry = cstr.Tokenize( ",", currpos );
+		ret.x = atoi( strx );
+		ret.y = atoi( stry );
+	}
+	else
+	{
+		ret.x = 0;
+		ret.y = 0;
+	}
+
+	return ret;
+}
+
+inline string CPointToString( CPoint pt )
+{
+	string ret;
+	char buffer_x[10];
+	char buffer_y[10];
+
+	itoa( pt.x, buffer_x, 10 );
+	itoa( pt.y, buffer_y, 10 );
+
+	string str;
+	str += buffer_x;
+	str += ",";
+	str += buffer_y;
+
+	return str;
+}
+
 CMusikPrefs::CMusikPrefs( CString filename )
 {
 	config = new CIniFile( filename.GetBuffer() );
@@ -14,11 +100,18 @@ CMusikPrefs::CMusikPrefs( CString filename )
 
 CMusikPrefs::~CMusikPrefs()
 {
+	SavePrefs();
 	delete config;
 }
 
 void CMusikPrefs::LoadPrefs()
 {
+	//-----------------------------------------------------//
+	//--- whole dialog									---//
+	//-----------------------------------------------------//
+	m_DlgSize = StringToCSize( config->GetValue( "Dialog", "Dialog Size", "800x600" ) );
+	m_DlgPos = StringToCPoint( config->GetValue( "Dialog", "Dialog Position", "50,50" ) );
+
 	//-----------------------------------------------------//
 	//--- selection area								---//
 	//-----------------------------------------------------//
@@ -31,11 +124,16 @@ void CMusikPrefs::LoadPrefs()
 	//-----------------------------------------------------//
 	//--- sources										---//
 	//-----------------------------------------------------//
-	SavePrefs();
 }
 
 void CMusikPrefs::SavePrefs()
 {
+	//-----------------------------------------------------//
+	//--- whole dialog									---//
+	//-----------------------------------------------------//
+	config->SetValue( "Dialog", "Dialog Size", CSizeToString( m_DlgSize ) );
+	config->SetValue( "Dialog", "Dialog Position", CPointToString( m_DlgPos ) );
+
 	//-----------------------------------------------------//
 	//--- selection area								---//
 	//-----------------------------------------------------//

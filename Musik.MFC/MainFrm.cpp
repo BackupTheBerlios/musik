@@ -11,6 +11,7 @@
 #include <Direct.h>
 
 #include "MainFrm.h"
+#include ".\mainfrm.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -23,7 +24,8 @@ IMPLEMENT_DYNAMIC(CMainFrame, CFrameWnd)
 BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_WM_CREATE()
 	ON_WM_SETFOCUS()
-	ON_WM_SIZE()
+//	ON_WM_SIZE()
+	ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
 
@@ -61,6 +63,14 @@ void CMainFrame::InitPaths()
 
 	m_Database = m_UserDir + _T( "musiklib.db" );
 	m_PrefsIni = m_UserDir + _T( "musikprefs.ini" );
+}
+
+void CMainFrame::ResetDialogRect()
+{
+	CSize dlg_size = m_Prefs->GetDlgSize();
+	CPoint dlg_pos = m_Prefs->GetDlgPos();
+
+	MoveWindow( dlg_pos.x, dlg_pos.y, dlg_size.cx, dlg_size.cy );
 }
 
 bool CMainFrame::RecurseMkDir( char* pszDir )
@@ -117,6 +127,8 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if ( CFrameWnd::OnCreate(lpCreateStruct) == -1 )
 		return -1;
+
+	ResetDialogRect();
 
 	//-------------------------------------------------//
 	//--- create a background window				---//
@@ -212,13 +224,16 @@ BOOL CMainFrame::OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO*
 
 BOOL CMainFrame::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* pContext )
 {
-	CRect client_size;
-	GetClientRect( &client_size );
-
 	return TRUE;
 }
-void CMainFrame::OnSize(UINT nType, int cx, int cy)
-{
-	CFrameWnd::OnSize(nType, cx, cy);
 
+void CMainFrame::OnDestroy()
+{
+	CFrameWnd::OnDestroy();
+	
+	CRect rc_dlg;
+	GetWindowRect( &rc_dlg );
+
+	m_Prefs->SetDlgSize( CSize( rc_dlg.right - rc_dlg.left, rc_dlg.bottom - rc_dlg.top ) );
+	m_Prefs->SetDlgPos( CPoint( rc_dlg.left, rc_dlg.top ) );
 }
