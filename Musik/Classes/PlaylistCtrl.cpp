@@ -1067,6 +1067,7 @@ void CPlaylistCtrl::RateSel( int nVal )
 {
 	int nIndex = -1;
 	//--- yeah, we can rate multiple items. find whats selected ---//
+	g_Library.BeginTransaction();
 	for ( int i = 0; i < GetSelectedItemCount(); i++ )
 	{
 		nIndex = GetNextItem( nIndex, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
@@ -1074,9 +1075,11 @@ void CPlaylistCtrl::RateSel( int nVal )
 			break;
 		//--- set db entry, then resync item(s) ---//
 		g_Library.SetRating( GetFilename( nIndex ), nVal );
-		ResynchItem( nIndex, -1, false );
+		g_Playlist.Item( nIndex ).Rating = nVal;
+		RefreshItem( nIndex );
 		
 	}
+	g_Library.EndTransaction();
 }
 
 void CPlaylistCtrl::EditTag( int i )

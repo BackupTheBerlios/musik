@@ -361,7 +361,7 @@ bool CMusikLibrary::WriteOGGTag( const CMusikSong & song, bool ClearAll )
     state = vcedit_new_state();
 
     //--- if file couldn't be loaded, return ---//
-	wxString read_state = wxT( "r+b" );
+	
 	if ( !in.Open( sRename, "r+b" ) )
 	{
 		wxRenameFile( sRename, filename );
@@ -391,7 +391,7 @@ bool CMusikLibrary::WriteOGGTag( const CMusikSong & song, bool ClearAll )
 	vorbis_comment_add_tag( vc, "DATE",			( char* )( ( const char* )ConvDBFieldToMB( song.Year )	)	);
 
 	//--- write new file ---//
-	wxString write_state = wxT( "w+b" );
+	
 	if ( out.Open( filename, "w+b" ) )
 		vcedit_write( state, out.fp() );
 
@@ -411,11 +411,11 @@ bool CMusikLibrary::WriteOGGTag( const CMusikSong & song, bool ClearAll )
 
 int CMusikLibrary::ClearDirtyTags()
 {
-	CMusikSongArray aDirty;
-	g_Library.QuerySongs( wxT("dirty = 1"), aDirty );
-	size_t nCount = aDirty.GetCount();
-	for( size_t i = 0; i < nCount; i++ )
-		UpdateItem( aDirty.Item( i ).Filename, aDirty.Item( i ), false );
+	wxCriticalSectionLocker lock( m_csDBAccess );
+	int nCount = QueryCount("select count(*) from songs where dirty = 1;");
+	sqlite_exec_printf( m_pDB, "update songs set dirty = 0 where dirty = 1;",
+			NULL, NULL, NULL);
+
 
 	return nCount;
 }
@@ -1009,10 +1009,10 @@ void CMusikLibrary::SetRating( const wxString & sFile, int nVal )
 	if ( nVal > 5 )
 		nVal = 5;
 
-	CMusikSong song;
-	GetSongFromFilename( sFile, &song );
-	song.Rating = nVal;
-	UpdateItem( song.Filename, song, false );
+	wxCriticalSectionLocker lock( m_csDBAccess );
+	sqlite_exec_printf( m_pDB, "update songs set rating = %d where filename = %Q;",
+		NULL, NULL, NULL, nVal, ( const char* )ConvFNToFieldMB( sFile ) );
+
 }
 
 void CMusikLibrary::CheckAndPurge( const wxString & filename )

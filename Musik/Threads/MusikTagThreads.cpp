@@ -41,6 +41,7 @@ void *MusikTagApplyThread::Entry()
 	int nLastProg = 0;
 	int nCurrProg = 0;
 	bool bRenameOK;
+	g_Library.BeginTransaction();
 	for( size_t i = 0; i < m_Songs.GetCount(); i++ )
 	{
 		//-----------------------//
@@ -95,7 +96,7 @@ void *MusikTagApplyThread::Entry()
 			}
 		}
 	}
-
+	g_Library.EndTransaction();
 	return NULL;
 }
 

@@ -95,6 +95,7 @@ void* MusikPlaylistRetagThread::Entry()
     float fPos = 0;
 	int nLastProg = 0;
 	int nCurrProg = 0;
+	g_Library.BeginTransaction();
 	for ( size_t i = 0; i < m_Songs.GetCount(); i++ )
 	{
 		//-----------------------//
@@ -115,7 +116,7 @@ void* MusikPlaylistRetagThread::Entry()
 		g_Library.RetagFile( &m_Songs.Item( i ) );
 		Yield();
 	}
-
+	g_Library.EndTransaction();
 	g_Playlist = m_Songs;
 
 	return NULL;
