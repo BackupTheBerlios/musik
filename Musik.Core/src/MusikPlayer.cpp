@@ -47,6 +47,8 @@ static void MusikPlayerWorker( CMusikPlayer* player )
 			// crossfader flag
 			if ( player->IsCrossfaderReady() )
 			{
+				TRACE0( "Crossfade started... " );
+
 				player->UnflagCrossfade();
 
 				bool fade_success = true;
@@ -118,6 +120,7 @@ static void MusikPlayerWorker( CMusikPlayer* player )
 						// see if we should abort. 
 						if ( player->GetHandle() != nCurrHandle )
 						{
+							TRACE0( "Crossfade aborted\n" );
 							fade_success = false;
 							break;
 						}
@@ -154,6 +157,8 @@ static void MusikPlayerWorker( CMusikPlayer* player )
 	
 				if ( fade_success )
 					player->FinishCrossfade();
+
+				TRACE0( "Crossfade finished successfully\n" );
 
 			}
 			
@@ -218,9 +223,9 @@ CMusikPlayer::CMusikPlayer( CMusikFunctor* functor, CMusikLibrary* library, CMus
 
 CMusikPlayer::~CMusikPlayer()
 {
+	CleanThread();
 	CleanEqualizer();
 	CleanCrossfader();
-	CleanThread();
 	CleanSound();
 }
 
@@ -245,6 +250,8 @@ void CMusikPlayer::InitThread()
 
 void CMusikPlayer::CleanThread()
 {
+	ACE_Thread::suspend( *m_ThreadHND );
+
 	if ( m_Mutex ) 	delete m_Mutex;
 	if ( m_ThreadID ) delete m_ThreadID;	
 	if ( m_ThreadHND ) delete m_ThreadHND;
