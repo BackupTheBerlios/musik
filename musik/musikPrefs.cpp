@@ -156,6 +156,10 @@ void CmusikPrefs::LoadPrefs()
 	MUSIK_COLOR_HIGHLIGHT			= StringToCOLORREF( config->GetValue( "Dialog Colors", "Color Highlight", "255,0,255" ) );
 	MUSIK_COLOR_HIGHLIGHTTEXT		= StringToCOLORREF( config->GetValue( "Dialog Colors", "Color Highlight Text", "255,0,255" ) );
 
+	// tunage
+	m_Tunage_Enabled	= StringToBool( config->GetValue( "Tunage", "Enabled", "0" ) );
+	m_Tunage_WriteFile	= StringToBool( config->GetValue( "Tunage", "WriteFile", "0" ) );	m_Tunage_Filename	= config->GetValue( "Tunage", "Filename", "" );	m_Tunage_FileLine	= config->GetValue( "Tunage", "FileLine", "" );	m_Tunage_AppendFile	= StringToBool( config->GetValue( "Tunage", "AppendFile", "0" ) );	m_Tunage_PostURL		= StringToBool( config->GetValue( "Tunage", "PostURL", "0" ) );	m_Tunage_URL			= config->GetValue( "Tunage", "URL", "" );	m_Tunage_RunApp		= StringToBool( config->GetValue( "Tunage", "RunApp", "0" ) );	m_Tunage_CmdLine		= config->GetValue( "Tunage", "CmdLine", "" );	m_Tunage_RunOnStop	= StringToBool( config->GetValue( "Tunage", "RunOnStop", "0" ) );	m_Tunage_StoppedText = config->GetValue( "Tunage", "StoppedText", "" );
+
 	ParseColors();
 }
 
@@ -236,6 +240,10 @@ void CmusikPrefs::SavePrefs()
 	config->SetValue( "Dialog Colors", "List Text", COLORREFToString( MUSIK_COLOR_LISTCTRLTEXT ) );
 	config->SetValue( "Dialog Colors", "Color Highlight", COLORREFToString( MUSIK_COLOR_HIGHLIGHT ) );
 	config->SetValue( "Dialog Colors", "Color Highlight Text", COLORREFToString( MUSIK_COLOR_HIGHLIGHTTEXT ) );
+
+	// tunage
+	config->SetValue( "Tunage", "Enabled", BoolToString( m_Tunage_Enabled ) ) ;
+	config->SetValue( "Tunage", "WriteFile", BoolToString( m_Tunage_WriteFile ) ) ;	config->SetValue( "Tunage", "Filename", m_Tunage_Filename );	config->SetValue( "Tunage", "FileLine", m_Tunage_FileLine );	config->SetValue( "Tunage", "AppendFile", BoolToString(	m_Tunage_AppendFile ) );	config->SetValue( "Tunage", "PostURL", BoolToString( m_Tunage_PostURL ) );	config->SetValue( "Tunage", "URL", m_Tunage_URL ) ;	config->SetValue( "Tunage", "RunApp", BoolToString(	m_Tunage_RunApp ) );	config->SetValue( "Tunage", "CmdLine", m_Tunage_CmdLine );	config->SetValue( "Tunage", "RunOnStop", BoolToString( m_Tunage_RunOnStop ) );	config->SetValue( "Tunage", "StoppedText", m_Tunage_StoppedText );
 
 	// write to ini file
 	config->WriteFile();

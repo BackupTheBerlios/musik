@@ -48,6 +48,7 @@
 #include "musikDirSync.h"
 #include "musikPrefsDlg.h"
 #include "musikPropertyPage.h"
+#include "musikTunage.h"
 
 #include "../musikCore/include/StdString.h"
 #include "../musikCore/include/musikLibrary.h"
@@ -1594,6 +1595,12 @@ LRESULT CMainFrame::OnSongChange( WPARAM wParam, LPARAM lParam )
 	{
 		strncpy ( m_TrayIcon.szTip, m_Caption, sizeof( m_TrayIcon.szTip ) );
 		Shell_NotifyIcon( NIM_MODIFY, &m_TrayIcon );
+	}
+
+	if ( m_Prefs->GetTunageEnabled() )
+	{
+		CmusikTunage tunage( m_Library, m_Player, m_Prefs );
+		tunage.Execute();
 	}
 
 	return 0L;

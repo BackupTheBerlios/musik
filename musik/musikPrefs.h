@@ -237,6 +237,12 @@ public:
 	COLORREF MUSIK_COLOR_HIGHLIGHT;
 	COLORREF MUSIK_COLOR_HIGHLIGHTTEXT;
 
+	bool GetTunageEnabled() { return m_Tunage_Enabled; }
+	bool GetTunageWriteFile() { return m_Tunage_WriteFile; }	string GetTunageFilename() { return m_Tunage_Filename; }	string GetTunageFileLine() { return m_Tunage_FileLine; }	bool GetTunageAppendFile() { return m_Tunage_AppendFile; }	bool GetTunagePostURL() { return m_Tunage_PostURL; }	string GetTunageURL() { return m_Tunage_URL; }	bool GetTunageRunApp() { return m_Tunage_RunApp; }	string GetTunageCmdLine() { return m_Tunage_CmdLine; }	bool GetTunageRunOnStop() { return m_Tunage_RunOnStop; }	string GetTunageStoppedText() { return m_Tunage_StoppedText; }
+
+	void SetTunageEnabled( bool val ) { m_Tunage_Enabled = val; }
+	void SetTunageWriteFile( bool val ) { m_Tunage_WriteFile = val; }	void SetTunageFilename( string val ) { m_Tunage_Filename = val; }	void SetTunageFileLine( string val ) { m_Tunage_FileLine = val; }	void SetTunageAppendFile( bool val ) {  m_Tunage_AppendFile = val; }	void SetTunagePostURL( bool val ) {  m_Tunage_PostURL = val; }	void SetTunageURL( string val ) {  m_Tunage_URL = val; }	void SetTunageRunApp( bool val ) { m_Tunage_RunApp = val; }	void SetTunageCmdLine( string val ) {  m_Tunage_CmdLine = val; }	void SetTunageRunOnStop( bool val ) {  m_Tunage_RunOnStop = val; }	void SetTunageStoppedText( string val ) { m_Tunage_StoppedText = val; }
+
 protected:
 
 	CIniFile* config;
@@ -316,6 +322,10 @@ private:
 	bool m_ListCtrlTextDef;
 	bool m_HilightDef;
 	bool m_HilightTextDef;
+
+	// tunage
+	bool m_Tunage_Enabled;
+	bool m_Tunage_WriteFile;	string m_Tunage_Filename;	string m_Tunage_FileLine;	bool m_Tunage_AppendFile;	bool m_Tunage_PostURL;	string m_Tunage_URL;	bool m_Tunage_RunApp;	string m_Tunage_CmdLine;	bool m_Tunage_RunOnStop;	string m_Tunage_StoppedText;
 };
 
 ///////////////////////////////////////////////////

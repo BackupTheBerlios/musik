@@ -143,6 +143,12 @@
 			<File
 				RelativePath=".\MainFrm.h">
 			</File>
+			<File
+				RelativePath=".\musikTunage.cpp">
+			</File>
+			<File
+				RelativePath=".\musikTunage.h">
+			</File>
 			<Filter
 				Name="Controls"
 				Filter="">
