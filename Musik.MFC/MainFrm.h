@@ -3,6 +3,8 @@
 #include "ChildView.h"
 #include "MusikSourcesCtrl.h"
 #include "MusikPlaylistCtrl.h"
+#include "MusikSourcesView.h"
+#include "MusikPlaylistView.h"
 
 class CMainFrame : public CFrameWnd
 {
@@ -30,8 +32,6 @@ public:
 
 private:
 	CSplitterWnd m_MainSplit;
-	CWnd* m_SourcesCtrl;
-	CWnd* m_PlaylistCtrl;
 	bool m_Split;
 
 protected:

@@ -150,26 +150,6 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="Header Files"
-			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
-			<File
-				RelativePath=".\ChildView.h">
-			</File>
-			<File
-				RelativePath=".\MainFrm.h">
-			</File>
-			<File
-				RelativePath=".\Musik.h">
-			</File>
-			<File
-				RelativePath=".\Resource.h">
-			</File>
-			<File
-				RelativePath=".\stdafx.h">
-			</File>
-		</Filter>
-		<Filter
 			Name="Resource Files"
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
@@ -207,10 +187,57 @@
 				</File>
 			</Filter>
 		</Filter>
+		<Filter
+			Name="Views"
+			Filter="">
+			<Filter
+				Name="MusikSourcesView"
+				Filter="">
+				<File
+					RelativePath=".\MusikSourcesView.cpp">
+				</File>
+				<File
+					RelativePath=".\MusikSourcesView.h">
+				</File>
+			</Filter>
+			<Filter
+				Name="MusikPlaylistView"
+				Filter="">
+				<File
+					RelativePath=".\MusikPlaylistView.cpp">
+				</File>
+				<File
+					RelativePath=".\MusikPlaylistView.h">
+				</File>
+			</Filter>
+		</Filter>
+		<Filter
+			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl;inc;xsd"
+			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
+			<File
+				RelativePath=".\ChildView.h">
+			</File>
+			<File
+				RelativePath=".\MainFrm.h">
+			</File>
+			<File
+				RelativePath=".\Musik.h">
+			</File>
+			<File
+				RelativePath=".\Resource.h">
+			</File>
+			<File
+				RelativePath=".\stdafx.h">
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\res\Musik.manifest">
 		</File>
 	</Files>
 	<Globals>
+		<Global
+			Name="RESOURCE_FILE"
+			Value="Musik.rc"/>
 	</Globals>
 </VisualStudioProject>

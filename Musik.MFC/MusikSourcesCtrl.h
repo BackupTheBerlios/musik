@@ -1,18 +1,18 @@
-#ifndef C_MUSIK_SOURCES_CTRL
-#define C_MUSIK_SOURCES_CTRL
+#pragma once
 
-#include "stdafx.h"
-#include "afxcview.h"
 
-class CMusikSourcesCtrl : public CListView
+// CMusikSourcesCtrl
+
+class CMusikSourcesCtrl : public CListCtrl
 {
+	DECLARE_DYNAMIC(CMusikSourcesCtrl)
+
 public:
 	CMusikSourcesCtrl();
-	~CMusikSourcesCtrl();
-
-private:
+	virtual ~CMusikSourcesCtrl();
 
 protected:
+	DECLARE_MESSAGE_MAP()
 };
 
-#endif
+

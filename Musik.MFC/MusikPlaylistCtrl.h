@@ -1,18 +1,18 @@
-#ifndef C_MUSIK_PLAYLIST_CTRL
-#define C_MUSIK_PLAYLIST_CTRL
+#pragma once
 
-#include "stdafx.h"
-#include "afxcview.h"
 
-class CMusikPlaylistCtrl : public CListView
+// CMusikPlaylistCtrl
+
+class CMusikPlaylistCtrl : public CListCtrl
 {
+	DECLARE_DYNAMIC(CMusikPlaylistCtrl)
+
 public:
 	CMusikPlaylistCtrl();
-	~CMusikPlaylistCtrl();
-
-private:
+	virtual ~CMusikPlaylistCtrl();
 
 protected:
+	DECLARE_MESSAGE_MAP()
 };
 
-#endif
+
