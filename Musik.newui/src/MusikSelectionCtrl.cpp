@@ -2,8 +2,9 @@
 #include "MusikSelectionCtrl.h"
 
 CMusikSelectionCtrl::CMusikSelectionCtrl( wxWindow* parent, wxWindowID id )
-	: CMusikListCtrl( parent, id, wxNO_FULL_REPAINT_ON_RESIZE | wxLC_ALIGN_LEFT | wxLC_REPORT /*| wxLC_VIRTUAL*/ | wxSIMPLE_BORDER & ~wxHSCROLL )
+	: CMusikListCtrl( parent, id, wxNO_FULL_REPAINT_ON_RESIZE | wxLC_ALIGN_LEFT | wxLC_REPORT | wxLC_VIRTUAL | wxSIMPLE_BORDER & ~wxHSCROLL )
 {
+	SetType( MUSIK_SELECTION_ARTISTS, false );	//--- this is where we will set the box type
 	Reset( true, true );
 }
 
@@ -35,9 +36,16 @@ void CMusikSelectionCtrl::Reset( bool rescale, bool refresh )
 	//--- hide it.											---//
 	//---------------------------------------------------------//
 	InsertColumn( 0, wxT( "" ) );
-	InsertColumn( 1, wxT( "SelectionBox" ) );
+	InsertColumn( 1, GetColumnName() );
 	if ( rescale )
 		RescaleColumns( refresh );
+}
+
+void CMusikSelectionCtrl::SetType( E_MUSIK_SELECTION_TYPE type, bool reset )
+{
+	m_Type = type;
+	if ( reset )
+		Reset();
 }
 
 void CMusikSelectionCtrl::Update( bool refresh )
