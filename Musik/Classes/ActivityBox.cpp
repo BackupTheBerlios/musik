@@ -722,7 +722,7 @@ wxString CActivityBox::DNDGetList()
 	for ( size_t i = 0; i < songs.GetCount(); i++ )
 	{
 		sRet += songs.Item( i ).MetaData.Filename.GetFullPath();
-		if	( i == ( songs.GetCount() - 1 ) )
+		if	( i != ( songs.GetCount() - 1 ) )
 			sRet += wxT("\n");
 	}
 	return sRet;

@@ -269,9 +269,9 @@ bool CMusikLibrary::FileInLibrary( const wxString & filename, bool fullpath )
 
 	char *query;
 	if ( fullpath )
-		query = sqlite_mprintf( "select songid from songs where filename = %Q;", ( const char* )ConvFNToFieldMB(filename) );
+		query = sqlite_mprintf( "select songid from songs where filename = %Q;", ( const char* )ConvToUTF8(filename) );
 	else
-		query = sqlite_mprintf( "select songid from songs where filename like '%%%q%%';", ( const char* )ConvFNToFieldMB(filename) );
+		query = sqlite_mprintf( "select songid from songs where filename like '%%%q%%';", ( const char* )ConvToUTF8(filename) );
 	
 	//--- run query ---//
 	const char *pTail;
@@ -318,7 +318,7 @@ void CMusikLibrary::AddSongDataFromFile( const wxString & filename )
 			NULL,	
 			(int)MetaData.eFormat,	
 			MetaData.bVBR, 
-			( const char* )ConvFNToFieldMB(MetaData.Filename.GetFullPath()) ,
+			( const char* )ConvToUTF8(MetaData.Filename.GetFullPath()) ,
 			( const char* )MetaData.Artist, 
 			( const char* )MetaData.Title, 
 			( const char* )MetaData.Album, 
@@ -365,7 +365,7 @@ void CMusikLibrary::UpdateSongDataFromFile( const wxString & filename )
 			MetaData.nBitrate, 
 			MetaData.nDuration_ms, 
 			MetaData.nFilesize,
-			( const char* )ConvFNToFieldMB(MetaData.Filename.GetFullPath())
+			( const char* )ConvToUTF8(MetaData.Filename.GetFullPath())
 			);
 	
 	}
@@ -402,7 +402,7 @@ bool CMusikLibrary::GetMP3MetaData( CSongMetaData & MetaData )
 		
 		//--- link and load mp3 ---//
 		ID3_Tag		id3Tag;
-		id3Tag.Link( ( const char* )ConvFNToFieldMB( sFilename ), (flags_t)ID3TT_ALL );
+		id3Tag.Link( ( const char* )ConvW2A( sFilename ), (flags_t)ID3TT_ALL );
 		
 		MetaData.Artist.Attach	( ID3_GetArtist	( &id3Tag ));
 		MetaData.Title.Attach	( ID3_GetTitle	( &id3Tag ));
@@ -451,7 +451,7 @@ void CMusikLibrary::WriteTag(  CMusikSong & song, bool ClearAll , bool bUpdateDB
 void CMusikLibrary::WriteMP3Tag( const CSongMetaData & MetaData, bool ClearAll )
 {
 	ID3_Tag	id3Tag;
-	id3Tag.Link( ( const char* )ConvFNToFieldMB( MetaData.Filename.GetFullPath () ) , (flags_t)ID3TT_ALL );
+	id3Tag.Link( ( const char* )ConvW2A( MetaData.Filename.GetFullPath () ) , (flags_t)ID3TT_ALL );
 
 	//--- iterate through and delete ALL TAG INFO ---//
 	if ( ClearAll )
@@ -1015,7 +1015,7 @@ void CMusikLibrary::UpdateItem( CMusikSong & newsonginfo, bool bDirty )
 		result = sqlite_exec_printf( m_pDB, "update songs set filename=%Q, artist=%Q, title=%Q,"
 											"album=%Q, tracknum=%d, year=%Q, genre=%Q, rating=%d,"
 											"notes=%Q, dirty=%d where songid = %d;", NULL, NULL, NULL, 
-			( const char* )ConvFNToFieldMB( newsonginfo.MetaData.Filename.GetFullPath() ), 
+			( const char* )ConvToUTF8( newsonginfo.MetaData.Filename.GetFullPath() ), 
 			( const char* )newsonginfo.MetaData.Artist, 
 			( const char* )newsonginfo.MetaData.Title , 
 			( const char * )newsonginfo.MetaData.Album , 
@@ -1036,7 +1036,7 @@ void CMusikLibrary::UpdateItem( CMusikSong & newsonginfo, bool bDirty )
 
 int CMusikLibrary::GetSongDirCount( wxString sDir )
 {
-	char *query = sqlite_mprintf( "select count(*) from songs where filename like '%q%%';", ( const char* )ConvFNToFieldMB(sDir) );
+	char *query = sqlite_mprintf( "select count(*) from songs where filename like '%q%%';", ( const char* )ConvToUTF8(sDir) );
 	int result = QueryCount(query);
 	sqlite_freemem( query );
 	return result;
@@ -1090,14 +1090,14 @@ bool CMusikLibrary::CheckAndPurge( const wxString & filename )
 void CMusikLibrary::RemoveSongDir( const wxString &  sDir )
 {
 	wxCriticalSectionLocker lock( m_csDBAccess );
-	sqlite_exec_printf( m_pDB, "delete from songs where filename like '%q%%'", NULL, NULL, NULL, ( const char* )ConvFNToFieldMB(sDir) );	
+	sqlite_exec_printf( m_pDB, "delete from songs where filename like '%q%%'", NULL, NULL, NULL, ( const char* )ConvToUTF8(sDir) );	
 	m_nCachedSongCount = -1;
 }
 
 void CMusikLibrary::RemoveSong( const wxString & sSong	)	
 {
 	wxCriticalSectionLocker lock( m_csDBAccess );
-	sqlite_exec_printf( m_pDB, "delete from songs where filename = '%q'", NULL, NULL, NULL, ( const char* )ConvFNToFieldMB( sSong ) );
+	sqlite_exec_printf( m_pDB, "delete from songs where filename = '%q'", NULL, NULL, NULL, ( const char* )ConvToUTF8( sSong ) );
 	m_nCachedSongCount = -1;
 }
 void CMusikLibrary::RemoveSong( int songid )	
@@ -1223,7 +1223,7 @@ bool CMusikLibrary::RenameFile( CMusikSong & song )
 			wxCriticalSectionLocker lock( m_csDBAccess );
 			sqlite_exec_printf( m_pDB, "update songs set filename =%Q where songid = %d;",
 				NULL, NULL, NULL,
-				( const char* )ConvFNToFieldMB( song.MetaData.Filename.GetFullPath() ),
+				( const char* )ConvToUTF8( song.MetaData.Filename.GetFullPath() ),
 				 song.songid );
 		}
 		return true;

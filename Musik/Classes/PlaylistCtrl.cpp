@@ -666,7 +666,18 @@ void CPlaylistCtrl::TranslateKeys( wxKeyEvent& event )
 				case '5':
 					RateSel(nKeyCode - '0');
 					break;
-
+				case 'e':
+					{
+						wxCommandEvent dummy;
+						OnPlayEnqueued( dummy );
+					}
+					break;
+				case 'n':
+					{
+						wxCommandEvent dummy;
+						OnPlayAsNext( dummy );
+					}
+					break;
 				default:
 					event.Skip();
 					return;
@@ -1422,7 +1433,7 @@ void  CPlaylistCtrl::MovePlaylistEntrys(int nMoveTo ,const wxArrayInt &arrToMove
 {
 	// assumes that arrToMove is sorted in ascending order
 
-	wxASSERT(nMoveTo >= 0 && nMoveTo <= g_Playlist.GetCount()); 
+	wxASSERT(nMoveTo >= 0 && nMoveTo <= (int)g_Playlist.GetCount()); 
 	int i = arrToMove.GetCount() - 1;
 	// first move all entrys which are behind nMoveTo position
 	for(;i >= 0 ; i--)
@@ -1543,7 +1554,7 @@ void CPlaylistCtrl::OnPlayEnqueued	( wxCommandEvent& WXUNUSED(event) )
 void CPlaylistCtrl::OnPlayReplace	( wxCommandEvent& WXUNUSED(event) )
 {	
 	
-	int nCurSel = g_PlaylistBox->PlaylistCtrl().GetNextItem( -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED );
+	int nCurSel = GetNextItem( -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED );
 	if ( nCurSel > -1 )
 	{
 		wxGetApp().Player.PlayReplaceList(nCurSel,g_Playlist);

@@ -439,9 +439,9 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 		sFilename = m_CurrentSong.MetaData.Filename.GetFullPath();
 
 #if ( MUSIK_FMOD_VERSION >= 0x0370 )
-	FSOUND_STREAM* pNewStream = FSOUND_Stream_Open( ( const char* )ConvFNToFieldMB( sFilename ), nFlags , 0, 0 );
+	FSOUND_STREAM* pNewStream = FSOUND_Stream_Open( ( const char* )ConvW2A( sFilename ), nFlags , 0, 0 );
 #else
-	FSOUND_STREAM* pNewStream = FSOUND_Stream_OpenFile( ( const char* )ConvFNToFieldMB( sFilename ), nFlags , 0);
+	FSOUND_STREAM* pNewStream = FSOUND_Stream_OpenFile( ( const char* )ConvW2A( sFilename ), nFlags , 0);
 #endif
 	if(pNewStream == NULL)
 	{
@@ -1019,9 +1019,9 @@ int CMusikPlayer::GetFilesize( wxString sFilename )
 {
 	int filesize = -1;
 #if ( MUSIK_FMOD_VERSION >= 0x0370 )
-	FSOUND_STREAM *pStream = FSOUND_Stream_Open( ( const char* )ConvFNToFieldMB( sFilename ), FSOUND_2D, 0, 0 );
+	FSOUND_STREAM *pStream = FSOUND_Stream_Open( ( const char* )ConvW2A( sFilename ), FSOUND_2D, 0, 0 );
 #else
-	FSOUND_STREAM* pStream = FSOUND_Stream_OpenFile( ( const char* )ConvFNToFieldMB( sFilename ), FSOUND_2D, 0);
+	FSOUND_STREAM* pStream = FSOUND_Stream_OpenFile( ( const char* )ConvW2A( sFilename ), FSOUND_2D, 0);
 #endif
 
 	if ( pStream )
@@ -1228,9 +1228,9 @@ int CMusikPlayer::GetFileDuration( wxString sFilename, int nType )
 	//--- an accurate length, but it's way slower..	---//
 	//-------------------------------------------------//
 #if (MUSIK_FMOD_VERSION >= 0x0370)
-	FSOUND_STREAM *pStream = FSOUND_Stream_Open( ( const char* )ConvFNToFieldMB( sFilename ), FSOUND_2D, 0, 0 );
+	FSOUND_STREAM *pStream = FSOUND_Stream_Open( ( const char* )ConvW2A( sFilename ), FSOUND_2D, 0, 0 );
 #else
-	FSOUND_STREAM* pStream = FSOUND_Stream_OpenFile( ( const char* )ConvFNToFieldMB( sFilename ), FSOUND_2D, 0);
+	FSOUND_STREAM* pStream = FSOUND_Stream_OpenFile( ( const char* )ConvW2A( sFilename ), FSOUND_2D, 0);
 #endif
 
 	if ( pStream )

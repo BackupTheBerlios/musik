@@ -193,5 +193,5 @@ int CMusikWebServer::ReadLine(wxString& outstr)
 // writes a line of output to the socket
 void CMusikWebServer::WriteLine( wxString str )
 {
-    pSocket->Write( ( const char* )ConvFNToFieldMB( str ), str.Length() );
+    pSocket->Write( ( const char* )ConvW2A( str ), str.Length() );
 }

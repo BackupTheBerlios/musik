@@ -207,14 +207,6 @@ inline const wxCharBuffer ConvW2A( const wxString &s )
 	return wxConvCurrent->cWX2MB( s );
 }
 
-inline wxCharBuffer ConvFNToFieldMB( const wxString &s )
-{
-	return wxConvCurrent->cWX2MB( s );
-}
-inline wxString ConvFNToFieldWX( const char *pchar )
-{
-	return wxConvCurrent->cMB2WX( pchar );
-}
 
 inline const wxCharBuffer ConvToUTF8( const wxString &s )
 {

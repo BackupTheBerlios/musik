@@ -54,7 +54,7 @@ using namespace std;
 int CMP3Info::loadInfo( const wxString &srcMP3 ) {
     
     // open input-file stream to the specified file, name
-    ifstream* ifile = new ifstream( ( const char* )ConvFNToFieldMB( srcMP3 ), ios::in | ios::binary /*| ios::nocreate*/);
+    ifstream* ifile = new ifstream( ( const char* )ConvW2A( srcMP3 ), ios::in | ios::binary /*| ios::nocreate*/);
 
 	if (!ifile->fail()) { // if the file was opened correctly
 

@@ -174,7 +174,7 @@ private:
 	inline static void _AssignSongTableColumnDataToSong(CMusikSong * pSong, const char **coldata)
 	{
 		pSong->songid		= StringToInt		( coldata[0] );
-		pSong->MetaData.Filename		= wxConvertMB2WX	( coldata[1] );
+		pSong->MetaData.Filename		= ConvFromUTF8		( coldata[1] );
 		pSong->MetaData.Title			=					  coldata[2];
 		pSong->MetaData.nTracknum		= StringToInt		( coldata[3] );
 		pSong->MetaData.Artist			=					  coldata[4];
