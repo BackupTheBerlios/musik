@@ -60,7 +60,7 @@ void CMusikPlaylistView::OnSize(UINT nType, int cx, int cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 
-	m_Playlist->MoveWindow( 4, 4, cx - 8, cy - 8 );
+	m_Playlist->MoveWindow( 4, 4, cx - 8, cy - 10 );
 }
 
 ///////////////////////////////////////////////////
@@ -92,7 +92,7 @@ void CMusikPlaylistView::OnNcPaint()
 	rcBorder.left += 3;
 	rcBorder.top += 3;
 	rcBorder.right -= 3;
-	rcBorder.bottom -= 3;
+	rcBorder.bottom -= 5;
 	pDC.Draw3dRect( rcBorder, GetSysColor( COLOR_BTNSHADOW ), GetSysColor( COLOR_BTNHILIGHT ) );
 
     // client area is not our bussiness
