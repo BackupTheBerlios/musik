@@ -330,11 +330,18 @@ void CPlaylistCtrl::OnColumnClick( wxListEvent& event )
 	if(g_SourcesCtrl->GetSelType() != MUSIK_SOURCES_LIBRARY) // only sort in library view, else we will destroy the user playlist
 		return;
 	int ActualColumn = m_ColumnOrder.Item( event.GetColumn() );
-	wxString sortstr = g_PlaylistColumnDBNames[ ActualColumn ];
-	m_aColumnSorting.Item( ActualColumn ) = -m_aColumnSorting.Item( ActualColumn );	
+	
+	int currentsortorder = m_aColumnSorting.Item( ActualColumn );
+	for(int i = 0; i < m_aColumnSorting.GetCount();i++)
+    	m_aColumnSorting.Item( i ) = 0;	   // set all columns to unsorted
+
+	m_aColumnSorting.Item( ActualColumn ) = currentsortorder > 0 ? -1 : 1;   // toggle sort order
+
 	bool desc = ( m_aColumnSorting.Item( ActualColumn ) < 0 );
 
-	g_Library.SortPlaylist( sortstr, desc );
+	g_Library.SetSortOrderField( ActualColumn, desc );
+	g_Library.RedoLastQuerySongsWhere( g_Playlist ,true);//sorted
+	g_PlaylistChanged = true;
 	Update();
 }
 
@@ -715,7 +722,7 @@ void CPlaylistCtrl::FindColumnOrder()
 		{
 			m_ColumnOrder.Add( i );
 		}
-		m_aColumnSorting.Add( -1 );
+		m_aColumnSorting.Add( 0 );
 	}
 }
 
@@ -729,8 +736,10 @@ wxListItemAttr* CPlaylistCtrl::OnGetItemAttr(long item) const
 	const CMusikSong & song = g_Playlist.Item ( item );
 	if ( g_Player.IsPlaying() && song.Filename == g_Player.GetCurrentFile() )
 	{
-		g_Player.SetCurSel(item);
-		return item % 2 ? (wxListItemAttr *)&m_SelectedDarkAttr : (wxListItemAttr *)&m_SelectedLightAttr;		
+		if ( g_Prefs.nPLStripes == 1 )
+			return item % 2 ? (wxListItemAttr *)&m_SelectedDarkAttr : (wxListItemAttr *)&m_SelectedLightAttr;
+		else
+			return (wxListItemAttr *)&m_SelectedLightAttr;
 	}
 	else
 	{
@@ -923,10 +932,7 @@ void CPlaylistCtrl::ResynchItem( int item, int lastitem, bool refreshonly )
 		}			
 	}
 
-	RefreshItem( item );
-
-	if ( lastitem > -1 && lastitem != item )
-		RefreshItem( lastitem );	
+	Update(false);
 }
 void CPlaylistCtrl::ResynchItem( int item, const CMusikSong & song)
 {
@@ -1300,7 +1306,7 @@ void CPlaylistCtrl::RetagSelFiles()
 bool CPlaylistCtrl::ViewDirtyTags()
 {
 	CMusikSongArray dirty;
-	g_Library.QuerySongs( wxT( "dirty = 1" ), dirty );
+	g_Library.QuerySongsWhere( wxT( "dirty = 1" ), dirty );
 	if ( dirty.GetCount() > 0 )
 	{
 
