@@ -399,14 +399,16 @@ void MusikLibraryFrame::PathsListRemoveAll()
 	}
 }
 
-void MusikLibraryFrame::PathsListProcessKeys( wxListEvent *event )
+void MusikLibraryFrame::PathsListProcessKeys( wxListEvent & event )
 {
-	if ( event->GetKeyCode() == WXK_DELETE || event->GetKeyCode() == WXK_BACK )
+	if ( event.GetKeyCode() == WXK_DELETE || event.GetKeyCode() == WXK_BACK )
 		PathsListRemoveSel();
-	else if ( event->GetKeyCode() == 65 )
+	else if ( event.GetKeyCode() == 65 )
 		wxListCtrlSelAll( lcPaths );
-	else if ( event->GetKeyCode() == 68 )
+	else if ( event.GetKeyCode() == 68 )
 		wxListCtrlSelNone( lcPaths );
+	else 
+		event.Skip();
 }
 
 void MusikLibraryFrame::PathsListAdd()
@@ -608,7 +610,7 @@ void MusikLibraryFrame::TranslateKeys( wxKeyEvent& event )
 			Close( true );
 	}
 	
-	// swallow all keys => no event.Skip()
+	event.Skip(); // propagate esc to other frames too
 }
 
 //-----------------------------------------------------------//

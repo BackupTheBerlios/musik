@@ -197,8 +197,10 @@ wxString GetGenre ( const wxString & sGenre )
 		if(wxIsdigit(sGenre[0]))
 			nGenreID = wxStringToInt( sGenre );
 		else if (sGenre.StartsWith(wxT("("),&aReturn))
-			nGenreID = wxStringToInt( aReturn.BeforeFirst(')') );
-
+		{	
+			aReturn = aReturn.BeforeFirst(')');
+			nGenreID = wxStringToInt( aReturn );
+		}
 		if (nGenreID >=0 && nGenreID < ID3_NR_OF_V1_GENRES )
 			aReturn = ConvA2W( ID3_v1_genre_description[nGenreID] );
 	}
