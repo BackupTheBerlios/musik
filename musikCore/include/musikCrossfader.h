@@ -71,14 +71,17 @@ enum
 
 class CmusikCrossfader
 {
+
+	friend class CmusikLibrary;
+
 public:
 	CmusikCrossfader()
 	{
-		m_NewSong		= 2.0f;
-		m_PauseResume	= 0.5f;
-		m_Seek			= 0.2f;
-		m_Stop			= 1.0f;
-		m_Exit			= 3.0f;
+		m_NewSong		= 0.0f;
+		m_PauseResume	= 0.0f;
+		m_Seek			= 0.0f;
+		m_Stop			= 0.0f;
+		m_Exit			= 0.0f;
 	}
 
 	~CmusikCrossfader()
@@ -156,8 +159,7 @@ public:
 		return m_Name;
 	}
 
-private:
-
+	// can be modified directly
 	float m_NewSong;
 	float m_PauseResume;
 	float m_Seek;

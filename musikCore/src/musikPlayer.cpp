@@ -191,7 +191,7 @@ int CmusikPlayerWorker::svc()
 				else
 				{
 					nTimeRemain = m_Player->GetTimeRemain( MUSIK_TIME_MS );
-					nFadeTime = m_Player->GetCrossfader()->GetDuration( MUSIK_CROSSFADER_NEW_SONG ) * 1000;
+					nFadeTime = (int)( m_Player->GetCrossfader()->GetDuration( MUSIK_CROSSFADER_NEW_SONG ) * 1000.0f );
 
 					if ( nTimeRemain <= nFadeTime )
 						m_Player->Next( true );

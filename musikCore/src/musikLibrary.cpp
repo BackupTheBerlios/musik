@@ -99,14 +99,17 @@ static int sqlite_GetCrossfader( void *args, int numCols, char **results, char *
 {
 	CmusikCrossfader* p = (CmusikCrossfader*)args;
 
-	double newsong		= atof( results[1] );
-	double pauseresume	= atof( results[2] );
-	double seek			= atof( results[3] );
-	double stop			= atof( results[4] );
-	double exit			= atof( results[5] );
+	p->Set( 
+		(float)atof( results[0] ), 
+		(float)atof( results[1] ), 
+		(float)atof( results[2] ), 
+		(float)atof( results[3] ), 
+		(float)atof( results[4] ) );
 
-	p->Set( (float)newsong, (float)pauseresume, (float)seek, (float)stop, (float)exit );
-	p->SetName( results[0] );
+	if ( numCols == 6 )
+        p->SetName( results[5] );
+	else
+		p->SetName( "Default" );
 
     return 0;
 }
@@ -532,10 +535,7 @@ bool CmusikLibrary::InitEqTable()
 		sqlite_freemem( pErr2 );
 	}
 
-	// if there was no error that means that
-	// the default table did not exist, so
-	// we want to initialize some default values...
-	InitDefaultEqualizer();
+	ResetDefaultEqualizer( false );
 
 	return error;
 }
@@ -633,7 +633,7 @@ bool CmusikLibrary::InitCrossfaderTable()
 
 	// construct the table that contains a list of
 	// all the crossfader presets
-	static const char *szCreateDBQuery  = 
+	static const char *szCreateDBQuery1  = 
 		"CREATE TABLE " CROSSFADER_PRESET " ( "	
 		"crossfader_id INTEGER PRIMARY KEY, "
 		"crossfader_name VARCHAR(255), "
@@ -644,19 +644,39 @@ bool CmusikLibrary::InitCrossfaderTable()
 		"exit FLOAT "
 		" );";
 
+	static const char *szCreateDBQuery2  = 
+		"CREATE TABLE " CROSSFADER_DEFAULT " ( "	
+		"crossfader_id INTEGER PRIMARY KEY, "
+		"newsong FLOAT, "
+		"pause_resume FLOAT, "
+		"seek FLOAT, "
+		"stop FLOAT, "
+		"exit FLOAT "
+		" );";
+
 	// put a lock on the library and open it up
-	char *pErr = NULL;
+	char *pErr1 = NULL;
+	char *pErr2 = NULL;
 
 	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
-		sqlite_exec( m_pDB, szCreateDBQuery, NULL, NULL, &pErr );
+		sqlite_exec( m_pDB, szCreateDBQuery1, NULL, NULL, &pErr1 );
+		sqlite_exec( m_pDB, szCreateDBQuery2, NULL, NULL, &pErr2 );
 	}
 
-	if ( pErr )
+	if ( pErr1 )
 	{
 		error = true;
-		sqlite_freemem( pErr );
+		sqlite_freemem( pErr1 );
 	}
+
+	if ( pErr2 )
+	{
+		error = true;
+		sqlite_freemem( pErr2 );
+	}
+
+	ResetDefaultCrossfader( false );
 
 	return error;
 }
@@ -759,6 +779,7 @@ bool CmusikLibrary::Startup()
 		InitEqTable();
 		InitPathTable();
 		InitTimeAdded();
+		InitCrossfaderTable();
    }
    else
 	   error = true;
@@ -2355,7 +2376,7 @@ int CmusikLibrary::GetCrossfader( int id, CmusikCrossfader* fader )
 	int nRet;
 	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
-		nRet = sqlite_exec_printf( m_pDB, "SELECT crossfader_name, newsong, pause_resume, seek, stop, exit FROM %Q WHERE crossfader_id = %d;", 
+		nRet = sqlite_exec_printf( m_pDB, "SELECT newsong, pause_resume, seek, stop, exit, crossfader_name FROM %Q WHERE crossfader_id = %d;", 
 			&sqlite_GetCrossfader, fader, NULL,
 			CROSSFADER_PRESET,
 			id );
@@ -2782,6 +2803,30 @@ int CmusikLibrary::UpdateEqualizer( int id, const CmusikEQSettings& eq )
 
 ///////////////////////////////////////////////////
 
+int CmusikLibrary::UpdateDefaultCrossfader( const CmusikCrossfader& fader )
+{
+	if ( !m_DatabaseOpen )
+		return -1;
+
+	int nRes;
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
+	{
+
+		nRes = sqlite_exec_printf( m_pDB, "UPDATE %Q SET newsong = %f, pause_resume = %f, seek = %f, stop = %f, exit = %f WHERE crossfader_id = -1;",
+				NULL, NULL, NULL,
+				CROSSFADER_DEFAULT,
+				fader.m_NewSong,
+				fader.m_PauseResume,
+				fader.m_Seek,
+				fader.m_Stop,
+				fader.m_Exit );
+	}
+
+	return nRes;
+}
+
+///////////////////////////////////////////////////
+
 int CmusikLibrary::UpdateDefaultEqualizer( const CmusikEQSettings& eq )
 {
 	if ( !m_DatabaseOpen )
@@ -2838,6 +2883,24 @@ int CmusikLibrary::UpdateDefaultEqualizer( const CmusikEQSettings& eq )
 
 ///////////////////////////////////////////////////
 
+int CmusikLibrary::GetDefaultCrossfader( CmusikCrossfader* target )
+{
+	if ( !m_DatabaseOpen )
+		return -1;
+
+	int nRet;
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
+	{
+		nRet = sqlite_exec_printf( m_pDB, "SELECT newsong, pause_resume, seek, stop, exit FROM %Q WHERE crossfader_id = -1;", 
+									&sqlite_GetCrossfader, target, NULL, 
+									CROSSFADER_DEFAULT );
+	}
+
+	return nRet;
+}
+
+///////////////////////////////////////////////////
+
 int CmusikLibrary::GetDefaultEqualizer( CmusikEQSettings* target )
 {
 	if ( !m_DatabaseOpen )
@@ -2858,7 +2921,7 @@ int CmusikLibrary::GetDefaultEqualizer( CmusikEQSettings* target )
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::InitDefaultEqualizer()
+int CmusikLibrary::ResetDefaultEqualizer( bool clear_old_default )
 {
 	if ( !m_DatabaseOpen )
 		return -1;
@@ -2866,10 +2929,34 @@ int CmusikLibrary::InitDefaultEqualizer()
 	int nRes;
 	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
+		if ( clear_old_default )
+			sqlite_exec( m_pDB, "delete from equalizer_default", NULL, NULL, NULL );
+
 		nRes = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( -1, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,"
 							" 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 );",
 				NULL, NULL, NULL,
 				EQUALIZER_DEFAULT );
+	}
+
+	return nRes;	
+}
+
+///////////////////////////////////////////////////
+
+int CmusikLibrary::ResetDefaultCrossfader( bool clear_old_default )
+{
+	if ( !m_DatabaseOpen )
+		return -1;
+
+	int nRes;
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
+	{
+		if ( clear_old_default )
+			sqlite_exec( m_pDB, "delete from crossfader_default", NULL, NULL, NULL );
+
+		nRes = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( -1, 2.0, 0.5, 0.2, 1.0, 3.0 );",
+				NULL, NULL, NULL,
+				CROSSFADER_DEFAULT );
 	}
 
 	return nRes;

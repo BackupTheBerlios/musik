@@ -123,6 +123,7 @@ enum
 #define DYN_PLAYLIST_QUERY "dyn_playlist_query"
 
 #define CROSSFADER_PRESET "crossfader_preset"
+#define CROSSFADER_DEFAULT "crossfader_default"
 
 #define EQUALIZER_PRESET "equalizer_preset"
 #define EQUALIZER_DEFAULT "equalizer_default"
@@ -231,6 +232,10 @@ public:
 	int  GetAllCrossfaders			( CmusikStringArray* names, bool clear_target = true );
 	int  GetAllCrossfaders			( CIntArray* ids, bool clear_target = true );
 
+	int  GetDefaultCrossfader		( CmusikCrossfader* fader );
+	int  UpdateDefaultCrossfader	( const CmusikCrossfader& fader );
+	int  ResetDefaultCrossfader		( bool clear_old_default = true );
+
 	// equalizers
 	int  CreateEqualizer			( CmusikEQSettings& eq, const CmusikString& name, bool is_preset = false );
 	int  DeleteEqualizer			( int id );
@@ -239,9 +244,10 @@ public:
 	int  GetEqualizerIDFromSongID	( int id );
 	int  GetEqualizerFromName		( const CmusikString& name );
 	int  GetAllEqualizerPresets		( CmusikStringArray* target, CIntArray* target_ids = NULL, bool clear_targets = true );
+	
 	int  GetDefaultEqualizer		( CmusikEQSettings* eq );
 	int  UpdateDefaultEqualizer		( const CmusikEQSettings& eq );
-	int  InitDefaultEqualizer		( );
+	int  ResetDefaultEqualizer		( bool clear_old_default = true );
 
 	// paths
 	int	 AddPath					( const CmusikString& path );
