@@ -74,7 +74,7 @@ CMusikNowPlayingCtrl::CMusikNowPlayingCtrl( wxWindow *parent, wxWindowID id )
 	//--- sizer for top						---//
 	//-----------------------------------------//
 	m_TopSizer = new wxBoxSizer( wxHORIZONTAL );
-	m_TopSizer->Add( m_stSong, 1, wxADJUST_MINSIZE | wxALIGN_CENTER_VERTICAL );
+	m_TopSizer->Add( m_stSong, 0, wxADJUST_MINSIZE | wxALIGN_CENTER_VERTICAL );
 	m_TopSizer->Add( 0, 0,	1, wxEXPAND);
 	m_TopSizer->Add( m_ButtonSizer, 0, wxALIGN_CENTER_VERTICAL );
 

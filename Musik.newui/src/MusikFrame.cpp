@@ -34,7 +34,7 @@ bool CMusikFrame::Show( bool show )
 void CMusikFrame::CreateSashes()
 {
 	//---------------------------------//
-	//--- main window.				---//
+	//--- main window				---//
 	//---------------------------------//	
 	wxSashLayoutWindow *pSash;
 	pSash = new wxSashLayoutWindow( this, -1, wxDefaultPosition, wxDefaultSize, wxNO_BORDER | wxCLIP_CHILDREN );
@@ -124,7 +124,12 @@ void CMusikFrame::CreateControls()
 	m_SimpleQuerySash->SetDefaultSize( wxSize( -1, tmp->GetSize().GetHeight() ) );
 	delete tmp;
 
-	//--- left or "sources" area	---//
+	//-------------------------------------------------//
+	//--- create all the controls. just create with	---//
+	//--- a parent of the correct value, and the	---//
+	//--- wxSashLayoutWindow will take care of the	---//
+	//--- rest										---//
+	//-------------------------------------------------//
 	m_SourcesCtrl		= new CMusikSourcesCtrl			( m_SourcesSash, -1 );
 	m_SelectionCtrl		= new CMusikSelectionAreaCtrl	( m_SelectionAreaSash, -1 );
 	m_PlaylistCtrl		= new CMusikPlaylistCtrl		( m_PlaylistSash, -1 );

@@ -97,8 +97,6 @@ void CMusikDragGaugeCtrl::SetPosFromMouse()
 		SetValue( (int)m_Val );
 		m_LastPos = (int)m_Val;
 	}	
-
-
 }
 
 void CMusikDragGaugeCtrl::OnSize( wxSizeEvent& event )
