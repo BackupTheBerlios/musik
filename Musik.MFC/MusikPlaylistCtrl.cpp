@@ -459,7 +459,7 @@ void CMusikPlaylistCtrl::OnLvnItemActivate(NMHDR *pNMHDR, LRESULT *pResult)
 		m_Changed = false;
 	}			
 
-	m_Player->Play( pNMIA->iItem );
+	m_Player->Play( pNMIA->iItem, MUSIK_CROSSFADER_NEW_SONG );
 
 	*pResult = 0;
 }

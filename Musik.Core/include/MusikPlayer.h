@@ -84,7 +84,7 @@ public:
 	void CleanCrossfader();
 	int GetFadeType(){ return m_FadeType; }
 	CMusikCrossfader* GetCrossfader(){ return m_Crossfader; }
-	void FinishCrossfade( bool success );
+	void FinishCrossfade();
 
 	// equalizer stuff
 	void InitEQ_DSP();
@@ -125,17 +125,15 @@ public:
 	bool IsEqualizerActive()	{ return m_IsEQActive; }
 	bool IsCrossfaderActive();
 	bool IsCrossfaderReady()	{ return m_IsCrossfaderReady; }
-	bool IsCrossfaderAborted()	{ return m_CrossfaderAbort; }
 
 	// crossfade flags
 	void FlagCrossfade()		{ m_IsCrossfaderReady = true; }
 	void UnflagCrossfade()		{ m_IsCrossfaderReady = false; }
-	void AbortCrossfade()		{ m_CrossfaderAbort = true; }
-	void CrossfadeAborted()		{ m_CrossfaderAbort = false; }
 
 	// misc
 	size_t GetStreamCount();
 	int GetChannelID( int n );
+	int GetHandle(){ return m_Handle; }
 
 private:
 
@@ -144,6 +142,13 @@ private:
 
 	// volume
 	int m_Volume;
+
+	// song's handle.. basically it just
+	// gets incremented every time a new song
+	// is played, so the crossfader can
+	// tell if it should abort what its currently
+	// doing
+	int m_Handle;
 
 	// start and stop sound. InitSound() will
 	// relay to these helper functions
@@ -163,7 +168,6 @@ private:
 	bool m_ShutDown;
 	bool m_IsEQActive;
 	bool m_IsCrossfaderReady;
-	bool m_CrossfaderAbort;
 
 	// info on currently playing song
 	CMusikSongInfo m_CurrSong;

@@ -27,7 +27,7 @@ public:
 		
 	}
 
-	virtual void Call()
+	virtual void OnNewSong()
 	{
 		int WM_SONGCHANGE = RegisterWindowMessage( "SONGCHANGE" );
 		m_Parent->PostMessage( WM_SONGCHANGE, NULL );
