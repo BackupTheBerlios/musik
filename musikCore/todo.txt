@@ -1,0 +1,9 @@
+musikCore Todo list:
+
+CmusikLibrary:
+
+  - InitEqTable(), and equalizer preset access
+
+CmusikPlayer:
+
+ 
