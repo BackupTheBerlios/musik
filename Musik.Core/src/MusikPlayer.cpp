@@ -162,6 +162,12 @@ static void MusikPlayerWorker( CMusikPlayer* player )
 
 					m_ProtectingStreams.release();
 
+					// on exit we need to toggle this var so we
+					// don't get stuck in a dead lock. it basically
+					// lets the player shut down.
+					if ( player->GetFadeType() == MUSIK_CROSSFADER_EXIT )
+						player->SetSafeShutdown();
+
 				}
 	
 				if ( fade_success )
@@ -224,6 +230,8 @@ CMusikPlayer::CMusikPlayer( CMusikFunctor* functor, CMusikLibrary* library, CMus
 
 	m_Volume			= 128;
 
+	m_PlayMode			= MUSIK_PLAYER_PLAYMODE_NORMAL;
+
 	InitThread();
 }
 
@@ -231,6 +239,13 @@ CMusikPlayer::CMusikPlayer( CMusikFunctor* functor, CMusikLibrary* library, CMus
 
 CMusikPlayer::~CMusikPlayer()
 {
+	Exit();
+
+	// thread will trigger this back
+	// once it has exited
+	while ( !m_ShutDown )
+		Sleep( 100 );
+
 	CleanThread();
 	CleanEqualizer();
 	CleanCrossfader();
@@ -305,6 +320,8 @@ void CMusikPlayer::CleanEqualizer()
 
 int CMusikPlayer::InitSound( int device, int driver, int rate, int channels, int mode )
 {
+	TRACE0( "Attempting to initialize FMOD... " );
+
 	if ( mode == MUSIK_PLAYER_INIT_RESTART || mode == MUSIK_PLAYER_INIT_STOP )
 		StopSound();
 
@@ -322,7 +339,7 @@ int CMusikPlayer::InitSound( int device, int driver, int rate, int channels, int
 
 	m_MaxChannels = channels;
 
-	TRACE0( "FMOD successfully initialized.\n" );
+	TRACE0( "FMOD initialized successfully.\n" );
 	return MUSIK_PLAYER_INIT_SUCCESS;
 }
 
@@ -503,8 +520,16 @@ bool CMusikPlayer::Play( int index, int fade_type, int start_pos )
 
 bool CMusikPlayer::Next()
 {
-	if ( m_Index + 1 == m_Playlist->GetCount() )
-		return false;
+	if ( GetPlaymode() == MUSIK_PLAYER_PLAYMODE_LOOP || GetPlaymode() == MUSIK_PLAYER_PLAYMODE_NORMAL )
+	{
+		if ( m_Index + 1 == m_Playlist->GetCount() )
+		{
+			if ( GetPlaymode() == MUSIK_PLAYER_PLAYMODE_LOOP )	
+				m_Index = 0;
+			else
+				return false;
+		}
+	}
 
 	if ( !IsCrossfaderActive() )
 		Play( m_Index + 1 );
@@ -512,6 +537,61 @@ bool CMusikPlayer::Next()
 		Play( m_Index + 1, MUSIK_CROSSFADER_NEW_SONG );
 
 	return true;
+}
+
+///////////////////////////////////////////////////
+
+bool CMusikPlayer::Prev()
+{
+	if ( GetTimeNow( MUSIK_TIME_MS ) > 2000 )
+	{
+		if ( GetPlaymode() == MUSIK_PLAYER_PLAYMODE_LOOP || GetPlaymode() == MUSIK_PLAYER_PLAYMODE_NORMAL )
+		{
+			if ( m_Index - 1 < 0 )
+			{
+				if ( GetPlaymode() == MUSIK_PLAYER_PLAYMODE_LOOP )	
+					m_Index = m_Playlist->GetCount() - 1;
+				else
+					return false;
+			}			
+		}
+	}
+
+	if ( !IsCrossfaderActive() )
+		Play( m_Index + 1 );
+	else
+		Play( m_Index + 1, MUSIK_CROSSFADER_NEW_SONG );
+
+	return true;
+}
+
+///////////////////////////////////////////////////
+
+void CMusikPlayer::Stop()
+{
+	if ( !IsCrossfaderActive() )
+		CleanOldStreams( true );
+	else
+	{
+		m_FadeType = MUSIK_CROSSFADER_STOP;
+		FlagCrossfade();
+	}
+}
+
+///////////////////////////////////////////////////
+
+void CMusikPlayer::Exit()
+{
+	if ( !IsCrossfaderActive() )
+	{
+		m_ShutDown = true;
+		CleanOldStreams( true );
+	}
+	else
+	{
+		m_FadeType = MUSIK_CROSSFADER_EXIT;
+		FlagCrossfade();
+	}
 }
 
 ///////////////////////////////////////////////////
@@ -682,6 +762,7 @@ int CMusikPlayer::GetChannelID( int n )
 void CMusikPlayer::SetVolume( int channel_id, int n )
 {
 	FSOUND_SetVolume( channel_id, n );
+
 }
 
 ///////////////////////////////////////////////////

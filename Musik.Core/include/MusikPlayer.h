@@ -118,6 +118,8 @@ public:
 	bool Prev();
 	bool Pause();
 	bool Resume();
+	void Stop();
+	void Exit();
 
 	// status
 	bool IsPlaying()			{ return m_IsPlaying; }
@@ -135,6 +137,9 @@ public:
 	size_t GetStreamCount();
 	int GetChannelID( int n );
 	int GetHandle(){ return m_Handle; }
+	int GetPlaymode(){ return m_PlayMode; }
+	void SetPlaymode( int mode ){ m_PlayMode = mode; }
+	void SetSafeShutdown(){ m_ShutDown = true; }
 
 private:
 
@@ -169,6 +174,9 @@ private:
 	bool m_ShutDown;
 	bool m_IsEQActive;
 	bool m_IsCrossfaderReady;
+
+	// play mode (repeat, random, etc)
+	int m_PlayMode;
 
 	// info on currently playing song
 	CMusikSongInfo m_CurrSong;
