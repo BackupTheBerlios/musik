@@ -1578,12 +1578,15 @@ int CmusikLibrary::GetSongInfoFromID( int id, CmusikSongInfo* info )
 
 ///////////////////////////////////////////////////
 
-bool CmusikLibrary::SetSongInfo( int songid, CmusikSongInfo* info )
+bool CmusikLibrary::SetSongInfo( CmusikSongInfo* info, int songid )
 {
 	if ( !m_pDB )
 		return false;
 
 	int result = 0;
+
+	if ( songid == -1 )
+		songid = info->GetID();
 
 	CStdString query;
 	query.Format( "UPDATE %s SET format=%d, vbr=%d, filename='%s', artist='%s', title='%s', album='%s', tracknum=%d, year='%s', genre='%s', rating=%d,",

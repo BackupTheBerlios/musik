@@ -121,12 +121,16 @@ static void musikBatchRetagWorker( CmusikThread* thread )
 			break;
 		}
 
+		bool success = false;
 		params->m_Library->GetSongFormatFromID( params->m_UpdatedTags->at( i ).GetID(), &nFormat );
 		if ( nFormat == MUSIK_LIBRARY_FORMAT_MP3 )
-			CmusikMp3Info::WriteInfo( params->m_UpdatedTags->at( i ) );
+			success = CmusikMp3Info::WriteInfo( params->m_UpdatedTags->at( i ) );
 		else if ( nFormat == MUSIK_LIBRARY_FORMAT_OGG )
-			CmusikOggInfo::WriteInfo( params->m_UpdatedTags->at( i ) );
-	
+			success = CmusikOggInfo::WriteInfo( params->m_UpdatedTags->at( i ) );
+
+		if ( success )
+			params->m_Library->SetSongInfo( &params->m_UpdatedTags->at( i ) );
+
 		// post progress to the functor
 		curr_prog = ( 100 * i ) / params->m_UpdatedTags->size();
 		if ( curr_prog != last_prog )

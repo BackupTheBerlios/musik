@@ -183,6 +183,8 @@ static void MainFrameWorker( CmusikThread* thread )
 	CMainFrame* parent = (CMainFrame*)thread->GetArgs();
 
 	size_t pos = 0;
+	size_t cnt = 0;
+	size_t thr_cnt = 0;
 	char turn;
 
 	// sleep if we go idle
@@ -207,7 +209,8 @@ static void MainFrameWorker( CmusikThread* thread )
 		if ( thread->m_Abort )
 			break;
 
-		if ( parent->m_ThreadCount )
+		thr_cnt = parent->m_Threads.size();
+		if ( thr_cnt )
 		{
 			switch ( pos )
 			{
@@ -230,16 +233,24 @@ static void MainFrameWorker( CmusikThread* thread )
 			}
 
 			sCaption = parent->m_Caption;
-			for ( size_t i = 0; i < parent->m_Threads.size(); i++ )
+			for ( size_t i = 0; i < thr_cnt; i++ )
 			{
 				sCaption += _T( "  " );
 				sCaption += turn;
 			}
 
 			parent->SetWindowText( sCaption );
-		}
 
+			// update ui every 3 seconds
+			++cnt;
+			if ( cnt == 6 )
+			{
+				parent->ResetSelBoxes();
+				cnt = 0;
+			}
+		}
 		ACE_OS::sleep( sleep );
+
 	}
 
 	thread->m_Finished = true;
@@ -249,8 +260,6 @@ static void MainFrameWorker( CmusikThread* thread )
 
 CMainFrame::CMainFrame()
 {
-	m_ThreadCount = 0;
-
 	InitPaths();
 	Initmusik();
 	InitDragTypes();
@@ -338,19 +347,6 @@ void CMainFrame::Initmusik()
 	// enable the equalizer...
 	if ( m_Prefs->IsEqualizerEnabled() )
 		m_Player->EnableEqualizer( true );
-
-	// startup a thread in the background
-	// to remove old files...
-	if ( m_Prefs->PurgeOnStartup() )
-	{
-		CmusikRemoveOld* params = new CmusikRemoveOld( m_Library, m_RemoveOldFnct );
-		CmusikThread* thread = new CmusikThread();
-		m_Threads.push_back( thread );
-
-		m_ThreadCount++;
-		thread->Start( (ACE_THR_FUNC)musikRemoveOldWorker, params );
-		
-	}
 }
 
 ///////////////////////////////////////////////////
@@ -626,9 +622,21 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		}
 	}
 
+	// fire the updater thread off
 	m_Updater = new CmusikThread();
-	m_ThreadCount++;
 	m_Updater->Start( (ACE_THR_FUNC)MainFrameWorker, this );
+
+	// startup a thread in the background
+	// to remove old files...
+	if ( m_Prefs->PurgeOnStartup() )
+	{
+		CmusikRemoveOld* params = new CmusikRemoveOld( m_Library, m_RemoveOldFnct );
+		CmusikThread* thread = new CmusikThread();
+
+		m_Threads.push_back( thread );
+
+		thread->Start( (ACE_THR_FUNC)musikRemoveOldWorker, params );
+	}
 
 	return 0;
 }
@@ -837,9 +845,9 @@ LRESULT CMainFrame::OnSelBoxEditCommit( WPARAM wParam, LPARAM lParam )
 
 		CmusikBatchRetag* params = new CmusikBatchRetag( m_Library, m_RemoveOldFnct, pSongInfoArray );
 		CmusikThread* thread = new CmusikThread();
+
 		m_Threads.push_back( thread );
 
-		m_ThreadCount++;
 		thread->Start( (ACE_THR_FUNC)musikBatchRetagWorker, params );
 		
 		return 1L;
@@ -1219,9 +1227,9 @@ void CMainFrame::OnOpenFiles()
 		{
 			CmusikBatchAdd* params = new CmusikBatchAdd( files, NULL, m_Library, NULL, m_BatchAddFnct, 0, 0, 1 );
 			CmusikThread* thread = new CmusikThread();
+
 			m_Threads.push_back( thread );
 
-			m_ThreadCount++;
 			thread->Start( (ACE_THR_FUNC)musikBatchAddWorker, (void*)params );
 		}
 		else
@@ -1240,9 +1248,9 @@ LRESULT CMainFrame::OnBatchAddNew( WPARAM wParam, LPARAM lParam )
 		params->m_Functor = m_BatchAddFnct;
 
 		CmusikThread* thread = new CmusikThread();
+
 		m_Threads.push_back( thread );
 
-		m_ThreadCount++;
 		thread->Start( (ACE_THR_FUNC)musikBatchAddWorker, (void*)params );
 	}
 
@@ -1267,12 +1275,10 @@ LRESULT CMainFrame::OnThreadEnd( WPARAM wParam, LPARAM lParam )
 	
 	if ( FreeThread( ptr_thr ) )
 	{
-		--m_ThreadCount;
 		ResetSelBoxes();
 		m_wndView->GetCtrl()->UpdateV( true );
 	}
-
-	if ( m_ThreadCount == 0 )
+	if ( m_Threads.size() == 0 )
 		SetWindowText( m_Caption );
 
 	return 0L;
@@ -1345,9 +1351,9 @@ void CMainFrame::OnOpenDirectory()
 		{
 			CmusikBatchAdd* params = new CmusikBatchAdd( files, NULL, m_Library, NULL, m_BatchAddFnct, 0, 0, 1 );
 			CmusikThread* thread = new CmusikThread();
+
 			m_Threads.push_back( thread );
 
-			m_ThreadCount++;
 			thread->Start( (ACE_THR_FUNC)musikBatchAddWorker, (void*)params );
 		}
 		else 

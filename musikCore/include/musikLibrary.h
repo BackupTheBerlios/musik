@@ -170,7 +170,7 @@ public:
 	int  GetSongFormatFromID		( int id, int* target );
 
 	// updating songs
-	bool SetSongInfo				( int songid, CmusikSongInfo* info );
+	bool SetSongInfo				( CmusikSongInfo* info, int songid = -1 );
 	bool SetLastPlayedToNow			( int songid );
 	bool SetSongRating				( int songid, int rating );
 
