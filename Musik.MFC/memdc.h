@@ -35,7 +35,7 @@ private:
 	BOOL    m_bMemDC;			// TRUE if CDC really is a Memory DC.
 public:
 
-	CMemDC(CDC* pDC, const CRect* pRect = NULL) : CDC()
+	CMemDC(CDC* pDC, const CRect* pRect = NULL, bool bFillRect = false ) : CDC()
 	{
 		ASSERT(pDC != NULL); 
 
@@ -76,7 +76,8 @@ public:
 		}
 
 		// Fill background 
-		FillSolidRect(m_rect, pDC->GetBkColor());
+		if ( bFillRect )
+			FillSolidRect(m_rect, pDC->GetBkColor());
 	}
 
 	~CMemDC() 

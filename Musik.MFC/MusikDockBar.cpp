@@ -6,7 +6,6 @@
 #include "MusikPrefs.h"
 
 #include "MEMDC.H"
-#include ".\musikdockbar.h"
 
 ///////////////////////////////////////////////////
 
@@ -100,8 +99,7 @@ void CMusikDockBar::NcCalcClient( LPRECT pRc, UINT nDockBarID )
 
 void CMusikDockBar::OnNcPaint()
 {
-    // get window DC that is clipped to the non-client area
-    CWindowDC dc(this);
+	CWindowDC dc(this);
 
     CRect rcClient, rcBar;
     GetClientRect( rcClient );
@@ -119,7 +117,7 @@ void CMusikDockBar::OnNcPaint()
     NcPaintGripper( &mdc, rcClient );
 
 	// draw border...
-	if ( HasGripper() && m_ShowGripper )
+	if ( m_ShowGripper )
 	{
 		rcClient.InflateRect( 1, 1, 1, 1 );
 		mdc.Draw3dRect( rcClient, m_Prefs->MUSIK_COLOR_BTNSHADOW, m_Prefs->MUSIK_COLOR_BTNHILIGHT );
@@ -262,41 +260,46 @@ void CMusikDockBar::OnUpdateCmdUI( CFrameWnd* pTarget, BOOL bDisableIfNoHndler )
     if ( !HasGripper() )
         return;
 
-	BOOL active_change = m_bActive;
-	CWnd* pFocus = GetFocus();
-	m_bActive = ( pFocus->GetSafeHwnd() && IsChild( pFocus ) );
-
     CPoint pt;
     ::GetCursorPos(&pt);
 
     BOOL bLButtonDown = ( ::GetKeyState( VK_LBUTTON ) < 0 );
 	
+	// what was hit?
+	UINT nHit = OnNcHitTest( pt );
+
 	// was the close buton pressed?
-	BOOL bHideHit			= ( OnNcHitTest( pt ) == HTCLOSE );
+	BOOL bHideHit			= ( nHit == HTCLOSE );
     BOOL bWasHidePushed		= m_biHide->bPushed;
     m_biHide->bPushed		= bHideHit && bLButtonDown;
     BOOL bWasHideRaised		= m_biHide->bRaised;
     m_biHide->bRaised		= bHideHit && !bLButtonDown;
 
+	// needs painting
+	BOOL bNeedsPaint = FALSE;
+    bNeedsPaint |=	( m_biHide->bPushed ^ bWasHidePushed ) ||
+					( m_biHide->bRaised ^ bWasHideRaised );
+
+	if ( bNeedsPaint )
+	{
+		SendMessage( WM_NCPAINT );
+		return;
+	}
+
 	// was the option button pressed?
-    BOOL bOptionsHit		= ( OnNcHitTest( pt ) == HTOPTIONS );
+    BOOL bOptionsHit		= ( nHit == HTOPTIONS );
     BOOL bWasOptionsPushed	= m_biOptions->bPushed;
     m_biOptions->bPushed	= bOptionsHit && bLButtonDown;
     BOOL bWasOptionsRaised	= m_biOptions->bRaised;
     m_biOptions->bRaised	= bOptionsHit && !bLButtonDown;
 
-	// do we need to paint?
-	BOOL bNeedPaint;
-    bNeedPaint |= ( m_biHide->bPushed ^ bWasHidePushed ) ||
-                  ( m_biHide->bRaised ^ bWasHideRaised ) ||
-				  ( m_biOptions->bPushed ^ bWasOptionsPushed ) ||
-				  ( m_biOptions->bRaised ^ bWasOptionsRaised ) ;
+	// needs painting
+	bNeedsPaint = FALSE;
+    bNeedsPaint |=	( m_biOptions->bPushed ^ bWasOptionsPushed ) ||
+					( m_biOptions->bRaised ^ bWasOptionsRaised );
 
-	if ( m_bActive != active_change )
-		bNeedPaint = true;
-
-    if ( bNeedPaint )
-        SendMessage( WM_NCPAINT );
+	if ( bNeedsPaint )
+		SendMessage( WM_NCPAINT );
 }
 
 ///////////////////////////////////////////////////

@@ -295,6 +295,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if ( CFrameWnd::OnCreate(lpCreateStruct) == -1 )
 		return -1;
 
+
 	SetIcon( m_hIcon32, true );
 	SetIcon( m_hIcon16, false );
 

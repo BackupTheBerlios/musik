@@ -91,7 +91,6 @@ CSizingControlBar::~CSizingControlBar()
 }
 
 BEGIN_MESSAGE_MAP(CSizingControlBar, baseCSizingControlBar)
-    //{{AFX_MSG_MAP(CSizingControlBar)
     ON_WM_CREATE()
     ON_WM_PAINT()
     ON_WM_NCPAINT()
@@ -109,7 +108,6 @@ BEGIN_MESSAGE_MAP(CSizingControlBar, baseCSizingControlBar)
     ON_WM_NCHITTEST()
     ON_WM_CLOSE()
     ON_WM_SIZE()
-    //}}AFX_MSG_MAP
     ON_MESSAGE(WM_SETTEXT, OnSetText)
 END_MESSAGE_MAP()
 

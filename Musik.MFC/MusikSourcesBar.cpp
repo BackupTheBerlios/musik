@@ -19,7 +19,7 @@ static char THIS_FILE[] = __FILE__;
 ///////////////////////////////////////////////////
 
 CMusikSourcesBar::CMusikSourcesBar( CFrameWnd* parent, CMusikLibrary* library, CMusikPrefs* prefs )
-	: baseCMusikSourcesBar( prefs )
+	: CMusikDockBar( prefs )
 {
 	m_wndChild = new CMusikSourcesCtrl( library, prefs );
 	m_Parent = parent;
@@ -67,7 +67,7 @@ int CMusikSourcesBar::OnCreate( LPCREATESTRUCT lpCreateStruct )
 
 void CMusikSourcesBar::OnSize(UINT nType, int cx, int cy)
 {
-	CMusikDockBar::OnSize(nType, cx, cy);
+	CSizingControlBar::OnSize(nType, cx, cy);
 
 	CRect client_size;
 	GetClientRect( &client_size );
