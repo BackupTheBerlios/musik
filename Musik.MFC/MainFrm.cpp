@@ -71,6 +71,14 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	EnableDocking( CBRS_ALIGN_TOP );
 
 	//-------------------------------------------------//
+	//--- now playing control						---//
+	//-------------------------------------------------//
+	m_wndNowPlaying.Create( _T( "Musik Now Playing" ), this, 123 );
+	m_wndNowPlaying.SetBarStyle( m_wndNowPlaying.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC );
+	m_wndNowPlaying.EnableDocking( CBRS_ALIGN_BOTTOM );
+	DockControlBar( &m_wndNowPlaying, AFX_IDW_DOCKBAR_BOTTOM );
+
+	//-------------------------------------------------//
 	//--- selection controls						---//
 	//-------------------------------------------------//
 	for ( size_t i = 0; i < 4; i++ )

@@ -6,6 +6,7 @@
 #include "MusikSourcesBar.h"
 #include "MusikPlaylistView.h"
 #include "MusikSelectionBar.h"
+#include "MusikNowPlayingBar.h"
 
 class CMainFrame : public CFrameWnd
 {
@@ -34,6 +35,7 @@ private:
 protected:
 	CMusikPlaylistView m_wndView;
 	CMusikSourcesBar m_wndSourcesBar;
+	CMusikNowPlayingBar m_wndNowPlaying;
 	CMusikSelectionBar m_wndSelectionBars[4];
 
 //-------------------------------------------------//

@@ -170,6 +170,12 @@
 			<Filter
 				Name="MusikNowPlayingCtrl"
 				Filter="">
+				<File
+					RelativePath=".\MusikNowPlayingCtrl.cpp">
+				</File>
+				<File
+					RelativePath=".\MusikNowPlayingCtrl.h">
+				</File>
 			</Filter>
 			<Filter
 				Name="MusikSelectionCtrl"
@@ -213,6 +219,16 @@
 				</File>
 				<File
 					RelativePath=".\MusikSelectionBar.h">
+				</File>
+			</Filter>
+			<Filter
+				Name="MusikNowPlayingBar"
+				Filter="">
+				<File
+					RelativePath=".\MusikNowPlayingBar.cpp">
+				</File>
+				<File
+					RelativePath=".\MusikNowPlayingBar.h">
 				</File>
 			</Filter>
 		</Filter>
@@ -278,12 +294,6 @@
 			</File>
 			<File
 				RelativePath=".\CPropTree\PropTree.h">
-			</File>
-			<File
-				RelativePath=".\CPropTree\PropTreeInfo.cpp">
-			</File>
-			<File
-				RelativePath=".\CPropTree\PropTreeInfo.h">
 			</File>
 			<File
 				RelativePath=".\CPropTree\PropTreeItem.cpp">
