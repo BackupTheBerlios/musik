@@ -4,6 +4,13 @@
 #include "wx/wxprec.h"
 #include "MusikListCtrl.h"
 
+#include "images/ratings/rating0.xpm"
+#include "images/ratings/rating1.xpm"
+#include "images/ratings/rating2.xpm"
+#include "images/ratings/rating3.xpm"	
+#include "images/ratings/rating4.xpm"
+#include "images/ratings/rating5.xpm"
+
 enum E_MUSIK_PLAYLIST_COLUMN_ID
 {
 	PLAYLISTCOLUMN_RATING = 0,

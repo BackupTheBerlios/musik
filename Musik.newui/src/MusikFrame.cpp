@@ -6,18 +6,6 @@
 	#include "MMShellHook.h"
 #endif
 
-//--- images ---//
-#include "images/sources/dynamic.xpm"
-#include "images/sources/library.xpm"
-#include "images/sources/standard.xpm"
-#include "images/ratings/rating0.xpm"
-#include "images/ratings/rating1.xpm"
-#include "images/ratings/rating2.xpm"
-#include "images/ratings/rating3.xpm"	
-#include "images/ratings/rating4.xpm"
-#include "images/ratings/rating5.xpm"
-
-// main dialog constructor
 MusikFrame::MusikFrame() 
 	: wxFrame( (wxFrame*)NULL, -1, wxT( "Musik Test UI" ), wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE | wxTAB_TRAVERSAL | wxCLIP_CHILDREN | wxNO_FULL_REPAINT_ON_RESIZE )
 {

@@ -35,6 +35,10 @@ public:
 	CMusikSelectionCtrl( wxWindow* parent, wxWindowID id );
 	~CMusikSelectionCtrl();
 
+	//---------------------------------------------------------//
+    //--- these are our virtual overrides. they control		---//
+	//--- dialog resizing, column dragging, and updating.	---//
+	//---------------------------------------------------------//
 	virtual void OnResize			( wxSizeEvent& event );
 	virtual void OnColBeginDrag		( wxListEvent& event );
 	virtual void OnKeyDown			( wxListEvent& event );
@@ -42,6 +46,10 @@ public:
 	virtual void Reset				( bool rescale = true, bool refresh = false );
 	virtual void Update				( bool refresh = false );
 
+	//---------------------------------------------------------//
+	//--- functions having to do with getting and setting	---//
+	//--- selectionctrl type.								---//
+	//---------------------------------------------------------//
 	wxString GetDBName				( )	{ return E_MUSIK_SELECTION_DB_NAMES[(int)m_Type]; }
 	wxString GetColumnName			( )	{ return E_MUSIK_SELECTION_COLUMN_LABELS[(int)m_Type]; }
 	E_MUSIK_SELECTION_TYPE GetType	( )	{ return m_Type; }

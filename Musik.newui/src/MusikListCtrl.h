@@ -51,14 +51,15 @@ public:
 	virtual void Reset				( bool rescale = true, bool refresh = false ){};
 	virtual void Update				( bool refresh = false ){};
 
-	virtual void StartEditInPlace();
-	virtual void EndEditInPlace( wxCommandEvent& event );
+	virtual void StartEditInPlace	( );
+	virtual void EndEditInPlace		( wxCommandEvent& event );
 
 	CMusikEditInPlaceCtrl* GetEditInPlaceCtrl(){ return m_EditInPlace; }
 
 	DECLARE_EVENT_TABLE();
 
 private:
+
 	CMusikEditInPlaceCtrl* m_EditInPlace;
 	wxWindow* m_Parent;
 };

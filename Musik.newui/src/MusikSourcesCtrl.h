@@ -4,6 +4,10 @@
 #include "wx/wxprec.h"
 #include "MusikListCtrl.h"
 
+#include "images/sources/dynamic.xpm"
+#include "images/sources/library.xpm"
+#include "images/sources/standard.xpm"
+
 enum E_MUSIK_SOURCES_TYPE
 {
 	MUSIK_SOURCES_LIBRARY = 0,
