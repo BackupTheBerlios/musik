@@ -9,7 +9,6 @@
 #include "../musikCore/include/musikPlayer.h"
 
 #include "MEMDC.H"
-#include ".\musiktrackctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -144,12 +143,12 @@ void CmusikTrackCtrl::DrawChannel( CDC* pDC, const CRect& rect, BOOL bHoriz )
 
 	if ( bHoriz )
 	{
-		float fWidth = (float)rcChannel.Width() * fPercent;
+		float fWidth = ( (float)rcChannel.Width() * fPercent ) + 1;
 		pMemDC->FillSolidRect( CRect( rcChannel.left + 1, rcChannel.top + 1, rcChannel.left + (int)fWidth, rcChannel.bottom - 1 ), m_Prefs->MUSIK_COLOR_ACTIVECAPTION );
 	}
 	else
 	{
-		float fHeight = (float)rcChannel.Height() * fPercent;
+		float fHeight = ( (float)rcChannel.Height() * fPercent ) + 1;
 		pMemDC->FillSolidRect( CRect( rcChannel.left + 1, rcChannel.top + (int)fHeight, rcChannel.right - 1, rcChannel.bottom - 1 ), m_Prefs->MUSIK_COLOR_ACTIVECAPTION );
 	}
 

@@ -607,7 +607,7 @@ BOOL CMainFrame::VerifyBarState( LPCTSTR lpszProfileName )
     {
         CControlBarInfo* pInfo = (CControlBarInfo*)state.m_arrBarInfo[i];
         ASSERT(pInfo != NULL);
-        int nDockedCount = pInfo->m_arrBarID.GetSize();
+        int nDockedCount = (int)pInfo->m_arrBarID.GetSize();
         if (nDockedCount > 0)
         {
             // dockbar
