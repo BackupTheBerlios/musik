@@ -144,7 +144,7 @@ wxArrayString GetMusicDir( wxString* sDir )
 wxArrayString DelimitStr( wxString sStr, wxString sDel, bool bRemoveDelimiter )
 {
 	wxArrayString aReturn;
-	wxStringTokenizer toke( sStr, sDel, !bRemoveDelimiter );
+	wxStringTokenizer toke( sStr, sDel, bRemoveDelimiter );
 
 	while( toke.HasMoreTokens() )
 		aReturn.Add( toke.GetNextToken() );

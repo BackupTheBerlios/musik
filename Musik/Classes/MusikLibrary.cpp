@@ -1244,11 +1244,17 @@ bool CMusikLibrary::RenameFile( CMusikSong* song, bool bClearCheck )
 
 bool CMusikLibrary::CheckTokenForInt( wxArrayString aTokens, size_t nStart, size_t nEnd )
 {
+	wxString *sTemp = new wxString;
 	for( size_t i = 0; i < aTokens.GetCount(); i++ )
 	{
-		
+		if( aTokens.Item( i ).StartsWith( wxT("2"), sTemp ) )
+			wxMessageBox( wxT( "success" ) );
+		else
+		{
+			wxMessageBox( wxT( "failure" ) );
+		}
 	}
-	return false;
+	return true;
 }
 
 bool CMusikLibrary::RetagFile( CMusikSong* song )
@@ -1265,6 +1271,10 @@ bool CMusikLibrary::RetagFile( CMusikSong* song )
 	wxString	sExt		= wxT(".") + filename.GetExt();
 
 	wxArrayString aMaskToken	= DelimitStr( sMask, wxT("%"), true );
+	for( int i = 0; i < aMaskToken.GetCount(); i++ )
+	{
+		wxMessageBox( aMaskToken.Item( i ) );
+	}
 	if( !CheckTokenForInt( aMaskToken, nValidStart, nValidEnd ) )
 	{
 		wxMessageBox( wxT("Not a valid mask.") );
