@@ -30,7 +30,7 @@
 class MusikPlaylistRenameThread : public wxThread
 {
 public:
-	MusikPlaylistRenameThread( const  CMusikSongArray & songs );
+	MusikPlaylistRenameThread( wxEvtHandler * pEvtHandler, const  CMusikSongArray & songs );
 
 	virtual void *Entry();
 	virtual void OnExit();
@@ -38,12 +38,13 @@ public:
 private:
 
 	CMusikSongArray m_Songs;
+	wxEvtHandler * m_pEvtHandler;
 };
 
 class MusikPlaylistRetagThread : public wxThread
 {
 public:
-	MusikPlaylistRetagThread(const wxString &TagMask, const  CMusikSongArray & songs );
+	MusikPlaylistRetagThread(wxEvtHandler * pEvtHandler , const wxString &TagMask, const  CMusikSongArray & songs );
 
 	virtual void *Entry();
 	virtual void OnExit();
@@ -51,6 +52,7 @@ public:
 private:
 	CMusikSongArray m_Songs;
 	wxString m_sTagMask;
+	wxEvtHandler * m_pEvtHandler;
 };
 
 #endif

@@ -134,7 +134,7 @@ public:
 	bool 			GetSongFromFilename	( const wxString& filename, CMusikSong *pSong );
 
 	void SortPlaylist( const wxString& sortstr, bool descending );
-	wxString GetTotalPlaylistSize();
+	double GetTotalPlaylistSize();
 
 	//--------------------//
 	//--- getting info ---//
@@ -206,6 +206,7 @@ private:
 									// a wxMutex is used automatically instead
 	void CreateDBFuncs();
 	static void remprefixFunc(sqlite_func *context, int argc, const char **argv);
+	static void wxjuliandayFunc(sqlite_func *context, int argc, const char **argv);
 };
 
 #endif

@@ -106,10 +106,9 @@ CTunage				g_Tunage;
 //--- controls ---//
 //----------------//
 CActivityAreaCtrl	*g_ActivityAreaCtrl;
-CPlaylistCtrl		*g_PlaylistCtrl;
+CPlaylistBox		*g_PlaylistBox;
 CSourcesBox			*g_SourcesCtrl;
 CNowPlayingCtrl		*g_NowPlayingCtrl;
-CPlaylistInfoCtrl	*g_PlaylistInfoCtrl;
 wxGauge				*g_Progress;
 
 //-----------------------//

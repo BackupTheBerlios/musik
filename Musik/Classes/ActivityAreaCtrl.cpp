@@ -22,7 +22,7 @@
 
 #include "PlaylistCtrl.h"
 
-BEGIN_EVENT_TABLE(CActivityAreaCtrl, wxPanel)
+BEGIN_EVENT_TABLE(CActivityAreaCtrl, wxSashLayoutWindow)
 	EVT_LIST_ITEM_FOCUSED		( MUSIK_ACTIVITYBOX1, CActivityAreaCtrl::OnActivityBoxFocused	)
 	EVT_LIST_ITEM_FOCUSED		( MUSIK_ACTIVITYBOX2, CActivityAreaCtrl::OnActivityBoxFocused	)
 	EVT_LIST_ITEM_FOCUSED		( MUSIK_ACTIVITYBOX3, CActivityAreaCtrl::OnActivityBoxFocused	)
@@ -47,19 +47,21 @@ BEGIN_EVENT_TABLE(CActivityAreaCtrl, wxPanel)
 	EVT_LIST_BEGIN_DRAG			( MUSIK_ACTIVITYBOX2, CActivityAreaCtrl::OnActivityBox2SelDrag	)
 	EVT_LIST_BEGIN_DRAG			( MUSIK_ACTIVITYBOX3, CActivityAreaCtrl::OnActivityBox3SelDrag	)
 	EVT_LIST_BEGIN_DRAG			( MUSIK_ACTIVITYBOX4, CActivityAreaCtrl::OnActivityBox4SelDrag	)
+	EVT_SASH_DRAGGED			( MUSIK_ACTIVITYCTRL, CActivityAreaCtrl::OnSashDragged			)
+	EVT_SIZE					(					  CActivityAreaCtrl::OnSize					)
 END_EVENT_TABLE()
 
 CActivityAreaCtrl::CActivityAreaCtrl( wxWindow *pParent )
-	: wxPanel( pParent, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxCLIP_CHILDREN )
+	: wxSashLayoutWindow( pParent, MUSIK_ACTIVITYCTRL, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxNO_BORDER|wxCLIP_CHILDREN | wxSW_3D )
 {
 	m_ActivityBox1	= NULL;
 	m_ActivityBox2	= NULL;
 	m_ActivityBox3	= NULL;
 	m_ActivityBox4	= NULL;
 
-	
+	m_pPanel = new wxPanel( this, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxNO_BORDER|wxCLIP_CHILDREN );
 	pTopSizer = new wxBoxSizer( wxHORIZONTAL );
-	SetSizerAndFit( pTopSizer );
+	m_pPanel->SetSizer( pTopSizer );
 	m_Selected = m_bFocused = m_Selecting = false;
 	m_UpdatePlaylist = true;
 	Create();
@@ -77,41 +79,41 @@ bool CActivityAreaCtrl::Create()
 		//--- box1 ---//
 		if ( g_Prefs.nActBox1 > 0 && m_ActivityBox1 == NULL )
 		{
-			m_ActivityBox1 = new CActivityBox( this, MUSIK_ACTIVITYBOX1, g_Prefs.nActBox1 );
+			m_ActivityBox1 = new CActivityBox( m_pPanel, MUSIK_ACTIVITYBOX1, g_Prefs.nActBox1 );
 			m_ActivityBox1->ResetCaption();
 
-			pTopSizer->Add( m_ActivityBox1, 1, wxEXPAND | wxALL, 1 );
+			pTopSizer->Add( m_ActivityBox1, 1, wxEXPAND | wxLEFT|wxBOTTOM, 0 );
 		}
 
 		//--- box2 ---//
 		if ( g_Prefs.nActBox2 > 0 && m_ActivityBox2 == NULL )
 		{
-			m_ActivityBox2 = new CActivityBox( this, MUSIK_ACTIVITYBOX2, g_Prefs.nActBox2 );
+			m_ActivityBox2 = new CActivityBox( m_pPanel, MUSIK_ACTIVITYBOX2, g_Prefs.nActBox2 );
 			m_ActivityBox2->ResetCaption();
 
-			pTopSizer->Add( m_ActivityBox2, 1, wxEXPAND | wxALL, 1 );
+			pTopSizer->Add( m_ActivityBox2, 1, wxEXPAND | wxLEFT|wxBOTTOM, 0 );
 		}
 
 		//--- box3 ---//
 		if ( g_Prefs.nActBox3 > 0 && m_ActivityBox3 == NULL )
 		{
-			m_ActivityBox3 = new CActivityBox( this, MUSIK_ACTIVITYBOX3, g_Prefs.nActBox3 );
+			m_ActivityBox3 = new CActivityBox( m_pPanel, MUSIK_ACTIVITYBOX3, g_Prefs.nActBox3 );
 			m_ActivityBox3->ResetCaption();
 
-			pTopSizer->Add( m_ActivityBox3, 1, wxEXPAND | wxALL, 1 );
+			pTopSizer->Add( m_ActivityBox3, 1, wxEXPAND | wxLEFT|wxBOTTOM, 0 );
 		}
 
 		//--- box4 ---//
 		if ( g_Prefs.nActBox4 > 0 && m_ActivityBox4 == NULL )
 		{
-			m_ActivityBox4 = new CActivityBox( this, MUSIK_ACTIVITYBOX4, g_Prefs.nActBox4 );
+			m_ActivityBox4 = new CActivityBox( m_pPanel, MUSIK_ACTIVITYBOX4, g_Prefs.nActBox4 );
 			m_ActivityBox4->ResetCaption();
 
-			pTopSizer->Add( m_ActivityBox4, 1, wxEXPAND | wxALL, 1 );
+			pTopSizer->Add( m_ActivityBox4, 1, wxEXPAND | wxLEFT|wxBOTTOM, 0 );
 		}
 
 		Layout();
-		SetSize( pTopSizer->GetMinSize() );
+	//	SetSize( pTopSizer->GetMinSize() );
 
 		SetParent( 0, false );
 
@@ -253,7 +255,7 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 			if ( !g_FirstRun )
 			{
 				g_Library.GetAllSongs( g_Playlist );
-				g_PlaylistCtrl->Update();
+				g_PlaylistBox->Update();
 				g_PlaylistChanged = true;
 			}
 			return;
@@ -305,7 +307,7 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 			if ( !g_FirstRun )
 			{
 				g_Library.GetAllSongs( g_Playlist );
-				g_PlaylistCtrl->Update();
+				g_PlaylistBox->Update();
 				g_PlaylistChanged = true;
 			}
 			return;
@@ -400,7 +402,7 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 	if ( ( g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_STANDARD || g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_SLOPPY ) && ( pSel->IsSelected( 0 ) || pSel->GetSelectedItemCount() < 1 ) )
 	{
 		g_Playlist.Clear();
-		g_PlaylistCtrl->Update();
+		g_PlaylistBox->Update();
 	}
 	else
 		pSel->SetPlaylist();
@@ -503,4 +505,17 @@ void CActivityAreaCtrl::OnActivityBoxActivated	( wxListEvent& event)
 
 		m_Selected = m_bFocused = m_Selecting = false;
 	}
+}
+
+void CActivityAreaCtrl::OnSashDragged	(wxSashEvent & ev)
+{
+	g_Prefs.nActivityCtrlHeight = ev.GetDragRect().height;
+	SetDefaultSize(wxSize( 1000, g_Prefs.nActivityCtrlHeight));
+	ev.Skip();
+}
+void CActivityAreaCtrl::OnSize( wxSizeEvent& event )
+{
+	wxSashLayoutWindow::OnSize(event);
+	m_pPanel->Layout();
+	
 }

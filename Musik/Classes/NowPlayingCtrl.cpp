@@ -45,22 +45,22 @@ BEGIN_EVENT_TABLE(CNowPlayingCtrl, wxPanel)
 END_EVENT_TABLE()
 
 CNowPlayingCtrl::CNowPlayingCtrl( wxWindow *parent )
-	: wxPanel( parent, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxTRANSPARENT_WINDOW )
+	: wxPanel( parent, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxTRANSPARENT_WINDOW  )
 {
 	wxColour bg = wxSystemSettings::GetColour( wxSYS_COLOUR_3DFACE );
 
 	SetBackgroundColour( bg );
 
-	pLeftPanel = new wxPanel( this );
-	pRightPanel = new wxPanel( this );
+	pLeftPanel = new wxPanel( this , -1, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxTRANSPARENT_WINDOW );
+	pRightPanel = new wxPanel( this , -1, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxTRANSPARENT_WINDOW );
 
 	//-----------------------------//
 	//--- title / artist / time ---//
 	//-----------------------------//
 	//--- now playing static text objects ---//
-	stSong			= new wxStaticText	( pLeftPanel, -1, _( "" ),	wxPoint( 0, 0 ), wxSize( 0, 0 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
-	stArtist		= new wxStaticText	( pLeftPanel, -1, _( "" ),	wxPoint( 0, 0 ), wxSize( 0, 0 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
-	stCurtime		= new wxStaticText	( pLeftPanel, -1, _( "" ),	wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );	
+	stSong			= new wxStaticText	( pLeftPanel, -1, _( "" ),	wxPoint( 0, 0 ), wxSize( 0, 0 ), 0 );
+	stArtist		= new wxStaticText	( pLeftPanel, -1, _( "" ),	wxPoint( 0, 0 ), wxSize( 0, 0 ), 0 );
+	stCurtime		= new wxStaticText	( pLeftPanel, -1, _( "" ),	wxPoint( -1, -1 ), wxSize( -1, -1 ), 0 );	
 
 	//--- fonts ---//
 	stSong->SetFont		( g_fntSong );
@@ -148,14 +148,14 @@ CNowPlayingCtrl::CNowPlayingCtrl( wxWindow *parent )
 
 	vsRightCol = new wxBoxSizer( wxVERTICAL );
 	vsRightCol->Add( hsButtons, 1 );
-	vsRightCol->Add( gSeek, 0, wxTOP, 2 ); //-- small top border --//
+	vsRightCol->Add( gSeek, 1, wxTOP, 2 ); //-- small top border --//
 
 	pRightPanel->SetSizerAndFit( vsRightCol );
 
 	hsCols = new wxBoxSizer( wxHORIZONTAL );
 	hsCols->Add( pLeftPanel,	0, wxADJUST_MINSIZE /*| wxEXPAND*/ | wxALL, 2	);
-	hsCols->Add( 0, 0,			1, wxEXPAND);
-	hsCols->Add( pRightPanel,	0, wxEXPAND | wxALL, 2	);
+	hsCols->Add( 0, -1,			1, wxEXPAND);
+	hsCols->Add( pRightPanel,	0, wxADJUST_MINSIZE | wxALL, 2	);
 
 	SetSizerAndFit( hsCols );
 

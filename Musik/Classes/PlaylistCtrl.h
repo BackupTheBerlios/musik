@@ -20,6 +20,7 @@
 #ifndef WX_PRECOMP
 	#include "wx/wx.h"
 #endif
+#include "PlaylistInfoCtrl.h"
 //--- definition CMusikSongArray is here ---//
 #include "MusikLibrary.h"
 
@@ -30,7 +31,15 @@
 class MusikPlaylistRenameThread;
 class MusikPlaylistRetagThread;
 
-class CPlaylistCtrl : public CMusikListCtrl
+class IPlaylistInfo
+{
+public:
+	virtual int				GetTotalPlayingTimeInSeconds()=0;
+	virtual double			GetTotalFilesize()=0;
+	virtual int				GetCount()=0;
+
+};
+class CPlaylistCtrl : public CMusikListCtrl,public IPlaylistInfo
 {
 public:
 	//--------------------------------//
@@ -61,8 +70,8 @@ public:
 	void OnColumnClick	( wxListEvent& event );
 	//--- other ---//
 	void UpdateSel		( wxListEvent&		event			);
-	void ShowMenu		( wxCommandEvent&	WXUNUSED(event) );
-	void BeginDrag		( wxEvent&			WXUNUSED(event)	);
+	void ShowMenu		( wxContextMenuEvent&	event );
+	void BeginDrag		( wxListEvent&		event	);
 	void TranslateKeys	( wxKeyEvent&		pEvent			);
 	void EndDragCol		( wxListEvent&		event			);
 	void BeginDragCol	( wxListEvent&		event			);
@@ -86,9 +95,10 @@ public:
 	void			GetAllFilesList ( wxArrayString & aResult );
 	void			GetSelSongs		( CMusikSongArray & aResult );
 	wxString		GetFilename		( int nItem );
+//IPlaylistInfo
 	int				GetTotalPlayingTimeInSeconds();
-	wxString		GetTotalFilesize();
-	
+	double			GetTotalFilesize();
+	int				GetCount() { return GetItemCount();}
 	//------------//
 	//--- sets ---//
 	//------------//
@@ -205,7 +215,7 @@ public:
 	//-------------------//
 	//--- constructor ---//
 	//-------------------//
-	PlaylistDropTarget( CPlaylistCtrl *pPList )	{ g_PlaylistCtrl = pPList;	}
+	PlaylistDropTarget( CPlaylistCtrl *pPList )	{ m_pPlaylistCtrl = pPList;	}
 
 	//-------------------------//
 	//--- virtual functions ---//
@@ -218,9 +228,27 @@ public:
 	//-------------------------//
 	void HighlightSel( wxPoint );
 private:
-	CPlaylistCtrl *g_PlaylistCtrl;	//--- pointer to the playlist ---//
+	CPlaylistCtrl *m_pPlaylistCtrl;	//--- pointer to the playlist ---//
 	int nLastHit;					//--- last item hit           ---//
 	long n;							//--- new pos                 ---//
+};
+
+class CPlaylistBox : public wxPanel
+{
+public:
+	CPlaylistBox( wxWindow *parent );
+	~CPlaylistBox();
+	void ShowPlaylistInfo();
+	CPlaylistInfoCtrl & PlaylistInfoCtrl()	{return *m_pPlaylistInfoCtrl;}
+	CPlaylistCtrl & PlaylistCtrl()			{return *m_pPlaylistCtrl;}
+	wxTextCtrl    & TextSimpleQuery()		{return *m_pTextSimpleQuery;}
+	void Update( bool bSelFirstItem = true);
+private:
+	wxBoxSizer			*m_pMainSizer;
+	wxBoxSizer			*m_pHorzSizer;
+	CPlaylistInfoCtrl	*m_pPlaylistInfoCtrl;
+	CPlaylistCtrl		*m_pPlaylistCtrl;
+	wxTextCtrl			*m_pTextSimpleQuery;
 };
 
 #endif

@@ -21,6 +21,7 @@
 #endif 
 
 #include "ActivityBox.h"
+#include <wx/laywin.h>
 
 #include <wx/dnd.h>
 
@@ -40,13 +41,13 @@ enum EMUSIK_LIBRARY_TYPE
 class CSourcesListBox : public CMusikListCtrl
 {
 public:
-	CSourcesListBox( wxPanel *parent );
+	CSourcesListBox( wxWindow *parent );
 	~CSourcesListBox();
 
 	//--------------//
 	//--- events ---//
 	//--------------//
-	void ShowMenu				( wxCommandEvent& WXUNUSED(event) );
+	void ShowMenu				( wxContextMenuEvent& WXUNUSED(event) );
 	void CreateCurPlaylist		( wxCommandEvent& WXUNUSED(event) );
 	void StandardPlaylist		( wxCommandEvent& WXUNUSED(event) );
 	void DynamicPlaylist		( wxCommandEvent& WXUNUSED(event) );
@@ -145,7 +146,7 @@ private:
 	int			m_DragIndex;
 };
 
-class CSourcesBox : public wxPanel
+class CSourcesBox : public wxSashLayoutWindow
 {
 public:
 	CSourcesBox( wxWindow *parent );
@@ -158,9 +159,13 @@ public:
 	int  GetSelType				( )	{ return pListBox->GetSelType();	}
 	void RescanPlaylistDir		( ) { pListBox->RescanPlaylistDir();	}
 	void Update					( ) { pListBox->Update();				}
-
+	void UpdateCurrent			( ) { pListBox->UpdateSel(pListBox->GetIndex()); }
+	void SelectLibrary			( ) { pListBox->UpdateSel(-2); }
+	void OnSashDragged	(wxSashEvent & ev);
 
 	wxString PromptDynamicPlaylist( wxString sQuery )	{ return pListBox->PromptDynamicPlaylist( sQuery ); }
+	
+	DECLARE_EVENT_TABLE()
 private:
 	CSourcesListBox *pListBox;
 	wxBoxSizer		*pSizer;

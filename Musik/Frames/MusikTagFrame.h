@@ -106,7 +106,7 @@ public:
 
 	void OnClickNext			( wxCommandEvent &WXUNUSED(event) ) { Next();								}
 	void OnClickPrev			( wxCommandEvent &WXUNUSED(event) ) { Prev();								}
-	void OnClose				( wxCommandEvent &WXUNUSED(event) ); 
+	void OnClose				( wxCloseEvent &WXUNUSED(event) ); 
 	void OnTranslateKeys		( wxKeyEvent& event		);
 
 	//--- thread event handlers ---//

@@ -32,11 +32,12 @@ public:
 	//--------------//	
 	//--- events ---//
 	//--------------//
-	void OnMove						( wxCommandEvent&	WXUNUSED(event) );
+	void OnMove						( wxMoveEvent&	WXUNUSED(event) );
 	void OnMaximize					( wxMaximizeEvent&	WXUNUSED(event) );
 	void OnIconize					( wxIconizeEvent&	WXUNUSED(event) );
-	void OnSize						( wxCommandEvent&	WXUNUSED(event) );
+	void OnSize						( wxSizeEvent	&	WXUNUSED(event) );
 	void OnClose					( wxCloseEvent&		WXUNUSED(event) );
+	void OnMenuClose				( wxCommandEvent&	WXUNUSED(event) ){ Close();};
 
 	void OnSetupPaths				( wxCommandEvent&	WXUNUSED(event) );
 	void OnPreferences				( wxCommandEvent&	event			);
@@ -67,6 +68,8 @@ public:
 	void OnUpdateProgress			( wxCommandEvent&	WXUNUSED(event) );
 	void OnEndProgress				( wxCommandEvent&	WXUNUSED(event) );
 	
+	void OnSashDraggedSourcesBox	(wxSashEvent & ev);
+	void OnSashDraggedActivityCtrl	(wxSashEvent & ev);
 	//-------------------------//
 	//--- virtual overrides ---//
 	//-------------------------//
@@ -98,9 +101,6 @@ public:
 	wxBitmap		bmpRating5;
 
 	//--- sizers ---//
-	wxBoxSizer* vsRightSide;
-	wxBoxSizer *vsLeftSide;
-	wxBoxSizer *hsLeftRight;
 	wxBoxSizer *vsTopBottom;
 
 	//----------------------------------------------------------------//
@@ -165,6 +165,8 @@ private:
 	
 	wxTextCtrl* m_TextSimpleQuery;
 	wxString m_customQuery;
+
+	wxSashLayoutWindow *m_pBottomPanel;
 };
 
 #endif

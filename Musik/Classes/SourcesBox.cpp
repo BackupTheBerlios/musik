@@ -169,7 +169,7 @@ BEGIN_EVENT_TABLE(CSourcesListBox, CMusikListCtrl)
 	EVT_LIST_COL_BEGIN_DRAG		(MUSIK_SOURCES,									CSourcesListBox::OnSourcesColSize		)
 END_EVENT_TABLE()
 
-CSourcesListBox::CSourcesListBox( wxPanel* parent )
+CSourcesListBox::CSourcesListBox( wxWindow* parent )
 	: CMusikListCtrl( parent, MUSIK_SOURCES, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxLC_ALIGN_LEFT |wxLC_EDIT_LABELS | wxLC_SINGLE_SEL | wxNO_BORDER)
 {
 	SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ) );
@@ -215,7 +215,7 @@ CSourcesListBox::~CSourcesListBox()
 	delete sources_context_menu;
 }
 
-void CSourcesListBox::ShowMenu( wxCommandEvent &WXUNUSED(event) )
+void CSourcesListBox::ShowMenu( wxContextMenuEvent &WXUNUSED(event) )
 {
 	wxPoint pos = ScreenToClient( wxGetMousePosition() );
 
@@ -243,7 +243,7 @@ void CSourcesListBox::CreateCurPlaylist( wxCommandEvent& WXUNUSED(event) )
 	if ( dlg.ShowModal() == wxID_OK )
 	{
 		wxString sName = dlg.GetValue();
-		NewPlaylist( sName, g_PlaylistCtrl->GetAllFiles(), MUSIK_SOURCES_PLAYLIST_STANDARD );
+		NewPlaylist( sName, g_PlaylistBox->PlaylistCtrl().GetAllFiles(), MUSIK_SOURCES_PLAYLIST_STANDARD );
 	}
 }
 
@@ -310,7 +310,7 @@ void CSourcesListBox::CopyFiles( wxCommandEvent& WXUNUSED(event) )
 	//--- now just loop through the files and copy them ---//
 	//-----------------------------------------------------//
 	wxArrayString filenames;
-	g_PlaylistCtrl->GetAllFilesList( filenames );
+	g_PlaylistBox->PlaylistCtrl().GetAllFilesList( filenames );
 
 	wxString sourcebasename, sourceext;
 	for ( size_t n = 0; n < filenames.GetCount(); n++ )
@@ -362,6 +362,21 @@ void CSourcesListBox::OnUpdateSel( wxListEvent& pEvent )
 
 void CSourcesListBox::UpdateSel( size_t index )
 {
+
+	///HACK///
+	static bool bInFunction = false;
+	if(	bInFunction )
+		return;
+	bInFunction = true;
+	if(index == -2)
+	{	// protect playlists from being accidently changed
+		wxListCtrlSelNone( this );
+        m_CurSel = FindInSources(wxT( "Musik Library" ),MUSIK_SOURCES_LIBRARY);
+		SetItemState( m_CurSel, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
+		g_PlaylistChanged = true; 
+		bInFunction = false;
+		return;
+    }
 	//--- save std playlist. if deleting, no need to worry ---//
 	int nLastSel = m_CurSel;
 	if ( !m_Deleting )
@@ -392,8 +407,8 @@ void CSourcesListBox::UpdateSel( size_t index )
 			g_Library.GetAllSongs( g_Playlist );
 
 		g_LibPlaylist.Clear();
-		g_PlaylistCtrl->Update();
-		g_MusikFrame->ShowActivityArea( true );
+		g_PlaylistBox->Update();
+		g_MusikFrame->ShowActivityArea( g_Prefs.nShowActivities );
 		
 	}
 
@@ -403,7 +418,7 @@ void CSourcesListBox::UpdateSel( size_t index )
 		g_LibPlaylist = g_Playlist;
 
 		//--- standard playlist selected ---//
-		if ( m_CurSel != 0 && m_CurSel != -1 && nSelType == MUSIK_SOURCES_PLAYLIST_STANDARD )
+		if (m_CurSel != -1 && nSelType == MUSIK_SOURCES_PLAYLIST_STANDARD )
 		{
 			wxArrayString aFilelist;
 			LoadStdPlaylist( GetItemText( m_CurSel ), aFilelist );
@@ -411,16 +426,16 @@ void CSourcesListBox::UpdateSel( size_t index )
 		}
 
 		//--- dynamic playlist selected ---//
-		else if ( m_CurSel != 0 && m_CurSel != -1 && nSelType == MUSIK_SOURCES_PLAYLIST_DYNAMIC )
+		else if (  m_CurSel != -1 && nSelType == MUSIK_SOURCES_PLAYLIST_DYNAMIC )
 		{
 			wxString sQuery = LoadDynPlaylist( GetItemText( m_CurSel ) );
 			 g_Library.QuerySongs( sQuery, g_Playlist );
 		}
-		else if ( m_CurSel != 0 && m_CurSel != -1 && nSelType == MUSIK_SOURCES_NOW_PLAYING )
+		else if (  m_CurSel != -1 && nSelType == MUSIK_SOURCES_NOW_PLAYING )
 		{
 			g_Playlist = g_Player.GetPlaylist();
 		}
-		else if ( m_CurSel != 0 && m_CurSel != -1 && nSelType == MUSIK_SOURCES_NETSTREAM )
+		else if ( m_CurSel != -1 && nSelType == MUSIK_SOURCES_NETSTREAM )
 		{
 			CMusikSong song;
 			LoadNetStream(GetItemText( m_CurSel ), song);
@@ -429,16 +444,17 @@ void CSourcesListBox::UpdateSel( size_t index )
 		}
 
 		//--- update ui with new list ---//
-		g_PlaylistCtrl->Update(true);
-		if ( m_CurSel != 0 && m_CurSel != -1 && nSelType == MUSIK_SOURCES_NOW_PLAYING )
+		g_PlaylistBox->Update(true);
+		if ( m_CurSel != -1 && nSelType == MUSIK_SOURCES_NOW_PLAYING )
 		{
-			g_PlaylistCtrl->EnsureVisible(g_Player.GetCurIndex());
+			g_PlaylistBox->PlaylistCtrl().EnsureVisible(g_Player.GetCurIndex());
 		}
 		g_MusikFrame->ShowActivityArea( false );
 		
 	}
 
 	g_PlaylistChanged = true; 
+	bInFunction = false;
 }
 
 void CSourcesListBox::BeginEditLabel( wxListEvent& pEvent )
@@ -824,7 +840,7 @@ void CSourcesListBox::RewriteStdPlaylist()
 	wxRemoveFile( sFilename );
 	
 	//--- write the new file ---//
-	wxString sFiles = g_PlaylistCtrl->GetAllFiles();
+	wxString sFiles = g_PlaylistBox->PlaylistCtrl().GetAllFiles();
 	PlaylistToFile( sItemText, &sFiles, MUSIK_SOURCES_PLAYLIST_STANDARD );
 }
 
@@ -972,7 +988,7 @@ void CSourcesListBox::UpdateDynPlaylist( int nIndex )
 		PlaylistToFile( sName, &sQuery, MUSIK_SOURCES_PLAYLIST_DYNAMIC );
 
 		g_Library.QuerySongs( sQuery, g_Playlist );
-		g_PlaylistCtrl->Update();
+		g_PlaylistBox->Update();
 	}
 }
 
@@ -1233,18 +1249,30 @@ void CSourcesListBox::ShowIconsChecked( bool bCheck )
 	sources_context_menu->Check( MUSIK_SOURCE_CONTEXT_SHOW_ICONS, bCheck );
 }
 
+BEGIN_EVENT_TABLE(CSourcesBox, wxSashLayoutWindow)
+	EVT_SASH_DRAGGED			( MUSIK_SOURCES,				CSourcesBox::OnSashDragged			)	
+END_EVENT_TABLE()
+
 CSourcesBox::CSourcesBox( wxWindow *parent )
-	: wxPanel( parent, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxSIMPLE_BORDER | wxCLIP_CHILDREN )
+	: wxSashLayoutWindow( parent, MUSIK_SOURCES, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxNO_BORDER | wxCLIP_CHILDREN |wxSW_3D )
 {
 	//--- CSourcesListBox ---//
 	pListBox	= new CSourcesListBox( this );
-	
+
+/*	
 	//--- top sizer ---//
 	pSizer = new wxBoxSizer( wxVERTICAL );
-	pSizer->Add( pListBox, 1, wxEXPAND | wxTOP, 0 );
+	pSizer->Add( pListBox, 0, wxEXPAND | wxTOP, 0 );
 	SetSizerAndFit( pSizer );
-
+*/
 	Layout();
+}
+
+void CSourcesBox::OnSashDragged	(wxSashEvent & ev)
+{
+	g_Prefs.nSourceBoxWidth = ev.GetDragRect().width;
+	SetDefaultSize(wxSize(g_Prefs.nSourceBoxWidth, 1000));
+	ev.Skip();
 }
 
 CSourcesBox::~CSourcesBox()

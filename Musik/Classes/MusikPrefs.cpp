@@ -88,6 +88,8 @@ void CMusikPrefs::LoadPrefs()
 	config->Read( wxT( "EnableWebserver" ),						&nWebServerEnable,			0						);
 	config->Read( wxT( "Webserverport" ),						&nWebServerPort,			6395					);
 	config->Read( wxT( "FramePlacement" ),						&sFramePlacement,			wxT("0,0,800,600,0,0")	);
+	config->Read( wxT( "SourceBoxWidth" ),						&nSourceBoxWidth,			130					);
+	config->Read( wxT( "ActivityCtrlHeight" ),					&nActivityCtrlHeight,		120					);
 	config->Read( wxT( "SmartPlaylistColumns" ),				&nPlaylistSmartColumns,		1						);
 	config->Read( wxT( "Use_MPEGACCURATE_ForMP3VBRFiles" ),		&nUse_MPEGACCURATE_ForMP3VBRFiles,	1				);
 
@@ -328,6 +330,9 @@ void CMusikPrefs::SavePrefs()
 	config->Write( wxT( "EnableWebserver" ),				nWebServerEnable			);
 	config->Write( wxT( "WebserverPort" ),					nWebServerPort				);
 	config->Write( wxT( "FramePlacement" ),					sFramePlacement				);
+	config->Write( wxT( "SourceBoxWidth" ),					nSourceBoxWidth				);
+	config->Write( wxT( "ActivityCtrlHeight" ),				nActivityCtrlHeight			);
+
 	config->Write( wxT( "SmartPlaylistColumns" ),			nPlaylistSmartColumns		);
 	config->Write( wxT( "Use_MPEGACCURATE_ForMP3VBRFiles" ),nUse_MPEGACCURATE_ForMP3VBRFiles );
 	

@@ -120,6 +120,7 @@ bool CMusikLibrary::Load()
 			"CREATE INDEX songs_artist_idx on songs (artist);"
 			"CREATE INDEX songs_album_idx on songs (album);"
 			"CREATE INDEX songs_genre_idx on songs (genre);"
+			"CREATE INDEX songs_tracknum_idx on songs (tracknum);"
 			"CREATE INDEX songs_artist_album_tracknum_idx on songs (artist,album,tracknum);"
 			;
 
@@ -151,6 +152,8 @@ void CMusikLibrary::CreateDBFuncs()
 	} aFuncs[] = 
 			{
 				{ "remprefix",      1, SQLITE_TEXT, remprefixFunc, 0 },
+			    { "wxjulianday",	1, SQLITE_NUMERIC, wxjuliandayFunc, 0 },
+
 			};
 	/*  static struct {
 	char *zName;
@@ -212,6 +215,15 @@ void CMusikLibrary::remprefixFunc(sqlite_func *context, int argc, const char **a
 		}
 	}
   sqlite_set_result_string(context, argv[0], argvlen);
+}
+void CMusikLibrary::wxjuliandayFunc(sqlite_func *context, int argc, const char **argv)
+{
+  if( argc<1 || argv[0]==0 ) return;
+  wxDateTime x;
+  if( x.ParseFormat(ConvA2W(argv[0])))
+  {
+    sqlite_set_result_double(context, x.GetJulianDayNumber());
+  }
 }
 //---  if true, compares the full path, if false, just looks for the filename itself   ---//
 //--- obviously the filename you pass will either be full or just filename accordingly ---//
@@ -950,6 +962,10 @@ void CMusikLibrary::SortPlaylist( const wxString& sortstr, bool descending )
 			sQuery += sortstr;
 			if ( descending )
 				sQuery += wxT(" desc");
+			if(sortstr == wxT("artist"))
+			{
+			  sQuery += wxT(" ,album , tracknum");
+			}
 			sQuery += wxT(";");
 		}
 	}
@@ -968,7 +984,7 @@ void CMusikLibrary::SortPlaylist( const wxString& sortstr, bool descending )
 
 ///////////////////////////////////////////////////////////////////////////////
 
-wxString CMusikLibrary::GetTotalPlaylistSize()
+double CMusikLibrary::GetTotalPlaylistSize()
 {
 	wxString sQuery;
 	
@@ -976,7 +992,7 @@ wxString CMusikLibrary::GetTotalPlaylistSize()
 
 	int count = g_Playlist.GetCount();
 	if ( count < 1 )
-		return wxString( wxT("0.0 MB") );
+		return 0.0;
 
 	sQuery.Alloc(sQuery.Len() + count * 30); // optimization ( the 30 is a wild guess)
 	for ( size_t i = 0; i < count ; i++ )
@@ -1010,7 +1026,7 @@ wxString CMusikLibrary::GetTotalPlaylistSize()
 	const char **coldata;
 	const char **coltypes;
 
-	float totsize = 0.0f;
+	double  totsize = 0.0;
 	if ( sqlite_step( pVM, &numcols, &coldata, &coltypes ) == SQLITE_ROW )
 	{
 		totsize = atof( coldata[0] );		
@@ -1019,18 +1035,7 @@ wxString CMusikLibrary::GetTotalPlaylistSize()
 	//--- close up ---//
 	sqlite_finalize( pVM, &errmsg );
 
-	wxString strsize( wxT("0.0 mb") );
-
-	if ( totsize < 1024.0f )
-		strsize = wxString::Format( wxT("%.2f b"), totsize );
-	else if ( totsize < ( 1024.0f * 1024.0f ) )
-		strsize = wxString::Format( wxT("%.2f kb"), totsize / 1024.0f );
-	else if ( totsize < ( 1024.0f * 1024.0f * 1024.0f ) )
-		strsize = wxString::Format( wxT("%.2f mb"), totsize / 1024.0f / 1024.0f );
-	else if ( totsize < ( 1024.0f * 1024.0f * 1024.0f * 1024.0f ) )
-		strsize = wxString::Format( wxT("%.2f gb"), totsize / 1024.0f / 1024.0f / 1024.0f );
-
-	return strsize;
+	return totsize;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

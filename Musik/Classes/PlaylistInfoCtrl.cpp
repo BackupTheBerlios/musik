@@ -21,10 +21,13 @@
 #include "../MusikGlobals.h"
 #include "../MusikUtils.h"
 
-CPlaylistInfoCtrl::CPlaylistInfoCtrl( wxWindow *parent )
+CPlaylistInfoCtrl::CPlaylistInfoCtrl( wxWindow *parent ,IPlaylistInfo *pIPlaylistInfo )
 	: wxPanel( parent, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxTRANSPARENT_WINDOW )
+	,m_pIPlaylistInfo( pIPlaylistInfo )
 {
-	SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_3DFACE ) );
+
+//	SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_3DFACE ) );
+	SetBackgroundColour( wxTheColourDatabase->Find(wxT("LIGHT STEEL BLUE")));
 
  	//--- static text objects ---/
 	stTotal			= new wxStaticText( this, -1, _( "Total Songs: " ),			wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
@@ -36,9 +39,6 @@ CPlaylistInfoCtrl::CPlaylistInfoCtrl( wxWindow *parent )
 	stFilesize		= new wxStaticText( this, -1, _( "Playlist size: " ),		wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
 	stFilesizeVal	= new wxStaticText( this, -1, wxT( "Empty" ),				wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
 	
-	//--- window spacers ---//
-	wxWindow *pSpacer1 = new wxWindow( this, -1, wxPoint( -1, -1 ), wxSize( -1, 0 ), wxNO_BORDER );
-	wxWindow *pSpacer2 = new wxWindow( this, -1, wxPoint( -1, -1 ), wxSize( -1, 0 ), wxNO_BORDER );
 
 	//--- font stuff ---//
 	stTotal->SetFont		( g_fntRegular );
@@ -52,20 +52,18 @@ CPlaylistInfoCtrl::CPlaylistInfoCtrl( wxWindow *parent )
 
 	//--- playlist info sizer ---//
 	pSizer = new wxBoxSizer	( wxHORIZONTAL	);
-	pSizer->Add( pSpacer1,		1, wxEXPAND );
-	pSizer->Add( stTotal,		0, wxLEFT | wxALIGN_CENTER_HORIZONTAL | wxADJUST_MINSIZE  , 0 );
-	pSizer->Add( stTotalVal,	0, wxLEFT | wxALIGN_CENTER_HORIZONTAL | wxADJUST_MINSIZE  , 4 );
-	pSizer->Add( stPlaylist,	0, wxLEFT | wxALIGN_CENTER_HORIZONTAL | wxADJUST_MINSIZE  , 24 );
-	pSizer->Add( stPlaylistVal,	0, wxLEFT | wxALIGN_CENTER_HORIZONTAL | wxADJUST_MINSIZE  , 4 );
-	pSizer->Add( stRuntime,		0, wxLEFT | wxALIGN_CENTER_HORIZONTAL | wxADJUST_MINSIZE  , 24 );
-	pSizer->Add( stRuntimeVal,	0, wxLEFT | wxALIGN_CENTER_HORIZONTAL | wxADJUST_MINSIZE  , 4 );   
-	pSizer->Add( stFilesize,	0, wxLEFT | wxALIGN_CENTER_HORIZONTAL | wxADJUST_MINSIZE  , 24 );
-	pSizer->Add( stFilesizeVal,	0, wxLEFT | wxALIGN_CENTER_HORIZONTAL | wxADJUST_MINSIZE  , 4 );
-	pSizer->Add( pSpacer2,		1, wxEXPAND );
+	pSizer->Add( stTotal,		0, wxLEFT | wxALIGN_CENTER | wxADJUST_MINSIZE  , 0 );
+	pSizer->Add( stTotalVal,	0, wxLEFT | wxALIGN_CENTER | wxADJUST_MINSIZE  , 2 );
+	pSizer->Add( stPlaylist,	0, wxLEFT | wxALIGN_CENTER | wxADJUST_MINSIZE  , 4 );
+	pSizer->Add( stPlaylistVal,	0, wxLEFT | wxALIGN_CENTER | wxADJUST_MINSIZE  , 2 );
+	pSizer->Add( stRuntime,		0, wxLEFT | wxALIGN_CENTER | wxADJUST_MINSIZE  , 4 );
+	pSizer->Add( stRuntimeVal,	0, wxLEFT | wxALIGN_CENTER | wxADJUST_MINSIZE  , 2 );   
+	pSizer->Add( stFilesize,	0, wxLEFT | wxALIGN_CENTER | wxADJUST_MINSIZE  , 4 );
+	pSizer->Add( stFilesizeVal,	0, wxLEFT | wxALIGN_CENTER | wxADJUST_MINSIZE  , 2 );
 
 	//--- top sizer, vertical ---//
 	pVert = new wxBoxSizer( wxVERTICAL );
-	pVert->Add( pSizer, 0, wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER | wxALL, 2 );
+	pVert->Add( pSizer, 0, wxALIGN_CENTER , 0 );
 
 	SetSizerAndFit( pVert );
 	Layout();
@@ -77,11 +75,21 @@ void CPlaylistInfoCtrl::Update()
 	if ( g_Prefs.nShowPLInfo == 1 )
 	{
 		stTotalVal->SetLabel( wxString::Format( wxT( "%d" ), g_Library.GetSongCount() ) );
-		stPlaylistVal->SetLabel( wxString::Format( wxT( "%d" ), g_PlaylistCtrl->GetItemCount() ) );
-		int nPlaylistTime = g_PlaylistCtrl->GetTotalPlayingTimeInSeconds();
+		stPlaylistVal->SetLabel( wxString::Format( wxT( "%d" ), m_pIPlaylistInfo->GetCount() ) );
+		int nPlaylistTime = m_pIPlaylistInfo->GetTotalPlayingTimeInSeconds();
 		wxTimeSpan PlayTime( 0, 0, nPlaylistTime );
 		stRuntimeVal->SetLabel ( PlayTime.Format() );
-		stFilesizeVal->SetLabel( g_PlaylistCtrl->GetTotalFilesize() );
+		wxString strsize( wxT("0.0 mb") );
+		double totsize = m_pIPlaylistInfo->GetTotalFilesize();
+		if ( totsize < 1024.0 )
+			strsize = wxString::Format( wxT("%.2f b"), totsize );
+		else if ( totsize < ( 1024.0 * 1024.0 ) )
+			strsize = wxString::Format( wxT("%.2f kb"), totsize / 1024.0 );
+		else if ( totsize < ( 1024.0 * 1024.0 * 1024.0 ) )
+			strsize = wxString::Format( wxT("%.2f mb"), totsize / 1024.0 / 1024.0 );
+		else if ( totsize < ( 1024.0 * 1024.0 * 1024.0 * 1024.0 ) )
+			strsize = wxString::Format( wxT("%.2f gb"), totsize / 1024.0 / 1024.0 / 1024.0 );
+		stFilesizeVal->SetLabel( strsize );
 	}
 	Layout();
 }

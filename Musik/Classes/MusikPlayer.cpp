@@ -215,7 +215,7 @@ void CMusikPlayer::PlayCurSel()
 		m_Paused = false;
 	}
 	
-	int nCurSel = g_PlaylistCtrl->GetNextItem( -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED );
+	int nCurSel = g_PlaylistBox->PlaylistCtrl().GetNextItem( -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED );
 	if ( nCurSel > -1 )
 	{
 		if ( g_PlaylistChanged )
@@ -305,6 +305,13 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 	else if (_IsNETSTREAMConnecting())
 	{
 		return true;
+	}
+	else if((m_Playlist.Item( nItem ).Format != MUSIK_FORMAT_NETSTREAM) && !::wxFileExists(m_Playlist.Item( nItem ).Filename))
+	{	// not a network stream
+		// and
+		// file does not exist
+			wxMessageBox( _( "Cannot find file.\n Filename:" ) + m_Playlist.Item( nItem ).Filename, MUSIK_VERSION, wxICON_STOP );
+			return false;
 	}
 
 	//--- check for an invalid playlist ---//
@@ -559,11 +566,11 @@ void CMusikPlayer::UpdateUI()
 	if(_CurrentSongIsNetStream())
 	{
 		song = m_Playlist.Item( m_SongIndex );
-		g_PlaylistCtrl->ResynchItem		( m_SongIndex,song);
+		g_PlaylistBox->PlaylistCtrl().ResynchItem		( m_SongIndex,song);
 	}
 	else
 	{
-		g_PlaylistCtrl->ResynchItem		( m_SongIndex, m_LastSong );
+		g_PlaylistBox->PlaylistCtrl().ResynchItem		( m_SongIndex, m_LastSong );
 		g_Library.UpdateItemLastPlayed	( m_CurrentFile );
 		g_Library.GetSongFromFilename( m_CurrentFile, &song );
 	}
@@ -577,9 +584,11 @@ void CMusikPlayer::ClearOldStreams( bool bClearAll )
 		if ( g_FaderThread->GetWorkerCount() )
 			return;
 	}
-
-	g_FaderThread->CrossfaderAbort();
-	g_FaderThread->CrossfaderStop();
+	if(g_FaderThread)
+	{
+		g_FaderThread->CrossfaderAbort();
+		g_FaderThread->CrossfaderStop();
+	}
 	wxCriticalSectionLocker lock(g_protectingStreamArrays);
 	int nStreamCount = g_ActiveStreams.GetCount();
 
@@ -720,9 +729,9 @@ void CMusikPlayer::Stop( bool bCheckFade, bool bExit )
 
 void CMusikPlayer::FinalizeStop()
 {
-	m_Playing = false;
+	m_Playing = m_Paused = false;
 	m_Stopping = false;
-
+	g_PlaylistBox->PlaylistCtrl().ResynchItem( m_SongIndex );
 	int nStreamCount = g_ActiveStreams.GetCount();
 	for ( int i = 0; i < nStreamCount; i++ )
 	{
@@ -748,21 +757,28 @@ size_t CMusikPlayer::GetRandomSong()
 
 	
 	bool repeat = false;
-	int nMaxRepeatCount = 10;
+	int nMaxRepeatCount = 30;
 	do {
 		repeat = false;
 		r = GetRandomNumber() % m_Playlist.GetCount();
 
 		if(nMaxRepeatCount--) // only check for repeats nMaxRepeatCount times, to prevent endless do loop
 		{
-			//--- check for repeats ---//
-			for ( size_t j = 0; j < m_Playlist.GetCount()-1 && j < WXSIZEOF(m_History); j++ )
+			if(::wxFileExists(m_Playlist.Item( r ).Filename))
 			{
-				if ( r == m_History[j] )
+				//--- check for repeats ---//
+				for ( size_t j = 0; j < m_Playlist.GetCount()-1 && j < WXSIZEOF(m_History); j++ )
 				{
-					repeat = true; 
-					break;
+					if ( r == m_History[j] )
+					{
+						repeat = true; 
+						break;
+					}
 				}
+			}
+			else
+			{
+				repeat = true; 
 			}
 		}
 	} while ( repeat );

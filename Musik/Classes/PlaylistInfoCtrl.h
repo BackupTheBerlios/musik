@@ -19,11 +19,12 @@
 #ifndef WX_PRECOMP
 	#include "wx/wx.h"
 #endif 
+class IPlaylistInfo;
 
 class CPlaylistInfoCtrl : public wxPanel
 {
 public:
-	CPlaylistInfoCtrl( wxWindow *pParent );
+	CPlaylistInfoCtrl( wxWindow *pParent ,IPlaylistInfo *pIPlaylistInfo);
 
 	wxStaticText* stTotal;		
 	wxStaticText* stTotalVal;
@@ -39,7 +40,7 @@ public:
 
 	void Update();
 private:
-
+	IPlaylistInfo* m_pIPlaylistInfo;
 };
 
 #endif

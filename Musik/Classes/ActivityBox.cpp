@@ -352,7 +352,7 @@ void ActivityDropTarget::HighlightSel( wxPoint pPos )
 }
 
 CActivityBox::CActivityBox( wxWindow *parent, wxWindowID id, EMUSIK_ACTIVITY_TYPE nType )
-	:  wxPanel( parent, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxSIMPLE_BORDER | wxCLIP_CHILDREN )
+	:  wxPanel( parent, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxNO_BORDER | wxCLIP_CHILDREN )
 {
 	//--- CActivityListBox ---//
 	pListBox	= new CActivityListBox	( this, id );
@@ -611,7 +611,7 @@ void CActivityBox::GetSelectedSongs( CMusikSongArray& array )
 void CActivityBox::SetPlaylist()
 {
 	GetSelectedSongs( g_Playlist );
-	g_PlaylistCtrl->Update( true );
+	g_PlaylistBox->Update( true );
 	g_PlaylistChanged = true;
 }
 
@@ -777,7 +777,7 @@ void CActivityBox::OnRenameThreadEnd( wxCommandEvent& WXUNUSED(event) )
 	}
 
 	EnableProgress( false );
-	g_PlaylistCtrl->Update();
+	g_PlaylistBox->Update();
 
 	//--- update locally ---//
 	SetProgressType	( 0 );
@@ -797,6 +797,7 @@ void CActivityBox::SetActiveThread( wxThread* newactivethread)
 		wxASSERT(pCurrThread);
 		pCurrThread->Wait();// wait until thread has completed
 		delete pCurrThread;
+		m_ActiveThread = NULL;
 	}
 	else
 	{

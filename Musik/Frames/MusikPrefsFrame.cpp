@@ -602,12 +602,12 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 //--------------//
 //--- Events ---//
 //--------------//
-void MusikPrefsFrame::OnTreeChange		( wxCommandEvent& WXUNUSED(event) )	{	UpdatePrefsPanel();		}
+void MusikPrefsFrame::OnTreeChange		( wxTreeEvent& WXUNUSED(event) )	{	UpdatePrefsPanel();		}
 void MusikPrefsFrame::OnOutputChanged	( wxCommandEvent& WXUNUSED(event) )	{	FindDevices();			}
 void MusikPrefsFrame::OnClickOK			( wxCommandEvent& WXUNUSED(event) )	{	Close( false );			}
 void MusikPrefsFrame::OnClickApply		( wxCommandEvent& WXUNUSED(event) )	{	SavePrefs();			}
 void MusikPrefsFrame::OnClickCancel		( wxCommandEvent& WXUNUSED(event) )	{	Close( true );			}
-void MusikPrefsFrame::OnClose			( wxCommandEvent& WXUNUSED(event) )	{	Close( true );			}
+void MusikPrefsFrame::OnClose			( wxCloseEvent& WXUNUSED(event) )	{	Close( true );			}
 
 void MusikPrefsFrame::OnClickColour		( wxCommandEvent &event )
 {
@@ -906,7 +906,7 @@ void MusikPrefsFrame::SavePrefs()
 		bPlaylistUpdate = true;
 	}
 	if ( bPlaylistUpdate )
-		g_PlaylistCtrl->Update();
+		g_PlaylistBox->Update();
 
 	if ( chkActivityBoxStripes->GetValue() != g_Prefs.nActStripes )
 	{
@@ -1245,5 +1245,5 @@ void MusikPrefsFrame::SavePrefs()
 		g_ActivityAreaCtrl->ResetAllContents();
 
 	if ( bResetColumns )
-		g_PlaylistCtrl->ResetColumns( true, true );
+		g_PlaylistBox->PlaylistCtrl().ResetColumns( true, true );
 }

@@ -43,12 +43,12 @@ public:
 	//--- events ---//
 	//--------------//
 	void OnTranslateKeys	( wxKeyEvent	 &event );
-	void OnTreeChange		( wxCommandEvent& WXUNUSED(event) );
+	void OnTreeChange		( wxTreeEvent& WXUNUSED(event) );
 	void OnOutputChanged	( wxCommandEvent& WXUNUSED(event) );
 	void OnClickOK			( wxCommandEvent& WXUNUSED(event) );
 	void OnClickApply		( wxCommandEvent& WXUNUSED(event) );
 	void OnClickCancel		( wxCommandEvent& WXUNUSED(event) );
-	void OnClose			( wxCommandEvent& WXUNUSED(event) );
+	void OnClose			( wxCloseEvent& WXUNUSED(event) );
 	void OnClickColour		( wxCommandEvent& event );
 
 	//-------------------------//

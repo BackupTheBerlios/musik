@@ -99,7 +99,8 @@ public:
 	int nWebServerPort;
 
 	wxString sFramePlacement;
-
+	int nSourceBoxWidth;
+	int nActivityCtrlHeight;
 	wxString sAutoRename;
 	wxString sAutoTag;
 	int nAutoTagConvertUnderscoresToSpaces;

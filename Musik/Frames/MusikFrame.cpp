@@ -72,84 +72,77 @@ MusikFrame::MusikFrame()
 	//-------------------------//
 	//--- initialize sizers ---//
 	//-------------------------//
-	vsRightSide			= new wxBoxSizer	( wxVERTICAL	);
-	vsLeftSide			= new wxBoxSizer	( wxVERTICAL	);
-	hsLeftRight			= new wxBoxSizer	( wxHORIZONTAL	);
 	vsTopBottom			= new wxBoxSizer	( wxVERTICAL	);
 
-	//----------------//
-	//--- playlist ---//
-	//----------------//
-	g_PlaylistCtrl  = new CPlaylistCtrl( this, MUSIK_PLAYLIST, wxPoint( 0, 0 ), wxSize( 0, 0 ) );
 
-	//---------------------//
-	//--- activity area ---//
-	//---------------------//
-	g_ActivityAreaCtrl = new CActivityAreaCtrl( this );
 
-	//---------------------//
-	//--- playlist info ---//
-	//---------------------//
-	g_PlaylistInfoCtrl = new CPlaylistInfoCtrl( this );
-	GetListCtrlFont();
-
-	//-------------------//
-	//--- now playing ---//
-	//-------------------//
-	g_NowPlayingCtrl = new CNowPlayingCtrl( this );
-
-	//---------------------------------//
-	//--- progress bar for whatever ---//
-	//---------------------------------//
-	g_Progress = new wxGauge( this, -1, 100, wxPoint( 0, 0 ), wxSize( 0, 18 ), wxGA_SMOOTH );
+	m_pBottomPanel = new wxSashLayoutWindow(this,-1,wxDefaultPosition,wxDefaultSize,wxNO_BORDER|wxCLIP_CHILDREN);
+	m_pBottomPanel->SetDefaultSize(wxSize(1000,70));
+	m_pBottomPanel->SetAlignment(wxLAYOUT_BOTTOM);
+	m_pBottomPanel->SetOrientation(wxLAYOUT_HORIZONTAL);
 
 	//---------------//
 	//--- sources ---//
 	//---------------//
 	g_SourcesCtrl = new CSourcesBox( this );
 
-	//--------------------//
-	//--- simple query ---//
-	//--------------------//
-	m_TextSimpleQuery = new wxTextCtrl( this, MUSIK_SIMPLEQUERY, wxT( "" ), wxPoint( 0, 0 ), wxSize( -1, -1 ), wxSIMPLE_BORDER );
+	g_SourcesCtrl->SetSashVisible(wxSASH_RIGHT, true);
+	g_SourcesCtrl->SetDefaultSize(wxSize(g_Prefs.nSourceBoxWidth,1000));
+	g_SourcesCtrl->SetAlignment(wxLAYOUT_LEFT);
+	g_SourcesCtrl->SetOrientation(wxLAYOUT_VERTICAL);
+	g_SourcesCtrl->SetSashBorder(wxSASH_RIGHT, true);
+	g_SourcesCtrl->SetSashBorder(wxSASH_RIGHT, true);
+	g_SourcesCtrl->SetDefaultBorderSize(3);
+	g_SourcesCtrl->SetExtraBorderSize(1);
+	//---------------------//
+	//--- activity area ---//
+	//---------------------//
+	g_ActivityAreaCtrl = new CActivityAreaCtrl( this );
+	g_ActivityAreaCtrl->SetSashVisible(wxSASH_BOTTOM, true);
+	g_ActivityAreaCtrl->SetDefaultSize(wxSize(1000,g_Prefs.nActivityCtrlHeight));
+	g_ActivityAreaCtrl->SetAlignment(wxLAYOUT_TOP);
+	g_ActivityAreaCtrl->SetOrientation(wxLAYOUT_HORIZONTAL);
+	g_ActivityAreaCtrl->SetSashBorder(wxSASH_BOTTOM, true);
+	g_ActivityAreaCtrl->SetDefaultBorderSize(3);
+	g_ActivityAreaCtrl->SetExtraBorderSize(1);
+	
+//	m_pMainPanel = new wxPanel(this,-1,wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxTRANSPARENT|wxCLIP_CHILDREN);
 
-	//-----------------------//
-	//--- left area sizer ---//
-	//-----------------------//
-	vsLeftSide->Add( g_SourcesCtrl, 1, wxEXPAND | wxLEFT | wxBOTTOM | wxTOP, 1 );
-	vsLeftSide->Add( m_TextSimpleQuery, 0, wxEXPAND | wxLEFT | wxBOTTOM | wxTOP, 1 );
+	//----------------//
+	//--- playlist ---//
+	//----------------//
+	g_PlaylistBox  = new CPlaylistBox( this );
 
-	//------------------------//
-	//--- right area sizer ---//
-	//------------------------//
-	vsRightSide->Add( g_ActivityAreaCtrl, 1, wxEXPAND | wxALL, 0 );	
-	vsRightSide->Add( g_PlaylistInfoCtrl, 0, wxEXPAND | wxALIGN_CENTER );
-	vsRightSide->Add( g_PlaylistCtrl, 2, wxEXPAND | wxALL, 1 );
 
-	//--------------------------//
-	//--- left / right sizer ---//
-	//--------------------------//
-	hsLeftRight->Add( vsLeftSide, 1, wxEXPAND | wxALL );
-	hsLeftRight->Add( vsRightSide, 5, wxEXPAND | wxLEFT | wxRIGHT, 1 );
+	GetListCtrlFont();
+
+	//-------------------//
+	//--- now playing ---//
+	//-------------------//
+	g_NowPlayingCtrl = new CNowPlayingCtrl( m_pBottomPanel );
+
+	//---------------------------------//
+	//--- progress bar for whatever ---//
+	//---------------------------------//
+	g_Progress = new wxGauge( m_pBottomPanel, -1, 100, wxPoint( 0, 0 ), wxSize( 0, 18 ), wxGA_SMOOTH );
 
 	//--------------------------//
 	//--- top / bottom sizer ---//
 	//--------------------------//
-	vsTopBottom->Add( hsLeftRight,		1, wxEXPAND | wxALL				  );
+//	vsTopBottom->Add( hsLeftRight,		1, wxEXPAND | wxALL				  );
 	vsTopBottom->Add( g_Progress,		0, wxEXPAND | wxLEFT | wxRIGHT, 1 );
 	vsTopBottom->Add( g_NowPlayingCtrl, 0, wxEXPAND | wxLEFT | wxRIGHT, 1 );
 
 	//--- hide progress bar for the time being, and set its abort var to false ---//
 	vsTopBottom->Show( g_Progress, false );
 
+	m_pBottomPanel->SetSizer(vsTopBottom);
 	//--- taylor ui ---//
 	ShowPlaylistInfo();
 	ShowSources();
 	SetStayOnTop(( bool )g_Prefs.nStayOnTop);
 	ShowActivityArea( g_Prefs.nShowActivities );
 
-	//--- set sizer, center dialog ---//
-	SetSizer/*AndFit*/( vsTopBottom );
 
 	//--- restore placement or use defaults ---//
 	g_DisablePlacement = false;
@@ -206,7 +199,7 @@ bool MusikFrame::Show( bool show )
 			if ( g_Prefs.nShowAllSongs == 1 )
 			{
 				g_Library.GetAllSongs( g_Playlist );
-				g_PlaylistCtrl->Update(true);
+				g_PlaylistBox->Update(true);
 				g_Player.SetPlaylist( g_Playlist );
 			}
 		}
@@ -322,7 +315,7 @@ void MusikFrame::GetFonts()
 
 void MusikFrame::GetListCtrlFont()
 {
-	g_fntListBold = g_PlaylistCtrl->GetFont();
+	g_fntListBold = g_PlaylistBox->PlaylistCtrl().GetFont();
 	g_fntListBold.SetWeight( wxBOLD );
 }
 
@@ -339,17 +332,14 @@ void MusikFrame::TogglePlaylistInfo()
 
 void MusikFrame::ShowPlaylistInfo()
 {
-    if( g_Prefs.nShowPLInfo )
-       g_PlaylistInfoCtrl->Update();
-	vsRightSide->Show( g_PlaylistInfoCtrl, ( bool )g_Prefs.nShowPLInfo );
-	Layout();
+	g_PlaylistBox->ShowPlaylistInfo();
 }
 
 void MusikFrame::ShowSources()
 {
-	hsLeftRight->Show( vsLeftSide, ( bool )g_Prefs.nShowSources );
-
-	Layout();
+	g_SourcesCtrl->Show(  ( bool )g_Prefs.nShowSources );
+	wxLayoutAlgorithm layout;
+    layout.LayoutWindow(this,g_PlaylistBox);
 }
 
 void MusikFrame::ToggleSources()
@@ -373,10 +363,15 @@ void MusikFrame::SetStayOnTop( bool bStayOnTop )
 }
 void MusikFrame::ShowActivityArea( bool bShow )
 {
-	m_TextSimpleQuery->Enable(bShow);
-	vsRightSide->Show( g_ActivityAreaCtrl, bShow );
-	Layout();
-	g_PlaylistInfoCtrl->Refresh();
+	if(g_SourcesCtrl->GetSelType() != MUSIK_SOURCES_LIBRARY)
+		bShow=false;
+	g_PlaylistBox->TextSimpleQuery().Enable(bShow);
+	g_ActivityAreaCtrl->Show( bShow );
+	wxLayoutAlgorithm layout;
+    layout.LayoutWindow(this,g_PlaylistBox);
+
+	g_PlaylistBox->Layout();
+	g_PlaylistBox->Refresh();
 }
 
 void MusikFrame::ToggleActivities()
@@ -391,9 +386,14 @@ void MusikFrame::ToggleActivities()
 
 void MusikFrame::EnableProgress( bool enable )
 {
+
 	vsTopBottom->Show( g_Progress, enable );
 	Enable( !enable );
-	Layout();
+	m_pBottomPanel->Layout();
+   	m_pBottomPanel->SetDefaultSize(vsTopBottom->GetMinSize());
+	wxLayoutAlgorithm layout;
+    layout.LayoutWindow(this,g_PlaylistBox);
+	m_pBottomPanel->Layout();
 }
 
 //---------------------------------------------------------//

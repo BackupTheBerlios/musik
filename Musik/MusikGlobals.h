@@ -49,6 +49,7 @@
 #define	MUSIK_ACTIVITYBOX4		9995
 #define	MUSIK_SIMPLEQUERY		9996
 #define MUSIK_NOWPLAYING_TIMER	9997
+#define MUSIK_ACTIVITYCTRL		9998
 #define MUSIK_VERSION			wxT( "Musik 0.2.2" )
 #define MUSIKSERV_VERSION		wxT( "MusikServ 0.2.2" )
 
@@ -302,13 +303,12 @@ extern CTunage				g_Tunage;
 #include "Classes/NowPlayingCtrl.h"
 #include "Classes/PlaylistInfoCtrl.h"
 
-class CPlaylistCtrl;
+class CPlaylistBox;
 
 extern CActivityAreaCtrl	*g_ActivityAreaCtrl;
-extern CPlaylistCtrl		*g_PlaylistCtrl;	
+extern CPlaylistBox		*g_PlaylistBox;	
 extern CSourcesBox			*g_SourcesCtrl;	
 extern CNowPlayingCtrl		*g_NowPlayingCtrl;
-extern CPlaylistInfoCtrl	*g_PlaylistInfoCtrl;
 extern wxGauge				*g_Progress;
 
 //------------//

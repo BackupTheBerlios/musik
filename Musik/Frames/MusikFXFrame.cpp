@@ -75,10 +75,15 @@ MusikFXFrame::MusikFXFrame( wxFrame *pParent, const wxString &sTitle, const wxPo
 	//-------------//
 	//--- pitch ---//
 	//-------------//
+	//-------------------------------------------------//
+	//--- Simon: not working right. commented out	---//
+	//--- for 0.1.3 release.						---//
+	//--- See Also: MusikPlayer::SetFrequency()		---//
+	//-------------------------------------------------//
 	
 	slPitch = new wxSlider( this, SLD_PITCH, 50, 0, 100, wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 	slPitch->SetToolTip( _("Pitch control, right-click to reset") );
-
+	
 	chkPitchEnable = new wxCheckBox( this, CHK_PITCHENABLE, _("Enable Pitch control") );
 	chkPitchEnable->SetValue( g_Prefs.nUsePitch );
 	hsPitch->Add( chkPitchEnable, 1, wxALIGN_CENTER | wxALIGN_CENTER_VERTICAL );
@@ -106,7 +111,7 @@ void MusikFXFrame::Close()
 	this->Destroy();
 }
 
-void MusikFXFrame::OnClose ( wxCommandEvent& WXUNUSED(event) )
+void MusikFXFrame::OnClose ( wxCloseEvent& WXUNUSED(event) )
 {
 	Close();
 }
@@ -116,7 +121,7 @@ void MusikFXFrame::OnSlidePitch( wxScrollEvent &event )
 	g_FX.SetFrequency( (( (float)slPitch->GetValue()) / 50.0f) * 44100.0f );
 }
 
-void MusikFXFrame::OnRightClick( wxCommandEvent& event )
+void MusikFXFrame::OnRightClick( wxContextMenuEvent& event )
 {
 	if ( event.m_id == SLD_PITCH )
 	{

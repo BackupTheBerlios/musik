@@ -54,8 +54,8 @@ public:
 	void OnClickAdd				( wxCommandEvent  &WXUNUSED(event)	)		{ PathsListAdd();												}
 	void OnClickRemoveSel		( wxCommandEvent  &WXUNUSED(event)	)		{ PathsListRemoveSel();											}
 	void OnClickRemoveAll		( wxCommandEvent  &WXUNUSED(event)	)		{ PathsListRemoveAll();											}
-	void OnClose				( wxCommandEvent  &WXUNUSED(event)	)		{ Close( true );												}
-	void OnSize					( wxCommandEvent  &WXUNUSED(event)	)		{ PathsResize();												}
+	void OnClose				( wxCloseEvent  &WXUNUSED(event)	)		{ Close( true );												}
+	void OnSize					( wxSizeEvent	  &WXUNUSED(event)	)		{ PathsResize();												}
 	void OnKeyPress				( wxListEvent	  &event			)		{ PathsListProcessKeys( event );								}
 	void OnClickOK				( wxCommandEvent  &WXUNUSED(event)	)		{ Close( false );												}
 	void OnClickCancel			( wxCommandEvent  &WXUNUSED(event)	)		{ Close( true );												}
@@ -104,7 +104,7 @@ public:
 	void PathsListProcessKeys	( wxListEvent &event );
 	void Close					( bool bCancel );
 	void PathsResize			();
-	void PathsPopupMenu			( wxCommandEvent& event );
+	void PathsPopupMenu			( wxContextMenuEvent& event );
 	void Activate				();
 	void PathsGetSel	( wxArrayString &aReturn );
 

@@ -358,7 +358,7 @@ void MusikLibraryFrame::PathsGetSel( wxArrayString &aReturn )
 	return;
 }
 
-void MusikLibraryFrame::PathsPopupMenu( wxCommandEvent& WXUNUSED(event) )
+void MusikLibraryFrame::PathsPopupMenu( wxContextMenuEvent& WXUNUSED(event) )
 {
 	int nSel = lcPaths->GetSelectedItemCount();
 
@@ -533,7 +533,7 @@ void MusikLibraryFrame::ClearLibrary()
 		g_Library.RemoveAll();
 		g_ActivityAreaCtrl->ResetAllContents();
 		g_Playlist.Clear();
-		g_PlaylistCtrl->Update();
+		g_PlaylistBox->Update();
 
 		ScanNew();
 	}
@@ -642,7 +642,7 @@ void MusikLibraryFrame::OnThreadEnd( wxCommandEvent& WXUNUSED(event) )
 		if ( g_Prefs.nShowAllSongs == 1 )
 		{
 			g_Library.GetAllSongs( g_Playlist );
-			g_PlaylistCtrl->Update();
+			g_PlaylistBox->Update();
 		}
 		bRebuild = false;
 	}
@@ -653,7 +653,7 @@ void MusikLibraryFrame::OnThreadEnd( wxCommandEvent& WXUNUSED(event) )
 		if ( g_Prefs.nShowAllSongs == 1 )
 		{
 			g_Library.GetAllSongs( g_Playlist );
-			g_PlaylistCtrl->Update();
+			g_PlaylistBox->Update();
 		}
 	}
 
@@ -712,6 +712,7 @@ void MusikLibraryFrame::SetActiveThread( wxThread* newactivethread)
 		wxASSERT(pCurrThread);
 		pCurrThread->Wait();// wait until thread has completed
 		delete pCurrThread;
+		m_ActiveThread = NULL;
 	}
 	else
 	{

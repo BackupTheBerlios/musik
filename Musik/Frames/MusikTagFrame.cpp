@@ -615,7 +615,7 @@ void MusikTagFrame::OnClickCancel( wxCommandEvent& WXUNUSED(event) )
 	Close();
 }
 
-void MusikTagFrame::OnClose( wxCommandEvent& WXUNUSED(event) )
+void MusikTagFrame::OnClose( wxCloseEvent& WXUNUSED(event) )
 {
 	//--- clean up ---//
 	Close();
@@ -708,7 +708,7 @@ void MusikTagFrame::OnTagThreadEnd( wxCommandEvent& WXUNUSED(event) )
 	if ( m_EditType == MUSIK_TAG_SINGLE )
 	{
 		g_Playlist = m_Songs;
-		g_PlaylistCtrl->Update();
+		g_PlaylistBox->Update();
 		g_ActivityAreaCtrl->ResetAllContents();
 	}
 
@@ -718,11 +718,11 @@ void MusikTagFrame::OnTagThreadEnd( wxCommandEvent& WXUNUSED(event) )
 	else if ( m_EditType == MUSIK_TAG_MULTIPLE )
 	{
 	//--- give the playlist back ---//
-	wxArrayInt sel = g_PlaylistCtrl->GetSelItems();
+	wxArrayInt sel = g_PlaylistBox->PlaylistCtrl().GetSelItems();
 	for ( size_t i = 0; i < sel.GetCount(); i++ )
 		g_Playlist.Item( sel.Item( i ) ) = 	m_Songs.Item( i );
 	
-		g_PlaylistCtrl->Update();
+		g_PlaylistBox->Update();
 		g_ActivityAreaCtrl->ResetAllContents();
 	}
 
@@ -760,6 +760,7 @@ void MusikTagFrame::SetActiveThread( wxThread* newactivethread)
 		wxASSERT(pCurrThread);
 		pCurrThread->Wait();// wait until thread has completed
 		delete pCurrThread;
+		m_ActiveThread = NULL;
 	}
 	else
 	{

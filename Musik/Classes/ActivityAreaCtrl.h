@@ -19,10 +19,10 @@
 #ifndef WX_PRECOMP
 	#include "wx/wx.h"
 #endif 
-
+#include "wx/laywin.h"
 #include "ActivityBox.h"
 
-class CActivityAreaCtrl : public wxPanel
+class CActivityAreaCtrl : public wxSashLayoutWindow
 {
 public:
 	CActivityAreaCtrl( wxWindow *pParent );
@@ -37,7 +37,9 @@ public:
 	void OnActivityBox4SelDrag		( wxListEvent& WXUNUSED(event) );
 	void OnActivityBoxColResize		( wxListEvent& event ){ event.Veto(); }
 	void OnActivityBoxActivated		( wxListEvent& event );
-	
+
+	void OnSashDragged				(wxSashEvent & ev);
+	void OnSize						( wxSizeEvent& event );
 	//--- member functions ---//
 	void UpdateSel( CActivityBox *pSel );
 	bool Create();
@@ -60,6 +62,7 @@ private:
 	CActivityBox *m_ActivityBox3;	
 	CActivityBox *m_ActivityBox4;
 	wxBoxSizer* pTopSizer;
+	wxPanel	  * m_pPanel;
 	bool m_bFocused; // this flags are used, to make instant selection working
 	bool m_Selected;
 	bool m_Selecting;

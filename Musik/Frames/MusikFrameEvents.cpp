@@ -33,7 +33,7 @@
 
 BEGIN_EVENT_TABLE(MusikFrame, wxFrame)
 	EVT_MENU					(MUSIK_MENU_PREFERENCES,			MusikFrame::OnPreferences			)	// File->Preferences
-	EVT_MENU					(MUSIK_MENU_EXIT,					MusikFrame::OnClose					)	// File->Exit
+	EVT_MENU					(MUSIK_MENU_EXIT,					MusikFrame::OnMenuClose				)	// File->Exit
 	EVT_MENU					(MUSIK_MENU_SOURCES_STATE,			MusikFrame::OnSourcesState			)	// View->Show Sources
 	EVT_MENU					(MUSIK_MENU_ACTIVITIES_STATE,		MusikFrame::OnActivitiesState		)	// View->Show Selections
 	EVT_MENU					(MUSIK_MENU_PLAYLISTINFO_STATE,		MusikFrame::OnPlaylistInfoState		)	// View->Show Playlist Info
@@ -64,14 +64,16 @@ BEGIN_EVENT_TABLE(MusikFrame, wxFrame)
     EVT_MENU					( MUSIK_FRAME_THREAD_START,		MusikFrame::OnStartProgress			) 
 	EVT_MENU					( MUSIK_FRAME_THREAD_END,		MusikFrame::OnEndProgress			) 
 	EVT_MENU					( MUSIK_FRAME_THREAD_PROG,		MusikFrame::OnUpdateProgress		)
-	EVT_MENU					( MUSIK_FRAME_EXIT_FADE_DONE,	MusikFrame::OnClose					)
+	EVT_MENU					( MUSIK_FRAME_EXIT_FADE_DONE,	MusikFrame::OnMenuClose				)
+	EVT_SASH_DRAGGED			( MUSIK_SOURCES,				MusikFrame::OnSashDraggedSourcesBox	)
+	EVT_SASH_DRAGGED			( MUSIK_ACTIVITYCTRL,			MusikFrame::OnSashDraggedActivityCtrl)
 END_EVENT_TABLE()
 
 
 //------------------------------------------//
 //--- non activity box event definitions ---//
 //------------------------------------------//
-void MusikFrame::OnMove ( wxCommandEvent& WXUNUSED(event) )	
+void MusikFrame::OnMove ( wxMoveEvent& WXUNUSED(event) )	
 { 
 	if ( !g_DisablePlacement )
 		g_Prefs.sFramePlacement = GetFramePlacement( this );
@@ -91,10 +93,21 @@ void MusikFrame::OnIconize( wxIconizeEvent& event )
 	event.Skip();
 }
 
-void MusikFrame::OnSize	( wxCommandEvent& WXUNUSED(event) )	
+void MusikFrame::OnSize	( wxSizeEvent& event )	
 {
-	this->Layout();
+//	wxFrame::OnSize(event);
+	m_pBottomPanel->SetDefaultSize(vsTopBottom->GetMinSize());
+	m_pBottomPanel->Layout();
 
+	wxLayoutAlgorithm layout;
+    layout.LayoutWindow(this,g_PlaylistBox);
+
+	m_pBottomPanel->Layout();
+
+	g_NowPlayingCtrl->Refresh();
+	g_NowPlayingCtrl->Update();
+
+	
 	if ( !g_DisablePlacement )
 		g_Prefs.sFramePlacement = GetFramePlacement( this );
 }
@@ -120,7 +133,7 @@ void MusikFrame::OnClose( wxCloseEvent& WXUNUSED(event) )
 	//-------------------------------------------------//
 	//--- write playlist columns to prefs			---//
 	//-------------------------------------------------//
-	g_PlaylistCtrl->SaveColumns();
+	g_PlaylistBox->PlaylistCtrl().SaveColumns();
 
 	//-------------------------------------------------//
 	//--- save prefs and paths,						---//
@@ -230,7 +243,7 @@ void MusikFrame::OnCustomQuery( wxCommandEvent& WXUNUSED(event) )
 
 void MusikFrame::OnViewDirtyTags( wxCommandEvent& WXUNUSED(event) )
 { 
-	if ( g_PlaylistCtrl->ViewDirtyTags() )
+	if ( g_PlaylistBox->PlaylistCtrl().ViewDirtyTags() )
 		ShowActivityArea( false );
 }
 
@@ -297,14 +310,14 @@ void MusikFrame::LibraryCustomQuery()
 		m_customQuery = sQuery;
 
 		g_Library.QuerySongs( m_customQuery, g_Playlist );
-		g_PlaylistCtrl->Update( );
+		g_PlaylistBox->Update( );
 		g_PlaylistChanged = true;
 	}
 }
 
 void MusikFrame::LibrarySimpleQueryEdit()
 {
-	wxString sQueryval = m_TextSimpleQuery->GetValue();
+	wxString sQueryval = g_PlaylistBox->TextSimpleQuery().GetValue();
 	if ( ( sQueryval.Length() < 2 ) || ( ( sQueryval.Left( 1 ) != wxT("!") ) && ( sQueryval.Length() < 4 ) ) || ( sQueryval == wxT("") ) )
 		return;
 	else
@@ -332,7 +345,7 @@ void MusikFrame::LibrarySimpleQuery( wxString sQueryVal )
 	sQuery.sprintf( wxT("artist like %s or album like %s or title like %s or filename like %s order by album,tracknum,filename"),
 		( const wxChar *)sString, (const wxChar *) sString, (const wxChar *)sString,(const wxChar*) sString );
 	g_Library.QuerySongs( sQuery, g_Playlist );
-	g_PlaylistCtrl->Update( );
+	g_PlaylistBox->Update( );
 	g_PlaylistChanged = true;
 }
 
@@ -407,4 +420,15 @@ void MusikFrame::OnEndProgress( wxCommandEvent& WXUNUSED(event) )
 	SetActiveThread	( NULL );
 
 	SetTitle( MUSIK_VERSION );
+}
+
+void MusikFrame::OnSashDraggedSourcesBox	(wxSashEvent & ev)
+{
+	wxLayoutAlgorithm layout;
+    layout.LayoutWindow(this,g_PlaylistBox);
+}
+void MusikFrame::OnSashDraggedActivityCtrl	(wxSashEvent & ev)
+{
+	wxLayoutAlgorithm layout;
+    layout.LayoutWindow(this,g_PlaylistBox);
 }

@@ -18,24 +18,23 @@
 #include "../MusikGlobals.h"
 #include "../MusikUtils.h"
 
-MusikPlaylistRenameThread::MusikPlaylistRenameThread( const  CMusikSongArray & songs )
+MusikPlaylistRenameThread::MusikPlaylistRenameThread(wxEvtHandler * pEvtHandler, const  CMusikSongArray & songs )
 	:wxThread(wxTHREAD_JOINABLE)
+	,m_pEvtHandler(pEvtHandler)
 {
 	m_Songs = songs;
 }
 
 void* MusikPlaylistRenameThread::Entry()
 {
-	g_PlaylistCtrl->SetProgressType	( MUSIK_PLAYLIST_RENAME_THREAD );
-	g_PlaylistCtrl->SetProgress		( 0 );
-
 	//----------------------------------------//
 	//--- events we'll post as we go along ---//
 	//----------------------------------------//
 	wxCommandEvent RenameStartEvt	( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYLIST_THREAD_START );
+	RenameStartEvt.SetExtraLong(MUSIK_PLAYLIST_RENAME_THREAD);
 	wxCommandEvent RenameProgEvt	( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYLIST_THREAD_PROG );	
 
-	wxPostEvent( g_PlaylistCtrl, RenameStartEvt );
+	wxPostEvent( m_pEvtHandler, RenameStartEvt );
 
     float fPos = 0;
 	int nLastProg = 0;
@@ -49,8 +48,8 @@ void* MusikPlaylistRenameThread::Entry()
 		nCurrProg = (int)fPos;
 		if ( nCurrProg > nLastProg )
 		{
-			g_PlaylistCtrl->SetProgress( nCurrProg );
-			wxPostEvent( g_PlaylistCtrl, RenameProgEvt );
+			RenameProgEvt.SetExtraLong( nCurrProg );
+			wxPostEvent( m_pEvtHandler, RenameProgEvt );
 		}
 		nLastProg = nCurrProg;
 
@@ -66,11 +65,12 @@ void* MusikPlaylistRenameThread::Entry()
 void MusikPlaylistRenameThread::OnExit()
 {
 	wxCommandEvent RenameEndEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYLIST_THREAD_END );
-	wxPostEvent( g_PlaylistCtrl, RenameEndEvt );
+	wxPostEvent( m_pEvtHandler, RenameEndEvt );
 }
 
-MusikPlaylistRetagThread::MusikPlaylistRetagThread(const wxString &TagMask, const  CMusikSongArray & songs )
+MusikPlaylistRetagThread::MusikPlaylistRetagThread(wxEvtHandler * pEvtHandler, const wxString &TagMask, const  CMusikSongArray & songs )
 	:wxThread(wxTHREAD_JOINABLE)
+	,m_pEvtHandler(pEvtHandler)
 {
 	m_Songs = songs;
 	m_sTagMask = TagMask;
@@ -78,17 +78,14 @@ MusikPlaylistRetagThread::MusikPlaylistRetagThread(const wxString &TagMask, cons
 
 void* MusikPlaylistRetagThread::Entry()
 {
-	
-	g_PlaylistCtrl->SetProgressType	( MUSIK_PLAYLIST_RETAG_THREAD );
-	g_PlaylistCtrl->SetProgress		( 0 );
-
 	//----------------------------------------//
 	//--- events we'll post as we go along ---//
 	//----------------------------------------//
 	wxCommandEvent RetagStartEvt	( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYLIST_THREAD_START );
+	RetagStartEvt.SetExtraLong(MUSIK_PLAYLIST_RETAG_THREAD);
 	wxCommandEvent RetagProgEvt		( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYLIST_THREAD_PROG );	
 
-	wxPostEvent( g_PlaylistCtrl, RetagStartEvt );
+	wxPostEvent( m_pEvtHandler, RetagStartEvt );
 
     float fPos = 0;
 	int nLastProg = 0;
@@ -106,8 +103,8 @@ void* MusikPlaylistRetagThread::Entry()
 		nCurrProg = (int)fPos;
 		if ( nCurrProg > nLastProg )
 		{
-			g_PlaylistCtrl->SetProgress( nCurrProg );
-			wxPostEvent( g_PlaylistCtrl, RetagProgEvt );
+			RetagProgEvt.SetExtraLong( nCurrProg );
+			wxPostEvent( m_pEvtHandler, RetagProgEvt );
 		}
 		nLastProg = nCurrProg;
 
@@ -124,5 +121,5 @@ void* MusikPlaylistRetagThread::Entry()
 void MusikPlaylistRetagThread::OnExit()
 {
 	wxCommandEvent RetagEndEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYLIST_THREAD_END );
-	wxPostEvent( g_PlaylistCtrl, RetagEndEvt );
+	wxPostEvent( m_pEvtHandler, RetagEndEvt );
 }

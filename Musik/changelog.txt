@@ -1,4 +1,19 @@
 0.2.1 to 0.2.2
+ - fixed bug: if you want to rename a playlist but then click somewhere else, the name was set to empty (gunnar)
+ + random play now skips songs which are not available ( because they are on a network drive or cdrom or deleted etc.) (gunnar) 
+ - fixed bug with en/disabling selections when libray is not selected (gunnar) 
+ - if a song cannot be loaded the current playing song is not stopped anymore (gunnar) 
+ - fixed a crash bug , which apperad if musik is closed while a net stream was playing (gunnar) 
+ + Moved search box to playinfo ctrl above the playlist (gunnar) 
+ + custom wxjulianday sqlite function integrated now, which makes it possible to create dynamic playlists like "Show songs added in last 2 days" 
+   	( query would be: "wxjulianday(timeadded) > julianday('now','-2 days')" )
+	or "Show songs last played at least two weeks before" ( query would be: "wxjulianday(lastplayed) > julianday('now','-14 days')"  )
+	or "Show Songs not play for 3 months" ( query would be:"wxjulianday(lastplayed) < julianday('now','-3 months') or lastplayed = ''" )
+
+	wxjulianday sqlite function converts the timeformat used by Musik to the timeformat of sqlite.
+	You need sqlite 2.8.11 for this to work.(gunnar) 
+
+ + Sources and selections areas use wxSashWindow now, which means they can be resized by the user now (gunnar)
  + More robust reconnect feature, if the stream connection is disturbed (gunnar)
  + Added Preferences for streaming. Proxy and buffer settings (gunnar)
  + Internet Radio streams are now supported (at least the kind of net streams, which fmod supports) (gunnar) 

@@ -46,7 +46,7 @@ public:
 	DECLARE_EVENT_TABLE()
 private:
 	void OnActivate				( wxActivateEvent&	WXUNUSED(event)	);
-	void OnClose				( wxCommandEvent&	WXUNUSED(event)	)	{ Close(); }
+	void OnClose				( wxCloseEvent&	WXUNUSED(event)	)	{ Close(); }
 	void OnChar					( wxKeyEvent&		event	);
 
 	wxFrame *parent;
