@@ -206,6 +206,7 @@ public:
 	int  GetDirtySongs				( CmusikPlaylist* target, bool clear = true );
 	int  FinalizeDirtySongs			( );
 	int  QuickQuery					( CmusikString str, CmusikPlaylist& target, bool use_temp_table = false );
+	void GetSongInfoFromPlaylist	( CmusikPlaylist* playlist, CmusikSongInfoArray& target );
 
 	// updating songs
 	bool SetSongInfo				( CmusikSongInfo* info, int songid = -1 );

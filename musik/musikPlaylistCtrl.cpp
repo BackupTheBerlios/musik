@@ -65,6 +65,12 @@ IMPLEMENT_DYNAMIC( CmusikPlaylistCtrl, CWnd )
 
 ///////////////////////////////////////////////////
 
+// messages that we can receive
+
+int WM_TAGPROPERTIESDESTROY = RegisterWindowMessage( "TAGPROPERTIESDESTROY" );
+
+///////////////////////////////////////////////////
+
 BEGIN_MESSAGE_MAP(CmusikPlaylistCtrl, CmusikListCtrl)
 	// mfc message maps
 	ON_WM_CREATE()
@@ -80,9 +86,17 @@ BEGIN_MESSAGE_MAP(CmusikPlaylistCtrl, CmusikListCtrl)
 	ON_NOTIFY_REFLECT(LVN_MARQUEEBEGIN, OnLvnMarqueeBegin)
 	ON_NOTIFY_REFLECT(LVN_COLUMNCLICK, OnLvnColumnclick)
 	ON_NOTIFY_REFLECT(LVN_BEGINRDRAG, OnLvnBeginrdrag)
-	ON_COMMAND(ID_PLAYLISTCOLUMNS_ARTIST, OnPlaylistcolumnsArtist)
 	ON_NOTIFY(HDN_ENDTRACKA, 0, OnHdnEndtrack)
 	ON_NOTIFY(HDN_ENDTRACKW, 0, OnHdnEndtrack)
+	ON_NOTIFY_REFLECT(LVN_KEYDOWN, OnLvnKeydown)
+
+	// menu
+	ON_COMMAND(ID_PLAYLISTCOLUMNS_ARTIST, OnPlaylistcolumnsArtist)
+	ON_COMMAND(ID_PLC_DELETE_FROMPLAYLIST, OnPlcDeleteFromplaylist)
+	ON_COMMAND(ID_PLC_DELETE_FROMLIBRARY, OnPlcDeleteFromlibrary)
+	ON_COMMAND(ID_PLC_DELETE_FROMCOMPUTER, OnPlcDeleteFromcomputer)
+	ON_COMMAND(ID_PLAYLISTCONTEXTMENU_SHUFFLENOWPLAYING, OnPlaylistcontextmenuShufflenowplaying)
+	ON_COMMAND(ID_PLAYLISTCONTEXTMENU_PROPERTIES, OnPlaylistcontextmenuProperties)
 	ON_COMMAND(ID_PLAYLISTCOLUMNS_ALBUM, OnPlaylistcolumnsAlbum)
 	ON_COMMAND(ID_PLAYLISTCOLUMNS_YEAR, OnPlaylistcolumnsYear)
 	ON_COMMAND(ID_PLAYLISTCOLUMNS_GENRE, OnPlaylistcolumnsGenre)
@@ -97,11 +111,9 @@ BEGIN_MESSAGE_MAP(CmusikPlaylistCtrl, CmusikListCtrl)
 	ON_COMMAND(ID_PLAYLISTCOLUMNS_TIMESPLAYED, OnPlaylistcolumnsTimesplayed)
 	ON_COMMAND(ID_PLAYLISTCOLUMNS_BITRATE, OnPlaylistcolumnsBitrate)
 	ON_COMMAND(ID_PLAYLISTCOLUMNS_FILENAME, OnPlaylistcolumnsFilename)
-	ON_NOTIFY_REFLECT(LVN_KEYDOWN, OnLvnKeydown)
-	ON_COMMAND(ID_PLC_DELETE_FROMPLAYLIST, OnPlcDeleteFromplaylist)
-	ON_COMMAND(ID_PLC_DELETE_FROMLIBRARY, OnPlcDeleteFromlibrary)
-	ON_COMMAND(ID_PLC_DELETE_FROMCOMPUTER, OnPlcDeleteFromcomputer)
-	ON_COMMAND(ID_PLAYLISTCONTEXTMENU_SHUFFLENOWPLAYING, OnPlaylistcontextmenuShufflenowplaying)
+
+	// custom messages
+	ON_REGISTERED_MESSAGE( WM_TAGPROPERTIESDESTROY, OnTagEditDestroy )
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -113,6 +125,9 @@ CmusikPlaylistCtrl::CmusikPlaylistCtrl( CFrameWnd* mainwnd, CmusikLibrary* libra
 	m_Library	= library;
 	m_Prefs		= prefs;
 	m_Player	= player;
+
+	// tag dialog
+	m_TagEdit = NULL;
 
 	// no sorting yet
 	m_LastCol	= -1;
@@ -152,6 +167,9 @@ CmusikPlaylistCtrl::~CmusikPlaylistCtrl()
 {
 	if ( m_Playlist && m_Playlist->m_Type != MUSIK_PLAYLIST_TYPE_NOWPLAYING )
 		delete m_Playlist;
+
+	if ( m_TagEdit )
+		delete m_TagEdit;
 
 	delete m_SongInfoCache;
 }
@@ -1512,6 +1530,9 @@ void CmusikPlaylistCtrl::ShowContextMenu()
 	if ( !m_Player->GetPlaylist()->GetCount() )
 		popup_menu->EnableMenuItem( ID_PLAYLISTCONTEXTMENU_SHUFFLENOWPLAYING, MF_DISABLED | MF_GRAYED );
 
+	if ( m_TagEdit )
+		popup_menu->CheckMenuItem( ID_PLAYLISTCONTEXTMENU_PROPERTIES, MF_CHECKED );
+
 	popup_menu->TrackPopupMenu( 0, pos.x, pos.y, this );
 }
 
@@ -1884,3 +1905,29 @@ void CmusikPlaylistCtrl::OnPlaylistcontextmenuShufflenowplaying()
 }
 
 ///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::OnPlaylistcontextmenuProperties()
+{
+	if ( m_TagEdit )
+		OnTagEditDestroy();
+
+	else
+	{
+		m_TagEdit = new CmusikTagDlg( this, m_Playlist, m_Library );
+		m_TagEdit->Create( IDD_TAG_PROPERTIES, this );
+		m_TagEdit->ShowWindow( SW_SHOWNORMAL );
+	}
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CmusikPlaylistCtrl::OnTagEditDestroy( WPARAM wParam, LPARAM lParam )
+{
+	delete m_TagEdit;
+	m_TagEdit = NULL;
+
+	return 0L;
+}
+
+///////////////////////////////////////////////////
+

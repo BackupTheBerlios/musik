@@ -456,6 +456,16 @@
 						RelativePath=".\musikWinampVisDlg.h">
 					</File>
 				</Filter>
+				<Filter
+					Name="musikTagDlg"
+					Filter="">
+					<File
+						RelativePath=".\musikTagDlg.cpp">
+					</File>
+					<File
+						RelativePath=".\musikTagDlg.h">
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="Functors"

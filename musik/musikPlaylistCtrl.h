@@ -51,6 +51,7 @@
 #include "musikListCtrl.h"
 
 #include "musikPrefs.h"
+#include "musikTagDlg.h"
 
 #include "../musikCore/include/musikLibrary.h"
 #include "../musikCore/include/musikPlayer.h"
@@ -118,6 +119,9 @@ protected:
 	// is dnd active
 	UINT m_DropID_L;
 	UINT m_DropID_R;
+
+	// tag editing dialog
+	CmusikTagDlg* m_TagEdit;
 
 	// internal play routines
 	bool PlayItem_AddNP( int n = -1 );
@@ -213,6 +217,8 @@ protected:
 	afx_msg void OnPlcDeleteFromlibrary();
 	afx_msg void OnPlcDeleteFromcomputer();
 	afx_msg void OnPlaylistcontextmenuShufflenowplaying();
+	afx_msg void OnPlaylistcontextmenuProperties();
+	afx_msg LRESULT OnTagEditDestroy( WPARAM wParam = NULL, LPARAM lParam = NULL );
 
 	// CmusikPlaylistDropTarget calls
 	// this function once files have
@@ -243,6 +249,7 @@ private:
 	void DrawSortArrow( int col );
 	int m_LastCol;
 	bool m_Ascend;
+
 };
 
 ///////////////////////////////////////////////////

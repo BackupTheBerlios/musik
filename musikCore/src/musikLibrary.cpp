@@ -2247,6 +2247,25 @@ int CmusikLibrary::GetSongInfoFromID( int id, CmusikSongInfo* info )
 
 ///////////////////////////////////////////////////
 
+void CmusikLibrary::GetSongInfoFromPlaylist( CmusikPlaylist* playlist, CmusikSongInfoArray& target )
+{
+	CmusikSongInfo info;
+	if ( playlist )
+	{
+		target.clear();
+
+		BeginTransaction();
+		for ( size_t i = 0; i < playlist->GetCount(); i++ )
+		{
+			GetSongInfoFromID( playlist->GetSongID( i ), &info );
+			target.push_back( info );
+		}
+		EndTransaction();
+	}
+}
+
+///////////////////////////////////////////////////
+
 bool CmusikLibrary::SetSongInfo( CmusikSongInfo* info, int songid )
 {
 	if ( !m_DatabaseOpen )

@@ -52,6 +52,7 @@
 #define IDC_SOUND_DRIVER                1010
 #define IDC_COMBO2                      1011
 #define IDC_SOUND_DEVICE                1011
+#define IDC_RATING                      1011
 #define IDC_COMBO3                      1012
 #define IDC_SOUND_PLAYBACK_RATE         1012
 #define IDC_EDIT1                       1013
@@ -63,9 +64,11 @@
 #define IDC_CHECK1                      1015
 #define IDC_EDIT4                       1015
 #define IDC_STOP                        1015
+#define IDC_ARTIST                      1015
 #define IDC_CHECK2                      1016
 #define IDC_ENABLE_QUERY2               1016
 #define IDC_EDIT7                       1016
+#define IDC_ALBUM                       1016
 #define IDC_BTNNO                       1017
 #define IDC_FIELDVARIABLE2              1017
 #define IDC_CHECK3                      1017
@@ -132,6 +135,7 @@
 #define IDC_CHECK4                      1052
 #define IDC_EDIT3                       1053
 #define IDC_SEEK                        1053
+#define IDC_TRACK                       1053
 #define IDC_DELETE                      1054
 #define IDC_CHECK5                      1055
 #define IDC_TUNAGEENABLED               1056
@@ -142,12 +146,22 @@
 #define IDC_SETTINGS                    1058
 #define IDC_SPIN1                       1059
 #define IDC_TUNAGEFILENAME              1060
+#define IDC_BITRATE                     1060
 #define IDC_TUNAGEFILEENABLED           1061
+#define IDC_DURATION                    1061
 #define IDC_TUNAGEFILELINE              1062
+#define IDC_FORMAT                      1062
 #define IDC_TUNAGEAPPEND                1063
+#define IDC_TIMEADDED                   1063
 #define IDC_TUNAGECOMMANDLINE           1064
+#define IDC_LASTPLAYED                  1064
 #define IDC_RUNAPPENABLED               1065
 #define IDC_TUNAGERUNAPPENABLED         1065
+#define IDC_TIMESPLAYED                 1065
+#define IDC_FILENAME                    1066
+#define IDC_TITLE                       1067
+#define IDC_GENRE                       1068
+#define IDC_YEAR                        1069
 #define ID_FILE_PREFERENCES             32771
 #define ID_FILE_SEP                     32772
 #define ID_ADD_FILES                    32774
@@ -283,7 +297,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        165
 #define _APS_NEXT_COMMAND_VALUE         32943
-#define _APS_NEXT_CONTROL_VALUE         1060
+#define _APS_NEXT_CONTROL_VALUE         1070
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif
