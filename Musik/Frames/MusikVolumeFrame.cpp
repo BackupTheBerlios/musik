@@ -65,9 +65,9 @@ MusikVolumeFrame::MusikVolumeFrame( wxFrame* pParent, wxPoint pos )
 	gSeek->SetValue( g_Prefs.nSndVolume );
 	pCrossfade->SetValue( g_Prefs.nGlobalFadeEnable );
 	if( g_Prefs.nRepeat )
-        m_pRadioBoxPlaymode->SetSelection( 1 );
+		m_pRadioBoxPlaymode->SetSelection( 1 );
 	else if( g_Prefs.nShuffle )
-        m_pRadioBoxPlaymode->SetSelection( 2 );
+		m_pRadioBoxPlaymode->SetSelection( 2 );
 	else
 		m_pRadioBoxPlaymode->SetSelection( 0 );
 

@@ -250,12 +250,6 @@ extern	MusikApp *pMusikApp;
 class	MusikFrame;
 extern	MusikFrame *g_MusikFrame;
 
-//----------------------------//
-//--- pointer to tag frame ---//
-//----------------------------//
-#include "Frames/MusikTagFrame.h"
-class MusikTagFrame;
-extern MusikTagFrame *g_MusikTagFrame;
 
 //--------------------------------//
 //--- pointer to library frame ---//
@@ -312,7 +306,6 @@ extern CSourcesBox			*g_SourcesCtrl;
 extern CNowPlayingCtrl		*g_NowPlayingCtrl;
 extern CPlaylistInfoCtrl	*g_PlaylistInfoCtrl;
 extern wxGauge				*g_Progress;
-extern wxTextCtrl			*g_SimpleQuery;
 
 //------------//
 //--- misc ---//

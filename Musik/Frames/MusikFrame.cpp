@@ -109,13 +109,13 @@ MusikFrame::MusikFrame()
 	//--------------------//
 	//--- simple query ---//
 	//--------------------//
-	g_SimpleQuery = new wxTextCtrl( this, MUSIK_SIMPLEQUERY, wxT( "" ), wxPoint( 0, 0 ), wxSize( -1, -1 ), wxSIMPLE_BORDER );
+	m_TextSimpleQuery = new wxTextCtrl( this, MUSIK_SIMPLEQUERY, wxT( "" ), wxPoint( 0, 0 ), wxSize( -1, -1 ), wxSIMPLE_BORDER );
 
 	//-----------------------//
 	//--- left area sizer ---//
 	//-----------------------//
 	vsLeftSide->Add( g_SourcesCtrl, 1, wxEXPAND | wxLEFT | wxBOTTOM | wxTOP, 1 );
-	vsLeftSide->Add( g_SimpleQuery, 0, wxEXPAND | wxLEFT | wxBOTTOM | wxTOP, 1 );
+	vsLeftSide->Add( m_TextSimpleQuery, 0, wxEXPAND | wxLEFT | wxBOTTOM | wxTOP, 1 );
 
 	//------------------------//
 	//--- right area sizer ---//
@@ -374,6 +374,7 @@ void MusikFrame::SetStayOnTop( bool bStayOnTop )
 }
 void MusikFrame::ShowActivityArea( bool bShow )
 {
+	m_TextSimpleQuery->Enable(bShow);
 	vsRightSide->Show( g_ActivityAreaCtrl, bShow );
 	Layout();
 	g_PlaylistInfoCtrl->Refresh();

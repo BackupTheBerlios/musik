@@ -306,7 +306,7 @@ void MusikFrame::LibraryCustomQuery()
 
 void MusikFrame::LibrarySimpleQueryEdit()
 {
-	wxString sQueryval = g_SimpleQuery->GetValue();
+	wxString sQueryval = m_TextSimpleQuery->GetValue();
 	if ( ( sQueryval.Length() < 2 ) || ( ( sQueryval.Left( 1 ) != wxT("!") ) && ( sQueryval.Length() < 4 ) ) || ( sQueryval == wxT("") ) )
 		return;
 	else

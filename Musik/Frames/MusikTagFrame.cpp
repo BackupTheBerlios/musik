@@ -56,6 +56,7 @@ END_EVENT_TABLE()
 MusikTagFrame::MusikTagFrame( wxFrame* pParent, CMusikSongArray aSongs, int nCurFrame, int nEditType, int n )
 	: wxFrame ( pParent, -1, wxT(""), wxPoint( 0, 0 ), wxSize( 420, 230 ), wxCAPTION | wxTAB_TRAVERSAL | wxFRAME_FLOAT_ON_PARENT | wxFRAME_NO_TASKBAR )
 {
+	m_bDirty = true;
 	//---------------//
  	//--- colours ---//
 	//---------------//
@@ -79,7 +80,7 @@ MusikTagFrame::MusikTagFrame( wxFrame* pParent, CMusikSongArray aSongs, int nCur
 	nIndex		= 0;
 	nType		= nEditType;
 	m_FrameType	= nType;
-	SetActiveThread( NULL );
+	m_ActiveThread =  NULL;
 
 	//-----------------//
 	//--- set title ---//
@@ -388,6 +389,7 @@ void MusikTagFrame::PopulateTagDlg()
 	//--- enable text controls accordingly ---//
 	SetEnabled();
 	SetFocus();
+	m_bDirty = true;
 }
 
 void MusikTagFrame::SetEnabled()
@@ -471,66 +473,52 @@ void MusikTagFrame::SaveCurSong()
 {
 	//--- update title ---//
 	if ( tcTitle->IsEnabled() && ( tcTitle->GetValue() != m_Songs.Item( nIndex ).Title ) )
+	{
 		m_Songs.Item( nIndex ).Title = tcTitle->GetValue();
-
+		m_Songs.Item( nIndex ).Check1 = 1;
+	}
 	//--- update track number ---//
 	long nTrackNum;
 	tcTrackNum->GetValue().ToLong( &nTrackNum );
 	if ( tcTrackNum->IsEnabled() && nTrackNum != m_Songs.Item( nIndex ).TrackNum )
+	{
 		m_Songs.Item( nIndex ).TrackNum = nTrackNum;
-	
+		m_Songs.Item( nIndex ).Check1 = 1;
+	}
 	//--- artist ---//
 	if ( tcArtist->IsEnabled() && tcArtist->GetValue() != m_Songs.Item( nIndex ).Artist )
+	{
 		m_Songs.Item( nIndex ).Artist = tcArtist->GetValue();
+		m_Songs.Item( nIndex ).Check1 = 1;
+	}
 
 	//--- album ---//
 	if ( tcAlbum->IsEnabled() && tcAlbum->GetValue() != m_Songs.Item( nIndex ).Album )
+	{
 		m_Songs.Item( nIndex ).Album = tcAlbum->GetValue();
-
+		m_Songs.Item( nIndex ).Check1 = 1;
+	}
 	//--- genre ---//
 	if ( cmbGenre->IsEnabled() && cmbGenre->GetValue() != m_Songs.Item( nIndex ).Genre )
+	{
 		m_Songs.Item( nIndex ).Genre = cmbGenre->GetValue();
+		m_Songs.Item( nIndex ).Check1 = 1;
+	}
 
 	//--- year ---//
 	if ( tcYear->IsEnabled() && tcYear->GetValue() != m_Songs.Item( nIndex ).Year )
-		m_Songs.Item( nIndex ).Year = tcYear->GetValue();
-}
-
-void MusikTagFrame::CheckChangesSingle()
-{
-	for ( size_t i = 0; i < m_Songs.GetCount(); i++ )
 	{
-		CMusikSong orig;
-		g_Library.GetSongFromFilename( m_Songs.Item( i ).Filename, &orig );
-
-		//--- check title ---//
-		if( tcTitle->IsEnabled() && ( orig.Title != m_Songs.Item( i ).Title ) )
-			m_Songs.Item( i ).Check1 = 1;
-
-		//--- check title ---//
-		if( tcTrackNum->IsEnabled() && orig.TrackNum != m_Songs.Item( i ).TrackNum )
-			m_Songs.Item( i ).Check1 = 1;
-
-		//--- check artist ---//
-		if( tcArtist->IsEnabled() && orig.Artist != m_Songs.Item( i ).Artist )
-			m_Songs.Item( i ).Check1 = 1;
-
-		//--- check album ---//
-		if( tcAlbum->IsEnabled() && orig.Album != m_Songs.Item( i ).Album )
-			m_Songs.Item( i ).Check1 = 1;
-
-		//--- check genre ---//
-		if( cmbGenre->IsEnabled() && orig.Genre != m_Songs.Item( i ).Genre )
-			m_Songs.Item( i ).Check1 = 1;
-
-		//--- check year ---//
-		if( tcYear->IsEnabled() && orig.Year != m_Songs.Item( i ).Year )
-			m_Songs.Item( i ).Check1 = 1;
+		m_Songs.Item( nIndex ).Year = tcYear->GetValue();
+		m_Songs.Item( nIndex ).Check1 = 1;
 	}
+	m_bDirty = m_Songs.Item( nIndex ).Check1 == 1;
 }
+
+
 
 void MusikTagFrame::CheckChangesBatch()
 {
+	int nTrackNum = wxStringToInt( tcTitle->GetValue() );
 	for ( size_t i = 0; i < m_Songs.GetCount(); i++ )
 	{
 		//--- title ---//
@@ -541,7 +529,6 @@ void MusikTagFrame::CheckChangesBatch()
 		}
 
 		//--- track number ---//
-		int nTrackNum = wxStringToInt( tcTitle->GetValue() );
 		if ( tcTrackNum->IsEnabled() && m_Songs.Item( i ).TrackNum != nTrackNum )
 		{
 			m_Songs.Item( i ).TrackNum = nTrackNum;
@@ -575,24 +562,17 @@ void MusikTagFrame::CheckChangesBatch()
 			m_Songs.Item( i ).Year = tcYear->GetValue();
 			m_Songs.Item( i ).Check1 = 1;
 		}
+		if(!m_bDirty && m_Songs.Item( nIndex ).Check1)
+			m_bDirty =true; // set to dirty if one of the songs is dirty
 	}
 }
 
 void MusikTagFrame::Apply( bool close )
 {
 	//--- save settings ---//
-	if ( chkWriteTag->IsChecked() )
-		g_Prefs.nTagDlgWrite = 1;
-	else
-		g_Prefs.nTagDlgWrite = 0;
-	if ( chkClear->IsChecked() )
-		g_Prefs.nTagDlgClear = 1;
-	else
-		g_Prefs.nTagDlgClear = 0;
-	if ( chkRename->IsChecked() )
-		g_Prefs.nTagDlgRename = 1;
-	else
-		g_Prefs.nTagDlgRename = 0;
+	g_Prefs.nTagDlgWrite = chkWriteTag->IsChecked() ? 1:0;
+	g_Prefs.nTagDlgClear = chkClear->IsChecked() ? 1:0;
+	g_Prefs.nTagDlgRename = chkRename->IsChecked() ? 1:0;
 
 	//--- do we close upon thread completion? ---//
 	m_Close = close;
@@ -602,22 +582,35 @@ void MusikTagFrame::Apply( bool close )
 	{
 		SetTitle( _( "Scanning for changed attributes" ) );
 
-	        if ( nType == MUSIK_TAG_SINGLE )
-	        {
+		if ( nType == MUSIK_TAG_SINGLE )
+		{
 			SaveCurSong();	
-			CheckChangesSingle();
-	        }
-	        else if ( nType == MUSIK_TAG_MULTIPLE )
+		}
+		else if ( nType == MUSIK_TAG_MULTIPLE )
 			CheckChangesBatch();
-
-		pApplyThread = new MusikTagApplyThread();
-		pApplyThread->Create();
-		pApplyThread->Run();
-        }
+		if(m_bDirty)
+		{
+			pApplyThread = new MusikTagApplyThread(this,m_Songs);
+			pApplyThread->Create();
+			SetActiveThread( pApplyThread );
+			EnableProgress( true );
+			pApplyThread->Run();
+		}
+		else
+		{
+			if (m_Close)
+				Close();
+		}
+	}
 	else
 		wxMessageBox( _("An internal error has occured.\nPrevious thread not terminated correctly.\n\nPlease contact the Musik development team with this error."), MUSIK_VERSION, wxICON_STOP );
 }
+void MusikTagFrame::Close()
+{
+	g_MusikFrame->Enable( TRUE );
+	Destroy();
 
+}
 void MusikTagFrame::OnClickOK( wxCommandEvent& WXUNUSED(event) )
 {
 	Apply( true );
@@ -625,15 +618,13 @@ void MusikTagFrame::OnClickOK( wxCommandEvent& WXUNUSED(event) )
 void MusikTagFrame::OnClickCancel( wxCommandEvent& WXUNUSED(event) )
 {
 	//--- clean up ---//
-	g_MusikFrame->Enable( TRUE );
-	Destroy();
+	Close();
 }
 
 void MusikTagFrame::OnClose( wxCommandEvent& WXUNUSED(event) )
 {
 	//--- clean up ---//
-	g_MusikFrame->Enable( TRUE );
-	Destroy();
+	Close();
 }
 
 void MusikTagFrame::EnableProgress( bool enable )
@@ -705,15 +696,6 @@ void MusikTagFrame::OnTranslateKeys( wxKeyEvent& event )
 //--------------------------------------------------------------//
 void MusikTagFrame::OnTagThreadStart( wxCommandEvent& WXUNUSED(event) )
 {
-	EnableProgress( true );
-
-	SetProgress( 0 );
-	SetActiveThread( pApplyThread );
-
-	if ( GetProgressType() == MUSIK_TAG_SINGLE_THREAD )
-		SetProgressType( MUSIK_TAG_SINGLE_THREAD );
-	else if ( GetProgressType() == MUSIK_TAG_BATCH_THREAD )
-		SetProgressType( MUSIK_TAG_BATCH_THREAD );
 
     SetTitle( _( "Updating tags - (ESC to abort)" ) );
 }
@@ -723,6 +705,8 @@ void MusikTagFrame::OnTagThreadStart( wxCommandEvent& WXUNUSED(event) )
 //-------------------------------------------------------------//
 void MusikTagFrame::OnTagThreadEnd( wxCommandEvent& WXUNUSED(event) )
 {
+	m_bDirty = false;
+	SetActiveThread	( NULL );
 	//------------------------------------------//
 	//--- if the frame is a single edit mode ---//
 	//------------------------------------------//
@@ -750,28 +734,41 @@ void MusikTagFrame::OnTagThreadEnd( wxCommandEvent& WXUNUSED(event) )
 	//------------------------------------------//
 	//--- make sure these are back to normal ---//
 	//------------------------------------------//
-	SetProgress	( 0 );
-	SetProgressType	( 0 );
-	SetActiveThread	( NULL );
 	SetCaption();
 
 	//----------------------------------//
 	//--- start dialog over or close ---//
 	//----------------------------------//
-	if ( !m_Close )
-		EnableProgress( false );
-
+	if ( m_Close )
+	{
+		Close();
+	}
 	else
 	{
-		g_MusikFrame->Enable( TRUE );
-		Destroy();
+		EnableProgress( false );
 	}
 }
 
 //------------------------------------------------------------------//
 //--- an progress thread event was caught, figure out what to do ---//
 //------------------------------------------------------------------//
-void MusikTagFrame::OnTagThreadProg( wxCommandEvent& WXUNUSED(event) )
+void MusikTagFrame::OnTagThreadProg( wxCommandEvent& event )
 {
-	gProgress->SetValue( GetProgress() );
+	gProgress->SetValue( event.GetExtraLong() );
 }
+void MusikTagFrame::SetActiveThread( wxThread* newactivethread)
+{
+	wxThread * pCurrThread = GetActiveThread();
+	if(newactivethread == NULL)
+	{
+		
+		wxASSERT(pCurrThread);
+		pCurrThread->Wait();// wait until thread has completed
+		delete pCurrThread;
+	}
+	else
+	{
+		wxASSERT(pCurrThread == NULL); // ATTENTION!!! there is an active thread. someone forgot to call SetActiveThread(NULL)
+	}
+	m_ActiveThread = newactivethread;
+}	

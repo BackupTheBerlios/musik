@@ -24,7 +24,7 @@
 
 //--- frames ---//
 #include "../Frames/MusikFrame.h"
-
+#include "../Frames/MusikTagFrame.h"
 //--- threads ---//
 #include "../Threads/PlaylistCtrlThreads.h"
 
@@ -504,7 +504,7 @@ void CPlaylistCtrl::TranslateKeys( wxKeyEvent& pEvent )
 		{
 			case WXK_DELETE:
 			case WXK_BACK:
-				DelSelFilesDB();
+				DelSelSongs(true);// delete songs from db
 				break;
 		}
 	}
@@ -520,7 +520,7 @@ void CPlaylistCtrl::TranslateKeys( wxKeyEvent& pEvent )
 			break;
 		case WXK_DELETE:
 		case WXK_BACK:
-			DelSelFiles();
+			DelSelSongs(true,true);// delete from db and computer
 			break;
 		}
 	}
@@ -697,29 +697,33 @@ wxString CPlaylistCtrl::GetSubitemText( int nItem, int nSubitem )
 wxString CPlaylistCtrl::GetAllFiles()
 {
 	wxString sResult;
-	sResult.Alloc( GetItemCount() * 30 ); // optimization ( the 30 is a wild guess)
+	sResult.Alloc( GetItemCount() * 50 ); // optimization ( the 50 is a wild guess)
 	for ( int i = 0; i < GetItemCount(); i++ )
 	{
 		sResult +=  GetFilename( i );
 		sResult += '\n';
 	}
 	//--- we don't need the last \n ---//
-	return sResult.Left( sResult.Length() - 1 );	
+	return sResult.Truncate( sResult.Length() - 1 );	
 }
 
 wxString CPlaylistCtrl::GetSelFiles()
 {
 	wxString sResult;
 	int nIndex = -1;
-	for ( int i = 0; i < GetSelectedItemCount(); i++ )
+	int itemcount = GetSelectedItemCount();
+	sResult.Alloc(itemcount * 50); // 50 is just a for the avarege file name length
+	for ( int i = 0; i < itemcount; i++ )
 	{
 		nIndex = GetNextItem( nIndex, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
-		if ( nIndex > -1 )
-			sResult = sResult + GetFilename( nIndex ) + wxT( "\n" );
+		if( i == -1)
+			break;
+		sResult += GetFilename( nIndex );
+		sResult+= wxT( "\n" ); // only add \n if it is not the last name
 	}
 
 	//--- we don't need the last \n ---//
-	return sResult.Left( sResult.Length() - 1 );	
+	return sResult.Truncate( sResult.Length() - 1 );	
 }
 
 wxArrayInt CPlaylistCtrl::GetSelItems()
@@ -729,8 +733,9 @@ wxArrayInt CPlaylistCtrl::GetSelItems()
 	for ( int i = 0; i < GetSelectedItemCount(); i++ )
 	{
 		nIndex = GetNextItem( nIndex, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
-		if ( nIndex > -1 )
-			aResult.Add( nIndex );
+		if ( nIndex == -1 )
+			break;
+		aResult.Add( nIndex );
 	}
 	return aResult;	
 }
@@ -742,8 +747,9 @@ void CPlaylistCtrl::GetSelFilesList( wxArrayString & aResult )
 	for ( int i = 0; i < GetSelectedItemCount(); i++ )
 	{
 		nIndex = GetNextItem( nIndex, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
-		if ( nIndex > -1 )
-			aResult.Add( GetFilename( nIndex ) );
+		if ( nIndex == -1 )
+			break;
+		aResult.Add( GetFilename( nIndex ) );
 	}
 
 	return;
@@ -752,6 +758,7 @@ void CPlaylistCtrl::GetSelFilesList( wxArrayString & aResult )
 void CPlaylistCtrl::GetAllFilesList(wxArrayString & aResult )
 {
 	aResult.Clear();
+	aResult.Alloc(GetItemCount());
 	for ( int i = 0; i < GetItemCount(); i++ )
 	{
 		aResult.Add( GetFilename( i ) );
@@ -770,12 +777,12 @@ void CPlaylistCtrl::GetSelSongs(CMusikSongArray & aResult)
 		for( int i = 0; i < GetSelectedItemCount(); i++ )
 		{
 			nIndex = GetNextItem( nIndex, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
-			if ( nIndex > -1 )
-			{
-				CMusikSong *pSong = new CMusikSong();
-				g_Library.GetSongFromFilename( GetFilename( nIndex ), pSong );
-				aResult.Add( pSong ); // array takes ownership of the pointer
-			}
+			if ( nIndex == -1 )
+				break;
+			CMusikSong *pSong = new CMusikSong();
+			g_Library.GetSongFromFilename( GetFilename( nIndex ), pSong );
+			aResult.Add( pSong ); // array takes ownership of the pointer
+			
 		}
 	}
 	return;
@@ -1063,12 +1070,12 @@ void CPlaylistCtrl::RateSel( int nVal )
 	for ( int i = 0; i < GetSelectedItemCount(); i++ )
 	{
 		nIndex = GetNextItem( nIndex, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
-		if ( nIndex > -1 )
-		{
-			//--- set db entry, then resync item(s) ---//
-			g_Library.SetRating( GetFilename( nIndex ), nVal );
-			ResynchItem( nIndex, -1, false );
-		}
+		if ( nIndex == -1 )
+			break;
+		//--- set db entry, then resync item(s) ---//
+		g_Library.SetRating( GetFilename( nIndex ), nVal );
+		ResynchItem( nIndex, -1, false );
+		
 	}
 }
 
@@ -1098,36 +1105,70 @@ void CPlaylistCtrl::EditTag( int i )
 	//---  tag dialog will re-enable when complete  ---//
 	if ( nEditType != 0 )
 	{
-		g_MusikTagFrame = new MusikTagFrame( g_MusikFrame, songs, i, nEditType, nIndex );
+		MusikTagFrame* pMusikTagFrame = new MusikTagFrame( g_MusikFrame, songs, i, nEditType, nIndex );
 		g_MusikFrame->Enable( FALSE );
-		g_MusikTagFrame->Show();
+		pMusikTagFrame->Show();
 	}
 }
 
-void CPlaylistCtrl::DelSelSongs()
-{
-	Freeze();
 
+
+
+void CPlaylistCtrl::DelSelSongs(bool bDeleteFromDB, bool bDeleteFromComputer)
+{
+	if( bDeleteFromComputer )
+{
+	wxMessageDialog confirm( this, _( "Delete the selected songs from your computer?" ), MUSIK_VERSION, wxYES_NO | wxICON_STOP );
+	if ( confirm.ShowModal() == wxID_NO )
+		return;
+	}
+	else if( bDeleteFromDB )
+	{
+		wxMessageDialog confirm( this, _( "Delete the selected songs from Musik's internal database?" ), MUSIK_VERSION, wxYES_NO | wxICON_QUESTION );
+		if ( confirm.ShowModal() == wxID_NO )
+			return;
+	}
+	wxString sError;
+	Freeze();
 	int nIndex = -1;
 	int nSelCount = GetSelectedItemCount();
 
 	//--- find which songs are selected, delete as we go along ---//
-	int nFirstSel = 0;
+	wxString sFile;
+	nIndex = -1;
 	int n = 0;
+	int nFirstSel = 0;
 	for ( int i = 0; i < nSelCount; i++ )
 	{
+		//--- find next item to delete ---//
 		nIndex = GetNextItem( nIndex, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
-		if ( nIndex > -1 )
+		if ( nIndex == -1 )
+			break;
+		//--- if its valid, delete ---//
+		g_Playlist.RemoveAt( nIndex - n, 1 );
+		g_PlaylistChanged = true;
+
+		sFile = g_Playlist.Item( nIndex - n ).Filename;
+		if( bDeleteFromComputer )
 		{
-			if ( i == 0 )
-				nFirstSel = nIndex;
-
-			g_Playlist.RemoveAt( nIndex - n, 1 );
-			g_PlaylistChanged = true;
-
-			n++;
+			if ( wxRemoveFile( sFile ) )
+				g_Library.RemoveSong( sFile );
+			else
+				sError = sError + sFile + wxT( "\n" );
 		}
+		else if( bDeleteFromDB )
+		{
+			g_Library.RemoveSong( sFile );
+		}
+		if ( i == 0 )
+			nFirstSel = nIndex;
+
+		n++;
 	}
+
+	//--- if certain files couldn't be deleted ---//
+	if ( !sError.IsEmpty() )
+		wxMessageBox( _( "Failed to delete the following files:\n\n " ) + sError, MUSIK_VERSION, wxICON_STOP );
 
 	Update( false );
 
@@ -1136,119 +1177,10 @@ void CPlaylistCtrl::DelSelSongs()
 		nFirstSel = GetItemCount() - 1;
 	SetItemState( nFirstSel, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
 
-	Thaw();
-
 	g_ActivityAreaCtrl->ResetAllContents();
+
+	Thaw();
 }
-
-void CPlaylistCtrl::DelSelFilesDB()
-{
-	wxMessageDialog confirm( this, _( "Delete the selected songs from Musik's internal database?" ), MUSIK_VERSION, wxYES_NO | wxICON_QUESTION );
-	if ( confirm.ShowModal() == wxID_NO )
-		return;
-	else
-	{
-		Freeze();
-		int nIndex = -1;
-		int nSelCount = GetSelectedItemCount();
-
-		//--- find which songs are selected, delete as we go along ---//
-		wxString sFile;
-		nIndex = -1;
-		int n = 0;
-		int nFirstSel = 0;
-		for ( int i = 0; i < nSelCount; i++ )
-		{
-			//--- find next item to delete ---//
-			nIndex = GetNextItem( nIndex, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
-
-			//--- if its valid, delete ---//
-			if ( nIndex > -1 )
-			{
-				sFile = g_Playlist.Item( nIndex - n ).Filename;
-				g_Library.RemoveSong( sFile );
-				g_Playlist.RemoveAt( nIndex - n, 1 );
-				g_PlaylistChanged = true;
-
-				if ( i == 0 )
-					nFirstSel = nIndex;
-
-				n++;
-			}
-		}
-
-		Update( false );
-
-		//--- select the last known item ---//
-		if ( nFirstSel > ( GetItemCount() - 1 ) )
-			nFirstSel = GetItemCount() - 1;
-		SetItemState( nFirstSel, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
-
-		Thaw();
-
-		g_ActivityAreaCtrl->ResetAllContents();
-	}
-}
-
-void CPlaylistCtrl::DelSelFiles()
-{
-	wxMessageDialog confirm( this, _( "Delete the selected songs from your computer?" ), MUSIK_VERSION, wxYES_NO | wxICON_STOP );
-	if ( confirm.ShowModal() == wxID_NO )
-		return;
-	else
-	{
-		wxString sError = wxT( "" );
-		Freeze();
-		int nIndex = -1;
-		int nSelCount = GetSelectedItemCount();
-
-		//--- find which songs are selected, delete as we go along ---//
-		wxString sFile;
-		nIndex = -1;
-		int n = 0;
-		int nFirstSel = 0;
-		for ( int i = 0; i < nSelCount; i++ )
-		{
-			//--- find next item to delete ---//
-			nIndex = GetNextItem( nIndex, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
-
-			//--- if its valid, delete ---//
-			if ( nIndex > -1 )
-			{
-				sFile = g_Playlist.Item( nIndex - n ).Filename;
-				g_Playlist.RemoveAt( nIndex - n, 1 );
-				g_PlaylistChanged = true;
-
-				if ( wxRemoveFile( sFile ) )
-					g_Library.RemoveSong( sFile );
-				else
-					sError = sError + sFile + wxT( "\n" );
-
-				if ( i == 0 )
-					nFirstSel = nIndex;
-
-				n++;
-			}
-
-		}
-
-		//--- if certain files couldn't be deleted ---//
-		if ( sError != wxT( "" ) )
-			wxMessageBox( _( "Failed to delete the following files:\n\n " ) + sError, MUSIK_VERSION, wxICON_STOP );
-
-		Update( false );
-
-		//--- select the last known item ---//
-		if ( nFirstSel > ( GetItemCount() - 1 ) )
-			nFirstSel = GetItemCount() - 1;
-		SetItemState( nFirstSel, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
-
-		g_ActivityAreaCtrl->ResetAllContents();
-
-		Thaw();
-	}
-}
-
 
 void CPlaylistCtrl::RenameSelFiles()
 {
@@ -1310,11 +1242,11 @@ void CPlaylistCtrl::DNDSetCurSel()
 		for( int i = 0; i < GetSelectedItemCount(); i++ )
 		{
 			nIndex = GetNextItem( nIndex, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
-			if ( nIndex > -1 )
-			{
-				aCurSel.Add( nIndex );
-				aCurSelSongs.Add( g_Playlist.Item( nIndex ) );
-			}
+			if ( nIndex == -1 )
+				break;
+			aCurSel.Add( nIndex );
+			aCurSelSongs.Add( g_Playlist.Item( nIndex ) );
+			
 		}
 	}
 }

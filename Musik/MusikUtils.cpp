@@ -213,7 +213,7 @@ int GetGenreID( const wxString & sGenre )
 	for ( int i = 0; i < ID3_NR_OF_V1_GENRES; i++ )
 	{
 		wxString sCur = ConvA2W( ID3_v1_genre_description[i] );
-		if ( sGenre.CmpNoCase( sCur ))
+		if ( sGenre.CmpNoCase( sCur ) == 0)
 			return i;
 	}
 	return -1; //--- return -1 if unknown ---//

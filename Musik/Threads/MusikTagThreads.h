@@ -31,12 +31,13 @@
 class MusikTagApplyThread : public wxThread
 {
 public:
-	MusikTagApplyThread();
+	MusikTagApplyThread(wxEvtHandler *dest ,const CMusikSongArray & songs);
 	virtual void *Entry();
 	virtual void OnExit();
 
 private:
-	CMusikSongArray* m_Songs;
+	const CMusikSongArray & m_Songs;
+	wxEvtHandler * m_pPostDest;
 };
 
 #endif

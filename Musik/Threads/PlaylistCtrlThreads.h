@@ -30,7 +30,7 @@
 class MusikPlaylistRenameThread : public wxThread
 {
 public:
-	MusikPlaylistRenameThread( CMusikSongArray songs );
+	MusikPlaylistRenameThread( const  CMusikSongArray & songs );
 
 	virtual void *Entry();
 	virtual void OnExit();
@@ -43,7 +43,7 @@ private:
 class MusikPlaylistRetagThread : public wxThread
 {
 public:
-	MusikPlaylistRetagThread( CMusikSongArray songs );
+	MusikPlaylistRetagThread( const  CMusikSongArray & songs );
 
 	virtual void *Entry();
 	virtual void OnExit();

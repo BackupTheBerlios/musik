@@ -22,10 +22,9 @@
 //-------------------------//
 //---	 apply thread	---//
 //-------------------------//
-MusikTagApplyThread::MusikTagApplyThread()
-        : wxThread()
+MusikTagApplyThread::MusikTagApplyThread(wxEvtHandler *dest ,const CMusikSongArray & songs)
+        : wxThread(wxTHREAD_JOINABLE),m_Songs(songs),m_pPostDest(dest)
 {
-	m_Songs = g_MusikTagFrame->GetSongs();
 }
 
 void *MusikTagApplyThread::Entry()
@@ -36,23 +35,23 @@ void *MusikTagApplyThread::Entry()
 	wxCommandEvent TagStartEvt		( wxEVT_COMMAND_MENU_SELECTED, MUSIK_TAG_THREAD_START );
 	wxCommandEvent TagProgEvt		( wxEVT_COMMAND_MENU_SELECTED, MUSIK_TAG_THREAD_PROG );	
 
-	wxPostEvent( g_MusikTagFrame, TagStartEvt );
+	wxPostEvent( m_pPostDest, TagStartEvt );
 
 	float fPos = 0;
 	int nLastProg = 0;
 	int nCurrProg = 0;
 	bool bRenameOK;
-	for( size_t i = 0; i < m_Songs->GetCount(); i++ )
+	for( size_t i = 0; i < m_Songs.GetCount(); i++ )
 	{
 		//-----------------------//
 		//--- update progress ---//
 		//-----------------------//
-		fPos = (float)( i * 100 ) / (float)m_Songs->GetCount();
+		fPos = (float)( i * 100 ) / (float)m_Songs.GetCount();
 		nCurrProg = (int)fPos;
 		if ( nCurrProg > nLastProg )
 		{
-			g_MusikTagFrame->SetProgress( nCurrProg );
-			wxPostEvent( g_MusikTagFrame, TagProgEvt );
+			TagProgEvt.SetExtraLong( nCurrProg );
+			wxPostEvent( m_pPostDest, TagProgEvt );
 		}
 		nLastProg = nCurrProg;
 
@@ -60,7 +59,7 @@ void *MusikTagApplyThread::Entry()
 			break;
 		else
 		{
-			if ( m_Songs->Item( i ).Check1 == 1 )
+			if ( m_Songs.Item( i ).Check1 == 1 )
 			{
 				//-----------------------//
 				//--- rename the file ---//
@@ -68,7 +67,7 @@ void *MusikTagApplyThread::Entry()
 				bRenameOK = true;
 				if ( g_Prefs.nTagDlgRename == 1 )
 				{
-					bRenameOK = g_Library.RenameFile( &m_Songs->Item( i ), true );
+					bRenameOK = g_Library.RenameFile( &m_Songs.Item( i ), true );
 				}
 
 				//--------------------------//
@@ -82,7 +81,7 @@ void *MusikTagApplyThread::Entry()
 						//--- rename will update the lib, so if	---//
 						//--- we're not renaming, update first	---//
 						//-----------------------------------------//
-						g_Library.WriteTag( m_Songs->Item( i ),(bool)g_Prefs.nTagDlgClear ,g_Prefs.nTagDlgRename == 0 );
+						g_Library.WriteTag( m_Songs.Item( i ),(bool)g_Prefs.nTagDlgClear ,g_Prefs.nTagDlgRename == 0 );
 					}
 
 					//-----------------------------//
@@ -90,7 +89,7 @@ void *MusikTagApplyThread::Entry()
 					//-----------------------------//
 					if ( g_Prefs.nTagDlgWrite == 0 && g_Prefs.nTagDlgRename == 0 )
 					{
-						g_Library.UpdateItem( m_Songs->Item( i ).Filename, m_Songs->Item( i ), true );
+						g_Library.UpdateItem( m_Songs.Item( i ).Filename, m_Songs.Item( i ), true );
 					}
 				}
 			}
@@ -103,6 +102,6 @@ void *MusikTagApplyThread::Entry()
 void MusikTagApplyThread::OnExit()
 {
 	wxCommandEvent TagEndEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_TAG_THREAD_END );	
-	wxPostEvent( g_MusikTagFrame, TagEndEvt );
+	wxPostEvent( m_pPostDest, TagEndEvt );
 }
 

@@ -126,18 +126,14 @@ public:
 	void Prev			();
 	void SetCaption		();
 
-	void CheckChangesSingle	();
 	void CheckChangesBatch	();
 
 	//--- virtual overrides ---//
 	virtual bool Show( bool show = true );
 
+	void Close();
 	//--- thread related functions ---//
-	void SetProgress			( int n	)				{ m_Progress = n; }
-	void SetProgressType		( int n )				{ m_ProgressType = n;		}
-	void SetActiveThread		( wxThread* thread	)	{ m_ActiveThread = thread;	}
-	int  GetProgress			()						{ return m_Progress;		}
-	int  GetProgressType		()						{ return m_ProgressType;	}
+	void SetActiveThread		( wxThread* thread	);
 	wxThread* GetActiveThread	()						{ return m_ActiveThread;	}
 	CMusikSongArray* GetSongs	()						{ return &m_Songs;			}
 
@@ -155,12 +151,11 @@ private:
 
 	//--- thread related stuff ---//
 	MusikTagApplyThread	*pApplyThread;
-	int m_Progress;
 	int m_ProgressType;
 	wxThread* m_ActiveThread;
 
 	bool m_Close;
-
+	bool m_bDirty;
 };
 
 #endif

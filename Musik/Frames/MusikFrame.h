@@ -161,6 +161,7 @@ private:
 	wxThread* m_ActiveThread;
 	MusikWriteDirtyThread* pWriteDirtyThread;
 
+	wxTextCtrl* m_TextSimpleQuery;
 	wxString m_customQuery;
 };
 

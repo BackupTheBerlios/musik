@@ -28,10 +28,6 @@ MusikApp *pMusikApp;
 //----------------------------//
 MusikFrame *g_MusikFrame;
 
-//--------------------------------//
-//--- pointer to MusikTagFrame ---//
-//--------------------------------//
-MusikTagFrame *g_MusikTagFrame;
 
 //------------------------------------//
 //--- pointer to MusikLibraryFrame ---//
@@ -103,7 +99,6 @@ CSourcesBox			*g_SourcesCtrl;
 CNowPlayingCtrl		*g_NowPlayingCtrl;
 CPlaylistInfoCtrl	*g_PlaylistInfoCtrl;
 wxGauge				*g_Progress;
-wxTextCtrl			*g_SimpleQuery;
 
 //-----------------------//
 //--- main menu stuff ---//

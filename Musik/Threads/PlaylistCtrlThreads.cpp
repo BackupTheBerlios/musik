@@ -19,7 +19,7 @@
 #include "../MusikGlobals.h"
 #include "../MusikUtils.h"
 
-MusikPlaylistRenameThread::MusikPlaylistRenameThread( CMusikSongArray songs )
+MusikPlaylistRenameThread::MusikPlaylistRenameThread( const  CMusikSongArray & songs )
 {
 	m_Songs = songs;
 }
@@ -73,7 +73,7 @@ void MusikPlaylistRenameThread::OnExit()
 	wxPostEvent( g_PlaylistCtrl, RenameEndEvt );
 }
 
-MusikPlaylistRetagThread::MusikPlaylistRetagThread( CMusikSongArray songs )
+MusikPlaylistRetagThread::MusikPlaylistRetagThread(const  CMusikSongArray & songs )
 {
 	m_Songs = songs;
 }

@@ -42,8 +42,8 @@ public:
 	//--------------//
 	//--- deleting ---//
 	void OnDelSel		( wxCommandEvent& WXUNUSED(event) )	{ DelSelSongs();	}
-	void OnDelFiles		( wxCommandEvent& WXUNUSED(event) )	{ DelSelFiles();	}
-	void OnDelFilesDB	( wxCommandEvent& WXUNUSED(event) )	{ DelSelFilesDB();	}
+	void OnDelFiles		( wxCommandEvent& WXUNUSED(event) )	{ DelSelSongs(true,true);	}
+	void OnDelFilesDB	( wxCommandEvent& WXUNUSED(event) )	{ DelSelSongs(true);	}
 	void OnRenameFiles	( wxCommandEvent& WXUNUSED(event) )	{ RenameSelFiles();	}
 	void OnRetagFiles	( wxCommandEvent& WXUNUSED(event) ) { RetagSelFiles();	}
 	//--- rating ---//
@@ -108,9 +108,7 @@ public:
 	void ResetColumns		( bool update = false, bool rescale = false );
 	void RateSel			( int nVal );
 	void EditTag			( int i );
-	void DelSelSongs		( );
-	void DelSelFiles		( );
-	void DelSelFilesDB		( );
+	void DelSelSongs		( bool bDeleteFromDB = false, bool bDeleteFromComputer = false );
 	void RenameSelFiles		( );
 	void RetagSelFiles		( );
 	bool ViewDirtyTags		( );
