@@ -628,6 +628,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// create the background window, which is the playlist
 	m_wndView = new CmusikPlaylistView( this, m_Library, m_Player, m_Prefs, m_uPlaylistDrop_L, m_uPlaylistDrop_R );
 	m_wndView->Create( NULL, NULL, AFX_WS_DEFAULT_VIEW, CRect(0, 0, 0, 0), this, AFX_IDW_PANE_FIRST, NULL );
+	m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, MUSIK_SOURCES_TYPE_LIBRARY );
 
 	if ( m_Prefs->LibraryShowsAllSongs() )
 	{
@@ -700,7 +701,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingThreads );
 	{
 		m_Updater = new CmusikThread();
-		m_Updater->Start( (ACE_THR_FUNC)MainFrameWorker, this );
+		m_Updater->Start( (ACE_THR_FUNC)MainFrameWorker, (void*)this );
 	}
 
 	// tray icon stuff
@@ -939,7 +940,7 @@ LRESULT CMainFrame::OnSelBoxEditCommit( WPARAM wParam, LPARAM lParam )
 			m_ThreadCount++;
 		}
 
-		thread->Start( (ACE_THR_FUNC)musikBatchRetagWorker, params );
+		thread->Start( (ACE_THR_FUNC)musikBatchRetagWorker, params, true, MUSIK_THREAD_TYPE_BATCHRETAG );
 		
 		return 1L;
 	}
@@ -1135,28 +1136,32 @@ void CMainFrame::RequeryPlaylist( CmusikSelectionCtrl* sender, bool focus_librar
 {
 	// make sure the playlist window has the right
 	// CmusikPlaylist...
-	if ( !m_LibPlaylist )
-		m_LibPlaylist = new CmusikPlaylist();
-	else
-		m_LibPlaylist->Clear();
-
-	if ( m_wndView->GetCtrl()->GetPlaylist() != m_LibPlaylist )
-		m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, MUSIK_SOURCES_TYPE_LIBRARY );
-
-	// see what the order should be by...
-	int order_by = -1;
-
 	if ( sender )
-		order_by = sender->GetType();
+	{
+		if ( !m_LibPlaylist )
+			m_LibPlaylist = new CmusikPlaylist();
+		else
+			m_LibPlaylist->Clear();
 
-	// determine query type
-	CmusikString sQuery = GetSelQuery( sender );
-	bool sub_query = true;
-	if ( sQuery.Left( 1 ) == _T( "W" ) )
-		sub_query = false;
+		if ( m_wndView->GetCtrl()->GetPlaylist() != m_LibPlaylist )
+			m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, MUSIK_SOURCES_TYPE_LIBRARY );
+
+		// see what the order should be by...
+		int order_by = -1;
+
+		if ( sender )
+			order_by = sender->GetType();
+
+		// determine query type
+		CmusikString sQuery = GetSelQuery( sender );
+		bool sub_query = true;
+		if ( sQuery.Left( 1 ) == _T( "W" ) )
+			sub_query = false;
+
+		m_Library->GetRelatedSongs( sQuery, order_by, *m_LibPlaylist, sub_query );
+	}
 
 	// do it
-	m_Library->GetRelatedSongs( sQuery, order_by, *m_LibPlaylist, sub_query );
 	m_wndView->GetCtrl()->UpdateV( true, true );
 	m_wndView->GetCtrl()->HideSortArrow();
 
@@ -1553,7 +1558,7 @@ void CMainFrame::OnAddFiles()
 				m_ThreadCount++;
 			}
 
-			thread->Start( (ACE_THR_FUNC)musikBatchAddWorker, (void*)params );
+			thread->Start( (ACE_THR_FUNC)musikBatchAddWorker, (void*)params, true, MUSIK_THREAD_TYPE_BATCHADD );
 		}
 		else
 			delete files;
@@ -1578,7 +1583,7 @@ LRESULT CMainFrame::OnBatchAddNew( WPARAM wParam, LPARAM lParam )
 			m_ThreadCount++;
 		}
 
-		thread->Start( (ACE_THR_FUNC)musikBatchAddWorker, (void*)params );
+		thread->Start( (ACE_THR_FUNC)musikBatchAddWorker, (void*)params, true, MUSIK_THREAD_TYPE_BATCHADD );
 	}
 
 	return 0L;
@@ -1599,9 +1604,21 @@ LRESULT CMainFrame::OnThreadEnd( WPARAM wParam, LPARAM lParam )
 	// has finished successfully, so go
 	// ahead and clean it up
 	CmusikThread* ptr_thr = (CmusikThread*)wParam;
-	
-	if ( FreeThread( ptr_thr ) )
+	int type = FreeThread( ptr_thr );
+
+	if ( type != -2 )
+	{
 		RequerySelBoxes();
+		
+		if ( type == MUSIK_THREAD_TYPE_BATCHADD )
+		{
+			int focus_type = m_wndSources->GetCtrl()->GetFocusedItem()->GetPlaylistType();
+			if ( focus_type == MUSIK_SOURCES_TYPE_LIBRARY )
+				RequeryPlaylist();
+			else
+				RequeryPlaylist( NULL, false );
+		}
+	}
 
 	if ( !m_ThreadCount )
 		SetWindowText( m_Caption );
@@ -1618,9 +1635,9 @@ LRESULT CMainFrame::OnRemoveOldProgress( WPARAM wParam, LPARAM lParam )
 
 ///////////////////////////////////////////////////
 
-bool CMainFrame::FreeThread( CmusikThread* pThread )
+int CMainFrame::FreeThread( CmusikThread* pThread )
 {
-	bool erased = false;
+	int ret = -2;
 
 	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingThreads );
 	{
@@ -1628,26 +1645,26 @@ bool CMainFrame::FreeThread( CmusikThread* pThread )
 		{
 			if ( pThread == m_Threads.at( i ) )
 			{
+				ret = m_Threads.at( i )->GetType();
+
 				// wait for the finish flag to be set...
 				while ( !m_Threads.at( i )->m_Finished )
 					Sleep( 100 );
 
 				// delete the completed thread
+				// and erase from array
 				delete m_Threads.at( i );
-
-				// erase from array
 				m_Threads.erase( m_Threads.begin() + i );
-				erased = true;
 
 				break;
 			}
 		}
 
-		if ( erased )
+		if ( ret != -2 )
 			m_ThreadCount--;
 	}
 
-	return erased;
+	return ret;
 }
 
 ///////////////////////////////////////////////////
@@ -1693,7 +1710,7 @@ void CMainFrame::OnAddDirectory()
 				m_ThreadCount++;
 			}
 
-			thread->Start( (ACE_THR_FUNC)musikBatchAddWorker, (void*)params );
+			thread->Start( (ACE_THR_FUNC)musikBatchAddWorker, (void*)params, true, MUSIK_THREAD_TYPE_BATCHADD );
 		}
 		else 
 			delete files;
@@ -2041,7 +2058,7 @@ void CMainFrame::OnUnsynchronizedtagsWritetofile()
 			m_ThreadCount++;
 		}
 
-		thread->Start( (ACE_THR_FUNC)musikBatchRetagWorker, params );
+		thread->Start( (ACE_THR_FUNC)musikBatchRetagWorker, params, true, MUSIK_THREAD_TYPE_BATCHRETAG );
 	}
 	else
 		delete playlist;
@@ -2305,7 +2322,7 @@ void CMainFrame::SynchronizeDirs()
 				m_ThreadCount++;
 			}
 
-			thread->Start( (ACE_THR_FUNC)musikBatchAddWorker, (void*)params );	
+			thread->Start( (ACE_THR_FUNC)musikBatchAddWorker, (void*)params, true, MUSIK_THREAD_TYPE_BATCHADD );	
 		}	
 	}
 
@@ -2320,7 +2337,7 @@ void CMainFrame::SynchronizeDirs()
 			m_ThreadCount++;
 		}
 
-		thread->Start( (ACE_THR_FUNC)musikRemoveOldWorker, params );
+		thread->Start( (ACE_THR_FUNC)musikRemoveOldWorker, params, true, MUSIK_THREAD_TYPE_REMOVEOLD );
 	}
 }
 

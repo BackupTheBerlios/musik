@@ -80,6 +80,9 @@ public:
 	virtual BOOL OnInitDialog();
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 
+	// macros
+	DECLARE_DYNAMIC(CmusikPrefsInterfaceGeneral)
+	DECLARE_MESSAGE_MAP()
 protected:
 
 	// misc
@@ -97,10 +100,6 @@ protected:
 	CButton m_StartWithWindows;
 	CButton m_AutoSynchronize;
 	CButton m_LibraryShowAll;
-
-	// macros
-	DECLARE_DYNAMIC(CmusikPrefsInterfaceGeneral)
-	DECLARE_MESSAGE_MAP()
 };
 
 ///////////////////////////////////////////////////
@@ -126,7 +125,11 @@ public:
 
 	// overrides
 	virtual BOOL OnInitDialog();
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 
+	// macros
+	DECLARE_DYNAMIC( CmusikPrefsSoundDriver )
+	DECLARE_MESSAGE_MAP()
 protected:
 
 	// misc
@@ -150,11 +153,6 @@ protected:
 	CmusikStringArray m_DeviceInfo;
 	CmusikStringArray m_DriverInfo;
 	CmusikStringArray m_PlaybackRateInfo;
-
-	// macros
-	DECLARE_DYNAMIC( CmusikPrefsSoundDriver )
-	DECLARE_MESSAGE_MAP()
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 };
 
 ///////////////////////////////////////////////////

@@ -8,7 +8,10 @@
 #include "musikPrefsDlg.h"
 
 #include "../musikCore/include/musikFilename.h"
-#include ".\musikprefsdlg.h"
+
+///////////////////////////////////////////////////
+
+class CmusikPropertyPage;
 
 ///////////////////////////////////////////////////
 

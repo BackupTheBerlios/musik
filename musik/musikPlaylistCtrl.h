@@ -72,6 +72,7 @@ class CmusikPlaylistCtrl : public CmusikListCtrl
 public:
 
 	// construct and destruct
+	CmusikPlaylistCtrl(){}
 	CmusikPlaylistCtrl( CFrameWnd* mainwnd, CmusikLibrary* library, CmusikPlayer* player, CmusikPrefs* prefs, UINT dropid_l, UINT dropid_r );
 	virtual ~CmusikPlaylistCtrl();
 

@@ -290,7 +290,7 @@ protected:
 	afx_msg void OnLibrarySynchronizedirectoriesnow();
 
 	// list of all threads running
-	bool FreeThread( CmusikThread* pThread );
+	int FreeThread( CmusikThread* pThread );
 	CmusikThreadPtrArray m_Threads;
 
 	// mutex to synchronize thread array
