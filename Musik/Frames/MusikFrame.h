@@ -67,7 +67,6 @@ public:
 	void OnStartProgress			( wxCommandEvent&	WXUNUSED(event) );
 	void OnUpdateProgress			( wxCommandEvent&	WXUNUSED(event) );
 	void OnEndProgress				( wxCommandEvent&	WXUNUSED(event) );
-	void OnExitFadeDone				( wxCommandEvent&	WXUNUSED(event) );
 	
 	//-------------------------//
 	//--- virtual overrides ---//

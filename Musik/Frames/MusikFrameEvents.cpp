@@ -64,7 +64,7 @@ BEGIN_EVENT_TABLE(MusikFrame, wxFrame)
     EVT_MENU					( MUSIK_FRAME_THREAD_START,		MusikFrame::OnStartProgress			) 
 	EVT_MENU					( MUSIK_FRAME_THREAD_END,		MusikFrame::OnEndProgress			) 
 	EVT_MENU					( MUSIK_FRAME_THREAD_PROG,		MusikFrame::OnUpdateProgress		)
-	EVT_MENU					( MUSIK_FRAME_EXIT_FADE_DONE,	MusikFrame::OnExitFadeDone			)
+	EVT_MENU					( MUSIK_FRAME_EXIT_FADE_DONE,	MusikFrame::OnCloseEvt				)
 END_EVENT_TABLE()
 
 
@@ -116,23 +116,23 @@ void MusikFrame::OnCloseEvt( wxCommandEvent& WXUNUSED(event) )
 	#endif
 }
 
-void MusikFrame::OnExitFadeDone( wxCommandEvent& WXUNUSED(event) )
-{
-	g_FaderThread->Delete();
-	Destroy();
-}
-
 void MusikFrame::OnClose( wxCloseEvent& WXUNUSED(event) )
 {
+    //-------------------------------------------------//
+    //--- if fade out on exit is enabled, hide the	---//
+    //--- frame and allow the fade to happen. an 	---//
+	//--- event will be posted back when done.		---//
+    //-------------------------------------------------//
+	Show( false );
+	if ( g_Prefs.nFadeExitEnable == 1 && g_Player.IsPlaying() && !g_Player.IsPaused() )
+	{
+		g_Player.Stop( true, true );
+		return;
+	}
+
 	#ifdef __WXMSW__
 		UnSetMMShellHook((HWND)GetHWND());
 	#endif
-
-    //-------------------------------------------------//
-    //--- there can be a slight delay cleaning		---//
-    //--- when we clean threads. update user		---//
-    //-------------------------------------------------//
-    SetTitle( wxString( MUSIK_VERSION ) + wxT( " - Cleaning up threads and saving settings..." ) );
 
 	//-------------------------------------------------//
 	//--- write playlist columns to prefs			---//
@@ -162,28 +162,12 @@ void MusikFrame::OnClose( wxCloseEvent& WXUNUSED(event) )
     //-------------------------------------------------//
      g_Library.Shutdown();
 
-    //-------------------------------------------------//
-    //--- if fade out on exit is enabled, let the	---//
-    //--- thread delete itself. otherwise kill it	---//
-	//--- to avoid memleaks.						---//
-    //-------------------------------------------------//
-	//---					ALSO					---//
 	//-------------------------------------------------//
-	//--- if we fade on exit, send the stop signal	---//
-	//--- with the exit flag and let the player		---//
-	//--- clean itself up. otherwise just shutdown.	---//
+	//--- delete the thread object and destroy.		---//
 	//-------------------------------------------------//
-	if ( g_Prefs.nFadeExitEnable == 0 || ( g_Prefs.nFadeExitEnable == 1 && !g_Player.IsPlaying() ) )
-	{
-	    g_FaderThread->Delete();
-		g_Player.Shutdown();
-		Destroy();
-	}
-	else
-	{
-		Show( false );
-		g_Player.Stop( true, true );
-	}
+    g_FaderThread->Delete();
+	g_Player.Shutdown();
+	Destroy();
 }
 
 void MusikFrame::OnSetupPaths( wxCommandEvent& WXUNUSED(event) )

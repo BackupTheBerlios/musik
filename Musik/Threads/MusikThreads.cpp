@@ -256,7 +256,6 @@ void *MusikCrossfaderThread::Entry()
 	for ( size_t i = 0; i < nFadeOutStreams; i++ )
 	{
 		nGetVol = FSOUND_GetVolume( g_ActiveChannels.Item( i ) ) / nFadeCount;
-		nGetVol /= nFadeCount;
 		if ( nGetVol < 1 )
 			nGetVol = 1;
 
@@ -336,6 +335,16 @@ void MusikCrossfaderThread::OnExit()
 		wxCommandEvent FadeCompleteEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYER_FADE_COMPLETE );	
 		wxPostEvent( &g_Player, FadeCompleteEvt );
 		Yield();
+
+		//-------------------------------------------------//
+		//--- if the fade type was an OnExit type, then	---//
+		//--- post an event to close the app.			---//
+		//-------------------------------------------------//
+		if ( m_FadeType == CROSSFADE_EXIT )
+		{
+			wxCommandEvent ExitCompleteEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_FRAME_EXIT_FADE_DONE );
+			wxPostEvent( g_MusikFrame, ExitCompleteEvt );
+		}
 	}
 
 	//-------------------------------------------------//

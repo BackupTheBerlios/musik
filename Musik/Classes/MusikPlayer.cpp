@@ -202,9 +202,10 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 
 	else
 	{
-		//-----------------------------//
-		//--- start with the basics ---//
-		//-----------------------------//
+		//---------------------------------------------//
+		//--- start with the basics					---//
+		//---------------------------------------------//
+		m_Stopping		= false;
 		m_SongIndex		= nItem;	
 		m_CurrentFile	= m_Playlist.Item( nItem ).Filename;
 
@@ -233,7 +234,7 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 		}
 
 		//---------------------------------------------//
-		//--- start playback on the new stream on	---//
+		//--- start playback of the new stream on	---//
 		//--- the designated channel.				---//
 		//---------------------------------------------//
 		IncNextChannel();
@@ -241,21 +242,22 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 		FSOUND_SetVolume( GetCurrChannel(), 0 );
 		FSOUND_Stream_SetTime( pNewStream, nStartPos * 1000 );
 
-		SetFrequency();
-
-		//---------------------------------------------//
-		//--- playback has been started, update the	---//
-		//--- user interface to reflect it			---//
-		//---------------------------------------------//
-		if ( nStartPos <= 0 )
-			UpdateUI();
-
 		//---------------------------------------------//
 		//--- update the global arrays containing	---//
 		//--- active channels and streams			---//
 		//---------------------------------------------//
 		g_ActiveStreams.Add( pNewStream );
 		g_ActiveChannels.Add( GetCurrChannel() );
+		m_Playing = true;
+
+		SetFrequency();
+
+		//---------------------------------------------//
+		//--- playback has been started, update the	---//
+		//--- user interface to reflect it			---//
+		//---------------------------------------------//
+		g_NowPlayingCtrl->PlayBtnToPauseBtn();
+		UpdateUI();
 
 		//---------------------------------------------//
 		//--- if fading is not enabled, shut down	---//
@@ -273,10 +275,7 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 		//--- start fading							---//
 		//---------------------------------------------//
 		else if ( g_Prefs.nFadeEnable == 1 )
-			SetFadeStart();
-		
-		m_Playing = true;
-		g_NowPlayingCtrl->PlayBtnToPauseBtn();
+			SetFadeStart();		
 	}
 
 	return true;
@@ -320,13 +319,15 @@ void CMusikPlayer::ClearOldStreams()
 
 void CMusikPlayer::Pause( bool bCheckFade )
 {
-	//---------------------------------------------//
-	//--- set the fade type, let the thread 	---//
-	//--- worry about cleaning any existing		---//
-	//--- fades.								---//
-	//---------------------------------------------//
+	//-------------------------------------------------//
+	//--- set the fade type, let the thread worry	---//
+	//--- about cleaning any existing fades.		---//
+	//-------------------------------------------------//
 	SetCrossfadeType( CROSSFADE_PAUSE );
 
+	//-------------------------------------------------//
+	//--- update the UI.							---//
+	//-------------------------------------------------//
 	m_Paused = true;
 	g_NowPlayingCtrl->PauseBtnToPlayBtn();
 	
@@ -352,13 +353,15 @@ void CMusikPlayer::FinalizePause()
 
 void CMusikPlayer::Resume( bool bCheckFade )
 {
-	//---------------------------------------------//
-	//--- set the fade type, let the thread 	---//
-	//--- worry about cleaning any existing		---//
-	//--- fades.								---//
-	//---------------------------------------------//
+	//-------------------------------------------------//
+	//--- set the fade type, let the thread worry	---//
+	//--- about cleaning any existing fades.		---//
+	//-------------------------------------------------//
 	SetCrossfadeType( CROSSFADE_RESUME );
 
+	//-------------------------------------------------//
+	//--- update the UI.							---//
+	//-------------------------------------------------//
 	g_NowPlayingCtrl->PlayBtnToPauseBtn();
 	FSOUND_SetPaused( FSOUND_ALL, FALSE );
 	m_Paused = false;
@@ -383,11 +386,10 @@ void CMusikPlayer::FinalizeResume()
 
 void CMusikPlayer::Stop( bool bCheckFade, bool bExit )
 {
-	//---------------------------------------------//
-	//--- set the fade type, let the thread 	---//
-	//--- worry about cleaning any existing		---//
-	//--- fades.								---//
-	//---------------------------------------------//
+	//-------------------------------------------------//
+	//--- set the fade type, let the thread worry	---//
+	//--- about cleaning any existing fades.		---//
+	//-------------------------------------------------//
 	if ( !bExit )
 		SetCrossfadeType( CROSSFADE_STOP );
 	else
