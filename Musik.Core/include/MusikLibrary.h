@@ -98,6 +98,7 @@ public:
 	void GetFieldFromID		( int id, int field, CStdString& string );
 	void GetSongInfoFromID	( int id, CMusikSongInfo* info );
 	void GetAllStdPlaylists ( CStdStringArray* target, bool clear_target = true );
+	int  GetIDFromFilename	( const CStdString& fn );
 
 	//-----------------------------------------------------//
 	//--- for creating and retrieving playlists			---//

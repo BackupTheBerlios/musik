@@ -98,6 +98,19 @@ static int sqlite_AddSongToStringArray( void *args, int numCols, char **results,
 
 ///////////////////////////////////////////////////
 
+static int sqlite_GetIDFromFilename( void *args, int numCols, char **results, char ** columnNames )
+{
+	// this is a callback for sqlite to use when 
+	// finding the song id from a filename	
+
+	int* n = (int*)args;
+	*n = atoi( results[0] ); 
+
+    return 0;
+}
+
+///////////////////////////////////////////////////
+
 static int sqlite_AddPlaylistToStringArray( void *args, int numCols, char **results, char ** columnNames )
 {
 	// this is a callback for sqlite to use when 
@@ -846,6 +859,22 @@ void CMusikLibrary::GetAllStdPlaylists( CStdStringArray* target, bool clear_targ
 	m_ProtectingLibrary->acquire();
 	sqlite_exec( m_pDB, sQuery.c_str(), &sqlite_AddPlaylistToStringArray, target, NULL );
 	m_ProtectingLibrary->release();
+}
+
+///////////////////////////////////////////////////
+
+int CMusikLibrary::GetIDFromFilename( const CStdString& fn )
+{
+	int target;
+
+	CStdString sQuery;
+	sQuery.Format( ( _T( "SELECT songid  FROM " ) SONG_TABLE_NAME _T( " WHERE filename = '%s'" ) ), fn.c_str() );
+
+	m_ProtectingLibrary->acquire();
+	sqlite_exec( m_pDB, sQuery.c_str(), &sqlite_GetIDFromFilename, &target, NULL );
+	m_ProtectingLibrary->release();
+
+	return target;
 }
 
 ///////////////////////////////////////////////////
