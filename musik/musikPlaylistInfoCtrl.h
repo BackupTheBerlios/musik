@@ -64,6 +64,7 @@ class CmusikPlaylist;
 class CmusikDynDspInfo;
 class CmusikDir;
 class CmusikPlaylistCtrl;
+class ACE_Mutex;
 
 ///////////////////////////////////////////////////
 
@@ -98,16 +99,13 @@ private:
 class CmusikPlaylistInfoCtrl : public CWnd
 {
 	// friend
-	friend class CPlaylistInfoWorker;
+	friend class CmusikPlaylistInfoWorker;
 
 public:
 
 	// construct and destruct
 	CmusikPlaylistInfoCtrl( CmusikPlaylistCtrl* parent, CmusikLibrary* library, CmusikPlayer* player, CmusikPrefs* prefs );
 	virtual ~CmusikPlaylistInfoCtrl();
-
-	// called to update the background image
-	void UpdateBG();
 
 	// called to update the info string
 	void UpdateInfo();
@@ -130,7 +128,6 @@ protected:
 
 	// message maps
 	afx_msg void OnPaint();
-	afx_msg void OnTimer(UINT nIDEvent);
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 		
@@ -143,10 +140,13 @@ protected:
 	CmusikPrefs* m_Prefs;
 
 	// worker thread
+	void UpdateStr( bool is_calc = false );
 	CmusikPlaylistInfoWorker* m_InfoWorker;
+	ACE_Mutex m_ProtectingUpdate;
 
 	// macros
 	DECLARE_DYNAMIC(CmusikPlaylistInfoCtrl)
 	DECLARE_MESSAGE_MAP()
 };
 
+///////////////////////////////////////////////////

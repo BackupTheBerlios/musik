@@ -51,6 +51,8 @@
 
 #include "musikPrefs.h"
 
+#include "ace/Task.h"
+
 #include <vector>
 
 ///////////////////////////////////////////////////

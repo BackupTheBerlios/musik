@@ -73,12 +73,15 @@ int CmusikPlaylistInfoWorker::svc()
 {
 	// sleep time inside the loop
 	ACE_Time_Value suspend;
-	suspend.set( 1.0 );
+	suspend.set( 0.10 );
 
 	// set flags
 	m_Stop = false;
 	m_Active = true;
 	m_Finished = false;
+
+	CmusikPlayer* m_Player = m_Parent->m_Player;
+	CmusikPrefs* m_Prefs = m_Parent->m_Prefs;
 
 	// this is the loop.. set it to true from 
 	// anywhere and it will abort. threads run
@@ -86,9 +89,12 @@ int CmusikPlaylistInfoWorker::svc()
 	// the interface
 	while ( !m_Stop )
 	{
-
+		if ( m_Player->IsPlaying() && !m_Player->IsPaused() )
+		{
+			if ( m_Prefs->GetPlaylistInfoVizStyle() != PLAYLIST_INFO_VIZ_STYLE_NONE )
+				m_Parent->Invalidate();
+		}
 		// HEY SIMON DO WORK HERE
-
 		ACE_OS::sleep( suspend );
 	}
 
@@ -134,7 +140,6 @@ CmusikPlaylistInfoCtrl::~CmusikPlaylistInfoCtrl()
 BEGIN_MESSAGE_MAP(CmusikPlaylistInfoCtrl, CWnd)
 	ON_WM_PAINT()
 	ON_WM_CREATE()
-	ON_WM_TIMER()
 	ON_WM_ERASEBKGND()
 END_MESSAGE_MAP()
 
@@ -142,6 +147,8 @@ END_MESSAGE_MAP()
 
 void CmusikPlaylistInfoCtrl::OnPaint()
 {
+	m_ProtectingUpdate.acquire();
+
 	CPaintDC dc(this);
 
 	CRect rect;
@@ -179,6 +186,8 @@ void CmusikPlaylistInfoCtrl::OnPaint()
 		// get the old font back
 		memDC.SelectObject( oldfont );
 	}
+
+	m_ProtectingUpdate.release();
 }
 
 ///////////////////////////////////////////////////
@@ -253,13 +262,6 @@ BOOL CmusikPlaylistInfoCtrl::OnEraseBkgnd(CDC* pDC)
 
 ///////////////////////////////////////////////////
 
-void CmusikPlaylistInfoCtrl::UpdateBG()
-{
-	Invalidate();
-}
-
-///////////////////////////////////////////////////
-
 // draws a visualization of the current sound spectrum
 // to a small bitmap, then stretches it to the size of
 // the control to paint it
@@ -325,51 +327,36 @@ void CmusikPlaylistInfoCtrl::DrawEQ( HDC hdc )
 
 ///////////////////////////////////////////////////
 
-void CmusikPlaylistInfoCtrl::OnTimer(UINT nIDEvent)
-{
-	if ( nIDEvent == MUSIK_VIZ_TIMER )
-	{
-		if ( m_Player->IsPlaying() && !m_Player->IsPaused() && ( m_Prefs->GetPlaylistInfoVizStyle() != PLAYLIST_INFO_VIZ_STYLE_NONE ) )
-		{
-			UpdateBG();
-		}
-	}
-}
-
-///////////////////////////////////////////////////
-
 void CmusikPlaylistInfoCtrl::UpdateInfo()
 {
-	if ( m_ListCtrl->GetPlaylist() )
+	if ( m_ListCtrl->GetPlaylist() && m_ListCtrl->GetPlaylist()->GetCount() != 0 )
 	{
-		if ( m_ListCtrl->GetPlaylist()->GetCount() == 0 )
-			m_strInfo = "empty playlist";
-		else
-		{
-			size_t runtime = m_ListCtrl->GetPlaylist()->GetTotalTime();
-			double totsize = m_ListCtrl->GetPlaylist()->GetTotalSize();
-			
-			CTimeSpan span( 0, 0, 0, runtime );
-			CString strtime;
-			if ( runtime > 172800 )
-				strtime = span.Format( "%D days, %H:%M:%S" );
-			else if ( runtime > 86400 )
-				strtime = span.Format( "%D day, %H:%M:%S" );
-			else
-				strtime = span.Format( "%H:%M:%S" );
-		
-			CString strsize( "0.0 mb" );
-			if ( totsize < 1024.0 )
-				strsize.Format( "%.2f b", totsize );
-			else if ( totsize < ( 1024.0 * 1024.0 ) )
-				strsize.Format( "%.2f kb", totsize / 1024.0 );
-			else if ( totsize < ( 1024.0 * 1024.0 * 1024.0 ) )
-				strsize.Format( "%.2f mb", totsize / 1024.0 / 1024.0 );
-			else if ( totsize < ( 1024.0 * 1024.0 * 1024.0 * 1024.0 ) )
-				strsize.Format( "%.2f gb", totsize / 1024.0 / 1024.0 / 1024.0 );
+		m_strInfo.Format( "number of songs: %d    (calculating...)", m_ListCtrl->GetPlaylist()->GetCount() );
+		m_ListCtrl->RedrawWindow();
 
-			m_strInfo.Format( "number of songs: %d    running time: %s    size: %s", m_ListCtrl->GetPlaylist()->GetCount(), strtime, strsize );
-		}
+		size_t runtime = m_ListCtrl->GetPlaylist()->GetTotalTime();
+		double totsize = m_ListCtrl->GetPlaylist()->GetTotalSize();
+		
+		CTimeSpan span( 0, 0, 0, runtime );
+		CString strtime;
+		if ( runtime > 172800 )
+			strtime = span.Format( "%D days, %H:%M:%S" );
+		else if ( runtime > 86400 )
+			strtime = span.Format( "%D day, %H:%M:%S" );
+		else
+			strtime = span.Format( "%H:%M:%S" );
+	
+		CString strsize( "0.0 mb" );
+		if ( totsize < 1024.0 )
+			strsize.Format( "%.2f b", totsize );
+		else if ( totsize < ( 1024.0 * 1024.0 ) )
+			strsize.Format( "%.2f kb", totsize / 1024.0 );
+		else if ( totsize < ( 1024.0 * 1024.0 * 1024.0 ) )
+			strsize.Format( "%.2f mb", totsize / 1024.0 / 1024.0 );
+		else if ( totsize < ( 1024.0 * 1024.0 * 1024.0 * 1024.0 ) )
+			strsize.Format( "%.2f gb", totsize / 1024.0 / 1024.0 / 1024.0 );
+
+		m_strInfo.Format( "number of songs: %d    running time: %s    size: %s", m_ListCtrl->GetPlaylist()->GetCount(), strtime, strsize );
 	}
 	else
 		m_strInfo = "empty playlist";
