@@ -1,4 +1,4 @@
-#include "MusikPlayer.h"
+#include "../include/MusikPlayer.h"
 
 CMusikPlayer::CMusikPlayer()
 	: boost::thread()

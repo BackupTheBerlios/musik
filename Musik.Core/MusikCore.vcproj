@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="Bin/"
-			IntermediateDirectory="Bin/"
+			OutputDirectory="bin/"
+			IntermediateDirectory="bin/"
 			ConfigurationType="4"
 			CharacterSet="2">
 			<Tool
@@ -53,8 +53,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="Bin/"
-			IntermediateDirectory="Bin/"
+			OutputDirectory="bin/"
+			IntermediateDirectory="bin/"
 			ConfigurationType="4"
 			CharacterSet="2">
 			<Tool
