@@ -20,6 +20,8 @@
 #include "../MusikGlobals.h"
 #include "../MusikUtils.h"
 
+#include "PlaylistCtrl.h"
+
 BEGIN_EVENT_TABLE(CActivityAreaCtrl, wxPanel)
 	EVT_LIST_ITEM_FOCUSED		( MUSIK_ACTIVITYBOX1, CActivityAreaCtrl::OnActivityBoxFocused	)
 	EVT_LIST_ITEM_FOCUSED		( MUSIK_ACTIVITYBOX2, CActivityAreaCtrl::OnActivityBoxFocused	)
@@ -159,17 +161,6 @@ void CActivityAreaCtrl::ResetAllContents( bool bUpdatePlaylist )
 	m_UpdatePlaylist = true;
 }
 
-void CActivityAreaCtrl::RescaleColumns()
-{
-	if ( m_ActivityBox1 != NULL )
-		m_ActivityBox1->RescaleColumns();
-	if ( m_ActivityBox2 != NULL )
-		m_ActivityBox2->RescaleColumns();
-	if ( m_ActivityBox3 != NULL )
-		m_ActivityBox3->RescaleColumns();
-	if ( m_ActivityBox4 != NULL )
-		m_ActivityBox4->RescaleColumns();
-}
 
 void CActivityAreaCtrl::SetParent( int nID, bool bUpdate )
 {

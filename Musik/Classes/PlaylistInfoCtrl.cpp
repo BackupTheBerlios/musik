@@ -16,7 +16,7 @@
 #include "wx/wxprec.h"
 
 #include "PlaylistInfoCtrl.h"
-
+#include "PlaylistCtrl.h"
 //--- globals ---//
 #include "../MusikGlobals.h"
 #include "../MusikUtils.h"

@@ -204,7 +204,7 @@ bool MusikFrame::Show( bool show )
 			if ( g_Prefs.nShowAllSongs == 1 )
 			{
 				g_Library.GetAllSongs( g_Playlist );
-				g_PlaylistCtrl->Update(true,false);
+				g_PlaylistCtrl->Update(true);
 				g_Player.SetPlaylist( g_Playlist );
 			}
 		}
@@ -343,10 +343,6 @@ void MusikFrame::ShowSources()
 	hsLeftRight->Show( vsLeftSide, ( bool )g_Prefs.nShowSources );
 
 	Layout();
-
-	g_PlaylistCtrl->RescaleColumns();
-	g_SourcesCtrl->RescaleColumns();
-	g_ActivityAreaCtrl->RescaleColumns();
 }
 
 void MusikFrame::ToggleSources()
@@ -373,7 +369,6 @@ void MusikFrame::ShowActivityArea( bool bShow )
 	m_TextSimpleQuery->Enable(bShow);
 	vsRightSide->Show( g_ActivityAreaCtrl, bShow );
 	Layout();
-	g_ActivityAreaCtrl->RescaleColumns();
 	g_PlaylistInfoCtrl->Refresh();
 }
 

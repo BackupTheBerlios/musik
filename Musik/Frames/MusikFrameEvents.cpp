@@ -97,10 +97,6 @@ void MusikFrame::OnSize	( wxCommandEvent& WXUNUSED(event) )
 
 	if ( !g_DisablePlacement )
 		g_Prefs.sFramePlacement = GetFramePlacement( this );
-
-	g_PlaylistCtrl->RescaleColumns();
-	g_SourcesCtrl->RescaleColumns();
-	g_ActivityAreaCtrl->RescaleColumns();
 }
 
 void MusikFrame::OnClose( wxCloseEvent& WXUNUSED(event) )

@@ -300,10 +300,11 @@ extern CTunage				g_Tunage;
 //--- controls ---//
 //----------------//
 #include "Classes/ActivityAreaCtrl.h"
-#include "Classes/PlaylistCtrl.h"
 #include "Classes/SourcesBox.h"
 #include "Classes/NowPlayingCtrl.h"
 #include "Classes/PlaylistInfoCtrl.h"
+
+class CPlaylistCtrl;
 
 extern CActivityAreaCtrl	*g_ActivityAreaCtrl;
 extern CPlaylistCtrl		*g_PlaylistCtrl;	

@@ -43,7 +43,6 @@ public:
 	bool Create();
 	void Delete();
 	void ResetAllContents( bool bUpdatePlaylist = true );
-	void RescaleColumns();
 
 	void SetParent( int ACTIVITY_BOX_ID, bool bUpdate = false );
 

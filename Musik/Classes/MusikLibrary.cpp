@@ -951,9 +951,13 @@ void CMusikLibrary::QuerySongs( const wxString & queryWhere, CMusikSongArray & a
 	wxString sInfo;
 
 	//--- run query ---//
-	wxString query(wxT("select filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize from songs where "));
-	query += queryWhere + wxT(";");
-
+	wxString query(wxT("select filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize from songs"));
+	if(!queryWhere.IsEmpty()) 
+	{	
+		query += wxT(" where ");
+		query += queryWhere; 
+	}
+	query += wxT(";");		
 	const wxCharBuffer pQuery = ConvQueryToMB(query);
 	aReturn.Alloc(GetSongCount());
 	{
@@ -1451,7 +1455,7 @@ void CMusikLibrary::GetAllYears(wxArrayString & years)
 
 void CMusikLibrary::GetAllSongs( CMusikSongArray & aReturn )	
 { 
-	QuerySongs( wxT("filename <> ''"), aReturn );												
+	QuerySongs( wxT(""), aReturn );												
 }
 
 void CMusikLibrary::GetAllArtists( wxArrayString & aReturn )	

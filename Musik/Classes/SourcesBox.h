@@ -35,9 +35,9 @@ enum EMUSIK_LIBRARY_TYPE
 	MUSIK_SOURCES_NONE
 };
 
-#include "wx/listctrl.h"
+#include "MusikListCtrl.h"
 
-class CSourcesListBox : public wxListCtrl
+class CSourcesListBox : public CMusikListCtrl
 {
 public:
 	CSourcesListBox( wxPanel *parent );
@@ -82,7 +82,6 @@ public:
 	int  GetSelType				( )						{ return  GetType( m_CurSel );	}
 	int  GetType				( long index );
 	int  GetItemImage			( long index );
-	void RescaleColumns			( );
 	void RescanPlaylistDir		( );
 	void ShowIcons				( );
 	void ToggleIcons			( );
@@ -111,7 +110,9 @@ public:
 	wxString GetPlaylistName		( int nIndex );
 
 	DECLARE_EVENT_TABLE()
-
+protected:
+	void RescaleColumns			( );
+	virtual bool OnRescaleColumns() {RescaleColumns(); return true;}
 private:
 
 	//--- virtual functions ---//
@@ -150,7 +151,6 @@ public:
 	//--- only place needed functions here to reduce overhead	---//
 	//-------------------------------------------------------------//
 	int  GetSelType				( )	{ return pListBox->GetSelType();	}
-	void RescaleColumns			( ) { pListBox->RescaleColumns();		}
 	void RescanPlaylistDir		( ) { pListBox->RescanPlaylistDir();	}
 	void Update					( ) { pListBox->Update();				}
 

@@ -29,6 +29,8 @@
 //--- for CMusikSongArray ---//
 #include "MusikLibrary.h"
 
+#include "MusikListCtrl.h"
+
 enum EMUSIK_ACTIVITY_TYPE
 {
 	MUSIK_LBTYPE_NULL = 0,
@@ -42,7 +44,9 @@ enum EMUSIK_ACTIVITY_TYPE
 class CActivityBox;
 class MusikActivityRenameThread;
 
-class CActivityListBox : public wxListCtrl
+
+
+class CActivityListBox : public CMusikListCtrl
 {
 public:
 	CActivityListBox( CActivityBox *parent, wxWindowID id );
@@ -63,10 +67,12 @@ public:
 	void DeselectAll	();
 	bool IsSelected		( int n );
 	void Update			( bool selectnone );
-	void RescaleColumns	( bool bFreeze = true );
 
   void OnChar( wxKeyEvent& event );
   DECLARE_EVENT_TABLE()
+protected:
+	void RescaleColumns	( bool bFreeze = true );	
+	bool OnRescaleColumns() { RescaleColumns();return true;}	
 private:
 	//--- virtual functions ---//
     virtual	wxString		OnGetItemText	(long item, long column) const;
@@ -164,7 +170,6 @@ public:
 	//---misc ---//
 	bool IsSelected			( int n )							{ return pListBox->IsSelected( n );		}
 	void Update				( bool selectnone = true )			{ pListBox->Update( selectnone );		}	
-	void RescaleColumns		()									{ pListBox->RescaleColumns();			}
 	void ResetCaption		();
 	void ResetContents		();
 	void SetContents		( const wxArrayString &list ); 

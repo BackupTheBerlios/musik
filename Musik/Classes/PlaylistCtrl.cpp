@@ -28,10 +28,12 @@
 //--- threads ---//
 #include "../Threads/PlaylistCtrlThreads.h"
 
-BEGIN_EVENT_TABLE(CPlaylistCtrl, wxListCtrl)
+
+BEGIN_EVENT_TABLE(CPlaylistCtrl, CMusikListCtrl)
 	EVT_LIST_ITEM_ACTIVATED		( MUSIK_PLAYLIST,														CPlaylistCtrl::PlaySel				)	
 	EVT_LIST_BEGIN_DRAG			( MUSIK_PLAYLIST,														CPlaylistCtrl::BeginDrag			)
 	EVT_LIST_ITEM_SELECTED		( MUSIK_PLAYLIST,														CPlaylistCtrl::UpdateSel			)
+	EVT_LIST_COL_BEGIN_DRAG		( MUSIK_PLAYLIST,														CPlaylistCtrl::BeginDragCol			)
 	EVT_LIST_COL_END_DRAG		( MUSIK_PLAYLIST,														CPlaylistCtrl::EndDragCol			)
 	EVT_MENU					( MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FROM_PLAYLIST,					CPlaylistCtrl::OnDelSel				)
 	EVT_MENU					( MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FILES,							CPlaylistCtrl::OnDelFiles			)
@@ -42,6 +44,7 @@ BEGIN_EVENT_TABLE(CPlaylistCtrl, wxListCtrl)
 	EVT_UPDATE_UI_RANGE			( MUSIK_PLAYLIST_CONTEXT_UNRATED, MUSIK_PLAYLIST_CONTEXT_RATE5,			CPlaylistCtrl::OnUpdateUIRateSel	)
 	EVT_MENU_RANGE				( MUSIK_PLAYLIST_CONTEXT_TAG_TITLE,	MUSIK_PLAYLIST_CONTEXT_TAG_YEAR,	CPlaylistCtrl::OnClickEditTag		)
 	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_SMART,											CPlaylistCtrl::OnDisplaySmart		)
+	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_FIT,											CPlaylistCtrl::OnDisplayFit			)
 	EVT_CONTEXT_MENU			(																		CPlaylistCtrl::ShowMenu				)
 	EVT_CHAR					(																		CPlaylistCtrl::TranslateKeys		)
 	EVT_LIST_COL_CLICK			( MUSIK_PLAYLIST,														CPlaylistCtrl::OnColumnClick		)
@@ -184,7 +187,7 @@ void PlaylistDropTarget::HighlightSel( wxPoint pPos )
 //--- construct / destruct ---//
 //----------------------------//
 CPlaylistCtrl::CPlaylistCtrl( wxWindow *parent, const wxWindowID id, const wxPoint& pos, const wxSize& size )
-	:	wxListCtrl		( parent, id, pos, size, wxLC_REPORT | wxLC_VIRTUAL | wxSIMPLE_BORDER | wxCLIP_CHILDREN & ~wxHSCROLL )
+	:	CMusikListCtrl		( parent, id, pos, size,wxSIMPLE_BORDER)
 {
 	SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ) );
 
@@ -255,6 +258,7 @@ CPlaylistCtrl::CPlaylistCtrl( wxWindow *parent, const wxWindowID id, const wxPoi
 	nCurSel = -1;
 	m_Overflow = 0;
 
+	m_bColDragging = false;
 	SetActiveThread( NULL );
 
 }
@@ -409,21 +413,17 @@ void CPlaylistCtrl::OnClickEditTag( wxCommandEvent& event )
 void CPlaylistCtrl::OnDisplayMenu( wxCommandEvent& event )
 {
   int nColumn = -1;
-	switch ( event.GetId() )
-	{
-	case MUSIK_PLAYLIST_DISPLAY_FIT:
-		RescaleColumns( true, false, true );
-		break;
-	default:
 		nColumn = DisplayEventId2ColumnId(event.GetId());
-	}
 	if( nColumn > -1)
 	{
 		g_Prefs.nPlaylistColumnEnable[nColumn] = !g_Prefs.nPlaylistColumnEnable[nColumn];
+		ResetColumns( false, true );
 	}
-	ResetColumns( false, true );
 }
-
+void CPlaylistCtrl::OnDisplayFit( wxCommandEvent& WXUNUSED(event) )
+{
+	RescaleColumns( true, false, true );
+}
 void CPlaylistCtrl::OnUpdateUIDisplayMenu ( wxUpdateUIEvent &event)
 {
 	int nColumn = DisplayEventId2ColumnId(event.GetId());
@@ -468,9 +468,13 @@ void CPlaylistCtrl::BeginDrag( wxEvent& WXUNUSED(event) )
 	//--- tell program we're done dragging ---//
 	g_DragInProg = false;
 }
-
+void CPlaylistCtrl::BeginDragCol(wxListEvent& event)
+{
+	m_bColDragging = true;
+}
 void CPlaylistCtrl::EndDragCol( wxListEvent& event )
 {
+	m_bColDragging = false;
 	m_ColSaveNeeded = true;
 }
 
@@ -853,14 +857,13 @@ void CPlaylistCtrl::ResynchItem( int item, int lastitem, bool refreshonly )
 		RefreshItem( lastitem );	
 }
 
-void CPlaylistCtrl::Update( bool bSelFirst, bool  bRescaleColumns)
+void CPlaylistCtrl::Update( bool bSelFirst)
 {
 	//----------------------------------------------------------------------------------//
 	//---         note that the playlist control is now virtual, so we don't         ---//
 	//---    add items directly to it.  Instead, we have MusikFrame::g_Playlist, a   ---//
 	//---  CMusikSongArray, that the virtual listctrl then references via callbacks  ---//
 	//----------------------------------------------------------------------------------//
-	Freeze();
 
 	//--- setup listbox colours from prefs	---//
 	m_LightAttr			= wxListItemAttr( *wxBLACK, wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ), wxNullFont );
@@ -870,26 +873,28 @@ void CPlaylistCtrl::Update( bool bSelFirst, bool  bRescaleColumns)
 
 	//--- SetItemCount() kinda tells the virtual list control to udpate ---//
 	SetItemCount( ( long )g_Playlist.GetCount() );
+	RescaleColumns();
+
 	wxListCtrlSelNone( this );
 
 	//--- sel first item, if we're supposed to ---//
 	if ( bSelFirst && GetItemCount() )
 		SetItemState( 0, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );	
 
-	if( bRescaleColumns )
-		RescaleColumns( false );
-
 	if ( g_Prefs.nShowPLInfo )
 		g_PlaylistInfoCtrl->Update();
 
-	Thaw();
 }
 
 void CPlaylistCtrl::RescaleColumns( bool bFreeze, bool bSave, bool bAutoFit )
 {
-	if ( g_DisablePlacement )
+	if ( g_DisablePlacement || m_bColDragging)
 		return;
 
+	static bool bInRescaleColumns = false;
+	if(bInRescaleColumns)
+		return;
+	bInRescaleColumns = true;
 	if ( m_ColSaveNeeded && !bAutoFit )
 		SaveColumns();
 
@@ -1002,10 +1007,14 @@ void CPlaylistCtrl::RescaleColumns( bool bFreeze, bool bSave, bool bAutoFit )
 	//--- make sure window is properly refreshed.	---//
 	//-------------------------------------------------//
 	if ( bFreeze )
+	{
 		Thaw();
+		wxWindow::Update(); // instantly update window content
+	}
 
 	if ( bAutoFit )
 		SaveColumns();
+	bInRescaleColumns = false;
 }
 
 void CPlaylistCtrl::ResetColumns( bool update, bool rescale )

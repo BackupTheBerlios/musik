@@ -40,6 +40,7 @@ ADD_EXECUTABLE(Musik
         ${Musik_SOURCE_DIR}/Classes/MusikPlayer
         ${Musik_SOURCE_DIR}/Classes/MusikPrefs
         ${Musik_SOURCE_DIR}/Classes/NowPlayingCtrl
+        ${Musik_SOURCE_DIR}/Classes/MusikListCtrl
         ${Musik_SOURCE_DIR}/Classes/PlaylistCtrl
 	${Musik_SOURCE_DIR}/Classes/PlaylistInfoCtrl
         ${Musik_SOURCE_DIR}/Classes/SourcesBox

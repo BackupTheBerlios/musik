@@ -22,14 +22,14 @@
 #endif
 //--- definition CMusikSongArray is here ---//
 #include "MusikLibrary.h"
-#include "wx/listctrl.h"
 #include <wx/dnd.h>
 
+#include "MusikListCtrl.h"
 
 class MusikPlaylistRenameThread;
 class MusikPlaylistRetagThread;
 
-class CPlaylistCtrl : public wxListCtrl
+class CPlaylistCtrl : public CMusikListCtrl
 {
 public:
 	//--------------------------------//
@@ -56,6 +56,7 @@ public:
 	void OnDisplayMenu	( wxCommandEvent& event				);
 	void OnUpdateUIDisplayMenu ( wxUpdateUIEvent &event);
 	void OnDisplaySmart	( wxCommandEvent& WXUNUSED(event)	);
+	void OnDisplayFit	( wxCommandEvent& WXUNUSED(event)	);
 	void OnColumnClick	( wxListEvent& event );
 	//--- other ---//
 	void UpdateSel		( wxListEvent&		event			);
@@ -63,6 +64,7 @@ public:
 	void BeginDrag		( wxEvent&			WXUNUSED(event)	);
 	void TranslateKeys	( wxKeyEvent&		pEvent			);
 	void EndDragCol		( wxListEvent&		event			);
+	void BeginDragCol	( wxListEvent&		event			);
 	void PlaySel		( wxListEvent&		WXUNUSED(event)	);
 
 	//------------------------//
@@ -96,8 +98,7 @@ public:
 	//--- others ---//
 	//--------------//
 	void ResynchItem		( int item, int lastitem = -1, bool refreshonly = true );
-	void Update				( bool bSelFirstItem = true,bool  bRescaleColumns = true );
-	void RescaleColumns		( bool bFreeze = true, bool bSave = false, bool bAutoFit = false );
+	void Update				( bool bSelFirstItem = true);
 	void ResetColumns		( bool update = false, bool rescale = false );
 	void RateSel			( int nVal );
 	void EditTag			( int i );
@@ -144,6 +145,11 @@ public:
 	int				nCurSel;
 
 	DECLARE_EVENT_TABLE()
+protected:
+	virtual bool OnRescaleColumns() {RescaleColumns(false); return true;}
+	void RescaleColumns		( bool bFreeze = true, bool bSave = false, bool bAutoFit = false );
+
+
 private:
 	int DisplayEventId2ColumnId(int evid);
 	//-------------------------//
@@ -177,6 +183,7 @@ private:
 	size_t m_Overflow;
 	bool m_ColSaveNeeded;
 
+	bool m_bColDragging;
 	wxArrayInt m_aColumnSorting;
 
 	//--------------//

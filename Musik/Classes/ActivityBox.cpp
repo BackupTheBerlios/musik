@@ -63,7 +63,7 @@ void CActivityEditEvt::TranslateKeys( wxKeyEvent& event )
 //--- CActivityListBox ---//
 //------------------------//
 CActivityListBox::CActivityListBox( CActivityBox *parent,  wxWindowID id )
-	: wxListCtrl( parent, id, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxLC_REPORT | wxLC_VIRTUAL | wxNO_BORDER )
+	: CMusikListCtrl( parent, id, wxPoint( -1, -1 ), wxSize( -1, -1 ),wxNO_BORDER)
 {
 	m_Related = 0;
 	m_pParent = parent;
@@ -72,7 +72,7 @@ CActivityListBox::CActivityListBox( CActivityBox *parent,  wxWindowID id )
 	InsertColumn( 0, wxT(""), wxLIST_FORMAT_LEFT, 0 );
 	InsertColumn( 1, wxT(""), wxLIST_FORMAT_LEFT, 0 );
 }
-BEGIN_EVENT_TABLE(CActivityListBox, wxListCtrl)
+BEGIN_EVENT_TABLE(CActivityListBox, CMusikListCtrl)
 	EVT_CHAR	( CActivityListBox::OnChar )
 END_EVENT_TABLE()
 
@@ -131,7 +131,6 @@ void CActivityListBox::Update( bool selnone )
 	//---    add items directly to it.  Instead, we have the object pItems a		 ---//
 	//---  *wxArrayString, that the virtual listctrl then references via callbacks   ---//
 	//----------------------------------------------------------------------------------//
-	Freeze();
 
 	//--- update colors from prefs ---//
 	m_LightAttr		= wxListItemAttr( *wxBLACK, wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ), wxNullFont );
@@ -140,10 +139,9 @@ void CActivityListBox::Update( bool selnone )
 	m_AllReset		= wxListItemAttr( *wxBLACK, wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ), g_fntListBold );
 
 	SetItemCount( GetRowCount() );
+	RescaleColumns();
 	if ( selnone )
 		wxListCtrlSelNone( this );
-	RescaleColumns(false); // no freeze in RescaleColumns
-	Thaw();
 	wxWindow::Update(); // instantly update window content
 }
 
@@ -599,7 +597,7 @@ void CActivityBox::GetSelectedSongs( CMusikSongArray& array )
 void CActivityBox::SetPlaylist()
 {
 	GetSelectedSongs( g_Playlist );
-	g_PlaylistCtrl->Update( true, g_Prefs.nPlaylistSmartColumns );
+	g_PlaylistCtrl->Update( true );
 	g_PlaylistChanged = true;
 }
 

@@ -141,7 +141,7 @@ void SourcesDropTarget::HighlightSel( wxPoint pPos )
 //-----------------------//
 //--- CSourcesListBox ---//
 //-----------------------//
-BEGIN_EVENT_TABLE(CSourcesListBox, wxListCtrl)
+BEGIN_EVENT_TABLE(CSourcesListBox, CMusikListCtrl)
 	EVT_CONTEXT_MENU			(												CSourcesListBox::ShowMenu				)
 	EVT_MENU					(MUSIK_SOURCE_CONTEXT_CREATE_CURRENT_PLAYLIST,	CSourcesListBox::CreateCurPlaylist		)	// Sources Context -> Create -> Create from Current
 	EVT_MENU					(MUSIK_SOURCE_CONTEXT_STANDARD_PLAYLIST,		CSourcesListBox::StandardPlaylist		)	// Sources Context -> Create -> Standard Playlist
@@ -161,7 +161,7 @@ BEGIN_EVENT_TABLE(CSourcesListBox, wxListCtrl)
 END_EVENT_TABLE()
 
 CSourcesListBox::CSourcesListBox( wxPanel* parent )
-	: wxListCtrl( parent, MUSIK_SOURCES, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxLC_ALIGN_LEFT | wxLC_REPORT | wxLC_VIRTUAL | wxLC_EDIT_LABELS | wxLC_SINGLE_SEL | wxNO_BORDER & ~wxHSCROLL )
+	: CMusikListCtrl( parent, MUSIK_SOURCES, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxLC_ALIGN_LEFT |wxLC_EDIT_LABELS | wxLC_SINGLE_SEL | wxNO_BORDER)
 {
 	SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ) );
 
@@ -373,8 +373,9 @@ void CSourcesListBox::UpdateSel( size_t index )
 			g_Library.GetAllSongs( g_Playlist );
 
 		g_LibPlaylist.Clear();
-		g_MusikFrame->ShowActivityArea( true );
 		g_PlaylistCtrl->Update();
+		g_MusikFrame->ShowActivityArea( true );
+		
 	}
 
 	else 
@@ -398,8 +399,8 @@ void CSourcesListBox::UpdateSel( size_t index )
 		}
 
 		//--- update ui with new list ---//
+		g_PlaylistCtrl->Update(true);
 		g_MusikFrame->ShowActivityArea( false );
-		g_PlaylistCtrl->Update(true,false);
 	}
 
 	g_PlaylistChanged = true; 
@@ -584,12 +585,8 @@ void CSourcesListBox::Update()
 	m_Dark		= wxListItemAttr( *wxBLACK, StringToColour( g_Prefs.sSourcesStripeColour ), wxNullFont );
 	m_DarkBold	= wxListItemAttr( *wxBLACK, StringToColour( g_Prefs.sSourcesStripeColour ), g_fntListBold );
 
-	Freeze();
 	SetItemCount( g_SourcesList.GetCount() );
 	RescaleColumns();
-	Thaw();
-	// Thaw() will call refresh, dont do it twice
-	//Refresh( false );
 }
 
 
