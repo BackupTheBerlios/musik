@@ -18,6 +18,7 @@
 #define IDD_SAVESTDPLAYLIST             137
 #define IDD_FILEDROP                    138
 #define IDD_FILEDROPDLG                 138
+#define IDD_SYNC_DIRS                   140
 #define IDC_CHECK_STARTUPSCAN           1007
 #define IDC_CHECK_PL_STRIPES            1009
 #define IDC_COMBO1                      1010
@@ -59,6 +60,10 @@
 #define IDC_FIELDTYPE1                  1034
 #define IDC_FIELDVARIABLE1              1035
 #define IDC_FIELDSTRING1                1036
+#define IDC_BUTTON1                     1038
+#define IDC_BUTTON3                     1039
+#define IDC_LIST2                       1040
+#define IDC_BUTTON4                     1041
 #define ID_FILE_PREFERENCES             32771
 #define ID_FILE_SEP                     32772
 #define ID_ADD_FILES                    32774
@@ -96,14 +101,15 @@
 #define ID_UNSYNCHRONIZEDTAGS_VIEW      32818
 #define ID_UNSYNCHRONIZEDTAGS_WRITETOFILE 32819
 #define ID_UNSYNCHRONIZEDTAGS_FINALIZEFORDATABASEONLY 32820
+#define ID_FILE_SYNCHRONIZEDDIRECTORIES 32826
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        140
-#define _APS_NEXT_COMMAND_VALUE         32823
-#define _APS_NEXT_CONTROL_VALUE         1037
+#define _APS_NEXT_RESOURCE_VALUE        141
+#define _APS_NEXT_COMMAND_VALUE         32827
+#define _APS_NEXT_CONTROL_VALUE         1042
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

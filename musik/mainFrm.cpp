@@ -45,6 +45,7 @@
 #include "musikRemoveOldFunctor.h"
 #include "musikFileDialog.h"
 #include "musikTimeCtrl.h"
+#include "musikDirSync.h"
 
 #include "../musikCore/include/StdString.h"
 #include "../musikCore/include/musikLibrary.h"
@@ -183,6 +184,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_REMOVEOLD_END, OnThreadEnd )
 	ON_REGISTERED_MESSAGE( WM_PLAYER_PLAYSEL, OnPlayerPlaySel )
 	ON_REGISTERED_MESSAGE( WM_BATCHADD_VERIFY_PLAYLIST, OnVerifyPlaylist )
+	ON_COMMAND(ID_FILE_SYNCHRONIZEDDIRECTORIES, OnFileSynchronizeddirectories)
+	ON_UPDATE_COMMAND_UI(ID_FILE_SYNCHRONIZEDDIRECTORIES, OnUpdateFileSynchronizeddirectories)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -340,6 +343,7 @@ void CMainFrame::Initmusik()
 	m_RemoveOldFnct	= new CmusikRemoveOldFunctor( this );
 	m_Library		= new CmusikLibrary( ( CStdString )m_Database );
 	m_Prefs			= new CmusikPrefs( m_PrefsIni );
+	m_DirSyncDlg	= NULL;
 
 	// show all songs, if we are supposed to
 	if ( m_Prefs->LibraryShowsAllSongs() )
@@ -406,6 +410,13 @@ void CMainFrame::Cleanmusik()
 		delete m_Threads.at( i );
 	}
 	m_ProtectingThreads->release();
+
+	if ( m_DirSyncDlg )
+	{
+		m_DirSyncDlg->DestroyWindow();
+		delete m_DirSyncDlg;
+		m_DirSyncDlg = NULL;
+	}
 
 	if ( m_Library )	
 	{
@@ -1884,6 +1895,25 @@ size_t CMainFrame::GetThreadCount()
 	m_ProtectingThreads->release();
 
 	return count;
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnFileSynchronizeddirectories()
+{
+	if ( !m_DirSyncDlg )
+	{
+		m_DirSyncDlg = new CmusikDirSync( this );
+		m_DirSyncDlg->Create( IDD_SYNC_DIRS, this );
+		m_DirSyncDlg->ShowWindow( SW_SHOWNORMAL );
+	}
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnUpdateFileSynchronizeddirectories(CCmdUI *pCmdUI)
+{
+	pCmdUI->Enable( m_DirSyncDlg == NULL );
 }
 
 ///////////////////////////////////////////////////

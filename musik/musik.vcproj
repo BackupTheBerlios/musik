@@ -459,6 +459,9 @@
 				RelativePath=".\musik.h">
 			</File>
 			<File
+				RelativePath=".\musikDirSync.h">
+			</File>
+			<File
 				RelativePath=".\Resource.h">
 			</File>
 			<File
@@ -665,6 +668,9 @@
 				</File>
 			</Filter>
 		</Filter>
+		<File
+			RelativePath=".\musikDirSync.cpp">
+		</File>
 	</Files>
 	<Globals>
 		<Global

@@ -85,6 +85,7 @@ class CmusikPlayer;
 class CmusikFrameFunctor;
 class CmusikBatchAddFunctor;
 class CmusikRemoveOldFunctor;
+class CmusikDirSync;
 class ACE_Thread_Mutex;
 
 ///////////////////////////////////////////////////
@@ -238,6 +239,8 @@ protected:
 	afx_msg void OnViewCrossfader();
 	afx_msg void OnViewEqualizer();
 	afx_msg void OnUpdateViewEqualizer(CCmdUI *pCmdUI);
+	afx_msg void OnFileSynchronizeddirectories();
+	afx_msg void OnUpdateFileSynchronizeddirectories(CCmdUI *pCmdUI);
 
 	// list of all threads running
 	bool FreeThread( CmusikThread* pThread );
@@ -251,6 +254,9 @@ protected:
 	CmusikBatchAddFunctor* m_BatchAddFnct;
 	CmusikRemoveOldFunctor* m_RemoveOldFnct;
 	CmusikThread* m_Updater;
+
+	// dir sync dialog
+	CmusikDirSync* m_DirSyncDlg;
 
 	// macros
 	DECLARE_DYNAMIC(CMainFrame)
