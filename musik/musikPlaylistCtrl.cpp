@@ -151,21 +151,14 @@ CmusikPlaylistCtrl::CmusikPlaylistCtrl( CFrameWnd* mainwnd, CmusikLibrary* libra
 	InitFonts();
 	InitColors();
 
-	// get rating extent
+	// get rating extent 
 	GetRatingExtent();
 
 	// image list contains the little speaker
 	// icon that appears when a visible song
 	// is playing...
 	m_ImageList = new CImageList();
-	m_ImageList->Create( 16, 12, ILC_COLOR8 | ILC_MASK, 2, 3 );
-	CBitmap bmpPlay, bmpNPlay;
-	bmpPlay.LoadBitmap( IDB_SONG_PLAYING );
-	bmpNPlay.LoadBitmap( IDB_SONG_NOTPLAYING );
-	m_ImageList->Add( &bmpNPlay, RGB( 255, 0, 255 ) );
-	m_ImageList->Add( &bmpPlay, RGB( 255, 0, 255 ) );
-	bmpPlay.DeleteObject();
-	bmpNPlay.DeleteObject();
+	m_ImageList->Create( 0, 16, ILC_COLOR32, 0, 0 );
 }
 
 ///////////////////////////////////////////////////
@@ -401,13 +394,6 @@ void CmusikPlaylistCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 		pItem->cchTextMax = sizeof( *pStr );
 		lstrcpy( pItem->pszText, pStr );
 	}
-	if ( pItem->mask & LVIF_IMAGE )
-	{
-		if ( m_Player->IsPlaying() && m_Playlist->GetSongID( pItem->iItem ) == m_Player->GetCurrPlaying()->GetID() )
-			pItem->iImage = 1;
-		else
-			pItem->iImage = 0;
-	}
 
 	*pResult = 0;
 }
@@ -457,7 +443,11 @@ void CmusikPlaylistCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 				pDC->SelectObject( m_StarFont );
 				pDC->SetTextColor( m_Prefs->MUSIK_COLOR_LISTCTRLTEXT );
 			}
-
+			else if ( m_Player->IsPlaying() && m_Playlist->GetSongID( pLVCD->nmcd.dwItemSpec ) == m_Player->GetCurrPlaying()->GetID() )
+			{
+				pDC->SelectObject( m_BoldFont );
+				pDC->SetTextColor( m_Prefs->MUSIK_COLOR_LISTCTRLTEXT );				
+			}
 			else
 				pDC->SelectObject( m_ItemFont );
 
@@ -481,6 +471,12 @@ void CmusikPlaylistCtrl::InitFonts()
 {
 	m_ItemFont.CreateStockObject( DEFAULT_GUI_FONT );
 	m_StarFont.CreatePointFont( 100, "musik" );
+
+	LOGFONT pBoldFont;
+	m_ItemFont.GetLogFont( &pBoldFont );
+	pBoldFont.lfWeight = FW_BOLD;
+
+	m_BoldFont.CreateFontIndirect( &pBoldFont );
 }
 
 ///////////////////////////////////////////////////
