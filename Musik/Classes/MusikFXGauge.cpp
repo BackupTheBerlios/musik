@@ -78,6 +78,11 @@ void CMusikFXHandler::OnMouseMove( wxMouseEvent& event )
 
 void CMusikFXHandler::OnLeftUp( wxMouseEvent& event )
 {
+	//-----------------------------------------------------//
+	//--- sheer luck. this will only get called once	---//
+	//--- becuase the event will only get caught from	---//
+	//--- the current gauge window.						---//
+	//-----------------------------------------------------//
 	m_Parent->SetEQ();
 }
 
