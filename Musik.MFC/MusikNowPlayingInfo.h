@@ -1,10 +1,56 @@
-// %a 1 <-- attribute
-// %f 2 <-- regular font size
-// %b 2 <-- bold
-// %i 2 <-- italic
-// %m 2 <-- bold / italic
-// %c from the album <-- comment
-
+///////////////////////////////////////////////////
+//
+// Class(s): 
+//
+//   CMusikDynamicTextArray,
+//   CMusikFontBaseline,
+//   CMusikNowPlayingInfo
+//   
+//
+// Filename(s): 
+//
+//   MusikNowPlayingInfo.h,
+//   MusikNowPlayingInfo.cpp
+//
+// Information:
+//
+//   A single line of now playing text that accepts
+//   a mask for formatting, including font attributes
+//   like size, bold, and italic.
+//
+// Usage: 
+//
+//	 Use Set() to set the mask, that should be
+//   it. Follow the following guidelines:
+//
+//     %a [id]    <-- attribute, such as title, artist, album, etc
+//     %f [size]  <-- regular font
+//     %b [size]  <-- bold font
+//     %i [size]  <-- italic font
+//     %m [size]  <-- bold and italic font
+//     %c [str]   <-- comment
+//
+// Example: 
+//
+//   m_Info->Set( _T( "%b20 %a4 %c from the album %a1" ) );
+//
+//      %b20 initializes the font to 20 with a bold attribute
+//      %a4 prints the current song's title
+//      %c prints the comment "from the album" using default font
+//      %a1 prints the album name, with the previously specified font  
+//
+// Copyright and Credits:
+//
+//   Copyright      : Casey Langen, 2003
+//
+//   Casey Langen   : Lead Developer, Project Manager
+//   Dustin Carter  : Developer, pain in the ass
+//   Simon Windmill : Developer, the most helpful person thats immediately available ;)
+// 
+// License:
+//
+//   See license.txt included with this distribution
+//
 ///////////////////////////////////////////////////
 
 #pragma once
