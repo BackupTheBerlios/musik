@@ -98,7 +98,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndNowPlaying.Create( _T( "Musik Now Playing" ), this, 123 );
 	m_wndNowPlaying.SetBarStyle( m_wndNowPlaying.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC );
 	m_wndNowPlaying.EnableDocking( CBRS_ALIGN_BOTTOM );
-	//m_wndNowPlaying.ShowGripper( false );
+	m_wndNowPlaying.ShowGripper( false );
 	DockControlBar( &m_wndNowPlaying, AFX_IDW_DOCKBAR_BOTTOM );
 
 	//-------------------------------------------------//

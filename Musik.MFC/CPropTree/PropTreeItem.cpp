@@ -430,7 +430,7 @@ LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 		if (IsRootLevel() || IsSelected())
 		{
 			pDC->SelectObject(CPropTree::GetBoldFont());
-			pDC->SetTextColor(GetSysColor(COLOR_BTNHILIGHT));
+			pDC->SetTextColor(GetSysColor(COLOR_CAPTIONTEXT));
 		}
 		else
 		{
