@@ -151,7 +151,7 @@ BEGIN_EVENT_TABLE(CPlaylistCtrl, CMusikListCtrl)
 	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_FIT,											CPlaylistCtrl::OnDisplayFit			)
 	EVT_MENU					( MUSIK_PLAYLIST_CLEARPLAYERLIST,										CPlaylistCtrl::OnClearPlayerlist	)
 	EVT_CONTEXT_MENU			(																		CPlaylistCtrl::ShowMenu				)
-	EVT_CHAR					(																		CPlaylistCtrl::TranslateKeys		)
+	EVT_KEY_DOWN				(																		CPlaylistCtrl::OnKeyDown			)
 	EVT_LIST_COL_CLICK			( -1,																	CPlaylistCtrl::OnColumnClick		)
 
 	//---------------------------------------------------------//
@@ -620,7 +620,7 @@ void CPlaylistCtrl::PlaySel( wxListEvent& (event) )
 	OnPlayInstantly(event);
 }
 
-void CPlaylistCtrl::TranslateKeys( wxKeyEvent& event )
+void CPlaylistCtrl::OnKeyDown( wxKeyEvent& event )
 {	 
 	int nKeyCode = event.GetKeyCode();
 	if ( event.AltDown() == TRUE )
@@ -640,10 +640,10 @@ void CPlaylistCtrl::TranslateKeys( wxKeyEvent& event )
 	{
 		switch( nKeyCode )
 		{
-		case 1:	//--- a / A ---//
+		case 'A':	//--- a / A ---//
 			wxListCtrlSelAll( this );
 			break;
-		case 4:	//--- d / D ---//
+		case 'D':	//--- d / D ---//
 			wxListCtrlSelNone( this );
 			break;
 		case WXK_DELETE:

@@ -89,7 +89,7 @@ public:
 	void UpdateSel		( wxListEvent&		event			);
 	void ShowMenu		( wxContextMenuEvent&	event );
 	void BeginDrag		( wxListEvent&		event	);
-	void TranslateKeys	( wxKeyEvent&		pEvent			);
+	void OnKeyDown		( wxKeyEvent&		pEvent			);
 	void EndDragCol		( wxListEvent&		event			);
 	void BeginDragCol	( wxListEvent&		event			);
 	void PlaySel		( wxListEvent&		WXUNUSED(event)	);
