@@ -304,7 +304,7 @@ msgstr "&Zeige Bildchen"
 
 #: ../Classes/PlaylistCtrl.cpp:393
 msgid "&Show in Library"
-msgstr "&Zeige in der Biblithek"
+msgstr "&Zeige in der Bibliothek"
 
 #: ../Frames/MusikFrame.cpp:151
 msgid "&Stop"
@@ -491,7 +491,7 @@ msgid ""
 "Cannot find file.\n"
 " Filename:"
 msgstr ""
-"DIe Datei kann nicht gefunden werden.\n"
+"Die Datei kann nicht gefunden werden.\n"
 "Dateiname:"
 
 #: ../Frames/MusikPrefsFrame.cpp:226

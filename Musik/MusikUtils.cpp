@@ -159,12 +159,6 @@ wxString MStoStr( int timems )
 	return result;
 }
 
-wxString GetJustFilename( const wxString & filename )
-{
-	wxArrayString paths;
-	DelimitStr( filename,  wxFileName::GetPathSeparator() , paths, false );
-	return paths.Item( paths.GetCount() - 1 );	
-}
 
 void GetPlaylistDir( wxArrayString & aFiles )
 {
@@ -295,20 +289,6 @@ void wxListCtrlSelNone( wxListCtrl *pList )
 #endif
 }
 
-wxString GenTempFilename( wxString filename, int nsize )
-{
-	wxFileName temp_name( filename );
-	wxString s;
-	int num; 
-	srand( wxGetLocalTime() );
-	for ( int i = 0; i < nsize; i++ )
-	{
-		num = rand() % 99;
-		s += IntTowxString( num );
-	}
-	temp_name.SetName( s );
-	return temp_name.GetFullPath();
-}
 
 wxString ColourToString ( const wxColour& color )
 {
@@ -876,7 +856,18 @@ wxString GetForbiddenChars(wxPathFormat format)
 	return strForbiddenChars;
 }
 
+void ReplaceChars(wxString &s,const wxString &chars,wxChar replaceby)
+{
+	for(size_t j = 0; j < s.Len();j++)
+	{
+		for(size_t i = 0; i < chars.Len();i++)
+		{
+			if(s[j] == chars[i])
+				s[j] = replaceby;
+		}
+	}			
 
+}
 // MusikLogWindow
 // -----------
 
@@ -1010,3 +1001,7 @@ void wxMultiLineTextEntryDialog::SetTextValidator( wxTextValidator& validator )
 
 #endif
 // wxUSE_VALIDATORS
+
+BEGIN_EVENT_TABLE(wxStaticText_NoFlicker,wxStaticText)
+EVT_ERASE_BACKGROUND(wxStaticText_NoFlicker::OnEraseBackGround)
+END_EVENT_TABLE()

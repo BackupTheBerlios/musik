@@ -230,6 +230,16 @@ static const bool DefaultPlaylistColumnDynamic[NPLAYLISTCOLUMNS] = {
 		false,
 		false
 };
+
+#ifdef wxUSE_HOTKEY
+static const wxString DefaultPlayerHotkeys[MUSIK_HOTKEYID_LAST] =
+{
+	wxT("CTRL ALT + S"),
+		wxT("CTRL ALT + P"),
+		wxT("ALT SHIFT + P"),
+		wxT("ALT SHIFT + N")
+};
+#endif
 static const EMUSIK_ACTIVITY_TYPE DefaultActBoxType[ActivityBoxesMaxCount] = {MUSIK_LBTYPE_ARTISTS,MUSIK_LBTYPE_ALBUMS,MUSIK_LBTYPE_NULL,MUSIK_LBTYPE_NULL};
 #ifdef _MSC_VER
 #pragma warning(disable : 4355)	
@@ -334,6 +344,10 @@ public:
 		,bPlaylistColumnDynamic(this,wxT( "PlaylistColumn%dDynamic"	),DefaultPlaylistColumnDynamic)
 
 		,nActBoxType(this,	wxT( "ActivityBox%d" )   ,DefaultActBoxType)
+#ifdef wxUSE_HOTKEY
+		,bEnablePlayerHotkeys(this,	wxT("EnablePlayerHotkeys"),false)
+		,sPlayerHotkeys(this,wxT("PlayerHotkey%d"),DefaultPlayerHotkeys)
+#endif
 	{
 		LoadPrefs();
 	}
@@ -444,6 +458,10 @@ public:
 
 	CConfigSettingArray<int,ActivityBoxesMaxCount,1,EMUSIK_ACTIVITY_TYPE> nActBoxType;
 
+#ifdef wxUSE_HOTKEY
+	CConfigSettingBool bEnablePlayerHotkeys;			
+	CConfigSettingArray<wxString,MUSIK_HOTKEYID_LAST> sPlayerHotkeys;
+#endif
 	wxString sDataPath;
 
 

@@ -102,7 +102,8 @@ void* MusikActivityRenameThread::Entry()
 			//--- rename file ---//
 			//-------------------//
 			if ( wxGetApp().Prefs.bActBoxRename == 1 )
-				wxGetApp().Library.RenameFile( m_Songs.Item( i ) );
+				if(false == wxGetApp().Library.RenameFile( m_Songs.Item( i ) ))
+					::wxLogWarning(_("Renaming of file %s failed."),(const wxChar *)m_Songs.Item( i ).MetaData.Filename.GetFullPath());
 
 			//----------------------------------//
 			//--- if not writing, flag dirty ---//

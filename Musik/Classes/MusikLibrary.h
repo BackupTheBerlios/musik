@@ -70,7 +70,7 @@ public:
 	//--------------------//
 	bool RenameFile			( CMusikSong & song );
 	bool RetagFile			( const CMusikTagger & tagger, CMusikSong* song );
-	bool ReplaceMask		( wxString *sSrc, wxString sMask, wxString sTarget, bool bReplaceAll = true  );
+	bool ReplaceMask		( wxString *sTarget,const  wxString & sMask, const wxString &sReplaceBy,const  wxString &sDefault = wxT("-Unknown-"),bool bReplaceAll = true  );
 	int  ClearDirtyTags		( );
 	bool WriteTag			(  CMusikSong & song, bool ClearAll, bool bUpdateDB = true );
 	

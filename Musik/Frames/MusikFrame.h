@@ -43,6 +43,8 @@ public:
     void OnMenuStop(wxCommandEvent&);
     void OnMenuExit(wxCommandEvent&);
     void OnMenuSetNewIcon(wxCommandEvent&);
+	void OnUpdateUIRateSel ( wxUpdateUIEvent &event);
+	void OnMenuRateSel( wxCommandEvent& event );
 
 DECLARE_EVENT_TABLE()
 

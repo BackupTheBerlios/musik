@@ -19,6 +19,7 @@
 #ifndef WX_PRECOMP
 	#include "wx/wx.h"
 #endif 
+#include "../MusikUtils.h"
 class IPlaylistInfo;
 
 class CPlaylistInfoCtrl : public wxPanel
@@ -26,14 +27,14 @@ class CPlaylistInfoCtrl : public wxPanel
 public:
 	CPlaylistInfoCtrl( wxWindow *pParent ,IPlaylistInfo *pIPlaylistInfo);
 
-	wxStaticText* stTotal;		
-	wxStaticText* stTotalVal;
-	wxStaticText* stPlaylist;		
-	wxStaticText* stPlaylistVal;
-	wxStaticText* stRuntime;	
-	wxStaticText* stRuntimeVal;	
-	wxStaticText* stFilesize;
-	wxStaticText* stFilesizeVal;
+	wxStaticText_NoFlicker* stTotal;		
+	wxStaticText_NoFlicker* stTotalVal;
+	wxStaticText_NoFlicker* stPlaylist;		
+	wxStaticText_NoFlicker* stPlaylistVal;
+	wxStaticText_NoFlicker* stRuntime;	
+	wxStaticText_NoFlicker* stRuntimeVal;	
+	wxStaticText_NoFlicker* stFilesize;
+	wxStaticText_NoFlicker* stFilesizeVal;
 
 	wxBoxSizer *pSizer;
 	wxBoxSizer *pVert;

@@ -60,7 +60,7 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//------------------------------//
 	//--- Selection Tree Control ---//
 	//------------------------------//
-	tcPreferencesTree	= new wxTreeCtrl( this, MUSIK_PREFERENCES_TREE, wxDefaultPosition, wxSize(140,-1), wxTR_HAS_BUTTONS | wxSIMPLE_BORDER );
+	tcPreferencesTree	= new wxTreeCtrl( this, MUSIK_PREFERENCES_TREE, wxDefaultPosition, wxSize(-1,-1), wxTR_HAS_BUTTONS | wxSIMPLE_BORDER );
 	//--- root nodes ---//
 	nRootID			=	tcPreferencesTree->AddRoot		( _( "Preferences" )		);
 	nOptionsRootID	=	tcPreferencesTree->AppendItem	( nRootID, _( "Options" )	);
@@ -367,13 +367,13 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	wxStaticText *stAutoDjDoNotPlaySongPlayedTheLastNHours	= new wxStaticText( this, -1, _("Number of hours a song must not have been played to be chosen:"));
 	wxStaticText *stAutoDJChooseSongsToPlayInAdvance		= new wxStaticText( this, -1, _("Number of songs to choose in advance:"));
 
-	tcAutoDjFilter								= new wxTextCtrl( this, -1);
+	tcAutoDjFilter								= new wxTextCtrl( this, -1,wxEmptyString,wxDefaultPosition,wxSize(-1,80),wxTE_MULTILINE);
 	tcAutoDjDoNotPlaySongPlayedTheLastNHours	= new wxTextCtrl( this, -1);
 	tcAutoDJChooseSongsToPlayInAdvance			= new wxTextCtrl( this, -1);
 
-	wxBoxSizer *hsAutoDjFilter = new wxBoxSizer( wxHORIZONTAL );
+	wxBoxSizer *hsAutoDjFilter = new wxBoxSizer( wxVERTICAL );
 	hsAutoDjFilter->Add( stAutoDjFilter, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 2 );
-	hsAutoDjFilter->Add( tcAutoDjFilter, 1, 0, 0 );
+	hsAutoDjFilter->Add( tcAutoDjFilter, 1, wxEXPAND, 0 );
 	wxBoxSizer *hsAutoDjDoNotPlaySongPlayedTheLastNHours = new wxBoxSizer( wxHORIZONTAL );
 	hsAutoDjDoNotPlaySongPlayedTheLastNHours->Add( stAutoDjDoNotPlaySongPlayedTheLastNHours, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 2 );
 	hsAutoDjDoNotPlaySongPlayedTheLastNHours->Add( tcAutoDjDoNotPlaySongPlayedTheLastNHours, 1, 0, 0 );
@@ -531,18 +531,18 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//--- Hide / Show Sizer ---//
 	//-------------------------//
 	hsSplitter = new wxBoxSizer( wxHORIZONTAL );
-	hsSplitter->Add( tcPreferencesTree,		0, wxEXPAND | wxRIGHT, 8 );
-	hsSplitter->Add( vsOptions_Selections,	1 );
-	hsSplitter->Add( vsOptions_Interface,	1 );
-	hsSplitter->Add( vsOptions_Playlist,	1 );
-	hsSplitter->Add( vsOptions_Tunage,		1 );
-	hsSplitter->Add( vsOptions_AutoDj,		1 );
-	hsSplitter->Add( vsSound_Crossfader,	1 );
-	hsSplitter->Add( vsSound_Driver,		1 );
-	hsSplitter->Add( vsTagging_General,		1 );
-	hsSplitter->Add( vsTagging_Auto,		1 );
-	hsSplitter->Add( vsStreaming_Buffer,	1 );
-	hsSplitter->Add( vsStreaming_ProxyServer,	1 );
+	hsSplitter->Add( tcPreferencesTree,		1, wxEXPAND | wxRIGHT, 8 );
+	hsSplitter->Add( vsOptions_Selections,	3 );
+	hsSplitter->Add( vsOptions_Interface,	3 );
+	hsSplitter->Add( vsOptions_Playlist,	3 );
+	hsSplitter->Add( vsOptions_Tunage,		3 );
+	hsSplitter->Add( vsOptions_AutoDj,		3 );
+	hsSplitter->Add( vsSound_Crossfader,	3 );
+	hsSplitter->Add( vsSound_Driver,		3 );
+	hsSplitter->Add( vsTagging_General,		3 );
+	hsSplitter->Add( vsTagging_Auto,		3 );
+	hsSplitter->Add( vsStreaming_Buffer,	3 );
+	hsSplitter->Add( vsStreaming_ProxyServer,	3 );
 	
 	//-----------------//
 	//--- Top Sizer ---//

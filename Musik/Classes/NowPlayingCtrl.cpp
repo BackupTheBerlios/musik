@@ -36,6 +36,10 @@
 #include "../images/playback/volume.xpm"
 #include "../images/playback/volume_down.xpm"
 
+
+
+
+
 BEGIN_EVENT_TABLE(CNowPlayingCtrl, wxPanel)
 	EVT_BUTTON	(MUSIK_NOWPLAYINGCTRL_STOP,				CNowPlayingCtrl::PlayerStop				)	// stop button pressed
 	EVT_BUTTON	(MUSIK_NOWPLAYINGCTRL_PLAYPAUSE,		CNowPlayingCtrl::PlayerPlayPause		)	// play/pause/resume perssed
@@ -46,6 +50,13 @@ BEGIN_EVENT_TABLE(CNowPlayingCtrl, wxPanel)
 	EVT_CHOICE	(MUSIK_NOWPLAYINGCTRL_PLAYMODE,			CNowPlayingCtrl::OnPlayMode) 
 	EVT_CHECKBOX(MUSIK_CHK_CROSSFADE,					CNowPlayingCtrl::OnCheckCrossfade)
 	EVT_LEFT_DOWN(CNowPlayingCtrl::OnClickTimeDisplay)
+#ifdef wxUSE_HOTKEY
+	EVT_HOTKEY(MUSIK_HOTKEYID_STOP, CNowPlayingCtrl::PlayerStop)
+	EVT_HOTKEY(MUSIK_HOTKEYID_PLAYPAUSE, CNowPlayingCtrl::PlayerPlayPause)
+	EVT_HOTKEY(MUSIK_HOTKEYID_PREV, CNowPlayingCtrl::PlayerPrev)
+	EVT_HOTKEY(MUSIK_HOTKEYID_NEXT, CNowPlayingCtrl::PlayerNext)
+
+#endif
 END_EVENT_TABLE()
 
 CNowPlayingCtrl::CNowPlayingCtrl( wxWindow *parent )
@@ -60,9 +71,9 @@ CNowPlayingCtrl::CNowPlayingCtrl( wxWindow *parent )
 	//--- title / artist / time ---//
 	//-----------------------------//
 	//--- now playing static text objects ---//
-	stSong			= new wxStaticText	( this, -1, wxT(""),	wxDefaultPosition, wxDefaultSize, 0 );
-	stArtist		= new wxStaticText	( this, -1, wxT(""),	wxDefaultPosition, wxDefaultSize, 0 );
-	stCurtime		= new wxStaticText	( this,MUSIK_NOWPLAYINGCTRL_TIMEDISPLAY, wxT(""),	wxDefaultPosition, wxDefaultSize, 0 );	
+	stSong			= new wxStaticText_NoFlicker	( this, -1, wxT(""),	wxDefaultPosition, wxDefaultSize, 0 );
+	stArtist		= new wxStaticText_NoFlicker	( this, -1, wxT(""),	wxDefaultPosition, wxDefaultSize, 0 );
+	stCurtime		= new wxStaticText_NoFlicker	( this,MUSIK_NOWPLAYINGCTRL_TIMEDISPLAY, wxT(""),	wxDefaultPosition, wxDefaultSize, 0 );	
 
 	//--- fonts ---//
 	stSong->SetFont		( g_fntSong );
@@ -182,10 +193,100 @@ CNowPlayingCtrl::CNowPlayingCtrl( wxWindow *parent )
 
 	ResetInfo();
 	m_pTunage = new CTunage;
+	ActivateHotkeys();
 }
+void CNowPlayingCtrl::ActivateHotkeys()
+{
+#ifdef wxUSE_HOTKEY
+	if( wxGetApp().Prefs.bEnablePlayerHotkeys == false)
+		return;
+
+	DeactivateHotkeys();
+	for(int i = MUSIK_HOTKEYID_FIRST; i <= MUSIK_HOTKEYID_LAST;i++)
+	{
+		int modifier=0;
+		int keycode = 0;
+		bool bRes = false;
+		wxString sHotKey = wxGetApp().Prefs.sPlayerHotkeys[i-MUSIK_HOTKEYID_FIRST];
+		wxArrayString ModnKey;
+		DelimitStr(sHotKey,wxT("+"),ModnKey);
+		if(ModnKey.GetCount() == 2)
+		{
+			ModnKey[0].Trim();
+			ModnKey[0].Trim(FALSE);
+
+			wxArrayString Modn;
+			DelimitStr(ModnKey[0],wxT(" "),Modn);
+			for(int i = 0; i< Modn.GetCount();i++)
+			{
+				bRes = true;
+				if(Modn[i] == wxT("ALT"))
+					modifier |= wxMOD_ALT;
+				else if(Modn[i] == wxT("SHIFT"))
+					modifier |= wxMOD_SHIFT;
+				else if(Modn[i] == wxT("CTRL"))
+					modifier |= wxMOD_CONTROL;
+				else if(Modn[i] == wxT("WIN"))
+					modifier |= wxMOD_WIN;
+				else 
+				{
+					bRes = false;
+					break;
+				}
+			}
+			if(bRes)
+			{
+				
+				ModnKey[1].Trim();
+				ModnKey[1].Trim(FALSE);
+				ModnKey[1].MakeUpper();
+				if(ModnKey[1].Len() == 1)
+				{
+					keycode= (int)ModnKey[1].GetChar(0);
+				}
+				else if(ModnKey[1].Len() > 1)
+				{
+					if(ModnKey[1] == wxT("SPACE"))
+						keycode = WXK_SPACE;
+					else if(ModnKey[1].StartsWith(wxT("F")))
+					{
+						long fkey = 0;
+						if(ModnKey[1].Right(ModnKey[1].Len()-1).ToLong(&fkey))
+						{
+							keycode = fkey + WXK_F1 - 1;
+						}
+					}
+					else
+						bRes = false;
+				}
+				else
+					bRes = false;
+			}
+		}
+        
+		if(bRes)
+			bRes = RegisterHotKey(i,modifier,keycode);
+		if(!bRes)
+			::wxLogWarning(_("Hotkey %s cannot be registered."),(const wxChar*)sHotKey);
+	}
+
+
+#endif
+}
+void CNowPlayingCtrl::DeactivateHotkeys()
+{
+#ifdef wxUSE_HOTKEY
+
+	for(int i = MUSIK_HOTKEYID_FIRST; i <= MUSIK_HOTKEYID_LAST;i++)
+		UnregisterHotKey(i);
+#endif
+}
+
 
 CNowPlayingCtrl::~CNowPlayingCtrl()
 {
+
+	DeactivateHotkeys();
 	//--- stop timer ---//
 	KillTimer();
 

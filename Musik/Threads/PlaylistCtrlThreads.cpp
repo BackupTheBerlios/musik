@@ -62,8 +62,9 @@ void* MusikPlaylistRenameThread::Entry()
 		if ( TestDestroy() )
 			break;
 
-		wxGetApp().Library.RenameFile( m_Songs.Item( i ) );
-		Yield();
+		if(false == wxGetApp().Library.RenameFile( m_Songs.Item( i ) ))
+			::wxLogWarning(_("Renaming of file %s failed."),(const wxChar *)m_Songs.Item( i ).MetaData.Filename.GetFullPath());
+
 	}
 	return NULL;
 }

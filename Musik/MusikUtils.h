@@ -301,14 +301,12 @@ wxString		MoveArtistPrefixToEnd( const wxString & str );
 wxString		SanitizedString		( const wxString & str );
 void			wxListCtrlSelAll	( wxListCtrl* listctrl );
 void			wxListCtrlSelNone	( wxListCtrl* listctrl );
-wxString		GenTempFilename		( wxString filename, int nsize );
 wxString		ColourToString		( const wxColour& color );
 wxColour		StringToColour		( const wxString& string );
 
 
 void			SortArrayByLength	( wxArrayString* pArray );
 
-wxString		GetJustFilename		( const wxString & filename );
 
 wxString		GetFramePlacement	( wxFrame* frame );
 bool			SetFramePlacement	( wxFrame* frame, wxString place );
@@ -412,6 +410,7 @@ double CharStringToDouble(const char *z);
 void DoubleToCharString(double r, char *z);
 wxString GetForbiddenChars(wxPathFormat format = wxPATH_NATIVE);
 
+void  ReplaceChars(wxString &s,const wxString &chars,wxChar replaceby = wxT('_'));
 
 wxLongLong GetTotalFilesize(const CMusikSongArray &songs);
 
@@ -507,5 +506,21 @@ private:
 	DECLARE_DYNAMIC_CLASS(wxMultiLineTextEntryDialog)
 	DECLARE_NO_COPY_CLASS(wxMultiLineTextEntryDialog)
 };
+
+class wxStaticText_NoFlicker : public wxStaticText
+{
+public:
+	wxStaticText_NoFlicker::wxStaticText_NoFlicker(wxWindow* parent,
+		wxWindowID id,
+		const wxString& label,
+		const wxPoint& pos,
+		const wxSize& size = wxDefaultSize,
+		long style = 0,
+		const wxString& name= wxStaticTextNameStr ):
+			wxStaticText(parent,id,label,pos,size,style,name){};
+	void wxStaticText_NoFlicker::OnEraseBackGround(wxEraseEvent& ) {};
+	DECLARE_EVENT_TABLE()
+};
+
 
 #endif

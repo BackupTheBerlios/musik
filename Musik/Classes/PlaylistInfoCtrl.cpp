@@ -22,7 +22,7 @@
 #include "../MusikUtils.h"
 
 CPlaylistInfoCtrl::CPlaylistInfoCtrl( wxWindow *parent ,IPlaylistInfo *pIPlaylistInfo )
-	: wxPanel( parent, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxCLIP_CHILDREN|wxTAB_TRAVERSAL )
+	: wxPanel( parent, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxCLIP_CHILDREN|wxTAB_TRAVERSAL |wxTRANSPARENT_WINDOW)
 	,m_pIPlaylistInfo( pIPlaylistInfo )
 {
 
@@ -30,14 +30,14 @@ CPlaylistInfoCtrl::CPlaylistInfoCtrl( wxWindow *parent ,IPlaylistInfo *pIPlaylis
 	SetBackgroundColour( WXSYSTEMCOLOUR(wxT("LIGHT STEEL BLUE")));
 
  	//--- static text objects ---/
-	stTotal			= new wxStaticText( this, -1, _( "Total Songs: " ),			wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
-	stTotalVal		= new wxStaticText( this, -1, wxT( "0" ),					wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
-	stPlaylist		= new wxStaticText( this, -1, _( "Playlist Songs: " ),		wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
-	stPlaylistVal	= new wxStaticText( this, -1, wxT( "0" ),					wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
-	stRuntime		= new wxStaticText( this, -1, _( "Playlist Runtime: " ),	wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
-	stRuntimeVal	= new wxStaticText( this, -1, wxT( "0:00" ),				wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
-	stFilesize		= new wxStaticText( this, -1, _( "Playlist size: " ),		wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
-	stFilesizeVal	= new wxStaticText( this, -1, wxT( "Empty" ),				wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
+	stTotal			= new wxStaticText_NoFlicker( this, -1, _( "Total Songs: " ),			wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
+	stTotalVal		= new wxStaticText_NoFlicker( this, -1, wxT( "0" ),					wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
+	stPlaylist		= new wxStaticText_NoFlicker( this, -1, _( "Playlist Songs: " ),		wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
+	stPlaylistVal	= new wxStaticText_NoFlicker( this, -1, wxT( "0" ),					wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
+	stRuntime		= new wxStaticText_NoFlicker( this, -1, _( "Playlist Runtime: " ),	wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
+	stRuntimeVal	= new wxStaticText_NoFlicker( this, -1, wxT( "0:00" ),				wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
+	stFilesize		= new wxStaticText_NoFlicker( this, -1, _( "Playlist size: " ),		wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
+	stFilesizeVal	= new wxStaticText_NoFlicker( this, -1, wxT( "Empty" ),				wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
 	
 
 	//--- font stuff ---//
@@ -52,13 +52,13 @@ CPlaylistInfoCtrl::CPlaylistInfoCtrl( wxWindow *parent ,IPlaylistInfo *pIPlaylis
 
 	//--- playlist info sizer ---//
 	pSizer = new wxBoxSizer	( wxHORIZONTAL	);
-	pSizer->Add( stTotal,		0, wxLEFT | wxALIGN_CENTER | wxADJUST_MINSIZE  , 0 );
+	pSizer->Add( stTotal,		0, wxLEFT | wxALIGN_CENTER   , 0 );
 	pSizer->Add( stTotalVal,	0, wxLEFT | wxALIGN_CENTER | wxADJUST_MINSIZE  , 2 );
-	pSizer->Add( stPlaylist,	0, wxLEFT | wxALIGN_CENTER | wxADJUST_MINSIZE  , 4 );
+	pSizer->Add( stPlaylist,	0, wxLEFT | wxALIGN_CENTER   , 4 );
 	pSizer->Add( stPlaylistVal,	0, wxLEFT | wxALIGN_CENTER | wxADJUST_MINSIZE  , 2 );
-	pSizer->Add( stRuntime,		0, wxLEFT | wxALIGN_CENTER | wxADJUST_MINSIZE  , 4 );
+	pSizer->Add( stRuntime,		0, wxLEFT | wxALIGN_CENTER   , 4 );
 	pSizer->Add( stRuntimeVal,	0, wxLEFT | wxALIGN_CENTER | wxADJUST_MINSIZE  , 2 );   
-	pSizer->Add( stFilesize,	0, wxLEFT | wxALIGN_CENTER | wxADJUST_MINSIZE  , 4 );
+	pSizer->Add( stFilesize,	0, wxLEFT | wxALIGN_CENTER   , 4 );
 	pSizer->Add( stFilesizeVal,	0, wxLEFT | wxALIGN_CENTER | wxADJUST_MINSIZE  , 2 );
 
 	//--- top sizer, vertical ---//

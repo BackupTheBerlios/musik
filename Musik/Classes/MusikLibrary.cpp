@@ -546,13 +546,20 @@ bool CMusikLibrary::WriteTag(  CMusikSong & song, bool ClearAll , bool bUpdateDB
 {
 
 	bool bRet = true;
+	if(false == wxFileExists(song.MetaData.Filename.GetFullPath()))
+	{
+		::wxLogWarning(_("Writing tags to file %s failed,because the file does not exist.\nPlease purge the database."),(const wxChar *)song.MetaData.Filename.GetFullPath());
+		return false;
+	}
+	else
+	{
 	if ( song.MetaData.eFormat == MUSIK_FORMAT_MP3 )
 		bRet = WriteMP3Tag( song.MetaData, ClearAll );
 	else if ( song.MetaData.eFormat == MUSIK_FORMAT_OGG )
 		bRet = WriteOGGTag( song.MetaData, ClearAll );
 	else
 		return false;
-
+	}
 	if( bRet && bUpdateDB )
 	{
 		//-----------------------------//
@@ -1263,18 +1270,16 @@ void CMusikLibrary::RemoveAll()
 	m_nCachedSongCount = 0;
 }
 
-bool CMusikLibrary::ReplaceMask( wxString *sSrc, wxString sMask, wxString sTarget, bool bReplaceAll )
+bool CMusikLibrary::ReplaceMask( wxString *sTarget,const  wxString & sMask, const wxString &sReplaceBy,const  wxString &sDefault,bool bReplaceAll )
 {
-	wxString sCheck( *sSrc ); 
+	wxString sCheck( sReplaceBy ); 
 	sCheck.Replace( wxT( " " ), wxT( "" ), true );
 
-	if ( !sCheck.IsEmpty() && sCheck != wxT( "<unknown>" ) )
-	{
-		sSrc->Replace( sMask, sTarget, bReplaceAll );
-		return true;
-	}
-
-	return false;
+	if ( sCheck.IsEmpty() )
+		sTarget->Replace( sMask, sDefault, bReplaceAll );
+	else
+		sTarget->Replace( sMask, sReplaceBy, bReplaceAll );
+	return true;
 
 }
 
@@ -1319,33 +1324,42 @@ bool CMusikLibrary::RenameFile( CMusikSong & song )
 	//--- format the output filename (without) ---//
 	//--- path. e.g.. 01 - STP - Meat Plow.mp3 ---//
 	//--------------------------------------------//
-	wxString sTrackNum;
-	sTrackNum.sprintf( wxT("%.2d"), song.MetaData.nTracknum );
 
 	//----------------------------------------------//
 	//--- replace masked values					 ---//
 	//----------------------------------------------//
-	if ( !ReplaceMask( &sFile, wxT( "%1" ),ConvFromUTF8( song.MetaData.Title )) )
+	wxString sForbiddenChars = GetForbiddenChars();
+	wxString sTitle = ConvFromUTF8( song.MetaData.Title );
+	//--- on some platforms, we can't have certain characters, so blank them out ---//
+	ReplaceChars(sTitle,sForbiddenChars);
+	if ( !ReplaceMask( &sFile, wxT( "%1" ),sTitle) )
 		return false;
-	if ( !ReplaceMask( &sFile, wxT( "%2" ),ConvFromUTF8( song.MetaData.Artist )) )
+	wxString sArtist = ConvFromUTF8( song.MetaData.Artist );
+	ReplaceChars(sArtist,sForbiddenChars);
+	if ( !ReplaceMask( &sFile, wxT( "%2" ),sArtist) )
 		return false;
-	if ( !ReplaceMask( &sFile, wxT( "%3" ),ConvFromUTF8( song.MetaData.Album )) )
+	wxString sAlbum = ConvFromUTF8( song.MetaData.Album );
+	ReplaceChars(sAlbum,sForbiddenChars);
+	if ( !ReplaceMask( &sFile, wxT( "%3" ),sAlbum) )
 		return false;
-	if ( !ReplaceMask( &sFile, wxT( "%4" ),ConvFromUTF8( song.MetaData.Genre )) )
+	wxString sGenre = ConvFromUTF8( song.MetaData.Genre );
+	ReplaceChars(sGenre,sForbiddenChars);
+	if ( !ReplaceMask( &sFile, wxT( "%4" ),sGenre) )
 		return false;
-	if ( !ReplaceMask( &sFile, wxT( "%5" ), ConvFromUTF8(song.MetaData.Year ) ) )
+	wxString sYear = ConvFromUTF8( song.MetaData.Year );
+	ReplaceChars(sYear,sForbiddenChars);
+	if ( !ReplaceMask( &sFile, wxT( "%5" ),sYear) )
 		return false;
+	wxString sTrackNum=wxString::Format(wxT("%.2d"), song.MetaData.nTracknum );
 	if ( !ReplaceMask( &sFile, wxT( "%6" ), sTrackNum ) )
 		return false;
 
-	//--- on some platfroms, we can't have certain characters, so blank them out ---//
-	wxString sForbiddenChars = GetForbiddenChars();
-	for(size_t i = 0; i < sForbiddenChars.Len();i++)
-        	sFile.Replace( sForbiddenChars.Mid(i,1), wxT(""), true );
-
 	//--- final name ---//
-	wxFileName newfilename(sRootPath,sFile, song.MetaData.Filename.GetExt());
-
+	wxFileName newfilename;
+	newfilename.AssignDir(sRootPath);
+	newfilename.SetName(sFile);
+	newfilename.SetExt(song.MetaData.Filename.GetExt());
+	newfilename.Normalize();
 	//--- filename already the same? return ---//
 	if ( song.MetaData.Filename == newfilename )
 	{
@@ -1357,7 +1371,7 @@ bool CMusikLibrary::RenameFile( CMusikSong & song )
 	//--- any sort of filename modification	---//
 	//--- that is needed					---//
 	//-----------------------------------------//
-	if(!wxFileName::Mkdir(sRootPath,0777,wxPATH_MKDIR_FULL))
+	if(!wxFileName::Mkdir(newfilename.GetPath(),0777,wxPATH_MKDIR_FULL))
 		return false;
 
 

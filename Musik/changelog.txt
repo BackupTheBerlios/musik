@@ -1,3 +1,13 @@
+0.3.1.2 to 0.3.1.3
+
++ (Windows only)Added possibilty for using standard keys as hotkeys for play control. For now the settings can only be made by editing the .ini file.
++ Reduced flicker of Playling display.
++ Multiline edit for the autodj filter in preferences 
+- fixed bug: if prev song is selected in AutoDj mode, the player has skipped to the next song instead the previous
++ You can use / or \ in the rename mask now, so you can restructure your directories with the renaming feature.
+- fixed bug: Renaming does actually work again.
+- fixed bug: If a file had been renamed outside of wxMusik and then tagged inside of wxMusik, wxMusik created a small file with the old name.
+
 0.3.1.1 to 0.3.1.2
 - fixed bug: now playing list was not properly refreshed , when view was changed back to now playing.
 - fixed bug: rename mask setting change was not used or saved.

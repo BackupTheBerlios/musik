@@ -69,6 +69,9 @@ void *MusikTagApplyThread::Entry()
 				if ( wxGetApp().Prefs.bTagDlgRename == 1 )
 				{
 					bRenameOK = wxGetApp().Library.RenameFile( m_Songs.Item( i ));
+					if(false == bRenameOK)
+						::wxLogWarning(_("Renaming of file %s failed."),(const wxChar *)m_Songs.Item( i ).MetaData.Filename.GetFullPath());
+
 					m_Songs.Item( i ).Check1 = 0;
 				}
 

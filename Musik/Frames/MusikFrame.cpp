@@ -79,6 +79,8 @@ BEGIN_EVENT_TABLE(MusikTaskBarIcon, wxTaskBarIcon)
     EVT_MENU(PU_PREV,	MusikTaskBarIcon::OnMenuPrev)
     EVT_MENU(PU_NEXT,	MusikTaskBarIcon::OnMenuNext)
     EVT_MENU(PU_STOP,	MusikTaskBarIcon::OnMenuStop)
+	EVT_MENU_RANGE				( MUSIK_PLAYLIST_CONTEXT_RATING, MUSIK_PLAYLIST_CONTEXT_RATING + (MUSIK_MAX_RATING - MUSIK_MIN_RATING) + 1,			MusikTaskBarIcon::OnMenuRateSel			) 	
+	EVT_UPDATE_UI_RANGE			( MUSIK_PLAYLIST_CONTEXT_RATING, MUSIK_PLAYLIST_CONTEXT_RATING + (MUSIK_MAX_RATING - MUSIK_MIN_RATING) + 1,			MusikTaskBarIcon::OnUpdateUIRateSel	)
 
     EVT_MENU(PU_EXIT,		MusikTaskBarIcon::OnMenuExit)
     EVT_TASKBAR_RIGHT_UP     (MusikTaskBarIcon::OnRButtonUp)
@@ -116,6 +118,24 @@ void MusikTaskBarIcon::OnMenuStop(wxCommandEvent& )
 	wxGetApp().Player.Stop();
 }
 
+void MusikTaskBarIcon::OnMenuRateSel( wxCommandEvent& event )
+{
+	int songid = wxGetApp().Player.GetCurrentSongid();
+	wxGetApp().Library.SetRating(songid,(event.GetId() - MUSIK_PLAYLIST_CONTEXT_RATING) + MUSIK_MIN_RATING );
+}
+void MusikTaskBarIcon::OnUpdateUIRateSel ( wxUpdateUIEvent &event)
+{
+	int songid = wxGetApp().Player.GetCurrentSongid();
+	CMusikSong song;
+	if(wxGetApp().Library.GetSongFromSongid(songid,&song ))
+	{
+		int nRating = song.Rating;
+		wxASSERT(nRating >= MUSIK_MIN_RATING && nRating <= MUSIK_MAX_RATING);
+		event.Check( event.GetId() == (MUSIK_PLAYLIST_CONTEXT_RATING + (nRating  - MUSIK_MIN_RATING)));
+	}
+	else
+		event.Enable(false);
+}
 void MusikTaskBarIcon::OnMenuExit(wxCommandEvent& )
 {
 
@@ -149,8 +169,16 @@ void MusikTaskBarIcon::OnRButtonUp(wxEvent&)
 	menu.Append(PU_NEXT, _("&Next"));
 	if ( wxGetApp().Player.IsPlaying() )
 		menu.Append(PU_STOP, _("&Stop"));
-	menu.AppendSeparator();
 
+	//--- rating menu ---//
+	wxMenu *rating_menu = new wxMenu;
+	for(int i = MUSIK_MIN_RATING; i <= MUSIK_MAX_RATING ;i++)
+	{
+		rating_menu->Append(  MUSIK_PLAYLIST_CONTEXT_RATING  + (i - MUSIK_MIN_RATING), (i == 0) ? _( "Unrated" ) : IntToString(i), wxT( "" ), wxITEM_CHECK );
+	}
+	menu.Append( MUSIK_PLAYLIST_CONTEXT_RATENODE,_( "&Rating" ),	rating_menu );
+
+	menu.AppendSeparator();
     menu.Append(PU_EXIT,    _("E&xit"));
 
     PopupMenu(&menu);

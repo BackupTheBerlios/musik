@@ -15,13 +15,22 @@
 #include "wx/wxprec.h"
 #include "MusikListCtrl.h"
 
+#ifdef __WXMSW__
+#include <commctrl.h>
+#endif
+
 CMusikListCtrl::CMusikListCtrl( wxWindow *parent, const wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
 	:	wxListCtrl		( parent, id, pos, size, wxLC_REPORT | wxLC_VIRTUAL | wxCLIP_CHILDREN | style)
 #ifdef __WXMSW__
 	,m_freezeCount(0)
 #endif
 {
-
+#ifdef __WXMSW__
+#ifdef LVS_EX_LABELTIP
+	HWND hwnd = (HWND)GetHandle();
+	ListView_SetExtendedListViewStyleEx(hwnd,LVS_EX_LABELTIP,LVS_EX_LABELTIP);
+#endif
+#endif
 }
 
 
