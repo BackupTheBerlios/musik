@@ -21,7 +21,6 @@
 //  Modified heavily by Casey Langen for musik MFC port...
 //    - Rather than linking to a dll or external lib, it compiles in.
 //    - PropTree and PropTreeList combined into one file
-//    - Mouse hover tracking
 //    - Drawing enhancements
 //    - Various musik specific functions
 //
@@ -108,15 +107,6 @@ typedef struct _NMPROPTREE
 
 ///////////////////////////////////////////////////
 
-class CmusikTrack
-{
-public:
-	int m_Top;
-	int m_Bottom;
-};
-
-///////////////////////////////////////////////////
-
 class CmusikPropTree : public CWnd
 {
 	// so they can access the musik stuff
@@ -141,11 +131,9 @@ public:
 	// item gets
 	CmusikPropTreeItem* GetRootItem();
 	CmusikPropTreeItem* GetFocusedItem();
-	CmusikPropTreeItem* GetHoveredItem();
 
 	// item sets
 	void SetFocusedItem(CmusikPropTreeItem* pItem);
-	void SetHoveredItem(CmusikPropTreeItem* pItem);
 
 	// items actions
 	CmusikPropTreeItem* InsertItem(CmusikPropTreeItem* pItem, CmusikPropTreeItem* pParent = NULL);
@@ -154,7 +142,6 @@ public:
 	void EnsureVisible(CmusikPropTreeItem* pItem);
 	virtual CmusikPropTreeItem* FindItem(const POINT& pt);
 	CmusikPropTreeItem* FindItem(UINT nCtrlID);
-	int FindNewItemPos( const CPoint& point );
 
 	// item checks
 	BOOL IsItemVisible(CmusikPropTreeItem* pItem);
@@ -173,12 +160,6 @@ public:
 	CmusikPropTreeItem* GetVisibleList();
 	const int& GetOrigin();
 	void UpdateResize();
-
-	// mouse tracking
-	bool m_MouseTrack;
-	CmusikTrack m_LastPos;
-	virtual void OnNewHoveredItem( int nIndex );
-	bool m_LockHover;
 
 	// item focus controls
 	CmusikPropTreeItem *FocusFirst();
@@ -235,9 +216,6 @@ protected:
 	// Pointer to the focused item (selected)
 	CmusikPropTreeItem* m_pFocus;
 
-	// Pointer to hovered item (mouse over)
-	CmusikPropTreeItem* m_pHovered;
-
 	// PropTree scroll position
 	int m_ScrollPos;
 
@@ -269,7 +247,7 @@ protected:
 	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg UINT OnGetDlgCode();
-	afx_msg LRESULT OnMouseLeave(WPARAM wParam, LPARAM lParam);
+	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
 
 	// macros
 	DECLARE_MESSAGE_MAP()
@@ -281,9 +259,7 @@ private:
 	static BOOL CALLBACK EnumSelectAll(CmusikPropTree*, CmusikPropTreeItem* pItem, LPARAM lParam);
 	static BOOL CALLBACK EnumMoveAll(CmusikPropTree*, CmusikPropTreeItem* pItem, LPARAM);
 	static BOOL CALLBACK EnumRefreshAll(CmusikPropTree*, CmusikPropTreeItem* pItem, LPARAM);
-public:
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
+
 };
 
 ///////////////////////////////////////////////////

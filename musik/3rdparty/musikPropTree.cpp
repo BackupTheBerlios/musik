@@ -21,12 +21,11 @@
 //  Modified heavily by Casey Langen for musik MFC port...
 //    - Rather than linking to a dll or external lib, it compiles in.
 //    - PropTree and PropTreeList combined into one file
-//    - Mouse hover tracking
 //    - Drawing enhancements
 //    - Various musik specific functions
 //
-//  The musik team thanks Scott Ramsay for creating this great
-//  class and making it open source. Cheers.
+//  Thanks Scott Ramsay for creating this great
+//  class and making it open source.
 //
 ///////////////////////////////////////////////////
 
@@ -36,7 +35,6 @@
 #include "../musikPrefs.h"
 
 #include "../MEMDC.H"
-#include ".\musikproptree.h"
 
 ///////////////////////////////////////////////////
 
@@ -90,8 +88,6 @@ BEGIN_MESSAGE_MAP(CmusikPropTree, CWnd)
 	ON_WM_KEYDOWN()
 	ON_WM_GETDLGCODE()
 	ON_WM_VSCROLL()
-	ON_WM_MOUSEMOVE()
-	ON_MESSAGE(WM_MOUSELEAVE, OnMouseLeave)
 	ON_WM_RBUTTONDOWN()
 END_MESSAGE_MAP()
 
@@ -102,7 +98,6 @@ CmusikPropTree::CmusikPropTree( CmusikPrefs* prefs, CmusikLibrary* library, UINT
 	m_ScrollPos(0),
 	m_nLastUID(1),
 	m_pFocus(NULL),
-	m_pHovered(NULL),
 	m_BackBufferSize(0,0)
 {
 	m_Root.Expand();
@@ -110,13 +105,6 @@ CmusikPropTree::CmusikPropTree( CmusikPrefs* prefs, CmusikLibrary* library, UINT
 	// prefs
 	m_Prefs = prefs;
 	m_Library = library;
-
-	// mouse track
-	m_MouseTrack = false;
-	m_LockHover	= false;
-	m_Count = 0;
-	m_LastPos.m_Top = -1;
-	m_LastPos.m_Bottom = -1;
 
 	// dropid
 	m_DropID = dropid;
@@ -262,13 +250,6 @@ CmusikPropTreeItem* CmusikPropTree::GetFocusedItem()
 
 ///////////////////////////////////////////////////
 
-CmusikPropTreeItem* CmusikPropTree::GetHoveredItem()
-{
-	return m_pHovered;
-}
-
-///////////////////////////////////////////////////
-
 CmusikPropTreeItem* CmusikPropTree::GetRootItem()
 {
 	return &m_Root;
@@ -298,6 +279,7 @@ void CmusikPropTree::AddToVisibleList(CmusikPropTreeItem* pItem)
 	// check for an empty visible list
 	if (!m_pVisbleList)
 		m_pVisbleList = pItem;
+
 	else
 	{
 		// Add the new item to the end of the list
@@ -367,7 +349,6 @@ void CmusikPropTree::DeleteAllItems()
 	Delete(NULL);
 	UpdatedItems();
 	m_nLastUID = 1; // reset uid counter
-	m_Count = 0;
 }
 
 ///////////////////////////////////////////////////
@@ -387,15 +368,9 @@ void CmusikPropTree::Delete(CmusikPropTreeItem* pItem)
 
 	// passing in a NULL item is the same as calling DeleteAllItems
 	if (!pItem)
-	{
 		pItem = &m_Root;
-		m_Count = 0;
-	}
-	else 
-		m_Count--;
 
 	// delete children
-
 	CmusikPropTreeItem* pIter;
 	CmusikPropTreeItem* pNext;
 
@@ -425,8 +400,8 @@ void CmusikPropTree::Delete(CmusikPropTreeItem* pItem)
 
 	if (pItem!=&m_Root)
 	{
-		if (pItem==GetFocusedItem())
-			SetFocusedItem(NULL);
+		//if (pItem==GetFocusedItem())
+		SetFocusedItem(NULL);
 		delete pItem;
 	}
 }
@@ -436,20 +411,9 @@ void CmusikPropTree::Delete(CmusikPropTreeItem* pItem)
 void CmusikPropTree::SetFocusedItem(CmusikPropTreeItem* pItem)
 {
 	m_pFocus = pItem;
-	//EnsureVisible(m_pFocus);
 
-	if (!IsWindow(m_hWnd))
-		return;
-
-	Invalidate();
-}
-
-///////////////////////////////////////////////////
-
-void CmusikPropTree::SetHoveredItem(CmusikPropTreeItem* pItem)
-{
-	m_pHovered = pItem;
-	EnsureVisible(m_pHovered);
+	if ( pItem )
+		EnsureVisible(m_pFocus);
 
 	if (!IsWindow(m_hWnd))
 		return;
@@ -529,8 +493,9 @@ CmusikPropTreeItem* CmusikPropTree::InsertItem(CmusikPropTreeItem* pItem, Cmusik
 	if (!pParent)
 		pParent = &m_Root;
 
-	if (!pParent->GetChild())
-		pParent->SetChild(pItem);
+	if ( !pParent->GetChild() )
+		pParent->SetChild( pItem );
+
 	else
 	{
 		// add to end of the sibling list
@@ -543,18 +508,16 @@ CmusikPropTreeItem* CmusikPropTree::InsertItem(CmusikPropTreeItem* pItem, Cmusik
 		pNext->SetSibling(pItem);
 	}
 
-	pItem->SetParent(pParent);
-	pItem->SetPropOwner(this);
+	pItem->SetParent( pParent );
+	pItem->SetPropOwner( this );
 
 	// auto generate a default ID
-	pItem->SetCtrlID(m_nLastUID++);
+	pItem->SetCtrlID( m_nLastUID++ );
 
-	SendNotify(PTN_INSERTITEM, pItem);
+	SendNotify( PTN_INSERTITEM, pItem );
 	UpdatedItems();
-	m_Count++;
 
 	return pItem;
-
 }
 
 ///////////////////////////////////////////////////
@@ -1280,95 +1243,6 @@ void CmusikPropTree::CheckVisibleFocus()
 
 		Invalidate();
 	}
-}
-
-///////////////////////////////////////////////////
-
-void CmusikPropTree::OnMouseMove(UINT nFlags, CPoint point)
-{
-	if ( m_LockHover )
-		return;
-
-	m_LockHover = true;
-
-	if ( !m_MouseTrack )
-	{
-		TRACKMOUSEEVENT tme;
-		tme.cbSize = sizeof( tme );
-		tme.dwFlags = TME_LEAVE;
-		tme.hwndTrack = m_hWnd;
-		tme.dwHoverTime = HOVER_DEFAULT;
-		::_TrackMouseEvent( &tme );
-
-		m_MouseTrack = true;
-	}
-
-	// see if a mouse is over a new item...
-	int nItemPos = FindNewItemPos( point );
-	if ( nItemPos > -1 )
-		OnNewHoveredItem( nItemPos );
-
-	m_LockHover = false;
-}
-
-int CmusikPropTree::FindNewItemPos( const CPoint& point )
-{
-	const int nTotal = PROPTREEITEM_DEFHEIGHT * ( m_Count );
-	int nItemPos = -1;
-
-	if ( ( point.y > m_LastPos.m_Top && point.y <= nTotal )		|| 
-		( point.y < m_LastPos.m_Top && point.y >= 0 )			|| 
-		( m_LastPos.m_Bottom == -1 && m_LastPos.m_Top == -1 ) )
-	{
-
-		CmusikTrack curr;
-		for( int i = 0; i < m_Count; i++ )
-		{
-			curr.m_Top = PROPTREEITEM_DEFHEIGHT * i;
-			curr.m_Bottom = PROPTREEITEM_DEFHEIGHT * ( i + 1 );
-
-			if ( point.y > curr.m_Top && point.y <= curr.m_Bottom  )
-			{
-				if ( m_LastPos.m_Bottom != curr.m_Bottom && m_LastPos.m_Top != curr.m_Top )
-				{
-					nItemPos = i;
-					m_LastPos = curr;
-				}
-			}
-		}
-	}
-
-	return nItemPos;
-}
-
-///////////////////////////////////////////////////
-
-void CmusikPropTree::OnNewHoveredItem( int nIndex )
-{
-	CmusikString s;
-	s.Format( "new item hovered at %d\n", nIndex );
-	TRACE0( s.c_str() );
-}
-
-///////////////////////////////////////////////////
-
-LRESULT CmusikPropTree::OnMouseLeave(WPARAM wParam, LPARAM lParam)
-{
-	m_MouseTrack = false;
-
-	m_LastPos.m_Bottom = -1;
-	m_LastPos.m_Top = -1;
-
-	if ( m_pHovered )
-	{
-		m_pHovered->Hover( FALSE );
-		SetHoveredItem( NULL );
-		m_pHovered = NULL;
-	}
-
-    SetHoveredItem( NULL );
-
-	return 0L;
 }
 
 ///////////////////////////////////////////////////

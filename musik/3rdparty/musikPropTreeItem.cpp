@@ -21,7 +21,6 @@
 //  Modified heavily by Casey Langen for musik MFC port...
 //    - Rather than linking to a dll or external lib, it compiles in.
 //    - PropTree and PropTreeList combined into one file
-//    - Mouse hover tracking
 //    - Drawing enhancements
 //    - Various musik specific functions
 //
@@ -96,7 +95,6 @@ CmusikPropTreeItem::CmusikPropTreeItem() :
 	m_dwState(0),
 	m_bActivated(FALSE),
 	m_bCommitOnce(FALSE),
-	m_bHover(FALSE),
 	m_rcExpand(0,0,0,0),
 	m_pParent(NULL),
 	m_pSibling(NULL),
@@ -152,20 +150,6 @@ BOOL CmusikPropTreeItem::IsExpanded()
 BOOL CmusikPropTreeItem::IsSelected()
 {
 	return (m_dwState & TreeItemSelected) ? TRUE : FALSE;
-}
-
-///////////////////////////////////////////////////
-
-BOOL CmusikPropTreeItem::IsHovered()
-{
-	return m_bHover;
-}
-
-///////////////////////////////////////////////////
-
-void CmusikPropTreeItem::Hover( BOOL bHover )
-{
-	m_bHover = bHover;
 }
 
 ///////////////////////////////////////////////////
@@ -478,13 +462,6 @@ LONG CmusikPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 		if ( IsSelected() )
 		{
 			gutterBrush.CreateSolidBrush( m_pProp->m_Prefs->MUSIK_COLOR_ACTIVECAPTION );
-			hOld = pDC->SelectObject( gutterBrush );
-			pDC->PatBlt( rc.left, drc.top, 8, drc.Height(), PATCOPY);
-		}
-		else if ( IsHovered() )
-		{
-
-			gutterBrush.CreateSolidBrush( m_pProp->m_Prefs->MUSIK_COLOR_INACTIVECAPTION );
 			hOld = pDC->SelectObject( gutterBrush );
 			pDC->PatBlt( rc.left, drc.top, 8, drc.Height(), PATCOPY);
 		}

@@ -1229,10 +1229,10 @@ LRESULT CMainFrame::OnSongChange( WPARAM wParam, LPARAM lParam )
 	// to do our own updating
 	if ( m_Player->IsPlaying() )
 	{
-		s.Format( _T( "%s [ %s - %s ]" ), 
-			MUSIK_VERSION_STR,
+		s.Format( _T( "[ %s - %s ] %s" ), 
 			m_Player->GetCurrPlaying()->GetTitle().c_str(), 
-			m_Player->GetCurrPlaying()->GetArtist().c_str() );
+			m_Player->GetCurrPlaying()->GetArtist().c_str(),
+			MUSIK_VERSION_STR );
 
 		SetWindowText( s );
 	}

@@ -21,7 +21,6 @@
 //  Modified heavily by Casey Langen for musik MFC port...
 //    - Rather than linking to a dll or external lib, it compiles in.
 //    - PropTree and PropTreeList combined into one file
-//    - Mouse hover tracking
 //    - Drawing enhancements
 //    - Various musik specific functions
 //
@@ -62,7 +61,6 @@ public:
 	// set states
 	void Select(BOOL bSelect = TRUE);
 	void Expand(BOOL bExpand = TRUE);
-	void Hover( BOOL bHover = TRUE );
 
 	// returns TRUE if the point is on the expand button
 	BOOL HitExpand(const POINT& pt);
@@ -70,9 +68,6 @@ public:
 	// returns TRUE if the item is on the root level. 
 	// root level items don't have attribute areas
 	BOOL IsRootLevel();
-
-	// returns TRUE if the mouse is over the item
-	BOOL IsHovered();
 
 	// returns the total height of the item and 
 	// all its children
@@ -182,9 +177,6 @@ private:
 
 	// TreeItem state
 	DWORD				m_dwState;
-
-	// TRUE if the mouse is over the item
-	BOOL				m_bHover;
 
 	// TRUE if item is activated
 	BOOL				m_bActivated;

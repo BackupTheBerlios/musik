@@ -109,15 +109,14 @@ public:
 	void FocusLibrary();
 	void FocusNowPlaying();
 	void FocusQuickSearch();
-	void RenameSel();
+	void RenameItem( CmusikPropTreeItem* pItem = NULL, int mode = MUSIK_SOURCES_EDITINPLACE_RENAME, CPoint loc = CPoint( -1, -1 ) );
 	void DeleteSel();
 	void QuickSearch();
-	void NewStdPlaylist();
+
 	void Reset(){ CleanItems(); InitItems(); }
 
 	// overrides
 	void DoDrag( CmusikPropTreeItem* pItem );
-	virtual CmusikPropTreeItem* FindItem( const POINT& pt );
 
 	// message maps
 	void OnDropFiles(HDROP hDropInfo);
@@ -127,15 +126,10 @@ protected:
 	// pointer to main frame
 	CFrameWnd* m_Parent;
 
-	// item hover fun
-	virtual void OnNewHoveredItem( int nIndex );
-	CmusikPropTreeItem* FindItemAtIndex( int nIndex );
-
    	// mfc message maps
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
 
 	// custom message maps
@@ -150,18 +144,16 @@ protected:
 	// create default headers
 	void InitItems();
 	void CleanItems();
-	CmusikPropTreeItem* m_LibrariesRoot;
-	CmusikPropTreeItem* m_QuickSearchRoot;
+	CmusikPropTreeItem* m_LibRoot;
+	CmusikPropTreeItem* m_SrcRoot;
 	CmusikPropTreeItem* m_StdPlaylistRoot;
 	CmusikPropTreeItem* m_DynPlaylistRoot;
 
 	// loading and finding the items
-	void LoadLibraries();
-	void LoadStdPlaylists();
+	void LibLoad();
+	void SrcLoad();
+	void StdPlaylistsLoad();
 	void LoadDynPlaylists();
-	int FindInLibraries( CmusikPropTreeItem* pItem );
-	int FindInStdPlaylists( CmusikPropTreeItem* pItem );
-	int FindInDynPlaylists( CmusikPropTreeItem* pItem );
 
 	// macros
 	DECLARE_DYNAMIC(CmusikSourcesCtrl)
@@ -183,6 +175,9 @@ private:
 	// quick search
 	void FinishQuickSearch();
 
+	// Create... new playlist
+	CmusikPropTreeItem* CreateNewStdPlaylist( CmusikStringArray* files = NULL );
+
 	// startup bool, if true on startup
 	// the library will be selected by
 	// default...
@@ -192,9 +187,8 @@ private:
 	CmusikPlayer* m_Player;
 
 	// items that will show up in the list
-	CmusikSourcesItemPtrArray m_Libraries;
-	CmusikPropTreeItem* m_QuickSearch;
-	CmusikPropTreeItem* m_NewStdPlaylist;
+	CmusikSourcesItemPtrArray m_Lib;
+	CmusikSourcesItemPtrArray m_Src;
 	CmusikSourcesItemPtrArray m_StdPlaylists;
 	CmusikSourcesItemPtrArray m_DynPlaylists;
 };
