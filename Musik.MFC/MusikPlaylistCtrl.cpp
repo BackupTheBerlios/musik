@@ -293,23 +293,23 @@ CString CMusikPlaylistCtrl::GetRating( int item )
 	switch ( nRating )
 	{
 	case 1:
-		sRating = _T( "«¶¶¶¶" );
+		sRating = _T( "µwwww" );
 		break;
 	case 2:
-		sRating = _T( "««¶¶¶" );
+		sRating = _T( "µµwww" );
 		break;
 	case 3:
-		sRating = _T( "«««¶¶" );
+		sRating = _T( "µµµww" );
 		break;
 	case 4:
-		sRating = _T( "««««¶" );
+		sRating = _T( "µµµµw" );
 		break;
 	case 5:
-        sRating = _T( "«««««" );
+        sRating = _T( "µµµµµ" );
 		break;
 	case 0:
 	default:
-		sRating = _T( "¶¶¶¶¶" );
+		sRating = _T( "wwwww" );
 		break;
 	}
 
