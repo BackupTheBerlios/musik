@@ -91,16 +91,16 @@ void* MusikActivityRenameThread::Entry()
 			//-------------------------------//
 			switch( m_Type )
 			{
-			case ACTIVITY_ARTISTS:
+			case MUSIK_LBTYPE_ARTISTS:
 				m_Songs.Item( i ).Artist = m_Replace;
 				break;
-			case ACTIVITY_ALBUMS:
+			case MUSIK_LBTYPE_ALBUMS:
 				m_Songs.Item( i ).Album	= m_Replace;
 				break;
-			case ACTIVITY_GENRES:
+			case MUSIK_LBTYPE_GENRES:
 				m_Songs.Item( i ).Genre = m_Replace;
 				break;
-			case ACTIVITY_YEARS:
+			case MUSIK_LBTYPE_YEARS:
 				m_Songs.Item( i ).Year = m_Replace;
 				break;
 			}
@@ -109,9 +109,7 @@ void* MusikActivityRenameThread::Entry()
 			//--- write tags to file ---//
 			//--------------------------//
 			if ( g_Prefs.nActBoxWrite == 1 )
-			{
 				g_Library.WriteTag( m_Songs.Item( i ), (bool)g_Prefs.nActBoxClear );
-			}
 
 			//-------------------//
 			//--- rename file ---//

@@ -372,16 +372,16 @@ wxString CActivityBox::GetActivityTypeStr()
 {
 	switch ( GetActivityType() )
 	{
-	case ACTIVITY_ARTISTS:
+	case MUSIK_LBTYPE_ARTISTS:
 		return wxT( "artist" );
 		break;
-	case ACTIVITY_ALBUMS:
+	case MUSIK_LBTYPE_ALBUMS:
 		return wxT( "album" );
 		break;
-	case ACTIVITY_GENRES:
+	case MUSIK_LBTYPE_GENRES:
 		return wxT( "genre" );
 		break;
-	case ACTIVITY_YEARS:
+	case MUSIK_LBTYPE_YEARS:
 		return wxT( "year" );
 		break;
 	}
@@ -492,22 +492,22 @@ void CActivityBox::SetPlaylist()
 			wxArrayString aThisSel;
 			GetSelected( aThisSel );
 
-			if ( nParentType == ACTIVITY_ARTISTS )
+			if ( nParentType == MUSIK_LBTYPE_ARTISTS )
 				sParentType = wxT( "artist" );
-			else if ( nParentType == ACTIVITY_ALBUMS )
+			else if ( nParentType == MUSIK_LBTYPE_ALBUMS )
 				sParentType = wxT( "album" );
-			else if ( nParentType == ACTIVITY_GENRES )
+			else if ( nParentType == MUSIK_LBTYPE_GENRES )
 				sParentType = wxT( "genre" );
-			else if ( nParentType == ACTIVITY_YEARS )
+			else if ( nParentType == MUSIK_LBTYPE_YEARS )
 				sParentType = wxT( "year" );
 
-			if ( nThisType == ACTIVITY_ARTISTS )
+			if ( nThisType == MUSIK_LBTYPE_ARTISTS )
 				sThisType = wxT( "artist" );
-			else if ( nThisType == ACTIVITY_ALBUMS )
+			else if ( nThisType == MUSIK_LBTYPE_ALBUMS )
 				sThisType = wxT( "album" );
-			else if ( nThisType == ACTIVITY_GENRES )
+			else if ( nThisType == MUSIK_LBTYPE_GENRES )
 				sThisType = wxT( "genre" );
-			else if ( nThisType == ACTIVITY_YEARS )
+			else if ( nThisType == MUSIK_LBTYPE_YEARS )
 				sThisType = wxT( "year" );
 
 			if ( sThisType == wxT( "" ) || sParentType == wxT( "" ) )

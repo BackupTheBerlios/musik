@@ -26,16 +26,6 @@
 
 #include "ListHeader.h"
 
-enum EACTIVITY_TYPE
-{
-	ACTIVITY_NONE = 0,
-	ACTIVITY_ARTISTS,
-	ACTIVITY_ALBUMS,
-	ACTIVITY_GENRES,
-	ACTIVITY_YEARS,
-	ACTIVITY_DECADES
-};
-
 #define MUSIK_ACT_TEXT 9998
 
 //--- forward declaration for threads ---//
@@ -183,7 +173,7 @@ public:
 
 private:
 
-	static enum EMUSIK_LIB_TYPE ACTIVITY_TYPE2LIB_TYPE(enum EMUSIK_ACTIVITY_TYPE lbtype);
+	enum EMUSIK_LIB_TYPE ACTIVITY_TYPE2LIB_TYPE(enum EMUSIK_ACTIVITY_TYPE lbtype);
 	EMUSIK_ACTIVITY_TYPE   m_ActivityType;
 	bool m_EditVisible;
 
