@@ -18,7 +18,6 @@
 #include "../musikCore/include/musikBatchAdd.h"
 
 #include "MEMDC.H"
-#include ".\musikplaylistctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -47,7 +46,7 @@ BEGIN_MESSAGE_MAP(CmusikPlaylistCtrl, CmusikListCtrl)
 	// custom messages
 	ON_REGISTERED_MESSAGE( WM_BATCHADD_PROGRESS_PLAYLIST, OnBatchAddProgress )
 	ON_REGISTERED_MESSAGE( WM_BATCHADD_END_PLAYLIST, OnBatchAddEnd )
-	ON_NOTIFY_REFLECT(LVN_MARQUEEBEGIN, OnLvnMarqueeBegin)
+	ON_WM_KEYDOWN()
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -77,6 +76,8 @@ CmusikPlaylistCtrl::CmusikPlaylistCtrl( CFrameWnd* mainwnd, CmusikLibrary* libra
 	// misc
 	m_RatingWidth = -1;
 	m_Changed = true;
+	m_DropArrange = false;
+	m_PlaylistNeedsSave = false;
 	m_SongInfoCache = new CmusikDynDspInfo( NULL, m_Library );
 
 	// dnd variables
@@ -141,7 +142,7 @@ void CmusikPlaylistCtrl::SaveColumns()
 
 ///////////////////////////////////////////////////
 
-void CmusikPlaylistCtrl::UpdateV()
+void CmusikPlaylistCtrl::UpdateV( bool redraw )
 {
 	if ( m_Playlist )
 	{
@@ -149,10 +150,13 @@ void CmusikPlaylistCtrl::UpdateV()
 		m_SongInfoCache->Set( 0, 0, true );
 		SetItemCountEx( m_Playlist->GetCount(), LVSICF_NOINVALIDATEALL | LVSICF_NOSCROLL );
 
-		CRect rcClient;
-		GetClientRect( &rcClient );
-		SetRedraw( true );
-		RedrawWindow( rcClient );
+		if ( redraw )
+		{
+			CRect rcClient;
+			GetClientRect( &rcClient );
+			SetRedraw( true );
+			RedrawWindow( rcClient );
+		}
 	}
 }
 
@@ -481,6 +485,7 @@ void CmusikPlaylistCtrl::SetPlaylist( CmusikPlaylist* playlist, int m_Type )
 	{
 		TRACE0( "Well, something messed up, our playlist is now NULL...\n" );
 	}
+
 	else if ( playlist != m_Playlist )
 	{
 		if ( m_SongInfoCache )
@@ -490,6 +495,7 @@ void CmusikPlaylistCtrl::SetPlaylist( CmusikPlaylist* playlist, int m_Type )
 		m_PlaylistType = m_Type;
 		
 		m_Changed = true;
+		m_PlaylistNeedsSave = false;
 	}
 }
 
@@ -722,8 +728,25 @@ void CmusikPlaylistCtrl::OnLvnBegindrag(NMHDR *pNMHDR, LRESULT *pResult)
 	*pResult = 0;
 }
 
-void CmusikPlaylistCtrl::OnDropFiles(HDROP hDropInfo)
+void CmusikPlaylistCtrl::OnDropFiles( HDROP hDropInfo )
 {
+	if ( m_DropArrange )
+	{
+		CPoint ptCursor;
+		::GetCursorPos( &ptCursor );
+		ScreenToClient( &ptCursor );
+		int nPos = HitTest( ptCursor );
+
+		CIntArray sel, selids;
+		GetSelectedItems( &sel );
+		GetItemIDs( sel, &selids );
+		DeleteItems( sel );
+		InsertItems( selids, nPos );
+
+		m_DropArrange = false;
+		return;
+	}
+
 	size_t nNumFiles;
 	TCHAR szNextFile [MAX_PATH];
 	SHFILEINFO  rFileInfo;
@@ -821,9 +844,79 @@ LRESULT CmusikPlaylistCtrl::OnBatchAddEnd( WPARAM wParam, LPARAM lParam )
 }
 
 ///////////////////////////////////////////////////
-void CmusikPlaylistCtrl::OnLvnMarqueeBegin(NMHDR *pNMHDR, LRESULT *pResult)
+
+void CmusikPlaylistCtrl::GetSelectedItems( CIntArray* items )
 {
-	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
-	// TODO: Add your control notification handler code here
-	*pResult = 0;
+	items->clear();
+
+    POSITION pos = GetFirstSelectedItemPosition();
+	while ( pos )
+        items->push_back( GetNextSelectedItem ( pos ) );
 }
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::GetItemIDs( const CIntArray& items, CIntArray* target )
+{
+	target->clear();
+
+	for ( size_t i = 0; i < items.size(); i++ )
+		target->push_back( m_Playlist->GetSongID( items.at( i ) ) );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::DeleteItems( const CIntArray& items, bool update )
+{
+	if ( items.size() <= 0 )
+		return;
+
+	int nScrollPos = GetScrollPos( SB_VERT );
+
+	for ( size_t i = 0; i < items.size(); i++ )
+		m_Playlist->DeleteAt( items.at( i ) - i );
+
+	if ( m_PlaylistType == MUSIK_PLAYLIST_TYPE_STANDARD )
+		m_PlaylistNeedsSave = true;
+
+	if ( update )
+	{
+		UpdateV();
+		SetScrollPos( SB_VERT, nScrollPos );
+	}
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::InsertItems( const CIntArray& items, int at, bool update )
+{
+	if ( items.size() <= 0 )
+		return;
+
+	int nScrollPos = GetScrollPos( SB_VERT );
+
+	m_Playlist->InsertAt( items, at );
+
+	if ( update )
+	{
+		UpdateV();
+		SetScrollPos( SB_VERT, nScrollPos );
+	}
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	if ( nChar == VK_DELETE )
+	{
+		CIntArray sel;
+		GetSelectedItems( &sel );
+		DeleteItems( sel );
+		return;
+	}
+
+	CmusikListCtrl::OnKeyDown( nChar, nRepCnt, nFlags );
+}
+
+///////////////////////////////////////////////////

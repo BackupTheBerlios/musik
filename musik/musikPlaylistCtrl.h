@@ -36,7 +36,12 @@ public:
 
 	// update the virtual list control
 	void InitColors();
-	void UpdateV();
+	void UpdateV( bool redraw = true );
+
+	// returns TRUE if user has deleted, inserted,
+	// or otherwise modified a playlist that may
+	// need to be saved...
+	bool PlaylistNeedsSave(){ return m_PlaylistNeedsSave; }
 
 	// get the playlist
 	CmusikPlaylist* GetPlaylist(){ return m_Playlist; }
@@ -82,6 +87,13 @@ protected:
 	COLORREF clrStripe;
 	COLORREF clrStripText;
 
+	// manipulating items..
+	bool m_PlaylistNeedsSave;
+	void GetSelectedItems( CIntArray* items );
+	void GetItemIDs( const CIntArray& items, CIntArray* target );
+	void DeleteItems( const CIntArray& items, bool update = true );
+	void InsertItems( const CIntArray& items, int at, bool update = true );
+
 	// misc
 	bool m_Changed;
 	int m_RatingWidth;
@@ -97,10 +109,12 @@ protected:
 	afx_msg void OnNMClick(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnLvnItemActivate(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnLvnBegindrag(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 
 	// CmusikPlaylistDropTarget calls
 	// this function once files have
 	// been dropped...
+	bool m_DropArrange;
 	void OnDropFiles(HDROP hDropInfo);
 
 	// custom message maps
@@ -126,8 +140,6 @@ private:
 	// batch add files thread
 	CmusikBatchAdd* m_BatchAddThr;
 	CmusikBatchAddFunctor* m_BatchAddFnct;
-public:
-	afx_msg void OnLvnMarqueeBegin(NMHDR *pNMHDR, LRESULT *pResult);
 };
 
 ///////////////////////////////////////////////////
