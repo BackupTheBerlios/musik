@@ -58,7 +58,7 @@ class CmusikDir;
 
 ///////////////////////////////////////////////////
 
-void OpenDir( CmusikString dir, CmusikStringArray* target = NULL, CmusikFunctor* functor = NULL, bool reset = false );
+void OpenDir( CmusikString dir, CmusikStringArray* target = NULL );
 
 ///////////////////////////////////////////////////
 
@@ -68,17 +68,16 @@ public:
 
 	// construct and destruct
 	CmusikDir();
-	CmusikDir( CmusikString dir, CmusikStringArray* target = NULL, CmusikFunctor* functor = NULL );
+	CmusikDir( CmusikString dir, CmusikStringArray* target = NULL );
 	~CmusikDir();
 
 	// the few functions we have
-	void SetTarget( CmusikStringArray* target ){	m_Target = target;	}
+	void SetTarget( CmusikStringArray* target ){ m_Target = target;	}
 	void Run();
 
 	// values we need
 	CmusikStringArray* m_Target;
 	CmusikString m_Dir;
-	CmusikFunctor* m_Functor;
 };
 
 ///////////////////////////////////////////////////
@@ -86,4 +85,3 @@ public:
 #endif
 
 ///////////////////////////////////////////////////
-

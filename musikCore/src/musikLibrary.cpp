@@ -267,7 +267,7 @@ static int sqlite_GetEqualizerIDFromID( void *args, int numCols, char **results,
 CmusikLibrary::CmusikLibrary( const CmusikString& filename )
 {
 	m_pDB = NULL;
-	m_Transactions = NULL;
+	m_Transactions = 0;
 	m_DatabaseOpen = false;
 
 	CmusikSong::SetLibrary( this );
@@ -792,7 +792,7 @@ void CmusikLibrary::BeginTransaction()
 	if ( !m_DatabaseOpen )
 		return;
 
-	if ( m_Transactions == NULL )
+	if ( m_Transactions == 0 )
 	{
 		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 		{
@@ -814,7 +814,7 @@ void CmusikLibrary::EndTransaction()
 
 	--m_Transactions;
 
-	if ( m_Transactions == NULL )
+	if ( m_Transactions == 0 )
 	{
 		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 		{
@@ -1331,7 +1331,7 @@ int CmusikLibrary::CreateDynPlaylist( const CmusikString& name, const CmusikStri
 						DYN_PLAYLIST_QUERY,
 						NULL,
 						nID,
-						query.at( i ) );
+						query.at( i ).c_str() );
 				}
 
 				if ( nRet != SQLITE_OK )

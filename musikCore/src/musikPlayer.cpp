@@ -240,7 +240,7 @@ static void musikPlayerWorker( CmusikThread* thread )
 								recalc_steps = true;
 							}
 
-							if ( nMainStream != nChildCount )
+							if ( nMainStream != (int)nChildCount )
 							{
 								nMainStream = nChildCount;
 								recalc_steps = true;

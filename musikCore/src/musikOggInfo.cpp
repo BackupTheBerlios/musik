@@ -202,7 +202,7 @@ bool CmusikOggInfo::WriteInfo( CmusikSongInfo info )
 
 	// attempt to rename the original file to 
 	// a new temporary filename
-	if ( rename( sFilename.c_str(), sTempFilename2.c_str() ) != NULL ) 
+	if ( rename( sFilename.c_str(), sTempFilename2.c_str() ) != 0 ) 
 	{
 		// rename failed, so remove the temporary
 		// file that was just created...
@@ -212,7 +212,7 @@ bool CmusikOggInfo::WriteInfo( CmusikSongInfo info )
 
 	// now rename the new file with the new
 	// comments the original filename
-	if ( rename( sTempFilename1.c_str(), sFilename.c_str() ) != NULL )
+	if ( rename( sTempFilename1.c_str(), sFilename.c_str() ) != 0 )
 	{
 		// if rename from new -> old filename fails,
 		// rename old -> original filename
@@ -223,7 +223,7 @@ bool CmusikOggInfo::WriteInfo( CmusikSongInfo info )
 	}
 
 	// if we get this far, remove the old file
-	if ( remove( sTempFilename2.c_str() ) != NULL )
+	if ( remove( sTempFilename2.c_str() ) != 0 )
 		return false;
 
 	return true;

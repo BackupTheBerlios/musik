@@ -48,16 +48,14 @@
 CmusikDir::CmusikDir()
 {
 	m_Target = NULL;
-	m_Functor = NULL;
 }
 
 ///////////////////////////////////////////////////
 
-CmusikDir::CmusikDir( CmusikString dir, CmusikStringArray* target, CmusikFunctor* functor )
+CmusikDir::CmusikDir( CmusikString dir, CmusikStringArray* target )
 {
 	m_Target = target;
 	m_Dir = dir;
-	m_Functor = functor;
 }
 
 ///////////////////////////////////////////////////
@@ -66,33 +64,12 @@ CmusikDir::~CmusikDir()
 {
 }
 
-
-///////////////////////////////////////////////////
-
-// avoid multiple constructor calls
-// during file find recursion...
-
-CmusikStringArray* g_Target;
-CmusikFunctor* g_Functor;
-int g_Count;
-int g_Found;
-
 ///////////////////////////////////////////////////
 
 #ifdef WIN32
 
-void OpenDir( CmusikString dir, CmusikStringArray* target, CmusikFunctor* functor, bool reset )
+void OpenDir( CmusikString dir, CmusikStringArray* target )
 {
-	if ( target )
-		g_Target = target;
-	if ( functor )
-		g_Functor = functor;
-	if ( reset )
-	{
-		g_Count = 0;
-		g_Found = 0;
-	}
-
 	// find the first file in the directory...
 	WIN32_FIND_DATA lpFindFileData;
 	HANDLE hDir = FindFirstFile( dir.c_str(), &lpFindFileData );
@@ -112,7 +89,7 @@ void OpenDir( CmusikString dir, CmusikStringArray* target, CmusikFunctor* functo
 					fn = dir.Left( dir.GetLength() - 3 );	// remove *.* from full path
 					fn += lpFindFileData.cFileName;			// append to make new path
 					fn += "\\*.*";							// add *.* to the end of the new path
-					OpenDir( fn, NULL, NULL, false );
+					OpenDir( fn, target );
 				}
 
 				// file is a file...
@@ -123,7 +100,7 @@ void OpenDir( CmusikString dir, CmusikStringArray* target, CmusikFunctor* functo
 					
 					MFN.SetFilename( fn );
 					if ( MFN.GetExtension() == "mp3" || MFN.GetExtension() == "ogg" )
-						g_Target->push_back( fn );
+						target->push_back( fn );
 				}
 			}
 
@@ -136,30 +113,36 @@ void OpenDir( CmusikString dir, CmusikStringArray* target, CmusikFunctor* functo
 
 #else
 
-void OpenDir( CmusikString dir, CmusikStringArray* target, CmusikFunctor* functor, bool reset )
+void OpenDir( CmusikString dir, CmusikStringArray* target )
 {
-	if ( target )
-		g_Target = target;
-	if ( functor )
-		g_Functor = functor;
+	DIR* pDir = opendir ( dir.c_str() );
 
-	DIR *pDir;
-	struct dirent *pEntry;
+	if ( !pDir) 
+		return;
 
-	if ( pDir == opendir( dir.c_str() ) )
-	{
-		CmusikString temp;
-		while( pEntry = readdir( pDir ) )
-		{
-			temp = (CmusikString)pEntry->d_name;
-			temp = temp.Right( 3 );
-			temp.MakeLower();
+	dirent* pEntry;
 
-			if ( temp.c_str() == "ogg" || temp.c_str() == "mp3" )
-				target->push_back( (CmusikString)pEntry->d_name );
+	CmusikString fn;
+	CmusikFilename MFN;
+	while ( ( pEntry = readdir ( pDir ) ) ) 
+    {
+		// got a directory, so recurse...
+        if ( DT_DIR & pEntry->d_type && strcmp ( pEntry->d_name, "." ) && strcmp ( pEntry->d_name, ".." ) ) 
+        {
+            CmusikString sSubDir = dir + CmusikString ( "/" ) + CmusikString ( pEntry->d_name );
+            OpenDir ( sSubDir, target );
 		}
-		closedir( pDir );
-	}
+
+		// not a directory, so check file attributes
+		else
+		{
+			fn = dir + CmusikString ( "/") + CmusikString ( pEntry->d_name );
+	
+			MFN.SetFilename( fn );
+			if ( MFN.GetExtension() == "mp3" || MFN.GetExtension() == "ogg" )
+				target->push_back( fn );
+		}
+    }
 }
 
 #endif
@@ -168,7 +151,7 @@ void OpenDir( CmusikString dir, CmusikStringArray* target, CmusikFunctor* functo
 
 void CmusikDir::Run()
 {
-	OpenDir( m_Dir, m_Target, m_Functor, true );
+	OpenDir( m_Dir, m_Target );
 	return;
 }
 
