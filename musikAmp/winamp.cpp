@@ -564,7 +564,7 @@ bool WINEXPORT LoadVisPlugins(LPCTSTR path)
 {
 	protect.Lock();
 
-	static int				currplug=0;
+	int						currplug=0;
 	WIN32_FIND_DATA			sFF = {0};
 	HANDLE					hFind = NULL;
 	CString					m_path, m_fullpath;
