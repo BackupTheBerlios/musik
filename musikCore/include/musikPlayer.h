@@ -187,7 +187,7 @@ public:
 	bool IsPaused()				{ return m_IsPaused; }
 	bool IsShuttingDown()		{ return m_ShutDown; }
 	bool IsEqualizerActive()	{ return m_IsEQActive; }
-	bool IsCrossfaderActive();
+	bool IsCrossfaderEnabled();
 	bool IsCrossfaderReady()	{ return m_IsCrossfaderReady; }
 
 	// crossfade flags

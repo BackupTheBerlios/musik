@@ -75,7 +75,7 @@ static void musikPlayerWorker( CmusikPlayer* player )
 			// start a tighter loop if the crossfader 
 			// is inactive and there is less than
 			// two seconds remaining on the song...
-			if ( !player->IsCrossfaderActive() )
+			if ( !player->IsCrossfaderEnabled() )
 			{
 				if ( player->GetTimeRemain( MUSIK_TIME_MS ) <= 2000 )
 				{
@@ -237,7 +237,7 @@ static void musikPlayerWorker( CmusikPlayer* player )
 							return;
 						}
 
-						else if ( player->GetFadeType() != MUSIK_CROSSFADER_NEW_SONG  )
+						else if ( player->GetFadeType() == MUSIK_CROSSFADER_NEW_SONG  )
 							player->FinalizeNewSong();
 
 						TRACE0( "Crossfade finished successfully\n" );
@@ -316,7 +316,7 @@ CmusikPlayer::~CmusikPlayer()
 
 	// thread will trigger this back
 	// once it has exited
-	if ( IsPlaying() && IsCrossfaderActive() )
+	if ( IsPlaying() && IsCrossfaderEnabled() )
 	{
 		while ( !m_ShutDown )
 			Sleep( 100 );
@@ -577,7 +577,7 @@ bool CmusikPlayer::Play( int index, int fade_type, int start_pos )
 	// if the current type of crossfade is either
 	// disabled or at 0.0 seconds, just cut
 	// out any old streams before we start up the next
-	if ( !IsCrossfaderActive() || ( m_Crossfader->GetDuration( fade_type ) <= 0 && fade_type == MUSIK_CROSSFADER_NONE ) )
+	if ( !IsCrossfaderEnabled() || ( m_Crossfader->GetDuration( fade_type ) <= 0 && fade_type == MUSIK_CROSSFADER_NONE ) )
 	{
 		// set new equalizer...
 		m_EQ->GetSongEq( m_Playlist->GetSongID( index ) );
@@ -623,10 +623,8 @@ bool CmusikPlayer::Next()
 		}
 	}
 
-	if ( !IsCrossfaderActive() )
-		Play( m_Index + 1 );
-	else
-		Play( m_Index + 1, MUSIK_CROSSFADER_NEW_SONG );
+
+	Play( m_Index + 1, MUSIK_CROSSFADER_NEW_SONG );
 
 	return true;
 }
@@ -638,9 +636,8 @@ bool CmusikPlayer::Prev()
 	if ( !m_Playlist )
 		return false;
 
-	// 2 second grace period... if the time right now
-	// is before 2000 ms (2 seconds), then start the
-	// previous song...
+	// if the song is under 2000 ms, we want to go
+	// to the previous track
 	if ( GetTimeNow( MUSIK_TIME_MS ) < 2000 )
 	{
 		if ( GetPlaymode() == MUSIK_PLAYER_PLAYMODE_NORMAL )
@@ -650,6 +647,7 @@ bool CmusikPlayer::Prev()
 			else
 				m_Index--;
 		}
+
 		else if ( GetPlaymode() == MUSIK_PLAYER_PLAYMODE_LOOP )
 		{
 			if ( m_Index -1 < 0 )
@@ -657,10 +655,11 @@ bool CmusikPlayer::Prev()
 		}
 	}
 
-	if ( !IsCrossfaderActive() )
-		Play( m_Index );
-	else
-		Play( m_Index, MUSIK_CROSSFADER_NEW_SONG );
+	// song time elapsted is greater than 2000 ms
+	// we want to start the song over
+	// m_Index == m_Index
+
+	Play( m_Index, MUSIK_CROSSFADER_NEW_SONG );
 
 	return true;
 }
@@ -669,7 +668,7 @@ bool CmusikPlayer::Prev()
 
 void CmusikPlayer::Stop()
 {
-	if ( IsCrossfaderActive() )
+	if ( IsCrossfaderEnabled() )
 	{
 		m_Handle++;
 		m_FadeType = MUSIK_CROSSFADER_STOP;
@@ -706,7 +705,7 @@ void CmusikPlayer::FinalizeExit()
 
 void CmusikPlayer::Exit()
 {
-	if ( IsCrossfaderActive() && IsPlaying() )
+	if ( IsCrossfaderEnabled() && IsPlaying() )
 	{
 		m_Handle++;
 		m_FadeType = MUSIK_CROSSFADER_EXIT;
@@ -817,7 +816,7 @@ void CmusikPlayer::CleanOldStreams( bool kill_primary )
 
 ///////////////////////////////////////////////////
 
-bool CmusikPlayer::IsCrossfaderActive()
+bool CmusikPlayer::IsCrossfaderEnabled()
 {
 	if ( m_Crossfader )
 		return true;
@@ -891,7 +890,7 @@ void CmusikPlayer::SetTimeNowPer( int percent )
 	int nPos = GetDuration( MUSIK_TIME_MS );
 	float fPos = ( (float)percent / 100.0f ) * nPos;
 
-	if ( !IsCrossfaderActive() )
+	if ( !IsCrossfaderEnabled() )
 		FSOUND_Stream_SetTime( GetCurrStream(), (int)fPos );
 	else
 		Play( m_Index, MUSIK_CROSSFADER_SEEK, (int)fPos );
@@ -964,7 +963,7 @@ void CmusikPlayer::SetCrossfader( CmusikCrossfader fader )
 {
 	CleanCrossfader();
 
-	if ( !IsCrossfaderActive() )
+	if ( !IsCrossfaderEnabled() )
 		InitCrossfader();
 
 	*m_Crossfader = fader;
@@ -1008,7 +1007,7 @@ bool CmusikPlayer::Pause()
 {
 	if ( IsPlaying() && !IsPaused() )
 	{
-		if ( IsCrossfaderActive() && m_Crossfader->GetDuration ( MUSIK_CROSSFADER_PAUSE_RESUME ) > 0.0f )
+		if ( IsCrossfaderEnabled() && m_Crossfader->GetDuration ( MUSIK_CROSSFADER_PAUSE_RESUME ) > 0.0f )
 		{
 			m_FadeType = MUSIK_CROSSFADER_PAUSE_RESUME;
 			FlagCrossfade();
@@ -1043,7 +1042,7 @@ bool CmusikPlayer::Resume()
 		CleanOldStreams();
 		FSOUND_SetPaused( FSOUND_ALL, FALSE );
 
-		if ( IsCrossfaderActive() && m_Crossfader->GetDuration ( MUSIK_CROSSFADER_PAUSE_RESUME ) > 0.0f )
+		if ( IsCrossfaderEnabled() && m_Crossfader->GetDuration ( MUSIK_CROSSFADER_PAUSE_RESUME ) > 0.0f )
 		{
 			m_FadeType = MUSIK_CROSSFADER_PAUSE_RESUME;
 			FlagCrossfade();
