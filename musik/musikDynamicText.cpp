@@ -45,6 +45,7 @@
 #include "musik.h"
 #include "musikDynamicText.h"
 #include "musikPrefs.h"
+#include ".\musikdynamictext.h"
 
 ///////////////////////////////////////////////////
 
@@ -58,6 +59,7 @@ CmusikDynamicText::CmusikDynamicText( CmusikPrefs* prefs )
 	m_FontSize = -1;
 	m_Prefs = prefs;
 	pFont = NULL;
+	m_BgColor.CreateSolidBrush( m_Prefs->MUSIK_COLOR_BTNFACE );
 }
 
 ///////////////////////////////////////////////////
@@ -66,11 +68,14 @@ CmusikDynamicText::~CmusikDynamicText()
 {
 	if ( pFont )
 		delete pFont;
+
+	m_BgColor.DeleteObject();
 }
 
 ///////////////////////////////////////////////////
 
 BEGIN_MESSAGE_MAP(CmusikDynamicText, CWnd)
+	ON_WM_CTLCOLOR_REFLECT()
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -168,3 +173,18 @@ CSize CmusikDynamicText::GetDynSize()
 }
 
 ///////////////////////////////////////////////////
+
+HBRUSH CmusikDynamicText::CtlColor( CDC* pDC, UINT nCtlColor )
+{
+	if ( nCtlColor == CTLCOLOR_STATIC )
+	{
+		HBRUSH hbr;
+		hbr = (HBRUSH)m_BgColor;
+		pDC->SetBkColor( m_Prefs->MUSIK_COLOR_BTNFACE  );
+		pDC->SetTextColor( m_Prefs->MUSIK_COLOR_BTNTEXT );
+		
+		return hbr;
+	}
+
+	return NULL;
+}

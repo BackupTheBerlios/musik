@@ -350,11 +350,13 @@ int CmusikEqualizerCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	for ( size_t i = 0; i < 18; i++ )
 	{
+		m_LeftBands[i].m_Prefs = m_Prefs;
 		m_LeftBands[i].Create( WS_CHILD | WS_VISIBLE | TBS_VERT, CRect( 0, 0, 0, 0 ), this, 123 );
 		m_LeftBands[i].m_Prefs = m_Prefs;
 		m_LeftBands[i].SetRange( 0, 100 );
 		m_LeftBands[i].SetPos( 50 );
 
+		m_RightBands[i].m_Prefs = m_Prefs;
 		m_RightBands[i].Create( WS_CHILD | WS_VISIBLE | TBS_VERT, CRect( 0, 0, 0, 0 ), this, 123 );
 		m_RightBands[i].m_Prefs = m_Prefs;
 		m_RightBands[i].SetRange( 0, 100 );

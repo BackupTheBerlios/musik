@@ -167,12 +167,10 @@ void CmusikNowPlayingCtrl::OnPaint()
 {
 	CPaintDC dc(this);
 	CRect rect;
-	GetClientRect(&rect);
-	CMemDC memDC(&dc, &rect);
-	
-	CRect clip;
-	memDC.GetClipBox(&clip);
-	memDC.FillSolidRect( clip, m_Prefs->MUSIK_COLOR_BTNFACE );
+	GetClientRect( &rect );
+	CMemDC memDC( &dc, &rect );
+
+	memDC.FillSolidRect( rect, m_Prefs->MUSIK_COLOR_BTNFACE );
 
 	DefWindowProc( WM_PAINT, (WPARAM)memDC->m_hDC, (LPARAM)0 );
 }
@@ -372,14 +370,20 @@ void CmusikNowPlayingCtrl::ResetBtnColors()
 {
 	m_Prev->SetColor( 0, m_Prefs->MUSIK_COLOR_ACTIVECAPTION, FALSE );
 	m_Prev->SetColor( 1, m_Prefs->MUSIK_COLOR_CAPTIONTEXT, FALSE );
+	m_Prev->SetColor( 2, m_Prefs->MUSIK_COLOR_BTNFACE, FALSE );
+	m_Prev->SetColor( 3, m_Prefs->MUSIK_COLOR_BTNTEXT, FALSE );
 	m_Prev->DrawBorder( FALSE, FALSE );
 
 	m_Play->SetColor( 0, m_Prefs->MUSIK_COLOR_ACTIVECAPTION, FALSE );
 	m_Play->SetColor( 1, m_Prefs->MUSIK_COLOR_CAPTIONTEXT, FALSE );
+	m_Play->SetColor( 2, m_Prefs->MUSIK_COLOR_BTNFACE, FALSE );
+	m_Play->SetColor( 3, m_Prefs->MUSIK_COLOR_BTNTEXT, FALSE );
 	m_Play->DrawBorder( FALSE, FALSE );
 
 	m_Next->SetColor( 0, m_Prefs->MUSIK_COLOR_ACTIVECAPTION, FALSE );
 	m_Next->SetColor( 1, m_Prefs->MUSIK_COLOR_CAPTIONTEXT, FALSE );
+	m_Next->SetColor( 2, m_Prefs->MUSIK_COLOR_BTNFACE, FALSE );
+	m_Next->SetColor( 3, m_Prefs->MUSIK_COLOR_BTNTEXT, FALSE );
 	m_Next->DrawBorder( FALSE, FALSE );
 }
 

@@ -568,14 +568,14 @@ BEGIN
     CONTROL         "Adaptive Fading (smoother, but CPU intensive)",
                     IDC_CHECK2,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,54,
                     167,10
-    LTEXT           "Focused transparency:",IDC_STATIC,6,72,84,8
-    LTEXT           "Unocused transparency:",IDC_STATIC,6,86,84,8
-    EDITTEXT        IDC_EDIT1,90,70,24,12,ES_AUTOHSCROLL
-    EDITTEXT        IDC_EDIT2,90,84,24,12,ES_AUTOHSCROLL
+    LTEXT           "Window Active:",IDC_STATIC,6,72,72,8
+    LTEXT           "Window Inactive:",IDC_STATIC,6,86,84,8
+    EDITTEXT        IDC_EDIT1,84,70,24,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT2,84,84,24,12,ES_AUTOHSCROLL
     CTEXT           "Transparency values range from 0 (completely transparent) to 255 (completely opaque)",
                     IDC_STATIC,6,11,192,18
     LTEXT           "Fade duration (secs):",IDC_STATIC,6,100,78,8
-    EDITTEXT        IDC_EDIT5,90,98,24,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT5,84,98,24,12,ES_AUTOHSCROLL
 END
 
 

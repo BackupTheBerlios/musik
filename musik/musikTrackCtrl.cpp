@@ -49,6 +49,7 @@
 #include "../musikCore/include/musikPlayer.h"
 
 #include "MEMDC.H"
+#include ".\musiktrackctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -73,6 +74,7 @@ CmusikTrackCtrl::CmusikTrackCtrl( CmusikPrefs* prefs, CmusikPlayer* player )
 
 CmusikTrackCtrl::~CmusikTrackCtrl()
 {
+	m_BgColor.DeleteObject();
 }
 
 ///////////////////////////////////////////////////
@@ -85,6 +87,7 @@ BEGIN_MESSAGE_MAP(CmusikTrackCtrl, CSliderCtrl)
 	ON_WM_MOUSEMOVE()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
+	ON_WM_CTLCOLOR_REFLECT()
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -223,6 +226,8 @@ int CmusikTrackCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CSliderCtrl::OnCreate(lpCreateStruct) == -1)
 		return -1;
+
+	m_BgColor.CreateSolidBrush( m_Prefs->MUSIK_COLOR_BTNFACE );
 
 	return 0;
 }
@@ -466,6 +471,23 @@ void CmusikTrackCtrl::OnBeginDrag()
 	}
 
 	TRACE0( "CmusikTrackCtrl::OnBeginDrag()\n" );
+}
+
+///////////////////////////////////////////////////
+
+HBRUSH CmusikTrackCtrl::CtlColor( CDC* pDC, UINT nCtlColor )
+{
+	if ( nCtlColor == CTLCOLOR_STATIC )
+	{
+		HBRUSH hbr;
+		hbr = (HBRUSH)m_BgColor;
+		pDC->SetBkColor( m_Prefs->MUSIK_COLOR_BTNFACE  );
+		pDC->SetTextColor( m_Prefs->MUSIK_COLOR_BTNTEXT );
+		
+		return hbr;
+	}
+
+	return NULL;
 }
 
 ///////////////////////////////////////////////////

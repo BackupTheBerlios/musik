@@ -1763,7 +1763,7 @@ void CMainFrame::OnFilePreferences()
 
 	if ( !m_Prefs->IsTransEnabled() && m_Trans != 255 )
 		SetTransparency( 255 );
-}
+} 
 
 ///////////////////////////////////////////////////
 

@@ -74,6 +74,9 @@ public:
 	CSize GetTextSize( const CString& str );
 	CSize GetDynSize();
 
+	// message handlers
+	afx_msg HBRUSH CtlColor(CDC* /*pDC*/, UINT /*nCtlColor*/);
+
 protected:
 
 	// fonts
@@ -87,9 +90,13 @@ protected:
 	int m_Type;
 	int m_FontSize;
 
+	// brush to hold bg color
+	CBrush m_BgColor;
+
 	// macros
 	DECLARE_DYNAMIC(CmusikDynamicText)
 	DECLARE_MESSAGE_MAP()
+
 };
 
 ///////////////////////////////////////////////////

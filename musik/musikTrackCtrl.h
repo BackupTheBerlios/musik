@@ -71,6 +71,7 @@ public:
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+	afx_msg HBRUSH CtlColor(CDC* /*pDC*/, UINT /*nCtlColor*/);
 
 	// use this to get colors
 	CmusikPrefs* m_Prefs;
@@ -87,6 +88,9 @@ protected:
 	virtual void OnBeginDrag();
 	virtual void OnFinishDrag();
 
+	// colors
+	CBrush m_BgColor;
+
 	// lock movement if no playback
 	bool m_LockIfNotPlaying;
 
@@ -102,6 +106,7 @@ protected:
 	// message maps
 	DECLARE_DYNAMIC(CmusikTrackCtrl)
 	DECLARE_MESSAGE_MAP()
+
 };
 
 ///////////////////////////////////////////////////
