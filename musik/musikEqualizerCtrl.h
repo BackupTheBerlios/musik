@@ -119,11 +119,18 @@ public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 
+	// custom message maps
+	afx_msg LRESULT OnBandChange( WPARAM wParam, LPARAM lParam );
+
 protected:
 
 	// status
 	bool m_ChannelsLocked;
 	int m_BandState;
+
+	// eq -> bands, bands -> eq
+	void BandsFromEQSettings( const CmusikEQSettings& settings );
+	void EQSettingsFromBands( CmusikEQSettings* settings );
 
 	// core
 	CmusikLibrary* m_Library;

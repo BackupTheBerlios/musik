@@ -65,6 +65,8 @@ public:
 	void GetSongEq( int songid );
 	void SetLibrary( CmusikLibrary* library );
 
+	void UpdateTable();
+
 	void ProcessDSP( void* buffer, int length, int channels, int bitspersample );
 
 private:

@@ -420,12 +420,6 @@ void CMainFrame::Cleanmusik()
 		m_DirSyncDlg = NULL;
 	}
 
-	if ( m_Library )	
-	{
-		delete m_Library;
-		m_Library = NULL;
-	}
-
 	if ( m_Prefs )		
 	{
 		delete m_Prefs;
@@ -442,6 +436,12 @@ void CMainFrame::Cleanmusik()
 	{
 		delete m_Player;
 		m_Player = NULL;
+	}
+
+	if ( m_Library )	
+	{
+		delete m_Library;
+		m_Library = NULL;
 	}
 
 	if ( m_NewSong )	

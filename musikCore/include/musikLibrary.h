@@ -203,11 +203,12 @@ public:
 	int  GetAllCrossfaders			( CIntArray* ids, bool clear_target = true );
 
 	// equalizers
-	int  CreateEqualizer			( const CmusikEQSettings& eq, const CStdString& name, bool is_preset = false );
+	int  CreateEqualizer			( CmusikEQSettings& eq, const CStdString& name, bool is_preset = false );
 	int  DeleteEqualizer			( int id );
 	int  GetEqualizer				( int eq_id, CmusikEQSettings* eq );
 	int  UpdateEqualizer			( int id, const CmusikEQSettings& eq );
 	int  GetEqualizerIDFromSongID	( int id );
+	int  GetEqualizerFromName		( const CStdString& name );
 	int  GetAllEqualizerPresets		( CStdStringArray* target, bool clear_target = true );
 	int  GetDefaultEqualizer		( CmusikEQSettings* eq );
 	int  UpdateDefaultEqualizer		( const CmusikEQSettings& eq );

@@ -106,6 +106,14 @@ void CmusikEqualizer::InitEqualizer()
 
 ///////////////////////////////////////////////////
 
+void CmusikEqualizer::UpdateTable()
+{
+	if ( m_TableSet )
+		equ_makeTable( m_EQ_Values.m_Left, m_EQ_Values.m_Right, &paramroot, 44100 );
+}
+
+///////////////////////////////////////////////////
+
 void CmusikEqualizer::CleanEqualizer()
 {
 	equ_quit();
@@ -116,7 +124,8 @@ void CmusikEqualizer::CleanEqualizer()
 
 void CmusikEqualizer::ProcessDSP( void* buffer, int length, int channels, int bitspersample )
 {
-	equ_modifySamples( (char*)buffer, length, channels, bitspersample );
+	if ( m_TableSet )
+		equ_modifySamples( (char*)buffer, length, channels, bitspersample );
 }
 
 ///////////////////////////////////////////////////
@@ -133,7 +142,6 @@ void CmusikEqualizer::GetSongEq( int songid )
 			{
 				CStdString fn;
 				m_Library->GetFieldFromID( m_SongID, MUSIK_LIBRARY_TYPE_FILENAME, fn );
-
 				m_Library->CreateEqualizer( m_EQ_Values, fn );
 			}
 			else

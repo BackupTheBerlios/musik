@@ -11,6 +11,7 @@
 #include "../musikCore/include/musikEqualizer.h"
 #include "../musikCore/include/musikEQSettings.h"
 #include "../musikCore/include/musikPlayer.h"
+#include "../musikCore/include/musikLibrary.h"
 
 #include "MEMDC.H"
 
@@ -200,6 +201,10 @@ IMPLEMENT_DYNAMIC(CmusikEqualizerCtrl, CWnd)
 
 ///////////////////////////////////////////////////
 
+int WM_BANDCHANGE = RegisterWindowMessage( "TRACKDRAGFINISH" );
+
+///////////////////////////////////////////////////
+
 CmusikEqualizerCtrl::CmusikEqualizerCtrl( CmusikLibrary* library, CmusikPlayer* player, CmusikPrefs* prefs )
 {
 	m_Library = library;
@@ -223,6 +228,7 @@ BEGIN_MESSAGE_MAP(CmusikEqualizerCtrl, CWnd)
 	ON_WM_ERASEBKGND()
 	ON_WM_CREATE()
 	ON_WM_SIZE()
+	ON_REGISTERED_MESSAGE(WM_BANDCHANGE, OnBandChange)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -267,6 +273,8 @@ int CmusikEqualizerCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		m_RightBands[i].SetRange( 0, 100 );
 		m_RightBands[i].SetPos( 50 );
 	}	
+
+	LoadDefault();
 
 	return 0;
 }
@@ -462,17 +470,7 @@ void CmusikEqualizerCtrl::LoadCurrSong()
 	if ( m_Player->IsPlaying() && m_Player->IsEqualizerActive() )
 	{
 		CmusikEQSettings& curr_song = m_Player->GetEqualizer()->m_EQ_Values;
-		
-		SetRedraw( FALSE );
-
-		for ( size_t i = 0; i < 16; i++ )
-		{
-			m_LeftBands[i].SetPos( (int)( curr_song.m_Left[i] * 50.0f ) );
-			m_RightBands[i].SetPos( (int)( curr_song.m_Left[i] * 50.0f ) );
-		}
-
-		SetRedraw( TRUE );
-		RedrawWindow();
+		BandsFromEQSettings( curr_song );
 	}
 }
 
@@ -480,7 +478,61 @@ void CmusikEqualizerCtrl::LoadCurrSong()
 
 void CmusikEqualizerCtrl::LoadDefault()
 {
+	CmusikEQSettings def_eq;
+	m_Library->GetDefaultEqualizer( &def_eq );
+	BandsFromEQSettings( def_eq );
+}
 
+///////////////////////////////////////////////////
+
+void CmusikEqualizerCtrl::BandsFromEQSettings( const CmusikEQSettings& settings )
+{
+	SetRedraw( FALSE );
+
+	for ( size_t i = 0; i < 16; i++ )
+	{
+		m_LeftBands[i].SetPos( 100 - (int)( settings.m_Left[i] * 50.0f ) );
+		m_RightBands[i].SetPos( 100 - (int)( settings.m_Left[i] * 50.0f ) );
+	}
+
+	SetRedraw( TRUE );
+	RedrawWindow();
+}
+
+///////////////////////////////////////////////////
+
+void CmusikEqualizerCtrl::EQSettingsFromBands( CmusikEQSettings* settings )
+{
+	for ( size_t i = 0; i < 16; i++ )
+	{
+		if ( GetBandState() == MUSIK_EQUALIZER_CTRL_16BANDS )
+		{
+			if ( IsChannelsLocked() )
+			{
+				settings->m_Left[i] = (float)( ( 100.0f - (float)m_LeftBands[i].GetPos() ) / 50.0f );
+				settings->m_Right[i] = (float)( ( 100.0f - m_LeftBands[i].GetPos() ) / 50.0f );
+			}
+			else
+			{
+				settings->m_Left[i] = (float)( ( 100.0f - (float)m_LeftBands[i].GetPos() ) / 50.0f );
+				settings->m_Right[i] = (float)( ( 100.0f - m_RightBands[i].GetPos() ) / 50.0f );
+			}
+		}
+	}
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CmusikEqualizerCtrl::OnBandChange( WPARAM wParam, LPARAM lParam )
+{
+	if ( m_Player->IsPlaying() && m_Player->IsEqualizerActive() )
+	{
+		EQSettingsFromBands( &m_Player->GetEqualizer()->m_EQ_Values );
+		m_Player->GetEqualizer()->UpdateTable();
+		m_Player->GetEqualizer()->m_EQ_Values_Modified = true;
+	}
+
+	return 0L;
 }
 
 ///////////////////////////////////////////////////

@@ -133,6 +133,7 @@ public:
 	int  GetInitState(){ return m_State; }
 	void CleanSound();
 	void CleanPlaylist();
+	void UpdateEqualizer();
 
 	// crossfader stuff
 	int GetFadeType(){ return m_FadeType; }

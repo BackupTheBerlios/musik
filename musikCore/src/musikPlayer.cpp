@@ -48,6 +48,8 @@
 
 #include "stdafx.h"
 
+#include <math.h>
+
 #include "../include/musikConfig.h"
 #include "../include/musikArrays.h"
 #include "../include/musikPlayer.h"
@@ -60,6 +62,10 @@
 #ifdef WIN32
 #pragma warning (disable : 4312)		// conversion of int to * of greater size
 #endif
+
+///////////////////////////////////////////////////
+
+#define round(x) floor( x + 0.5f )
 
 ///////////////////////////////////////////////////
 
@@ -167,7 +173,7 @@ static void musikPlayerWorker( CmusikThread* thread )
 			// crossfader flag
 			if ( player->IsCrossfaderReady() )
 			{
-				TRACE0( "Crossfade started... " );
+				TRACE0( "Crossfade started...\n" );
 
 				player->UnflagCrossfade();
 
@@ -190,7 +196,8 @@ static void musikPlayerWorker( CmusikThread* thread )
 					if ( nFadeCount < 1 ) nFadeCount = 1;
 
 					// variables
-					int temp = 0;
+					float ftemp = 0.0f;
+					int ntemp = 0;
 
 					int nFadeType = player->GetFadeType();
 					int nCurrHandle	= player->GetHandle();
@@ -206,6 +213,7 @@ static void musikPlayerWorker( CmusikThread* thread )
 					int nChildChan = -1;
 
 					bool recalc_steps = true;
+					bool eq_updated = false;
 
 					// start the main loop
 					for ( int i = 0; i < nFadeCount; i++ )
@@ -221,7 +229,7 @@ static void musikPlayerWorker( CmusikThread* thread )
 								recalc_steps = true;
 							}
 						}
-	    
+
 						// otherwise its a regular fade, so find the
 						// main and child streams
 						else
@@ -239,6 +247,19 @@ static void musikPlayerWorker( CmusikThread* thread )
 							}
 						}	
 
+						// we will switch the equalizer half way
+						// through the crossfade, assuming there are
+						// child streams. if there are not child streams
+						// just start the new EQ right away
+						if ( !eq_updated )
+						{
+							if ( ( nChildCount > 0 && ( i == ( nFadeCount / 2 ) ) ) || ( nChildCount == 0 && i == 0 ) )
+							{							
+								player->UpdateEqualizer();
+								eq_updated = true;
+							}
+						}
+
 						if ( recalc_steps )
 						{
 							// an array containing the volume steps for
@@ -246,9 +267,13 @@ static void musikPlayerWorker( CmusikThread* thread )
 							aChildSteps.clear();
 							for ( size_t i = 0; i < nChildCount; i++ )
 							{
-								temp = player->GetVolume( player->GetChannelID( i ) ) / nFadeCount;
-								if ( temp < 1 )	temp = 1;
-								aChildSteps.push_back( temp );
+								ftemp = (float)player->GetVolume( player->GetChannelID( i ) ) / fFadeCount;
+								ntemp = round( ftemp );
+
+								if ( ntemp < 1 )	
+									ntemp = 1;
+
+								aChildSteps.push_back( ntemp );
 							}
 
 							// the amount of volume to be changed
@@ -997,8 +1022,8 @@ void CmusikPlayer::EnableEqualizer( bool enable )
 	}
 	else
 	{
-		CleanEqualizer();
 		CleanEQ_DSP();
+		CleanEqualizer();
 	}
 }
 
@@ -1144,9 +1169,6 @@ int CmusikPlayer::GetTimeRemain( int mode )
 
 void CmusikPlayer::FinalizeNewSong()
 {
-	if ( IsEqualizerActive() && IsEqualizerEnabled() )
-		m_EQ->GetSongEq( m_Playlist->GetSongID( m_Index ) );
-	
 	// call the functor. this is sort of like
 	// a callback, but a bit easier.
 	if ( m_Functor )
@@ -1361,6 +1383,17 @@ void CmusikPlayer::ModifyPlaymode( unsigned long add, unsigned long remove, bool
 
 	if ( remove )
 		m_Playmode &= ~remove;
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlayer::UpdateEqualizer()
+{
+	if ( IsEqualizerActive() && IsEqualizerEnabled() )
+	{
+		GetEqualizer()->GetSongEq( GetPlaylist()->GetSongID( GetIndex() ) );
+		GetEqualizer()->UpdateTable();						
+	}
 }
 
 ///////////////////////////////////////////////////

@@ -163,8 +163,11 @@ static int sqlite_GetEqualizer( void *args, int numCols, char **results, char **
 	p->m_Right[16]		= (float)atof( results[34] );
 	p->m_Right[17]		= (float)atof( results[35] );
 
-    p->m_Name = results[36];
-	p->m_ID	= atoi( results[37] );
+	if ( numCols > 36 )
+	{
+		p->m_Name = results[36];
+		p->m_ID	= atoi( results[37] );
+	}
 
 	return 0;
 }
@@ -567,8 +570,7 @@ bool CmusikLibrary::InitEqTable()
 	// if there was no error that means that
 	// the default table did not exist, so
 	// we want to initialize some default values...
-	else
-		InitDefaultEqualizer();
+	InitDefaultEqualizer();
 
 	return error;
 }
@@ -2087,14 +2089,37 @@ int CmusikLibrary::GetEqualizerIDFromSongID( int id )
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::CreateEqualizer( const CmusikEQSettings& eq, const CStdString& name, bool is_preset )
+
+int CmusikLibrary::GetEqualizerFromName( const CStdString& name )
+{
+	if ( !m_DatabaseOpen )
+		return -1;
+
+	int target;
+
+	// do it
+	m_ProtectingLibrary->acquire();
+
+	sqlite_exec_printf( m_pDB, "SELECT equalizer_id FROM %Q WHERE equalizer_name = %Q;", 
+		&sqlite_GetEqualizerIDFromID, &target, NULL,
+		EQUALIZER_PRESET,
+		name.c_str() );
+
+	m_ProtectingLibrary->release();
+
+	return target;
+}
+
+///////////////////////////////////////////////////
+
+int CmusikLibrary::CreateEqualizer( CmusikEQSettings& eq, const CStdString& name, bool is_preset )
 {
 	if ( !m_DatabaseOpen )
 		return -1;
 
 	m_ProtectingLibrary->acquire();
 
-	int nRes = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %Q, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, );", NULL, NULL, NULL, 
+	int nRes = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %Q, %d, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f );", NULL, NULL, NULL, 
 		EQUALIZER_PRESET,								// eq table 		
 		NULL,											// id
 		name.c_str(),									// name
@@ -2138,6 +2163,8 @@ int CmusikLibrary::CreateEqualizer( const CmusikEQSettings& eq, const CStdString
 
 	m_ProtectingLibrary->release();
 
+	eq.m_ID = GetEqualizerFromName( name.c_str() );	
+
 	return nRes;
 }
 
@@ -2169,8 +2196,8 @@ int CmusikLibrary::UpdateEqualizer( int id, const CmusikEQSettings& eq )
 
 	m_ProtectingLibrary->acquire();
 
-	int nRes = sqlite_exec_printf( m_pDB, "UPDATE %Q set equalizer_name = %Q, hz55_left = %d, hz77_left = %d, hz110_left = %d, hz156_left = %d, hz220_left = %d, hz311_left = %d, hz440_left = %d, hz622_left = %d, hz880_left = %d, hz1244_left = %d, hz1760_left = %d, hz2489_left = %d, hz3520_left = %d, hz4978_left = %d, hz7040_left = %d, hz9956_left = %d, hz14080_left = %d, hz19912_left = %d,"
-						" hz55_right = %d, hz77_right = %d, hz110_right = %d, hz156_right = %d, hz220_right = %d, hz311_right = %d, hz440_right = %d, hz622_right = %d, hz880_right = %d, hz1244_right = %d, hz1760_right = %d, hz2489_right = %d, hz3520_right = %d, hz4978_right = %d, hz7040_right = %d, hz9956_right = %d, hz14080_right = %d, hz19912_right = %d WHERE equalizer_id = %d;",
+	int nRes = sqlite_exec_printf( m_pDB, "UPDATE %Q set equalizer_name = %Q, hz55_left = %f, hz77_left = %f, hz110_left = %f, hz156_left = %f, hz220_left = %f, hz311_left = %f, hz440_left = %f, hz622_left = %f, hz880_left = %f, hz1244_left = %f, hz1760_left = %f, hz2489_left = %f, hz3520_left = %f, hz4978_left = %f, hz7040_left = %f, hz9956_left = %f, hz14080_left = %f, hz19912_left = %f,"
+						" hz55_right = %f, hz77_right = %f, hz110_right = %f, hz156_right = %f, hz220_right = %f, hz311_right = %f, hz440_right = %f, hz622_right = %f, hz880_right = %f, hz1244_right = %f, hz1760_right = %f, hz2489_right = %f, hz3520_right = %f, hz4978_right = %f, hz7040_right = %f, hz9956_right = %f, hz14080_right = %f, hz19912_right = %f WHERE equalizer_id = %d;",
 			NULL, NULL, NULL,
 			EQUALIZER_PRESET,
 			eq.m_Name.c_str(),
@@ -2226,8 +2253,8 @@ int CmusikLibrary::UpdateDefaultEqualizer( const CmusikEQSettings& eq )
 
 	m_ProtectingLibrary->acquire();
 
-	int nRes = sqlite_exec_printf( m_pDB, "UPDATE %Q SET hz55_left = %d, hz77_left = %d, hz110_left = %d, hz156_left = %d, hz220_left = %d, hz311_left = %d, hz440_left = %d, hz622_left = %d, hz880_left = %d, hz1244_left = %d, hz1760_left = %d, hz2489_left = %d, hz3520_left = %d, hz4978_left = %d, hz7040_left = %d, hz9956_left = %d, hz14080_left = %d, hz19912_left = %d,"
-						" hz55_right = %d, hz77_right = %d, hz110_right = %d, hz156_right = %d, hz220_right = %d, hz311_right = %d, hz440_right = %d, hz622_right = %d, hz880_right = %d, hz1244_right = %d, hz1760_right = %d, hz2489_right = %d, hz3520_right = %d, hz4978_right = %d, hz7040_right = %d, hz9956_right = %d, hz14080_right = %d, hz19912_right = %d WHERE equalizer_id = -1;",
+	int nRes = sqlite_exec_printf( m_pDB, "UPDATE %Q SET hz55_left = %f, hz77_left = %f, hz110_left = %f, hz156_left = %f, hz220_left = %f, hz311_left = %f, hz440_left = %f, hz622_left = %f, hz880_left = %f, hz1244_left = %f, hz1760_left = %f, hz2489_left = %f, hz3520_left = %f, hz4978_left = %f, hz7040_left = %f, hz9956_left = %f, hz14080_left = %f, hz19912_left = %f,"
+						" hz55_right = %f, hz77_right = %f, hz110_right = %f, hz156_right = %f, hz220_right = %f, hz311_right = %f, hz440_right = %f, hz622_right = %f, hz880_right = %f, hz1244_right = %f, hz1760_right = %f, hz2489_right = %f, hz3520_right = %f, hz4978_right = %f, hz7040_right = %f, hz9956_right = %f, hz14080_right = %f, hz19912_right = %f WHERE equalizer_id = -1;",
 			NULL, NULL, NULL,
 			EQUALIZER_DEFAULT,
 			eq.m_Left[0],
@@ -2281,8 +2308,9 @@ int CmusikLibrary::GetDefaultEqualizer( CmusikEQSettings* target )
 
 	m_ProtectingLibrary->acquire();
 
-	int nRet = sqlite_exec_printf( m_pDB, "SELECT hz55_left, hz77_left, hz110_left, hz156_left, hz220_left, hz311_left, hz440_left, hz622_left, hz880_left, hz1244_left, hz1760_left, hz2489_left, hz3520_left, hz4978_left, hz7040_left, hz9956_left, hz14080_left, hz19912_left,"
-								" hz55_right, hz77_right, hz110_right, hz156_right, hz220_right, hz311_right, hz440_right, hz622_right, hz880_right, hz1244_right, hz1760_right, hz2489_right, hz3520_right, hz4978_right, hz7040_right, hz9956_right, hz14080_right hz19912_right, equalizer_name, equalizer_id"
+	int nRet = sqlite_exec_printf( m_pDB, "SELECT"
+								" hz55_left,  hz77_left,  hz110_left,  hz156_left,  hz220_left,  hz311_left,  hz440_left,  hz622_left,  hz880_left,  hz1244_left,  hz1760_left,  hz2489_left,  hz3520_left,  hz4978_left,  hz7040_left,  hz9956_left,  hz14080_left, hz19912_left,"
+								" hz55_right, hz77_right, hz110_right, hz156_right, hz220_right, hz311_right, hz440_right, hz622_right, hz880_right, hz1244_right, hz1760_right, hz2489_right, hz3520_right, hz4978_right, hz7040_right, hz9956_right, hz14080_right, hz19912_right"
 								" FROM %Q WHERE equalizer_id = -1;", 
 								&sqlite_GetEqualizer, &target, NULL, 
 								EQUALIZER_DEFAULT );
@@ -2321,7 +2349,7 @@ int CmusikLibrary::GetEqualizer( int eq_id, CmusikEQSettings* target )
 	m_ProtectingLibrary->acquire();
 
 	int nRet = sqlite_exec_printf( m_pDB, "SELECT hz55_left, hz77_left, hz110_left, hz156_left, hz220_left, hz311_left, hz440_left, hz622_left, hz880_left, hz1244_left, hz1760_left, hz2489_left, hz3520_left, hz4978_left, hz7040_left, hz9956_left, hz14080_left, hz19912_left,"
-								" hz55_right, hz77_right, hz110_right, hz156_right, hz220_right, hz311_right, hz440_right, hz622_right, hz880_right, hz1244_right, hz1760_right, hz2489_right, hz3520_right, hz4978_right, hz7040_right, hz9956_right, hz14080_right hz19912_right, equalizer_name, equalizer_id"
+								" hz55_right, hz77_right, hz110_right, hz156_right, hz220_right, hz311_right, hz440_right, hz622_right, hz880_right, hz1244_right, hz1760_right, hz2489_right, hz3520_right, hz4978_right, hz7040_right, hz9956_right, hz14080_right, hz19912_right, equalizer_name, equalizer_id"
 								" FROM %Q WHERE equalizer_id = %d;", 
 								&sqlite_GetEqualizer, &target, NULL, 
 								EQUALIZER_PRESET,
