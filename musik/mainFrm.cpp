@@ -57,6 +57,7 @@
 #include <Direct.h>
 
 #include "3rdparty/TreePropSheet.h"
+#include ".\mainfrm.h"
 
 ///////////////////////////////////////////////////
 
@@ -101,6 +102,10 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_COMMAND(ID_FILE_PREFERENCES, OnFilePreferences)
 	ON_COMMAND(ID_OPEN_FILES, OnOpenFiles)
 	ON_COMMAND(ID_OPEN_DIRECTORY, OnOpenDirectory)
+	ON_COMMAND(ID_FILE_SAVEPLAYLIST, OnFileSaveplaylist)
+
+	// update ui
+	ON_UPDATE_COMMAND_UI(ID_FILE_SAVEPLAYLIST,OnUpdateMainMenu)
 
 	// custom message maps
 	ON_REGISTERED_MESSAGE( WM_SELBOXUPDATE, OnUpdateSel )
@@ -1020,3 +1025,16 @@ void CMainFrame::OnOpenDirectory()
 
 ///////////////////////////////////////////////////
 
+void CMainFrame::OnFileSaveplaylist()
+{
+	if ( m_wndView->GetCtrl()->PlaylistNeedsSave() )
+		m_wndView->GetCtrl()->SavePlaylist();
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnUpdateMainMenu( CCmdUI* pCmd )
+{
+	if ( pCmd->m_nID == ID_FILE_SAVEPLAYLIST )
+		pCmd->Enable( m_wndView->GetCtrl()->PlaylistNeedsSave() );
+}

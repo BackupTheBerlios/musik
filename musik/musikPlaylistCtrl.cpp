@@ -1030,3 +1030,20 @@ void CmusikPlaylistCtrl::OnLvnMarqueeBegin(NMHDR *pNMHDR, LRESULT *pResult)
 }
 
 ///////////////////////////////////////////////////
+
+bool CmusikPlaylistCtrl::SavePlaylist()
+{
+	// if this is a standard playlist, it
+	// will have an ID. all other playlists
+	// will have an id as -1.
+	if ( m_Playlist->GetPlaylistID() != -1 )
+	{
+		m_Library->RewriteStdPlaylist( m_Playlist->GetPlaylistID(), m_Playlist );
+		m_PlaylistNeedsSave = false;
+		return true;
+	}
+
+	return false;
+}
+
+///////////////////////////////////////////////////

@@ -49,6 +49,11 @@ public:
 	// set the playlist
 	void SetPlaylist( CmusikPlaylist* playlist, int type );
 
+	// save the current playlist back to the library..
+	// this will only work on standard playlists. will
+	// return false if non standard playlist
+	bool SavePlaylist();
+
 protected:
 
 	// is dnd active

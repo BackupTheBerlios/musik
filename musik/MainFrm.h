@@ -173,6 +173,9 @@ protected:
 	afx_msg void OnOpenFiles();
 	afx_msg void OnOpenDirectory();
 
+	// updating ui
+	void OnUpdateMainMenu( CCmdUI* pCmd );
+
 	// batch add files thread
 	CmusikBatchAdd* m_BatchAddThr;
 	CmusikBatchAddFunctor* m_BatchAddFnct;
@@ -180,6 +183,8 @@ protected:
 	// macros
 	DECLARE_DYNAMIC(CMainFrame)
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnFileSaveplaylist();
 };
 
 ///////////////////////////////////////////////////

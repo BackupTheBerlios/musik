@@ -84,6 +84,8 @@ BEGIN
             MENUITEM "Directory",                   ID_OPEN_DIRECTORY
         END
         MENUITEM SEPARATOR
+        MENUITEM "Save Playlist",               ID_FILE_SAVEPLAYLIST
+        MENUITEM SEPARATOR
         MENUITEM "Manage Directories",          ID_FILE_MANAGEDIRECTORIES
         MENUITEM "&Preferences\tCtrl+P",        ID_FILE_PREFERENCES
         MENUITEM SEPARATOR
