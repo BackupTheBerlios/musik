@@ -102,7 +102,7 @@ void CMusikPlayer::Init(bool bSuppressAutoPlay)
 				{
 					arr[0].ToULong((unsigned long *)&m_SongIndex);
 					arr[1].ToLong((long*)&nPlayStartPos);
-					nPlayStartPos = max(0,(nPlayStartPos - 10 * 1000)/1000);
+					nPlayStartPos = wxMax(0,(nPlayStartPos - 10 * 1000)/1000);
 				}
 			}
 			wxArrayString aFilelist;

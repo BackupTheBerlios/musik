@@ -51,9 +51,8 @@ public:
 	CMusikPlayer		Player;
 	CMusikWebServer		WebServer;
 private:
-	wxString ReadVersion();
-	void WriteVersion();
-	void CheckVersion();
+	wxString ReadOldVersionFile();
+	void CheckOldVersion();
 
 	wxSingleInstanceChecker *m_pSingleInstanceChecker;
 	MusikAppServer *m_pServer;

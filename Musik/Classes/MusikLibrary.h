@@ -144,6 +144,8 @@ public:
 	int QueryCount			(const char * szQuery );
 private:
 
+	void CheckVersion();
+
 	sqlite		  *m_pDB;
 	void CreateDB();
 	bool GetMetaData		( CSongMetaData & MetaData  );
@@ -168,9 +170,10 @@ private:
 									// a wxMutex is used automatically instead
 	void CreateDBFuncs();
 	static void remprefixFunc(sqlite_func *context, int argc, const char **argv);
+	static void cnvISO8859_1ToUTF8Func(sqlite_func *context, int argc, const char **argv);
 	static void wxjuliandayFunc(sqlite_func *context, int argc, const char **argv);
 	static void cnvMusikOldDTFormatToJuliandayFunc(sqlite_func *context, int argc, const char **argv);
-
+				
 	inline static void _AssignSongTableColumnDataToSong(CMusikSong * pSong, const char **coldata)
 	{
 		pSong->songid		= StringToInt		( coldata[0] );

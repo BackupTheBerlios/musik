@@ -25,11 +25,6 @@
 #endif
 
 
-// in case it is missing 
-#ifndef max
-#define max(a, b)   (((a) > (b)) ? (a) : (b))
-#endif
-
 //---------------//
 //--- defines ---//
 //---------------//
@@ -44,7 +39,29 @@
 #define	MUSIK_SIMPLEQUERY		9996
 #define MUSIK_NOWPLAYING_TIMER	9997
 #define MUSIK_ACTIVITYCTRL		9998
-#define MUSIK_VERSION_STR		wxT("0.3.1 CVS")
+
+#define MUSIK_STRINGIZE2(x)  #x
+#define MUSIK_STRINGIZE(x)  wxT(MUSIK_STRINGIZE2(x))
+
+#define MUSIK_VERSION_MAJOR		0
+#define MUSIK_VERSION_MAJORSUB	3
+#define MUSIK_VERSION_MINOR		1
+#define MUSIK_VERSION_MINORSUB	0
+
+#ifdef WXDEBUG
+#define MUSIK_VERSION_DEBUG wxT("-DEBUG-")
+#else
+#define MUSIK_VERSION_DEBUG wxT("")
+#endif
+#define MUSIK_VERSION_ADDENDUM	wxT(" CVS")
+//#define MUSIK_VERSION_ADDENDUM	wxT("")
+							  
+#define MUSIK_VERSION_STR		MUSIK_STRINGIZE(MUSIK_VERSION_MAJOR) wxT(".") \
+								MUSIK_STRINGIZE(MUSIK_VERSION_MAJORSUB) wxT(".") \
+								MUSIK_STRINGIZE(MUSIK_VERSION_MINOR) wxT(".") \
+								MUSIK_STRINGIZE(MUSIK_VERSION_MINORSUB) MUSIK_VERSION_DEBUG \
+								MUSIK_VERSION_ADDENDUM
+
 #define MUSIKAPPNAME			wxT("wxMusik")
 #define MUSIKAPPNAME_VERSION	MUSIKAPPNAME wxT(" ") MUSIK_VERSION_STR
 #define MUSIKSERV_VERSION		MUSIKAPPNAME wxT("Serv ") MUSIK_VERSION_STR
@@ -54,7 +71,8 @@
 #include <wx/filename.h>
 #define MUSIK_HOME_DIR 			wxFileName::GetHomeDir() + wxFileName::GetPathSeparator() + wxT( ".Musik" ) + wxFileName::GetPathSeparator()
 #define MUSIK_PLAYLIST_DIR		wxGetApp().Prefs.sDataPath + wxT( "playlists" ) + wxFileName::GetPathSeparator()
-#define MUSIK_DB_FILENAME		wxGetApp().Prefs.sDataPath + wxT( "musiklib.db" )
+#define MUSIK_OLD_DB_FILENAME		wxGetApp().Prefs.sDataPath + wxT( "musiklib.db" )
+#define MUSIK_DB_FILENAME		wxGetApp().Prefs.sDataPath + wxT( "wxmusiklib.db" )
 #define MUSIK_SOURCES_FILENAME	wxGetApp().Prefs.sDataPath + wxT( "musiksources.dat" )
 #define MUSIK_PATHS_FILENAME	wxGetApp().Prefs.sDataPath + wxT( "musikpaths.dat" )
 #define MUSIK_VERSION_FILENAME	wxGetApp().Prefs.sDataPath + wxT( "musikversion.dat" )

@@ -331,7 +331,7 @@ void CNowPlayingCtrl::UpdateInfo( const CMusikSong &song )
 	m_LastFile = song.MetaData.Filename;
 
 	//--- caption bar title ---//
-	g_MusikFrame->SetTitle( wxString( MUSIKAPPNAME_VERSION ) + wxT( " [ " ) + sArtist + wxT( " - " ) +  sTitle + wxT( " ]" ) );
+	g_MusikFrame->SetTitle( wxT( "[ " ) + sArtist + wxT( " - " ) +  sTitle + wxT( " ] " ) + wxString( MUSIKAPPNAME_VERSION ) );
 
 	//--- title / artist / time -//
 	sTitle.Replace	( wxT( "&" ), wxT( "&&" ), TRUE );

@@ -133,7 +133,7 @@ bool MusikApp::OnInit()
 	//--- if any core changes need to be	---//
 	//--- made.								---//
 	//-----------------------------------------//
-	CheckVersion();
+	CheckOldVersion();
 	
 	//--- assure playlists directory exists ---//
 	if ( !wxDirExists( MUSIK_PLAYLIST_DIR ) )
@@ -210,19 +210,15 @@ int MusikApp::OnExit()
 	delete m_pServer;
 	return 0;
 }
-void MusikApp::CheckVersion()
+void MusikApp::CheckOldVersion()
 {
 	wxString sVersion;
 	if ( wxFileExists( MUSIK_VERSION_FILENAME ) )
 	{
-		sVersion = ReadVersion();
+		sVersion = ReadOldVersionFile();
 
-		if ( sVersion == wxT( "Musik 0.1.3" ) || sVersion == wxT( "Musik 0.1.3 CVS" ) )
-		{
-//			wxMessageBox( wxT( MUSIKAPPNAME" has detected 0.1.3 was previously installed. Due to the changes in the playlist display preferences, your columns will be reset. We apologize for any inconvenience this may cause." ), MUSIKAPPNAME_VERSION, wxICON_INFORMATION );
-		}
-
-		WriteVersion();
+		wxRemoveFile(MUSIK_VERSION_FILENAME);
+		wxRename(MUSIK_OLD_DB_FILENAME,MUSIK_DB_FILENAME);		
 	}
 	else
 	{
@@ -232,21 +228,20 @@ void MusikApp::CheckVersion()
 		//--- installed. give user a nice little		---//
 		//--- warning.									---//
 		//-------------------------------------------------//
-		if ( wxFileExists( MUSIK_SOURCES_FILENAME ) || wxFileExists( MUSIK_DB_FILENAME ) )
+		if ( wxFileExists( MUSIK_SOURCES_FILENAME ) && wxFileExists( MUSIK_OLD_DB_FILENAME ) )
 		{
 			wxMessageBox(wxString(MUSIKAPPNAME) + _(" has detected version 0.1.2 or earlier was previously installed.\n\nDue to the changes from 0.1.2 to the current version, your Sources list and Library must be reset. We apologize for any inconvenience this may cause.") , MUSIKAPPNAME_VERSION, wxICON_INFORMATION );
 	
 			if ( wxFileExists( MUSIK_SOURCES_FILENAME ) )
 				wxRemoveFile( MUSIK_SOURCES_FILENAME );
-			if ( wxFileExists( MUSIK_DB_FILENAME ) )
-				wxRemoveFile( MUSIK_DB_FILENAME );
+			if ( wxFileExists( MUSIK_OLD_DB_FILENAME ) )
+				wxRemoveFile( MUSIK_OLD_DB_FILENAME );
 		}	
 
-		WriteVersion();
 	}
 }
 
-wxString MusikApp::ReadVersion()
+wxString MusikApp::ReadOldVersionFile()
 {
 	wxTextFile ver( MUSIK_VERSION_FILENAME );
 	wxString sRet;
@@ -259,28 +254,6 @@ wxString MusikApp::ReadVersion()
 	return sRet;
 }
 
-void MusikApp::WriteVersion()
-{
-	wxTextFile ver;
-	if ( !wxFileExists( MUSIK_VERSION_FILENAME ) )
-	{
-		ver.Create( MUSIK_VERSION_FILENAME );
-	}
-	ver.Open( MUSIK_VERSION_FILENAME );
-    
-	if ( ver.IsOpened() )
-	{
-		if ( ver.GetLineCount() != 0 )
-    		ver.RemoveLine(0);
-		ver.AddLine( MUSIKAPPNAME_VERSION );
-		ver.Write();
-		ver.Close();
-	}
- 	else
-  	{
-    		wxASSERT(0);
-  	}
-}
 
 wxConnectionBase * MusikAppServer::OnAcceptConnection(const wxString& WXUNUSED(topic))
 {

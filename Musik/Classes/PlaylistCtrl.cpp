@@ -775,7 +775,13 @@ wxString CPlaylistCtrl::OnGetItemText(long item, long column) const
 		break;
 
 	case PLAYLISTCOLUMN_FILENAME:
-		return song.MetaData.Filename.GetFullPath();
+		{
+			wxString fn = song.MetaData.Filename.GetFullPath();
+			if(fn.StartsWith(wxT("\\\\http")))
+				return FilenameAsUrl(fn); 
+			else
+				return fn;
+		}
 		break;
 	case PLAYLISTCOLUMN_NOTES:
 		return ConvFromUTF8(song.MetaData.Notes);
@@ -819,7 +825,7 @@ wxListItemAttr* CPlaylistCtrl::OnGetItemAttr(long item) const
 			return (wxListItemAttr *)&m_SelectedLightAttr;
 	}
 	else if ( wxGetApp().Player.IsPlaying() && (g_SourcesCtrl->GetSelType() != MUSIK_SOURCES_NOW_PLAYING) 
-		&& song.songid == wxGetApp().Player.GetCurrentSongid() )
+		&& song.songid == wxGetApp().Player.GetCurrentSongid() && song.MetaData.Filename.GetFullPath() == wxGetApp().Player.GetCurrentFilename() )
 	{
 		if ( wxGetApp().Prefs.bPLStripes == 1 )
 			return item % 2 ? (wxListItemAttr *)&m_SelectedDarkAttr : (wxListItemAttr *)&m_SelectedLightAttr;

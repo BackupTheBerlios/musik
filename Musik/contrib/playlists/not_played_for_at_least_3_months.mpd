@@ -1,1 +1,1 @@
-wxjulianday(lastplayed) < julianday('now','-3 months') or lastplayed = ''
+lastplayed < julianday('now','-3 months') or lastplayed =''

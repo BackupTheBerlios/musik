@@ -78,6 +78,10 @@ bool CMusikLibrary::Load()
 		
 	//--- look for database.. if need be, create it and create tables ---//
 	char *errmsg = NULL;
+	static	const char *szCreateVersionQuery =
+		"CREATE TABLE version ( " 	
+		"name, major, majorsub ,minor, minorsub "
+		" );";
 	
 	//--- create the tables ---//
 	static const char *szCreateSongTableQuery  = 
@@ -133,6 +137,7 @@ bool CMusikLibrary::Load()
 	{
 
 		// always create table, if it exists can error will be returned by sqlite_exec, but we dont care.
+		sqlite_exec( m_pDB, szCreateVersionQuery, NULL, NULL, NULL );
 		sqlite_exec( m_pDB, szCreateSongTableQuery, NULL, NULL, NULL );
 		sqlite_exec( m_pDB, szCreateSongTableIdxQuery, NULL, NULL, NULL );
 		sqlite_exec( m_pDB, szCreateSongHistoryQuery, NULL, NULL, NULL );
@@ -149,10 +154,103 @@ bool CMusikLibrary::Load()
 		CreateDBFuncs();
 		sqlite_exec( m_pDB, "PRAGMA synchronous = OFF;", NULL, NULL, NULL );
 		sqlite_exec( m_pDB, "PRAGMA cache_size = 10000;", NULL, NULL, NULL );
+
+
+
+		CheckVersion();
 	}
 	if ( errmsg )
 			free( errmsg );
 	return m_pDB != NULL;
+}
+
+void CMusikLibrary::CheckVersion()
+{
+	bool bVersionInfoPresent = false;
+	int ver_major = -1;
+	int ver_majorsub = -1;
+	int ver_minor = -1;
+	int ver_minorsub = -1;
+	//--- run query ---//
+	const char *pTail;
+	sqlite_vm *pVM;
+
+	sqlite_compile( m_pDB, "select name,major,majorsub,minor,minorsub from version where name='wxMusik';", &pTail, &pVM, NULL );
+	char *errmsg = NULL;
+	int numcols = 0;
+	const char **coldata;
+	const char **coltypes;
+
+	//--- look and see if there's one row ---//
+	if ( sqlite_step( pVM, &numcols, &coldata, &coltypes ) == SQLITE_ROW )
+	{
+		bVersionInfoPresent= true;
+		ver_major = atoi(coldata[1]);
+		ver_majorsub = atoi(coldata[2]);
+		ver_minor = atoi(coldata[3]);
+		ver_minorsub = atoi(coldata[4]);
+	}
+	//--- close up ---//
+	sqlite_finalize( pVM, &errmsg );
+	sqlite_freemem(errmsg);
+
+	if(bVersionInfoPresent)
+	{
+		// update version info
+		sqlite_exec_printf( m_pDB,	"update version set major=%d,majorsub=%d,minor=%d,minorsub=%d,where name = 'wxMusik';",
+			NULL,NULL,NULL,MUSIK_VERSION_MAJOR,MUSIK_VERSION_MAJORSUB,MUSIK_VERSION_MINOR,MUSIK_VERSION_MINORSUB
+			);
+		// 
+		if((ver_major == MUSIK_VERSION_MAJOR) &&
+			(ver_majorsub == MUSIK_VERSION_MAJORSUB) &&
+			(ver_minor == MUSIK_VERSION_MINOR)	 )
+		{
+			// nothing to do
+			return;
+		}
+		// maybe  we call sometime conversion routines from here
+
+	}
+	else
+	{
+	   // version must be before 0.3.1.0
+
+		// check for old datetime format 
+		wxArrayString aOldDateStrings;
+		Query(wxT(" select timeadded  from songs where timeadded like '%:%' limit 1;"),aOldDateStrings);// does an entry contains a colon?
+		if(aOldDateStrings.GetCount() == 1)
+		{
+			// db contains old string format. m/d/y h:m:s
+			//convert it to julianday
+			sqlite_exec( m_pDB, "update songs set lastplayed = cnvMusikOldDTFormatToJulianday(lastplayed), timeadded = cnvMusikOldDTFormatToJulianday(timeadded) where 1;", NULL, NULL, NULL );
+
+		}
+
+		// convert <unknown> and 0 entrys to ''
+		sqlite_exec( m_pDB, "update songs set album = '' where album = '<unknown>';"
+							"update songs set artist = '' where artist = '<unknown>';"		
+							"update songs set genre = '' where genre = '<unknown>';"		
+							"update songs set year = '' where year = '<unknown>' or year=0;"		
+							"update songs set notes = '' where  notes = '<unknown>' ;"		
+							"update songs set lastplayed = '' where  lastplayed isnull;"		
+							"update songs set tracknum = '' where tracknum = '<unknown>' OR tracknum = 0 OR tracknum isnull;"		
+							, NULL, NULL, NULL );
+
+
+		// convert iso8859-1 encoding to utf-8
+		sqlite_exec( m_pDB, "update songs set artist = cnvISO8859_1ToUTF8(artist),"
+							" album = cnvISO8859_1ToUTF8(album),"		
+							" title = cnvISO8859_1ToUTF8(title),"		
+							" genre = cnvISO8859_1ToUTF8(genre),"		
+							" filename = cnvISO8859_1ToUTF8(filename) where 1; "
+							, NULL, NULL, NULL );
+
+		// insert version info
+		sqlite_exec_printf( m_pDB,	"INSERT INTO version values('wxMusik',%d,%d,%d,%d);",
+			NULL,NULL,NULL,MUSIK_VERSION_MAJOR,MUSIK_VERSION_MAJORSUB,MUSIK_VERSION_MINOR,MUSIK_VERSION_MINORSUB
+			);
+
+	}
 }
 void CMusikLibrary::CreateDBFuncs()
 {
@@ -167,6 +265,7 @@ void CMusikLibrary::CreateDBFuncs()
 	} aFuncs[] = 
 			{
 				{ "remprefix",      1, SQLITE_TEXT, remprefixFunc, 0 },
+				{ "cnvISO8859_1ToUTF8",     1, SQLITE_TEXT, cnvISO8859_1ToUTF8Func, 0 },
 				{ "wxjulianday", 1, SQLITE_TEXT, wxjuliandayFunc,0 },// for backward compatibility
 			    { "cnvMusikOldDTFormatToJulianday",	1, SQLITE_NUMERIC, cnvMusikOldDTFormatToJuliandayFunc, 0 },
 
@@ -203,6 +302,13 @@ void CMusikLibrary::CreateDBFuncs()
 	sqlite_function_type(m_pDB, aAggs[i].zName, aAggs[i].dataType);
 	}
 	*/
+}
+void CMusikLibrary::cnvISO8859_1ToUTF8Func(sqlite_func *context, int argc, const char **argv)
+{
+	if( argc<1 || argv[0]==0 ) return;
+	const wxCharBuffer buf = ConvFromISO8859_1ToUTF8(argv[0]);
+	int len =strlen(buf);
+	sqlite_set_result_string(context,buf, len);
 }
 void CMusikLibrary::remprefixFunc(sqlite_func *context, int argc, const char **argv)
 {
@@ -270,7 +376,7 @@ bool CMusikLibrary::FileInLibrary( const wxString & filename, bool fullpath )
 	sqlite_vm *pVM;
 	wxCriticalSectionLocker lock( m_csDBAccess );
 	sqlite_compile( m_pDB, query, &pTail, &pVM, NULL );
-	char *errmsg;
+	char *errmsg = NULL;
 	int numcols = 0;
 	const char **coldata;
 	const char **coltypes;
@@ -282,6 +388,7 @@ bool CMusikLibrary::FileInLibrary( const wxString & filename, bool fullpath )
 	//--- close up ---//
 	sqlite_finalize( pVM, &errmsg );
 	sqlite_freemem( query );
+	sqlite_freemem(errmsg);
 	return result;
 }
 
@@ -764,7 +871,7 @@ void CMusikLibrary::GetFilelistSongs( const wxArrayString & aFiles, CMusikSongAr
 	for ( size_t i = 0; i < aFiles.GetCount(); i++ )
 	{
 		CMusikSong *pSong = theMap[ aFiles.Item( i ) ];
-		wxASSERT_MSG( pSong, wxString(aFiles.Item( i ) + wxT( " is not on the map!" ) ) );
+	//	wxASSERT_MSG( pSong, wxString(aFiles.Item( i ) + wxT( " is not on the map!" ) ) );
 
 		//---------------------------------------------------------------------//
 		//--- add the object(of the map) by value, to create duplicate		---// 
@@ -870,7 +977,7 @@ double CMusikLibrary::GetTotalPlaylistSize()
 
 	wxCriticalSectionLocker lock( m_csDBAccess );
 	sqlite_compile( m_pDB, ConvQueryToMB( sQuery ), &pTail, &pVM, NULL );
-	char *errmsg;
+	char *errmsg = NULL;
 	int numcols = 0;
 	const char **coldata;
 	const char **coltypes;
@@ -883,6 +990,7 @@ double CMusikLibrary::GetTotalPlaylistSize()
 
 	//--- close up ---//
 	sqlite_finalize( pVM, &errmsg );
+	sqlite_freemem(errmsg);
 
 	return totsize;
 }
@@ -981,7 +1089,7 @@ bool CMusikLibrary::GetSongFromSongid( int songid, CMusikSong *pSong )
 
 	wxCriticalSectionLocker lock( m_csDBAccess );
 	sqlite_compile( m_pDB, query, &pTail, &pVM, NULL );
-	char *errmsg;
+	char *errmsg = NULL;
 	int numcols = 0;
 	const char **coldata;
 	const char **coltypes;
@@ -997,6 +1105,7 @@ bool CMusikLibrary::GetSongFromSongid( int songid, CMusikSong *pSong )
 	//--- close up ---//
 	sqlite_finalize( pVM, &errmsg );
 	sqlite_freemem( query );
+	sqlite_freemem(errmsg);
 
 	return bFoundSong;
 }
@@ -1045,17 +1154,18 @@ int CMusikLibrary::QueryCount(const char * szQuery )
 
 	wxCriticalSectionLocker lock( m_csDBAccess );
 	sqlite_compile( m_pDB, szQuery, &pTail, &pVM, NULL );
-	char *errmsg;
+	char *errmsg = NULL;
 	int numcols = 0;
 	const char **coldata;
 	const char **coltypes;
 
 	//--- look and see if there's one row ---//
 	if ( sqlite_step( pVM, &numcols, &coldata, &coltypes ) == SQLITE_ROW )
-		result = atoi( coldata[0] );
+		result = coldata[0] ? atoi( coldata[0] ) : 0;
 
 	//--- close up ---//
 	sqlite_finalize( pVM, &errmsg );
+	sqlite_freemem(errmsg);
 	return result;
 }
 

@@ -1,1 +1,1 @@
-wxjulianday(lastplayed) >= julianday('now','start of month')
+lastplayed !='' and lastplayed >= julianday('now','start of month')

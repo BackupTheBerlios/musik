@@ -77,36 +77,46 @@ BEGIN_EVENT_TABLE(CActivityListBox, CMusikListCtrl)
 	EVT_CHAR	( CActivityListBox::OnChar )
 END_EVENT_TABLE()
 
-void CActivityListBox::OnChar( wxKeyEvent& event )
+void CActivityListBox::OnChar(wxKeyEvent& event)
 {
-  int keycode = event.GetKeyCode();
-  if (keycode >= WXK_SPACE && keycode <=0xff )
-  {
-	if(m_OnCharStopWatch.Time() > 1000)
-	{// more than 1000 ms have been passed
-		// reset search string
-		m_sSearch.Empty();// 
-	}
-	m_sSearch+=(char)(keycode&0xff);
-  	for ( long i = HasShowAllRow() ? 1 : 0; i < GetItemCount(); i++ )
+	int keycode=event.GetKeyCode();
+	if ((keycode>=WXK_SPACE)&&(keycode<=0xff))
 	{
-	  if (GetRowText(i,false).Left(m_sSearch.Len()).IsSameAs(m_sSearch,false))
-      { // make this item the top item
-        int up = GetCountPerPage() -1;
-        int topitem = GetTopItem();
-        int showitem = (i + up > GetItemCount() - 1 ) ?  GetItemCount() - 1 : i + up;
-        if(showitem < topitem)
-           showitem = i; // EnsureVisible(m) will scroll backwards, this will bring the item m automatically to the top
-		EnsureVisible(showitem);// if showitem is visible, i is now the top item
-   
-		break;
-      }
-	}
-	m_OnCharStopWatch.Start();
-  }
-  else
-    event.Skip();
-}  
+		if(m_OnCharStopWatch.Time()>1000)
+		{ // More than 1000 ms have passed since the last character was entered.
+			// Reset the search string.
+			m_sSearch.Empty();
+		}
+		m_sSearch+=char(keycode&0xff);
+		for (int i=HasShowAllRow()?1:0;i<GetItemCount();++i)
+		{
+			if (GetRowText(i,false).Left(m_sSearch.Len()).IsSameAs(m_sSearch,false))
+			{ // Move this item to the center of the list.
+				int centeroffset = GetCountPerPage()/2 -1;
+				int showitem=0;
+				if (i >= GetTopItem()) 
+				{
+					// We need to ensure visibility of an item further down the list to
+					// move the matching item to the center of the list.
+					showitem = wxMin(i + centeroffset, GetItemCount()-1);
+				} 
+				else
+				{
+					// i < GetTopItem() , so EnsureVisible(m) will scroll backwards, 
+					// this will bring the item m automatically to the center
+					showitem = wxMax(0, i-centeroffset);
+				}
+				EnsureVisible(showitem);
+				// Move the focus (*not* the selection) to the matching item.
+				SetItemState(i,wxLIST_STATE_FOCUSED,wxLIST_STATE_FOCUSED);
+				break;
+			}
+		}
+		m_OnCharStopWatch.Start();
+	} 
+	else 
+		event.Skip();
+}
 
 void CActivityListBox::RescaleColumns( bool bFreeze )
 {
@@ -168,7 +178,13 @@ wxString CActivityListBox::OnGetItemText(long item, long column) const
 		break;
 
 	case 1:
-		return GetRowText( item );
+		{
+			wxString text(GetRowText( item ));
+			if(text.IsEmpty())
+				return _( "<unknown>" );
+			else
+				return text;
+		}
 		break;
 	}
 	return wxT("");

@@ -47,8 +47,9 @@ bool COggInfo::ReadMetaData(CSongMetaData & MetaData) const
 		MetaData.Title	= vorbis_comment_query( pComment, "TITLE",	0 );
 		MetaData.Genre	= vorbis_comment_query( pComment, "GENRE",	0 );
 		MetaData.Notes	= vorbis_comment_query( pComment, "COMMENT",0 );
-
-		MetaData.Year	= vorbis_comment_query( pComment, "DATA", 		0 );
+		if(MetaData.Notes.IsEmpty())
+			MetaData.Notes	= vorbis_comment_query( pComment, "DESCRIPTION",0 );
+		MetaData.Year	= vorbis_comment_query( pComment, "DATE", 		0 );
 		char *szTracknum = vorbis_comment_query( pComment, "TRACKNUMBER", 0 );
 		MetaData.nTracknum = atol( szTracknum ? szTracknum : "0" );
 
@@ -112,9 +113,9 @@ bool  COggInfo::WriteMetaData(const CSongMetaData & MetaData,bool bClearAll)
 	tagmap.AddTag("TRACKNUMBER",bufNumber);
 	tagmap.AddTag("ARTIST", MetaData.Artist );
 	tagmap.AddTag("ALBUM", MetaData.Album );
-	tagmap.AddTag("GENRE", MetaData.Genre );
+	tagmap.AddTag("GENRE", MetaData.Genre,false );
 	tagmap.AddTag("DATE", MetaData.Year );
-	tagmap.AddTag("COMMENT", MetaData.Notes );
+	tagmap.AddTag("COMMENT", MetaData.Notes,false );
 
 	// clear the vc  out ---//
 	vorbis_comment_clear( vc );
@@ -150,7 +151,7 @@ void COggInfo::CVCTagMap::AddTagsFromVC(vorbis_comment *pComment)
 		off_t seppos = entry.Find('=');
 		if(	seppos > -1 )
 		{
-			wxString key( ConvFromUTF8(entry),(size_t)seppos );
+			wxString key( ConvA2W(entry),(size_t)seppos );
 			key.MakeUpper();
 			CSongMetaData::StringData val( entry.Substr(seppos + 1) );
 			m_mapTags.insert (tagmap_t::value_type(key,val ));
@@ -173,11 +174,22 @@ void COggInfo::CVCTagMap::AddTag(const char *tag,const char *val, bool bUnique)
 {
 	if (!val || strlen(val) == 0 ) return;
 	// if the tag should be unique, erase all previous contained tags 
-	wxString sTag = ConvFromUTF8(tag);
-	if (bUnique) 
+	wxString sTag( ConvA2W(tag));
+	if (bUnique)
+	{
 		m_mapTags.erase (sTag);
-
-	m_mapTags.insert (tagmap_t::value_type(sTag,val));
+		m_mapTags.insert (tagmap_t::value_type(sTag,val));
+	}
+	else
+	{  // no unique tag, find the first tag
+		// we support only the first of multiple non-unique tags
+		tagmap_t::iterator   it = m_mapTags.find(sTag);
+		if(it == m_mapTags.end())
+			// not found
+			m_mapTags.insert (tagmap_t::value_type(sTag,val));
+		else
+			(*it).second = val;
+	}
 	return;
 
 }

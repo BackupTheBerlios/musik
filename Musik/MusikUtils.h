@@ -199,12 +199,12 @@ long			GetRandomNumber		();
 //-------------------------//
 inline wxString ConvA2W( const char *pChar )
 {
-	wxString s(wxConvCurrent->cMB2WX( pChar ) );
+	wxString s(wxConvISO8859_1.cMB2WX( pChar ) );
 	return s;
 }
 inline const wxCharBuffer ConvW2A( const wxString &s )
 {
-	return wxConvCurrent->cWX2MB( s );
+	return wxConvISO8859_1.cWX2MB( s );
 }
 
 
@@ -225,12 +225,18 @@ inline const wxCharBuffer ConvFromISO8859_1ToUTF8( const char *s )
 #if wxUSE_UNICODE
 inline const wxWCharBuffer ConvFromUTF8( const char *s )
 {
-	return wxConvUTF8.cMB2WC(s);
+	wxWCharBuffer buf(wxConvUTF8.cMB2WC(s));
+	if(buf.data())
+		return buf;
+	return wxWCharBuffer(L"");
 }
 #else
 inline const wxCharBuffer ConvFromUTF8( const char *s )
 {
-	return wxConvCurrent->cWC2WX(wxConvUTF8.cMB2WC(s));
+	wxWCharBuffer buf(wxConvUTF8.cMB2WC(s));
+	if(buf.data())
+		return wxConvCurrent->cWC2WX(buf);
+	return wxCharBuffer("");
 }
 #endif
 
@@ -258,7 +264,7 @@ inline int wxStringToInt( const wxString &str )
 
 inline int StringToInt( const char* pChar )
 {
-	return atoi( pChar );
+	return pChar ? atoi( pChar ): 0;
 }
 
 inline wxString IntTowxString( int n )
