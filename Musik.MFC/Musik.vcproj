@@ -276,6 +276,15 @@
 			<File
 				RelativePath=".\res\Musik.rc2">
 			</File>
+			<File
+				RelativePath=".\res\musik_16.ico">
+			</File>
+			<File
+				RelativePath=".\res\musik_32.ico">
+			</File>
+			<File
+				RelativePath=".\res\musik_48.ico">
+			</File>
 		</Filter>
 		<Filter
 			Name="App Stuff"

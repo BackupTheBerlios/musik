@@ -53,8 +53,8 @@ protected:
 public:
 
 private:
-	HICON m_Icon16;
-	HICON m_Icon32;
+	HICON m_hIcon16;
+	HICON m_hIcon32;
 	HICON m_Tray_Playing;
 	HICON m_Tray_Stopped;
 

@@ -65,6 +65,9 @@ END
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDR_MAINFRAME           ICON                    "res\\Musik.ico"
+IDI_MUSIK_16            ICON                    "res\\musik_16.ico"
+IDI_MUSIK_32            ICON                    "res\\musik_32.ico"
+IDI_MUSIK_48            ICON                    "res\\musik_48.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //

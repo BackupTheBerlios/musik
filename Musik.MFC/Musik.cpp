@@ -56,7 +56,7 @@ BOOL CMusikApp::InitInstance()
 		return FALSE;
 	m_pMainWnd = pFrame;
 	// create and load the frame with its resources
-	pFrame->LoadFrame(IDR_MAINFRAME,
+	pFrame->LoadFrame( IDR_MAINFRAME,
 		WS_OVERLAPPEDWINDOW | FWS_ADDTOTITLE, NULL,
 		NULL);
 

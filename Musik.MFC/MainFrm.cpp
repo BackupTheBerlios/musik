@@ -40,8 +40,8 @@ CMainFrame::CMainFrame()
 	m_DynPlaylist = NULL;
 	m_StdPlaylist = NULL;
 
-	//m_hIcon16 = ( HICON )LoadImage( AfxGetApp()->m_hInstance, MAKEINTRESOURCE( IDI_ICON16 ), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR );
-	//m_hIcon32 = ( HICON )LoadImage( AfxGetApp()->m_hInstance, MAKEINTRESOURCE( IDI_ICON32 ), IMAGE_ICON, 32, 32, LR_DEFAULTCOLOR );
+	m_hIcon16 = ( HICON )LoadImage( AfxGetApp()->m_hInstance, MAKEINTRESOURCE( IDI_MUSIK_16 ), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR );
+	m_hIcon32 = ( HICON )LoadImage( AfxGetApp()->m_hInstance, MAKEINTRESOURCE( IDI_MUSIK_32 ), IMAGE_ICON, 32, 32, LR_DEFAULTCOLOR );
 }
 
 ///////////////////////////////////////////////////
@@ -202,6 +202,9 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if ( CFrameWnd::OnCreate(lpCreateStruct) == -1 )
 		return -1;
+
+	SetIcon( m_hIcon32, true );
+	SetIcon( m_hIcon16, false );
 
 	// create the background window, which is the playlist
 	m_wndView = new CMusikPlaylistView( m_Library, m_Prefs, m_LibPlaylist );
