@@ -256,6 +256,8 @@ public:
 		,bStopSongOnNowPlayingClear(this,wxT( "StopSongOnNowPlayingClear" ),true)
 		,eSelStyle(this,wxT( "SelectionStyle" ),MUSIK_SELECTION_TYPE_STANDARD)
 		,bShowAllSongs(this,wxT( "SelectingLibraryDisplaysSongs" ),true)
+		,bLogVerbose(this,wxT( "LogVerbose" ),true)
+
 		,nSndOutput(this,wxT( "OutputDriver" ),0)
 		,nSndDevice(this,wxT( "SoundDevice" ),0)
 		,nSndRate(this,wxT( "PlaybackRate" ),44100)
@@ -376,6 +378,8 @@ public:
 	CConfigSettingBool bStopSongOnNowPlayingClear;
 	CConfigSetting<Value<int>,EMUSIK_ACTIVITY_SELECTION_TYPE> eSelStyle;
 	CConfigSettingBool bShowAllSongs;
+	CConfigSettingBool bLogVerbose;
+
 	CConfigSettingInt nSndOutput;
 	CConfigSettingInt nSndDevice;
 	CConfigSettingInt nSndRate;

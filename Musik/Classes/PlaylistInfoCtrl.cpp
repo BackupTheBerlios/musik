@@ -22,7 +22,9 @@
 #include "../MusikUtils.h"
 
 BEGIN_EVENT_TABLE(CPlaylistInfoCtrl,wxPanel)
+#ifndef __WXMAC__
 EVT_ERASE_BACKGROUND(CPlaylistInfoCtrl::OnEraseBackground)
+#endif
 END_EVENT_TABLE()
 
 CPlaylistInfoCtrl::CPlaylistInfoCtrl( wxWindow *parent ,IPlaylistInfo *pIPlaylistInfo )

@@ -13,7 +13,6 @@ CMP3Info::CMP3Info()
 }
 bool CMP3Info::ReadMetaData(CSongMetaData & MetaData) const
 {
-	MetaData.eFormat = MUSIK_FORMAT_MP3;
 	//--- load and link mp3 ---//
 	FILE * f = wxFopen(MetaData.Filename.GetFullPath(), wxT("rb"));
 	if(f == NULL)

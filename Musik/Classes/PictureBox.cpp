@@ -37,7 +37,7 @@ CPictureBox::CPictureBox( wxWindow *parent )
 	SetBackgroundColour(WXSYSTEMCOLOUR(wxT("LIGHT STEEL BLUE")));
 	Show(false);
 }
-void CPictureBox::OnIdle(wxIdleEvent & event)
+void CPictureBox::OnIdle(wxIdleEvent & WXUNUSED(event))
 {
 	if(IsShown() == false || (GetParent() && (GetParent()->IsShown() == false)))
 		return;

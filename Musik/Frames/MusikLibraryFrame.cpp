@@ -97,7 +97,7 @@ MusikLibraryFrame::MusikLibraryFrame( wxFrame* pParent ,const wxArrayString &arr
 //---  gets called from menu    ---//
 //--- or at program's first run ---//
 //---------------------------------//
-MusikLibraryFrame::MusikLibraryFrame( wxFrame* pParent, const wxPoint &pos, const wxSize &size ) 
+MusikLibraryFrame::MusikLibraryFrame( wxFrame* pParent, const wxPoint &pos, const wxSize & ) 
 	: wxFrame( pParent, -1, wxString(MUSIKAPPNAME) + _(" Library Setup"), pos, wxSize( 600, 400 ), wxCAPTION | wxTAB_TRAVERSAL | wxRESIZE_BORDER | wxFRAME_FLOAT_ON_PARENT | wxFRAME_NO_TASKBAR | wxCLIP_CHILDREN )
 {
 	//--------------------//
@@ -258,7 +258,7 @@ bool MusikLibraryFrame::Show( bool show )
 	if ( m_AutoStart )
 	{
 		m_AutoStart	= false;
-		UpdateLibrary( false ,m_flagsUpdate & MUSIK_UpdateFlags::RebuildTags);
+		UpdateLibrary( false ,(m_flagsUpdate & MUSIK_UpdateFlags::RebuildTags) == MUSIK_UpdateFlags::RebuildTags);
 	}
 
 	//--- non-autstart ---//

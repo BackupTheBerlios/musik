@@ -185,6 +185,8 @@ bool MusikApp::OnInit()
 	pMain->Show();
 
 	new MusikLogWindow(pMain,wxString::Format(_("%s Logging Window"),MUSIKAPPNAME),MUSIK_LW_ClearContentOnClose|MUSIK_LW_ShowOnLog); 
+	
+	wxLog::SetVerbose(Prefs.bLogVerbose);
 
 	SetTopWindow( pMain );
 

@@ -1,11 +1,11 @@
 #ifndef CMP3INFO_H
 #define CMP3INFO_H
-
+#include "CInfo.h"
 //--- globals ---//
 #include "../../MusikGlobals.h"
 
 
-class CMP3Info
+class CMP3Info : public CInfoRead,public CInfoWrite
 {
 public:
 	CMP3Info();

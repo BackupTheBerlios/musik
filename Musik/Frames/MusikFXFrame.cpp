@@ -39,7 +39,9 @@ BEGIN_EVENT_TABLE(MusikFXFrame, wxFrame)
 	EVT_CONTEXT_MENU		(					MusikFXFrame::OnRightClick		)
 	EVT_COMMAND_SCROLL		( SLD_PITCH,		MusikFXFrame::OnSlidePitch		)
 	EVT_CHECKBOX			( CHK_PITCHENABLE,	MusikFXFrame::OnTogglePitchEnable )
+#ifndef __WXMAC__
 	EVT_ERASE_BACKGROUND		( MusikFXFrame::OnEraseBackground )
+#endif
 END_EVENT_TABLE()
 
 void MusikFXFrame::OnEraseBackground( wxEraseEvent& (event) )

@@ -1,18 +1,20 @@
 0.3.1.4 to 0.3.1.5
++ supported new formats: mp2, wav , aiff and wma(windows only).  wav , aiff and wma tag writing is not (yet) supported.
 + new ui language available: french
 + number of items is now displayed in the selecton boxes captions,finally you know how much albums( and how many artists you have ;-))
 -fixed bug: seeking in song, did increment the timesplayed count and added a history entry.
-+ auto dj album count can no be set in the prefs.
++ auto dj album count can now be set in the prefs.
 -fixed bug: long song titles should no longer overwrite the play control buttons.
 + Right click on seek bar, toggles time display to counting up or down.
 -fixed major bug: Picture view took 50% cpu, if wxMusik logo was displayed, because no picture could be found.
-+ internally, a songs is flagged now , if chosen by user(other case is chosen by autodj). this is written to the history_songs table.(but not used yet)
++ internally, a songs is flagged now , if chosen by user(as opposes to chosen by autodj). this is written to the history_songs table.(but not used yet)
 + new option: Stop song, if now playing list is cleared. Before this was always the case, now you can turn this off.
 + spinctrl are used for most preferences, which are numbers.
 -fixed minor bug: sometimes tag were written even if not changed.
 -fixed bug: filenames are converted to the currently used locale and not always to iso8859-1 charset. Korean filenames should work now, hopyfully.
 -fixed bug: if in shuffle mode, 'play as next' added songs are really played as next  
  some code cleanup. made adding of new preferences a lot easier.
+ 
 0.3.1.3 to 0.3.1.4
 + new Open Folder in Filemanager option in playlist context menu. This opens the folder(directory) of the current selected song in a app,which is configured in the prefs file.
 as default this is FilemanagerCmd=explorer.exe "%s" ,you can change that for now only by editing the prefs file yourself.

@@ -53,6 +53,8 @@ ADD_EXECUTABLE(wxMusik
 
         ${wxMusik_SOURCE_DIR}/Classes/Library/CMP3Info
         ${wxMusik_SOURCE_DIR}/Classes/Library/COggInfo
+        ${wxMusik_SOURCE_DIR}/Classes/Library/CFMODInfo
+        ${wxMusik_SOURCE_DIR}/Classes/Library/MetaDataHandler
         ${wxMusik_SOURCE_DIR}/Classes/Library/vcedit
 		"${wxMusik_SOURCE_DIR}/3rd Party/Bitap/libbitap"
 		

@@ -14,7 +14,7 @@
 #include "wx/wxprec.h"
 
 #include "MusikLibraryThreads.h"
-
+#include "../Classes/Library/MetaDataHandler.h"
 //--- globals ---//
 #include "../MusikGlobals.h"
 #include "../MusikUtils.h"
@@ -174,10 +174,8 @@ public:
 			return wxDIR_STOP;
 		}
 		wxFileName fn( filename );
-		wxString ext = fn.GetExt();
-		ext.MakeLower();
-
-		if ( ext == wxT( "mp3" ) || ext == wxT( "ogg" ) ) 
+		const tSongClass *psc = CMetaDataHandler::GetSongClass(fn.GetExt());
+		if (psc) 
 		{
 			m_files.Add( filename );
 

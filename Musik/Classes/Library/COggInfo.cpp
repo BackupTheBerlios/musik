@@ -78,7 +78,6 @@ bool COggInfo::ReadMetaData(CSongMetaData & MetaData) const
 		vorbis_comment_clear( pComment );
 		vorbis_info_clear( pInfo );
 		ov_clear( &vorbisfile );	//--- will also close the FILE (audiofile) ---//
-		MetaData.eFormat = MUSIK_FORMAT_OGG;
 		MetaData.bVBR = true;
 
 		return true;

@@ -12,12 +12,12 @@
 
 #ifndef OGGINFO_H
 #define OGGINFO_H
-
+#include "CInfo.h"
 //--- globals ---//
 #include "../../MusikGlobals.h"
 
 
-class COggInfo
+class COggInfo : public CInfoRead,public CInfoWrite
 {
 public:
 	COggInfo();

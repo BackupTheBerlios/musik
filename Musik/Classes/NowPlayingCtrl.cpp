@@ -221,7 +221,7 @@ void CNowPlayingCtrl::ActivateHotkeys()
 
 			wxArrayString Modn;
 			DelimitStr(ModnKey[0],wxT(" "),Modn);
-			for(int i = 0; i< Modn.GetCount();i++)
+			for(size_t i = 0; i< Modn.GetCount();i++)
 			{
 				bRes = true;
 				if(Modn[i] == wxT("ALT"))

@@ -75,7 +75,9 @@ BEGIN_EVENT_TABLE(MusikFrame, wxFrame)
 	EVT_MENU					( MUSIK_FRAME_EXIT_FADE_DONE,	MusikFrame::OnMenuClose				)
 	EVT_SASH_DRAGGED			( MUSIK_SOURCES,				MusikFrame::OnSashDraggedSourcesBox	)
 	EVT_SASH_DRAGGED			( MUSIK_ACTIVITYCTRL,			MusikFrame::OnSashDraggedActivityCtrl)
+#ifndef __WXMAC__
 	EVT_ERASE_BACKGROUND		( MusikFrame::OnEraseBackground )
+#endif
 END_EVENT_TABLE()
 
 

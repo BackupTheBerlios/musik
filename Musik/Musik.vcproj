@@ -648,6 +648,15 @@
 				Name="MusikLibrary"
 				Filter="">
 				<File
+					RelativePath=".\Classes\Library\CInfo.h">
+				</File>
+				<File
+					RelativePath=".\Classes\Library\MetaDataHandler.cpp">
+				</File>
+				<File
+					RelativePath=".\Classes\Library\MetaDataHandler.h">
+				</File>
+				<File
 					RelativePath=".\Classes\MusikLibrary.cpp">
 				</File>
 				<File
@@ -707,6 +716,16 @@
 					</File>
 					<File
 						RelativePath=".\Classes\Library\vcedit.h">
+					</File>
+				</Filter>
+				<Filter
+					Name="FMODInfo"
+					Filter="">
+					<File
+						RelativePath=".\Classes\Library\CFMODInfo.cpp">
+					</File>
+					<File
+						RelativePath=".\Classes\Library\CFMODInfo.h">
 					</File>
 				</Filter>
 			</Filter>

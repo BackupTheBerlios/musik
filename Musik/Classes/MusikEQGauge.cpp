@@ -27,7 +27,9 @@ BEGIN_EVENT_TABLE(CMusikEQGauge, wxGauge)
 	EVT_LEFT_DOWN				( CMusikEQGauge::OnLeftDown		) 
 	EVT_LEFT_UP					( CMusikEQGauge::OnLeftUp		)
 	EVT_MOTION					( CMusikEQGauge::OnMouseMove	) 
+#ifndef __WXMAC__
 	EVT_ERASE_BACKGROUND		( CMusikEQGauge::OnEraseBackground )
+#endif
 #ifdef __WXMSW__
 	EVT_PAINT ( CMusikEQGauge::OnPaint )
 #endif

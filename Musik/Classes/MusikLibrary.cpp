@@ -22,15 +22,14 @@
 #include "../MusikGlobals.h"
 #include "../MusikUtils.h"
 
-//--- mp3 / ogg helpers ---//
-#include "Library/CMP3Info.h"
-#include "Library/COggInfo.h"
 //--- wx ---//
 #include <wx/file.h>
 #include <wx/filename.h>
 
 #include "3rd Party/Bitap/libbitap.h"
 #include <wx/arrimpl.cpp>
+
+#include "Library/MetaDataHandler.h"
 
 WX_DEFINE_OBJARRAY( CMusikSongArray )
 WX_DECLARE_STRING_HASH_MAP( CMusikSong *, myStringToMusikSongPtrMap );
@@ -49,6 +48,7 @@ CMusikSong::CMusikSong()
 	bForcePlay = 0;
 
 }
+
 
 CMusikLibrary::CMusikLibrary()
 	: wxEvtHandler()
@@ -440,8 +440,13 @@ bool CMusikLibrary::AddSongDataFromFile( const wxString & filename )
 	
 	CSongMetaData MetaData;
 	MetaData.Filename = filename;
-	bool bRet = GetMetaData( MetaData );
-	if(bRet)
+	CMetaDataHandler::RetCode rc  = CMetaDataHandler::GetMetaData( MetaData );
+	if(rc == CMetaDataHandler::notsupported)
+	{
+		::wxLogInfo(_("Parsing of file %s not supported. Setting title to filename."),(const wxChar *)MetaData.Filename.GetFullPath());
+		rc = CMetaDataHandler::success; // continue as if success
+	}
+	if(rc == CMetaDataHandler::success )
 	{
 
 		//--- run the query ---//
@@ -468,8 +473,16 @@ bool CMusikLibrary::AddSongDataFromFile( const wxString & filename )
 			0); //dirty
 	
 	}
+	else if(rc == CMetaDataHandler::fail)
+	{
+		::wxLogWarning(_("Parsing of file %s failed."),(const wxChar *)MetaData.Filename.GetFullPath());
+	}
+	else
+	{
+		wxASSERT(false);
+	}
 
-	return bRet;
+	return rc != CMetaDataHandler::fail;
 }
 
 bool CMusikLibrary::UpdateSongDataFromFile( const wxString & filename )
@@ -480,8 +493,13 @@ bool CMusikLibrary::UpdateSongDataFromFile( const wxString & filename )
 	
 	CSongMetaData MetaData;
 	MetaData.Filename = filename;
-	bool bRet = GetMetaData( MetaData );
-	if(bRet)
+	CMetaDataHandler::RetCode rc  = CMetaDataHandler::GetMetaData( MetaData );
+	if(rc == CMetaDataHandler::notsupported)
+	{
+		::wxLogInfo(_("Parsing of file %s not supported. Song data is not updated."),(const wxChar *)MetaData.Filename.GetFullPath());
+		return true; // we are not able to parse this file, so we return here, to not overwrite the possible user edited data in the db with empty data.
+	}
+	if(rc == CMetaDataHandler::success )
 	{
 
 		//--- run the query ---//
@@ -503,40 +521,23 @@ bool CMusikLibrary::UpdateSongDataFromFile( const wxString & filename )
 			);
 	
 	}
-	return bRet;
-}
-
-bool CMusikLibrary::GetMetaData( CSongMetaData & MetaData  )
-{
-	
-	//--- get format ---//
-	wxString ext = MetaData.Filename.GetExt().MakeLower();
-    bool bRet = false;
-	if ( ext == wxT("mp3") )
-		bRet = GetMP3MetaData( MetaData );
-	else if ( ext == wxT("ogg") )
-		bRet = GetOggMetaData( MetaData );
-
-	if ( MetaData.Title.Length() == 0 )
-			MetaData.Title = ConvToUTF8( MetaData.Filename.GetFullPath() );
-	if(bRet == false)
+	else if(rc == CMetaDataHandler::fail)
 	{
 		::wxLogWarning(_("Parsing of file %s failed."),(const wxChar *)MetaData.Filename.GetFullPath());
 	}
+	else
+	{
+		wxASSERT(false);
+	}
 
-	return bRet;
+	return rc != CMetaDataHandler::fail;
+}
 
-}
-bool CMusikLibrary::GetMP3MetaData( CSongMetaData & MetaData )
-{
-	CMP3Info info;
-	return info.ReadMetaData(MetaData);
-}
 
 bool CMusikLibrary::WriteTag(  CMusikSong & song, bool ClearAll , bool bUpdateDB )
 {
 
-	bool bRet = true;
+	CMetaDataHandler::RetCode rc  = CMetaDataHandler::success;
 	if(false == wxFileExists(song.MetaData.Filename.GetFullPath()))
 	{
 		::wxLogWarning(_("Writing tags to file %s failed,because the file does not exist.\nPlease purge the database."),(const wxChar *)song.MetaData.Filename.GetFullPath());
@@ -544,36 +545,23 @@ bool CMusikLibrary::WriteTag(  CMusikSong & song, bool ClearAll , bool bUpdateDB
 	}
 	else
 	{
-	if ( song.MetaData.eFormat == MUSIK_FORMAT_MP3 )
-		bRet = WriteMP3Tag( song.MetaData, ClearAll );
-	else if ( song.MetaData.eFormat == MUSIK_FORMAT_OGG )
-		bRet = WriteOGGTag( song.MetaData, ClearAll );
-	else
-		return false;
+		rc = CMetaDataHandler::WriteMetaData(song.MetaData,ClearAll);
 	}
-	if( bRet && bUpdateDB )
+	if(rc == CMetaDataHandler::notsupported)
+	  ::wxLogInfo(_("Writing tags to file %s is not supported. File is set as clean in database."),(const wxChar *)song.MetaData.Filename.GetFullPath());
+	if(( rc != CMetaDataHandler::fail) && bUpdateDB )
 	{
 		//-----------------------------//
 		//--- flag item as clean	---//
 		//-----------------------------//
 		UpdateItem( song , false );
 	}
-	else if(bRet == false)
+	else if(rc == CMetaDataHandler::fail)
 		::wxLogWarning(_("Writing tags to file %s failed."),(const wxChar *)song.MetaData.Filename.GetFullPath());
-   return bRet;
+
+   return rc != CMetaDataHandler::fail;
 }
 
-bool CMusikLibrary::WriteMP3Tag( const CSongMetaData & MetaData, bool bClearAll )
-{
-	CMP3Info info;
-	return info.WriteMetaData (MetaData, bClearAll);
-}
-
-bool CMusikLibrary::WriteOGGTag( const CSongMetaData & MetaData, bool bClearAll )
-{
-	COggInfo info;
-	return info.WriteMetaData (MetaData, bClearAll);
-}
 
 int CMusikLibrary::ClearDirtyTags()
 {
@@ -584,32 +572,8 @@ int CMusikLibrary::ClearDirtyTags()
 	return nCount;
 }
 
-void CMusikLibrary::AddMod( const wxString & WXUNUSED(filename) )
-{
-	//int format = MUSIK_FORMAT_MOD;
-}
 
-bool CMusikLibrary::GetOggMetaData( CSongMetaData & MetaData )
-{	
 
-	COggInfo ogg; 
-	return  ogg.ReadMetaData(MetaData);
-}
-
-void CMusikLibrary::AddWav( const wxString & WXUNUSED(filename) )
-{
-	//int format = MUSIK_FORMAT_WAV;
-}
-
-void CMusikLibrary::AddWMA( const wxString & WXUNUSED(filename) )
-{
-	//int format = MUSIK_FORMAT_WMA;
-}
-
-void CMusikLibrary::AddAIFF( const wxString & WXUNUSED(filename) )
-{
-	//int format = MUSIK_FORMAT_AIFF;
-}
 
 void CMusikLibrary::VerifyYearList( const wxArrayString & aList,wxArrayString & aVerifiedList )
 {
@@ -1049,7 +1013,8 @@ void CMusikLibrary::RecordSongHistory( const CMusikSong & song ,int playedtime)
 
 	{
 		bool bSelectedByUser = song.bChosenByUser == 1;
-		int percentplayed = playedtime * 100 / song.MetaData.nDuration_ms;  
+		
+		int percentplayed = playedtime * 100 / (song.MetaData.nDuration_ms ? song.MetaData.nDuration_ms : playedtime); // be safe against integer division by zero
 		wxCriticalSectionLocker lock( m_csDBAccess );
 		sqlite_exec_printf( m_pDB, "insert into songhistory values ( %d, julianday('now'),%d,%d );",
 			NULL, NULL, NULL,song.songid ,percentplayed ,bSelectedByUser);

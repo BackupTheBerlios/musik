@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wxMusik-0.3.1.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-08-07 10:56+0200\n"
+"POT-Creation-Date: 2004-08-08 19:03+0200\n"
 "PO-Revision-Date: 2004-08-07 10:54+0100\n"
 "Last-Translator: TomAss <tomass@no-log.org>\n"
 "Language-Team: wxMusik Team\n"
@@ -69,7 +69,7 @@ msgstr ""
 "Il est suggeré de mettre à jour la bibliothèque interne, voulez vous y "
 "ajouter les nouveaux morceaux ?"
 
-#: ../MusikApp.cpp:247
+#: ../MusikApp.cpp:249
 msgid ""
 " has detected version 0.1.2 or earlier was previously installed.\n"
 "\n"
@@ -82,7 +82,7 @@ msgstr ""
 "liste des sources et des bibliothèques doit etre reinitialisée. Désolé pour "
 "tous les désagrements induits dans ces changements."
 
-#: ../Classes/MusikPrefs.h:334
+#: ../Classes/MusikPrefs.h:336
 msgid " is not running"
 msgstr " ne fonctionne pas"
 
@@ -428,7 +428,7 @@ msgstr "Toujours au dessus\tCtrl-T"
 msgid "An error occured when setting the Auto DJ Filter"
 msgstr "Une erreur est survenue en lancant le filtre Auto DJ "
 
-#: ../Classes/MusikLibrary.cpp:1220
+#: ../Classes/MusikLibrary.cpp:1105
 msgid "An error occurred when attempting to update the database"
 msgstr "Une erreur est survenue en tentant de mettre à jour la base de données"
 
@@ -712,7 +712,7 @@ msgstr "Exemples:\n"
 msgid "FX\tCtrl-F"
 msgstr "FX\tCtrl-F"
 
-#: ../MusikApp.cpp:347
+#: ../MusikApp.cpp:349
 #, c-format
 msgid "Failed to copy file %s. Continue?"
 msgstr "Echec de la copie du fichier %s. Continuer ?"
@@ -732,11 +732,11 @@ msgstr ""
 msgid "File"
 msgstr "Fichier"
 
-#: ../MusikApp.cpp:348
+#: ../MusikApp.cpp:350
 msgid "File copy error"
 msgstr "Erreur de copie "
 
-#: ../MusikApp.cpp:308
+#: ../MusikApp.cpp:310
 msgid "File copy warning"
 msgstr "Avertissement de copie de fichiers"
 
@@ -930,10 +930,20 @@ msgstr "Options"
 msgid "Ouput Driver:"
 msgstr "Driver de sortie:"
 
-#: ../Classes/MusikLibrary.cpp:526
+#: ../Classes/MusikLibrary.cpp:478 ../Classes/MusikLibrary.cpp:526
 #, c-format
 msgid "Parsing of file %s failed."
 msgstr "Echec du parcours du fichier %s "
+
+#: ../Classes/MusikLibrary.cpp:446
+#, c-format
+msgid "Parsing of file %s not supported. Setting title to filename."
+msgstr ""
+
+#: ../Classes/MusikLibrary.cpp:499
+#, c-format
+msgid "Parsing of file %s not supported. Song data is not updated."
+msgstr ""
 
 #: ../Frames/MusikLibraryFrame.cpp:190
 msgid "Path"
@@ -987,7 +997,7 @@ msgstr "Sélection courante"
 msgid "Playlist size: "
 msgstr "Taille de la sélection"
 
-#: ../MusikApp.cpp:294
+#: ../MusikApp.cpp:296
 msgid "Please choose location to copy songs to:"
 msgstr "Choisissez une destination pour copier le morceau "
 
@@ -1276,7 +1286,7 @@ msgstr "Il n'y a pas de tags en suspens à afficher."
 msgid "There are no pending tags to finalize."
 msgstr "Il n'y a pas de tags en suspens à finaliser"
 
-#: ../MusikApp.cpp:307
+#: ../MusikApp.cpp:309
 #, c-format
 msgid ""
 "There is not enough free space in directory \"%s\". You need %s bytes more "
@@ -1442,7 +1452,7 @@ msgstr "Ecriture des tags du fichier"
 msgid "Write to file"
 msgstr "Ecriture du fichier"
 
-#: ../Classes/MusikLibrary.cpp:580
+#: ../Classes/MusikLibrary.cpp:543
 #, c-format
 msgid ""
 "Writing tags to file %s failed,because the file does not exist.\n"
@@ -1451,10 +1461,18 @@ msgstr ""
 "Echec de l'écriture tag du fichier %s car le fichier n'existe pas.\n"
 "Purgez la base de données."
 
-#: ../Classes/MusikLibrary.cpp:600
+#: ../Classes/MusikLibrary.cpp:560
 #, c-format
 msgid "Writing tags to file %s failed."
 msgstr "Echec de l'écriture tag du fichier %s"
+
+#: ../Classes/MusikLibrary.cpp:551
+#, fuzzy, c-format
+msgid ""
+"Writing tags to file %s is not supported. File is set as clean in database."
+msgstr ""
+"Echec de l'écriture tag du fichier %s car le fichier n'existe pas.\n"
+"Purgez la base de données."
 
 #: ../Frames/MusikPrefsFrame.cpp:223 ../Frames/MusikPrefsFrame.cpp:374
 #: ../MusikGlobals.cpp:54
@@ -1485,7 +1503,7 @@ msgstr "mise en cache"
 msgid "connecting ..."
 msgstr "connexion"
 
-#: ../MusikApp.cpp:340
+#: ../MusikApp.cpp:342
 #, c-format
 msgid "copying %s"
 msgstr "copie %s"

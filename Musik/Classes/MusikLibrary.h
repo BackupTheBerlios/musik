@@ -32,8 +32,6 @@
 #include <wx/filename.h>
 
 #include "../MusikUtils.h"
-#include "../MusikDefines.h"
-
 
 class CMusikLibrary : public wxEvtHandler
 {
@@ -129,22 +127,13 @@ public:
 
 	//misc
 	bool SetAutoDjFilter(const wxString & sFilter);
+
 private:
 
 	void CheckVersion();
 
 	sqlite		  *m_pDB;
 	void CreateDB();
-	bool GetMetaData		( CSongMetaData & MetaData  );
-	bool GetMP3MetaData		( CSongMetaData & MetaData );
-	void AddMod				( const wxString & filename );
-	bool GetOggMetaData		( CSongMetaData & MetaData );
-	void AddWav				( const wxString & filename );
-	void AddWMA				( const wxString & filename );
-	void AddAIFF			( const wxString & filename );
-
-	bool WriteMP3Tag		( const CSongMetaData & MetaData, bool ClearAll );
-	bool WriteOGGTag		( const CSongMetaData & MetaData, bool ClearAll );
 
 	wxString  m_sSortAllSongsQuery;
 	wxString m_lastQueryWhere;
