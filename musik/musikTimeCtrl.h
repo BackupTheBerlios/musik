@@ -22,6 +22,9 @@ public:
 	// misc
 	void OnNewSong();
 
+	// size
+	void SetSize( const CSize& size );
+
 	// message maps
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
@@ -45,6 +48,10 @@ protected:
 	void RescaleInfo( int cx );
 	size_t m_CurChars;
 	size_t m_TotalChars;
+
+	// size
+	CSize m_Size;
+	CSize m_CapSize;
 
 	// we seeking playback time?
 	bool m_TimeDrag;

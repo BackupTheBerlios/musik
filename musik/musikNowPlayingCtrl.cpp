@@ -137,8 +137,9 @@ void CmusikNowPlayingCtrl::RescaleInfo()
 	lpRect = CRect( CPoint( rcClient.right - 16, rcClient.top ), CSize( 16, rcClient.bottom ) );
 	m_Volume->MoveWindow( lpRect );
 
-	lpRect = CRect( rcClient.right - 28 - 200, rcClient.bottom - 16, rcClient.right - 28, rcClient.bottom );
-	m_Track->MoveWindow( lpRect );
+	CPoint ptTemp( rcClient.right - 240 - 16, rcClient.bottom - 16 );
+	CSize szTemp( 240, 16 );
+	m_Track->MoveWindow( CRect( ptTemp, szTemp ) );
 }
 
 ///////////////////////////////////////////////////

@@ -39,6 +39,8 @@ CmusikTimeCtrl::CmusikTimeCtrl( CmusikPrefs* prefs, CmusikPlayer* player )
 
 	m_TimeDrag = false;
 
+	m_Size = CSize( 200, 16 );
+
 	m_Prefs = prefs;
 	m_Player = player;
 }
@@ -88,13 +90,15 @@ int CmusikTimeCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if ( !m_CurTime->Create( NULL, WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0 ), this ) )
 		return false;
 	m_CurTime->SetDynFont( 11, 1, 0 );
-	m_CurTime->SetDynText( _T( "0:00" ) );
+	m_CurTime->SetDynText( _T( "0:00" ), false, false );
 	
 	m_TotalTime = new CmusikDynamicText();
 	if ( !m_TotalTime->Create( NULL, WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0 ), this ) )
 		return false;
 	m_TotalTime->SetDynFont( 11, 1, 0 );
-	m_TotalTime->SetDynText( _T( "0:00" ) );
+	m_TotalTime->SetDynText( _T( "0:00" ), false, false );
+
+	m_CapSize = m_TotalTime->GetTextSize( _T( "XX:XX:XX" ) );
 	
 	m_TimerID = SetTimer( MUSIK_SEEK_TIMER, 1000, NULL );
 
@@ -118,34 +122,33 @@ void CmusikTimeCtrl::RescaleInfo( int cx )
 	if ( cx == -1 )
 		cx = rcClient.Width();
 
-	CRect rcStatic = CRect( 0, 0, 0, 0 );
+	// stuff we'll use
+	CRect rcStatic;
+	m_CurTime->GetClientRect( &rcStatic );
+	CPoint ptCurr;
+	CSize szCurr, szTemp;
 
-	int nRemain = NULL;
-	int nTrackStart = NULL;
+	// current time
+	szTemp = m_CurTime->GetDynSize();
+	ptCurr.x = m_CapSize.cx - szTemp.cx;
+	ptCurr.y = ( rcClient.Height() - rcStatic.Height() ) / 2;
 
-	m_CurTime->UpdateDynSize();
-	m_TotalTime->UpdateDynSize();
+	m_CurTime->MoveWindow( CRect( ptCurr, szTemp ) );
 
-	if ( m_CurTime )
-	{
-		m_CurTime->GetClientRect( &rcStatic );
-		m_CurTime->MoveWindow( 0, abs( rcClient.Height() - rcStatic.Height() ) / 2, rcStatic.Width(), rcStatic.Height() );
-		nRemain += rcStatic.Width();
-		nTrackStart = rcStatic.Width();
-	}
+	// seeker
+	ptCurr.x = m_CapSize.cx;
+	ptCurr.y = 0;
+	
+	szCurr.cx = rcClient.Width() - ( m_CapSize.cx * 2 );
+	szCurr.cy = 16;
 
-	if ( m_TotalTime )
-	{
-		m_TotalTime->GetClientRect( &rcStatic );
-		m_TotalTime->MoveWindow( cx - rcStatic.Width(), abs( rcClient.Height() - rcStatic.Height() ) / 2, cx, rcStatic.Height() );
-		nRemain += rcStatic.Width();
-	}
+	m_TimeCtrl->MoveWindow( CRect( ptCurr, szCurr ) );
 
-	if ( m_TimeCtrl )
-	{
-		nRemain = cx - nRemain;
-		m_TimeCtrl->MoveWindow( nTrackStart, 0, nRemain, 16 );
-	}
+	// total time
+	ptCurr.x = rcClient.Width() - m_CapSize.cx;
+	ptCurr.y = ( rcClient.Height() - rcStatic.Height() ) / 2;
+
+	m_TotalTime->MoveWindow( CRect( ptCurr, m_CapSize ) );
 }
 
 ///////////////////////////////////////////////////
@@ -181,7 +184,7 @@ void CmusikTimeCtrl::OnTimer(UINT nIDEvent)
 		{
 			CString sTimeStr = m_Player->GetTimeStr( m_Player->GetTimeNow( MUSIK_TIME_MS ) );
 			m_TimeCtrl->SetPos( m_Player->GetTimeNowPer() );
-			m_CurTime->SetDynText( sTimeStr, false );
+			m_CurTime->SetDynText( sTimeStr, false, false );
 
 			// avoid unnecessary RescaleInfo() calls
 			if ( sTimeStr.GetLength() != m_CurChars )
@@ -199,7 +202,7 @@ void CmusikTimeCtrl::OnTimer(UINT nIDEvent)
 void CmusikTimeCtrl::OnNewSong()
 {
 	CString sTimeStr = m_Player->GetTimeStr( m_Player->GetDuration( MUSIK_TIME_MS ) );
-	m_TotalTime->SetDynText( sTimeStr, false );
+	m_TotalTime->SetDynText( sTimeStr, false, false );
 
 	// avoid un necessary RescaleInfo() calls
 	if ( sTimeStr.GetLength() != m_TotalChars )
@@ -215,7 +218,7 @@ void CmusikTimeCtrl::OnNewSong()
 LRESULT CmusikTimeCtrl::OnTrackChange( WPARAM wParam, LPARAM lParam )
 {
 	CString sTimeStr = m_Player->GetTimePerStr( m_TimeCtrl->GetPos() );
-	m_CurTime->SetDynText( sTimeStr, false );
+	m_CurTime->SetDynText( sTimeStr, false, false );
 
 	// avoid unnecessary RescaleInfo() calls
 	if ( sTimeStr.GetLength() != m_CurChars )

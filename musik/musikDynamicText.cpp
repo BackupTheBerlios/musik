@@ -69,13 +69,14 @@ END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
 
-void CmusikDynamicText::SetDynText( const CString& str, bool movewindow )
+void CmusikDynamicText::SetDynText( const CString& str, bool updatesize, bool movewindow )
 {
 	CString sVerify = str;
 	sVerify.Replace( _T( "&" ), _T( "&&" ) );
 	SetWindowText( sVerify );
 
-	UpdateDynSize( movewindow );
+	if ( updatesize )
+		UpdateDynSize( movewindow );
 }
 
 ///////////////////////////////////////////////////
@@ -88,25 +89,34 @@ void CmusikDynamicText::UpdateDynSize( bool movewindow )
 	str.Replace( "&&", "&" );
 
 	// get text extent
-	CSize szText;
-	HDC	hMemDC	= NULL;
-	hMemDC = CreateCompatibleDC(NULL);
-	if ( hMemDC )
-	{
-		CDC* pDC = CDC::FromHandle( hMemDC );
-		if ( pDC )
-		{
-			CFont* pOldFont = pDC->SelectObject( this->GetFont() );
-			szText = pDC->GetTextExtent( (LPCTSTR)str, str.GetLength() );
-			pOldFont = pDC->SelectObject( pOldFont );
-		}
-	}
-
+	CSize szText = GetTextSize( str );
 	m_Width = szText.cx;
 
 	// resize the window
 	if ( movewindow )
 		MoveWindow( CRect( CPoint( 0, 0 ), szText ) );
+}
+
+///////////////////////////////////////////////////
+
+CSize CmusikDynamicText::GetTextSize( const CString& str )
+{
+	CSize szText;
+
+	HDC	hMemDC	= NULL;
+	hMemDC = CreateCompatibleDC( NULL );
+	if ( hMemDC )
+	{
+		CDC* pDC = CDC::FromHandle( hMemDC );
+		if ( pDC )
+		{
+			CFont* pOldFont = pDC->SelectObject( pFont );
+			szText = pDC->GetTextExtent( (LPCTSTR)str, str.GetLength() );
+			pOldFont = pDC->SelectObject( pOldFont );
+		}
+	}
+
+	return szText;
 }
 
 ///////////////////////////////////////////////////
@@ -142,3 +152,12 @@ void CmusikDynamicText::SetDynFont( int size, int bold, int italic )
 
 ///////////////////////////////////////////////////
 
+CSize CmusikDynamicText::GetDynSize()
+{
+	CString str;
+	GetWindowText( str );
+
+	return GetTextSize( str );
+}
+
+///////////////////////////////////////////////////
