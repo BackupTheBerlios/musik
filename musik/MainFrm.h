@@ -382,6 +382,7 @@ protected:
 	bool m_PlaylistSel;
 	bool m_AutoStart;
 	bool m_TransEnb;
+	int m_Trans;
 };
 
 ///////////////////////////////////////////////////

@@ -1247,6 +1247,7 @@ int CMainFrame::GetSelPlaylistType()
 void CMainFrame::SetTransparency( int trans )
 {
 	m_pSetLayeredWindowAttributes( GetSafeHwnd(), 0, trans, LWA_ALPHA );
+	m_Trans = trans;
 }
 
 ///////////////////////////////////////////////////
@@ -1759,6 +1760,9 @@ void CMainFrame::OnFilePreferences()
 	PrefSheet.SetActivePage( &wndPageInterfaceWorkflow );
 
 	PrefSheet.DoModal();
+
+	if ( !m_Prefs->IsTransEnabled() && m_Trans != 255 )
+		SetTransparency( 255 );
 }
 
 ///////////////////////////////////////////////////

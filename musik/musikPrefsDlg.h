@@ -233,6 +233,11 @@ public:
 	CButton m_TransAdaptive;
 	CEdit m_TransFocused;
 	CEdit m_TransUnfocused;
+	CEdit m_TransFadeDuration;
+
+	// overrides
+	virtual BOOL OnInitDialog();
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 
 protected:
 
@@ -243,11 +248,7 @@ protected:
 	// macros
 	DECLARE_DYNAMIC(CmusikPrefsInterfaceTrans)
 	DECLARE_MESSAGE_MAP()
-public:
-	CEdit m_TransFadeDuration;
-	virtual BOOL OnInitDialog();
-protected:
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+
 };
 
 
