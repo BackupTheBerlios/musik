@@ -1609,6 +1609,9 @@ LRESULT CMainFrame::OnSongChange( WPARAM wParam, LPARAM lParam )
 			MUSIK_VERSION_STR );
 
 		SetWindowText( s );
+
+		if ( visSetVisPlaying )
+			visSetVisPlaying( TRUE );
 	}
 	else
 	{
@@ -1647,6 +1650,9 @@ LRESULT CMainFrame::OnSongStop( WPARAM wParam, LPARAM lParam )
 	m_wndView->GetCtrl()->RedrawWindow();
 
 	SetWindowText( MUSIK_VERSION_STR );
+
+	if ( visSetVisPlaying )
+		visSetVisPlaying( FALSE );
 	
 	return 0L;
 }
@@ -3317,6 +3323,7 @@ void CMainFrame::ImportWinamp()
 	visSetVisModule = ( lpfnSetVisModule )GetProcAddress( m_WinampVis, _T( "_SetVisModule@4" ) );
 	visGetVisModuleCount = ( lpfnGetVisModuleCount )GetProcAddress( m_WinampVis, _T( "_GetVisModuleCount@4" ) );
 	visGetVisModuleInfo = ( lpfnGetVisModuleInfo )GetProcAddress( m_WinampVis, _T( "_GetVisModuleInfo@8" ) );
+	visSetVisPlaying = ( lpfnSetVisPlaying )GetProcAddress( m_WinampVis, _T( "_IsPlaying@4" ) );
 }
 
 ///////////////////////////////////////////////////

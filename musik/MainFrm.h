@@ -138,6 +138,7 @@ typedef UINT	( WINAPI* lpfnGetVisModuleCount )( int );
 typedef LPSTR	( WINAPI* lpfnGetVisModuleInfo )( int, int );
 typedef HWND	( WINAPI* lpfnGetVisHwnd )();
 typedef void	( WINAPI* lpfnConfigVis )( int, int );
+typedef void	( WINAPI* lpfnSetVisPlaying ) ( int );
 
 ///////////////////////////////////////////////////
 
@@ -456,6 +457,7 @@ protected:
 	lpfnStopVis visStopVis;
 	lpfnGetVisHwnd visGetVisHwnd;
 	lpfnConfigVis visConfigVis;
+	lpfnSetVisPlaying visSetVisPlaying;
 
 	CmusikWinampVisDlg* m_VisDlg;
 
