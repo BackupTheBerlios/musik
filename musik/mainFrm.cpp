@@ -247,59 +247,9 @@ int CMainFrameWorker::svc()
 	suspend.set( 0.1f );
 	sleep.set( 1.0f );
 
-	bool is_frame_focused = false;
-	int fade_dur = 5;	// half second ( = seconds * 10 )
-	int unfocused_per = 25;
-	int trans = unfocused_per;
-
 	CString sCaption;
 	while ( !m_Stop )
 	{
-		// transparency effects.
-		if ( m_Parent->IsTransEnb() )
-		{
-			if ( !is_frame_focused && GetForegroundWindow() == m_Parent->GetSafeHwnd() )
-			{
-				if ( trans < 1 )
-					trans = 1;
-
-				if ( unfocused_per < 1 )
-					unfocused_per = 1;
-
-				suspend.set( fade_dur / 10 / ( 1 + ( 255 - unfocused_per ) ) );
-				for ( int i = trans; i < 255 - unfocused_per; i++ )
-				{
-					trans++;
-					m_Parent->SetTransparency( trans );
-					ACE_OS::sleep( suspend );
-				}
-
-				trans = 255;
-				m_Parent->SetTransparency( trans );
-				is_frame_focused = true;
-			}
-			else if ( is_frame_focused && GetForegroundWindow() != m_Parent->GetSafeHwnd() )
-			{
-				if ( trans < 1 )
-					trans = 1;
-
-				if ( unfocused_per < 1 )
-					unfocused_per = 1;
-
-				suspend.set( fade_dur / 10 / ( 1 + ( 255 - unfocused_per ) ) );
-				for ( int i = 1; i < 255 - unfocused_per; i++ )
-				{
-					trans--;
-					m_Parent->SetTransparency( trans );
-					ACE_OS::sleep( suspend );
-				}
-
-				trans = unfocused_per;
-				m_Parent->SetTransparency( trans );
-				is_frame_focused = false;
-			}
-		}
-
 		if ( m_Parent->GetTaskCount() )
 		{
 			switch ( pos )
@@ -341,6 +291,155 @@ int CMainFrameWorker::svc()
 
 		ACE_OS::sleep( sleep );
 
+	}
+
+	m_Finished = true;
+
+	return 0;
+}
+
+///////////////////////////////////////////////////
+
+CMainFrameFader::open( void* parent )
+{
+	m_Parent = (CMainFrame*)parent;
+	int ret_code = activate( THR_NEW_LWP | THR_JOINABLE | THR_USE_AFX );
+
+	return ret_code;
+}
+
+///////////////////////////////////////////////////
+
+CMainFrameFader::svc()
+{
+	// sleep if we go idle
+	ACE_Time_Value suspend, sleep;
+	sleep.set( 0.5f );
+
+	m_Stop = false;
+	m_Active = true;
+	m_Finished = false;
+
+	int fade_dur = 5;	// half second ( = seconds * 10 )
+	int unfocused_per = 100;
+	int focused_per = 230;
+	bool adaptive = false;
+	int fade_steps = 10;
+
+	bool is_frame_focused = false;
+	int trans = unfocused_per;
+
+	while ( !m_Stop )
+	{
+		// transparency effects.
+		if ( m_Parent->IsTransEnb() )
+		{
+			// fade in
+			if ( !is_frame_focused && GetForegroundWindow() == m_Parent->GetSafeHwnd() )
+			{
+				if ( trans < 1 )
+					trans = 1;
+
+				if ( unfocused_per < 1 )
+					unfocused_per = 1;
+
+				// adaptive filtering is only recommended
+				// if the user has a good video card.
+				if ( adaptive )
+				{
+					suspend.set( (float)( fade_dur / 10 ) / (float)( 1 + ( focused_per - unfocused_per ) ) );
+					for ( int i = trans; i < focused_per; i++ )
+					{
+						if ( m_Stop ) 
+							break;
+
+						trans++;
+
+						if ( trans > focused_per )
+							trans = focused_per;
+
+						m_Parent->SetTransparency( trans );
+						ACE_OS::sleep( suspend );
+					}
+				}
+				else	// non adaptive
+				{
+					int interval = ( focused_per - unfocused_per ) / fade_steps;
+					sleep.set( (float)( fade_dur / 10 ) / (float)( fade_steps ) );
+
+					for ( int i = 0; i < fade_steps; i++ )
+					{
+						if ( m_Stop )
+							break;
+
+						trans += interval;
+
+						if ( trans > focused_per )
+							trans = focused_per;
+
+						m_Parent->SetTransparency( trans );
+						ACE_OS::sleep( suspend );
+					}
+				}
+
+				trans = focused_per;
+				m_Parent->SetTransparency( trans );
+				is_frame_focused = true;
+			}
+
+			// fade out
+			else if ( is_frame_focused && GetForegroundWindow() != m_Parent->GetSafeHwnd() )
+			{
+				if ( trans < 1 )
+					trans = 1;
+
+				if ( unfocused_per < 1 )
+					unfocused_per = 1;
+
+				if ( adaptive )
+				{
+					suspend.set( fade_dur / 10 / ( 1 + ( focused_per - unfocused_per ) ) );
+					for ( int i = 1; i < focused_per - unfocused_per; i++ )
+					{
+						if ( m_Stop )
+							break;
+
+						trans--;
+
+						if ( trans < unfocused_per )
+							trans = unfocused_per;
+
+						m_Parent->SetTransparency( trans );
+						ACE_OS::sleep( suspend );
+					}
+				}
+				else	// non adaptive
+				{
+					int interval = ( focused_per - unfocused_per ) / fade_steps;
+					sleep.set( (float)( fade_dur / 10 ) / (float)( fade_steps ) );
+
+					for ( int i = 0; i < fade_steps; i++ )
+					{
+						if ( m_Stop )
+							break;
+
+						trans -= interval;
+
+						if ( trans < unfocused_per )
+							trans = unfocused_per;
+
+						m_Parent->SetTransparency( trans );
+						ACE_OS::sleep( suspend );
+					}
+				}
+
+				trans = unfocused_per;
+				m_Parent->SetTransparency( trans );
+				is_frame_focused = false;
+			}
+		}
+
+		ACE_OS::sleep( sleep );
 	}
 
 	m_Finished = true;
@@ -737,6 +836,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		m_Updater->open( this );
 	m_ProtectingTasks.release();
 
+
 	// tray icon stuff
 	InitTrayIcon();
 
@@ -745,6 +845,12 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		SynchronizeDirs();
 
 	m_TransEnb = InitTrans();
+
+	// fire off the fader task
+	m_ProtectingTasks.acquire();
+		m_Fader = new CMainFrameFader;
+		m_Fader->open( this );
+	m_ProtectingTasks.release();
 
 	return 0;
 }
@@ -880,7 +986,7 @@ BOOL CMainFrame::DestroyWindow()
 {
 	// make sure all the tasks are finished
 	// before destroying the window...
-	KillTasks( true, true, false );
+	KillTasks( true, true, true, false );
 
 	CString sProfile = _T( "musikProfile" );
 	CSizingControlBar::GlobalSaveState( this, sProfile );
@@ -2620,7 +2726,7 @@ LRESULT CMainFrame::OnSelBoxAddRemove( WPARAM wParam, LPARAM lParam )
 
 ///////////////////////////////////////////////////
 
-void CMainFrame::KillTasks( bool updater, bool helpers, bool setwindowtext )
+void CMainFrame::KillTasks( bool updater, bool fader, bool helpers, bool setwindowtext )
 {
 	m_ProtectingTasks.acquire();
 
@@ -2632,6 +2738,17 @@ void CMainFrame::KillTasks( bool updater, bool helpers, bool setwindowtext )
 
 				delete m_Updater;
 				m_Updater = NULL;
+			}
+		}
+
+		if ( fader )
+		{
+			if ( m_Fader )
+			{
+				m_Fader->StopWait( 4 );
+
+				delete m_Fader;
+				m_Fader = NULL;
 			}
 		}
 
@@ -2675,7 +2792,7 @@ void CMainFrame::OnFileClearlibrary()
 	}
 
 	// kill all tasks that may be accessing the database
-	KillTasks( true, true, true );
+	KillTasks( true, false, true, true );
 
 	// stop player
 	m_Player->Stop();
@@ -2716,7 +2833,7 @@ BOOL CMainFrame::PreTranslateMessage(MSG* pMsg)
 {
 	if ( pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_ESCAPE && GetTaskCount() )
 	{
-		KillTasks( false, true, true );
+		KillTasks( false, false, true, true );
 		return true;
 	}
 

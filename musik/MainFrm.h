@@ -133,6 +133,22 @@ private:
 
 ///////////////////////////////////////////////////
 
+class CMainFrameFader : public CmusikTask
+{
+
+public:
+
+	int open( void* parent );
+	int svc();
+
+private:
+
+	CMainFrame* m_Parent;
+
+};
+
+///////////////////////////////////////////////////
+
 class CMainFrame : public CFrameWnd
 {
 
@@ -338,12 +354,13 @@ protected:
 	// mutex to synchronize task array
 	ACE_Mutex m_ProtectingTasks;
 	int m_TaskCount;
-	void KillTasks( bool updater = true, bool childtasks = true, bool setwindowtext = true );
+	void KillTasks( bool updater = true, bool fader = true, bool childtasks = true, bool setwindowtext = true );
 
 	// batch functors tasks will use
 	CmusikBatchAddFunctor* m_BatchAddFnct;
 	CmusikRemoveOldFunctor* m_RemoveOldFnct;
 	CMainFrameWorker* m_Updater;
+	CMainFrameFader* m_Fader;
 
 	// dir sync dialog
 	CmusikDirSync* m_DirSyncDlg;
