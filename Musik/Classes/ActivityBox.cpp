@@ -520,19 +520,14 @@ void CActivityBox::SetPlaylist()
 			for ( size_t i = 0; i < aThisSel.GetCount(); i++ )
 			{
 				aThisSel.Item( i ).Replace( wxT( "'" ), wxT( "''" ), true );
-				sThis += wxT("'");
-				sThis += aThisSel.Item( i );
+				sThis += wxT("'") + aThisSel.Item( i );
 
 				//--- last item, so just add apostrophe ' ---//
 				if ( i == ( aThisSel.GetCount() - 1 ) )
 				      sThis += wxT("'");
 				//--- not last item, so format string for another ---//
 				else
-				{
-				      sThis += wxT("' or ");
-				      sThis += sThisType;
-				      sThis += wxT(" like ");
-				}
+					sThis += wxT("' or ") + sThisType + wxT(" like ");
 			}
 
 			//--- make parent portion of query ---//
@@ -542,17 +537,14 @@ void CActivityBox::SetPlaylist()
 			for ( size_t i = 0; i < aParentSel.GetCount(); i++ )
 			{
 				aParentSel.Item( i ).Replace( wxT( "'" ), wxT( "''" ), true );
-				sParent += wxT("'");
-				sParent += aParentSel.Item( i );
-				sParent += wxT("' and " );
-				sParent += sThis;
-				if ( i != ( aParentSel.GetCount() - 1 ) )
+				sParent += wxT("'") + aParentSel.Item( i ) + wxT("' and " ) + sThis;
+
+				//--- last item, so just add apostrophe ' ---//
+				if ( i == ( aParentSel.GetCount() - 1 ) )
+				      sParent += wxT("'");
 				//--- not last item, so format string for another ---//
-				{
-					sParent += wxT(" or ");
-					sParent += sParentType;
-					sParent += wxT(" like ");
-			    	}
+				if ( i != ( aParentSel.GetCount() - 1 ) )
+					sParent += wxT(" or ") + sParentType + wxT( " like " );
 			}
 
 			//--- compile query ---//
