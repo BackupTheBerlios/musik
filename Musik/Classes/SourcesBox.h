@@ -101,10 +101,12 @@ public:
 	bool CreateDynPlaylist			( wxString sName );
     void AppendStdPlaylist			( wxString sName, wxString sSongs );
 	void RewriteStdPlaylist			();
-	void UpdateDynPlaylist			( int nIndex = -1 );
+	void UpdateDynPlaylist			( int nIndex );
 	wxArrayString LoadStdPlaylist	( wxString sName );
 	wxString LoadDynPlaylist		( wxString sName );
 	bool PlaylistToFile				( wxString sName, wxString* sItems, int type, bool bDelOld = true );
+	wxString PromptDynamicPlaylist	( wxString sQuery );
+	wxString GetPlaylistName		( int nIndex );
 
 	DECLARE_EVENT_TABLE()
 

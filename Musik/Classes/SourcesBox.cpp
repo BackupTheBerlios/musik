@@ -199,30 +199,25 @@ CSourcesListBox::~CSourcesListBox()
 
 void CSourcesListBox::ShowMenu( wxCommandEvent &WXUNUSED(event) )
 {
-	int nSel = GetSelectedItemCount();
-
 	wxPoint pos = ScreenToClient( wxGetMousePosition() );
-	if ( nSel == 0 )
-	{
-		sources_context_menu->Enable( MUSIK_SOURCE_CONTEXT_RENAME, false );
-		sources_context_menu->Enable( MUSIK_SOURCE_CONTEXT_DELETE, false );
-		sources_context_menu->Enable( MUSIK_SOURCE_CONTEXT_EDIT_QUERY, false );
-	}
+
+	//---------------------------------------------------------//
+	//--- if a dynamic playlist is selected, it can have	---//
+	//--- its query edited. other playlists cannot.			---//
+	//---------------------------------------------------------//
+	if ( GetSelType() == MUSIK_SOURCES_PLAYLIST_DYNAMIC )
+		sources_context_menu->Enable( MUSIK_SOURCE_CONTEXT_EDIT_QUERY, true );
 	else
-	{
-		sources_context_menu->Enable( MUSIK_SOURCE_CONTEXT_RENAME, true );
+		sources_context_menu->Enable( MUSIK_SOURCE_CONTEXT_EDIT_QUERY, false );
 
-		if ( GetType( m_CurSel ) == MUSIK_SOURCES_LIBRARY )
-			sources_context_menu->Enable( MUSIK_SOURCE_CONTEXT_DELETE, false );
-		else
-			sources_context_menu->Enable( MUSIK_SOURCE_CONTEXT_DELETE, true );
+	//---------------------------------------------------------//
+	//--- if a library is selected, it can't be deleted		---//
+	//---------------------------------------------------------//
+	if ( GetSelType() == MUSIK_SOURCES_LIBRARY )
+		sources_context_menu->Enable( MUSIK_SOURCE_CONTEXT_DELETE, false );
+	else
+		sources_context_menu->Enable( MUSIK_SOURCE_CONTEXT_DELETE, true );
 
-		if ( GetType( m_CurSel ) == MUSIK_SOURCES_PLAYLIST_DYNAMIC )
-			sources_context_menu->Enable( MUSIK_SOURCE_CONTEXT_EDIT_QUERY, true );
-		else
-			sources_context_menu->Enable( MUSIK_SOURCE_CONTEXT_EDIT_QUERY, false );
-
-	}
 	PopupMenu( sources_context_menu, pos );
 }
 
@@ -257,7 +252,8 @@ void CSourcesListBox::DynamicPlaylist( wxCommandEvent& WXUNUSED(event) )
 }
 void CSourcesListBox::EditQuery( wxCommandEvent& WXUNUSED(event) )
 {
-	UpdateDynPlaylist();
+	int nSelPos = GetNextItem( -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED );
+	UpdateDynPlaylist( nSelPos );
 }
 
 void CSourcesListBox::ToggleIconsEvt( wxCommandEvent& WXUNUSED(event) )
@@ -763,62 +759,45 @@ bool CSourcesListBox::CreateDynPlaylist( wxString sName )
 		//-----------------------------------------------------//
 		//--- search the list to see if the item is visible ---//
 		//-----------------------------------------------------//
-		if ( FindInSources( sName, MUSIK_SOURCES_PLAYLIST_DYNAMIC ) == -1 )
+		int nItemPos = FindInSources( sName, MUSIK_SOURCES_PLAYLIST_DYNAMIC );
+		if ( nItemPos == -1 )
 		{
 			if ( wxMessageBox( _( "Dynamic playlist \"" ) + sName + _( "\" already exists, but does not appear to be visible in the panel.\n\nWould you like to show it?" ), MUSIK_VERSION, wxYES_NO | wxICON_QUESTION ) == wxYES )
 			{		
+				nItemPos = g_SourcesList.GetCount();
 				g_SourcesList.Add( wxT( "[d] " ) + sName );
 				Update();
 			}
 		}
-		/*
-		int nAnswer = wxMessageBox( _( "A dynamic playlist with this name already exists, would you like to edit it's query?" ), MUSIK_VERSION, wxYES_NO | wxICON_QUESTION );
+
+		//-----------------------------------------------------//
+		//--- ask the user if he wants to edit the current	---//
+		//--- query since it already exists					---//
+		//-----------------------------------------------------//
+		int nAnswer = wxMessageBox( _( "Would you like to edit the existing dynamic playlist's query?" ), MUSIK_VERSION, wxYES_NO | wxICON_QUESTION );
 		if ( nAnswer == wxYES )
-			UpdateDynPlaylist( FindInSources( sName, MUSIK_SOURCES_PLAYLIST_DYNAMIC ) );
-		{
-			wxString sOldQuery	= LoadDynPlaylist( sName );
+			UpdateDynPlaylist( nItemPos );
 
-			wxTextEntryDialog dlg( this, _( "Examples:\ntitle like '%funky%'    (all titles containing funky)\nbitrate < 128, vbr = 0    (all low quality, non-VBR)\ntimesplayed > 10 order by artist    (your popular tracks)" ), MUSIK_VERSION, sOldQuery );
-			if ( dlg.ShowModal() == wxID_OK )
-			{
-				wxString sNewQuery = dlg.GetValue();
-				PlaylistToFile( sName, &sNewQuery, MUSIK_SOURCES_PLAYLIST_DYNAMIC );
-			}
-
-				/*
-				//--- remove old, add new ---//
-				g_SourcesList.Item( nIndex ) = wxT( "[d] " ) + sName;
-				
-
-				//--- populate list ---//
-				g_Playlist = g_Library.QuerySongs( sNewQuery );
-				g_PlaylistCtrl->Update();
-			
-
-
-			return false;
-		}
-		else
-		*/
-			return false;
+		return false;
 	}
 
-
+	//-----------------------------------------------------//
+	//--- ask user for a query. if the user doesn't		---//
+	//--- give a blank one back, save this to file, and	---//
+	//--- return.										---//
+	//-----------------------------------------------------//
 	else
 	{
-		wxTextEntryDialog dlg( this, _( "Examples:\ntitle like '%funky%'    (all titles containing funky)\nbitrate < 128, vbr = 0    (all low quality, non-VBR)\ntimesplayed > 10 order by artist    (your popular tracks)" ), MUSIK_VERSION, wxT( "" ) );
-		if ( dlg.ShowModal() == wxID_OK )
-		{
-			//--- get query ---//
-			wxString sQuery = dlg.GetValue();
+		wxString sQuery = PromptDynamicPlaylist( wxT( "" ) );
 
-			//-- show and save item ---//
+		if ( sQuery != wxT( "" ) )
+		{
 			PlaylistToFile( sName, &sQuery, MUSIK_SOURCES_PLAYLIST_DYNAMIC );
 			g_SourcesList.Add( wxT( "[d] " ) + sName );
 			Update();
-
+			
 			return true;
-		}	
+		}
 		else
 			return false;
 	}
@@ -828,16 +807,35 @@ bool CSourcesListBox::CreateDynPlaylist( wxString sName )
 
 void CSourcesListBox::UpdateDynPlaylist( int nIndex )
 {
-	wxMessageBox( wxT( "Busted." ) );
 
-	/*
-	if ( nIndex < 0 )
-		nIndex = GetNextItem( -1, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
-
-	wxString sName		= GetItemText		( nIndex );
-	*/
+	wxString sName = GetPlaylistName( nIndex );
+	wxString sQuery = PromptDynamicPlaylist( LoadDynPlaylist( sName ) );
 	
+	if ( sQuery != wxT( "" ) )
+	{
+		g_SourcesList.Item( nIndex ) = wxT( "[d] " ) + sName;
+		PlaylistToFile( sName, &sQuery, MUSIK_SOURCES_PLAYLIST_DYNAMIC );
 
+		g_Playlist = g_Library.QuerySongs( sQuery );
+		g_PlaylistCtrl->Update();
+	}
+}
+
+wxString CSourcesListBox::PromptDynamicPlaylist( wxString sQuery )
+{
+	wxTextEntryDialog dlg( this, _( "Examples:\ntitle like '%funky%'    (all titles containing funky)\nbitrate < 128, vbr = 0    (all low quality, non-VBR)\ntimesplayed > 10 order by artist    (your popular tracks)" ), MUSIK_VERSION, wxT( "" ) );
+
+	if ( dlg.ShowModal() == wxID_OK )
+		return dlg.GetValue();	
+
+	return wxT( "" );
+}
+
+wxString CSourcesListBox::GetPlaylistName( int nIndex )
+{
+	wxString sRet = g_SourcesList.Item( nIndex );
+	sRet = sRet.Right( sRet.Length() - 3 );
+	return sRet;
 }
 
 void CSourcesListBox::AppendStdPlaylist( wxString sName, wxString sSongs )
