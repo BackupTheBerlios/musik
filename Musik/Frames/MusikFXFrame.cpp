@@ -356,8 +356,8 @@ void MusikFXFrame::SlidersFromBands()
 
 	for ( int n = 0; n < 18; n++ )
 	{
-		slLeft[n]->SetValue( 100.0f - (ldata[n] * 50.0f) );
-		slRight[n]->SetValue( 100.0f - (rdata[n] * 50.0f) );
+		slLeft[n]->SetValue( (int)( 100.0f - ( ldata[n] * 50.0f ) ) );
+		slRight[n]->SetValue( (int)( 100.0f - ( rdata[n] * 50.0f ) ) );
 	}
 }
 

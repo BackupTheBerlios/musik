@@ -275,7 +275,7 @@ void CMusikPlayer::SetFX()
 
 void CMusikPlayer::SetFrequency()
 {
-	FSOUND_SetFrequency( FSOUND_ALL, g_FX.GetFrequency() );
+	FSOUND_SetFrequency( FSOUND_ALL, (int)g_FX.GetFrequency() );
 }
 
 void CMusikPlayer::UpdateUI()

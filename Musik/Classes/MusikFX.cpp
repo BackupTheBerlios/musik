@@ -5,7 +5,7 @@
 //-----------------------------//
 //--- Stuff for Shibatch EQ ---//
 //-----------------------------//
-#include "../Shibatch/paramlist.hpp"
+#include "../shibatch/paramlist.hpp"
 
 extern void equ_init(int wb);
 extern void equ_makeTable(float *lbc,float *rbc,paramlist *,float fs);
@@ -114,7 +114,7 @@ void CMusikFX::LoadBands( wxFileConfig *pConfig )
 	pConfig->Read( wxT( "EQR15" ),		&bands[15],				1.0					);
 	pConfig->Read( wxT( "EQR16" ),		&bands[16],				1.0					);
 	pConfig->Read( wxT( "EQR17" ),		&bands[17],				1.0					);
-	for ( n = 0; n < 18; n++ )
+	for ( int n = 0; n < 18; n++ )
 		m_RightBands[n] = (float)bands[n];
 }
 
