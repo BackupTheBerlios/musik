@@ -158,6 +158,9 @@
 			RelativePath=".\include\MusikArrays.h">
 		</File>
 		<File
+			RelativePath=".\include\MusikConfig.h">
+		</File>
+		<File
 			RelativePath=".\include\MusikCrossfader.h">
 		</File>
 		<File
