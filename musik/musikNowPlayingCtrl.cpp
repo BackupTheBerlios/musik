@@ -169,16 +169,25 @@ void CmusikNowPlayingCtrl::OnDestroy()
 
 void CmusikNowPlayingCtrl::RescaleInfo()
 {
-	CRect lpRect = CRect( CPoint( 0, 0 ), m_Info1->GetSize() );
+	CRect rcClient;
+	GetClientRect( &rcClient );
+
+	CSize szSize = m_Info1->GetSize();
+	if ( szSize.cx > ( rcClient.Width() - 240 ) )
+		szSize.cx = rcClient.Width() - 240;
+
+	CRect lpRect = CRect( CPoint( 0, 0 ), szSize );
 	m_Info1->MoveWindow( lpRect );
 	m_Info1->Layout();
 
-	lpRect = CRect( CPoint( 0, m_Info1->GetHeight() + 2 ), m_Info2->GetSize() );
+	szSize = m_Info2->GetSize();
+	if ( szSize.cx > ( rcClient.Width() - 240 ) )
+		szSize.cx = rcClient.Width() - 240;
+
+	lpRect = CRect( CPoint( 0, m_Info1->GetHeight() + 2 ), szSize );
 	m_Info2->MoveWindow( lpRect );
 	m_Info2->Layout();
 
-	CRect rcClient;
-	GetClientRect( &rcClient );
 	lpRect = CRect( CPoint( rcClient.right - 16, rcClient.top ), CSize( 16, rcClient.bottom ) );
 	m_Volume->MoveWindow( lpRect );
 

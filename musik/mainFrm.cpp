@@ -791,6 +791,8 @@ LRESULT CMainFrame::OnSongStop( WPARAM wParam, LPARAM lParam )
 {
 	TRACE0( "Song stop signal caught\n" );
 
+	m_wndNowPlaying->GetCtrl()->UpdateButtonStates();
+	
 	return 0L;
 }
 
