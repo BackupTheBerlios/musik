@@ -26,7 +26,7 @@
 				BasicRuntimeChecks="3"
 				SmallerTypeCheck="TRUE"
 				RuntimeLibrary="3"
-				UsePrecompiledHeader="3"
+				UsePrecompiledHeader="0"
 				PrecompiledHeaderThrough="wx/wxprec.h"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
