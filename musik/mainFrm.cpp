@@ -306,7 +306,7 @@ CMainFrame::CMainFrame()
 CMainFrame::~CMainFrame()
 {
 	CIntArray sel_modes;
-	for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
+	for ( size_t i = 0; i < m_wndSelectionBars.size(); i++ )
 	{
 		sel_modes.push_back( m_wndSelectionBars.at( i )->GetCtrl()->GetType() );
 		delete m_wndSelectionBars.at( i );
@@ -2284,15 +2284,49 @@ void CMainFrame::OnNotificationtrayStop()
 LRESULT CMainFrame::OnSelBoxAddRemove( WPARAM wParam, LPARAM lParam )
 {
 	BOOL add_new = (BOOL)wParam;
+	bool save = false;
 
 	if ( add_new )
 	{
+		CmusikSelectionBar* pAdd = new CmusikSelectionBar( this, m_Library, m_Prefs, MUSIK_LIBRARY_TYPE_ARTIST, 123 + m_wndSelectionBars.size(), m_uSelectionDrop );
+		pAdd->Create( _T( "musik Selection Box" ), this, ID_SELECTIONBOX_START + m_wndSelectionBars.size() );
+		FloatControlBar( pAdd, CPoint( 0, 0 ) );
 
+		m_wndSelectionBars.push_back( pAdd );
+		save = true;
 	}
 
 	else
 	{
 		CmusikSelectionBar* pRemove = (CmusikSelectionBar*)lParam;
+
+		// remove the bar
+		for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
+		{
+			if ( pRemove == m_wndSelectionBars.at( i ) )
+			{
+				m_wndSelectionBars.at( i )->DestroyWindow();
+				delete m_wndSelectionBars.at( i );
+				m_wndSelectionBars.erase( m_wndSelectionBars.begin() + i );
+
+				save = true;
+				break;
+			}
+		}
+
+		// call this the layout 
+		if ( m_wndSelectionBars.size() )
+			m_wndSelectionBars.at( 0 )->CalcDynamicLayout( 0, LM_HORZ | LM_HORZDOCK );
+	}
+
+	// save new state to prefs
+	if ( save )
+	{
+		CIntArray new_selboxes;
+		for ( size_t i = 0; i < m_wndSelectionBars.size(); i++ )
+			new_selboxes.push_back( m_wndSelectionBars.at( i )->GetCtrl()->GetType() );
+
+		m_Prefs->SetSelBoxTypes( new_selboxes );
 	}
 
 	return 0L;

@@ -31,6 +31,8 @@ class CmusikSelectionCtrl;
 
 class CmusikSelectionBar : public baseCmusikSelectionBar
 {
+	friend class CmusikSelectionCtrl;
+
 public:
 
 	// construct / destruct
@@ -60,6 +62,9 @@ protected:
 	// macros
 	DECLARE_DYNAMIC(CmusikSelectionBar)
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnSelectionboxRemove();
+	afx_msg void OnSelectionboxAddnew();
 };
 
 ///////////////////////////////////////////////////
@@ -70,6 +75,7 @@ protected:
 
 class CmusikSelectionCtrl : public CmusikListCtrl
 {
+	friend class CmusikSelectionBar;
 	static bool m_Updating;
 
 public:

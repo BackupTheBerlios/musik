@@ -8,6 +8,7 @@
 #include "MEMDC.H"
 
 #include "../musikCore/include/musikLibrary.h"
+#include ".\musikselectionctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -38,6 +39,8 @@ BEGIN_MESSAGE_MAP(CmusikSelectionBar, baseCmusikSelectionBar)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
 	ON_COMMAND(ID_SELECTIONBOX_RENAME, OnSelectionboxRename)
+	ON_COMMAND(ID_SELECTIONBOX_REMOVE, OnSelectionboxRemove)
+	ON_COMMAND(ID_SELECTIONBOX_ADDNEW, OnSelectionboxAddnew)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -112,6 +115,9 @@ void CmusikSelectionBar::ShowMenu()
 	// check / enable / disable menu items
 	if ( m_Prefs->GetSelBoxCount() == 1 )
 		popup_menu->EnableMenuItem( ID_SELECTIONBOX_REMOVE, MF_DISABLED | MF_GRAYED );
+
+	if ( GetCtrl()->GetSelectedCount() == 0 )
+		popup_menu->EnableMenuItem( ID_SELECTIONBOX_RENAME, MF_DISABLED | MF_GRAYED );
 		
 	int type = GetCtrl()->GetType();
 	switch( type )
@@ -157,6 +163,22 @@ void CmusikSelectionBar::ShowMenu()
 	}
 
 	popup_menu->TrackPopupMenu( 0, pos.x, pos.y, this );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionBar::OnSelectionboxRemove()
+{
+	int WM_SELBOXADDREMOVE = RegisterWindowMessage( "SELBOXADDREMOVE" );
+	GetCtrl()->m_Parent->SendMessage( WM_SELBOXADDREMOVE, (WPARAM)FALSE, (LPARAM)this );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionBar::OnSelectionboxAddnew()
+{
+	int WM_SELBOXADDREMOVE = RegisterWindowMessage( "SELBOXADDREMOVE" );
+	GetCtrl()->m_Parent->SendMessage( WM_SELBOXADDREMOVE, (WPARAM)TRUE, NULL );
 }
 
 ///////////////////////////////////////////////////
@@ -359,7 +381,7 @@ void CmusikSelectionCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 				}
 			}
 			else
-				pStr = (char*)m_Items.at( 0 ).c_str();
+				pStr = (char*)m_Items.at( pItem->iItem ).c_str();
 
 			if ( pStr )
 			{

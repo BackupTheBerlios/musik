@@ -270,7 +270,6 @@ void CmusikPrefs::LoadPrefs()
 	m_Dlg_MinimizeToTray		= StringToBool( config->GetValue( "Dialog", "Minimize to Notification Tray", "0" ) );
 
 	// selection area
-	m_SelectionBox_Count = StringToInt( config->GetValue( "Selection Area", "Count", "2" ) );
 	m_SelectionBox_Types = StringToCIntArray( config->GetValue( "Selection Area", "Types", "1,2" ) );
 
 	// playlist
@@ -336,7 +335,6 @@ void CmusikPrefs::SavePrefs()
 	config->SetValue( "Dialog", "Minimize to Notification Tray", BoolToString( m_Dlg_MinimizeToTray ) );
 
 	// selection area
-	config->SetValue( "Selection Area", "Count", IntToString( (int)m_SelectionBox_Count ) );
 	config->SetValue( "Selection Area", "Types", CIntArrayToString( m_SelectionBox_Types ) );
 
 	// playlist
