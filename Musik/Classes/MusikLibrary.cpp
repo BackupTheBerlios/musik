@@ -3,10 +3,10 @@
  *
  *  Object which controls database manipulation.
  *
- *  Uses: SQLite, id3lib, and oggvorbis
+ *  Uses: SQLite, id3lib, and ogg/vorbis
  *  Information about SQLite - An Embeddable SQL Database Engine is available at http://www.hwaci.com/sw/sqlite/
  *  Information about id3lib is available at http://www.id3lib.org
- *  Information about oggvorbis is available at http://www.vorbis.com/
+ *  Information about ogg/vorbis is available at http://www.vorbis.com/
  *  
  *  Copyright (c) 2003 Casey Langen (casey@bak.rr.com)
  *	Contributors: Simon Windmill, Dustin Carter
