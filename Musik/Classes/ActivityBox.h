@@ -177,10 +177,10 @@ public:
 	wxThread* GetActiveThread()	{ return m_ActiveThread;	}
 
 	DECLARE_EVENT_TABLE()
-protected:
-	static enum EMUSIK_LIB_TYPE ACTIVITY_TYPE2LIB_TYPE(enum EMUSIK_ACTIVITY_TYPE lbtype);
+
 private:
 
+	static enum EMUSIK_LIB_TYPE ACTIVITY_TYPE2LIB_TYPE(enum EMUSIK_ACTIVITY_TYPE lbtype);
 	enum EMUSIK_ACTIVITY_TYPE   m_ActivityType;
 	bool m_EditVisible;
 
