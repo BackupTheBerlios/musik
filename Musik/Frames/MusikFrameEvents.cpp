@@ -182,7 +182,8 @@ void MusikFrame::OnClose( wxCloseEvent& WXUNUSED(event) )
 
 void MusikFrame::OnSetupPaths( wxCommandEvent& WXUNUSED(event) )
 {
-	MusikLibraryFrame* pMusikLibraryFrame = new MusikLibraryFrame( ( wxFrame* )this, wxDefaultPosition, wxDefaultSize );
+	wxSize mysize( 400, 300 );
+	MusikLibraryFrame* pMusikLibraryFrame = new MusikLibraryFrame( ( wxFrame* )this, wxDefaultPosition, mysize );
 	this->Enable( FALSE );	
 	pMusikLibraryFrame->Show();
 }

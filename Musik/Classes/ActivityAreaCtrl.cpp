@@ -45,6 +45,10 @@ CActivityAreaCtrl::CActivityAreaCtrl( wxWindow *pParent )
 	m_bContentInvalid = true;
 	m_pLastSelectedBox = NULL;
 	Create();
+
+	wxBoxSizer *pSizer = new wxBoxSizer( wxVERTICAL );
+	pSizer->Add( m_pPanel, 1, wxEXPAND , 0 );
+	SetSizer( pSizer );
 }
 
 CActivityAreaCtrl::~CActivityAreaCtrl()

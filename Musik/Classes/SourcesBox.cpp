@@ -1414,12 +1414,12 @@ CSourcesBox::CSourcesBox( wxWindow *parent )
 	//--- CSourcesListBox ---//
 	pListBox	= new CSourcesListBox( this );
 
-/*	
+	
 	//--- top sizer ---//
-	pSizer = new wxBoxSizer( wxVERTICAL );
-	pSizer->Add( pListBox, 0, wxEXPAND | wxTOP, 0 );
-	SetSizerAndFit( pSizer );
-*/
+	wxBoxSizer *pSizer = new wxBoxSizer( wxVERTICAL );
+	pSizer->Add( pListBox, 1, wxEXPAND , 0 );
+	SetSizer( pSizer );
+
 	Layout();
 }
 

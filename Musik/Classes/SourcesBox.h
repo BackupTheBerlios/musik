@@ -173,7 +173,6 @@ public:
 	DECLARE_EVENT_TABLE()
 private:
 	CSourcesListBox *pListBox;
-	wxBoxSizer		*pSizer;
 };
 
 
