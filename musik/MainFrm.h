@@ -285,7 +285,6 @@ protected:
 
 	// utility functions
 	void DockBarLeftOf( CSizingControlBar* Bar, CSizingControlBar* LeftOf );
-	bool RecurseMkDir( char* pszDir );
 	void GetCrossfader( CmusikCrossfader* fader );
 
 	// custom message maps

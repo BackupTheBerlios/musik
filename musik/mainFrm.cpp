@@ -473,7 +473,7 @@ void CMainFrame::InitPaths()
 	m_UserDir = app->GetUserDir();
 	m_UserDir += _T( "\\.musikCube\\" );
 
-	RecurseMkDir( m_UserDir.GetBuffer() );
+	CmusikFilename::RecurseMkDir( m_UserDir.GetBuffer() );
 
 	m_Database = m_UserDir + _T( "musiklib.db" );
 	m_PrefsIni = m_UserDir + _T( "musikprefs.ini" );
@@ -657,33 +657,6 @@ void CMainFrame::ResetSelBoxes()
 		m_wndSelectionBars.at( i )->GetCtrl()->SetItemState( -1, 0, LVIS_SELECTED );		
 	}
 	CmusikSelectionCtrl::SetUpdating( false );
-}
-
-///////////////////////////////////////////////////
-
-bool CMainFrame::RecurseMkDir( char* pszDir )
-{
-    char*   pszLastSlash;
-    char    cTmp;
-
-	if( _access( pszDir, 0 ) != -1 )
-        return true;
-
-    pszLastSlash = strrchr( pszDir, '\\' );
-    if ( pszLastSlash )
-    {
-        cTmp = *pszLastSlash;
-        *pszLastSlash = '\0';
-
-        RecurseMkDir( pszDir );
-
-        *pszLastSlash = cTmp;
-    }
-
-    if ( _mkdir( pszDir ) == -1 )
-		return false;
-
-    return true;
 }
 
 ///////////////////////////////////////////////////
