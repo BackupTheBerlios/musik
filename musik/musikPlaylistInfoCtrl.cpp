@@ -75,6 +75,8 @@ CmusikPlaylistInfoCtrl::~CmusikPlaylistInfoCtrl()
 {
 	if ( m_hBGBitmap )
 		DeleteObject ( m_hBGBitmap );
+
+	m_ListCtrl->SetInfoCtrl( NULL );
 }
 
 ///////////////////////////////////////////////////
