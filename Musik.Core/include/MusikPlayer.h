@@ -41,6 +41,14 @@ enum
 
 ///////////////////////////////////////////////////
 
+enum
+{
+	MUSIK_TIME_SECONDS = 0,
+	MUSIK_TIME_MS
+};
+
+///////////////////////////////////////////////////
+
 class CMusikLibrary;
 class CMusikPlaylist;
 class CMusikFunctor;
@@ -61,28 +69,43 @@ class CMusikPlayer
 	static void* F_CALLBACKAPI MusikEQCallback( void* originalbuffer, void *newbuffer, int length, int param );
 
 public: 	
+
+	// construct and destruct
 	CMusikPlayer( CMusikFunctor* functor, CMusikLibrary* library, CMusikPlaylist* playlist );
 	~CMusikPlayer();
 
+	// sound system initialization and
+	// deinitialization stuff
 	int  InitSound( int device, int driver, int rate, int channels, int mode = MUSIK_PLAYER_INIT_START );
 	void CleanSound();
 
+	// contains the information of the 
+	// currently playing song
 	CMusikSongInfo* GetCurrPlaying(){ return &m_CurrSong; }
 
+	// sets various attributes
 	void SetPlaylist( CMusikPlaylist* playlist );
 	void SetLibrary( CMusikLibrary* library );
 	void SetEqualizerActive( bool active = true );
+
+	// time
+	int	GetTimeNow		( int mode );
+	int	GetTimeRemain	( int mode );
+	int	GetDuration		( int mode );
 		
+	// play controls
 	bool Play( int index = 0, int play_type = 0, int start_pos = 0 );
 	bool Next();
 	bool Prev();
 	bool Pause();
 	bool Resume();
 
+	// status
 	bool IsPlaying()			{ return m_IsPlaying; }
 	bool IsPaused()				{ return m_IsPaused; }
 	bool IsShuttingDown()		{ return m_ShutDown; }
 	bool IsEqualizerActive()	{ return m_IsEQActive; }
+	bool IsCrossfaderActive();
 
 private:
 
@@ -117,6 +140,9 @@ private:
 	int m_CurrChannel;
 	void PushNewChannel();
 	int GetCurrChannel();
+
+	// a pointer to the currently playing stream
+	FSOUND_STREAM* GetCurrStream();
 
 	// active streams and channels
 	void CleanOldStreams( bool kill_primary = false );

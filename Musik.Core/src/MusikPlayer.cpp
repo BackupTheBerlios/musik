@@ -306,6 +306,13 @@ int CMusikPlayer::GetCurrChannel()
 
 ///////////////////////////////////////////////////
 
+FSOUND_STREAM* CMusikPlayer::GetCurrStream()
+{
+	return m_ActiveStreams->at( m_ActiveStreams->size() );
+}
+
+///////////////////////////////////////////////////
+
 void CMusikPlayer::InitDSP()
 {
 	if ( !m_DSP )
@@ -373,3 +380,53 @@ void CMusikPlayer::CleanOldStreams( bool kill_primary )
 		m_ActiveChannels->erase( m_ActiveChannels->begin() );
 	}	
 }
+
+///////////////////////////////////////////////////
+
+bool CMusikPlayer::IsCrossfaderActive()
+{
+	if ( m_Crossfader )
+		return true;
+	
+	return false;
+}
+
+///////////////////////////////////////////////////
+
+int CMusikPlayer::GetDuration( int mode )
+{
+	int nTime = FSOUND_Stream_GetLengthMs( GetCurrStream() );
+
+	if ( mode == MUSIK_TIME_SECONDS )
+		nTime /= 1000;
+
+	return nTime;
+}
+
+///////////////////////////////////////////////////
+
+int CMusikPlayer::GetTimeNow( int mode )
+{
+	int nCurr = FSOUND_Stream_GetTime( GetCurrStream() );
+
+	if ( mode == MUSIK_TIME_SECONDS )
+		nCurr /= 1000;
+
+	return nCurr;
+}
+
+///////////////////////////////////////////////////
+
+int CMusikPlayer::GetTimeRemain( int mode )
+{
+	int nLeft = GetDuration( mode ) - GetTimeNow( mode );
+
+	if ( mode == MUSIK_TIME_SECONDS )
+		nLeft /= 1000;
+
+	return nLeft;
+}
+
+
+///////////////////////////////////////////////////
+
