@@ -49,6 +49,7 @@
 
 #include "musik.h"
 #include "musikPrefsDlg.h"
+#include "musikNameEntry.h"
 
 #include "../musikCore/include/musikFilename.h"
 #include "../musikCore/include/musikLibrary.h"
@@ -472,7 +473,7 @@ BOOL CmusikPrefsSoundDriver::OnCommand(WPARAM wParam, LPARAM lParam)
 	return CmusikPropertyPage::OnCommand(wParam, lParam);
 }
 
-///////////////////////////////////////////////////// musikPrefsDlg.cpp : implementation file
+///////////////////////////////////////////////////
 
 // Sound::Crossfader
 
@@ -503,11 +504,16 @@ void CmusikPrefsSoundCrossfader::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_SEEK, m_Seek);
 	DDX_Control(pDX, IDC_STOP, m_Stop);
 	DDX_Control(pDX, IDC_EXIT, m_Exit);
+	DDX_Control(pDX, IDC_PRESETBOX, m_PresetBox);
 }
 
 ///////////////////////////////////////////////////
 
 BEGIN_MESSAGE_MAP(CmusikPrefsSoundCrossfader, CmusikPropertyPage)
+	ON_BN_CLICKED(IDC_RESET, OnBnClickedReset)
+	ON_BN_CLICKED(IDC_ADD, OnBnClickedAdd)
+	ON_BN_CLICKED(IDC_REMOVE, OnBnClickedRemove)
+	ON_LBN_SELCHANGE(IDC_PRESETBOX, OnLbnSelchangePresetbox)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -515,13 +521,27 @@ END_MESSAGE_MAP()
 BOOL CmusikPrefsSoundCrossfader::OnInitDialog()
 {
 	CmusikPropertyPage::OnInitDialog();
+	LoadPrefs();
+	return TRUE;
+}
 
+///////////////////////////////////////////////////
+
+void CmusikPrefsSoundCrossfader::LoadPrefs()
+{
+	// intervals
 	CmusikCrossfader fader;
 	m_Library->GetDefaultCrossfader( &fader );
 
 	Populate( fader );
 
-	return TRUE;
+	// presets
+	CmusikStringArray items;
+	m_Library->GetAllCrossfaderPresets( &items, &m_IDs, true );
+
+	m_PresetBox.ResetContent();
+	for ( size_t i = 0; i < items.size(); i++ )
+		m_PresetBox.AddString( items.at( i ) );
 }
 
 ///////////////////////////////////////////////////
@@ -572,6 +592,39 @@ BOOL CmusikPrefsSoundCrossfader::OnCommand(WPARAM wParam, LPARAM lParam)
 	m_Modified = true;
 
 	return CmusikPropertyPage::OnCommand(wParam, lParam);
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPrefsSoundCrossfader::OnBnClickedReset()
+{
+	m_Library->ResetDefaultCrossfader();
+	
+	CmusikCrossfader fader;
+	m_Library->GetDefaultCrossfader( &fader );
+
+	Populate( fader );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPrefsSoundCrossfader::OnBnClickedAdd()
+{
+	// TODO: Add your control notification handler code here
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPrefsSoundCrossfader::OnBnClickedRemove()
+{
+	// TODO: Add your control notification handler code here
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPrefsSoundCrossfader::OnLbnSelchangePresetbox()
+{
+	// TODO: Add your control notification handler code here
 }
 
 ///////////////////////////////////////////////////

@@ -1,7 +1,8 @@
 -------------------------------------------------------------------------
 
 a2:
-  
+ 
+  - redid the equalizer presets dialog. 
   - fixed tab ordering in all dialogs
   - added "Shuffle Now Playing" to playlist context menu
   - "Shuffle Now Playing" menu option disabled if now playing

@@ -170,17 +170,25 @@ public:
 	CmusikPrefsSoundCrossfader( CmusikPrefs* prefs, CmusikLibrary* library, CmusikPlayer* player );
 	virtual ~CmusikPrefsSoundCrossfader();
 	
+	// from CmusikPropertyPage
 	virtual void CommitChanges();
-	
+	virtual void LoadPrefs();
+
 	// mfc vars and messages
 	virtual BOOL OnInitDialog();
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+
+	afx_msg void OnBnClickedReset();
+	afx_msg void OnBnClickedAdd();
+	afx_msg void OnBnClickedRemove();
+	afx_msg void OnLbnSelchangePresetbox();
 
 	CEdit m_NewSong;
 	CEdit m_PauseResume;
 	CEdit m_Seek;
 	CEdit m_Stop;
 	CEdit m_Exit;
+	CListBox m_PresetBox;
 
 protected:
 
@@ -189,9 +197,12 @@ protected:
 	enum { IDD = IDD_PROPPAGE_SOUND_CROSSFADER };
 	void Populate( const CmusikCrossfader& fader );
 
+	CIntArray m_IDs;
+
 	// macros
 	DECLARE_DYNAMIC(CmusikPrefsSoundCrossfader)
 	DECLARE_MESSAGE_MAP()
+
 };
 
 ///////////////////////////////////////////////////

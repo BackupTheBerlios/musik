@@ -81,13 +81,10 @@ void CmusikEqualizerSets::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CmusikEqualizerSets, CDialog)
 	ON_BN_CLICKED(IDC_CLOSE_DLG, OnBnClickedCloseDlg)
-	ON_BN_CLICKED(IDC_SAVE_ACTIVE_AS_SELECTED, OnBnClickedSaveActiveAsSelected)
-	ON_BN_CLICKED(IDC_SAVE_ACTIVE_AS_NEW, OnBnClickedSaveActiveAsNew)
+	ON_BN_CLICKED(IDC_ADD, OnBnClickedAdd)
 	ON_WM_CLOSE()
 	ON_BN_CLICKED(IDC_RENAME_SEL, OnBnClickedRenameSel)
 	ON_LBN_SELCHANGE(IDC_PRESET_BOX, OnLbnSelchangePresetBox)
-	ON_BN_CLICKED(IDC_RESET_DEFAULTS, OnBnClickedResetDefaults)
-	ON_BN_CLICKED(IDC_SET_AS_DEFAULT, OnBnClickedSetAsDefault)
 	ON_BN_CLICKED(IDC_DELETE_SEL, OnBnClickedDeleteSel)
 END_MESSAGE_MAP()
 
@@ -129,27 +126,7 @@ int CmusikEqualizerSets::GetIndex()
 
 ///////////////////////////////////////////////////
 
-void CmusikEqualizerSets::OnBnClickedSaveActiveAsSelected()
-{
-	int nSel = GetIndex();
-
-	if ( nSel != -1 )
-	{
-		CString sSel;
-		m_PresetBox.GetText( nSel, sSel );
-
-		CmusikEQSettings settings;
-		settings.m_ID = m_IDs.at( nSel );
-		settings.m_Name = sSel;
-
-		GetActiveEqualizer( &settings );
-		m_Library->UpdateEqualizer( m_IDs.at( nSel ), settings );
-	}
-}
-
-///////////////////////////////////////////////////
-
-void CmusikEqualizerSets::OnBnClickedSaveActiveAsNew()
+void CmusikEqualizerSets::OnBnClickedAdd()
 {
 	CmusikEQSettings settings;
 	CmusikEqualizerBar* pBar = (CmusikEqualizerBar*)m_Parent;
@@ -237,27 +214,6 @@ void CmusikEqualizerSets::OnLbnSelchangePresetBox()
 		pBar->GetCtrl()->SetBandsFrom( settings );
 		pBar->GetCtrl()->OnBandChange( NULL, NULL );
 	}
-}
-
-///////////////////////////////////////////////////
-
-void CmusikEqualizerSets::OnBnClickedResetDefaults()
-{
-	CmusikEQSettings settings;
-
-	CmusikEqualizerBar* pBar = (CmusikEqualizerBar*)m_Parent;
-	pBar->GetCtrl()->SetBandsFrom( settings );
-	pBar->GetCtrl()->OnBandChange( NULL, NULL );
-}
-
-///////////////////////////////////////////////////
-
-void CmusikEqualizerSets::OnBnClickedSetAsDefault()
-{
-	CmusikEQSettings settings;
-	GetActiveEqualizer( &settings );
-
-	m_Library->UpdateDefaultEqualizer( settings );
 }
 
 ///////////////////////////////////////////////////

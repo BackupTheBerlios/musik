@@ -102,12 +102,14 @@
 #define IDC_LIST2                       1040
 #define IDC_DIRS                        1040
 #define IDC_PRESET_BOX                  1040
+#define IDC_PRESETBOX                   1040
 #define IDC_LIST1                       1042
 #define IDC_BUTTON5                     1043
 #define IDC_DELETE_SEL                  1043
 #define IDC_BUTTON6                     1044
 #define IDC_SET_AS_DEFAULT              1044
 #define IDC_BUTTON7                     1045
+#define IDC_RESET                       1045
 #define IDC_BUTTON8                     1046
 #define IDC_RENAME_SEL                  1046
 #define IDC_BUTTON9                     1047

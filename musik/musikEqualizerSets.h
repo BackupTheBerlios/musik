@@ -66,15 +66,11 @@ public:
 	// mfc message maps / overrides
 	afx_msg void OnBnClickedCloseDlg();
 	virtual BOOL OnInitDialog();
-	afx_msg void OnBnClickedSaveActiveAsSelected();
-	afx_msg void OnBnClickedSaveActiveAsNew();
+	afx_msg void OnBnClickedAdd();
 	afx_msg void OnClose();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
-	afx_msg void OnLbnDblclkPresetBox();
 	afx_msg void OnBnClickedRenameSel();
 	afx_msg void OnLbnSelchangePresetBox();
-	afx_msg void OnBnClickedResetDefaults();
-	afx_msg void OnBnClickedSetAsDefault();
 	afx_msg void OnBnClickedDeleteSel();
 
 	// misc
