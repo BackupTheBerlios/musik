@@ -694,12 +694,12 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 ///////////////////////////////////////////////////
 
-void CMainFrame::SetPlaylist( bool update, bool hide_sort_arrow )
+void CMainFrame::SetPlaylist( bool update, bool hide_sort_arrow, bool select_none )
 {
 	m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist );
 
 	if ( update )
-		m_wndView->GetCtrl()->UpdateV();
+		m_wndView->GetCtrl()->UpdateV( true, select_none );
 
 	if ( hide_sort_arrow )
 		m_wndView->GetCtrl()->HideSortArrow();
@@ -1186,8 +1186,7 @@ void CMainFrame::RequeryPlaylist( CmusikSelectionCtrl* sender )
 	} 
 
 	// do it
-	m_wndView->GetCtrl()->UpdateV( true, true );
-	m_wndView->GetCtrl()->HideSortArrow();
+	SetPlaylist( true, true, true );
 }
 
 ///////////////////////////////////////////////////
