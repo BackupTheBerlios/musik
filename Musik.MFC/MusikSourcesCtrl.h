@@ -31,6 +31,10 @@ public:
 	void FocusLibrary();
 	void FocusNowPlaying();
 
+	// overrides
+	virtual void DoDrag( CMusikPropTreeItem* pItem );
+	virtual CMusikPropTreeItem* FindItem( const POINT& pt );
+
 	// message maps
 	void OnDropFiles(HDROP hDropInfo);
 
