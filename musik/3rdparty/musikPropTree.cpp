@@ -114,6 +114,8 @@ CmusikPropTree::CmusikPropTree( CmusikPrefs* prefs, CmusikLibrary* library, UINT
 	if (!s_nInstanceCount)
 		InitGlobalResources();
 
+	m_EditLock = false;
+
 	s_nInstanceCount++;
 }
 
@@ -958,6 +960,9 @@ void CmusikPropTree::OnLButtonDown(UINT, CPoint point)
 {
 	SendNotify(NM_CLICK);
 
+	if ( m_EditLock )
+		return;
+
 	if (!IsWindowEnabled())
 		return;
 
@@ -1022,6 +1027,9 @@ void CmusikPropTree::OnLButtonDown(UINT, CPoint point)
 void CmusikPropTree::OnLButtonDblClk(UINT, CPoint point)
 {
 	SendNotify(NM_DBLCLK);
+
+	if ( m_EditLock )
+		return;
 
 	CmusikPropTreeItem* pItem;
 	CmusikPropTreeItem* pOldFocus;

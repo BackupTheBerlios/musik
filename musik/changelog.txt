@@ -1,6 +1,8 @@
 ----------------------------------------------------------------------------
 a4:
  
+  - fixed two sources panel crashes. not sure why no one ever 
+    noticed them before.
   - pressing ESC while creating a new playlist now cancels the 
     operations.
   - "Create..." playlists or sub libraries must be double clicked
@@ -126,14 +128,6 @@ stuff that isn't implemented / doesn't work yet:
 
   - dynamic playlist creation
   - dialog to view tag properties
-
-----------------------------------------------------------------------------
-
-known bugs:
- 
-  - crashes on showing window: it has been impossible thus far 
-    to reproduce on command, and simon and i have each
-    seen it only once.
 
 ----------------------------------------------------------------------------
 

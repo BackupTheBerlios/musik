@@ -1049,6 +1049,8 @@ void CmusikSourcesCtrl::RenameItem( CmusikPropTreeItem* pItem, int mode, CPoint 
 	m_EditInPlace.SetFocus();
 	m_EditInPlace.SetString( pItem->GetLabelText() );
 	m_EditInPlace.ShowWindow( SW_SHOWDEFAULT );
+
+	m_EditLock = true;
 }
 
 ///////////////////////////////////////////////////
@@ -1185,6 +1187,7 @@ LRESULT CmusikSourcesCtrl::OnEditCancel( WPARAM wParam, LPARAM lParam )
 	}
 
 	m_EditInPlace.EnableWindow( FALSE );
+	m_EditLock = false;
 	
 	return 0L;
 }
@@ -1247,6 +1250,7 @@ LRESULT CmusikSourcesCtrl::OnEditCommit( WPARAM wParam, LPARAM lParam )
 	}
 
 	m_EditInPlace.EnableWindow( FALSE );
+	m_EditLock = false;
 
 	SetFocus();
 	return 0L;

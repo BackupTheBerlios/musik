@@ -221,6 +221,9 @@ protected:
 	// auto generated last created ID
 	UINT m_nLastUID;
 
+	// locked for editing
+	bool m_EditLock;
+
 	// Number of CmusikPropTree controls in the current application
 	static UINT s_nInstanceCount;
 
