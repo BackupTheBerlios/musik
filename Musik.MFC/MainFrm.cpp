@@ -40,11 +40,14 @@
 #include "Musik.h"
 #include "MainFrm.h"
 #include "MainFrmFunctor.h"
+#include "MusikBatchAddFunctor.h"
+#include "MusikFileDialog.h"
 
 #include "../Musik.Core/include/StdString.h"
 #include "../Musik.Core/include/MusikLibrary.h"
 #include "../Musik.Core/include/MusikPlayer.h"
 #include "../Musik.Core/include/MusikFilename.h"
+#include "../Musik.Core/include/MusikBatchAdd.h"
 
 #include <io.h>
 #include <Direct.h>
@@ -61,6 +64,9 @@
 
 int WM_SELBOXUPDATE			= RegisterWindowMessage( "SELBOXUPDATE" );
 int WM_SELBOXRESET			= RegisterWindowMessage( "SELBOXRESET" );
+
+int WM_BATCHADD_PROGRESS	= RegisterWindowMessage( "BATCHADD_PROGRESS" );
+int WM_BATCHADD_END			= RegisterWindowMessage( "BATCHADD_END" );
 
 int WM_PLAYERNEWPLAYLIST	= RegisterWindowMessage( "PLAYERNEWPLAYLIST" );
 
@@ -89,6 +95,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_WM_PAINT()
 	ON_WM_SYSCOLORCHANGE()
 	ON_COMMAND(ID_FILE_PREFERENCES, OnFilePreferences)
+	ON_COMMAND(ID_OPEN_FILES, OnOpenFiles)
 
 	// custom message maps
 	ON_REGISTERED_MESSAGE( WM_SELBOXUPDATE, OnUpdateSel )
@@ -102,6 +109,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_DRAGEND, OnDragEnd )
 	ON_REGISTERED_MESSAGE( WM_PLAYERNEWPLAYLIST, OnPlayerNewPlaylist )
 	ON_REGISTERED_MESSAGE( WM_SELBOXRESET, OnSelBoxesReset )
+	ON_REGISTERED_MESSAGE( WM_BATCHADD_PROGRESS, OnBatchAddProgress )
+	ON_REGISTERED_MESSAGE( WM_BATCHADD_END, OnBatchAddEnd )
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -169,6 +178,8 @@ void CMainFrame::InitMusik()
 	m_StdPlaylist	= NULL;
 	m_DynPlaylist	= NULL;
 	m_NowPlaylist	= NULL;
+	m_BatchAddThr	= NULL;
+	m_BatchAddFnct	= NULL;
 	m_Library		= new CMusikLibrary( ( CStdString )m_Database );
 	m_Prefs			= new CMusikPrefs( m_PrefsIni );
 	m_Player		= new CMusikPlayer( m_NewSong, m_Library );
@@ -864,3 +875,82 @@ void CMainFrame::OnFilePreferences()
 
 	PrefSheet.DoModal();
 }
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnOpenFiles()
+{
+	// create the open dialog object
+	CMusikFileDialog opendlg( TRUE, "mp3", NULL, OFN_ALLOWMULTISELECT | OFN_EXPLORER, 
+		"Supported Media Files ( *.mp3, *.ogg )|*.mp3;*.ogg|"
+		"MP3 Files ( *.mp3 )|*.mp3|"
+		"OGG Vorbis Files ( *.ogg )|*.ogg||" );
+
+	CStdStringArray* files;
+
+	if ( m_BatchAddThr )
+	{
+		m_BatchAddThr->Pause();
+		files = m_BatchAddThr->m_Files;
+	}
+	else
+		files = new CStdStringArray();
+
+	POSITION posCurr;
+	if ( opendlg.DoModal() == IDOK )
+	{
+		posCurr = opendlg.GetStartPosition();
+		while ( posCurr )
+			files->push_back( (CStdString)opendlg.GetNextPathName( posCurr ) );
+	}
+
+	if ( m_BatchAddThr )
+		m_BatchAddThr->Resume();
+
+	else
+	{
+		if ( files->size() > 0 )
+		{
+			if ( m_BatchAddFnct )
+			{
+				TRACE0( "Last thread ended but functor still active? This is a bug...\n" );
+				delete m_BatchAddFnct;
+				m_BatchAddFnct = NULL;
+			}	
+
+			m_BatchAddFnct = new CMusikBatchAddFunctor( this );
+			m_BatchAddThr = new CMusikBatchAdd( files, m_Player->GetPlaylist(), m_Library, m_BatchAddFnct );
+			m_BatchAddThr->Run();
+		}
+	}
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CMainFrame::OnBatchAddProgress( WPARAM wParam, LPARAM lParam )
+{
+	return 0L;
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CMainFrame::OnBatchAddEnd( WPARAM wParam, LPARAM lParam )
+{
+	if ( m_BatchAddThr )
+	{
+		delete m_BatchAddThr;
+		m_BatchAddThr = NULL;
+	}
+
+	if ( m_BatchAddFnct )
+	{
+		delete m_BatchAddFnct;
+		m_BatchAddFnct = NULL;
+	}
+
+	ResetSelBoxes();
+
+	return 0L;
+}
+
+///////////////////////////////////////////////////

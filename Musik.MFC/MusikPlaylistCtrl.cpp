@@ -25,8 +25,8 @@ IMPLEMENT_DYNAMIC(CMusikPlaylistCtrl, CMusikListCtrl)
 
 ///////////////////////////////////////////////////
 
-int WM_BATCHADD_PROGRESS	= RegisterWindowMessage( "BATCHADD_PROGRESS" );
-int WM_BATCHADD_END			= RegisterWindowMessage( "BATCHADD_END" );
+int WM_BATCHADD_PROGRESS_PLAYLIST	= RegisterWindowMessage( "BATCHADD_PROGRESS" );
+int WM_BATCHADD_END_PLAYLIST		= RegisterWindowMessage( "BATCHADD_END" );
 
 ///////////////////////////////////////////////////
 
@@ -44,8 +44,8 @@ BEGIN_MESSAGE_MAP(CMusikPlaylistCtrl, CMusikListCtrl)
 	ON_NOTIFY_REFLECT(LVN_BEGINDRAG, OnLvnBegindrag)
 	
 	// custom messages
-	ON_REGISTERED_MESSAGE( WM_BATCHADD_PROGRESS, OnBatchAddProgress )
-	ON_REGISTERED_MESSAGE( WM_BATCHADD_END, OnBatchAddEnd )
+	ON_REGISTERED_MESSAGE( WM_BATCHADD_PROGRESS_PLAYLIST, OnBatchAddProgress )
+	ON_REGISTERED_MESSAGE( WM_BATCHADD_END_PLAYLIST, OnBatchAddEnd )
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -768,9 +768,19 @@ void CMusikPlaylistCtrl::OnDropFiles(HDROP hDropInfo)
 		m_BatchAddThr->Resume();
 	else
 	{
-		m_BatchAddFnct = new CMusikBatchAddFunctor( this );
-		m_BatchAddThr = new CMusikBatchAdd( files, m_Player->GetPlaylist(), m_Library, m_BatchAddFnct );
-		m_BatchAddThr->Run();
+		if ( files->size() > 0 )
+		{
+			if ( m_BatchAddFnct )
+			{
+				TRACE0( "Last thread ended but functor still active? This is a bug...\n" );
+				delete m_BatchAddFnct;
+				m_BatchAddFnct = NULL;
+			}	
+
+			m_BatchAddFnct = new CMusikBatchAddFunctor( this );
+			m_BatchAddThr = new CMusikBatchAdd( files, m_Player->GetPlaylist(), m_Library, m_BatchAddFnct );
+			m_BatchAddThr->Run();
+		}
 	}
 }
 

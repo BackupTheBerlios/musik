@@ -302,6 +302,16 @@
 						RelativePath=".\3rdparty\TreePropSheet.h">
 					</File>
 				</Filter>
+				<Filter
+					Name="MusikFileDialog"
+					Filter="">
+					<File
+						RelativePath=".\MusikFileDialog.cpp">
+					</File>
+					<File
+						RelativePath=".\MusikFileDialog.h">
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="CSizingControlBar"

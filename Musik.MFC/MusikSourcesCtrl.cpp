@@ -184,7 +184,6 @@ void CMusikSourcesCtrl::LoadDynPlaylists()
 
 void CMusikSourcesCtrl::OnDropFiles(HDROP hDropInfo)
 {
-
 	// set cursor back to hour glass
 	SetCursor( LoadCursor( NULL, IDC_WAIT ) );
 
@@ -550,6 +549,7 @@ CMusikPropTreeItem* CMusikSourcesCtrl::FindItem( const POINT& pt )
 }
 
 ///////////////////////////////////////////////////
+
 void CMusikSourcesCtrl::OnShowWindow(BOOL bShow, UINT nStatus)
 {
 	CMusikPropTree::OnShowWindow(bShow, nStatus);
@@ -560,3 +560,6 @@ void CMusikSourcesCtrl::OnShowWindow(BOOL bShow, UINT nStatus)
 		m_Startup = false;
 	}
 }
+
+///////////////////////////////////////////////////
+

@@ -67,6 +67,8 @@ class CMusikLibrary;
 class CMusikPlaylist;
 class CMusikPlayer;
 class CMusikFrameFunctor;
+class CMusikBatchAdd;
+class CMusikBatchAddFunctor;
 
 ///////////////////////////////////////////////////
 
@@ -150,10 +152,6 @@ protected:
 	void DockBarLeftOf( CSizingControlBar* Bar, CSizingControlBar* LeftOf );
 	bool RecurseMkDir( char* pszDir );
 
-	// mfc mesage maps
-	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg void OnDestroy();
-
 	// custom message maps
 	afx_msg LRESULT OnUpdateSel( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSongChange( WPARAM wParam, LPARAM lParam );
@@ -166,17 +164,25 @@ protected:
 	afx_msg LRESULT OnDragEnd(  WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSelBoxesReset( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnPlayerNewPlaylist( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnBatchAddProgress( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnBatchAddEnd( WPARAM wParam, LPARAM lParam );
 
 	// mfc message maps
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
 	afx_msg void OnSysColorChange();
 	afx_msg void OnFilePreferences();
+	afx_msg void OnDestroy();
+	afx_msg void OnOpenFiles();
+
+	// batch add files thread
+	CMusikBatchAdd* m_BatchAddThr;
+	CMusikBatchAddFunctor* m_BatchAddFnct;
 
 	// macros
 	DECLARE_DYNAMIC(CMainFrame)
 	DECLARE_MESSAGE_MAP()
-	
 };
 
 ///////////////////////////////////////////////////

@@ -48,3 +48,4 @@
 
 #include <shlwapi.h>
 #include <afxole.h>
+#include <afxdlgs.h>
