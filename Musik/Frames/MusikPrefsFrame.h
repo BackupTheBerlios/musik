@@ -174,6 +174,7 @@ public:
 	wxFlexGridSizer	*vsOptions_Playlist;
 	wxBoxSizer		*vsOptions_Interface;
 	wxBoxSizer		*vsOptions_Misc;
+	wxBoxSizer		*vsOptions_Tunage;
 	wxBoxSizer		*vsTagging_General;
 	wxBoxSizer		*vsTagging_Auto;
 	wxBoxSizer		*hsSplitter;
@@ -192,6 +193,7 @@ private:
 	wxTreeItemId nSoundRootID;
 	wxTreeItemId nOptionsRootID;
 	wxTreeItemId nTagRootID;
+	wxTreeItemId nTunageID;
 	wxTreeItemId nPlaybackID;
 	wxTreeItemId nDriverID;
 	wxTreeItemId nSelectionsID;

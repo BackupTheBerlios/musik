@@ -69,11 +69,12 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	nRootID			=	tcPreferencesTree->AddRoot		( _( "Preferences" )		);
 	nOptionsRootID	=	tcPreferencesTree->AppendItem	( nRootID, _( "Options" )	);
 	nTagRootID		=	tcPreferencesTree->AppendItem	( nRootID, _( "Tagging" )	);
-	nSoundRootID	=	tcPreferencesTree->AppendItem	( nRootID, _( "Sound" )		);
+	nSoundRootID	=	tcPreferencesTree->AppendItem	( nRootID, _( "Sound" )		);	
 	//--- child nodes ---//
 	nInterfaceID	=	tcPreferencesTree->AppendItem	( nOptionsRootID,	_( "General" )		);
 	nSelectionsID	=	tcPreferencesTree->AppendItem	( nOptionsRootID,	_( "Selections" )	);
 	nPlaylistID		=	tcPreferencesTree->AppendItem	( nOptionsRootID,	_( "Playlist" )		);
+	nTunageID		=	tcPreferencesTree->AppendItem	( nOptionsRootID,	_( "Tunage" )		);
 	nGeneralTagID	=	tcPreferencesTree->AppendItem	( nTagRootID,		_( "General" )		);
 	nAutoTagID		=	tcPreferencesTree->AppendItem	( nTagRootID,		_( "Auto Tag" )		);
 	nDriverID		=	tcPreferencesTree->AppendItem	( nSoundRootID,		_( "Driver" )		);
@@ -356,6 +357,11 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	vsOptions_Playlist->Add( chkFilenameEnable,		0, wxALIGN_CENTER_VERTICAL | wxADJUST_MINSIZE );
 	vsOptions_Playlist->Add( cmbFilenameStatic,		0 );
 
+	//-------------------------//
+	//--- Options -> Tunage ---//
+	//-------------------------//
+	vsOptions_Tunage = new wxBoxSizer( wxVERTICAL );
+
 	//--------------------------//
 	//--- Tagging -> General ---//
 	//--------------------------//
@@ -441,6 +447,7 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	hsSplitter->Add( vsOptions_Selections,	5 );
 	hsSplitter->Add( vsOptions_Interface,	5 );
 	hsSplitter->Add( vsOptions_Playlist,	5 );
+	hsSplitter->Add( vsOptions_Tunage,		5 );
 	hsSplitter->Add( vsSound_Crossfader,	5 );
 	hsSplitter->Add( vsSound_Driver,		5 );
 	hsSplitter->Add( vsTagging_General,		5 );
@@ -629,7 +636,8 @@ void MusikPrefsFrame::HidePanels()
 	hsSplitter->Show( vsOptions_Selections,	false );
 	hsSplitter->Show( vsOptions_Interface,	false );
 	hsSplitter->Show( vsOptions_Playlist,	false );
-	hsSplitter->Show( vsSound_Crossfader,		false );
+	hsSplitter->Show( vsOptions_Tunage,		false );
+	hsSplitter->Show( vsSound_Crossfader,	false );
 	hsSplitter->Show( vsSound_Driver,		false );
 	hsSplitter->Show( vsTagging_General,	false );
 	hsSplitter->Show( vsTagging_Auto,		false );
@@ -672,6 +680,12 @@ void MusikPrefsFrame::UpdatePrefsPanel()
 		HidePanels();
 		hsSplitter->Show( vsOptions_Playlist, true );
 	}
+	else if ( tcPreferencesTree->GetSelection() == nTunageID )
+	{
+		HidePanels();
+		hsSplitter->Show( vsOptions_Tunage, true );
+	}
+
 	this->Layout();
 }
 
