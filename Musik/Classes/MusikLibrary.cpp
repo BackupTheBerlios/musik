@@ -995,7 +995,7 @@ bool CMusikLibrary::GetSongFromFilename( const wxString& filename, CMusikSong *p
 void CMusikLibrary::UpdateItem( const wxString & fn, CMusikSong & newsonginfo, bool bDirty )
 {
 	//wxMutexLocker lock( LibMutex );
-	wxString filename(fn);
+	wxString filename( newsonginfo.Filename );
 	if ( filename.Trim().Length() > 0 )
 	{
 		wxString OldFilename( fn );
@@ -1214,6 +1214,7 @@ bool CMusikLibrary::RenameFile( CMusikSong* song, bool bClearCheck )
 	//-----------------------------------------//
 	if ( oldfilename == newfilename )
 	{
+		song->Filename = newfilename;
 		g_Library.UpdateItem( oldfilename, *song, false );
 
 		if ( bClearCheck )

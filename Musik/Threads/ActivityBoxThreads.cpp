@@ -104,48 +104,37 @@ void* MusikActivityRenameThread::Entry()
 				break;
 			}
 
-			//-----------------------//
-			//--- rename the file ---//
-			//-----------------------//
-			bRenameOK = true;
-			if ( g_Prefs.nActBoxRename == 1 )
-			{
-				bRenameOK = g_Library.RenameFile( &m_Songs.Item( i ) );
-			}
-
 			//--------------------------//
 			//--- write tags to file ---//
 			//--------------------------//
-			if ( bRenameOK )
+			if ( g_Prefs.nActBoxWrite == 1 )
 			{
-				if ( g_Prefs.nActBoxWrite == 1 )
-				{
-					//-----------------------------------------//
-					//--- rename will update the lib, so if	---//
-					//--- we're not renaming, update first	---//
-					//-----------------------------------------//
-    				if ( g_Prefs.nActBoxRename == 0 )
-						g_Library.UpdateItem( m_Songs.Item( i ).Filename, m_Songs.Item( i ), false );
+				g_Library.UpdateItem( m_Songs.Item( i ).Filename, m_Songs.Item( i ), false );
 
-					if ( m_Songs.Item( i ).Format == MUSIK_FORMAT_MP3 )
-						g_Library.WriteMP3Tag( m_Songs.Item( i ).Filename, (bool)g_Prefs.nActBoxClear );
-					else if ( m_Songs.Item( i ).Format == MUSIK_FORMAT_OGG )
-						g_Library.WriteOGGTag( m_Songs.Item( i ).Filename, (bool)g_Prefs.nActBoxClear );
-				}
-
-				//-----------------------------//
-				//--- write tag for db only ---//
-				//-----------------------------//
-				if ( g_Prefs.nActBoxWrite == 0 && g_Prefs.nActBoxRename == 0 )
-				{
-					g_Library.UpdateItem( m_Songs.Item( i ).Filename, m_Songs.Item( i ), true );
-				}
+				if ( m_Songs.Item( i ).Format == MUSIK_FORMAT_MP3 )
+					g_Library.WriteMP3Tag( m_Songs.Item( i ).Filename, (bool)g_Prefs.nActBoxClear );
+				else if ( m_Songs.Item( i ).Format == MUSIK_FORMAT_OGG )
+					g_Library.WriteOGGTag( m_Songs.Item( i ).Filename, (bool)g_Prefs.nActBoxClear );
 			}
+
+			//-------------------//
+			//--- rename file ---//
+			//-------------------//
+			if ( g_Prefs.nActBoxRename == 1 )
+				g_Library.RenameFile( &m_Songs.Item( i ) );
+
+			//----------------------------------//
+			//--- if not writing, flag dirty ---//
+			//----------------------------------//
+			if ( g_Prefs.nActBoxWrite == 0 )
+				g_Library.UpdateItem( m_Songs.Item( i ).Filename, m_Songs.Item( i ), true );
+			else
+				g_Library.UpdateItem( m_Songs.Item( i ).Filename, m_Songs.Item( i ), false );
+
 		}
 	}
 
 	g_Playlist = m_Songs;
-
 	return NULL;
 }
 
