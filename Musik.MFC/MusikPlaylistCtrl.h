@@ -34,11 +34,12 @@ protected:
 //--- operations								---//
 //-------------------------------------------------//
 private:
-	void EnableHighlighting( HWND hWnd, int row, bool bHighlight );
-	bool IsRowSelected( HWND hWnd, int row );
+	void EnableHighlighting( int row, bool bHighlight );
+	bool IsRowSelected( int row );
 	void ResetColumns();
 	void SaveColumns();
 	CString GetRating( int item );
+	void DrawItem( CDC* pDC, int item, const CRect& rect );
 	
 //-------------------------------------------------//
 //--- message maps								---//

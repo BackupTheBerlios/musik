@@ -232,16 +232,12 @@ void CMusikPlaylistCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 	{
         int iRow = (int)pLVCD->nmcd.dwItemSpec;
 		
-		COLORREF bgCol;
+		CDC* pDC = CDC::FromHandle(pLVCD->nmcd.hdc);
+		CRect item_rect;
+		GetItemRect( iRow, &item_rect, LVIR_BOUNDS ); 
+		DrawItem( pDC, iRow, item_rect );
 
-		if ( iRow % 2 == 0 )
-			bgCol = m_Prefs->GetPlaylistStripeColor();
-		else
-			bgCol = GetSysColor( COLOR_BTNHILIGHT );
-
-
-		// 	
-		//	*pResult = CDRF_DODEFAULT | CDRF_NOTIFYPOSTPAINT | CDRF_NEWFONT;
+		*pResult = CDRF_SKIPDEFAULT;
 	}
 
 	else if( pLVCD->nmcd.dwDrawStage == CDDS_ITEMPOSTPAINT )
@@ -250,16 +246,16 @@ void CMusikPlaylistCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 
 ///////////////////////////////////////////////////
 
-void CMusikPlaylistCtrl::EnableHighlighting( HWND hWnd, int row, bool bHighlight )
+void CMusikPlaylistCtrl::EnableHighlighting( int row, bool bHighlight )
 {
-	ListView_SetItemState(hWnd, row, bHighlight? 0xff: 0, LVIS_SELECTED);
+	ListView_SetItemState( m_hWnd, row, bHighlight? 0xff: 0, LVIS_SELECTED );
 }
 
 ///////////////////////////////////////////////////
 
-bool CMusikPlaylistCtrl::IsRowSelected( HWND hWnd, int row )
+bool CMusikPlaylistCtrl::IsRowSelected( int row )
 {
-	return ListView_GetItemState(hWnd, row, LVIS_SELECTED) != 0;
+	return ListView_GetItemState( m_hWnd, row, LVIS_SELECTED ) != 0;
 }
 
 ///////////////////////////////////////////////////
@@ -292,4 +288,35 @@ CString CMusikPlaylistCtrl::GetRating( int item )
 	}
 
 	return sRating;
+}
+
+///////////////////////////////////////////////////
+
+void CMusikPlaylistCtrl::DrawItem( CDC* pDC, int item, const CRect& rect )
+{
+	CMemDC dc( pDC, &rect );
+
+	// setup the font and highlight colors
+	COLORREF bg;
+	COLORREF text;
+	if ( IsRowSelected( item ) )
+	{
+		bg = GetSysColor( COLOR_HIGHLIGHT );
+		text = GetSysColor( COLOR_HIGHLIGHTTEXT );
+	}
+	else
+	{
+		if ( item % 2 == 0 )
+		{
+			bg = m_Prefs->GetPlaylistStripeColor();
+			text = GetSysColor( COLOR_WINDOWTEXT );
+		}
+		else
+		{
+			bg = GetSysColor( COLOR_BTNHILIGHT );
+			text = GetSysColor( COLOR_WINDOWTEXT );
+		}
+	}
+
+	dc.FillSolidRect( &rect, bg );
 }
