@@ -1150,14 +1150,12 @@ void CmusikSourcesCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 LRESULT CmusikSourcesCtrl::OnEditCancel( WPARAM wParam, LPARAM lParam )
 {
-	m_EditInPlace.EnableWindow( FALSE );
-	SetFocus();
-
 	int cmd = (int)lParam;
 
 	CmusikEditInPlace* sender = (CmusikEditInPlace*)wParam;
 	
 	CmusikPropTreeItem* pItem = GetFocusedItem();
+	SetFocusedItem( NULL );
 	if ( cmd == MUSIK_SOURCES_EDITINPLACE_NEWSUBLIBRARYRARY )
 	{
 		m_SubLibs.at( m_SubLibs.size() - 1 )->SetLabelText( _T( "Create..." ) );
@@ -1185,6 +1183,8 @@ LRESULT CmusikSourcesCtrl::OnEditCancel( WPARAM wParam, LPARAM lParam )
 		FinishQuickSearch();
 		m_Src.at( 0 )->SetLabelText( "Enter Search..." );
 	}
+
+	m_EditInPlace.EnableWindow( FALSE );
 	
 	return 0L;
 }
@@ -1338,11 +1338,20 @@ void CmusikSourcesCtrl::OnMouseMove(UINT nFlags, CPoint point)
 	if ( m_MouseTrack && ( nFlags & MK_LBUTTON ) )
 	{
 		CmusikPropTreeItem* pItem = FindItem( point );
-		if ( pItem && pItem->GetPlaylistType() != -1 )
-		{
-			DoDrag( pItem );
+		
+		if ( !pItem )
 			return;
-		}
+
+		if ( pItem->IsRootLevel() )
+			return;
+
+		if ( pItem->GetPlaylistType() == MUSIK_SOURCES_TYPE_NEWSUBLIBRARY ||
+			 pItem->GetPlaylistType() == MUSIK_SOURCES_TYPE_NEWSTDPLAYLIST || 
+			 pItem->GetPlaylistType() == MUSIK_SOURCES_TYPE_QUICKSEARCH )
+			 return;
+
+		DoDrag( pItem );
+		return;
 	}
 }
 
