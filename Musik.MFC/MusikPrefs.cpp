@@ -194,6 +194,39 @@ inline string BoolToString( const bool val )
 
 ///////////////////////////////////////////////////
 
+inline CMusikCrossfader StringToCrossfader( const string& str )
+{
+	CMusikCrossfader ret;
+	CString CStr = str.c_str();
+
+	int pos = 0;
+
+	double new_song		= atof( CStr.Tokenize( ",", pos ) );
+	double pause_resume	= atof( CStr.Tokenize( ",", pos ) );
+	double stop			= atof( CStr.Tokenize( ",", pos ) );
+	double exit			= atof( CStr.Tokenize( ",", pos ) );
+
+	ret.Set( (float)new_song, (float)pause_resume, (float)stop, (float)exit );
+
+	return ret;
+}
+
+///////////////////////////////////////////////////
+
+inline string CrossfaderToString( CMusikCrossfader& fader )
+{
+	CStdString sRet;
+	sRet.Format( _T( "%f, %f, %f, %f" ), 
+		fader.GetDuration( MUSIK_CROSSFADER_NEW_SONG ),
+		fader.GetDuration( MUSIK_CROSSFADER_PAUSE_RESUME ),
+		fader.GetDuration( MUSIK_CROSSFADER_STOP ),
+		fader.GetDuration( MUSIK_CROSSFADER_EXIT ) );
+
+	return sRet.c_str();
+}
+
+///////////////////////////////////////////////////
+
 CMusikPrefs::CMusikPrefs( CString filename )
 {
 	config = new CIniFile( filename.GetBuffer() );
@@ -238,6 +271,11 @@ void CMusikPrefs::LoadPrefs()
 	m_Player_Device			= StringToInt( config->GetValue( "Player", "Device", "0" ) );
 	m_Player_Rate			= StringToInt( config->GetValue( "Player", "Rate", "44100" ) );
 	m_Player_Max_Channels	= StringToInt( config->GetValue( "Player", "Maximum Channels", "6" ) );
+
+	// crossfader
+	m_Crossfader_Enabled	= StringToBool( config->GetValue( "Crossfader", "Enabled", "1" ) );
+	m_Crossfader_Current	= config->GetValue( "Crossfader", "Set Name", "Default" );
+	m_Crossfader_Default	= StringToCrossfader( config->GetValue( "Crossfader", "Values", "2.0,0.5,1.0,3.0" ) );
 }
 
 ///////////////////////////////////////////////////
@@ -266,6 +304,11 @@ void CMusikPrefs::SavePrefs()
 	config->SetValue( "Player", "Device", IntToString( m_Player_Device ) );
 	config->SetValue( "Player", "Rate", IntToString( m_Player_Rate ) );
 	config->SetValue( "Player", "Maximum Channels", IntToString( m_Player_Max_Channels ) );
+
+	// crossfader
+	config->SetValue( "Crossfader", "Enabled", BoolToString( m_Crossfader_Enabled ) );
+	config->SetValue( "Crossfader", "Set Name", m_Crossfader_Current );	
+	config->SetValue( "Crossfader", "Values", CrossfaderToString( m_Crossfader_Default ) );
 
 	// write to ini file
 	config->WriteFile();

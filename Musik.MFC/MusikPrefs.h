@@ -8,6 +8,7 @@
 
 #include "CIniEx/iniFile.h"
 
+#include "../Musik.Core/include/MusikCrossfader.h"
 #include "../Musik.Core/include/MusikArrays.h"
 
 ///////////////////////////////////////////////////
@@ -77,6 +78,12 @@ public:
 	void		SetPlayerRate						( int n )			{ m_Player_Rate = n; }
 	void		SetPlayerMaxChannels				( int n )			{ m_Player_Max_Channels = n; }
 
+	// default crossfader get
+	CMusikCrossfader GetDefaultCrossfader			()					{ return m_Crossfader_Default; }
+	CStdString GetCurrCrossfader					()					{ return m_Crossfader_Current; }
+	bool IsCrossfaderEnabled						()					{ return m_Crossfader_Enabled; }
+
+
 protected:
 	CIniFile* config;
 	string GetDefPlaylistOrder();
@@ -107,6 +114,11 @@ private:
 	int m_Player_Driver;
 	int m_Player_Rate;
 	int m_Player_Max_Channels;
+
+	// crossfader
+	CMusikCrossfader m_Crossfader_Default;
+	CStdString m_Crossfader_Current;
+	bool m_Crossfader_Enabled;
 };
 
 ///////////////////////////////////////////////////

@@ -98,6 +98,9 @@ void CMainFrame::InitMusik()
 
 	m_Player		= new CMusikPlayer( m_NewSong, m_Library, m_LibPlaylist );
 	m_Player->InitSound( m_Prefs->GetPlayerDevice(), m_Prefs->GetPlayerDriver(), m_Prefs->GetPlayerRate(), m_Prefs->GetPlayerMaxChannels() );
+	
+	if ( m_Prefs->IsCrossfaderEnabled() )
+		m_Player->SetCrossfader( m_Prefs->GetDefaultCrossfader() );
 }
 
 ///////////////////////////////////////////////////

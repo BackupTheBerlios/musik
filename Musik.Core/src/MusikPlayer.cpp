@@ -17,7 +17,7 @@ static void MusikPlayerWorker( CMusikPlayer* player )
 	ACE_Thread_Mutex m_ProtectingStreams;
 
 	ACE_Time_Value sleep_regular, sleep_tight;
-	sleep_regular.set( 0.5 );
+	sleep_regular.set( 0.1 );
 	sleep_tight.set( 0.1 );
 
 	while ( !player->IsShuttingDown() )
@@ -28,20 +28,30 @@ static void MusikPlayerWorker( CMusikPlayer* player )
 			// start a tighter loop if the crossfader 
 			// is inactive and there is less than
 			// two seconds remaining on the song...
-			if ( !player->IsCrossfaderActive() && player->GetTimeRemain( MUSIK_TIME_MS ) <= 2000 )
+			if ( !player->IsCrossfaderActive() )
 			{
-				bool started = false;
-				while ( !started )
+				if ( player->GetTimeRemain( MUSIK_TIME_MS ) <= 2000 )
 				{
-					if ( player->GetTimeRemain( MUSIK_TIME_MS ) <= 10 )
+					bool started = false;
+					while ( !started )
 					{
-						player->Next();
-						started = true;
+						if ( player->GetTimeRemain( MUSIK_TIME_MS ) <= 10 )
+						{
+							player->Next();
+							started = true;
+						}
+						else
+							ACE_OS::sleep( sleep_tight );
 					}
-					else
-						ACE_OS::sleep( sleep_tight );
 				}
 			}
+
+			// we have a crossfader, see if it should
+			// be queued up... we'll need to enter a tighter
+			// loop to be more accurate, so if its around 2
+			// seconds until the fade, start the tighter loop
+			else if ( player->GetTimeRemain( MUSIK_TIME_MS ) <= ( player->GetCrossfader()->GetDuration( player->GetFadeType() ) * 1000 ) )
+				player->Next();
 
 			// othwerwise just monitor for the
 			// crossfader flag
@@ -55,9 +65,8 @@ static void MusikPlayerWorker( CMusikPlayer* player )
 				
 				// if the song is shorter than twice the fade
 				// duration ( fadein + fadeout ), don't do
-				// the fade becuase something will fuck up,
-				// otherwise just begin
-				if ( player->GetDuration( MUSIK_TIME_MS ) > player->GetCrossfader()->GetDuration( player->GetFadeType() ) )
+				// the fade becuase something will fuck up
+				if ( player->GetDuration( MUSIK_TIME_MS ) > ( player->GetCrossfader()->GetDuration( player->GetFadeType() ) * 1000 ) )
 				{
 					m_ProtectingStreams.acquire();
 
@@ -215,7 +224,6 @@ CMusikPlayer::CMusikPlayer( CMusikFunctor* functor, CMusikLibrary* library, CMus
 
 	m_Volume			= 128;
 
-	InitCrossfader();
 	InitThread();
 }
 
@@ -498,7 +506,11 @@ bool CMusikPlayer::Next()
 	if ( m_Index + 1 == m_Playlist->GetCount() )
 		return false;
 
-	Play( m_Index + 1 );
+	if ( !IsCrossfaderActive() )
+		Play( m_Index + 1 );
+	else
+		Play( m_Index + 1, MUSIK_CROSSFADER_NEW_SONG );
+
 	return true;
 }
 
@@ -680,6 +692,18 @@ void CMusikPlayer::SetMaxVolume( int n, bool set_now )
 
 	if ( set_now )
 		FSOUND_SetVolume( GetCurrChannel(), n );
+}
+
+///////////////////////////////////////////////////
+
+void CMusikPlayer::SetCrossfader( CMusikCrossfader fader, bool force_init )
+{
+	CleanCrossfader();
+
+	if ( !IsCrossfaderActive() )
+		InitCrossfader();
+
+	*m_Crossfader = fader;
 }
 
 ///////////////////////////////////////////////////

@@ -85,6 +85,7 @@ public:
 	int GetFadeType(){ return m_FadeType; }
 	CMusikCrossfader* GetCrossfader(){ return m_Crossfader; }
 	void FinishCrossfade();
+	void SetCrossfader( CMusikCrossfader fader, bool force_init = true );
 
 	// equalizer stuff
 	void InitEQ_DSP();
