@@ -81,7 +81,8 @@ void CmusikPlayerWorker::StopWait()
 {
 	if ( m_Active )
 	{
-		m_Stop = true;
+		if ( m_Player && ( !m_Player->IsCrossfaderEnabled() || !m_Player->IsPlaying() ) )
+			m_Stop = true;
 
 		ACE_Time_Value half_sec;
 		half_sec.set( (double)0.5 );
