@@ -4,10 +4,12 @@
 
 ///////////////////////////////////////////////////
 
-#include "musikEditInPlace.h"
-#include "3rdparty/musikPropTree.h"
-
 #include "../musikCore/include/musikDir.h"
+
+#include "musikEditInPlace.h"
+#include "musikDockBar.h"
+
+#include "3rdparty/musikPropTree.h"
 
 #include <vector>
 
@@ -19,8 +21,52 @@ typedef std::vector<CmusikPropTreeItem*> CmusikSourcesItemPtrArray;
 
 class CmusikPlayer;
 class CmusikSourcesDropTarget;
+class CmusikSourcesCtrl;
 
 ///////////////////////////////////////////////////
+
+#ifndef baseCmusikSourcesBar
+	#define baseCmusikSourcesBar CmusikDockBar
+#endif
+
+///////////////////////////////////////////////////
+
+#define IDC_SOURCES 1000
+
+///////////////////////////////////////////////////
+
+// CmusikSourcesBar
+
+class CmusikSourcesBar : public baseCmusikSourcesBar
+{
+public:
+
+	// construct / destruct
+	CmusikSourcesBar( CFrameWnd* parent, CmusikLibrary* library, CmusikPlayer* player, CmusikPrefs* prefs, UINT dropid );
+	virtual ~CmusikSourcesBar();
+
+	// gets
+	CmusikSourcesCtrl* GetCtrl(){ return m_wndChild; }
+
+protected:
+
+	// children
+	CmusikSourcesCtrl* m_wndChild;
+	CFont m_Font;
+	CFrameWnd* m_Parent;
+
+	// message maps
+	afx_msg int OnCreate( LPCREATESTRUCT lpCreateStruct );
+	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnItemChanged( NMHDR* pNotifyStruct, LRESULT* plResult );
+
+	// macros
+	DECLARE_MESSAGE_MAP()
+};
+
+///////////////////////////////////////////////////
+
+// CmusikSourcesCtrl
 
 class CmusikSourcesCtrl : public CmusikPropTree
 {

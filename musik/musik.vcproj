@@ -159,12 +159,6 @@
 					Name="musikSourcesCtrl"
 					Filter="">
 					<File
-						RelativePath=".\musikSourcesBar.cpp">
-					</File>
-					<File
-						RelativePath=".\musikSourcesBar.h">
-					</File>
-					<File
 						RelativePath=".\musikSourcesCtrl.cpp">
 					</File>
 					<File

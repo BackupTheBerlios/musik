@@ -43,7 +43,6 @@
 #include "musikPlaylistCtrl.h"
 #include "musikPrefs.h"
 
-#include "musikSourcesBar.h"
 #include "musikPlaylistView.h"
 #include "musikSelectionBar.h"
 #include "musikNowPlayingBar.h"
