@@ -243,13 +243,15 @@
 #define ID_PLAYLISTCOLUMNS_BITRATE      32921
 #define ID_PLAYLISTCOLUMNS_FILENAME     32922
 #define ID_PLAYLISTCONTEXTMENU_SHUFFLENOWPLAYING 32923
+#define ID_HELP_VERSION                 32924
+#define ID_HELP_CORE                    32925
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        161
-#define _APS_NEXT_COMMAND_VALUE         32924
+#define _APS_NEXT_COMMAND_VALUE         32926
 #define _APS_NEXT_CONTROL_VALUE         1056
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
