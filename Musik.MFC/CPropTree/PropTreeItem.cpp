@@ -463,8 +463,6 @@ LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 
 			if ( !IsRootLevel() )
 				pDC->SetTextColor(GetSysColor(COLOR_INFOTEXT));
-			else
-				pDC->SetTextColor(GetSysColor(COLOR_BTNHIGHLIGHT));
 		}
 
 		// check if we need to draw the text as disabled
