@@ -26,6 +26,7 @@ public:
 	virtual ~CMusikPlaylistCtrl();
 
 	// update the virtual list control
+	void InitColors();
 	void UpdateV();
 
 	// set the playlist
@@ -44,6 +45,9 @@ protected:
 	void InitFonts();
 	CFont m_Bullets;
 	CFont m_Items;
+
+	// colors
+	COLORREF clrStripe;
 
 	// misc
 	bool m_Changed;

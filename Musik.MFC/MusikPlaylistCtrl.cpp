@@ -32,6 +32,7 @@ CMusikPlaylistCtrl::CMusikPlaylistCtrl( CMusikLibrary* library, CMusikPlayer* pl
 	m_SongInfoCache = new CMusikDynDspInfo( m_Playlist, m_Library );
 
 	InitFonts();
+	InitColors();
 }
 
 ///////////////////////////////////////////////////
@@ -211,12 +212,18 @@ void CMusikPlaylistCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
     // First thing - check the draw stage. If it's the control's prepaint
     // stage, then tell Windows we want messages for every item.
     if ( CDDS_PREPAINT == pLVCD->nmcd.dwDrawStage )
+	{
         *pResult = CDRF_NOTIFYITEMDRAW;
+		return;
+	}
 	
 	// we got a paint item event, ignore it, we want to draw the 
 	// sub items one by one.
 	else if ( pLVCD->nmcd.dwDrawStage == CDDS_ITEMPREPAINT  )
+	{
 		*pResult = CDRF_NOTIFYSUBITEMDRAW;
+		return;
+	}	
 
 	// draw the sub items
 	else if ( pLVCD->nmcd.dwDrawStage == ( CDDS_ITEMPREPAINT | CDDS_SUBITEM ) )
@@ -240,8 +247,12 @@ void CMusikPlaylistCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 		}
 		else
 			pDC->SelectObject( m_Items );
+
+		if ( pLVCD->nmcd.dwItemSpec % 2 != 0 )
+			pLVCD->clrTextBk = clrStripe;
 			
 		*pResult = CDRF_NEWFONT;
+		return;
 	}
 }
 
@@ -251,6 +262,46 @@ void CMusikPlaylistCtrl::InitFonts()
 {
 	m_Items.CreateStockObject( DEFAULT_GUI_FONT );
 	m_Bullets.CreatePointFont( 100, "Musik" );
+}
+
+///////////////////////////////////////////////////
+
+void CMusikPlaylistCtrl::InitColors()
+{
+	int r, g, b;
+	
+	r = GetRValue( GetSysColor( COLOR_BTNHILIGHT ) );
+	g = GetGValue( GetSysColor( COLOR_BTNHILIGHT ) );
+	b = GetBValue( GetSysColor( COLOR_BTNHILIGHT ) );
+	int avg = ( r + g + b ) / 3;
+
+	// color is more bright than dim, so the stripe 
+	// color will be slightly darker
+	if ( avg > 128 )
+	{
+		r -= 10;
+		g -= 10;
+		b -= 10;
+
+		if ( r < 0 ) r = 0;
+		if ( g < 0 ) g = 0;
+		if ( b < 0 ) b = 0;
+	}
+
+	// opposite
+	else
+	{
+		r += 10;
+		g += 10;
+		b += 10;
+
+		if ( r > 255 ) r = 255;
+		if ( g > 255 ) g = 255;
+		if ( b > 255 ) b = 255;
+	}
+
+	// set color 
+	clrStripe = RGB( r, g, b );
 }
 
 ///////////////////////////////////////////////////

@@ -47,6 +47,8 @@ int CMusikSelectionCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CMusikListCtrl::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
+	SetBkColor( GetSysColor( COLOR_BTNHILIGHT ) );
+
 	CString sTitle = (CString)m_Library->GetSongField( m_Type );
 	sTitle += _T( "s" );
 
@@ -258,10 +260,16 @@ void CMusikSelectionCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 
     *pResult = CDRF_DODEFAULT;
 	
-    if ( CDDS_PREPAINT == pLVCD->nmcd.dwDrawStage )
+	// this is the first notifcation we'll receive. tell
+	// the handler we want to recieve notifactions for 
+	// each item in the list
+    if ( pLVCD->nmcd.dwDrawStage == CDDS_PREPAINT )
+	{
         *pResult = CDRF_NOTIFYITEMDRAW;
+		return;
+	}
 
-	// draw the items
+	// draw each sub item... we set colors here.
 	if ( pLVCD->nmcd.dwDrawStage == CDDS_ITEMPREPAINT )
 	{
 		CDC *pDC = CDC::FromHandle(pLVCD->nmcd.hdc);
@@ -270,8 +278,11 @@ void CMusikSelectionCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 			pDC->SelectObject( m_Bold );
 		else
 			pDC->SelectObject( m_Regular );
+
+		pLVCD->clrTextBk = GetSysColor( COLOR_BTNHILIGHT );
 			
 		*pResult = CDRF_NEWFONT;
+		return;
 	}
 }
 
