@@ -76,6 +76,7 @@ void MusikVolumeFrame::OnActivate( wxActivateEvent& event )
 		gSeek->SetValue( g_Prefs.nSndVolume );
 		pRepeat->SetValue( g_Prefs.nRepeat );
 		pShuffle->SetValue( g_Prefs.nShuffle );
+		pCrossfade->SetValue( g_Prefs.nGlobalFadeEnable );
 		nFirstRun = 0;
 	}
 }
@@ -92,5 +93,6 @@ void MusikVolumeFrame::Close()
 {
 	g_Prefs.nRepeat = pRepeat->GetValue();
 	g_Prefs.nShuffle = pShuffle->GetValue();
+	g_Prefs.nGlobalFadeEnable = pCrossfade->GetValue();
 	Destroy();
 }

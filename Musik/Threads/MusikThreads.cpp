@@ -114,12 +114,12 @@ void *MusikFaderThread::Entry()
 			if ( ( !g_Player.IsStartingNext() ) && ( !g_Player.IsFading() ) && ( g_Player.GetTimeLeft( FMOD_MSEC ) <= ( g_Prefs.nFadeDuration + 1000 ) ) )
 			{
 				//-------------------------------------------------//
-				//--- if currently we are not fading, but the	---//
-				//--- crossfader is enabled, check to see if	---//
-				//--- the duration is such that we should		---//
-				//--- queue up the next song and start the fade	---//
+				//--- if there is no fading at all going on,	---//
+				//--- and there is 10 mseconds or less playback	---//
+				//--- time left, go ahead and start up the next	---//
+				//--- track										---//
 				//-------------------------------------------------//
-				if ( ( g_Prefs.nFadeEnable == 1 ) && ( g_Player.GetTimeLeft( FMOD_MSEC ) <= g_Prefs.nFadeDuration ) )
+				if ( ( g_Prefs.nGlobalFadeEnable == 0 ) || ( ( g_Prefs.nFadeEnable == 0 ) && ( g_Player.GetTimeLeft( FMOD_MSEC ) <= 10 ) ) )
 				{
 					g_Player.SetStartingNext( true );
 					wxPostEvent( &g_Player, NextSongEvt );
@@ -127,17 +127,18 @@ void *MusikFaderThread::Entry()
 				}
 
 				//-------------------------------------------------//
-				//--- if there is no fading at all going on,	---//
-				//--- and there is 10 mseconds or less playback	---//
-				//--- time left, go ahead and start up the next	---//
-				//--- track										---//
+				//--- if currently we are not fading, but the	---//
+				//--- crossfader is enabled, check to see if	---//
+				//--- the duration is such that we should		---//
+				//--- queue up the next song and start the fade	---//
 				//-------------------------------------------------//
-				else if ( ( g_Prefs.nFadeEnable == 0 ) && ( g_Player.GetTimeLeft( FMOD_MSEC ) <= 10 ) )
+				else if ( ( g_Prefs.nFadeEnable == 1 ) && ( g_Player.GetTimeLeft( FMOD_MSEC ) <= g_Prefs.nFadeDuration ) )
 				{
 					g_Player.SetStartingNext( true );
 					wxPostEvent( &g_Player, NextSongEvt );
 					Yield();
 				}
+
 			}
 		}	
 		Sleep( 10 );
