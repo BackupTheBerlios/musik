@@ -13,8 +13,8 @@
  *  See the file "license.txt" for information on usage and redistribution
  *  of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 */// For compilers that support precompilation, includes "wx/wx.h".#include "wx/wxprec.h"
-#include "MusikFX.h"
 
+#include "MusikFX.h"
 #include "../MusikGlobals.h"
 
 //-----------------------------//
@@ -172,8 +172,6 @@ void CMusikFX::SaveBands( wxFileConfig *pConfig )
 	pConfig->Write( wxT( "EQR16" ),		(double)m_RightBands[16] );
 	pConfig->Write( wxT( "EQR17" ),		(double)m_RightBands[17] );	
 }
-
-///////////////////////////////////////////////////////////////////////////////
 
 void CMusikFX::SetFrequency( float newfreq )
 {

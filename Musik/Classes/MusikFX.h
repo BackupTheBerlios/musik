@@ -29,21 +29,22 @@
 class CMusikFX
 {
 public:
-	void	SetLeftBands( float data[18] );
-	void	SetRightBands( float data[18] );
-	void	GetLeftBands( float *data );
-	void	GetRightBands( float *data );
-	void	MakeTable( float samplerate );
-	void	ResetBands();
-	void	InitEQ();
-	void	EndEQ();
-	void	ProcessSamples( void *pBuffer, int length, int channels, int bitspersample );
+	void	SetLeftBands	( float data[18] );
+	void	SetRightBands	( float data[18] );
+	void	GetLeftBands	( float *data );
+	void	GetRightBands	( float *data );
+	void	MakeTable		( float samplerate );
+	void	ResetBands		();
+	void	InitEQ			();
+	void	EndEQ			();
+	void	ProcessSamples	( void *pBuffer, int length, int channels, int bitspersample );
 
-	void	SaveBands( wxFileConfig *pConfig );
-	void	LoadBands( wxFileConfig *pConfig );
+	void	SaveBands		( wxFileConfig *pConfig );
+	void	LoadBands		( wxFileConfig *pConfig );
 
-	void	SetFrequency( float newfreq );
-	float	GetFrequency( ) { return m_Frequency; }
+	void	SetFrequency	( float newfreq );
+	float	GetFrequency	( ) { return m_Frequency; }
+
 private:
 	float m_LeftBands[18];
 	float m_RightBands[18];
