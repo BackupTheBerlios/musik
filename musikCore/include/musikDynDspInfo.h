@@ -164,6 +164,11 @@ public:
 
 	bool ResyncItem( int songid )
 	{
+		if ( songid == -1 )
+		{
+			Set( m_LastItemRange.m_First, m_LastItemRange.m_Last - 1, true );
+			return true;
+		}
 		for ( size_t i = 0; i < m_Items.size(); i++ )
 		{
 			if ( m_Items.at( i ).GetID() == songid )
