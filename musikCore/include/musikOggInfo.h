@@ -55,7 +55,7 @@ public:
 
 	// reading and writing tag
 	bool LoadInfo( const CStdString& fn );
-	bool WriteInfo( CmusikSongInfo info );
+	static bool WriteInfo( CmusikSongInfo info );
 
 	// gets
 	CStdString GetField( int field );

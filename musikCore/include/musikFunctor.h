@@ -103,6 +103,11 @@ public:
 		// pure virtual
 	}
 
+	virtual void OnPlaybackFailed()
+	{
+		// pure virtual
+	}
+
 	virtual bool VerifyPlaylist( void* pl_addr = NULL )
 	{
 		return true;

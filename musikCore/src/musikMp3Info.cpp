@@ -120,7 +120,6 @@ bool CmusikMp3Info::LoadInfo( const CStdString& fn )
 
 bool CmusikMp3Info::WriteInfo( CmusikSongInfo info, bool clear_old )
 {
-
 	ID3_Tag	id3Tag;
 	id3Tag.Link( info.GetFilename().c_str(), ID3TT_ALL );
 

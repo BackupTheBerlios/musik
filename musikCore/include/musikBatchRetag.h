@@ -23,52 +23,57 @@
 //
 // Class(s): 
 //
-//   CmusikBatchAdd
+//   CmusikBatchRetag
 //
 // Filename(s): 
 //
-//   CmusikRemoveOld.h
+//   CmusikBatchRetag.h
 //
 // Information:
 //
-//   A worker thread for removing missing files 
-//   from the library
+//   A worker thread for updating tags 
 //
 // Usage: 
 //
-//   Create a new CmusikThread and a CmusikRemoveOld,
+//   Create a new CmusikThread and a CmusikBatchRetag,
 //   set the specified paramters, then run the thread
-//   sending the CmusikRemoveOld object as the argument,
-//   and musikRemoveOldWorker as the worker thread.
+//   sending the CmusikBatchRetag object as the argument,
+//   and musikBatchRetagWorker as the worker thread.
 //
 ///////////////////////////////////////////////////
 
+#include "musikArrays.h"
 #include "musikLibrary.h"
 #include "musikFunctor.h"
-#include "musikPlaylist.h"
+#include "musikMP3Info.h"
+#include "musikOggInfo.h"
 
 ///////////////////////////////////////////////////
 
-class CmusikRemoveOld
+class CmusikBatchRetag
 {
 public: 
 
 	// construct / destruct
-	CmusikRemoveOld()
+	CmusikBatchRetag()
 	{
 		m_Functor = NULL;
 		m_Library = NULL;
+		m_UpdatedTags = NULL;
 		m_CallFunctorOnAbort = false;
+		m_DeleteUpdatedTags = true;
 	}
 
-	CmusikRemoveOld( CmusikLibrary* pLibrary, CmusikFunctor* pFunctor )
+	CmusikBatchRetag( CmusikLibrary* pLibrary, CmusikFunctor* pFunctor, CmusikSongInfoArray* pUpdatedTags )
 	{
 		m_Functor = pFunctor;
 		m_Library = pLibrary;
+		m_UpdatedTags = pUpdatedTags;
 		m_CallFunctorOnAbort = false;
+		m_DeleteUpdatedTags = true;
 	}
 
-	~CmusikRemoveOld()
+	~CmusikBatchRetag()
 	{
 	}
 
@@ -76,29 +81,26 @@ public:
 	// these variables.
 	CmusikLibrary* m_Library;
 	CmusikFunctor* m_Functor;
+	CmusikSongInfoArray* m_UpdatedTags;
 	bool m_CallFunctorOnAbort;
+	bool m_DeleteUpdatedTags;
 };
 
 ///////////////////////////////////////////////////
 
-static void musikRemoveOldWorker( CmusikThread* thread )
+static void musikBatchRetagWorker( CmusikThread* thread )
 {
-	CmusikRemoveOld* params = (CmusikRemoveOld*)thread->GetArgs();
+	CmusikBatchRetag* params = (CmusikBatchRetag*)thread->GetArgs();
 
 	size_t curr_prog = 0;
 	size_t last_prog = 0;
-
-	CStdStringArray all_files;
-	params->m_Library->GetAllDistinct( MUSIK_LIBRARY_TYPE_FILENAME, all_files, false );
 
 	// sleep if we go idle
 	ACE_Time_Value sleep;
 	sleep.set( 0.1f );
 
-	bool verify_failed = false;
-
 	params->m_Library->BeginTransaction();
-	for( size_t i = 0; i < all_files.size(); i++ )
+	for( size_t i = 0; i < params->m_UpdatedTags->size(); i++ )
 	{
 		// sleep if we're told
 		if ( thread->IsSuspended() )
@@ -114,16 +116,20 @@ static void musikRemoveOldWorker( CmusikThread* thread )
 		// check abort flag
 		if ( thread->m_Abort )
 		{
-			TRACE0( "musikRemoveOldWorker worker function aborted...\n" );
+			TRACE0( "musikBatchRetagWorker worker function aborted...\n" );
 			break;
 		}
 
-		// see if the file exists
-		if ( !CmusikFilename::FileExists( all_files.at ( i ) ) )
-			params->m_Library->RemoveSong( all_files.at ( i ) );
+
+		//
+		//
+		// do what we need here
+		//
+		//
+
 
 		// post progress to the functor
-		curr_prog = ( 100 * i ) / all_files.size();
+		curr_prog = ( 100 * i ) / params->m_UpdatedTags->size();
 		if ( curr_prog != last_prog )
 		{
 			if ( params->m_Functor )
@@ -135,12 +141,17 @@ static void musikRemoveOldWorker( CmusikThread* thread )
 	}
 	params->m_Library->EndTransaction();
 
+	// finish
+	thread->m_Finished = true;
+
 	if ( params->m_Functor && ( !thread->m_Abort || ( thread->m_Abort && params->m_CallFunctorOnAbort ) ) )
 		params->m_Functor->OnThreadEnd( (void*)thread );
 	
-	delete params;
+	// clean up
+	if ( params->m_DeleteUpdatedTags )
+		delete params->m_UpdatedTags;
 
-	thread->m_Finished = true;
+	delete params;
 }
 
 ///////////////////////////////////////////////////

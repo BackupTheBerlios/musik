@@ -49,13 +49,6 @@
 
 ///////////////////////////////////////////////////
 
-class CmusikLibrary;
-class CmusikPlaylist;
-class CmusikFunctor;
-class CmusikPlayer;
-
-///////////////////////////////////////////////////
-
 class CmusikBatchAdd
 {
 public: 
@@ -183,18 +176,17 @@ static void musikBatchAddWorker( CmusikThread* thread )
 	}
 	params->m_Library->EndTransaction();
 
-	// flag thread operation as complete
-	thread->m_Finished = true;
-
-	// trigger functor (to delete file list)
+	// clean up
 	if ( params->m_DeleteFilelist )
 		delete params->m_Files;
 
-	// call the functor's OnThreadEnd
 	if ( params->m_Functor && ( ( thread->m_Abort && params->m_CallFunctorOnAbort ) || !thread->m_Abort ) )
 		params->m_Functor->OnThreadEnd( (void*)thread );
 
 	delete params;
+
+	// flag thread operation as complete
+	thread->m_Finished = true;
 }
 
 ///////////////////////////////////////////////////

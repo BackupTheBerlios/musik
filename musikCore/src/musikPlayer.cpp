@@ -630,6 +630,10 @@ bool CmusikPlayer::Play( int index, int fade_type, int start_pos )
 	if ( !pNewStream )
 	{
 		TRACE0( "Song file failed to load. Invalid filename?\n" );
+
+		m_IsPlaying = false;
+		m_IsPaused = false;
+
 		return false;
 	}
 
