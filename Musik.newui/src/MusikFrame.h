@@ -3,7 +3,7 @@
 
 #include <wx/socket.h>
 #include "MusikSourcesCtrl.h"
-#include "MusikSelectionCtrl.h"
+#include "MusikSelectionAreaCtrl.h"
 
 class MusikFrame : public wxFrame
 {
@@ -12,7 +12,7 @@ public:
 	~MusikFrame();
 
 	CMusikSourcesCtrl *m_SourcesCtrl;
-	CMusikSelectionCtrl *m_SelectionCtrl;
+	CMusikSelectionAreaCtrl *m_SelectionCtrl;
 	
 };
 
