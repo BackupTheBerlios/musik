@@ -544,7 +544,6 @@ void CSizingControlBar::OnNcPaint()
 
     // draw borders in non-client area
     CRect rcDraw = rcBar;
-    //DrawBorders(&mdc, rcDraw);
 
     // erase the NC background
     mdc.FillRect(rcDraw, CBrush::FromHandle(

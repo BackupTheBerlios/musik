@@ -3,8 +3,10 @@
 #include "stdafx.h"
 
 #include "MusikDockBar.h"
-
 #include "MusikPrefs.h"
+
+#include "MEMDC.H"
+#include ".\musikdockbar.h"
 
 ///////////////////////////////////////////////////
 
@@ -15,7 +17,9 @@ IMPLEMENT_DYNAMIC(CMusikDockBar, baseMusikDockBar);
 BEGIN_MESSAGE_MAP(CMusikDockBar, baseMusikDockBar)
     ON_WM_NCLBUTTONUP()
     ON_WM_NCHITTEST()
+	ON_WM_NCPAINT()
     ON_MESSAGE(WM_SETTEXT, OnSetText)
+	ON_WM_ERASEBKGND()
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -94,6 +98,41 @@ void CMusikDockBar::NcCalcClient( LPRECT pRc, UINT nDockBarID )
 
 ///////////////////////////////////////////////////
 
+void CMusikDockBar::OnNcPaint()
+{
+    // get window DC that is clipped to the non-client area
+    CWindowDC dc(this);
+
+    CRect rcClient, rcBar;
+    GetClientRect( rcClient );
+    ClientToScreen( rcClient );
+
+    GetWindowRect( rcBar );
+    rcClient.OffsetRect( -rcBar.TopLeft() );
+    rcBar.OffsetRect( -rcBar.TopLeft() );
+
+    CMemDC mdc( &dc );
+    
+    // erase the NC background
+	CRect rcDraw = rcBar;
+	mdc.FillSolidRect( rcDraw, m_Prefs->MUSIK_COLOR_BTNFACE );
+    NcPaintGripper( &mdc, rcClient );
+
+	// draw border...
+	if ( HasGripper() && m_ShowGripper )
+	{
+		rcClient.InflateRect( 1, 1, 1, 1 );
+		mdc.Draw3dRect( rcClient, m_Prefs->MUSIK_COLOR_BTNSHADOW, m_Prefs->MUSIK_COLOR_BTNHILIGHT );
+		rcClient.DeflateRect( 1, 1, 1, 1 );
+	}
+
+    // client area is not our bussiness
+    dc.IntersectClipRect(rcBar);
+    dc.ExcludeClipRect(rcClient);
+}
+
+///////////////////////////////////////////////////
+
 BOOL CMusikDockBar::Create(LPCTSTR lpszWindowName, CWnd* pParentWnd, UINT nID, DWORD dwStyle)
 {
     // must have a parent
@@ -112,8 +151,6 @@ BOOL CMusikDockBar::Create(LPCTSTR lpszWindowName, CWnd* pParentWnd, UINT nID, D
     CString wndclass = ::AfxRegisterWndClass( CS_DBLCLKS,
         ::LoadCursor( NULL, IDC_ARROW ), 
 		back, 0 );
-
-
 
 	// keep only the generic window styles, as 
 	// well as WS_CLIPCHILDREN to prevent flashing
@@ -139,7 +176,7 @@ void CMusikDockBar::NcPaintGripper( CDC* pDC, CRect rcClient )
     CRect rcBtn = m_biOptions->GetRect();
 
 	// gripper at top
-	rcGrip.left += 1;
+	rcGrip.left -= 1;
     rcGrip.top -= m_cyGripper + 1;
     rcGrip.bottom = rcGrip.top + 11;
     rcGrip.right = rcBtn.left - 3;
@@ -250,10 +287,10 @@ void CMusikDockBar::OnUpdateCmdUI( CFrameWnd* pTarget, BOOL bDisableIfNoHndler )
 
 	// do we need to paint?
 	BOOL bNeedPaint;
-    bNeedPaint |= (m_biHide->bPushed ^ bWasHidePushed) ||
-                  (m_biHide->bRaised ^ bWasHideRaised) ||
-				  (m_biOptions->bPushed ^ bWasOptionsPushed) ||
-				  (m_biOptions->bRaised ^ bWasOptionsRaised) ;
+    bNeedPaint |= ( m_biHide->bPushed ^ bWasHidePushed ) ||
+                  ( m_biHide->bRaised ^ bWasHideRaised ) ||
+				  ( m_biOptions->bPushed ^ bWasOptionsPushed ) ||
+				  ( m_biOptions->bRaised ^ bWasOptionsRaised ) ;
 
 	if ( m_bActive != active_change )
 		bNeedPaint = true;
@@ -333,3 +370,11 @@ BOOL CMusikDockBar::HasGripper() const
 }
 
 ///////////////////////////////////////////////////
+
+BOOL CMusikDockBar::OnEraseBkgnd(CDC* pDC)
+{
+	return false;
+}
+
+///////////////////////////////////////////////////
+

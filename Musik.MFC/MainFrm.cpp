@@ -95,6 +95,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_SELBOXRESET, OnSelBoxesReset )
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
+	ON_WM_SYSCOLORCHANGE()
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -742,3 +743,11 @@ void CMainFrame::OnPaint()
 }
 
 ///////////////////////////////////////////////////
+
+void CMainFrame::OnSysColorChange()
+{
+	CFrameWnd::OnSysColorChange();
+
+	m_Prefs->ThemeChanged();
+	Invalidate();
+}

@@ -3,6 +3,9 @@
 #include "stdafx.h"
 #include "Musik.h"
 #include "MusikSelectionCtrl.h"
+#include "MusikPrefs.h"
+
+#include "MEMDC.H"
 
 #include "../Musik.Core/include/MusikLibrary.h"
 
@@ -16,7 +19,11 @@ IMPLEMENT_DYNAMIC(CMusikSelectionCtrl, CMusikListCtrl)
 
 ///////////////////////////////////////////////////
 
-CMusikSelectionCtrl::CMusikSelectionCtrl( CFrameWnd* parent, CMusikLibrary* library, int type, int ctrl_id )
+
+
+///////////////////////////////////////////////////
+
+CMusikSelectionCtrl::CMusikSelectionCtrl( CFrameWnd* parent, CMusikLibrary* library, CMusikPrefs* prefs, int type, int ctrl_id )
 {
 	m_Library = library;
 	m_Type = type;
@@ -25,6 +32,8 @@ CMusikSelectionCtrl::CMusikSelectionCtrl( CFrameWnd* parent, CMusikLibrary* libr
 	m_ParentBox = false;
 	HideScrollBars( LCSB_NCOVERRIDE, SB_HORZ );
 	InitFonts();
+
+	m_Prefs = prefs;
 }
 
 ///////////////////////////////////////////////////
@@ -40,6 +49,8 @@ BEGIN_MESSAGE_MAP(CMusikSelectionCtrl, CMusikListCtrl)
 	ON_NOTIFY_REFLECT(LVN_GETDISPINFO, OnLvnGetdispinfo)
 	ON_NOTIFY_REFLECT(LVN_ITEMCHANGED, OnLvnItemchanged)
 	ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, OnNMCustomdraw)
+	ON_WM_ERASEBKGND()
+	ON_WM_PAINT()
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -48,8 +59,6 @@ int CMusikSelectionCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CMusikListCtrl::OnCreate(lpCreateStruct) == -1)
 		return -1;
-
-	SetBkColor( GetSysColor( COLOR_BTNHILIGHT ) );
 
 	CString sTitle = (CString)m_Library->GetSongField( m_Type );
 	sTitle += _T( "s" );
@@ -295,7 +304,8 @@ void CMusikSelectionCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 		else
 			pDC->SelectObject( m_Regular );
 
-		pLVCD->clrTextBk = GetSysColor( COLOR_BTNHILIGHT );
+		pLVCD->clrTextBk = m_Prefs->MUSIK_COLOR_LISTCTRL;
+		pLVCD->clrText = m_Prefs->MUSIK_COLOR_LISTCTRLTEXT;
 			
 		*pResult = CDRF_NEWFONT;
 		return;
@@ -313,6 +323,35 @@ void CMusikSelectionCtrl::InitFonts()
 	pBoldFont.lfWeight = FW_BOLD;
 
 	m_Bold.CreateFontIndirect( &pBoldFont );
+}
+
+///////////////////////////////////////////////////
+
+BOOL CMusikSelectionCtrl::OnEraseBkgnd(CDC* pDC)
+{
+	return false;
+}
+
+///////////////////////////////////////////////////
+
+
+void CMusikSelectionCtrl::OnPaint()
+{
+	CPaintDC dc(this);
+	CRect rect;
+	GetClientRect(&rect);
+	CMemDC memDC(&dc, &rect);
+	
+	CRect headerRect;
+	GetDlgItem(0)->GetWindowRect(&headerRect);
+	ScreenToClient(&headerRect);
+	dc.ExcludeClipRect(&headerRect);
+	   
+	CRect clip;
+	memDC.GetClipBox(&clip);
+	memDC.FillSolidRect( clip, m_Prefs->MUSIK_COLOR_LISTCTRL );
+	   
+	DefWindowProc(WM_PAINT, (WPARAM)memDC->m_hDC, (LPARAM)0);
 }
 
 ///////////////////////////////////////////////////

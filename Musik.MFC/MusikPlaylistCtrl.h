@@ -58,6 +58,7 @@ protected:
 
 	// colors
 	COLORREF clrStripe;
+	COLORREF clrStripText;
 
 	// misc
 	bool m_Changed;

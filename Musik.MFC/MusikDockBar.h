@@ -40,6 +40,10 @@ protected:
 	virtual void OnUpdateCmdUI(CFrameWnd* pTarget, BOOL bDisableIfNoHndler);
     afx_msg UINT OnNcHitTest(CPoint point);
     afx_msg void OnNcLButtonUp(UINT nHitTest, CPoint point);
+	afx_msg void OnNcPaint();
+
+	// custom message maps
+    afx_msg LRESULT OnSetText(WPARAM wParam, LPARAM lParam);
 
 	// appearance
     int     m_cyGripper;
@@ -47,22 +51,19 @@ protected:
 	BOOL    m_bActive;
     CString m_sFontFace;
 
-    CMusikDockbarBtn* m_biHide;
+	// gripper icons
+	CMusikDockbarBtn* m_biHide;
 	CMusikDockbarBtn* m_biOptions;
 
 	// musik stuff
 	CMusikPrefs* m_Prefs;
 	CMenu* m_Menu;
 	
-	// mfc message maps
-	afx_msg void OnNcPaint();
-
-	// custom message maps
-    afx_msg LRESULT OnSetText(WPARAM wParam, LPARAM lParam);
-
 	// macros
     DECLARE_DYNAMIC(CMusikDockBar)
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 };
 
 ///////////////////////////////////////////////////

@@ -27,6 +27,7 @@ public:
 
 	void ParseColors();
 	void UnparseColors();
+	void ThemeChanged();
 
 	// basic stuff
 	void		LoadPrefs();
@@ -56,12 +57,10 @@ public:
 	int			GetPlaylistCol						( int n )			{ return m_Playlist_Order.at( n ); }
 	int			GetPlaylistColWidth					( int n )			{ return m_Playlist_Sizes.at( n ); }
 	size_t		GetPlaylistColCount					( )					{ return m_Playlist_Order.size(); }
-	COLORREF	GetPlaylistStripeColor				( )					{ return m_Playlist_Stripe_Color; }
 	
 	// playlist sets
 	void		SetPlaylistOrder					( CIntArray n )		{ m_Playlist_Order = n; }	
 	void		SetPlaylistSizes					( CIntArray n )		{ m_Playlist_Sizes = n; }
-	void		SetPlaylistStripColor				( COLORREF c )		{ m_Playlist_Stripe_Color = c; }
 	
 	// now playing gets
 	int			GetNowPlayingCaptionFontSize		( )					{ return m_NowPlaying_CaptionFont; }
@@ -95,12 +94,14 @@ public:
 	COLORREF MUSIK_COLOR_BTNHILIGHT;
 	COLORREF MUSIK_COLOR_BTNSHADOW;
 	COLORREF MUSIK_COLOR_LISTCTRL;
+	COLORREF MUSIK_COLOR_LISTCTRLTEXT;
+	COLORREF MUSIK_COLOR_HIGHLIGHT;
+	COLORREF MUSIK_COLOR_HIGHLIGHTTEXT;
 
 protected:
 	CIniFile* config;
 	string GetDefPlaylistOrder();
 	string GetDefPlaylistSizes();
-	string GetDefPlaylistStripeColor();
 
 private:
 
@@ -116,7 +117,6 @@ private:
 	// playlist
 	CIntArray m_Playlist_Order;
 	CIntArray m_Playlist_Sizes;
-	COLORREF m_Playlist_Stripe_Color;
 
 	// now playing
 	int m_NowPlaying_CaptionFont;
@@ -131,6 +131,20 @@ private:
 	CMusikCrossfader m_Crossfader_Default;
 	CStdString m_Crossfader_Current;
 	bool m_Crossfader_Enabled;
+
+	// theme aware stuff
+	bool m_ActiveCaptionDef;
+	bool m_CaptionDef;
+	bool m_InctiveCaptionDef;
+	bool m_InctiveCaptionTextDef;
+	bool m_BtnFaceDef;
+	bool m_BtnTextDef;
+	bool m_BtnHilightDef;
+	bool m_BtnShadowDef;
+	bool m_ListCtrlDef;
+	bool m_ListCtrlTextDef;
+	bool m_HilightDef;
+	bool m_HilightTextDef;
 };
 
 ///////////////////////////////////////////////////

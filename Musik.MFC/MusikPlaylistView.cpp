@@ -68,7 +68,7 @@ int CMusikPlaylistView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	DragAcceptFiles( true );
 
-	long dwStyle = WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_OWNERDATA | WS_VSCROLL | WS_HSCROLL | LVS_SHOWSELALWAYS;
+	long dwStyle = WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_OWNERDATA | WS_VSCROLL | WS_HSCROLL;
 	long dwStyleEx = LVS_EX_FULLROWSELECT | LVS_EX_HEADERDRAGDROP;
 
 	m_Playlist->Create( dwStyle, CRect( 0, 0, 0, 0 ), this, 123 );
@@ -120,6 +120,7 @@ void CMusikPlaylistView::OnNcPaint()
 	rcBorder.bottom -= 5;
 	pDC.Draw3dRect( rcBorder, m_Prefs->MUSIK_COLOR_BTNSHADOW, m_Prefs->MUSIK_COLOR_BTNHILIGHT );
 
+	// line at bottom
 	CRect rcBottom;
 	rcBottom.left = 0;
 	rcBottom.right = rcClient.Width();

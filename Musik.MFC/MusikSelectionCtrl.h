@@ -1,11 +1,20 @@
+///////////////////////////////////////////////////
+
 #pragma once
+
+///////////////////////////////////////////////////
 
 #include "MusikListCtrl.h"
 
 #include "../Musik.Core/include/StdString.h"
 #include "../Musik.Core/include/MusikArrays.h"
 
+///////////////////////////////////////////////////
+
 class CMusikLibrary;
+class CMusikPrefs;
+
+///////////////////////////////////////////////////
 
 class CMusikSelectionCtrl : public CMusikListCtrl
 {
@@ -14,7 +23,7 @@ class CMusikSelectionCtrl : public CMusikListCtrl
 public:
 
 	// construct / destruct
-	CMusikSelectionCtrl( CFrameWnd* parent, CMusikLibrary* library, int type, int ctrl_id );
+	CMusikSelectionCtrl( CFrameWnd* parent, CMusikLibrary* library, CMusikPrefs* prefs, int type, int ctrl_id );
 	virtual ~CMusikSelectionCtrl();
 
 	// gets
@@ -44,6 +53,8 @@ public:
 	afx_msg void OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnLvnItemchanged(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	afx_msg void OnPaint();
 
 protected:
 
@@ -58,6 +69,9 @@ protected:
 	int m_ID;
 	bool m_ParentBox;
 
+	// prefs
+	CMusikPrefs *m_Prefs;
+
 	// fonts
 	CFont m_Regular;
 	CFont m_Bold;
@@ -67,4 +81,5 @@ protected:
 	DECLARE_DYNAMIC(CMusikSelectionCtrl)
 };
 
+///////////////////////////////////////////////////
 

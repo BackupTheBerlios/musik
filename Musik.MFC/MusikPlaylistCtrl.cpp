@@ -265,8 +265,9 @@ void CMusikPlaylistCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 		if ( nSubType == MUSIK_LIBRARY_TYPE_RATING )
 		{
 			pDC->SelectObject( m_StarFont );
-			pDC->SetTextColor( GetSysColor( COLOR_BTNFACE ) );
+			pDC->SetTextColor( m_Prefs->MUSIK_COLOR_LISTCTRLTEXT );
 		}
+
 		else
 		{
 			if ( m_Player->GetCurrPlaying()->GetID() == m_Playlist->GetSongID( pLVCD->nmcd.dwItemSpec ) )
@@ -275,11 +276,14 @@ void CMusikPlaylistCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 				pDC->SelectObject( m_ItemFont );
 		}
 
+		// which stripe color to use
 		if ( pLVCD->nmcd.dwItemSpec % 2 != 0 )
 			pLVCD->clrTextBk = clrStripe;
 		else
-			pLVCD->clrTextBk = GetSysColor( COLOR_BTNHILIGHT );
-			
+			pLVCD->clrTextBk = m_Prefs->MUSIK_COLOR_LISTCTRL;
+
+		pLVCD->clrText = m_Prefs->MUSIK_COLOR_LISTCTRLTEXT;		
+
 		*pResult = CDRF_NEWFONT;
 		return;
 	}
@@ -304,9 +308,9 @@ void CMusikPlaylistCtrl::InitColors()
 {
 	int r, g, b;
 	
-	r = GetRValue( GetSysColor( COLOR_BTNHILIGHT ) );
-	g = GetGValue( GetSysColor( COLOR_BTNHILIGHT ) );
-	b = GetBValue( GetSysColor( COLOR_BTNHILIGHT ) );
+	r = GetRValue( m_Prefs->MUSIK_COLOR_LISTCTRL );
+	g = GetGValue( m_Prefs->MUSIK_COLOR_LISTCTRL );
+	b = GetBValue( m_Prefs->MUSIK_COLOR_LISTCTRL );
 	int avg = ( r + g + b ) / 3;
 
 	// color is more bright than dim, so the stripe 
@@ -364,7 +368,7 @@ void CMusikPlaylistCtrl::OnPaint()
 	   
 	CRect clip;
 	memDC.GetClipBox(&clip);
-	memDC.FillSolidRect( clip, GetSysColor( COLOR_BTNHILIGHT ) );
+	memDC.FillSolidRect( clip, m_Prefs->MUSIK_COLOR_LISTCTRL );
 	   
 	DefWindowProc(WM_PAINT, (WPARAM)memDC->m_hDC, (LPARAM)0);
 }

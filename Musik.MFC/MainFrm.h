@@ -171,6 +171,7 @@ protected:
 public:
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
+	afx_msg void OnSysColorChange();
 };
 
 ///////////////////////////////////////////////////

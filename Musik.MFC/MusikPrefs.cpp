@@ -234,6 +234,19 @@ CMusikPrefs::CMusikPrefs( CString filename )
 	if ( !config->ReadFile() )
 		config->WriteFile();
 
+	bool m_ActiveCaptionDef			= false;
+	bool m_CaptionDef				= false;
+	bool m_InctiveCaptionDef		= false;
+	bool m_InctiveCaptionTextDef	= false;
+	bool m_BtnFaceDef				= false;
+	bool m_BtnTextDef				= false;
+	bool m_BtnHilightDef			= false;
+	bool m_BtnShadowDef				= false;
+	bool m_ListCtrlDef				= false;
+	bool m_ListCtrlTextDef			= false;
+	bool m_HilightDef				= false;
+	bool m_HilightTextDef			= false;
+
 	LoadPrefs();
 }
 
@@ -261,7 +274,6 @@ void CMusikPrefs::LoadPrefs()
 	// playlist
 	m_Playlist_Order		= StringToCIntArray( config->GetValue( "Playlist", "Column Order", GetDefPlaylistOrder() ) );
 	m_Playlist_Sizes		= StringToCIntArray( config->GetValue( "Playlist", "Column Sizes", GetDefPlaylistSizes() ) );
-	m_Playlist_Stripe_Color	= StringToCOLORREF( config->GetValue( "Playlist", "Stripe Color", GetDefPlaylistStripeColor() ) );
 
 	// now playing
 	m_NowPlaying_CaptionFont = StringToInt( config->GetValue( "Now Playing", "Caption Font Size", "11" ) );
@@ -286,7 +298,10 @@ void CMusikPrefs::LoadPrefs()
 	MUSIK_COLOR_BTNTEXT				= StringToCOLORREF( config->GetValue( "Dialog Colors", "Button Text", "255,0,255" ) );
 	MUSIK_COLOR_BTNHILIGHT			= StringToCOLORREF( config->GetValue( "Dialog Colors", "Button Highlight", "255,0,255" ) );
 	MUSIK_COLOR_BTNSHADOW			= StringToCOLORREF( config->GetValue( "Dialog Colors", "Button Shadow", "255,0,255" ) );
-	MUSIK_COLOR_LISTCTRL			= StringToCOLORREF( config->GetValue( "Dialog Colors", "List Backgrounds", "255,0,255" ) );
+	MUSIK_COLOR_LISTCTRL			= StringToCOLORREF( config->GetValue( "Dialog Colors", "List Background", "255,0,255" ) );
+	MUSIK_COLOR_LISTCTRLTEXT		= StringToCOLORREF( config->GetValue( "Dialog Colors", "List Text", "255,0,255" ) );
+	MUSIK_COLOR_HIGHLIGHT			= StringToCOLORREF( config->GetValue( "Dialog Colors", "Color Highlight", "255,0,255" ) );
+	MUSIK_COLOR_HIGHLIGHTTEXT		= StringToCOLORREF( config->GetValue( "Dialog Colors", "Color Highlight Text", "255,0,255" ) );
 
 	ParseColors();
 }
@@ -309,7 +324,6 @@ void CMusikPrefs::SavePrefs()
 	// playlist
 	config->SetValue( "Playlist", "Column Order", CIntArrayToString( m_Playlist_Order ) );
 	config->SetValue( "Playlist", "Column Sizes", CIntArrayToString( m_Playlist_Sizes ) );
-	config->SetValue( "Playlist", "Stripe Color", COLORREFToString( m_Playlist_Stripe_Color ) );
 
 	// now playing
 	config->SetValue( "Now Playing", "Caption Font Size", IntToString( m_NowPlaying_CaptionFont ) );
@@ -334,7 +348,10 @@ void CMusikPrefs::SavePrefs()
 	config->SetValue( "Dialog Colors", "Button Text", COLORREFToString( MUSIK_COLOR_BTNTEXT ) );
 	config->SetValue( "Dialog Colors", "Button Highlight", COLORREFToString( MUSIK_COLOR_BTNHILIGHT ) );
 	config->SetValue( "Dialog Colors", "Button Shadow", COLORREFToString( MUSIK_COLOR_BTNSHADOW ) );
-	config->SetValue( "Dialog Colors", "List Backgrounds", COLORREFToString( MUSIK_COLOR_LISTCTRL ) );
+	config->SetValue( "Dialog Colors", "List Background", COLORREFToString( MUSIK_COLOR_LISTCTRL ) );
+	config->SetValue( "Dialog Colors", "List Text", COLORREFToString( MUSIK_COLOR_LISTCTRLTEXT ) );
+	config->SetValue( "Dialog Colors", "Color Highlight", COLORREFToString( MUSIK_COLOR_HIGHLIGHT ) );
+	config->SetValue( "Dialog Colors", "Color Highlight Text", COLORREFToString( MUSIK_COLOR_HIGHLIGHTTEXT ) );
 
 	// write to ini file
 	config->WriteFile();
@@ -371,47 +388,123 @@ string CMusikPrefs::GetDefPlaylistSizes()
 
 ///////////////////////////////////////////////////
 
-string CMusikPrefs::GetDefPlaylistStripeColor()
-{
-	CString CRet;
-	CRet.Format( _T( "244,244,244" ) );
-
-	string sRet = CRet.GetBuffer();
-	return sRet;
-}
-
-///////////////////////////////////////////////////
-
 void CMusikPrefs::ParseColors()
 {
 	const COLORREF transparent = RGB( 255, 0, 255 );
 
 	if ( MUSIK_COLOR_ACTIVECAPTION == transparent )
+	{
 		MUSIK_COLOR_ACTIVECAPTION = GetSysColor( COLOR_ACTIVECAPTION );
+		m_ActiveCaptionDef = true;
+	}
 
 	if ( MUSIK_COLOR_CAPTIONTEXT == transparent )
+	{
 		MUSIK_COLOR_CAPTIONTEXT = GetSysColor( COLOR_CAPTIONTEXT );
+		m_CaptionDef = true;
+	}
 
 	if ( MUSIK_COLOR_INACTIVECAPTION == transparent )
+	{
 		MUSIK_COLOR_INACTIVECAPTION = GetSysColor( COLOR_INACTIVECAPTION );
+		m_InctiveCaptionDef = true;
+	}
 
 	if ( MUSIK_COLOR_INACTIVECAPTIONTEXT == transparent )
+	{	
 		MUSIK_COLOR_INACTIVECAPTIONTEXT = GetSysColor( COLOR_INACTIVECAPTIONTEXT );
-	
+		m_InctiveCaptionTextDef = true;
+	}
+
 	if ( MUSIK_COLOR_BTNFACE == transparent )
+	{	
 		MUSIK_COLOR_BTNFACE = GetSysColor( COLOR_BTNFACE );
+		m_BtnFaceDef = true;
+	}
 
 	if ( MUSIK_COLOR_BTNTEXT == transparent )
+	{	
 		MUSIK_COLOR_BTNTEXT = GetSysColor( COLOR_BTNTEXT );
+		m_BtnTextDef = true;
+	}
 
 	if ( MUSIK_COLOR_BTNHILIGHT == transparent )
+	{	
 		MUSIK_COLOR_BTNHILIGHT = GetSysColor( COLOR_BTNHILIGHT );
+		m_BtnHilightDef = true;
+	}
 	
 	if ( MUSIK_COLOR_BTNSHADOW == transparent )
+	{	
 		MUSIK_COLOR_BTNSHADOW = GetSysColor( COLOR_BTNSHADOW );
-	
+		m_BtnShadowDef = true;
+	}
+
 	if ( MUSIK_COLOR_LISTCTRL == transparent )
-		MUSIK_COLOR_LISTCTRL = GetSysColor( COLOR_ACTIVECAPTION );
+	{	
+		MUSIK_COLOR_LISTCTRL = GetSysColor( COLOR_BTNHILIGHT );
+		m_ListCtrlDef = true;
+	}
+
+	if ( MUSIK_COLOR_LISTCTRLTEXT == transparent )
+	{	
+		MUSIK_COLOR_LISTCTRLTEXT = GetSysColor( COLOR_BTNTEXT );
+		m_ListCtrlTextDef = true;
+	}
+
+	if ( MUSIK_COLOR_HIGHLIGHT == transparent )
+	{
+		MUSIK_COLOR_HIGHLIGHT = GetSysColor( COLOR_HIGHLIGHT );
+		m_HilightDef = true;
+	}
+
+	if ( MUSIK_COLOR_HIGHLIGHTTEXT == transparent )
+	{
+		MUSIK_COLOR_HIGHLIGHTTEXT = GetSysColor( COLOR_HIGHLIGHTTEXT );
+		m_HilightTextDef = true;
+	}
+}
+
+///////////////////////////////////////////////////
+
+void CMusikPrefs::ThemeChanged()
+{
+	if ( m_ActiveCaptionDef )
+		MUSIK_COLOR_ACTIVECAPTION = GetSysColor( COLOR_ACTIVECAPTION );
+
+	if ( m_CaptionDef )
+		MUSIK_COLOR_CAPTIONTEXT = GetSysColor( COLOR_CAPTIONTEXT );
+
+	if ( m_InctiveCaptionDef )
+		MUSIK_COLOR_INACTIVECAPTION = GetSysColor( COLOR_INACTIVECAPTION );
+
+	if ( m_InctiveCaptionTextDef )
+		MUSIK_COLOR_INACTIVECAPTIONTEXT = GetSysColor( COLOR_INACTIVECAPTIONTEXT );
+
+	if ( m_BtnFaceDef )
+		MUSIK_COLOR_BTNFACE = GetSysColor( COLOR_BTNFACE );
+
+	if ( m_BtnTextDef )
+		MUSIK_COLOR_BTNTEXT = GetSysColor( COLOR_BTNTEXT );
+
+	if ( m_BtnHilightDef )
+		MUSIK_COLOR_BTNHILIGHT = GetSysColor( COLOR_BTNHILIGHT );
+
+	if ( m_BtnShadowDef )
+		MUSIK_COLOR_BTNSHADOW = GetSysColor( COLOR_BTNSHADOW );
+
+	if ( m_ListCtrlDef )
+		MUSIK_COLOR_LISTCTRL = GetSysColor( COLOR_BTNHILIGHT );
+
+	if ( m_ListCtrlTextDef )
+		MUSIK_COLOR_LISTCTRLTEXT = GetSysColor( COLOR_BTNTEXT );
+
+	if ( m_HilightDef )
+		MUSIK_COLOR_HIGHLIGHT = GetSysColor( COLOR_HIGHLIGHT );
+
+	if ( m_HilightTextDef )
+		MUSIK_COLOR_HIGHLIGHTTEXT = GetSysColor( COLOR_HIGHLIGHTTEXT );
+
 }
 
 ///////////////////////////////////////////////////
@@ -444,8 +537,17 @@ void CMusikPrefs::UnparseColors()
 	if ( MUSIK_COLOR_BTNSHADOW == GetSysColor( COLOR_BTNSHADOW ) )
 		MUSIK_COLOR_BTNSHADOW = transparent;
 	
-	if ( MUSIK_COLOR_LISTCTRL == GetSysColor( COLOR_ACTIVECAPTION ) )
+	if ( MUSIK_COLOR_LISTCTRL == GetSysColor( COLOR_BTNHILIGHT ) )
 		MUSIK_COLOR_LISTCTRL = transparent;
+
+	if ( MUSIK_COLOR_LISTCTRLTEXT == GetSysColor( COLOR_BTNTEXT ) )
+		MUSIK_COLOR_LISTCTRLTEXT = transparent;
+
+	if ( MUSIK_COLOR_HIGHLIGHT == GetSysColor( COLOR_HIGHLIGHT ) )
+		MUSIK_COLOR_HIGHLIGHT = transparent;
+
+	if ( MUSIK_COLOR_HIGHLIGHTTEXT == GetSysColor( COLOR_HIGHLIGHTTEXT ) )
+		MUSIK_COLOR_HIGHLIGHTTEXT = transparent;
 }
 
 ///////////////////////////////////////////////////
