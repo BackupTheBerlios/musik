@@ -4,10 +4,10 @@ musikCube Todo list:
 2.  Dynamic Playlist Dialog [avatar]
 3.  Jukebox playlist type [dcarter/avatar]
 4.  Playlist info [avatar]
-5.  Crossfader preset manager [avatar]
 
 Stuff Added 
 
+24. Crossfader preset manager in File -> Preferences
 23. CmusikThread -> CmusikTask
 22. Preferences dialog.
 21. Directory synchronization 

@@ -1745,7 +1745,7 @@ void CMainFrame::OnAddDirectory()
 
 void CMainFrame::GetCrossfader( CmusikCrossfader* fader )
 {
-	if ( m_Library->GetDefaultCrossfader( fader ) != SQLITE_OK )
+	if ( m_Library->GetDefaultCrossfader( fader ) != MUSIK_LIBRARY_OK )
 	{
 		fader->Set( 2.0f, 0.5f, 0.2f, 1.0f, 3.0f );
 		m_Library->UpdateDefaultCrossfader( *fader );

@@ -177,10 +177,11 @@ public:
 	// mfc vars and messages
 	virtual BOOL OnInitDialog();
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
 	afx_msg void OnBnClickedReset();
 	afx_msg void OnBnClickedAdd();
-	afx_msg void OnBnClickedRemove();
+	afx_msg void OnBnClickedDelete();
 	afx_msg void OnLbnSelchangePresetbox();
 
 	CEdit m_NewSong;
@@ -196,6 +197,8 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
 	enum { IDD = IDD_PROPPAGE_SOUND_CROSSFADER };
 	void Populate( const CmusikCrossfader& fader );
+	void RevPopulate( CmusikCrossfader& fader );
+	int GetIndex();
 
 	CIntArray m_IDs;
 

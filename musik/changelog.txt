@@ -2,6 +2,12 @@
 
 a2:
  
+  - crossfader presets and settings are now available to
+    the user. see file -> preferences -> sound -> crossfader
+  - duplicate equalizer and crossfader preset names are
+    no longer allowed. this keeps stuff a lot easier
+    to maintain in the backend.
+  - lots of internal cleaning for musikCore's CmusikLibrary
   - redid the equalizer presets dialog. 
   - fixed tab ordering in all dialogs
   - added "Shuffle Now Playing" to playlist context menu

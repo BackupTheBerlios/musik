@@ -136,11 +136,15 @@ void CmusikEqualizerSets::OnBnClickedAdd()
 	CmusikNameEntry* pDlg = new CmusikNameEntry( this, &name );
 	if ( pDlg->DoModal() == IDOK && !name.IsEmpty() )
 	{
-		if ( m_Library->CreateEqualizer( settings, (CmusikString)name, true ) == 0 )
+		settings.m_Name = name;
+		int ret = m_Library->CreateEqualizer( settings, true );
+		if ( ret == 0 )
 		{
 			m_PresetBox.AddString( name );
 			m_IDs.push_back( settings.m_ID );
 		}
+		else if ( ret == MUSIK_LIBRARY_ID_EXISTS )
+			MessageBox( _T( "Sorry, but an equalizer preset with this name already exists. Please enter a unique name." ), MUSIK_VERSION_STR, MB_OK | MB_ICONWARNING );
 	}
 	delete pDlg;
 }
@@ -162,7 +166,7 @@ BOOL CmusikEqualizerSets::PreTranslateMessage(MSG* pMsg)
 		OnClose();
 		return true;
 	}
-	else if ( pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_DELETE )
+	else if ( pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_DELETE && GetFocus() == &m_PresetBox )
 	{
 		OnBnClickedDeleteSel();
 		return true;
@@ -194,6 +198,8 @@ void CmusikEqualizerSets::OnBnClickedRenameSel()
 
 				m_PresetBox.InsertString( nSel, rename );
 				m_IDs.insert( m_IDs.begin() + nSel, settings.m_ID );
+
+				m_PresetBox.SetCurSel( m_PresetBox.GetCount() - 1 );
 			}
 		}	
 	}
@@ -229,8 +235,10 @@ void CmusikEqualizerSets::GetActiveEqualizer( CmusikEQSettings* settings )
 void CmusikEqualizerSets::OnBnClickedDeleteSel()
 {
 	int nSel = GetIndex();
+
+	if ( nSel > -1 )
 	{
-		if ( m_Library->DeleteEqualizer( m_IDs.at( nSel ) ) == 0 )
+		if ( m_Library->DeleteEqualizer( m_IDs.at( nSel ) ) == MUSIK_LIBRARY_OK )
 		{
 			m_PresetBox.DeleteString( nSel );
 			m_IDs.erase( m_IDs.begin() + nSel );
@@ -239,7 +247,7 @@ void CmusikEqualizerSets::OnBnClickedDeleteSel()
 			if ( nSel == -1 )
 				nSel = 0;
 
-			m_PresetBox.SetSel( nSel );
+			m_PresetBox.SetCurSel( nSel );
 		}
 	}
 }

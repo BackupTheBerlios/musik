@@ -54,6 +54,7 @@
 #include "../musikCore/include/musikFilename.h"
 #include "../musikCore/include/musikLibrary.h"
 #include "../musikCore/include/musikPlayer.h"
+#include ".\musikprefsdlg.h"
 
 ///////////////////////////////////////////////////
 
@@ -512,7 +513,7 @@ void CmusikPrefsSoundCrossfader::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CmusikPrefsSoundCrossfader, CmusikPropertyPage)
 	ON_BN_CLICKED(IDC_RESET, OnBnClickedReset)
 	ON_BN_CLICKED(IDC_ADD, OnBnClickedAdd)
-	ON_BN_CLICKED(IDC_REMOVE, OnBnClickedRemove)
+	ON_BN_CLICKED(IDC_DELETE, OnBnClickedDelete)
 	ON_LBN_SELCHANGE(IDC_PRESETBOX, OnLbnSelchangePresetbox)
 END_MESSAGE_MAP()
 
@@ -557,26 +558,32 @@ void CmusikPrefsSoundCrossfader::Populate( const CmusikCrossfader& fader )
 
 ///////////////////////////////////////////////////
 
-void CmusikPrefsSoundCrossfader::CommitChanges()
+void CmusikPrefsSoundCrossfader::RevPopulate( CmusikCrossfader& fader )
 {
-	CmusikCrossfader fader_save;
-	
 	CString sWnd;
 
 	m_NewSong.GetWindowText( sWnd );
-	fader_save.m_NewSong = StringToFloat( sWnd.GetBuffer() );
+	fader.m_NewSong = StringToFloat( sWnd.GetBuffer() );
 
 	m_PauseResume.GetWindowText( sWnd );
-	fader_save.m_PauseResume = StringToFloat( sWnd.GetBuffer() );
+	fader.m_PauseResume = StringToFloat( sWnd.GetBuffer() );
 
 	m_Seek.GetWindowText( sWnd );
-	fader_save.m_Seek = StringToFloat( sWnd.GetBuffer() );
+	fader.m_Seek = StringToFloat( sWnd.GetBuffer() );
 
 	m_Stop.GetWindowText( sWnd );
-	fader_save.m_Stop = StringToFloat( sWnd.GetBuffer() );
+	fader.m_Stop = StringToFloat( sWnd.GetBuffer() );
 
 	m_Exit.GetWindowText( sWnd );
-	fader_save.m_Exit = StringToFloat( sWnd.GetBuffer() );
+	fader.m_Exit = StringToFloat( sWnd.GetBuffer() );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPrefsSoundCrossfader::CommitChanges()
+{
+	CmusikCrossfader fader_save;
+	RevPopulate( fader_save );
 
 	m_Library->UpdateDefaultCrossfader( fader_save );
 
@@ -610,21 +617,86 @@ void CmusikPrefsSoundCrossfader::OnBnClickedReset()
 
 void CmusikPrefsSoundCrossfader::OnBnClickedAdd()
 {
-	// TODO: Add your control notification handler code here
+	CmusikCrossfader fader_new;
+	RevPopulate( fader_new );
+
+	CString name;
+	CmusikNameEntry* pDlg = new CmusikNameEntry( this, &name );
+	if ( pDlg->DoModal() == IDOK && !name.IsEmpty() )
+	{
+		fader_new.m_Name = name;
+		int ret = m_Library->CreateCrossfader( &fader_new );
+		if ( ret == MUSIK_LIBRARY_OK )
+		{
+			m_PresetBox.AddString( name );
+			m_IDs.push_back( fader_new.m_ID );
+	
+			m_PresetBox.SetCurSel( m_PresetBox.GetCount() - 1 );
+		}
+		else if ( ret == MUSIK_LIBRARY_ID_EXISTS )
+			MessageBox( _T( "Sorry, but a crossfader preset with this name already exists. Please enter a unique name." ), MUSIK_VERSION_STR, MB_OK | MB_ICONWARNING );
+	}
+	delete pDlg;
 }
 
 ///////////////////////////////////////////////////
 
-void CmusikPrefsSoundCrossfader::OnBnClickedRemove()
+void CmusikPrefsSoundCrossfader::OnBnClickedDelete()
 {
-	// TODO: Add your control notification handler code here
+	int nSel = GetIndex();
+	
+	if ( nSel > -1 )
+	{
+		if ( m_Library->DeleteCrossfader( m_IDs.at( nSel ) ) == MUSIK_LIBRARY_OK )
+		{
+			m_PresetBox.DeleteString( nSel );
+			m_IDs.erase( m_IDs.begin() + nSel );
+	
+			--nSel;
+			if ( nSel == -1 )
+				nSel = 0;
+
+			m_PresetBox.SetCurSel( nSel );
+		}
+	}
+}
+
+///////////////////////////////////////////////////
+
+int CmusikPrefsSoundCrossfader::GetIndex()
+{
+	for ( size_t i = 0; i < m_IDs.size(); i++ )
+	{
+		if ( m_PresetBox.GetSel( i ) )
+			return i;
+	}
+
+	return -1;
 }
 
 ///////////////////////////////////////////////////
 
 void CmusikPrefsSoundCrossfader::OnLbnSelchangePresetbox()
 {
-	// TODO: Add your control notification handler code here
+	int nSel = GetIndex();
+
+	if ( nSel != -1 )
+	{
+		CmusikCrossfader fader;
+		m_Library->GetCrossfader( m_IDs.at( nSel ), &fader );
+
+		Populate( fader );
+	}
 }
 
 ///////////////////////////////////////////////////
+BOOL CmusikPrefsSoundCrossfader::PreTranslateMessage(MSG* pMsg)
+{
+	if ( pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_DELETE && GetFocus() == &m_PresetBox )
+	{
+		OnBnClickedDelete();
+		return true;
+	}
+
+	return CmusikPropertyPage::PreTranslateMessage(pMsg);
+}
