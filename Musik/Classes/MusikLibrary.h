@@ -116,7 +116,7 @@ public:
 	//--- getting items ---//
 	//---------------------//
 	CMusikSongArray GetStdPlaylistSongs	( wxArrayString *aFiles );
-	void 			GetSongFromFilename	( wxString filename, CMusikSong *pSong );
+	bool 			GetSongFromFilename	( const wxString& filename, CMusikSong *pSong );
 
 	//--------------------//
 	//--- getting info ---//

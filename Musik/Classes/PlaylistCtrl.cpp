@@ -247,20 +247,17 @@ void CPlaylistCtrl::ShowMenu( wxCommandEvent& WXUNUSED(event) )
 	if ( GetSelectedItemCount() > 0 )
 	{
 		//--- uncheck all ratings ---//
-		/*
 		playlist_context_rating_menu->Check( MUSIK_PLAYLIST_CONTEXT_UNRATED, false );
 		playlist_context_rating_menu->Check( MUSIK_PLAYLIST_CONTEXT_RATE1, false );
 		playlist_context_rating_menu->Check( MUSIK_PLAYLIST_CONTEXT_RATE2, false );
 		playlist_context_rating_menu->Check( MUSIK_PLAYLIST_CONTEXT_RATE3, false );
 		playlist_context_rating_menu->Check( MUSIK_PLAYLIST_CONTEXT_RATE4, false );
 		playlist_context_rating_menu->Check( MUSIK_PLAYLIST_CONTEXT_RATE5, false );
-		*/
 
 		//--- get rating for first sel ---//
 		int nFirst = g_Playlist.Item( GetNextItem( -1, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED ) ).Rating;
 		switch ( nFirst )
 		{
-			/*
 		case 0:
 			playlist_context_rating_menu->Check( MUSIK_PLAYLIST_CONTEXT_UNRATED, true );
 			break;
@@ -279,7 +276,6 @@ void CPlaylistCtrl::ShowMenu( wxCommandEvent& WXUNUSED(event) )
 		case 5:
 			playlist_context_rating_menu->Check( MUSIK_PLAYLIST_CONTEXT_RATE5, true );
 			break;
-			*/
 		}
 		PopupMenu( playlist_context_menu, pos );
 	}
