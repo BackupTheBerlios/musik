@@ -2,6 +2,8 @@
 
 a3:
 
+  - fixed a memory leak and potential crash relating to clearing
+    the library.
   - fixed a bug where adding synchronized paths with spaces
     could cause a "conflicting path" error.
   - fixed a bug where dropping from sources without a playlist

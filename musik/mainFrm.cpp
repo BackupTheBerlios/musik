@@ -2574,7 +2574,7 @@ void CMainFrame::OnFileClearlibrary()
 	}
 
 	// kill all tasks that may be accessing the database
-	KillTasks( false, true, true );
+	KillTasks( true, true, true );
 
 	// stop player
 	m_Player->Stop();

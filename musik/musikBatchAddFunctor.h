@@ -55,20 +55,20 @@ public:
 		m_Parent = parent; 
 	}
 
-	virtual void OnThreadStart()
+	virtual void OnTaskStart()
 	{
-		TRACE0( "CmusikBatchAdd thread started\n" );
+		TRACE0( "CmusikBatchAdd task started\n" );
 	}
 
-	virtual void OnThreadEnd( void* thr_addr = NULL )
+	virtual void OnTaskEnd( CmusikTask* task_addr = NULL )
 	{
-		TRACE0( "CmusikBatchAdd thread complete\n" );
+		TRACE0( "CmusikBatchAdd task complete\n" );
 
 		int WM_BATCHADD_END = RegisterWindowMessage( "BATCHADD_END" );
-		m_Parent->PostMessage( WM_BATCHADD_END, (WPARAM)thr_addr );	
+		m_Parent->PostMessage( WM_BATCHADD_END, (WPARAM)task_addr );	
 	}
 
-	virtual void OnThreadProgress( size_t progress )
+	virtual void OnTaskProgress( size_t progress )
 	{
 		CmusikString s;
 		s.Format( "CmusikBatchAdd %d%% complete.\n", progress );

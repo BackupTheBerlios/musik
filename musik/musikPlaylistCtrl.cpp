@@ -813,6 +813,8 @@ bool CmusikPlaylistCtrl::PlayItem( int n )
 		m_Player->Play( insert_at, MUSIK_CROSSFADER_NEW_SONG );
 
 	SetItemState( n, 0, LVIS_SELECTED );
+
+	return true;
 }
 
 ///////////////////////////////////////////////////

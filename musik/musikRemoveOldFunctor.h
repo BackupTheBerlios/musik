@@ -55,20 +55,20 @@ public:
 		m_Parent = parent; 
 	}
 
-	virtual void OnThreadStart()
+	virtual void OnTaskStart()
 	{
-		TRACE0( "CmusikRemoveOldFunctor thread started\n" );
+		TRACE0( "CmusikRemoveOldFunctor task started\n" );
 	}
 
-	virtual void OnThreadEnd( void* thr_addr = NULL )
+	virtual void OnTaskEnd( CmusikTask* task_addr = NULL )
 	{
-		TRACE0( "CmusikRemoveOldFunctor thread complete\n" );
+		TRACE0( "CmusikRemoveOldFunctor task complete\n" );
 
 		int WM_REMOVEOLD_END = RegisterWindowMessage( "REMOVEOLD_END" );
-		m_Parent->PostMessage( WM_REMOVEOLD_END, (WPARAM)thr_addr );		
+		m_Parent->PostMessage( WM_REMOVEOLD_END, (WPARAM)task_addr );		
 	}
 
-	virtual void OnThreadProgress( size_t progress )
+	virtual void OnTaskProgress( size_t progress )
 	{
 		CmusikString s;
 		s.Format( "CmusikRemoveOld %d%% complete.\n", progress );
