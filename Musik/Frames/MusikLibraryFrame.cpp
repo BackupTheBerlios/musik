@@ -301,15 +301,27 @@ void MusikLibraryFrame::PathsSave()
 //---------------------//
 void MusikLibraryFrame::Close( bool bCancel )
 {
+	//---------------------------------//
 	//--- if cancel / ok is pressed ---//
+	//---------------------------------//
 	if ( !bCancel )
 	{
 		PathsSave();
 		if ( bRebuild )
 		{
-			m_Close = true;	//--- this lets the thread know to close the dialog when its done ---//
+			//----------------------------------------------------//
+			//--- setting m_Close allows the thread to close	---//
+			//--- the dialog upon completion.						---//
+			//----------------------------------------------------//
+			m_Close = true;
 			UpdateLibrary( true );
-			return; //--- return premature, let thread close the dlg ---//
+			
+			//----------------------------------------------------//
+			//--- we need to return prematurely, to allow the	---//
+			//--- thread to process. it will handle dialog		---//
+			//--- clean up												---//
+			//----------------------------------------------------//
+			return;
 		}
 	}
 
@@ -319,7 +331,7 @@ void MusikLibraryFrame::Close( bool bCancel )
 		delete paths_context_menu;	
 		m_MenuCreated = false;
 	}
-	//--- cleanup ---//
+
 	g_MusikFrame->Enable( TRUE );
 	Destroy();
 }
