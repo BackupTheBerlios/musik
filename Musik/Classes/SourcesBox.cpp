@@ -150,6 +150,7 @@ BEGIN_EVENT_TABLE(CSourcesListBox, wxListCtrl)
 	EVT_MENU					(MUSIK_SOURCE_CONTEXT_DELETE,					CSourcesListBox::Delete					)	// Sources Context -> Delete
 	EVT_MENU					(MUSIK_SOURCE_CONTEXT_RENAME,					CSourcesListBox::Rename					)	// Sources Context -> Rename
 	EVT_MENU					(MUSIK_SOURCE_CONTEXT_SHOW_ICONS,				CSourcesListBox::ToggleIconsEvt			)	// Sources Context -> Show Icons
+	EVT_MENU					(MUSIK_SOURCE_CONTEXT_COPY_FILES,				CSourcesListBox::CopyFiles				)	// Sources Context -> Copy files
 	EVT_LIST_BEGIN_DRAG			(MUSIK_SOURCES,									CSourcesListBox::BeginDrag				)	// user drags files from sources
 	EVT_LIST_ITEM_SELECTED		(MUSIK_SOURCES,									CSourcesListBox::UpdateSel				)	// sources list sel
 	EVT_LIST_BEGIN_LABEL_EDIT	(MUSIK_SOURCES,									CSourcesListBox::BeginEditLabel			)   // user edits a playlist filename
@@ -180,6 +181,9 @@ CSourcesListBox::CSourcesListBox( wxPanel* parent, wxWindowID id )
 	sources_context_menu->AppendSeparator();
 	sources_context_menu->Append( MUSIK_SOURCE_CONTEXT_SHOW_ICONS, _( "&Show Icons" ), wxT( "" ), wxITEM_CHECK );
 	sources_context_menu->Check( MUSIK_SOURCE_CONTEXT_SHOW_ICONS, ( bool )g_Prefs.nShowSourcesIcons );
+	sources_context_menu->AppendSeparator();
+	sources_context_menu->Append( MUSIK_SOURCE_CONTEXT_COPY_FILES, _("Copy files to directory") );
+	
 
 	InsertColumn( 0, _( "Sources" ), wxLIST_FORMAT_CENTER );
 	SetDropTarget( new SourcesDropTarget( this ) );
@@ -259,6 +263,10 @@ void CSourcesListBox::EditQuery( wxCommandEvent& WXUNUSED(event) )
 void CSourcesListBox::ToggleIconsEvt( wxCommandEvent& WXUNUSED(event) )
 {
 	ToggleIcons();
+}
+
+void CSourcesListBox::CopyFiles( wxCommandEvent& WXUNUSED(event) )
+{
 }
 
 void CSourcesListBox::BeginDrag( wxListEvent &event )

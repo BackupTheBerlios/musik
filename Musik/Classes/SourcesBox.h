@@ -55,6 +55,7 @@ public:
 	void Delete					( wxCommandEvent& WXUNUSED(event) )	{ DelSel();		};
 	void Rename					( wxCommandEvent& WXUNUSED(event) )	{ RenameSel();	};
 	void ToggleIconsEvt			( wxCommandEvent& WXUNUSED(event) );
+	void CopyFiles				( wxCommandEvent& WXUNUSED(event) );
 	void BeginDrag				( wxListEvent& event );
 	void UpdateSel				( wxListEvent& pEvent );
 	void BeginEditLabel			( wxListEvent& pEvent );
