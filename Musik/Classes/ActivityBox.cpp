@@ -601,8 +601,7 @@ void CActivityBox::GetSelectedSongs( CMusikSongArray& array )
 					sParent += wxT(" like ");
 				}
 			}
-			sParent += wxT(" order by album,tracknum,filename");
-			g_Library.QuerySongs( sParent, array );
+			g_Library.QuerySongsWhere( sParent, array );
 			return;
 		}
 	}
