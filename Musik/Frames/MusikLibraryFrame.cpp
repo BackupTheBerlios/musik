@@ -394,8 +394,11 @@ void MusikLibraryFrame::PathsListRemoveSel()
 
 void MusikLibraryFrame::PathsListRemoveAll()
 {
-	wxListCtrlSelAll( lcPaths );
-	PathsListRemoveSel();
+	if ( lcPaths->GetItemCount() )
+	{
+		lcPaths->DeleteAllItems();
+		PathsSave();
+	}
 }
 
 void MusikLibraryFrame::PathsListProcessKeys( wxListEvent *event )
@@ -429,6 +432,8 @@ void MusikLibraryFrame::PathsListAdd()
 		}
 	}
 	delete dlgBrowse;
+
+	PathsSave();
 	bRebuild = true;
 }
 
