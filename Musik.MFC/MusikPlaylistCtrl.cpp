@@ -535,6 +535,9 @@ void CMusikPlaylistCtrl::GivePlaylistToPlayer()
 
 void CMusikPlaylistCtrl::OnLvnBegindrag(NMHDR *pNMHDR, LRESULT *pResult)
 {
+	// set cursor back to an arrow
+	SetCursor( LoadCursor( NULL, IDC_ARROW ) );
+
 	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
 
 	COleDataSource datasrc;
