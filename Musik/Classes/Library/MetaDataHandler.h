@@ -1,7 +1,7 @@
 #ifndef	 CMETADATAHANDLER_H
 #define CMETADATAHANDLER_H
 
-#include "../MusikDefines.h"
+#include "../../MusikDefines.h"
 #include "CInfo.h"
 struct tSongClass
 {
