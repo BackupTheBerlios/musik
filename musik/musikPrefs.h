@@ -105,6 +105,11 @@ public:
 	void SetLibraryShowsAllSongs( bool showall ){ m_Dlg_LibraryShowsAllSongs = showall; }
 	void SetMinimizeToTray( bool tray ){ m_Dlg_MinimizeToTray = tray; }
 
+	void AppendPlaylistColOrder( int col ){ m_Playlist_Order.push_back( col ); }
+	void AppendPlaylistColSize( int size ){ m_Playlist_Sizes.push_back( size ); }
+	void RemovePlaylistColOrder( int at ){ m_Playlist_Order.erase( m_Playlist_Order.begin() + at ); }
+	void RemovePlaylistColSize( int at ){ m_Playlist_Sizes.erase( m_Playlist_Sizes.begin() + at ); }
+
 	//
 	// selection box
 	//

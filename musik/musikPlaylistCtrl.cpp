@@ -62,6 +62,7 @@
 #include "../musikCore/include/musikBatchAdd.h"
 
 #include "MEMDC.H"
+#include ".\musikplaylistctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -89,6 +90,23 @@ BEGIN_MESSAGE_MAP(CmusikPlaylistCtrl, CmusikListCtrl)
 	ON_NOTIFY_REFLECT(LVN_MARQUEEBEGIN, OnLvnMarqueeBegin)
 	ON_NOTIFY_REFLECT(LVN_COLUMNCLICK, OnLvnColumnclick)
 	ON_NOTIFY_REFLECT(LVN_BEGINRDRAG, OnLvnBeginrdrag)
+	ON_COMMAND(ID_PLAYLISTCOLUMNS_ARTIST, OnPlaylistcolumnsArtist)
+	ON_NOTIFY(HDN_ENDTRACKA, 0, OnHdnEndtrack)
+	ON_NOTIFY(HDN_ENDTRACKW, 0, OnHdnEndtrack)
+	ON_COMMAND(ID_PLAYLISTCOLUMNS_ALBUM, OnPlaylistcolumnsAlbum)
+	ON_COMMAND(ID_PLAYLISTCOLUMNS_YEAR, OnPlaylistcolumnsYear)
+	ON_COMMAND(ID_PLAYLISTCOLUMNS_GENRE, OnPlaylistcolumnsGenre)
+	ON_COMMAND(ID_PLAYLISTCOLUMNS_TITLE, OnPlaylistcolumnsTitle)
+	ON_COMMAND(ID_PLAYLISTCOLUMNS_TRACKNUMBER, OnPlaylistcolumnsTracknumber)
+	ON_COMMAND(ID_PLAYLISTCOLUMNS_TIMEADDED, OnPlaylistcolumnsTimeadded)
+	ON_COMMAND(ID_PLAYLISTCOLUMNS_LASTPLAYED, OnPlaylistcolumnsLastplayed)
+	ON_COMMAND(ID_PLAYLISTCOLUMNS_FILESIZE, OnPlaylistcolumnsFilesize)
+	ON_COMMAND(ID_PLAYLISTCOLUMNS_FORMAT, OnPlaylistcolumnsFormat)
+	ON_COMMAND(ID_PLAYLISTCOLUMNS_DURATION, OnPlaylistcolumnsDuration)
+	ON_COMMAND(ID_PLAYLISTCOLUMNS_RATING, OnPlaylistcolumnsRating)
+	ON_COMMAND(ID_PLAYLISTCOLUMNS_TIMESPLAYED, OnPlaylistcolumnsTimesplayed)
+	ON_COMMAND(ID_PLAYLISTCOLUMNS_BITRATE, OnPlaylistcolumnsBitrate)
+	ON_COMMAND(ID_PLAYLISTCOLUMNS_FILENAME, OnPlaylistcolumnsFilename)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -313,6 +331,38 @@ void CmusikPlaylistCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 				sValue = m_SongInfoCache->GetValue( nItem - m_SongInfoCache->GetFirst(), MUSIK_LIBRARY_TYPE_TRACKNUM );
 				if ( sValue == _T( "0" ) )
 					sValue = _T( "" );
+			}
+
+			else if ( m_Prefs->GetPlaylistCol( nSub ) == MUSIK_LIBRARY_TYPE_YEAR )
+			{
+				sValue = m_SongInfoCache->GetValue( nItem - m_SongInfoCache->GetFirst(), MUSIK_LIBRARY_TYPE_YEAR );
+				if ( sValue == _T( "0" ) )
+					sValue = _T( "" );
+			}
+
+			else if ( m_Prefs->GetPlaylistCol( nSub ) == MUSIK_LIBRARY_TYPE_TIMESPLAYED )
+			{
+				sValue = m_SongInfoCache->GetValue( nItem - m_SongInfoCache->GetFirst(), MUSIK_LIBRARY_TYPE_TIMESPLAYED );
+				if ( sValue == _T( "0" ) )
+					sValue = _T( "" );
+			}
+
+			else if ( m_Prefs->GetPlaylistCol( nSub ) == MUSIK_LIBRARY_TYPE_FILESIZE )
+			{
+				sValue = m_SongInfoCache->GetValue( nItem - m_SongInfoCache->GetFirst(), MUSIK_LIBRARY_TYPE_FILESIZE );
+				float fval = (float)atoi( sValue.GetBuffer() );
+
+				fval /= ( 1024.0 * 1024.0 );
+				sValue.Format( _T( "%.2f mb" ), fval );
+			}
+
+			else if ( m_Prefs->GetPlaylistCol( nSub ) == MUSIK_LIBRARY_TYPE_FORMAT )
+			{
+				sValue = m_SongInfoCache->GetValue( nItem - m_SongInfoCache->GetFirst(), MUSIK_LIBRARY_TYPE_FORMAT );
+				if ( sValue == _T( "1" ) )
+					sValue = _T( "ogg" );
+				else
+					sValue = _T( "mp3" );
 			}
 
 			// otherwise, just use the value we are supposed to
@@ -1392,3 +1442,250 @@ void CmusikPlaylistCtrl::ShowContextMenu()
 
 ///////////////////////////////////////////////////
 
+int CmusikPlaylistCtrl::GetColumnPos( int field )
+{
+	for ( size_t i = 0; i < m_Prefs->GetPlaylistColCount(); i++ )
+	{
+		if ( m_Prefs->GetPlaylistCol( i ) == field )
+			return i;
+	}
+
+	return -1;
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::ShowHeaderMenu()
+{
+	CPoint pos;
+	::GetCursorPos( &pos );
+
+	CMenu main_menu;
+	CMenu* popup_menu;
+
+	main_menu.LoadMenu( IDR_PLAYLIST_COLUMNS_MENU );
+	popup_menu = main_menu.GetSubMenu( 0 );
+
+	// check / enable / disable menu items
+	CIntArray items = m_Prefs->GetPlaylistOrder();
+
+	for ( size_t i = 0; i < items.size(); i++ )
+	{
+		switch( items.at( i ) )
+		{
+		case MUSIK_LIBRARY_TYPE_ARTIST:
+			popup_menu->CheckMenuItem( ID_PLAYLISTCOLUMNS_ARTIST, MF_CHECKED );
+			break;
+
+		case MUSIK_LIBRARY_TYPE_ALBUM:
+			popup_menu->CheckMenuItem( ID_PLAYLISTCOLUMNS_ALBUM, MF_CHECKED );
+			break;
+
+		case MUSIK_LIBRARY_TYPE_YEAR:
+			popup_menu->CheckMenuItem( ID_PLAYLISTCOLUMNS_YEAR, MF_CHECKED );
+			break;
+
+		case MUSIK_LIBRARY_TYPE_GENRE:
+			popup_menu->CheckMenuItem( ID_PLAYLISTCOLUMNS_GENRE, MF_CHECKED );
+			break;
+
+		case MUSIK_LIBRARY_TYPE_TITLE:
+			popup_menu->CheckMenuItem( ID_PLAYLISTCOLUMNS_TITLE, MF_CHECKED );
+			break;
+
+		case MUSIK_LIBRARY_TYPE_TRACKNUM:
+			popup_menu->CheckMenuItem( ID_PLAYLISTCOLUMNS_TRACKNUMBER, MF_CHECKED );
+			break;
+
+		case MUSIK_LIBRARY_TYPE_TIMEADDED:
+			popup_menu->CheckMenuItem( ID_PLAYLISTCOLUMNS_TIMEADDED, MF_CHECKED );
+			break;
+
+		case MUSIK_LIBRARY_TYPE_LASTPLAYED:
+			popup_menu->CheckMenuItem( ID_PLAYLISTCOLUMNS_LASTPLAYED, MF_CHECKED );
+			break;
+
+		case MUSIK_LIBRARY_TYPE_FILESIZE:
+			popup_menu->CheckMenuItem( ID_PLAYLISTCOLUMNS_FILESIZE, MF_CHECKED );
+			break;
+
+		case MUSIK_LIBRARY_TYPE_FORMAT:
+			popup_menu->CheckMenuItem( ID_PLAYLISTCOLUMNS_FORMAT, MF_CHECKED );
+			break;
+
+		case MUSIK_LIBRARY_TYPE_DURATION:
+			popup_menu->CheckMenuItem( ID_PLAYLISTCOLUMNS_DURATION, MF_CHECKED );
+			break;
+
+		case MUSIK_LIBRARY_TYPE_RATING:
+			popup_menu->CheckMenuItem( ID_PLAYLISTCOLUMNS_RATING, MF_CHECKED );
+			break;
+
+		case MUSIK_LIBRARY_TYPE_TIMESPLAYED:
+			popup_menu->CheckMenuItem( ID_PLAYLISTCOLUMNS_TIMESPLAYED, MF_CHECKED );
+			break;
+
+		case MUSIK_LIBRARY_TYPE_BITRATE:
+			popup_menu->CheckMenuItem( ID_PLAYLISTCOLUMNS_BITRATE, MF_CHECKED );
+			break;
+
+		case MUSIK_LIBRARY_TYPE_FILENAME:
+			popup_menu->CheckMenuItem( ID_PLAYLISTCOLUMNS_FILENAME, MF_CHECKED );
+			break;
+
+		case MUSIK_LIBRARY_TYPE_EQUALIZER:
+			popup_menu->CheckMenuItem( ID_EQUALIZER_LOCKCHANNELS, MF_CHECKED );
+			break;
+		}
+	}
+		
+	popup_menu->TrackPopupMenu( 0, pos.x, pos.y, this );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::AddColumn( int field, bool refresh_cols )
+{
+	m_Prefs->AppendPlaylistColOrder( field );
+	m_Prefs->AppendPlaylistColSize( 50 );
+
+	if ( refresh_cols )
+		ResetColumns();
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::RemoveColumn( int at, bool refresh_cols )
+{
+	m_Prefs->RemovePlaylistColOrder( at );
+	m_Prefs->RemovePlaylistColSize( at );
+
+	if ( refresh_cols )
+		ResetColumns();
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::OnHdnEndtrack(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	SaveColumns();
+	*pResult = 0;
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::ToggleColumn( int field )
+{
+	int pos = GetColumnPos( field );
+	if ( pos == -1 )
+		AddColumn( field );
+	else
+		RemoveColumn( pos );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::OnPlaylistcolumnsArtist()
+{
+	ToggleColumn( MUSIK_LIBRARY_TYPE_ARTIST );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::OnPlaylistcolumnsAlbum()
+{
+	ToggleColumn( MUSIK_LIBRARY_TYPE_ALBUM );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::OnPlaylistcolumnsYear()
+{
+	ToggleColumn( MUSIK_LIBRARY_TYPE_YEAR );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::OnPlaylistcolumnsGenre()
+{
+	ToggleColumn( MUSIK_LIBRARY_TYPE_GENRE );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::OnPlaylistcolumnsTitle()
+{
+	ToggleColumn( MUSIK_LIBRARY_TYPE_TITLE );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::OnPlaylistcolumnsTracknumber()
+{
+	ToggleColumn( MUSIK_LIBRARY_TYPE_TRACKNUM );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::OnPlaylistcolumnsTimeadded()
+{
+	ToggleColumn( MUSIK_LIBRARY_TYPE_TIMEADDED );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::OnPlaylistcolumnsLastplayed()
+{
+	ToggleColumn( MUSIK_LIBRARY_TYPE_LASTPLAYED );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::OnPlaylistcolumnsFilesize()
+{
+	ToggleColumn( MUSIK_LIBRARY_TYPE_FILESIZE );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::OnPlaylistcolumnsFormat()
+{
+	ToggleColumn( MUSIK_LIBRARY_TYPE_FORMAT );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::OnPlaylistcolumnsDuration()
+{
+	ToggleColumn( MUSIK_LIBRARY_TYPE_DURATION );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::OnPlaylistcolumnsRating()
+{
+	ToggleColumn( MUSIK_LIBRARY_TYPE_RATING );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::OnPlaylistcolumnsTimesplayed()
+{
+	ToggleColumn( MUSIK_LIBRARY_TYPE_TIMESPLAYED );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::OnPlaylistcolumnsBitrate()
+{
+	ToggleColumn( MUSIK_LIBRARY_TYPE_BITRATE );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::OnPlaylistcolumnsFilename()
+{
+	ToggleColumn( MUSIK_LIBRARY_TYPE_FILENAME );
+}
+
+///////////////////////////////////////////////////

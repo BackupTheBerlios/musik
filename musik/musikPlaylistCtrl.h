@@ -82,6 +82,11 @@ public:
 	void ScrollToCurr();
 
 	void ShowContextMenu();
+	void ShowHeaderMenu();
+	int GetColumnPos( int field );
+	void AddColumn( int field, bool refresh_cols = true );
+	void RemoveColumn( int at, bool refresh_cols = true );
+	void ToggleColumn ( int field );
 
 	// call when new playlist is set becuase the
 	// previous playlist's sorting should not apply
@@ -188,6 +193,11 @@ protected:
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnLvnMarqueeBegin(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnLvnColumnclick(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnPlaylistcolumnsArtist();
+	afx_msg void OnLvnBeginrdrag(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnHdnEndtrack(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnPlaylistcolumnsAlbum();
+	afx_msg void OnPlaylistcolumnsYear();
 
 	// CmusikPlaylistDropTarget calls
 	// this function once files have
@@ -216,7 +226,19 @@ private:
 	int m_LastCol;
 	bool m_Ascend;
 public:
-	afx_msg void OnLvnBeginrdrag(NMHDR *pNMHDR, LRESULT *pResult);
+
+	afx_msg void OnPlaylistcolumnsGenre();
+	afx_msg void OnPlaylistcolumnsTitle();
+	afx_msg void OnPlaylistcolumnsTracknumber();
+	afx_msg void OnPlaylistcolumnsTimeadded();
+	afx_msg void OnPlaylistcolumnsLastplayed();
+	afx_msg void OnPlaylistcolumnsFilesize();
+	afx_msg void OnPlaylistcolumnsFormat();
+	afx_msg void OnPlaylistcolumnsDuration();
+	afx_msg void OnPlaylistcolumnsRating();
+	afx_msg void OnPlaylistcolumnsTimesplayed();
+	afx_msg void OnPlaylistcolumnsBitrate();
+	afx_msg void OnPlaylistcolumnsFilename();
 };
 
 ///////////////////////////////////////////////////
