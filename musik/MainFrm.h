@@ -42,6 +42,8 @@
 #include "musikSourcesCtrl.h"
 #include "musikNowPlayingCtrl.h"
 #include "musikSelectionCtrl.h"
+#include "musikCrossfaderCtrl.h"
+#include "musikEqualizerCtrl.h"
 
 #include "musikPlaylistCtrl.h"
 #include "musikPlaylistView.h"
@@ -54,6 +56,8 @@
 // problems may arise. they are the
 // ids for the dock bars
 
+#define ID_CROSSFADER 1342
+#define ID_EQUALIZER 1343
 #define ID_NOWPLAYING 1344
 #define ID_SOURCESBOX 1345
 #define ID_SELECTIONBOX_START 1346
@@ -163,7 +167,9 @@ protected:
 	CmusikPlaylistView*		m_wndView;
 	CmusikSourcesBar*		m_wndSources;
 	CmusikNowPlayingBar*	m_wndNowPlaying;
-	CmusikSelectionBar*		m_wndSelectionBars[4];
+	CmusikSelectionBar*		m_wndSelectionBars[12];
+	CmusikCrossfaderBar*	m_wndCrossfader;
+	CmusikEqualizerBar*		m_wndEqualizer;
 
 	// utility functions
 	void DockBarLeftOf( CSizingControlBar* Bar, CSizingControlBar* LeftOf );
@@ -238,6 +244,10 @@ public:
 	afx_msg void OnUnsynchronizedtagsWritetofile();
 	afx_msg void OnUnsynchronizedtagsFinalizefordatabaseonly();
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
+	afx_msg void OnUpdateViewCrossfader(CCmdUI *pCmdUI);
+	afx_msg void OnViewCrossfader();
+	afx_msg void OnViewEqualizer();
+	afx_msg void OnUpdateViewEqualizer(CCmdUI *pCmdUI);
 };
 
 ///////////////////////////////////////////////////

@@ -4,6 +4,9 @@
 #include "musik.h"
 
 #include "musikCrossfaderCtrl.h"
+#include "musikPrefs.h"
+
+#include "MEMDC.H"
 
 ///////////////////////////////////////////////////
 
@@ -93,7 +96,31 @@ CmusikCrossfaderCtrl::~CmusikCrossfaderCtrl()
 ///////////////////////////////////////////////////
 
 BEGIN_MESSAGE_MAP(CmusikCrossfaderCtrl, CWnd)
+	ON_WM_PAINT()
+	ON_WM_ERASEBKGND()
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
 
+void CmusikCrossfaderCtrl::OnPaint()
+{
+	CPaintDC dc(this);
+	CRect rect;
+	GetClientRect(&rect);
+	CMemDC memDC(&dc, &rect);
+	
+	CRect clip;
+	memDC.GetClipBox(&clip);
+	memDC.FillSolidRect( clip, m_Prefs->MUSIK_COLOR_BTNFACE );
+
+	DefWindowProc( WM_PAINT, (WPARAM)memDC->m_hDC, (LPARAM)0 );
+}
+
+///////////////////////////////////////////////////
+
+BOOL CmusikCrossfaderCtrl::OnEraseBkgnd(CDC* pDC)
+{
+	return false;
+}
+
+///////////////////////////////////////////////////

@@ -4,6 +4,9 @@
 #include "musik.h"
 
 #include "musikEqualizerCtrl.h"
+#include "musikPrefs.h"
+
+#include "MEMDC.H"
 
 ///////////////////////////////////////////////////
 
@@ -92,7 +95,31 @@ CmusikEqualizerCtrl::~CmusikEqualizerCtrl()
 ///////////////////////////////////////////////////
 
 BEGIN_MESSAGE_MAP(CmusikEqualizerCtrl, CWnd)
+	ON_WM_PAINT()
+	ON_WM_ERASEBKGND()
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
 
+void CmusikEqualizerCtrl::OnPaint()
+{
+	CPaintDC dc(this);
+	CRect rect;
+	GetClientRect(&rect);
+	CMemDC memDC(&dc, &rect);
+	
+	CRect clip;
+	memDC.GetClipBox(&clip);
+	memDC.FillSolidRect( clip, m_Prefs->MUSIK_COLOR_BTNFACE );
+
+	DefWindowProc( WM_PAINT, (WPARAM)memDC->m_hDC, (LPARAM)0 );
+}
+
+///////////////////////////////////////////////////
+
+BOOL CmusikEqualizerCtrl::OnEraseBkgnd(CDC* pDC)
+{
+	return false;
+}
+
+///////////////////////////////////////////////////

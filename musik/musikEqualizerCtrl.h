@@ -28,6 +28,8 @@ class CmusikDockBar;
 
 class CmusikEqualizerBar : public baseCmusikEqualizerBar
 {
+public:
+
 	// construct / destruct
 	CmusikEqualizerBar( CmusikLibrary* library, CmusikPlayer* player, CmusikPrefs* prefs );
 	virtual ~CmusikEqualizerBar();
@@ -64,6 +66,10 @@ public:
 	// construct and destruct
 	CmusikEqualizerCtrl( CmusikLibrary* library, CmusikPlayer* player, CmusikPrefs* prefs );
 	virtual ~CmusikEqualizerCtrl();
+
+	// message maps
+	afx_msg void OnPaint();
+	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 
 protected:
 

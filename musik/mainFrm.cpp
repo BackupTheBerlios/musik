@@ -60,6 +60,7 @@
 #include <Direct.h>
 
 #include "3rdparty/TreePropSheet.h"
+#include ".\mainfrm.h"
 
 ///////////////////////////////////////////////////
 
@@ -125,6 +126,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_SYSCOLORCHANGE()
+	ON_WM_SYSCOMMAND()
 
 	// menu 
 	ON_COMMAND(ID_FILE_PREFERENCES, OnFilePreferences)
@@ -140,6 +142,11 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_COMMAND(ID_PLAYBACKMODE_REPEATSINGLE, OnPlaybackmodeRepeatsingle)
 	ON_COMMAND(ID_PLAYBACKMODE_REPEATPLAYLIST, OnPlaybackmodeRepeatplaylist)
 	ON_COMMAND(ID_PLAYBACKMODE_INTRO, OnPlaybackmodeIntro)
+	ON_COMMAND(ID_UNSYNCHRONIZEDTAGS_VIEW, OnUnsynchronizedtagsView)
+	ON_COMMAND(ID_UNSYNCHRONIZEDTAGS_WRITETOFILE, OnUnsynchronizedtagsWritetofile)
+	ON_COMMAND(ID_UNSYNCHRONIZEDTAGS_FINALIZEFORDATABASEONLY, OnUnsynchronizedtagsFinalizefordatabaseonly)
+	ON_COMMAND(ID_VIEW_CROSSFADER, OnViewCrossfader)
+	ON_COMMAND(ID_VIEW_EQUALIZER, OnViewEqualizer)
 
 	// update ui
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SOURCES, OnUpdateViewSources)
@@ -152,6 +159,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_UPDATE_COMMAND_UI(ID_PLAYBACKMODE_REPEATSINGLE, OnUpdatePlaybackmodeRepeatsingle)
 	ON_UPDATE_COMMAND_UI(ID_PLAYBACKMODE_REPEATPLAYLIST, OnUpdatePlaybackmodeRepeatplaylist)
 	ON_UPDATE_COMMAND_UI(ID_PLAYBACKMODE_INTRO, OnUpdatePlaybackmodeIntro)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_CROSSFADER, OnUpdateViewCrossfader)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_EQUALIZER, OnUpdateViewEqualizer)
 
 	// custom message maps
 	ON_REGISTERED_MESSAGE( WM_SELBOXUPDATE, OnUpdateSel )
@@ -174,10 +183,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_REMOVEOLD_END, OnThreadEnd )
 	ON_REGISTERED_MESSAGE( WM_PLAYER_PLAYSEL, OnPlayerPlaySel )
 	ON_REGISTERED_MESSAGE( WM_BATCHADD_VERIFY_PLAYLIST, OnVerifyPlaylist )
-	ON_COMMAND(ID_UNSYNCHRONIZEDTAGS_VIEW, OnUnsynchronizedtagsView)
-	ON_COMMAND(ID_UNSYNCHRONIZEDTAGS_WRITETOFILE, OnUnsynchronizedtagsWritetofile)
-	ON_COMMAND(ID_UNSYNCHRONIZEDTAGS_FINALIZEFORDATABASEONLY, OnUnsynchronizedtagsFinalizefordatabaseonly)
-	ON_WM_SYSCOMMAND()
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -437,6 +442,18 @@ void CMainFrame::Cleanmusik()
 		delete m_RemoveOldFnct;
 		m_RemoveOldFnct = NULL;
 	}
+
+	if ( m_wndCrossfader )
+	{
+		delete m_wndCrossfader;
+		m_wndCrossfader = NULL;
+	}
+
+	if ( m_wndEqualizer )
+	{
+		delete m_wndEqualizer;
+		m_wndEqualizer = NULL;
+	}
 }
 
 ///////////////////////////////////////////////////
@@ -632,6 +649,16 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndSources = new CmusikSourcesBar( this, m_Library, m_Player, m_Prefs, m_uSourcesDrop );
 	m_wndSources->Create( _T( "Sources" ), this, ID_SOURCESBOX );
 	DockControlBar( m_wndSources, AFX_IDW_DOCKBAR_LEFT );
+
+	// crossfader control
+	m_wndCrossfader = new CmusikCrossfaderBar( m_Library, m_Player, m_Prefs );
+	m_wndCrossfader->Create( _T( "Crossfader" ), this, ID_CROSSFADER );
+	FloatControlBar( m_wndCrossfader, CPoint( 14, 14 ) );
+
+	// equalizer control
+	m_wndEqualizer = new CmusikEqualizerBar( m_Library, m_Player, m_Prefs );
+	m_wndEqualizer->Create( _T( "Equalizer" ), this, ID_EQUALIZER );
+	FloatControlBar( m_wndEqualizer, CPoint( 28, 28 ) );
 
 	// append the system menu
 	CMenu* pMenu = GetSystemMenu( false );
@@ -1770,6 +1797,40 @@ void CMainFrame::OnSysCommand(UINT nID, LPARAM lParam)
 	}
 
 	CFrameWnd::OnSysCommand(nID, lParam);
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnUpdateViewCrossfader(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck( m_wndCrossfader->IsVisible() );
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnViewCrossfader()
+{
+	if ( m_wndCrossfader->IsVisible() )
+		ShowControlBar( m_wndCrossfader, FALSE, FALSE );
+	else
+        ShowControlBar( m_wndCrossfader, TRUE, FALSE );
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnViewEqualizer()
+{
+	if ( m_wndEqualizer->IsVisible() )
+		ShowControlBar( m_wndEqualizer, FALSE, FALSE );
+	else
+        ShowControlBar( m_wndEqualizer, TRUE, FALSE );
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnUpdateViewEqualizer(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck( m_wndEqualizer->IsVisible() );
 }
 
 ///////////////////////////////////////////////////

@@ -103,14 +103,14 @@ BEGIN
     END
     POPUP "&View"
     BEGIN
-        MENUITEM "&Sources\tCtrl+Shift+S",      ID_VIEW_SOURCES
-        MENUITEM "Selection &Boxes\tCtrl+Shift+B", ID_VIEW_SELECTIONBOXES
-        MENUITEM "Playlist &Information\tCtrl+Shift+I", 
+        MENUITEM "&Sources\tCtrl+Shift+A",      ID_VIEW_SOURCES
+        MENUITEM "Selection &Boxes\tCtrl+Shift+S", ID_VIEW_SELECTIONBOXES
+        MENUITEM "&Now Playing\tCtrl+Shift+D",  ID_VIEW_NOWPLAYING
+        MENUITEM "Playlist &Information\tCtrl+Shift+F", 
                                                 ID_VIEW_PLAYLISTINFORMATION
-        MENUITEM "&Now Playing\tCtrl+Shift+N",  ID_VIEW_NOWPLAYING
         MENUITEM SEPARATOR
-        MENUITEM "Crossfader",                  ID_VIEW_CROSSFADER
-        MENUITEM "Equalizer",                   ID_VIEW_EQUALIZER
+        MENUITEM "Crossfader\tCtrl+Shift+Z",    ID_VIEW_CROSSFADER
+        MENUITEM "Equalizer\tCtrl+Shift+X",     ID_VIEW_EQUALIZER
     END
     POPUP "&Audio"
     BEGIN
@@ -143,6 +143,8 @@ END
 
 IDR_MAINFRAME ACCELERATORS 
 BEGIN
+    "D",            ID_ADD_DIRECTORY,       VIRTKEY, CONTROL, NOINVERT
+    "O",            ID_ADD_FILES,           VIRTKEY, CONTROL, NOINVERT
     "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
     VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
     VK_DELETE,      ID_EDIT_CUT,            VIRTKEY, SHIFT, NOINVERT
@@ -151,21 +153,23 @@ BEGIN
     VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT, NOINVERT
     VK_BACK,        ID_EDIT_UNDO,           VIRTKEY, ALT, NOINVERT
     "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL, NOINVERT
+    "M",            ID_FILE_MANAGEDIRECTORIES, VIRTKEY, CONTROL, NOINVERT
     "P",            ID_FILE_PREFERENCES,    VIRTKEY, CONTROL, NOINVERT
     "S",            ID_FILE_SAVEPLAYLIST,   VIRTKEY, CONTROL, NOINVERT
     VK_F6,          ID_NEXT_PANE,           VIRTKEY, NOINVERT
-    "D",            ID_ADD_DIRECTORY,       VIRTKEY, CONTROL, NOINVERT
-    "O",            ID_ADD_FILES,           VIRTKEY, CONTROL, NOINVERT
     VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
-    "N",            ID_VIEW_NOWPLAYING,     VIRTKEY, SHIFT, CONTROL, 
+    "D",            ID_VIEW_NOWPLAYING,     VIRTKEY, SHIFT, CONTROL, 
                                                     NOINVERT
-    "I",            ID_VIEW_PLAYLISTINFORMATION, VIRTKEY, SHIFT, CONTROL, 
+    "F",            ID_VIEW_PLAYLISTINFORMATION, VIRTKEY, SHIFT, CONTROL, 
                                                     NOINVERT
-    "B",            ID_VIEW_SELECTIONBOXES, VIRTKEY, SHIFT, CONTROL, 
+    "S",            ID_VIEW_SELECTIONBOXES, VIRTKEY, SHIFT, CONTROL, 
                                                     NOINVERT
-    "S",            ID_VIEW_SOURCES,        VIRTKEY, SHIFT, CONTROL, 
+    "A",            ID_VIEW_SOURCES,        VIRTKEY, SHIFT, CONTROL, 
                                                     NOINVERT
-    "M",            ID_FILE_MANAGEDIRECTORIES, VIRTKEY, CONTROL, NOINVERT
+    "Z",            ID_VIEW_CROSSFADER,     VIRTKEY, SHIFT, CONTROL, 
+                                                    NOINVERT
+    "X",            ID_VIEW_EQUALIZER,      VIRTKEY, SHIFT, CONTROL, 
+                                                    NOINVERT
 END
 
 

@@ -28,6 +28,8 @@ class CmusikDockBar;
 
 class CmusikCrossfaderBar : public baseCmusikCrossfaderBar
 {
+public:
+
 	// construct / destruct
 	CmusikCrossfaderBar( CmusikLibrary* library, CmusikPlayer* player, CmusikPrefs* prefs );
 	virtual ~CmusikCrossfaderBar();
@@ -64,6 +66,10 @@ public:
 	// construct and destruct
 	CmusikCrossfaderCtrl( CmusikLibrary* library, CmusikPlayer* player, CmusikPrefs* prefs );
 	virtual ~CmusikCrossfaderCtrl();
+
+	// mfc message maps
+	afx_msg void OnPaint();
+	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 
 protected:
 
