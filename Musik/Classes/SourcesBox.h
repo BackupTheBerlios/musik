@@ -40,7 +40,7 @@ enum EMUSIK_LIBRARY_TYPE
 class CSourcesListBox : public wxListCtrl
 {
 public:
-	CSourcesListBox( wxPanel *parent, wxWindowID id );
+	CSourcesListBox( wxPanel *parent );
 	~CSourcesListBox();
 
 	//--------------//
@@ -60,6 +60,7 @@ public:
 	void BeginEditLabel			( wxListEvent& pEvent );
 	void EndEditLabel			( wxListEvent& pEvent );
 	void TranslateKeys			( wxListEvent& pEvent );
+	void OnSourcesColSize		( wxListEvent& event ){ event.Veto(); }
 
 	//------------------------//
 	//--- sources list i/o ---//
@@ -141,7 +142,7 @@ private:
 class CSourcesBox : public wxPanel
 {
 public:
-	CSourcesBox( wxWindow *parent, wxWindowID id );
+	CSourcesBox( wxWindow *parent );
 	~CSourcesBox();
 
 	//-------------------------------------------------------------//
@@ -153,8 +154,8 @@ public:
 	void RescanPlaylistDir		( ) { pListBox->RescanPlaylistDir();	}
 	void Update					( ) { pListBox->Update();				}
 
-	wxString PromptDynamicPlaylist( wxString sQuery )	{ return pListBox->PromptDynamicPlaylist( sQuery ); }
 
+	wxString PromptDynamicPlaylist( wxString sQuery )	{ return pListBox->PromptDynamicPlaylist( sQuery ); }
 private:
 	CSourcesListBox *pListBox;
 	wxBoxSizer		*pSizer;

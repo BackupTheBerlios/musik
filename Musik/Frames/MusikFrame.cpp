@@ -104,7 +104,7 @@ MusikFrame::MusikFrame()
 	//---------------//
 	//--- sources ---//
 	//---------------//
-	g_SourcesCtrl = new CSourcesBox( this, MUSIK_SOURCES );
+	g_SourcesCtrl = new CSourcesBox( this );
 
 	//--------------------//
 	//--- simple query ---//

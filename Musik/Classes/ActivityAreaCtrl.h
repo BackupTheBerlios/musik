@@ -35,7 +35,8 @@ public:
 	void OnActivityBox2SelDrag		( wxListEvent& WXUNUSED(event) );
 	void OnActivityBox3SelDrag		( wxListEvent& WXUNUSED(event) );
 	void OnActivityBox4SelDrag		( wxListEvent& WXUNUSED(event) );
-	void OnActivityBoxActivated	( wxListEvent& event );
+	void OnActivityBoxColResize		( wxListEvent& event ){ event.Veto(); }
+	void OnActivityBoxActivated		( wxListEvent& event );
 	
 	//--- member functions ---//
 	void UpdateSel( CActivityBox *pSel );

@@ -157,10 +157,11 @@ BEGIN_EVENT_TABLE(CSourcesListBox, wxListCtrl)
 	EVT_LIST_END_LABEL_EDIT		(MUSIK_SOURCES,									CSourcesListBox::EndEditLabel			)   // user edits a playlist filename
 	EVT_LIST_KEY_DOWN			(MUSIK_SOURCES,									CSourcesListBox::TranslateKeys			)	// user presses a key in the sources list
 	EVT_LIST_ITEM_ACTIVATED		(MUSIK_SOURCES,									CSourcesListBox::OnUpdateSel			)	// user wants to redisplay playlist
+	EVT_LIST_COL_BEGIN_DRAG		(MUSIK_SOURCES,									CSourcesListBox::OnSourcesColSize		)
 END_EVENT_TABLE()
 
-CSourcesListBox::CSourcesListBox( wxPanel* parent, wxWindowID id )
-	: wxListCtrl( parent, id, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxLC_ALIGN_LEFT | wxLC_REPORT | wxLC_VIRTUAL | wxLC_EDIT_LABELS | wxLC_SINGLE_SEL | wxNO_BORDER & ~wxHSCROLL )
+CSourcesListBox::CSourcesListBox( wxPanel* parent )
+	: wxListCtrl( parent, MUSIK_SOURCES, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxLC_ALIGN_LEFT | wxLC_REPORT | wxLC_VIRTUAL | wxLC_EDIT_LABELS | wxLC_SINGLE_SEL | wxNO_BORDER & ~wxHSCROLL )
 {
 	//--- initialize variables ---//
 	m_CurSel = 0;
@@ -1088,11 +1089,11 @@ void CSourcesListBox::ShowIconsChecked( bool bCheck )
 	sources_context_menu->Check( MUSIK_SOURCE_CONTEXT_SHOW_ICONS, bCheck );
 }
 
-CSourcesBox::CSourcesBox( wxWindow *parent, wxWindowID id )
+CSourcesBox::CSourcesBox( wxWindow *parent )
 	: wxPanel( parent, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxSIMPLE_BORDER | wxCLIP_CHILDREN )
 {
 	//--- CSourcesListBox ---//
-	pListBox	= new CSourcesListBox( this, id );
+	pListBox	= new CSourcesListBox( this );
 	
 	//--- top sizer ---//
 	pSizer = new wxBoxSizer( wxVERTICAL );
