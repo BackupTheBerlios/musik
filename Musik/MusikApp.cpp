@@ -29,6 +29,10 @@ bool MusikApp::OnInit()
 {
 	g_FirstRun = true;
 
+	//--- setup our home dir ---//
+	if ( !wxDirExists( MUSIK_HOME_DIR ) )
+		wxMkdir( MUSIK_HOME_DIR );
+
 	//-----------------------------------------//
 	//--- check to see if a new version has	---//
 	//--- been installed. if it has, see	---//
@@ -38,10 +42,6 @@ bool MusikApp::OnInit()
 	g_Prefs.LoadPrefs();
 	CheckVersion();
 	
-	//--- setup our home dir ---//
-	if ( !wxDirExists( MUSIK_HOME_DIR ) )
-		wxMkdir( MUSIK_HOME_DIR );
-
 	//--- assure playlists directory exists ---//
 	if ( !wxDirExists( MUSIK_PLAYLIST_DIR ) )
 		wxMkdir( MUSIK_PLAYLIST_DIR );
