@@ -43,6 +43,7 @@
 #include "MainFrmFunctor.h"
 #include "musikBatchAddFunctor.h"
 #include "musikFileDialog.h"
+#include "musikTimeCtrl.h"
 
 #include "../musikCore/include/StdString.h"
 #include "../musikCore/include/musikLibrary.h"
@@ -665,6 +666,8 @@ LRESULT CMainFrame::OnSongChange( WPARAM wParam, LPARAM lParam )
 		
 		m_wndNowPlaying->GetCtrl()->UpdateInfo();
 		m_wndView->GetCtrl()->RedrawWindow();
+
+		m_wndNowPlaying->GetCtrl()->GetTimeCtrl()->OnNewSong();
 	}
 	else
 		SetWindowText( MUSIK_VERSION_STR );	

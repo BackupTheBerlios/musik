@@ -59,12 +59,12 @@ public:
 	CSize GetSize() { return CSize( GetWidth(), GetHeight() ); }
 
 	// sets
-	void SetDynText( const CString& str );
+	void SetDynText( const CString& str, bool movewindow = true );
 	void SetDynFont( int size = -1, int bold = 0, int italic = 0 );
 	void SetType( int n ){ m_Type = n; }
 
 	// misc
-	void UpdateDynSize();
+	void UpdateDynSize( bool movewindow = true );
 
 protected:
 

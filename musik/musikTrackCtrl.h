@@ -39,6 +39,8 @@ protected:
 	bool m_IsCapturing;
 	void SetPosFromMouse();
 	virtual void OnPosChanged();
+	virtual void OnBeginDrag();
+	virtual void OnFinishDrag();
 
 	// lock movement if no playback
 	bool m_LockIfNotPlaying;

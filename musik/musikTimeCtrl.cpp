@@ -11,11 +11,16 @@
 #include "../musikCore/include/musikPlayer.h"
 
 #include "MEMDC.H"
-#include ".\musiktimectrl.h"
 
 ///////////////////////////////////////////////////
 
 IMPLEMENT_DYNAMIC(CmusikTimeCtrl, CWnd)
+
+///////////////////////////////////////////////////
+
+int WM_TRACKCHANGE = RegisterWindowMessage( "TRACKCHANGE" );
+int WM_TRACKDRAGBEGIN = RegisterWindowMessage( "TRACKDRAGBEGIN" );	
+int WM_TRACKDRAGFINISH = RegisterWindowMessage( "TRACKDRAGFINISH" );
 
 ///////////////////////////////////////////////////
 
@@ -28,6 +33,11 @@ CmusikTimeCtrl::CmusikTimeCtrl( CmusikPrefs* prefs, CmusikPlayer* player )
 	m_TimeCtrl = NULL;
 	m_CurTime = NULL;
 	m_TotalTime = NULL;
+
+	m_CurChars = -1;
+	m_TotalChars = -1;
+
+	m_TimeDrag = false;
 
 	m_Prefs = prefs;
 	m_Player = player;
@@ -55,6 +65,9 @@ BEGIN_MESSAGE_MAP(CmusikTimeCtrl, CWnd)
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_TIMER()
+	ON_REGISTERED_MESSAGE(WM_TRACKCHANGE, OnTrackChange)
+	ON_REGISTERED_MESSAGE(WM_TRACKDRAGBEGIN, OnTrackBegin)
+	ON_REGISTERED_MESSAGE(WM_TRACKDRAGFINISH, OnTrackFinish)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -101,6 +114,9 @@ void CmusikTimeCtrl::RescaleInfo( int cx )
 {
 	CRect rcClient;
 	GetClientRect( &rcClient );
+	
+	if ( cx == -1 )
+		cx = rcClient.Width();
 
 	CRect rcStatic = CRect( 0, 0, 0, 0 );
 
@@ -161,11 +177,76 @@ void CmusikTimeCtrl::OnTimer(UINT nIDEvent)
 {
 	if ( nIDEvent == MUSIK_SEEK_TIMER )
 	{
-		if ( m_Player->IsPlaying() && !m_Player->IsPaused() )
+		if ( m_Player->IsPlaying() && !m_Player->IsPaused() && !m_TimeDrag )
 		{
-			
+			CString sTimeStr = m_Player->GetTimeStr( m_Player->GetTimeNow( MUSIK_TIME_MS ) );
+			m_TimeCtrl->SetPos( m_Player->GetTimeNowPer() );
+			m_CurTime->SetDynText( sTimeStr, false );
+
+			// avoid unnecessary RescaleInfo() calls
+			if ( sTimeStr.GetLength() != m_CurChars )
+			{
+				RescaleInfo( -1 );
+				m_CurChars = sTimeStr.GetLength();
+				m_CurTime->RedrawWindow();
+			}
 		}
 	}
+}
+
+///////////////////////////////////////////////////
+
+void CmusikTimeCtrl::OnNewSong()
+{
+	CString sTimeStr = m_Player->GetTimeStr( m_Player->GetDuration( MUSIK_TIME_MS ) );
+	m_TotalTime->SetDynText( sTimeStr, false );
+
+	// avoid un necessary RescaleInfo() calls
+	if ( sTimeStr.GetLength() != m_TotalChars )
+	{
+		RescaleInfo( -1 );
+		m_TotalChars = sTimeStr.GetLength();
+		RedrawWindow();
+	}
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CmusikTimeCtrl::OnTrackChange( WPARAM wParam, LPARAM lParam )
+{
+	CString sTimeStr = m_Player->GetTimePerStr( m_TimeCtrl->GetPos() );
+	m_CurTime->SetDynText( sTimeStr, false );
+
+	// avoid unnecessary RescaleInfo() calls
+	if ( sTimeStr.GetLength() != m_CurChars )
+	{
+		RescaleInfo( -1 );
+		m_CurChars = sTimeStr.GetLength();
+		m_CurTime->RedrawWindow();
+	}	
+	
+	return 0L;
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CmusikTimeCtrl::OnTrackBegin( WPARAM wParam, LPARAM lParam )
+{
+	m_TimeDrag = true;
+
+	return 0L;
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CmusikTimeCtrl::OnTrackFinish( WPARAM wParam, LPARAM lParam )
+{
+	m_TimeDrag = false;
+
+	if ( m_Player )
+		m_Player->SetTimeNowPer( m_TimeCtrl->GetPos() );
+
+	return 0L;
 }
 
 ///////////////////////////////////////////////////

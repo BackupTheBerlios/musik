@@ -230,6 +230,8 @@ void CmusikTrackCtrl::OnLButtonDown(UINT nFlags, CPoint point)
 
 	GetCursorPos( &m_Cursor );
 	SetPosFromMouse();
+
+	OnBeginDrag();
 }
 
 ///////////////////////////////////////////////////
@@ -296,6 +298,7 @@ void CmusikTrackCtrl::OnLButtonUp(UINT nFlags, CPoint point)
 		SetCursor( LoadCursor( NULL, IDC_ARROW ) );
 	}
 
+	OnFinishDrag();
 	m_LeftDown = false;
 	m_IsCapturing = false;
 }
@@ -391,7 +394,39 @@ void CmusikTrackCtrl::SetPosFromMouse()
 
 void CmusikTrackCtrl::OnPosChanged()
 {
+	if ( GetParent() )
+	{
+		int WM_TRACKCHANGE = RegisterWindowMessage( "TRACKCHANGE" );		
+		GetParent()->SendMessage( WM_TRACKCHANGE, NULL, NULL );
+	}
+
 	TRACE0( "CmusikTrackCtrl::OnPosChanged()\n" );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikTrackCtrl::OnFinishDrag()
+{
+	if ( GetParent() )
+	{
+		int WM_TRACKDRAGFINISH = RegisterWindowMessage( "TRACKDRAGFINISH" );		
+		GetParent()->SendMessage( WM_TRACKDRAGFINISH, NULL, NULL );
+	}
+
+	TRACE0( "CmusikTrackCtrl::OnFinishDrag()\n" );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikTrackCtrl::OnBeginDrag()
+{
+	if ( GetParent() )
+	{
+		int WM_TRACKDRAGBEGIN = RegisterWindowMessage( "TRACKDRAGBEGIN" );		
+		GetParent()->SendMessage( WM_TRACKDRAGBEGIN, NULL, NULL );
+	}
+
+	TRACE0( "CmusikTrackCtrl::OnBeginDrag()\n" );
 }
 
 ///////////////////////////////////////////////////

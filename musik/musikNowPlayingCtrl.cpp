@@ -149,3 +149,4 @@ BOOL CmusikNowPlayingCtrl::OnEraseBkgnd(CDC* pDC)
 }
 
 ///////////////////////////////////////////////////
+

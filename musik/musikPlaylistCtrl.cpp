@@ -392,22 +392,7 @@ void CmusikPlaylistCtrl::OnPaint()
 CString CmusikPlaylistCtrl::GetTimeStr( int item )
 {
 	int time_ms = atoi( m_SongInfoCache->GetValue( item - m_SongInfoCache->GetFirst(), MUSIK_LIBRARY_TYPE_DURATION ).c_str() );
-
-	CString sTime;
-
-	int ms = time_ms;
-	int hours = ms / 1000 / 60 / 60;
-	ms -= hours * 1000 * 60 * 60;
-	int minutes = ms / 1000 / 60;
-	ms -= minutes * 1000 * 60;
-	int seconds = ms / 1000;
-
-	if ( hours > 0 )
-		sTime.Format( _T( "%d:%02d:%02d" ), hours, minutes, seconds );
-	else
-		sTime.Format( _T( "%d:%02d" ), minutes, seconds );
-	
-	return sTime;
+	return (CString)m_Player->GetTimeStr( time_ms );	
 }
 
 ///////////////////////////////////////////////////

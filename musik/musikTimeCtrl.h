@@ -19,12 +19,18 @@ public:
 	CmusikTimeCtrl( CmusikPrefs* prefs = NULL, CmusikPlayer* player = NULL );
 	virtual ~CmusikTimeCtrl();
 
+	// misc
+	void OnNewSong();
+
 	// message maps
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
 	afx_msg void OnTimer(UINT nIDEvent);
+	afx_msg LRESULT OnTrackChange( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnTrackBegin( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnTrackFinish( WPARAM wParam, LPARAM lParam );
 
 protected:
 
@@ -37,6 +43,11 @@ protected:
 	CmusikDynamicText* m_CurTime;
 	CmusikDynamicText* m_TotalTime;
 	void RescaleInfo( int cx );
+	size_t m_CurChars;
+	size_t m_TotalChars;
+
+	// we seeking playback time?
+	bool m_TimeDrag;
 
 	// timer
 	UINT m_TimerID;

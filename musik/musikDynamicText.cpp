@@ -69,18 +69,18 @@ END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
 
-void CmusikDynamicText::SetDynText( const CString& str )
+void CmusikDynamicText::SetDynText( const CString& str, bool movewindow )
 {
 	CString sVerify = str;
 	sVerify.Replace( _T( "&" ), _T( "&&" ) );
 	SetWindowText( sVerify );
 
-	UpdateDynSize();
+	UpdateDynSize( movewindow );
 }
 
 ///////////////////////////////////////////////////
 
-void CmusikDynamicText::UpdateDynSize()
+void CmusikDynamicText::UpdateDynSize( bool movewindow )
 {
 	// get text
 	CString str;
@@ -105,7 +105,8 @@ void CmusikDynamicText::UpdateDynSize()
 	m_Width = szText.cx;
 
 	// resize the window
-	MoveWindow( CRect( CPoint( 0, 0 ), szText ) );
+	if ( movewindow )
+		MoveWindow( CRect( CPoint( 0, 0 ), szText ) );
 }
 
 ///////////////////////////////////////////////////
