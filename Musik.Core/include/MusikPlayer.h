@@ -67,6 +67,8 @@ public:
 	int  InitSound( int device, int driver, int rate, int channels, int mode = MUSIK_PLAYER_INIT_START );
 	void CleanSound();
 
+	CMusikSongInfo* GetCurrPlaying(){ return &m_CurrSong; }
+
 	void SetPlaylist( CMusikPlaylist* playlist );
 	void SetLibrary( CMusikLibrary* library );
 	void SetEqualizerActive( bool active = true );

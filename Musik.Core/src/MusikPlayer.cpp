@@ -138,6 +138,7 @@ int CMusikPlayer::InitSound( int device, int driver, int rate, int channels, int
 
 void CMusikPlayer::CleanSound()
 {
+	CleanOldStreams( true );
 	StopSound();
 
 	if ( m_ActiveStreams ) delete m_ActiveStreams;
@@ -268,6 +269,10 @@ bool CMusikPlayer::Play( int index, int play_type, int start_pos )
 	// disabled or at 0.0 seconds, just cut
 	// out any old streams before we start up the next
 	CleanOldStreams();
+
+	// toggle the flag
+	m_IsPlaying = true;
+	m_IsPaused = false;
 
 	// call the functor. this is sort of like
 	// a callback, but a bit easier.
