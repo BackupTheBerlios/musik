@@ -51,7 +51,7 @@ CMainFrame::CMainFrame()
 
 CMainFrame::~CMainFrame()
 {
-	for ( int i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
+	for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
 		delete m_wndSelectionBars[i];
 
 	delete m_wndView;
@@ -191,7 +191,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	//-------------------------------------------------//
 	//--- selection controls						---//
 	//-------------------------------------------------//
-	for ( int i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
+	for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
 	{
 		m_wndSelectionBars[i] = new CMusikSelectionBar( this, m_Library, i, i );
 		m_wndSelectionBars[i]->Create( _T( "Musik Selection Box" ), this, ID_SELECTIONBOX_START + i );
@@ -294,7 +294,7 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 	CMusikSelectionCtrl* pCurr		= NULL;
 	CMusikSelectionCtrl* pParent	= NULL;
 
-	int nSender = wParam;
+	int nSender = (int)wParam;
 
 	// find the sender and parent
 	for ( size_t i = 0; i < selbox_count; i++ )

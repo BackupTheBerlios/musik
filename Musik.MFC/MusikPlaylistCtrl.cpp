@@ -87,7 +87,7 @@ void CMusikPlaylistCtrl::OnNcPaint()
 
 void CMusikPlaylistCtrl::ResetColumns()
 {
-	for ( int i = 0; i < m_Prefs->GetPlaylistColCount(); i++ )
+	for ( size_t i = 0; i < m_Prefs->GetPlaylistColCount(); i++ )
 	{
 		InsertColumn( i, m_Library->GetSongField( m_Prefs->GetPlaylistCol( i ) ) );
 		SetColumnWidth( i, m_Prefs->GetPlaylistColWidth( i ) );
@@ -114,7 +114,6 @@ void CMusikPlaylistCtrl::SaveColumns()
 	// get header order array
 	GetHeaderCtrl()->GetOrderArray( lpiCols, nColCount );
 
-	int nItem;
 	for (int i = 0; i < nColCount; i++)
 	{
 		GetColumn( lpiCols[i], &pColumn );

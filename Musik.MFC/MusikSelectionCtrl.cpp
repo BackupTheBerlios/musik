@@ -137,12 +137,14 @@ void CMusikSelectionCtrl::OnLvnItemchanged(NMHDR *pNMHDR, LRESULT *pResult)
 
 CString CMusikSelectionCtrl::GetTypeDB()
 {
-	return m_Library->GetSongFieldDB( m_Type );
+	CStdString ret = m_Library->GetSongFieldDB( m_Type );
+	CString sRet = (CString)ret.c_str();
+	return sRet;
 }
 
 CString CMusikSelectionCtrl::GetTypeStr()
 {
-	return m_Library->GetSongField( m_Type );
+	return (CString)m_Library->GetSongField( m_Type ).c_str();
 }
 
 
