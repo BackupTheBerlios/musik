@@ -102,6 +102,14 @@ DROPEFFECT CmusikPlaylistDropTarget::OnDragOver ( CWnd* pWnd, COleDataObject* pD
 {
 	DROPEFFECT dwEffect = DROPEFFECT_NONE;
 
+    // Check for our own custom clipboard format in the data object.  If it's
+    // present, then the DnD was initiated from our own window, and we want to
+	// rearrange items. Set the flag in the playlist control.
+    if ( pDataObject->GetGlobalData ( m_uSourceID ) != NULL )
+		m_pList->m_DropArrange = true;
+	else
+		m_pList->m_DropArrange = false;
+
 	// Look for CF_HDROP data in the data object, and accept the drop if
 	// it's there.
 	if ( pDataObject->GetGlobalData ( CF_HDROP ) != NULL )
@@ -122,12 +130,6 @@ BOOL CmusikPlaylistDropTarget::OnDrop ( CWnd* pWnd, COleDataObject* pDataObject,
 
     // Read the CF_HDROP data and put the files in the main window's list.
 	bRet = ReadHdropData ( pDataObject );
-
-    // Check for our own custom clipboard format in the data object.  If it's
-    // present, then the DnD was initiated from our own window, and we want to
-	// rearrange items. Set the flag in the playlist control.
-    if ( pDataObject->GetGlobalData ( m_uSourceID ) != NULL )
-		m_pList->m_DropArrange = true;
 
     // Call the DnD helper.
 	if ( m_bUseDnDHelper )

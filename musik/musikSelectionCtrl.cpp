@@ -238,7 +238,7 @@ void CmusikSelectionCtrl::GetSelItems( CStdStringArray& items, bool format_query
 
 		else
 		{
-			items.push_back( ( CStdString)GetItemText( item, 1 ) );
+			items.push_back( ( CStdString)GetItemText( item, 0 ) );
 			if ( format_query )
 				items.at( count ).Replace( _T( "'" ), _T( "''" ) );
 		}

@@ -129,8 +129,8 @@ public:
 	// misc
 	void Add( const CmusikSong& song );
 	void DeleteAt( size_t pos );
-	void InsertAt( int songid, int at );
-	void InsertAt( const CIntArray& songids, int at );
+	void InsertAt( int songid, int pos );
+	void InsertAt( const CIntArray& songids, int pos );
 	void Clear();
 
 private:

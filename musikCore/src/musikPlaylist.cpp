@@ -246,15 +246,15 @@ void CmusikPlaylist::InsertAt( int songid, int at )
 	CmusikSong song;
 	song.SetID( songid );
 
-		if ( at == -1 )
-			m_Songs.push_back( song );
-		else
-			m_Songs.insert( m_Songs.begin() + at, song );
+	if ( at == -1 )
+		m_Songs.push_back( song );
+	else
+		m_Songs.insert( m_Songs.begin() + at, song );
 }
 
 ///////////////////////////////////////////////////
 
-void CmusikPlaylist::InsertAt( const CIntArray& songids, int at )
+void CmusikPlaylist::InsertAt( const CIntArray& songids, int pos )
 {
 	CmusikSong song;
 
@@ -262,10 +262,10 @@ void CmusikPlaylist::InsertAt( const CIntArray& songids, int at )
 	{
 		song.SetID( songids.at( i ) );
 
-		if ( at == -1 )
+		if ( pos == -1 )
 			m_Songs.push_back( song );
 		else
-			m_Songs.insert( m_Songs.begin() + at, song );
+			m_Songs.insert( m_Songs.begin() + pos + i, song );
 	}
 }
 
