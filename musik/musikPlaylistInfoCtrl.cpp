@@ -96,25 +96,27 @@ void CmusikPlaylistInfoCtrl::OnPaint()
 	CPaintDC dc(this);
 	CRect rect;
 	GetClientRect( &rect );
+	CRect innerrect(rect);
+	innerrect.DeflateRect( 1, 1, 1, 1 );
 	CMemDC memDC( &dc, &rect );
 
 	CFont* oldfont = memDC.SelectObject( &m_Font );
 
-	memDC.FillSolidRect( rect, m_Prefs->MUSIK_COLOR_BTNFACE );
 	memDC.Draw3dRect( rect, m_Prefs->MUSIK_COLOR_BTNSHADOW, m_Prefs->MUSIK_COLOR_BTNHILIGHT );
 
 	// draw the bitchin' background
-	switch ( m_Prefs->GetPlaylistInfoVizStyle() )
+	int style = m_Prefs->GetPlaylistInfoVizStyle();
+	if ( !m_Player->IsPlaying() || m_Player->IsPaused() || style == PLAYLIST_INFO_VIZ_STYLE_NONE )
+		memDC.FillSolidRect( innerrect, m_Prefs->MUSIK_COLOR_BTNFACE );	
+	else
 	{
-	case PLAYLIST_INFO_VIZ_STYLE_NONE:
-		break;
-
-	case PLAYLIST_INFO_VIZ_STYLE_EQ:
-		DrawEQ( memDC.GetSafeHdc() );
-		break;
-	}
-
-	
+		switch ( m_Prefs->GetPlaylistInfoVizStyle() )
+		{
+		case PLAYLIST_INFO_VIZ_STYLE_EQ:
+			DrawEQ( memDC.GetSafeHdc() );
+			break;
+		}
+	}	
 
 	// put the text over it
 	SetTextAlign( memDC.GetSafeHdc(), TA_CENTER );
@@ -266,6 +268,7 @@ void CmusikPlaylistInfoCtrl::DrawEQ( HDC hdc )
 				VIZ_WIDTH-1,		// '
 				VIZ_HEIGHT-1,		// '
 				SRCCOPY );
+	
 
 	// restore stuff
 	::SelectObject (hSrcDC, hOldBmp);
