@@ -2,6 +2,7 @@
 
 #include "stdafx.h"
 
+#include "../include/MusikArrays.h"
 #include "../include/MusikPlayer.h"
 #include "../include/MusikLibrary.h"
 #include "../include/MusikFunctor.h"
@@ -32,17 +33,17 @@ static void PlayerWorker( CMusikPlayer* player )
 
 CMusikPlayer::CMusikPlayer( CMusikFunctor* functor )
 {
-	m_IsPlaying = false;
-	m_IsPaused	= false;
-	m_ShutDown = false;
-
-	m_Functor	= functor;
-
-	m_ActiveStreams = NULL;	
-	m_ActiveChannels = NULL;
-	m_Mutex = NULL;
-	m_ThreadID = NULL;
-	m_ThreadHND = NULL;
+	m_IsPlaying			= false;
+	m_IsPaused			= false;
+	m_ShutDown			= false;
+	m_Functor			= functor;
+	m_ActiveStreams		= NULL;	
+	m_ActiveChannels	= NULL;
+	m_Mutex				= NULL;
+	m_ThreadID			= NULL;
+	m_ThreadHND			= NULL;
+	m_MaxChannels		= -1;
+	m_CurrChannel		= -1;
 
 	InitThread();
 }
@@ -181,12 +182,44 @@ void CMusikPlayer::StopSound()
 
 ///////////////////////////////////////////////////
 
-bool CMusikPlayer::Play( int index )
+void CMusikPlayer::SetPlaylist( CMusikPlaylist* playlist )
 {
+	m_Playlist = playlist;
+}
 
-	m_Functor->Call();
+///////////////////////////////////////////////////
 
+bool CMusikPlayer::Play( int index, int play_type, int start_pos )
+{
+	// verify song can even 
+	if ( index >= (int)m_Playlist->size() || index < 0 )
+	{
+		TRACE0( "Playlist song out of range." );
+		return false;
+	}
+
+	// get song info about the currently
+	// playing song from it's ID
+	m_Library->GetSongInfoFromID( m_Playlist->items()->at( index ).GetID(), &m_CurrSong );
+
+	// setup next channel
+
+	// call the functor. this is sort of like
+	// a callback, but a bit easier.
+	if ( m_Functor )
+		m_Functor->Call();
+
+	// and, we're done.
+	TRACE0( "Next song started, and functor called." );
 	return true;
 }
 
 ///////////////////////////////////////////////////
+
+void CMusikPlayer::PushNewChannel()
+{
+	if ( ( m_CurrChannel + 1 ) == m_MaxChannels || m_CurrChannel == -1 )
+		m_CurrChannel = 0;
+	else
+		m_CurrChannel++;
+}

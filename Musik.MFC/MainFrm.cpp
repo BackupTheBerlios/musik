@@ -207,7 +207,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	SetIcon( m_hIcon16, false );
 
 	// create the background window, which is the playlist
-	m_wndView = new CMusikPlaylistView( m_Library, m_Prefs, m_LibPlaylist );
+	m_wndView = new CMusikPlaylistView( m_Library, m_Player, m_Prefs, m_LibPlaylist );
 	m_wndView->Create( NULL, NULL, AFX_WS_DEFAULT_VIEW, CRect(0, 0, 0, 0), this, AFX_IDW_PANE_FIRST, NULL );
 	m_wndView->ModifyStyleEx( WS_EX_STATICEDGE, NULL );
 	m_wndView->ModifyStyle( WS_BORDER, 0 );

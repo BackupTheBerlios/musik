@@ -131,6 +131,29 @@
 				RelativePath=".\include\MusikPlayer.h">
 			</File>
 		</Filter>
+		<Filter
+			Name="MusikEqualizer"
+			Filter="">
+			<File
+				RelativePath=".\src\MusikEqualizer.cpp">
+			</File>
+			<File
+				RelativePath=".\include\MusikEqualizer.h">
+			</File>
+			<Filter
+				Name="Shibatch"
+				Filter="">
+				<File
+					RelativePath=".\src\Equ.cpp">
+				</File>
+				<File
+					RelativePath=".\src\Fftsg_fl.cpp">
+				</File>
+				<File
+					RelativePath=".\include\paramlist.hpp">
+				</File>
+			</Filter>
+		</Filter>
 		<File
 			RelativePath=".\include\MusikArrays.h">
 		</File>
@@ -141,7 +164,7 @@
 			RelativePath=".\include\MusikDynDspInfo.h">
 		</File>
 		<File
-			RelativePath=".\include\MusikEqualizer.h">
+			RelativePath=".\include\MusikEQSettings.h">
 		</File>
 		<File
 			RelativePath=".\include\MusikFunctor.h">

@@ -1,23 +1,23 @@
 ///////////////////////////////////////////////////
 
 #include "stdafx.h"
+
 #include "Musik.h"
 #include "MusikPlaylistView.h"
+#include "MusikPrefs.h"
 
 #include "../Musik.Core/include/MusikLibrary.h"
 #include "../Musik.Core/include/MusikArrays.h"
+#include "../Musik.Core/include/MusikPlayer.h"
 
 #include "MEMDC.H"
-
-#include "MusikPrefs.h"
-#include ".\musikplaylistview.h"
 
 ///////////////////////////////////////////////////
 
 IMPLEMENT_DYNAMIC(CMusikPlaylistView, CWnd)
-CMusikPlaylistView::CMusikPlaylistView( CMusikLibrary* library, CMusikPrefs* prefs, CMusikPlaylist* playlist )
+CMusikPlaylistView::CMusikPlaylistView( CMusikLibrary* library, CMusikPlayer* player, CMusikPrefs* prefs, CMusikPlaylist* playlist )
 {
-	m_Playlist = new CMusikPlaylistCtrl( library, prefs, playlist );
+	m_Playlist = new CMusikPlaylistCtrl( library, player, prefs, playlist );
 }
 
 ///////////////////////////////////////////////////

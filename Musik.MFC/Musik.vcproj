@@ -328,6 +328,12 @@
 			Name="Core"
 			Filter="">
 			<File
+				RelativePath="..\Musik.Core\src\Equ.cpp">
+			</File>
+			<File
+				RelativePath="..\Musik.Core\src\Fftsg_fl.cpp">
+			</File>
+			<File
 				RelativePath="..\Musik.Core\include\MusikArrays.h">
 			</File>
 			<File
@@ -335,6 +341,15 @@
 			</File>
 			<File
 				RelativePath="..\Musik.Core\include\MusikDynDspInfo.h">
+			</File>
+			<File
+				RelativePath="..\Musik.Core\include\MusikEQSettings.h">
+			</File>
+			<File
+				RelativePath="..\Musik.Core\src\MusikEqualizer.cpp">
+			</File>
+			<File
+				RelativePath="..\Musik.Core\include\MusikEqualizer.h">
 			</File>
 			<File
 				RelativePath="..\Musik.Core\include\MusikFunctor.h">
@@ -356,6 +371,12 @@
 			</File>
 			<File
 				RelativePath="..\Musik.Core\include\MusikPlaylist.h">
+			</File>
+			<File
+				RelativePath="..\Musik.Core\include\paramlist.hpp">
+			</File>
+			<File
+				RelativePath="..\Musik.Core\src\stdafx.h">
 			</File>
 			<File
 				RelativePath="..\Musik.Core\include\StdString.h">

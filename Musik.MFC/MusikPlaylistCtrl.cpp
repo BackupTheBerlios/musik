@@ -10,19 +10,24 @@
 #include "../Musik.Core/include/MusikArrays.h"
 #include "../Musik.Core/include/MusikLibrary.h"
 #include "../Musik.Core/include/MusikDynDspInfo.h"
+#include "../Musik.Core/include/MusikPlayer.h"
 
 #include "MEMDC.H"
+#include ".\musikplaylistctrl.h"
 
 ///////////////////////////////////////////////////
 
 IMPLEMENT_DYNAMIC(CMusikPlaylistCtrl, CListCtrl)
-CMusikPlaylistCtrl::CMusikPlaylistCtrl( CMusikLibrary* library, CMusikPrefs* prefs, CMusikPlaylist* playlist )
+CMusikPlaylistCtrl::CMusikPlaylistCtrl( CMusikLibrary* library, CMusikPlayer* player, CMusikPrefs* prefs, CMusikPlaylist* playlist )
 {
 	m_Library	= library;
 	m_Prefs		= prefs;
 	m_Playlist	= playlist;
+	m_Player	= player;
 
 	m_RatingWidth = -1;
+
+	m_Changed = true;
 
 	m_SongInfoCache = new CMusikDynDspInfo( m_Playlist, m_Library );
 
@@ -47,6 +52,7 @@ BEGIN_MESSAGE_MAP(CMusikPlaylistCtrl, CListCtrl)
 	ON_NOTIFY_REFLECT(LVN_ODCACHEHINT, OnLvnOdcachehint)
 	ON_WM_PAINT()
 	ON_NOTIFY_REFLECT(NM_CLICK, OnNMClick)
+	ON_NOTIFY_REFLECT(LVN_ITEMACTIVATE, OnLvnItemActivate)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -92,6 +98,14 @@ void CMusikPlaylistCtrl::SaveColumns()
 
 	m_Prefs->SetPlaylistOrder( last_order );
 	m_Prefs->SetPlaylistSizes( last_sizes );
+}
+
+///////////////////////////////////////////////////
+
+void CMusikPlaylistCtrl::SetPlaylist( CMusikPlaylist* playlist )
+{
+	m_Playlist = playlist;
+	m_Changed = true;
 }
 
 ///////////////////////////////////////////////////
@@ -362,6 +376,21 @@ void CMusikPlaylistCtrl::OnNMClick(NMHDR *pNMHDR, LRESULT *pResult)
 				RedrawItems( hit_test.iItem, hit_test.iItem );
 		}
 	}
+
+	*pResult = 0;
+}
+
+///////////////////////////////////////////////////
+
+void CMusikPlaylistCtrl::OnLvnItemActivate(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMITEMACTIVATE pNMIA = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+	
+	if ( m_Changed )
+	{
+		m_Player->SetPlaylist( m_Playlist );
+		m_Changed = false;
+	}			
 
 	*pResult = 0;
 }

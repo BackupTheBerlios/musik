@@ -3,6 +3,7 @@
 #include "MusikListCtrl.h"
 
 class CMusikLibrary;
+class CMusikPlayer;
 class CMusikPrefs;
 class CMusikPlaylist;
 class CMusikDynDspInfo;
@@ -15,10 +16,11 @@ class CMusikPlaylistCtrl : public CListCtrl
 //--- implementation							---//
 //-------------------------------------------------//
 public:
-	CMusikPlaylistCtrl( CMusikLibrary* library, CMusikPrefs* prefs, CMusikPlaylist* playlist );
+	CMusikPlaylistCtrl( CMusikLibrary* library, CMusikPlayer* player, CMusikPrefs* prefs, CMusikPlaylist* playlist );
 	virtual ~CMusikPlaylistCtrl();
 
 	void UpdateV();
+	void SetPlaylist( CMusikPlaylist* playlist );
 
 protected:
 	DECLARE_MESSAGE_MAP()
@@ -28,10 +30,13 @@ protected:
 //-------------------------------------------------//
 protected:
 	CMusikLibrary* m_Library;
+	CMusikPlayer* m_Player;
 	CMusikPrefs* m_Prefs;
 	CMusikPlaylist* m_Playlist;
 	CFont m_Bullets;
 	CFont m_Items;
+
+	bool m_Changed;
 
 	int m_RatingWidth;
 		
@@ -61,6 +66,7 @@ public:
 	afx_msg void OnLvnOdcachehint(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnPaint();
 	afx_msg void OnNMClick(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnLvnItemActivate(NMHDR *pNMHDR, LRESULT *pResult);
 };
 
 

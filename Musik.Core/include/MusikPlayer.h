@@ -19,10 +19,11 @@
 
 enum
 {
+	// playmodes
 	MUSIK_PLAYER_PLAYMODE_NORMAL = 0,
 	MUSIK_PLAYER_PLAYMODE_RANDOM,
 	MUSIK_PLAYER_PLAYMODE_SMART,
-	MUSIK_PLAYER_PLAYMODE_LOOP
+	MUSIK_PLAYER_PLAYMODE_LOOP,
 };
 
 ///////////////////////////////////////////////////
@@ -45,6 +46,7 @@ class CMusikLibrary;
 class CMusikPlaylist;
 class CMusikFunctor;
 class CMusikPlayer;
+class CMusikSongInfo;
 
 ///////////////////////////////////////////////////
 
@@ -63,7 +65,7 @@ public:
 
 	void SetPlaylist( CMusikPlaylist* playlist );
 	
-	bool Play( int index = 0 );
+	bool Play( int index = 0, int play_type = 0, int start_pos = 0 );
 	bool Next();
 	bool Prev();
 	bool Pause();
@@ -84,9 +86,20 @@ private:
 	bool m_IsPaused;
 	bool m_ShutDown;
 
+	// info on currently playing song
+	CMusikSongInfo m_CurrSong;
+
 	// a pointer to a functor that will be
 	// used to post a next song event
 	CMusikFunctor* m_Functor;
+
+
+	// maximum number of open channels, and
+	// little functions to help us manage
+	// them...
+	int m_MaxChannels;
+	int m_CurrChannel;
+	void PushNewChannel();
 
 	// active streams and channels
 	CMusikStreamPtrArray* m_ActiveStreams;
