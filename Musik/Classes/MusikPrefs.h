@@ -237,7 +237,8 @@ public:
 	CMusikPrefs()
 		:wxFileConfig( CONFIG_NAME )
 		,bFirstRun(this,wxT("FirstRun"),true)
-		,bAutoAdd(this,wxT( "AddFilesonStartup" ),true)
+		,bAutoAdd(this,wxT( "AddFilesonStartup" ),false)
+		,bAutoPlayOnAppStart(this,wxT( "AutoPlayOnAppStart" ),false)
 		,eSelStyle(this,wxT( "SelectionStyle" ),MUSIK_SELECTION_TYPE_STANDARD)
 		,bShowAllSongs(this,wxT( "SelectingLibraryDisplaysSongs" ),true)
 		,nSndOutput(this,wxT( "OutputDriver" ),0)
@@ -294,6 +295,9 @@ public:
 		,nWebServerPort(this,wxT( "Webserverport" ),6395)
 		,sFramePlacement(this,wxT( "FramePlacement" ),wxT("0,0,800,600,0,0"))
 
+#ifdef wxHAS_TASK_BAR_ICON
+		,bHideOnMinimize(this,wxT("HideOnMinimize"),false )
+#endif
 		,nSourceBoxWidth(this,wxT( "SourceBoxWidth" ),130)
 		,nActivityCtrlHeight(this,wxT( "ActivityCtrlHeight" ),120)
 		,bPlaylistSmartColumns(this,wxT( "SmartPlaylistColumns" ),true)
@@ -335,6 +339,7 @@ public:
 	void SavePrefs();
 
 	CConfigSettingBool bFirstRun;
+	CConfigSettingBool bAutoPlayOnAppStart;
 	CConfigSettingBool bAutoAdd;
 	CConfigSettingBool bShowAllSongs;
 
@@ -399,7 +404,9 @@ public:
 	CConfigSettingString sFramePlacement;
 	CConfigSettingInt nSourceBoxWidth;
 	CConfigSettingInt nActivityCtrlHeight;
-	
+#ifdef wxHAS_TASK_BAR_ICON
+	CConfigSettingBool bHideOnMinimize;
+#endif
 	CConfigSettingPath sAutoRename;
 	CConfigSettingPath sAutoTag;
     CConfigSettingBool bAutoTagConvertUnderscoresToSpaces;

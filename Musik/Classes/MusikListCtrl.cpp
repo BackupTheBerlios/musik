@@ -53,7 +53,7 @@ bool CMusikListCtrl::OnRescaleColumns()
 void CMusikListCtrl::Freeze()
 {
 	if(!m_freezeCount++)
-	wxListCtrl::Freeze();
+		wxListCtrl::Freeze();
 }
 void CMusikListCtrl::Thaw()
 {

@@ -48,7 +48,9 @@ enum EMUSIK_PLAYMODE
 	MUSIK_PLAYMODE_NORMAL = 0,
 	MUSIK_PLAYMODE_LOOPSONG,
 	MUSIK_PLAYMODE_LOOPLIST,
-	MUSIK_PLAYMODE_RANDOM
+	MUSIK_PLAYMODE_SHUFFLE,
+	MUSIK_PLAYMODE_AUTO_DJ
+
 };
 
 enum EFMOD_INIT
@@ -181,7 +183,7 @@ public:
 	DECLARE_EVENT_TABLE()
 	
 private:
-	void _PostPlayRestart();
+	void _PostPlayRestart( int nStartPos = 0 );
 	bool _IsSeekCrossFadingDisabled();
 	bool _CurrentSongNeedsMPEGACCURATE();
 	bool _CurrentSongIsNetStream();
@@ -189,7 +191,7 @@ private:
 	static signed char F_CALLBACKAPI MetadataCallback(char *name, char *value, int userdata);
 	void _SetMetaData(char *name, char *value);
 	void _UpdateNetstreamMetadata( wxCommandEvent& event );
-
+	void _AddRandomSongs();
 	int _NetStreamStatusUpdate(FSOUND_STREAM * pStream);
 
 	CMusikSongArray m_Playlist;			//--- heart and soul.								---//
@@ -221,6 +223,7 @@ private:
 	wxCriticalSection m_critInternalData;
 	wxStopWatch m_StreamIsWorkingStopWatch;
 	bool m_bStreamIsWorkingStopWatchIsRunning;
+	int m_nLastSongTime;
 
 };
 

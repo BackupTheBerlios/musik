@@ -92,12 +92,18 @@ void MusikFrame::OnIconize( wxIconizeEvent& event )
 	if ( !g_DisablePlacement )
 		g_Prefs.sFramePlacement = GetFramePlacement( this );
 #ifdef wxHAS_TASK_BAR_ICON
-	if(event.Iconized())
+	if( m_pTaskBarIcon && g_Prefs.bHideOnMinimize )
 	{
-		Show(FALSE);
-//		m_pTaskBarIcon->SetIcon(wxIcon(tray_xpm), GetTitle());
+		if(event.Iconized())
+		{
+			Show(FALSE);
+		}
+		event.Skip(FALSE);
 	}
-	event.Skip(FALSE);
+	else
+		event.Skip();
+#else
+	event.Skip();
 #endif
 }
 
@@ -159,11 +165,6 @@ void MusikFrame::OnClose( wxCloseEvent& WXUNUSED(event) )
     //-------------------------------------------------//
     DeleteImageLists();
 
-    //-------------------------------------------------//
-    //--- make sure the SQL database is shut down	---//
-    //--- cleanly									---//
-    //-------------------------------------------------//
-     g_Library.Shutdown();
 
 	//-------------------------------------------------//
 	//--- delete the thread object and destroy.		---//

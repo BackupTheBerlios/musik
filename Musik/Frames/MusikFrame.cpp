@@ -294,7 +294,6 @@ bool MusikFrame::Show( bool show )
 			}
 			else
 				AutoUpdate();
-          return bRet;
 		}
 		else
 		{
@@ -316,6 +315,7 @@ bool MusikFrame::Show( bool show )
 		g_FaderThread = new MusikFaderThread();
 		g_FaderThread->Create();
 		g_FaderThread->Run();
+
 	}
 	return bRet;	
 }
@@ -511,7 +511,8 @@ void MusikFrame::EnableProgress( bool enable )
 void MusikFrame::SetTitle(const wxString& title)
 {
 #ifdef wxHAS_TASK_BAR_ICON
-	m_pTaskBarIcon->SetIcon(wxIcon(tray_xpm), title);
+	if(	m_pTaskBarIcon )
+		m_pTaskBarIcon->SetIcon(wxIcon(tray_xpm), title);
 #endif
 	wxFrame::SetTitle(title);
 }

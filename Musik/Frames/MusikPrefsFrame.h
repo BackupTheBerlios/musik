@@ -79,7 +79,10 @@ public:
 	//--- options -> general ---//
 	//--------------------------//
 	wxCheckBox	*chkAutoScan;
-	wxCheckBox	*chkAutoDelta;
+	wxCheckBox	*chkAutoPlayOnAppStart;
+#ifdef wxHAS_TASK_BAR_ICON
+	wxCheckBox	*chkHideOnMinimize;
+#endif
 	wxCheckBox	*chkExtendedPlaylist;
 	wxCheckBox	*chkShowAllSongs;
 	wxCheckBox	*chkBlankSwears;

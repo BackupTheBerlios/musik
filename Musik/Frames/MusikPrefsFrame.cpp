@@ -147,10 +147,10 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	cmbPlayRate->Append ( wxT("11025") );
 	cmbPlayRate->Append ( wxT("8000") );
 	//--- buffer length ---//
-	tcBufferLength = new wxTextCtrl	( this, -1, wxT(""), wxDefaultPosition, wxDefaultSize );
-	wxStaticText *stBufferLength = new wxStaticText	( this, -1, _(" second buffer length"), wxDefaultPosition, wxDefaultSize );
+	tcBufferLength = new wxTextCtrl	( this, -1, wxT("") );
+	wxStaticText *stBufferLength = new wxStaticText	( this, -1, _(" second buffer length") );
 	//--- max channels ---//
-	tcMaxChannels = new wxTextCtrl	( this, -1, wxT(""), wxDefaultPosition, wxDefaultSize );
+	tcMaxChannels = new wxTextCtrl	( this, -1, wxT("") );
 	wxStaticText *stMaxChannels = new wxStaticText( this, -1, _("Maximum sound channels:"), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
 	
 	//Use_MPEGACCURATE_ForMP3VBRFiles
@@ -214,22 +214,30 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//--------------------------//
 	//--- Options -> General ---//
 	//--------------------------//
-	chkAutoScan				=	new wxCheckBox( this, -1,	_("Automatically scan for new songs on startup"), wxDefaultPosition, wxDefaultSize );
-	chkShowAllSongs			=	new wxCheckBox( this, -1,	_("Selecting library shows all songs in playlist"), wxDefaultPosition, wxDefaultSize );
-	chkBlankSwears			=	new wxCheckBox( this, -1,	_("Censor common swearwords"), wxDefaultPosition, wxDefaultSize );
-	chkSortArtistWithoutPrefix	=	new wxCheckBox( this, -1,	_("Sort Artist without prefix"), wxDefaultPosition, wxDefaultSize );
-	chkPlaylistStripes		=	new wxCheckBox( this, -1,	_("Show \"stripes\" in playlist"), wxDefaultPosition, wxDefaultSize );
-	chkActivityBoxStripes	=	new wxCheckBox( this, -1,	_("Show \"stripes\" in selection boxes"), wxDefaultPosition, wxDefaultSize );
-	chkSourcesBoxStripes	=	new wxCheckBox( this, -1,	_("Show \"stripes\" in sources box"), wxDefaultPosition, wxDefaultSize );
+	chkAutoPlayOnAppStart	=	new wxCheckBox( this, -1,	_("Automatically play song on startup") );
+#ifdef wxHAS_TASK_BAR_ICON
+	chkHideOnMinimize		=	new wxCheckBox( this, -1,	_("Hide Window on Mimimize") );
+#endif
+	chkAutoScan				=	new wxCheckBox( this, -1,	_("Automatically scan for new songs on startup") );
+	chkShowAllSongs			=	new wxCheckBox( this, -1,	_("Selecting library shows all songs in playlist") );
+	chkBlankSwears			=	new wxCheckBox( this, -1,	_("Censor common swearwords") );
+	chkSortArtistWithoutPrefix	=	new wxCheckBox( this, -1,	_("Sort Artist without prefix") );
+	chkPlaylistStripes		=	new wxCheckBox( this, -1,	_("Show \"stripes\" in playlist") );
+	chkActivityBoxStripes	=	new wxCheckBox( this, -1,	_("Show \"stripes\" in selection boxes") );
+	chkSourcesBoxStripes	=	new wxCheckBox( this, -1,	_("Show \"stripes\" in sources box") );
 
-	btnPlaylistStripeColour	=	new wxButton( this, MUSIK_PREFERENCES_PLAYLIST_STRIPE_COLOUR,	_("Set Color"), wxDefaultPosition, wxDefaultSize );
-	btnActivityStripeColour	=	new wxButton( this, MUSIK_PREFERENCES_ACTIVITY_STRIPE_COLOUR,	_("Set Color"), wxDefaultPosition, wxDefaultSize );
-	btnSourcesStripeColour	=	new wxButton( this, MUSIK_PREFERENCES_SOURCES_STRIPE_COLOUR,	_("Set Color"), wxDefaultPosition, wxDefaultSize );
+	btnPlaylistStripeColour	=	new wxButton( this, MUSIK_PREFERENCES_PLAYLIST_STRIPE_COLOUR,	_("Set Color") );
+	btnActivityStripeColour	=	new wxButton( this, MUSIK_PREFERENCES_ACTIVITY_STRIPE_COLOUR,	_("Set Color") );
+	btnSourcesStripeColour	=	new wxButton( this, MUSIK_PREFERENCES_SOURCES_STRIPE_COLOUR,	_("Set Color") );
 
 	//--------------------------------//
 	//--- Options -> General Sizer ---//
 	//--------------------------------//
 	vsOptions_Interface = new wxBoxSizer( wxVERTICAL );
+	vsOptions_Interface->Add( chkAutoPlayOnAppStart,	0, wxALL, 4 );
+#ifdef wxHAS_TASK_BAR_ICON
+	vsOptions_Interface->Add( chkHideOnMinimize,		0, wxALL, 4 );
+#endif
 	vsOptions_Interface->Add( chkAutoScan,				0, wxALL, 4 );
 	vsOptions_Interface->Add( chkShowAllSongs,			0, wxALL, 4 );
 	vsOptions_Interface->Add( chkBlankSwears,			0, wxALL, 4 );
@@ -350,7 +358,7 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
  	//--------------------------------//
 	//--- Streaming -> ProxyServer ---//
 	//--------------------------------//
-	chkUseProxyServer		= new wxCheckBox	( this, -1,	_("Use Proxy server"), wxDefaultPosition, wxDefaultSize );
+	chkUseProxyServer		= new wxCheckBox	( this, -1,	_("Use Proxy server") );
 	wxStaticText *stProxyServer			= new wxStaticText( this, -1, _("Proxy server adress:"),		wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
 	wxStaticText *stProxyServerPort	= new wxStaticText( this, -1, _("Proxy server port:"),	wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
 	wxStaticText *stProxyServerUser	= new wxStaticText( this, -1, _("Proxy server user:"),			wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
@@ -380,13 +388,13 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//--- Tagging -> General ---//
 	//--------------------------//
 	wxStaticText *stActivityTag =	new wxStaticText( this, -1, _("Selection Boxes (artist/album/etc):"), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
-	chkActivityWrite			=	new wxCheckBox	( this, -1,	_("Write tag to file"), wxDefaultPosition, wxDefaultSize );
-	chkActivityClear			=	new wxCheckBox	( this, -1,	_("Clear old tag"), wxDefaultPosition, wxDefaultSize );
-	chkActivityRename			=	new wxCheckBox	( this, -1,	_("Automatically rename file"), wxDefaultPosition, wxDefaultSize );
+	chkActivityWrite			=	new wxCheckBox	( this, -1,	_("Write tag to file") );
+	chkActivityClear			=	new wxCheckBox	( this, -1,	_("Clear old tag") );
+	chkActivityRename			=	new wxCheckBox	( this, -1,	_("Automatically rename file") );
 	wxStaticText *stTagDlgTag	=	new wxStaticText( this, -1, _("\nTag Dialog Box:"), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
-	chkTagDlgWrite				=	new wxCheckBox	( this, -1,	_("Write tag to file"), wxDefaultPosition, wxDefaultSize );
-	chkTagDlgClear				=	new wxCheckBox	( this, -1,	_("Clear old tag"), wxDefaultPosition, wxDefaultSize );
-	chkTagDlgRename				=	new wxCheckBox	( this, -1,	_("Automatically rename file"), wxDefaultPosition, wxDefaultSize );
+	chkTagDlgWrite				=	new wxCheckBox	( this, -1,	_("Write tag to file") );
+	chkTagDlgClear				=	new wxCheckBox	( this, -1,	_("Clear old tag") );
+	chkTagDlgRename				=	new wxCheckBox	( this, -1,	_("Automatically rename file") );
 
 	//--------------------------------//
 	//--- Tagging -> General Sizer ---//
@@ -406,7 +414,7 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//---------------------------//
 	//--- rename options and sizer ---//
 	wxStaticText *stRename	= new wxStaticText	( this, -1, _("Rename:"), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
-	tcAutoRename			= new wxTextCtrl	( this, -1, wxT(""), wxDefaultPosition, wxDefaultSize );
+	tcAutoRename			= new wxTextCtrl	( this, -1, wxT("") );
 	wxBoxSizer *hsRename	= new wxBoxSizer	( wxHORIZONTAL );
 	hsRename->Add ( stRename, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 2 );
 	hsRename->Add ( tcAutoRename, 1, wxEXPAND, 0 );
@@ -518,6 +526,10 @@ void MusikPrefsFrame::LoadPrefs()
 	//--------------------------//
 	//--- options -> general ---//
 	//--------------------------//
+	chkAutoPlayOnAppStart->SetValue	( g_Prefs.bAutoPlayOnAppStart	);
+#ifdef wxHAS_TASK_BAR_ICON
+	chkHideOnMinimize->SetValue		( g_Prefs.bHideOnMinimize	);
+#endif
 	chkAutoScan->SetValue			( g_Prefs.bAutoAdd	);
 	chkShowAllSongs->SetValue		( g_Prefs.bShowAllSongs );
 	chkBlankSwears->SetValue		( g_Prefs.bBlankSwears );
@@ -749,7 +761,12 @@ void MusikPrefsFrame::SavePrefs()
 	//--------------------------//
 	//--- Options -> general ---//
 	//--------------------------//
+
 	g_Prefs.bAutoAdd		= chkAutoScan->GetValue();
+	g_Prefs.bAutoPlayOnAppStart	= chkAutoPlayOnAppStart->GetValue();
+#ifdef wxHAS_TASK_BAR_ICON
+	g_Prefs.bHideOnMinimize	= chkHideOnMinimize->GetValue();
+#endif
 	g_Prefs.bShowAllSongs	= chkShowAllSongs->GetValue();
 	g_Prefs.bBlankSwears	= chkBlankSwears->GetValue();
 

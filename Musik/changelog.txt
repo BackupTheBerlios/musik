@@ -1,5 +1,7 @@
 
 0.3.0.2 to 0.3.1 CVS
++ New Option "Hide On Minimize". This behaviour is now optional, and default is false. ( some uers had problems understanding the previous default behaviour)
++ New option, to automatically (re)start playing on startup, at the point where you have exit wxMusik before.
 + On start, now playing list is shown instead of Musik Library, this way startup time is faster.
 + Now Playing list scrolls to new song on song change
 + Sources box now scroll automatically while drag and dropping
