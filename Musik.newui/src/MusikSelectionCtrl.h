@@ -35,17 +35,17 @@ public:
 	CMusikSelectionCtrl( wxWindow* parent, wxWindowID id );
 	~CMusikSelectionCtrl();
 
-	virtual void OnResize( wxSizeEvent& event );
-	virtual void OnColBeginDrag( wxListEvent& event );
-	virtual void OnKeyDown( wxListEvent& event );
-	virtual void RescaleColumns( bool refresh = false );
-	virtual void Reset( bool rescale = true, bool refresh = false );
-	virtual void Update( bool refresh = false );
+	virtual void OnResize			( wxSizeEvent& event );
+	virtual void OnColBeginDrag		( wxListEvent& event );
+	virtual void OnKeyDown			( wxListEvent& event );
+	virtual void RescaleColumns		( bool refresh = false );
+	virtual void Reset				( bool rescale = true, bool refresh = false );
+	virtual void Update				( bool refresh = false );
 
-	wxString GetDBName(){ return E_MUSIK_SELECTION_DB_NAMES[(int)m_Type]; }
-	wxString GetColumnName(){ return E_MUSIK_SELECTION_COLUMN_LABELS[(int)m_Type]; }
-	E_MUSIK_SELECTION_TYPE GetType(){ return m_Type; }
-	void SetType( E_MUSIK_SELECTION_TYPE type, bool reset = true );
+	wxString GetDBName				( )	{ return E_MUSIK_SELECTION_DB_NAMES[(int)m_Type]; }
+	wxString GetColumnName			( )	{ return E_MUSIK_SELECTION_COLUMN_LABELS[(int)m_Type]; }
+	E_MUSIK_SELECTION_TYPE GetType	( )	{ return m_Type; }
+	void SetType					( E_MUSIK_SELECTION_TYPE type, bool reset = true );
 
 private:
 
