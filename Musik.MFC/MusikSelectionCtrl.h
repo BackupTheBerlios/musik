@@ -24,6 +24,8 @@ public:
 	bool			IsItemSelected( int item );
 	bool			IsParent(){ return m_ParentBox; }
 
+	void			RescaleColumn();
+
 	void SetUpdating( bool updating = true ){ m_Updating = updating; }
 	void SetParent( bool parent = true ){ m_ParentBox = parent; }
 

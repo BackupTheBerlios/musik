@@ -49,7 +49,6 @@ BOOL CMusikApp::InitInstance()
 	// Change the registry key under which our settings are stored
 	// TODO: You should modify this string to be something appropriate
 	// such as the name of your company or organization
-	SetRegistryKey(_T("Musik.MFC"));
 	// To create the main window, this code creates a new frame window
 	// object and then sets it as the application's main window object
 	CMainFrame* pFrame = new CMainFrame;

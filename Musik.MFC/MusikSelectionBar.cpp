@@ -4,6 +4,7 @@
 #include "MainFrm.h"
 
 #include "../Musik.Core/include/MusikLibrary.h"
+#include ".\musikselectionbar.h"
 
 
 CMusikSelectionBar::CMusikSelectionBar( CFrameWnd* parent, CMusikLibrary* library, int type, int ctrl_id )
@@ -19,6 +20,7 @@ CMusikSelectionBar::~CMusikSelectionBar()
 
 BEGIN_MESSAGE_MAP(CMusikSelectionBar, baseCMusikSelectionBar)
 	ON_WM_CREATE()
+	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
 
@@ -27,7 +29,7 @@ int CMusikSelectionBar::OnCreate( LPCREATESTRUCT lpCreateStruct )
 	if ( baseCMusikSelectionBar::OnCreate(lpCreateStruct) == -1 )
 		return -1;
 
-	SetSCBStyle( GetSCBStyle() | SCBS_SIZECHILD );
+	//SetSCBStyle( GetSCBStyle() | SCBS_SIZECHILD );
 
 	long dwStyle = WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_OWNERDATA | LVS_SHOWSELALWAYS;
 	long dwStyleEx =  LVS_EX_FULLROWSELECT;
@@ -45,4 +47,15 @@ int CMusikSelectionBar::OnCreate( LPCREATESTRUCT lpCreateStruct )
 	m_wndChild->SetFont( &m_Font );
 
 	return 0;
+}
+
+void CMusikSelectionBar::OnSize(UINT nType, int cx, int cy)
+{
+	CSizingControlBarG::OnSize(nType, cx, cy);
+
+	CRect rcClient;
+	GetClientRect( &rcClient );
+
+	m_wndChild->MoveWindow( rcClient );
+	m_wndChild->RescaleColumn();
 }

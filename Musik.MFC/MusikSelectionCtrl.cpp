@@ -27,7 +27,6 @@ CMusikSelectionCtrl::~CMusikSelectionCtrl()
 
 
 BEGIN_MESSAGE_MAP(CMusikSelectionCtrl, CMusikListCtrl)
-	ON_WM_SIZE()
 	ON_WM_CREATE()
 	ON_NOTIFY_REFLECT(LVN_GETDISPINFO, OnLvnGetdispinfo)
 	ON_NOTIFY_REFLECT(LVN_ITEMCHANGED, OnLvnItemchanged)
@@ -36,13 +35,6 @@ END_MESSAGE_MAP()
 
 
 // CMusikSelectionCtrl message handlers
-
-
-void CMusikSelectionCtrl::OnSize(UINT nType, int cx, int cy)
-{
-	SetColumnWidth( 0, cx );
-	CMusikListCtrl::OnSize(nType, cx, cy);
-}
 
 int CMusikSelectionCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
@@ -54,11 +46,18 @@ int CMusikSelectionCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CRect client_size;
 	GetClientRect( &client_size );
 
-	SetColumnWidth( 0, client_size.Width() );
+	RescaleColumn();
 
 	UpdateV( true );
 
 	return 0;
+}
+
+void CMusikSelectionCtrl::RescaleColumn()
+{
+	CRect client_size;
+	GetClientRect( &client_size );
+	SetColumnWidth( 0, client_size.Width() );
 }
 
 void CMusikSelectionCtrl::UpdateV( bool update_count )
