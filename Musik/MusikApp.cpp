@@ -109,18 +109,18 @@ bool MusikApp::OnInit()
 
 		if(arrParams.GetCount())
 		{
-		for( size_t i = 0; i < arrParams.GetCount(); i++)
-		{
-			sData += arrParams[i];
-			sData += wxT("\n");
-		}
+			for( size_t i = 0; i < arrParams.GetCount(); i++)
+			{
+				sData += arrParams[i];
+				sData += wxT("\n");
+			}
 	#ifdef wxUSE_UNICODE
 			pConn->Poke(wxT("PlayFiles"),sData.GetWriteBuf(sData.Length()),sData.Length()*sizeof(wxChar),wxIPC_UNICODETEXT);
 	#else
-		pConn->Poke(wxT("PlayFiles"),sData.GetWriteBuf(sData.Length()),sData.Length(),wxIPC_TEXT);
+			pConn->Poke(wxT("PlayFiles"),sData.GetWriteBuf(sData.Length()),sData.Length(),wxIPC_TEXT);
 	#endif
-			pConn->Poke(wxT("RaiseFrame"),NULL,0,wxIPC_PRIVATE);
 		}
+		pConn->Poke(wxT("RaiseFrame"),NULL,0,wxIPC_PRIVATE);
 		return false;
 	}
 	//--- setup our home dir ---//

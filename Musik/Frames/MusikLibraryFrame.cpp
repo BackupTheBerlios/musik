@@ -393,6 +393,7 @@ void MusikLibraryFrame::PathsListRemoveSel()
 			aDelDirs.Add( lcPaths->GetItemText( i ) );
 			lcPaths->DeleteItem( i );
 			i--;
+			m_arrScannedFiles.Clear(); // we have to rescan the files
 		}
 	}
 
@@ -407,6 +408,7 @@ void MusikLibraryFrame::PathsListRemoveAll()
 		lcPaths->DeleteAllItems();
 		PathsSave();
 	}
+	m_arrScannedFiles.Clear(); // we have to rescan the files
 }
 
 void MusikLibraryFrame::PathsListProcessKeys( wxListEvent & event )
@@ -445,6 +447,7 @@ void MusikLibraryFrame::PathsListAdd()
 
 				PathsSave();
 				bRebuild = true;
+				m_arrScannedFiles.Clear(); // we have to rescan the files
 			}
 		}
 	}
