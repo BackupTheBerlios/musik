@@ -83,22 +83,27 @@ BEGIN
             MENUITEM "F&iles\tCtrl+O",              ID_ADD_FILES
             MENUITEM "&Directory\tCtrl+D",          ID_ADD_DIRECTORY
         END
-        POPUP "&Unsynchronized Tags"
+        POPUP "Library"
         BEGIN
-            MENUITEM "Vie&w",                       ID_UNSYNCHRONIZEDTAGS_VIEW
+            MENUITEM "Clear Library...",            ID_FILE_CLEARLIBRARY
+            MENUITEM "Synchronized Directories...\tCtrl+M", 
+                                                    ID_FILE_SYNCHRONIZEDDIRECTORIES
 
             MENUITEM SEPARATOR
-            MENUITEM "&Write to File",              ID_UNSYNCHRONIZEDTAGS_WRITETOFILE
+            POPUP "Unsynchronized Tags"
+            BEGIN
+                MENUITEM "Vie&w",                       ID_UNSYNCHRONIZEDTAGS_VIEW
 
-            MENUITEM "Finalize for &Database Only", ID_UNSYNCHRONIZEDTAGS_FINALIZEFORDATABASEONLY
+                MENUITEM SEPARATOR
+                MENUITEM "&Write to File",              ID_UNSYNCHRONIZEDTAGS_WRITETOFILE
 
+                MENUITEM "Finalize for &Database Only", ID_UNSYNCHRONIZEDTAGS_FINALIZEFORDATABASEONLY
+
+            END
         END
         MENUITEM SEPARATOR
         MENUITEM "&Save Playlist\tCtrl+S",      ID_FILE_SAVEPLAYLIST
         MENUITEM SEPARATOR
-        MENUITEM "Synchronized Directories...\tCtrl+M", 
-                                                ID_FILE_SYNCHRONIZEDDIRECTORIES
-
         MENUITEM "&Preferences...\tCtrl+P",     ID_FILE_PREFERENCES
         MENUITEM SEPARATOR
         MENUITEM "E&xit",                       ID_APP_EXIT

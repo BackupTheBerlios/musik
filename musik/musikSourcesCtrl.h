@@ -103,6 +103,7 @@ public:
 	void RenameSel();
 	void DeleteSel();
 	void QuickSearch();
+	void Reset(){ CleanItems(); InitItems(); }
 
 	// overrides
 	void DoDrag( CmusikPropTreeItem* pItem );
@@ -138,6 +139,7 @@ protected:
 
 	// create default headers
 	void InitItems();
+	void CleanItems();
 	CmusikPropTreeItem* m_LibrariesRoot;
 	CmusikPropTreeItem* m_QuickSearchRoot;
 	CmusikPropTreeItem* m_StdPlaylistRoot;

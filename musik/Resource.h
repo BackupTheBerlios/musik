@@ -102,7 +102,6 @@
 #define ID_ADD_FILES                    32774
 #define ID_ADD_DIRECTORY                32775
 #define ID_OPEN_MANAGEDIRECTORIES       32776
-#define ID_FILE_MANAGEDIRECTORIES       32777
 #define ID_FILE_SAVEPLAYLIST            32778
 #define ID_AUDIO_PLAYBACKMODE           32780
 #define ID_PLAYBACKMODE_NORMAL          32781
@@ -181,13 +180,16 @@
 #define ID_EQUALIZER_ENABLED2           32880
 #define ID_SELECTIONBOX_ADDNEW          32881
 #define ID_SELECTIONBOX_REMOVE          32882
+#define ID_FILE_CLEARLIBRARY            32883
+#define ID_SYNCHRONIZATION_UNSYNCHRONIZEDTAGS 32886
+#define ID_FILE_LIBRARY                 32887
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        147
-#define _APS_NEXT_COMMAND_VALUE         32883
+#define _APS_NEXT_COMMAND_VALUE         32888
 #define _APS_NEXT_CONTROL_VALUE         1051
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

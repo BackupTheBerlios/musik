@@ -312,6 +312,23 @@ void CmusikSourcesCtrl::InitItems()
 
 ///////////////////////////////////////////////////
 
+void CmusikSourcesCtrl::CleanItems()
+{
+	ClearVisibleList();
+	DeleteAllItems();
+	
+	m_LibrariesRoot = NULL;
+	m_StdPlaylistRoot = NULL;
+	m_DynPlaylistRoot = NULL;
+	m_QuickSearch = NULL;
+
+	m_Libraries.clear();
+	m_StdPlaylists.clear();
+	m_DynPlaylists.clear();
+}
+
+///////////////////////////////////////////////////
+
 void CmusikSourcesCtrl::FocusLibrary()
 {
 	KillFocus( false );

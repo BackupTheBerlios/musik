@@ -300,6 +300,8 @@ protected:
 	void InitTrayIcon();
 	void ShowTrayIcon();
 	void HideTrayIcon();
+public:
+	afx_msg void OnFileClearlibrary();
 };
 
 ///////////////////////////////////////////////////

@@ -207,6 +207,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_BATCHADD_VERIFY_PLAYLIST, OnVerifyPlaylist )
 	ON_REGISTERED_MESSAGE( WM_CLOSEDIRSYNC, OnCloseDirSync )
 	ON_REGISTERED_MESSAGE( WM_SELBOXADDREMOVE, OnSelBoxAddRemove )
+	ON_COMMAND(ID_FILE_CLEARLIBRARY, OnFileClearlibrary)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -567,7 +568,7 @@ void CMainFrame::ResetSelBoxes( bool requery, bool resetparent )
 		{
 			if ( m_wndSelectionBars.at( i )->GetCtrl()->IsParent() )
 			{
-				OnUpdateSel( (WPARAM)m_wndSelectionBars.at( i )->GetCtrl()->GetCtrlID(), (LPARAM)resetparent );
+				OnUpdateSel( (WPARAM)m_wndSelectionBars.at( i )->GetCtrl()->GetCtrlID(), (LPARAM)requery );
 				return;
 			}
 		}	
@@ -1001,7 +1002,12 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 	CmusikSelectionCtrl* pParent	= NULL;
 
 	int nSender = (int)wParam;
-	bool force_all_updatev = ( lParam == NULL ) ? false : true;
+
+	bool force_all_updatev;
+	if ( lParam == NULL )
+		force_all_updatev = false;
+	else
+		force_all_updatev = true;
 
 	// find the sender and parent
 	for ( size_t i = 0; i < selbox_count; i++ )
@@ -2332,3 +2338,90 @@ LRESULT CMainFrame::OnSelBoxAddRemove( WPARAM wParam, LPARAM lParam )
 
 ///////////////////////////////////////////////////
 
+void CMainFrame::OnFileClearlibrary()
+{
+	int prompt = MessageBox( "Would you like to also clear playlists, equalizer, and crossfade settings?", MUSIK_VERSION_STR, MB_ICONWARNING | MB_YESNOCANCEL );
+
+	bool clear = false;
+	switch ( prompt )
+	{
+	case IDYES:
+		clear = true;
+		break;
+	case IDNO:
+		clear = false;
+		break;
+	case IDCANCEL:
+		return;
+		break;
+	}
+
+	// kill all threads that may be
+	// accessing the database
+	{
+		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingThreads );
+		{
+			if ( m_Updater )
+			{
+				m_Updater->Suspend( true );
+				m_Updater->Abort();
+				m_Updater->Resume();
+
+				while ( !m_Updater->m_Finished )
+					Sleep( 50 );
+
+				delete m_Updater;
+			}
+		}
+	}
+
+	{
+		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingThreads );
+		{
+			for ( size_t i = 0; i < m_Threads.size(); i++ )
+			{
+				m_Threads.at( i )->Suspend( true );
+				m_Threads.at( i )->Abort();
+				m_Threads.at( i )->Resume();
+
+				while ( !m_Threads.at( i )->m_Finished )
+					Sleep( 50 );
+
+				delete m_Threads.at( i );
+			}
+
+			m_Threads.clear();
+		}
+	}
+
+	// stop player
+	m_Player->Stop();
+	while ( m_Player->IsPlaying() || m_Player->IsPaused() )
+		Sleep( 50 );
+	m_Player->GetPlaylist()->Clear();
+
+	// clear
+	m_Library->ClearLibrary( clear );
+
+	// send an event that the library
+	// was selected...
+	if ( m_LibPlaylist )
+		delete m_LibPlaylist;
+
+	m_wndSources->GetCtrl()->Reset();
+	m_wndSources->GetCtrl()->FocusLibrary();
+	m_LibPlaylist = new CmusikPlaylist();
+	OnSourcesLibrary( NULL, NULL );
+	ResetSelBoxes();
+
+	// start the updater again
+	{
+		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingThreads );
+		{
+			m_Updater = new CmusikThread();
+			m_Updater->Start( (ACE_THR_FUNC)MainFrameWorker, this );
+		}
+	}
+}
+
+///////////////////////////////////////////////////
