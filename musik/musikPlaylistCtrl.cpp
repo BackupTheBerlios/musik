@@ -558,8 +558,14 @@ void CmusikPlaylistCtrl::OnNMClick(NMHDR *pNMHDR, LRESULT *pResult)
 				nRating = 0;
 			else if ( clk_loc >= m_RatingExtent + nOffset )
 				nRating = 5;
-			else
+			else 
+			{
 				nRating = ( clk_loc / ( m_RatingExtent / 5 ) );
+
+				if ( rating_pos == 0 )
+					nRating++;
+			}
+
 
             m_Library->SetSongRating( m_Playlist->GetSongID( hit_test.iItem ), nRating );	
 			if ( m_SongInfoCache->ResyncItem( m_Playlist->GetSongID( hit_test.iItem ) ) )
