@@ -111,7 +111,7 @@ void MusikFrame::OnClose( wxCloseEvent& WXUNUSED(event) )
 	//--- event will be posted back when done.		---//
     //-------------------------------------------------//
 	Show( false );
-	if ( g_Prefs.nFadeExitEnable == 1 && g_Player.IsPlaying() && !g_Player.IsPaused() )
+	if ( g_Prefs.nGlobalFadeEnable && g_Prefs.nFadeExitEnable && g_Player.IsPlaying() && !g_Player.IsPaused() )
 	{
 		g_Player.Stop( true, true );
 		return;

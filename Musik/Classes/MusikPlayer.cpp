@@ -261,7 +261,7 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 		//--- all of the old channels, and set the	---//
 		//--- active stream to full volume			---//
 		//---------------------------------------------//
-		if ( g_Prefs.nFadeEnable == 0 )
+		if ( g_Prefs.nFadeEnable == 0 || g_Prefs.nGlobalFadeEnable == 0 )
 		{
 			FSOUND_SetVolume( g_ActiveChannels.Item( g_ActiveChannels.GetCount() - 1 ), g_Prefs.nSndVolume );
 			ClearOldStreams();
@@ -271,7 +271,7 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 		//--- tell the listening thread its time to	---//
 		//--- start fading							---//
 		//---------------------------------------------//
-		else if ( g_Prefs.nFadeEnable == 1 )
+		else if ( g_Prefs.nFadeEnable && g_Prefs.nGlobalFadeEnable )
 			SetFadeStart();		
 	}
 
@@ -370,7 +370,7 @@ void CMusikPlayer::Pause( bool bCheckFade )
 	//--- will get posted back to actually pause	---//
 	//--- once the fade is complete.				---//
 	//-------------------------------------------------//
-	if ( bCheckFade && g_Prefs.nFadePauseResumeEnable )
+	if ( bCheckFade && g_Prefs.nFadePauseResumeEnable && g_Prefs.nGlobalFadeEnable )
 		SetFadeStart();
 	else
 		FinalizePause();
@@ -400,7 +400,7 @@ void CMusikPlayer::Resume( bool bCheckFade )
 	//--- setup crossfader and return, if	the prefs	---//
 	//--- say so.										---//
 	//-----------------------------------------------------//
-	if ( bCheckFade && g_Prefs.nFadePauseResumeEnable )
+	if ( bCheckFade && g_Prefs.nFadePauseResumeEnable && g_Prefs.nGlobalFadeEnable )
 		SetFadeStart();
 	else
 		FinalizeResume();
@@ -435,7 +435,7 @@ void CMusikPlayer::Stop( bool bCheckFade, bool bExit )
 	//--- setup crossfader and return, if the prefs	---//
 	//--- say so.									---//
 	//-------------------------------------------------//
-	if ( bCheckFade && g_Prefs.nFadeExitEnable == 1 )
+	if ( bCheckFade && g_Prefs.nFadeExitEnable && g_Prefs.nGlobalFadeEnable )
 	{
 		//--- use exit duration ---//
 		if ( bExit )

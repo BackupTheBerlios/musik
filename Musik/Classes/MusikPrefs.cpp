@@ -46,6 +46,7 @@ void CMusikPrefs::LoadPrefs()
 	config->Read( wxT( "ActivityBox4" ),						(int*)&nActBox4,			0						);
 	config->Read( wxT( "Repeat" ),								&nRepeat,					1						);
 	config->Read( wxT( "Shuffle" ),								&nShuffle,					0						);
+	config->Read( wxT( "GlobalFaderEnabled" ),					&nGlobalFadeEnable,			1						);
 	config->Read( wxT( "CrossfaderEnabled" ),					&nFadeEnable,				1						);
 	config->Read( wxT( "CrossfaderSeekEnabled" ),				&nFadeSeekEnable,			1						);
 	config->Read( wxT( "CrossfaderPauseResumeEnabled" ),		&nFadePauseResumeEnable,	1						);
@@ -255,6 +256,7 @@ void CMusikPrefs::SavePrefs()
 	config->Write( wxT( "ActivityBox4" ),					nActBox4					);
 	config->Write( wxT( "Repeat" ),							nRepeat						);
 	config->Write( wxT( "Shuffle" ),						nShuffle					);
+	config->Write( wxT( "GlobalFaderEnabled" ),				nGlobalFadeEnable			);
 	config->Write( wxT( "CrossfaderEnabled" ),				nFadeEnable					);
 	config->Write( wxT( "CrossfaderSeekEnabled" ),			nFadeSeekEnable				);
 	config->Write( wxT( "CrossfaderPauseResumeEnabled" ),	nFadePauseResumeEnable		);

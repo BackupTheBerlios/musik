@@ -77,18 +77,11 @@ void CGaugeSeekEvt::OnLeftUp( wxMouseEvent& event )
 
 		if ( g_ActiveStreams.GetCount() )
 		{
-			//-----------------------------------------------//
-			//--- if we have left up and modifying volume ---//
-			//--- assume user is done. destroy the frame  ---//
-			//-----------------------------------------------//
-			if ( lType == wxGA_VERTICAL )
-				g_VolumeFrame->Close();
-
      		//-----------------------------------------------//
 			//--- if we have left up and modifying time	  ---//
 			//--- assume user is done. update pos		  ---//
 			//-----------------------------------------------//   		
-			else if ( lType == wxGA_HORIZONTAL )
+			if ( lType == wxGA_HORIZONTAL )
 			{
 				//--- set player pos ---//
 				int nTime = ( (int)fPos * (int)g_Player.GetDuration( FMOD_SEC ) ) / (int)100;

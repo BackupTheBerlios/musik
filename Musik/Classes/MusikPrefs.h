@@ -77,6 +77,7 @@ public:
 	int nRepeat;
 	int nShuffle;
 
+	int nGlobalFadeEnable;
 	int nFadeEnable;
 	int nFadeSeekEnable;
 	int nFadePauseResumeEnable;
