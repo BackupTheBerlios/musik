@@ -104,7 +104,15 @@ void MusikFrame::OnSize	( wxCommandEvent& WXUNUSED(event) )
 
 void MusikFrame::OnCloseEvt( wxCommandEvent& WXUNUSED(event) )
 {
-	Close();
+	//-------------------------------------------------//
+	//--- use Close() in GTK and you get a segfault	---//
+	//--- use Destroy() in MSW you get mem leaks		---//
+	//-------------------------------------------------//
+	#ifdef __WXMSW__
+		Close();
+	#elif defined __WXGTK__
+		Destroy();
+	#endif
 }
 
 void MusikFrame::OnClose( wxCloseEvent& WXUNUSED(event) )
@@ -402,4 +410,3 @@ void MusikFrame::OnEndProgress( wxCommandEvent& WXUNUSED(event) )
 
 	SetTitle( MUSIK_VERSION );
 }
-
