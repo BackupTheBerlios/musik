@@ -221,6 +221,8 @@ protected:
 	// macros
 	DECLARE_DYNAMIC(CMainFrame)
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnUnsynchronizedtagsView();
 };
 
 ///////////////////////////////////////////////////

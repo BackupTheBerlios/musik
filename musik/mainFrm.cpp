@@ -60,6 +60,7 @@
 #include <Direct.h>
 
 #include "3rdparty/TreePropSheet.h"
+#include ".\mainfrm.h"
 
 ///////////////////////////////////////////////////
 
@@ -174,6 +175,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_REMOVEOLD_END, OnThreadEnd )
 	ON_REGISTERED_MESSAGE( WM_PLAYER_PLAYSEL, OnPlayerPlaySel )
 	ON_REGISTERED_MESSAGE( WM_BATCHADD_VERIFY_PLAYLIST, OnVerifyPlaylist )
+	ON_COMMAND(ID_UNSYNCHRONIZEDTAGS_VIEW, OnUnsynchronizedtagsView)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -832,16 +834,8 @@ LRESULT CMainFrame::OnSelBoxEditCommit( WPARAM wParam, LPARAM lParam )
 	if ( playlist->GetCount() )
 	{
 		CmusikSongInfoArray* pSongInfoArray = new CmusikSongInfoArray();
-		CmusikSongInfo info;
-
-		m_Library->BeginTransaction();
-		for ( size_t i = 0; i < playlist->GetCount(); i++ )
-		{
-			m_Library->GetSongInfoFromID( playlist->GetSongID( i ), &info );
-			info.SetField( nLibType, sNew );
-			pSongInfoArray->push_back( info );
-		}
-		m_Library->EndTransaction();
+	
+		m_Library->GetInfoArrayFromPlaylist( playlist, pSongInfoArray, nLibType, sNew, true );
 
 		delete playlist;
 
@@ -1656,6 +1650,25 @@ void CMainFrame::OnPlaybackmodeIntro()
 		m_Player->ModifyPlaymode( MUSIK_PLAYER_PLAYMODE_INTRO, NULL );
 
 	m_Prefs->SetPlayerPlaymode( m_Player->GetPlaymode() );
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnUnsynchronizedtagsView()
+{
+	// get the songs
+	if ( !m_LibPlaylist )
+		m_LibPlaylist = new CmusikPlaylist();
+
+	m_Library->GetDirtySongs( m_LibPlaylist, true );
+
+	// make sure the correct playlist is set
+	if ( m_wndView->GetCtrl()->GetPlaylist() != m_LibPlaylist )
+		m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, MUSIK_SOURCES_TYPE_LIBRARY );
+
+	// update the windows
+	m_wndView->GetCtrl()->UpdateV();
+	m_wndSources->GetCtrl()->FocusLibrary();
 }
 
 ///////////////////////////////////////////////////
