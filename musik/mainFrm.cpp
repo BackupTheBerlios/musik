@@ -1269,6 +1269,7 @@ LRESULT CMainFrame::OnSongChange( WPARAM wParam, LPARAM lParam )
 
 	// tell the child windows to redraw their
 	// state accordingly
+	m_wndView->GetCtrl()->ScrollToCurr();
 	m_wndView->GetCtrl()->RedrawWindow();
 
 	m_wndNowPlaying->GetCtrl()->GetTimeCtrl()->OnNewSong();
