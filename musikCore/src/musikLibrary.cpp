@@ -1357,6 +1357,43 @@ bool CmusikLibrary::GetStdPlaylistFns( CmusikPlaylist& playlist, CmusikStringArr
 
 ///////////////////////////////////////////////////
 
+void CmusikLibrary::GetPlaylistInfoTotals( int id, size_t& TotalTime, double& TotalSize )
+{
+	size_t tot = 0;
+
+	const char *pTail;
+	sqlite_vm *pVM;
+
+	m_ProtectingLibrary.acquire();
+
+	char* query;
+	if ( id == -1 )
+		query = sqlite_mprintf( "select sum(duration), sum(filesize) from %Q;", SONG_TABLE_NAME );
+	else
+		query = sqlite_mprintf( "select sum(a1.duration), sum(a1.filesize) SIZE from %Q A1, %Q A2 where A1.filename = A2.songfn and a2.std_playlist_id = %d;", SONG_TABLE_NAME, STD_PLAYLIST_SONGS, id );
+
+	sqlite_compile( m_pDB, query, &pTail, &pVM, NULL );
+	char *errmsg;
+	int numcols = 0;
+	const char **coldata;
+	const char **coltypes;
+
+	if ( sqlite_step( pVM, &numcols, &coldata, &coltypes ) == SQLITE_ROW )
+	{
+		TotalTime = atoi( coldata[0] ) / 1000;
+		TotalSize = atof( coldata[1] );
+	}
+
+	sqlite_freemem( query );
+
+	sqlite_finalize( pVM, &errmsg );
+
+	m_ProtectingLibrary.release();
+
+}
+
+///////////////////////////////////////////////////
+
 int CmusikLibrary::CreateDynPlaylist( const CmusikString& name, const CmusikStringArray& query )
 {
 	if ( !m_DatabaseOpen )

@@ -281,7 +281,11 @@ void CmusikPlaylistInfoCtrl::UpdateInfo()
 			m_strInfo = "empty playlist";
 		else
 		{
-			size_t runtime = m_ListCtrl->GetPlaylist()->GetRunningTime();
+			//size_t runtime = m_ListCtrl->GetPlaylist()->GetRunningTime();
+			size_t runtime;
+			double totsize;
+			m_Library->GetPlaylistInfoTotals( m_ListCtrl->GetPlaylist()->GetPlaylistID(), runtime, totsize );
+			
 			CTimeSpan span( 0, 0, 0, runtime );
 			CString strtime;
 			if ( runtime > 172800 )
@@ -292,7 +296,7 @@ void CmusikPlaylistInfoCtrl::UpdateInfo()
 				strtime = span.Format( "%H:%M:%S" );
 		
 			CString strsize( "0.0 mb" );
-			double totsize = m_ListCtrl->GetPlaylist()->GetDiskspace();
+			//double totsize = m_ListCtrl->GetPlaylist()->GetDiskspace();
 			if ( totsize < 1024.0 )
 				strsize.Format( "%.2f b", totsize );
 			else if ( totsize < ( 1024.0 * 1024.0 ) )

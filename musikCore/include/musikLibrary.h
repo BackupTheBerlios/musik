@@ -237,7 +237,8 @@ public:
 	int  GetStdPlaylist				( int id, CmusikPlaylist& target, bool clear_target = true );
 	bool GetStdPlaylistFns			( int id, CmusikStringArray& target, bool clear_target = true );
 	bool GetStdPlaylistFns			( CmusikPlaylist& playlist, CmusikStringArray& target, bool clear_target = true );
-
+	void GetPlaylistInfoTotals		( int id, size_t& TotalTime, double& TotalSize );
+	
 	// dynamic playlist
 	int  CreateDynPlaylist			( const CmusikString& name, const CmusikStringArray& query );
 	int  RewriteDynPlaylist			( int id, const CmusikStringArray& query );

@@ -122,8 +122,6 @@ public:
 	CmusikString GetField( int index, int field );
 	int GetSongID( int index );
 	size_t GetCount();
-	size_t GetRunningTime();
-	double GetDiskspace();
 	int GetPlaylistID(){ return m_ID; }
 
 	// sets
@@ -140,10 +138,6 @@ public:
 	int m_ID;
 	int m_Type;
 	CmusikSongArray m_Songs;
-
-protected:
-	size_t	m_TotalRunningTime;
-	double  m_TotalDiskspace;
 };
 
 ///////////////////////////////////////////////////
