@@ -270,7 +270,7 @@ void CPlaylistCtrl::SaveColumns()
 			if ( i == 0 )
 			{
 				g_Prefs.nPlaylistColumnSize[nCurrCol] = GetColumnWidth( i ) - m_Overflow;
-				size_t m_Overflow = 0;
+				 m_Overflow = 0;
 			}
 			else
 				g_Prefs.nPlaylistColumnSize[nCurrCol] = GetColumnWidth( i );
@@ -898,7 +898,7 @@ void CPlaylistCtrl::ResetColumns( bool update, bool rescale )
 	//-------------------------------------------------//
 	//--- clear all columns							---//
 	//-------------------------------------------------//
-	int nColumnCount = GetColumnCount();
+	size_t nColumnCount = GetColumnCount();
 	for ( size_t i = 0; i < nColumnCount; i++ )
 		DeleteColumn( 0 );
 

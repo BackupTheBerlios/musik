@@ -649,10 +649,9 @@ CMusikSongArray CMusikLibrary::GetSongs( wxArrayString *aList, int nInType )
 	wxString sInfo;
 	aReturn.Alloc(GetSongCount()); // optimize item adding performance,
   	wxString sQuery(wxT( "select filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize from songs where "));
-  
-   
+     
   	if ( nInType == MUSIK_LIB_ARTIST )
-    		sQuery +=wxT("artist in(");
+		sQuery +=wxT("artist in(");
 	else if ( nInType == MUSIK_LIB_ALBUM )
 		sQuery += wxT( "album in( ");
 	else if ( nInType == MUSIK_LIB_GENRE )
@@ -662,9 +661,10 @@ CMusikSongArray CMusikLibrary::GetSongs( wxArrayString *aList, int nInType )
 	sQuery.Alloc(sQuery.Len() + 30 + aList->GetCount() * 30); // optimization ( the 30 is a wild guess)
 
 	//--- for each item in the input list, we're going to query the database ---//
-	for ( int i = 0; i < (int)aList->GetCount(); i++ )
+	for ( size_t i = 0; i < aList->GetCount(); i++ )
 	{	
-    	 	aList->Item( i ).Replace( wxT( "'" ), wxT( "''" ), true );
+		aList->Item( i ).Replace( wxT( "'" ), wxT( "''" ), true );
+		
   	 	sQuery += wxT("'");
 		sQuery += aList->Item( i );
 		//--- not at the end ---//
@@ -675,7 +675,7 @@ CMusikSongArray CMusikLibrary::GetSongs( wxArrayString *aList, int nInType )
 			sQuery += wxT("' ) ");
   	}
 	if ( nInType == MUSIK_LIB_ARTIST )
-    		sQuery +=wxT("order by artist,album,tracknum;");
+		sQuery +=wxT("order by artist,album,tracknum;");
 	else if ( nInType == MUSIK_LIB_ALBUM )
 		sQuery += wxT( "order by album,tracknum,artist;");
 	else if ( nInType == MUSIK_LIB_GENRE )
