@@ -418,7 +418,15 @@ void CSourcesListBox::BeginDrag( wxListEvent &event )
 		//-------------------------//
 		//--- get selected item	---//
 		//-------------------------//
-		m_DragIndex		= event.GetIndex();
+		int n = event.GetIndex();
+		EMUSIK_SOURCES_TYPE Type = GetType(n);
+		if(( Type == MUSIK_SOURCES_NONE)
+			|| (Type == MUSIK_SOURCES_NOW_PLAYING)
+			|| (Type == MUSIK_SOURCES_LIBRARY))
+		{
+			return;//not allowed to be dragged.
+		}
+		m_DragIndex = n;
 		const wxString & sDrop	= m_SourcesList.Item( m_DragIndex );
 
 		//------------------------------------------------------//

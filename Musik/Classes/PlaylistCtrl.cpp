@@ -230,7 +230,7 @@ wxDragResult PlaylistDropTarget::OnDropFiles(wxCoord x, wxCoord y, const wxArray
 wxDragResult PlaylistDropTarget::OnDropSonglist( wxCoord x, wxCoord y, const wxString &sFiles,wxDragResult def )
 {
 	//--- make sure we have something ---//
-	if ( sFiles != wxT( "" ) )
+	if ( !sFiles.IsEmpty())
 	{
 
 		//--- where did we land? ---//
@@ -239,8 +239,8 @@ wxDragResult PlaylistDropTarget::OnDropSonglist( wxCoord x, wxCoord y, const wxS
 		n = m_pPlaylistCtrl->HitTest( pt, nFlags );
 
 
-		//--- make sure we havn't dragged on a selected item ---//
-		if ( m_pPlaylistCtrl->DNDIsSel( n ) )
+		//--- make sure we havn't dragged on a selected item and aCurSel is not empty---//
+		if ( m_pPlaylistCtrl->DNDIsSel( n ) || m_pPlaylistCtrl->aCurSel.GetCount() == 0)
 		{
 			m_pPlaylistCtrl->aCurSel.Clear();
 			return wxDragNone;
@@ -288,7 +288,7 @@ wxDragResult PlaylistDropTarget::OnDragOver(wxCoord x, wxCoord y, wxDragResult d
 			)
 			return wxDragNone;
 	}
-	return HighlightSel( pt ) ? wxDragCopy : wxDragNone;// return wxDragCopy because def is not set correctly by wxwidgets(it shoul dbe the operation which is proposed by windows, but wxwidgets uses the keystate for determining the drop effect)
+	return HighlightSel( pt ) ? wxDragCopy : wxDragNone;// return wxDragCopy because def is not set correctly by wxwidgets(it should be the operation which is proposed by windows, but wxwidgets uses the keystate for determining the drop effect)
 	// wxDragCopy because CPlaylistCtrl uses wxDrag_CopyOnly( to prohibit moving files by explorer when files are dropped there.)
 }
 
@@ -710,6 +710,7 @@ void CPlaylistCtrl::OnKeyDown( wxKeyEvent& event )
 				case WXK_F5:
 				case WXK_F6:
 				case WXK_F7:
+				case WXK_F8:
 					EditTag( nKeyCode -  WXK_F2);
 					break;
 				case WXK_DELETE:

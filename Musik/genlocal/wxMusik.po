@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-08-30 18:59+0200\n"
+"POT-Creation-Date: 2004-09-20 11:15+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -61,7 +61,7 @@ msgid ""
 "the new songs. Proceed?"
 msgstr ""
 
-#: ../MusikApp.cpp:266
+#: ../MusikApp.cpp:270
 msgid ""
 " has detected version 0.1.2 or earlier was previously installed.\n"
 "\n"
@@ -89,8 +89,8 @@ msgstr ""
 msgid " will not delete empty directories!"
 msgstr ""
 
-#: ../Classes/SourcesBox.cpp:950 ../Classes/SourcesBox.cpp:1024
-#: ../Classes/SourcesBox.cpp:1128
+#: ../Classes/SourcesBox.cpp:958 ../Classes/SourcesBox.cpp:1032
+#: ../Classes/SourcesBox.cpp:1136
 msgid ""
 "\" already exists, but does not appear to be visible in the panel.\n"
 "\n"
@@ -143,7 +143,7 @@ msgstr ""
 msgid "%d.%02d TB"
 msgstr ""
 
-#: ../MusikApp.cpp:204
+#: ../MusikApp.cpp:208
 #, c-format
 msgid "%s Logging Window"
 msgstr ""
@@ -303,19 +303,19 @@ msgstr ""
 msgid "&View"
 msgstr ""
 
-#: ../Classes/SourcesBox.cpp:1101
+#: ../Classes/SourcesBox.cpp:1109
 msgid "(all low quality, non-VBR)\n"
 msgstr ""
 
-#: ../Classes/SourcesBox.cpp:1105
+#: ../Classes/SourcesBox.cpp:1113
 msgid "(all songs played this month)"
 msgstr ""
 
-#: ../Classes/SourcesBox.cpp:1099
+#: ../Classes/SourcesBox.cpp:1107
 msgid "(all titles containing funky)\n"
 msgstr ""
 
-#: ../Classes/SourcesBox.cpp:1103
+#: ../Classes/SourcesBox.cpp:1111
 msgid "(your popular tracks)\n"
 msgstr ""
 
@@ -349,13 +349,13 @@ msgstr ""
 msgid "<unknown>"
 msgstr ""
 
-#: ../Classes/SourcesBox.cpp:1036
+#: ../Classes/SourcesBox.cpp:1044
 msgid ""
 "A dynamic playlist with this name already exists, would you like to edit the "
 "existing query?"
 msgstr ""
 
-#: ../Classes/SourcesBox.cpp:965
+#: ../Classes/SourcesBox.cpp:973
 msgid ""
 "A playlist with this name already exists, would you like to append to the "
 "existing one?"
@@ -575,7 +575,7 @@ msgstr ""
 msgid "Dynamic Playlist"
 msgstr ""
 
-#: ../Classes/SourcesBox.cpp:1024
+#: ../Classes/SourcesBox.cpp:1032
 msgid "Dynamic playlist \""
 msgstr ""
 
@@ -657,7 +657,7 @@ msgstr ""
 msgid "Enter name of the net stream:"
 msgstr ""
 
-#: ../Classes/SourcesBox.cpp:1154
+#: ../Classes/SourcesBox.cpp:1162
 msgid "Enter net stream address(URL):"
 msgstr ""
 
@@ -665,7 +665,7 @@ msgstr ""
 msgid "Exact phrase"
 msgstr ""
 
-#: ../Classes/SourcesBox.cpp:1097
+#: ../Classes/SourcesBox.cpp:1105
 msgid "Examples:\n"
 msgstr ""
 
@@ -673,7 +673,7 @@ msgstr ""
 msgid "FX\tCtrl-F"
 msgstr ""
 
-#: ../MusikApp.cpp:366
+#: ../MusikApp.cpp:370
 #, c-format
 msgid "Failed to copy file %s. Continue?"
 msgstr ""
@@ -689,11 +689,11 @@ msgstr ""
 msgid "File"
 msgstr ""
 
-#: ../MusikApp.cpp:367
+#: ../MusikApp.cpp:371
 msgid "File copy error"
 msgstr ""
 
-#: ../MusikApp.cpp:327
+#: ../MusikApp.cpp:331
 msgid "File copy warning"
 msgstr ""
 
@@ -771,11 +771,11 @@ msgstr ""
 msgid "Hotkey %s cannot be registered."
 msgstr ""
 
-#: ../MusikApp.cpp:184
+#: ../MusikApp.cpp:188
 msgid "Initialization of FMOD sound system failed."
 msgstr ""
 
-#: ../MusikApp.cpp:177
+#: ../MusikApp.cpp:181
 msgid "Initialization of library failed."
 msgstr ""
 
@@ -783,7 +783,7 @@ msgstr ""
 msgid "Instantly"
 msgstr ""
 
-#: ../Classes/SourcesBox.cpp:893
+#: ../Classes/SourcesBox.cpp:901
 msgid "Invalid playlist name."
 msgstr ""
 
@@ -812,15 +812,15 @@ msgstr ""
 msgid "Misc."
 msgstr ""
 
-#: ../Classes/SourcesBox.cpp:733
+#: ../Classes/SourcesBox.cpp:741
 msgid "Musik Library"
 msgstr ""
 
-#: ../Classes/SourcesBox.cpp:314 ../Classes/SourcesBox.cpp:1279
+#: ../Classes/SourcesBox.cpp:314 ../Classes/SourcesBox.cpp:1287
 msgid "Net Stream"
 msgstr ""
 
-#: ../Classes/SourcesBox.cpp:1128
+#: ../Classes/SourcesBox.cpp:1136
 msgid "Net Stream \""
 msgstr ""
 
@@ -856,7 +856,7 @@ msgstr ""
 msgid "Notes "
 msgstr ""
 
-#: ../Classes/SourcesBox.cpp:735
+#: ../Classes/SourcesBox.cpp:743
 msgid "Now Playing"
 msgstr ""
 
@@ -951,7 +951,7 @@ msgstr ""
 msgid "Playlist size: "
 msgstr ""
 
-#: ../MusikApp.cpp:313
+#: ../MusikApp.cpp:317
 msgid "Please choose location to copy songs to:"
 msgstr ""
 
@@ -1188,7 +1188,7 @@ msgstr ""
 msgid "Standard Playlist"
 msgstr ""
 
-#: ../Classes/SourcesBox.cpp:950
+#: ../Classes/SourcesBox.cpp:958
 msgid "Standard playlist \""
 msgstr ""
 
@@ -1220,7 +1220,7 @@ msgstr ""
 msgid "Tagging"
 msgstr ""
 
-#: ../Classes/SourcesBox.cpp:1085
+#: ../Classes/SourcesBox.cpp:1093
 msgid "The following fields can be used in your query"
 msgstr ""
 
@@ -1232,7 +1232,7 @@ msgstr ""
 msgid "There are no pending tags to finalize."
 msgstr ""
 
-#: ../MusikApp.cpp:326
+#: ../MusikApp.cpp:330
 #, c-format
 msgid ""
 "There is not enough free space in directory \"%s\". You need %s bytes more "
@@ -1430,7 +1430,7 @@ msgstr ""
 msgid "connecting ..."
 msgstr ""
 
-#: ../MusikApp.cpp:359
+#: ../MusikApp.cpp:363
 #, c-format
 msgid "copying %s"
 msgstr ""

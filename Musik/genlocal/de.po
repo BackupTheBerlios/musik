@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wxMusik-0.3.1.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-08-30 18:59+0200\n"
+"POT-Creation-Date: 2004-09-20 11:15+0200\n"
 "PO-Revision-Date: 2004-08-08 19:07+0100\n"
 "Last-Translator: Gunnar Roth <gunnar.roth@gmx.de>\n"
 "Language-Team: wxMusik Team <gunnar.roth@gmx.de>\n"
@@ -64,7 +64,7 @@ msgstr ""
 "Es wird empfohlen die Daten der Bibliothek auf den neuesten Stand zu "
 "bringen, was das Zufügen neuer Lieder beinhaltet. Fortfahren?"
 
-#: ../MusikApp.cpp:266
+#: ../MusikApp.cpp:270
 msgid ""
 " has detected version 0.1.2 or earlier was previously installed.\n"
 "\n"
@@ -97,8 +97,8 @@ msgstr " Pufferlänge in Sekunden"
 msgid " will not delete empty directories!"
 msgstr " löscht keine leeren Verzeichnisse!"
 
-#: ../Classes/SourcesBox.cpp:950 ../Classes/SourcesBox.cpp:1024
-#: ../Classes/SourcesBox.cpp:1128
+#: ../Classes/SourcesBox.cpp:958 ../Classes/SourcesBox.cpp:1032
+#: ../Classes/SourcesBox.cpp:1136
 msgid ""
 "\" already exists, but does not appear to be visible in the panel.\n"
 "\n"
@@ -157,7 +157,7 @@ msgstr "%d.%02d MB"
 msgid "%d.%02d TB"
 msgstr "%d.%02d TB"
 
-#: ../MusikApp.cpp:204
+#: ../MusikApp.cpp:208
 #, c-format
 msgid "%s Logging Window"
 msgstr "%s Logfenster"
@@ -327,19 +327,19 @@ msgstr "Bibliothek &aktualisieren"
 msgid "&View"
 msgstr "&Ansicht"
 
-#: ../Classes/SourcesBox.cpp:1101
+#: ../Classes/SourcesBox.cpp:1109
 msgid "(all low quality, non-VBR)\n"
 msgstr "(Alle Lieder von niedriger Qualität, die nicht VBR sind)\n"
 
-#: ../Classes/SourcesBox.cpp:1105
+#: ../Classes/SourcesBox.cpp:1113
 msgid "(all songs played this month)"
 msgstr "(Alle Lieder, die diesen Monat gespielt wurden)"
 
-#: ../Classes/SourcesBox.cpp:1099
+#: ../Classes/SourcesBox.cpp:1107
 msgid "(all titles containing funky)\n"
 msgstr "(Alle Lieder die im Titel funky enthalten)\n"
 
-#: ../Classes/SourcesBox.cpp:1103
+#: ../Classes/SourcesBox.cpp:1111
 msgid "(your popular tracks)\n"
 msgstr "(Häufig gespielte Lieder ,nach Künstler sortiert)\n"
 
@@ -374,7 +374,7 @@ msgstr ": Schreibe unfertige Tags in Datei (Mit ESC abbrechen)"
 msgid "<unknown>"
 msgstr "<unbekannt>"
 
-#: ../Classes/SourcesBox.cpp:1036
+#: ../Classes/SourcesBox.cpp:1044
 msgid ""
 "A dynamic playlist with this name already exists, would you like to edit the "
 "existing query?"
@@ -382,7 +382,7 @@ msgstr ""
 "Eine dynamische Liedliste mit diesem Namen existiert schon, möchten sie "
 "deren Abfrage editieren?"
 
-#: ../Classes/SourcesBox.cpp:965
+#: ../Classes/SourcesBox.cpp:973
 msgid ""
 "A playlist with this name already exists, would you like to append to the "
 "existing one?"
@@ -607,7 +607,7 @@ msgstr "Dynamisch"
 msgid "Dynamic Playlist"
 msgstr "Dynamische Liedliste"
 
-#: ../Classes/SourcesBox.cpp:1024
+#: ../Classes/SourcesBox.cpp:1032
 msgid "Dynamic playlist \""
 msgstr "Dynamische Liedliste\""
 
@@ -689,7 +689,7 @@ msgstr "Namen für neue Liedliste eingeben:"
 msgid "Enter name of the net stream:"
 msgstr "Namen des Netzradios eingeben:"
 
-#: ../Classes/SourcesBox.cpp:1154
+#: ../Classes/SourcesBox.cpp:1162
 msgid "Enter net stream address(URL):"
 msgstr "Adresse(URL) des Netzradios eingeben:"
 
@@ -697,7 +697,7 @@ msgstr "Adresse(URL) des Netzradios eingeben:"
 msgid "Exact phrase"
 msgstr "Exakte Phrase"
 
-#: ../Classes/SourcesBox.cpp:1097
+#: ../Classes/SourcesBox.cpp:1105
 msgid "Examples:\n"
 msgstr "Beispiele:\n"
 
@@ -705,7 +705,7 @@ msgstr "Beispiele:\n"
 msgid "FX\tCtrl-F"
 msgstr "Effekte\tCtrl-E"
 
-#: ../MusikApp.cpp:366
+#: ../MusikApp.cpp:370
 #, c-format
 msgid "Failed to copy file %s. Continue?"
 msgstr "Ein Fehler ist beim Kopieren der Datei %s aufgetreten. Fortsetzen?"
@@ -725,11 +725,11 @@ msgstr ""
 msgid "File"
 msgstr "Datei"
 
-#: ../MusikApp.cpp:367
+#: ../MusikApp.cpp:371
 msgid "File copy error"
 msgstr "Dateikopierfehler"
 
-#: ../MusikApp.cpp:327
+#: ../MusikApp.cpp:331
 msgid "File copy warning"
 msgstr "Dateikopierwarnung"
 
@@ -807,11 +807,11 @@ msgstr "Hervorheben"
 msgid "Hotkey %s cannot be registered."
 msgstr "Hotkey %s kann nicht registriert werden."
 
-#: ../MusikApp.cpp:184
+#: ../MusikApp.cpp:188
 msgid "Initialization of FMOD sound system failed."
 msgstr "Die Initialisierung des FMOD-Sound-Systems ist fehlgeschlagen."
 
-#: ../MusikApp.cpp:177
+#: ../MusikApp.cpp:181
 msgid "Initialization of library failed."
 msgstr "Die Initialisierung der Datenbank ist fehlgeschlagen."
 
@@ -819,7 +819,7 @@ msgstr "Die Initialisierung der Datenbank ist fehlgeschlagen."
 msgid "Instantly"
 msgstr "Sofort"
 
-#: ../Classes/SourcesBox.cpp:893
+#: ../Classes/SourcesBox.cpp:901
 msgid "Invalid playlist name."
 msgstr "Ungültiger Liedlistenname"
 
@@ -848,15 +848,15 @@ msgstr "Maximale Anzahl Soundkanäle:"
 msgid "Misc."
 msgstr "Verschiedenes"
 
-#: ../Classes/SourcesBox.cpp:733
+#: ../Classes/SourcesBox.cpp:741
 msgid "Musik Library"
 msgstr "Musikbibliothek"
 
-#: ../Classes/SourcesBox.cpp:314 ../Classes/SourcesBox.cpp:1279
+#: ../Classes/SourcesBox.cpp:314 ../Classes/SourcesBox.cpp:1287
 msgid "Net Stream"
 msgstr "Netzradio"
 
-#: ../Classes/SourcesBox.cpp:1128
+#: ../Classes/SourcesBox.cpp:1136
 msgid "Net Stream \""
 msgstr "Netzradio \""
 
@@ -892,7 +892,7 @@ msgstr "Kommentar"
 msgid "Notes "
 msgstr "Kommentar "
 
-#: ../Classes/SourcesBox.cpp:735
+#: ../Classes/SourcesBox.cpp:743
 msgid "Now Playing"
 msgstr "Wiedergabeliste"
 
@@ -994,7 +994,7 @@ msgstr "Liedliste aus angezeigter Liste"
 msgid "Playlist size: "
 msgstr "Liedlistengröße:"
 
-#: ../MusikApp.cpp:313
+#: ../MusikApp.cpp:317
 msgid "Please choose location to copy songs to:"
 msgstr "Bitte geben sie den Ort an, zu dem kopiert werden soll:"
 
@@ -1232,7 +1232,7 @@ msgstr "Standard"
 msgid "Standard Playlist"
 msgstr "Standardliedliste"
 
-#: ../Classes/SourcesBox.cpp:950
+#: ../Classes/SourcesBox.cpp:958
 msgid "Standard playlist \""
 msgstr "Standardliedliste \""
 
@@ -1264,7 +1264,7 @@ msgstr "Änderung der Tagdaten (Einzeln)"
 msgid "Tagging"
 msgstr "Taggen"
 
-#: ../Classes/SourcesBox.cpp:1085
+#: ../Classes/SourcesBox.cpp:1093
 msgid "The following fields can be used in your query"
 msgstr "Die folgenden Felder können sie in der Abfrage verwenden"
 
@@ -1276,7 +1276,7 @@ msgstr "Es sind keine unfertigen Tags vorhanden."
 msgid "There are no pending tags to finalize."
 msgstr "Es sind keine unfertigen Tags zu bereinigen."
 
-#: ../MusikApp.cpp:326
+#: ../MusikApp.cpp:330
 #, c-format
 msgid ""
 "There is not enough free space in directory \"%s\". You need %s bytes more "
@@ -1492,7 +1492,7 @@ msgstr "puffere ..."
 msgid "connecting ..."
 msgstr "verbinde ..."
 
-#: ../MusikApp.cpp:359
+#: ../MusikApp.cpp:363
 #, c-format
 msgid "copying %s"
 msgstr "kopiere %s"
