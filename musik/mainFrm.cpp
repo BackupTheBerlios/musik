@@ -613,7 +613,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// append the system menu
 	CMenu* pMenu = GetSystemMenu( false );
 	if ( pMenu )
-		pMenu->InsertMenu( 0, MF_STRING, SYSMENU_RESETDIALOG, _T( "Reset Dialog" ) );
+		pMenu->InsertMenu( 0, MF_STRING, SYSMENU_RESETDIALOG, _T( "Reset Window" ) );
 
 	// load dockbar sizes and positions
 	if ( m_Prefs->ResetUI() )
