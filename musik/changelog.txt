@@ -2,6 +2,7 @@
 
 a5:
 
+  - batch tagging through right click playlist -> batch
   - very basic winamp vis plugin support. this feature
     is experimental and unsupported (use at your own risk)
   - song is no longer bolded unless it is it in the now
@@ -13,7 +14,12 @@ a5:
   - ditched ACE for OpenThreads
   - much improved selection box updating while threading.
   - updated about box
-
+  - fixed a strange threading bug that would cause selection
+    box contents to be doubled (?? if you EVER experience
+    this again please let me know). CmusikSelectionCtrl::UpdateV()
+    functions are protected by a mutex now, so multiple threads
+    can't update them at the same time.
+    
 ----------------------------------------------------------------------------
 
 a4:

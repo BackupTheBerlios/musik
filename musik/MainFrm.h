@@ -175,6 +175,7 @@ class CMainFrame : public CFrameWnd
 	// are allowed access to our private members.
 	friend void CmusikSourcesCtrl::DoDrag( CmusikPropTreeItem* pItem );
 	friend class CMainFrameFader;
+	friend class CMainFrameWorker;
 
 public:
 

@@ -51,6 +51,9 @@
 #include "../musikCore/include/musikLibrary.h"
 #include "../musikCore/include/musikPlayer.h"
 
+#include <OpenThreads/Mutex>
+using namespace OpenThreads;
+
 ///////////////////////////////////////////////////
 
 using namespace musik;
@@ -240,6 +243,8 @@ protected:
 	CFont m_Regular;
 	CFont m_Bold;
 	CFont m_StarFont;
+
+	Mutex m_ProtectingUpdate;
 
 	// macros
 	DECLARE_DYNAMIC(CmusikSelectionCtrl)

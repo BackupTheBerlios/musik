@@ -480,12 +480,14 @@ void CmusikSelectionCtrl::RescaleColumn()
 
 void CmusikSelectionCtrl::UpdateV()
 {
+	m_ProtectingUpdate.lock();
+
 	int nPos = GetScrollPos( SB_VERT );
 
 	// get new items
+	m_Items.clear();
 	if ( m_Type == MUSIK_LIBRARY_TYPE_RATING )
 	{
-		m_Items.clear();
 		m_Items.push_back( _T( "0" ) );
 		m_Items.push_back( _T( "5" ) );
 		m_Items.push_back( _T( "4" ) );
@@ -502,6 +504,9 @@ void CmusikSelectionCtrl::UpdateV()
 	CString type = GetTypeStr();
 	type.MakeLower();
 
+	if ( m_Items.size() && m_Items.at( 0 ).Left( 6 ) == _T( "Select" ) )
+		MessageBox( _T( "This was a bug that was supposed to be fixed. If you see this, please contact the musik team" ), MUSIK_VERSION_STR, MB_OK );
+
 	switch ( m_Type )
 	{
 	case MUSIK_LIBRARY_TYPE_TIMEADDED:
@@ -513,6 +518,8 @@ void CmusikSelectionCtrl::UpdateV()
 		top.Format( _T( "Select all %ss (%d)" ), type, item_count );
 		break;
 	}
+
+	m_ProtectingUpdate.unlock();
 
 	// update
 	m_Items.insert( m_Items.begin(), top );
@@ -534,6 +541,8 @@ bool CmusikSelectionCtrl::UseTempTable()
 
 void CmusikSelectionCtrl::UpdateV( CmusikString query )
 {
+	m_ProtectingUpdate.lock();
+
 	int nPos = GetScrollPos( SB_VERT );
 
 	// run query to get related items
@@ -541,6 +550,7 @@ void CmusikSelectionCtrl::UpdateV( CmusikString query )
 	if ( query.Left( 1 ) == "W" )
 		sub_query = false;
 
+	m_Items.clear();
 	m_Library->GetRelatedItems( query, m_Type, m_Items, sub_query, UseTempTable() );
 
 	// format "Select all..."
@@ -550,6 +560,8 @@ void CmusikSelectionCtrl::UpdateV( CmusikString query )
 	type.MakeLower();
 	top.Format( _T( "Select all %ss (%d)" ), type, item_count );
 
+	m_ProtectingUpdate.unlock();
+		
 	// update
 	m_Items.insert( m_Items.begin(), top );
 	SetItemCountEx( m_Items.size(), LVSICF_NOINVALIDATEALL | LVSICF_NOSCROLL );

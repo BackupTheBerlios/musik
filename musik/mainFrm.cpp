@@ -267,7 +267,6 @@ void CMainFrameWorker::run()
 		if ( task_count )
 		{
 			// let user know how many tasks are active
-			task_count = m_Parent->GetTaskCount();
 			if ( task_count != last_task_count )
 			{
 				if ( task_count == 1 )
@@ -817,7 +816,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		m_Updater->start();
 	m_ProtectingTasks.unlock();
 
-
 	// tray icon stuff
 	InitTrayIcon();
 
@@ -831,7 +829,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		m_Fader->m_Parent = this;
 		m_Fader->start();
 	m_ProtectingTasks.unlock();
-
+	
 	ImportTrans();
 	if ( m_Prefs->IsTransEnabled() )
 		InitTrans();
@@ -1119,10 +1117,11 @@ LRESULT CMainFrame::OnSelBoxEditCommit( WPARAM wParam, LPARAM lParam )
 
 			m_Tasks.push_back( task );
 			m_TaskCount++;
-
 			task->start();
 
 		m_ProtectingTasks.unlock();
+
+
 
 		return 1L;
 	}
@@ -1874,7 +1873,6 @@ void CMainFrame::OnAddFiles()
 				task->start();
 
 			m_ProtectingTasks.unlock();
-
 		}
 		else
 			delete files;
@@ -1898,7 +1896,6 @@ LRESULT CMainFrame::OnBatchAddNew( WPARAM wParam, LPARAM lParam )
 
 			m_Tasks.push_back( task );
 			m_TaskCount++;
-
 			task->start();
 
 		m_ProtectingTasks.unlock();
@@ -2054,6 +2051,8 @@ void CMainFrame::OnAddDirectory()
 				task->start();
 
 			m_ProtectingTasks.unlock();
+
+			
 		}
 		else 
 			delete files;
@@ -2385,6 +2384,7 @@ void CMainFrame::OnUnsynchronizedtagsWritetofile()
 			task->start();
 
 		m_ProtectingTasks.unlock();
+		
 	}
 	else
 		delete playlist;
@@ -2476,13 +2476,7 @@ void CMainFrame::OnUpdateViewEqualizer(CCmdUI *pCmdUI)
 
 size_t CMainFrame::GetTaskCount()
 {
-	size_t count;
-
-	m_ProtectingTasks.lock();
-		count = m_Tasks.size();
-	m_ProtectingTasks.unlock();
-
-	return count;
+	return m_Tasks.size();
 }
 
 ///////////////////////////////////////////////////
@@ -2660,7 +2654,6 @@ void CMainFrame::SynchronizeDirs()
 		m_TaskCount++;
 
 		task->start();
-
 	m_ProtectingTasks.unlock();	
 }
 
@@ -2933,6 +2926,8 @@ void CMainFrame::OnFileClearlibrary()
 		m_Updater->m_Parent = this;
 		m_Updater->start();
 	m_ProtectingTasks.unlock();
+
+	
 }
 
 ///////////////////////////////////////////////////
