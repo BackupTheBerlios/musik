@@ -84,6 +84,7 @@ public:
 	void	Shutdown		( );
 	void	ClearOldStreams	( );
 	void	SetFX		( );
+	void	SetFrequency	( );
 
 	//------------------------------//
 	//--- events threads may use ---//

@@ -20,9 +20,11 @@ public:
 	//--- events ---//
 	//--------------//
 	void OnClose			( wxCommandEvent& WXUNUSED(event) );
-	void OnSlider(wxScrollEvent& event);
-	void OnClickReset( wxCommandEvent& WXUNUSED(event) );
-	void OnToggleEQEnable( wxCommandEvent& WXUNUSED(event) );
+	void OnSlider			(wxScrollEvent& event);
+	void OnSlidePitch		( wxScrollEvent& event );
+	void OnClickReset		( wxCommandEvent& WXUNUSED(event) );
+	void OnRightClick		( wxCommandEvent& event );
+	void OnToggleEQEnable	( wxCommandEvent& WXUNUSED(event) );
 	
 	//-------------------------//
 	//--- utility functions ---//
@@ -41,6 +43,7 @@ public:
 	wxCheckBox	*chkLock;
 	wxCheckBox	*chkEQEnable;
 	wxButton	*btnReset;
+	wxSlider	*slPitch;
 	
 	//------------------//
 	//--- eq sliders ---//
@@ -54,6 +57,8 @@ public:
 	wxBoxSizer	*hsLeftSliders;
 	wxBoxSizer	*hsRightSliders;
 	wxBoxSizer	*vsSliders;
+	wxBoxSizer	*vsEQControls;
+	wxBoxSizer	*hsEQ;
 	wxBoxSizer	*hsControls;
 	wxBoxSizer	*vsMain;
 	

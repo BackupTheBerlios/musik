@@ -92,6 +92,7 @@ int CMusikPlayer::InitializeFMOD( int nFunction, int nSndOutput, int nSndDevice,
 	}
 
 	g_FX.InitEQ();
+	g_FX.SetFrequency( 44100 );
 
 	//---------------------//
 	//--- setup driver	---//
@@ -224,6 +225,9 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 		FSOUND_Stream_Play( GetCurrChannel(), pNewStream );
 		FSOUND_SetVolume( GetCurrChannel(), 0 );
 		FSOUND_Stream_SetTime( pNewStream, nStartPos * 1000 );
+
+		SetFrequency();
+
 		
 		//---------------------------------------------//
 		//--- playback has been started, update the	---//
@@ -267,6 +271,11 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 void CMusikPlayer::SetFX()
 {
 	FSOUND_DSP_SetActive( m_DSP, g_Prefs.nUseEQ );
+}
+
+void CMusikPlayer::SetFrequency()
+{
+	FSOUND_SetFrequency( FSOUND_ALL, g_FX.GetFrequency() );
 }
 
 void CMusikPlayer::UpdateUI()

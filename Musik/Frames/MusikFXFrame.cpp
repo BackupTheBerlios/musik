@@ -14,6 +14,8 @@
 //--- related frames ---//
 #include "../Frames/MusikFrame.h"
 
+int freqs[] = {55,77,110,156,220,311,440,622,880,1244,1760,2489,3520,4978,7040,9956,14080,19912};
+
 enum
 {
 	SBASE = wxID_HIGHEST,
@@ -54,7 +56,8 @@ enum
 	SL17,
 	SR17,
 	BTN_RESET,
-	CHK_EQENABLE 
+	CHK_EQENABLE,
+	SLD_PITCH
 };
 
 BEGIN_EVENT_TABLE(MusikFXFrame, wxFrame)
@@ -95,12 +98,14 @@ BEGIN_EVENT_TABLE(MusikFXFrame, wxFrame)
 	EVT_COMMAND_SCROLL( SR15, MusikFXFrame::OnSlider )
 	EVT_COMMAND_SCROLL( SR16, MusikFXFrame::OnSlider )
 	EVT_COMMAND_SCROLL( SR17, MusikFXFrame::OnSlider )
+	EVT_COMMAND_SCROLL( SLD_PITCH, MusikFXFrame::OnSlidePitch )
+	EVT_CONTEXT_MENU( MusikFXFrame::OnRightClick )
 	EVT_BUTTON( BTN_RESET, MusikFXFrame::OnClickReset )
 	EVT_CHECKBOX( CHK_EQENABLE, MusikFXFrame::OnToggleEQEnable )
 END_EVENT_TABLE()
 
 MusikFXFrame::MusikFXFrame( wxFrame *pParent, const wxString &sTitle, const wxPoint &pos, const wxSize &size ) 
-	: wxFrame( pParent, -1, sTitle, pos, size, wxDEFAULT_FRAME_STYLE | wxFRAME_FLOAT_ON_PARENT | wxFRAME_TOOL_WINDOW  )
+	: wxFrame( pParent, -1, sTitle, pos, size, wxDEFAULT_FRAME_STYLE | wxFRAME_FLOAT_ON_PARENT | wxFRAME_TOOL_WINDOW | wxFRAME_NO_TASKBAR )
 {
 	//---------------//
 	//--- colours ---//
@@ -114,21 +119,23 @@ MusikFXFrame::MusikFXFrame( wxFrame *pParent, const wxString &sTitle, const wxPo
 	#if defined (__WXMSW__)
 		SetIcon( wxICON( musicbox ) );
 	#endif
-
-	//--------------------//
-	//--- Dummy Window ---//
-	//--------------------//
-	wxWindow *wndDummy = new wxWindow( this, -1, wxPoint( 0, 0 ), wxSize( 0, 0 ) );
-
+	
 	hsLeftSliders = new wxBoxSizer( wxHORIZONTAL );
 	hsRightSliders = new wxBoxSizer( wxHORIZONTAL );
 	vsSliders = new wxBoxSizer( wxVERTICAL );
+	vsEQControls = new wxBoxSizer( wxVERTICAL );
+	hsEQ = new wxBoxSizer( wxHORIZONTAL );
+	
+	
 	hsControls = new wxBoxSizer( wxHORIZONTAL );
 	vsMain = new wxBoxSizer( wxVERTICAL );
 
 	vsSliders->Add( hsLeftSliders );
 	vsSliders->Add( hsRightSliders );
-	vsMain->Add( vsSliders );
+	hsEQ->Add( vsSliders );
+	hsEQ->Add( vsEQControls );
+
+	vsMain->Add( hsEQ );
 	vsMain->Add( hsControls );
 
 	SetSizer( vsMain );
@@ -137,22 +144,29 @@ MusikFXFrame::MusikFXFrame( wxFrame *pParent, const wxString &sTitle, const wxPo
 	int rightslidercount = 2;
 	for ( int n = 0; n < 18; n++ )
 	{
-		slLeft[n] = new wxSlider( this, SBASE+leftslidercount, 50, 0, 100, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxSL_VERTICAL );
+		slLeft[n] = new wxSlider( this, SBASE+leftslidercount, 50, 0, 100, wxPoint( -1, -1 ), wxSize( 16, 100 ), wxSL_VERTICAL );
+		slLeft[n]->SetToolTip( wxString::Format( _("left %d hz"), freqs[n]) );
 		hsLeftSliders->Add( slLeft[n] );
-		slRight[n] = new wxSlider( this, SBASE+rightslidercount, 50, 0, 100, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxSL_VERTICAL );
+		slRight[n] = new wxSlider( this, SBASE+rightslidercount, 50, 0, 100, wxPoint( -1, -1 ), wxSize( 16, 100 ), wxSL_VERTICAL );
 		hsRightSliders->Add( slRight[n] );
+		slRight[n]->SetToolTip( wxString::Format( _("right %d hz"), freqs[n]) );
 
 		leftslidercount += 2;
 		rightslidercount += 2;
 	}
 
 	chkEQEnable = new wxCheckBox( this, CHK_EQENABLE, _("Enable EQ") );
-	hsControls->Add( chkEQEnable );
+	vsEQControls->Add( chkEQEnable, 1 );
 
 	chkLock = new wxCheckBox( this, -1, _("Lock channels") );
-	hsControls->Add( chkLock );
+	chkLock->SetValue( true );
+	vsEQControls->Add( chkLock, 1 );
 	btnReset = new wxButton( this, BTN_RESET, _("Reset bands") );
-	hsControls->Add( btnReset );
+	vsEQControls->Add( btnReset, 1 );
+
+	slPitch = new wxSlider( this, SLD_PITCH, 50, 0, 100, wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+	slPitch->SetToolTip( _("Pitch control, right-click to reset") );
+	hsControls->Add( slPitch );
 
 	//--------------//
 	//--- Layout ---//
@@ -310,6 +324,20 @@ void MusikFXFrame::OnSlider( wxScrollEvent &event )
 	
 	if ( event.m_eventType == wxEVT_SCROLL_THUMBRELEASE )
 		BandsFromSliders();
+}
+
+void MusikFXFrame::OnSlidePitch( wxScrollEvent &event )
+{
+	g_FX.SetFrequency( (( (float)slPitch->GetValue()) / 50.0f) * 44100.0f );
+}
+
+void MusikFXFrame::OnRightClick( wxCommandEvent& event )
+{
+	if ( event.m_id == SLD_PITCH )
+	{
+		slPitch->SetValue( 50 );
+		g_FX.SetFrequency( 44100 );
+	}
 }
 
 void MusikFXFrame::OnToggleEQEnable( wxCommandEvent& WXUNUSED(event) )

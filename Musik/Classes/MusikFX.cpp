@@ -1,5 +1,7 @@
 #include "MusikFX.h"
 
+#include "../MusikGlobals.h"
+
 //-----------------------------//
 //--- Stuff for Shibatch EQ ---//
 //-----------------------------//
@@ -158,3 +160,9 @@ void CMusikFX::SaveBands( wxFileConfig *pConfig )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+void CMusikFX::SetFrequency( float newfreq )
+{
+	m_Frequency = newfreq;
+	g_Player.SetFrequency();
+}
