@@ -1208,7 +1208,7 @@ void CmusikPlaylistCtrl::OnLvnColumnclick(NMHDR *pNMHDR, LRESULT *pResult)
 			songid = m_Player->GetPlaylist()->GetSongID( m_Player->GetIndex() );
 
 		int type = m_Prefs->GetPlaylistCol( pNMLV->iSubItem );
-		m_Library->SortPlaylist( m_Playlist, type, m_Ascend );
+		m_Library->SortPlaylist( m_Playlist, type, m_Ascend ? false : true );
 
 		if ( m_Player->IsPlaying() && songid != -1 )
 			m_Player->FindNewIndex( songid );

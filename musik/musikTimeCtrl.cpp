@@ -89,13 +89,13 @@ int CmusikTimeCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_CurTime = new CmusikDynamicText();
 	if ( !m_CurTime->Create( NULL, WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0 ), this ) )
 		return false;
-	m_CurTime->SetDynFont( 11, 1, 0 );
+	m_CurTime->SetDynFont( 12, 0, 0 );
 	m_CurTime->SetDynText( _T( "0:00" ), false, false );
 	
 	m_TotalTime = new CmusikDynamicText();
 	if ( !m_TotalTime->Create( NULL, WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0 ), this ) )
 		return false;
-	m_TotalTime->SetDynFont( 11, 1, 0 );
+	m_TotalTime->SetDynFont( 12, 0, 0 );
 	m_TotalTime->SetDynText( _T( "0:00" ), false, false );
 	
 	m_TimerID = SetTimer( MUSIK_SEEK_TIMER, 1000, NULL );
@@ -227,7 +227,7 @@ void CmusikTimeCtrl::OnNewSong()
 
 		return;
 	}
-	else
+	else if ( !m_Player->IsPlaying() )
 	{
 		CString sTimeStr = m_Player->GetTimeStr( m_Player->GetDuration( MUSIK_TIME_MS ) );
 		m_TotalTime->SetDynText( sTimeStr, false, false );
