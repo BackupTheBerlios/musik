@@ -1229,8 +1229,8 @@ void CMusikPlayer::RemovePlaylistEntry( size_t index )
 void  CMusikPlayer::MovePlaylistEntrys(size_t nMoveTo ,const wxArrayInt &arrToMove)
 {
 	wxCriticalSectionLocker locker( m_critInternalData);
-	wxASSERT(nMoveTo >= -1 && nMoveTo <= m_Playlist.GetCount()); 
-	size_t i = arrToMove.GetCount() - 1;
+	wxASSERT(nMoveTo >= 0 && nMoveTo <= m_Playlist.GetCount()); 
+	int i = arrToMove.GetCount() - 1;
 	// first move all entrys which are behind nMoveTo;
 	for(;i >= 0 ; i--)
 	{
@@ -1246,7 +1246,7 @@ void  CMusikPlayer::MovePlaylistEntrys(size_t nMoveTo ,const wxArrayInt &arrToMo
 			m_SongIndex = nMoveTo;
 	}
 	// now move all entry which are before
-	for(size_t j = i; j >= 0; j--)
+	for(int j = i; j >= 0; j--)
 	{
 		size_t MoveToIdx = nMoveTo - (i - j) - 1;
 		m_Playlist.Insert(m_Playlist.Detach(arrToMove[j]),MoveToIdx);

@@ -1447,7 +1447,7 @@ void  CPlaylistCtrl::MovePlaylistEntrys(int nMoveTo ,const wxArrayInt &arrToMove
 {
 	// assumes that arrToMove is sorted in ascending order
 
-	wxASSERT(nMoveTo >= -1 && nMoveTo <= g_Playlist.GetCount()); 
+	wxASSERT(nMoveTo >= 0 && nMoveTo <= g_Playlist.GetCount()); 
 	int i = arrToMove.GetCount() - 1;
 	// first move all entrys which are behind nMoveTo position
 	for(;i >= 0 ; i--)
