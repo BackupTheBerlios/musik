@@ -427,7 +427,7 @@ LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 	// draw label
 	if ( !m_sLabel.IsEmpty() )
 	{
-		if (IsRootLevel())
+		if (IsRootLevel() || IsSelected())
 		{
 			pDC->SelectObject(CPropTree::GetBoldFont());
 			pDC->SetTextColor(GetSysColor(COLOR_BTNHILIGHT));
