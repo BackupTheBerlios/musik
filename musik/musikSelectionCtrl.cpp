@@ -679,8 +679,6 @@ CmusikString CmusikSelectionCtrl::GetSelQuery()
 		for ( size_t i = 0; i < selected_items.size(); i++ )
 		{
 			sSel = selected_items.at( i );
-			if ( sSel.IsEmpty() )
-				sSel = _T( "%" );
 
 			sQuery += m_Library->GetSongFieldDB( m_Type );
 			sQuery += _T( " like " );	

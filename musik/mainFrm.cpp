@@ -1500,12 +1500,10 @@ void CMainFrame::OnFilePreferences()
 {
 	// initialize the property pages
 	CmusikPrefsInterfaceGeneral wndPageInterfaceGeneral( m_Prefs );
-	CmusikPropertyPage wndPageInterfaceColors	( IDD_PROPPAGE_INTERFACE_COLORS, m_Prefs );
 	CmusikPrefsSoundDriver wndPageSoundDriver( m_Prefs );
 
 	// remove help icon from gripper
 	wndPageInterfaceGeneral.m_psp.dwFlags&=		~PSP_HASHELP;
-	wndPageInterfaceColors.m_psp.dwFlags&=		~PSP_HASHELP;
 	wndPageSoundDriver.m_psp.dwFlags&=			~PSP_HASHELP;
 
 	// initialize the CTreePropSheet class 
@@ -1515,7 +1513,6 @@ void CMainFrame::OnFilePreferences()
 
 	// physically add the preference sheets
 	PrefSheet.AddPage(&wndPageInterfaceGeneral);
-	PrefSheet.AddPage(&wndPageInterfaceColors);
 	PrefSheet.AddPage(&wndPageSoundDriver);
 
 	PrefSheet.SetEmptyPageText(_T("Please select a child item of '%s'."));
