@@ -110,11 +110,30 @@ int CmusikPlayerWorker::open( void* player )
 
 ///////////////////////////////////////////////////
 
+void CmusikPlayerWorker::AbortCrossfade( bool wait )
+{
+	m_AbortCrossfade = true;
+
+	if ( !wait )
+		return;
+
+	while ( m_CrossfadeActive )
+	{
+		ACE_Time_Value sleep_t;
+		sleep_t.set( 0.1 );
+		ACE_OS::sleep( sleep_t );
+	}
+}	
+
+///////////////////////////////////////////////////
+
 int CmusikPlayerWorker::svc()
 {
 	m_Active = true;
 	m_Finished = false;
 	m_Stop = false;
+	m_CrossfadeActive = false;
+	m_AbortCrossfade = false;
 
 	TRACE0( "Player worker function started\n" );
 
@@ -248,9 +267,19 @@ int CmusikPlayerWorker::svc()
 					bool recalc_steps = true;
 					bool eq_updated = false;
 
-					// start the main loop
+					m_CrossfadeActive = true;
+
+					// start the main crossfade loop
 					for ( int i = 0; i < nFadeCount; i++ )
 					{
+						if ( m_AbortCrossfade )
+						{
+							m_AbortCrossfade = false;
+							m_CrossfadeActive = false;
+							fade_success = false;
+							break;
+						}
+
 						// if the fade type is pause, stop
 						// or exit, we need ALL the streams as
 						// children. children always fade out
@@ -359,6 +388,8 @@ int CmusikPlayerWorker::svc()
 						// sleep 10 ms
 						ACE_OS::sleep( sleep_tight );
 					}
+
+					m_CrossfadeActive = false;
 
 					// if there was a successful fade, then some
 					// clean up is in order...
@@ -738,7 +769,12 @@ bool CmusikPlayer::Play( int index, int fade_type, int start_pos )
 	// if we got a valid crossfade type, flag it
 	// so the thread can pick it up when we finish
 	else
+	{
+		if ( m_PlayerWorker->IsCrossfadeActive() )
+			m_PlayerWorker->AbortCrossfade();
+
 		FlagCrossfade();	
+	}
 
 	
 	// once we get here the new song is "officially"
@@ -905,6 +941,9 @@ void CmusikPlayer::Stop()
 {
 	if ( IsCrossfaderEnabled() )
 	{
+		if ( m_PlayerWorker->IsCrossfadeActive() )
+			m_PlayerWorker->AbortCrossfade();
+
 		m_Handle++;
 		m_FadeType = MUSIK_CROSSFADER_STOP;
 		FlagCrossfade();
@@ -942,6 +981,9 @@ void CmusikPlayer::ThrExit()
 {
 	if ( IsCrossfaderEnabled() && IsPlaying() )
 	{
+		if ( m_PlayerWorker->IsCrossfadeActive() )
+			m_PlayerWorker->AbortCrossfade();
+
 		m_FadeType = MUSIK_CROSSFADER_EXIT;
 		FlagCrossfade();
 		m_Handle++;
@@ -1289,6 +1331,9 @@ bool CmusikPlayer::Pause()
 {
 	if ( IsPlaying() && !IsPaused() )
 	{
+		if ( m_PlayerWorker->IsCrossfadeActive() )
+			m_PlayerWorker->AbortCrossfade();
+
 		if ( IsCrossfaderEnabled() && m_Crossfader->GetDuration ( MUSIK_CROSSFADER_PAUSE_RESUME ) > 0.0f )
 		{
 			m_FadeType = MUSIK_CROSSFADER_PAUSE_RESUME;
@@ -1321,6 +1366,9 @@ bool CmusikPlayer::Resume()
 {
 	if ( IsPlaying() && IsPaused() )
 	{
+		if ( m_PlayerWorker->IsCrossfadeActive() )
+			m_PlayerWorker->AbortCrossfade();
+
 		CleanOldStreams();
 		FSOUND_SetPaused( FSOUND_ALL, false );
 
@@ -1412,7 +1460,6 @@ bool CmusikPlayer::FindNewIndex( int songid )
 			break;
 		}
 	}
-
 
 	return found;
 }

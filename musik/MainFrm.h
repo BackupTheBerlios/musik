@@ -235,7 +235,8 @@ protected:
 	afx_msg LRESULT OnSongChange( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnEqualizerChange( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSongStop( WPARAM wParam, LPARAM lParam );
-	afx_msg LRESULT OnSongPauseResume( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnSongPause( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnSongResume( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSourcesLibrary( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSourcesNowPlaying( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSourcesSubLib( WPARAM wParam, LPARAM lParam );

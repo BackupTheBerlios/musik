@@ -122,8 +122,11 @@ public:
 	// layout and update
 	void UpdateInfo( bool redraw = true );
 	void RescaleInfo();
-	void UpdateButtonStates();
 	void ResetBtnColors();
+	void SetPaused();
+	void SetResumed();
+	void SetPlaying();
+	void SetStopped();
 
 protected:
 

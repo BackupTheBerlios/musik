@@ -78,14 +78,14 @@ public:
 
 	virtual void OnPause()
 	{
-		int WM_SONGPAUSERESUME = RegisterWindowMessage( "SONGPAUSERESUME" );
-		m_Parent->SendMessage( WM_SONGPAUSERESUME, NULL );
+		int WM_SONGPAUSE = RegisterWindowMessage( "SONGPAUSE" );
+		m_Parent->SendMessage( WM_SONGPAUSE, NULL );
 	}
 
 	virtual void OnResume()
 	{
-		int WM_SONGPAUSERESUME = RegisterWindowMessage( "SONGPAUSERESUME" );
-		m_Parent->SendMessage( WM_SONGPAUSERESUME, NULL );
+		int WM_SONGRESUME = RegisterWindowMessage( "SONGRESUME" );
+		m_Parent->SendMessage( WM_SONGRESUME, NULL );
 	}
 
 	virtual void OnPlaybackFailed()

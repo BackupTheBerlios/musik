@@ -124,10 +124,14 @@ public:
 	int open( void* player );
 	int svc();
 
+	bool IsCrossfadeActive(){ return m_CrossfadeActive; }
+	void AbortCrossfade( bool wait = true );
+
 	void StopWait();
 
 private:
 
+	bool m_CrossfadeActive, m_AbortCrossfade;
 	CmusikPlayer* m_Player;
 
 };

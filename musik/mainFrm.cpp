@@ -97,7 +97,8 @@ int WM_RESTARTSOUNDSYSTEM	= RegisterWindowMessage( "RESTARTSOUNDSYSTEM" );
 // certain operation as completed
 int WM_SONGCHANGE			= RegisterWindowMessage( "SONGCHANGE" );
 int WM_SONGSTOP				= RegisterWindowMessage( "SONGSTOP" );
-int WM_SONGPAUSE			= RegisterWindowMessage( "SONGPAUSERESUME" );
+int WM_SONGPAUSE			= RegisterWindowMessage( "SONGPAUSE" );
+int WM_SONGRESUME			= RegisterWindowMessage( "SONGRESUME" );
 int WM_EQUALIZERCHANGE		= RegisterWindowMessage( "EQUALIZERCHANGE" );
 
 // these will come from all over the UI,
@@ -191,7 +192,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_SELBOXUPDATE, OnUpdateSel )
 	ON_REGISTERED_MESSAGE( WM_SONGCHANGE, OnSongChange )
 	ON_REGISTERED_MESSAGE( WM_SONGSTOP, OnSongStop )
-	ON_REGISTERED_MESSAGE( WM_SONGPAUSE, OnSongPauseResume )
+	ON_REGISTERED_MESSAGE( WM_SONGPAUSE, OnSongPause )
+	ON_REGISTERED_MESSAGE( WM_SONGRESUME, OnSongResume )
 	ON_REGISTERED_MESSAGE( WM_SOURCESLIBRARY, OnSourcesLibrary )
 	ON_REGISTERED_MESSAGE( WM_SOURCESNOWPLAYING, OnSourcesNowPlaying )
 	ON_REGISTERED_MESSAGE( WM_SOURCESSUBLIBRARY, OnSourcesSubLib )
@@ -1308,7 +1310,7 @@ LRESULT CMainFrame::OnSongChange( WPARAM wParam, LPARAM lParam )
 
 	m_wndNowPlaying->GetCtrl()->GetTimeCtrl()->OnNewSong();
 	m_wndNowPlaying->GetCtrl()->UpdateInfo();
-	m_wndNowPlaying->GetCtrl()->UpdateButtonStates();
+	m_wndNowPlaying->GetCtrl()->SetPlaying();
 	
 	// if the player is playing, then we need
 	// to do our own updating
@@ -1347,7 +1349,7 @@ LRESULT CMainFrame::OnSongStop( WPARAM wParam, LPARAM lParam )
 
 	m_wndNowPlaying->GetCtrl()->GetTimeCtrl()->OnNewSong();
 	m_wndNowPlaying->GetCtrl()->UpdateInfo();
-	m_wndNowPlaying->GetCtrl()->UpdateButtonStates();
+	m_wndNowPlaying->GetCtrl()->SetStopped();
 
 	m_wndView->GetCtrl()->RedrawWindow();
 
@@ -1358,12 +1360,19 @@ LRESULT CMainFrame::OnSongStop( WPARAM wParam, LPARAM lParam )
 
 ///////////////////////////////////////////////////
 
-LRESULT CMainFrame::OnSongPauseResume( WPARAM wParam, LPARAM lParam )
+LRESULT CMainFrame::OnSongPause( WPARAM wParam, LPARAM lParam )
 {
 	TRACE0( "Pause song signal caught\n" );
+	m_wndNowPlaying->GetCtrl()->SetPaused();
+	return 0L;
+}
 
-	m_wndNowPlaying->GetCtrl()->UpdateButtonStates();
+///////////////////////////////////////////////////
 
+LRESULT CMainFrame::OnSongResume( WPARAM wParam, LPARAM lParam )
+{
+	TRACE0( "Resume song signal caught\n" );
+	m_wndNowPlaying->GetCtrl()->SetResumed();
 	return 0L;
 }
 

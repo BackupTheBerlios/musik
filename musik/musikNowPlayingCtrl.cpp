@@ -243,14 +243,30 @@ void CmusikNowPlayingCtrl::UpdateInfo( bool refresh )
 
 ///////////////////////////////////////////////////
 
-void CmusikNowPlayingCtrl::UpdateButtonStates()
+void CmusikNowPlayingCtrl::SetPlaying()
 {
-	if ( m_Player->IsPlaying() && m_Player->IsPaused() )
-		m_Play->SetWindowText( "resume" );
-	else if ( m_Player->IsPlaying() && !m_Player->IsPaused() )
-		m_Play->SetWindowText( "pause" );
-	else 
-		m_Play->SetWindowText( "play" );
+	m_Play->SetWindowText( "pause" );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikNowPlayingCtrl::SetPaused()
+{
+	m_Play->SetWindowText( "resume" );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikNowPlayingCtrl::SetResumed()
+{
+	m_Play->SetWindowText( "pause" );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikNowPlayingCtrl::SetStopped()
+{
+	m_Play->SetWindowText( "play" );
 }
 
 ///////////////////////////////////////////////////
@@ -314,10 +330,6 @@ BOOL CmusikNowPlayingCtrl::OnEraseBkgnd(CDC* pDC)
 }
 
 ///////////////////////////////////////////////////
-
-// send the play command to the main UI, it will
-// translate messages and (hopefully) send us
-// an event back so we know it started..
 
 void CmusikNowPlayingCtrl::OnBtnPlay()
 {
