@@ -202,11 +202,7 @@ void MusikFrame::OnMenuAbout( wxCommandEvent &WXUNUSED(event) )
 }
 void MusikFrame::OnPreferences( wxCommandEvent &WXUNUSED(event) )
 {
-	
-	//wxSize prefs_size( 600, 500 );
-	wxSize prefs_size( -1, -1);	
-
-	wxFrame *pDlg = new MusikPrefsFrame( this, wxString(MUSIKAPPNAME) + _(" Preferences"), wxDefaultPosition, prefs_size );
+	wxFrame *pDlg = new MusikPrefsFrame( this, wxString(MUSIKAPPNAME) + _(" Preferences") );
 	this->Enable( FALSE );
 	pDlg->Show();
 }

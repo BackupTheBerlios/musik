@@ -16,7 +16,20 @@
 #include <wx/cmdline.h>
 #include <wx/progdlg.h>
 #include "MusikApp.h"
-IMPLEMENT_APP( MusikApp )
+
+#if defined(__WXGTK__) || defined(__WXMOTIF__) || defined(__WXX11__)
+IMPLEMENT_APP_NO_MAIN(MusikApp)
+#include <X11/Xlib.h>
+int main(int argc, char *argv[]) {
+	if ( XInitThreads() == 0 ) {
+		fprintf( stderr, "%s: Unable to initialize multithreaded X11 code (XInitThreads failed).\n", argv[0] );
+		exit( EXIT_FAILURE );
+	}
+	return wxEntry(argc, argv);
+}
+#else
+IMPLEMENT_APP(MusikApp)
+#endif
 
 
 
@@ -87,7 +100,11 @@ bool MusikApp::OnInit()
 {
 	m_locale.AddCatalogLookupPathPrefix(wxT("locale"));
 
-	m_locale.Init(wxLANGUAGE_DEFAULT);
+	const wxLanguageInfo * pLangInfo = wxLocale::FindLanguageInfo(Prefs.sLocale);
+	if(pLangInfo == NULL)
+		m_locale.Init(wxLANGUAGE_DEFAULT);
+	else
+		m_locale.Init(pLangInfo->Language);
 	m_locale.AddCatalog(MUSIKAPPNAME);
 
 	static const wxCmdLineEntryDesc cmdLineDesc[] =

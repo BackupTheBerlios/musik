@@ -40,7 +40,7 @@ enum EMUSIK_PREFERENCES_OBJECT_ID
 class MusikPrefsFrame : public wxFrame
 {
 public:
-	MusikPrefsFrame( wxFrame* pParent, const wxString &sTitle, const wxPoint &pos, const wxSize &size );
+	MusikPrefsFrame( wxFrame* pParent, const wxString &sTitle);
 
 	//--------------//
 	//--- events ---//

@@ -257,6 +257,7 @@ public:
 		,eSelStyle(this,wxT( "SelectionStyle" ),MUSIK_SELECTION_TYPE_STANDARD)
 		,bShowAllSongs(this,wxT( "SelectingLibraryDisplaysSongs" ),true)
 		,bLogVerbose(this,wxT( "LogVerbose" ),true)
+		,sLocale(this,wxT( "Locale" ),wxT("default"))
 
 		,nSndOutput(this,wxT( "OutputDriver" ),0)
 		,nSndDevice(this,wxT( "SoundDevice" ),0)
@@ -379,6 +380,7 @@ public:
 	CConfigSetting<Value<int>,EMUSIK_ACTIVITY_SELECTION_TYPE> eSelStyle;
 	CConfigSettingBool bShowAllSongs;
 	CConfigSettingBool bLogVerbose;
+	CConfigSettingString sLocale;
 
 	CConfigSettingInt nSndOutput;
 	CConfigSettingInt nSndDevice;

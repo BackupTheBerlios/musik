@@ -17,7 +17,7 @@
 #ifndef WX_PRECOMP
 	#include "wx/wx.h"
 #endif 
-#include "MusikUtils.h"
+#include "../MusikUtils.h"
 #include "MusikEQGauge.h"
 
 enum EMUSIK_EQ_OBJECT_ID

@@ -904,10 +904,12 @@ void MusikLogWindow::DoLogString(const wxChar *szString, time_t t)
 {
 
 	wxLogWindow::DoLogString(szString,t);
-#ifndef __WXGTK__  // on linux the Show from another thread( if wxLogWarning is issued from a thread) lead to a xlib fault and crash
+//#ifndef __WXGTK__  // on linux the Show from another thread( if wxLogWarning is issued from a thread) lead to a xlib fault and crash
+#ifndef __WXMAC__
 	if(m_Style & MUSIK_LW_ShowOnLog)
 		Show(TRUE);
 #endif
+//#endif
 }
 
 

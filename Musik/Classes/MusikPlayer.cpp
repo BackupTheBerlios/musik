@@ -1041,13 +1041,13 @@ void CMusikPlayer::_ChooseRandomSongs(int nSongsToAdd,CMusikSongArray &arrSongs)
 		int r = GetRandomNumber() % (wxGetApp().Library.GetSongCount());
 		wxString sQueryRandomSong = wxString::Format(wxT(" select autodj_songs.songid from autodj_songs " 
 					"where songs.songid not in(select songid from songhistory "
-					"where date_played > julianday('now','-%d hours')) limit 1 offset %d;"),nMaxRepeatCount < 5 ? 1 : wxGetApp().Prefs.nAutoDjDoNotPlaySongPlayedTheLastNHours,r);
+					"where date_played > julianday('now','-%d hours')) limit 1 offset %d;"),nMaxRepeatCount < 5 ? 1 : (int)wxGetApp().Prefs.nAutoDjDoNotPlaySongPlayedTheLastNHours,r);
 	
 #else
 		int r = GetRandomNumber() % (maxsongid + 1);
 	   wxString sQueryRandomSong = wxString::Format(wxT(" select autodj_songs.songid from autodj_songs ") 
 		   wxT("where autodj_songs.songid = %d and autodj_songs.songid not in(select songid from songhistory ")
-		   wxT("where date_played > julianday('now','-%d days'));"),r,nMaxRepeatCount < 5 ? 1 : wxGetApp().Prefs.nAutoDjDoNotPlaySongPlayedTheLastNHours);
+		   wxT("where date_played > julianday('now','-%d days'));"),r,nMaxRepeatCount < 5 ? 1 : (int)wxGetApp().Prefs.nAutoDjDoNotPlaySongPlayedTheLastNHours);	 //(int) cast to make gcc 2.95 happy
 
 
 #endif
@@ -1099,7 +1099,7 @@ void CMusikPlayer::_ChooseRandomAlbumSongs(int nAlbumsToAdd,CMusikSongArray &arr
 		
 		int r = GetRandomNumber() % (albums_count);
 		wxString sQueryRandomAlbum = wxString::Format(wxT("select album||'|'||artist from autodj_albums where most_lastplayed < julianday('now','-%d hours') limit 1 offset %d;") 
-											,nMaxRepeatCount < 5 ? 1 : wxGetApp().Prefs.nAutoDjDoNotPlaySongPlayedTheLastNHours,r);
+											,nMaxRepeatCount < 5 ? 1 : (int)wxGetApp().Prefs.nAutoDjDoNotPlaySongPlayedTheLastNHours,r);
 
 		wxArrayString newAlbums;
 		wxGetApp().Library.Query(sQueryRandomAlbum,newAlbums,false);

@@ -26,7 +26,7 @@
 #include <wx/file.h>
 #include <wx/filename.h>
 
-#include "3rd Party/Bitap/libbitap.h"
+#include "../3rd Party/Bitap/libbitap.h"
 #include <wx/arrimpl.cpp>
 
 #include "Library/MetaDataHandler.h"
@@ -944,7 +944,7 @@ void CMusikLibrary::QuerySongsWhere( const wxString & queryWhere, CMusikSongArra
 		aReturn.Clear();
 	//--- run query ---//
 	wxString query;
-	wxString myqueryWhere = queryWhere.IsEmpty()  ? wxT("") : wxT(" where ") + queryWhere;
+	wxString myqueryWhere = queryWhere.IsEmpty()  ? wxString(wxT("")) : wxString(wxT(" where ")) + queryWhere;
 	m_lastQueryWhere = queryWhere;
 	if( bSorted && !m_sSortAllSongsQuery.IsEmpty() )
 	{

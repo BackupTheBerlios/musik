@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-08-08 19:03+0200\n"
+"POT-Creation-Date: 2004-08-30 18:59+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -37,7 +37,7 @@ msgstr ""
 msgid " Autotagger"
 msgstr ""
 
-#: ../Frames/MusikFrameEvents.cpp:221
+#: ../Frames/MusikFrameEvents.cpp:219
 msgid " FX"
 msgstr ""
 
@@ -49,7 +49,7 @@ msgstr ""
 msgid " Library Setup - Elapsed Time: "
 msgstr ""
 
-#: ../Frames/MusikFrameEvents.cpp:207
+#: ../Frames/MusikFrameEvents.cpp:205
 msgid " Preferences"
 msgstr ""
 
@@ -61,7 +61,7 @@ msgid ""
 "the new songs. Proceed?"
 msgstr ""
 
-#: ../MusikApp.cpp:249
+#: ../MusikApp.cpp:266
 msgid ""
 " has detected version 0.1.2 or earlier was previously installed.\n"
 "\n"
@@ -69,7 +69,7 @@ msgid ""
 "Library must be reset. We apologize for any inconvenience this may cause."
 msgstr ""
 
-#: ../Classes/MusikPrefs.h:336
+#: ../Classes/MusikPrefs.h:337
 msgid " is not running"
 msgstr ""
 
@@ -143,7 +143,7 @@ msgstr ""
 msgid "%d.%02d TB"
 msgstr ""
 
-#: ../MusikApp.cpp:187
+#: ../MusikApp.cpp:204
 #, c-format
 msgid "%s Logging Window"
 msgstr ""
@@ -170,11 +170,11 @@ msgstr ""
 msgid "&Add Directory"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:370
+#: ../Classes/PlaylistCtrl.cpp:371
 msgid "&Auto Rename"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:413 ../Classes/SourcesBox.cpp:294
+#: ../Classes/PlaylistCtrl.cpp:414 ../Classes/SourcesBox.cpp:294
 msgid "&Clear List"
 msgstr ""
 
@@ -222,7 +222,7 @@ msgstr ""
 msgid "&Next"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:429
+#: ../Classes/PlaylistCtrl.cpp:430
 msgid "&Open Folder in File Manager"
 msgstr ""
 
@@ -234,7 +234,7 @@ msgstr ""
 msgid "&Pending Tags"
 msgstr ""
 
-#: ../Classes/ActivityBox.cpp:821 ../Classes/PlaylistCtrl.cpp:410
+#: ../Classes/ActivityBox.cpp:821 ../Classes/PlaylistCtrl.cpp:411
 #: ../Frames/MusikFrame.cpp:167
 msgid "&Play"
 msgstr ""
@@ -247,7 +247,7 @@ msgstr ""
 msgid "&Previous"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:432 ../Frames/MusikFrame.cpp:179
+#: ../Classes/PlaylistCtrl.cpp:433 ../Frames/MusikFrame.cpp:179
 msgid "&Rating"
 msgstr ""
 
@@ -255,7 +255,7 @@ msgstr ""
 msgid "&Rebuild Library"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:372
+#: ../Classes/PlaylistCtrl.cpp:373
 msgid "&Rebuild Tag"
 msgstr ""
 
@@ -287,7 +287,7 @@ msgstr ""
 msgid "&Show Icons"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:428
+#: ../Classes/PlaylistCtrl.cpp:429
 msgid "&Show in Library"
 msgstr ""
 
@@ -327,25 +327,25 @@ msgstr ""
 msgid "-"
 msgstr ""
 
-#: ../Frames/MusikFrameEvents.cpp:307
+#: ../Frames/MusikFrameEvents.cpp:305
 msgid ": Aborting process, please wait..."
 msgstr ""
 
-#: ../Frames/MusikFrameEvents.cpp:394
+#: ../Frames/MusikFrameEvents.cpp:392
 msgid ": Renaming selected playlist items (ESC to abort)"
 msgstr ""
 
-#: ../Frames/MusikFrameEvents.cpp:390
+#: ../Frames/MusikFrameEvents.cpp:388
 msgid ": Updating tags from selection box (ESC to abort)"
 msgstr ""
 
-#: ../Frames/MusikFrameEvents.cpp:398
+#: ../Frames/MusikFrameEvents.cpp:396
 msgid ": Writing dirty tags to file (ESC to abort)"
 msgstr ""
 
-#: ../Classes/ActivityBox.cpp:211 ../Classes/PlaylistCtrl.cpp:794
-#: ../Classes/PlaylistCtrl.cpp:803 ../Classes/PlaylistCtrl.cpp:810
-#: ../Classes/PlaylistCtrl.cpp:817
+#: ../Classes/ActivityBox.cpp:211 ../Classes/PlaylistCtrl.cpp:795
+#: ../Classes/PlaylistCtrl.cpp:804 ../Classes/PlaylistCtrl.cpp:811
+#: ../Classes/PlaylistCtrl.cpp:818
 msgid "<unknown>"
 msgstr ""
 
@@ -361,7 +361,7 @@ msgid ""
 "existing one?"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:371
+#: ../Classes/PlaylistCtrl.cpp:372
 msgid "A&uto Retag..."
 msgstr ""
 
@@ -382,7 +382,7 @@ msgstr ""
 msgid "Albums"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:1726
+#: ../Classes/PlaylistCtrl.cpp:1727
 msgid "All words"
 msgstr ""
 
@@ -398,7 +398,7 @@ msgstr ""
 msgid "An error occurred when attempting to update the database"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:1726
+#: ../Classes/PlaylistCtrl.cpp:1727
 msgid "Any word"
 msgstr ""
 
@@ -487,7 +487,7 @@ msgstr ""
 msgid "Censor common swearwords"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:1725
+#: ../Classes/PlaylistCtrl.cpp:1726
 msgid "Clear"
 msgstr ""
 
@@ -499,7 +499,7 @@ msgstr ""
 msgid "Clear old tag"
 msgstr ""
 
-#: ../Frames/MusikFrameEvents.cpp:321
+#: ../Frames/MusikFrameEvents.cpp:319
 msgid "Clear old tag information before writing?"
 msgstr ""
 
@@ -547,19 +547,19 @@ msgstr ""
 msgid "Crossfader"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:435
+#: ../Classes/PlaylistCtrl.cpp:436
 msgid "Delete"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:1350
+#: ../Classes/PlaylistCtrl.cpp:1351
 msgid "Delete the selected songs from wxMusik's internal database?"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:1344
+#: ../Classes/PlaylistCtrl.cpp:1345
 msgid "Delete the selected songs from your computer?"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:433
+#: ../Classes/PlaylistCtrl.cpp:434
 msgid "Display"
 msgstr ""
 
@@ -587,35 +587,35 @@ msgstr ""
 msgid "ERROR: failed to open stream:"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:437
+#: ../Classes/PlaylistCtrl.cpp:438
 msgid "Edit &Tag"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:365
+#: ../Classes/PlaylistCtrl.cpp:366
 msgid "Edit Album\tF5"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:364
+#: ../Classes/PlaylistCtrl.cpp:365
 msgid "Edit Artist\tF4"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:366
+#: ../Classes/PlaylistCtrl.cpp:367
 msgid "Edit Genre\tF6"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:368
+#: ../Classes/PlaylistCtrl.cpp:369
 msgid "Edit Notes\tF8"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:362
+#: ../Classes/PlaylistCtrl.cpp:363
 msgid "Edit Title\tF2"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:363
+#: ../Classes/PlaylistCtrl.cpp:364
 msgid "Edit Track Number\tF3"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:367
+#: ../Classes/PlaylistCtrl.cpp:368
 msgid "Edit Year\tF7"
 msgstr ""
 
@@ -632,11 +632,11 @@ msgstr ""
 msgid "Enable EQ"
 msgstr ""
 
-#: ../Frames/MusikFXFrame.cpp:130
+#: ../Frames/MusikFXFrame.cpp:132
 msgid "Enable Pitch control"
 msgstr ""
 
-#: ../Classes/ActivityBox.cpp:816 ../Classes/PlaylistCtrl.cpp:405
+#: ../Classes/ActivityBox.cpp:816 ../Classes/PlaylistCtrl.cpp:406
 msgid "Enqueue"
 msgstr ""
 
@@ -661,7 +661,7 @@ msgstr ""
 msgid "Enter net stream address(URL):"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:1726
+#: ../Classes/PlaylistCtrl.cpp:1727
 msgid "Exact phrase"
 msgstr ""
 
@@ -673,12 +673,12 @@ msgstr ""
 msgid "FX\tCtrl-F"
 msgstr ""
 
-#: ../MusikApp.cpp:349
+#: ../MusikApp.cpp:366
 #, c-format
 msgid "Failed to copy file %s. Continue?"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:1406
+#: ../Classes/PlaylistCtrl.cpp:1407
 msgid ""
 "Failed to delete the following files from your computer:\n"
 "\n"
@@ -689,11 +689,11 @@ msgstr ""
 msgid "File"
 msgstr ""
 
-#: ../MusikApp.cpp:350
+#: ../MusikApp.cpp:367
 msgid "File copy error"
 msgstr ""
 
-#: ../MusikApp.cpp:310
+#: ../MusikApp.cpp:327
 msgid "File copy warning"
 msgstr ""
 
@@ -713,35 +713,35 @@ msgstr ""
 msgid "Finalize for Database &Only"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:387
+#: ../Classes/PlaylistCtrl.cpp:388
 msgid "Fit Columns"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:378
+#: ../Classes/PlaylistCtrl.cpp:379
 msgid "From Computer\tCtrl+Del"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:377
+#: ../Classes/PlaylistCtrl.cpp:378
 msgid "From Database\tAlt+Del"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:376
+#: ../Classes/PlaylistCtrl.cpp:377
 msgid "From Playlist\tDel"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:1729
+#: ../Classes/PlaylistCtrl.cpp:1730
 msgid "Fuzzy High"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:1729
+#: ../Classes/PlaylistCtrl.cpp:1730
 msgid "Fuzzy Low"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:1729
+#: ../Classes/PlaylistCtrl.cpp:1730
 msgid "Fuzzy Middle"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:1729
+#: ../Classes/PlaylistCtrl.cpp:1730
 msgid "Fuzzy None"
 msgstr ""
 
@@ -771,15 +771,15 @@ msgstr ""
 msgid "Hotkey %s cannot be registered."
 msgstr ""
 
-#: ../MusikApp.cpp:167
+#: ../MusikApp.cpp:184
 msgid "Initialization of FMOD sound system failed."
 msgstr ""
 
-#: ../MusikApp.cpp:160
+#: ../MusikApp.cpp:177
 msgid "Initialization of library failed."
 msgstr ""
 
-#: ../Classes/ActivityBox.cpp:817 ../Classes/PlaylistCtrl.cpp:406
+#: ../Classes/ActivityBox.cpp:817 ../Classes/PlaylistCtrl.cpp:407
 msgid "Instantly"
 msgstr ""
 
@@ -824,7 +824,7 @@ msgstr ""
 msgid "Net Stream \""
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:836
+#: ../Classes/PlaylistCtrl.cpp:837
 msgid "Never"
 msgstr ""
 
@@ -832,11 +832,11 @@ msgstr ""
 msgid "New"
 msgstr ""
 
-#: ../Classes/ActivityBox.cpp:815 ../Classes/PlaylistCtrl.cpp:404
+#: ../Classes/ActivityBox.cpp:815 ../Classes/PlaylistCtrl.cpp:405
 msgid "Next"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:388
+#: ../Classes/PlaylistCtrl.cpp:389
 msgid "No Horizontal Scroll"
 msgstr ""
 
@@ -905,7 +905,7 @@ msgstr ""
 msgid "Path"
 msgstr ""
 
-#: ../Frames/MusikFXFrame.cpp:128
+#: ../Frames/MusikFXFrame.cpp:130
 msgid "Pitch control, right-click to reset"
 msgstr ""
 
@@ -935,11 +935,11 @@ msgstr ""
 msgid "Playlist"
 msgstr ""
 
-#: ../Classes/PlaylistInfoCtrl.cpp:40
+#: ../Classes/PlaylistInfoCtrl.cpp:42
 msgid "Playlist Runtime: "
 msgstr ""
 
-#: ../Classes/PlaylistInfoCtrl.cpp:38
+#: ../Classes/PlaylistInfoCtrl.cpp:40
 msgid "Playlist Songs: "
 msgstr ""
 
@@ -947,11 +947,11 @@ msgstr ""
 msgid "Playlist from Current"
 msgstr ""
 
-#: ../Classes/PlaylistInfoCtrl.cpp:42
+#: ../Classes/PlaylistInfoCtrl.cpp:44
 msgid "Playlist size: "
 msgstr ""
 
-#: ../MusikApp.cpp:296
+#: ../MusikApp.cpp:313
 msgid "Please choose location to copy songs to:"
 msgstr ""
 
@@ -1033,11 +1033,11 @@ msgstr ""
 msgid "Repeat Song"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:408
+#: ../Classes/PlaylistCtrl.cpp:409
 msgid "Replace current playlist with all"
 msgstr ""
 
-#: ../Classes/ActivityBox.cpp:818 ../Classes/PlaylistCtrl.cpp:407
+#: ../Classes/ActivityBox.cpp:818 ../Classes/PlaylistCtrl.cpp:408
 msgid "Replace current playlist with selection"
 msgstr ""
 
@@ -1077,7 +1077,7 @@ msgstr ""
 msgid "Scanning library for obsolete files: %d / %d (ESC to abort)"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:1723
+#: ../Classes/PlaylistCtrl.cpp:1724
 msgid "Search:"
 msgstr ""
 
@@ -1224,15 +1224,15 @@ msgstr ""
 msgid "The following fields can be used in your query"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:1474
+#: ../Classes/PlaylistCtrl.cpp:1475
 msgid "There are no pending tags available to display."
 msgstr ""
 
-#: ../Frames/MusikFrameEvents.cpp:296
+#: ../Frames/MusikFrameEvents.cpp:294
 msgid "There are no pending tags to finalize."
 msgstr ""
 
-#: ../MusikApp.cpp:309
+#: ../MusikApp.cpp:326
 #, c-format
 msgid ""
 "There is not enough free space in directory \"%s\". You need %s bytes more "
@@ -1243,15 +1243,15 @@ msgstr ""
 msgid "These variables can be used in file line, URL or commandline"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:420
+#: ../Classes/PlaylistCtrl.cpp:421
 msgid "This album"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:418
+#: ../Classes/PlaylistCtrl.cpp:419
 msgid "This artist"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:422
+#: ../Classes/PlaylistCtrl.cpp:423
 msgid "This genre"
 msgstr ""
 
@@ -1274,7 +1274,7 @@ msgid ""
 "this?"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:424
+#: ../Classes/PlaylistCtrl.cpp:425
 msgid "This year"
 msgstr ""
 
@@ -1299,7 +1299,7 @@ msgstr ""
 msgid "Total"
 msgstr ""
 
-#: ../Classes/PlaylistInfoCtrl.cpp:36
+#: ../Classes/PlaylistInfoCtrl.cpp:38
 msgid "Total Songs: "
 msgstr ""
 
@@ -1335,7 +1335,7 @@ msgstr ""
 msgid "Unknown Song"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:358 ../Frames/MusikFrame.cpp:177
+#: ../Classes/PlaylistCtrl.cpp:359 ../Frames/MusikFrame.cpp:177
 msgid "Unrated"
 msgstr ""
 
@@ -1430,7 +1430,7 @@ msgstr ""
 msgid "connecting ..."
 msgstr ""
 
-#: ../MusikApp.cpp:342
+#: ../MusikApp.cpp:359
 #, c-format
 msgid "copying %s"
 msgstr ""

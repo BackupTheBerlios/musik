@@ -69,8 +69,8 @@ wxSpinCtrl *sc##prefname	= new wxSpinCtrl( this, -1,wxEmptyString,wxDefaultPosit
 #define PREF_STATICTEXT(text)	\
 	new wxStaticText_NoFlicker( this, -1, text)
 
-MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, const wxPoint &pos, const wxSize &size ) 
-	: wxFrame( pParent, -1, sTitle, pos, wxSize(600,600), wxDEFAULT_FRAME_STYLE|wxRESIZE_BORDER|wxCAPTION | wxTAB_TRAVERSAL | wxFRAME_FLOAT_ON_PARENT | wxFRAME_NO_TASKBAR )
+MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle ) 
+	: wxFrame( pParent, -1, sTitle, wxDefaultPosition, wxSize(600,600), wxDEFAULT_FRAME_STYLE|wxRESIZE_BORDER|wxCAPTION | wxTAB_TRAVERSAL | wxFRAME_FLOAT_ON_PARENT | wxFRAME_NO_TASKBAR )
 {
 	//---------------//
 	//--- colours ---//
@@ -373,7 +373,7 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 		wxT("$TITLE      \t\t\t") + _("Title")				+  _(" of current song\n") +
 		wxT("$YEAR      \t\t\t") + _("Year")				+  _(" of current song\n") +
 		wxT("$TRACKNUM   \t\t\t") + _("Track number")			+  _(" of current song\n") +
-		wxT("$TRACKLENGTH\t\t\t") + _("Track length in mm:ss")			+  _(" of current song\n") +
+		wxT("$TRACKLENGTH\t\t") + _("Track length in mm:ss")			+  _(" of current song\n") +
 		wxT("$FILENAME   \t\t\t") + _("Filename")				+  _(" of current song\n") +
 		wxT("$FILESIZE   \t\t\t") + _("Filesize")				+  _(" of current song\n") +
 		wxT("$BITRATE    \t\t\t") + _("Bitrate")				+  _(" of current song\n") +

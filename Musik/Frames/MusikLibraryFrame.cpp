@@ -240,7 +240,7 @@ void MusikLibraryFrame::OnRebuildAll( wxCommandEvent& WXUNUSED(event) )
 }
 bool MusikLibraryFrame::Show( bool show )
 {
-	bool bRet = wxWindow::Show( show );
+	bool bRet = wxFrame::Show( show );
 
 	//---------------------------//
 	//--- kill first run pref ---//
@@ -712,7 +712,7 @@ void MusikLibraryFrame::OnThreadProg( wxCommandEvent& event )
 			//--- MusikLibraryFrame::OnThreadScanProg will set title ---//
 			//----------------------------------------------------------//
 			lcPaths->SetItem( event.GetExtraLong(), 1, IntTowxString( m_Total ), -1 );
-			lcPaths->SetItem( event.GetExtraLong(), 2, (m_New >= 0) ? IntTowxString( m_New ): wxT("-"), -1 );
+			lcPaths->SetItem( event.GetExtraLong(), 2, (m_New >= 0) ? IntTowxString( m_New ): wxString(wxT("-")), -1 );
 			gProgress->SetValue( ( event.GetExtraLong() * 100 ) /  g_Paths.GetCount() );
 		}
 

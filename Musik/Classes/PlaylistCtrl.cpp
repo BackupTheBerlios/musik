@@ -823,7 +823,7 @@ wxString CPlaylistCtrl::GetItemText(long item, EPLAYLISTCOLUMNS eColumnType) con
 	case PLAYLISTCOLUMN_TIMES_PLAYED:
 		{
 
-			return (song.TimesPlayed > 0) ? IntToString(song.TimesPlayed) : wxT("-");
+			return (song.TimesPlayed > 0) ? IntToString(song.TimesPlayed) : wxString(wxT("-"));
 		}
 		break;
 
@@ -1687,7 +1687,7 @@ void CPlaylistCtrl::OnShowInLibrary( wxCommandEvent& event )
 }
 void CPlaylistCtrl::OnOpenFolderInFileManager( wxCommandEvent&  )
 {
-	if ( m_nCurSel > -1 && m_nCurSel < g_Playlist.GetCount() )
+	if ( m_nCurSel > -1 && m_nCurSel < (int)g_Playlist.GetCount() )
 	{
 		wxString sCommand = wxString::Format(wxGetApp().Prefs.sFilemanagerCmd, g_Playlist[m_nCurSel].MetaData.Filename.GetPath().c_str());
 		wxExecute(sCommand);
