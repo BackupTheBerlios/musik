@@ -205,8 +205,6 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSelectedBox )
 		{
 			wxGetApp().Library.GetAllSongs( g_Playlist );
 			g_PlaylistBox->Update();
-			g_PlaylistChanged = true;
-
 			return;
 		}
 	}
@@ -249,7 +247,6 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSelectedBox )
 		{
 			wxGetApp().Library.GetAllSongs( g_Playlist );
 			g_PlaylistBox->Update();
-			g_PlaylistChanged = true;
 			return;
 		}		
 	}

@@ -205,6 +205,9 @@ int CMusikPlayer::InitializeFMOD( int nFunction )
 				if ( FSOUND_SetOutput( FSOUND_OUTPUT_ALSA ) == FALSE )
 					return FMOD_INIT_ERROR_ALSA;
 			}
+		#elif defined (__WXMAC__)
+			if( FSOUND_SetOutput( FSOUND_OUTPUT_MAC ) == FALSE )
+				return FMOD_INIT_ERROR_MAC;
 		#endif
 		if(wxGetApp().Prefs.nSndDevice > 0)
 		{
@@ -268,15 +271,6 @@ void CMusikPlayer::PlayPause()
 	{
 		if(GetPlaymode() == MUSIK_PLAYMODE_SHUFFLE)
 		{
-/*
-			// if playlist has changed set new playlist for the player
-			// in random mode
-			if ( g_PlaylistChanged )
-			{
-				SetPlaylist( g_Playlist );
-				g_PlaylistChanged = false;
-			}
-*/
 			NextSong();
 		}
 		else
@@ -1409,9 +1403,10 @@ void  CMusikPlayer::MovePlaylistEntrys(size_t nMoveTo ,const wxArrayInt &arrToMo
 void CMusikPlayer::RefreshInternalPlaylist()
 {
 
-	for(size_t i = 0;i < m_Playlist.GetCount();i++)
+	for(int i = m_Playlist.GetCount() - 1 ;i >= 0 ;i--)
 	{
 		CMusikSong & refSong = m_Playlist[i];
-		wxGetApp().Library.GetSongFromSongid(refSong.songid,&refSong);
+		if(false == wxGetApp().Library.GetSongFromSongid(refSong.songid,&refSong))
+			m_Playlist.RemoveAt(i);
 	}
 }

@@ -20,6 +20,11 @@
 #define WXSYSTEMCOLOUR(x)	*wxTheColourDatabase->FindColour(x)
 #endif
 
+
+#ifdef __WXGTK__
+#define WXLISTCTRL_SETITEMSTATE_IS_BUGGY 1
+#endif
+
 #ifndef wxFULL_REPAINT_ON_RESIZE
 #define wxFULL_REPAINT_ON_RESIZE 0
 #endif

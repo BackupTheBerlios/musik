@@ -406,7 +406,6 @@ void CPlaylistCtrl::OnColumnClick( wxListEvent& event )
 
 	wxGetApp().Library.SetSortOrderField( ActualColumn, desc );
 	wxGetApp().Library.RedoLastQuerySongsWhere( g_Playlist ,true);//sorted
-	g_PlaylistChanged = true;
 	Update();
 }
 
@@ -1328,8 +1327,6 @@ void CPlaylistCtrl::DelSelSongs(bool bDeleteFromDB, bool bDeleteFromComputer)
 		}
 		nDeletedSongs ++;
 	}
-	g_PlaylistChanged = (nDeletedSongs > 0);  
-
 	//--- if certain files couldn't be deleted ---//
 	if ( !sError.IsEmpty() )
 		wxMessageBox( _( "Failed to delete the following files from your computer:\n\n " ) + sError, MUSIKAPPNAME_VERSION, wxICON_STOP );

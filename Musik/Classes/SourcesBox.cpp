@@ -439,7 +439,6 @@ void CSourcesListBox::UpdateSel( size_t index )
 		wxListCtrlSelNone( this );
         m_CurSel = FindInSources(wxT( "Musik Library" ),MUSIK_SOURCES_LIBRARY);
 		SetItemState( m_CurSel, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
-		g_PlaylistChanged = true; 
 		bInFunction = false;
 		return;
     }
@@ -449,7 +448,6 @@ void CSourcesListBox::UpdateSel( size_t index )
 		wxListCtrlSelNone( this );
         int sel = FindInSources(wxT( "Now Playing" ),MUSIK_SOURCES_NOW_PLAYING);
 		SetItemState( sel, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
-		g_PlaylistChanged = true; 
 		return;
     }
 
@@ -531,8 +529,6 @@ void CSourcesListBox::UpdateSel( size_t index )
 		g_MusikFrame->ShowActivityArea( false );
 		
 	}
-
-	g_PlaylistChanged = true; 
 	bInFunction = false;
 }
 

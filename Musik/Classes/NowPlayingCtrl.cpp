@@ -105,7 +105,7 @@ CNowPlayingCtrl::CNowPlayingCtrl( wxWindow *parent )
 	btnPlayPause->SetBitmapFocus		( bmPlayDown );
 	btnStop->SetBitmapFocus				( bmStopDown );
 	btnVolume->SetBitmapFocus			( bmVolumeDown );
-	#elif defined __WXMSW__
+	#else // defined __WXMSW__
 	pPrevEvt	= new CBtnDownEvt	( btnPrev, &bmPrevDown, &bmPrev );
 	pNextEvt	= new CBtnDownEvt	( btnNext, &bmNextDown, &bmNext );
 	pPlayEvt	= new CBtnDownEvt	( btnPlayPause, &bmPlayDown, &bmPlay );
@@ -238,7 +238,7 @@ void CNowPlayingCtrl::PlayBtnToPauseBtn()
 	#ifdef __WXGTK__
 	btnPlayPause->SetBitmapLabel( bmPause );
 	btnPlayPause->SetBitmapFocus( bmPauseDown );
-	#elif defined __WXMSW__
+	#else //defined __WXMSW__
 	btnPlayPause->SetBitmapLabel( bmPause );
 	btnPlayPause->PopEventHandler();
 	btnPlayPause->PushEventHandler( pPauseEvt );
@@ -251,7 +251,7 @@ void CNowPlayingCtrl::PauseBtnToPlayBtn()
 	#ifdef __WXGTK__
 	btnPlayPause->SetBitmapLabel( bmPlay );
 	btnPlayPause->SetBitmapFocus( bmPlayDown );
-	#elif defined __WXMSW__
+	#else //if defined __WXMSW__
 	btnPlayPause->SetBitmapLabel( bmPlay );
 	btnPlayPause->PopEventHandler();
 	btnPlayPause->PushEventHandler( pPlayEvt );
@@ -303,9 +303,9 @@ void CNowPlayingCtrl::ResetInfo()
 	stSong->SetLabel	( _( "Playback Stopped" )	);
 	stArtist->SetLabel	( _( "Playback Stopped" )	);
 	stCurtime->SetLabel	( _( " - 0:00" )			);
-	#ifdef __WXMSW__
+	#ifndef __WXGTK__
 		gSeek->SetValue( 0 );
-	#elif defined __WXGTK__
+	#else
 		gSeek->SetValue( 1 );
 	#endif
 

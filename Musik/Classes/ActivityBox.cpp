@@ -92,7 +92,7 @@ void CActivityListBox::OnChar(wxKeyEvent& event)
 		{
 			if (GetRowText(i,false).Left(m_sSearch.Len()).IsSameAs(m_sSearch,false))
 			{ // Move this item to the center of the list.
-				int centeroffset = GetCountPerPage()/2 -1;
+				int centeroffset = (GetCountPerPage() - 1) / 2;
 				int showitem=0;
 				if (i >= GetTopItem()) 
 				{
@@ -129,9 +129,9 @@ void CActivityListBox::RescaleColumns( bool bFreeze )
 
 	if ( GetColumnWidth( 1 ) != nWidth )
 	{
-		#ifdef __WXMSW__
+		#ifndef __WXGTK__
 			SetColumnWidth	( 1, nWidth );
-		#elif defined __WXGTK__
+		#else
 			SetColumnWidth( 1, nWidth - wxSystemSettings::GetMetric(wxSYS_HSCROLL_Y) - GetColumnWidth( 0 ) - 1 );			
 		#endif 
 	}
@@ -640,7 +640,6 @@ void CActivityBox::SetPlaylist()
 {
 	GetSelectedSongs( g_Playlist );
 	g_PlaylistBox->Update( true );
-	g_PlaylistChanged = true;
 }
 
 void CActivityBox::SetContents( const wxArrayString & aList )

@@ -272,22 +272,22 @@ wxString SanitizedString( const wxString & str )
 
 void wxListCtrlSelAll( wxListCtrl *pList )
 {
-	#if defined __WXMSW__
-		pList->SetItemState( -1, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
-	#elif defined __WXGTK__
+	#ifdef WXLISTCTRL_SETITEMSTATE_IS_BUGGY
 		for( int i = 0; i < pList->GetItemCount(); i++ )
 			pList->SetItemState( i, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
+	#else
+    		pList->SetItemState( -1, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
 	#endif
 }
 
 void wxListCtrlSelNone( wxListCtrl *pList )
 {
-	#if defined __WXMSW__
-		pList->SetItemState( -1, 0, wxLIST_STATE_SELECTED );
-	#elif defined __WXGTK__
-		for( int i = 0; i < pList->GetItemCount(); i++ )
-			pList->SetItemState( i, 0, wxLIST_STATE_SELECTED );
-	#endif
+#ifdef WXLISTCTRL_SETITEMSTATE_IS_BUGGY
+	for( int i = 0; i < pList->GetItemCount(); i++ )
+		pList->SetItemState( i, 0, wxLIST_STATE_SELECTED );
+#else
+	pList->SetItemState( -1, 0, wxLIST_STATE_SELECTED );
+#endif
 }
 
 wxString GenTempFilename( wxString filename, int nsize )

@@ -325,16 +325,15 @@ void MusikFrame::LibraryCustomQuery()
 
 		wxGetApp().Library.QuerySongsWhere( m_customQuery, g_Playlist );
 		g_PlaylistBox->Update( );
-		g_PlaylistChanged = true;
 	}
 }
 
 void MusikFrame::LibrarySimpleQueryEdit()
 {
 	wxString sQueryval = g_PlaylistBox->TextSimpleQuery().GetValue();
-	if ( ( sQueryval.Length() < 3 )  )
-		return;
-	else
+//	if ( ( sQueryval.Length() < 3 )  )
+//		return;
+//	else
 		LibrarySimpleQuery( sQueryval );
 }
 
@@ -350,36 +349,41 @@ void MusikFrame::LibrarySimpleQueryDlg()
 
 void MusikFrame::LibrarySimpleQuery( wxString sQueryVal )
 {
-
-	sQueryVal.Replace( wxT("'"), wxT("''") ); //--- double apostrophe to make valid syntax ---//
-
-	wxArrayString sTokens;
-	if ( sQueryVal.Left( 1 ) == wxT("!") )
+	if(   !sQueryVal.IsEmpty() )
 	{
-		sQueryVal = sQueryVal.Right( sQueryVal.Length() - 1 );	//--- remove "!" ---//
-		sTokens.Add(sQueryVal);
-	}
-	else
-		DelimitStr(sQueryVal,wxT(" "),sTokens,true);
+		sQueryVal.Replace( wxT("'"), wxT("''") ); //--- double apostrophe to make valid syntax ---//
 
-	wxString sQuery;
-
-	for ( size_t i = 0; i < sTokens.GetCount() ; i++)
-	{
-		
-		wxString sString = wxT("'%") + sTokens[i] + wxT("%'");
-		sQuery+= wxString::Format( wxT("(artist like %s or album like %s or title like %s or filename like %s or notes like %s)"),
-			( const wxChar *)sString, (const wxChar *) sString, (const wxChar *)sString,(const wxChar*) sString,(const wxChar*) sString );
-		if(i != sTokens.GetCount() - 1)
+		wxArrayString sTokens;
+		if ( sQueryVal.Left( 1 ) == wxT("!") )
 		{
-			sQuery += wxT(" and ");
+			sQueryVal = sQueryVal.Right( sQueryVal.Length() - 1 );	//--- remove "!" ---//
+			sTokens.Add(sQueryVal);
+		}
+		else
+			DelimitStr(sQueryVal,wxT(" "),sTokens,true);
+
+		wxString sQuery;
+
+		for ( size_t i = 0; i < sTokens.GetCount() ; i++)
+		{
+			
+			wxString sString = wxT("'%") + sTokens[i] + wxT("%'");
+			sQuery+= wxString::Format( wxT("(artist like %s or album like %s or title like %s or filename like %s or notes like %s)"),
+				( const wxChar *)sString, (const wxChar *) sString, (const wxChar *)sString,(const wxChar*) sString,(const wxChar*) sString );
+			if(i != sTokens.GetCount() - 1)
+			{
+				sQuery += wxT(" and ");
+			}
+
 		}
 
+		wxGetApp().Library.QuerySongsWhere( sQuery, g_Playlist ,true);  // true means query sorted
 	}
-
-	wxGetApp().Library.QuerySongsWhere( sQuery, g_Playlist ,true);  // true means query sorted
+	else
+	{
+		wxGetApp().Library.GetAllSongs(g_Playlist);
+	}
 	g_PlaylistBox->Update( );
-	g_PlaylistChanged = true;
 }
 
 //------------------------//

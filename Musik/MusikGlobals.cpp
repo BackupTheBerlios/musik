@@ -124,7 +124,6 @@ wxFont g_fntListBold;
 bool g_SelInProg;
 bool g_FocusDone;
 bool g_DragInProg;
-bool g_PlaylistChanged;
 bool g_TimeSeeking;
 bool g_DisablePlacement;
 

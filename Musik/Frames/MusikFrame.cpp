@@ -154,7 +154,6 @@ MusikFrame::MusikFrame()
 {
 	//--- no selection in progress / no dragging yet ---//
 	g_DragInProg		= false;
-	g_PlaylistChanged	= true;
 
 	//--- pointer to main dialog, defined in MusikGlobals ---//
 	g_MusikFrame = this;
@@ -407,7 +406,7 @@ void MusikFrame::GetFonts()
 		g_fntBold.SetFaceName	( sFace );
 		g_fntBold.SetWeight		( wxBOLD );
 
-	#elif defined __WXGTK__
+	#else
 		sFace = wxT( "Sans" );
 	
 		g_fntSong.SetFaceName	( sFace );

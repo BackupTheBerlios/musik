@@ -130,6 +130,7 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 		cmbOutputDrv->Append ( wxT("ASIO") );
 	#elif defined (__WXMAC__)
 		//--- mac sound stuff ---//
+		cmbOutputDrv->Append ( wxT("MAC") );
 	#elif defined (__WXGTK__)
 		cmbOutputDrv->Append ( wxT("OSS") );
 		cmbOutputDrv->Append ( wxT("ESD") );
