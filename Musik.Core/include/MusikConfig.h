@@ -20,7 +20,6 @@
 	#ifndef Sleep
 		#define Sleep(x) sleep(x)
 	#endif
-
 #endif
 
 #endif
