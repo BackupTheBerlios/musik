@@ -57,6 +57,7 @@
 #include <Direct.h>
 
 #include "3rdparty/TreePropSheet.h"
+#include ".\mainfrm.h"
 
 ///////////////////////////////////////////////////
 
@@ -112,15 +113,23 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_SYSCOLORCHANGE()
+
+	// menu 
 	ON_COMMAND(ID_FILE_PREFERENCES, OnFilePreferences)
 	ON_COMMAND(ID_OPEN_FILES, OnOpenFiles)
 	ON_COMMAND(ID_OPEN_DIRECTORY, OnOpenDirectory)
 	ON_COMMAND(ID_FILE_SAVEPLAYLIST, OnFileSaveplaylist)
 	ON_COMMAND(ID_VIEW_PLAYLISTINFORMATION, OnViewPlaylistinformation)
+	ON_COMMAND(ID_VIEW_SOURCES, OnViewSources)
+	ON_COMMAND(ID_VIEW_SELECTIONBOXES, OnViewSelectionboxes)
+	ON_COMMAND(ID_VIEW_NOWPLAYING, OnViewNowplaying)
 
 	// update ui
 	ON_UPDATE_COMMAND_UI(ID_FILE_SAVEPLAYLIST,OnUpdateMainMenu)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_PLAYLISTINFORMATION,OnUpdateMainMenu)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_SOURCES, OnUpdateViewSources)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_SELECTIONBOXES, OnUpdateViewSelectionboxes)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_NOWPLAYING, OnUpdateViewNowplaying)
 
 	// custom message maps
 	ON_REGISTERED_MESSAGE( WM_SELBOXUPDATE, OnUpdateSel )
@@ -1189,3 +1198,64 @@ LRESULT CMainFrame::OnPlayerPlaySel( WPARAM wParam, LPARAM lParam )
 
 ///////////////////////////////////////////////////
 
+void CMainFrame::OnViewSources()
+{
+	if ( m_wndSources->IsVisible() )
+		ShowControlBar( m_wndSources, FALSE, FALSE );
+	else
+        ShowControlBar( m_wndSources, TRUE, FALSE );
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnUpdateViewSources(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck( m_wndSources->IsVisible() );
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnViewSelectionboxes()
+{
+	if ( !m_Prefs->GetSelBoxCount() )
+		return;
+
+	if ( m_wndSelectionBars[0]->IsVisible() )
+	{
+		for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
+			ShowControlBar( m_wndSelectionBars[i], FALSE, TRUE );
+	}
+	else
+	{
+		for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
+			ShowControlBar( m_wndSelectionBars[i], TRUE, TRUE );
+	}
+
+	RecalcLayout();
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnUpdateViewSelectionboxes(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck( m_wndSelectionBars[0]->IsVisible() );
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnViewNowplaying()
+{
+	if ( m_wndNowPlaying->IsVisible() )
+		ShowControlBar( m_wndNowPlaying, FALSE, FALSE );
+	else
+        ShowControlBar( m_wndNowPlaying, TRUE, FALSE );
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnUpdateViewNowplaying(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck( m_wndNowPlaying->IsVisible() );
+}
+
+///////////////////////////////////////////////////

@@ -55,13 +55,21 @@
 #define ID_AUDIO_EQUALIZER              32789
 #define ID_EQUALIZER_ENABLED            32790
 #define ID_EQUALIZER_SETUP              32791
+#define ID_VIEW_CROSSFADER              32792
+#define ID_VIEW_EQUALIZER               32793
+#define ID_VIEW_SOURCES                 32794
+#define ID_VIEW_NOWPLAYING              32795
+#define ID_VIEW_SELECTIONAREA           32796
+#define ID_VIEW_SELECTIONBOXES          32797
+#define ID_AUDIO_CROSSFADERENABLED32798 32798
+#define ID_AUDIO_EQUALIZERENABLED32799  32799
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        139
-#define _APS_NEXT_COMMAND_VALUE         32792
+#define _APS_NEXT_COMMAND_VALUE         32800
 #define _APS_NEXT_CONTROL_VALUE         1023
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

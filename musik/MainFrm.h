@@ -181,6 +181,12 @@ protected:
 	afx_msg void OnOpenDirectory();
 	afx_msg void OnFileSaveplaylist();
 	afx_msg void OnViewPlaylistinformation();
+	afx_msg void OnUpdateViewSources(CCmdUI *pCmdUI);
+	afx_msg void OnViewSources();
+	afx_msg void OnViewSelectionboxes();
+	afx_msg void OnUpdateViewSelectionboxes(CCmdUI *pCmdUI);
+	afx_msg void OnViewNowplaying();
+	afx_msg void OnUpdateViewNowplaying(CCmdUI *pCmdUI);
 
 	// updating ui
 	void OnUpdateMainMenu( CCmdUI* pCmd );

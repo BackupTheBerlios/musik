@@ -93,7 +93,13 @@ BEGIN
     END
     POPUP "View"
     BEGIN
+        MENUITEM "Sources",                     ID_VIEW_SOURCES
+        MENUITEM "Selection Boxes",             ID_VIEW_SELECTIONBOXES
         MENUITEM "Playlist Information",        ID_VIEW_PLAYLISTINFORMATION
+        MENUITEM "Now Playing",                 ID_VIEW_NOWPLAYING
+        MENUITEM SEPARATOR
+        MENUITEM "Crossfader",                  ID_VIEW_CROSSFADER
+        MENUITEM "Equalizer",                   ID_VIEW_EQUALIZER
     END
     POPUP "Audio"
     BEGIN
@@ -102,16 +108,11 @@ BEGIN
             MENUITEM "Repeat",                      ID_PLAYBACKMODE_REPEAT
             MENUITEM "Shuffle",                     ID_PLAYBACKMODE_SHUFFLE
         END
-        POPUP "Crossfader"
-        BEGIN
-            MENUITEM "Enabled",                     ID_CROSSFADER_ENABLED
-            MENUITEM "Setup",                       ID_CROSSFADER_SETUP
-        END
-        POPUP "Equalizer"
-        BEGIN
-            MENUITEM "Enabled",                     ID_EQUALIZER_ENABLED
-            MENUITEM "Setup",                       ID_EQUALIZER_SETUP
-        END
+        MENUITEM SEPARATOR
+        MENUITEM "Crossfader Enabled",          ID_AUDIO_CROSSFADERENABLED32798
+
+        MENUITEM "Equalizer Enabled",           ID_AUDIO_EQUALIZERENABLED32799
+
     END
     POPUP "&Help"
     BEGIN
