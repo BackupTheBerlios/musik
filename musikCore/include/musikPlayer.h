@@ -245,7 +245,7 @@ public:
 	// misc
 	void SetSafeShutdown(){ m_ShutDown = true; }
 	CmusikPlaylist* GetPlaylist(){ return m_Playlist; }
-	CmusikString GetTimeStr( int time_ms );
+	static CmusikString GetTimeStr( int time_ms );
 	void SetTimeNowPer( int percent );
 	CmusikString GetTimePerStr( int percent );
 	int GetTimePer ( int percent );
