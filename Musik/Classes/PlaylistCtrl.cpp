@@ -216,11 +216,11 @@ CPlaylistCtrl::CPlaylistCtrl( wxWindow *parent, const wxWindowID id, const wxPoi
 
 	//--- main context menu ---//
 	playlist_context_menu = new wxMenu;
-	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_DELETENODE, _( "&Delete" ), playlist_context_delete_menu );
+	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_DELETENODE,	_( "&Delete" ),		playlist_context_delete_menu );
 	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_RENAME_FILES, _( "A&uto Rename" ) );
 	playlist_context_menu->AppendSeparator();
-	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_RATENODE, _( "&Rating" ), playlist_context_rating_menu );
-	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_TAGNODE, _( "Edit &Tag" ), playlist_context_edit_tag_menu );
+	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_RATENODE,		_( "&Rating" ),		playlist_context_rating_menu );
+	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_TAGNODE,		_( "Edit &Tag" ),	playlist_context_edit_tag_menu );
 
 	//--- setup drop target ---//
 	SetDropTarget( new PlaylistDropTarget( this ) );
@@ -247,17 +247,20 @@ void CPlaylistCtrl::ShowMenu( wxCommandEvent& WXUNUSED(event) )
 	if ( GetSelectedItemCount() > 0 )
 	{
 		//--- uncheck all ratings ---//
+		/*
 		playlist_context_rating_menu->Check( MUSIK_PLAYLIST_CONTEXT_UNRATED, false );
 		playlist_context_rating_menu->Check( MUSIK_PLAYLIST_CONTEXT_RATE1, false );
 		playlist_context_rating_menu->Check( MUSIK_PLAYLIST_CONTEXT_RATE2, false );
 		playlist_context_rating_menu->Check( MUSIK_PLAYLIST_CONTEXT_RATE3, false );
 		playlist_context_rating_menu->Check( MUSIK_PLAYLIST_CONTEXT_RATE4, false );
 		playlist_context_rating_menu->Check( MUSIK_PLAYLIST_CONTEXT_RATE5, false );
+		*/
 
 		//--- get rating for first sel ---//
-		int nAvg = g_Playlist.Item( GetNextItem( -1, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED ) ).Rating;
-		switch ( nAvg )
+		int nFirst = g_Playlist.Item( GetNextItem( -1, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED ) ).Rating;
+		switch ( nFirst )
 		{
+			/*
 		case 0:
 			playlist_context_rating_menu->Check( MUSIK_PLAYLIST_CONTEXT_UNRATED, true );
 			break;
@@ -276,6 +279,7 @@ void CPlaylistCtrl::ShowMenu( wxCommandEvent& WXUNUSED(event) )
 		case 5:
 			playlist_context_rating_menu->Check( MUSIK_PLAYLIST_CONTEXT_RATE5, true );
 			break;
+			*/
 		}
 		PopupMenu( playlist_context_menu, pos );
 	}
@@ -540,13 +544,17 @@ CMusikSongArray CPlaylistCtrl::GetSelSongs()
 {
 	CMusikSongArray aResult;
 	int nIndex = -1;
+	CMusikSong song;
 	if( GetSelectedItemCount() > 0 )
 	{
 		for( int i = 0; i < GetSelectedItemCount(); i++ )
 		{
 			nIndex = GetNextItem( nIndex, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
 			if ( nIndex > -1 )
-				aResult.Add( g_Library.GetSongFromFilename( GetFilename( nIndex ) ) );
+			{
+				g_Library.GetSongFromFilename( GetFilename( nIndex ), &song );
+				aResult.Add( song );
+			}
 		}
 	}
 	return aResult;
@@ -634,7 +642,8 @@ void CPlaylistCtrl::ResynchItem( int i, bool freeze )
 		Freeze();
 
 	CMusikSong currentitem = g_Playlist.Item( i );
-	CMusikSong dbitem = g_Library.GetSongFromFilename( currentitem.Filename );
+	CMusikSong dbitem;
+	g_Library.GetSongFromFilename( currentitem.Filename, &dbitem );
 
 	currentitem.Album = dbitem.Album;
 	currentitem.Artist = dbitem.Artist;

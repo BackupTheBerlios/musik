@@ -110,14 +110,13 @@ public:
 	void DeleteItem		( const wxString &  filename	);
 	void RemoveSongDir	( const wxString &  sDir		);
 	void RemoveSong		( const wxString &  sSong		);
-	void RemoveAll		(						);
+	void RemoveAll		( );
 	
 	//---------------------//
 	//--- getting items ---//
 	//---------------------//
 	CMusikSongArray GetStdPlaylistSongs	( wxArrayString *aFiles );
-	CMusikSong		GetSongFromFilename	( const wxString & filename );
-	void 			GetSongFromFilename	( const wxString & filename,CMusikSong *pSong );
+	void 			GetSongFromFilename	( wxString filename, CMusikSong *pSong );
 
 	//--------------------//
 	//--- getting info ---//

@@ -269,7 +269,8 @@ void CNowPlayingCtrl::UpdateInfo( wxString sFilename )
 	this->Freeze();
 
 	//--- first things first, verify data in song ---//
-	CMusikSong song = g_Library.GetSongFromFilename( sFilename );
+	CMusikSong song;
+	g_Library.GetSongFromFilename( sFilename, &song );
 	song.Artist = SanitizedString( song.Artist );
 	song.Title = SanitizedString( song.Title );
 	if ( song.Artist == _( "<unknown>" ) )

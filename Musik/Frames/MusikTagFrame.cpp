@@ -491,7 +491,8 @@ void MusikTagFrame::CheckChangesSingle()
 {
 	for ( size_t i = 0; i < m_Songs.GetCount(); i++ )
 	{
-		CMusikSong orig = g_Library.GetSongFromFilename( m_Songs.Item( i ).Filename );
+		CMusikSong orig;
+		g_Library.GetSongFromFilename( m_Songs.Item( i ).Filename, &orig );
 
 		//--- check title ---//
 		if( tcTitle->IsEnabled() && ( orig.Title != m_Songs.Item( i ).Title ) )
