@@ -157,9 +157,10 @@ MusikFrame::MusikFrame()
 	g_Player.SetVolume();
 
 	SetActiveThread( NULL );
-#ifdef __WXMSW__
-	SetMMShellHook((HWND)GetHWND());
-#endif
+
+	#ifdef __WXMSW__
+		SetMMShellHook((HWND)GetHWND());
+	#endif
 }
 
 MusikFrame::~MusikFrame()

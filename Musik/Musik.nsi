@@ -74,6 +74,7 @@ Section "Musik 0.1.2" SecCopyUI
   File "sqlite.dll"
   File "msvcr71.dll"
   File "msvcp71.dll"
+  File "MMShellHook.dll"
 
   ;Store install folder
   WriteRegStr HKCU "Software\${MUI_PRODUCT}" "" $INSTDIR
@@ -113,6 +114,7 @@ Section "Uninstall"
   Delete "$INSTDIR\sqlite.dll"
   Delete "$INSTDIR\msvcr71.dll"
   Delete "$INSTDIR\msvcp71.dll"
+  Delete "$INSTDIR\MMShellHook.dll"
   Delete "$INSTDIR\Uninstall.exe"
   
   ;Remove shortcut
