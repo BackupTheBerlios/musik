@@ -324,7 +324,9 @@ void MusikFrame::OnServerEvent(wxSocketEvent& event)
 	if ( !g_WebServer.IsRunning() )
 		return;
 
-	// if we get a connection, make the server listen
+	//------------------------------------------------------//
+	//--- if we get a connection, make the server listen ---//
+	//------------------------------------------------------//
 	switch( event.GetSocketEvent() )
 	{
 		case wxSOCKET_CONNECTION:
