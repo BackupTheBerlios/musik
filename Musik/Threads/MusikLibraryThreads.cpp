@@ -38,7 +38,7 @@ void *MusikUpdateLibThread::Entry()
 
 	wxGetApp().Library.BeginTransaction();
 	//--- remove old songs ---//
-	if ( m_pPathesDel->GetCount() > 0 )
+	if (m_pPathesDel &&  m_pPathesDel->GetCount() > 0 )
 	{
 		for ( size_t i = 0; i < m_pPathesDel->GetCount(); i++ )
 		{

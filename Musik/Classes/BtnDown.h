@@ -28,7 +28,7 @@ public:
 	void OnLeftDown	( wxMouseEvent& event );
 	void OnLeftUp	( wxMouseEvent& event );
 	void OnMouseMove( wxMouseEvent& event );
-
+	void OnEraseBackground(wxEraseEvent& ) {}
 	DECLARE_EVENT_TABLE()
 private:
 	wxBitmapButton	*pParent;

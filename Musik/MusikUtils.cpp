@@ -868,6 +868,25 @@ void ReplaceChars(wxString &s,const wxString &chars,wxChar replaceby)
 	}			
 
 }
+wxString SecToStr( int nSec )
+{
+	wxString result;
+
+	int ms = nSec * 1000;
+	int hours = ms / 1000 / 60 / 60;
+	ms -= hours * 1000 * 60 * 60;
+	int minutes = ms / 1000 / 60;
+	ms -= minutes * 1000 * 60;
+	int seconds = ms / 1000;
+
+	if ( hours > 0 )
+		result.sprintf( wxT( "%d:%02d:%02d" ), hours, minutes, seconds );
+	else
+		result.sprintf( wxT( "%d:%02d" ), minutes, seconds );
+
+	return result;
+}
+
 // MusikLogWindow
 // -----------
 
@@ -1003,5 +1022,21 @@ void wxMultiLineTextEntryDialog::SetTextValidator( wxTextValidator& validator )
 // wxUSE_VALIDATORS
 
 BEGIN_EVENT_TABLE(wxStaticText_NoFlicker,wxStaticText)
-EVT_ERASE_BACKGROUND(wxStaticText_NoFlicker::OnEraseBackGround)
+EVT_ERASE_BACKGROUND(wxStaticText_NoFlicker::OnEraseBackground)
+END_EVENT_TABLE()
+
+BEGIN_EVENT_TABLE(wxCheckBox_NoFlicker,wxCheckBox)
+EVT_ERASE_BACKGROUND(wxCheckBox_NoFlicker::OnEraseBackground)
+END_EVENT_TABLE()
+
+BEGIN_EVENT_TABLE(wxChoice_NoFlicker,wxChoice)
+EVT_ERASE_BACKGROUND(wxChoice_NoFlicker::OnEraseBackground)
+END_EVENT_TABLE()
+
+BEGIN_EVENT_TABLE(wxButton_NoFlicker,wxButton)
+EVT_ERASE_BACKGROUND(wxButton_NoFlicker::OnEraseBackground)
+END_EVENT_TABLE()
+
+BEGIN_EVENT_TABLE(wxTextCtrl_NoFlicker,wxWindow)
+EVT_ERASE_BACKGROUND(wxTextCtrl_NoFlicker::OnEraseBackground)
 END_EVENT_TABLE()

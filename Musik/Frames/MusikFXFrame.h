@@ -43,7 +43,10 @@ public:
 	void OnRightClick		( wxContextMenuEvent& event );
 	void OnTogglePitchEnable	( wxCommandEvent& WXUNUSED(event) );
 
-	
+	void OnEraseBackground ( wxEraseEvent& event );
+
+	//------------------//
+	//--- eq sliders ---//
 	//-------------------------//
 	//--- utility functions ---//
 	//-------------------------//

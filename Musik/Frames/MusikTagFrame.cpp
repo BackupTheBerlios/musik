@@ -142,8 +142,8 @@ MusikTagFrame::MusikTagFrame( wxFrame* pParent, CPlaylistCtrl * pPlaylistctrl, i
 
 	gProgress					=	new wxGauge			( this, -1, 100, wxDefaultPosition, wxSize( -1, 18 ), wxGA_SMOOTH );
 
-	btnNext		= new wxButton( this, MUSIK_TAG_NEXT,	wxT(">"),		wxDefaultPosition, wxDefaultSize );
-	btnPrev		= new wxButton( this, MUSIK_TAG_PREV,	wxT("<"),		wxDefaultPosition,wxDefaultSize );
+	btnNext		= new wxButton( this, MUSIK_TAG_NEXT,	wxT(">"),		wxDefaultPosition, wxDefaultSize ,wxBU_EXACTFIT);
+	btnPrev		= new wxButton( this, MUSIK_TAG_PREV,	wxT("<"),		wxDefaultPosition,wxDefaultSize ,wxBU_EXACTFIT);
 	btnCancel	= new wxButton( this, MUSIK_TAG_CANCEL,	_("Cancel"),	wxDefaultPosition, wxDefaultSize );
 	btnApply	= new wxButton( this, MUSIK_TAG_APPLY,	_("Apply"),	wxDefaultPosition, wxDefaultSize );
 	btnOK		= new wxButton( this, MUSIK_TAG_OK,		_("OK"),		wxDefaultPosition, wxDefaultSize );

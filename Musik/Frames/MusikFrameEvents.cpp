@@ -44,16 +44,18 @@ BEGIN_EVENT_TABLE(MusikFrame, wxFrame)
 	EVT_UPDATE_UI				(MUSIK_MENU_ACTIVITIES_STATE,		MusikFrame::OnUpdateUIActivitiesState)	
 	EVT_MENU					(MUSIK_MENU_PLAYLISTINFO_STATE,		MusikFrame::OnPlaylistInfoState		)	// View->Show Playlist Info
 	EVT_UPDATE_UI				(MUSIK_MENU_PLAYLISTINFO_STATE,		MusikFrame::OnUpdateUIPlaylistInfoState	)	
+	EVT_MENU					(MUSIK_MENU_ALBUMART_STATE,			MusikFrame::OnAlbumartState		)	// View->Show Album Art
+	EVT_UPDATE_UI				(MUSIK_MENU_ALBUMART_STATE,			MusikFrame::OnUpdateUIAlbumartState	)	
+	EVT_MENU_RANGE				(MUSIK_MENU_SELECT_SOURCES_LIBRARY,MUSIK_MENU_SELECT_SOURCES_NOWPLAYING	,		MusikFrame::OnSelectSources			)	// View->Select xxx
+
 	EVT_MENU					(MUSIK_MENU_STAY_ON_TOP,			MusikFrame::OnStayOnTop				)	// View->Stay On Top
 	EVT_UPDATE_UI				(MUSIK_MENU_STAY_ON_TOP,			MusikFrame::OnUpdateUIStayOnTop		)	
 	EVT_MENU					(MUSIK_MENU_FX,						MusikFrame::OnFX					)
 	EVT_MENU					(MUSIK_MENU_PATHS,					MusikFrame::OnSetupPaths			)	// Library->Setup Paths
-	EVT_MENU					(MUSIK_MENU_SIMPLEQUERY,			MusikFrame::OnSimpleQueryDlg		)	// Library->Simple Query
 	EVT_MENU					(MUSIK_MENU_CUSTOMQUERY,			MusikFrame::OnCustomQuery			)	// Library->Custom Query
 	EVT_MENU					(MUSIK_MENU_VIEW_DIRTY_TAGS,		MusikFrame::OnViewDirtyTags			)	// Library->Write Tags->View
 	EVT_MENU					(MUSIK_MENU_WRITE_TAGS,				MusikFrame::OnWriteTags				)	// Library->Write Tags->Write
 	EVT_MENU					(MUSIK_MENU_WRITE_CLEAR_DIRTY,		MusikFrame::OnWriteTagsClearDirty	)	// Library->Write Tags->Finalize DB
-	EVT_TEXT					(MUSIK_SIMPLEQUERY,					MusikFrame::OnSimpleQueryEdit		)	// simple query box change
 	EVT_MOVE					(									MusikFrame::OnMove					)	// main dlg moved
 	EVT_MAXIMIZE				(									MusikFrame::OnMaximize				)	// main dlg maximized
 	EVT_ICONIZE					(									MusikFrame::OnIconize				)	// main dlg minimized
@@ -73,6 +75,7 @@ BEGIN_EVENT_TABLE(MusikFrame, wxFrame)
 	EVT_MENU					( MUSIK_FRAME_EXIT_FADE_DONE,	MusikFrame::OnMenuClose				)
 	EVT_SASH_DRAGGED			( MUSIK_SOURCES,				MusikFrame::OnSashDraggedSourcesBox	)
 	EVT_SASH_DRAGGED			( MUSIK_ACTIVITYCTRL,			MusikFrame::OnSashDraggedActivityCtrl)
+	EVT_ERASE_BACKGROUND		( MusikFrame::OnEraseBackground )
 END_EVENT_TABLE()
 
 
@@ -123,10 +126,9 @@ void MusikFrame::OnSize	( wxSizeEvent& WXUNUSED(event) )
 
 	m_pBottomPanel->Layout();
 
-	m_pNowPlayingCtrl->Refresh();
-	m_pNowPlayingCtrl->Update();
+//	m_pNowPlayingCtrl->Refresh();
+//	m_pNowPlayingCtrl->Update();
 
-	
 	if ( !g_DisablePlacement )
 		wxGetApp().Prefs.sFramePlacement = GetFramePlacement( this );
 }
@@ -209,9 +211,16 @@ void MusikFrame::OnPreferences( wxCommandEvent &WXUNUSED(event) )
 
 void MusikFrame::OnFX( wxCommandEvent &WXUNUSED(event) )
 {
-	wxFrame *pDlg = new MusikFXFrame( this, wxString(MUSIKAPPNAME) + _(" FX"), wxDefaultPosition, wxDefaultSize );
-	//this->Enable( FALSE );
-	pDlg->Show();
+	wxWindow *w = wxWindow::FindWindowById(MUSIK_FRAME_ID_FX);
+	if(w)
+	{
+		w->Raise();
+	}
+	else
+	{
+		w = new MusikFXFrame( this, wxString(MUSIKAPPNAME) + _(" FX"), wxDefaultPosition, wxDefaultSize );
+		w->Show();
+	}	
 }
 
 void MusikFrame::OnStayOnTop( wxCommandEvent &WXUNUSED(event) )	
@@ -233,6 +242,18 @@ void MusikFrame::OnUpdateUIPlaylistInfoState( wxUpdateUIEvent& event)
 {
 	event.Check(wxGetApp().Prefs.bShowPLInfo);
 }
+void MusikFrame::OnAlbumartState( wxCommandEvent& WXUNUSED(event) )	
+{ 
+	wxGetApp().Prefs.bShowAlbumArt = !wxGetApp().Prefs.bShowAlbumArt;
+	ShowAlbumArt();
+	
+}
+void MusikFrame::OnUpdateUIAlbumartState( wxUpdateUIEvent& event)
+{
+	event.Check(wxGetApp().Prefs.bShowAlbumArt);
+	event.Enable(g_SourcesCtrl->IsShown());
+
+}
 
 void MusikFrame::OnSourcesState( wxCommandEvent& WXUNUSED(event) )
 { 
@@ -250,16 +271,6 @@ void MusikFrame::OnActivitiesState( wxCommandEvent& WXUNUSED(event) )
 void MusikFrame::OnUpdateUIActivitiesState( wxUpdateUIEvent& event)
 {
 	event.Check(wxGetApp().Prefs.bShowActivities);
-}
-
-void MusikFrame::OnSimpleQueryDlg( wxCommandEvent& WXUNUSED(event) )
-{ 
-	LibrarySimpleQueryDlg();
-}
-
-void MusikFrame::OnSimpleQueryEdit( wxCommandEvent& WXUNUSED(event) )
-{
-	LibrarySimpleQueryEdit();
 }
 
 void MusikFrame::OnCustomQuery( wxCommandEvent& WXUNUSED(event) )
@@ -330,70 +341,10 @@ void MusikFrame::LibraryCustomQuery()
 
 	if ( !sQuery.IsEmpty() )
 	{
-		m_customQuery = sQuery;
 		g_SourcesCtrl->SelectLibrary(false);  // only change selection, not the view( to protect playlist from being changed. ok that is a hack, but else i would have to much of the structure. this will be done sometime later)
-		wxGetApp().Library.QuerySongsWhere( m_customQuery, g_Playlist );
+		wxGetApp().Library.QuerySongsWhere( sQuery, g_Playlist );
 		g_PlaylistBox->Update( );
 	}
-}
-
-void MusikFrame::LibrarySimpleQueryEdit()
-{
-	wxString sQueryval = g_PlaylistBox->TextSimpleQuery().GetValue();
-//	if ( ( sQueryval.Length() < 3 )  )
-//		return;
-//	else
-		LibrarySimpleQuery( sQueryval );
-}
-
-void MusikFrame::LibrarySimpleQueryDlg()
-{
-	wxTextEntryDialog dlg( this, _("Enter Query:"), MUSIKAPPNAME_VERSION, m_customQuery );
-	if ( dlg.ShowModal() == wxID_OK )
-	{
-		wxString sQuery = dlg.GetValue();
-		g_SourcesCtrl->SelectLibrary(false);  // only change selection, not the view( to protect playlist from being changed. ok that is a hack, but else i would have to much of the structure. this will be done sometime later)
-		LibrarySimpleQuery( sQuery );
-	}
-}
-
-void MusikFrame::LibrarySimpleQuery( wxString sQueryVal )
-{
-	if(   !sQueryVal.IsEmpty() )
-	{
-		sQueryVal.Replace( wxT("'"), wxT("''") ); //--- double apostrophe to make valid syntax ---//
-
-		wxArrayString sTokens;
-		if ( sQueryVal.Left( 1 ) == wxT("!") )
-		{
-			sQueryVal = sQueryVal.Right( sQueryVal.Length() - 1 );	//--- remove "!" ---//
-			sTokens.Add(sQueryVal);
-		}
-		else
-			DelimitStr(sQueryVal,wxT(" "),sTokens,true);
-
-		wxString sQuery;
-
-		for ( size_t i = 0; i < sTokens.GetCount() ; i++)
-		{
-			
-			wxString sString = wxT("'%") + sTokens[i] + wxT("%'");
-			sQuery+= wxString::Format( wxT("(artist like %s or album like %s or title like %s or filename like %s or notes like %s)"),
-				( const wxChar *)sString, (const wxChar *) sString, (const wxChar *)sString,(const wxChar*) sString,(const wxChar*) sString );
-			if(i != sTokens.GetCount() - 1)
-			{
-				sQuery += wxT(" and ");
-			}
-
-		}
-
-		wxGetApp().Library.QuerySongsWhere( sQuery, g_Playlist ,true);  // true means query sorted
-	}
-	else
-	{
-		wxGetApp().Library.GetAllSongs(g_Playlist);
-	}
-	g_PlaylistBox->Update( );
 }
 
 //------------------------//
@@ -480,3 +431,53 @@ void MusikFrame::OnSashDraggedActivityCtrl	(wxSashEvent & WXUNUSED(ev))
     layout.LayoutWindow(this,g_PlaylistBox);
 }
 
+
+void MusikFrame::OnEraseBackground( wxEraseEvent& (event) )
+{	
+	// empty => no background erasing to avoid flicker
+
+	wxDC * TheDC = event.m_dc;
+	wxColour BGColor =  GetBackgroundColour();
+	wxBrush MyBrush(BGColor ,wxSOLID);
+	TheDC->SetBackground(MyBrush);
+
+	wxCoord width,height;
+	TheDC->GetSize(&width,&height);
+	wxCoord x,y,w,h;
+	TheDC->GetClippingBox(&x,&y,&w,&h); 
+
+	// Now  declare the Clipping Region which is
+	// what needs to be repainted
+	wxRegion MyRegion(x,y,w,h); 
+
+	//Get all the windows(controls)  rect's on the dialog
+	wxWindowList & children = GetChildren();
+	for ( wxWindowList::Node *node = children.GetFirst(); node; node = node->GetNext() )
+	{
+		wxWindow *current = (wxWindow *)node->GetData();
+
+		// now subtract out the controls rect from the
+		//clipping region
+		MyRegion.Subtract(current->GetRect());
+	}
+
+	// now destroy the old clipping region
+	TheDC->DestroyClippingRegion();
+
+	//and set the new one
+	TheDC->SetClippingRegion(MyRegion);
+	TheDC->Clear();
+}
+
+void MusikFrame::OnSelectSources( wxCommandEvent &event )
+{
+	switch(event.GetId())
+	{
+	case MUSIK_MENU_SELECT_SOURCES_NOWPLAYING:
+		g_SourcesCtrl->SelectNowPlaying();
+		break;
+	case MUSIK_MENU_SELECT_SOURCES_LIBRARY:
+		g_SourcesCtrl->SelectLibrary();
+
+	}
+}

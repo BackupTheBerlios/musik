@@ -165,13 +165,13 @@ CNowPlayingCtrl::CNowPlayingCtrl( wxWindow *parent )
 	vsPlayModeCol->Add( hsButtons, 1,wxEXPAND|wxALL,2 );
 
 //	vsPlayModeCol->Add( new wxStaticText	( this, -1, _( "Play mode" ) ), 1 );
-	const wxString playmode_choices[] ={_("Normal"),_("Repeat Song"),_("Repeat List"),_("Shuffle"),_("Auto DJ")};
+	const wxString playmode_choices[] ={_("Normal"),_("Repeat Song"),_("Repeat List"),_("Shuffle"),_("Auto DJ"),_("Auto DJ Album")};
 	
-	wxChoice *choicePlaymode = new wxChoice(this,MUSIK_NOWPLAYINGCTRL_PLAYMODE,wxDefaultPosition,wxDefaultSize,WXSIZEOF(playmode_choices),playmode_choices);
+	wxChoice *choicePlaymode = new wxChoice_NoFlicker(this,MUSIK_NOWPLAYINGCTRL_PLAYMODE,wxDefaultPosition,wxDefaultSize,WXSIZEOF(playmode_choices),playmode_choices);
 	int playmode = wxGetApp().Prefs.ePlaymode.val;
 	choicePlaymode->SetSelection(playmode);
 	vsPlayModeCol->Add( choicePlaymode,0, wxRIGHT|wxLEFT|wxALIGN_CENTRE_VERTICAL, 5 ); //-- small top border --//
-	wxCheckBox * pCrossfade = new wxCheckBox( this, MUSIK_CHK_CROSSFADE, _("Crossfade"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+	wxCheckBox * pCrossfade = new wxCheckBox_NoFlicker( this, MUSIK_CHK_CROSSFADE, _("Crossfade"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 	vsPlayModeCol->Add( pCrossfade,0, wxALIGN_CENTRE_VERTICAL|wxRIGHT, 2 ); //-- small top border --//
 	pCrossfade->SetValue( wxGetApp().Prefs.bGlobalFadeEnable );
   	vsRightCol->Add( vsPlayModeCol, 0 ); //-- small top border --//
@@ -187,16 +187,20 @@ CNowPlayingCtrl::CNowPlayingCtrl( wxWindow *parent )
 
 	SetSizerAndFit( hsCols );
 
+	m_pTunage = new CTunage;
 	pSecTimer = NULL;
 	StartTimer();
 	g_TimeSeeking = false;
-
+	
 	ResetInfo();
-	m_pTunage = new CTunage;
+	
 	ActivateHotkeys();
 }
+static bool s_bHotKeyRegistered = false;
 void CNowPlayingCtrl::ActivateHotkeys()
 {
+	if(s_bHotKeyRegistered)
+		return;
 #ifdef wxUSE_HOTKEY
 	if( wxGetApp().Prefs.bEnablePlayerHotkeys == false)
 		return;
@@ -269,12 +273,14 @@ void CNowPlayingCtrl::ActivateHotkeys()
 		if(!bRes)
 			::wxLogWarning(_("Hotkey %s cannot be registered."),(const wxChar*)sHotKey);
 	}
-
+	s_bHotKeyRegistered = true;
 
 #endif
 }
 void CNowPlayingCtrl::DeactivateHotkeys()
 {
+	if(!s_bHotKeyRegistered)
+		return;
 #ifdef wxUSE_HOTKEY
 
 	for(int i = MUSIK_HOTKEYID_FIRST; i <= MUSIK_HOTKEYID_LAST;i++)

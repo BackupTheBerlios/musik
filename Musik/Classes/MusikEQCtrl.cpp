@@ -23,10 +23,16 @@ int freqs[] = {55,77,110,156,220,311,440,622,880,1244,1760,2489,3520,4978,7040,9
 BEGIN_EVENT_TABLE(CMusikEQCtrl, wxPanel)
 	EVT_BUTTON			( BTN_RESET,		CMusikEQCtrl::OnClickReset		)
 	EVT_CHECKBOX		( CHK_EQENABLE,		CMusikEQCtrl::OnToggleEQEnable	)
+//	EVT_ERASE_BACKGROUND		( CMusikEQCtrl::OnEraseBackground )
 END_EVENT_TABLE()
 
+void CMusikEQCtrl::OnEraseBackground( wxEraseEvent& WXUNUSED(event) )
+{	
+	// empty => no background erasing to avoid flicker
+}
+
 CMusikEQCtrl::CMusikEQCtrl( wxFrame* pParent )
-	: wxPanel( pParent, -1, wxDefaultPosition, wxDefaultSize, wxNO_BORDER | wxTRANSPARENT_WINDOW )
+	: wxPanel( pParent, -1, wxDefaultPosition, wxDefaultSize, wxNO_BORDER |wxCLIP_CHILDREN| wxTRANSPARENT_WINDOW )
 {
 	//-------------------------------------//
 	//--- initialize the sizers			---//
@@ -50,25 +56,27 @@ CMusikEQCtrl::CMusikEQCtrl( wxFrame* pParent )
 		slRight[i]->SetToolTip( wxString::Format( _( "Right Channel: %d hz" ), freqs[i]) );
 		pBandsSizer->Add( slRight[i],1,wxEXPAND );
 	}
+	pBandsSizer->AddGrowableRow(0);
+	pBandsSizer->AddGrowableRow(1);
 
 	//-------------------------------------//
 	//--- enableequalizer				---//
 	//-------------------------------------//
-	chkEQEnable = new wxCheckBox( this, CHK_EQENABLE, _("Enable EQ") );
+	chkEQEnable = new wxCheckBox_NoFlicker( this, CHK_EQENABLE, _("Enable EQ") );
 	chkEQEnable->SetValue( wxGetApp().Prefs.bUseEQ );
 	pOptionsSizer->Add( chkEQEnable, 1, wxALIGN_CENTER | wxALIGN_CENTER_VERTICAL );
 
 	//-------------------------------------//
 	//--- lock channels					---//
 	//-------------------------------------//
-	chkLock = new wxCheckBox( this, -1, _("Lock channels") );
+	chkLock = new wxCheckBox_NoFlicker( this, -1, _("Lock channels") );
 	chkLock->SetValue( true );
 	pOptionsSizer->Add( chkLock, 1, wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL );
 
 	//-------------------------------------//
 	//--- reset bands					---//
 	//-------------------------------------//
-	btnReset = new wxButton( this, BTN_RESET, _("Reset bands") );
+	btnReset = new wxButton_NoFlicker( this, BTN_RESET, _("Reset bands") );
 	pOptionsSizer->Add( btnReset, 1, wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL );
 
 	pMainSizer->Add( pOptionsSizer, 0, wxEXPAND | wxBOTTOM, 4 );

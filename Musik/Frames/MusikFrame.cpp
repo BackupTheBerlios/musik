@@ -283,6 +283,7 @@ MusikFrame::MusikFrame()
 	//--- taylor ui ---//
 	ShowPlaylistInfo();
 	ShowSources();
+	ShowAlbumArt();
 	SetStayOnTop(( bool )wxGetApp().Prefs.bStayOnTop);
 
 	CreateMainMenu();
@@ -324,6 +325,10 @@ void MusikFrame::CreateMainMenu()
 	view_menu->Append	( MUSIK_MENU_SOURCES_STATE,	_("Show Sources\tCtrl-1"), wxT(""), wxITEM_CHECK );
 	view_menu->Append	( MUSIK_MENU_ACTIVITIES_STATE, _("Show Selections\tCtrl-2"), wxT(""), wxITEM_CHECK );
 	view_menu->Append	( MUSIK_MENU_PLAYLISTINFO_STATE, _("Show Playlist Info\tCtrl-3"), wxT(""), wxITEM_CHECK );
+	view_menu->Append	( MUSIK_MENU_ALBUMART_STATE, _("Show Album Info\tCtrl-4"), wxT(""), wxITEM_CHECK );
+	view_menu->AppendSeparator();
+	view_menu->Append	( MUSIK_MENU_SELECT_SOURCES_LIBRARY, _("Select Library\tCtrl-F1"), wxT("") );
+	view_menu->Append	( MUSIK_MENU_SELECT_SOURCES_NOWPLAYING, _("Select Now Playing\tCtrl-F2"), wxT(""));
 	view_menu->AppendSeparator();
 	view_menu->Append	( MUSIK_MENU_FX, _("FX\tCtrl-F") );
 #ifdef __WXMSW__
@@ -342,7 +347,6 @@ void MusikFrame::CreateMainMenu()
 	wxMenu *library_menu = new wxMenu;
 	library_menu->Append( MUSIK_MENU_PATHS, _("&Setup Library\tCtrl-L") );
 	library_menu->AppendSeparator();
-	library_menu->Append( MUSIK_MENU_SIMPLEQUERY, _("S&imple Query") );
 	library_menu->Append( MUSIK_MENU_CUSTOMQUERY, _("&Custom Query") );
 	library_menu->AppendSeparator();
 	library_menu->Append( MUSIK_MENU_WRITE, _("&Pending Tags"), library_writetags_menu );
@@ -514,7 +518,12 @@ void MusikFrame::ShowSources()
 	wxLayoutAlgorithm layout;
     layout.LayoutWindow(this,g_PlaylistBox);
 }
-
+void MusikFrame::ShowAlbumArt()
+{
+	g_SourcesCtrl->ShowAlbumArt(  ( bool )wxGetApp().Prefs.bShowAlbumArt );
+	wxLayoutAlgorithm layout;
+	layout.LayoutWindow(this,g_PlaylistBox);
+}
 void MusikFrame::ToggleSources()
 {
 	wxGetApp().Prefs.bShowSources = !wxGetApp().Prefs.bShowSources;
@@ -536,13 +545,13 @@ void MusikFrame::ShowActivityArea( bool bShow )
 {
 	if(g_SourcesCtrl->GetSelType() != MUSIK_SOURCES_LIBRARY)
 		bShow=false;
-	g_PlaylistBox->TextSimpleQuery().Enable(bShow);
+	g_PlaylistBox->ShowSearchBox(bShow);
 	g_ActivityAreaCtrl->Show( bShow );
 	wxLayoutAlgorithm layout;
     layout.LayoutWindow(this,g_PlaylistBox);
 
 	g_PlaylistBox->Layout();
-	g_PlaylistBox->Refresh();
+	//g_PlaylistBox->Refresh();
 }
 
 void MusikFrame::ToggleActivities()

@@ -17,7 +17,7 @@
 #ifndef WX_PRECOMP
 	#include "wx/wx.h"
 #endif 
-
+#include "MusikUtils.h"
 #include "MusikEQGauge.h"
 
 enum EMUSIK_EQ_OBJECT_ID
@@ -40,6 +40,7 @@ public:
 	void OnClickReset		( wxCommandEvent& WXUNUSED(event) );
 	void SlidersFromBands	();
 	void BandsFromSliders	();
+	void OnEraseBackground ( wxEraseEvent& event );
 
 	//------------------//
 	//--- eq sliders ---//
@@ -50,9 +51,9 @@ public:
 	//------------------//
 	//--- eq options ---//
 	//------------------//
-	wxCheckBox				*chkLock;
-	wxCheckBox				*chkEQEnable;
-	wxButton				*btnReset;
+	wxCheckBox_NoFlicker				*chkLock;
+	wxCheckBox_NoFlicker				*chkEQEnable;
+	wxButton_NoFlicker				*btnReset;
 
 	//--------------//
 	//--- sizers ---//

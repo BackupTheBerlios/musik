@@ -31,7 +31,7 @@
 #include <wx/file.h>
 #include <wx/filename.h>
 
-
+#include "3rd Party/Bitap/libbitap.h"
 #include <wx/arrimpl.cpp>
 
 WX_DEFINE_OBJARRAY( CMusikSongArray )
@@ -149,20 +149,22 @@ bool CMusikLibrary::Load()
 							"DELETE FROM songhistory WHERE songid = old.songid;"
 							"END;", NULL, NULL, NULL );
 
-		sqlite_exec( m_pDB,	"CREATE VIEW valid_albums as select album,artist,most_lastplayed from ("
-							"select album,artist,sum(duration) as sum_duration,max(lastplayed+0) as most_lastplayed "  
-							"from songs where album != '' group by album) where sum_duration > 1500000;"
-							, NULL, NULL, NULL );	
-		sqlite_exec_printf( m_pDB,	"CREATE VIEW autodj_songs as select * from songs where %s;"
-			, NULL, NULL, NULL ,( const char* )ConvToUTF8(wxGetApp().Prefs.sAutoDjFilter ));	
 
 		CreateDBFuncs();
 		sqlite_exec( m_pDB, "PRAGMA synchronous = OFF;", NULL, NULL, NULL );
 		sqlite_exec( m_pDB, "PRAGMA cache_size = 10000;", NULL, NULL, NULL );
-
-
-
 		CheckVersion();
+		sqlite_exec_printf( m_pDB,	"CREATE VIEW autodj_songs as select * from songs where %s;"
+			, NULL, NULL, NULL ,( const char* )ConvToUTF8(wxGetApp().Prefs.sAutoDjFilter ));	
+		sqlite_exec( m_pDB,	"CREATE VIEW valid_albums as select album,artist,most_lastplayed from ("
+			"select album,artist,sum(duration) as sum_duration,max(lastplayed+0) as most_lastplayed "  
+			"from songs where album != '' group by album) where sum_duration > 1500000;"
+			, NULL, NULL, NULL );	
+		sqlite_exec( m_pDB,	"CREATE VIEW autodj_albums as select album,artist,most_lastplayed from ("
+			"select album,artist,sum(duration) as sum_duration,max(lastplayed+0) as most_lastplayed "  
+			"from autodj_songs where album != '' group by album) where sum_duration > 1500000;"
+			, NULL, NULL, NULL );	
+
 	}
 	if ( errmsg )
 			free( errmsg );
@@ -279,7 +281,7 @@ void CMusikLibrary::CreateDBFuncs()
 				{ "cnvISO8859_1ToUTF8",     1, SQLITE_TEXT, cnvISO8859_1ToUTF8Func, 0 },
 				{ "wxjulianday", 1, SQLITE_TEXT, wxjuliandayFunc,0 },// for backward compatibility
 			    { "cnvMusikOldDTFormatToJulianday",	1, SQLITE_NUMERIC, cnvMusikOldDTFormatToJuliandayFunc, 0 },
-
+				{ "fuzzycmp",     3, SQLITE_TEXT, fuzzycmpFunc ,0},
 			};
 	/*  static struct {
 	char *zName;
@@ -370,6 +372,27 @@ void CMusikLibrary::wxjuliandayFunc(sqlite_func *context, int argc, const char *
 	if( argc<1 || argv[0]==0 ) return;
 	sqlite_set_result_string(context,argv[0], strlen(argv[0]));
 }
+
+void CMusikLibrary::fuzzycmpFunc(sqlite_func *context, int argc, const char **argv)
+{
+	if( argc!=3 || argv[0]==0 || argv[1]==0) return;
+	int AllowedErrors  = argv[2]?atoi(argv[2]):0;
+	const char *Pattern = argv[0];
+	const char *Text =   argv[1];
+	int Result = 0;
+	bitapType b;
+	if(NewBitap(&b,(const unsigned char*)Pattern)>=0)
+	{
+		if (NULL != FindWithBitap(&b, (const unsigned char*)Text,strlen (Text), AllowedErrors,NULL,NULL))
+		{
+			Result = 1;
+		}
+	}
+	DeleteBitap(&b);
+	sqlite_set_result_int(context,Result);
+}
+
+
 //---  if true, compares the full path, if false, just looks for the filename itself   ---//
 //--- obviously the filename you pass will either be full or just filename accordingly ---//
 bool CMusikLibrary::FileInLibrary( const wxString & filename, bool fullpath )
@@ -833,7 +856,7 @@ void CMusikLibrary::GetSongs( const wxArrayString & aList, int nInType, CMusikSo
 void CMusikLibrary::Query( const wxString & query, wxArrayString & aReturn ,bool bClearArray )
 {
 	if(bClearArray)
-{
+	{
 
 	aReturn.Clear();
 	//--- run the query ---//
@@ -1025,9 +1048,10 @@ void CMusikLibrary::RedoLastQuerySongsWhere( CMusikSongArray & aReturn ,bool bSo
 {
 	QuerySongsWhere(m_lastQueryWhere,aReturn,bSorted);
 }
-void CMusikLibrary::QuerySongsWhere( const wxString & queryWhere, CMusikSongArray & aReturn ,bool bSorted)
+void CMusikLibrary::QuerySongsWhere( const wxString & queryWhere, CMusikSongArray & aReturn ,bool bSorted,bool bClearArray)
 {
-	aReturn.Clear();
+	if(bClearArray)
+		aReturn.Clear();
 	//--- run query ---//
 	wxString query;
 	wxString myqueryWhere = queryWhere.IsEmpty()  ? wxT("") : wxT(" where ") + queryWhere;

@@ -71,8 +71,12 @@ private:
 	long n;							//--- new pos                 ---//
 };
 
+BEGIN_EVENT_TABLE(CPlaylistBox,wxPanel)
+//EVT_ERASE_BACKGROUND(CPlaylistBox::OnEraseBackground)
+END_EVENT_TABLE()
+
 CPlaylistBox::CPlaylistBox( wxWindow *parent )
-	: wxPanel( parent, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ),  wxTAB_TRAVERSAL|wxCLIP_CHILDREN|wxSUNKEN_BORDER )
+	: wxPanel( parent, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ),wxNO_FULL_REPAINT_ON_RESIZE| wxTAB_TRAVERSAL|wxCLIP_CHILDREN|wxSUNKEN_BORDER )
 	
 {
 	SetBackgroundColour( WXSYSTEMCOLOUR(wxT("LIGHT STEEL BLUE")));
@@ -80,24 +84,14 @@ CPlaylistBox::CPlaylistBox( wxWindow *parent )
 	//--- CSourcesListBox ---//
 	m_pPlaylistCtrl	= new CPlaylistCtrl( this, MUSIK_PLAYLIST, wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 	m_pPlaylistInfoCtrl = new CPlaylistInfoCtrl( this ,  m_pPlaylistCtrl);
-	//--------------------//
-	//--- simple query ---//
-	//--------------------//
-	wxBoxSizer *pSimpleQuerySizer = new wxBoxSizer( wxHORIZONTAL );
-
-	wxStaticText *stSearch	= new wxStaticText( this, -1, _( "Search:" ),wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_RIGHT | wxTRANSPARENT_WINDOW );
-	m_pTextSimpleQuery		= new wxTextCtrl( this, MUSIK_SIMPLEQUERY, wxT( "" ), wxPoint( -1, -1 ), wxSize( -1, -1 ), wxSIMPLE_BORDER );
-	pSimpleQuerySizer->Add( stSearch,	0, wxRIGHT | wxADJUST_MINSIZE | wxALIGN_CENTER_VERTICAL, 2 );
-	pSimpleQuerySizer->Add( m_pTextSimpleQuery, 1, wxADJUST_MINSIZE );
-
-	m_pHorzSizer = new wxBoxSizer( wxHORIZONTAL );
-	m_pHorzSizer->Add( m_pPlaylistInfoCtrl, 4, wxADJUST_MINSIZE|wxALIGN_CENTER_VERTICAL  );
-	m_pHorzSizer->Add( 5,-1 );
-
-	m_pHorzSizer->Add( pSimpleQuerySizer, 1, wxADJUST_MINSIZE|wxALIGN_CENTER_VERTICAL );
+	m_pSearchBox = new CSearchBox(this);
+	m_pInfoSearchSizer = new wxBoxSizer( wxVERTICAL );
+	m_pInfoSearchSizer->Add( m_pSearchBox, 0, wxEXPAND|wxALL,2 );
+	m_pInfoSearchSizer->Add( m_pPlaylistInfoCtrl, 0, wxEXPAND );
 	//--- top sizer ---//
 	m_pMainSizer = new wxBoxSizer( wxVERTICAL );
-	m_pMainSizer->Add( m_pHorzSizer, 0, wxADJUST_MINSIZE|wxEXPAND|wxRIGHT|wxLEFT|wxBOTTOM|wxTOP  , 2 );
+	m_pMainSizer->Add( m_pInfoSearchSizer, 0, wxADJUST_MINSIZE|wxEXPAND|wxRIGHT|wxLEFT|wxBOTTOM|wxTOP  , 2 );
+	
 	m_pMainSizer->Add(  m_pPlaylistCtrl, 1, wxEXPAND|wxRIGHT|wxLEFT|wxBOTTOM,5);
 	SetSizerAndFit( m_pMainSizer );
 
@@ -107,7 +101,7 @@ void CPlaylistBox::ShowPlaylistInfo()
 {
     if( wxGetApp().Prefs.bShowPLInfo )
        m_pPlaylistInfoCtrl->Update();
-	m_pHorzSizer->Show( m_pPlaylistInfoCtrl, ( bool )wxGetApp().Prefs.bShowPLInfo );
+	m_pInfoSearchSizer->Show( m_pPlaylistInfoCtrl, ( bool )wxGetApp().Prefs.bShowPLInfo );
 	Layout();
 }
 void CPlaylistBox::Update( bool bSelFirstItem )
@@ -119,6 +113,42 @@ void CPlaylistBox::Update( bool bSelFirstItem )
 	}
 	Layout();
 
+}
+void CPlaylistBox::OnEraseBackground( wxEraseEvent& (event) )
+{	
+	// empty => no background erasing to avoid flicker
+
+	wxDC * TheDC = event.m_dc;
+	wxColour BGColor =  GetBackgroundColour();
+	wxBrush MyBrush(BGColor ,wxSOLID);
+	TheDC->SetBackground(MyBrush);
+
+	wxCoord width,height;
+	TheDC->GetSize(&width,&height);
+	wxCoord x,y,w,h;
+	TheDC->GetClippingBox(&x,&y,&w,&h); 
+
+	// Now  declare the Clipping Region which is
+	// what needs to be repainted
+	wxRegion MyRegion(x,y,w,h); 
+
+	//Get all the windows(controls)  rect's on the dialog
+	wxWindowList & children = GetChildren();
+	for ( wxWindowList::Node *node = children.GetFirst(); node; node = node->GetNext() )
+	{
+		wxWindow *current = (wxWindow *)node->GetData();
+
+		// now subtract out the controls rect from the
+		//clipping region
+		MyRegion.Subtract(current->GetRect());
+	}
+
+	// now destroy the old clipping region
+	TheDC->DestroyClippingRegion();
+
+	//and set the new one
+	TheDC->SetClippingRegion(MyRegion);
+	TheDC->Clear();
 }
 CPlaylistBox::~CPlaylistBox()
 {
@@ -137,6 +167,7 @@ BEGIN_EVENT_TABLE(CPlaylistCtrl, CMusikListCtrl)
 	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_PLAY_ENQUEUED,									CPlaylistCtrl::OnPlayEnqueued		)
 	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_PLAY_REPLACE_PLAYERLIST,						CPlaylistCtrl::OnPlayReplace		)
 	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_PLAY_REPLACE_PLAYERLIST_WITH_SELECTION,		CPlaylistCtrl::OnPlayReplaceWithSel	)
+	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_OPEN_FOLDER_IN_FILEMANAGER,							CPlaylistCtrl::OnOpenFolderInFileManager	)
 	EVT_MENU_RANGE				( MUSIK_PLAYLIST_CONTEXT_SHOW_IN_LIBRARY_ARTIST,MUSIK_PLAYLIST_CONTEXT_SHOW_IN_LIBRARY_YEAR, CPlaylistCtrl::OnShowInLibrary)
 	EVT_MENU					( MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FROM_PLAYLIST,					CPlaylistCtrl::OnDelSel				)
 	EVT_MENU					( MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FILES,							CPlaylistCtrl::OnDelFiles			)
@@ -144,6 +175,8 @@ BEGIN_EVENT_TABLE(CPlaylistCtrl, CMusikListCtrl)
 	EVT_UPDATE_UI_RANGE			( MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FROM_PLAYLIST, MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FROM_DB,	CPlaylistCtrl::OnUpdateUIDelete	)
 	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_RENAME_FILES,									CPlaylistCtrl::OnRenameFiles		)
 	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_RETAG_FILES,									CPlaylistCtrl::OnRetagFiles			)
+	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_REBUILDTAG,									CPlaylistCtrl::OnRebuildTag			)
+
 	EVT_MENU_RANGE				( MUSIK_PLAYLIST_CONTEXT_RATING, MUSIK_PLAYLIST_CONTEXT_RATING + (MUSIK_MAX_RATING - MUSIK_MIN_RATING) + 1,			CPlaylistCtrl::OnRateSel			) 	
 	EVT_UPDATE_UI_RANGE			( MUSIK_PLAYLIST_CONTEXT_RATING, MUSIK_PLAYLIST_CONTEXT_RATING + (MUSIK_MAX_RATING - MUSIK_MIN_RATING) + 1,			CPlaylistCtrl::OnUpdateUIRateSel	)
 	EVT_MENU_RANGE				( MUSIK_PLAYLIST_CONTEXT_TAG_TITLE,	MUSIK_PLAYLIST_CONTEXT_TAG_NOTES,	CPlaylistCtrl::OnClickEditTag		)
@@ -255,7 +288,8 @@ wxDragResult PlaylistDropTarget::OnDragOver(wxCoord x, wxCoord y, wxDragResult d
 			)
 			return wxDragNone;
 	}
-	return HighlightSel( pt ) ? def : wxDragNone;
+	return HighlightSel( pt ) ? wxDragCopy : wxDragNone;// return wxDragCopy because def is not set correctly by wxwidgets(it shoul dbe the operation which is proposed by windows, but wxwidgets uses the keystate for determining the drop effect)
+	// wxDragCopy because CPlaylistCtrl uses wxDrag_CopyOnly( to prohibit moving files by explorer when files are dropped there.)
 }
 
 bool PlaylistDropTarget::HighlightSel( const  wxPoint & pPos )
@@ -335,6 +369,7 @@ wxMenu * CPlaylistCtrl::CreateContextMenu()
 	playlist_context_edit_tag_menu->AppendSeparator();
 	playlist_context_edit_tag_menu->Append( MUSIK_PLAYLIST_CONTEXT_RENAME_FILES,	_( "&Auto Rename" ) );
 	playlist_context_edit_tag_menu->Append( MUSIK_PLAYLIST_CONTEXT_RETAG_FILES,		_( "A&uto Retag..." ) );
+	playlist_context_edit_tag_menu->Append( MUSIK_PLAYLIST_CONTEXT_REBUILDTAG,		_( "&Rebuild Tag" ) );
 
 	//--- delete menu ---//
 	wxMenu *playlist_context_delete_menu = new wxMenu;
@@ -391,8 +426,7 @@ wxMenu * CPlaylistCtrl::CreateContextMenu()
 
 
 	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_SHOW_IN_LIBRARY_NODE,_( "&Show in Library" ),	playlist_context_show_in_library_menu );
-
-
+	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_OPEN_FOLDER_IN_FILEMANAGER,_( "&Open Folder in File Manager" ),wxT(""));
 	
 
 	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_RATENODE,			_( "&Rating" ),					playlist_context_rating_menu );
@@ -408,10 +442,11 @@ wxMenu * CPlaylistCtrl::CreateContextMenu()
 		playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_DELETENODE,	!bNetStreamSel );
 	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_RENAME_FILES, !bNetStreamSel );
 	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_RETAG_FILES,	!bNetStreamSel );
+	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_REBUILDTAG,	!bNetStreamSel );
 	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_RATENODE,		!bNetStreamSel );
 	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_TAGNODE,		!bNetStreamSel );
 	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_SHOW_IN_LIBRARY_NODE,	!bNetStreamSel );
-
+	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_OPEN_FOLDER_IN_FILEMANAGER,	!bNetStreamSel );
 
 	return playlist_context_menu;
 }
@@ -591,10 +626,19 @@ void CPlaylistCtrl::BeginDrag( wxListEvent& WXUNUSED(event) )
 		  
 		//--- initialize drag and drop... SourcesDropTarget / PlaylistDropTarget should take care of the rest ---//
 		wxDropSource dragSource( this );
-		CMusikSonglistDataObject song_data( sDrop );
-		dragSource.SetData( song_data );
+		CMusikSonglistDataObject *psong_data = new CMusikSonglistDataObject(sDrop);
+		wxFileDataObject *pfile_data = new wxFileDataObject;
+		for (size_t i = 0; i < aCurSel.GetCount();i++)
+		{
+			pfile_data->AddFile(g_Playlist[aCurSel[i]].MetaData.Filename.GetFullPath());
+		}
+		wxDataObjectComposite dobj;
+		dobj.Add(psong_data,true);
+		dobj.Add(pfile_data);
+
+		dragSource.SetData( dobj );
 		m_bInternalDragInProcess = true;
-		dragSource.DoDragDrop( TRUE );
+		dragSource.DoDragDrop( wxDrag_CopyOnly );
 		m_bInternalDragInProcess = false;
 	}
 }
@@ -966,6 +1010,23 @@ void CPlaylistCtrl::GetSelectedSongs(CMusikSongArray & aResult)
 	return;
 }
 
+void CPlaylistCtrl::RefreshSelectedSongs()
+{
+
+	int nIndex = -1;
+
+	if( GetSelectedItemCount() > 0 )
+	{
+		while((nIndex = GetNextItem( nIndex, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED )) != -1)
+		{
+			CMusikSong & refSong = g_Playlist[nIndex];
+			if(refSong.MetaData.eFormat == MUSIK_FORMAT_NETSTREAM)
+				continue; // skip net streams
+			 wxGetApp().Library.GetSongFromSongid(refSong.songid,&refSong);
+			 RefreshItem(nIndex);
+		}	
+	}
+}
 wxLongLong CPlaylistCtrl::GetTotalFilesize()
 {
 	wxLongLong filesize = 0;
@@ -989,7 +1050,7 @@ int CPlaylistCtrl::GetTotalPlayingTimeInSeconds()
 	return Duration;
 }
 
-wxString  CPlaylistCtrl::GetFilename( int nItem )
+const wxString & CPlaylistCtrl::GetFilename( int nItem )
 {
 	if ( nItem > -1 )
 	{
@@ -998,7 +1059,7 @@ wxString  CPlaylistCtrl::GetFilename( int nItem )
 	}
 
 	//--- not found? return a null string ---//
-	return wxString();
+	return m_EmptyString;
 }
 
 
@@ -1387,6 +1448,15 @@ void CPlaylistCtrl::RetagSelFiles()
 		InternalErrorMessageBox(wxT("Previous thread not terminated correctly."));
 }
 
+void CPlaylistCtrl::RebuildTagSelFiles()
+{
+		wxArrayString aFiles;
+		GetSelFilesList(aFiles);
+		
+		g_MusikFrame->AutoUpdate(aFiles, MUSIK_UpdateFlags::RebuildTags|MUSIK_UpdateFlags::WaitUntilDone );
+		RefreshSelectedSongs();
+}
+
 bool CPlaylistCtrl::ViewDirtyTags()
 {
 	CMusikSongArray dirty;
@@ -1613,4 +1683,165 @@ void CPlaylistCtrl::OnShowInLibrary( wxCommandEvent& event )
 		pBox->SetSel(sEntry);
 	}
 }
+void CPlaylistCtrl::OnOpenFolderInFileManager( wxCommandEvent&  )
+{
+	if ( m_nCurSel > -1 && m_nCurSel < g_Playlist.GetCount() )
+	{
+		wxString sCommand = wxString::Format(wxGetApp().Prefs.sFilemanagerCmd, g_Playlist[m_nCurSel].MetaData.Filename.GetPath().c_str());
+		wxExecute(sCommand);
+	}
+}	
+enum EMUSIK_SEARCHBOX_ID
+{
+	MUSIK_SEARCHBOX_TEXT = 1,
+	MUSIK_SEARCHBOX_SEARCHMODE = 2,
+	MUSIK_SEARCHBOX_FUZZYSEARCHMODE = 3,
+	MUSIK_SEARCHBOX_TIMERID = 4,
+	MUSIK_SEARCHBOX_CLEAR = 5
 
+};
+
+BEGIN_EVENT_TABLE(CSearchBox, wxPanel)
+EVT_TEXT					(MUSIK_SEARCHBOX_TEXT,			CSearchBox::OnTextInput	)	// simple query box change
+EVT_CHOICE					(MUSIK_SEARCHBOX_SEARCHMODE,	CSearchBox::OnSearchMode	) 
+EVT_CHOICE					(MUSIK_SEARCHBOX_FUZZYSEARCHMODE,	CSearchBox::OnFuzzySearchMode ) 
+EVT_TIMER					(MUSIK_SEARCHBOX_TIMERID, CSearchBox::OnTimer)
+EVT_BUTTON					(MUSIK_SEARCHBOX_CLEAR,CSearchBox::OnClear)
+END_EVENT_TABLE()
+
+CSearchBox::CSearchBox( wxWindow *parent )
+:wxPanel( parent, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ),wxNO_FULL_REPAINT_ON_RESIZE| wxTAB_TRAVERSAL|wxCLIP_CHILDREN|wxBORDER_RAISED )
+,m_Timer(this,MUSIK_SEARCHBOX_TIMERID)
+{
+	//SetBackgroundColour( parent->GetBackgroundColour() );
+	//--------------------//
+	//--- simple query ---//
+	//--------------------//
+	wxBoxSizer *pSizer = new wxBoxSizer( wxHORIZONTAL );
+
+	wxStaticText *stSearch	= new wxStaticText_NoFlicker( this, -1, _( "Search:" ),wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_RIGHT | wxTRANSPARENT_WINDOW );
+	m_pTextSimpleQuery		= new wxTextCtrl_NoFlicker( this, MUSIK_SEARCHBOX_TEXT, wxT( "" ), wxPoint( -1, -1 ), wxSize( -1, -1 ), wxSIMPLE_BORDER );
+	wxButton *buttonClear =new wxButton_NoFlicker(this,MUSIK_SEARCHBOX_CLEAR,_("Clear"),wxDefaultPosition,wxDefaultSize,wxBU_EXACTFIT );
+	const wxString searchmode_choices[] ={_("All words"),_("Exact phrase"),_("Any word")};
+	wxChoice *choiceSearchmode = new wxChoice_NoFlicker(this,MUSIK_SEARCHBOX_SEARCHMODE,wxDefaultPosition,wxDefaultSize,WXSIZEOF(searchmode_choices),searchmode_choices);
+	choiceSearchmode->SetSelection(wxGetApp().Prefs.eSearchmode.val);
+	const wxString fuzzysearchmode_choices[] ={_("Fuzzy None"),_("Fuzzy Low"),_("Fuzzy Middle"),_("Fuzzy High")};
+	wxChoice *choiceFuzzySearchmode = new wxChoice_NoFlicker(this,MUSIK_SEARCHBOX_FUZZYSEARCHMODE,wxDefaultPosition,wxDefaultSize,WXSIZEOF(fuzzysearchmode_choices),fuzzysearchmode_choices);
+	choiceFuzzySearchmode->SetSelection(wxGetApp().Prefs.eFuzzySearchmode.val);
+	pSizer->Add( stSearch,	0, wxRIGHT | wxADJUST_MINSIZE | wxALIGN_CENTER_VERTICAL|wxALL, 4 );
+	pSizer->Add( m_pTextSimpleQuery, 1, wxADJUST_MINSIZE |wxALIGN_CENTER_VERTICAL|wxRIGHT|wxTOP|wxBOTTOM,4);
+	pSizer->Add( buttonClear, 0, wxADJUST_MINSIZE |wxALIGN_CENTER_VERTICAL|wxRIGHT|wxTOP|wxBOTTOM,4);
+	pSizer->Add( choiceSearchmode, 0, wxADJUST_MINSIZE |wxALIGN_CENTER_VERTICAL|wxRIGHT|wxTOP|wxBOTTOM,4);
+	pSizer->Add( choiceFuzzySearchmode, 0, wxADJUST_MINSIZE |wxALIGN_CENTER_VERTICAL|wxRIGHT|wxTOP|wxBOTTOM,4);
+	m_arrFieldsToSearch.Add(g_PlaylistColumnDBNames[PLAYLISTCOLUMN_ARTIST]);
+	m_arrFieldsToSearch.Add(g_PlaylistColumnDBNames[PLAYLISTCOLUMN_ALBUM]);
+	m_arrFieldsToSearch.Add(g_PlaylistColumnDBNames[PLAYLISTCOLUMN_TITLE]);
+	m_arrFieldsToSearch.Add(g_PlaylistColumnDBNames[PLAYLISTCOLUMN_FILENAME]);
+	m_arrFieldsToSearch.Add(g_PlaylistColumnDBNames[PLAYLISTCOLUMN_NOTES]);
+	SetSizer(pSizer);
+}
+CSearchBox::~CSearchBox()
+{
+}
+
+void CSearchBox::DoSearchQuery( wxString sQueryVal )
+{
+	if(   !sQueryVal.IsEmpty() )
+	{
+		sQueryVal.Replace( wxT("'"), wxT("''") ); //--- double apostrophe to make valid syntax ---//
+		sQueryVal.MakeLower();
+		wxArrayString sTokens;
+		wxString sCompareTempl;
+		
+		wxString sSetOperator(wxT(" and "));
+		EMUSIK_FUZZYSEARCHMODE fm = wxGetApp().Prefs.eFuzzySearchmode;
+		double fuzzy = 0.0;
+		switch (fm)
+		{
+		case MUSIK_FUZZYSEARCHMODE_NONE:
+			sCompareTempl = wxT("LIKE('%%%s%%',%s)");
+			fuzzy = 0.0;
+			break;
+		case MUSIK_FUZZYSEARCHMODE_LOW:
+			sCompareTempl << wxT("fuzzycmp('.*%s.*',lower(%s),%d)"); 
+			fuzzy = 1.2;
+			break;
+		case MUSIK_FUZZYSEARCHMODE_MIDDLE:
+			sCompareTempl << wxT("fuzzycmp('.*%s.*',lower(%s),%d)"); 
+
+			fuzzy = 1.5;
+			break;
+		case MUSIK_FUZZYSEARCHMODE_HIGH:
+			sCompareTempl << wxT("fuzzycmp('.*%s.*',lower(%s),%d)"); 
+			fuzzy = 1.8;
+			break;
+
+		}
+		EMUSIK_SEARCHMODE sm = wxGetApp().Prefs.eSearchmode;
+		switch(	sm )
+		{
+		case MUSIK_SEARCHMODE_ALLWORDS:
+				DelimitStr(sQueryVal,wxT(" "),sTokens,true);
+				
+				break;
+		case MUSIK_SEARCHMODE_ANYWORDS:
+				sSetOperator = wxT(" or ");
+				DelimitStr(sQueryVal,wxT(" "),sTokens,true);
+				break;
+		case MUSIK_SEARCHMODE_EXACTPHRASE:
+				sTokens.Add(sQueryVal);
+				break;
+		}
+
+		wxString sQuery;
+
+		for ( size_t i = 0; i < sTokens.GetCount() ; i++)
+		{
+			sQuery+= wxT("(");
+			for ( size_t field = 0; field < m_arrFieldsToSearch.GetCount() ; field++)
+			{
+				int errors = ((sTokens[i].Length() > 3) && (fuzzy != 0.0)) ? (int)((double) sTokens[i].Length()  / 10.0  * fuzzy +0.5): 0;  
+				sQuery+= wxString::Format( sCompareTempl,sTokens[i].c_str(),m_arrFieldsToSearch[field].c_str(),errors );
+				if(field != m_arrFieldsToSearch.GetCount() - 1)
+					sQuery+= wxT(" or ");
+			}
+			sQuery+= wxT(")");
+			if(i != sTokens.GetCount() - 1)
+				sQuery += sSetOperator;
+		}
+
+		wxGetApp().Library.QuerySongsWhere( sQuery, g_Playlist ,true);  // true means query sorted
+	}
+	else
+	{
+		if ( wxGetApp().Prefs.bShowAllSongs == 1 )
+			wxGetApp().Library.GetAllSongs(g_Playlist);
+	}
+	g_PlaylistBox->Update( );
+}
+void CSearchBox::OnTextInput(wxCommandEvent &)
+{
+	m_Timer.Start(650,wxTIMER_ONE_SHOT );	
+}
+void CSearchBox::OnSearchMode( wxCommandEvent&	event )
+{
+	int modesel = event.GetSelection();
+	wxGetApp().Prefs.eSearchmode = (EMUSIK_SEARCHMODE)modesel;
+	DoSearchQuery(m_pTextSimpleQuery->GetValue());
+}
+
+void CSearchBox::OnFuzzySearchMode( wxCommandEvent&	event )
+{
+	int modesel = event.GetSelection();
+	wxGetApp().Prefs.eFuzzySearchmode = (EMUSIK_FUZZYSEARCHMODE)modesel;
+	DoSearchQuery(m_pTextSimpleQuery->GetValue());
+}
+void CSearchBox::OnTimer(wxTimerEvent& )
+{
+	DoSearchQuery(m_pTextSimpleQuery->GetValue());
+}
+
+void CSearchBox::OnClear(wxCommandEvent&)
+{
+	m_pTextSimpleQuery->SetValue(wxEmptyString);	
+}

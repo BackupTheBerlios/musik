@@ -21,7 +21,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/D ID3LIB_LINKOPTION=1"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(VORBISDIR)\include;$(FMODDIR)\api\inc;&quot;$(ID3LIBDIR)\include&quot;;$(OGGDIR)\include;$(SQLITEDIR);MMShellHook;&quot;$(WXDIR)\lib\vc_lib\mswd&quot;;&quot;$(WXDIR)\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(VORBISDIR)\include&quot;;&quot;$(FMODDIR)\api\inc&quot;;&quot;$(ID3LIBDIR)\include&quot;;&quot;$(OGGDIR)\include&quot;;&quot;$(SQLITEDIR)&quot;;MMShellHook;&quot;$(WXDIR)\lib\vc_lib\mswd&quot;;&quot;$(WXDIR)\include&quot;"
 				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;WINVER=0x400;_MT"
 				StringPooling="TRUE"
 				MinimalRebuild="TRUE"
@@ -93,7 +93,7 @@
 				OmitFramePointers="TRUE"
 				OptimizeForProcessor="0"
 				OptimizeForWindowsApplication="TRUE"
-				AdditionalIncludeDirectories="$(VORBISDIR)\include;$(FMODDIR)\api\inc;&quot;$(ID3LIBDIR)\include&quot;;$(OGGDIR)\include;&quot;$(WXDIR)\include&quot;;&quot;$(WXDIR)\lib\vc_lib\msw&quot;;$(SQLITEDIR);MMShellHook"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(VORBISDIR)\include&quot;;&quot;$(FMODDIR)\api\inc&quot;;&quot;$(ID3LIBDIR)\include&quot;;&quot;$(OGGDIR)\include&quot;;&quot;$(WXDIR)\include&quot;;&quot;$(WXDIR)\lib\vc_lib\msw&quot;;&quot;$(SQLITEDIR)&quot;;MMShellHook"
 				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;WINVER=0x400;_MT"
 				StringPooling="TRUE"
 				ExceptionHandling="TRUE"
@@ -158,7 +158,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/D ID3LIB_LINKOPTION=1"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(VORBISDIR)\include&quot;;&quot;$(FMODDIR)\api\inc&quot;;&quot;$(WXDIR)\lib\vc_lib\mswud&quot;;&quot;$(ID3LIBDIR)\include&quot;;&quot;$(OGGDIR)\include&quot;;&quot;$(WXDIR)\include&quot;;&quot;$(SQLITEDIR)&quot;;MMShellHook"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(VORBISDIR)\include&quot;;&quot;$(FMODDIR)\api\inc&quot;;&quot;$(WXDIR)\lib\vc_lib\mswud&quot;;&quot;$(ID3LIBDIR)\include&quot;;&quot;$(OGGDIR)\include&quot;;&quot;$(WXDIR)\include&quot;;&quot;$(SQLITEDIR)&quot;;MMShellHook"
 				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;WINVER=0x400;_MT;_UNICODE;wxUSE_UNICODE"
 				StringPooling="TRUE"
 				MinimalRebuild="TRUE"
@@ -225,7 +225,7 @@
 				OmitFramePointers="TRUE"
 				OptimizeForProcessor="0"
 				OptimizeForWindowsApplication="TRUE"
-				AdditionalIncludeDirectories="&quot;$(VORBISDIR)\include&quot;;&quot;$(FMODDIR)\api\inc&quot;;&quot;$(WXDIR)\lib\vc_lib\mswu&quot;;&quot;$(ID3LIBDIR)\include&quot;;&quot;$(OGGDIR)\include&quot;;&quot;$(WXDIR)\include&quot;;&quot;$(SQLITEDIR)&quot;;MMShellHook"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(VORBISDIR)\include&quot;;&quot;$(FMODDIR)\api\inc&quot;;&quot;$(WXDIR)\lib\vc_lib\mswu&quot;;&quot;$(ID3LIBDIR)\include&quot;;&quot;$(OGGDIR)\include&quot;;&quot;$(WXDIR)\include&quot;;&quot;$(SQLITEDIR)&quot;;MMShellHook"
 				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;WINVER=0x400;_MT;_UNICODE;wxUSE_UNICODE"
 				StringPooling="TRUE"
 				ExceptionHandling="TRUE"
@@ -287,7 +287,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/D ID3LIB_LINKOPTION=1"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(VORBISDIR)\include&quot;;&quot;$(FMODDIR)\api\inc&quot;;&quot;$(WXDIR)\lib\vc_lib\mswunivud&quot;;&quot;$(ID3LIBDIR)\include&quot;;&quot;$(OGGDIR)\include&quot;;&quot;$(WXDIR)\include&quot;;&quot;$(SQLITEDIR)&quot;;MMShellHook"
+				AdditionalIncludeDirectories="$(ProjectDir);$(VORBISDIR)\include&quot;;&quot;$(FMODDIR)\api\inc&quot;;&quot;$(WXDIR)\lib\vc_lib\mswunivud&quot;;&quot;$(ID3LIBDIR)\include&quot;;&quot;$(OGGDIR)\include&quot;;&quot;$(WXDIR)\include&quot;;&quot;$(SQLITEDIR)&quot;;MMShellHook"
 				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;WINVER=0x400;_MT;_UNICODE;wxUSE_UNICODE"
 				StringPooling="TRUE"
 				MinimalRebuild="TRUE"
@@ -630,6 +630,16 @@
 					RelativePath=".\Classes\MusikListCtrl.h">
 				</File>
 			</Filter>
+			<Filter
+				Name="PictureBox"
+				Filter="">
+				<File
+					RelativePath=".\Classes\PictureBox.cpp">
+				</File>
+				<File
+					RelativePath=".\Classes\PictureBox.h">
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Objects"
@@ -782,8 +792,55 @@
 				</File>
 			</Filter>
 		</Filter>
+		<Filter
+			Name="3rd Party"
+			Filter="">
+			<Filter
+				Name="Bitap"
+				Filter="">
+				<File
+					RelativePath=".\3rd Party\Bitap\libbitap.c">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug Unicode|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Unicode|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Universal Unicode Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\3rd Party\Bitap\libbitap.h">
+				</File>
+			</Filter>
+		</Filter>
 		<File
 			RelativePath=".\changelog.txt">
+		</File>
+		<File
+			RelativePath=".\genlocal\de.po">
 		</File>
 		<File
 			RelativePath=".\Musik.rc">

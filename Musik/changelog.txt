@@ -1,3 +1,26 @@
+0.3.1.3 to 0.3.1.4
++ new Open Folder in Filemanager option in playlist context menu. This opens the folder(directory) of the current selected song in a app,which is configured in the prefs file.
+as default this is FilemanagerCmd=explorer.exe "%s" ,you can change that for now only by editing the prefs file yourself.
++ new "RebuildTags" option in playlist context menu. that way you can drag and drop songs into MusicBrainz app or other tagger, tag them there,
+and then rebuild( read again) the tags from the files of the selected songs into wxMusik's database.
++ drag and drop of songs from playlist into other apps( cd-burning app for example, or other players,well promise me you won't do this ;-))  
+is now possible(only windows, wxWidgets restriction)
++ you can use fuzzy matching in your own dynamic pla<ylist by using fuzzycmp(pattern,field,errors) function in your query. for example
+	fuzzycmp('*.Marillian.*',artist,1) will match 'Marillion' or 'marillian' or 'marilian' etc. 
++ enhanced search feature. different search modes and fuzzy matching supported
++ additional shortcut keys: CTRL + F1 selects Library ,CTRL + F2 selects Now Playing
++ added $YEAR and "$TRACKLENGTH tunage variables
++ auto dj album mode added. in this mode complete albums are chosen. as default 5 albums are chosen in advance. the setting for "hours not played" is also used
+  , thus a song from an albumn, which was recently played,is not chosen.
+ 
++ album picture view added. shows a picture according to the selected album( album of song) or when playing a song, the picture of the respective album.
+  the picture are looked for in the directory and subdirectorys of the song file location. if the name contains "front" this picture is chosen before others.
+  you can change to the other pictures by clicking on the displayed picture.
+- fix crash on startup , if bTunageRunOnStop option was active   
+- fixed bug: sometimes after stopping a song, you could not start play again.
+- fixed bug: player pause state was wrongly maintained leading to problems with the trayicon menu. 
+ 
+
 0.3.1.2 to 0.3.1.3
 + Listviews show a tooltip if column could not display the whole text ( Windows only)
 + (Windows only)Added possibility for using standard keys as hotkeys for play control. For now the settings can only be made by editing the .ini file.

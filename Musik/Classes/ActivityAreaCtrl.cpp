@@ -153,7 +153,8 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSelectedBox )
 
 	if ( !pSelectedBox )
 	{
-		wxGetApp().Library.GetAllSongs( g_Playlist );
+		if ( wxGetApp().Prefs.bShowAllSongs == 1 )
+			wxGetApp().Library.GetAllSongs( g_Playlist );
 		return;
 	}
 	//-------------------------------------//

@@ -12,8 +12,8 @@
  *  of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 */
 
-#ifndef MUSIK_SOURCES_BOX
-#define MUSIK_SOURCES_BOX
+#ifndef MUSIK_SOURCES_BOX_H
+#define MUSIK_SOURCES_BOX_H
 
 #include "wx/wxprec.h"
 #ifndef WX_PRECOMP
@@ -39,6 +39,7 @@ enum EMUSIK_SOURCES_TYPE
 #include "MusikListCtrl.h"
 
 class SourcesDropTarget;
+class CPictureBox;
 
 class CSourcesListBox : public CMusikListCtrl
 {
@@ -162,18 +163,21 @@ public:
 	//--- abstraction, so other controls can use g_SourcesCtrl ---//
 	//--- only place needed functions here to reduce overhead	---//
 	//-------------------------------------------------------------//
-	int  GetSelType				( )	{ return pListBox->GetSelType();	}
-	void Update					( ) { pListBox->Update();				}
-	void UpdateCurrent			( ) { pListBox->UpdateSel(pListBox->GetIndex()); }
-	void SelectLibrary			( bool bSwitchView = true ) { pListBox->UpdateSel(bSwitchView ? (size_t) -2:(size_t) -4); }
-	void SelectNowPlaying		( ) { pListBox->UpdateSel((size_t) -3); }
-	void OnSashDragged	(wxSashEvent & ev);
+	int  GetSelType				( )	{ return m_pListBox->GetSelType();	}
+	void Update					( ) { m_pListBox->Update();				}
+	void UpdateCurrent			( ) { m_pListBox->UpdateSel(m_pListBox->GetIndex()); }
+	void SelectLibrary			( bool bSwitchView = true ) { m_pListBox->UpdateSel(bSwitchView ? (size_t) -2:(size_t) -4); }
+	void SelectNowPlaying		( ) { m_pListBox->UpdateSel((size_t) -3); }
+	void OnSashDragged			(wxSashEvent & ev);
+	void OnSize					( wxSizeEvent& event );
 
-	wxString PromptDynamicPlaylist( wxString sQuery )	{ return pListBox->PromptDynamicPlaylist( sQuery ); }
-	
+	wxString PromptDynamicPlaylist( wxString sQuery )	{ return m_pListBox->PromptDynamicPlaylist( sQuery ); }
+	void ShowAlbumArt(bool bShow); 
 	DECLARE_EVENT_TABLE()
 private:
-	CSourcesListBox *pListBox;
+	CSourcesListBox *m_pListBox;
+	CPictureBox *	m_pPictureBox;
+	wxPanel *	m_pPanel;
 };
 
 

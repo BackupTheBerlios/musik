@@ -109,7 +109,7 @@ public:
 	//--- generic querying ---//
 	//------------------------//
 	void Query				( const wxString & query, wxArrayString & aReturn ,bool bClearArray = true);
-	void QuerySongsWhere	( const wxString & query, CMusikSongArray & aReturn ,bool bSorted = false);	  //if bSorted ==true,  use SetSortOrderField to set sorting string
+	void QuerySongsWhere	( const wxString & query, CMusikSongArray & aReturn ,bool bSorted = false,bool bClearArray=true);	  //if bSorted ==true,  use SetSortOrderField to set sorting string
 	void QuerySongsFrom		( const wxString & queryFrom, CMusikSongArray & aReturn ,bool bSorted = false);
 	void RedoLastQuerySongsWhere( CMusikSongArray & aReturn ,bool bSorted = false);
 	//-----------------------------------//
@@ -160,7 +160,7 @@ private:
 	static void cnvISO8859_1ToUTF8Func(sqlite_func *context, int argc, const char **argv);
 	static void wxjuliandayFunc(sqlite_func *context, int argc, const char **argv);
 	static void cnvMusikOldDTFormatToJuliandayFunc(sqlite_func *context, int argc, const char **argv);
-				
+	static void fuzzycmpFunc(sqlite_func *context, int argc, const char **argv);				
 	inline static void _AssignSongTableColumnDataToSong(CMusikSong * pSong, const char **coldata)
 	{
 		pSong->songid		= StringToInt		( coldata[0] );

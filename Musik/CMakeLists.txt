@@ -56,7 +56,8 @@ ADD_EXECUTABLE(wxMusik
         ${wxMusik_SOURCE_DIR}/Classes/Library/COggInfo
         ${wxMusik_SOURCE_DIR}/Classes/Library/CVBitRate
         ${wxMusik_SOURCE_DIR}/Classes/Library/vcedit
-
+		"${wxMusik_SOURCE_DIR}/3rd Parts/Bitap/libbitap"
+		
         ${wxMusik_SOURCE_DIR}/Frames/MusikFrame
         ${wxMusik_SOURCE_DIR}/Frames/MusikFrameEvents
         ${wxMusik_SOURCE_DIR}/Frames/MusikLibraryFrame

@@ -40,6 +40,9 @@ public:
 	wxBoxSizer *pVert;
 
 	void Update();
+	void OnEraseBackground(wxEraseEvent& event);
+	DECLARE_EVENT_TABLE()
+
 private:
 	IPlaylistInfo* m_pIPlaylistInfo;
 };

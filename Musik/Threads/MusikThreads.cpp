@@ -331,10 +331,11 @@ void MusikCrossfaderThread::OnExit()
 	//--- no other fading is going on, so it can	---//
 	//--- manage and clean up any orphan streams	---//
 	//-------------------------------------------------//
-	if ( !m_Aborted )
+	
 	{
 		wxCommandEvent FadeCompleteEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYER_FADE_COMPLETE );	
 		FadeCompleteEvt.SetExtraLong(m_FadeType);
+		FadeCompleteEvt.SetInt(m_Aborted);
 		wxPostEvent( &wxGetApp().Player, FadeCompleteEvt );
 	}
 	//-------------------------------------------------//

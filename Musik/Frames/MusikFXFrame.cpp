@@ -39,14 +39,57 @@ BEGIN_EVENT_TABLE(MusikFXFrame, wxFrame)
 	EVT_CONTEXT_MENU		(					MusikFXFrame::OnRightClick		)
 	EVT_COMMAND_SCROLL		( SLD_PITCH,		MusikFXFrame::OnSlidePitch		)
 	EVT_CHECKBOX			( CHK_PITCHENABLE,	MusikFXFrame::OnTogglePitchEnable )
+	EVT_ERASE_BACKGROUND		( MusikFXFrame::OnEraseBackground )
 END_EVENT_TABLE()
 
+void MusikFXFrame::OnEraseBackground( wxEraseEvent& (event) )
+{	
+	// empty => no background erasing to avoid flicker
+
+	wxDC * TheDC = event.m_dc;
+	wxColour BGColor =  GetBackgroundColour();
+	wxBrush MyBrush(BGColor ,wxSOLID);
+	TheDC->SetBackground(MyBrush);
+
+	wxCoord width,height;
+	TheDC->GetSize(&width,&height);
+	wxCoord x,y,w,h;
+	TheDC->GetClippingBox(&x,&y,&w,&h); 
+
+	// Now  declare the Clipping Region which is
+	// what needs to be repainted
+	wxRegion MyRegion(x,y,w,h); 
+
+	//Get all the windows(controls)  rect's on the dialog
+	wxWindowList & children = GetChildren();
+	for ( wxWindowList::Node *node = children.GetFirst(); node; node = node->GetNext() )
+	{
+		wxWindow *current = (wxWindow *)node->GetData();
+
+		// now subtract out the controls rect from the
+		//clipping region
+		MyRegion.Subtract(current->GetRect());
+	}
+
+	
+
+
+
+	
+
+	// now destroy the old clipping region
+	TheDC->DestroyClippingRegion();
+
+	//and set the new one
+	TheDC->SetClippingRegion(MyRegion);
+	TheDC->Clear();
+}
 #ifndef wxCLOSE_BOX
 #define wxCLOSE_BOX 0
 #endif
 
 MusikFXFrame::MusikFXFrame( wxFrame *pParent, const wxString &sTitle, const wxPoint &pos, const wxSize &size ) 
-	: wxFrame ( pParent, -1, sTitle, pos, size, wxRESIZE_BORDER|wxCAPTION | wxTAB_TRAVERSAL | wxCLOSE_BOX | wxSYSTEM_MENU | wxFRAME_NO_TASKBAR )
+	: wxFrame ( pParent, MUSIK_FRAME_ID_FX, sTitle, pos, size, wxRESIZE_BORDER|wxCAPTION | wxTAB_TRAVERSAL |wxCLIP_CHILDREN| wxCLOSE_BOX | wxSYSTEM_MENU | wxFRAME_NO_TASKBAR )
 {
 	//---------------//
 	//--- colours ---//

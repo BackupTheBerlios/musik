@@ -258,7 +258,7 @@ bool MusikLibraryFrame::Show( bool show )
 	if ( m_AutoStart )
 	{
 		m_AutoStart	= false;
-		UpdateLibrary( false );
+		UpdateLibrary( false ,m_flagsUpdate & MUSIK_UpdateFlags::RebuildTags);
 	}
 
 	//--- non-autstart ---//
@@ -569,6 +569,8 @@ void MusikLibraryFrame::UpdateLibrary( bool bConfirm , bool bCompleteRebuild)
 	if ( !m_ActiveThreadController.IsAlive())
 	{
 		m_ActiveThreadController.AttachAndRun( new MusikUpdateLibThread(this, &aDelDirs,m_arrScannedFiles ,bCompleteRebuild) );
+		if(m_flagsUpdate & MUSIK_UpdateFlags::WaitUntilDone)
+			m_ActiveThreadController.Join();
 	}
 	else
 		InternalErrorMessageBox(wxT("Previous thread not terminated correctly."));

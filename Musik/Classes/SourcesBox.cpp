@@ -15,8 +15,7 @@
 //--- For compilers that support precompilation, includes "wx/wx.h". ---//
 #include "wx/wxprec.h"
 
-#include "SourcesBox.h"
-
+#include "PictureBox.h"
 //--- globals ---//
 #include "../MusikGlobals.h"
 #include "../MusikUtils.h"
@@ -180,7 +179,8 @@ wxDragResult SourcesDropTarget::OnDragOver(wxCoord x, wxCoord y, wxDragResult de
 		return wxDragNone;
 
 	const wxPoint& pt = wxPoint( x, y );
-	return HighlightSel( pt )? def : wxDragNone;
+	return HighlightSel( pt )? wxDragCopy : wxDragNone;// return wxDragCopy because def is not set correctly by wxwidgets(it should be the operation which is proposed by windows, but wxwidgets uses the keystate for determining the drop effect)
+	// wxDragCopy because CPlaylistCtrl uses wxDrag_CopyOnly( to prohibit moving files by explorer when files are dropped there.)
 }
 
 bool SourcesDropTarget::HighlightSel( const wxPoint &pPos )
@@ -236,17 +236,17 @@ BEGIN_EVENT_TABLE(CSourcesListBox, CMusikListCtrl)
 	EVT_MENU					(MUSIK_SOURCE_CONTEXT_RENAME,					CSourcesListBox::Rename					)	// Sources Context -> Rename
 	EVT_MENU					(MUSIK_SOURCE_CONTEXT_SHOW_ICONS,				CSourcesListBox::ToggleIconsEvt			)	// Sources Context -> Show Icons
 	EVT_MENU					(MUSIK_SOURCE_CONTEXT_COPY_FILES,				CSourcesListBox::CopyFiles				)	// Sources Context -> Copy files
-	EVT_LIST_BEGIN_DRAG			(MUSIK_SOURCES,									CSourcesListBox::BeginDrag				)	// user drags files from sources
-	EVT_LIST_ITEM_SELECTED		(MUSIK_SOURCES,									CSourcesListBox::OnUpdateSel			)	// sources list sel
-	EVT_LIST_BEGIN_LABEL_EDIT	(MUSIK_SOURCES,									CSourcesListBox::BeginEditLabel			)   // user edits a playlist filename
-	EVT_LIST_END_LABEL_EDIT		(MUSIK_SOURCES,									CSourcesListBox::EndEditLabel			)   // user edits a playlist filename
-	EVT_LIST_KEY_DOWN			(MUSIK_SOURCES,									CSourcesListBox::TranslateKeys			)	// user presses a key in the sources list
-	EVT_LIST_ITEM_ACTIVATED		(MUSIK_SOURCES,									CSourcesListBox::OnUpdateSel			)	// user wants to redisplay playlist
-	EVT_LIST_COL_BEGIN_DRAG		(MUSIK_SOURCES,									CSourcesListBox::OnSourcesColSize		)
+	EVT_LIST_BEGIN_DRAG			(MUSIK_SOURCES_LISTCTRL,									CSourcesListBox::BeginDrag				)	// user drags files from sources
+	EVT_LIST_ITEM_SELECTED		(MUSIK_SOURCES_LISTCTRL,									CSourcesListBox::OnUpdateSel			)	// sources list sel
+	EVT_LIST_BEGIN_LABEL_EDIT	(MUSIK_SOURCES_LISTCTRL,									CSourcesListBox::BeginEditLabel			)   // user edits a playlist filename
+	EVT_LIST_END_LABEL_EDIT		(MUSIK_SOURCES_LISTCTRL,									CSourcesListBox::EndEditLabel			)   // user edits a playlist filename
+	EVT_LIST_KEY_DOWN			(MUSIK_SOURCES_LISTCTRL,									CSourcesListBox::TranslateKeys			)	// user presses a key in the sources list
+	EVT_LIST_ITEM_ACTIVATED		(MUSIK_SOURCES_LISTCTRL,									CSourcesListBox::OnUpdateSel			)	// user wants to redisplay playlist
+	EVT_LIST_COL_BEGIN_DRAG		(MUSIK_SOURCES_LISTCTRL,									CSourcesListBox::OnSourcesColSize		)
 END_EVENT_TABLE()
 
 CSourcesListBox::CSourcesListBox( wxWindow* parent )
-	: CMusikListCtrl( parent, MUSIK_SOURCES, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxLC_ALIGN_LEFT |wxLC_EDIT_LABELS | wxLC_SINGLE_SEL | wxNO_BORDER|wxLC_NO_SORT_HEADER)
+	: CMusikListCtrl( parent, MUSIK_SOURCES_LISTCTRL, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxLC_ALIGN_LEFT |wxLC_EDIT_LABELS | wxLC_SINGLE_SEL | wxNO_BORDER|wxLC_NO_SORT_HEADER)
 {
 	SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ) );
 
@@ -1436,21 +1436,23 @@ bool CSourcesListBox::AddSourceContentToNowPlaying(int nIndex)
 
 BEGIN_EVENT_TABLE(CSourcesBox, wxSashLayoutWindow)
 	EVT_SASH_DRAGGED			( MUSIK_SOURCES,				CSourcesBox::OnSashDragged			)	
+	EVT_SIZE					( 	CSourcesBox::OnSize			)	
 END_EVENT_TABLE()
 
 CSourcesBox::CSourcesBox( wxWindow *parent )
 	: wxSashLayoutWindow( parent, MUSIK_SOURCES, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxNO_BORDER | wxCLIP_CHILDREN |wxSW_3D|wxTAB_TRAVERSAL )
 {
-	//--- CSourcesListBox ---//
-	pListBox	= new CSourcesListBox( this );
 
+	m_pPanel = new wxPanel( this, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxNO_BORDER|wxCLIP_CHILDREN|wxTAB_TRAVERSAL );
+	//--- CSourcesListBox ---//
+	m_pListBox	= new CSourcesListBox( m_pPanel );
+	m_pPictureBox = new CPictureBox(m_pPanel);
 	
 	//--- top sizer ---//
 	wxBoxSizer *pSizer = new wxBoxSizer( wxVERTICAL );
-	pSizer->Add( pListBox, 1, wxEXPAND , 0 );
-	SetSizer( pSizer );
-
-	Layout();
+	pSizer->Add( m_pListBox, 1, wxEXPAND|wxALIGN_TOP , 0 );
+	pSizer->Add( m_pPictureBox, 0, wxEXPAND|wxALIGN_BOTTOM , 0 );
+	m_pPanel->SetSizer( pSizer );
 }
 
 void CSourcesBox::OnSashDragged	(wxSashEvent & ev)
@@ -1459,7 +1461,37 @@ void CSourcesBox::OnSashDragged	(wxSashEvent & ev)
 	SetDefaultSize(wxSize(wxGetApp().Prefs.nSourceBoxWidth, 1000));
 	ev.Skip();
 }
-
+void CSourcesBox::OnSize( wxSizeEvent& event )
+{
+	if(m_pPictureBox->IsShown())
+	{
+		wxSize s =GetClientSize();
+		s.SetHeight(s.GetWidth());
+		m_pPictureBox->SetSizeHints(s,s);
+		wxSashLayoutWindow::OnSize(event);
+		m_pPictureBox->Refresh();
+	}
+	else
+	{	
+		m_pPictureBox->SetSizeHints(0,0);
+		event.Skip();
+	}
+}
+void CSourcesBox::ShowAlbumArt(bool bShow)
+{
+	m_pPictureBox->Show(bShow);
+	if(bShow)
+	{
+		wxSize s =GetClientSize();
+		s.SetHeight(s.GetWidth());
+		m_pPictureBox->SetSizeHints(s,s);
+	}
+	else
+	{	
+		m_pPictureBox->SetSizeHints(0,0);
+	}
+	m_pPanel->Layout();
+}
 CSourcesBox::~CSourcesBox()
 {
 	

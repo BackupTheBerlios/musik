@@ -65,6 +65,7 @@ public:
 	void OnPlayReplace	( wxCommandEvent& event );
 	//---- other---//
 	void OnShowInLibrary	( wxCommandEvent& event );
+	void OnOpenFolderInFileManager( wxCommandEvent& event );
 	
 	//--- deleting ---//
 	void OnClearPlayerlist( wxCommandEvent& event );
@@ -74,6 +75,7 @@ public:
 	void OnUpdateUIDelete( wxUpdateUIEvent &event);
 	void OnRenameFiles	( wxCommandEvent& WXUNUSED(event) )	{ RenameSelFiles();	}
 	void OnRetagFiles	( wxCommandEvent& WXUNUSED(event) ) { RetagSelFiles();	}
+	void OnRebuildTag	( wxCommandEvent& WXUNUSED(event) ) { RebuildTagSelFiles();	}
 	//--- rating ---//
 	void OnRateSel		( wxCommandEvent& event );
 	void OnUpdateUIRateSel ( wxUpdateUIEvent &event);
@@ -112,7 +114,7 @@ public:
 	void			GetSelItems		(wxArrayInt & aResult);
 	void			GetSelFilesList	( wxArrayString & aResult );
 	void			GetSelectedSongs( CMusikSongArray & aResult );
-	wxString 		GetFilename		( int nItem );
+	const wxString 	&	GetFilename		( int nItem );
 	CMusikSongArray * GetPlaylist	();
 //IPlaylistInfo
 	int				GetTotalPlayingTimeInSeconds();
@@ -136,6 +138,7 @@ public:
 	void DelSelSongs		( bool bDeleteFromDB = false, bool bDeleteFromComputer = false );
 	void RenameSelFiles		( );
 	void RetagSelFiles		( );
+	void RebuildTagSelFiles ( );
 	bool ViewDirtyTags		( );
 	void ShowIcons			( );
 	void SaveColumns		( );
@@ -164,6 +167,7 @@ public:
 	DECLARE_EVENT_TABLE()
 
 protected:
+	void RefreshSelectedSongs();
 	virtual bool OnRescaleColumns() {RescaleColumns(false); return true;}
 	void RescaleColumns		( bool bFreeze = true, bool bSave = false, bool bAutoFit = false );
 	wxMenu * CreateContextMenu();
@@ -179,6 +183,7 @@ protected:
 
 
 private:
+	const wxString m_EmptyString;// this strins is simply empty, it is used in methods were a const reference to an empty string must be returned
 
 	CPlaylistBox *m_pParent;
 
@@ -222,7 +227,23 @@ private:
 
 };
 
-
+class CSearchBox: public wxPanel
+{
+public:
+	CSearchBox( wxWindow *parent );
+	~CSearchBox();
+	void DoSearchQuery( wxString sQueryVal );
+	void OnTextInput(wxCommandEvent &event);
+	void OnSearchMode(wxCommandEvent&	event);
+	void OnFuzzySearchMode(wxCommandEvent&	event);
+	void OnTimer(wxTimerEvent& event);
+	void OnClear(wxCommandEvent&	event);
+	DECLARE_EVENT_TABLE()
+private:
+	wxArrayString m_arrFieldsToSearch;
+	wxTextCtrl *m_pTextSimpleQuery;
+	wxTimer		m_Timer;
+};
 
 class CPlaylistBox : public wxPanel
 {
@@ -232,14 +253,22 @@ public:
 	void ShowPlaylistInfo();
 	CPlaylistInfoCtrl & PlaylistInfoCtrl()	{return *m_pPlaylistInfoCtrl;}
 	CPlaylistCtrl & PlaylistCtrl()			{return *m_pPlaylistCtrl;}
-	wxTextCtrl    & TextSimpleQuery()		{return *m_pTextSimpleQuery;}
+//	CSearchBox    & SearchBox()		{return *m_pSearchBox;}
+	void ShowSearchBox(bool bShow)
+	{
+		m_pInfoSearchSizer->Show(m_pSearchBox,bShow);
+		Layout();
+	}
 	void Update( bool bSelFirstItem = true);
+	void OnEraseBackground(wxEraseEvent& event);
+	DECLARE_EVENT_TABLE()
+
 private:
 	wxBoxSizer			*m_pMainSizer;
-	wxBoxSizer			*m_pHorzSizer;
+	wxBoxSizer			*m_pInfoSearchSizer;
 	CPlaylistInfoCtrl	*m_pPlaylistInfoCtrl;
 	CPlaylistCtrl		*m_pPlaylistCtrl;
-	wxTextCtrl			*m_pTextSimpleQuery;
+	CSearchBox			*m_pSearchBox;
 };
 
 #endif

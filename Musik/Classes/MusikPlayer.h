@@ -175,7 +175,6 @@ public:
 	//--- misc ---//
 	//------------//
 	void UpdateUI		( );
-	wxString SecToStr	( int nSec );
 	
 	DECLARE_EVENT_TABLE()
 	
@@ -190,7 +189,7 @@ private:
 	void _UpdateNetstreamMetadata( wxCommandEvent& event );
 	void _AddRandomSongs();
 	void _ChooseRandomSongs(int nSongsToAdd,CMusikSongArray &arrSongs);
-	void _ChooseRandomAlbums(int nAlbumsToAdd,wxArrayString &arrAlbums);
+	void _ChooseRandomAlbumSongs(int nAlbumsToAdd,CMusikSongArray &arrAlbumSongs);
 	int _NetStreamStatusUpdate(FSOUND_STREAM * pStream);
 
 	

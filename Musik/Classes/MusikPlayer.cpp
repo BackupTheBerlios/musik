@@ -120,11 +120,12 @@ void CMusikPlayer::Init(bool bSuppressAutoPlay)
 			}
 		}
 	}
-	if(!bSuppressAutoPlay && wxGetApp().Prefs.bAutoPlayOnAppStart && (m_Playlist.GetCount() ||  (wxGetApp().Prefs.ePlaymode == MUSIK_PLAYMODE_AUTO_DJ)))
+	if(!bSuppressAutoPlay && wxGetApp().Prefs.bAutoPlayOnAppStart && (m_Playlist.GetCount()
+		||  (wxGetApp().Prefs.ePlaymode == MUSIK_PLAYMODE_AUTO_DJ) ||(wxGetApp().Prefs.ePlaymode == MUSIK_PLAYMODE_AUTO_DJ_ALBUM) ))
 	{
 		_PostPlayRestart( nPlayStartPos ); 
-		if(m_Playlist.GetCount())
-			m_bSuppressAutomaticSongPicking = true; // set this flag , so that auto djing does not interfere with starting to play last song.
+		if(m_Playlist.GetCount())// if we have songs in our playlist ( just loaded)
+			m_bSuppressAutomaticSongPicking = true; // set this flag , so that auto djing does not interfere with starting of last played song.
 	}
 }
 CMusikPlayer::~CMusikPlayer()
@@ -299,7 +300,6 @@ void CMusikPlayer::PlayReplaceList(int nItemToPlay,const CMusikSongArray & playl
 	if ( IsPaused() )
 	{
 		ClearOldStreams();
-		m_Paused = false;
 	}
 	
 	SetPlaylist( playlist );
@@ -381,7 +381,10 @@ void CMusikPlayer::OnPlayRestart( wxCommandEvent& event )
 }
 bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 {
-	if((m_bSuppressAutomaticSongPicking == false) && m_Playlist.GetCount() < (size_t)wxGetApp().Prefs.nAutoDJChooseSongsToPlayInAdvance && MUSIK_PLAYMODE_AUTO_DJ == m_Playmode)
+	if((m_bSuppressAutomaticSongPicking == false) 
+		&& (m_Playlist.GetCount() < (size_t)wxGetApp().Prefs.nAutoDJChooseSongsToPlayInAdvance) 
+		&& ( MUSIK_PLAYMODE_AUTO_DJ == m_Playmode || MUSIK_PLAYMODE_AUTO_DJ_ALBUM == m_Playmode)
+		)
 	{
 		if(m_Playlist.GetCount() == 0)
 			nItem = 0;
@@ -540,6 +543,8 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 	FSOUND_SetVolume( nChannel, 0 );
 	FSOUND_Stream_SetTime( pNewStream, nStartPos * 1000 );
 	FSOUND_SetPaused(nChannel, FALSE);
+	m_Playing = true;
+	m_Paused = false;
 	g_FaderThread->CrossfaderAbort();
 	//---------------------------------------------//
 	//--- update the global arrays containing	---//
@@ -550,7 +555,7 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 		g_ActiveStreams.Add( pNewStream );
 		g_ActiveChannels.Add( nChannel );
 	}
-	m_Playing = true;
+	
 
 	SetFrequency();
 
@@ -716,7 +721,6 @@ void CMusikPlayer::Pause( bool bCheckFade )
 	//-------------------------------------------------//
 	//--- update the UI.							---//
 	//-------------------------------------------------//
-	m_Paused = true;
 	g_MusikFrame->m_pNowPlayingCtrl->PauseBtnToPlayBtn();
 	
 	//-------------------------------------------------//
@@ -734,6 +738,7 @@ void CMusikPlayer::Pause( bool bCheckFade )
 void CMusikPlayer::FinalizePause()
 {
 	FSOUND_SetPaused( FSOUND_ALL, TRUE );
+	m_Paused = true;
 }
 
 void CMusikPlayer::Resume( bool bCheckFade )
@@ -750,7 +755,6 @@ void CMusikPlayer::Resume( bool bCheckFade )
 	g_MusikFrame->m_pNowPlayingCtrl->PlayBtnToPauseBtn();
 	FSOUND_SetPaused( FSOUND_ALL, FALSE );
 	m_Paused = false;
-
 	//-----------------------------------------------------//
 	//--- setup crossfader and return, if	the prefs	---//
 	//--- say so.										---//
@@ -829,7 +833,8 @@ void CMusikPlayer::FinalizeStop()
 	else
 		m_nLastSongTime = 0;
 	m_CurrentSong = CMusikSong();
-	m_Playing = m_Paused = false;
+	m_Playing = false;
+	m_Paused = false;
 	m_Stopping = false;
 	g_PlaylistBox->PlaylistCtrl().ResynchItem( m_SongIndex );
 	int nStreamCount = g_ActiveStreams.GetCount();
@@ -903,6 +908,7 @@ void CMusikPlayer::NextSong()
 	switch ( m_Playmode )
 	{
 	case MUSIK_PLAYMODE_AUTO_DJ:
+	case MUSIK_PLAYMODE_AUTO_DJ_ALBUM:
 
 		_AddRandomSongs();
 		
@@ -976,13 +982,21 @@ void CMusikPlayer::PrevSong()
 
 void CMusikPlayer::_AddRandomSongs()
 {
-
 	CMusikSongArray  arrSongs;
+
 	m_SongIndex = wxMin(m_SongIndex,m_Playlist.GetCount() - 1);
 	int nSongsToAdd = (wxGetApp().Prefs.nAutoDJChooseSongsToPlayInAdvance - (m_Playlist.GetCount() - 1 - m_SongIndex));
 	if(nSongsToAdd <= 0)
 		return;
-	_ChooseRandomSongs(nSongsToAdd,arrSongs);
+	if(MUSIK_PLAYMODE_AUTO_DJ == m_Playmode)
+	{
+
+		_ChooseRandomSongs(nSongsToAdd,arrSongs);
+	}
+	else if(MUSIK_PLAYMODE_AUTO_DJ_ALBUM == m_Playmode)
+	{
+		_ChooseRandomAlbumSongs(5,arrSongs);
+	}
 	AddToPlaylist(arrSongs,false);
 }
 void CMusikPlayer::_ChooseRandomSongs(int nSongsToAdd,CMusikSongArray &arrSongs)
@@ -990,27 +1004,27 @@ void CMusikPlayer::_ChooseRandomSongs(int nSongsToAdd,CMusikSongArray &arrSongs)
 	if(nSongsToAdd <= 0)
 		return;
 	int nMaxRepeatCount = 30;
-	bool repeat = true;
 	int maxsongid = wxGetApp().Library.QueryCount("select max(songid) from autodj_songs;");
 
-	while ( nMaxRepeatCount-- && (repeat || (arrSongs.GetCount() < (size_t)nSongsToAdd)))
+	while ( (nMaxRepeatCount > 0) && (arrSongs.GetCount() < (size_t)nSongsToAdd))
 	{
-		repeat = false;
+		
 #if 0
 		int r = GetRandomNumber() % (wxGetApp().Library.GetSongCount());
 		wxString sQueryRandomSong = wxString::Format(wxT(" select autodj_songs.songid from autodj_songs " 
 					"where songs.songid not in(select songid from songhistory "
-					"where date_played > julianday('now','-%d hours')) limit 1 offset %d;"),nMaxRepeatCount == 5 ? 1 : wxGetApp().Prefs.nAutoDjDoNotPlaySongPlayedTheLastNHours,r);
+					"where date_played > julianday('now','-%d hours')) limit 1 offset %d;"),nMaxRepeatCount < 5 ? 1 : wxGetApp().Prefs.nAutoDjDoNotPlaySongPlayedTheLastNHours,r);
 	
 #else
 		int r = GetRandomNumber() % (maxsongid + 1);
 	   wxString sQueryRandomSong = wxString::Format(wxT(" select autodj_songs.songid from autodj_songs ") 
 		   wxT("where autodj_songs.songid = %d and autodj_songs.songid not in(select songid from songhistory ")
-		   wxT("where date_played > julianday('now','-%d days'));"),r,nMaxRepeatCount == 5 ? 1 : wxGetApp().Prefs.nAutoDjDoNotPlaySongPlayedTheLastNHours);
+		   wxT("where date_played > julianday('now','-%d days'));"),r,nMaxRepeatCount < 5 ? 1 : wxGetApp().Prefs.nAutoDjDoNotPlaySongPlayedTheLastNHours);
 
 
 #endif
 		int songid = wxGetApp().Library.QueryCount(ConvQueryToMB(sQueryRandomSong));
+		bool repeat = false;
 		if(songid > -1)
 		{
 			CMusikSong song;
@@ -1036,28 +1050,32 @@ void CMusikPlayer::_ChooseRandomSongs(int nSongsToAdd,CMusikSongArray &arrSongs)
 					}
 			}
 		}
+		else 
+			repeat = true;
+		if(repeat)
+			nMaxRepeatCount--;
 	} 
 }
-void CMusikPlayer::_ChooseRandomAlbums(int nAlbumsToAdd,wxArrayString &arrAlbums)
+void CMusikPlayer::_ChooseRandomAlbumSongs(int nAlbumsToAdd,CMusikSongArray &arrAlbumSongs)
 {
 	if(nAlbumsToAdd <= 0)
 		return;
 	int nMaxRepeatCount = 30;
-	bool repeat = true;
 	int hours = wxGetApp().Prefs.nAutoDjDoNotPlaySongPlayedTheLastNHours;
-	char * count_query = sqlite_mprintf("select count(*) from valid_albums where most_lastplayed < julianday('now','-%d hours');",hours);
+	char * count_query = sqlite_mprintf("select count(*) from autodj_albums where most_lastplayed < julianday('now','-%d hours');",hours);
 	int albums_count = wxGetApp().Library.QueryCount(count_query);
 	sqlite_freemem( count_query );
-
-	while ( nMaxRepeatCount-- && (repeat || (arrAlbums.GetCount() < (size_t)nAlbumsToAdd)))
+	wxArrayString arrAlbums;
+	while ( (nMaxRepeatCount > 0) && ( arrAlbums.GetCount() < (size_t)nAlbumsToAdd ))
 	{
-		repeat = false;
+		
 		int r = GetRandomNumber() % (albums_count);
-		wxString sQueryRandomAlbum = wxString::Format(wxT("select album from valid_albums where most_lastplayed < julianday('now','-%d hours') limit 1 offset %d;") 
-											,nMaxRepeatCount == 5 ? 1 : wxGetApp().Prefs.nAutoDjDoNotPlaySongPlayedTheLastNHours,r);
+		wxString sQueryRandomAlbum = wxString::Format(wxT("select album||'|'||artist from autodj_albums where most_lastplayed < julianday('now','-%d hours') limit 1 offset %d;") 
+											,nMaxRepeatCount < 5 ? 1 : wxGetApp().Prefs.nAutoDjDoNotPlaySongPlayedTheLastNHours,r);
 
 		wxArrayString newAlbums;
 		wxGetApp().Library.Query(sQueryRandomAlbum,newAlbums,false);
+		bool repeat = false;
 		if(newAlbums.GetCount() > 0)
 		{
 			//--- check for repeats ---//
@@ -1069,10 +1087,35 @@ void CMusikPlayer::_ChooseRandomAlbums(int nAlbumsToAdd,wxArrayString &arrAlbums
 					break;
 				}
 			}
-			if(!repeat)
-				arrAlbums.Add(newAlbums[0]);
 		}
+		else
+			repeat = true;
+
+		if(!repeat)
+			arrAlbums.Add(newAlbums[0]);
+		else
+			nMaxRepeatCount--;
+
 	} 
+
+	
+	
+	for(size_t i = 0;i < arrAlbums.GetCount();i++)
+	{
+		wxString sQuery;
+		sQuery.Alloc( 80);
+		arrAlbums[i].Replace( wxT( "'" ), wxT( "''" ));
+		wxArrayString album_artist;
+		DelimitStr(arrAlbums[i],wxT("|"),album_artist);
+		sQuery+=wxT("album='");
+		sQuery+=album_artist[0];
+		sQuery+=wxT("' and artist='");
+		sQuery+=album_artist[1];
+		sQuery+=wxT("' order by tracknum");
+		wxGetApp().Library.QuerySongsWhere(sQuery ,arrAlbumSongs,false,false);	
+	}
+	
+
 }
 int CMusikPlayer::GetFilesize( wxString sFilename )
 {
@@ -1238,7 +1281,7 @@ void CMusikPlayer::SetTime( int nSec )
 
 bool CMusikPlayer::_IsSeekCrossFadingDisabled()
 {
-	return ( wxGetApp().Prefs.bGlobalFadeEnable == 0 || wxGetApp().Prefs.bFadeSeekEnable == 0 || m_Paused 
+	return ( wxGetApp().Prefs.bGlobalFadeEnable == 0 || wxGetApp().Prefs.bFadeSeekEnable == 0 || IsPaused() 
 		||  _CurrentSongNeedsMPEGACCURATE() // no seek crossfadeing, because _CurrentSongNeedsMPEGACCURATE files are slow in opening
 		|| _CurrentSongIsNetStream());
 }
@@ -1254,24 +1297,6 @@ bool CMusikPlayer::_CurrentSongIsNetStream()
 {
 	return ((m_SongIndex <  m_Playlist.GetCount())
 			&& (m_CurrentSong.MetaData.eFormat == MUSIK_FORMAT_NETSTREAM) ); 
-}
-wxString CMusikPlayer::SecToStr( int nSec )
-{
-	wxString result;
-
-	int ms = nSec * 1000;
-	int hours = ms / 1000 / 60 / 60;
-	ms -= hours * 1000 * 60 * 60;
-	int minutes = ms / 1000 / 60;
-	ms -= minutes * 1000 * 60;
-	int seconds = ms / 1000;
-
-	if ( hours > 0 )
-		result.sprintf( wxT( "%d:%02d:%02d" ), hours, minutes, seconds );
-	else
-		result.sprintf( wxT( "%d:%02d" ), minutes, seconds );
-	
-	return result;
 }
 
 int CMusikPlayer::GetFileDuration( wxString sFilename, int nType )
@@ -1299,6 +1324,7 @@ int CMusikPlayer::GetFileDuration( wxString sFilename, int nType )
 void CMusikPlayer::OnFadeCompleteEvt( wxCommandEvent& event )
 {
 	long FadeType = event.GetExtraLong();
+	bool bAbort = event.GetInt()!=0;
 	//-------------------------------------------------//
 	//--- finalize whatever type of fade was going	---//
 	//--- on.										---//
@@ -1311,7 +1337,8 @@ void CMusikPlayer::OnFadeCompleteEvt( wxCommandEvent& event )
 		FinalizeResume();
 
 	m_Fading = false; 
-	ClearOldStreams();
+	if(!bAbort)
+		ClearOldStreams();
 }
 
 void CMusikPlayer::SetFadeStart()

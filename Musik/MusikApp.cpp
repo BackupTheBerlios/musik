@@ -132,6 +132,12 @@ bool MusikApp::OnInit()
 
 	wxImage::AddHandler(new wxPNGHandler);
 	wxImage::AddHandler(new wxJPEGHandler);
+	wxImage::AddHandler( new wxXPMHandler );
+	wxImage::AddHandler( new wxBMPHandler );
+	wxImage::AddHandler( new wxGIFHandler );
+
+
+
 	//--- setup our home dir ---//
 	if ( !wxDirExists( MUSIK_HOME_DIR ) )
 		wxMkdir( MUSIK_HOME_DIR );
@@ -159,9 +165,6 @@ bool MusikApp::OnInit()
 	//--- initialize fmod ---//
 	if ( wxGetApp().Player.InitializeFMOD( FMOD_INIT_START ) != FMOD_INIT_SUCCESS )
 		wxMessageBox( _("Initialization of FMOD sound system failed."), MUSIKAPPNAME_VERSION, wxOK | wxICON_ERROR );
-
-
-	wxImage::AddHandler( new wxXPMHandler );
 
 
 	//-------------------//

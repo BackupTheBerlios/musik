@@ -271,6 +271,7 @@ public:
 		,sActStripeColour(this,wxT( "ActivityStripeColour" ),wxT("244, 244, 244"))
 		,sSourcesStripeColour(this,wxT( "SourcesStripeColour" ),wxT("244, 244, 244"))
 		,bShowPLInfo(this,wxT( "ShowPlaylistInfo" ),true)
+		,bShowAlbumArt(this,wxT( "ShowAlbumArt" ),true)
 		,bShowSources(this,wxT( "ShowSources" ),true)
 		,bShowSourcesIcons(this,wxT( "ShowSourcesIcons" ),true)
 		,bShowActivities(this,wxT( "ShowActivities" ),true)
@@ -344,6 +345,13 @@ public:
 		,bPlaylistColumnDynamic(this,wxT( "PlaylistColumn%dDynamic"	),DefaultPlaylistColumnDynamic)
 
 		,nActBoxType(this,	wxT( "ActivityBox%d" )   ,DefaultActBoxType)
+
+		,eSearchmode(this,wxT( "Searchmode" ),MUSIK_SEARCHMODE_ALLWORDS)
+		,eFuzzySearchmode(this,wxT( "FuzzySearchmode" ),MUSIK_FUZZYSEARCHMODE_NONE)
+
+		,sFilemanagerCmd(this,wxT( "FilemanagerCmd" ),wxT("explorer.exe \"%s\""))			
+
+		
 #ifdef wxUSE_HOTKEY
 		,bEnablePlayerHotkeys(this,	wxT("EnablePlayerHotkeys"),false)
 		,sPlayerHotkeys(this,wxT("PlayerHotkey%d"),DefaultPlayerHotkeys)
@@ -381,6 +389,7 @@ public:
 	CConfigSettingString sActStripeColour;
 	CConfigSettingString sSourcesStripeColour;
 	CConfigSettingBool bShowPLInfo;
+	CConfigSettingBool bShowAlbumArt;
 	CConfigSettingBool bShowSources;
 	CConfigSettingBool bShowSourcesIcons;
 	CConfigSettingBool bShowActivities;
@@ -458,6 +467,11 @@ public:
 
 	CConfigSettingArray<int,ActivityBoxesMaxCount,1,EMUSIK_ACTIVITY_TYPE> nActBoxType;
 
+	CConfigSetting<Value<int>,EMUSIK_SEARCHMODE> eSearchmode;
+	CConfigSetting<Value<int>,EMUSIK_FUZZYSEARCHMODE> eFuzzySearchmode;
+
+	CConfigSettingString sFilemanagerCmd;			
+	
 #ifdef wxUSE_HOTKEY
 	CConfigSettingBool bEnablePlayerHotkeys;			
 	CConfigSettingArray<wxString,MUSIK_HOTKEYID_LAST> sPlayerHotkeys;

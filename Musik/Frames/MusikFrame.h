@@ -84,9 +84,11 @@ public:
 	void OnUpdateUIActivitiesState	( wxUpdateUIEvent&	event			);
 	void OnPlaylistInfoState		( wxCommandEvent&	WXUNUSED(event) );
 	void OnUpdateUIPlaylistInfoState( wxUpdateUIEvent&	event			);
+	void OnAlbumartState			( wxCommandEvent&	WXUNUSED(event) );
+	void OnUpdateUIAlbumartState	( wxUpdateUIEvent&	event			);
 
-	void OnSimpleQueryDlg			( wxCommandEvent&	WXUNUSED(event) );
-	void OnSimpleQueryEdit			( wxCommandEvent&	WXUNUSED(event) );
+	void OnSelectSources			( wxCommandEvent&	event );
+
 	void OnCustomQuery				( wxCommandEvent&	WXUNUSED(event) );
 
 	void OnViewDirtyTags			( wxCommandEvent&	WXUNUSED(event) );
@@ -102,6 +104,7 @@ public:
 	
 	void OnSashDraggedSourcesBox	(wxSashEvent & ev);
 	void OnSashDraggedActivityCtrl	(wxSashEvent & ev);
+	void OnEraseBackground ( wxEraseEvent& event );
 	//-------------------------//
 	//--- virtual overrides ---//
 	//-------------------------//
@@ -142,9 +145,6 @@ public:
 
 	//--- library ---//
 	void	LibraryCustomQuery		();
-	void	LibrarySimpleQuery		( wxString sQuery );
-	void	LibrarySimpleQueryDlg	();
-	void	LibrarySimpleQueryEdit	();
 
 	void	AutoUpdate	( const wxArrayString & Filenames = wxArrayString(),unsigned long flags = 0);
 	//--- tag related ---//
@@ -162,6 +162,7 @@ public:
 	void ToggleSources		();
 	void ToggleActivities	();
 	void ShowSources		();
+	void ShowAlbumArt		();
 	void ShowActivityArea	( bool bShow = true );
 	void EnableProgress		( bool show = true );
 	void SetStayOnTop( bool bStayOnTop );
@@ -199,11 +200,7 @@ private:
 	wxThread* m_ActiveThread;
 	MusikWriteDirtyThread* pWriteDirtyThread;
 	
-	wxTextCtrl* m_TextSimpleQuery;
 	wxGauge	  *	m_pProgressGauge;
-
-	wxString m_customQuery;
-
 	wxSashLayoutWindow *m_pBottomPanel;
 
 };

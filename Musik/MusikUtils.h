@@ -414,6 +414,8 @@ void  ReplaceChars(wxString &s,const wxString &chars,wxChar replaceby = wxT('_')
 
 wxLongLong GetTotalFilesize(const CMusikSongArray &songs);
 
+wxString SecToStr	( int nSec );
+
 class CNiceFilesize
 {
 public:
@@ -510,17 +512,86 @@ private:
 class wxStaticText_NoFlicker : public wxStaticText
 {
 public:
-	wxStaticText_NoFlicker::wxStaticText_NoFlicker(wxWindow* parent,
+	wxStaticText_NoFlicker(wxWindow* parent,
 		wxWindowID id,
 		const wxString& label,
-		const wxPoint& pos,
+		const wxPoint& pos = wxDefaultPosition,
 		const wxSize& size = wxDefaultSize,
 		long style = 0,
-		const wxString& name= wxStaticTextNameStr ):
-			wxStaticText(parent,id,label,pos,size,style,name){};
-	void wxStaticText_NoFlicker::OnEraseBackGround(wxEraseEvent& ) {};
+		const wxString& name= wxStaticTextNameStr )
+			:wxStaticText(parent,id,label,pos,size,style,name){}
+	void OnEraseBackground(wxEraseEvent& ) {}
+	DECLARE_EVENT_TABLE()
+};
+class wxCheckBox_NoFlicker : public wxCheckBox
+{
+public:
+	wxCheckBox_NoFlicker( wxWindow*          pParent
+		,wxWindowID         vId
+		,const wxString&    rsLabel
+		,const wxPoint&     rPos = wxDefaultPosition
+		,const wxSize&      rSize = wxDefaultSize
+		,long lStyle = 0
+		,const wxValidator& rValidator = wxDefaultValidator
+		,const wxString&    rsName = wxCheckBoxNameStr
+		):
+	wxCheckBox(pParent,vId,rsLabel,rPos,rSize,lStyle,rValidator,rsName){}
+	void OnEraseBackground(wxEraseEvent& ) {}
 	DECLARE_EVENT_TABLE()
 };
 
+class wxChoice_NoFlicker : public wxChoice
+{
+public:
+	wxChoice_NoFlicker(wxWindow *parent, wxWindowID id,
+		const wxPoint& pos = wxDefaultPosition,
+		const wxSize& size = wxDefaultSize,
+		int n = 0, const wxString choices[] = (const wxString *) NULL,
+		long style = 0,
+		const wxValidator& validator = wxDefaultValidator,
+		const wxString& name = wxChoiceNameStr)
+			:wxChoice(parent,id,pos,size,n,choices,style,validator,name){}
+	wxChoice_NoFlicker(wxWindow *parent, wxWindowID id,
+		const wxPoint& pos,
+		const wxSize& size,
+		const wxArrayString& choices,
+		long style = 0,
+		const wxValidator& validator = wxDefaultValidator,
+		const wxString& name = wxChoiceNameStr)
+			:wxChoice(parent,id,pos,size,choices,style,validator,name){}
+	void OnEraseBackground(wxEraseEvent& ) {}
+	DECLARE_EVENT_TABLE()
+};
+class wxButton_NoFlicker : public wxButton
+{
+public:
+	wxButton_NoFlicker(wxWindow *parent,
+		wxWindowID id,
+		const wxString& label,
+		const wxPoint& pos = wxDefaultPosition,
+		const wxSize& size = wxDefaultSize,
+		long style = 0,
+		const wxValidator& validator = wxDefaultValidator,
+		const wxString& name = wxButtonNameStr)
+			:wxButton(parent,id,label,pos,size,style,validator,name){}
+	void OnEraseBackground(wxEraseEvent& ) {}
+	DECLARE_EVENT_TABLE()
+};
+
+class wxTextCtrl_NoFlicker : public wxTextCtrl
+{
+public:
+	wxTextCtrl_NoFlicker(wxWindow *parent,
+		wxWindowID id,
+		const wxString &value = wxEmptyString,
+		const wxPoint &pos = wxDefaultPosition,
+		const wxSize &size = wxDefaultSize,
+		long style = 0,
+		const wxValidator& validator = wxDefaultValidator,
+		const wxString &name = wxTextCtrlNameStr)
+			:wxTextCtrl(parent,id,value,pos,size,style,validator,name){}
+		void OnEraseBackground(wxEraseEvent& event) { event.Skip();}
+		DECLARE_EVENT_TABLE()
+};
 
 #endif

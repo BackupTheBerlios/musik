@@ -150,6 +150,7 @@ void CTunage::ParseTags( wxString& str )
 	str.Replace( wxT("$ARTIST"), ConvFromUTF8( m_Song.MetaData.Artist ));
 	str.Replace( wxT("$ALBUM"), ConvFromUTF8( m_Song.MetaData.Album ));
 	str.Replace( wxT("$TITLE"), ConvFromUTF8(m_Song.MetaData.Title ));
+	str.Replace( wxT("$YEAR"), ConvFromUTF8(m_Song.MetaData.Year ));
 
 	if ( m_Song.MetaData.nFilesize == -1 )
 		str.Replace( wxT("$NAME"), wxGetApp().Prefs.sTunageStoppedText );
@@ -159,8 +160,9 @@ void CTunage::ParseTags( wxString& str )
 	str.Replace( wxT("$FILENAME"), m_Song.MetaData.Filename.GetFullPath() );
 	str.Replace( wxT("$FILESIZE"), sFilesize );
 	str.Replace( wxT("$BITRATE"), wxString::Format( wxT("%d"), m_Song.MetaData.nBitrate ) );
+	str.Replace( wxT("$TRACKLENGTH"), SecToStr( m_Song.MetaData.nDuration_ms /1000 ) );
 
 	str.Replace( wxT("$TIMESPLAYED"), wxString::Format( wxT("%d"), m_Song.TimesPlayed ) );
-	str.Replace( wxT("$TRACKNUM"), wxString::Format( wxT("%d"), m_Song.MetaData.nTracknum ) );
+	str.Replace( wxT("$TRACKNUM"), wxString::Format( wxT("%.2d"), m_Song.MetaData.nTracknum ) );
 }
 
