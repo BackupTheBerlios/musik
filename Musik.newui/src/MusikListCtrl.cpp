@@ -2,7 +2,8 @@
 #include "MusikListCtrl.h"
 
 BEGIN_EVENT_TABLE( CMusikEditInPlaceCtrl, wxTextCtrl )
-EVT_CHAR						( CMusikEditInPlaceCtrl::OnChar					)
+	EVT_CHAR						( CMusikEditInPlaceCtrl::OnChar					)
+	EVT_KILL_FOCUS					( CMusikEditInPlaceCtrl::OnKillFocus			)
 END_EVENT_TABLE()
 
 CMusikEditInPlaceCtrl::CMusikEditInPlaceCtrl( wxWindow* parent, wxWindowID id )
@@ -19,12 +20,24 @@ void CMusikEditInPlaceCtrl::OnChar( wxKeyEvent& event )
 	int nKey = event.GetKeyCode();
 
 	if ( nKey == WXK_ESCAPE )
-		wxMessageBox( wxT( "Canceled" ) );
+	{
+		Show( false );
+		Enable( false );
+	}
 
 	else if ( nKey == WXK_RETURN )
-		wxMessageBox( wxT( "Committed" ) );
+	{
+		wxMessageBox( wxT( "Committed Your Changes! [not really]" ) );
+		//--- post event to parent ---//
+	}
 
 	event.Skip();
+}
+
+void CMusikEditInPlaceCtrl::OnKillFocus( wxFocusEvent& event )
+{
+	Show( false );
+	Enable( false );
 }
 
 BEGIN_EVENT_TABLE( CMusikListCtrl, wxListCtrl )
@@ -46,6 +59,7 @@ CMusikListCtrl::CMusikListCtrl( wxWindow *parent, wxWindowID id, long flags )
 	SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ) );
 	
 	m_EditInPlace = new CMusikEditInPlaceCtrl( this, -1 );
+	m_EditInPlace->Enable( false );
 	m_EditInPlace->Show( false );
 	m_Parent = parent;
 }
@@ -58,14 +72,7 @@ void CMusikListCtrl::StartEditInPlace()
 {
 	m_EditInPlace->SetSize( GetClientSize().GetWidth(), -1 );
 	m_EditInPlace->Move( 0, ( GetClientSize().GetHeight() ) - ( m_EditInPlace->GetSize().GetHeight() ) );
+	m_EditInPlace->Enable( true );
 	m_EditInPlace->Show( true );
 	m_EditInPlace->SetFocus();
-}
-
-wxString CMusikListCtrl::EndEditInPlace()
-{
-	wxString sReturn = m_EditInPlace->GetValue();
-	m_EditInPlace->Show( false );
-	m_EditInPlace->Clear();
-	return sReturn;
 }

@@ -11,6 +11,7 @@ public:
 	~CMusikEditInPlaceCtrl();
 
 	void OnChar( wxKeyEvent& event );
+	void OnKillFocus( wxFocusEvent& event );
 
 	DECLARE_EVENT_TABLE()
 };
@@ -42,7 +43,6 @@ public:
 	virtual void Update				( bool refresh = false ){};
 
 	virtual void StartEditInPlace();
-	virtual wxString EndEditInPlace();
 
 	DECLARE_EVENT_TABLE();
 
