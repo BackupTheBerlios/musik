@@ -275,22 +275,41 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 	if ( selbox_count < 2 )
 		return 0L;
 
-	CMusikSelectionCtrl* pSender = NULL;
-	CMusikSelectionCtrl* pCurr = NULL;
+	CMusikSelectionCtrl* pSender	= NULL;
+	CMusikSelectionCtrl* pCurr		= NULL;
+	CMusikSelectionCtrl* pParent	= NULL;
 
 	int nSender = wParam;
 
-	// find the sender
+	// find the sender and parent
 	for ( size_t i = 0; i < selbox_count; i++ )
 	{
 		pCurr = m_wndSelectionBars[i]->GetCtrl();
 		if ( pCurr->GetCtrlID() == nSender )
 			pSender = pCurr;
+		if ( pCurr->IsParent() )
+			pParent = pCurr;
 	}
 
 	// sender not found
 	if ( !pSender )
 		return 0L;
+
+	// no parent found, so we have a new parent!
+	if ( !pParent )
+	{
+		pParent = pSender;
+		pParent->SetParent( true );
+	}
+
+	// if the first item was clicked, the user wants
+	// to display all the info
+	if ( pSender->IsItemSelected( 0 ) )
+	{
+		pSender->UpdateV();
+		pParent->SetParent( false );
+		return 0L;
+	}	
 
 	// get a list of the sender's selected items
 	CStdStringArray sender_sel;
@@ -306,7 +325,7 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 	for( size_t i = 0; i < selbox_count; i++ )
 	{
 		pCurr = m_wndSelectionBars[i]->GetCtrl();
-		if ( pCurr != pSender )
+		if ( pCurr != pSender && pCurr != pParent )
 		{
 			pCurr->SetUpdating( true );			
 			pCurr->UpdateV( sSender );

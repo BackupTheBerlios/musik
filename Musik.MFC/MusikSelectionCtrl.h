@@ -21,7 +21,11 @@ public:
 	void			GetSelItems( CStdStringArray& items, bool format_query = true );
 	CStdString		GetSelQuery();
 
+	bool			IsItemSelected( int item );
+	bool			IsParent(){ return m_ParentBox; }
+
 	void SetUpdating( bool updating = true ){ m_Updating = updating; }
+	void SetParent( bool parent = true ){ m_ParentBox = parent; }
 
 	void UpdateV( bool update_count = false );
 	void UpdateV( CStdString query, bool update_count = false );
@@ -33,6 +37,7 @@ protected:
 	int m_Type;
 	int m_ID;
 	bool m_Updating;
+	bool m_ParentBox;
 
 	DECLARE_MESSAGE_MAP()
 

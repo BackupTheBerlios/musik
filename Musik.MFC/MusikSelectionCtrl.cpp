@@ -17,6 +17,7 @@ CMusikSelectionCtrl::CMusikSelectionCtrl( CFrameWnd* parent, CMusikLibrary* libr
 	m_Parent = parent;
 	m_ID = ctrl_id;
 	m_Updating = false;
+	m_ParentBox = false;
 	HideScrollBars( LCSB_NCOVERRIDE, SB_HORZ );
 }
 
@@ -196,4 +197,11 @@ CStdString CMusikSelectionCtrl::GetSelQuery()
 	}
 	
 	return sQuery;
+}
+
+bool CMusikSelectionCtrl::IsItemSelected( int item )
+{
+	if ( GetItemState( item, LVIS_SELECTED ) )
+		return true;
+	return false;
 }
