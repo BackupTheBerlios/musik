@@ -59,12 +59,14 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
+				EnableFiberSafeOptimizations="TRUE"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				RuntimeLibrary="0"
+				EnableEnhancedInstructionSet="2"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="3"/>
+				DebugInformationFormat="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -102,7 +104,7 @@
 				RelativePath=".\src\MusikLibrary.cpp">
 			</File>
 			<File
-				RelativePath=".\src\MusikLibrary.h">
+				RelativePath=".\include\MusikLibrary.h">
 			</File>
 		</Filter>
 		<Filter
@@ -112,7 +114,7 @@
 				RelativePath=".\src\MusikPlaylist.cpp">
 			</File>
 			<File
-				RelativePath=".\src\MusikPlaylist.h">
+				RelativePath=".\include\MusikPlaylist.h">
 			</File>
 		</Filter>
 		<Filter
@@ -122,11 +124,11 @@
 				RelativePath=".\src\MusikPlayer.cpp">
 			</File>
 			<File
-				RelativePath=".\src\MusikPlayer.h">
+				RelativePath=".\include\MusikPlayer.h">
 			</File>
 		</Filter>
 		<File
-			RelativePath=".\src\StdString.h">
+			RelativePath=".\include\StdString.h">
 		</File>
 	</Files>
 	<Globals>
