@@ -489,8 +489,10 @@ void CSourcesListBox::Load()
 
 void CSourcesListBox::Save()
 {
-	if ( GetType( m_CurSel ) == MUSIK_SOURCES_PLAYLIST_STANDARD )
-			RewriteStdPlaylist();
+	// SiW - removed this because it was causing the loss of playlists
+	// when exiting.. any side effects?
+	//if ( GetType( m_CurSel ) == MUSIK_SOURCES_PLAYLIST_STANDARD )
+	//		RewriteStdPlaylist();
 
 	if ( wxFileExists( MUSIK_SOURCES_FILENAME ) )
 		wxRemoveFile( MUSIK_SOURCES_FILENAME );

@@ -1,4 +1,5 @@
 0.2.1 to 0.2.2
+ - Fixed Bug: Playlists could be overwritten with empty file when exiting
  + Added playlist sorting by column
  + Made headers look better (avatar)
  - Fixed Bug: On linux there were problems with menu items in the playlist context menu having the same title. The key accelarators of one item did also apper in an item of another submenu with the same title. simply changed the titles of items (gunnar)
