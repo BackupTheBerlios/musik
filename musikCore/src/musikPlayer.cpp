@@ -261,8 +261,11 @@ static void musikPlayerWorker( CmusikThread* thread )
 										player->GetFunctor()->OnNewSong();
 								}
 
-								if ( player->IsEqualizerActive() )
-									player->UpdateEqualizer();
+								if ( nFadeType == MUSIK_CROSSFADER_NEW_SONG || nFadeType == MUSIK_CROSSFADER_STOP || nFadeType == MUSIK_CROSSFADER_EXIT )
+								{
+									if ( player->IsEqualizerActive() )
+										player->UpdateEqualizer();
+								}
 
 								eq_updated = true;
 							}
@@ -1393,10 +1396,7 @@ void CmusikPlayer::ModifyPlaymode( unsigned long add, unsigned long remove, bool
 void CmusikPlayer::UpdateEqualizer()
 {
 	if ( IsEqualizerActive() && IsEqualizerEnabled() )
-	{
-		GetEqualizer()->SetNewSong( GetPlaylist()->GetSongID( GetIndex() ) );
-		GetEqualizer()->UpdateTable();						
-	}
+		GetEqualizer()->SetNewSong( m_Playlist->GetSongID( m_Index ) );
 }
 
 ///////////////////////////////////////////////////

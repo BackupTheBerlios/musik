@@ -148,12 +148,11 @@ void CmusikEqualizer::SetNewSong( int songid )
 				m_Library->UpdateEqualizer( m_EQ_Values.m_ID, m_EQ_Values );
 
 			m_Library->SetSongEqualizer( m_SongID, m_EQ_Values.m_ID );
-
-			m_EQ_Values_Modified = false;
 		}
 	}
 
 	// set the new one
+	m_EQ_Values_Modified = false;
 	m_SongID = songid;
 
 	// load the current equalizer
@@ -163,15 +162,16 @@ void CmusikEqualizer::SetNewSong( int songid )
 
 		if ( nEqualizerID > -1 )
 		{
-			CmusikEQSettings eq;
-			m_Library->GetEqualizer( nEqualizerID, &eq );
-
-			m_EQ_Values.Set( MUSIK_EQ_SETTINGS_LEFT_BAND, eq.m_Left );
-			m_EQ_Values.Set( MUSIK_EQ_SETTINGS_RIGHT_BAND, eq.m_Right );
+			m_Library->GetEqualizer( nEqualizerID, &m_EQ_Values );
 		}
 		else
+		{
 			m_Library->GetDefaultEqualizer( &m_EQ_Values );
+			m_EQ_Values.m_ID = -1;
+		}
 	}
+
+	UpdateTable();
 }
 
 ///////////////////////////////////////////////////
