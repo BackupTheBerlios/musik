@@ -271,14 +271,22 @@ void CMainFrame::OnDestroy()
 
 LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 {
+	CMusikSelectionCtrl* pSelCtrl;
+	CMusikSelectionCtrl* pTemp;
+
 	int sender = wParam;
+	CStdString query_str;
+	CStdString curr_type;
 	for( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
 	{
-		if ( m_wndSelectionBars[i]->GetCtrlID() != sender )
+		pSelCtrl = m_wndSelectionBars[i]->GetCtrl();
+		if ( pSelCtrl->GetCtrlID() != sender )
 		{
-			m_wndSelectionBars[i]->SetUpdating( true );
-		
-			m_wndSelectionBars[i]->SetUpdating( false );
+			pSelCtrl->SetUpdating( true );
+
+
+			
+			pSelCtrl->SetUpdating( false );
 		}
 	}
 

@@ -17,6 +17,7 @@ public:
 
 	int GetCtrlID(){ return m_ID; }
 	void SetUpdating( bool updating = true ){ m_Updating = updating; }
+	CString GetTypeDB();
 
 protected:
 	CFrameWnd* m_Parent;

@@ -17,8 +17,7 @@ public:
 	CMusikSelectionBar( CFrameWnd* parent, CMusikLibrary* library, int type, int ctrl_id );
 	virtual ~CMusikSelectionBar();
 
-	int GetCtrlID(){ return m_wndChild->GetCtrlID(); }
-	void SetUpdating( bool updating = true ){ m_wndChild->SetUpdating( updating ); }
+	CMusikSelectionCtrl* GetCtrl(){ return m_wndChild; }
 
 //-------------------------------------------------//
 //--- variables									---//
