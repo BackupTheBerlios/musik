@@ -41,6 +41,9 @@
 
 #include "../include/musikFilename.h"
 
+#include <io.h>
+#include <Direct.h>
+
 ///////////////////////////////////////////////////
 
 using namespace musik;
@@ -123,6 +126,9 @@ CmusikString CmusikFilename::GetExtension( bool make_lower )
 {
 	int nPos = m_Filename.ReverseFind( "." );
 	CmusikString ret = m_Filename.Right( m_Filename.GetLength() - nPos - 1 );
+
+	if ( nPos == -1 )
+		return (CmusikString)"";
 
 	if ( make_lower )
 		ret.MakeLower();
@@ -236,13 +242,16 @@ void CmusikFilename::DelimitStr( CmusikString path, CmusikString delimiter, Cmus
 
 ///////////////////////////////////////////////////
 
-bool CmusikFilename::GetSongInfo( CmusikStringArray mask, CmusikString fn_delimiter, CmusikSongInfo& target, bool partial )
+bool CmusikFilename::GetSongInfo( CmusikStringArray mask, CmusikString fn_delimiter, CmusikSongInfo& target, bool clear_info, bool partial )
 {
 	CmusikString path = GetTrimPath();
 	CmusikString fn = GetJustFilenameNoExt();
 
 	fn.Replace( fn_delimiter, MUSIK_PATH_SEPARATOR );
 	path += fn;
+
+	if ( path.IsEmpty() )
+		return false;
 
 	CmusikStringArray values;
 	DelimitStr( path, MUSIK_PATH_SEPARATOR, values, true, mask.size() );
@@ -252,6 +261,17 @@ bool CmusikFilename::GetSongInfo( CmusikStringArray mask, CmusikString fn_delimi
 
 	if ( !values.size() )
 		return false;
+
+	if ( clear_info )
+	{
+		target.SetTitle( _T( "" ) );
+		target.SetArtist( _T( "" ) );
+		target.SetAlbum( _T( "" ) );
+		target.SetTrackNum( _T( "" ) );
+		target.SetGenre( _T( "" ) );
+		target.SetYear( _T( "" ) );
+		target.SetRating( _T( "" ) );
+	}
 
 	for ( size_t i = 0; i < mask.size(); i++ )
 	{
@@ -277,6 +297,78 @@ bool CmusikFilename::GetSongInfo( CmusikStringArray mask, CmusikString fn_delimi
 	}
 
 	return true;
+}
+
+///////////////////////////////////////////////////
+
+bool CmusikFilename::RenameFromSongInfo( CmusikString mask, CmusikSongInfo& src )
+{
+	if ( m_Filename.IsEmpty() )
+		return false;
+
+	CmusikString out_path = GetPath();
+	CmusikString out_dir;
+
+	// parase mask
+	if ( mask.Right( mask.length() ) != MUSIK_PATH_SEPARATOR )
+		mask += MUSIK_PATH_SEPARATOR;
+
+	mask.Replace( _T( "$TITLE" ), src.GetTitle() );
+	mask.Replace( _T( "$ARTIST" ), src.GetArtist() );
+	mask.Replace( _T( "$ALBUM" ), src.GetAlbum() );
+	mask.Replace( _T( "$TRACK" ), src.GetTrackNum() );
+	mask.Replace( _T( "$GENRE" ), src.GetGenre() );
+	mask.Replace( _T( "$YEAR" ), src.GetYear() );
+	mask.Replace( _T( "$RATING" ), src.GetRating() );
+
+	// get final output filename
+	out_path += mask;
+	CmusikString ext = GetExtension();
+	out_path = out_path.Left( out_path.length() - 1 );
+	out_path += ".";
+	out_path += ext;
+
+	// create directory
+	CmusikFilename fn( out_path );
+	if ( CmusikFilename::RecurseMkDir( fn.GetPath().GetBuffer() ) )
+		return false;
+
+	// rename file
+	if ( rename( m_Filename.c_str(), out_path.c_str() ) )
+		return false;
+
+	src.SetFilename( out_path );
+	return true;
+}
+
+///////////////////////////////////////////////////
+
+bool CmusikFilename::RecurseMkDir( char* pszDir )
+{
+    char*   pszLastSlash;
+    char    cTmp;
+
+#ifdef WIN32
+	char path_sep = '\\';
+#else
+	char path_sep = '/';
+#endif
+
+    pszLastSlash = strrchr( pszDir, path_sep );
+    if ( pszLastSlash )
+    {
+        cTmp = *pszLastSlash;
+        *pszLastSlash = '\0';
+
+        RecurseMkDir( pszDir );
+
+        *pszLastSlash = cTmp;
+    }
+
+	if ( mkdir( pszDir ) )
+		return false;
+
+    return true;
 }
 
 ///////////////////////////////////////////////////

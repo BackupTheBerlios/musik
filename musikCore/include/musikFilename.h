@@ -77,8 +77,9 @@ public:
 	CmusikString GetExtension( bool make_lower = true );
 	CmusikString GetJustFilenameNoExt();
 
-    bool GetSongInfo( CmusikStringArray mask, CmusikString fn_delimiter, CmusikSongInfo& target, bool accept_partial = true );
+    bool GetSongInfo( CmusikStringArray mask, CmusikString fn_delimiter, CmusikSongInfo& target, bool clear_info = true, bool accept_partial = true );
 	void GetDelimitedPath( CmusikStringArray& target, bool reverse = false, bool trimfilename = false );
+	bool RenameFromSongInfo( CmusikString mask, CmusikSongInfo& source );
 
 	// sets
 	void SetFilename( const CmusikString& fn );
@@ -86,6 +87,7 @@ public:
 	// misc
 	static bool FileExists( const CmusikString& fn );
 	static CmusikString GetTempFilename( CmusikString fn, bool check_exists );
+	static bool RecurseMkDir( char* dir );
 
 private:
 
@@ -102,3 +104,4 @@ private:
 #endif
 
 ///////////////////////////////////////////////////
+
