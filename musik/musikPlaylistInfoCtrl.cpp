@@ -219,7 +219,7 @@ void CmusikPlaylistInfoCtrl::DrawEQ( HDC hdc )
         return;
 	
 	// fill with the proper bg color	
-	for ( int n = 0; n < (VIZ_WIDTH * VIZ_HEIGHT); n++ )
+	for ( int n = 0; n < (VIZ_WIDTH * VIZ_HEIGHT)-1; n++ )
 		m_pBGBitmapBits[n] = m_BGColor;
 
 	// now draw the viz directly to the bitmap bits
