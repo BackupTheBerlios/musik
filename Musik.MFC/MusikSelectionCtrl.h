@@ -34,6 +34,8 @@ public:
 	void UpdateV( CStdString query, bool update_count = false );
 
 protected:
+	void InitFonts();
+
 	CFrameWnd* m_Parent;
 	CMusikLibrary* m_Library;
 	CStdStringArray m_Items;
@@ -42,6 +44,9 @@ protected:
 	bool m_Updating;
 	bool m_ParentBox;
 
+	CFont m_Regular;
+	CFont m_Bold;
+
 	DECLARE_MESSAGE_MAP()
 
 public:
@@ -49,6 +54,7 @@ public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnLvnItemchanged(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult);
 };
 
 

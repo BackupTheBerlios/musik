@@ -232,7 +232,7 @@ void CMusikPlaylistCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
     // First thing - check the draw stage. If it's the control's prepaint
     // stage, then tell Windows we want messages for every item.
     if ( CDDS_PREPAINT == pLVCD->nmcd.dwDrawStage )
-        *pResult = ( CDRF_NOTIFYITEMDRAW | CDRF_NOTIFYSUBITEMDRAW );
+        *pResult = CDRF_NOTIFYITEMDRAW;
 	
 	// we got a paint item event, ignore it, we want to draw the 
 	// sub items one by one.

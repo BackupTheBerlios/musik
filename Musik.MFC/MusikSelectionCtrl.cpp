@@ -1,14 +1,13 @@
-// MusikSelectionCtrl.cpp : implementation file
-//
+///////////////////////////////////////////////////
 
 #include "stdafx.h"
 #include "Musik.h"
 #include "MusikSelectionCtrl.h"
 
 #include "../Musik.Core/include/MusikLibrary.h"
+#include ".\musikselectionctrl.h"
 
-// CMusikSelectionCtrl
-
+///////////////////////////////////////////////////
 IMPLEMENT_DYNAMIC(CMusikSelectionCtrl, CMusikListCtrl)
 CMusikSelectionCtrl::CMusikSelectionCtrl( CFrameWnd* parent, CMusikLibrary* library, int type, int ctrl_id )
 {
@@ -21,20 +20,22 @@ CMusikSelectionCtrl::CMusikSelectionCtrl( CFrameWnd* parent, CMusikLibrary* libr
 	HideScrollBars( LCSB_NCOVERRIDE, SB_HORZ );
 }
 
+///////////////////////////////////////////////////
+
 CMusikSelectionCtrl::~CMusikSelectionCtrl()
 {
 }
 
+///////////////////////////////////////////////////
 
 BEGIN_MESSAGE_MAP(CMusikSelectionCtrl, CMusikListCtrl)
 	ON_WM_CREATE()
 	ON_NOTIFY_REFLECT(LVN_GETDISPINFO, OnLvnGetdispinfo)
 	ON_NOTIFY_REFLECT(LVN_ITEMCHANGED, OnLvnItemchanged)
+	ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, OnNMCustomdraw)
 END_MESSAGE_MAP()
 
-
-
-// CMusikSelectionCtrl message handlers
+///////////////////////////////////////////////////
 
 int CMusikSelectionCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
@@ -57,12 +58,16 @@ int CMusikSelectionCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
+///////////////////////////////////////////////////
+
 void CMusikSelectionCtrl::RescaleColumn()
 {
 	CRect client_size;
 	GetClientRect( &client_size );
 	SetColumnWidth( 0, client_size.Width() );
 }
+
+///////////////////////////////////////////////////
 
 void CMusikSelectionCtrl::UpdateV( bool update_count )
 {
@@ -78,6 +83,8 @@ void CMusikSelectionCtrl::UpdateV( bool update_count )
 	m_Items.insert( m_Items.begin(), top );
 	SetItemCountEx( m_Items.size(), LVSICF_NOINVALIDATEALL | LVSICF_NOSCROLL );
 }
+
+///////////////////////////////////////////////////
 
 void CMusikSelectionCtrl::UpdateV( CStdString query, bool update_count )
 {
@@ -97,6 +104,8 @@ void CMusikSelectionCtrl::UpdateV( CStdString query, bool update_count )
 	GetClientRect( &rcClient );
 	RedrawWindow( rcClient );
 }
+
+///////////////////////////////////////////////////
 
 void CMusikSelectionCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 {
@@ -119,6 +128,8 @@ void CMusikSelectionCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 	*pResult = 0;
 }
 
+///////////////////////////////////////////////////
+
 void CMusikSelectionCtrl::OnLvnItemchanged(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
@@ -139,6 +150,8 @@ void CMusikSelectionCtrl::OnLvnItemchanged(NMHDR *pNMHDR, LRESULT *pResult)
 	*pResult = 0;
 }
 
+///////////////////////////////////////////////////
+
 CString CMusikSelectionCtrl::GetTypeDB()
 {
 	CStdString ret = m_Library->GetSongFieldDB( m_Type );
@@ -146,11 +159,14 @@ CString CMusikSelectionCtrl::GetTypeDB()
 	return sRet;
 }
 
+///////////////////////////////////////////////////
+
 CString CMusikSelectionCtrl::GetTypeStr()
 {
 	return (CString)m_Library->GetSongField( m_Type ).c_str();
 }
 
+///////////////////////////////////////////////////
 
 void CMusikSelectionCtrl::GetSelItems( CStdStringArray& items, bool format_query )
 {
@@ -174,6 +190,8 @@ void CMusikSelectionCtrl::GetSelItems( CStdStringArray& items, bool format_query
 		i = item;
 	}
 }
+
+///////////////////////////////////////////////////
 
 CStdString CMusikSelectionCtrl::GetSelQuery()
 {
@@ -204,9 +222,52 @@ CStdString CMusikSelectionCtrl::GetSelQuery()
 	return sQuery;
 }
 
+///////////////////////////////////////////////////
+
 bool CMusikSelectionCtrl::IsItemSelected( int item )
 {
 	if ( GetItemState( item, LVIS_SELECTED ) )
 		return true;
 	return false;
 }
+
+///////////////////////////////////////////////////
+
+void CMusikSelectionCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	NMLVCUSTOMDRAW* pLVCD = reinterpret_cast<NMLVCUSTOMDRAW*>( pNMHDR );
+
+    *pResult = CDRF_DODEFAULT;
+	
+    if ( CDDS_PREPAINT == pLVCD->nmcd.dwDrawStage )
+        *pResult = CDRF_NOTIFYITEMDRAW;
+
+	// draw the items
+	if ( pLVCD->nmcd.dwDrawStage == CDDS_ITEMPREPAINT )
+	{
+		CDC *pDC = CDC::FromHandle(pLVCD->nmcd.hdc);
+
+		if ( pLVCD->nmcd.dwItemSpec == 0 )
+			pDC->SelectObject( m_Bold );
+		else
+			pDC->SelectObject( m_Regular );
+			
+		*pResult = CDRF_NEWFONT;
+	}
+
+	*pResult = 0;
+}
+
+///////////////////////////////////////////////////
+
+void CMusikSelectionCtrl::InitFonts()
+{
+	m_Regular.CreateStockObject( DEFAULT_GUI_FONT );
+	m_Bold.CreateStockObject( DEFAULT_GUI_FONT );
+
+	LOGFONT* pBold;
+	m_Bold.GetLogFont( pBold );
+	pBold->lfWeight = FW_BOLD;
+}
+
+///////////////////////////////////////////////////

@@ -35,11 +35,13 @@ protected:
 //-------------------------------------------------//
 //--- operations								---//
 //-------------------------------------------------//
+protected:
+	void InitFonts();
+
 private:
 	void ResetColumns();
 	void SaveColumns();
 	CString GetRating( int item );
-	void InitFonts();
 	
 //-------------------------------------------------//
 //--- message maps								---//
