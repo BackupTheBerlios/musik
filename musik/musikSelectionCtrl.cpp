@@ -19,10 +19,10 @@ IMPLEMENT_DYNAMIC(CmusikSelectionBar, baseCmusikSelectionBar)
 
 ///////////////////////////////////////////////////
 
-CmusikSelectionBar::CmusikSelectionBar( CFrameWnd* parent, CmusikLibrary* library, CmusikPrefs* prefs, int type, int ctrlid, int dropid )
+CmusikSelectionBar::CmusikSelectionBar( CFrameWnd* parent, CmusikLibrary* library, CmusikPrefs* prefs, int type, int ctrlid, UINT dropid_l, UINT dropid_r )
 	: CmusikDockBar( prefs )
 {
-	m_wndChild = new CmusikSelectionCtrl( parent, library, prefs, type, ctrlid, dropid );
+	m_wndChild = new CmusikSelectionCtrl( parent, library, prefs, type, ctrlid, dropid_l, dropid_r );
 }
 
 ///////////////////////////////////////////////////
@@ -288,7 +288,7 @@ int WM_SELECTION_EDIT_CANCEL = RegisterWindowMessage( "MUSIKEDITCANCEL" );
 
 ///////////////////////////////////////////////////
 
-CmusikSelectionCtrl::CmusikSelectionCtrl( CFrameWnd* parent, CmusikLibrary* library, CmusikPrefs* prefs, int type, int ctrlid, int dropid )
+CmusikSelectionCtrl::CmusikSelectionCtrl( CFrameWnd* parent, CmusikLibrary* library, CmusikPrefs* prefs, int type, int ctrlid, UINT dropid_l, UINT dropid_r )
 {
 	m_Prefs = prefs;
 
@@ -296,9 +296,9 @@ CmusikSelectionCtrl::CmusikSelectionCtrl( CFrameWnd* parent, CmusikLibrary* libr
 	m_Type = type;
 	m_Parent = parent;
 	m_ID = ctrlid;
-	m_DropID = dropid;
+	m_DropID_L = dropid_l;
+	m_DropID_R = dropid_r;
 	m_ParentBox = false;
-	m_MouseTrack = false;
 	m_ChildOrder = -1;
 
 	m_IsWinNT = ( 0 == ( GetVersion() & 0x80000000 ) );
@@ -325,15 +325,15 @@ BEGIN_MESSAGE_MAP(CmusikSelectionCtrl, CmusikListCtrl)
 	ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, OnNMCustomdraw)
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
-	ON_WM_MOUSEMOVE()
-	ON_MESSAGE(WM_MOUSELEAVE, OnMouseLeave)
 	ON_NOTIFY_REFLECT(LVN_MARQUEEBEGIN, OnLvnMarqueeBegin)
 	ON_WM_KEYDOWN()
+	ON_NOTIFY_REFLECT(LVN_BEGINDRAG, OnLvnBegindrag)
+	ON_NOTIFY_REFLECT(LVN_BEGINRDRAG, OnLvnBeginrdrag)
+	ON_WM_CONTEXTMENU()
 
 	// custom message maps
 	ON_REGISTERED_MESSAGE(WM_SELECTION_EDIT_COMMIT,OnEditCommit)
 	ON_REGISTERED_MESSAGE(WM_SELECTION_EDIT_CANCEL,OnEditCancel)
-	ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -846,187 +846,6 @@ void CmusikSelectionCtrl::OnPaint()
 
 ///////////////////////////////////////////////////
 
-LRESULT CmusikSelectionCtrl::OnMouseLeave( WPARAM wParam, LPARAM lParam )
-{
-	m_MouseTrack = false;
-	return 0L;
-}
-
-///////////////////////////////////////////////////
-
-void CmusikSelectionCtrl::OnMouseMove(UINT nFlags, CPoint point)
-{
-	// mouse must cleanly enter the window
-	// without the button down to start
-	// tracking. once tracking begins,
-	// dnd can begin. once the mouse leaves 
-	// the window, m_MouseTrack is false and
-	// dnd cannot happen
-	if ( !m_MouseTrack && !( nFlags & MK_LBUTTON ) )
-	{
-		TRACKMOUSEEVENT tme;
-		tme.cbSize = sizeof(tme);
-		tme.dwFlags = TME_LEAVE;
-		tme.hwndTrack = m_hWnd;
-		tme.dwHoverTime = HOVER_DEFAULT;
-		::_TrackMouseEvent(&tme);
-
-		m_MouseTrack = true; 	
-	}
-
-	if ( ( nFlags & MK_LBUTTON ) && GetSelectedCount() && m_MouseTrack )
-	{
-		COleDataSource datasrc;
-		HGLOBAL        hgDrop;
-		DROPFILES*     pDrop;
-		CStringList    lsDraggedFiles;
-		POSITION       pos;
-		CString        sFile;
-		UINT           uBuffSize = 0;
-		TCHAR*         pszBuff;
-		FORMATETC      etc = { CF_HDROP, NULL, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
-
-		// get a list of filenames with the currently
-		// selected items...
-		CmusikStringArray files;
-		CmusikStringArray sel;
-		GetSelItems( sel );
-		m_Library->GetRelatedItems( GetType(), sel, MUSIK_LIBRARY_TYPE_FILENAME, files );
-
-		if ( !files.size() )
-			return;
-
-		// CStringList containing files
-		for ( size_t i = 0; i < files.size(); i++ )
-		{
-			lsDraggedFiles.AddTail( files.at( i ) );
-			uBuffSize += files.at( i ).GetLength() + 1;
-		}
-
-		sel.clear();
-		files.clear();
-
-		// Add 1 extra for the final null char, and the size of the DROPFILES struct.
-		uBuffSize = sizeof(DROPFILES) + sizeof(TCHAR) * (uBuffSize + 1);
-
-		// Allocate memory from the heap for the DROPFILES struct.
-		hgDrop = GlobalAlloc ( GHND | GMEM_SHARE, uBuffSize );
-
-		if ( !hgDrop )
-			return;
-
-		pDrop = (DROPFILES*) GlobalLock ( hgDrop );
-
-		if ( !pDrop )
-		{
-			GlobalFree ( hgDrop );
-			return;
-		}
-
-		// Fill in the DROPFILES struct.
-		pDrop->pFiles = sizeof(DROPFILES);
-
-		// If we're compiling for Unicode, set the Unicode flag in the struct to
-		// indicate it contains Unicode strings.
-		#ifdef _UNICODE
-			pDrop->fWide = TRUE;
-		#endif;
-
-		// Copy all the filenames into memory after the end of the DROPFILES struct.
-		pos = lsDraggedFiles.GetHeadPosition();
-		pszBuff = (TCHAR*) (LPBYTE(pDrop) + sizeof(DROPFILES));
-
-		while ( pos )
-		{
-			lstrcpy ( pszBuff, (LPCTSTR) lsDraggedFiles.GetNext ( pos ) );
-			pszBuff = 1 + _tcschr ( pszBuff, '\0' );
-		}
-
-		GlobalUnlock ( hgDrop );
-
-		// Put the data in the data source.
-		datasrc.CacheGlobalData ( CF_HDROP, hgDrop, &etc );
-
-		// Add in our own custom data, so we know that the drag originated from our 
-		// window.  CMyDropTarget::DragEnter() checks for this custom format, and
-		// doesn't allow the drop if it's present.  This is how we prevent the user
-		// from dragging and then dropping in our own window.
-		// The data will just be a dummy bool.
-		HGLOBAL hgBool;
-
-		hgBool = GlobalAlloc ( GHND | GMEM_SHARE, sizeof(bool) );
-
-		if ( NULL == hgBool )
-		{
-			GlobalFree ( hgDrop );
-			return;
-		}
-
-		// Put the data in the data source.
-		etc.cfFormat = m_DropID;
-		datasrc.CacheGlobalData ( m_DropID, hgBool, &etc );
-
-		// Start the drag 'n' drop!
-		DROPEFFECT dwEffect = datasrc.DoDragDrop ( DROPEFFECT_COPY | DROPEFFECT_MOVE );
-
-		// If the DnD completed OK, we remove all of the dragged items from our
-		// list.
-		switch ( dwEffect )
-		{
-			case DROPEFFECT_COPY:
-			case DROPEFFECT_MOVE:
-			{
-				// the copy completed successfully
-				// do whatever we need to do here
-				TRACE0( "DND from playlist completed successfully. The data has a new owner.\n" );
-			}
-			break;
-
-			case DROPEFFECT_NONE:
-			{
-				// This needs special handling, because on NT, DROPEFFECT_NONE
-				// is returned for move operations, instead of DROPEFFECT_MOVE.
-				// See Q182219 for the details.
-				// So if we're on NT, we check each selected item, and if the
-				// file no longer exists, it was moved successfully and we can
-				// remove it from the list.
-				if ( m_IsWinNT )
-				{
-					// the copy completed successfully
-					// on a windows nt machine.
-					// do whatever we need to do here
-					bool bDeletedAnything = false;
-					if ( ! bDeletedAnything )
-					{
-						// The DnD operation wasn't accepted, or was canceled, so we 
-						// should call GlobalFree() to clean up.
-						GlobalFree ( hgDrop );
-						GlobalFree ( hgBool );
-
-						TRACE0( "DND had a problem. We had to manually free the data.\n" );
-					}
-				}
-
-				// not windows NT
-				else
-				{
-					// We're on 9x, and a return of DROPEFFECT_NONE always means
-					// that the DnD operation was aborted.  We need to free the
-					// allocated memory.
-					GlobalFree ( hgDrop );
-					GlobalFree ( hgBool );
-
-					TRACE0( "DND had a problem. We had to manually free the data.\n" );
-				}
-			}
-
-			break;
-		}		
-	}
-}
-
-///////////////////////////////////////////////////
-
 void CmusikSelectionCtrl::OnLvnMarqueeBegin(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
@@ -1211,3 +1030,170 @@ void CmusikSelectionCtrl::SetType( int type, bool update )
 }
 
 ///////////////////////////////////////////////////
+
+void CmusikSelectionCtrl::OnLvnBegindrag(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	BeginDrag( false );
+	*pResult = 0;
+}
+
+void CmusikSelectionCtrl::OnLvnBeginrdrag(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	BeginDrag( true );
+	*pResult = 0;
+}
+
+void CmusikSelectionCtrl::BeginDrag( bool right_button )
+{
+	COleDataSource datasrc;
+	HGLOBAL        hgDrop;
+	DROPFILES*     pDrop;
+	CStringList    lsDraggedFiles;
+	POSITION       pos;
+	CString        sFile;
+	UINT           uBuffSize = 0;
+	TCHAR*         pszBuff;
+	FORMATETC      etc = { CF_HDROP, NULL, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
+
+	// get a list of filenames with the currently
+	// selected items...
+	CmusikStringArray files;
+	CmusikStringArray sel;
+	GetSelItems( sel );
+	m_Library->GetRelatedItems( GetType(), sel, MUSIK_LIBRARY_TYPE_FILENAME, files );
+
+	if ( !files.size() )
+		return;
+
+	// CStringList containing files
+	for ( size_t i = 0; i < files.size(); i++ )
+	{
+		lsDraggedFiles.AddTail( files.at( i ) );
+		uBuffSize += files.at( i ).GetLength() + 1;
+	}
+
+	sel.clear();
+	files.clear();
+
+	// Add 1 extra for the final null char, and the size of the DROPFILES struct.
+	uBuffSize = sizeof(DROPFILES) + sizeof(TCHAR) * (uBuffSize + 1);
+
+	// Allocate memory from the heap for the DROPFILES struct.
+	hgDrop = GlobalAlloc ( GHND | GMEM_SHARE, uBuffSize );
+
+	if ( !hgDrop )
+		return;
+
+	pDrop = (DROPFILES*) GlobalLock ( hgDrop );
+
+	if ( !pDrop )
+	{
+		GlobalFree ( hgDrop );
+		return;
+	}
+
+	// Fill in the DROPFILES struct.
+	pDrop->pFiles = sizeof(DROPFILES);
+
+	// If we're compiling for Unicode, set the Unicode flag in the struct to
+	// indicate it contains Unicode strings.
+	#ifdef _UNICODE
+		pDrop->fWide = TRUE;
+	#endif;
+
+	// Copy all the filenames into memory after the end of the DROPFILES struct.
+	pos = lsDraggedFiles.GetHeadPosition();
+	pszBuff = (TCHAR*) (LPBYTE(pDrop) + sizeof(DROPFILES));
+
+	while ( pos )
+	{
+		lstrcpy ( pszBuff, (LPCTSTR) lsDraggedFiles.GetNext ( pos ) );
+		pszBuff = 1 + _tcschr ( pszBuff, '\0' );
+	}
+
+	GlobalUnlock ( hgDrop );
+
+	// Put the data in the data source.
+	datasrc.CacheGlobalData ( CF_HDROP, hgDrop, &etc );
+
+	// Add in our own custom data, so we know that the drag originated from our 
+	// window.  CMyDropTarget::DragEnter() checks for this custom format, and
+	// doesn't allow the drop if it's present.  This is how we prevent the user
+	// from dragging and then dropping in our own window.
+	// The data will just be a dummy bool.
+	HGLOBAL hgBool;
+
+	hgBool = GlobalAlloc ( GHND | GMEM_SHARE, sizeof(bool) );
+
+	if ( NULL == hgBool )
+	{
+		GlobalFree ( hgDrop );
+		return;
+	}
+
+	// Put the data in the data source.
+	if ( right_button )
+		etc.cfFormat = m_DropID_R;
+	else
+		etc.cfFormat = m_DropID_L;
+
+	datasrc.CacheGlobalData ( right_button ? m_DropID_R : m_DropID_L, hgBool, &etc );
+
+	// Start the drag 'n' drop!
+	DROPEFFECT dwEffect = datasrc.DoDragDrop ( DROPEFFECT_COPY | DROPEFFECT_MOVE );
+
+	// If the DnD completed OK, we remove all of the dragged items from our
+	// list.
+	switch ( dwEffect )
+	{
+		case DROPEFFECT_COPY:
+		case DROPEFFECT_MOVE:
+		{
+			// the copy completed successfully
+			// do whatever we need to do here
+			TRACE0( "DND from playlist completed successfully. The data has a new owner.\n" );
+		}
+		break;
+
+		case DROPEFFECT_NONE:
+		{
+			// This needs special handling, because on NT, DROPEFFECT_NONE
+			// is returned for move operations, instead of DROPEFFECT_MOVE.
+			// See Q182219 for the details.
+			// So if we're on NT, we check each selected item, and if the
+			// file no longer exists, it was moved successfully and we can
+			// remove it from the list.
+			if ( m_IsWinNT )
+			{
+				// the copy completed successfully
+				// on a windows nt machine.
+				// do whatever we need to do here
+				bool bDeletedAnything = false;
+				if ( ! bDeletedAnything )
+				{
+					// The DnD operation wasn't accepted, or was canceled, so we 
+					// should call GlobalFree() to clean up.
+					GlobalFree ( hgDrop );
+					GlobalFree ( hgBool );
+
+					TRACE0( "DND had a problem. We had to manually free the data.\n" );
+				}
+			}
+
+			// not windows NT
+			else
+			{
+				// We're on 9x, and a return of DROPEFFECT_NONE always means
+				// that the DnD operation was aborted.  We need to free the
+				// allocated memory.
+				GlobalFree ( hgDrop );
+				GlobalFree ( hgBool );
+
+				TRACE0( "DND had a problem. We had to manually free the data.\n" );
+			}
+		}
+
+		break;
+	}		
+
+}

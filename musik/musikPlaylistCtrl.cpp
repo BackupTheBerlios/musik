@@ -62,7 +62,6 @@
 #include "../musikCore/include/musikBatchAdd.h"
 
 #include "MEMDC.H"
-#include ".\musikplaylistctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -89,11 +88,12 @@ BEGIN_MESSAGE_MAP(CmusikPlaylistCtrl, CmusikListCtrl)
 	ON_WM_KEYDOWN()
 	ON_NOTIFY_REFLECT(LVN_MARQUEEBEGIN, OnLvnMarqueeBegin)
 	ON_NOTIFY_REFLECT(LVN_COLUMNCLICK, OnLvnColumnclick)
+	ON_NOTIFY_REFLECT(LVN_BEGINRDRAG, OnLvnBeginrdrag)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
 
-CmusikPlaylistCtrl::CmusikPlaylistCtrl( CFrameWnd* mainwnd, CmusikLibrary* library, CmusikPlayer* player, CmusikPrefs* prefs, UINT dropid )
+CmusikPlaylistCtrl::CmusikPlaylistCtrl( CFrameWnd* mainwnd, CmusikLibrary* library, CmusikPlayer* player, CmusikPrefs* prefs, UINT dropid_l, UINT dropid_r )
 {
 	// core
 	m_Playlist	= NULL;
@@ -112,7 +112,8 @@ CmusikPlaylistCtrl::CmusikPlaylistCtrl( CFrameWnd* mainwnd, CmusikLibrary* libra
 	m_PlaylistType = MUSIK_SOURCES_TYPE_LIBRARY;
 
 	// dnd drop id
-	m_DropID = dropid;
+	m_DropID_L = dropid_l;
+	m_DropID_R = dropid_r;
 
 	// main window
 	m_MainWnd = mainwnd;
@@ -203,10 +204,13 @@ void CmusikPlaylistCtrl::SaveColumns()
 
 ///////////////////////////////////////////////////
 
-void CmusikPlaylistCtrl::UpdateV( bool redraw )
+void CmusikPlaylistCtrl::UpdateV( bool redraw, bool select_none )
 {
 	if ( m_Playlist )
 	{
+		if ( select_none )
+			SetItemState( -1, 0, LVIS_SELECTED );
+
 		int nPos = GetScrollPos( SB_VERT );
 
 		SetRedraw( false );
@@ -600,6 +604,8 @@ void CmusikPlaylistCtrl::SavePlaylist( bool check_prompt )
 
 void CmusikPlaylistCtrl::SetPlaylist( CmusikPlaylist* playlist, int m_Type )
 {
+	SetItemState( -1, 0, LVIS_SELECTED );
+
 	if ( playlist == NULL )
 	{
 		TRACE0( "Well, something messed up, our playlist is now NULL...\n" );
@@ -697,7 +703,7 @@ void CmusikPlaylistCtrl::OnLvnItemActivate(NMHDR *pNMHDR, LRESULT *pResult)
 
 ///////////////////////////////////////////////////
 
-void CmusikPlaylistCtrl::OnLvnBegindrag(NMHDR *pNMHDR, LRESULT *pResult)
+void CmusikPlaylistCtrl::BeginDrag( NMHDR* pNMHDR, bool right_button )
 {
 	// set cursor back to an arrow
 	SetCursor( LoadCursor( NULL, IDC_ARROW ) );
@@ -788,8 +794,12 @@ void CmusikPlaylistCtrl::OnLvnBegindrag(NMHDR *pNMHDR, LRESULT *pResult)
     }
 
     // Put the data in the data source.
-    etc.cfFormat = m_DropID;
-    datasrc.CacheGlobalData ( m_DropID, hgBool, &etc );
+	if ( right_button )
+		etc.cfFormat = m_DropID_R;
+	else 
+		etc.cfFormat = m_DropID_L;
+
+	datasrc.CacheGlobalData ( right_button ? m_DropID_R : m_DropID_L, hgBool, &etc );
 
 	// post a message to the main frame, letting
 	// it know that drag and drop has started
@@ -875,6 +885,13 @@ void CmusikPlaylistCtrl::OnLvnBegindrag(NMHDR *pNMHDR, LRESULT *pResult)
 
         break;
 	}
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::OnLvnBegindrag(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	BeginDrag( pNMHDR, false );
 
 	*pResult = 0;
 }
@@ -1286,6 +1303,15 @@ void CmusikPlaylistCtrl::HideSortArrow()
 
 		header_ctrl->SetItem( m_LastCol, &header_item );
 	}
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::OnLvnBeginrdrag(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	BeginDrag( pNMHDR, true );
+
+	*pResult = 0;
 }
 
 ///////////////////////////////////////////////////

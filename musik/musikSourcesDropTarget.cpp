@@ -36,12 +36,15 @@ extern "C" const GUID __declspec(selectany) IID_IDropTargetHelper =
 
 ///////////////////////////////////////////////////
 
-CmusikSourcesDropTarget::CmusikSourcesDropTarget( CmusikSourcesCtrl* pList, UINT uSourceID )
+CmusikSourcesDropTarget::CmusikSourcesDropTarget( CmusikSourcesCtrl* pList, UINT uSourceID, UINT uPlaylistID_R, UINT uSelectionID_R  )
 {
 	m_pList = pList;
 	m_piDropHelper = NULL;
 	m_bUseDnDHelper = false;
+
 	m_uSourceID = uSourceID;
+	m_uPlaylistID_R = uPlaylistID_R;
+	m_uSelectionID_R = uSelectionID_R;
 
     // Create an instance of the shell DnD helper object.
     if ( SUCCEEDED( CoCreateInstance ( 
@@ -73,6 +76,11 @@ DROPEFFECT CmusikSourcesDropTarget::OnDragEnter ( CWnd* pWnd, COleDataObject* pD
     // present, then the DnD was initiated from our own window, and we won't
     // accept the drop.
     // If it's not present, then we check for CF_HDROP data in the data object.
+	if ( pDataObject->GetGlobalData( m_uPlaylistID_R ) != NULL || pDataObject->GetGlobalData( m_uSelectionID_R ) )
+		m_RightButton = true;
+	else
+		m_RightButton = false;
+
     if ( pDataObject->GetGlobalData ( m_uSourceID ) == NULL )
 	{
         // Look for CF_HDROP data in the data object, and accept the drop if
@@ -179,7 +187,7 @@ BOOL CmusikSourcesDropTarget::ReadHdropData ( COleDataObject* pDataObject )
 		return FALSE;
 	}
 
-	m_pList->OnDropFiles( hdrop );
+	m_pList->OnDropFiles( hdrop, m_RightButton );
 
     GlobalUnlock ( hg );
 

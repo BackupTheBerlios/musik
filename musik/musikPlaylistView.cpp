@@ -68,10 +68,10 @@ BEGIN_MESSAGE_MAP(CmusikPlaylistView, CWnd)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
-CmusikPlaylistView::CmusikPlaylistView( CFrameWnd* mainwnd, CmusikLibrary* library, CmusikPlayer* player, CmusikPrefs* prefs, int dropid )
+CmusikPlaylistView::CmusikPlaylistView( CFrameWnd* mainwnd, CmusikLibrary* library, CmusikPlayer* player, CmusikPrefs* prefs, UINT dropid_l, UINT dropid_r )
 {
-	m_Playlist = new CmusikPlaylistCtrl( mainwnd, library, player, prefs, dropid );
-	m_DropTarget = new CmusikPlaylistDropTarget( m_Playlist, dropid );
+	m_Playlist = new CmusikPlaylistCtrl( mainwnd, library, player, prefs, dropid_l, dropid_r );
+	m_DropTarget = new CmusikPlaylistDropTarget( m_Playlist, dropid_l );
 
 	m_Library = library;
 	m_Player = player;

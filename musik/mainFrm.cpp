@@ -350,9 +350,11 @@ void CMainFrame::InitPaths()
 
 void CMainFrame::InitDragTypes()
 {
-	m_uPlaylistDrop = RegisterClipboardFormat ( _T("musikPlaylist_3BCFE9D1_6D61_4cb6_9D0B_3BB3F643CA82") );
-	m_uSourcesDrop = RegisterClipboardFormat( _T("musikSources_3BCFE9D1_6D61_4cb6_9D0B_3BB3F643CA82") );
-	m_uSelectionDrop = RegisterClipboardFormat( _T("musikSelection_3BCFE9D1_6D61_4cb6_9D0B_3BB3F643CA82") );
+	m_uPlaylistDrop_L	= RegisterClipboardFormat ( _T("musikPlaylist_3BCFE9D1_6D61_4cb6_9D0B_3BB3F643CA82") );
+	m_uPlaylistDrop_R	= RegisterClipboardFormat ( _T("musikPlaylist_9543E137-7131-49fd-ADB5-208F0EF7A05C") );
+	m_uSourcesDrop		= RegisterClipboardFormat ( _T("musikSources_3BCFE9D1_6D61_4cb6_9D0B_3BB3F643CA82") );
+	m_uSelectionDrop_R	= RegisterClipboardFormat ( _T("musikSelection_070D6C9E-0E34-4b56-990D-5E2A2FA719A0") );
+	m_uSelectionDrop_L	= RegisterClipboardFormat ( _T("musikSelection_374DA040-66D6-4b2d-9E8C-592421FF499D") );
 }
 
 ///////////////////////////////////////////////////
@@ -621,7 +623,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	#endif
 
 	// create the background window, which is the playlist
-	m_wndView = new CmusikPlaylistView( this, m_Library, m_Player, m_Prefs, m_uPlaylistDrop );
+	m_wndView = new CmusikPlaylistView( this, m_Library, m_Player, m_Prefs, m_uPlaylistDrop_L, m_uPlaylistDrop_R );
 	m_wndView->Create( NULL, NULL, AFX_WS_DEFAULT_VIEW, CRect(0, 0, 0, 0), this, AFX_IDW_PANE_FIRST, NULL );
 
 	if ( m_Prefs->LibraryShowsAllSongs() )
@@ -639,7 +641,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CmusikSelectionBar* pBar;
 	for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
 	{
-		pBar = new CmusikSelectionBar( this, m_Library, m_Prefs, m_Prefs->GetSelBoxType( i ), i, m_uSelectionDrop );
+		pBar = new CmusikSelectionBar( this, m_Library, m_Prefs, m_Prefs->GetSelBoxType( i ), i, m_uSelectionDrop_L, m_uSelectionDrop_R );
 		pBar->Create( _T( "musik Selection Box" ), this, ID_SELECTIONBOX_START + i );
 		if ( i == 0 )
 			DockControlBar( pBar );
@@ -650,7 +652,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 
 	// sources control
-	m_wndSources = new CmusikSourcesBar( this, m_Library, m_Player, m_Prefs, m_uSourcesDrop );
+	m_wndSources = new CmusikSourcesBar( this, m_Library, m_Player, m_Prefs, m_uSourcesDrop, m_uPlaylistDrop_R, m_uSelectionDrop_R );
 	m_wndSources->Create( _T( "Sources" ), this, ID_SOURCESBOX );
 	DockControlBar( m_wndSources, AFX_IDW_DOCKBAR_LEFT );
 
@@ -1153,7 +1155,7 @@ void CMainFrame::RequeryPlaylist( CmusikSelectionCtrl* sender, bool focus_librar
 
 	// do it
 	m_Library->GetRelatedSongs( sQuery, order_by, *m_LibPlaylist, sub_query );
-	m_wndView->GetCtrl()->UpdateV();
+	m_wndView->GetCtrl()->UpdateV( true, true );
 	m_wndView->GetCtrl()->HideSortArrow();
 
 	// set focus to library in sources
@@ -2453,7 +2455,7 @@ LRESULT CMainFrame::OnSelBoxAddRemove( WPARAM wParam, LPARAM lParam )
 
 	if ( add_new )
 	{
-		pBar = new CmusikSelectionBar( this, m_Library, m_Prefs, MUSIK_LIBRARY_TYPE_ARTIST, 123 + m_wndSelectionBars.size(), m_uSelectionDrop );
+		pBar = new CmusikSelectionBar( this, m_Library, m_Prefs, MUSIK_LIBRARY_TYPE_ARTIST, 123 + m_wndSelectionBars.size(), m_uSelectionDrop_L, m_uSelectionDrop_R );
 		pBar->Create( _T( "musik Selection Box" ), this, ID_SELECTIONBOX_START + m_wndSelectionBars.size() );
 		FloatControlBar( pBar, CPoint( 0, 0 ) );
 

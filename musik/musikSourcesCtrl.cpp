@@ -17,10 +17,10 @@
 
 ///////////////////////////////////////////////////
 
-CmusikSourcesBar::CmusikSourcesBar( CFrameWnd* parent, CmusikLibrary* library, CmusikPlayer* player, CmusikPrefs* prefs, UINT dropid )
+CmusikSourcesBar::CmusikSourcesBar( CFrameWnd* parent, CmusikLibrary* library, CmusikPlayer* player, CmusikPrefs* prefs, UINT dropid, UINT pldropid_r, UINT sbdropid_r )
 	: CmusikDockBar( prefs )
 {
-	m_wndChild = new CmusikSourcesCtrl( parent, library, player, prefs, dropid );
+	m_wndChild = new CmusikSourcesCtrl( parent, library, player, prefs, dropid, pldropid_r, sbdropid_r );
 	m_Parent = parent;
 }
 
@@ -223,10 +223,10 @@ int WM_SOURCES_EDIT_CHANGE = RegisterWindowMessage( "MUSIKEDITCHANGE" );
 
 ///////////////////////////////////////////////////
 
-CmusikSourcesCtrl::CmusikSourcesCtrl( CFrameWnd* parent, CmusikLibrary* library, CmusikPlayer* player, CmusikPrefs* prefs, UINT dropid )
+CmusikSourcesCtrl::CmusikSourcesCtrl( CFrameWnd* parent, CmusikLibrary* library, CmusikPlayer* player, CmusikPrefs* prefs, UINT dropid, UINT pldropid_r, UINT sbdropid_r )
 	: CmusikPropTree( prefs, library, dropid )
 {
-	m_DropTarget		= new CmusikSourcesDropTarget( this, dropid );
+	m_DropTarget		= new CmusikSourcesDropTarget( this, dropid, pldropid_r, sbdropid_r );
 	m_Parent			= parent;
 	m_LibRoot			= NULL;
 	m_SrcRoot			= NULL;
@@ -453,7 +453,7 @@ void CmusikSourcesCtrl::LoadDynPlaylists()
 
 ///////////////////////////////////////////////////
 
-void CmusikSourcesCtrl::OnDropFiles(HDROP hDropInfo)
+void CmusikSourcesCtrl::OnDropFiles( HDROP hDropInfo, bool right_button )
 {
 	// set cursor back to hour glass
 	SetCursor( LoadCursor( NULL, IDC_WAIT ) );
@@ -484,11 +484,14 @@ void CmusikSourcesCtrl::OnDropFiles(HDROP hDropInfo)
 		return;
 	}
 
-	if ( pItem && !pItem->IsRootLevel() )
+	if ( right_button )
 	{
-		KillFocus();
-		pItem->Select( TRUE );
-		SetFocusedItem( pItem );	
+		if ( pItem && !pItem->IsRootLevel() )
+		{
+			KillFocus();
+			pItem->Select( TRUE );
+			SetFocusedItem( pItem );	
+		}
 	}
 
 	// dnd stuff
@@ -571,7 +574,7 @@ void CmusikSourcesCtrl::OnDropFiles(HDROP hDropInfo)
 		return;
 	}
 
-	if ( pItem )
+	if ( right_button && pItem )
 		SendNotify( PTN_SELCHANGE, pItem );
 }
 

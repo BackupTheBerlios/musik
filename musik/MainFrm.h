@@ -149,9 +149,11 @@ public:
 	BOOL VerifyBarState( LPCTSTR lpszProfileName );
 
 	// unique drag identifiers
-	UINT m_uSelectionDrop;
-	UINT m_uPlaylistDrop;
 	UINT m_uSourcesDrop;
+	UINT m_uPlaylistDrop_L;
+	UINT m_uPlaylistDrop_R;
+	UINT m_uSelectionDrop_L;
+	UINT m_uSelectionDrop_R;
 
 	// current window text
 	CString m_Caption;

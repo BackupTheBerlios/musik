@@ -55,7 +55,7 @@ class CmusikSourcesBar : public baseCmusikSourcesBar
 public:
 
 	// construct / destruct
-	CmusikSourcesBar( CFrameWnd* parent, CmusikLibrary* library, CmusikPlayer* player, CmusikPrefs* prefs, UINT dropid );
+	CmusikSourcesBar( CFrameWnd* parent, CmusikLibrary* library, CmusikPlayer* player, CmusikPrefs* prefs, UINT dropid, UINT pldropid_r, UINT sbdropid_r );
 	virtual ~CmusikSourcesBar();
 
 	// options
@@ -101,7 +101,7 @@ class CmusikSourcesCtrl : public CmusikPropTree
 public:
 
 	// construct / destruct
-	CmusikSourcesCtrl( CFrameWnd* parent, CmusikLibrary* library, CmusikPlayer* player, CmusikPrefs* prefs, UINT dropid );
+	CmusikSourcesCtrl( CFrameWnd* parent, CmusikLibrary* library, CmusikPlayer* player, CmusikPrefs* prefs, UINT dropid, UINT pldropid_r, UINT sbdropid_r );
 	virtual ~CmusikSourcesCtrl();
 
 	// actions
@@ -119,7 +119,7 @@ public:
 	void DoDrag( CmusikPropTreeItem* pItem );
 
 	// message maps
-	void OnDropFiles(HDROP hDropInfo);
+	void OnDropFiles( HDROP hDropInfo, bool right_button = false );
 
 protected:
 

@@ -39,7 +39,7 @@ class CmusikSelectionBar : public baseCmusikSelectionBar
 public:
 
 	// construct / destruct
-	CmusikSelectionBar( CFrameWnd* parent, CmusikLibrary* library, CmusikPrefs* prefs, int type, int ctrlid, int dropid );
+	CmusikSelectionBar( CFrameWnd* parent, CmusikLibrary* library, CmusikPrefs* prefs, int type, int ctrlid, UINT dropid_l, UINT dropid_r );
 	virtual ~CmusikSelectionBar();
 
 	// gets
@@ -95,7 +95,7 @@ class CmusikSelectionCtrl : public CmusikListCtrl
 public:
 
 	// construct / destruct
-	CmusikSelectionCtrl( CFrameWnd* parent, CmusikLibrary* library, CmusikPrefs* prefs, int type, int ctrlid, int dropid );
+	CmusikSelectionCtrl( CFrameWnd* parent, CmusikLibrary* library, CmusikPrefs* prefs, int type, int ctrlid, UINT dropid_l, UINT dropid_r );
 	virtual ~CmusikSelectionCtrl();
 
 	// gets
@@ -162,7 +162,9 @@ protected:
 
 	// drag / drop id
 	bool m_IsWinNT;
-	UINT m_DropID;
+	UINT m_DropID_L;
+	UINT m_DropID_R;
+	void BeginDrag( bool right_button );
 
 	// tracking mouse
 	bool m_MouseTrack;
@@ -197,6 +199,9 @@ protected:
 	// macros
 	DECLARE_DYNAMIC(CmusikSelectionCtrl)
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnLvnBegindrag(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnLvnBeginrdrag(NMHDR *pNMHDR, LRESULT *pResult);
 };
 
 ///////////////////////////////////////////////////

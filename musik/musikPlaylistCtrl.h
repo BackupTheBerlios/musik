@@ -72,18 +72,18 @@ class CmusikPlaylistCtrl : public CmusikListCtrl
 public:
 
 	// construct and destruct
-	CmusikPlaylistCtrl( CFrameWnd* mainwnd, CmusikLibrary* library, CmusikPlayer* player, CmusikPrefs* prefs, UINT dropid );
+	CmusikPlaylistCtrl( CFrameWnd* mainwnd, CmusikLibrary* library, CmusikPlayer* player, CmusikPrefs* prefs, UINT dropid_l, UINT dropid_r );
 	virtual ~CmusikPlaylistCtrl();
 
 	// update the virtual list control
 	void InitColors();
-	void UpdateV( bool redraw = true );
+	void UpdateV( bool redraw = true, bool select_none = false );
 
 	// call when new playlist is set becuase the
 	// previous playlist's sorting should not apply
 	// to the current one's...
 	void HideSortArrow();
-
+    
 	// returns TRUE if user has deleted, inserted,
 	// or otherwise modified a playlist that may
 	// need to be saved...
@@ -107,10 +107,14 @@ public:
 protected:
 
 	// is dnd active
-	UINT m_DropID;
+	UINT m_DropID_L;
+	UINT m_DropID_R;
 
 	// is a column being arranged?
 	bool m_Arranging;
+
+	// call to initialize drag and drop
+	void BeginDrag( NMHDR* pNMHDR, bool right_button );
 
 	// for some reason creating a CmusikDir
 	// object during a drop operation causes
@@ -207,6 +211,8 @@ private:
 	void DrawSortArrow( int col );
 	int m_LastCol;
 	bool m_Ascend;
+public:
+	afx_msg void OnLvnBeginrdrag(NMHDR *pNMHDR, LRESULT *pResult);
 };
 
 ///////////////////////////////////////////////////
