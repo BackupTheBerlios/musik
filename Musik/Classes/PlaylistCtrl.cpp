@@ -250,7 +250,7 @@ wxDragResult PlaylistDropTarget::OnDragOver(wxCoord x, wxCoord y, wxDragResult d
 	if(m_pPlaylistCtrl->m_bInternalDragInProcess)
 	{	 // check if dnd makes sense
 		if((g_SourcesCtrl->GetSelType() == MUSIK_SOURCES_LIBRARY) 
-			|| (g_SourcesCtrl->GetSelType() == MUSIK_SOURCES_NOW_PLAYING)
+			|| (g_SourcesCtrl->GetSelType() == MUSIK_SOURCES_NETSTREAM)
 			|| (g_SourcesCtrl->GetSelType() == MUSIK_SOURCES_PLAYLIST_DYNAMIC)
 			)
 			return wxDragNone;
