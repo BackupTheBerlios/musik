@@ -265,7 +265,7 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 	else if ( g_Prefs.nShowUnsel == 0 && ( !pSel->IsSelected( 0 ) && pSel->GetSelectedItemCount() > 0 ) )
 	{
 		wxArrayString temp_list;
-		if ( GetParentId() == pSel->GetListId() )
+		if ( /*GetParentId() == pSel->GetListId()*/ 1 == 1 )
 		{
 			if ( pBox1 != NULL )
 			{
