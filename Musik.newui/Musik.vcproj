@@ -247,6 +247,9 @@
 		<Filter
 			Name="Core"
 			Filter="">
+			<File
+				RelativePath=".\src\MusikUTF8.h">
+			</File>
 			<Filter
 				Name="MusikLibrary"
 				Filter="">

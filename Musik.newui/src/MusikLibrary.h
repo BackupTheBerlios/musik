@@ -2,6 +2,10 @@
 #define C_MUSIK_LIBRARY_H
 
 #include "wx/wxprec.h"
+#include "wx/filename.h"
+#include "sqlite.h"
+
+#define MUSIK_DB_FILENAME wxFileName::GetHomeDir() + wxFileName::GetPathSeparator() + wxT( ".Musik" ) + wxFileName::GetPathSeparator() + wxT( "musiklib.db" )
 
 class CMusikLibrary
 {
@@ -20,13 +24,29 @@ public:
 protected:
 
 private:
-	
+	//-----------------------------------------------------//
+	//--- start / shutdown database.					---//
+	//-----------------------------------------------------//
+	bool Start();
+	void Shutdown();
+
 	//-----------------------------------------------------//
 	//--- fields... artist/title/album/etc				---//
 	//-----------------------------------------------------//
-	InitFields();
+	void InitFields();
 	wxArrayString m_Fields;
 	wxArrayString m_FieldsDB;
+
+	//-----------------------------------------------------//
+	//--- database access critical section. its sort	---//
+	//--- of like a mutex, but faster in windows.		---//
+	//-----------------------------------------------------//
+	wxCriticalSection m_csDBAccess;
+
+	//-----------------------------------------------------//
+	//--- this is the actual SQL database object		---//
+	//-----------------------------------------------------//
+	sqlite	*m_pDB;
 };
 
 #endif
