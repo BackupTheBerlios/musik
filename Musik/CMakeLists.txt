@@ -74,7 +74,7 @@ ADD_EXECUTABLE(wxMusik
         ${Musik_SOURCE_DIR}/shibatch/Fftsg_fl.cpp
     )
 
-TARGET_LINK_LIBRARIES(Musik 
+TARGET_LINK_LIBRARIES(wxMusik 
         ${WXWINDOWS_LIBRARY} 
         ${OGG_LIBRARY}
         ${SQLITE_LIBRARY}

@@ -41,17 +41,17 @@ Source: ..\..\WINDOWS\SYSTEM32\msvcp71.dll; DestDir: {app}; Flags: promptifolder
 Source: ..\..\WINDOWS\SYSTEM32\msvcr71.dll; DestDir: {app}; Flags: promptifolder onlyifdoesntexist
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
-Source: contrib\playlists\top_10_rated_songs_played_this_year.mpd; DestDir: {userappdata}\.Musik\playlists; Flags: onlyifdoesntexist; Components: Dynamic_Playlist_Examples
-Source: contrib\playlists\added_in_the_last_2_days.mpd; DestDir: {userappdata}\.Musik\playlists; Flags: onlyifdoesntexist; Components: Dynamic_Playlist_Examples
-Source: contrib\playlists\energy_club.mpu; DestDir: {userappdata}\.Musik\playlists; Flags: onlyifdoesntexist; Components: Radio_Channels
-Source: contrib\playlists\mistagged_files.mpd; DestDir: {userappdata}\.Musik\playlists; Flags: onlyifdoesntexist; Components: Dynamic_Playlist_Examples
-Source: contrib\playlists\mp3_vbr_files.mpd; DestDir: {userappdata}\.Musik\playlists; Flags: onlyifdoesntexist; Components: Dynamic_Playlist_Examples
-Source: contrib\playlists\not_played_for_at_least_3_months.mpd; DestDir: {userappdata}\.Musik\playlists; Flags: onlyifdoesntexist; Components: Dynamic_Playlist_Examples
-Source: contrib\playlists\played_this_month.mpd; DestDir: {userappdata}\.Musik\playlists; Flags: onlyifdoesntexist; Components: Dynamic_Playlist_Examples
-Source: contrib\playlists\progrock_radio.mpu; DestDir: {userappdata}\.Musik\playlists; Flags: onlyifdoesntexist; Components: Radio_Channels
-Source: contrib\playlists\snakemetal.mpu; DestDir: {userappdata}\.Musik\playlists; Flags: onlyifdoesntexist; Components: Radio_Channels
-Source: contrib\playlists\songs_you_never_played.mpd; DestDir: {userappdata}\.Musik\playlists; Flags: onlyifdoesntexist; Components: Dynamic_Playlist_Examples
-Source: contrib\playlists\top_10_most_played_in_last_2_weeks.mpd; DestDir: {userappdata}\.Musik\playlists; Flags: onlyifdoesntexist; Components: Dynamic_Playlist_Examples
+Source: contrib\playlists\top_10_rated_songs_played_this_year.mpd; DestDir: {userappdata}\..\.Musik\playlists; Flags: overwritereadonly; Components: Dynamic_Playlist_Examples
+Source: contrib\playlists\added_in_the_last_2_days.mpd; DestDir: {userappdata}\..\.Musik\playlists; Flags: overwritereadonly; Components: Dynamic_Playlist_Examples
+Source: contrib\playlists\energy_club.mpu; DestDir: {userappdata}\..\.Musik\playlists; Flags: overwritereadonly; Components: Radio_Channels
+Source: contrib\playlists\mistagged_files.mpd; DestDir: {userappdata}\..\.Musik\playlists; Flags: overwritereadonly; Components: Dynamic_Playlist_Examples
+Source: contrib\playlists\mp3_vbr_files.mpd; DestDir: {userappdata}\..\.Musik\playlists; Flags: overwritereadonly; Components: Dynamic_Playlist_Examples
+Source: contrib\playlists\not_played_for_at_least_3_months.mpd; DestDir: {userappdata}\..\.Musik\playlists; Flags: overwritereadonly; Components: Dynamic_Playlist_Examples
+Source: contrib\playlists\played_this_month.mpd; DestDir: {userappdata}\..\.Musik\playlists; Flags: overwritereadonly; Components: Dynamic_Playlist_Examples
+Source: contrib\playlists\progrock_radio.mpu; DestDir: {userappdata}\..\.Musik\playlists; Flags: overwritereadonly; Components: Radio_Channels
+Source: contrib\playlists\snakemetal.mpu; DestDir: {userappdata}\..\.Musik\playlists; Flags: overwritereadonly; Components: Radio_Channels
+Source: contrib\playlists\songs_you_never_played.mpd; DestDir: {userappdata}\..\.Musik\playlists; Flags: overwritereadonly; Components: Dynamic_Playlist_Examples
+Source: contrib\playlists\top_10_most_played_in_last_2_weeks.mpd; DestDir: {userappdata}\..\.Musik\playlists; Flags: overwritereadonly; Components: Dynamic_Playlist_Examples
 [Icons]
 Name: {group}\wxMusik; Filename: {app}\wxMusik.exe
 ; NOTE: The following entry contains an English phrase ("Uninstall"). You are free to translate it into another language if required.
