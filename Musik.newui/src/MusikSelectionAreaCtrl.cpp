@@ -32,7 +32,6 @@ void CMusikSelectionAreaCtrl::CreateSashes()
 
 void CMusikSelectionAreaCtrl::CreateControls()
 {
-	/*
 	if ( HORIZONTAL )
 		m_SelectionSizer = new wxBoxSizer( wxHORIZONTAL );
 	else
@@ -48,7 +47,6 @@ void CMusikSelectionAreaCtrl::CreateControls()
 	}
 
 	Layout();
-	*/
 }
 
 void CMusikSelectionAreaCtrl::Delete()
