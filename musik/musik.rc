@@ -355,29 +355,26 @@ END
 // Dialog
 //
 
-IDD_ABOUTBOX DIALOGEX 0, 0, 246, 263
+IDD_ABOUTBOX DIALOGEX 0, 0, 246, 215
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
     WS_SYSMENU
 CAPTION "About musikCube"
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
-    ICON            IDR_MAINFRAME,IDC_STATIC,114,12,20,20
-    DEFPUSHBUTTON   "ok",IDOK,190,242,50,16,WS_GROUP
+    DEFPUSHBUTTON   "ok",IDOK,190,194,50,16,WS_GROUP
     CTEXT           "Casey Langen: Lead developer, project manager",
-                    IDC_STATIC,12,66,222,8
-    CTEXT           "Dustin Carter: Developer, webmaster",IDC_STATIC,12,78,
+                    IDC_STATIC,12,48,222,8
+    CTEXT           "Dustin Carter: Developer, webmaster",IDC_STATIC,12,57,
                     222,8
     CTEXT           "The  musik team would like to thank the following people:\n\n-Simon Windmill for his bottomless well of patience\n-Colby Langen for his valuable advice\n-Jared Dickinson for his hours of rigerous testing\n-Robert Mitchell for the musik project logo",
-                    IDC_STATIC,12,96,222,48
+                    IDC_STATIC,12,72,222,48
     CTEXT           "If you enjoy using musik, donations are much appreciated. Project musik will always be free, although food isn't -- and we programmers have to eat too.  Visit the website below to contribute!",
-                    IDC_STATIC,12,36,222,24
+                    IDC_STATIC,12,12,222,24
     CTEXT           "website: http://www.musikcube.com\ne-mail: casey@bak.rr.com",
-                    IDC_STATIC,12,174,222,18
-    CTEXT           "musikCore 0.3.0 CVS\nmusikCube a3 CVS",IDC_STATIC,12,
-                    150,222,18
-    CTEXT           "Project musik, including musik:Core and musikCube is copyright (C) Casey Langen 2003.  Project musik is open source under the BSD license. See license.txt for more information",
-                    IDC_STATIC,12,198,222,30
-    GROUPBOX        "",IDC_STATIC,6,2,234,232
+                    IDC_STATIC,12,125,222,18
+    CTEXT           "Project musik, including musikCore and musikCube is copyright (C) Casey Langen 2003.  Project musik is open source under the BSD license. See license.txt for more information",
+                    IDC_STATIC,12,149,222,30
+    GROUPBOX        "",IDC_STATIC,6,2,234,184
 END
 
 IDD_PROPPAGE_INTERFACE_WORKFLOW DIALOGEX 0, 0, 210, 154
@@ -724,7 +721,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 239
         TOPMARGIN, 7
-        BOTTOMMARGIN, 256
+        BOTTOMMARGIN, 208
     END
 
     IDD_PROPPAGE_INTERFACE_WORKFLOW, DIALOG

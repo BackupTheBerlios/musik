@@ -8,7 +8,7 @@
 * Redistribution is appreciated.
 *
 * $Workfile:$
-* $Revision: 1.4 $
+* $Revision: 1.5 $
 * $Modtime:$
 * $Author: avatar5d $
 *
@@ -838,7 +838,7 @@ BOOL CTreePropSheet::OnInitDialog()
 	}
 
 	// finally create tht tree control
-	const DWORD	dwTreeStyle = TVS_SHOWSELALWAYS|TVS_TRACKSELECT|TVS_HASLINES|TVS_LINESATROOT|TVS_HASBUTTONS;
+	const DWORD	dwTreeStyle = TVS_SHOWSELALWAYS/*|TVS_TRACKSELECT|TVS_HASLINES*/|TVS_LINESATROOT | TVS_FULLROWSELECT | TVS_HASBUTTONS;
 	m_pwndPageTree = CreatePageTreeObject();
 	if (!m_pwndPageTree)
 	{

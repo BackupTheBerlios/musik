@@ -4,6 +4,7 @@ a5:
 
   - ditched ACE for OpenThreads
   - much improved selection box updating while threading.
+  - updated about box
 
 ----------------------------------------------------------------------------
 
