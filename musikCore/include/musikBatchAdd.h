@@ -88,7 +88,9 @@ public:
 		m_CallFunctorOnAbort	= false;
 	}
 
-	~CmusikBatchAdd();
+	~CmusikBatchAdd()
+	{
+	}
 
 	// we'll allow users to manually set
 	// these variables.
@@ -140,12 +142,14 @@ static void musikBatchAddWorker( CmusikThread* thread )
 		// add the song
 		params->m_Library->AddSong( params->m_Files->at( i ) );
 
+		// adding to now playing
 		if ( params->m_AddToPlayer && params->m_Player && params->m_Player->GetPlaylist() )
 		{
 			params->m_Library->GetSongFromFilename( params->m_Files->at( i ), song );
 			params->m_Player->GetPlaylist()->Add( song );
 		}
 
+		// adding to current playlist
 		else if ( params->m_UpdatePlaylist && params->m_Playlist )
 		{
 			if ( !verify_failed )
@@ -176,7 +180,6 @@ static void musikBatchAddWorker( CmusikThread* thread )
 	}
 	params->m_Library->EndTransaction();
 
-
 	// flag thread operation as complete
 	thread->m_Finished = true;
 
@@ -187,6 +190,8 @@ static void musikBatchAddWorker( CmusikThread* thread )
 	// call the functor's OnThreadEnd
 	if ( ( thread->m_Abort && params->m_CallFunctorOnAbort ) || !thread->m_Abort )
 		params->m_Functor->OnThreadEnd( (void*)thread );
+
+	delete params;
 }
 
 ///////////////////////////////////////////////////
