@@ -678,6 +678,8 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// equalizer control
 	m_wndEqualizer = new CmusikEqualizerBar( m_Library, m_Player, m_Prefs );
 	m_wndEqualizer->Create( _T( "Equalizer" ), this, ID_EQUALIZER );
+	m_wndEqualizer->GetCtrl()->SetBandState( m_Prefs->GetEqualizerBandState() );
+	m_wndEqualizer->GetCtrl()->SetChannelsLocked( m_Prefs->IsEqualizerChannelsLocked() );
 	FloatControlBar( m_wndEqualizer, CPoint( 28, 28 ) );
 
 	// append the system menu

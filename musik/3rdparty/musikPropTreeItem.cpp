@@ -459,7 +459,7 @@ LONG CmusikPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 
 		//the object
 		hOld = pDC->SelectObject( CreateSolidBrush( m_pProp->m_Prefs->MUSIK_COLOR_LISTCTRL ) );
-		pDC->PatBlt(rc.left + 14, drc.top, rc.right - rc.left + 1, drc.Height(), PATCOPY);
+		pDC->PatBlt(rc.left, drc.top, rc.right - rc.left + 1, drc.Height(), PATCOPY);
 
 		//the gutter
 		if ( IsSelected() )

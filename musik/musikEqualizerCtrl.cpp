@@ -76,7 +76,7 @@ int CmusikEqualizerBar::OnCreate( LPCREATESTRUCT lpCreateStruct )
 	EnableDocking( CBRS_ALIGN_ANY );
 
 	// child
-	if ( !m_wndChild->Create( NULL, NULL, WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0), this, 123 ) )
+	if ( !m_wndChild->Create( NULL, NULL, WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN, CRect( 0, 0, 0, 0), this, 123 ) )
 		return -1;
 
 	if ( !m_Font.CreateStockObject(DEFAULT_GUI_FONT) )
@@ -160,9 +160,15 @@ void CmusikEqualizerBar::OnSize(UINT nType, int cx, int cy)
 void CmusikEqualizerBar::OnEqualizerLockchannels()
 {
 	if ( GetCtrl()->IsChannelsLocked() )
+	{
 		GetCtrl()->SetChannelsLocked( false );
+		m_Prefs->SetEqualizerChannelsLocked( false );
+	}
 	else
+	{
 		GetCtrl()->SetChannelsLocked( true );
+		m_Prefs->SetEqualizerChannelsLocked( true );
+	}
 
 	GetCtrl()->LayoutNewState();
 }
@@ -174,6 +180,8 @@ void CmusikEqualizerBar::OnEqualizerState18band()
 	GetCtrl()->SetBandState( MUSIK_EQUALIZER_CTRL_18BANDS );
 	GetCtrl()->LayoutNewState();
 	GetCtrl()->DisplayChanged();
+
+	m_Prefs->SetEqualizerBandState( MUSIK_EQUALIZER_CTRL_18BANDS );
 }
 
 ///////////////////////////////////////////////////
@@ -183,6 +191,8 @@ void CmusikEqualizerBar::OnEqualizerState6band()
 	GetCtrl()->SetBandState( MUSIK_EQUALIZER_CTRL_6BANDS );
 	GetCtrl()->LayoutNewState();
 	GetCtrl()->DisplayChanged();
+
+	m_Prefs->SetEqualizerBandState( MUSIK_EQUALIZER_CTRL_6BANDS );
 }
 
 ///////////////////////////////////////////////////
@@ -294,16 +304,22 @@ void CmusikEqualizerCtrl::OnSize(UINT nType, int cx, int cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 
-	int width_remaining = ( ( cx - ( 16 * GetBandState() ) ) / GetBandState() );
+	int width_remaining = ( ( cx - ( 16 * ( GetBandState() ) ) ) / GetBandState() );
 
 	CRect curr;
-	for ( int i = 0; i < 18; i++ )
+	int space;
+	if ( GetBandState() == MUSIK_EQUALIZER_CTRL_18BANDS )
 	{
-		if ( GetBandState() == MUSIK_EQUALIZER_CTRL_18BANDS )
+		for ( int i = 0; i < 18; i++ )
 		{
+			if ( i == 0 )
+				space = ( width_remaining / 2 );
+			else
+				space = ( width_remaining / 2 ) + ( i * width_remaining );
+
 			curr.top = 0;
 			curr.bottom = IsChannelsLocked() ? cy : cy / 2;
-			curr.left = ( i * 16 ) + ( ( i + 1 ) * width_remaining );
+			curr.left = ( i * 16 ) + space;
 			curr.right = curr.left + 16;
 
 			m_LeftBands[i].MoveWindow( curr );
@@ -318,27 +334,55 @@ void CmusikEqualizerCtrl::OnSize(UINT nType, int cx, int cy)
 				m_RightBands[i].MoveWindow( curr );
 			}
 		}
+	}
 
-		else if ( GetBandState() == MUSIK_EQUALIZER_CTRL_6BANDS )
+	else if ( GetBandState() == MUSIK_EQUALIZER_CTRL_6BANDS )
+	{
+		int band_at;
+		for ( size_t i = 0; i < 6; i++ )
 		{
-			if ( i % 3 == 0 )
+			switch( i )
 			{
-				curr.top = 0;
-				curr.bottom = IsChannelsLocked() ? cy : cy / 2;
-				curr.left = ( ( i / 3 ) * 16 ) + ( ( ( i / 3 ) + 1 ) * width_remaining );
-				curr.right = curr.left + 16;
+			case 0:
+				band_at = 0;
+				break;
+			case 1:
+				band_at = 3;
+				break;
+			case 2:
+				band_at = 7;
+				break;
+			case 3: 
+				band_at = 10;
+				break;
+			case 4:
+				band_at = 14;
+				break;
+			case 5:
+				band_at = 17;
+				break;
+			}
 
-				m_LeftBands[i].MoveWindow( curr );
+			if ( i == 0 )
+				space = ( width_remaining / 2 );
+			else
+				space = ( width_remaining / 2 ) + ( i * width_remaining );
 
-				// if the channels are locked, these bands
-				// will be hidden...
-				if ( !IsChannelsLocked() )
-				{
-					curr.top = curr.bottom;
-					curr.bottom = cy;
+			curr.top = 0;
+			curr.bottom = IsChannelsLocked() ? cy : cy / 2;
+			curr.left = ( ( i ) * 16 ) + space;
+			curr.right = curr.left + 16;
 
-					m_RightBands[i].MoveWindow( curr );
-				}
+			m_LeftBands[band_at].MoveWindow( curr );
+
+			// if the channels are locked, these bands
+			// will be hidden...
+			if ( !IsChannelsLocked() )
+			{
+				curr.top = curr.bottom;
+				curr.bottom = cy;
+
+				m_RightBands[band_at].MoveWindow( curr );
 			}
 		}
 	}
@@ -348,11 +392,9 @@ void CmusikEqualizerCtrl::OnSize(UINT nType, int cx, int cy)
 
 void CmusikEqualizerCtrl::LayoutNewState()
 {
-	// if the channels are locked, hide all
-	// of the right channel bands...
-	if ( IsChannelsLocked() )
+	if ( GetBandState() == MUSIK_EQUALIZER_CTRL_18BANDS )
 	{
-		if ( GetBandState() == MUSIK_EQUALIZER_CTRL_18BANDS )
+		if ( IsChannelsLocked() )
 		{
 			for ( size_t i = 0; i < 18; i++ )
 			{
@@ -360,26 +402,7 @@ void CmusikEqualizerCtrl::LayoutNewState()
 				m_RightBands[i].ShowWindow( SW_HIDE );
 			}
 		}
-
-		else if ( GetBandState() == MUSIK_EQUALIZER_CTRL_6BANDS )
-		{
-			for ( size_t i = 0; i < 18; i++ )
-			{
-				if ( i % 3 == 0 ) // hide every other band
-					m_LeftBands[i].ShowWindow( SW_SHOW );
-				else
-					m_LeftBands[i].ShowWindow( SW_HIDE );
-
-				m_RightBands[i].ShowWindow( SW_HIDE );
-			}
-		}
-	}
-
-	// channels are unlocked, both bands
-	// are visible...
-	else
-	{
-		if ( GetBandState() == MUSIK_EQUALIZER_CTRL_18BANDS )
+		else
 		{
 			for ( size_t i = 0; i < 18; i++ )
 			{
@@ -387,23 +410,47 @@ void CmusikEqualizerCtrl::LayoutNewState()
 				m_RightBands[i].ShowWindow( SW_SHOW );
 			}
 		}
+	}
 
-		else if ( GetBandState() == MUSIK_EQUALIZER_CTRL_6BANDS )
-		{
-			for ( size_t i = 0; i < 18; i++ )
-			{
-				if ( i % 3 == 0 )
-				{
-					m_LeftBands[i].ShowWindow( SW_SHOW );
-					m_RightBands[i].ShowWindow( SW_SHOW );
-				}
-				else
-				{
-					m_LeftBands[i].ShowWindow( SW_HIDE );
-					m_RightBands[i].ShowWindow( SW_HIDE );
-				}
-			}
-		}
+	else if ( GetBandState() == MUSIK_EQUALIZER_CTRL_6BANDS )
+	{
+		m_LeftBands[0].ShowWindow( SW_SHOW );
+		m_LeftBands[1].ShowWindow( SW_HIDE );
+		m_LeftBands[2].ShowWindow( SW_HIDE );
+		m_LeftBands[3].ShowWindow( SW_SHOW );
+		m_LeftBands[4].ShowWindow( SW_HIDE );
+		m_LeftBands[5].ShowWindow( SW_HIDE );
+		m_LeftBands[6].ShowWindow( SW_HIDE );
+		m_LeftBands[7].ShowWindow( SW_SHOW );
+		m_LeftBands[8].ShowWindow( SW_HIDE );
+		m_LeftBands[9].ShowWindow( SW_HIDE );
+		m_LeftBands[10].ShowWindow( SW_SHOW );
+		m_LeftBands[11].ShowWindow( SW_HIDE );
+		m_LeftBands[12].ShowWindow( SW_HIDE );
+		m_LeftBands[13].ShowWindow( SW_HIDE );
+		m_LeftBands[14].ShowWindow( SW_SHOW );
+		m_LeftBands[15].ShowWindow( SW_HIDE );
+		m_LeftBands[16].ShowWindow( SW_HIDE );
+		m_LeftBands[17].ShowWindow( SW_SHOW );
+
+		m_RightBands[0].ShowWindow( !IsChannelsLocked() ? SW_SHOW : SW_HIDE );
+		m_RightBands[1].ShowWindow( SW_HIDE );
+		m_RightBands[2].ShowWindow( SW_HIDE );
+		m_RightBands[3].ShowWindow( !IsChannelsLocked() ? SW_SHOW : SW_HIDE );
+		m_RightBands[4].ShowWindow( SW_HIDE );
+		m_RightBands[5].ShowWindow( SW_HIDE );
+		m_RightBands[6].ShowWindow( SW_HIDE );
+		m_RightBands[7].ShowWindow( !IsChannelsLocked() ? SW_SHOW : SW_HIDE );
+		m_RightBands[8].ShowWindow( SW_HIDE );
+		m_RightBands[9].ShowWindow( SW_HIDE );
+		m_RightBands[10].ShowWindow( !IsChannelsLocked() ? SW_SHOW : SW_HIDE );
+		m_RightBands[11].ShowWindow( SW_HIDE );
+		m_RightBands[12].ShowWindow( SW_HIDE );
+		m_RightBands[13].ShowWindow( SW_HIDE );
+		m_RightBands[14].ShowWindow( !IsChannelsLocked() ? SW_SHOW : SW_HIDE );
+		m_RightBands[15].ShowWindow( SW_HIDE );
+		m_RightBands[16].ShowWindow( SW_HIDE );
+		m_RightBands[17].ShowWindow( !IsChannelsLocked() ? SW_SHOW : SW_HIDE );
 	}
 
 	CRect rcClient;
@@ -430,18 +477,9 @@ void CmusikEqualizerCtrl::SetBandState( int state )
 void CmusikEqualizerCtrl::LoadCurrSong()
 {
 	if ( m_Player->IsPlaying() && m_Player->IsEqualizerActive() )
-	{
-		CmusikEQSettings& curr_song = m_Player->GetEqualizer()->m_EQ_Values;
-	
-		if ( m_Player->GetEqualizer()->m_EQ_Values.m_ID == -1 )
-		{
-			LoadDefault();
-			return;
-		}
-
-		BandsFromEQSettings( curr_song );
-	}
+		BandsFromEQSettings( m_Player->GetEqualizer()->m_EQ_Values );
 }
+
 
 ///////////////////////////////////////////////////
 
@@ -451,6 +489,7 @@ void CmusikEqualizerCtrl::LoadDefault()
 	{
 		m_Library->GetDefaultEqualizer( &m_Player->GetEqualizer()->m_EQ_Values );
 		m_Player->GetEqualizer()->UpdateTable();
+
 		BandsFromEQSettings( m_Player->GetEqualizer()->m_EQ_Values );
 	}
 }
@@ -459,22 +498,28 @@ void CmusikEqualizerCtrl::LoadDefault()
 
 void CmusikEqualizerCtrl::BandsFromEQSettings( const CmusikEQSettings& settings )
 {
-	SetRedraw( FALSE );
-
+	int left = 0;
+	int right = 0;
 	for ( size_t i = 0; i < 18; i++ )
 	{
 		if ( IsChannelsLocked() )
 		{
-			m_LeftBands[i].SetPos( 100 - (int)( settings.m_Left[i] * 50.0f ) );
-			m_RightBands[i].SetPos( 100 - (int)( settings.m_Left[i] * 50.0f ) );
+			left = right = 100 - (int)( settings.m_Left[i] * 50.0f );
+
+			m_LeftBands[i].SetPos( left );
+			m_RightBands[i].SetPos( right );
 		}
 		else
-			m_LeftBands[i].SetPos( 100 - (int)( settings.m_Left[i] * 50.0f ) );
-			m_RightBands[i].SetPos( 100 - (int)( settings.m_Right[i] * 50.0f ) );
+		{
+			left = 100 - (int)( settings.m_Left[i] * 50.0f );
+			right = 100 - (int)( settings.m_Right[i] * 50.0f );
+
+			m_LeftBands[i].SetPos( left );
+			m_RightBands[i].SetPos( right );
+		}
 	}
 
-	SetRedraw( TRUE );
-	RedrawWindow();
+	Invalidate();
 }
 
 ///////////////////////////////////////////////////
@@ -488,8 +533,7 @@ void CmusikEqualizerCtrl::EQSettingsFromBands( CmusikEQSettings* settings )
 	{
 		if ( IsChannelsLocked() )
 		{
-			left_chan[i] = (float)( ( 100.0f - (float)m_LeftBands[i].GetPos() ) / 50.0f );
-			right_chan[i] = (float)( ( 100.0f - m_LeftBands[i].GetPos() ) / 50.0f );
+			left_chan[i] = right_chan[i] = (float)( ( 100.0f - (float)m_LeftBands[i].GetPos() ) / 50.0f );
 		}
 		else
 		{
@@ -570,11 +614,8 @@ void CmusikEqualizerCtrl::EQSettingsFromBands( CmusikEQSettings* settings )
 		right_chan[17]	= chan_set_l[5];
 	}
 
-	for ( size_t i = 0; i < 18; i++ )
-	{
-		settings->m_Left[i] = left_chan[i];
-		settings->m_Right[i] = right_chan[i];
-	}
+	settings->Set( MUSIK_EQ_SETTINGS_LEFT_BAND, left_chan );
+	settings->Set( MUSIK_EQ_SETTINGS_RIGHT_BAND, right_chan );
 }
 
 ///////////////////////////////////////////////////
@@ -584,6 +625,7 @@ LRESULT CmusikEqualizerCtrl::OnBandChange( WPARAM wParam, LPARAM lParam )
 	if ( m_Player->IsEqualizerActive() )
 	{
 		EQSettingsFromBands( &m_Player->GetEqualizer()->m_EQ_Values );
+
 		m_Player->GetEqualizer()->UpdateTable();
 		m_Player->GetEqualizer()->m_EQ_Values_Modified = true;
 	}
@@ -614,11 +656,16 @@ void CmusikEqualizerCtrl::ResetDefault()
 {
 	if ( m_Player->IsEqualizerActive() )
 	{
+		// get default
 		CmusikEQSettings reset;
 		BandsFromEQSettings( reset );
+
+		// send to player
 		m_Player->GetEqualizer()->m_EQ_Values = reset;
+		m_Player->GetEqualizer()->UpdateTable();
+
+		// save to library
 		m_Library->UpdateDefaultEqualizer( reset );
-		m_Player->UpdateEqualizer();
 	}
 }
 

@@ -958,7 +958,7 @@ void CmusikPropTree::OnPaint()
 
 	// draw control background
 	CMemDC memdc( &dc );
-	memdc.FillSolidRect( rc, m_Prefs->MUSIK_COLOR_LISTCTRL );
+	memdc.FillSolidRect( rc, m_Prefs->MUSIK_COLOR_BTNFACE );
 
 	CmusikPropTreeItem* pItem;
 	LONG nTotal = 0;
