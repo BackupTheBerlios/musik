@@ -70,6 +70,7 @@ void CMusikFrame::CreateSashes()
 	pSash->SetAlignment( wxLAYOUT_BOTTOM );
 	pSash->SetDefaultSize( wxSize( -1, 24 ) );
 	pSash->SetOrientation( wxLAYOUT_HORIZONTAL );
+	pSash->SetSashVisible( wxSASH_TOP, true );
 	//pSash->SetBackgroundColour( wxColour( 0, 255, 255 ) );
 	m_SimpleQuerySash = pSash;
 
@@ -153,11 +154,16 @@ void CMusikFrame::CreateMenu()
 	//--- view menu									---//
 	//-------------------------------------------------//
 	view_menu = new wxMenu();
+	view_menu->Append( VIEW_MENU_SHOW_SOURCES, wxT( "Show Sources" ), wxT( "" ), wxITEM_CHECK );
+	view_menu->Append( VIEW_MENU_SHOW_SELECTION_AREA, wxT( "Show Selection Area" ), wxT( "" ), wxITEM_CHECK );
+	view_menu->Append( VIEW_MENU_SHOW_PLAYLIST_INFO, wxT( "Show Playlist Info" ), wxT( "" ), wxITEM_CHECK ); 
 
 	//-------------------------------------------------//
 	//--- help menu									---//
 	//-------------------------------------------------//
 	help_menu = new wxMenu();
+	help_menu->Append( HELP_MENU_ONLINE_HELP, wxT( "Online Help" ), wxT( "" ), wxITEM_NORMAL );
+	help_menu->Append( HELP_MENU_ABOUT, wxT( "About..." ), wxT( "" ), wxITEM_NORMAL );
 
 	//-------------------------------------------------//
 	//--- construct and set the main menu bar		---//
