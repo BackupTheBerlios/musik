@@ -6,16 +6,18 @@
 #include "../Musik.Core/include/MusikArrays.h"
 
 class CMusikLibrary;
+class CMainFrame;
 
 class CMusikSelectionCtrl : public CMusikListCtrl
 {
 	DECLARE_DYNAMIC(CMusikSelectionCtrl)
 
 public:
-	CMusikSelectionCtrl( CMusikLibrary* library, int type );
+	CMusikSelectionCtrl( CFrameWnd* parent, CMusikLibrary* library, int type );
 	virtual ~CMusikSelectionCtrl();
 
 protected:
+	CMainFrame* m_Parent;
 	CMusikLibrary* m_Library;
 	CStdStringArray m_Items;
 	int m_Type;
@@ -26,6 +28,7 @@ public:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnLvnItemchanged(NMHDR *pNMHDR, LRESULT *pResult);
 };
 
 

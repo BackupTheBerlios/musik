@@ -89,6 +89,7 @@ void CMusikPlaylistCtrl::ResetColumns()
 {
 	CIntArray order = m_Prefs->GetPlaylistOrder();
 	CIntArray sizes = m_Prefs->GetPlaylistSizes();
+
 	for ( int i = 0; i < order.size(); i++ )
 	{
 		InsertColumn( i, m_Library->GetSongField( order.at( i ) ) );

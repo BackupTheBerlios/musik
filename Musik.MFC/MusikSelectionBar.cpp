@@ -1,18 +1,14 @@
 #include "stdafx.h"
 #include "Musik.h"
 #include "MusikSelectionBar.h"
+#include "MainFrm.h"
 
 #include "../Musik.Core/include/MusikLibrary.h"
 
-#ifdef _DEBUG
-#define new DEBUG_NEW
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
-#endif
 
-CMusikSelectionBar::CMusikSelectionBar( CMusikLibrary* library, int type )
+CMusikSelectionBar::CMusikSelectionBar( CFrameWnd* parent, CMusikLibrary* library, int type )
 {
-	m_wndChild = new CMusikSelectionCtrl( library, type );
+	m_wndChild = new CMusikSelectionCtrl( parent, library, type );
 }
 
 CMusikSelectionBar::~CMusikSelectionBar()

@@ -175,7 +175,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	//-------------------------------------------------//
 	for ( int i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
 	{
-		m_wndSelectionBars[i] = new CMusikSelectionBar( m_Library, i );
+		m_wndSelectionBars[i] = new CMusikSelectionBar( this, m_Library, i );
 		m_wndSelectionBars[i]->Create( _T( "Musik Selection Box" ), this, ID_SELECTIONBOX_START + i );
 		m_wndSelectionBars[i]->SetBarStyle( m_wndSelectionBars[i]->GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC );
 		m_wndSelectionBars[i]->EnableDocking( CBRS_ALIGN_ANY );

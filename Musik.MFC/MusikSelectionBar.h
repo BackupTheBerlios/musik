@@ -14,7 +14,7 @@ class CMusikSelectionBar : public baseCMusikSelectionBar
 //--- implementation							---//
 //-------------------------------------------------//
 public:
-	CMusikSelectionBar( CMusikLibrary* library, int type );
+	CMusikSelectionBar( CFrameWnd* parent, CMusikLibrary* library, int type );
 	virtual ~CMusikSelectionBar();
 
 //-------------------------------------------------//

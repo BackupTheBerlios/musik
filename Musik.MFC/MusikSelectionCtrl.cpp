@@ -6,14 +6,16 @@
 #include "MusikSelectionCtrl.h"
 
 #include "../Musik.Core/include/MusikLibrary.h"
+#include ".\musikselectionctrl.h"
 
 // CMusikSelectionCtrl
 
 IMPLEMENT_DYNAMIC(CMusikSelectionCtrl, CMusikListCtrl)
-CMusikSelectionCtrl::CMusikSelectionCtrl( CMusikLibrary* library, int type )
+CMusikSelectionCtrl::CMusikSelectionCtrl( CFrameWnd* parent, CMusikLibrary* library, int type )
 {
 	m_Library = library;
 	m_Type = type;
+	m_Parent = (CMainFrame*)parent;
 	HideScrollBars( LCSB_NCOVERRIDE, /*SB_HORZ*/ SB_BOTH );
 }
 
@@ -26,6 +28,7 @@ BEGIN_MESSAGE_MAP(CMusikSelectionCtrl, CMusikListCtrl)
 	ON_WM_SIZE()
 	ON_WM_CREATE()
 	ON_NOTIFY_REFLECT(LVN_GETDISPINFO, OnLvnGetdispinfo)
+	ON_NOTIFY_REFLECT(LVN_ITEMCHANGED, OnLvnItemchanged)
 END_MESSAGE_MAP()
 
 
@@ -73,6 +76,21 @@ void CMusikSelectionCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 			lstrcpy( pItem->pszText, m_Items.at( index ).c_str() );
 			break;
 		}
+	*pResult = 0;
 	}
+}
+
+void CMusikSelectionCtrl::OnLvnItemchanged(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
+
+	// only interested in state changes
+	if ( pNMLV->uChanged & LVIF_STATE )
+	{
+		if ( pNMLV->uNewState & LVIS_SELECTED )
+		{
+		}
+	}
+
 	*pResult = 0;
 }
