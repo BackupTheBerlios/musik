@@ -158,7 +158,19 @@ STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Sound::Driver"
 FONT 8, "MS Shell Dlg", 0, 0, 0x0
 BEGIN
-    LTEXT           "TODO: layout property page",IDC_STATIC,60,73,90,8
+    COMBOBOX        IDC_COMBO1,85,9,75,30,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Output Driver:",IDC_STATIC,32,11,48,8
+    COMBOBOX        IDC_COMBO2,85,24,75,30,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO3,85,39,75,30,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_EDIT1,85,53,31,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT2,85,68,31,14,ES_AUTOHSCROLL
+    LTEXT           "Sound Device:",IDC_STATIC,33,26,47,8
+    LTEXT           "Playback Rate (hz):",IDC_STATIC,16,41,64,8
+    LTEXT           "Buffer Length (sec):",IDC_STATIC,14,56,66,8
+    LTEXT           "Max Sound Channels:",IDC_STATIC,10,71,70,8
 END
 
 IDD_PROPPAGE_SOUND_CROSSFADER DIALOGEX 0, 0, 210, 154
@@ -246,8 +258,17 @@ BEGIN
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 203
+        VERTGUIDE, 80
+        VERTGUIDE, 85
+        VERTGUIDE, 116
+        VERTGUIDE, 160
         TOPMARGIN, 7
         BOTTOMMARGIN, 147
+        HORZGUIDE, 15
+        HORZGUIDE, 30
+        HORZGUIDE, 45
+        HORZGUIDE, 60
+        HORZGUIDE, 75
     END
 
     IDD_PROPPAGE_SOUND_CROSSFADER, DIALOG
