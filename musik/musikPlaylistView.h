@@ -52,6 +52,7 @@ class CmusikPlayer;
 class CmusikPrefs;
 class CmusikPlaylist;
 class CmusikPlaylistDropTarget;
+class CFrameWnd;
 
 ///////////////////////////////////////////////////
 
@@ -60,7 +61,7 @@ class CmusikPlaylistView : public CWnd
 public:
 
 	// construct and destruct
-	CmusikPlaylistView( CFrameWnd* parent, CmusikLibrary* library, CmusikPlayer* player, CmusikPrefs* prefs, UINT dropid_l, UINT dropid_r );
+	CmusikPlaylistView( CFrameWnd* mainwnd, CmusikLibrary* library, CmusikPlayer* player, CmusikPrefs* prefs, UINT dropid_l, UINT dropid_r, UINT dropid_sources, UINT dropid_selection_l, UINT dropid_selection_r );
 	virtual ~CmusikPlaylistView();
 
 	// get the playlist control

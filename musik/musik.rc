@@ -296,8 +296,8 @@ END
 
 IDR_MAINFRAME ACCELERATORS 
 BEGIN
-    "D",            ID_ADD_DIRECTORY,       VIRTKEY, CONTROL, NOINVERT
-    "O",            ID_ADD_FILES,           VIRTKEY, CONTROL, NOINVERT
+    "G",            ID_ADD_DIRECTORY,       VIRTKEY, CONTROL, NOINVERT
+    "F",            ID_ADD_FILES,           VIRTKEY, CONTROL, NOINVERT
     "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
     VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
     VK_DELETE,      ID_EDIT_CUT,            VIRTKEY, SHIFT, NOINVERT
@@ -310,6 +310,8 @@ BEGIN
     "S",            ID_FILE_SAVEPLAYLIST,   VIRTKEY, CONTROL, NOINVERT
     "M",            ID_FILE_SYNCHRONIZEDDIRECTORIES, VIRTKEY, CONTROL, 
                                                     NOINVERT
+    "S",            ID_LIBRARY_SYNCHRONIZEDIRECTORIESNOW, VIRTKEY, CONTROL, 
+                                                    ALT, NOINVERT
     VK_F6,          ID_NEXT_PANE,           VIRTKEY, NOINVERT
     "A",            ID_PLAYBACKMODE_SHUFFLECURRENTPLAYLIST, VIRTKEY, CONTROL, 
                                                     ALT, NOINVERT
@@ -326,8 +328,6 @@ BEGIN
                                                     NOINVERT
     "A",            ID_VIEW_SOURCES,        VIRTKEY, SHIFT, CONTROL, 
                                                     NOINVERT
-    "S",            ID_LIBRARY_SYNCHRONIZEDIRECTORIESNOW, VIRTKEY, CONTROL, 
-                                                    ALT, NOINVERT
 END
 
 

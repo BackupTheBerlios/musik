@@ -1,5 +1,11 @@
+-------------------------------------------------------------------------
+
 a2:
 
+  - from selection boxes -> playlist drag and drop bug fix
+  - CTRL + A / CTRL + D in playlist to select and deslect 
+    all the items
+  - much better theme support
   - changed rollover button behavior for playback
     buttons
   - fixed the problem with the rating selection boxes

@@ -1722,6 +1722,23 @@ void CmusikPlaylistCtrl::OnLvnKeydown(NMHDR *pNMHDR, LRESULT *pResult)
 
 		// delete from playlist
 		DeleteSelectedItems( delete_from_lib, delete_from_comp );
+		return;
+	}
+
+	if ( nChar == 'A' || nChar == 'a' )
+	{
+		if ( GetKeyState( VK_CONTROL ) < 0 )
+			SetItemState( -1, LVIS_SELECTED, LVIS_SELECTED );
+
+		return;
+	}
+
+	if ( nChar == 'D' || nChar == 'd' )
+	{
+		if ( GetKeyState( VK_CONTROL ) < 0 )
+			SetItemState( -1, 0, LVIS_SELECTED );
+
+		return;
 	}
 }
 

@@ -83,12 +83,14 @@ extern "C" const GUID __declspec(selectany) IID_IDropTargetHelper =
 
 ///////////////////////////////////////////////////
 
-CmusikPlaylistDropTarget::CmusikPlaylistDropTarget( CmusikPlaylistCtrl* pList, UINT uSourceID )
+CmusikPlaylistDropTarget::CmusikPlaylistDropTarget( CmusikPlaylistCtrl* pList, UINT uSourceID, UINT uSelectionID_L, UINT uSelectionID_R )
 {
 	m_pList = pList;
 	m_piDropHelper = NULL;
 	m_bUseDnDHelper = false;
 	m_uSourceID = uSourceID;
+	m_uSelectionID_L = uSelectionID_L;
+	m_uSelectionID_R = uSelectionID_R;
 
     // Create an instance of the shell DnD helper object.
     if ( SUCCEEDED( CoCreateInstance ( 
@@ -120,12 +122,15 @@ DROPEFFECT CmusikPlaylistDropTarget::OnDragEnter ( CWnd* pWnd, COleDataObject* p
     // present, then the DnD was initiated from our own window, and we won't
     // accept the drop.
     // If it's not present, then we check for CF_HDROP data in the data object.
-    if ( pDataObject->GetGlobalData ( m_uSourceID ) == NULL )
+	if ( pDataObject->GetGlobalData( m_uSelectionID_L ) || pDataObject->GetGlobalData( m_uSelectionID_R ) )
+		return DROPEFFECT_NONE;
+
+	if ( pDataObject->GetGlobalData ( m_uSourceID ) == NULL )
 	{
-        // Look for CF_HDROP data in the data object, and accept the drop if
-        // it's there.
-        if ( pDataObject->GetGlobalData ( CF_HDROP ) != NULL )
-            dwEffect = DROPEFFECT_COPY;
+		// Look for CF_HDROP data in the data object, and accept the drop if
+		// it's there.
+		if ( pDataObject->GetGlobalData ( CF_HDROP ) != NULL )
+			dwEffect = DROPEFFECT_COPY;
 	}
 
     // Call the DnD helper.
@@ -152,6 +157,9 @@ DROPEFFECT CmusikPlaylistDropTarget::OnDragOver ( CWnd* pWnd, COleDataObject* pD
     // Check for our own custom clipboard format in the data object.  If it's
     // present, then the DnD was initiated from our own window, and we want to
 	// rearrange items. Set the flag in the playlist control.
+	if ( pDataObject->GetGlobalData( m_uSelectionID_L ) || pDataObject->GetGlobalData( m_uSelectionID_R ) )
+		return DROPEFFECT_NONE;
+
     if ( pDataObject->GetGlobalData ( m_uSourceID ) != NULL )
 		m_pList->m_DropArrange = true;
 	else
