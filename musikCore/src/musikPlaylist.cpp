@@ -240,6 +240,9 @@ CmusikPlaylist::CmusikPlaylist()
 {
 	m_ID = -1;
 	m_Type = MUSIK_PLAYLIST_TYPE_UNKNOWN;
+
+	m_TotalTime = 0;
+	m_TotalSize = 0.0;
 }
 
 ///////////////////////////////////////////////////

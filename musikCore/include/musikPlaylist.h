@@ -138,6 +138,16 @@ public:
 	int m_ID;
 	int m_Type;
 	CmusikSongArray m_Songs;
+
+	size_t GetTotalTime() { return m_TotalTime; }
+	double GetTotalSize() { return m_TotalSize; }
+	void SetTotalTime( size_t tot ) { m_TotalTime = tot; }
+	void SetTotalSize( double tot ) { m_TotalSize = tot; }
+
+protected:
+	size_t m_TotalTime;
+	double m_TotalSize;
+	
 };
 
 ///////////////////////////////////////////////////

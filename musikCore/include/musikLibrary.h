@@ -237,6 +237,8 @@ public:
 	int  GetStdPlaylist				( int id, CmusikPlaylist& target, bool clear_target = true );
 	bool GetStdPlaylistFns			( int id, CmusikStringArray& target, bool clear_target = true );
 	bool GetStdPlaylistFns			( CmusikPlaylist& playlist, CmusikStringArray& target, bool clear_target = true );
+	
+	// deprecated
 	void GetPlaylistInfoTotals		( int id, size_t& TotalTime, double& TotalSize );
 	
 	// dynamic playlist
