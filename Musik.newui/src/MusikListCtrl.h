@@ -31,6 +31,7 @@ public:
 	CMusikListCtrl( wxWindow *parent, wxWindowID id, long flags = 0 );
 	~CMusikListCtrl();
 
+protected:
 	//---------------------------------------------------------//
 	//--- this class will remain strictly virtual. here		---//
 	//--- are the classes that every inherited class can	---//

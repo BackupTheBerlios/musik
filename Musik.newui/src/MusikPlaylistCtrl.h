@@ -82,6 +82,10 @@ public:
 	CMusikPlaylistCtrl( wxWindow* parent, wxWindowID id );
 	~CMusikPlaylistCtrl();
 
+protected:
+
+private:
+
 };
 
 #endif

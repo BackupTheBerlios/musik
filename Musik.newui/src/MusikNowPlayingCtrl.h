@@ -22,6 +22,7 @@ public:
 	void ResetInfo();
 
 	DECLARE_EVENT_TABLE()
+
 private:
 
 	//---------------------------------//

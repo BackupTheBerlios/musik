@@ -9,6 +9,7 @@ public:
 	CMusikDragGaugeCtrl( wxWindow* parent, wxWindowID id, wxSize size, long type );
 	~CMusikDragGaugeCtrl();
 
+protected:
 	void OnLeftUp			( wxMouseEvent& event );
 	void OnLeftDown			( wxMouseEvent& event );
 	void OnMotion			( wxMouseEvent& event );
@@ -24,6 +25,7 @@ public:
 	virtual void OnMotionV	(){}
 
 	DECLARE_EVENT_TABLE()
+
 private:
 
 	void SetPosFromMouse();

@@ -10,6 +10,7 @@ public:
 	CMusikSeekCtrl( wxWindow* parent, wxWindowID id );
 	~CMusikSeekCtrl();
 
+protected:
 	virtual void OnLeftUpV();
 	virtual void OnMotionV();
 
