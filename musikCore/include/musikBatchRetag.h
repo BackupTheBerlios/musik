@@ -62,6 +62,7 @@ public:
 		m_UpdatedTags = NULL;
 		m_CallFunctorOnAbort = false;
 		m_DeleteUpdatedTags = true;
+		m_WriteToFile = false;
 	}
 
 	CmusikBatchRetag( CmusikLibrary* pLibrary, CmusikFunctor* pFunctor, CmusikSongInfoArray* pUpdatedTags )
@@ -71,6 +72,7 @@ public:
 		m_UpdatedTags = pUpdatedTags;
 		m_CallFunctorOnAbort = false;
 		m_DeleteUpdatedTags = true;
+		m_WriteToFile = false;
 	}
 
 	~CmusikBatchRetag()
@@ -84,6 +86,7 @@ public:
 	CmusikSongInfoArray* m_UpdatedTags;
 	bool m_CallFunctorOnAbort;
 	bool m_DeleteUpdatedTags;
+	bool m_WriteToFile;
 };
 
 ///////////////////////////////////////////////////
@@ -121,15 +124,25 @@ static void musikBatchRetagWorker( CmusikThread* thread )
 			break;
 		}
 
-		bool success = false;
-		params->m_Library->GetSongFormatFromID( params->m_UpdatedTags->at( i ).GetID(), &nFormat );
-		if ( nFormat == MUSIK_LIBRARY_FORMAT_MP3 )
-			success = CmusikMp3Info::WriteInfo( params->m_UpdatedTags->at( i ) );
-		else if ( nFormat == MUSIK_LIBRARY_FORMAT_OGG )
-			success = CmusikOggInfo::WriteInfo( params->m_UpdatedTags->at( i ) );
+		bool success = false;	
+		if ( params->m_WriteToFile )
+		{
+			params->m_Library->GetSongFormatFromID( params->m_UpdatedTags->at( i ).GetID(), &nFormat );
+			if ( nFormat == MUSIK_LIBRARY_FORMAT_MP3 )
+				success = CmusikMp3Info::WriteInfo( params->m_UpdatedTags->at( i ) );
+			else if ( nFormat == MUSIK_LIBRARY_FORMAT_OGG )
+				success = CmusikOggInfo::WriteInfo( params->m_UpdatedTags->at( i ) );
+		}
+		else
+			success = true;
 
 		if ( success )
+		{
+			if ( !params->m_WriteToFile )
+				params->m_UpdatedTags->at( i ).SetDirtyFlag( "1" );
+
 			params->m_Library->SetSongInfo( &params->m_UpdatedTags->at( i ) );
+		}
 
 		// post progress to the functor
 		curr_prog = ( 100 * i ) / params->m_UpdatedTags->size();
