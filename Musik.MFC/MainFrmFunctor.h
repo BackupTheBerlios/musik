@@ -28,7 +28,7 @@ public:
 
 	virtual void Call()
 	{
-
+		
 	};
 
 private:

@@ -44,6 +44,11 @@ enum
 class CMusikLibrary;
 class CMusikPlaylist;
 class CMusikFunctor;
+class CMusikPlayer;
+
+///////////////////////////////////////////////////
+
+static void PlayerWorker( CMusikPlayer* player );
 
 ///////////////////////////////////////////////////
 
@@ -64,8 +69,9 @@ public:
 	bool Pause();
 	bool Resume();
 
-	bool IsPlaying();
-	bool IsPaused();
+	bool IsPlaying()		{ return m_IsPlaying; }
+	bool IsPaused()			{ return m_IsPaused; }
+	bool IsShuttingDown()	{ return m_ShutDown; }
 
 private:
 	// start and stop sound. InitSound() will
@@ -76,6 +82,7 @@ private:
 	// status flags
 	bool m_IsPlaying;
 	bool m_IsPaused;
+	bool m_ShutDown;
 
 	// a pointer to a functor that will be
 	// used to post a next song event
@@ -86,13 +93,12 @@ private:
 	CIntArray* m_ActiveChannels;
 
 	// main thread and mutex
+	void InitThread();
+	void CleanThread();
+	
 	ACE_Thread_Mutex* m_Mutex;
 	ACE_thread_t* m_ThreadID;
 	ACE_hthread_t* m_ThreadHND;
-
-	void InitThread();
-	void CleanThread();
-	static void PlayerThread();
 
 	// pointer to library and playlist
 	CMusikLibrary* m_Library;

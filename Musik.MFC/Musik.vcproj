@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="sqlite.lib fmodvc.lib ../Musik.Core/bin/MusikCoreD.lib"
+				AdditionalDependencies="sqlite.lib fmodvc.lib acesd.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
@@ -91,7 +91,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="../Musik.Core/bin/MusikCore.lib sqlite.lib fmodvc.lib"
+				AdditionalDependencies="sqlite.lib fmodvc.lib aces.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="FALSE"
 				SubSystem="2"
@@ -340,10 +340,19 @@
 				RelativePath="..\Musik.Core\include\MusikFunctor.h">
 			</File>
 			<File
+				RelativePath="..\Musik.Core\src\MusikLibrary.cpp">
+			</File>
+			<File
 				RelativePath="..\Musik.Core\include\MusikLibrary.h">
 			</File>
 			<File
+				RelativePath="..\Musik.Core\src\MusikPlayer.cpp">
+			</File>
+			<File
 				RelativePath="..\Musik.Core\include\MusikPlayer.h">
+			</File>
+			<File
+				RelativePath="..\Musik.Core\src\MusikPlaylist.cpp">
 			</File>
 			<File
 				RelativePath="..\Musik.Core\include\MusikPlaylist.h">

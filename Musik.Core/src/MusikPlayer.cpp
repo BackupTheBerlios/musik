@@ -8,13 +8,37 @@
 
 ///////////////////////////////////////////////////
 
+static void PlayerWorker( CMusikPlayer* player )
+{
+	TRACE0( "Player thread initialized\n" );
+
+	ACE_Time_Value sleep;
+	sleep.set( 0.5 );
+
+	while ( !player->IsShuttingDown() )
+	{
+		if ( player->IsPlaying() && !player->IsPaused() )
+		{
+
+		}
+
+		ACE_OS::sleep( sleep );
+	}
+
+	TRACE0( "Player thread terminated\n" );	
+}
+
+///////////////////////////////////////////////////
+
 CMusikPlayer::CMusikPlayer( CMusikFunctor* functor )
 {
 	m_IsPlaying = false;
 	m_IsPaused	= false;
+	m_ShutDown = false;
+
 	m_Functor	= functor;
 
-	m_ActiveStreams = NULL;
+	m_ActiveStreams = NULL;	
 	m_ActiveChannels = NULL;
 	m_Mutex = NULL;
 	m_ThreadID = NULL;
@@ -39,25 +63,20 @@ void CMusikPlayer::InitThread()
 	m_ThreadID = new ACE_thread_t();
 	m_ThreadHND = new ACE_hthread_t();
 
-	ACE_Thread::spawn( (ACE_THR_FUNC)CMusikPlayer::PlayerThread,
-		NULL,
-		THR_JOINABLE,
+	ACE_Thread::spawn( (ACE_THR_FUNC)PlayerWorker,
+		this,
+		THR_JOINABLE | THR_NEW_LWP,
 		m_ThreadID,
 		m_ThreadHND );
-}
 
-///////////////////////////////////////////////////
-
-void CMusikPlayer::PlayerThread()
-{
-	MessageBox( NULL, "AHAHAHA", NULL, NULL );
+	ACE_Thread::join( m_ThreadHND );
 }
 
 ///////////////////////////////////////////////////
 
 void CMusikPlayer::CleanThread()
 {
-	if ( m_Mutex ) delete m_Mutex;
+	if ( m_Mutex ) 	delete m_Mutex;
 	if ( m_ThreadID ) delete m_ThreadID;	
 	if ( m_ThreadHND ) delete m_ThreadHND;
 }
