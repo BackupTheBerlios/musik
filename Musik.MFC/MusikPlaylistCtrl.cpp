@@ -226,7 +226,7 @@ void CMusikPlaylistCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 void CMusikPlaylistCtrl::InitFonts()
 {
 	m_Items.CreateStockObject( DEFAULT_GUI_FONT );
-	m_Bullets.CreatePointFont( 100, "Marlett" );
+	m_Bullets.CreatePointFont( 100, "Wingdings" );
 }
 
 ///////////////////////////////////////////////////
@@ -293,23 +293,23 @@ CString CMusikPlaylistCtrl::GetRating( int item )
 	switch ( nRating )
 	{
 	case 1:
-		sRating = _T( "hiiii" );
+		sRating = _T( "«¶¶¶¶" );
 		break;
 	case 2:
-		sRating = _T( "hhiii" );
+		sRating = _T( "««¶¶¶" );
 		break;
 	case 3:
-		sRating = _T( "hhhii" );
+		sRating = _T( "«««¶¶" );
 		break;
 	case 4:
-		sRating = _T( "hhhhi" );
+		sRating = _T( "««««¶" );
 		break;
 	case 5:
-        sRating = _T( "hhhhh" );
+        sRating = _T( "«««««" );
 		break;
 	case 0:
 	default:
-		sRating = _T( "iiiii" );
+		sRating = _T( "¶¶¶¶¶" );
 		break;
 	}
 
@@ -336,7 +336,7 @@ void CMusikPlaylistCtrl::OnNMClick(NMHDR *pNMHDR, LRESULT *pResult)
 			GetSubItemRect( hit_test.iItem, hit_test.iSubItem, LVIR_BOUNDS, sub_item_rect );
 
 			int nRating = ( ( ptCurr.x * 100 ) / ( m_Prefs->GetPlaylistColWidth( hit_test.iSubItem ) ) ) / 20;
-            m_Library->SetSongRating( m_Playlist->items()->at( hit_test.iItem ).GetID(), nRating + 1 );	
+            m_Library->SetSongRating( m_Playlist->items()->at( hit_test.iItem ).GetID(), nRating );	
 
 			if ( m_SongInfoCache->ResyncItem( m_Playlist->items()->at( hit_test.iItem ).GetID() ) )
 				RedrawItems( hit_test.iItem, hit_test.iItem );
