@@ -35,8 +35,10 @@ public:
 	//--- playlist										---//
 	//-----------------------------------------------------//
 	CIntArray	GetPlaylistOrder()				{ return m_Playlist_Order; }
+	CIntArray	GetPlaylistSizes()				{ return m_Playlist_Sizes; }
 	
-	void		SetPlaylistOrder( CIntArray n )	{ m_Playlist_Order = n; }				
+	void		SetPlaylistOrder( CIntArray n )	{ m_Playlist_Order = n; }	
+	void		SetPlaylistSizes( CIntArray n )	{ m_Playlist_Sizes = n; }
 	
 	//-----------------------------------------------------//
 	//--- sources										---//

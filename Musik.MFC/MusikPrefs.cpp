@@ -153,6 +153,7 @@ void CMusikPrefs::LoadPrefs()
 	//--- playlist										---//
 	//-----------------------------------------------------//
 	m_Playlist_Order = StringToCIntArray( config->GetValue( "Playlist", "Column Order", GetDefPlaylistOrder() ) );
+	m_Playlist_Sizes = StringToCIntArray( config->GetValue( "Playlist", "Column Sizes", GetDefPlaylistSizes() ) );
 
 	//-----------------------------------------------------//
 	//--- sources										---//
@@ -181,6 +182,7 @@ void CMusikPrefs::SavePrefs()
 	//--- playlist										---//
 	//-----------------------------------------------------//
 	config->SetValue( "Playlist", "Column Order", CIntArrayToString( m_Playlist_Order ) );
+	config->SetValue( "Playlist", "Column Sizes", CIntArrayToString( m_Playlist_Sizes ) );
 
 	//-----------------------------------------------------//
 	//--- sources										---//
@@ -205,6 +207,15 @@ string CMusikPrefs::GetDefPlaylistOrder()
 		MUSIK_LIBRARY_TYPE_ALBUM,
 		MUSIK_LIBRARY_TYPE_GENRE,
 		MUSIK_LIBRARY_TYPE_DURATION );
+	
+	string sRet = CRet.GetBuffer();
+	return sRet;
+}
+
+string CMusikPrefs::GetDefPlaylistSizes()
+{
+	CString CRet;
+	CRet.Format( _T( "100,100,100,100,100,100,100" ) );
 	
 	string sRet = CRet.GetBuffer();
 	return sRet;
