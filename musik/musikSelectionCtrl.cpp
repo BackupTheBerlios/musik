@@ -372,7 +372,7 @@ void CmusikSelectionCtrl::UpdateV( bool update_count )
 {
 	int nPos = GetScrollPos( SB_VERT );
 
-	CStdString top;
+	CmusikString top;
 	if ( !update_count )
 		top = m_Items.at( 0 );
 
@@ -406,9 +406,9 @@ void CmusikSelectionCtrl::UpdateV( bool update_count )
 
 ///////////////////////////////////////////////////
 
-void CmusikSelectionCtrl::UpdateV( CStdString query, bool update_count )
+void CmusikSelectionCtrl::UpdateV( CmusikString query, bool update_count )
 {
-	CStdString top;
+	CmusikString top;
 	if ( !update_count )
 	{
 		if ( m_Items.size() )
@@ -474,7 +474,7 @@ void CmusikSelectionCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 
 					case MUSIK_LIBRARY_TYPE_RATING:
 						{
-							const CStdString& rating = m_Items.at( pItem->iItem );
+							const CmusikString& rating = m_Items.at( pItem->iItem );
 
 							if ( rating == _T( "0" ) )
 								pStr = _T( "Unrated" );
@@ -570,7 +570,7 @@ void CmusikSelectionCtrl::OnLvnItemchanged(NMHDR *pNMHDR, LRESULT *pResult)
 
 CString CmusikSelectionCtrl::GetTypeDB()
 {
-	CStdString ret = m_Library->GetSongFieldDB( m_Type );
+	CmusikString ret = m_Library->GetSongFieldDB( m_Type );
 	CString sRet = (CString)ret.c_str();
 	return sRet;
 }
@@ -584,7 +584,7 @@ CString CmusikSelectionCtrl::GetTypeStr()
 
 ///////////////////////////////////////////////////
 
-void CmusikSelectionCtrl::GetSelItems( CStdStringArray& items, bool format_query )
+void CmusikSelectionCtrl::GetSelItems( CmusikStringArray& items, bool format_query )
 {
 	items.clear();
 	
@@ -628,12 +628,12 @@ void CmusikSelectionCtrl::GetSelItems( CStdStringArray& items, bool format_query
 
 ///////////////////////////////////////////////////
 
-CStdString CmusikSelectionCtrl::GetSelQuery( CStdString other_sel_query )
+CmusikString CmusikSelectionCtrl::GetSelQuery( CmusikString other_sel_query )
 {
-	CStdStringArray selected_items;
+	CmusikStringArray selected_items;
 	GetSelItems( selected_items );
 
-	CStdString sQuery;
+	CmusikString sQuery;
 	sQuery += GetTypeDB();
 	sQuery += _T( " like " );
 	for ( size_t i = 0; i < selected_items.size(); i++ )
@@ -803,8 +803,8 @@ void CmusikSelectionCtrl::OnMouseMove(UINT nFlags, CPoint point)
 
 		// get a list of filenames with the currently
 		// selected items...
-		CStdStringArray files;
-		CStdStringArray sel;
+		CmusikStringArray files;
+		CmusikStringArray sel;
 		GetSelItems( sel );
 		m_Library->GetRelatedItems( GetType(), sel, MUSIK_LIBRARY_TYPE_FILENAME, files );
 
@@ -966,7 +966,7 @@ void CmusikSelectionCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 void CmusikSelectionCtrl::RenameSel()
 {
-	CStdStringArray items;
+	CmusikStringArray items;
 	GetSelItems( items );
 
 	// make sure somethign is selected
@@ -1059,7 +1059,7 @@ LRESULT CmusikSelectionCtrl::OnEditCommit( WPARAM wParam, LPARAM lParam )
 
 ///////////////////////////////////////////////////
 
-CStdString CmusikSelectionCtrl::GetEditCommitStr()
+CmusikString CmusikSelectionCtrl::GetEditCommitStr()
 {
 	return m_CommitStr;
 }

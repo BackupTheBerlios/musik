@@ -21,7 +21,7 @@
 //
 ///////////////////////////////////////////////////
 //
-// Class(s): 
+// Class(es): 
 //
 //   CmusikLibrary
 //
@@ -87,8 +87,8 @@ static int sqlite_AddSongToPlaylist(void *args, int numCols, char **results, cha
 
 static int sqlite_GetFieldFromID( void *args, int numCols, char **results, char ** columnNames )
 {
-	CStdString* p = (CStdString*)args;
-	*p = CStdString( results[0] ); 
+	CmusikString* p = (CmusikString*)args;
+	*p = CmusikString( results[0] ); 
 
     return 0;
 }
@@ -192,7 +192,7 @@ static int sqlite_GetSongInfoFromID( void *args, int numCols, char **results, ch
 
 static int sqlite_AddSongToStringArray( void *args, int numCols, char **results, char ** columnNames )
 {
-	CStdStringArray* p = (CStdStringArray*)args;
+	CmusikStringArray* p = (CmusikStringArray*)args;
 	p->push_back( results[0] ); 
 
     return 0;
@@ -212,7 +212,7 @@ static int sqlite_GetIntFromRow( void *args, int numCols, char **results, char *
 
 static int sqlite_AddRowToStringArray( void *args, int numCols, char **results, char ** columnNames )
 {
-	CStdStringArray* p = (CStdStringArray*)args;
+	CmusikStringArray* p = (CmusikStringArray*)args;
 	p->push_back( results[0] ); 
 
     return 0;
@@ -264,7 +264,7 @@ static int sqlite_GetEqualizerIDFromID( void *args, int numCols, char **results,
 
 ///////////////////////////////////////////////////
 
-CmusikLibrary::CmusikLibrary( const CStdString& filename )
+CmusikLibrary::CmusikLibrary( const CmusikString& filename )
 {
 	m_pDB = NULL;
 	m_Transactions = NULL;
@@ -339,7 +339,7 @@ void CmusikLibrary::InitFields()
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetSongFieldID( CStdString field )
+int CmusikLibrary::GetSongFieldID( CmusikString field )
 {
 	for ( size_t i = 0; i < m_Fields.size(); i++ )
 	{
@@ -351,7 +351,7 @@ int CmusikLibrary::GetSongFieldID( CStdString field )
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetSongFieldDBID( CStdString field )
+int CmusikLibrary::GetSongFieldDBID( CmusikString field )
 {
 	for ( size_t i = 0; i < m_FieldsDB.size(); i++ )
 	{
@@ -869,7 +869,7 @@ int CmusikLibrary::DeleteCrossfader( int id )
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::CreateStdPlaylist( const CStdString& name, const CStdStringArray& songids )
+int CmusikLibrary::CreateStdPlaylist( const CmusikString& name, const CmusikStringArray& songids )
 {
 	if ( !m_DatabaseOpen )
 		return -1;
@@ -936,7 +936,7 @@ int CmusikLibrary::CreateStdPlaylist( const CStdString& name, const CStdStringAr
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::AppendStdPlaylist( int id, const CStdStringArray& files )
+int CmusikLibrary::AppendStdPlaylist( int id, const CmusikStringArray& files )
 {
 	if ( !m_DatabaseOpen ) 
 		return -1;
@@ -977,7 +977,7 @@ int CmusikLibrary::AppendStdPlaylist( int id, const CStdStringArray& files )
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::RewriteDynPlaylist( int id, const CStdStringArray& query )
+int CmusikLibrary::RewriteDynPlaylist( int id, const CmusikStringArray& query )
 {
 	if ( !m_DatabaseOpen )
 		return -1;
@@ -1078,7 +1078,7 @@ int CmusikLibrary::RewriteStdPlaylist( int id, CmusikPlaylist* playlist )
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::RenameStdPlaylist( int id, const CStdString& str )
+int CmusikLibrary::RenameStdPlaylist( int id, const CmusikString& str )
 {
 	if ( !m_DatabaseOpen )
 		return -1;
@@ -1127,7 +1127,7 @@ int CmusikLibrary::GetStdPlaylist( int id, CmusikPlaylist& target, bool clear_ta
 
 ///////////////////////////////////////////////////
 
-bool CmusikLibrary::GetStdPlaylistFns( int id, CStdStringArray& target, bool clear_target )
+bool CmusikLibrary::GetStdPlaylistFns( int id, CmusikStringArray& target, bool clear_target )
 {
 	CmusikPlaylist ids;
 	GetStdPlaylist( id, ids, false );
@@ -1151,7 +1151,7 @@ bool CmusikLibrary::GetStdPlaylistFns( int id, CStdStringArray& target, bool cle
 
 ///////////////////////////////////////////////////
 
-bool CmusikLibrary::GetStdPlaylistFns( CmusikPlaylist& playlist, CStdStringArray& target, bool clear_target )
+bool CmusikLibrary::GetStdPlaylistFns( CmusikPlaylist& playlist, CmusikStringArray& target, bool clear_target )
 {
 	if ( !playlist.GetCount() )
 		return false;
@@ -1172,7 +1172,7 @@ bool CmusikLibrary::GetStdPlaylistFns( CmusikPlaylist& playlist, CStdStringArray
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::CreateDynPlaylist( const CStdString& name, const CStdStringArray& query )
+int CmusikLibrary::CreateDynPlaylist( const CmusikString& name, const CmusikStringArray& query )
 {
 	if ( !m_DatabaseOpen )
 		return -1;
@@ -1244,7 +1244,7 @@ int CmusikLibrary::CreateDynPlaylist( const CStdString& name, const CStdStringAr
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::DeleteStdPlaylist( const CStdString& name )
+int CmusikLibrary::DeleteStdPlaylist( const CmusikString& name )
 {
 	if ( !m_DatabaseOpen )
 		return -1;
@@ -1336,7 +1336,7 @@ int CmusikLibrary::DeleteStdPlaylist( int id )
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::DeleteDynPlaylist( const CStdString& name )
+int CmusikLibrary::DeleteDynPlaylist( const CmusikString& name )
 {
 	if ( !m_DatabaseOpen )
 		return -1;
@@ -1377,9 +1377,9 @@ int CmusikLibrary::DeleteDynPlaylist( int id )
 
 ///////////////////////////////////////////////////
 
-CStdString CmusikLibrary::GetOrder( int type, bool terminate )
+CmusikString CmusikLibrary::GetOrder( int type, bool terminate )
 {
-	CStdString sTerminate = "";
+	CmusikString sTerminate = "";
 	if ( terminate )
 		sTerminate = ";";
 
@@ -1478,7 +1478,7 @@ int CmusikLibrary::QueryCount( const char* pQueryResult )
 
 ///////////////////////////////////////////////////
 
-void CmusikLibrary::VerifyYearList( CStdStringArray & list )
+void CmusikLibrary::VerifyYearList( CmusikStringArray & list )
 {
 	size_t count = list.size();
 
@@ -1501,7 +1501,7 @@ int CmusikLibrary::GetAllSongs( CmusikPlaylist& target )
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::QuickQuery( CStdString str, CmusikPlaylist& target )
+int CmusikLibrary::QuickQuery( CmusikString str, CmusikPlaylist& target )
 {
 	if ( !m_DatabaseOpen )
 		return -1;
@@ -1527,7 +1527,7 @@ int CmusikLibrary::QuickQuery( CStdString str, CmusikPlaylist& target )
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::QuerySongs( const CStdString& query, CmusikPlaylist& target )
+int CmusikLibrary::QuerySongs( const CmusikString& query, CmusikPlaylist& target )
 {
 	if ( !m_DatabaseOpen )
 		return -1;
@@ -1549,7 +1549,7 @@ int CmusikLibrary::QuerySongs( const CStdString& query, CmusikPlaylist& target )
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetRelatedItems( int source_type, const CStdStringArray& source_items, int target_type, CStdStringArray& target )
+int CmusikLibrary::GetRelatedItems( int source_type, const CmusikStringArray& source_items, int target_type, CmusikStringArray& target )
 {
 	if ( !m_DatabaseOpen )
 		return -1;
@@ -1559,17 +1559,17 @@ int CmusikLibrary::GetRelatedItems( int source_type, const CStdStringArray& sour
 	if ( source_type == -1 || target_type == -1 )
 		return -1;
 
-	const CStdString sInType = GetSongFieldDB( source_type );
-	const CStdString sOutType = GetSongFieldDB( target_type );
+	const CmusikString sInType = GetSongFieldDB( source_type );
+	const CmusikString sOutType = GetSongFieldDB( target_type );
 
 	// construct the query
-	CStdString query;
+	CmusikString query;
 	query.Format( "SELECT DISTINCT %s, UPPER( %s ) AS UP FROM %s where ", 
 		sOutType.c_str(), 
 		sOutType.c_str(), 
 		SONG_TABLE_NAME );
 
-	CStdString sCurrentItem;
+	CmusikString sCurrentItem;
 	for ( size_t i = 0; i < source_items.size(); i++ )
 	{
 		sCurrentItem = source_items.at( i );
@@ -1600,11 +1600,11 @@ int CmusikLibrary::GetRelatedItems( int source_type, const CStdStringArray& sour
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetRelatedItems( CStdString sub_query, int dst_type, CStdStringArray& target )
+int CmusikLibrary::GetRelatedItems( CmusikString sub_query, int dst_type, CmusikStringArray& target )
 {
 	target.clear();
 
-	CStdString sOutType = GetSongFieldDB( dst_type );
+	CmusikString sOutType = GetSongFieldDB( dst_type );
 
 	// do it
 	int nRet;
@@ -1629,7 +1629,7 @@ int CmusikLibrary::GetRelatedItems( CStdString sub_query, int dst_type, CStdStri
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetRelatedSongs( CStdString sub_query, int source_type, CmusikPlaylist& target )
+int CmusikLibrary::GetRelatedSongs( CmusikString sub_query, int source_type, CmusikPlaylist& target )
 {
 	if ( !m_DatabaseOpen )
 		return -1;
@@ -1652,7 +1652,7 @@ int CmusikLibrary::GetRelatedSongs( CStdString sub_query, int source_type, Cmusi
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetAllDistinct( int source_type, CStdStringArray& target, bool clear_target )
+int CmusikLibrary::GetAllDistinct( int source_type, CmusikStringArray& target, bool clear_target )
 {
 	if ( !m_DatabaseOpen )
 		return -1;
@@ -1660,7 +1660,7 @@ int CmusikLibrary::GetAllDistinct( int source_type, CStdStringArray& target, boo
 	if ( clear_target )
 		target.clear();
 
-	CStdString sField = GetSongFieldDB( source_type );
+	CmusikString sField = GetSongFieldDB( source_type );
 
 	// do it
 	int nRet;
@@ -1694,12 +1694,12 @@ int CmusikLibrary::GetSongCount()
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetFieldFromID( int id, int field, CStdString& string )
+int CmusikLibrary::GetFieldFromID( int id, int field, CmusikString& string )
 {
 	if ( !m_DatabaseOpen )
 		return -1;
 
-	CStdString type = GetSongFieldDB( field );
+	CmusikString type = GetSongFieldDB( field );
 
 	// do it
 	int nRet;
@@ -1878,7 +1878,7 @@ int CmusikLibrary::GetAllDynPlaylists( CmusikPlaylistInfoArray* target, bool cle
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetAllCrossfaders( CStdStringArray* target, bool clear_target )
+int CmusikLibrary::GetAllCrossfaders( CmusikStringArray* target, bool clear_target )
 {
 	if ( !m_DatabaseOpen )
 		return -1;
@@ -1941,7 +1941,7 @@ int CmusikLibrary::GetCrossfader( int id, CmusikCrossfader* fader )
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetIDFromFilename( CStdString fn )
+int CmusikLibrary::GetIDFromFilename( CmusikString fn )
 {
 	if ( !m_DatabaseOpen )
 		return -1;
@@ -1962,7 +1962,7 @@ int CmusikLibrary::GetIDFromFilename( CStdString fn )
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetSongFromFilename( CStdString fn, CmusikSong& song )
+int CmusikLibrary::GetSongFromFilename( CmusikString fn, CmusikSong& song )
 {
 	int nRet = GetIDFromFilename( fn );
 	song.SetID( nRet );
@@ -1972,7 +1972,7 @@ int CmusikLibrary::GetSongFromFilename( CStdString fn, CmusikSong& song )
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetFilesize( const CStdString& fn )
+int CmusikLibrary::GetFilesize( const CmusikString& fn )
 {
 	FILE* pFile = fopen( fn.c_str(), "rb" );
 	if ( pFile )
@@ -2008,7 +2008,7 @@ bool CmusikLibrary::RemoveSong( int songid )
 
 ///////////////////////////////////////////////////
 
-bool CmusikLibrary::RemoveSong( const CStdString& fn )
+bool CmusikLibrary::RemoveSong( const CmusikString& fn )
 {
 	if ( !m_DatabaseOpen )
 		return false;
@@ -2029,14 +2029,14 @@ bool CmusikLibrary::RemoveSong( const CStdString& fn )
 
 ///////////////////////////////////////////////////
 
-bool CmusikLibrary::AddSong( const CStdString& fn )
+bool CmusikLibrary::AddSong( const CmusikString& fn )
 {
 	bool result = true;
 
 	if ( !IsSongInLibrary( fn ) )
 	{
 		CmusikFilename MFN( fn );
-		CStdString sExt = MFN.GetExtension();
+		CmusikString sExt = MFN.GetExtension();
 
 		if ( sExt == "mp3" )
 			result = AddMP3( fn );
@@ -2049,7 +2049,7 @@ bool CmusikLibrary::AddSong( const CStdString& fn )
 
 ///////////////////////////////////////////////////
 
-bool CmusikLibrary::AddOGG( const CStdString& fn )
+bool CmusikLibrary::AddOGG( const CmusikString& fn )
 {
 	if ( !m_DatabaseOpen )
 		return false;
@@ -2093,7 +2093,7 @@ bool CmusikLibrary::AddOGG( const CStdString& fn )
 
 ///////////////////////////////////////////////////
 
-bool CmusikLibrary::AddMP3( const CStdString& fn )
+bool CmusikLibrary::AddMP3( const CmusikString& fn )
 {
 	if ( !m_DatabaseOpen )
 		return false;
@@ -2137,7 +2137,7 @@ bool CmusikLibrary::AddMP3( const CStdString& fn )
 
 ///////////////////////////////////////////////////
 
-bool CmusikLibrary::IsSongInLibrary( CStdString fn )
+bool CmusikLibrary::IsSongInLibrary( CmusikString fn )
 {
 	if ( !m_DatabaseOpen )
 		return false;
@@ -2201,7 +2201,7 @@ int CmusikLibrary::GetEqualizerIDFromSongID( int id )
 ///////////////////////////////////////////////////
 
 
-int CmusikLibrary::GetEqualizerFromName( const CStdString& name )
+int CmusikLibrary::GetEqualizerFromName( const CmusikString& name )
 {
 	if ( !m_DatabaseOpen )
 		return -1;
@@ -2222,7 +2222,7 @@ int CmusikLibrary::GetEqualizerFromName( const CStdString& name )
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::CreateEqualizer( CmusikEQSettings& eq, const CStdString& name, bool is_preset )
+int CmusikLibrary::CreateEqualizer( CmusikEQSettings& eq, const CmusikString& name, bool is_preset )
 {
 	if ( !m_DatabaseOpen )
 		return -1;
@@ -2483,7 +2483,7 @@ int CmusikLibrary::GetEqualizer( int eq_id, CmusikEQSettings* target )
 // ever notice unless they have something
 // like 10,000 equalizer presets on a 486 
 
-int  CmusikLibrary::GetAllEqualizerPresets( CStdStringArray* target, CIntArray* target_ids, bool clear_targets )
+int  CmusikLibrary::GetAllEqualizerPresets( CmusikStringArray* target, CIntArray* target_ids, bool clear_targets )
 {
 	if ( !m_DatabaseOpen )
 		return -1;
@@ -2540,7 +2540,7 @@ int CmusikLibrary::GetSongFormatFromID( int id, int* target )
 
 ///////////////////////////////////////////////////
 
-void CmusikLibrary::GetInfoArrayFromPlaylist(  CmusikPlaylist* playlist, CmusikSongInfoArray* info, int replace_field_type, CStdString new_field, bool clear )
+void CmusikLibrary::GetInfoArrayFromPlaylist(  CmusikPlaylist* playlist, CmusikSongInfoArray* info, int replace_field_type, CmusikString new_field, bool clear )
 {
 	if ( !m_DatabaseOpen )
 		return;
@@ -2593,7 +2593,7 @@ int CmusikLibrary::FinalizeDirtySongs()
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::AddPath( const CStdString& path )
+int CmusikLibrary::AddPath( const CmusikString& path )
 {
 	if ( !m_DatabaseOpen )
 		return -1;
@@ -2612,7 +2612,7 @@ int CmusikLibrary::AddPath( const CStdString& path )
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::RemovePath( const CStdString& path )
+int CmusikLibrary::RemovePath( const CmusikString& path )
 {
 	if ( !m_DatabaseOpen )
 		return -1;
@@ -2631,7 +2631,7 @@ int CmusikLibrary::RemovePath( const CStdString& path )
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetAllPaths( CStdStringArray* target, bool clear_target )
+int CmusikLibrary::GetAllPaths( CmusikStringArray* target, bool clear_target )
 {
 	if ( !m_DatabaseOpen )
 		return -1;

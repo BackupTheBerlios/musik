@@ -21,7 +21,7 @@
 //
 ///////////////////////////////////////////////////
 //
-// Class(s): 
+// Class(es): 
 //
 //   CmusikFilename
 //
@@ -41,7 +41,7 @@
 
 ///////////////////////////////////////////////////
 
-#include "StdString.h"
+#include "musikConfig.h"
 
 ///////////////////////////////////////////////////
 
@@ -59,26 +59,26 @@ public:
 
 	// construct and destruct
 	CmusikFilename();
-	CmusikFilename( const CStdString& fn );
+	CmusikFilename( const CmusikString& fn );
 	~CmusikFilename();
 
 	// gets
-	CStdString GetPathSeparator();
-	CStdString GetJustFilename();
-	CStdString GetPath();
-	CStdString GetFullFilename();
-	CStdString GetExtension( bool make_lower = true );
+	CmusikString GetPathSeparator();
+	CmusikString GetJustFilename();
+	CmusikString GetPath();
+	CmusikString GetFullFilename();
+	CmusikString GetExtension( bool make_lower = true );
 
 	// sets
-	void SetFilename( const CStdString& fn );
+	void SetFilename( const CmusikString& fn );
 
 	// misc
-	static bool FileExists( const CStdString& fn );
-	static CStdString GetTempFilename( CStdString fn, bool check_exists );
+	static bool FileExists( const CmusikString& fn );
+	static CmusikString GetTempFilename( CmusikString fn, bool check_exists );
 
 private:
 
-	CStdString m_Filename;
+	CmusikString m_Filename;
 };
 
 ///////////////////////////////////////////////////

@@ -21,7 +21,7 @@
 //
 ///////////////////////////////////////////////////
 //
-// Class(s): 
+// Class(es): 
 //
 //   CmusikEqualizer
 //
@@ -172,7 +172,7 @@ void CmusikEqualizer::SaveCurr()
 
 			if ( m_EQ_Values.m_ID == -1 )
 			{
-				CStdString fn;
+				CmusikString fn;
 				m_Library->GetFieldFromID( m_SongID, MUSIK_LIBRARY_TYPE_FILENAME, fn );
 				m_Library->CreateEqualizer( m_EQ_Values, fn );
 				

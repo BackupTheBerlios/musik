@@ -21,7 +21,7 @@
 //
 ///////////////////////////////////////////////////
 //
-// Class(s): 
+// Class(es): 
 //
 //   CmusikEQSettings 
 //
@@ -113,7 +113,7 @@ public:
 	float m_Left[MUSIK_EQ_SETTINGS_NUM_BANDS];
 	float m_Right[MUSIK_EQ_SETTINGS_NUM_BANDS];
 
-	CStdString m_Name;
+	CmusikString m_Name;
 	int m_ID;
 };
 

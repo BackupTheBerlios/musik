@@ -21,7 +21,7 @@
 //
 ///////////////////////////////////////////////////
 //
-// Class(s): 
+// Class(es): 
 //
 //   CMainFrame,
 //
@@ -136,9 +136,9 @@ public:
 	void PurgeObseleteFiles();
 	void RestoreFromTray();
 	void SaveWindowState();
-	void RequeryPlaylist( CStdString query = "", CmusikSelectionCtrl* sender = NULL, bool focus_library = true );
-	void RequerySelBoxes( CStdString query = "", CmusikSelectionCtrl* parent = NULL );
-	CStdString GetSelQuery( CmusikSelectionCtrl* sender = NULL, CmusikSelectionCtrl* parent = NULL );
+	void RequeryPlaylist( CmusikString query = "", CmusikSelectionCtrl* sender = NULL, bool focus_library = true );
+	void RequerySelBoxes( CmusikString query = "", CmusikSelectionCtrl* parent = NULL );
+	CmusikString GetSelQuery( CmusikSelectionCtrl* sender = NULL, CmusikSelectionCtrl* parent = NULL );
 
 	// to save window state
 	virtual BOOL DestroyWindow();

@@ -72,7 +72,7 @@ void CmusikDirSync::DeleteSel()
 		if ( m_wndPaths.GetSel( index ) )
 		{
 			m_wndPaths.GetText( index, sStr );
-			m_Library->RemovePath( (CStdString)sStr );
+			m_Library->RemovePath( (CmusikString)sStr );
 
 			m_wndPaths.DeleteString( index );
 		}
@@ -120,7 +120,7 @@ BOOL CmusikDirSync::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	CStdStringArray paths;
+	CmusikStringArray paths;
 	m_Library->GetAllPaths( &paths, false );
 
 	m_wndPaths.ResetContent();

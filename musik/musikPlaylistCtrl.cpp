@@ -21,7 +21,7 @@
 //
 ///////////////////////////////////////////////////
 //
-// Class(s): 
+// Class(es): 
 //
 //   CmusikPlaylistCtrl
 //
@@ -922,11 +922,11 @@ void CmusikPlaylistCtrl::OnDropFiles( HDROP hDropInfo )
 	SHFILEINFO  rFileInfo;
 	
 	nNumFiles = DragQueryFile ( hDropInfo, -1, NULL, 0 );
-	CStdStringArray* files = NULL;
+	CmusikStringArray* files = NULL;
 
-	files = new CStdStringArray();
+	files = new CmusikStringArray();
 
-	CStdString sTemp;
+	CmusikString sTemp;
 	for ( size_t i = 0; i < nNumFiles; i++ )
 	{
 		if ( DragQueryFile( hDropInfo, i, szNextFile, MAX_PATH ) > 0 )

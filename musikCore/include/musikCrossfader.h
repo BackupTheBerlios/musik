@@ -21,7 +21,7 @@
 //
 ///////////////////////////////////////////////////
 //
-// Class(s): 
+// Class(es): 
 //
 //   CmusikCrossfader 
 //
@@ -53,7 +53,7 @@
 
 ///////////////////////////////////////////////////
 
-#include "StdString.h"
+#include "musikConfig.h"
 
 ///////////////////////////////////////////////////
 
@@ -146,14 +146,14 @@ public:
 		return 0.0f;
 	}
 
-	void SetName( const CStdString& name )
+	void SetName( const CmusikString& name )
 	{
 		m_Name = name;
 	}
 
-	CStdString GetName()
+	CmusikString GetName()
 	{
-			return m_Name;
+		return m_Name;
 	}
 
 private:
@@ -164,7 +164,7 @@ private:
 	float m_Stop;
 	float m_Exit;
 
-	CStdString m_Name;
+	CmusikString m_Name;
 };
 
 ///////////////////////////////////////////////////

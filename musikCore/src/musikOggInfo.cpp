@@ -21,7 +21,7 @@
 //
 ///////////////////////////////////////////////////
 //
-// Class(s): 
+// Class(es): 
 //
 //   CmusikOggInfo
 //
@@ -59,7 +59,7 @@ CmusikOggInfo::~CmusikOggInfo()
 
 ///////////////////////////////////////////////////
 
-bool CmusikOggInfo::LoadInfo( const CStdString& fn )
+bool CmusikOggInfo::LoadInfo( const CmusikString& fn )
 {
 	FILE *pAudioFile = fopen( fn.c_str(), "rb" );
 	OggVorbis_File vorbisfile;
@@ -70,8 +70,8 @@ bool CmusikOggInfo::LoadInfo( const CStdString& fn )
 		vorbis_comment *pComment = ov_comment( &vorbisfile, -1 );
 
 		// need to be validated
-		CStdString year_temp;
-		CStdString track_num;
+		CmusikString year_temp;
+		CmusikString track_num;
 
 		// tag
 		m_Info.SetArtist	( vorbis_comment_query( pComment, "artist",			0 ) );
@@ -97,7 +97,7 @@ bool CmusikOggInfo::LoadInfo( const CStdString& fn )
 		m_Info.SetYear( year_temp );
 		m_Info.SetTrackNum( track_num.c_str() );
 
-		CStdString temp;
+		CmusikString temp;
 
 		// bitrate
 		vorbis_info *pInfo = ov_info( &vorbisfile, -1 );
@@ -141,11 +141,11 @@ bool CmusikOggInfo::WriteInfo( CmusikSongInfo info )
 	FILE* pIn;
 	FILE* pOut;
 
-	CStdString sFilename = info.GetFilename();
+	CmusikString sFilename = info.GetFilename();
 
 	// create two unique temporary filenames
-	CStdString sTempFilename1 = CmusikFilename::GetTempFilename( sFilename, true );
-	CStdString sTempFilename2 = CmusikFilename::GetTempFilename( sFilename, true );
+	CmusikString sTempFilename1 = CmusikFilename::GetTempFilename( sFilename, true );
+	CmusikString sTempFilename2 = CmusikFilename::GetTempFilename( sFilename, true );
 	while ( sTempFilename2 == sTempFilename1 )
 		sTempFilename2 = CmusikFilename::GetTempFilename( sFilename, true );
 
@@ -231,7 +231,7 @@ bool CmusikOggInfo::WriteInfo( CmusikSongInfo info )
 
 ///////////////////////////////////////////////////
 
-CStdString CmusikOggInfo::GetField( int field )
+CmusikString CmusikOggInfo::GetField( int field )
 {
 	return m_Info.GetField( field );
 }

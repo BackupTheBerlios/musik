@@ -482,9 +482,9 @@ void CmusikSourcesCtrl::OnDropFiles(HDROP hDropInfo)
 	SHFILEINFO  rFileInfo;
 	
 	nNumFiles = DragQueryFile ( hDropInfo, -1, NULL, 0 );
-	CStdStringArray files;
+	CmusikStringArray files;
 
-	CStdString sTemp;
+	CmusikString sTemp;
 	for ( size_t i = 0; i < nNumFiles; i++ )
 	{
 		if ( DragQueryFile( hDropInfo, i, szNextFile, MAX_PATH ) > 0 )
@@ -545,7 +545,7 @@ void CmusikSourcesCtrl::OnDropFiles(HDROP hDropInfo)
 	// was pushed to the back of the list
 	if ( !pItem || pItem == m_StdPlaylistRoot )
 	{
-		CStdString playlist_str;
+		CmusikString playlist_str;
 		playlist_str.Format( _T( "New Playlist %d" ), m_StdPlaylists.size() );
 		m_Library->CreateStdPlaylist( playlist_str.c_str(), files );
 		LoadStdPlaylists();
@@ -596,7 +596,7 @@ void CmusikSourcesCtrl::DoDrag( CmusikPropTreeItem* pItem )
 
 	// get a list of filenames with the currently
 	// selected items...
-	CStdStringArray files;
+	CmusikStringArray files;
 
 	int nMode = pItem->GetPlaylistType();
 	
@@ -1119,7 +1119,7 @@ LRESULT CmusikSourcesCtrl::OnEditCommit( WPARAM wParam, LPARAM lParam )
 		{
 			if ( pItem->GetPlaylistType() == MUSIK_PLAYLIST_TYPE_STANDARD )
 			{
-				m_Library->RenameStdPlaylist( pItem->GetPlaylistID(), (CStdString)sName );
+				m_Library->RenameStdPlaylist( pItem->GetPlaylistID(), (CmusikString)sName );
 				pItem->SetLabelText( sName );
 				Invalidate();
 			}

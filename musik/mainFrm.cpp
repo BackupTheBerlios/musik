@@ -21,7 +21,7 @@
 //
 ///////////////////////////////////////////////////
 //
-// Class(s): 
+// Class(es): 
 //
 //   CMainFrame,
 //
@@ -362,7 +362,7 @@ void CMainFrame::Initmusik()
 	m_Caption		= MUSIK_VERSION_STR;
 	m_BatchAddFnct	= new CmusikBatchAddFunctor( this );
 	m_RemoveOldFnct	= new CmusikRemoveOldFunctor( this );
-	m_Library		= new CmusikLibrary( ( CStdString )m_Database );
+	m_Library		= new CmusikLibrary( ( CmusikString )m_Database );
 	m_Prefs			= new CmusikPrefs( m_PrefsIni );
 	m_DirSyncDlg	= NULL;
 	
@@ -735,7 +735,7 @@ bool CMainFrame::PlayCmd( const CString& fn )
 	if ( m_Library )
 	{
 		// add song to library, if necessary
-		m_Library->AddSong( (CStdString)fn );
+		m_Library->AddSong( (CmusikString)fn );
 
 		// get player's playlist
 		CmusikPlaylist* pPlaylist = m_Player->GetPlaylist();
@@ -743,7 +743,7 @@ bool CMainFrame::PlayCmd( const CString& fn )
 		{
 			// get the song we just added...
 			CmusikSong song;
-			m_Library->GetSongFromFilename( (CStdString)fn, song );
+			m_Library->GetSongFromFilename( (CmusikString)fn, song );
 
 			// add to the control's playlist
 			if ( song.GetID() >= 0 )
@@ -950,14 +950,14 @@ LRESULT CMainFrame::OnSelBoxEditCommit( WPARAM wParam, LPARAM lParam )
 	// setup vars
 	CmusikSelectionCtrl* pSel = (CmusikSelectionCtrl*)wParam;
 	int nLibType = (int)lParam;
-	CStdString sNew = pSel->GetEditCommitStr();
+	CmusikString sNew = pSel->GetEditCommitStr();
 
 	// get selected items into a new
 	// playlist
 	CmusikPlaylist* playlist = new CmusikPlaylist();
 	
-	//CStdString sub_query = pSel->GetSelQuery();
-	CStdString sub_query = GetSelQuery( pSel, NULL );
+	//CmusikString sub_query = pSel->GetSelQuery();
+	CmusikString sub_query = GetSelQuery( pSel, NULL );
 
 	m_Library->GetRelatedSongs( sub_query, pSel->GetType(), *playlist );
 
@@ -1068,7 +1068,7 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 	// construct first part of query... this is basically
 	// a list of all the selected items from the control
 	// that triggered the event
-	CStdString sQuery = GetSelQuery( pSender, pParent );
+	CmusikString sQuery = GetSelQuery( pSender, pParent );
 
 	// update all the selection controls
 	RequerySelBoxes( sQuery, pParent );
@@ -1081,7 +1081,7 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 
 ///////////////////////////////////////////////////
 
-void CMainFrame::RequerySelBoxes( CStdString query, CmusikSelectionCtrl* parent )
+void CMainFrame::RequerySelBoxes( CmusikString query, CmusikSelectionCtrl* parent )
 {
 	// first find if a parent exists
 	if ( !parent )
@@ -1128,7 +1128,7 @@ void CMainFrame::RequerySelBoxes( CStdString query, CmusikSelectionCtrl* parent 
 
 ///////////////////////////////////////////////////
 
-void CMainFrame::RequeryPlaylist( CStdString query, CmusikSelectionCtrl* sender, bool focus_library )
+void CMainFrame::RequeryPlaylist( CmusikString query, CmusikSelectionCtrl* sender, bool focus_library )
 {
 	if ( !sender )
 	{
@@ -1187,7 +1187,7 @@ LRESULT CMainFrame::OnSelBoxRequestUpdate( WPARAM wParam, LPARAM lParam )
 {
 	CmusikSelectionCtrl* pSender = (CmusikSelectionCtrl*)wParam;
 
-	CStdString query = GetSelQuery( pSender, NULL );
+	CmusikString query = GetSelQuery( pSender, NULL );
 	query += _T( "'%'" );
 
 	pSender->UpdateV( query, true );
@@ -1197,7 +1197,7 @@ LRESULT CMainFrame::OnSelBoxRequestUpdate( WPARAM wParam, LPARAM lParam )
 
 ///////////////////////////////////////////////////
 
-CStdString CMainFrame::GetSelQuery( CmusikSelectionCtrl* pSender, CmusikSelectionCtrl* pParent )
+CmusikString CMainFrame::GetSelQuery( CmusikSelectionCtrl* pSender, CmusikSelectionCtrl* pParent )
 {
 	// get parent
 	if ( !pParent )
@@ -1214,13 +1214,13 @@ CStdString CMainFrame::GetSelQuery( CmusikSelectionCtrl* pSender, CmusikSelectio
 
 	// query of the currently selected
 	// item... may be parent, may be child.
-	CStdString sel_query;
+	CmusikString sel_query;
 	
 	if ( pSender )
 		sel_query = pSender->GetSelQuery();
 
 	// find full query
-	CStdString sQuery;
+	CmusikString sQuery;
 	if ( pParent != 0 && pParent != pSender )
 	{
 		CmusikSelectionCtrl* pCurr;
@@ -1340,7 +1340,7 @@ LRESULT CMainFrame::OnSourcesQuickSearch( WPARAM wParam, LPARAM lParam )
 
 	CString* sPattern = (CString*)wParam;
 	
-	m_Library->QuickQuery( (CStdString)*sPattern, *m_LibPlaylist );
+	m_Library->QuickQuery( (CmusikString)*sPattern, *m_LibPlaylist );
 
 	if ( m_wndView->GetCtrl()->GetPlaylist() != m_LibPlaylist )
 		m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, MUSIK_SOURCES_TYPE_LIBRARY );
@@ -1531,11 +1531,11 @@ void CMainFrame::OnAddFiles()
 
 	if ( opendlg.DoModal() == IDOK )
 	{
-		CStdStringArray* files = new CStdStringArray();
+		CmusikStringArray* files = new CmusikStringArray();
 
 		POSITION posCurr = opendlg.GetStartPosition();
 		while ( posCurr )
-			files->push_back( (CStdString)opendlg.GetNextPathName( posCurr ) );
+			files->push_back( (CmusikString)opendlg.GetNextPathName( posCurr ) );
 
 		if ( files->size() > 0 )
 		{
@@ -1670,11 +1670,11 @@ void CMainFrame::OnAddDirectory()
 			imalloc->Release ( );
 		}
 
-		CStdStringArray* files = new CStdStringArray();
+		CmusikStringArray* files = new CmusikStringArray();
 
         // get all the musik related files
 		// in the directory we just found...
-		CStdString sPath = path;
+		CmusikString sPath = path;
 		sPath += "\\*.*";
 		CmusikDir dir( sPath, files, NULL );
 		dir.Run();
@@ -2275,11 +2275,11 @@ void CMainFrame::RestoreFromTray()
 
 void CMainFrame::SynchronizeDirs()
 {
-	CStdStringArray synchs;
+	CmusikStringArray synchs;
 	m_Library->GetAllPaths( &synchs, false );
 	for ( size_t i = 0; i < synchs.size(); i++ )
 	{
-		CStdStringArray* files = new CStdStringArray();
+		CmusikStringArray* files = new CmusikStringArray();
 		CmusikDir scan( synchs.at( i ) + _T( "\\*.*" ), files, NULL );
 		scan.Run();
 

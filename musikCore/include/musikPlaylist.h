@@ -21,7 +21,7 @@
 //
 ///////////////////////////////////////////////////
 //
-// Class(s): 
+// Class(es): 
 //
 //   CmusikPlaylist,
 //   CmusikPlaylistInfo,
@@ -76,7 +76,7 @@
 
 #include "sqlite.h"
 
-#include "StdString.h"
+#include "musikConfig.h"
 
 #include <vector>
 #include <iostream>
@@ -99,11 +99,11 @@ public:
 
 	// gets
 	int GetID(){ return m_ID; }
-	CStdString GetField( int field );	
+	CmusikString GetField( int field );	
 
 	// sets
 	void SetID( int id ){ m_ID = id; }
-	void SetField( int field, CStdString value );	
+	void SetField( int field, CmusikString value );	
 	static void SetLibrary( CmusikLibrary* library ){ m_musikLibrary = library; }
 
 private:
@@ -119,7 +119,7 @@ public:
 	~CmusikPlaylist();
 
 	// gets
-	CStdString GetField( int index, int field );
+	CmusikString GetField( int index, int field );
 	int GetSongID( int index );
 	size_t GetCount();
 	int GetPlaylistID(){ return m_ID; }
@@ -148,23 +148,23 @@ public:
 
 	// construct and destruct
 	CmusikPlaylistInfo();
-	CmusikPlaylistInfo( CStdString name, int type, int id );
+	CmusikPlaylistInfo( CmusikString name, int type, int id );
 	~CmusikPlaylistInfo();
 	
 	// gets
-	CStdString GetName(){ return m_Name; }
+	CmusikString GetName(){ return m_Name; }
 	int GetType(){ return m_Type; }
 	int GetID(){ return m_ID; }
 
 	// sets
-	void Set( CStdString name, int type, int id );
+	void Set( CmusikString name, int type, int id );
 
 	// misc
-	void Rename( CStdString new_name );
+	void Rename( CmusikString new_name );
 	void SaveToLibrary( CmusikLibrary* library );
 
 private:
-	CStdString m_Name;
+	CmusikString m_Name;
 	int m_Type;
 	int m_ID;
 };
@@ -177,60 +177,60 @@ public:
 	CmusikSongInfo();
 	~CmusikSongInfo();
 
-	CStdString GetField( int field );
-	void SetField( int field, const CStdString& str );
+	CmusikString GetField( int field );
+	void SetField( int field, const CmusikString& str );
 
 	void SetID( int id )				{ m_ID = id; }
 	int	GetID()							{ return m_ID; }
 
-	CStdString	GetFilename()			{ return m_Filename; }
-	CStdString	GetTitle()				{ return m_Title; }
-	CStdString	GetTrackNum()			{ return m_TrackNum; }
-	CStdString	GetArtist()				{ return m_Artist; }
-	CStdString	GetAlbum()				{ return m_Album; }
-	CStdString	GetGenre()				{ return m_Genre; }
-	CStdString	GetDuration()			{ return m_Duration; }
-	CStdString	GetFormat()				{ return m_Format; }
-	CStdString	GetVBR()				{ return m_VBR; }
-	CStdString	GetYear()				{ return m_Year; }
-	CStdString	GetRating()				{ return m_Rating; }
-	CStdString	GetBitrate()			{ return m_Bitrate; }
-	CStdString	GetLastPlayed()			{ return m_LastPlayed; }
-	CStdString	GetNotes()				{ return m_Notes; }
-	CStdString	GetTimesPlayed()		{ return m_TimesPlayed; }
-	CStdString	GetTimeAdded()			{ return m_TimeAdded; }
-	CStdString	GetFilesize()			{ return m_Filesize; }
-	CStdString	GetDirtyFlag()			{ return m_Dirty; }
-	CStdString	GetEqualizer()			{ return m_Equalizer; }
+	CmusikString	GetFilename()			{ return m_Filename; }
+	CmusikString	GetTitle()				{ return m_Title; }
+	CmusikString	GetTrackNum()			{ return m_TrackNum; }
+	CmusikString	GetArtist()				{ return m_Artist; }
+	CmusikString	GetAlbum()				{ return m_Album; }
+	CmusikString	GetGenre()				{ return m_Genre; }
+	CmusikString	GetDuration()			{ return m_Duration; }
+	CmusikString	GetFormat()				{ return m_Format; }
+	CmusikString	GetVBR()				{ return m_VBR; }
+	CmusikString	GetYear()				{ return m_Year; }
+	CmusikString	GetRating()				{ return m_Rating; }
+	CmusikString	GetBitrate()			{ return m_Bitrate; }
+	CmusikString	GetLastPlayed()			{ return m_LastPlayed; }
+	CmusikString	GetNotes()				{ return m_Notes; }
+	CmusikString	GetTimesPlayed()		{ return m_TimesPlayed; }
+	CmusikString	GetTimeAdded()			{ return m_TimeAdded; }
+	CmusikString	GetFilesize()			{ return m_Filesize; }
+	CmusikString	GetDirtyFlag()			{ return m_Dirty; }
+	CmusikString	GetEqualizer()			{ return m_Equalizer; }
 	
-	void SetFilename( CStdString s )	{ m_Filename = s; }
-	void SetTitle( CStdString s )		{ m_Title = s; }
-	void SetTrackNum( CStdString s )	{ m_TrackNum = s; }
-	void SetArtist( CStdString s )		{ m_Artist = s; }
-	void SetAlbum( CStdString s )		{ m_Album = s; }
-	void SetGenre( CStdString s )		{ m_Genre = s; }
-	void SetDuration( CStdString s )	{ m_Duration = s; }
-	void SetFormat( CStdString s )		{ m_Format = s; }
-	void SetVBR( CStdString s )			{ m_VBR = s; }
-	void SetYear( CStdString s )		{ m_Year = s; }
-	void SetRating( CStdString s )		{ m_Rating = s; }
-	void SetBitrate( CStdString s )		{ m_Bitrate = s; }
-	void SetLastPlayed( CStdString s )	{ m_LastPlayed = s; }
-	void SetNotes( CStdString s )		{ m_Notes = s; }
-	void SetTimesPlayed( CStdString s )	{ m_TimesPlayed = s; }
-	void SetTimeAdded( CStdString s )	{ m_TimeAdded = s; }
-	void SetFilesize( CStdString s )	{ m_Filesize = s; }
-	void SetDirtyFlag( CStdString s )	{ m_Dirty = s; }
-	void SetEqualizer( CStdString s )	{ m_Equalizer = s; }
+	void SetFilename( CmusikString s )		{ m_Filename = s; }
+	void SetTitle( CmusikString s )			{ m_Title = s; }
+	void SetTrackNum( CmusikString s )		{ m_TrackNum = s; }
+	void SetArtist( CmusikString s )		{ m_Artist = s; }
+	void SetAlbum( CmusikString s )			{ m_Album = s; }
+	void SetGenre( CmusikString s )			{ m_Genre = s; }
+	void SetDuration( CmusikString s )		{ m_Duration = s; }
+	void SetFormat( CmusikString s )		{ m_Format = s; }
+	void SetVBR( CmusikString s )			{ m_VBR = s; }
+	void SetYear( CmusikString s )			{ m_Year = s; }
+	void SetRating( CmusikString s )		{ m_Rating = s; }
+	void SetBitrate( CmusikString s )		{ m_Bitrate = s; }
+	void SetLastPlayed( CmusikString s )	{ m_LastPlayed = s; }
+	void SetNotes( CmusikString s )			{ m_Notes = s; }
+	void SetTimesPlayed( CmusikString s )	{ m_TimesPlayed = s; }
+	void SetTimeAdded( CmusikString s )		{ m_TimeAdded = s; }
+	void SetFilesize( CmusikString s )		{ m_Filesize = s; }
+	void SetDirtyFlag( CmusikString s )		{ m_Dirty = s; }
+	void SetEqualizer( CmusikString s )		{ m_Equalizer = s; }
 
 protected:
 
 	int m_ID;
 
-	CStdString	m_Rating, m_Bitrate, m_Duration, m_Dirty, m_Filesize,
-				m_TimesPlayed, m_TrackNum, m_Format, m_VBR, m_Filename,
-				m_Title, m_Artist, m_Album, m_Year, m_Genre, m_LastPlayed,
-				m_TimeAdded, m_Notes, m_Equalizer;
+	CmusikString	m_Rating, m_Bitrate, m_Duration, m_Dirty, m_Filesize,
+					m_TimesPlayed, m_TrackNum, m_Format, m_VBR, m_Filename,
+					m_Title, m_Artist, m_Album, m_Year, m_Genre, m_LastPlayed,
+					m_TimeAdded, m_Notes, m_Equalizer;
 
 };
 

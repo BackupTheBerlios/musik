@@ -21,7 +21,7 @@
 //
 ///////////////////////////////////////////////////
 //
-// Class(s): 
+// Class(es): 
 //
 //   CmusikFilename
 //
@@ -48,7 +48,7 @@ CmusikFilename::CmusikFilename()
 
 ///////////////////////////////////////////////////
 
-CmusikFilename::CmusikFilename( const CStdString& fn )
+CmusikFilename::CmusikFilename( const CmusikString& fn )
 {
 	m_Filename = fn;
 }
@@ -61,21 +61,21 @@ CmusikFilename::~CmusikFilename()
 
 ///////////////////////////////////////////////////
 
-void CmusikFilename::SetFilename( const CStdString& fn )
+void CmusikFilename::SetFilename( const CmusikString& fn )
 {
 	m_Filename = fn;
 }
 
 ///////////////////////////////////////////////////
 
-CStdString CmusikFilename::GetPathSeparator()
+CmusikString CmusikFilename::GetPathSeparator()
 {
-	return (CStdString)MUSIK_PATH_SEPARATOR;
+	return (CmusikString)MUSIK_PATH_SEPARATOR;
 }
 
 ///////////////////////////////////////////////////
 
-CStdString CmusikFilename::GetJustFilename()
+CmusikString CmusikFilename::GetJustFilename()
 {
 	int nPos = m_Filename.ReverseFind( MUSIK_PATH_SEPARATOR );
 	return m_Filename.Right( m_Filename.GetLength() - nPos - 1 );
@@ -83,17 +83,17 @@ CStdString CmusikFilename::GetJustFilename()
 
 ///////////////////////////////////////////////////
 
-CStdString CmusikFilename::GetFullFilename()
+CmusikString CmusikFilename::GetFullFilename()
 {
 	return m_Filename;
 }
 
 ///////////////////////////////////////////////////
 
-CStdString CmusikFilename::GetExtension( bool make_lower )
+CmusikString CmusikFilename::GetExtension( bool make_lower )
 {
 	int nPos = m_Filename.ReverseFind( "." );
-	CStdString ret = m_Filename.Right( m_Filename.GetLength() - nPos - 1 );
+	CmusikString ret = m_Filename.Right( m_Filename.GetLength() - nPos - 1 );
 
 	if ( make_lower )
 		ret.MakeLower();
@@ -103,7 +103,7 @@ CStdString CmusikFilename::GetExtension( bool make_lower )
 
 ///////////////////////////////////////////////////
 
-CStdString CmusikFilename::GetPath()
+CmusikString CmusikFilename::GetPath()
 {
 	int nPos = m_Filename.ReverseFind( MUSIK_PATH_SEPARATOR );
 	return m_Filename.Left( nPos + 1 );
@@ -111,7 +111,7 @@ CStdString CmusikFilename::GetPath()
 
 ///////////////////////////////////////////////////
 
-bool CmusikFilename::FileExists( const CStdString& fn )
+bool CmusikFilename::FileExists( const CmusikString& fn )
 {
 	FILE* pIn = fopen( fn.c_str(), "rb" );
 	if ( pIn )
@@ -125,14 +125,14 @@ bool CmusikFilename::FileExists( const CStdString& fn )
 
 ///////////////////////////////////////////////////
 
-CStdString CmusikFilename::GetTempFilename( CStdString fn, bool check_exists )
+CmusikString CmusikFilename::GetTempFilename( CmusikString fn, bool check_exists )
 {
 	srand ( ( size_t )time( NULL ) );
 
 	CmusikFilename MFN( fn );
-	CStdString sPath = MFN.GetPath();
+	CmusikString sPath = MFN.GetPath();
 	
-	CStdString sName;
+	CmusikString sName;
 	sName.Format( "%s%d", sPath, rand() );
 	
 	if ( check_exists )

@@ -1345,7 +1345,7 @@ int CmusikPropTree::FindNewItemPos( const CPoint& point )
 
 void CmusikPropTree::OnNewHoveredItem( int nIndex )
 {
-	CStdString s;
+	CmusikString s;
 	s.Format( "new item hovered at %d\n", nIndex );
 	TRACE0( s.c_str() );
 }

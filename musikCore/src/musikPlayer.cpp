@@ -21,7 +21,7 @@
 //
 ///////////////////////////////////////////////////
 //
-// Class(s): 
+// Class(es): 
 //
 //   CmusikPlayer
 //
@@ -1136,7 +1136,7 @@ int CmusikPlayer::GetTimePer ( int percent )
 
 ///////////////////////////////////////////////////
 
-CStdString CmusikPlayer::GetTimePerStr( int percent )
+CmusikString CmusikPlayer::GetTimePerStr( int percent )
 {
 	return GetTimeStr( GetTimePer( percent ) );
 }
@@ -1289,9 +1289,9 @@ void CmusikPlayer::CleanPlaylist()
 
 ///////////////////////////////////////////////////
 
-CStdString CmusikPlayer::GetTimeStr( int time_ms )
+CmusikString CmusikPlayer::GetTimeStr( int time_ms )
 {
-	CStdString sTime;
+	CmusikString sTime;
 
 	int ms = time_ms;
 	int hours = ms / 1000 / 60 / 60;

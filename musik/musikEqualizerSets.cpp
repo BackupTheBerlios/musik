@@ -65,7 +65,7 @@ BOOL CmusikEqualizerSets::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	CStdStringArray items;
+	CmusikStringArray items;
 	m_Library->GetAllEqualizerPresets( &items, &m_IDs, true );
 
 	m_PresetBox.ResetContent();
@@ -120,7 +120,7 @@ void CmusikEqualizerSets::OnBnClickedSaveActiveAsNew()
 	CmusikNameEntry* pDlg = new CmusikNameEntry( this, &name );
 	if ( pDlg->DoModal() == IDOK && !name.IsEmpty() )
 	{
-		if ( m_Library->CreateEqualizer( settings, (CStdString)name, true ) == 0 )
+		if ( m_Library->CreateEqualizer( settings, (CmusikString)name, true ) == 0 )
 		{
 			m_PresetBox.AddString( name );
 			m_IDs.push_back( settings.m_ID );

@@ -21,7 +21,7 @@
 //
 ///////////////////////////////////////////////////
 //
-// Class(s): 
+// Class(es): 
 //
 //   CmusikMp3Info
 //
@@ -54,14 +54,14 @@ public:
 	~CmusikMp3Info();
 
 	// reading and writing tag
-	bool LoadInfo( const CStdString& fn );
+	bool LoadInfo( const CmusikString& fn );
 	static bool WriteInfo( CmusikSongInfo info, bool clear_old = true );
 
 	// gets
-	CStdString GetField( int field );
+	CmusikString GetField( int field );
 	CmusikSongInfo* Get(){ return &m_Info; }
-	static CStdString GetGenre( CStdString genre );
-	static int GetGenreID( CStdString genre );
+	static CmusikString GetGenre( CmusikString genre );
+	static int GetGenreID( CmusikString genre );
 
 private:
 

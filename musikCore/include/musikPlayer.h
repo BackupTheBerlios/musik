@@ -21,7 +21,7 @@
 //
 ///////////////////////////////////////////////////
 //
-// Class(s): 
+// Class(es): 
 //
 //   CmusikPlayer
 //
@@ -220,9 +220,9 @@ public:
 	// misc
 	void SetSafeShutdown(){ m_ShutDown = true; }
 	CmusikPlaylist* GetPlaylist(){ return m_Playlist; }
-	CStdString GetTimeStr( int time_ms );
+	CmusikString GetTimeStr( int time_ms );
 	void SetTimeNowPer( int percent );
-	CStdString GetTimePerStr( int percent );
+	CmusikString GetTimePerStr( int percent );
 	int GetTimePer ( int percent );
 
 private:

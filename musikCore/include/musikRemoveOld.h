@@ -21,7 +21,7 @@
 //
 ///////////////////////////////////////////////////
 //
-// Class(s): 
+// Class(es): 
 //
 //   CmusikBatchAdd
 //
@@ -88,7 +88,7 @@ static void musikRemoveOldWorker( CmusikThread* thread )
 	size_t curr_prog = 0;
 	size_t last_prog = 0;
 
-	CStdStringArray all_files;
+	CmusikStringArray all_files;
 	params->m_Library->GetAllDistinct( MUSIK_LIBRARY_TYPE_FILENAME, all_files, false );
 
 	// sleep if we go idle

@@ -21,7 +21,7 @@
 //
 ///////////////////////////////////////////////////
 //
-// Class(s): 
+// Class(es): 
 //
 //   CmusikOggInfo
 //
@@ -54,16 +54,16 @@ public:
 	~CmusikOggInfo();
 
 	// reading and writing tag
-	bool LoadInfo( const CStdString& fn );
+	bool LoadInfo( const CmusikString& fn );
 	static bool WriteInfo( CmusikSongInfo info );
 
 	// gets
-	CStdString GetField( int field );
+	CmusikString GetField( int field );
 	CmusikSongInfo* Get(){ return &m_Info; }
 
 private:
 
-	CStdString GetTempFilename( CStdString fn, bool check_exists = true );
+	CmusikString GetTempFilename( CmusikString fn, bool check_exists = true );
 	CmusikSongInfo m_Info;
 };
 

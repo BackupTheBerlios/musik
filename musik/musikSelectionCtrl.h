@@ -100,9 +100,9 @@ public:
 	CString GetTypeDB();
 	CString GetTypeStr();
 	int	GetType(){ return m_Type; }
-	void GetSelItems( CStdStringArray& items, bool format_query = true );
-	CStdString GetSelQuery( CStdString other_sel_query = _T( "" ) );
-	CStdString GetEditCommitStr();
+	void GetSelItems( CmusikStringArray& items, bool format_query = true );
+	CmusikString GetSelQuery( CmusikString other_sel_query = _T( "" ) );
+	CmusikString GetEditCommitStr();
 
 	// sets
 	void SetParent( bool parent = true ){ m_ParentBox = parent; }
@@ -112,7 +112,7 @@ public:
 	// misc
 	void RescaleColumn();
 	void UpdateV( bool update_count = false );
-	void UpdateV( CStdString query, bool update_count = false );
+	void UpdateV( CmusikString query, bool update_count = false );
 	void RenameSel();
 
 	// queries
@@ -156,12 +156,12 @@ protected:
 
 	// F2...
 	CmusikEditInPlace m_EditInPlace;
-	CStdString m_CommitStr;
+	CmusikString m_CommitStr;
 
 	// core
 	CFrameWnd* m_Parent;
 	CmusikLibrary* m_Library;
-	CStdStringArray m_Items;
+	CmusikStringArray m_Items;
 	int m_Type;
 	int m_ID;
 	bool m_ParentBox;

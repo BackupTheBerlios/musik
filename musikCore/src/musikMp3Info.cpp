@@ -21,7 +21,7 @@
 //
 ///////////////////////////////////////////////////
 //
-// Class(s): 
+// Class(es): 
 //
 //   CmusikMp3Info
 //
@@ -61,7 +61,7 @@ CmusikMp3Info::~CmusikMp3Info()
 
 ///////////////////////////////////////////////////
 
-bool CmusikMp3Info::LoadInfo( const CStdString& fn )
+bool CmusikMp3Info::LoadInfo( const CmusikString& fn )
 {
 	ID3_Tag	id3Tag;
 	id3Tag.Link( fn.c_str(), ID3TT_ALL );	
@@ -75,8 +75,8 @@ bool CmusikMp3Info::LoadInfo( const CStdString& fn )
 	char* pTrackNum	= ID3_GetTrack	( &id3Tag );
 
 	// validate year and track num...
-	CStdString year_temp = pYear;
-	CStdString track_num = pTrackNum;
+	CmusikString year_temp = pYear;
+	CmusikString track_num = pTrackNum;
 
 	year_temp.Replace( "(", "" );
 	year_temp.Replace( ")", "" );
@@ -186,16 +186,16 @@ bool CmusikMp3Info::WriteInfo( CmusikSongInfo info, bool clear_old )
 
 ///////////////////////////////////////////////////
 
-CStdString CmusikMp3Info::GetField( int field )
+CmusikString CmusikMp3Info::GetField( int field )
 {
 	return m_Info.GetField( field );
 }
 
 ///////////////////////////////////////////////////
 
-CStdString CmusikMp3Info::GetGenre( CStdString genre )
+CmusikString CmusikMp3Info::GetGenre( CmusikString genre )
 {
-	CStdString sRet;
+	CmusikString sRet;
 
 	if ( genre.size() > 0 )
 	{
@@ -225,7 +225,7 @@ CStdString CmusikMp3Info::GetGenre( CStdString genre )
 
 ///////////////////////////////////////////////////
 
-int CmusikMp3Info::GetGenreID( CStdString genre )
+int CmusikMp3Info::GetGenreID( CmusikString genre )
 {
 	for ( int i = 0; i < ID3_NR_OF_V1_GENRES; i++ )
 	{

@@ -21,7 +21,7 @@
 //
 ///////////////////////////////////////////////////
 //
-// Class(s): 
+// Class(es): 
 //
 //   CmusikDir
 //
@@ -53,7 +53,7 @@ CmusikDir::CmusikDir()
 
 ///////////////////////////////////////////////////
 
-CmusikDir::CmusikDir( CStdString dir, CStdStringArray* target, CmusikFunctor* functor )
+CmusikDir::CmusikDir( CmusikString dir, CmusikStringArray* target, CmusikFunctor* functor )
 {
 	m_Target = target;
 	m_Dir = dir;
@@ -72,7 +72,7 @@ CmusikDir::~CmusikDir()
 // avoid multiple constructor calls
 // during file find recursion...
 
-CStdStringArray* g_Target;
+CmusikStringArray* g_Target;
 CmusikFunctor* g_Functor;
 int g_Count;
 int g_Found;
@@ -81,7 +81,7 @@ int g_Found;
 
 #ifdef WIN32
 
-void OpenDir( CStdString dir, CStdStringArray* target, CmusikFunctor* functor, bool reset )
+void OpenDir( CmusikString dir, CmusikStringArray* target, CmusikFunctor* functor, bool reset )
 {
 	if ( target )
 		g_Target = target;
@@ -100,7 +100,7 @@ void OpenDir( CStdString dir, CStdStringArray* target, CmusikFunctor* functor, b
 	// assure the first file exists...
 	if ( hDir != INVALID_HANDLE_VALUE )
 	{
-		CStdString fn, temp;
+		CmusikString fn, temp;
 		CmusikFilename MFN;
 		do
 		{
@@ -136,7 +136,7 @@ void OpenDir( CStdString dir, CStdStringArray* target, CmusikFunctor* functor, b
 
 #else
 
-void OpenDir( CStdString dir, CStdStringArray* target, CmusikFunctor* functor, bool reset )
+void OpenDir( CmusikString dir, CmusikStringArray* target, CmusikFunctor* functor, bool reset )
 {
 	if ( target )
 		g_Target = target;
@@ -148,15 +148,15 @@ void OpenDir( CStdString dir, CStdStringArray* target, CmusikFunctor* functor, b
 
 	if ( pDir == opendir( dir.c_str() ) )
 	{
-		CStdString temp;
+		CmusikString temp;
 		while( pEntry = readdir( pDir ) )
 		{
-			temp = (CStdString)pEntry->d_name;
+			temp = (CmusikString)pEntry->d_name;
 			temp = temp.Right( 3 );
 			temp.MakeLower();
 
 			if ( temp.c_str() == "ogg" || temp.c_str() == "mp3" )
-				target->push_back( (CStdString)pEntry->d_name );
+				target->push_back( (CmusikString)pEntry->d_name );
 		}
 		closedir( pDir );
 	}

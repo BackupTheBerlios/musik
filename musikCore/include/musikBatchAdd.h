@@ -21,7 +21,7 @@
 //
 ///////////////////////////////////////////////////
 //
-// Class(s): 
+// Class(es): 
 //
 //   CmusikBatchAdd
 //
@@ -67,7 +67,7 @@ public:
 		m_CallFunctorOnAbort	= false;
 	}
 
-	CmusikBatchAdd( CStdStringArray* pFiles, CmusikPlaylist* pPlaylist, CmusikLibrary* pLibrary, CmusikPlayer* pPlayer, 
+	CmusikBatchAdd( CmusikStringArray* pFiles, CmusikPlaylist* pPlaylist, CmusikLibrary* pLibrary, CmusikPlayer* pPlayer, 
 		CmusikFunctor* pFunctor, bool bUpdatePlaylist = false, bool bAddToPlayer = false, bool bDeleteFilelist = true )
 	{
 		m_Files					= pFiles;
@@ -87,7 +87,7 @@ public:
 
 	// we'll allow users to manually set
 	// these variables.
-	CStdStringArray* m_Files;
+	CmusikStringArray* m_Files;
 	CmusikPlaylist* m_Playlist;
 	CmusikLibrary* m_Library;
 	CmusikPlayer* m_Player;
@@ -159,7 +159,7 @@ static void musikBatchAddWorker( CmusikThread* thread )
 			else
 			{
 				verify_failed = true;
-				CStdString s;
+				CmusikString s;
 				s.Format( "Failed to add song to playlist at address %d becuase it couldn't be verified\n", params->m_Playlist );
 				TRACE0( s.c_str() );
 			}

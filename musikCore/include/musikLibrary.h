@@ -21,7 +21,7 @@
 //
 ///////////////////////////////////////////////////
 //
-// Class(s): 
+// Class(es): 
 //
 //   CmusikLibrary
 //
@@ -56,8 +56,8 @@
 #include <iostream>
 
 #include "sqlite.h"
-#include "StdString.h"
 
+#include "musikConfig.h"
 #include "musikArrays.h"
 #include "musikPlaylist.h"
 
@@ -144,7 +144,7 @@ class CmusikLibrary
 public:
 
 	// construct and destruct
-	CmusikLibrary( const CStdString& filename );
+	CmusikLibrary( const CmusikString& filename );
 	~CmusikLibrary();
 
 	// starting up and shutting down the database
@@ -164,31 +164,31 @@ public:
 	int  GetOpenTransactions();
 
 	// querying library fields
-	CStdStringArray*	GetSongFields	( )					{ return &m_Fields; }
-	CStdStringArray*	GetSongFieldsDB	( )					{ return &m_FieldsDB; }
-	const CStdString	GetSongField	( int n )			{ return m_Fields.at( n ); }
-	const CStdString	GetSongFieldDB	( int n )			{ return m_FieldsDB.at( n ); }
+	CmusikStringArray*	GetSongFields	( )					{ return &m_Fields; }
+	CmusikStringArray*	GetSongFieldsDB	( )					{ return &m_FieldsDB; }
+	const CmusikString	GetSongField	( int n )			{ return m_Fields.at( n ); }
+	const CmusikString	GetSongFieldDB	( int n )			{ return m_FieldsDB.at( n ); }
 	int					GetSongFieldCnt	( )					{ return MUSIK_LIBRARY_FIELD_COUNT; }
-	int					GetSongFieldID	( CStdString field );
-	int					GetSongFieldDBID( CStdString field );
+	int					GetSongFieldID	( CmusikString field );
+	int					GetSongFieldDBID( CmusikString field );
 
 	// querying songs
 	int  GetAllSongs				( CmusikPlaylist & target );
-	int  GetRelatedItems			( int source_type, const CStdStringArray & source_items, int target_type, CStdStringArray & target );
-	int  GetRelatedItems			( CStdString sub_query, int order_by, CStdStringArray& target );
-	int  GetRelatedSongs			( CStdString sub_query, int order_by, CmusikPlaylist& target );
-	int  GetAllDistinct				( int source_type, CStdStringArray& target, bool clear_target = true );
+	int  GetRelatedItems			( int source_type, const CmusikStringArray & source_items, int target_type, CmusikStringArray & target );
+	int  GetRelatedItems			( CmusikString sub_query, int order_by, CmusikStringArray& target );
+	int  GetRelatedSongs			( CmusikString sub_query, int order_by, CmusikPlaylist& target );
+	int  GetAllDistinct				( int source_type, CmusikStringArray& target, bool clear_target = true );
 	int	 GetSongCount				();
-	int  GetFieldFromID				( int id, int field, CStdString& string );
+	int  GetFieldFromID				( int id, int field, CmusikString& string );
 	int  GetSongInfoFromID			( int id, CmusikSongInfo* info );
-	int  GetIDFromFilename			( CStdString fn );
-	int  GetSongFromFilename		( CStdString fn, CmusikSong& song );
-	bool IsSongInLibrary			( CStdString fn );
+	int  GetIDFromFilename			( CmusikString fn );
+	int  GetSongFromFilename		( CmusikString fn, CmusikSong& song );
+	bool IsSongInLibrary			( CmusikString fn );
 	int  GetSongFormatFromID		( int id, int* target );
-	void GetInfoArrayFromPlaylist	( CmusikPlaylist* playlist, CmusikSongInfoArray* info, int replace_field_type = -1, CStdString new_field = "", bool clear = true );
+	void GetInfoArrayFromPlaylist	( CmusikPlaylist* playlist, CmusikSongInfoArray* info, int replace_field_type = -1, CmusikString new_field = "", bool clear = true );
 	int  GetDirtySongs				( CmusikPlaylist* target, bool clear = true );
 	int  FinalizeDirtySongs			();
-	int  QuickQuery					( CStdString str, CmusikPlaylist& target );
+	int  QuickQuery					( CmusikString str, CmusikPlaylist& target );
 
 	// updating songs
 	bool SetSongInfo				( CmusikSongInfo* info, int songid = -1 );
@@ -197,22 +197,22 @@ public:
 	bool SetSongEqualizer			( int songid, int eq_id );
 
 	// standard playlist
-	int  CreateStdPlaylist			( const CStdString& name, const CStdStringArray& files );
-	int  AppendStdPlaylist			( int id, const CStdStringArray& files );
-	int  RenameStdPlaylist			( int id, const CStdString& str );
-	int  DeleteStdPlaylist			( const CStdString& name );
+	int  CreateStdPlaylist			( const CmusikString& name, const CmusikStringArray& files );
+	int  AppendStdPlaylist			( int id, const CmusikStringArray& files );
+	int  RenameStdPlaylist			( int id, const CmusikString& str );
+	int  DeleteStdPlaylist			( const CmusikString& name );
 	int  RewriteStdPlaylist			( int id, CmusikPlaylist* playlist );
 	int  DeleteStdPlaylist			( int id );
 
 	int  GetAllStdPlaylists			( CmusikPlaylistInfoArray* target, bool clear_target = true );
 	int  GetStdPlaylist				( int id, CmusikPlaylist& target, bool clear_target = true );
-	bool GetStdPlaylistFns			( int id, CStdStringArray& target, bool clear_target = true );
-	bool GetStdPlaylistFns			( CmusikPlaylist& playlist, CStdStringArray& target, bool clear_target = true );
+	bool GetStdPlaylistFns			( int id, CmusikStringArray& target, bool clear_target = true );
+	bool GetStdPlaylistFns			( CmusikPlaylist& playlist, CmusikStringArray& target, bool clear_target = true );
 
 	// dynamic playlist
-	int  CreateDynPlaylist			( const CStdString& name, const CStdStringArray& query );
-	int  RewriteDynPlaylist			( int id, const CStdStringArray& query );
-	int  DeleteDynPlaylist			( const CStdString& name );
+	int  CreateDynPlaylist			( const CmusikString& name, const CmusikStringArray& query );
+	int  RewriteDynPlaylist			( int id, const CmusikStringArray& query );
+	int  DeleteDynPlaylist			( const CmusikString& name );
 	int  DeleteDynPlaylist			( int id );
 
 	int  GetAllDynPlaylists			( CmusikPlaylistInfoArray* target, bool clear_target = true );
@@ -222,40 +222,40 @@ public:
 	int  CreateCrossfader			( CmusikCrossfader* fader );
 	int  DeleteCrossfader			( int id );
 	int  GetCrossfader				( int id, CmusikCrossfader* fader );
-	int  GetAllCrossfaders			( CStdStringArray* names, bool clear_target = true );
+	int  GetAllCrossfaders			( CmusikStringArray* names, bool clear_target = true );
 	int  GetAllCrossfaders			( CIntArray* ids, bool clear_target = true );
 
 	// equalizers
-	int  CreateEqualizer			( CmusikEQSettings& eq, const CStdString& name, bool is_preset = false );
+	int  CreateEqualizer			( CmusikEQSettings& eq, const CmusikString& name, bool is_preset = false );
 	int  DeleteEqualizer			( int id );
 	int  GetEqualizer				( int eq_id, CmusikEQSettings* eq );
 	int  UpdateEqualizer			( int id, const CmusikEQSettings& eq );
 	int  GetEqualizerIDFromSongID	( int id );
-	int  GetEqualizerFromName		( const CStdString& name );
-	int  GetAllEqualizerPresets		( CStdStringArray* target, CIntArray* target_ids = NULL, bool clear_targets = true );
+	int  GetEqualizerFromName		( const CmusikString& name );
+	int  GetAllEqualizerPresets		( CmusikStringArray* target, CIntArray* target_ids = NULL, bool clear_targets = true );
 	int  GetDefaultEqualizer		( CmusikEQSettings* eq );
 	int  UpdateDefaultEqualizer		( const CmusikEQSettings& eq );
 	int  InitDefaultEqualizer		( );
 
 	// paths
-	int	 AddPath					( const CStdString& path );
-	int  RemovePath					( const CStdString& path );
-	int  GetAllPaths				( CStdStringArray* target, bool clear_target = true );
+	int	 AddPath					( const CmusikString& path );
+	int  RemovePath					( const CmusikString& path );
+	int  GetAllPaths				( CmusikStringArray* target, bool clear_target = true );
 
 	// misc stuff
-	static int GetFilesize( const CStdString& fn );
+	static int GetFilesize( const CmusikString& fn );
 
 	// adding and removing files
-	bool AddSong	( const CStdString& fn );
-	bool AddOGG		( const CStdString& fn );
-	bool AddMP3		( const CStdString& fn );
+	bool AddSong	( const CmusikString& fn );
+	bool AddOGG		( const CmusikString& fn );
+	bool AddMP3		( const CmusikString& fn );
 	bool RemoveSong	( int songid );
-	bool RemoveSong	( const CStdString& fn );
+	bool RemoveSong	( const CmusikString& fn );
 
 private:
 
 	// filename of the currently opened database
-	CStdString m_Filename;
+	CmusikString m_Filename;
 
 	// currently opened database
 	sqlite *m_pDB;
@@ -271,8 +271,8 @@ private:
 	
 	// fields... artist/title/album/etc
 	void InitFields();
-	CStdStringArray m_Fields;
-	CStdStringArray m_FieldsDB;
+	CmusikStringArray m_Fields;
+	CmusikStringArray m_FieldsDB;
 
 	// table creation
 	bool InitLibTable();
@@ -286,13 +286,13 @@ private:
 	int  IncLastPlayed( int songid );
 
 	// only needs to be initialized once
-	CStdString m_TimeAdded;
+	CmusikString m_TimeAdded;
 
 	// internal song query functions
-	int			QuerySongs		( const CStdString & query, CmusikPlaylist & target );	
-	CStdString	GetOrder		( int type, bool terminate = true );
+	int			QuerySongs		( const CmusikString & query, CmusikPlaylist & target );	
+	CmusikString	GetOrder		( int type, bool terminate = true );
 	int			QueryCount		( const char* pQueryResult );
-	void		VerifyYearList	( CStdStringArray & list );
+	void		VerifyYearList	( CmusikStringArray & list );
 };
 
 ///////////////////////////////////////////////////

@@ -21,7 +21,7 @@
 //
 ///////////////////////////////////////////////////
 //
-// Class(s): 
+// Class(es): 
 //
 //   CmusikPlaylist,
 //   CmusikSong,
@@ -92,16 +92,16 @@ CmusikSong::~CmusikSong()
 
 ///////////////////////////////////////////////////
 
-CStdString CmusikSong::GetField( int field )
+CmusikString CmusikSong::GetField( int field )
 {
-	CStdString ret;
+	CmusikString ret;
 	m_musikLibrary->GetFieldFromID( m_ID, field, ret );
 	return ret;
 }
 
 ///////////////////////////////////////////////////
 
-void CmusikSong::SetField( int field, CStdString value )
+void CmusikSong::SetField( int field, CmusikString value )
 {
 
 }
@@ -122,7 +122,7 @@ CmusikSongInfo::~CmusikSongInfo()
 
 ///////////////////////////////////////////////////
 
-CStdString CmusikSongInfo::GetField( int field )
+CmusikString CmusikSongInfo::GetField( int field )
 {
 	switch( field )
 	{
@@ -178,7 +178,7 @@ CStdString CmusikSongInfo::GetField( int field )
 
 ///////////////////////////////////////////////////
 
-void CmusikSongInfo::SetField( int field, const CStdString& str )
+void CmusikSongInfo::SetField( int field, const CmusikString& str )
 {
 	switch( field )
 	{
@@ -250,7 +250,7 @@ CmusikPlaylist::~CmusikPlaylist()
 
 ///////////////////////////////////////////////////
 
-CStdString CmusikPlaylist::GetField( int index, int field )
+CmusikString CmusikPlaylist::GetField( int index, int field )
 {
 	return m_Songs.at( index ).GetField( field );
 }
@@ -337,7 +337,7 @@ CmusikPlaylistInfo::CmusikPlaylistInfo()
 
 ///////////////////////////////////////////////////
 
-CmusikPlaylistInfo::CmusikPlaylistInfo( CStdString name, int type, int id )
+CmusikPlaylistInfo::CmusikPlaylistInfo( CmusikString name, int type, int id )
 {
 	m_Name = name;
 	m_Type = type;
@@ -352,7 +352,7 @@ CmusikPlaylistInfo::~CmusikPlaylistInfo()
 
 ///////////////////////////////////////////////////
 
-void CmusikPlaylistInfo::Set( CStdString name, int type, int id )
+void CmusikPlaylistInfo::Set( CmusikString name, int type, int id )
 {
 	m_Name = name;
 	m_Type = type;

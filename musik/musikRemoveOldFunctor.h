@@ -34,7 +34,7 @@ public:
 
 	virtual void OnThreadProgress( size_t progress )
 	{
-		CStdString s;
+		CmusikString s;
 		s.Format( "CmusikRemoveOld %d%% complete.\n", progress );
 		TRACE0( s.c_str() );
 	}

@@ -21,9 +21,9 @@
 //
 ///////////////////////////////////////////////////
 //
-// Class(s): 
+// Class(es): 
 //
-//   CStdStringArray,
+//   CmusikStringArray,
 //   CmusikSongArray,
 //   CmusikSongInfoArray,
 //   CIntArray,
@@ -50,7 +50,8 @@
 
 ///////////////////////////////////////////////////
 
-#include "StdString.h"
+#include "musikConfig.h"
+
 #include "fmod.h"
 #include <vector>
 
@@ -64,7 +65,7 @@ class CmusikThread;
 
 ///////////////////////////////////////////////////
 
-typedef std::vector<CStdString> CStdStringArray;
+typedef std::vector<CmusikString> CmusikStringArray;
 typedef std::vector<CmusikSong> CmusikSongArray;
 typedef std::vector<CmusikSongInfo> CmusikSongInfoArray;
 typedef std::vector<CmusikPlaylist> CmusikPlaylistArray;
