@@ -400,45 +400,6 @@ void CMainFrame::Initmusik()
 
 void CMainFrame::Cleanmusik()
 {
-	// the threads need to be cleaned first becuase
-	// they are attached to nearly everything: the 
-	// player, library, etc, etc... so we need to:
-	// suspend, set abort switch, and then
-	// resume any remaning threads...
-	{
-		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingThreads );
-		{
-			if ( m_Updater )
-			{
-				m_Updater->Suspend( true );
-				m_Updater->Abort();
-				m_Updater->Resume();
-
-				while ( !m_Updater->m_Finished )
-					Sleep( 50 );
-
-				delete m_Updater;
-			}
-		}
-	}
-
-	{
-		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingThreads );
-		{
-			for ( size_t i = 0; i < m_Threads.size(); i++ )
-			{
-				m_Threads.at( i )->Suspend( true );
-				m_Threads.at( i )->Abort();
-				m_Threads.at( i )->Resume();
-
-				while ( !m_Threads.at( i )->m_Finished )
-					Sleep( 50 );
-
-				delete m_Threads.at( i );
-			}
-		}
-	}
-
 	if ( m_DirSyncDlg )
 	{
 		m_DirSyncDlg->DestroyWindow();
@@ -878,6 +839,42 @@ BOOL CMainFrame::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* pContext )
 
 BOOL CMainFrame::DestroyWindow()
 {
+	// make sure all the threads are finished
+	// before destroying the window...
+	{
+		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingThreads );
+		{
+			if ( m_Updater )
+			{
+				m_Updater->Suspend( true );
+				m_Updater->Abort();
+				m_Updater->Resume();
+
+				while ( !m_Updater->m_Finished )
+					Sleep( 50 );
+
+				delete m_Updater;
+			}
+		}
+	}
+
+	{
+		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingThreads );
+		{
+			for ( size_t i = 0; i < m_Threads.size(); i++ )
+			{
+				m_Threads.at( i )->Suspend( true );
+				m_Threads.at( i )->Abort();
+				m_Threads.at( i )->Resume();
+
+				while ( !m_Threads.at( i )->m_Finished )
+					Sleep( 50 );
+
+				delete m_Threads.at( i );
+			}
+		}
+	}
+
 	CString sProfile = _T( "musikProfile" );
 	CSizingControlBar::GlobalSaveState( this, sProfile );
 	SaveBarState( sProfile );
@@ -2371,7 +2368,7 @@ LRESULT CMainFrame::OnSelBoxAddRemove( WPARAM wParam, LPARAM lParam )
 
 void CMainFrame::OnFileClearlibrary()
 {
-	int prompt = MessageBox( "Would you like to also clear playlists, equalizer, and crossfade settings?", MUSIK_VERSION_STR, MB_ICONWARNING | MB_YESNOCANCEL );
+	int prompt = MessageBox( "Would you like to also clear synchronized directories, playlists, equalizer, and crossfade settings?", MUSIK_VERSION_STR, MB_ICONWARNING | MB_YESNOCANCEL );
 
 	bool clear = false;
 	switch ( prompt )
@@ -2470,5 +2467,4 @@ void CMainFrame::OnLibrarySynchronizedirectoriesnow()
 }
 
 ///////////////////////////////////////////////////
-
 

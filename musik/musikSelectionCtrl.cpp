@@ -8,7 +8,6 @@
 #include "MEMDC.H"
 
 #include "../musikCore/include/musikLibrary.h"
-#include ".\musikselectionctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -41,6 +40,17 @@ BEGIN_MESSAGE_MAP(CmusikSelectionBar, baseCmusikSelectionBar)
 	ON_COMMAND(ID_SELECTIONBOX_RENAME, OnSelectionboxRename)
 	ON_COMMAND(ID_SELECTIONBOX_REMOVE, OnSelectionboxRemove)
 	ON_COMMAND(ID_SELECTIONBOX_ADDNEW, OnSelectionboxAddnew)
+	ON_COMMAND(ID_CHANGETYPE_ARTIST, OnChangetypeArtist)
+	ON_COMMAND(ID_CHANGETYPE_ALBUM, OnChangetypeAlbum)
+	ON_COMMAND(ID_CHANGETYPE_YEAR, OnChangetypeYear)
+	ON_COMMAND(ID_CHANGETYPE_GENRE, OnChangetypeGenre)
+	ON_COMMAND(ID_CHANGETYPE_TRACKNUMBER, OnChangetypeTracknumber)
+	ON_COMMAND(ID_CHANGETYPE_TIMEADDED, OnChangetypeTimeadded)
+	ON_COMMAND(ID_CHANGETYPE_LASTPLAYED, OnChangetypeLastplayed)
+	ON_COMMAND(ID_CHANGETYPE_FORMAT, OnChangetypeFormat)
+	ON_COMMAND(ID_CHANGETYPE_RATING, OnChangetypeRating)
+	ON_COMMAND(ID_CHANGETYPE_TIMESPLAYED, OnChangetypeTimesplayed)
+	ON_COMMAND(ID_CHANGETYPE_BITRATE, OnChangetypeBitrate)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -250,12 +260,9 @@ int CmusikSelectionCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if ( CmusikListCtrl::OnCreate( lpCreateStruct ) == -1 )
 		return -1;
 
-	CString sTitle = (CString)m_Library->GetSongField( m_Type );
-	sTitle += _T( "s" );
-
-	InsertColumn( 0, sTitle );
-
-	GetParent()->SetWindowText( sTitle );
+	// set caption to reflect type
+	InsertColumn( 0, _T( "" ) );
+	SetWindowCap();
 
 	// edit in place
 	m_EditInPlace.Create( WS_CHILD | WS_CLIPCHILDREN, CRect( 0, 0, 0, 0 ), this, 123 );
@@ -298,7 +305,18 @@ void CmusikSelectionCtrl::UpdateV( bool update_count )
 	{
 		CString type = GetTypeStr();
 		type.MakeLower();
-		top.Format( _T( "Show all %ss (%d)" ), type, m_Items.size() );
+
+		switch ( m_Type )
+		{
+		case MUSIK_LIBRARY_TYPE_TIMEADDED:
+		case MUSIK_LIBRARY_TYPE_LASTPLAYED:
+		case MUSIK_LIBRARY_TYPE_TIMESPLAYED:
+			top.Format( _T( "Show all %s (%d)" ), type, m_Items.size() );
+			break;
+		default:
+			top.Format( _T( "Show all %ss (%d)" ), type, m_Items.size() );
+			break;
+		}
 	}
 
 	m_Items.insert( m_Items.begin(), top );
@@ -315,7 +333,10 @@ void CmusikSelectionCtrl::UpdateV( CStdString query, bool update_count )
 {
 	CStdString top;
 	if ( !update_count )
-		top = m_Items.at( 0 );
+	{
+		if ( m_Items.size() )
+			top = m_Items.at( 0 );
+	}
 
 	m_Library->GetRelatedItems( query, m_Type, m_Items );
 
@@ -373,6 +394,56 @@ void CmusikSelectionCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 						else if ( m_Items.at( pItem->iItem ) == _T( "1" ) )
 							pStr = _T( "ogg" );
 						break;
+
+					case MUSIK_LIBRARY_TYPE_RATING:
+						{
+							const CStdString& rating = m_Items.at( pItem->iItem );
+
+							if ( rating == _T( "0" ) )
+								pStr = _T( "Unrated" );
+
+							else if ( rating == _T( "1" ) )
+								pStr = _T( "-,,,," );
+
+							else if ( rating == _T( "2" ) )
+								pStr = _T( "--,,," );
+
+							else if ( rating == _T( "3" ) )
+								pStr = _T( "---,," );
+
+							else if ( rating == _T( "4" ) )
+								pStr = _T( "----," );
+
+							else if ( rating == _T( "5" ) )
+								pStr = _T( "-----" );
+						}
+
+						break;
+
+					case MUSIK_LIBRARY_TYPE_LASTPLAYED:
+					case MUSIK_LIBRARY_TYPE_TIMESPLAYED:
+
+						if ( m_Items.at( pItem->iItem ).IsEmpty() || m_Items.at( pItem->iItem ) == _T( "0" ) )
+						{
+							pStr = _T( "(never)" );
+							break;
+						}
+
+					case MUSIK_LIBRARY_TYPE_BITRATE:
+
+						if ( m_Items.at( pItem->iItem ) == _T( "0" ) )
+						{
+							pStr = _T( "(unknown)" );
+							break;
+						}
+
+					case MUSIK_LIBRARY_TYPE_TRACKNUM:
+
+						if ( m_Items.at( pItem->iItem ) == _T( "0" ) )
+						{
+							pStr = _T( "(unknown)" );
+							break;
+						}
 
 					default:
 						pStr = (char*)m_Items.at( pItem->iItem ).c_str();
@@ -462,13 +533,15 @@ void CmusikSelectionCtrl::GetSelItems( CStdStringArray& items, bool format_query
 				else if ( item_str == "ogg" )
 					items.push_back( "1" );
 
+				break;
+
 			default:
-				items.push_back( ( CStdString)GetItemText( item, 0 ) );
+				items.push_back( m_Items.at( item ) );
 				if ( format_query )
 					items.at( count ).Replace( _T( "'" ), _T( "''" ) );
 
+				break;
 			}
-
 		}
 
 		i = item;
@@ -548,10 +621,12 @@ void CmusikSelectionCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 	// draw each sub item... we set colors here.
 	if ( pLVCD->nmcd.dwDrawStage == CDDS_ITEMPREPAINT )
 	{
-		CDC *pDC = CDC::FromHandle(pLVCD->nmcd.hdc);
+		CDC *pDC = CDC::FromHandle( pLVCD->nmcd.hdc );
 
 		if ( pLVCD->nmcd.dwItemSpec == 0 )
 			pDC->SelectObject( m_Bold );
+		else if ( m_Type == MUSIK_LIBRARY_TYPE_RATING && m_Items.at( pLVCD->nmcd.dwItemSpec ) != _T( "0" )  )
+			pDC->SelectObject( m_StarFont );
 		else
 			pDC->SelectObject( m_Regular );
 
@@ -567,6 +642,8 @@ void CmusikSelectionCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 
 void CmusikSelectionCtrl::InitFonts()
 {
+	m_StarFont.CreatePointFont( 100, "musik" );
+
 	m_Regular.CreateStockObject( DEFAULT_GUI_FONT );
 
 	LOGFONT pBoldFont;
@@ -857,6 +934,37 @@ LRESULT CmusikSelectionCtrl::OnEditCommit( WPARAM wParam, LPARAM lParam )
 
 	m_CommitStr = m_EditInPlace.GetString();
 
+	switch( m_Type )
+	{
+	case MUSIK_LIBRARY_TYPE_YEAR:
+
+		{
+			int year = atoi( m_CommitStr.c_str() );
+			if ( year == 0 || year < 1000 || year > 9999 )
+			{
+				MessageBox( _T( "Invalid year entered. Please enter a four digit number, such as 2004." ), MUSIK_VERSION_STR, MB_ICONINFORMATION );
+				return 0L;
+			}
+		}
+
+		break;
+
+	case MUSIK_LIBRARY_TYPE_TRACKNUM:
+		if ( !m_CommitStr.IsEmpty() )
+		{
+			int track = atoi( m_CommitStr.c_str() );
+			if ( track == 0 )
+			{
+				MessageBox( _T( "Invalid track number entered. Please enter any number greater than 0, or leave the field blank for no track number." ), MUSIK_VERSION_STR, MB_ICONINFORMATION );
+				return 0L;
+			}
+		}
+		else
+			m_CommitStr = "0";
+		break;
+
+	}
+
 	if ( GetSelectedCount() == 1 )
 	{
 		if ( m_Items.at( GetSelectionMark() ) == m_CommitStr )
@@ -889,3 +997,109 @@ void CmusikSelectionCtrl::OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/)
 
 ///////////////////////////////////////////////////
 
+void CmusikSelectionCtrl::SetWindowCap()
+{
+	CString sTitle = (CString)m_Library->GetSongField( m_Type );
+	sTitle += _T( "s" );
+
+	LV_COLUMN column;
+	column.mask = LVCF_TEXT;
+	column.cchTextMax = 255;
+	column.pszText = sTitle.GetBuffer();
+	
+	SetColumn( 0, &column );
+
+	GetParent()->SetWindowText( sTitle );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionCtrl::SetType( int type, bool update )
+{
+	m_Type = type;
+	SetWindowCap();
+
+	if ( update )
+		UpdateV( true );
+
+	RedrawWindow();
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionBar::OnChangetypeArtist()
+{
+	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_ARTIST );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionBar::OnChangetypeAlbum()
+{
+	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_ALBUM );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionBar::OnChangetypeYear()
+{
+	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_YEAR );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionBar::OnChangetypeGenre()
+{
+	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_GENRE );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionBar::OnChangetypeTracknumber()
+{
+	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_TRACKNUM );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionBar::OnChangetypeTimeadded()
+{
+	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_TIMEADDED );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionBar::OnChangetypeLastplayed()
+{
+	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_LASTPLAYED );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionBar::OnChangetypeFormat()
+{
+	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_FORMAT );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionBar::OnChangetypeRating()
+{
+	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_RATING );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionBar::OnChangetypeTimesplayed()
+{
+	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_TIMESPLAYED );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionBar::OnChangetypeBitrate()
+{
+	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_BITRATE );
+}
+
+///////////////////////////////////////////////////

@@ -65,6 +65,17 @@ protected:
 public:
 	afx_msg void OnSelectionboxRemove();
 	afx_msg void OnSelectionboxAddnew();
+	afx_msg void OnChangetypeArtist();
+	afx_msg void OnChangetypeAlbum();
+	afx_msg void OnChangetypeYear();
+	afx_msg void OnChangetypeGenre();
+	afx_msg void OnChangetypeTracknumber();
+	afx_msg void OnChangetypeTimeadded();
+	afx_msg void OnChangetypeLastplayed();
+	afx_msg void OnChangetypeFormat();
+	afx_msg void OnChangetypeRating();
+	afx_msg void OnChangetypeTimesplayed();
+	afx_msg void OnChangetypeBitrate();
 };
 
 ///////////////////////////////////////////////////
@@ -96,6 +107,7 @@ public:
 	// sets
 	void SetParent( bool parent = true ){ m_ParentBox = parent; }
 	static void SetUpdating( bool updating = true ){ m_Updating = updating; }
+	void SetType( int type, bool update = true );
 
 	// misc
 	void RescaleColumn();
@@ -132,6 +144,9 @@ protected:
 	// inits
 	void InitFonts();
 
+	// set window text
+	void SetWindowCap();
+
 	// drag / drop id
 	bool m_IsWinNT;
 	UINT m_DropID;
@@ -157,6 +172,7 @@ protected:
 	// fonts
 	CFont m_Regular;
 	CFont m_Bold;
+	CFont m_StarFont;
 
 	// macros
 	DECLARE_DYNAMIC(CmusikSelectionCtrl)

@@ -82,6 +82,8 @@ void CmusikTrackCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 		// and return...
 		if ( lpcd->dwItemSpec == TBCD_TICS )
 		{
+			ReleaseDC( pDC );
+
 			*pResult = CDRF_SKIPDEFAULT;
 			return;
 		}
