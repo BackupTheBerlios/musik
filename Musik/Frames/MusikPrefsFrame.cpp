@@ -66,17 +66,18 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//------------------------------//
 	tcPreferencesTree	= new wxTreeCtrl( this, MUSIK_PREFERENCES_TREE, wxPoint( 0, 0 ), wxSize( 100, 300 ), wxTR_HAS_BUTTONS | wxSIMPLE_BORDER );
 	//--- root nodes ---//
-	nRootID			=	tcPreferencesTree->AddRoot		( _("Preferences")			);
-	nOptionsRootID	=	tcPreferencesTree->AppendItem	( nRootID, _("Options")	);
-	nTagRootID		=	tcPreferencesTree->AppendItem	( nRootID, _("Tagging")	);
-	nSoundRootID	=	tcPreferencesTree->AppendItem	( nRootID, _("Sound")		);
+	nRootID			=	tcPreferencesTree->AddRoot		( _( "Preferences" )		);
+	nOptionsRootID	=	tcPreferencesTree->AppendItem	( nRootID, _( "Options" )	);
+	nTagRootID		=	tcPreferencesTree->AppendItem	( nRootID, _( "Tagging" )	);
+	nSoundRootID	=	tcPreferencesTree->AppendItem	( nRootID, _( "Sound" )		);
 	//--- child nodes ---//
-	nInterfaceID	=	tcPreferencesTree->AppendItem	( nOptionsRootID,	_("General")		);
-	nSelectionsID	=	tcPreferencesTree->AppendItem	( nOptionsRootID,	_("Selections")	);
-	nGeneralTagID	=	tcPreferencesTree->AppendItem	( nTagRootID,		_("General")		);
-	nAutoTagID		=	tcPreferencesTree->AppendItem	( nTagRootID,		_("Auto Tag")		);
-	nPlaybackID		=	tcPreferencesTree->AppendItem	( nSoundRootID,		_("Playback")		);
-	nDriverID		=	tcPreferencesTree->AppendItem	( nSoundRootID,		_("Driver")		);
+	nInterfaceID	=	tcPreferencesTree->AppendItem	( nOptionsRootID,	_( "General" )		);
+	nSelectionsID	=	tcPreferencesTree->AppendItem	( nOptionsRootID,	_( "Selections" )	);
+	nPlaylistID		=	tcPreferencesTree->AppendItem	( nOptionsRootID,	_( "Playlist" )		);
+	nGeneralTagID	=	tcPreferencesTree->AppendItem	( nTagRootID,		_( "General" )		);
+	nAutoTagID		=	tcPreferencesTree->AppendItem	( nTagRootID,		_( "Auto Tag" )		);
+	nPlaybackID		=	tcPreferencesTree->AppendItem	( nSoundRootID,		_( "Playback" )		);
+	nDriverID		=	tcPreferencesTree->AppendItem	( nSoundRootID,		_( "Driver" )		);
 	//--- expand all the root nodes ---//
 	tcPreferencesTree->Expand( nOptionsRootID );
 	tcPreferencesTree->Expand( nTagRootID );
@@ -105,6 +106,15 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	hsSeekDuration->Add( chkCrossfadeSeek,	0, wxALIGN_CENTER | wxRIGHT, 3 );
 	hsSeekDuration->Add( tcSeekDuration,	0, wxALIGN_CENTER | wxRIGHT, 3 );
 	hsSeekDuration->Add( stSeekDuration,	0, wxALIGN_CENTER, 0);
+
+	//-------------------------------//
+	//--- Sound -> Playback Sizer ---//
+	//-------------------------------//
+	vsSound_Playback = new wxBoxSizer( wxVERTICAL );
+	vsSound_Playback->Add( chkRepeat,		0, wxALL, 4  );
+	vsSound_Playback->Add( chkShuffle,		0, wxALL, 4  );
+	vsSound_Playback->Add( hsDuration,		0, wxALL, 4  );
+	vsSound_Playback->Add( hsSeekDuration,	0, wxALL, 4  );
 
 	//-----------------------//
 	//--- Sound -> Driver ---//
@@ -149,6 +159,15 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	hsBufferLength = new wxBoxSizer( wxHORIZONTAL );
 	hsBufferLength->Add( tcBufferLength, 0, wxALIGN_CENTER | wxRIGHT, 4 );
 	hsBufferLength->Add( stBufferLength, 0, wxALIGN_CENTER, 0 );
+
+	//-----------------------------//
+	//--- Sound -> Driver Sizer ---//
+	//-----------------------------//
+	vsSound_Driver = new wxBoxSizer ( wxVERTICAL );
+	vsSound_Driver->Add( vsOutputDrv,		0, wxALL, 4 );
+	vsSound_Driver->Add( vsSndDevice,		0, wxALL, 4  );
+	vsSound_Driver->Add( vsPlayRate,		0, wxALL, 4  );
+	vsSound_Driver->Add( hsBufferLength,	0, wxALL, 4  );
 
 	//----------------------------//
 	//--- Options -> Selection ---//
@@ -208,23 +227,15 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	hsSelStyle->Add( stSelStyle, 0, wxCENTER | wxRIGHT, 4 );
 	hsSelStyle->Add( cmbSelStyle, 1, wxCENTER, 0 );
 
-	//-------------------------------//
-	//--- Sound -> Playback Sizer ---//
-	//-------------------------------//
-	vsSound_Playback = new wxBoxSizer( wxVERTICAL );
-	vsSound_Playback->Add( chkRepeat,		0, wxALL, 4  );
-	vsSound_Playback->Add( chkShuffle,		0, wxALL, 4  );
-	vsSound_Playback->Add( hsDuration,		0, wxALL, 4  );
-	vsSound_Playback->Add( hsSeekDuration,	0, wxALL, 4  );
-
-	//-----------------------------//
-	//--- Sound -> Driver Sizer ---//
-	//-----------------------------//
-	vsSound_Driver = new wxBoxSizer ( wxVERTICAL );
-	vsSound_Driver->Add( vsOutputDrv,		0, wxALL, 4 );
-	vsSound_Driver->Add( vsSndDevice,		0, wxALL, 4  );
-	vsSound_Driver->Add( vsPlayRate,		0, wxALL, 4  );
-	vsSound_Driver->Add( hsBufferLength,	0, wxALL, 4  );
+	//-----------------------------------//
+	//--- Options -> Selections Sizer ---//
+	//-----------------------------------//
+	vsOptions_Selections = new wxBoxSizer ( wxVERTICAL );
+	vsOptions_Selections->Add ( hsActivityBox1,		0, wxALL, 4 );
+	vsOptions_Selections->Add ( hsActivityBox2,		0, wxALL, 4 );
+	vsOptions_Selections->Add ( hsActivityBox3,		0, wxALL, 4 );
+	vsOptions_Selections->Add ( hsActivityBox4,		0, wxALL, 4 );
+	vsOptions_Selections->Add ( hsSelStyle,			0, wxALL, 4 );
 
 	//--------------------------//
 	//--- Options -> General ---//
@@ -241,9 +252,9 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	btnActivityStripeColour	=	new wxButton( this, MUSIK_PREFERENCES_ACTIVITY_STRIPE_COLOUR,	_("Set Color"), wxPoint( 0, 0 ), wxSize( 64, 24 ) );
 	btnSourcesStripeColour	=	new wxButton( this, MUSIK_PREFERENCES_SOURCES_STRIPE_COLOUR,	_("Set Color"), wxPoint( 0, 0 ), wxSize( 64, 24 ) );
 
-	//----------------------------------//
-	//--- Options -> Interface Sizer ---//
-	//----------------------------------//
+	//--------------------------------//
+	//--- Options -> General Sizer ---//
+	//--------------------------------//
 	vsOptions_Interface = new wxBoxSizer( wxVERTICAL );
 	vsOptions_Interface->Add( chkAutoScan,				0, wxALL, 4 );
 	vsOptions_Interface->Add( chkAutoDelta,				0, wxALL, 4 );
@@ -255,6 +266,19 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	vsOptions_Interface->Add( btnActivityStripeColour,	0, wxALL, 4 );
 	vsOptions_Interface->Add( chkSourcesBoxStripes,		0, wxALL, 4 );
 	vsOptions_Interface->Add( btnSourcesStripeColour,	0, wxALL, 4 );
+
+	//---------------------------//
+	//--- Options -> Playlist ---//
+	//---------------------------//
+	chkPLColumnStatic	= new wxCheckBox ( this, -1,	_("Playlist headers resize dynamically."), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+	chkPLNoHorScroll	= new wxCheckBox ( this, -1,	_("Resize playlist headers so there is no horizontal scrolling."), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+
+	//---------------------------------//
+	//--- Options -> Playlist Sizer ---//
+	//---------------------------------//
+	vsOptions_Playlist = new wxBoxSizer( wxVERTICAL );
+	vsOptions_Playlist->Add	( chkPLColumnStatic,	0, wxALL | wxEXPAND, 4 );
+	vsOptions_Playlist->Add	( chkPLNoHorScroll,		0, wxALL | wxEXPAND, 4 );
 
 	//--------------------------//
 	//--- Tagging -> General ---//
@@ -303,7 +327,7 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 		wxString( _("%1 - Song Title\n")				) + 
 		wxString( _("%2 - Artist Name\n")				) +
 		wxString( _("%3 - Album Name\n")				) +
-		wxString( _("%4 - Genre\n")					) +
+		wxString( _("%4 - Genre\n")						) +
 		wxString( _("%5 - Year\n")						) +
 		wxString( _("%6 - Track Number\n\n")			) +
 		wxString( _("Musik will not delete empty directories!" ) );
@@ -324,16 +348,6 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	btnApply =	new wxButton( this, MUSIK_PREFERENCES_APPLY,	_("Apply"),		wxPoint( 0, 0 ), wxSize( 64, 24 ) );
 	btnOK =		new wxButton( this, MUSIK_PREFERENCES_OK,		_("OK"),		wxPoint( 0, 0 ), wxSize( 64, 24 ) );
 
-	//-----------------------------------//
-	//--- Options -> Selections Sizer ---//
-	//-----------------------------------//
-	vsOptions_Selections = new wxBoxSizer ( wxVERTICAL );
-	vsOptions_Selections->Add ( hsActivityBox1,		0, wxALL, 4 );
-	vsOptions_Selections->Add ( hsActivityBox2,		0, wxALL, 4 );
-	vsOptions_Selections->Add ( hsActivityBox3,		0, wxALL, 4 );
-	vsOptions_Selections->Add ( hsActivityBox4,		0, wxALL, 4 );
-	vsOptions_Selections->Add ( hsSelStyle,			0, wxALL, 4 );
-
 	//----------------------------//
 	//--- System Buttons Sizer ---//
 	//----------------------------//
@@ -350,6 +364,7 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	hsSplitter->Add( tcPreferencesTree,		2, wxEXPAND | wxRIGHT, 8 );
 	hsSplitter->Add( vsOptions_Selections,	5 );
 	hsSplitter->Add( vsOptions_Interface,	5 );
+	hsSplitter->Add( vsOptions_Playlist,	5 );
 	hsSplitter->Add( vsSound_Playback,		5 );
 	hsSplitter->Add( vsSound_Driver,		5 );
 	hsSplitter->Add( vsTagging_General,		5 );
@@ -492,6 +507,7 @@ void MusikPrefsFrame::HidePanels()
 {
 	hsSplitter->Show( vsOptions_Selections,	false );
 	hsSplitter->Show( vsOptions_Interface,	false );
+	hsSplitter->Show( vsOptions_Playlist,	false );
 	hsSplitter->Show( vsSound_Playback,		false );
 	hsSplitter->Show( vsSound_Driver,		false );
 	hsSplitter->Show( vsTagging_General,	false );
@@ -529,6 +545,11 @@ void MusikPrefsFrame::UpdatePrefsPanel()
 	{
 		HidePanels();
 		hsSplitter->Show( vsTagging_General, true );
+	}
+	else if ( tcPreferencesTree->GetSelection() == nPlaylistID )
+	{
+		HidePanels();
+		hsSplitter->Show( vsOptions_Playlist, true );
 	}
 	this->Layout();
 }

@@ -97,6 +97,12 @@ public:
 	wxComboBox	*cmbActivityBox4;
 	wxComboBox	*cmbSelStyle;
 
+	//-----------------------------//
+	//--- options -> playlist	---//
+	//-----------------------------//
+	wxCheckBox*	chkPLNoHorScroll;
+	wxCheckBox*	chkPLColumnStatic;
+
 	//--------------------------//
 	//--- tagging -> general ---//
 	//--------------------------//
@@ -137,6 +143,7 @@ public:
 	wxBoxSizer	*vsSound_Driver;
 	wxBoxSizer	*vsSound_Playback;
 	wxBoxSizer	*vsOptions_Selections;
+	wxBoxSizer	*vsOptions_Playlist;
 	wxBoxSizer	*vsOptions_Interface;
 	wxBoxSizer	*vsOptions_Misc;
 	wxBoxSizer	*vsTagging_General;
@@ -170,6 +177,7 @@ private:
 	wxTreeItemId nPlaybackID;
 	wxTreeItemId nDriverID;
 	wxTreeItemId nSelectionsID;
+	wxTreeItemId nPlaylistID;
 	wxTreeItemId nInterfaceID;	
 	wxTreeItemId nGeneralTagID;
 	wxTreeItemId nAutoTagID;

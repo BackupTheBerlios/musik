@@ -76,7 +76,7 @@ void CMusikPrefs::LoadPrefs()
 	config->Read( wxT( "BlankSwears" ),								&nBlankSwears,			0						);
 	config->Read( wxT( "EnableWebserver" ),							&nWebServerEnable,		0						);
 	config->Read( wxT( "Webserverport" ),							&nWebServerPort,		6395					);
-	config->Read( wxT( "FramePlacement" ),							&sFramePlacement,		wxT("")					);
+	config->Read( wxT( "FramePlacement" ),							&sFramePlacement,		wxT("0,0,800,600,0,0")	);
 
 	//--- playlist columns ---//
 	for( int i = 0;i < NPLAYLISTCOLUMNS; i++ )
