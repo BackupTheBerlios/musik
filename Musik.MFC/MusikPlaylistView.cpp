@@ -4,8 +4,6 @@
 #include "stdafx.h"
 #include "Musik.h"
 #include "MusikPlaylistView.h"
-#include ".\musikplaylistview.h"
-
 
 // CMusikPlaylistView
 
