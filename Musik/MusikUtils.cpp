@@ -163,6 +163,24 @@ wxArrayString DelimitStr( wxString sStr, wxString sDel, bool bRemoveDelimiter )
 	return aReturn;
 }
 
+void SortArrayByLength ( wxArrayString* pArray )
+{
+	wxString sTemp;
+
+	for ( size_t i = 0; i < pArray->GetCount(); i++ )
+	{
+		for ( size_t j = 0; j < pArray->GetCount()-1; j++ )
+		{	
+			if( pArray->Item( j ).Length() < pArray->Item( j + 1 ).Length() )
+			{
+				sTemp = pArray->Item( j );
+				pArray->Item( j + 0 ) = pArray->Item( j + 1 );
+				pArray->Item( j + 1 ) = sTemp;
+			}
+		}
+	}
+}
+
 size_t GetDelimitCount ( wxString sStr, wxString sDel )
 {
 	wxArrayString aTemp = DelimitStr( sStr, sDel, false );

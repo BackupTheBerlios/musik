@@ -1094,15 +1094,10 @@ void CPlaylistCtrl::DNDDone( int nNewPos )
 //----------------------------------------//
 void CPlaylistCtrl::OnThreadStart( wxCommandEvent& WXUNUSED(event) )
 {
-	//--- update locally ---//
-	SetActiveThread	( pRenameThread );
-	SetProgressType	( MUSIK_PLAYLIST_RENAME_THREAD );
-	SetProgress		( 0 );
-
 	//--- setup thread to begin in g_MusikFrame ---//
-	g_MusikFrame->SetActiveThread	( pRenameThread );
-	g_MusikFrame->SetProgressType	( MUSIK_PLAYLIST_RENAME_THREAD );
-	g_MusikFrame->SetProgress		( 0 );
+	g_MusikFrame->SetActiveThread	( GetActiveThread() );
+	g_MusikFrame->SetProgressType	( GetProgressType() );
+	g_MusikFrame->SetProgress		( GetProgress() );
 
 	//--- post the event. we're up and running now! ---//
 	wxCommandEvent MusikStartProgEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_FRAME_THREAD_START );
@@ -1113,6 +1108,7 @@ void CPlaylistCtrl::OnThreadProg( wxCommandEvent& WXUNUSED(event) )
 {
 	//--- relay thread progress message to g_MusikFrame ---//
 	g_MusikFrame->SetProgress( GetProgress() );
+
 	wxCommandEvent MusikEndProgEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_FRAME_THREAD_PROG );
 	wxPostEvent( g_MusikFrame, MusikEndProgEvt );
 }
@@ -1121,6 +1117,7 @@ void CPlaylistCtrl::OnThreadEnd( wxCommandEvent& WXUNUSED(event) )
 {
 	if( GetProgressType() == MUSIK_PLAYLIST_RETAG_THREAD )
 		g_ActivityAreaCtrl->ResetAllContents();
+
 	g_PlaylistCtrl->Update();
 
 	//--- update locally ---//

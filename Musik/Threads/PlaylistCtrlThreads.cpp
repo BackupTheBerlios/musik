@@ -26,6 +26,10 @@ MusikPlaylistRenameThread::MusikPlaylistRenameThread( CMusikSongArray songs )
 
 void* MusikPlaylistRenameThread::Entry()
 {
+	g_PlaylistCtrl->SetActiveThread	( this );
+	g_PlaylistCtrl->SetProgressType	( MUSIK_PLAYLIST_RENAME_THREAD );
+	g_PlaylistCtrl->SetProgress		( 0 );
+
 	//----------------------------------------//
 	//--- events we'll post as we go along ---//
 	//----------------------------------------//
@@ -76,6 +80,10 @@ MusikPlaylistRetagThread::MusikPlaylistRetagThread( CMusikSongArray songs )
 
 void* MusikPlaylistRetagThread::Entry()
 {
+	g_PlaylistCtrl->SetActiveThread	( this );
+	g_PlaylistCtrl->SetProgressType	( MUSIK_PLAYLIST_RETAG_THREAD );
+	g_PlaylistCtrl->SetProgress		( 0 );
+
 	//----------------------------------------//
 	//--- events we'll post as we go along ---//
 	//----------------------------------------//

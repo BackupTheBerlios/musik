@@ -42,8 +42,10 @@ wxString		GenTempFilename		( wxString filename, int nsize );
 wxString		ColourToString		( const wxColour& color );
 wxColour		StringToColour		( const wxString& string );
 
-wxArrayString	GetMusicDirs	( wxArrayString *aDirs );
-wxArrayString	GetMusicDir		( wxString* sDir );
+wxArrayString	GetMusicDirs		( wxArrayString *aDirs );
+wxArrayString	GetMusicDir			( wxString* sDir );
+
+void			SortArrayByLength	( wxArrayString* pArray );
 
 wxString		GetJustFilename	( const wxString & filename );
 

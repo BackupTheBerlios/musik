@@ -1270,129 +1270,108 @@ bool CMusikLibrary::RenameFile( CMusikSong* song, bool bClearCheck )
 	return false;
 }
 
-bool CMusikLibrary::RetagFile( CMusikSong* OldSong )
+bool CMusikLibrary::RetagFile( CMusikSong* Song )
 {
-	CMusikSong* NewSong		= new CMusikSong;
-	NewSong					= OldSong;
+	wxString sMask	= g_Prefs.sAutoTag;
+	wxString sFile	= Song->Filename;
 
-	wxFileName	filename	( NewSong->Filename );
-
-	wxString	sMask		= g_Prefs.sAutoTag;
-	wxString	sFile		= NewSong->Filename;
-	wxString	sExt		= wxT(".") + filename.GetExt();
-
+	//-------------------------------------------------//
+	//--- get rid of the file extension.			---//
+	//-------------------------------------------------//
 	sFile = sFile.Left( sFile.Length() - 4 );
 
-	size_t		nValidStart	= 1;
-	size_t		nValidEnd	= 6;
+	//-------------------------------------------------//
+	//--- get the order of the values in the mask,	---//
+	//--- as well as the order of the delimiters	---//
+	//--- (space inbetween the mask)				---//
+	//---											---//
+	//--- Example:									---//
+	//---    %1_-_%2_-_%3-.mp3						---//
+	//-------------------------------------------------//
+	wxArrayString aMaskDelimiters = DelimitStr( sMask, wxT("%"), true );
+	aMaskDelimiters.Remove( 0, 1 );	//--- will be blank. working right to left, not left to right ---//
 
+	wxString sIsNumber;
 	wxArrayString aMaskOrder;
-
-	wxArrayString aMaskDelimiters	= DelimitStr( sMask, wxT("%"), true );
-	aMaskDelimiters.Remove(0, 1);
-
-	wxArrayString aFileTokens;
-
-// Get mask order and delimiter order.
-	bool bSuccess;
-	wxString sTemp;
-
-	for( size_t i = 0; i < aMaskDelimiters.GetCount(); i++ )
+	for ( size_t i = 0; i < aMaskDelimiters.GetCount(); i++ )
 	{
-		sTemp = aMaskDelimiters.Item( i ).Left( 1 );
-		if( sTemp.IsNumber() )
+		sIsNumber= aMaskDelimiters.Item( i ).Left( 1 );
+		if( sIsNumber.IsNumber() )
 		{
-			aMaskOrder.Insert( sTemp, i );
-			aMaskDelimiters.Item( i ) = aMaskDelimiters.Item( i ).Right( aMaskDelimiters.Item( i ).Length() - 1 );
-			bSuccess = true;
+			aMaskOrder.Add( sIsNumber );
+			aMaskDelimiters.Item( i ) = aMaskDelimiters.Item( i ).Right( aMaskDelimiters.Item( i ).Length() - 1 );	//--- chop off mask value ---//
 		}
 
-		if( !bSuccess )
+		else
 		{
 			wxMessageBox( wxT( "Invalid Mask." ) );
 			return false;
 		}
 	}
 
-//Sorts delimiters in order of length
-	size_t k = 0;
-	while( k < aMaskDelimiters.GetCount() - 1 )
-	{
-		if( aMaskDelimiters.Item( k ).Length() >= aMaskDelimiters.Item( k + 1 ).Length() )
-			k++;
-		else
-		{
-			sTemp = aMaskDelimiters.Item( k );
-			aMaskDelimiters.Item( k ) = aMaskDelimiters.Item( k + 1 );
-			aMaskDelimiters.Item( k + 1 ) = sTemp;
-			k = 0;
-		}
-	}
+	//-------------------------------------------------//
+	//--- sort delimiters in order of length		---//
+	//-------------------------------------------------//
+	SortArrayByLength( &aMaskDelimiters );
 
-//Convert delimiters to \n chars (for replacement purposes) NEEDS WORK
-	size_t nReplacementCount = 0;
-
-	nReplacementCount = sFile.Replace( wxString( MUSIK_PATH_SEPARATOR ), wxT( "\n" ), true );
+	//-------------------------------------------------//
+	//--- Convert path separators and delimiters	---// 
+	//--- to newline constants ("\n")				---//
+	//-------------------------------------------------//
+	sFile.Replace( wxString( MUSIK_PATH_SEPARATOR ), wxT( "\n" ), true );
 
 	for( size_t i = 0; i < aMaskDelimiters.GetCount() - 1; i++ )
-	{
-		nReplacementCount = nReplacementCount + sFile.Replace( aMaskDelimiters.Item( i ), wxT( "\n" ), true );
-	}
+		sFile.Replace( aMaskDelimiters.Item( i ), wxT( "\n" ), true );
 
-	if( nReplacementCount < aMaskDelimiters.GetCount() )
-		return false;
-
-	aFileTokens = DelimitStr( sFile, wxT( "\n" ), true );
-
+	//-------------------------------------------------//
+	//--- delimit the string for future parsing		---//
+	//-------------------------------------------------//
+	wxArrayString aFileTokens = DelimitStr( sFile, wxT( "\n" ), true );
 	for( size_t i = 0; i < aFileTokens.GetCount(); i++ )
 	{
 		aFileTokens.Item( i ).Trim( true );
 		aFileTokens.Item( i ).Trim( false );
 	}
 
-// put in proper order.
+	//-------------------------------------------------//
+	//--- reading right to left, (bottom to top in	---//
+	//--- array terms), assign the needed values	---//
+	//--- to the new song.							---//
+	//-------------------------------------------------//
 	size_t nTokenIndex	= aFileTokens.GetCount() - 1;
 	size_t nMaskIndex	= aMaskOrder.GetCount() - 1;
 
 	for( size_t i = 0; i < aMaskOrder.GetCount(); i++ )
+	{
+		switch ( wxStringToInt( aMaskOrder.Item( nMaskIndex - i ) ) )
 		{
-			switch ( wxStringToInt( aMaskOrder.Item( nMaskIndex - i ) ) )
-			{
-			case 1:
-				NewSong->Title = aFileTokens.Item( nTokenIndex - i );
-				wxMessageBox( wxT( "..." ) + NewSong->Title + wxT( "..." ) );
-				break;
-			case 2:
-				NewSong->Artist = aFileTokens.Item( nTokenIndex - i );
-				wxMessageBox( wxT( "..." ) + NewSong->Artist + wxT( "..." ) );
-				break;
-			case 3:
-				NewSong->Album = aFileTokens.Item( nTokenIndex - i );
-				wxMessageBox( wxT( "..." ) + NewSong->Album + wxT( "..." ) );
-				break;
-			case 4:
-				NewSong->Genre = aFileTokens.Item( nTokenIndex - i );
-				wxMessageBox( wxT( "..." ) + NewSong->Genre + wxT( "..." ) );
-				break;
-			case 5:
-				NewSong->Year = aFileTokens.Item( nTokenIndex - i );
-				wxMessageBox( wxT( "..." ) + NewSong->Year + wxT( "..." ) );
-				break;
-			case 6:
-				NewSong->TrackNum = wxStringToInt( aFileTokens.Item( nTokenIndex - i ) );
-				wxMessageBox( wxT( "..." ) + IntTowxString(NewSong->TrackNum) + wxT( "..." ) );
-				break;
-			default:
-				wxMessageBox( wxT("Fuckup.") );
-				break;
-			}
+		case 1:
+			Song->Title = aFileTokens.Item	( nTokenIndex - i );
+			break;
+		case 2:
+			Song->Artist = aFileTokens.Item	( nTokenIndex - i );
+			break;
+		case 3:
+			Song->Album = aFileTokens.Item	( nTokenIndex - i );
+			break;
+		case 4:
+			Song->Genre = aFileTokens.Item	( nTokenIndex - i );
+			break;
+		case 5:
+			Song->Year = aFileTokens.Item	( nTokenIndex - i );
+			break;
+		case 6:
+			Song->TrackNum = wxStringToInt( aFileTokens.Item( nTokenIndex - i ) );
+			break;
+		default:
+			return false;
+			break;
 		}
+	}
 
-	g_Library.UpdateItem( NewSong->Filename, *NewSong, true );
+	g_Library.UpdateItem( Song->Filename, *Song, true );
 	return true;
 }
-
-
 
 //-----------------------------------//
 //--- pre-defined queries to make ---//

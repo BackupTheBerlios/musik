@@ -305,7 +305,7 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 		wxString( _("%4 - Genre\n")					) +
 		wxString( _("%5 - Year\n")						) +
 		wxString( _("%6 - Track Number\n\n")			) +
-		wxString( _("Musik will not delete empty directories!\nPaths are not currently parsed by auto tag." ) );
+		wxString( _("Musik will not delete empty directories!" ) );
 	wxStaticText *stInfo = new wxStaticText( this, -1, sInfo, wxPoint( 0, 0 ), wxSize( -1, -1), wxALIGN_LEFT );
 
 	//---------------------------------//
@@ -320,7 +320,7 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//--- System Buttons ---//
 	//----------------------//
 	btnCancel =	new wxButton( this, MUSIK_PREFERENCES_CANCEL,	_("Cancel"),	wxPoint( 0, 0 ), wxSize( 64, 24 ) );
-	btnApply =	new wxButton( this, MUSIK_PREFERENCES_APPLY,	_("Apply"),	wxPoint( 0, 0 ), wxSize( 64, 24 ) );
+	btnApply =	new wxButton( this, MUSIK_PREFERENCES_APPLY,	_("Apply"),		wxPoint( 0, 0 ), wxSize( 64, 24 ) );
 	btnOK =		new wxButton( this, MUSIK_PREFERENCES_OK,		_("OK"),		wxPoint( 0, 0 ), wxSize( 64, 24 ) );
 
 	//-----------------------------------//
