@@ -82,9 +82,9 @@ void CMusikPrefs::LoadPrefs()
 	//--- playlist columns ---//
 	for( int i = 0;i < NPLAYLISTCOLUMNS; i++ )
 	{
-		config->Read( wxString::Format(wxT("PlaylistColumn%dEnable"),i),&nPlaylistColumnEnable[i],	1	);
-		config->Read( wxString::Format(wxT("PlaylistColumn%dSize")	,i),&nPlaylistColumnSize[i],	50	);
-		config->Read( wxString::Format(wxT("PlaylistColumn%dStatic"),i),&nPlaylistColumnStatic[i],	0	);
+		config->Read( wxString::Format(wxT("PlaylistColumn%dEnable"),i),	&nPlaylistColumnEnable[i],	1	);
+		config->Read( wxString::Format(wxT("PlaylistColumn%dSize")	,i),	&nPlaylistColumnSize[i],	50	);
+		config->Read( wxString::Format(wxT("PlaylistColumn%dDynamic"),i),	&nPlaylistColumnDynamic[i],	0	);
 	}
 
 	g_FX.LoadBands( config );
@@ -175,9 +175,9 @@ void CMusikPrefs::SavePrefs()
 	//--- playlist columns ---//
 	for( int i = 0; i < NPLAYLISTCOLUMNS; i++ )
 	{
-		config->Write( wxString::Format(wxT("PlaylistColumn%dEnable"),	i),nPlaylistColumnEnable[i]	);
-		config->Write( wxString::Format(wxT("PlaylistColumn%dSize"),	i),nPlaylistColumnSize[i]	);
-		config->Write( wxString::Format(wxT("PlaylistColumn%dStatic"),	i),nPlaylistColumnStatic[i]	);
+		config->Write( wxString::Format(wxT("PlaylistColumn%dEnable"),	i),	nPlaylistColumnEnable[i]	);
+		config->Write( wxString::Format(wxT("PlaylistColumn%dSize"),	i),	nPlaylistColumnSize[i]		);
+		config->Write( wxString::Format(wxT("PlaylistColumn%dDynamic"),	i),	nPlaylistColumnDynamic[i]	);
 	}
 
 	g_FX.SaveBands( config );

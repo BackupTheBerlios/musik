@@ -97,7 +97,7 @@ public:
 
 	int nPlaylistColumnEnable[NPLAYLISTCOLUMNS];
 	int nPlaylistColumnSize[NPLAYLISTCOLUMNS];
-	int nPlaylistColumnStatic[NPLAYLISTCOLUMNS];
+	int nPlaylistColumnDynamic[NPLAYLISTCOLUMNS];
 };
 
 class CMusikPaths

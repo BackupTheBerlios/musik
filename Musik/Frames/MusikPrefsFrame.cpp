@@ -271,112 +271,162 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//--- Options -> Playlist ---//
 	//---------------------------//
 
-	chkRatingEnable			= new wxCheckBox(	this, -1, _("Rating:"),			wxPoint( 0, 0 ), wxSize( 90, -1 ) );
-	chkTrackEnable			= new wxCheckBox(	this, -1, _("Number:"),			wxPoint( 0, 0 ), wxSize( 90, -1 ) );
-	chkTitleEnable			= new wxCheckBox(	this, -1, _("Title:"),			wxPoint( 0, 0 ), wxSize( 90, -1 ) );
-	chkArtistEnable			= new wxCheckBox(	this, -1, _("Artist:"),			wxPoint( 0, 0 ), wxSize( 90, -1 ) );
-	chkAlbumEnable			= new wxCheckBox(	this, -1, _("Album:"),			wxPoint( 0, 0 ), wxSize( 90, -1 ) );
-	chkYearEnable			= new wxCheckBox(	this, -1, _("Year:"),			wxPoint( 0, 0 ), wxSize( 90, -1 ) );
-	chkGenreEnable			= new wxCheckBox(	this, -1, _("Genre:"),			wxPoint( 0, 0 ), wxSize( 90, -1 ) );
-	chkTimesPlayedEnable	= new wxCheckBox(	this, -1, _("Times Played:"),	wxPoint( 0, 0 ), wxSize( 90, -1 ) );
-	chkLastPlayedEnable		= new wxCheckBox(	this, -1, _("Last Played:"),	wxPoint( 0, 0 ), wxSize( 90, -1 ) );
-	chkTimeEnable			= new wxCheckBox(	this, -1, _("Time:"),			wxPoint( 0, 0 ), wxSize( 90, -1 ) );
-	chkBitrateEnable		= new wxCheckBox(	this, -1, _("Bitrate:"),		wxPoint( 0, 0 ), wxSize( 90, -1 ) );
-	chkFilenameEnable		= new wxCheckBox(	this, -1, _("Filename:"),		wxPoint( 0, 0 ), wxSize( 90, -1 ) );
+	chkRatingEnable			= new wxCheckBox(	this, -1, _("Rating"),			wxPoint( 0, 0 ), wxSize( -1, -1 ) );
+	chkTrackEnable			= new wxCheckBox(	this, -1, _("Number:"),			wxPoint( 0, 0 ), wxSize( -1, -1 ) );
+	chkTitleEnable			= new wxCheckBox(	this, -1, _("Title:"),			wxPoint( 0, 0 ), wxSize( -1, -1 ) );
+	chkArtistEnable			= new wxCheckBox(	this, -1, _("Artist:"),			wxPoint( 0, 0 ), wxSize( -1, -1 ) );
+	chkAlbumEnable			= new wxCheckBox(	this, -1, _("Album:"),			wxPoint( 0, 0 ), wxSize( -1, -1 ) );
+	chkYearEnable			= new wxCheckBox(	this, -1, _("Year:"),			wxPoint( 0, 0 ), wxSize( -1, -1 ) );
+	chkGenreEnable			= new wxCheckBox(	this, -1, _("Genre:"),			wxPoint( 0, 0 ), wxSize( -1, -1 ) );
+	chkTimesPlayedEnable	= new wxCheckBox(	this, -1, _("Times Played:"),	wxPoint( 0, 0 ), wxSize( -1, -1 ) );
+	chkLastPlayedEnable		= new wxCheckBox(	this, -1, _("Last Played:"),	wxPoint( 0, 0 ), wxSize( -1, -1 ) );
+	chkTimeEnable			= new wxCheckBox(	this, -1, _("Time:"),			wxPoint( 0, 0 ), wxSize( -1, -1 ) );
+	chkBitrateEnable		= new wxCheckBox(	this, -1, _("Bitrate:"),		wxPoint( 0, 0 ), wxSize( -1, -1 ) );
+	chkFilenameEnable		= new wxCheckBox(	this, -1, _("Filename:"),		wxPoint( 0, 0 ), wxSize( -1, -1 ) );
 
-	cmbRatingStatic			= new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
-		cmbRatingStatic->Append		( _("Static")  );
-		cmbRatingStatic->Append		( _("Dynamic") );
-	cmbTrackStatic			= new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
-		cmbTrackStatic->Append		( _("Static")  );
-		cmbTrackStatic->Append		( _("Dynamic") );
-	cmbTitleStatic			= new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
-		cmbTitleStatic->Append		( _("Static")  );
-		cmbTitleStatic->Append		( _("Dynamic") );
-	cmbArtistStatic			= new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
-		cmbArtistStatic->Append		( _("Static")  );
-		cmbArtistStatic->Append		( _("Dynamic") );
-	cmbAlbumStatic			= new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
-		cmbAlbumStatic->Append		( _("Static")  );
-		cmbAlbumStatic->Append		( _("Dynamic") );
-	cmbYearStatic			= new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
-		cmbYearStatic->Append		( _("Static")  );
-		cmbYearStatic->Append		( _("Dynamic") );
-	cmbGenreStatic			= new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
-		cmbGenreStatic->Append		( _("Static")  );
-		cmbGenreStatic->Append		( _("Dynamic") );
-	cmbTimesPlayedStatic	= new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
-		cmbTimesPlayedStatic->Append( _("Static")  );
-		cmbTitleStatic->Append		( _("Dynamic") );
-	cmbLastPlayedStatic		= new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
-		cmbTitleStatic->Append		( _("Static")  );
-		cmbTitleStatic->Append		( _("Dynamic") );
-	cmbTimeStatic			= new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
-		cmbTimeStatic->Append		( _("Static")  );
-		cmbTimeStatic->Append		( _("Dynamic") );
-	cmbBitrateStatic		= new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
-		cmbBitrateStatic->Append	( _("Static")  );
-		cmbBitrateStatic->Append	( _("Dynamic") );
-	cmbFilenameStatic		= new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
-		cmbFilenameStatic->Append	( _("Static")  );
-		cmbFilenameStatic->Append	( _("Dynamic") );
+	//--- track num combo box ---//
+	cmbTrackStatic	= new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
+	cmbTrackStatic->Append( _("Static")  );
+	cmbTrackStatic->Append( _("Dynamic") );
+	cmbTrackStatic->SetSelection ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TRACK] );
 
-	//chkPLColumnStatic	= new wxCheckBox ( this, -1,	_("Playlist headers resize dynamically."), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
-	//chkPLNoHorScroll	= new wxCheckBox ( this, -1,	_("Resize playlist headers so there is no horizontal scrolling."), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+	//--- title combo box ---//
+	cmbTitleStatic = new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
+	cmbTitleStatic->Append( _("Static")  );
+	cmbTitleStatic->Append( _("Dynamic") );
+	cmbTitleStatic->SetSelection ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TITLE] );
+
+	//--- artist combo box ---//
+	cmbArtistStatic	= new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
+	cmbArtistStatic->Append	( _("Static")  );
+	cmbArtistStatic->Append	( _("Dynamic") );
+	cmbArtistStatic->SetSelection ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_ARTIST] );
+
+	//--- album combo box ---//
+	cmbAlbumStatic = new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
+	cmbAlbumStatic->Append( _("Static")  );
+	cmbAlbumStatic->Append( _("Dynamic") );
+	cmbAlbumStatic->SetSelection ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_ALBUM] );
+
+	//--- year combo box ---//
+	cmbYearStatic = new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
+	cmbYearStatic->Append( _("Static")  );
+	cmbYearStatic->Append( _("Dynamic") );
+	cmbYearStatic->SetSelection ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_YEAR] );
+
+	//--- genre combo box ---//
+	cmbGenreStatic = new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
+	cmbGenreStatic->Append( _("Static")  );
+	cmbGenreStatic->Append( _("Dynamic") );
+	cmbGenreStatic->SetSelection ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_GENRE] );
+
+	//--- times played combo box ---//
+	cmbTimesPlayedStatic = new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
+	cmbTimesPlayedStatic->Append( _("Static")  );
+	cmbTimesPlayedStatic->Append( _("Dynamic") );
+	cmbTimesPlayedStatic->SetSelection ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TIMES_PLAYED] );
+
+	//--- last played combo box ---//
+	cmbLastPlayedStatic	= new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
+	cmbLastPlayedStatic->Append( _("Static")  );
+	cmbLastPlayedStatic->Append( _("Dynamic") );
+	cmbLastPlayedStatic->SetSelection ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_LAST_PLAYED] );
+
+	//--- time combo box ---//
+	cmbTimeStatic = new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
+	cmbTimeStatic->Append( _("Static")  );
+	cmbTimeStatic->Append( _("Dynamic") );
+	cmbTimeStatic->SetSelection ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TIME] );
+
+	//--- bitrate combo box ---//
+	cmbBitrateStatic = new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
+	cmbBitrateStatic->Append( _("Static")  );
+	cmbBitrateStatic->Append( _("Dynamic") );
+	cmbBitrateStatic->SetSelection ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_BITRATE] );
+
+	//--- filename ---//
+	cmbFilenameStatic = new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
+	cmbFilenameStatic->Append( _("Static")  );
+	cmbFilenameStatic->Append( _("Dynamic") );
+	cmbFilenameStatic->SetSelection ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_FILENAME] );
 
 	//---------------------------------//
 	//--- Options -> Playlist Sizer ---//
 	//---------------------------------//
-	hsPLRating =			new wxBoxSizer( wxHORIZONTAL );
-		hsPLRating->Add(		chkRatingEnable,		0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 2 );
-		hsPLRating->Add(		cmbRatingStatic,		0 );
-	hsPLTrack =				new wxBoxSizer( wxHORIZONTAL );
-		hsPLTrack->Add(			chkTrackEnable,			0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 2 );
-		hsPLTrack->Add(			cmbTrackStatic,			0 );
-	hsPLTitle =				new wxBoxSizer( wxHORIZONTAL );
-		hsPLTitle->Add(			chkTitleEnable,			0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 2 );
-		hsPLTitle->Add(			cmbTitleStatic,			0 );
-	hsPLArtist =			new wxBoxSizer( wxHORIZONTAL );
-		hsPLArtist->Add(		chkArtistEnable,		0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 2 );
-		hsPLArtist->Add(		cmbArtistStatic,		0 );
-	hsPLAlbum =				new wxBoxSizer( wxHORIZONTAL );
-		hsPLAlbum->Add(			chkAlbumEnable,			0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 2 );
-		hsPLAlbum->Add(			cmbAlbumStatic,			0 );
-	hsPLYear =				new wxBoxSizer( wxHORIZONTAL );
-		hsPLYear->Add(			chkYearEnable,			0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 2 );
-		hsPLYear->Add(			cmbYearStatic,			0 );
-	hsPLGenre =				new wxBoxSizer( wxHORIZONTAL );
-		hsPLGenre->Add(			chkGenreEnable,			0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 2 );
-		hsPLGenre->Add(			cmbGenreStatic,			0 );
-	hsPLTimesPlayed =		new wxBoxSizer( wxHORIZONTAL );
-		hsPLTimesPlayed->Add(	chkTimesPlayedEnable,	0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 2 );
-		hsPLTimesPlayed->Add(	cmbTimesPlayedStatic,	0 );
-	hsPLLastPlayed =		new wxBoxSizer( wxHORIZONTAL );
-		hsPLLastPlayed->Add(	chkLastPlayedEnable,	0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 2 );
-		hsPLLastPlayed->Add(	cmbLastPlayedStatic,	0 );
-	hsPLTime =				new wxBoxSizer( wxHORIZONTAL );
-		hsPLTime->Add(			chkTimeEnable,			0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 2 );
-		hsPLTime->Add(			cmbTimeStatic,			0 );
-	hsPLBitrate =			new wxBoxSizer( wxHORIZONTAL );
-		hsPLBitrate->Add(		chkBitrateEnable,		0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 2 );
-		hsPLBitrate->Add(		cmbBitrateStatic,		0 );
-	hsPLFilename =			new wxBoxSizer( wxHORIZONTAL );
-		hsPLFilename->Add(		chkFilenameEnable,		0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 2 );
-		hsPLFilename->Add(		cmbFilenameStatic,		0 );
 
-	vsOptions_Playlist =	new wxBoxSizer( wxVERTICAL   );
-		vsOptions_Playlist->Add(	hsPLRating,			0, wxALL | wxEXPAND, 2 );
-		vsOptions_Playlist->Add(	hsPLTrack,			0, wxALL | wxEXPAND, 2 );
-		vsOptions_Playlist->Add(	hsPLTitle,			0, wxALL | wxEXPAND, 2 );
-		vsOptions_Playlist->Add(	hsPLArtist,			0, wxALL | wxEXPAND, 2 );
-		vsOptions_Playlist->Add(	hsPLAlbum,			0, wxALL | wxEXPAND, 2 );
-		vsOptions_Playlist->Add(	hsPLYear,			0, wxALL | wxEXPAND, 2 );
-		vsOptions_Playlist->Add(	hsPLGenre,			0, wxALL | wxEXPAND, 2 );
-		vsOptions_Playlist->Add(	hsPLTimesPlayed,	0, wxALL | wxEXPAND, 2 );
-		vsOptions_Playlist->Add(	hsPLLastPlayed,		0, wxALL | wxEXPAND, 2 );
-		vsOptions_Playlist->Add(	hsPLTime,			0, wxALL | wxEXPAND, 2 );
-		vsOptions_Playlist->Add(	hsPLBitrate,		0, wxALL | wxEXPAND, 2 );
-		vsOptions_Playlist->Add(	hsPLFilename,		0, wxALL | wxEXPAND, 2 );
+	//---  pl rating sizer ---//
+	hsPLRating = new wxBoxSizer( wxHORIZONTAL );
+	hsPLRating->Add( chkRatingEnable, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 2 );
+
+	//---  pl track num sizer ---//
+	hsPLTrack =	 new wxBoxSizer( wxHORIZONTAL );
+	hsPLTrack->Add(	chkTrackEnable,	0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 2 );
+	hsPLTrack->Add(	cmbTrackStatic,	0 );
+
+	//---  pl title sizer ---//
+	hsPLTitle =	new wxBoxSizer( wxHORIZONTAL );
+	hsPLTitle->Add(	chkTitleEnable,	0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 2 );
+	hsPLTitle->Add(	cmbTitleStatic,	0 );
+
+	//--- pl artist sizer ---//
+	hsPLArtist = new wxBoxSizer( wxHORIZONTAL );
+	hsPLArtist->Add( chkArtistEnable, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 2 );
+	hsPLArtist->Add( cmbArtistStatic, 0 );
+
+	//--- pl album sizer ---//
+	hsPLAlbum =	new wxBoxSizer( wxHORIZONTAL );
+	hsPLAlbum->Add(	chkAlbumEnable,	0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 2 );
+	hsPLAlbum->Add(	cmbAlbumStatic,	0 );
+
+	//--- pl year sizer ---//
+	hsPLYear = new wxBoxSizer( wxHORIZONTAL );
+	hsPLYear->Add( chkYearEnable, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 2 );
+	hsPLYear->Add( cmbYearStatic, 0 );
+
+	//--- pl genre sizer ---//
+	hsPLGenre =	new wxBoxSizer( wxHORIZONTAL );
+	hsPLGenre->Add(	chkGenreEnable,	0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 2 );
+	hsPLGenre->Add(	cmbGenreStatic,	0 );
+
+	//--- pl times played sizer ---//
+	hsPLTimesPlayed = new wxBoxSizer( wxHORIZONTAL );
+	hsPLTimesPlayed->Add( chkTimesPlayedEnable,	0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 2 );
+	hsPLTimesPlayed->Add( cmbTimesPlayedStatic,	0 );
+
+	//--- pl last played sizer ---//
+	hsPLLastPlayed = new wxBoxSizer( wxHORIZONTAL );
+	hsPLLastPlayed->Add( chkLastPlayedEnable,	0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 2 );
+	hsPLLastPlayed->Add( cmbLastPlayedStatic,	0 );
+
+	//--- pl time sizer --//
+	hsPLTime = new wxBoxSizer( wxHORIZONTAL );
+	hsPLTime->Add( chkTimeEnable, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 2 );
+	hsPLTime->Add( cmbTimeStatic, 0 );
+
+	//--- pl bitrate sizer ---//
+	hsPLBitrate = new wxBoxSizer( wxHORIZONTAL );
+	hsPLBitrate->Add( chkBitrateEnable,	0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 2 );
+	hsPLBitrate->Add( cmbBitrateStatic,	0 );
+
+	//--- pl filename sizer ---//
+	hsPLFilename = new wxBoxSizer( wxHORIZONTAL );
+	hsPLFilename->Add( chkFilenameEnable, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 2 );
+	hsPLFilename->Add( cmbFilenameStatic, 0 );
+
+	//--- main sizer for playlist options ---//
+	vsOptions_Playlist = new wxBoxSizer( wxVERTICAL   );
+	vsOptions_Playlist->Add( hsPLRating,		0, wxALL | wxEXPAND, 2 );
+	vsOptions_Playlist->Add( hsPLTrack,			0, wxALL | wxEXPAND, 2 );
+	vsOptions_Playlist->Add( hsPLTitle,			0, wxALL | wxEXPAND, 2 );
+	vsOptions_Playlist->Add( hsPLArtist,		0, wxALL | wxEXPAND, 2 );
+	vsOptions_Playlist->Add( hsPLAlbum,			0, wxALL | wxEXPAND, 2 );
+	vsOptions_Playlist->Add( hsPLYear,			0, wxALL | wxEXPAND, 2 );
+	vsOptions_Playlist->Add( hsPLGenre,			0, wxALL | wxEXPAND, 2 );
+	vsOptions_Playlist->Add( hsPLTimesPlayed,	0, wxALL | wxEXPAND, 2 );
+	vsOptions_Playlist->Add( hsPLLastPlayed,	0, wxALL | wxEXPAND, 2 );
+	vsOptions_Playlist->Add( hsPLTime,			0, wxALL | wxEXPAND, 2 );
+	vsOptions_Playlist->Add( hsPLBitrate,		0, wxALL | wxEXPAND, 2 );
+	vsOptions_Playlist->Add( hsPLFilename,		0, wxALL | wxEXPAND, 2 );
 
 	//--------------------------//
 	//--- Tagging -> General ---//

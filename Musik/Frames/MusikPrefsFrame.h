@@ -114,7 +114,6 @@ public:
 	wxCheckBox* chkBitrateEnable;
 	wxCheckBox* chkFilenameEnable;
 
-	wxComboBox* cmbRatingStatic;
 	wxComboBox* cmbTrackStatic;
 	wxComboBox* cmbTitleStatic;
 	wxComboBox* cmbArtistStatic;
@@ -126,9 +125,6 @@ public:
 	wxComboBox* cmbTimeStatic;
 	wxComboBox* cmbBitrateStatic;
 	wxComboBox* cmbFilenameStatic;
-
-	//wxCheckBox*	chkPLNoHorScroll;
-	//wxCheckBox*	chkPLColumnStatic;
 
 	//--------------------------//
 	//--- tagging -> general ---//
