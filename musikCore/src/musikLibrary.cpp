@@ -2324,46 +2324,43 @@ int CmusikLibrary::GetAllDynPlaylists( CmusikPlaylistInfoArray* target, bool cle
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetAllCrossfaders( CmusikStringArray* target, bool clear_target )
+int CmusikLibrary::GetAllCrossfaderPresets( CmusikStringArray* target, CIntArray* target_ids, bool clear_targets )
 {
 	if ( !m_DatabaseOpen )
 		return -1;
 
-	if ( clear_target )
+	if ( clear_targets )
+	{
 		target->clear();
 
-	// do it
-	int nRet;
-	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
-	{
-		nRet = sqlite_exec_printf( m_pDB, "SELECT crossfader_name FROM %Q WHERE crossfader_name <> '';", 
-			&sqlite_AddRowToStringArray, target, NULL,
-			CROSSFADER_PRESET );
+		if ( target_ids )
+			target_ids->clear();
 	}
 
-	return nRet;
-}
-
-///////////////////////////////////////////////////
-
-int CmusikLibrary::GetAllCrossfaders( CIntArray* target, bool clear_target )
-{
-	if ( !m_DatabaseOpen )
-		return -1;
-
-	if ( clear_target )
-		target->clear();
-
-	// do it
-	int nRet;
+	int nRet1, nRet2 = 0;
+	BeginTransaction();
 	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
-		nRet = sqlite_exec_printf( m_pDB, "SELECT crossfader_id FROM %Q WHERE crossfader_id > -1;", 
-			&sqlite_GetIntFromRow, target, NULL,
-			CROSSFADER_PRESET );
-	}
+		if ( target )
+		{
+			nRet1 = sqlite_exec_printf( m_pDB, "SELECT crossfader_name FROM %Q order by crossfader_id;",
+				&sqlite_AddRowToStringArray, target, NULL,
+				CROSSFADER_PRESET );
+		}
 
-	return nRet;
+		if ( target_ids )
+		{
+			nRet2 = sqlite_exec_printf( m_pDB, "SELECT crossfader_id FROM %Q order by crossfader_id;",
+				&sqlite_AddRowToIntArray, target_ids, NULL,
+				CROSSFADER_PRESET );	
+		}
+	}
+	EndTransaction();
+
+	if ( nRet1 != 0 )
+		return nRet1;
+
+	return nRet2;
 }
 
 ///////////////////////////////////////////////////
@@ -3013,9 +3010,12 @@ int  CmusikLibrary::GetAllEqualizerPresets( CmusikStringArray* target, CIntArray
 	BeginTransaction();
 	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
-		nRet1 = sqlite_exec_printf( m_pDB, "SELECT equalizer_name FROM %Q WHERE equalizer_is_preset = 1 order by equalizer_id;",
-			&sqlite_AddRowToStringArray, target, NULL,
-			EQUALIZER_PRESET );
+		if ( target )
+		{
+			nRet1 = sqlite_exec_printf( m_pDB, "SELECT equalizer_name FROM %Q WHERE equalizer_is_preset = 1 order by equalizer_id;",
+				&sqlite_AddRowToStringArray, target, NULL,
+				EQUALIZER_PRESET );
+		}
 
 		if ( target_ids )
 		{

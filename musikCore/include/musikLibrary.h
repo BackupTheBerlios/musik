@@ -229,8 +229,7 @@ public:
 	int  CreateCrossfader			( CmusikCrossfader* fader );
 	int  DeleteCrossfader			( int id );
 	int  GetCrossfader				( int id, CmusikCrossfader* fader );
-	int  GetAllCrossfaders			( CmusikStringArray* names, bool clear_target = true );
-	int  GetAllCrossfaders			( CIntArray* ids, bool clear_target = true );
+	int  GetAllCrossfaderPresets	( CmusikStringArray* target, CIntArray* target_ids = NULL, bool clear_targets = true );
 
 	int  GetDefaultCrossfader		( CmusikCrossfader* fader );
 	int  UpdateDefaultCrossfader	( const CmusikCrossfader& fader );
