@@ -1,22 +1,25 @@
+///////////////////////////////////////////////////
+
 #ifndef C_MUSIK_PLAYLIST_H
 #define C_MUSIK_PLAYLIST_H
 
+///////////////////////////////////////////////////
+
 #include "sqlite.h"
+
 #include "StdString.h"
+
 #include <vector>
 #include <iostream>
 
 #include "MusikArrays.h"
 
-#ifndef BOOST_HAS_THREADS
-#define BOOST_HAS_THREADS 1
-#endif
+///////////////////////////////////////////////////
 
 class CMusikLibrary;
 
-//-----------------------------------------------------//
-//--- CMusik Song: a single song ID					---//
-//-----------------------------------------------------//
+///////////////////////////////////////////////////
+
 class CMusikSong
 {
 	static CMusikLibrary* m_MusikLibrary;
@@ -25,15 +28,11 @@ public:
 	CMusikSong();
 	~CMusikSong();
 
-	//-----------------------------------------------------//
-	//--- gets											---//
-	//-----------------------------------------------------//
+	// gets
 	int GetID(){ return m_ID; }
 	CStdString GetField( int field );	
 
-	//-----------------------------------------------------//
-	//--- sets											---//
-	//-----------------------------------------------------//
+	// sets
 	void SetID( int id ){ m_ID = id; }
 	void SetField( int field, CStdString value );	
 	static void SetLibrary( CMusikLibrary* library ){ m_MusikLibrary = library; }
@@ -42,8 +41,8 @@ private:
 	int m_ID;
 };
 
-// CMusikPlaylist: a class that manages an array
-// of CMusikSongs (CMusikSongArray)
+///////////////////////////////////////////////////
+
 class CMusikPlaylist
 {
 public:
@@ -65,6 +64,8 @@ public:
 private:
 	CMusikSongArray m_Songs;
 };
+
+///////////////////////////////////////////////////
 
 class CMusikSongInfo
 {
@@ -127,4 +128,8 @@ protected:
 
 };
 
+///////////////////////////////////////////////////
+
 #endif
+
+///////////////////////////////////////////////////

@@ -120,6 +120,10 @@ public:
 	void DeleteCrossfader	( CMusikCrossfader* fader );
 	void DeleteCrossfader	( const CStdString& name );
 
+	// adding files
+	bool AddOGG		( const CStdString& fn );
+	bool AddMP3		( const CStdString& fn );
+
 private:
 
 	// filename of the currently opened database

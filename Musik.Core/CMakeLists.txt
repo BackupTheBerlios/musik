@@ -20,7 +20,9 @@ ADD_LIBRARY( Musik.Core
 	${Musik.Core_SOURCE_DIR}/src/MusikEqualizer
 	${Musik.Core_SOURCE_DIR}/src/MusikLibrary
 	${Musik.Core_SOURCE_DIR}/src/MusikPlayer
-	${Musik.Core_SOURCE_DIR}/src/MusikPlaylist
+	${Musik.Core_SOURCE_DIR}/src/MusikOggInfo	
+	${Musik.Core_SOURCE_DIR}/src/vcedit
+	${Musik.Core_SOURCE_DIR}/src/MusikOggInfo
 	)
 
 TARGET_LINK_LIBRARIES(Musik.Core
