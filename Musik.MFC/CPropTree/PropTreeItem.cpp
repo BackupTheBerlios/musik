@@ -38,9 +38,9 @@
 //
 
 // draw a dotted horizontal line
-static void _DotHLine(HDC hdc, LONG x, LONG y, LONG w)
+static void HLine(HDC hdc, LONG x, LONG y, LONG w)
 {
-	for (; w>0; w-=2, x+=2)
+	for (; w>0; w--, x++)
 		SetPixel(hdc, x, y, GetSysColor(COLOR_BTNSHADOW));
 }
 
@@ -452,7 +452,8 @@ LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 	}
 
 	// draw horzontal sep
-	_DotHLine(pDC->m_hDC, PROPTREEITEM_EXPANDCOLUMN, pt.y + nTotal - 1, rc.right - PROPTREEITEM_EXPANDCOLUMN + 1);
+	
+	HLine(pDC->m_hDC, PROPTREEITEM_EXPANDCOLUMN, pt.y + nTotal - 1, rc.right - PROPTREEITEM_EXPANDCOLUMN + 1);
 
 	// draw children
 	if (GetChild() && IsExpanded())
