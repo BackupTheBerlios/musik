@@ -100,16 +100,8 @@ public:
 		// not then that means nothing has been selected,
 		// and this cache hint was sent even though its not
 		// needed. just return.
-		if ( m_ItemRange.GetLast() > (int)m_Songs->size() )
+		if ( m_ItemRange.GetLast() > (int)m_Songs->GetCount() )
 			return;
-
-		/*
-		char buffer[32];
-		TRACE0 ( itoa( from, buffer, 10 ) );
-		TRACE0 ( ", " );
-		TRACE0 ( itoa( to, buffer, 10 ) );
-		TRACE0 ( "\n" );
-		*/
 
 		// grab all the new items
 		m_Items.clear();
@@ -117,7 +109,7 @@ public:
 		int nID;
 		for ( int i = m_ItemRange.GetFirst(); i < m_ItemRange.GetLast(); i++ )
 		{
-			nID = m_Songs->items()->at( i ).GetID();
+			nID = m_Songs->GetSongID( i );
 			m_Library->GetSongInfoFromID( nID, &item );
 			m_Items.push_back( item );
 		}

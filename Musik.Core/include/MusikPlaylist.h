@@ -42,33 +42,25 @@ private:
 	int m_ID;
 };
 
-//-----------------------------------------------------//
-//--- CMusikPlaylist: a class that manages an array	---//
-//--- of CMusikSongs (CMusikSongArray)				---//
-//-----------------------------------------------------//
+// CMusikPlaylist: a class that manages an array
+// of CMusikSongs (CMusikSongArray)
 class CMusikPlaylist
 {
 public:
 	CMusikPlaylist();
 	~CMusikPlaylist();
 
-	//-----------------------------------------------------//
-	//--- gets											---//
-	//-----------------------------------------------------//
+	// gets
 	CStdString GetField( int index, int field );
+	int GetSongID( int index );
+	size_t GetCount();
 
-	//-----------------------------------------------------//
-	//--- sets											---//
-	//-----------------------------------------------------//
+	// sets
 	void SetField( int index, int field );
 
-	//-----------------------------------------------------//
-	//--- stl wrapper functions							---//
-	//-----------------------------------------------------//
-	void push_back( const CMusikSong& song ){ m_Songs.push_back( song ); }
-	void clear(){ m_Songs.clear(); }
-	size_t size(){ return m_Songs.size(); }
-	CMusikSongArray* items(){ return &m_Songs; }
+	// misc
+	void Add( const CMusikSong& song );
+	void Clear();
 
 private:
 	CMusikSongArray m_Songs;

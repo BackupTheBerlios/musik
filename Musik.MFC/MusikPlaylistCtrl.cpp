@@ -114,7 +114,7 @@ void CMusikPlaylistCtrl::UpdateV()
 {
 	SetRedraw( false );
 	m_SongInfoCache->Set( 0, 0 );
-	SetItemCountEx( m_Playlist->size(), LVSICF_NOINVALIDATEALL /*| LVSICF_NOSCROLL*/ );
+	SetItemCountEx( m_Playlist->GetCount(), LVSICF_NOINVALIDATEALL | LVSICF_NOSCROLL );
 
 	CRect rcClient;
 	GetClientRect( &rcClient );
@@ -246,7 +246,7 @@ void CMusikPlaylistCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 		}
 		else
 		{
-			if ( m_Player->GetCurrPlaying()->GetID() == m_Playlist->items()->at( pLVCD->nmcd.dwItemSpec ).GetID() )
+			if ( m_Player->GetCurrPlaying()->GetID() == m_Playlist->GetSongID( pLVCD->nmcd.dwItemSpec ) )
 				pDC->SelectObject( m_BoldFont );
 			else
 				pDC->SelectObject( m_ItemFont );
@@ -438,8 +438,8 @@ void CMusikPlaylistCtrl::OnNMClick(NMHDR *pNMHDR, LRESULT *pResult)
 			else
 				nRating = ( ( ptCurr.x - 6 ) / ( m_RatingWidth / 5 ) ) + 1;
 
-            m_Library->SetSongRating( m_Playlist->items()->at( hit_test.iItem ).GetID(), nRating );	
-			if ( m_SongInfoCache->ResyncItem( m_Playlist->items()->at( hit_test.iItem ).GetID() ) )
+            m_Library->SetSongRating( m_Playlist->GetSongID( hit_test.iItem ), nRating );	
+			if ( m_SongInfoCache->ResyncItem( m_Playlist->GetSongID( hit_test.iItem ) ) )
 				RedrawItems( hit_test.iItem, hit_test.iItem );
 		}
 	}

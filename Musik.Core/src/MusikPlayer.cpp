@@ -232,7 +232,7 @@ void CMusikPlayer::SetPlaylist( CMusikPlaylist* playlist )
 bool CMusikPlayer::Play( int index, int play_type, int start_pos )
 {
 	// verify song can even 
-	if ( index >= (int)m_Playlist->size() || index < 0 )
+	if ( index >= (int)m_Playlist->GetCount() || index < 0 )
 	{
 		TRACE0( "Playlist song out of range.\n" );
 		return false;
@@ -240,7 +240,7 @@ bool CMusikPlayer::Play( int index, int play_type, int start_pos )
 
 	// get song info about the currently
 	// playing song from it's ID
-	m_Library->GetSongInfoFromID( m_Playlist->items()->at( index ).GetID(), &m_CurrSong );
+	m_Library->GetSongInfoFromID( m_Playlist->GetSongID( index ), &m_CurrSong );
 
 	// setup next stream
 	FSOUND_STREAM* pNewStream = FSOUND_Stream_Open( 

@@ -137,3 +137,31 @@ CStdString CMusikPlaylist::GetField( int index, int field )
 }
 
 ///////////////////////////////////////////////////
+
+void CMusikPlaylist::Clear()
+{
+	m_Songs.clear();
+}	
+
+///////////////////////////////////////////////////
+
+void CMusikPlaylist::Add( const CMusikSong& song )
+{ 
+	m_Songs.push_back( song ); 
+}
+
+///////////////////////////////////////////////////
+
+size_t CMusikPlaylist::GetCount()
+{
+	return m_Songs.size();
+}
+
+///////////////////////////////////////////////////
+
+int CMusikPlaylist::GetSongID( int index )
+{
+	return m_Songs.at( index ).GetID();
+}
+
+///////////////////////////////////////////////////

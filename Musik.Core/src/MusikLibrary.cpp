@@ -20,7 +20,7 @@ static int sqlite_AddSongToPlaylist(void *args, int numCols, char **results, cha
 	CMusikSong *pLibItem = new CMusikSong();
 	pLibItem->SetID( atoi( results[0] ) ); 
 	
-	p->push_back( *pLibItem );
+	p->Add( *pLibItem );
 
 	delete pLibItem;
 
@@ -475,59 +475,59 @@ CStdString CMusikLibrary::GetOrder( int type, bool terminate )
 	switch( type )
 	{
 	case MUSIK_LIBRARY_TYPE_ARTIST:
-		sTerminate.Format( _T( "order by artist,album,tracknum,title%s" ), sTerminate.c_str() );
+		sTerminate.Format( _T( "ORDER BY artist,album,tracknum,title%s" ), sTerminate.c_str() );
 		return sTerminate;
 		break;
 	case MUSIK_LIBRARY_TYPE_ALBUM:
-		sTerminate.Format( _T( "order by album,tracknum,artist,title%s" ), sTerminate.c_str() );
+		sTerminate.Format( _T( "ORDER BY album,tracknum,artist,title%s" ), sTerminate.c_str() );
 		return sTerminate;
 		break;
 	case MUSIK_LIBRARY_TYPE_YEAR:
-		sTerminate.Format( _T( "order by year,artist,album,tracknum,title%s" ), sTerminate.c_str() );
+		sTerminate.Format( _T( "ORDER BY year,artist,album,tracknum,title%s" ), sTerminate.c_str() );
 		return sTerminate;
 		break;
 	case MUSIK_LIBRARY_TYPE_GENRE:
-		sTerminate.Format( _T( "order by genre,artist,album,tracknum,title%s" ), sTerminate.c_str() );
+		sTerminate.Format( _T( "ORDER BY genre,artist,album,tracknum,title%s" ), sTerminate.c_str() );
 		return sTerminate;
 		break;
 	case MUSIK_LIBRARY_TYPE_TITLE:
-		sTerminate.Format( _T( "order by title,artist,album,tracknum%s" ), sTerminate.c_str() );
+		sTerminate.Format( _T( "ORDER BY title,artist,album,tracknum%s" ), sTerminate.c_str() );
 		return sTerminate;
 		break;
 	case MUSIK_LIBRARY_TYPE_TRACKNUM:
-		sTerminate.Format( _T( "order by tracknum,artist,album,title%s" ), sTerminate.c_str() );
+		sTerminate.Format( _T( "ORDER BY tracknum,artist,album,title%s" ), sTerminate.c_str() );
 		return sTerminate;
 		break;
 	case MUSIK_LIBRARY_TYPE_TIMEADDED:
-		sTerminate.Format( _T( "order by timeadded,artist,album,tracknum,title%s" ), sTerminate.c_str() );
+		sTerminate.Format( _T( "ORDER BY timeadded,artist,album,tracknum,title%s" ), sTerminate.c_str() );
 		return sTerminate;
 		break;
 	case MUSIK_LIBRARY_TYPE_LASTPLAYED:
-		sTerminate.Format( _T( "order by lastplayed,artist,album,tracknum,title%s" ), sTerminate.c_str() );
+		sTerminate.Format( _T( "ORDER BY lastplayed,artist,album,tracknum,title%s" ), sTerminate.c_str() );
 		return sTerminate;
 		break;
 	case MUSIK_LIBRARY_TYPE_FILESIZE:
-		sTerminate.Format( _T( "order by filesize,artist,album,tracknum,title%s" ), sTerminate.c_str() );
+		sTerminate.Format( _T( "ORDER BY filesize,artist,album,tracknum,title%s" ), sTerminate.c_str() );
 		return sTerminate;
 		break;
 	case MUSIK_LIBRARY_TYPE_FORMAT:
-		sTerminate.Format( _T( "order by format,artist,album,tracknum,title%s" ), sTerminate.c_str() );
+		sTerminate.Format( _T( "ORDER BY format,artist,album,tracknum,title%s" ), sTerminate.c_str() );
 		return sTerminate;
 		break;
 	case MUSIK_LIBRARY_TYPE_DURATION:
-		sTerminate.Format( _T( "order by duration,artist,album,tracknum,title%s" ), sTerminate.c_str() );
+		sTerminate.Format( _T( "ORDER BY duration,artist,album,tracknum,title%s" ), sTerminate.c_str() );
 		return sTerminate;
 		break;
 	case MUSIK_LIBRARY_TYPE_RATING:
-		sTerminate.Format( _T( "order by rating,artist,album,tracknum,title%s" ), sTerminate.c_str() );
+		sTerminate.Format( _T( "ORDER BY rating,artist,album,tracknum,title%s" ), sTerminate.c_str() );
 		return sTerminate;
 		break;
 	case MUSIK_LIBRARY_TYPE_TIMESPLAYED:
-		sTerminate.Format( _T( "order by timesplayed,artist,album,tracknum,title%s" ), sTerminate.c_str() );
+		sTerminate.Format( _T( "ORDER BY timesplayed,artist,album,tracknum,title%s" ), sTerminate.c_str() );
 		return sTerminate;
 		break;
 	case MUSIK_LIBRARY_TYPE_BITRATE:
-		sTerminate.Format( _T( "order by bitrate,artist,album,tracknum,title%s" ), sTerminate.c_str() );
+		sTerminate.Format( _T( "ORDER BY bitrate,artist,album,tracknum,title%s" ), sTerminate.c_str() );
 		return sTerminate;
 		break;
 	case MUSIK_LIBRARY_TYPE_FILENAME:
@@ -591,9 +591,9 @@ void CMusikLibrary::GetAllSongs( CMusikPlaylist& target )
 
 void CMusikLibrary::QuerySongs( const CStdString& query, CMusikPlaylist& target )
 {
-	target.clear();
+	target.Clear();
 
-	CStdString queryWhere( _T( "select songid from " ) SONG_TABLE_NAME _T( " where " ) );
+	CStdString queryWhere( _T( "SELECT songid FROM " ) SONG_TABLE_NAME _T( " where " ) );
 	queryWhere += query;
 	queryWhere += _T( ";" );
 
@@ -684,7 +684,7 @@ void CMusikLibrary::GetRelatedItems( CStdString sub_query, int dst_type, CStdStr
 
 void CMusikLibrary::GetRelatedSongs( CStdString sub_query, int source_type, CMusikPlaylist& target )
 {
-	target.clear();
+	target.Clear();
 
 	CStdString order_by = GetOrder( source_type );
 
