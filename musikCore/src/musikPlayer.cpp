@@ -506,15 +506,19 @@ bool CmusikPlayer::Play( int index, int fade_type, int start_pos )
 	}
 
 	// verify song can is within the playlist's range 
-	if ( index >= (int)m_Playlist->GetCount() || index < 0 )
+	if ( ( index >= (int)m_Playlist->GetCount() || index < 0 ) && fade_type != MUSIK_CROSSFADER_SEEK )
 	{
 		TRACE0( "Playlist song out of range.\n" );
 		return false;
 	}
 
-	// get song info about the currently
-	// playing song from it's ID
-	m_Library->GetSongInfoFromID( m_Playlist->GetSongID( index ), &m_CurrSong );
+	// check to see if we're seeking... if we
+	// are then we do not need to get the song's
+	// info again. otherwise, we need to get song 
+	// info about the currently playing song 
+	// from it's ID
+	if ( fade_type != MUSIK_CROSSFADER_SEEK )
+		m_Library->GetSongInfoFromID( m_Playlist->GetSongID( index ), &m_CurrSong );
 
 	// setup next stream
 	FSOUND_STREAM* pNewStream = FSOUND_Stream_Open( 
