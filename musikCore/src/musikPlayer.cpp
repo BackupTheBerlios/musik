@@ -658,6 +658,7 @@ int CmusikPlayer::StartSound( int device, int driver, int rate, int channels )
 void CmusikPlayer::StopSound()
 {
 	FSOUND_Close();
+	m_State = MUSIK_PLAYER_INIT_UNINITIALIZED;
 }
 
 ///////////////////////////////////////////////////
