@@ -51,7 +51,7 @@
 #define	MUSIK_SIMPLEQUERY		9996
 #define MUSIK_NOWPLAYING_TIMER	9997
 #define MUSIK_ACTIVITYCTRL		9998
-#define MUSIK_VERSION_STR		"0.3.0"
+#define MUSIK_VERSION_STR		"0.3.0a-CVS"
 #define MUSIKAPPNAME			"wxMusik"
 #define MUSIKAPPNAME_VERSION	wxT(MUSIKAPPNAME" "MUSIK_VERSION_STR)
 #define MUSIKSERV_VERSION		wxT( MUSIKAPPNAME"Serv "MUSIK_VERSION_STR )
@@ -77,11 +77,11 @@
 //----------------------------------//
 #include <wx/filename.h>
 #define MUSIK_HOME_DIR 			wxFileName::GetHomeDir() + wxFileName::GetPathSeparator() + wxT( ".Musik" ) + wxFileName::GetPathSeparator()
-#define MUSIK_PLAYLIST_DIR		MUSIK_HOME_DIR + wxT( "playlists" ) + wxFileName::GetPathSeparator()
-#define MUSIK_DB_FILENAME		MUSIK_HOME_DIR + wxT( "musiklib.db" )
-#define MUSIK_SOURCES_FILENAME	MUSIK_HOME_DIR + wxT( "musiksources.dat" )
-#define MUSIK_PATHS_FILENAME	MUSIK_HOME_DIR + wxT( "musikpaths.dat" )
-#define MUSIK_VERSION_FILENAME	MUSIK_HOME_DIR + wxT( "musikversion.dat" )
+#define MUSIK_PLAYLIST_DIR		g_Prefs.sDataPath + wxT( "playlists" ) + wxFileName::GetPathSeparator()
+#define MUSIK_DB_FILENAME		g_Prefs.sDataPath + wxT( "musiklib.db" )
+#define MUSIK_SOURCES_FILENAME	g_Prefs.sDataPath + wxT( "musiksources.dat" )
+#define MUSIK_PATHS_FILENAME	g_Prefs.sDataPath + wxT( "musikpaths.dat" )
+#define MUSIK_VERSION_FILENAME	g_Prefs.sDataPath + wxT( "musikversion.dat" )
 #define MUSIK_PATH_SEPARATOR	wxFileName::GetPathSeparator()
 
 //-------------------------//
