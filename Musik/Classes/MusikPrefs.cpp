@@ -61,7 +61,7 @@ void CMusikPrefs::LoadPrefs()
 	config->Read( wxT( "TagDialogWrite" ),							&nTagDlgWrite,			0						);
 	config->Read( wxT( "TagDialogClear" ),							&nTagDlgClear,			0						);
 	config->Read( wxT( "TagDialogRename" ),							&nTagDlgRename,			0						);
-	config->Read( wxT( "AutoRenameMask" ),							&sAutoRename,			wxT( "%6. %2 - %1" )	);
+	config->Read( wxT( "AutoRenameMask" ),							&sAutoRename,			wxT( "%6 - %2 - %1" )	);
 	config->Read( wxT( "Auto Tag Mask" ),							&sAutoTag,				wxT( "%1 - %2" )		);
 	config->Read( wxT( "FirstRun" ),								&nFirstRun,				1						);
 	config->Read( wxT( "AddFilesonStartup" ),						&nAutoAdd,				1						);
