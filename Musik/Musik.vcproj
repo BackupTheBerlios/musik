@@ -326,16 +326,6 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="ListHeader"
-				Filter="">
-				<File
-					RelativePath=".\Classes\ListHeader.cpp">
-				</File>
-				<File
-					RelativePath=".\Classes\ListHeader.h">
-				</File>
-			</Filter>
-			<Filter
 				Name="MusikEQ"
 				Filter="">
 				<File

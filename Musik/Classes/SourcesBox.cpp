@@ -1091,7 +1091,7 @@ void CSourcesListBox::ShowIconsChecked( bool bCheck )
 CSourcesBox::CSourcesBox( wxWindow *parent, wxWindowID id )
 	: wxPanel( parent, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxSIMPLE_BORDER | wxCLIP_CHILDREN )
 {
-	//--- CListHeader / CSourcesListBox ---//
+	//--- CSourcesListBox ---//
 	pListBox	= new CSourcesListBox( this, id );
 	
 	//--- top sizer ---//
