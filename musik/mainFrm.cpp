@@ -278,7 +278,11 @@ int CMainFrameWorker::svc()
 			task_count = m_Parent->GetTaskCount();
 			if ( task_count != last_task_count )
 			{
-				sCaption.Format( _T( "%s (%d workers)" ), m_Parent->m_Caption, task_count );
+				if ( task_count == 1 )
+					sCaption.Format( _T( "%s (1 worker)" ), m_Parent->m_Caption );
+				else
+					sCaption.Format( _T( "%s (%d workers)" ), m_Parent->m_Caption, task_count );
+
 				m_Parent->SetWindowText( sCaption );
 			}
 			last_task_count = task_count;
@@ -2897,10 +2901,13 @@ void CMainFrame::OnLibrarySynchronizedirectoriesnow()
 
 BOOL CMainFrame::PreTranslateMessage(MSG* pMsg)
 {
-	if ( pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_ESCAPE && GetTaskCount() )
+	if ( pMsg->message == WM_KEYDOWN )
 	{
-		KillTasks( false, false, true, true );
-		return true;
+		if ( pMsg->wParam == VK_ESCAPE && GetTaskCount() )
+		{
+			KillTasks( false, false, true, true );
+			return true;
+		}
 	}
 
 	return CFrameWnd::PreTranslateMessage(pMsg);
