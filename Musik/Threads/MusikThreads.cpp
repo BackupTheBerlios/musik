@@ -408,15 +408,7 @@ void *MusikWriteDirtyThread::Entry()
 			//-----------------------------//
 			//--- write the tag to file	---//
 			//-----------------------------//
-			if ( aDirty.Item( i ).Format == MUSIK_FORMAT_MP3 )
-				g_Library.WriteMP3Tag( aDirty.Item( i ).Filename, m_Clear );
-			else if ( aDirty.Item( i ).Format == MUSIK_FORMAT_OGG )
-				g_Library.WriteOGGTag( aDirty.Item( i ).Filename, m_Clear );
-
-			//-----------------------------//
-			//--- flag item as clean	---//
-			//-----------------------------//
-			g_Library.UpdateItem( aDirty.Item( i ).Filename, aDirty.Item( i ), false );
+			g_Library.WriteTag( aDirty.Item( i ), m_Clear );
 		}
 
 	}

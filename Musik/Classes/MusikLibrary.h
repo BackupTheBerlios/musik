@@ -90,8 +90,15 @@ public:
 	bool Load		();
 	void Shutdown	();
 	void AddItem		( const wxString & filename );
-	void BeginTransaction(){ sqlite_exec_printf( m_pDB, "begin transaction;", NULL, NULL, NULL );}
-	void EndTransaction(){ sqlite_exec_printf( m_pDB, "end transaction;", NULL, NULL, NULL );}
+	void BeginTransaction()
+	{ 	wxCriticalSectionLocker lock( m_csDBAccess );
+		sqlite_exec_printf( m_pDB, "begin transaction;", NULL, NULL, NULL );
+	}
+	void EndTransaction()
+	{ 		
+		wxCriticalSectionLocker lock( m_csDBAccess );
+		sqlite_exec_printf( m_pDB, "end transaction;", NULL, NULL, NULL );
+	}
 	//----------------//
 	//--- updating ---//
 	//----------------//
@@ -106,9 +113,8 @@ public:
 	bool RenameFile			( CMusikSong* song, bool bClearCheck = false );
 	bool RetagFile			( CMusikSong* song );
 	bool ReplaceMask		( wxString *sSrc, wxString sMask, wxString sTarget, bool bReplaceAll = true  );
-	void WriteMP3Tag		( const wxString & filename, bool ClearAll );
-	bool WriteOGGTag		( const wxString & filename, bool ClearAll );
 	void ClearDirtyTags		( bool bInform );
+	bool WriteTag			(  CMusikSong & song, bool ClearAll, bool bUpdateDB = true );
 	
 	//----------------//
 	//--- removing ---//
@@ -174,7 +180,7 @@ private:
 	void GetSongs		( const wxArrayString & aInfo, int nInType, CMusikSongArray & aReturn );
 	sqlite		  *m_pDB;
 	void CreateDB();
-	int QueryCount(const char * szQuery );
+	int QueryCount			(const char * szQuery );
 	
 	void AddMP3				( const wxString & filename );
 	void AddMod				( const wxString & filename );
@@ -183,11 +189,16 @@ private:
 	void AddWMA				( const wxString & filename );
 	void AddAIFF			( const wxString & filename );
 
+	void WriteMP3Tag		( const CMusikSong & song, bool ClearAll );
+	bool WriteOGGTag		( const CMusikSong & song, bool ClearAll );
+
 	wxString m_TimeAdded;
 
 	void VerifyYearList ( const wxArrayString & aList,wxArrayString & aVerifiedList );
 
-	wxMutex LibMutex;
+	wxCriticalSection m_csDBAccess; // to lock all accesses to m_pDB. 
+									// used instead of wxMutex, because this is faster on windows. on linux 
+									// a wxMutex is used automatically instead
 };
 
 #endif

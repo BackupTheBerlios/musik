@@ -110,12 +110,7 @@ void* MusikActivityRenameThread::Entry()
 			//--------------------------//
 			if ( g_Prefs.nActBoxWrite == 1 )
 			{
-				g_Library.UpdateItem( m_Songs.Item( i ).Filename, m_Songs.Item( i ), false );
-
-				if ( m_Songs.Item( i ).Format == MUSIK_FORMAT_MP3 )
-					g_Library.WriteMP3Tag( m_Songs.Item( i ).Filename, (bool)g_Prefs.nActBoxClear );
-				else if ( m_Songs.Item( i ).Format == MUSIK_FORMAT_OGG )
-					g_Library.WriteOGGTag( m_Songs.Item( i ).Filename, (bool)g_Prefs.nActBoxClear );
+				WriteTag( m_Songs.Item( i ), (bool)g_Prefs.nActBoxClear );
 			}
 
 			//-------------------//
@@ -127,10 +122,7 @@ void* MusikActivityRenameThread::Entry()
 			//----------------------------------//
 			//--- if not writing, flag dirty ---//
 			//----------------------------------//
-			if ( g_Prefs.nActBoxWrite == 0 )
-				g_Library.UpdateItem( m_Songs.Item( i ).Filename, m_Songs.Item( i ), true );
-			else
-				g_Library.UpdateItem( m_Songs.Item( i ).Filename, m_Songs.Item( i ), false );
+			g_Library.UpdateItem( m_Songs.Item( i ).Filename, m_Songs.Item( i ), g_Prefs.nActBoxWrite == 0 );
 
 		}
 	}
