@@ -283,16 +283,14 @@ static void MainFrameWorker( CmusikThread* thread )
 				sCaption += turn;
 			}
 
-			parent->SetWindowText( sCaption );
-
-			// update ui every 3 seconds
-			++cnt;
-			if ( cnt == 6 )
+			cnt++;
+			if ( cnt == 12 )
 			{
-				parent->RequerySelBoxes( NULL, false );
-				parent->m_wndView->GetCtrl()->UpdateV();
+				parent->RequerySelBoxes( NULL, true, true );
 				cnt = 0;
 			}
+
+			parent->SetWindowText( sCaption );
 		}
 
 		ACE_OS::sleep( sleep );
@@ -1048,10 +1046,11 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 
 ///////////////////////////////////////////////////
 
-void CMainFrame::RequerySelBoxes( CmusikSelectionCtrl* sender, bool deselect_items )
+void CMainFrame::RequerySelBoxes( CmusikSelectionCtrl* sender, bool deselect_items, bool only_if_parent_exists )
 {
 	// first find if a parent exists
 	CmusikSelectionCtrl* pParent = NULL;
+
 	for ( size_t i = 0; i < m_wndSelectionBars.size(); i++ )
 	{
 		if ( m_wndSelectionBars.at( i )->GetCtrl()->IsParent() )
@@ -1060,6 +1059,9 @@ void CMainFrame::RequerySelBoxes( CmusikSelectionCtrl* sender, bool deselect_ite
 			break;
 		}
 	}
+
+	if ( only_if_parent_exists && pParent )
+		return;
 
 	CmusikSelectionCtrl::SetUpdating( true );
 
@@ -1280,7 +1282,9 @@ LRESULT CMainFrame::OnSongChange( WPARAM wParam, LPARAM lParam )
 
 	// tell the child windows to redraw their
 	// state accordingly
-	m_wndView->GetCtrl()->ScrollToCurr();
+	if ( m_wndView->GetCtrl()->GetPlaylist() == m_Player->GetPlaylist() )
+		m_wndView->GetCtrl()->ScrollToCurr();
+
 	m_wndView->GetCtrl()->ResyncItem( m_Player->GetCurrPlaying()->GetID() );
 
 	m_wndNowPlaying->GetCtrl()->GetTimeCtrl()->OnNewSong();
@@ -1622,20 +1626,6 @@ LRESULT CMainFrame::OnThreadEnd( WPARAM wParam, LPARAM lParam )
 	CmusikThread* ptr_thr = (CmusikThread*)wParam;
 	int type = FreeThread( ptr_thr );
 
-	if ( type != -2 )
-	{
-		RequerySelBoxes( NULL, false );
-		
-		if ( type == MUSIK_THREAD_TYPE_BATCHADD )
-		{
-			int focus_type = m_wndSources->GetCtrl()->GetFocusedItem()->GetPlaylistType();
-			if ( focus_type == MUSIK_SOURCES_TYPE_LIBRARY )
-				RequeryPlaylist();
-			else
-				RequeryPlaylist( NULL, false );
-		}
-	}
-
 	if ( !m_ThreadCount )
 		SetWindowText( m_Caption );
 
@@ -1655,30 +1645,44 @@ int CMainFrame::FreeThread( CmusikThread* pThread )
 {
 	int ret = -2;
 
-	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingThreads );
+	TRACE0( "BEGIN\n" );
+
+	m_ProtectingThreads.acquire();
+
+	for ( size_t i = 0; i < m_Threads.size(); i++ )
 	{
-		for ( size_t i = 0; i < m_Threads.size(); i++ )
+		if ( pThread == m_Threads.at( i ) )
 		{
-			if ( pThread == m_Threads.at( i ) )
+			ret = m_Threads.at( i )->GetType();
+
+			// wait for the finish flag to be set...
+			while ( !m_Threads.at( i )->m_Finished )
+				Sleep( 100 );
+
+			// delete the completed thread
+			// and erase from array
+			delete m_Threads.at( i );
+			m_Threads.erase( m_Threads.begin() + i );
+
+			if ( ret > MUSIK_THREAD_TYPE_UNKNOWN && ret < MUSIK_THREAD_TYPE_PLAYER_WORKER )
 			{
-				ret = m_Threads.at( i )->GetType();
+				if ( ret == MUSIK_THREAD_TYPE_BATCHRETAG )
+					RequerySelBoxes( NULL, true );
+				else
+					RequerySelBoxes( NULL, true, true );
 
-				// wait for the finish flag to be set...
-				while ( !m_Threads.at( i )->m_Finished )
-					Sleep( 100 );
-
-				// delete the completed thread
-				// and erase from array
-				delete m_Threads.at( i );
-				m_Threads.erase( m_Threads.begin() + i );
-
-				break;
+				m_wndView->GetCtrl()->ResyncItem( -1, -1 );
 			}
-		}
 
-		if ( ret != -2 )
-			m_ThreadCount--;
+			break;
+		}
 	}
+
+	if ( ret != -2 )
+		m_ThreadCount--;
+
+	m_ProtectingThreads.release();
+	TRACE0( "END\n" );
 
 	return ret;
 }
