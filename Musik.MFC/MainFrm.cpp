@@ -301,22 +301,18 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 	// that triggered the event
 	CStdString sSender = pSender->GetSelQuery();
 
-	CStdString curr_type;
-
-	/*
+	// go through each box that isn't the sender and
+	// update based on the new information we got
 	for( size_t i = 0; i < selbox_count; i++ )
 	{
-		pSelCtrl = m_wndSelectionBars[i]->GetCtrl();
-		if ( pSelCtrl->GetCtrlID() != sender )
+		pCurr = m_wndSelectionBars[i]->GetCtrl();
+		if ( pCurr != pSender )
 		{
-			pSelCtrl->SetUpdating( true );
-
-
-			
-			pSelCtrl->SetUpdating( false );
+			pCurr->SetUpdating( true );			
+			pCurr->UpdateV( sSender );
+			pCurr->SetUpdating( false );
 		}
 	}
-	*/
 
 	return 0L;
 }

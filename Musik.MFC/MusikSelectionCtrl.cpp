@@ -18,7 +18,7 @@ CMusikSelectionCtrl::CMusikSelectionCtrl( CFrameWnd* parent, CMusikLibrary* libr
 	m_Parent = parent;
 	m_ID = ctrl_id;
 	m_Updating = false;
-	HideScrollBars( LCSB_NCOVERRIDE, /*SB_HORZ*/ SB_BOTH );
+	HideScrollBars( LCSB_NCOVERRIDE, SB_HORZ /*SB_BOTH*/ );
 }
 
 CMusikSelectionCtrl::~CMusikSelectionCtrl()
@@ -72,11 +72,16 @@ void CMusikSelectionCtrl::UpdateV( CStdString query )
 {
 	m_Library->GetRelatedItems( query, m_Type, m_Items );
 	SetItemCountEx( m_Items.size(), LVSICF_NOINVALIDATEALL | LVSICF_NOSCROLL );
+
+	CRect rcClient;
+	GetClientRect( &rcClient );
+	RedrawWindow( rcClient );
 }
 
 void CMusikSelectionCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	NMLVDISPINFO *pDispInfo = reinterpret_cast<NMLVDISPINFO*>(pNMHDR);
+
 	LV_ITEM* pItem= &(pDispInfo)->item;
 
 	int index= pItem->iItem;
@@ -89,7 +94,8 @@ void CMusikSelectionCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 			lstrcpy( pItem->pszText, m_Items.at( index ).c_str() );
 			break;
 		}
-	*pResult = 0;
+
+		*pResult = 0;
 	}
 }
 
@@ -105,7 +111,7 @@ void CMusikSelectionCtrl::OnLvnItemchanged(NMHDR *pNMHDR, LRESULT *pResult)
 			if ( pNMLV->uNewState & LVIS_SELECTED )
 			{
 				int WM_SELBOXUPDATE = RegisterWindowMessage( "SELBOXUPDATE" );
-				m_Parent->SendMessage( WM_SELBOXUPDATE, GetCtrlID() );
+				m_Parent->PostMessage( WM_SELBOXUPDATE, GetCtrlID() );
 			}
 		}
 	}
