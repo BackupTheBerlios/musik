@@ -71,7 +71,7 @@ void CTunage::PostURL()
 	
 	if ( url.GetError() != wxURL_NOERR )
 	{
-		wxMessageBox( wxT("Could not parse Tunage URL"), wxT("Tunage error"), wxOK );
+		wxMessageBox( wxT("Could not parse Tunage URL"), wxT("Tunage error"), wxOK | wxICON_WARNING );
 		
 		return;
 	}
@@ -81,7 +81,7 @@ void CTunage::PostURL()
 	wxInputStream *data = url.GetInputStream();
 	if ( !data )
 	{
-		wxMessageBox( wxT("Could not access URL"), wxT("Tunage error"), wxOK );
+		wxMessageBox( wxT("Could not access URL"), wxT("Tunage error"), wxOK | wxICON_WARNING );
 	}
 
 	delete data;

@@ -1,8 +1,8 @@
 0.2.1 to 0.2.2
  + Tunage - a simple system to update a file, URL, or run an app when song changes (SiW)
  - Fixed Bug: Sorting numeric fields now works again (SiW)
- + Fixed Bug: Serious Bug in delete from db and computer. The wrong files are deleted. This bug was introduced by me in 0.2.1. Shame on me.(gunnar)
- + Fixed Bug: If Playlist is sorted, it was not internally updated by the player
+ - Fixed Bug: Serious Bug in delete from db and computer. The wrong files are deleted. This bug was introduced by me in 0.2.1. Shame on me. (gunnar)
+ - Fixed Bug: If Playlist is sorted, it was not internally updated by the player
  - Fixed Bug:  On linux the genre string parsing did not work correctly for tags like (123)
  + If a selection box has the focus, it now scrolls to a matching entry if a key is pressed
  + Selection Boxes are now case-insensitively sorted (gunnar)
