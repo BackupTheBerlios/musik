@@ -305,6 +305,8 @@ CmusikPlayer::CmusikPlayer( CmusikFunctor* functor, CmusikLibrary* library )
 	m_IsPlaying			= false;
 	m_IsPaused			= false;
 	m_IsCrossfaderReady	= false;
+	m_CrossfaderEnabled	= false;
+	m_IsEQActive		= false;
 
 	m_EQ				= NULL;
 	m_Crossfader		= NULL;
@@ -619,7 +621,9 @@ bool CmusikPlayer::Play( int index, int fade_type, int start_pos )
 	if ( !IsCrossfaderEnabled() || ( m_Crossfader->GetDuration( fade_type ) <= 0 && fade_type == MUSIK_CROSSFADER_NONE ) )
 	{
 		// set new equalizer...
-		m_EQ->GetSongEq( m_Playlist->GetSongID( index ) );
+		if ( IsEqualizerActive() )
+			m_EQ->GetSongEq( m_Playlist->GetSongID( index ) );
+
 		FSOUND_SetVolume( GetCurrChannel(), m_Volume );
 		CleanOldStreams();
 	}
@@ -863,15 +867,17 @@ void CmusikPlayer::InitEQ_DSP()
 
 ///////////////////////////////////////////////////
 
-void CmusikPlayer::EnableEQ( bool enable )
+void CmusikPlayer::EnableEqualizer( bool enable )
 {
+	m_IsEQActive = enable;
+
 	if ( enable )
 	{
 		if ( !m_EQ_DSP )
 			InitEQ_DSP();
 
 		if ( m_EQ_DSP )
-			FSOUND_DSP_SetActive( m_EQ_DSP, m_IsEQActive );
+			FSOUND_DSP_SetActive( m_EQ_DSP, TRUE );
 	}
 	else
 	{
@@ -1018,7 +1024,7 @@ int CmusikPlayer::GetTimeRemain( int mode )
 
 void CmusikPlayer::FinalizeNewSong()
 {
-	if ( IsEqualizerActive() && m_EQ )
+	if ( IsEqualizerActive() && IsEqualizerEnabled() )
 		m_EQ->GetSongEq( m_Playlist->GetSongID( m_Index ) );
 	
 	SetVolume( m_Volume, true );
@@ -1065,14 +1071,35 @@ void CmusikPlayer::SetMaxVolume( int n, bool set_now )
 
 ///////////////////////////////////////////////////
 
-void CmusikPlayer::SetCrossfader( CmusikCrossfader fader )
+void CmusikPlayer::EnableCrossfader( bool enable )
 {
-	CleanCrossfader();
+	m_CrossfaderEnabled = enable;
 
-	if ( !IsCrossfaderEnabled() )
-		InitCrossfader();
+	if ( enable )
+	{
+		CleanCrossfader();
+		InitCrossfader(); 
+		return;
+	}
+	else
+		CleanCrossfader();
+}
 
-	*m_Crossfader = fader;
+///////////////////////////////////////////////////
+
+bool CmusikPlayer::SetCrossfader( const CmusikCrossfader& fader )
+{
+	if ( m_CrossfaderEnabled )
+	{
+		if ( !m_Crossfader )
+			InitCrossfader();
+
+		*m_Crossfader = fader;
+
+		return true;
+	}
+
+	return false;
 }
 
 ///////////////////////////////////////////////////

@@ -137,13 +137,12 @@ public:
 	// crossfader stuff
 	int GetFadeType(){ return m_FadeType; }
 	CmusikCrossfader* GetCrossfader(){ return m_Crossfader; }
-	void SetCrossfader( CmusikCrossfader fader );
+	bool SetCrossfader( const CmusikCrossfader& fader );
+	void EnableCrossfader( bool enabled = true );
 
 	// equalizer stuff
 	CmusikEqualizer* GetEqualizer(){ return m_EQ; }
-
-	// equalizer stuff
-	void EnableEQ( bool enable );
+	void EnableEqualizer( bool enable );
 
 	// contains the information of the 
 	// currently playing song
@@ -194,6 +193,7 @@ public:
 	bool IsPaused()				{ return m_IsPaused; }
 	bool IsShuttingDown()		{ return m_ShutDown; }
 	bool IsEqualizerActive()	{ return m_IsEQActive; }
+	bool IsEqualizerEnabled()	{ return ( m_EQ == NULL ? false : true ); }
 	bool IsCrossfaderEnabled();
 	bool IsCrossfaderReady()	{ return m_IsCrossfaderReady; }
 
@@ -288,7 +288,9 @@ private:
 	// internal functions to maintain the
 	// current set of crossfader prefs...
 	CmusikCrossfader* m_Crossfader;
+	
 	int m_FadeType;
+	bool m_CrossfaderEnabled;
 
 	void InitCrossfader();
 	void CleanCrossfader();
