@@ -9,6 +9,7 @@
 
 #include "../Musik.Core/include/MusikArrays.h"
 #include "../Musik.Core/include/MusikLibrary.h"
+#include ".\musikplaylistctrl.h"
 
 
 // CMusikPlaylistCtrl
@@ -29,6 +30,7 @@ BEGIN_MESSAGE_MAP(CMusikPlaylistCtrl, CListCtrl)
 	ON_WM_NCPAINT()
 	ON_WM_NCCALCSIZE()
 	ON_WM_CREATE()
+	ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
 void CMusikPlaylistCtrl::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp)
@@ -94,6 +96,27 @@ void CMusikPlaylistCtrl::ResetColumns()
 
 ///////////////////////////////////////////////////
 
+void CMusikPlaylistCtrl::SaveColumnOrder()
+{
+	CIntArray last_order;
+	char sCol[256];
+
+	LVCOLUMN pColumn;
+	pColumn.mask = LVCF_TEXT;
+	pColumn.pszText = sCol;
+	pColumn.cchTextMax = sizeof( sCol );
+
+	for ( int i = 0; i < GetHeaderCtrl()->GetItemCount(); i++ )
+	{
+		GetColumn( i, &pColumn );
+		last_order.push_back( m_Library->GetSongFieldID( pColumn.pszText ) );
+	}
+
+	m_Prefs->SetPlaylistOrder( last_order );
+}
+
+///////////////////////////////////////////////////
+
 int CMusikPlaylistCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if ( CListCtrl::OnCreate( lpCreateStruct ) == -1 )
@@ -102,4 +125,13 @@ int CMusikPlaylistCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	ResetColumns();
 
 	return 0;
+}
+
+///////////////////////////////////////////////////
+
+void CMusikPlaylistCtrl::OnDestroy()
+{
+	SaveColumnOrder();
+
+	CListCtrl::OnDestroy();
 }

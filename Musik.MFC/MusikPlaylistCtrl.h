@@ -31,6 +31,7 @@ protected:
 //-------------------------------------------------//
 private:
 	void ResetColumns();
+	void SaveColumnOrder();
 	
 //-------------------------------------------------//
 //--- message maps								---//
@@ -39,6 +40,7 @@ public:
 	afx_msg void OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp);
 	afx_msg void OnNcPaint();
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnDestroy();
 };
 
 
