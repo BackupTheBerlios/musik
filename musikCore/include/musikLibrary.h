@@ -169,7 +169,7 @@ public:
 	// but will clear everything if the right flag
 	// is passed
 	void ClearLibrary( bool clear_all_tables = false );
-	void DeleteSongs( CmusikPlaylist& songs, bool delete_from_disk = false );
+	void DeleteSongs( CmusikPlaylist& songs, bool delete_from_disk = false, bool use_temp_table = false );
 
 	// sorting playlist by field
 	int SortPlaylist( CmusikPlaylist* playlist, int field, bool ascending = true );
@@ -184,7 +184,7 @@ public:
 	// functions specifically dealing with the
 	// the temporary song table.
 	void ClearTempSongTable();
-	int  PopulateTempSongTable( CmusikPlaylist& source, bool clear = true ); 
+	int  PopulateTempSongTable( CmusikPlaylist& source ); 
 
 	// querying library fields
 	CmusikStringArray*	GetSongFields	( )					{ return &m_Fields; }
@@ -226,7 +226,7 @@ public:
 	int  AppendStdPlaylist			( int id, CmusikPlaylist& playlist );
 	int  RenameStdPlaylist			( int id, const CmusikString& str );
 	int  DeleteStdPlaylist			( const CmusikString& name );
-	int  RewriteStdPlaylist			( int id, CmusikPlaylist* playlist );
+	int  RewriteStdPlaylist			( CmusikPlaylist* playlist );
 	int  DeleteStdPlaylist			( int id );
 
 	int  GetAllStdPlaylists			( CmusikPlaylistInfoArray* target, bool clear_target = true );

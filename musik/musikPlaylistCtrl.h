@@ -99,17 +99,10 @@ public:
 	// or otherwise modified a playlist that may
 	// need to be saved...
 	bool PlaylistNeedsSave(){ return m_PlaylistNeedsSave; }
-
-	// get the playlist
 	CmusikPlaylist* GetPlaylist(){ return m_Playlist; }
-
-	// set the playlist
 	void SetPlaylist( CmusikPlaylist* playlist, int type );
-
-	// save the current playlist back to the library..
-	// this will only work on standard playlists. will
-	// return false if non standard playlist
 	void SavePlaylist( bool check_prompt = true );
+	int GetPlaylistType(){ return m_PlaylistType; }
 
 	// used by the main UI to trigger an "item activate"
 	// event..
@@ -120,12 +113,6 @@ protected:
 	// is dnd active
 	UINT m_DropID_L;
 	UINT m_DropID_R;
-
-	// is a column being arranged?
-	bool m_Arranging;
-
-	// call to initialize drag and drop
-	void BeginDrag( NMHDR* pNMHDR, bool right_button );
 
 	// for some reason creating a CmusikDir
 	// object during a drop operation causes
@@ -150,10 +137,10 @@ protected:
 	CmusikPlaylist* m_Playlist;
 	int m_PlaylistType;
 
-	// function the custom header control
-	// will use as a callback after a column
-	// has been moved
+	// drag and drop functions
 	virtual void OnDragColumn( int source, int dest );
+	void BeginDrag( NMHDR* pNMHDR, bool right_button );
+	bool m_Arranging;
 
 	// fonts
 	void InitFonts();
@@ -230,6 +217,9 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
+
+	// misc
+	bool UseTempTable();
 
 	// playlist column stuff
 	void ResetColumns();

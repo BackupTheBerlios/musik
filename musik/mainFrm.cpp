@@ -970,9 +970,9 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 
 	// if the first item was clicked, the user wants
 	// to display all the info
+	bool unsel_parent = false;
 	if ( pSender->IsItemSelected( 0 ) || ( pParent && !pParent->GetSelectedCount() ) )
 	{
-		bool unsel_parent = false;
 		if ( pParent && !pParent->GetSelectedCount() && pParent->IsItemSelected( 0 ) )
 			unsel_parent = true;
 
@@ -1003,8 +1003,9 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 		else
 			m_LibPlaylist->Clear();
 
-		m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, GetSelPlaylistType() );
-
+		// assure the correct playlist is set and
+		// then update the view
+		m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, m_wndView->GetCtrl()->GetPlaylistType() );
 		m_wndView->GetCtrl()->UpdateV();
 		m_wndView->GetCtrl()->HideSortArrow();
 

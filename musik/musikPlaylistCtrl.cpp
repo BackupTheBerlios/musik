@@ -692,60 +692,70 @@ void CmusikPlaylistCtrl::ResyncItem( size_t songid, int item )
 void CmusikPlaylistCtrl::SavePlaylist( bool check_prompt )
 {
 	// if the user wants to be prompted...
-	if ( m_PlaylistNeedsSave )
+	if ( m_PlaylistNeedsSave && m_PlaylistType == MUSIK_PLAYLIST_TYPE_STANDARD )
 	{
 		if ( m_Playlist->GetPlaylistID() == -1 )
 			return;
 
 		// user needs to be prompted
+		bool save = true;
 		if ( check_prompt )
 		{
+			// throw dialog
 			if ( m_Prefs->GetStdPlaylistPrompt() == -1 )
 			{
 				CmusikSaveStdPlaylist* pDlg;
 				pDlg = new CmusikSaveStdPlaylist( this, m_Prefs );
 				int nRes = pDlg->DoModal();
 
-				if ( nRes == IDOK )
-					m_Library->RewriteStdPlaylist( m_Playlist->GetPlaylistID(), m_Playlist );
+				// write the playlist if "ok" was pressed
+				if ( nRes != IDOK )
+					save = false;
 
 				delete pDlg;
 			}
 
 			// otherwise just take the pref's default
-			else
-			{
-				if ( m_Prefs->GetStdPlaylistPrompt() == 1 )
-					m_Library->RewriteStdPlaylist( m_Playlist->GetPlaylistID(), m_Playlist );
-			}
-
-			m_PlaylistNeedsSave = false;
+			else if ( m_Prefs->GetStdPlaylistPrompt() != 1 )
+				save = false;
 		}
 
-		// save silently
-		else
+		// save
+		if ( save )
 		{
-			m_Library->RewriteStdPlaylist( m_Playlist->GetPlaylistID(), m_Playlist );
+			if ( UseTempTable() )
+			{
+				CmusikPlaylist temp;
+				temp.m_ID = m_Playlist->m_ID;
+
+				m_Library->GetAllSongs( temp, true );
+				m_Library->RewriteStdPlaylist( &temp );
+			}
+			else
+				m_Library->RewriteStdPlaylist( m_Playlist );
+
 			m_PlaylistNeedsSave = false;
 		}
 	}
 }
 
+
 ///////////////////////////////////////////////////
 
-void CmusikPlaylistCtrl::SetPlaylist( CmusikPlaylist* playlist, int m_Type )
+void CmusikPlaylistCtrl::SetPlaylist( CmusikPlaylist* playlist, int type )
 {
-	SetItemState( -1, 0, LVIS_SELECTED );
-
 	if ( playlist == NULL )
 	{
-		TRACE0( "Well, something messed up, our playlist is now NULL\n" );
+		TRACE0( "Passed a NULL playlist\n" );
+		return;
 	}
+
+	SetItemState( -1, 0, LVIS_SELECTED );
 
 	// if the last item was a standard playlist,
 	// we may need to save it. so check...
-	if ( m_PlaylistType == MUSIK_PLAYLIST_TYPE_STANDARD )
-		SavePlaylist();
+	SavePlaylist();
+	m_PlaylistType = type;
 
 	if ( playlist != m_Playlist )
 	{
@@ -753,8 +763,6 @@ void CmusikPlaylistCtrl::SetPlaylist( CmusikPlaylist* playlist, int m_Type )
 			m_SongInfoCache->SetPlaylist( playlist );
 	    
 		m_Playlist = playlist;
-		m_PlaylistType = m_Type;
-
 		m_Changed = true;
 	}
 }
@@ -829,9 +837,7 @@ void CmusikPlaylistCtrl::OnLvnItemActivate(NMHDR *pNMHDR, LRESULT *pResult)
 	// (prompt to) save the current playlist...
 	if ( m_Changed )
 	{
-		if ( m_PlaylistType == MUSIK_PLAYLIST_TYPE_STANDARD )
-			SavePlaylist();
-
+		SavePlaylist();
 		m_Changed = false;
 	}
 
@@ -1729,6 +1735,16 @@ void CmusikPlaylistCtrl::OnPlaylistcolumnsFilename()
 
 ///////////////////////////////////////////////////
 
+bool CmusikPlaylistCtrl::UseTempTable()
+{
+	if ( m_PlaylistType == MUSIK_PLAYLIST_TYPE_STANDARD || m_PlaylistType == MUSIK_PLAYLIST_TYPE_DYNAMIC )
+		return true;
+
+	return false;
+}
+
+///////////////////////////////////////////////////
+
 void CmusikPlaylistCtrl::OnLvnKeydown(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMLVKEYDOWN pLVKeyDow = reinterpret_cast<LPNMLVKEYDOWN>(pNMHDR);
@@ -1742,7 +1758,7 @@ void CmusikPlaylistCtrl::OnLvnKeydown(NMHDR *pNMHDR, LRESULT *pResult)
 		bool delete_from_comp = false;
 
 		// delete from library
-		if ( GetKeyState( VK_MENU ) < 0 )
+		if ( GetKeyState( VK_MENU ) < 0 || UseTempTable() )
 			delete_from_lib = true;
 
 		// delete from computer
@@ -1789,14 +1805,14 @@ void CmusikPlaylistCtrl::DeleteSelectedItems( bool from_library, bool from_compu
 				return;	
 		}
 
-		m_Library->DeleteSongs( sel_songs, from_computer );
+		m_Library->DeleteSongs( sel_songs, from_computer, UseTempTable() );
 	}
 
 	CIntArray sel;
 	GetSelectedItems( &sel );
 	DeleteItems( sel, true );
 
-	if ( from_library )
+	if ( from_library || ( from_computer && UseTempTable() ) )
 	{
 		int WM_SELBOXREQUESTUPDATE = RegisterWindowMessage( "SELBOXREQUESTUPDATE" );
 		m_Parent->SendMessage( WM_SELBOXREQUESTUPDATE );

@@ -1166,20 +1166,20 @@ int CmusikLibrary::RewriteDynPlaylist( int id, const CmusikStringArray& query )
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::RewriteStdPlaylist( int id, CmusikPlaylist* playlist )
+int CmusikLibrary::RewriteStdPlaylist( CmusikPlaylist* playlist )
 {
 	if ( !m_DatabaseOpen )
 		return MUSIK_LIBRARY_NOT_OPEN;
 
 	int nRet;
 
-	if ( id >= 0 )
+	if ( playlist->m_ID >= 0 )
 	{
 		m_ProtectingLibrary.acquire();
 			nRet = sqlite_exec_printf( m_pDB, "DELETE FROM %Q WHERE std_playlist_id = %d;",
 			NULL, NULL, NULL, 
 			STD_PLAYLIST_SONGS,
-			id );
+			playlist->m_ID );
 		m_ProtectingLibrary.release();
 
 		BeginTransaction();
@@ -1191,7 +1191,7 @@ int CmusikLibrary::RewriteStdPlaylist( int id, CmusikPlaylist* playlist )
 				NULL, NULL, NULL, 
 				STD_PLAYLIST_SONGS,
 				NULL,
-				id,
+				playlist->m_ID,
 				playlist->GetField( i, MUSIK_LIBRARY_TYPE_FILENAME ).c_str() );
 			m_ProtectingLibrary.release();
 
@@ -2156,6 +2156,8 @@ int CmusikLibrary::GetSongInfoFromID( int id, CmusikSongInfo* info )
 			id );
 	m_ProtectingLibrary.release();
 
+	info->SetID( id );
+
 	return nRet;
 }
 
@@ -2476,15 +2478,14 @@ void CmusikLibrary::ClearTempSongTable()
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::PopulateTempSongTable( CmusikPlaylist& source, bool clear )
+int CmusikLibrary::PopulateTempSongTable( CmusikPlaylist& source )
 {
 	if ( !m_DatabaseOpen )
 		return MUSIK_LIBRARY_NOT_OPEN;
 
 	int ret = MUSIK_LIBRARY_OK;
 
-	if ( clear )
-		ClearTempSongTable();
+	ClearTempSongTable();
 
 	BeginTransaction();
 	for ( size_t i = 0; i < source.GetCount(); i++ )
@@ -3350,7 +3351,7 @@ int CmusikLibrary::SortPlaylist( CmusikPlaylist* playlist, int field, bool desce
 
 ///////////////////////////////////////////////////
 
-void CmusikLibrary::DeleteSongs( CmusikPlaylist& songs, bool delete_from_disk )
+void CmusikLibrary::DeleteSongs( CmusikPlaylist& songs, bool delete_from_disk, bool use_temp_table )
 {
 	CmusikString filename;
 	BeginTransaction();
@@ -3360,8 +3361,9 @@ void CmusikLibrary::DeleteSongs( CmusikPlaylist& songs, bool delete_from_disk )
 			filename = songs.GetField( i, MUSIK_LIBRARY_TYPE_FILENAME );
 
 		m_ProtectingLibrary.acquire();
-			sqlite_exec_printf( m_pDB, "delete from songs where songid=%d;", 
+			sqlite_exec_printf( m_pDB, "delete from %Q where songid=%d;", 
 				NULL, NULL, NULL,
+				use_temp_table ? TEMP_SONG_TABLE_NAME : SONG_TABLE_NAME,
 				songs.GetSongID( i ) );
 		m_ProtectingLibrary.release();
 
