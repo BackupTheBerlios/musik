@@ -664,11 +664,19 @@ void CmusikSourcesCtrl::OnDropFiles( HDROP hDropInfo, bool right_button )
 	// was pushed to the back of the list
 	if ( !pItem || pItem == m_SubLibRoot )
 	{
+		// assure the sub libs are visible
+		if ( !m_SubLibRoot->IsExpanded() )
+			m_SubLibRoot->Expand();
+
 		CreateNewStdPlaylist( MUSIK_PLAYLIST_TYPE_SUBLIBRARY, &files );
 		return;
 	}
 	else if ( pItem == m_StdPlaylistRoot )
 	{
+		// assure the playlists are visible
+		if ( !m_StdPlaylistRoot->IsExpanded() )
+			m_StdPlaylistRoot->Expand();
+
 		CreateNewStdPlaylist( MUSIK_PLAYLIST_TYPE_STANDARD, &files );
 		return;
 	}

@@ -1525,12 +1525,12 @@ void CMainFrame::OnSysColorChange()
 void CMainFrame::OnFilePreferences()
 {
 	// initialize the property pages
-	CmusikPrefsInterfaceGeneral wndPageInterfaceGeneral( m_Prefs, m_Library, m_Player );
+	CmusikPrefsInterfaceWorkflow wndPageInterfaceWorkflow( m_Prefs, m_Library, m_Player );
 	CmusikPrefsSoundCrossfader wndPageSoundCrossfader( m_Prefs, m_Library, m_Player );
 	CmusikPrefsSoundDriver wndPageSoundDriver( m_Prefs, m_Library, m_Player );
 
 	// remove help icon from gripper
-	wndPageInterfaceGeneral.m_psp.dwFlags&=		~PSP_HASHELP;
+	wndPageInterfaceWorkflow.m_psp.dwFlags&=		~PSP_HASHELP;
 	wndPageSoundCrossfader.m_psp.dwFlags&=		~PSP_HASHELP;
 	wndPageSoundDriver.m_psp.dwFlags&=			~PSP_HASHELP;
 
@@ -1540,7 +1540,7 @@ void CMainFrame::OnFilePreferences()
 	PrefSheet.m_psh.dwFlags&= ~PSH_HASHELP;
 
 	// physically add the preference sheets
-	PrefSheet.AddPage( &wndPageInterfaceGeneral );
+	PrefSheet.AddPage( &wndPageInterfaceWorkflow );
 	PrefSheet.AddPage( &wndPageSoundCrossfader );
 	PrefSheet.AddPage( &wndPageSoundDriver );
 
@@ -1549,7 +1549,7 @@ void CMainFrame::OnFilePreferences()
 	// set some miscellaneous tree view properties
 	PrefSheet.SetTreeViewMode( true, true, false );
 
-	PrefSheet.SetActivePage( &wndPageInterfaceGeneral );
+	PrefSheet.SetActivePage( &wndPageInterfaceWorkflow );
 
 	PrefSheet.DoModal();
 }

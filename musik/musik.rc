@@ -360,9 +360,9 @@ BEGIN
     GROUPBOX        "",IDC_STATIC,6,2,234,232
 END
 
-IDD_PROPPAGE_INTERFACE_GENERAL DIALOGEX 0, 0, 210, 154
+IDD_PROPPAGE_INTERFACE_WORKFLOW DIALOGEX 0, 0, 210, 154
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
-CAPTION "Interface::General"
+CAPTION "Interface::Workflow"
 FONT 8, "MS Shell Dlg", 0, 0, 0x0
 BEGIN
     CONTROL         "Minimize to notification tray (next to clock)",
@@ -383,7 +383,7 @@ BEGIN
                     125,10
     CTEXT           "All users should consider setting up the following options:",
                     IDC_STATIC,12,11,186,13
-    CONTROL         "Starting a new song replaces current ""Now Playing"" with the active playlist.",
+    CONTROL         "Starting a new song replaces current ""Now Playing"" with the active playlist (old musik style).",
                     IDC_CHECK6,"Button",BS_AUTOCHECKBOX | BS_LEFT | BS_TOP | 
                     BS_MULTILINE | WS_TABSTOP,6,123,186,21
 END
@@ -615,7 +615,7 @@ BEGIN
         BOTTOMMARGIN, 256
     END
 
-    IDD_PROPPAGE_INTERFACE_GENERAL, DIALOG
+    IDD_PROPPAGE_INTERFACE_WORKFLOW, DIALOG
     BEGIN
         LEFTMARGIN, 5
         RIGHTMARGIN, 203

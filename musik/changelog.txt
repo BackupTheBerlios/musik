@@ -16,6 +16,10 @@ a3:
   ****                                                               ****
   ***********************************************************************
 
+  - Prefs -> Interface -> General is now Prefs -> Interface -> Workflow
+  - Currently playing item in "Now Playing" is no longer bold. The
+    little playback icon is enough.
+  - A preference for old-style double clicking song behavior.
   - "Sub Libraries" (name subject to change) now available. they
     are stored as standard playlists, but displayed differently.
     each "Sub Library" is a pseudo library created dynamically,

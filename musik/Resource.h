@@ -4,7 +4,7 @@
 //
 #define IDD_ABOUTBOX                    100
 #define IDR_HTML_MUSIKPREFSSOUNDDRIVER  103
-#define IDD_PROPPAGE_INTERFACE_GENERAL  106
+#define IDD_PROPPAGE_INTERFACE_WORKFLOW 106
 #define IDD_PROPPAGE_SOUND_DRIVER       108
 #define IDR_MAINFRAME                   128
 #define IDR_musikTYPE                   129

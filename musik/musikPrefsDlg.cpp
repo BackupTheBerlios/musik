@@ -23,7 +23,9 @@
 //
 // Class(es): 
 //
-//   CmusikPrefsInterfaceGeneral
+//   CmusikPrefsInterfaceWorkflow,
+//   CmusikPrefsSoundCrossfader,
+//   CmusikPrefsSoundDriver
 //
 // Filename(s): 
 //
@@ -66,28 +68,28 @@ class CmusikPropertyPage;
 
 ///////////////////////////////////////////////////
 
-// General::Interface
+// Interface::Workflow
 
 ///////////////////////////////////////////////////
 
-IMPLEMENT_DYNAMIC( CmusikPrefsInterfaceGeneral, CmusikPropertyPage )
+IMPLEMENT_DYNAMIC( CmusikPrefsInterfaceWorkflow, CmusikPropertyPage )
 
 ///////////////////////////////////////////////////
 
-CmusikPrefsInterfaceGeneral::CmusikPrefsInterfaceGeneral( CmusikPrefs* prefs, CmusikLibrary* library, CmusikPlayer* player )
-	: CmusikPropertyPage( CmusikPrefsInterfaceGeneral::IDD, prefs, library, player )
+CmusikPrefsInterfaceWorkflow::CmusikPrefsInterfaceWorkflow( CmusikPrefs* prefs, CmusikLibrary* library, CmusikPlayer* player )
+	: CmusikPropertyPage( CmusikPrefsInterfaceWorkflow::IDD, prefs, library, player )
 {
 }
 
 ///////////////////////////////////////////////////
 
-CmusikPrefsInterfaceGeneral::~CmusikPrefsInterfaceGeneral()
+CmusikPrefsInterfaceWorkflow::~CmusikPrefsInterfaceWorkflow()
 {
 }
 
 ///////////////////////////////////////////////////
 
-void CmusikPrefsInterfaceGeneral::DoDataExchange( CDataExchange* pDX )
+void CmusikPrefsInterfaceWorkflow::DoDataExchange( CDataExchange* pDX )
 {
 	CmusikPropertyPage::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_CHECK_ENABLETRAYICON, m_EnableTrayIcon);
@@ -101,12 +103,12 @@ void CmusikPrefsInterfaceGeneral::DoDataExchange( CDataExchange* pDX )
 
 ///////////////////////////////////////////////////
 
-BEGIN_MESSAGE_MAP( CmusikPrefsInterfaceGeneral, CmusikPropertyPage )
+BEGIN_MESSAGE_MAP( CmusikPrefsInterfaceWorkflow, CmusikPropertyPage )
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
 
-BOOL CmusikPrefsInterfaceGeneral::OnCommand(WPARAM wParam, LPARAM lParam)
+BOOL CmusikPrefsInterfaceWorkflow::OnCommand(WPARAM wParam, LPARAM lParam)
 {
 	SetModified( TRUE );
 	m_Modified = true;
@@ -116,7 +118,7 @@ BOOL CmusikPrefsInterfaceGeneral::OnCommand(WPARAM wParam, LPARAM lParam)
 
 ///////////////////////////////////////////////////
 
-void CmusikPrefsInterfaceGeneral::LoadPrefs()
+void CmusikPrefsInterfaceWorkflow::LoadPrefs()
 {
 	m_EnableTrayIcon.SetCheck( m_Prefs->MinimizeToTray() );
 	m_PromptSavePlaylists.SetCheck( m_Prefs->GetStdPlaylistPrompt() == -1 ? true : false );
@@ -129,7 +131,7 @@ void CmusikPrefsInterfaceGeneral::LoadPrefs()
 
 ///////////////////////////////////////////////////
 
-void CmusikPrefsInterfaceGeneral::CommitChanges()
+void CmusikPrefsInterfaceWorkflow::CommitChanges()
 {
 	m_Prefs->SetMinimizeToTray( m_EnableTrayIcon.GetCheck() );
 
@@ -164,7 +166,7 @@ void CmusikPrefsInterfaceGeneral::CommitChanges()
 
 ///////////////////////////////////////////////////
 
-bool CmusikPrefsInterfaceGeneral::GetStartup()
+bool CmusikPrefsInterfaceWorkflow::GetStartup()
 {
 	CmusikString userdir;
 
@@ -176,7 +178,7 @@ bool CmusikPrefsInterfaceGeneral::GetStartup()
 	return CmusikFilename::FileExists( userdir );
 }
 
-void CmusikPrefsInterfaceGeneral::EnableStartup()
+void CmusikPrefsInterfaceWorkflow::EnableStartup()
 {
 	CmusikString shortcut_path, program_path;
 	char buffer[2000];
@@ -249,7 +251,7 @@ void CmusikPrefsInterfaceGeneral::EnableStartup()
 
 ///////////////////////////////////////////////////
 
-void CmusikPrefsInterfaceGeneral::DisableStartup()
+void CmusikPrefsInterfaceWorkflow::DisableStartup()
 {
 	CmusikString shortcut_path, program_path;
 	char buffer[2000];
@@ -266,7 +268,7 @@ void CmusikPrefsInterfaceGeneral::DisableStartup()
 
 ///////////////////////////////////////////////////
 
-BOOL CmusikPrefsInterfaceGeneral::OnInitDialog()
+BOOL CmusikPrefsInterfaceWorkflow::OnInitDialog()
 {
 	CmusikPropertyPage::OnInitDialog();
 	LoadPrefs();

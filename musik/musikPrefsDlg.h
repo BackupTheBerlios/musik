@@ -23,7 +23,7 @@
 //
 // Class(es): 
 //
-//   CmusikPrefsInterfaceGeneral
+//   CmusikPrefsInterfaceWorkflow
 //
 // Filename(s): 
 //
@@ -59,31 +59,31 @@ class CmusikPlayer;
 
 ///////////////////////////////////////////////////
 
-// General::Interface
+// Interface::Workflow
 
 ///////////////////////////////////////////////////
 
-class CmusikPrefsInterfaceGeneral : public CmusikPropertyPage
+class CmusikPrefsInterfaceWorkflow : public CmusikPropertyPage
 {
 public:
 
 	// construct / destruct
-	CmusikPrefsInterfaceGeneral( CmusikPrefs* prefs, CmusikLibrary* library, CmusikPlayer* player );
-	virtual ~CmusikPrefsInterfaceGeneral();
+	CmusikPrefsInterfaceWorkflow( CmusikPrefs* prefs, CmusikLibrary* library, CmusikPlayer* player );
+	virtual ~CmusikPrefsInterfaceWorkflow();
 
 	// saving / loading
 	virtual void CommitChanges();
 	virtual void LoadPrefs();
 
 	// dialog data
-	enum { IDD = IDD_PROPPAGE_INTERFACE_GENERAL };
+	enum { IDD = IDD_PROPPAGE_INTERFACE_WORKFLOW };
 
 	// overrides
 	virtual BOOL OnInitDialog();
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 
 	// macros
-	DECLARE_DYNAMIC(CmusikPrefsInterfaceGeneral)
+	DECLARE_DYNAMIC(CmusikPrefsInterfaceWorkflow)
 	DECLARE_MESSAGE_MAP()
 protected:
 

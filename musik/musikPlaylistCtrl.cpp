@@ -455,15 +455,7 @@ void CmusikPlaylistCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 			}
 
 			else
-			{
-				if ( m_Player->IsPlaying() &&
-					m_Player->GetCurrPlaying()->GetID() == m_Playlist->GetSongID( pLVCD->nmcd.dwItemSpec ) && 
-					GetPlaylist() == m_Player->GetPlaylist() &&
-					pLVCD->nmcd.dwItemSpec == m_Player->GetIndex() )
-					pDC->SelectObject( m_BoldFont );
-				else
-					pDC->SelectObject( m_ItemFont );
-			}
+				pDC->SelectObject( m_ItemFont );
 
 			// which stripe color to use
 			if ( pLVCD->nmcd.dwItemSpec % 2 != 0 )
@@ -485,12 +477,6 @@ void CmusikPlaylistCtrl::InitFonts()
 {
 	m_ItemFont.CreateStockObject( DEFAULT_GUI_FONT );
 	m_StarFont.CreatePointFont( 100, "musik" );
-
-	LOGFONT pBoldFont;
-	m_ItemFont.GetLogFont( &pBoldFont );
-	pBoldFont.lfWeight = FW_BOLD;
-
-	m_BoldFont.CreateFontIndirect( &pBoldFont );
 }
 
 ///////////////////////////////////////////////////
