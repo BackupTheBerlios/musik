@@ -1260,6 +1260,18 @@ bool CMusikLibrary::RetagFile( CMusikSong* song, bool bClearCheck )
 	size_t nPatternDel	= GetDelimitCount( sPattern, wxT("-") );
 	size_t nFilenameDel = GetDelimitCount( sFile, wxT("-") );
 
+	if( nPatternDel == nFilenameDel )
+	{
+		for( size_t i = 0; i < nPatternDel; i++ )
+		{
+			switch ( aPattern.Item( i ) )
+			{
+			case wxT("%1"):
+					wxMessageBox( wxT("bleh") );
+					break;
+			}
+		}
+	}
 
 	return true;
 }
