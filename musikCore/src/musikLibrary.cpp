@@ -67,9 +67,6 @@
 #include "../include/musikMp3Info.h"
 #include "../include/musikOggInfo.h"
 
-#include "ace/Thread.h"
-#include "ace/Synch.h"
-
 ///////////////////////////////////////////////////
 
 static int sqlite_AddSongToPlaylist(void *args, int numCols, char **results, char ** columnNames )
@@ -273,7 +270,6 @@ CmusikLibrary::CmusikLibrary( const CStdString& filename )
 	m_Transactions = NULL;
 	m_DatabaseOpen = false;
 
-	m_ProtectingLibrary = new ACE_Thread_Mutex();
 	CmusikSong::SetLibrary( this );
 	m_Filename = filename;
 
@@ -287,7 +283,6 @@ CmusikLibrary::CmusikLibrary( const CStdString& filename )
 CmusikLibrary::~CmusikLibrary()
 {
 	Shutdown();
-	delete m_ProtectingLibrary;
 }
 
 ///////////////////////////////////////////////////
@@ -396,7 +391,7 @@ bool CmusikLibrary::InitStdTables()
 	char *pErr1 = NULL;
 	char *pErr2 = NULL;
 
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		sqlite_exec( m_pDB, szCreateDBQuery1, NULL, NULL, &pErr1 );
 		sqlite_exec( m_pDB, szCreateDBQuery2, NULL, NULL, &pErr2 );
@@ -519,7 +514,7 @@ bool CmusikLibrary::InitEqTable()
 	char *pErr1 = NULL;
 	char *pErr2 = NULL;
 
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		sqlite_exec( m_pDB, szCreateDBQuery1, NULL, NULL, &pErr1 );
 		sqlite_exec( m_pDB, szCreateDBQuery2, NULL, NULL, &pErr2 );
@@ -563,7 +558,7 @@ bool CmusikLibrary::InitPathTable()
 	// put a lock on the library and open it up
 	char *pErr = NULL;
 
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		sqlite_exec( m_pDB, szCreateDBQuery, NULL, NULL, &pErr );
 	}
@@ -598,7 +593,7 @@ bool CmusikLibrary::InitDynTable()
 	// put a lock on the library and open it up
 	char *pErr = NULL;
 
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		sqlite_exec( m_pDB, szCreateDBQuery, NULL, NULL, &pErr );
 	}
@@ -637,7 +632,7 @@ bool CmusikLibrary::InitCrossfaderTable()
 	// put a lock on the library and open it up
 	char *pErr = NULL;
 
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		sqlite_exec( m_pDB, szCreateDBQuery, NULL, NULL, &pErr );
 	}
@@ -701,7 +696,7 @@ bool CmusikLibrary::InitLibTable()
 	char *pErr1 = NULL;
 	char* pErr2 = NULL;
 
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		sqlite_exec( m_pDB, szCreateDBQuery, NULL, NULL, &pErr1 );
 		sqlite_exec( m_pDB, szCreateIdxQuery, NULL, NULL, &pErr2 );
@@ -733,7 +728,7 @@ bool CmusikLibrary::Startup()
 
 	char* pErr = NULL;
 
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		m_pDB = sqlite_open( m_Filename.c_str(), 0666, &pErr );
 
@@ -763,7 +758,7 @@ bool CmusikLibrary::Startup()
 void CmusikLibrary::Shutdown()
 {
 	// lock it up and close it down.
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		if ( m_DatabaseOpen )
 		{
@@ -783,7 +778,7 @@ void CmusikLibrary::BeginTransaction()
 
 	if ( m_Transactions == NULL )
 	{
-		ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 		{
 			sqlite_exec_printf( m_pDB, "begin transaction;", NULL, NULL, NULL );
 		}
@@ -805,7 +800,7 @@ void CmusikLibrary::EndTransaction()
 
 	if ( m_Transactions == NULL )
 	{
-		ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 		{
 			sqlite_exec_printf( m_pDB, "end transaction;", NULL, NULL, NULL );
 		}
@@ -822,7 +817,7 @@ int CmusikLibrary::CreateCrossfader( CmusikCrossfader* fader )
 		return -1;
 
 	int nRet;
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q,%f,%f,%f,%f );", 
 			NULL, NULL, NULL,
@@ -845,7 +840,7 @@ int CmusikLibrary::DeleteCrossfader( int id )
 		return -1;
 
 	int nRet;
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		nRet = sqlite_exec_printf( m_pDB, "DELETE FROM %Q WHERE crossfader_id = %d", 
 			NULL, NULL, NULL,
@@ -866,7 +861,7 @@ int CmusikLibrary::CreateStdPlaylist( const CStdString& name, const CStdStringAr
 	int nID, nRet;
 
 	// lock it up
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		// insert the new playlist name
 		nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %Q );", 
@@ -881,7 +876,7 @@ int CmusikLibrary::CreateStdPlaylist( const CStdString& name, const CStdStringAr
 
 	// get the ID of the newly created entry
 	{
-		ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 		{
 			nRet = sqlite_exec_printf( m_pDB, "SELECT std_playlist_id FROM %Q WHERE std_playlist_name = %Q;", 
 				&sqlite_GetIntFromRow, &nID, NULL,
@@ -901,7 +896,7 @@ int CmusikLibrary::CreateStdPlaylist( const CStdString& name, const CStdStringAr
 		{
 			AddSong( songids.at( i ) );
 
-			ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+			ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 			{
 				nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %d, %d );",
 					NULL, NULL, NULL, 
@@ -939,7 +934,7 @@ int CmusikLibrary::AppendStdPlaylist( int id, const CStdStringArray& files )
 		{
 			AddSong( files.at( i ) );
 
-			ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+			ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 			{
 
 				nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %d, %d );",
@@ -975,7 +970,7 @@ int CmusikLibrary::RewriteStdPlaylist( int id, CmusikPlaylist* playlist )
 
 	if ( id >= 0 )
 	{
-		ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 		{
 			nRet = sqlite_exec_printf( m_pDB, "DELETE FROM %Q WHERE std_playlist_id = %d;",
 			NULL, NULL, NULL, 
@@ -987,7 +982,7 @@ int CmusikLibrary::RewriteStdPlaylist( int id, CmusikPlaylist* playlist )
 		
 		for ( size_t i = 0; i < playlist->GetCount(); i++ )
 		{
-			ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+			ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 			{
 				nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %d, %d );",
 				NULL, NULL, NULL, 
@@ -1023,7 +1018,7 @@ int CmusikLibrary::RenameStdPlaylist( int id, const CStdString& str )
 
 	if ( id >= 0 )
 	{
-		ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 		{
 			nRet = sqlite_exec_printf( m_pDB, "UPDATE %Q SET std_playlist_name = %Q WHERE std_playlist_id = %d;",
 			NULL, NULL, NULL, 
@@ -1050,7 +1045,7 @@ int CmusikLibrary::GetStdPlaylist( int id, CmusikPlaylist& target, bool clear_ta
 
 	// do it
 	int nRet;
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		nRet = sqlite_exec_printf( m_pDB, "SELECT songid FROM %Q WHERE std_playlist_id = %d;", 
 			&sqlite_AddSongToPlaylist, &target, NULL,
@@ -1115,7 +1110,7 @@ int CmusikLibrary::CreateDynPlaylist( const CStdString& name, const CStdString& 
 
 	// do it
 	int nRet;
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %q, %q ); ", 
 			NULL, NULL, NULL,
@@ -1138,7 +1133,7 @@ int CmusikLibrary::DeleteStdPlaylist( const CStdString& name )
 	int nID, nRet;
 
 	// lock it up	
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		// get ID of the currently named playlist
 		nRet = sqlite_exec_printf( m_pDB, "SELECT std_playlist_id FROM %Q WHERE std_playlist_name = %Q;", 
@@ -1153,7 +1148,7 @@ int CmusikLibrary::DeleteStdPlaylist( const CStdString& name )
 	// remove entry from table containing
 	// the list of standard playlists
 	{
-		ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 		{
 			nRet = sqlite_exec_printf( m_pDB, "DELETE FROM %Q WHERE std_playlist_name = %Q;", 
 				NULL, NULL, NULL,
@@ -1168,7 +1163,7 @@ int CmusikLibrary::DeleteStdPlaylist( const CStdString& name )
 	// delete corresponding songs from the
 	// other table
 	{
-		ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 		{
 			nRet = sqlite_exec_printf( m_pDB, "DELETE FROM %Q WHERE std_playlist_id = %d", 
 				NULL, NULL, NULL,
@@ -1191,7 +1186,7 @@ int CmusikLibrary::DeleteStdPlaylist( int id )
 	int nRet;
 
 	{
-		ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 		{
 			// remove entry from table containing
 			// the list of standard playlists
@@ -1208,7 +1203,7 @@ int CmusikLibrary::DeleteStdPlaylist( int id )
 	// now remove corresponding entries in
 	// the table that contains the songs
 	{
-		ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 		{
 			nRet = sqlite_exec_printf( m_pDB, "DELETE FROM %Q WHERE std_playlist_id = %d;", 
 				NULL, NULL, NULL,
@@ -1230,7 +1225,7 @@ int CmusikLibrary::DeleteDynPlaylist( const CStdString& name )
 	int nRet;
 
 	// do it
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		nRet = sqlite_exec_printf( m_pDB, "DELETE FROM %Q WHERE dyn_playlist_name = %Q;", 
 			NULL, NULL, NULL,
@@ -1250,7 +1245,7 @@ int CmusikLibrary::DeleteDynPlaylist( int id )
 
 	// do it
 	int nRet;
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		nRet = sqlite_exec_printf( m_pDB, "DELETE FROM %Q WHERE dyn_playlist_id = %d;", 
 			NULL, NULL, NULL,
@@ -1349,7 +1344,7 @@ int CmusikLibrary::QueryCount( const char* pQueryResult )
 	const char **coltypes;
 	int result = 0;
 
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		sqlite_compile( m_pDB, pQueryResult, &pTail, &pVM, NULL );
 
@@ -1398,7 +1393,7 @@ int CmusikLibrary::QuickQuery( CStdString str, CmusikPlaylist& target )
 	str = "%" + str + "%";
 
 	int nRet;
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		nRet = sqlite_exec_printf( m_pDB, "SELECT songid FROM %Q WHERE artist LIKE %Q OR album LIKE %Q OR title LIKE %Q OR filename LIKE %Q;", 
 			&sqlite_AddSongToPlaylist, &target, NULL,
@@ -1423,7 +1418,7 @@ int CmusikLibrary::QuerySongs( const CStdString& query, CmusikPlaylist& target )
 
 	// lock it up and query it
 	int nRet;
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		nRet = sqlite_exec_printf( m_pDB, "SELECT songid FROM %Q WHERE %q;", 
 			&sqlite_AddSongToPlaylist, &target, NULL,
@@ -1472,7 +1467,7 @@ int CmusikLibrary::GetRelatedItems( int source_type, const CStdStringArray& sour
 
 	// do it
 	int nRet;
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		nRet = sqlite_exec(m_pDB, query.c_str(), &sqlite_AddSongToStringArray, &target, NULL);
 	}
@@ -1495,7 +1490,7 @@ int CmusikLibrary::GetRelatedItems( CStdString sub_query, int dst_type, CStdStri
 
 	// do it
 	int nRet;
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		nRet = sqlite_exec_printf(m_pDB, "SELECT DISTINCT %q, UPPER( %q ) AS UP FROM %Q WHERE %s order by %q;", 
 			&sqlite_AddSongToStringArray, &target, NULL,
@@ -1525,7 +1520,7 @@ int CmusikLibrary::GetRelatedSongs( CStdString sub_query, int source_type, Cmusi
 
 	// do it
 	int nRet;
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		nRet = sqlite_exec_printf(m_pDB, "SELECT DISTINCT songid FROM %Q WHERE %s %q;", 
 			&sqlite_AddSongToPlaylist, &target, NULL,
@@ -1551,7 +1546,7 @@ int CmusikLibrary::GetAllDistinct( int source_type, CStdStringArray& target, boo
 
 	// do it
 	int nRet;
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		nRet = sqlite_exec_printf( m_pDB, "SELECT DISTINCT %q, UPPER( %q ) AS UP FROM %Q ORDER BY UP;", 
 			&sqlite_AddSongToStringArray, &target, NULL,
@@ -1587,7 +1582,7 @@ int CmusikLibrary::GetFieldFromID( int id, int field, CStdString& string )
 
 	// do it
 	int nRet;
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		nRet = sqlite_exec_printf( m_pDB, "SELECT %q FROM %Q WHERE songid = %d;", 
 			&sqlite_GetFieldFromID, &string, NULL,
@@ -1610,7 +1605,7 @@ int CmusikLibrary::GetSongInfoFromID( int id, CmusikSongInfo* info )
 
 	// do it
 	int nRet;
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		nRet = sqlite_exec_printf( m_pDB, "SELECT tracknum,artist,album,genre,title,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize,filename,equalizer FROM %Q WHERE songid = %d;", 
 			&sqlite_GetSongInfoFromID, info, NULL,
@@ -1634,7 +1629,7 @@ bool CmusikLibrary::SetSongInfo( CmusikSongInfo* info, int songid )
 		songid = info->GetID();
 
 	// lock it up and run the query
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		result = sqlite_exec_printf( m_pDB, "UPDATE %Q SET format = %d, vbr = %d, filename = %Q, artist = %Q, title = %Q, album = %Q, tracknum = %d, year = %Q, genre = %Q, rating = %d, bitrate = %d, lastplayed = %Q, notes = %Q, timesplayed = %d, duration = %d, timeadded = %Q, filesize = %d, dirty = %d WHERE songid = %d;",
 			NULL, NULL, NULL,
@@ -1676,7 +1671,7 @@ bool CmusikLibrary::SetSongRating( int songid, int rating )
 	int result = 0;
 
 	// lock it up and run the query
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		result = sqlite_exec_printf( m_pDB, "UPDATE %Q SET rating = %d WHERE songid = %d", 
 			NULL, NULL, NULL,
@@ -1701,7 +1696,7 @@ bool CmusikLibrary::SetSongEqualizer( int songid, int eq_id )
 	int result = 0;
 
 	// lock it up and run the query
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		result = sqlite_exec_printf( m_pDB, "UPDATE %Q SET equalizer = %d WHERE songid = %d", 
 			NULL, NULL, NULL,
@@ -1728,7 +1723,7 @@ int CmusikLibrary::GetAllStdPlaylists( CmusikPlaylistInfoArray* target, bool cle
 
 	// do it
 	int nRet;
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		nRet = sqlite_exec_printf( m_pDB, "SELECT std_playlist_name,std_playlist_id FROM %Q WHERE std_playlist_name <> '';", 
 			&sqlite_AddStdPlaylistInfoArray, target, NULL,
@@ -1750,7 +1745,7 @@ int CmusikLibrary::GetAllDynPlaylists( CmusikPlaylistInfoArray* target, bool cle
 
 	// do it
 	int nRet;
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		nRet = sqlite_exec_printf( m_pDB, "SELECT dyn_playlist_name,dyn_playlist_id FROM %Q WHERE dyn_playlist_name <> '';",
 			&sqlite_AddDynPlaylistInfoArray, target, NULL,
@@ -1772,7 +1767,7 @@ int CmusikLibrary::GetAllCrossfaders( CStdStringArray* target, bool clear_target
 
 	// do it
 	int nRet;
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		nRet = sqlite_exec_printf( m_pDB, "SELECT crossfader_name FROM %Q WHERE crossfader_name <> '';", 
 			&sqlite_AddRowToStringArray, target, NULL,
@@ -1794,7 +1789,7 @@ int CmusikLibrary::GetAllCrossfaders( CIntArray* target, bool clear_target )
 
 	// do it
 	int nRet;
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		nRet = sqlite_exec_printf( m_pDB, "SELECT crossfader_id FROM %Q WHERE crossfader_id > -1;", 
 			&sqlite_GetIntFromRow, target, NULL,
@@ -1812,7 +1807,7 @@ int CmusikLibrary::GetCrossfader( int id, CmusikCrossfader* fader )
 		return -1;
 
 	int nRet;
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		nRet = sqlite_exec_printf( m_pDB, "SELECT crossfader_name, newsong, pause_resume, seek, stop, exit FROM %Q WHERE crossfader_id = %d;", 
 			&sqlite_GetCrossfader, fader, NULL,
@@ -1833,7 +1828,7 @@ int CmusikLibrary::GetIDFromFilename( CStdString fn )
 	int target;
 
 	// do it
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		sqlite_exec_printf( m_pDB, "SELECT songid FROM %Q WHERE filename = %Q;", 
 			&sqlite_GetIntFromRow, &target, NULL,
@@ -1877,7 +1872,7 @@ bool CmusikLibrary::RemoveSong( int songid )
 		return false;
 
 	int nRes;
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		nRes = sqlite_exec_printf( m_pDB, "DELETE FROM %Q WHERE songid=%d;", NULL, NULL, NULL,
 			SONG_TABLE_NAME,
@@ -1898,7 +1893,7 @@ bool CmusikLibrary::RemoveSong( const CStdString& fn )
 		return false;
 
 	int nRet;
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		nRet = sqlite_exec_printf( m_pDB, "DELETE FROM %Q WHERE filename = %Q;", NULL, NULL, NULL,
 			SONG_TABLE_NAME,
@@ -1942,7 +1937,7 @@ bool CmusikLibrary::AddOGG( const CStdString& fn )
 	if ( info.LoadInfo( fn ) )
 	{
 		int nRet;
-		ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 		{
 			nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %d, %d, %Q, %Q, %Q, %Q, %d, %Q, %Q, %d, %d, %Q, %Q, %d, %d, %Q, %d, %d, %d );", NULL, NULL, NULL, 
 				SONG_TABLE_NAME,								// song table 		
@@ -1986,7 +1981,7 @@ bool CmusikLibrary::AddMP3( const CStdString& fn )
 	if ( info.LoadInfo( fn ) )
 	{
 		int nRet;
-		ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 		{
 			nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %q VALUES ( %Q, %d, %d, %Q, %Q, %Q, %Q, %d, %Q, %Q, %d, %d, %Q, %Q, %d, %d, %Q, %d, %d, %d );", NULL, NULL, NULL, 
 				SONG_TABLE_NAME,								// song table 		
@@ -2042,7 +2037,7 @@ bool CmusikLibrary::IsSongInLibrary( CStdString fn )
 	const char **coldata;
 	const char **coltypes;
 
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		sqlite_compile( m_pDB, query, &pTail, &pVM, NULL );
 
@@ -2071,7 +2066,7 @@ int CmusikLibrary::GetEqualizerIDFromSongID( int id )
 	int target;
 
 	// do it
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		sqlite_exec_printf( m_pDB, "SELECT equalizer FROM %Q WHERE songid = %d;", 
 			&sqlite_GetEqualizerIDFromID, &target, NULL,
@@ -2093,7 +2088,7 @@ int CmusikLibrary::GetEqualizerFromName( const CStdString& name )
 	int target;
 
 	// do it
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		sqlite_exec_printf( m_pDB, "SELECT equalizer_id FROM %Q WHERE equalizer_name = %Q;", 
 			&sqlite_GetEqualizerIDFromID, &target, NULL,
@@ -2112,7 +2107,7 @@ int CmusikLibrary::CreateEqualizer( CmusikEQSettings& eq, const CStdString& name
 		return -1;
 
 	int nRes;
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		nRes = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %Q, %d, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f );", NULL, NULL, NULL, 
 			EQUALIZER_PRESET,								// eq table 		
@@ -2170,7 +2165,7 @@ int CmusikLibrary::DeleteEqualizer( int id )
 		return -1;
 
 	int nRes;
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		nRes = sqlite_exec_printf( m_pDB, "DELETE FROM %Q WHERE equalizer_id = %d;",
 			NULL, NULL, NULL, 
@@ -2189,7 +2184,7 @@ int CmusikLibrary::UpdateEqualizer( int id, const CmusikEQSettings& eq )
 		return -1;
 
 	int nRes;
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		nRes = sqlite_exec_printf( m_pDB, "UPDATE %Q set equalizer_name = %Q, hz55_left = %f, hz77_left = %f, hz110_left = %f, hz156_left = %f, hz220_left = %f, hz311_left = %f, hz440_left = %f, hz622_left = %f, hz880_left = %f, hz1244_left = %f, hz1760_left = %f, hz2489_left = %f, hz3520_left = %f, hz4978_left = %f, hz7040_left = %f, hz9956_left = %f, hz14080_left = %f, hz19912_left = %f,"
 							" hz55_right = %f, hz77_right = %f, hz110_right = %f, hz156_right = %f, hz220_right = %f, hz311_right = %f, hz440_right = %f, hz622_right = %f, hz880_right = %f, hz1244_right = %f, hz1760_right = %f, hz2489_right = %f, hz3520_right = %f, hz4978_right = %f, hz7040_right = %f, hz9956_right = %f, hz14080_right = %f, hz19912_right = %f WHERE equalizer_id = %d;",
@@ -2246,7 +2241,7 @@ int CmusikLibrary::UpdateDefaultEqualizer( const CmusikEQSettings& eq )
 		return -1;
 
 	int nRes;
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 
 		nRes = sqlite_exec_printf( m_pDB, "UPDATE %Q SET hz55_left = %f, hz77_left = %f, hz110_left = %f, hz156_left = %f, hz220_left = %f, hz311_left = %f, hz440_left = %f, hz622_left = %f, hz880_left = %f, hz1244_left = %f, hz1760_left = %f, hz2489_left = %f, hz3520_left = %f, hz4978_left = %f, hz7040_left = %f, hz9956_left = %f, hz14080_left = %f, hz19912_left = %f,"
@@ -2302,7 +2297,7 @@ int CmusikLibrary::GetDefaultEqualizer( CmusikEQSettings* target )
 		return -1;
 
 	int nRet;
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		nRet = sqlite_exec_printf( m_pDB, "SELECT hz55_left, hz77_left, hz110_left, hz156_left, hz220_left, hz311_left, hz440_left, hz622_left, hz880_left, hz1244_left, hz1760_left, hz2489_left, hz3520_left, hz4978_left, hz7040_left, hz9956_left, hz14080_left, hz19912_left,"
 									" hz55_right, hz77_right, hz110_right, hz156_right, hz220_right, hz311_right, hz440_right, hz622_right, hz880_right, hz1244_right, hz1760_right, hz2489_right, hz3520_right, hz4978_right, hz7040_right, hz9956_right, hz14080_right, hz19912_right"
@@ -2322,7 +2317,7 @@ int CmusikLibrary::InitDefaultEqualizer()
 		return -1;
 
 	int nRes;
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		nRes = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( -1, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,"
 							" 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 );",
@@ -2341,7 +2336,7 @@ int CmusikLibrary::GetEqualizer( int eq_id, CmusikEQSettings* target )
 		return -1;
 
 	int nRet;
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		nRet = sqlite_exec_printf( m_pDB, "SELECT"
 									" hz55_left,  hz77_left,  hz110_left,  hz156_left,  hz220_left,  hz311_left,  hz440_left,  hz622_left,  hz880_left,  hz1244_left,  hz1760_left,  hz2489_left,  hz3520_left,  hz4978_left,  hz7040_left,  hz9956_left,  hz14080_left,  hz19912_left,"
@@ -2382,7 +2377,7 @@ int  CmusikLibrary::GetAllEqualizerPresets( CStdStringArray* target, CIntArray* 
 
 	int nRet1, nRet2 = 0;
 	BeginTransaction();
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		nRet1 = sqlite_exec_printf( m_pDB, "SELECT equalizer_name FROM %Q WHERE equalizer_is_preset = 1 order by equalizer_id;",
 			&sqlite_AddRowToStringArray, target, NULL,
@@ -2411,7 +2406,7 @@ int CmusikLibrary::GetSongFormatFromID( int id, int* target )
 		return -1;
 
 	int nRet;
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		nRet = sqlite_exec_printf( m_pDB, "SELECT format FROM %Q WHERE songid = %d;", 
 			&sqlite_GetIntFromRow, target, NULL,
@@ -2465,7 +2460,7 @@ int CmusikLibrary::FinalizeDirtySongs()
 		return -1;
 
 	int nRet;
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		nRet = sqlite_exec_printf( m_pDB, "UPDATE %Q SET dirty = 0 WHERE dirty = 1",
 			NULL, NULL, NULL,
@@ -2483,7 +2478,7 @@ int CmusikLibrary::AddPath( const CStdString& path )
 		return -1;
 
 	int nRet;
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q );",
 			NULL, NULL, NULL,
@@ -2502,7 +2497,7 @@ int CmusikLibrary::RemovePath( const CStdString& path )
 		return -1;
 
 	int nRet;
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		nRet = sqlite_exec_printf( m_pDB, "DELETE FROM %Q WHERE path_name = %Q;",
 			NULL, NULL, NULL,
@@ -2524,7 +2519,7 @@ int CmusikLibrary::GetAllPaths( CStdStringArray* target, bool clear_target )
 		target->clear();
 
 	int nRet;
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
 		nRet = sqlite_exec_printf( m_pDB, "SELECT path_name FROM %Q WHERE path_name <> '';",
 			&sqlite_AddRowToStringArray, target, NULL,

@@ -1098,3 +1098,5 @@ void CmusikPlaylistCtrl::GetRatingExtent()
 
 	m_RatingExtent = szText.cx;
 }
+
+///////////////////////////////////////////////////

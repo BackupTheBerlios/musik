@@ -272,7 +272,7 @@ protected:
 	CmusikThreadPtrArray m_Threads;
 
 	// mutex to synchronize thread array
-	ACE_Thread_Mutex* m_ProtectingThreads;
+	ACE_Thread_Mutex m_ProtectingThreads;
 	int m_ThreadCount;
 
 	// batch functors threads will use

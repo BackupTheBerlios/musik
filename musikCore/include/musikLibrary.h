@@ -63,6 +63,9 @@
 
 #include "../musikCore/include/musikEQSettings.h"
 
+#include "ace/Thread.h"
+#include "ace/Synch.h"
+
 ///////////////////////////////////////////////////
 
 enum
@@ -245,7 +248,7 @@ private:
 
 	// the mutex that will be used to protect the
 	//library within any given scope.
-	ACE_Thread_Mutex* m_ProtectingLibrary;
+	ACE_Thread_Mutex m_ProtectingLibrary;
 	
 	// fields... artist/title/album/etc
 	void InitFields();

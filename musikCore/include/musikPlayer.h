@@ -225,9 +225,6 @@ public:
 	CStdString GetTimePerStr( int percent );
 	int GetTimePer ( int percent );
 
-	// stream array protecting mutex
-	ACE_Thread_Mutex* m_ProtectingStreams;
-
 private:
 
 	// index of the current song
@@ -303,7 +300,8 @@ private:
 	void InitCrossfader();
 	void CleanCrossfader();
 
-	// main thread
+	// main thread and mutex
+	ACE_Thread_Mutex m_ProtectingStreams;
 	CmusikThread* m_pThread;
 	void InitThread();
 	void CleanThread();
