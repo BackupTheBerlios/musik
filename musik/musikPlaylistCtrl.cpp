@@ -54,6 +54,8 @@
 #include "musikSaveStdPlaylist.h"
 #include "musikBatchTagDlg.h"
 
+#include "../musikCore/include/musikBatchRetag.h"
+
 #include "MEMDC.H"
 
 ///////////////////////////////////////////////////
@@ -1222,6 +1224,26 @@ void CmusikPlaylistCtrl::GetSelectedSongs( CmusikPlaylist& items )
 
 ///////////////////////////////////////////////////
 
+void CmusikPlaylistCtrl::GetSelectedSongs( CmusikSongInfoArray& items )
+{
+	items.clear();
+
+	CmusikSong curr_song;
+	CmusikSongInfo curr_info;
+	
+	POSITION pos = GetFirstSelectedItemPosition();
+	m_Library->BeginTransaction();
+	while ( pos )
+	{
+		curr_song = m_Playlist->GetSong( GetNextSelectedItem( pos ) );
+		m_Library->GetSongInfoFromID( curr_song.GetID(), &curr_info );
+		items.push_back( curr_info );
+	}
+	m_Library->EndTransaction();
+}
+
+///////////////////////////////////////////////////
+
 int CmusikPlaylistCtrl::GetFirstSelected()
 {
     POSITION pos = GetFirstSelectedItemPosition();
@@ -1853,6 +1875,22 @@ void CmusikPlaylistCtrl::OnLvnKeydown(NMHDR *pNMHDR, LRESULT *pResult)
 
 		return;
 	}
+
+	if ( nChar == 'B' || nChar == 'b' )
+	{
+		if ( GetKeyState( VK_CONTROL ) < 0 )
+			OnPlaylistcontextmenuBatch();
+
+		return;
+	}
+
+	if ( nChar == 'T' || nChar == 't' )
+	{
+		if ( GetKeyState( VK_CONTROL ) < 0 )
+			OnPlaylistcontextmenuProperties();
+
+		return;
+	}
 }
 
 ///////////////////////////////////////////////////
@@ -2011,7 +2049,24 @@ LRESULT CmusikPlaylistCtrl::OnTagUpdate( WPARAM wParam, LPARAM lParam )
 
 void CmusikPlaylistCtrl::OnPlaylistcontextmenuBatch()
 {
+	CmusikSongInfoArray* selected = new CmusikSongInfoArray();
+	GetSelectedSongs( *selected );
+
+	CmusikBatchTagDlg batch( this, selected );
 	
+	if ( batch.DoModal() == IDOK )
+	{
+		CmusikBatchRetag* params;
+
+		params = new CmusikBatchRetag( m_Library, NULL, selected );
+		params->m_DeleteUpdatedTags = true;
+		params->m_WriteToFile = false;
+
+		int WM_BATCHRETAG_NEW = RegisterWindowMessage( "BATCHRETAG_NEW" );
+		m_Parent->SendMessage( WM_BATCHRETAG_NEW, (WPARAM)params );		
+	}
+	else
+		delete selected;
 }
 
 ///////////////////////////////////////////////////

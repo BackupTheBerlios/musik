@@ -176,6 +176,7 @@ protected:
 	bool m_PlaylistNeedsSave;
 	void GetSelectedItems( CIntArray& items );
 	void GetSelectedSongs( CmusikPlaylist& songs );
+	void GetSelectedSongs( CmusikSongInfoArray& songs );
 	void GetItemIDs( const CIntArray& items, CIntArray* target );
 	void DeleteItems( const CIntArray& items, bool update = true );
 	void InsertItems( CmusikPlaylist& items, int first_sel, int at, bool update = true );

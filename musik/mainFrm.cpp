@@ -106,9 +106,9 @@ int WM_PLAYER_NEXT			= RegisterWindowMessage( "PLAYER_NEXT" );
 int WM_PLAYER_PREV			= RegisterWindowMessage( "PLAYER_PREV" );
 int WM_PLAYER_STOP			= RegisterWindowMessage( "PLAYER_STOP" );
 
-// comes from other child controls when
-// files have been dropped
+// so other controls can kick up threads
 int WM_BATCHADD_NEW			= RegisterWindowMessage( "BATCHADD_NEW" );
+int WM_BATCHRETAG_NEW		= RegisterWindowMessage( "BATCHRETAG_NEW" );
 
 // come from the batch add functor
 int WM_BATCHADD_PROGRESS	= RegisterWindowMessage( "BATCHADD_PROGRESS" );
@@ -224,6 +224,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_SELBOXEDITCOMMIT, OnSelBoxEditCommit )
 	ON_REGISTERED_MESSAGE( WM_SELBOXDELSEL, OnSelBoxDelSel )
 	ON_REGISTERED_MESSAGE( WM_BATCHADD_NEW, OnBatchAddNew )
+	ON_REGISTERED_MESSAGE( WM_BATCHRETAG_NEW, OnBatchRetagNew )
 	ON_REGISTERED_MESSAGE( WM_BATCHADD_PROGRESS, OnBatchAddProgress )
 	ON_REGISTERED_MESSAGE( WM_BATCHADD_END, OnTaskEnd )
 	ON_REGISTERED_MESSAGE( WM_REMOVEOLD_PROGRESS, OnRemoveOldProgress )
@@ -1815,7 +1816,7 @@ void CMainFrame::OnFilePreferences()
 
 	// initialize the CTreePropSheet class 
 	// and remove help icon from gripper
-	CmusikPropertySheet PrefSheet( _T( "musikCube Preferences" ) );
+	CmusikPropertySheet PrefSheet( _T( "Cube Preferences" ) );
 	PrefSheet.m_psh.dwFlags&= ~PSH_HASHELP;
 
 	// physically add the preference sheets
@@ -1893,6 +1894,32 @@ LRESULT CMainFrame::OnBatchAddNew( WPARAM wParam, LPARAM lParam )
 			params->m_Functor = m_BatchAddFnct;
 
 			CmusikBatchAddTask* task = new CmusikBatchAddTask;
+			task->m_Params = params;
+
+			m_Tasks.push_back( task );
+			m_TaskCount++;
+
+			task->start();
+
+		m_ProtectingTasks.unlock();
+	}
+
+	return 0L;
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CMainFrame::OnBatchRetagNew( WPARAM wParam, LPARAM lParam )
+{
+	CmusikBatchRetag* params = (CmusikBatchRetag*)wParam;
+
+	if ( params )
+	{
+		m_ProtectingTasks.lock();
+
+			params->m_Functor = m_BatchAddFnct;
+
+			CmusikBatchRetagTask* task = new CmusikBatchRetagTask;
 			task->m_Params = params;
 
 			m_Tasks.push_back( task );

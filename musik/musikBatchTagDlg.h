@@ -35,11 +35,18 @@
 // 
 // Usage: 
 //
-//   Void.
+//   Ment to be modal.
 //
 ///////////////////////////////////////////////////
 
 #pragma once
+
+///////////////////////////////////////////////////
+
+#include "Resource.h"
+#include "afxwin.h"
+
+#include "../musikCore/include/musikPlaylist.h"
 
 ///////////////////////////////////////////////////
 
@@ -49,14 +56,42 @@ class CmusikBatchTagDlg : public CDialog
 public:
 
 	// construct and destruct
-	CmusikBatchTagDlg(CWnd* pParent = NULL);
+	CmusikBatchTagDlg( CWnd* parent, CmusikSongInfoArray* songs );
 	virtual ~CmusikBatchTagDlg();
+
+	// mfc messages and overrides
+	afx_msg void OnBnClickedCancel();
+	afx_msg void OnBnClickedOk();
+	afx_msg void OnBnClickedEnbtitle();
+	afx_msg void OnBnClickedEnbartist();
+	afx_msg void OnBnClickedEnbalbum();
+	afx_msg void OnBnClickedEnbtrack();
+	afx_msg void OnBnClickedEnbgenre();
+	afx_msg void OnBnClickedEnbyear();
+	afx_msg void OnBnClickedEnbrating();
+	virtual BOOL OnInitDialog();
 
 	// misc
 	enum { IDD = IDD_BATCH_TAG };
 	virtual void DoDataExchange(CDataExchange* pDX);
 
 protected:
+
+	// objects
+	CmusikSongInfoArray* m_Songs;
+	CWnd* m_Parent;
+
+	// controls
+	CEdit m_Title;
+	CEdit m_Artist;
+	CEdit m_Album;
+	CEdit m_Track;
+	CComboBox m_Genre;
+	CEdit m_Year;
+	CComboBox m_Rating;
+
+	// helpers
+	void Apply();
 
 	// macros
 	DECLARE_DYNAMIC(CmusikBatchTagDlg)

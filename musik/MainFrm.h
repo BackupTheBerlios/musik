@@ -307,6 +307,7 @@ protected:
 	afx_msg LRESULT OnTaskEnd( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnPlayerPlaySel( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnBatchAddNew( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnBatchRetagNew( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnVerifyPlaylist( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnCloseDirSync( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSelBoxAddRemove( WPARAM wParam, LPARAM lParam );
