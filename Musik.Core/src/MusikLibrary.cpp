@@ -820,7 +820,7 @@ void CMusikLibrary::DeleteStdPlaylist( const CStdString& name )
 		STD_PLAYLIST_TABLE_NAME,
 		name.c_str() );
 
-	sqlite_exec_printf( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
+	sqlite_exec( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
 
 	// delete corresponding songs from the
 	// other table
@@ -828,7 +828,7 @@ void CMusikLibrary::DeleteStdPlaylist( const CStdString& name )
 		STD_PLAYLIST_SONGS,
 		nID );
 
-	sqlite_exec_printf( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
+	sqlite_exec( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
 
 	// release mutex lock
 	m_ProtectingLibrary->release();
@@ -838,18 +838,29 @@ void CMusikLibrary::DeleteStdPlaylist( const CStdString& name )
 
 void CMusikLibrary::DeleteStdPlaylist( int id )
 {
+	if ( !m_pDB )
+		return;
+
 	CStdString sQuery;
+
+	m_ProtectingLibrary->acquire();
 
 	// remove entry from table containing
 	// the list of standard playlists
-	sQuery.Format( "DELETE FROM %s WHERE dyn_playlist_id = %d;",
-		DYN_PLAYLIST_TABLE_NAME,
+	sQuery.Format( "DELETE FROM %s WHERE std_playlist_id = %d;",
+		STD_PLAYLIST_TABLE_NAME,
 		id );
 
-	// do it
-	m_ProtectingLibrary->acquire();
-	if ( !m_pDB )
-		sqlite_exec_printf( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
+	sqlite_exec( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
+
+	// now remove corresponding entries in
+	// the table that contains the songs
+	sQuery.Format( "DELETE FROM %s WHERE std_playlist_id = %d;",
+		STD_PLAYLIST_SONGS,
+		id );
+
+	sqlite_exec( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
+
 	m_ProtectingLibrary->release();
 }
 
