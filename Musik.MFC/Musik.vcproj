@@ -211,6 +211,16 @@
 					RelativePath=".\MusikPlaylistBar.h">
 				</File>
 			</Filter>
+			<Filter
+				Name="MusikSelectionBar"
+				Filter="">
+				<File
+					RelativePath=".\MusikSelectionBar.cpp">
+				</File>
+				<File
+					RelativePath=".\MusikSelectionBar.h">
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="App Stuff"
