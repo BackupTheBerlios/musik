@@ -307,7 +307,7 @@ wxMenu * CSourcesListBox::CreateContextMenu()
 
 	wxMenu * submenu_new = new wxMenu;
 	submenu_new->Append( MUSIK_SOURCE_CONTEXT_CREATE_CURRENT_PLAYLIST, _( "Playlist from Current" ) );
-	submenu_new->Enable(MUSIK_SOURCE_CONTEXT_CREATE_CURRENT_PLAYLIST,g_PlaylistBox->PlaylistCtrl().GetCount());
+	submenu_new->Enable(MUSIK_SOURCE_CONTEXT_CREATE_CURRENT_PLAYLIST,g_PlaylistBox->PlaylistCtrl().GetCount() > 0);
 	submenu_new->AppendSeparator();
 	submenu_new->Append( MUSIK_SOURCE_CONTEXT_STANDARD_PLAYLIST, _( "Standard Playlist" ) );
 	submenu_new->Append( MUSIK_SOURCE_CONTEXT_DYNAMIC_PLAYLIST, _( "Dynamic Playlist" ) );
@@ -323,7 +323,7 @@ wxMenu * CSourcesListBox::CreateContextMenu()
 	{
 		context_menu->AppendSeparator();
 		context_menu->Append( MUSIK_SOURCE_CONTEXT_COPY_FILES, _("Copy files to directory") );
-		context_menu->Enable( MUSIK_SOURCE_CONTEXT_COPY_FILES,g_PlaylistBox->PlaylistCtrl().GetCount());
+		context_menu->Enable( MUSIK_SOURCE_CONTEXT_COPY_FILES,g_PlaylistBox->PlaylistCtrl().GetCount() > 0);
 
 	}
 	return context_menu;

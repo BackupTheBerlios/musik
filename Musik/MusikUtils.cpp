@@ -867,7 +867,7 @@ MusikLogWindow::MusikLogWindow(wxFrame *pParent,
 						 const wxChar *szTitle,
 						 long style)
 						 :m_Style(style)
-						 ,wxLogWindow(pParent,szTitle,style & MUSIK_LW_ShowInitial,style & MUSIK_LW_DoPass)
+						 ,wxLogWindow(pParent,szTitle,(style & MUSIK_LW_ShowInitial) != 0,(style & MUSIK_LW_DoPass) != 0)
 {
 }
 
