@@ -244,8 +244,11 @@ CMusikPlayer::~CMusikPlayer()
 
 	// thread will trigger this back
 	// once it has exited
-	while ( !m_ShutDown )
-		Sleep( 100 );
+	if ( IsPlaying() )
+	{
+		while ( !m_ShutDown )
+			Sleep( 100 );
+	}
 
 	CleanThread();
 	CleanEqualizer();
