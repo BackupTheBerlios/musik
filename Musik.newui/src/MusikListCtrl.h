@@ -31,6 +31,10 @@ public:
 	virtual void Update				( bool refresh = false ){};
 
 	DECLARE_EVENT_TABLE();
+
+private:
+
+	wxWindow* m_Parent;
 };
 
 #endif

@@ -18,6 +18,7 @@ CMusikListCtrl::CMusikListCtrl( wxWindow *parent, wxWindowID id, long flags )
 	: wxListCtrl( parent, id, wxPoint( -1, -1 ), wxSize( -1, -1 ), flags )
 {
 	SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ) );
+	m_Parent = parent;
 }
 
 CMusikListCtrl::~CMusikListCtrl()
