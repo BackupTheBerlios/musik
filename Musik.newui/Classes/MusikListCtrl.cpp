@@ -15,62 +15,11 @@ BEGIN_EVENT_TABLE( CMusikListCtrl, wxListCtrl )
 END_EVENT_TABLE()
 
 CMusikListCtrl::CMusikListCtrl( wxWindow *parent, wxWindowID id )
-	: wxListCtrl( parent, id, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxNO_FULL_REPAINT_ON_RESIZE | wxLC_ALIGN_LEFT | wxLC_REPORT | wxLC_VIRTUAL | wxLC_EDIT_LABELS | wxLC_SINGLE_SEL | wxNO_BORDER & ~wxHSCROLL )
+	: wxListCtrl( parent, id, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxNO_FULL_REPAINT_ON_RESIZE | wxLC_ALIGN_LEFT | wxLC_REPORT | wxLC_VIRTUAL | wxLC_EDIT_LABELS | wxLC_SINGLE_SEL | wxSIMPLE_BORDER & ~wxHSCROLL )
 {
 	SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ) );
 }
 
 CMusikListCtrl::~CMusikListCtrl()
 {
-}
-
-void CMusikListCtrl::OnItemSelect( wxListEvent& event )
-{
-	return;
-}
-
-
-void CMusikListCtrl::OnItemActivate( wxListEvent& event )
-{
-	return;
-}
-
-void CMusikListCtrl::OnItemBeginDrag( wxListEvent& event )
-{
-	return;
-}
-
-void CMusikListCtrl::OnItemBeginEdit( wxListEvent& event )
-{
-	return;
-}
-
-void CMusikListCtrl::OnItemEndEdit( wxListEvent& event )
-{
-	return;
-}
-
-void CMusikListCtrl::OnColClick( wxListEvent& event )
-{
-	return;
-}
-
-void CMusikListCtrl::OnColBeginDrag( wxListEvent& event )
-{
-	return;
-}
-
-void CMusikListCtrl::OnKeyDown( wxListEvent& event )
-{
-	return;
-}
-
-void CMusikListCtrl::OnContextMenu( wxCommandEvent& event )
-{
-	return;
-}
-
-void CMusikListCtrl::OnResize( wxSizeEvent& event )
-{
-	return;
 }

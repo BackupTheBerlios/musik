@@ -25,7 +25,9 @@ MusikFrame::MusikFrame()
 
 	wxBoxSizer *p = new wxBoxSizer( wxHORIZONTAL );
 	m_SourcesCtrl = new CMusikSourcesCtrl( this, -1 );
-	p->Add( m_SourcesCtrl, 1, wxEXPAND );
+	m_SelectionCtrl = new CMusikSelectionCtrl( this, -1 );
+	p->Add( m_SourcesCtrl, 1, wxEXPAND | wxALL, 2 );
+	p->Add( m_SelectionCtrl, 1, wxEXPAND | wxALL, 2 );
 	SetSizer( p );
 	Layout();
 }
