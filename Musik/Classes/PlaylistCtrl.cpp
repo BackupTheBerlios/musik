@@ -224,6 +224,9 @@ CPlaylistCtrl::CPlaylistCtrl( wxWindow *parent, const wxWindowID id, const wxPoi
 	playlist_context_edit_tag_menu->Append( MUSIK_PLAYLIST_CONTEXT_TAG_ALBUM,		_( "Album\tF5" ) );
 	playlist_context_edit_tag_menu->Append( MUSIK_PLAYLIST_CONTEXT_TAG_GENRE,		_( "Genre\tF6" ) );
 	playlist_context_edit_tag_menu->Append( MUSIK_PLAYLIST_CONTEXT_TAG_YEAR,		_( "Year\tF7" ) );
+	playlist_context_edit_tag_menu->AppendSeparator();
+	playlist_context_edit_tag_menu->Append( MUSIK_PLAYLIST_CONTEXT_RENAME_FILES,	_( "&Auto Rename" ) );
+	playlist_context_edit_tag_menu->Append( MUSIK_PLAYLIST_CONTEXT_RETAG_FILES,		_( "A&uto Retag" ) );
 
 	//--- delete menu ---//
 	playlist_context_delete_menu = new wxMenu;
@@ -248,14 +251,13 @@ CPlaylistCtrl::CPlaylistCtrl( wxWindow *parent, const wxWindowID id, const wxPoi
 
 	//--- main context menu ---//
 	playlist_context_menu = new wxMenu;
-	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_DELETENODE,		_( "&Delete" ),		playlist_context_delete_menu );
-	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_RENAME_FILES,		_( "&Auto Rename" ) );
-	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_RETAG_FILES,		_( "A&uto Retag" ) );
+	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_RATENODE,			_( "&Rating" ),					playlist_context_rating_menu );
+	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_DISPLAYNODE,		_( "Display" ),					playlist_context_display_menu );
 	playlist_context_menu->AppendSeparator();
-	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_RATENODE,			_( "&Rating" ),		playlist_context_rating_menu );
-	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_TAGNODE,			_( "Edit &Tag" ),	playlist_context_edit_tag_menu );
+	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_DELETENODE,		_( "F&ile Operations" ),		playlist_context_delete_menu );
 	playlist_context_menu->AppendSeparator();
-	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_DISPLAYNODE,		_( "Display" ),	playlist_context_display_menu );
+	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_TAGNODE,			_( "Edit &Tag" ),				playlist_context_edit_tag_menu );
+
 
 	//--- setup drop target ---//
 	SetDropTarget( new PlaylistDropTarget( this ) );

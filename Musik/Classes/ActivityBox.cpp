@@ -11,6 +11,7 @@
  *  See the file "license.txt" for information on usage and redistribution
  *  of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 */
+
 // For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
 #include "ActivityBox.h"
@@ -559,7 +560,7 @@ void CActivityBox::SetPlaylist()
 		}
 	}
 
-	g_PlaylistCtrl->Update(true,false);
+	g_PlaylistCtrl->Update( true, g_Prefs.nPlaylistSmartColumns );
 	g_PlaylistChanged = true;
 }
 
