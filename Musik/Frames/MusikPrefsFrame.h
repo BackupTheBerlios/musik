@@ -165,8 +165,8 @@ public:
 	//--------------//
 	wxBoxSizer	*vsSound_Driver;
 	wxBoxSizer	*vsSound_Playback;
-	wxGridSizer	*vsOptions_Selections;
-	wxGridSizer	*vsOptions_Playlist;
+	wxFlexGridSizer	*vsOptions_Selections;
+	wxFlexGridSizer	*vsOptions_Playlist;
 	wxBoxSizer	*vsOptions_Interface;
 	wxBoxSizer	*vsOptions_Misc;
 	wxBoxSizer	*vsTagging_General;

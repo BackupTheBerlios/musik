@@ -79,7 +79,6 @@ void CMusikPrefs::LoadPrefs()
 	config->Read( wxT( "FramePlacement" ),							&sFramePlacement,		wxT("0,0,800,600,0,0")	);
 	config->Read( wxT( "MusikVersion" ),							&sMusikVersion,			wxT("Musik 0.1.2")		);
 
-	//--- playlist columns ---//
 	for( int i = 0;i < NPLAYLISTCOLUMNS; i++ )
 	{
 		config->Read( wxString::Format(wxT("PlaylistColumn%dEnable"),i),	&nPlaylistColumnEnable[i],	1	);

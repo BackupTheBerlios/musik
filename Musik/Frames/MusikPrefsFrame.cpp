@@ -214,7 +214,7 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//-----------------------------------//
 	//--- Options -> Selections Sizer ---//
 	//-----------------------------------//
-	vsOptions_Selections = new wxGridSizer ( 4, 2, 2, 2 );
+	vsOptions_Selections = new wxFlexGridSizer ( 4, 2, 2, 2 );
 	vsOptions_Selections->Add( stActivityBox1,	0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
 	vsOptions_Selections->Add( cmbActivityBox1,	1, wxCENTER, 0 );
 	vsOptions_Selections->Add( stActivityBox2,	0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
@@ -261,7 +261,7 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//---------------------------//
 
 	chkRatingEnable			= new wxCheckBox(	this, -1, _("Rating"),			wxPoint( 0, 0 ), wxSize( -1, -1 ) );
-	chkTrackEnable			= new wxCheckBox(	this, -1, _("Number:"),			wxPoint( 0, 0 ), wxSize( -1, -1 ) );
+	chkTrackEnable			= new wxCheckBox(	this, -1, _("Track Number:"),	wxPoint( 0, 0 ), wxSize( -1, -1 ) );
 	chkTitleEnable			= new wxCheckBox(	this, -1, _("Title:"),			wxPoint( 0, 0 ), wxSize( -1, -1 ) );
 	chkArtistEnable			= new wxCheckBox(	this, -1, _("Artist:"),			wxPoint( 0, 0 ), wxSize( -1, -1 ) );
 	chkAlbumEnable			= new wxCheckBox(	this, -1, _("Album:"),			wxPoint( 0, 0 ), wxSize( -1, -1 ) );
@@ -342,7 +342,7 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//---------------------------------//
 	//--- Options -> Playlist Sizer ---//
 	//---------------------------------//
-	vsOptions_Playlist = new wxGridSizer( 12, 2, 2, 2 );
+	vsOptions_Playlist = new wxFlexGridSizer( 12, 2, 2, 2 );
 	vsOptions_Playlist->Add( chkRatingEnable,		0, wxALIGN_CENTER_VERTICAL | wxADJUST_MINSIZE );
 	vsOptions_Playlist->Add( 0,						0 );
 	vsOptions_Playlist->Add( chkTrackEnable,		0, wxALIGN_CENTER_VERTICAL | wxADJUST_MINSIZE );
