@@ -19,6 +19,7 @@ using namespace std;
 
 #include "CMP3Info.h"
 #include "../../MusikUtils.h"
+#include "../../MusikGlobals.h"
 
 /* ----------------------------------------------------------
    CMP3Info class is your complete guide to the 
@@ -37,6 +38,13 @@ using namespace std;
                        http://home.swipnet.se/grd/
                        grd@swipnet.se
    ---------------------------------------------------------- */
+
+/*
+ *  Modified by Casey Langen
+ *	If getting variable bitrate fails, fall back to fmod.
+ *	This is a Musik only mod.
+*/
+
 
 #define ERR_FILEOPEN    0x0001
 #define ERR_NOSUCHFILE  0x0002
@@ -190,9 +198,12 @@ int CMP3Info::getLengthInSeconds() {
 
     // kiloBitFileSize to match kiloBitPerSecond in bitrate...
     int kiloBitFileSize = (8 * fileSize) / 1000;
-    
-    return (int)(kiloBitFileSize/getBitrate());
+	int mp3BitRate = getBitrate();
 
+	if ( mp3BitRate )
+		return (int)(kiloBitFileSize/getBitrate());
+	else
+		return g_Player.GetFileDuration( fileName, FMOD_SEC );
 }
 
 

@@ -1242,27 +1242,13 @@ bool CMusikLibrary::RenameFile( CMusikSong* song, bool bClearCheck )
 	return false;
 }
 
-bool CMusikLibrary::CheckTokenForInt( wxArrayString aTokens, size_t nStart, size_t nEnd )
-{
-	wxString *sTemp = new wxString;
-	for( size_t i = 0; i < aTokens.GetCount(); i++ )
-	{
-		if( aTokens.Item( i ).StartsWith( wxT("2"), sTemp ) )
-			wxMessageBox( wxT( "success" ) );
-		else
-		{
-			wxMessageBox( wxT( "failure" ) );
-		}
-	}
-	return true;
-}
-
 bool CMusikLibrary::RetagFile( CMusikSong* song )
 {
 	CMusikSong* NewSong		= new CMusikSong;
 	wxFileName	filename	( song->Filename );
 
 	wxString	sMask		= g_Prefs.sAutoTag;
+
 	size_t		nValidStart	= 1;
 	size_t		nValidEnd	= 6;
 
@@ -1270,25 +1256,43 @@ bool CMusikLibrary::RetagFile( CMusikSong* song )
 	wxString	sFile		= filename.GetName();
 	wxString	sExt		= wxT(".") + filename.GetExt();
 
-	wxArrayString aMaskToken	= DelimitStr( sMask, wxT("%"), true );
-	for( int i = 0; i < aMaskToken.GetCount(); i++ )
+	wxArrayString aMaskOrder;
+	wxArrayString aMaskTokens	= DelimitStr( sMask, wxT("%"), true );
+	aMaskTokens.Remove(0, 1);
+
+//	for( size_t i = 0; i < aMaskTokens.GetCount(); i++ )
+//	{
+//		wxMessageBox( aMaskTokens.Item( i ) );
+//	}
+
+//////////////////////////
+	wxString sTemp;
+	bool bSuccess = false;
+
+	for( size_t i = 0; i < aMaskTokens.GetCount(); i++ )
 	{
-		wxMessageBox( aMaskToken.Item( i ) );
+		bSuccess = false;
+		for( size_t j = nValidStart; j <= nValidEnd; j++ )
+		{
+			if( aMaskTokens.Item( i ).StartsWith( IntTowxString(j) ) )
+			{	
+				aMaskOrder.Insert( IntTowxString( j ), 0 );
+				aMaskTokens.Item( i ).Remove( 0, 1 );
+				bSuccess = true;
+			}
+
+		}
+		if( bSuccess )
+		{
+			wxMessageBox( aMaskOrder.Item( i ) );
+			wxMessageBox( aMaskTokens.Item( i ) );
+		}
+		else
+		{
+			wxMessageBox( wxT( "Invalid Mask." ) );
+			return false;
+		}
 	}
-	if( !CheckTokenForInt( aMaskToken, nValidStart, nValidEnd ) )
-	{
-		wxMessageBox( wxT("Not a valid mask.") );
-	}
-/*
-	sMask.Replace( wxT("%"), wxT(""), 1 );
-	sMask.Replace( wxT(" "), wxT(""), 1 );
-
-	size_t nMaskDel		= GetDelimitCount( sMask, wxT("-") );
-	size_t nFilenameDel = GetDelimitCount( sFile, wxT("-") );
-
-	wxArrayString aMask		= DelimitStr( sMask, wxT("%"), true );
-	wxArrayString aTagInfo	= DelimitStr( sFile, wxT("-"), true );	
-
 /*	1 - song title
 	2 - artist name
 	3 - album name

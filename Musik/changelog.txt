@@ -1,4 +1,5 @@
 0.1.2 to 0.1.3
+ - fixed vbr crashing. if non Xing VBR, bitrate will be stored as 0 for the time being
  - fixed confusion when attempting to add / show a playlist that exists or is not visible in the sources box
  - Sources box now virtual. another big update.
  - couple patches from Gunnar Roth that should address any non ANSI character issues
