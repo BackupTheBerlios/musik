@@ -62,6 +62,7 @@
 #include <Direct.h>
 
 #include "3rdparty/TreePropSheet.h"
+#include ".\mainfrm.h"
 
 ///////////////////////////////////////////////////
 
@@ -162,6 +163,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_COMMAND(ID_NOTIFICATIONTRAY_NEXT, OnNotificationtrayNext)
 	ON_COMMAND(ID_NOTIFICATIONTRAY_PREV, OnNotificationtrayPrev)
 	ON_COMMAND(ID_FILE_CLEARLIBRARY, OnFileClearlibrary)
+	ON_COMMAND(ID_LIBRARY_SCANFORMISSINGFILESNOW, OnLibraryScanformissingfilesnow)
+	ON_COMMAND(ID_LIBRARY_SYNCHRONIZEDIRECTORIESNOW, OnLibrarySynchronizedirectoriesnow)
 
 	// update ui
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SOURCES, OnUpdateViewSources)
@@ -752,23 +755,28 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// startup a thread in the background
 	// to remove old files...
 	if ( m_Prefs->PurgeOnStartup() )
-	{
-		CmusikRemoveOld* params = new CmusikRemoveOld( m_Library, m_RemoveOldFnct );
-		CmusikThread* thread = new CmusikThread();
-
-		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingThreads );
-		{
-			m_Threads.push_back( thread );
-			m_ThreadCount++;
-		}
-
-		thread->Start( (ACE_THR_FUNC)musikRemoveOldWorker, params );
-	}
+		PurgeObseleteFiles();
 
 	// tray icon stuff
 	InitTrayIcon();
 
 	return 0;
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::PurgeObseleteFiles()
+{
+	CmusikRemoveOld* params = new CmusikRemoveOld( m_Library, m_RemoveOldFnct );
+	CmusikThread* thread = new CmusikThread();
+
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingThreads );
+	{
+		m_Threads.push_back( thread );
+		m_ThreadCount++;
+	}
+
+	thread->Start( (ACE_THR_FUNC)musikRemoveOldWorker, params );
 }
 
 ///////////////////////////////////////////////////
@@ -2424,3 +2432,19 @@ void CMainFrame::OnFileClearlibrary()
 }
 
 ///////////////////////////////////////////////////
+
+void CMainFrame::OnLibraryScanformissingfilesnow()
+{
+	PurgeObseleteFiles();
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnLibrarySynchronizedirectoriesnow()
+{
+	SynchronizeDirs();
+}
+
+///////////////////////////////////////////////////
+
+

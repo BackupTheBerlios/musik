@@ -90,6 +90,11 @@ BEGIN
                                                     ID_FILE_SYNCHRONIZEDDIRECTORIES
 
             MENUITEM SEPARATOR
+            MENUITEM "Synchronize Directories Now", ID_LIBRARY_SYNCHRONIZEDIRECTORIESNOW
+
+            MENUITEM "Scan for Missing Files Now",  ID_LIBRARY_SCANFORMISSINGFILESNOW
+
+            MENUITEM SEPARATOR
             POPUP "Unsynchronized Tags"
             BEGIN
                 MENUITEM "Vie&w",                       ID_UNSYNCHRONIZEDTAGS_VIEW

@@ -133,6 +133,7 @@ public:
 	// misc
 	bool PlayCmd( const CString& fn );
 	void SynchronizeDirs();
+	void PurgeObseleteFiles();
 	void RestoreFromTray();
 
 	// to save window state
@@ -274,6 +275,8 @@ protected:
 	afx_msg void OnUpdateNotificationtrayStop(CCmdUI *pCmdUI);
 	afx_msg void OnNotificationtrayStop();
 	afx_msg void OnFileClearlibrary();
+	afx_msg void OnLibraryScanformissingfilesnow();
+	afx_msg void OnLibrarySynchronizedirectoriesnow();
 
 	// list of all threads running
 	bool FreeThread( CmusikThread* pThread );
