@@ -185,7 +185,10 @@ void CMainFrame::Initmusik()
 	m_BatchAddFnct	= NULL;
 	m_Library		= new CmusikLibrary( ( CStdString )m_Database );
 	m_Prefs			= new CmusikPrefs( m_PrefsIni );
+
+	// setup the player...
 	m_Player		= new CmusikPlayer( m_NewSong, m_Library );
+	m_Player->SetMaxVolume( m_Prefs->GetPlayerVolume() );
 	
 	// give player a crossfader, it will take
 	// care of loading equalizer settings itself...
@@ -256,15 +259,19 @@ void CMainFrame::LoadDlgSize()
 	CSize dlg_size = m_Prefs->GetDlgSize();
 	CPoint dlg_pos = m_Prefs->GetDlgPos();
 
-	MoveWindow( dlg_pos.x, dlg_pos.y, dlg_size.cx, dlg_size.cy );
-
+	CRect rcNormal = CRect( dlg_pos, dlg_size );
+	
 	if ( m_Prefs->IsMaximized() )
 	{
 		WINDOWPLACEMENT max;
 		max.showCmd = SW_SHOWMAXIMIZED;
+		max.rcNormalPosition = rcNormal;
 		SetWindowPlacement( &max );
 		return;
 	}
+	else
+		MoveWindow( rcNormal );
+
 }
 
 ///////////////////////////////////////////////////
@@ -729,6 +736,7 @@ LRESULT CMainFrame::OnSourcesStdPlaylist( WPARAM wParam, LPARAM lParam )
 
 	int nID = m_wndSources->GetCtrl()->GetFocusedItem()->GetPlaylistID();
 	m_Library->GetStdPlaylist( nID, *m_StdPlaylist, true );
+	m_StdPlaylist->SetPlaylistID( nID );
 
 	m_wndView->GetCtrl()->SetPlaylist( m_StdPlaylist, MUSIK_PLAYLIST_TYPE_STANDARD );
 	m_wndView->GetCtrl()->UpdateV();

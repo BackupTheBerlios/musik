@@ -184,7 +184,7 @@ CStdString CmusikSongInfo::GetField( int field )
 
 CmusikPlaylist::CmusikPlaylist()
 {
-	
+	m_ID = -1;
 }
 
 ///////////////////////////////////////////////////

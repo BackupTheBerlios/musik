@@ -183,6 +183,7 @@ public:
 	void RenameStdPlaylist			( int id, const CStdString& str );
 	void CreateDynPlaylist			( const CStdString& name, const CStdString& query );
 	void DeleteStdPlaylist			( const CStdString& name );
+	void RewriteStdPlaylist			( int id, CmusikPlaylist* playlist );
 	void DeleteStdPlaylist			( int id );
 	void DeleteDynPlaylist			( const CStdString& name );
 	void DeleteDynPlaylist			( int id );

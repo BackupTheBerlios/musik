@@ -122,32 +122,28 @@ END
 // Dialog
 //
 
-IDD_ABOUTBOX DIALOGEX 0, 0, 256, 197
+IDD_ABOUTBOX DIALOGEX 0, 0, 234, 221
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
     WS_SYSMENU
-CAPTION "About musik"
+CAPTION "About musik:Cube"
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
-    ICON            IDR_MAINFRAME,IDC_STATIC,6,6,21,20
-    LTEXT           "musik Version 0.3.0 CVS, Copyright (C) Casey Langen 2003",
-                    IDC_STATIC,6,180,192,8
-    DEFPUSHBUTTON   "OK",IDOK,204,176,50,16,WS_GROUP
-    LTEXT           "Casey Langen: Lead developer, project manager",
-                    IDC_STATIC,12,42,186,8
-    LTEXT           "Dustin Carter: Developer, webmaster",IDC_STATIC,12,54,
-                    186,8
-    LTEXT           "The  musik team would like to thank the following people:",
-                    IDC_STATIC,12,78,186,8
-    LTEXT           "If you enjoy using musik, donations are much appreciated. musik will always be free and open source, although food isn't, and we programmers have to eat too.  Visit the website above to contribute!",
-                    IDC_STATIC,12,138,222,24
-    LTEXT           "    - Jared Dickinson for making us laugh",IDC_STATIC,
-                    12,102,186,8
-    LTEXT           "    - Colby Langen for being the most annoying beta tester ever",
-                    IDC_STATIC,12,114,222,8
-    LTEXT           "    - Simon Windmill for his bottomless well of patience",
-                    IDC_STATIC,12,90,186,8
-    LTEXT           "website: http://musik.berlios.de",IDC_STATIC,36,6,186,8
-    LTEXT           "email: casey@bak.rr.com",IDC_STATIC,36,18,186,8
+    ICON            IDR_MAINFRAME,IDC_STATIC,6,198,21,20
+    DEFPUSHBUTTON   "OK",IDOK,179,202,50,16,WS_GROUP
+    CTEXT           "Casey Langen: Lead developer, project manager",
+                    IDC_STATIC,6,36,222,8
+    CTEXT           "Dustin Carter: Developer, webmaster",IDC_STATIC,6,48,
+                    222,8
+    CTEXT           "The  musik team would like to thank the following people:\n\n-Simon Windmill for his bottomless well of patience\n-Colby Langen for his valuable advice\n-Jared Dickinson for his hours of rigerous testing",
+                    IDC_STATIC,6,66,222,48
+    CTEXT           "If you enjoy using musik, donations are much appreciated. Project musik will always be free, although food isn't -- and we programmers have to eat too.  Visit the website below to contribute!",
+                    IDC_STATIC,6,6,228,24
+    CTEXT           "website: http://musik.berlios.de\ne-mail: casey@bak.rr.com",
+                    IDC_STATIC,6,138,222,18
+    CTEXT           "musik:Cube 0.3.0 CVS\nmusik:Core 0.3.0 CVS",IDC_STATIC,
+                    6,114,222,18
+    CTEXT           "Project musik, including musik:Core and musik:Cube is copyright (C) Casey Langen 2003.  Project musik is open source under the BSD license. See license.txt for more information",
+                    IDC_STATIC,6,162,222,30
 END
 
 IDD_PROPPAGE_INTERFACE_GENERAL DIALOGEX 0, 0, 210, 154
@@ -201,7 +197,7 @@ END
 IDD_SAVESTDPLAYLIST DIALOGEX 0, 0, 262, 53
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
     WS_SYSMENU
-CAPTION "musik"
+CAPTION "musik:Cube"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     PUSHBUTTON      "No",IDC_BTNNO,209,35,50,14
@@ -264,9 +260,9 @@ BEGIN
     IDD_ABOUTBOX, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 249
+        RIGHTMARGIN, 227
         TOPMARGIN, 7
-        BOTTOMMARGIN, 190
+        BOTTOMMARGIN, 214
     END
 
     IDD_PROPPAGE_INTERFACE_GENERAL, DIALOG

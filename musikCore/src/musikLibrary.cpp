@@ -879,6 +879,40 @@ void CmusikLibrary::AppendStdPlaylist( int id, const CStdStringArray& files )
 
 ///////////////////////////////////////////////////
 
+void CmusikLibrary::RewriteStdPlaylist( int id, CmusikPlaylist* playlist )
+{
+	if ( !m_pDB )
+		return;
+
+	if ( id >= 0 )
+	{
+		m_ProtectingLibrary->acquire();
+
+		sqlite_exec_printf( m_pDB, "DELETE FROM %q WHERE std_playlist_id=%d;",
+		NULL, NULL, NULL, 
+		STD_PLAYLIST_SONGS,
+		id );
+
+		BeginTransaction();
+		
+		for ( size_t i = 0; i < playlist->GetCount(); i++ )
+		{
+			sqlite_exec_printf( m_pDB, "INSERT INTO %q VALUES ( %Q, %d, %d );",
+			NULL, NULL, NULL, 
+			STD_PLAYLIST_SONGS,
+			NULL,
+			id,
+			playlist->GetSongID( i ) );
+		}
+
+		EndTransaction();
+
+		m_ProtectingLibrary->release();
+	}
+}
+
+///////////////////////////////////////////////////
+
 void CmusikLibrary::RenameStdPlaylist( int id, const CStdString& str )
 {
 	if ( !m_pDB )

@@ -122,9 +122,11 @@ public:
 	CStdString GetField( int index, int field );
 	int GetSongID( int index );
 	size_t GetCount();
+	int GetPlaylistID(){ return m_ID; }
 
 	// sets
 	void SetField( int index, int field );
+	void SetPlaylistID( int id ){ m_ID = id;} 
 
 	// misc
 	void Add( const CmusikSong& song );
@@ -134,6 +136,7 @@ public:
 	void Clear();
 
 private:
+	int m_ID;
 	CmusikSongArray m_Songs;
 };
 

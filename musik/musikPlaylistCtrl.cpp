@@ -227,6 +227,7 @@ void CmusikPlaylistCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 
 		// copy the buffer of the correct display string
 		// to the current LV_ITEM
+
 		char* pStr = sValue.GetBuffer();
 		pItem->cchTextMax = sizeof( *pStr );
 		lstrcpy( pItem->pszText, pStr );
@@ -270,7 +271,7 @@ void CmusikPlaylistCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 	// draw the sub items
 	else if ( pLVCD->nmcd.dwDrawStage == ( CDDS_ITEMPREPAINT | CDDS_SUBITEM ) )
 	{
-		if ( pLVCD->nmcd.dwItemSpec < m_Playlist->GetCount() )
+		if ( m_Playlist && pLVCD->nmcd.dwItemSpec < m_Playlist->GetCount() )
 		{
 			CDC *pDC = CDC::FromHandle(pLVCD->nmcd.hdc);
 			int nSubType = m_Prefs->GetPlaylistCol( pLVCD->iSubItem );
@@ -509,18 +510,14 @@ void CmusikPlaylistCtrl::SetPlaylist( CmusikPlaylist* playlist, int m_Type )
 				int nRes = pDlg->DoModal();
 
 				if ( nRes == IDOK )
-				{
-					// save playlist...
-				}
+					m_Library->RewriteStdPlaylist( m_Playlist->GetPlaylistID(), m_Playlist );
 			}
 
 			// otherwise just take the pref's default
 			else
 			{
 				if ( m_Prefs->GetStdPlaylistPrompt() == 1 )
-				{
-					// save playlist...
-				}
+					m_Library->RewriteStdPlaylist( m_Playlist->GetPlaylistID(), m_Playlist );
 			}
 
 			m_PlaylistNeedsSave = false;

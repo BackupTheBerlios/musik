@@ -903,7 +903,6 @@ int CmusikPlayer::GetChannelID( int n )
 void CmusikPlayer::SetVolume( int channel_id, int n )
 {
 	FSOUND_SetVolume( channel_id, n );
-
 }
 
 ///////////////////////////////////////////////////

@@ -38,7 +38,7 @@ int CmusikVolumeCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	SetRange( 0, 255 );
 
 	if ( m_Prefs )
-		SetPos( m_Prefs->GetPlayerVolume() );
+		SetPos( 255 - m_Prefs->GetPlayerVolume() );
 
 	return 0;
 }
@@ -48,7 +48,10 @@ int CmusikVolumeCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 void CmusikVolumeCtrl::OnPosChanged()
 {
 	if ( m_Player )
+	{
 		m_Player->SetVolume( m_Player->GetCurrChannel(), 255 - GetPos() );
+		m_Player->SetMaxVolume( 255 - GetPos() );
+	}
 
 	if ( m_Prefs )
 		m_Prefs->SetPlayerVolume( 255 - GetPos() );
