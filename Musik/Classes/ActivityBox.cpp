@@ -551,7 +551,7 @@ void CActivityBox::SetPlaylist()
 		}
 	}
 
-	g_PlaylistCtrl->Update(true,false);
+	g_PlaylistCtrl->Update(true,true);	//--- needs to rescale columns ---//
 	g_PlaylistChanged = true;
 }
 

@@ -173,6 +173,7 @@ private:
 	wxMenu *playlist_context_rating_menu;
 	wxMenu *playlist_context_edit_tag_menu;
 	wxMenu *playlist_context_delete_menu;
+	wxMenu *playlist_context_display_menu;
 
 	//--------------------//
 	//--- column order ---//

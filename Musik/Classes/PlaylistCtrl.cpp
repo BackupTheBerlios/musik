@@ -215,14 +215,31 @@ CPlaylistCtrl::CPlaylistCtrl( wxWindow *parent, const wxWindowID id, const wxPoi
 	playlist_context_delete_menu->Append( MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FROM_DB,			_( "From Database\tAlt+Del" ) );
 	playlist_context_delete_menu->Append( MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FILES,			_( "From Computer\tCtrl+Del" ) );
 
+	//--- columns context menu ---//
+	playlist_context_display_menu = new wxMenu;
+	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_RATING,		_( "Rating" ),			wxT( "" ), wxITEM_CHECK );
+	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_TRACK,		_( "Track" ),			wxT( "" ), wxITEM_CHECK );
+	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_TITLE,		_( "Title" ),			wxT( "" ), wxITEM_CHECK );
+	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_ARTIST,		_( "Artist" ),			wxT( "" ), wxITEM_CHECK );
+	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_ALBUM,		_( "Album" ),			wxT( "" ), wxITEM_CHECK );
+	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_YEAR,			_( "Year" ),			wxT( "" ), wxITEM_CHECK );
+	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_GENRE,		_( "Genre" ),			wxT( "" ), wxITEM_CHECK );
+	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_TIMES_PLAYED,	_( "Times Played" ),	wxT( "" ), wxITEM_CHECK );
+	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_LAST_PLAYED,	_( "Last Played" ),		wxT( "" ), wxITEM_CHECK );
+	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_TIME,			_( "Time" ),			wxT( "" ), wxITEM_CHECK );
+	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_BITRATE,		_( "Bitrate" ),			wxT( "" ), wxITEM_CHECK );
+	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_FILENAME,		_( "Year" ),			wxT( "" ), wxITEM_CHECK );
+
 	//--- main context menu ---//
 	playlist_context_menu = new wxMenu;
-	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_DELETENODE,	_( "&Delete" ),		playlist_context_delete_menu );
-	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_RENAME_FILES, _( "&Auto Rename" ) );
-	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_RETAG_FILES,	_( "A&uto Retag" ) );
+	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_DELETENODE,		_( "&Delete" ),		playlist_context_delete_menu );
+	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_RENAME_FILES,		_( "&Auto Rename" ) );
+	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_RETAG_FILES,		_( "A&uto Retag" ) );
 	playlist_context_menu->AppendSeparator();
-	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_RATENODE,		_( "&Rating" ),		playlist_context_rating_menu );
-	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_TAGNODE,		_( "Edit &Tag" ),	playlist_context_edit_tag_menu );
+	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_RATENODE,			_( "&Rating" ),		playlist_context_rating_menu );
+	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_TAGNODE,			_( "Edit &Tag" ),	playlist_context_edit_tag_menu );
+	playlist_context_menu->AppendSeparator();
+	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_DISPLAYNODE,		_( "Display" ),	playlist_context_display_menu );
 
 	//--- setup drop target ---//
 	SetDropTarget( new PlaylistDropTarget( this ) );
@@ -299,7 +316,18 @@ void CPlaylistCtrl::SaveColumns()
 void CPlaylistCtrl::ShowMenu( wxCommandEvent& WXUNUSED(event) )
 {
 	wxPoint pos = ScreenToClient( wxGetMousePosition() );
+
+	bool bItemSel = false;
 	if ( GetSelectedItemCount() > 0 )
+		bItemSel = true;
+
+	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_DELETENODE,	bItemSel );
+	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_RENAME_FILES, bItemSel );
+	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_RETAG_FILES,	bItemSel );
+	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_RATENODE,		bItemSel );
+	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_TAGNODE,		bItemSel );
+
+	if ( bItemSel )
 	{
 		//--- uncheck all ratings ---//
 		playlist_context_rating_menu->Check( MUSIK_PLAYLIST_CONTEXT_UNRATED, false );
@@ -332,8 +360,24 @@ void CPlaylistCtrl::ShowMenu( wxCommandEvent& WXUNUSED(event) )
 			playlist_context_rating_menu->Check( MUSIK_PLAYLIST_CONTEXT_RATE5, true );
 			break;
 		}
-		PopupMenu( playlist_context_menu, pos );
+		
 	}
+
+	//--- check which columns are displayed ---//
+	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_RATING,		g_Prefs.nPlaylistColumnEnable[0] );
+	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_TRACK,			g_Prefs.nPlaylistColumnEnable[1] );
+	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_TITLE,			g_Prefs.nPlaylistColumnEnable[2] );
+	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_ARTIST,		g_Prefs.nPlaylistColumnEnable[3] );
+	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_ALBUM,			g_Prefs.nPlaylistColumnEnable[4] );
+	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_YEAR,			g_Prefs.nPlaylistColumnEnable[5] );
+	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_GENRE,			g_Prefs.nPlaylistColumnEnable[6] );
+	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_TIMES_PLAYED,	g_Prefs.nPlaylistColumnEnable[7] );
+	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_LAST_PLAYED,	g_Prefs.nPlaylistColumnEnable[8] );
+	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_TIME,			g_Prefs.nPlaylistColumnEnable[9] );
+	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_BITRATE,		g_Prefs.nPlaylistColumnEnable[10] );
+	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_FILENAME,		g_Prefs.nPlaylistColumnEnable[11] );
+
+	PopupMenu( playlist_context_menu, pos );
 }
 
 void CPlaylistCtrl::BeginDrag( wxEvent& WXUNUSED(event) )
