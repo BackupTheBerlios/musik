@@ -3,6 +3,7 @@
 #include "stdafx.h"
 #include "time.h"
 
+#include "../include/MusikFilename.h"
 #include "../include/MusikConfig.h"
 #include "../include/MusikCrossfader.h"
 #include "../include/MusikLibrary.h"
@@ -998,6 +999,15 @@ int CMusikLibrary::GetIDFromFilename( const CStdString& fn )
 	m_ProtectingLibrary->release();
 
 	return target;
+}
+
+///////////////////////////////////////////////////
+
+bool CMusikLibrary::AddOGG( const CStdString& fn )
+{
+	CMusikFilename MFN( fn );
+
+	return true;
 }
 
 ///////////////////////////////////////////////////

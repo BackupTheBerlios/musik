@@ -3,6 +3,7 @@
 #include "stdafx.h"
 
 #include "MusikOggInfo.h"
+#include "MusikFilename.h"
 
 #include "vcedit.h"
 #include <vorbis/codec.h>
@@ -50,6 +51,14 @@ bool CMusikOggInfo::LoadInfo( const CStdString& fn )
 		vorbis_comment_clear( pComment );
 		vorbis_info_clear( pInfo );
 		ov_clear( &vorbisfile );
+
+		// if the title is empty, then use the
+		// filename...
+		if ( m_Info.GetTitle().IsEmpty() )
+		{
+			CMusikFilename MFN( fn );
+			m_Info.SetTitle( MFN.GetJustFilename() );
+		}
 
 		return true;
 	}
