@@ -37,7 +37,8 @@ void CActivityBoxEvt::TranslateKeys( wxKeyEvent& event )
 {
 	if ( event.GetKeyCode() == WXK_F2 )
 		pParent->EditBegin();
-	event.Skip();
+  else  
+	  event.Skip();
 }
 
 //------------------------//
@@ -54,14 +55,15 @@ void CActivityEditEvt::TranslateKeys( wxKeyEvent& event )
 		pParent->EditCancel();
 	else if ( nKey == WXK_RETURN )
 		pParent->EditCommit();
-	event.Skip( TRUE );
+  else  
+  	event.Skip( TRUE );
 }
 
 //------------------------//
 //--- CActivityListBox ---//
 //------------------------//
 CActivityListBox::CActivityListBox( CActivityBox *parent,  wxWindowID id )
-	: wxListCtrl( parent, id, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxLC_REPORT | wxLC_VIRTUAL | wxNO_BORDER & ~wxHSCROLL & ~wxLC_SINGLE_SEL )
+	: wxListCtrl( parent, id, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxLC_REPORT | wxLC_VIRTUAL | wxNO_BORDER )
 {
 	m_Related = 0;
 	m_pParent = parent;
@@ -70,7 +72,32 @@ CActivityListBox::CActivityListBox( CActivityBox *parent,  wxWindowID id )
 	this->InsertColumn( 0, wxT(""), wxLIST_FORMAT_LEFT, 0 );
 	this->InsertColumn( 1, wxT(""), wxLIST_FORMAT_LEFT, 0 );
 }
+BEGIN_EVENT_TABLE(CActivityListBox, wxListCtrl)
+	EVT_CHAR	( CActivityListBox::OnChar )
+END_EVENT_TABLE()
 
+void CActivityListBox::OnChar( wxKeyEvent& event )
+{
+  int keycode = event.GetKeyCode();
+  if (wxIsalnum(keycode))
+  {
+  	for ( size_t i = HasShowAllRow() ? 1 : 0; i < GetItemCount(); i++ )
+	{
+	  if (GetRowText(i).Left(1).IsSameAs(keycode,false))
+      { // make this item the top item
+        int up = GetCountPerPage() -1;
+        int topitem = GetTopItem();
+        int showitem = (i + up > GetItemCount() - 1 ) ?  GetItemCount() - 1 : i + up;
+        if(showitem < topitem)
+           showitem = i; // EnsureVisible(m) will scroll backwards, this will bring the item m automatically to the top
+			  EnsureVisible(showitem);// if showitem is visible, i is now the top item
+        break;
+      }
+	}
+  }
+  else
+    event.Skip();
+}  
 void CActivityListBox::RescaleColumns()
 {
 	int nWidth, nHeight;
@@ -217,13 +244,10 @@ void CActivityListBox::GetSelected(wxArrayString & aReturn)
 wxString CActivityListBox::GetFirstSel()
 {
 	int nIndex = -1;
-	for ( int i = 0; i < GetSelectedItemCount(); i++ )
+	nIndex = GetNextItem( nIndex, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
+	if ( nIndex > -1 )
 	{
-		nIndex = GetNextItem( nIndex, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
-		if ( nIndex > -1 )
-		{
 			return( GetRowText( nIndex ) );
-		}
 	}
 	return wxT("");
 }

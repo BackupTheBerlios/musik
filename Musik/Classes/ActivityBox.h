@@ -65,6 +65,8 @@ public:
 	void Update			( bool selectnone );
 	void RescaleColumns	();
 
+  void OnChar( wxKeyEvent& event );
+  DECLARE_EVENT_TABLE()
 private:
 	//--- virtual functions ---//
     virtual	wxString		OnGetItemText	(long item, long column) const;

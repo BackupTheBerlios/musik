@@ -1,4 +1,6 @@
 0.2.1 to 0.2.2
+ - Fixed Bug:  On linux the genre string parsing did not work correctly for tags like (123)
+ + If a selection box has the focus, it now scrolls to a matching entry if a key is pressed
  + Selection Boxes are now case-insensitively sorted (gunnar)
  + Optimized Column sorting code a bit (gunnar)
  - Fixed Bug: Playlists could be overwritten with empty file when exiting

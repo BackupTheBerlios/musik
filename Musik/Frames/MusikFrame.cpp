@@ -170,7 +170,7 @@ MusikFrame::~MusikFrame()
 
 bool MusikFrame::Show( bool show )
 {
-	bool bRet = wxWindow::Show( show );
+	bool bRet = false;
 	
 	if ( g_FirstRun && show )
 	{
@@ -184,15 +184,19 @@ bool MusikFrame::Show( bool show )
 		//--- autostart stuff ---//
 		if ( g_Prefs.nFirstRun == 1 )
 		{
+            bRet =	 wxWindow::Show( show );
 			g_MusikLibraryFrame = new MusikLibraryFrame( ( wxFrame* )this, wxPoint( 0, 0 ), wxSize( 480, 240 ) );
 			this->Enable	( FALSE );
 			g_MusikLibraryFrame->Show	( TRUE	);
+            return bRet;
 		}
 		else if ( g_Prefs.nAutoAdd == 1 )
 		{
+            bRet =	 wxWindow::Show( show );
 			g_MusikLibraryFrame = new MusikLibraryFrame( ( wxFrame* )this );
 			this->Enable	( FALSE );
 			g_MusikLibraryFrame->Show	( TRUE	);
+            return bRet;
 		}
 		else
 		{
@@ -205,7 +209,7 @@ bool MusikFrame::Show( bool show )
 			}
 		}
 	}
-	
+    bRet =	 wxWindow::Show( show );
 	return bRet;	
 }
 
@@ -320,14 +324,7 @@ void MusikFrame::GetListCtrlFont()
 //--------------------------------------------//
 void MusikFrame::TogglePlaylistInfo()
 {
-	if ( g_Prefs.nShowPLInfo == 0 )
-	{
-		g_Prefs.nShowPLInfo = 1;
-		g_PlaylistInfoCtrl->Update();
-	}
-	else
-		g_Prefs.nShowPLInfo = 0;
-
+	g_Prefs.nShowPLInfo = !g_Prefs.nShowPLInfo;
 	ShowPlaylistInfo();
 
 	view_menu->Check( MUSIK_MENU_PLAYLISTINFO_STATE, ( bool )g_Prefs.nShowPLInfo );
@@ -335,6 +332,8 @@ void MusikFrame::TogglePlaylistInfo()
 
 void MusikFrame::ShowPlaylistInfo()
 {
+    if( g_Prefs.nShowPLInfo )
+       g_PlaylistInfoCtrl->Update();
 	vsRightSide->Show( g_PlaylistInfoCtrl, ( bool )g_Prefs.nShowPLInfo );
 	Layout();
 }
@@ -352,10 +351,7 @@ void MusikFrame::ShowSources()
 
 void MusikFrame::ToggleSources()
 {
-	if ( g_Prefs.nShowSources == 0 )
-		g_Prefs.nShowSources = 1;
-	else
-		g_Prefs.nShowSources = 0;
+	g_Prefs.nShowSources = !g_Prefs.nShowSources;
 
 	ShowSources();
 
@@ -383,10 +379,8 @@ void MusikFrame::ShowActivityArea( bool bShow )
 
 void MusikFrame::ToggleActivities()
 {
-	if ( g_Prefs.nShowActivities == 0 )
-		g_Prefs.nShowActivities = 1;
-	else
-		g_Prefs.nShowActivities = 0;
+	
+	g_Prefs.nShowActivities = !g_Prefs.nShowActivities;
 
 	ShowActivityArea( (bool)g_Prefs.nShowActivities );
 
