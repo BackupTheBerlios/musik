@@ -221,6 +221,8 @@ void CMusikPrefs::ResetColumns()
 	nPlaylistColumnEnable	[PLAYLISTCOLUMN_FILENAME]	= 0;
 	nPlaylistColumnSize		[PLAYLISTCOLUMN_FILENAME]	= 40;
 	nPlaylistColumnDynamic	[PLAYLISTCOLUMN_FILENAME]	= 1;	
+
+	nPlaylistSmartColumns =	1;
 }
 
 void CMusikPrefs::SavePrefs()
