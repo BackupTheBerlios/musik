@@ -1,8 +1,10 @@
 0.3.1.5 to 0.3.1.6
++ On windows a balloon tooltip is shown above the trayicon on each song change with the song info.
 + Reads APE Tags (V1 and V2) and id3v1 tag for all files, if no other tags are present.
 + Uses filename to guess tags, if no tags are present, on library build and rebuild.
 + If the playlists are read on first startup they are now sorted after categories.(delete musiksources.dat if you want sort it as default again) 
 + Added italian translation, (thanks to mirko_3)
++ Added dutch translation, (thanks to Brent Huisman)
 + Setup (on windows) no longer associated .mp3 and .ogg with wxMusik. Instead you can set the associations in the preferences now.
 - fix AutoDj selection routine. Was made in good intention,but badly done,so didnt work quite right. Random selection has been enhance for shuffle play too.
 + Trayicon text displays now  song  properties multiple lines. Album  info has been added.
@@ -23,7 +25,7 @@
 - fixed centering of picture in album info. Transparency of picture( if available) is used now 
 - fixed some other minor bug
 - fixed crash while drag and drop under some circumstances
-+added norsk bokmal translation( thanks to 
++ added norsk bokmal translation( thanks to Oddmund aka dubbz)
 + added czech translation (thanks to Vit Hrachovy)
 - fixed sorting in selection boxes. now the sorting order honors the current locale setting of the OS.
 

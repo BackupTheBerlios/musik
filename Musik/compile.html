@@ -10,7 +10,7 @@
 <a href="#win32">compiling in win32</a>
 <p><a href="#linux">compiling in linux</a></p>
 <h1 id="win32"><span style="font-style: italic;">Important&nbsp; note:
-Only wxWidgets version 2.5.2 is supported</span></h1>
+Only wxWidgets version 2.5.3 is supported</span></h1>
 <br>
 <br>
 <table border="0" width="95%">
@@ -47,7 +47,8 @@ To use VS.Net 7.0 you have to change the version number from 7.10 (
       <ul>
         <li> Microsoft Visual C++ .NET 2003 </li>
         <li> <a href="#id3lib">id3lib</a> </li>
-        <li> <a href="#ogg">libogg</a> </li>
+        <li> <a href="#ogg">libogg</a></li>
+        <li><a href="#flac">libflac</a></li>
         <li> <a href="#ogg">libvorbis</a> </li>
         <li> <a href="#fmod">fmod sound system</a> </li>
         <li> <a href="#sqlite">sqlite</a> </li>
@@ -95,12 +96,50 @@ variables. Be sure to build all libs as static libs using the c-runtime
     </tr>
     <tr>
       <td>
-      <h4>notes: just build as normal. consult package's readme.</h4>
+      <h4>notes: build as static libs. consult package's readme.</h4>
       </td>
     </tr>
   </tbody>
 </table>
 <br>
+<table border="0" width="95%">
+  <tbody>
+    <tr>
+      <td>
+      <h3 id="flac"> libflac: <a href="http://flac.sourceforge.net/"
+ target="_blank">homepage</a> or <a
+ href="http://flac.sourceforge.net/download.html" target="_blank">
+download libflac</a> </h3>
+      </td>
+    </tr>
+    <tr>
+      <td>
+      <h4>notes: You need flac 1.1.1. build as static libs. consult
+package's readme.</h4>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+<table border="0" width="95%">
+  <tbody>
+    <tr>
+      <td>
+      <h3 id="flac">MAC SDK(Monkey's Audio aka APE): <a
+ href="http://www.monkeysaudio.com/" target="_blank">homepage</a> or <a
+ href="http://www.monkeysaudio.com/files/MAC_SDK_399.zip"
+ target="_blank">
+download MAC SDK</a> </h3>
+      </td>
+    </tr>
+    <tr>
+      <td>
+      <h4>notes: You need version 3.99&nbsp; build as static libs.
+consult package's readme.</h4>
+      </td>
+    </tr>
+  </tbody>
+</table>
 <br>
 <table border="0" width="95%">
   <tbody>
@@ -166,13 +205,13 @@ of sqlite.</li>
   <tbody>
     <tr>
       <td>
-      <h3 id="wxwindows"> wxWidgets 2.5.2 : <a
+      <h3 id="wxwindows"> wxWidgets 2.5.3 : <a
  href="http:///www.wxwindows.org/">homepage </a> </h3>
       </td>
     </tr>
     <tr>
       <td>
-      <h4>notes: only wxWidgets 2.5.2 version is supported by now!<br>
+      <h4>notes: only wxWidgets 2.5.3 version is supported by now!<br>
       </h4>
       </td>
     </tr>
@@ -217,13 +256,15 @@ download</a></h3>
 (Setting/System/Advanced)
           <ul>
             <li> set WXDIR&nbsp; to the wxwindows dir (e.g.
-c:\src\wxwidgets-2.5.2) </li>
+c:\src\wxwidgets-2.5.3) </li>
             <li> set SQLITEDIR (e.g. c:\src\sqlite) be sure to create
 the sqlite.lib in Debug/Release subdirectories there. </li>
             <li> set OGGDIR (e.g. c:\src\ogg) </li>
             <li> set VORBISDIR (e.g. c:\src\vorbis) </li>
             <li> set FMODDIR (e.g. c:\src\fmodapi373win) </li>
             <li> set ID3LIBDIR (e.g. c:\src\id3lib-3.8.3)</li>
+            <li> set FLACLIBDIR (e.g. c:\src\flac-1.1.1)</li>
+            <li> set MAC_SDKDIR (e.g. c:\src\MAC_SDK_399)</li>
           </ul>
         </li>
         <li> load <code>Musik.sln</code> into Visual C++.NET 2003 </li>
@@ -246,7 +287,9 @@ Debug version work.)</li>
     </tr>
     <tr>
       <td>
-      <h2>setup the Musik dependencies</h2>
+      <h2>setup the wxMusik dependencies ( note that currently only
+Version 0.3.1.6 compiles on linux, but not the new version 0.4)<br>
+      </h2>
       </td>
     </tr>
   </tbody>
@@ -418,7 +461,7 @@ packages is in an include path.</h4>
   <tbody>
     <tr>
       <td>
-      <h3>wxWidgets 2.5.2: <a href="http://www.wxwindows.org">homepage</a>
+      <h3>wxWidgets 2.5.3: <a href="http://www.wxwindows.org">homepage</a>
 or download</h3>
       </td>
     </tr>
@@ -430,13 +473,14 @@ or download</h3>
 --with-gtk</code></code> </h4>
       <h4> gtk1 is somewhat faster than gtk2,but does not support
 unicode!</h4>
-      <p>Some Linux users have experienced problems when scanning their
+&lt;&gt;Some Linux users have experienced problems when scanning their
 media files.<br>
 One of them told me that using wxGTK 2.4.1 solved the problems for him.<br>
-But wxGTK version below wxGTK 2.5.2 are not supported by wxMusik
+But wxGTK version below wxGTK 2.5.3 are not supported by wxMusik
 anymore. I would be glad if someone,who also has this problem could
 this debug for me.<br>
-      </p>
+As mirko_3 found out the problem arises, if the environment variables
+settings are not set correctly.<br>
       </td>
     </tr>
     <tr>
@@ -508,6 +552,6 @@ german for this to work)<br>
 </table>
 <br>
 </div>
-(last changed 8th august 2004)
+(last changed 16th october 2004)
 </body>
 </html>

@@ -613,7 +613,12 @@ void MusikFrame::SetSongInfoText(const CMusikSong& song)
 	//		sTitle + wxT("\n") 
 	//		);
 	//#endif
-	wxString sInfo(_("by ") + sArtist + wxT("\n") + _("from the album")+ wxT(" '") + sAlbum + wxT("'"));
+	wxString sInfo;
+	if(!sArtist.empty())
+		sInfo += _("by ") + sArtist + wxT("\n");
+	if(!sAlbum.empty())
+		sInfo += wxString(_("from the album")) + wxT(" '") + sAlbum + wxT("'");
+	
 
 	if(	m_pTaskBarIcon )
 	{
