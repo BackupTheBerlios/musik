@@ -6,12 +6,11 @@
  *
  * Comment editing backend, suitable for use by nice frontend interfaces.
  *
- * last modified: $Id: vcedit.c,v 1.4 2003/11/28 20:03:14 avatar5d Exp $
+ * last modified: $Id: vcedit.c,v 1.5 2003/11/30 15:04:57 avatar5d Exp $
  */
 
 #ifndef _(x)
-	#define _(x) \
-	(x)
+	#define _(x) (x)
 #endif
 
 #include <stdio.h>

@@ -38,6 +38,8 @@
 
 #include "stdafx.h"
 
+#include "../include/MusikConfig.h"
+
 #include "../include/MusikMp3Info.h"
 #include "../include/MusikFilename.h"
 
@@ -98,9 +100,9 @@ bool CMusikMp3Info::LoadInfo( const CStdString& fn )
 	{
 		char buffer[32];
 
-		m_Info.SetDuration( itoa( mp3header->time * 1000, buffer, 10 ) );
+		m_Info.SetDuration( itoa( buffer, mp3header->time * 1000 ) );
 		m_Info.SetVBR( mp3header->vbr_bitrate ? "1" : "0" );
-		m_Info.SetBitrate( itoa( mp3header->bitrate / 1000, buffer, 10 ) );
+		m_Info.SetBitrate( itoa( buffer, mp3header->bitrate / 1000 ) );
 	}
 
 	// if the title is empty, then use the
@@ -227,4 +229,3 @@ int CMusikMp3Info::GetGenreID( CStdString genre )
 }
 
 ///////////////////////////////////////////////////
-

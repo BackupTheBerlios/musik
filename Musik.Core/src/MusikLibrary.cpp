@@ -540,7 +540,7 @@ void CMusikLibrary::CreateStdPlaylist( const CStdString& name, const CIntArray& 
 	// std_playlist table
 	sQuery.Format( "INSERT INTO %s VALUES ( %d,'%s' ); ",
 		STD_PLAYLIST_TABLE_NAME,
-		NULL,
+		0,
 		name.c_str() );
 
 	// insert the new playlist name
@@ -1118,7 +1118,7 @@ bool CMusikLibrary::AddSong( const CStdString& fn )
 	bool result = true;
 
 	CMusikFilename MFN( fn );
-	CString sExt = MFN.GetExtension();
+	CStdString sExt = MFN.GetExtension();
 
 	if ( sExt == "mp3" )
 		result = AddMP3( fn );

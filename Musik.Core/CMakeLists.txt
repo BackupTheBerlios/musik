@@ -4,7 +4,7 @@
 # 
 ##################################
 
-PROJECT(Musik.Core)
+PROJECT(MusikCore)
 
 ##################################
 #
@@ -35,17 +35,17 @@ FIND_LIBRARY(OGG_LIBRARY NAMES ogg PATHS /usr/lib /usr/local/lib)
 #
 ##################################
 
-ADD_LIBRARY( Musik.Core
-	${Musik.Core_SOURCE_DIR}/src/Equ
-	${Musik.Core_SOURCE_DIR}/src/Fftsg_fl
-	${Musik.Core_SOURCE_DIR}/src/MusikEqualizer
-	${Musik.Core_SOURCE_DIR}/src/MusikFilename
-	${Musik.Core_SOURCE_DIR}/src/MusikLibrary
-	${Musik.Core_SOURCE_DIR}/src/MusikPlayer
-	${Musik.Core_SOURCE_DIR}/src/MusikPlaylist
-	${Musik.Core_SOURCE_DIR}/src/MusikOggInfo	
-	${Musik.Core_SOURCE_DIR}/src/MusikMp3Info
-	${Musik.Core_SOURCE_DIR}/src/vcedit
+ADD_LIBRARY( MusikCore
+	${MusikCore_SOURCE_DIR}/src/Equ
+	${MusikCore_SOURCE_DIR}/src/Fftsg_fl
+	${MusikCore_SOURCE_DIR}/src/MusikEqualizer
+	${MusikCore_SOURCE_DIR}/src/MusikFilename
+	${MusikCore_SOURCE_DIR}/src/MusikLibrary
+	${MusikCore_SOURCE_DIR}/src/MusikPlayer
+	${MusikCore_SOURCE_DIR}/src/MusikPlaylist
+	${MusikCore_SOURCE_DIR}/src/MusikOggInfo	
+	${MusikCore_SOURCE_DIR}/src/MusikMp3Info
+	${MusikCore_SOURCE_DIR}/src/vcedit
 	)
 
 ##################################
@@ -54,7 +54,7 @@ ADD_LIBRARY( Musik.Core
 #
 ##################################
 
-TARGET_LINK_LIBRARIES(Musik.Core
+TARGET_LINK_LIBRARIES(MusikCore
 	${SQLITE_LIBRARY}
 	${FMOD_LIBRARY}
 	${ACE_LIBRARY}
