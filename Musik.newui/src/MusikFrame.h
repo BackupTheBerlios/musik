@@ -6,16 +6,23 @@
 #include "MusikSelectionAreaCtrl.h"
 #include "MusikPlaylistCtrl.h"
 
-class MusikFrame : public wxFrame
+class CMusikFrame : public wxFrame
 {
 public:
-	MusikFrame();
-	~MusikFrame();
+	CMusikFrame();
+	~CMusikFrame();
 
 	CMusikSourcesCtrl *m_SourcesCtrl;
 	CMusikSelectionAreaCtrl *m_SelectionCtrl;
 	CMusikPlaylistCtrl *m_PlaylistCtrl;
-	
+
+private:
+	void CreateSashes();
+	void CreateControls();
+
+	wxWindow* m_SourcesSash;
+	wxWindow* m_SelectionAreaSash;
+	wxWindow* m_PlaylistSash;	
 };
 
 #endif

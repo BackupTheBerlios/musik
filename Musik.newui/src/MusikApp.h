@@ -3,12 +3,12 @@
 
 #include "wx/wxprec.h"
 
-class MusikApp : public wxApp
+class CMusikApp : public wxApp
 {
 public:
 	virtual bool OnInit();
 };
 
-DECLARE_APP(MusikApp)
+DECLARE_APP( CMusikApp )
 
 #endif

@@ -1,14 +1,14 @@
 #include "wx/wxprec.h"
 #include "MusikApp.h"
 
-IMPLEMENT_APP( MusikApp )
+IMPLEMENT_APP( CMusikApp )
 
 //--- related frames ---//
 #include "MusikFrame.h"
 
-bool MusikApp::OnInit()
+bool CMusikApp::OnInit()
 {
-    MusikFrame *pMain = new MusikFrame();
+    CMusikFrame *pMain = new CMusikFrame();
 	pMain->Show(TRUE);
 	SetTopWindow( pMain );
 
