@@ -1965,6 +1965,9 @@ void CmusikPlaylistCtrl::OnPlaylistcontextmenuProperties()
 
 	else
 	{
+		if ( !GetSelectedCount() )
+			return;
+
 		m_TagEdit = new CmusikTagDlg( this, m_Playlist, m_Library );
 		m_TagEdit->Create( IDD_TAG_PROPERTIES, this );
 		m_TagEdit->ShowWindow( SW_SHOWNORMAL );
@@ -2054,7 +2057,7 @@ void CmusikPlaylistCtrl::OnPlaylistcontextmenuBatch()
 
 	CmusikBatchTagDlg batch( this, selected );
 	
-	if ( batch.DoModal() == IDOK )
+	if ( selected->size() > 1 && batch.DoModal() == IDOK )
 	{
 		CmusikBatchRetag* params;
 

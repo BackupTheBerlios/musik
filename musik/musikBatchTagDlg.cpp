@@ -44,7 +44,6 @@
 #include "musikBatchTagDlg.h"
 
 #include "id3/globals.h"
-#include ".\musikbatchtagdlg.h"
 
 ///////////////////////////////////////////////////
 
