@@ -345,7 +345,6 @@ void CMusikLibrary::WriteMP3Tag( const CMusikSong & song, bool ClearAll )
 
 bool CMusikLibrary::WriteOGGTag( const CMusikSong & song, bool ClearAll )
 {
-
 	wxString filename = song.Filename;
 	//--- generate a temp filename, then rename the ogg ---//
 	wxString sRename = GenTempFilename( filename, 8 );
@@ -361,9 +360,9 @@ bool CMusikLibrary::WriteOGGTag( const CMusikSong & song, bool ClearAll )
     vorbis_comment *vc;
     state = vcedit_new_state();
 
-    	//--- if file couldn't be loaded, return ---//
+    //--- if file couldn't be loaded, return ---//
 	wxString read_state = wxT( "r+b" );
-	if ( !in.Open( sRename.c_str(), "r+b" ) )
+	if ( !in.Open( sRename, "r+b" ) )
 	{
 		wxRenameFile( sRename, filename );
 		return false;
@@ -379,7 +378,7 @@ bool CMusikLibrary::WriteOGGTag( const CMusikSong & song, bool ClearAll )
 
 	//--- load the comments, and clear them out ---//
 	vc = vcedit_comments( state );
-    	vorbis_comment_clear( vc );
+    vorbis_comment_clear( vc );
 	vorbis_comment_init( vc );
 
 	//--- add comments ---//
@@ -393,7 +392,7 @@ bool CMusikLibrary::WriteOGGTag( const CMusikSong & song, bool ClearAll )
 
 	//--- write new file ---//
 	wxString write_state = wxT( "w+b" );
-	if ( out.Open( filename.c_str(), "w+b" ) )
+	if ( out.Open( filename, "w+b" ) )
 		vcedit_write( state, out.fp() );
 
 	//--- clean up ---//
