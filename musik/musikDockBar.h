@@ -32,6 +32,11 @@ public:
     virtual BOOL Create( LPCTSTR lpszWindowName, CWnd* pParentWnd,
         UINT nID, DWORD dwStyle = WS_CHILD | WS_VISIBLE | CBRS_TOP );
 
+	// setting size
+	void ForceDockedSize( const CSize& size, int orientation, bool layout = false );
+	void ForceFloatSize( const CSize& size );
+	void Layout(){ CalcDynamicLayout( NULL, LM_VERTDOCK | LM_HORZDOCK ); }
+
 	// show / hide gripper
     virtual BOOL HasGripper() const;
 	void ShowGripper( bool show = true );

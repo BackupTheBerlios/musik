@@ -155,15 +155,6 @@ BOOL CSizingControlBar::Create(LPCTSTR lpszWindowName,
     return TRUE;
 }
 
-void CSizingControlBar::SetSize( const CSize& size, bool layout )
-{
-	m_szHorz = size;
-	m_szVert = size;
-
-	if ( layout )
-		CalcDynamicLayout( NULL, LM_VERTDOCK | LM_HORZDOCK );
-}
-
 /////////////////////////////////////////////////////////////////////////
 // CSizingControlBar operations
 #if defined(_SCB_REPLACE_MINIFRAME) && !defined(_SCB_MINIFRAME_CAPTION)

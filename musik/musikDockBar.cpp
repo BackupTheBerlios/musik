@@ -390,6 +390,22 @@ void CmusikDockBar::OnOptions()
 
 ///////////////////////////////////////////////////
 
+void CmusikDockBar::ForceDockedSize( const CSize& size, int dockstate, bool layout )
+{
+	if ( dockstate == LM_HORZDOCK )
+		m_szHorz = size;
+	if ( dockstate == LM_VERTDOCK )
+		m_szVert = size;
+
+	if ( layout )
+		Layout();
+}
 
 ///////////////////////////////////////////////////
 
+void CmusikDockBar::ForceFloatSize( const CSize& size )
+{
+	m_szFloat = size;
+}
+
+///////////////////////////////////////////////////

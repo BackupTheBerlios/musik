@@ -113,6 +113,9 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Crossfader\tCtrl+Shift+Z",    ID_VIEW_CROSSFADER
         MENUITEM "Equalizer\tCtrl+Shift+X",     ID_VIEW_EQUALIZER
+        MENUITEM SEPARATOR
+        MENUITEM "Reset Interface to Default",  ID_VIEW_RESETINTERFACETODEFAULT
+
     END
     POPUP "&Audio"
     BEGIN
@@ -193,6 +196,22 @@ BEGIN
         MENUITEM "Delete\tDel",                 ID_SOURCES_DELETE
         MENUITEM SEPARATOR
         MENUITEM "Edit Query",                  ID_SOURCES_EDITQUERY
+    END
+END
+
+IDR_TRAY_MENU MENU 
+BEGIN
+    POPUP "Notification Tray"
+    BEGIN
+        MENUITEM "Restore",                     ID_NOTIFICATIONTRAY_RESTORE
+        MENUITEM SEPARATOR
+        MENUITEM "Play",                        ID_NOTIFICATIONTRAY_PLAY
+        MENUITEM "Pause",                       ID_NOTIFICATIONTRAY_PAUSE
+        MENUITEM "Next",                        ID_NOTIFICATIONTRAY_NEXT
+        MENUITEM "Prev",                        ID_NOTIFICATIONTRAY_PREV
+        MENUITEM "Stop",                        ID_NOTIFICATIONTRAY_STOP
+        MENUITEM SEPARATOR
+        MENUITEM "Exit",                        ID_NOTIFICATIONTRAY_EXIT
     END
 END
 

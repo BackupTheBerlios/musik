@@ -126,6 +126,7 @@ public:
 	// misc
 	bool PlayCmd( const CString& fn );
 	void SynchronizeDirs();
+	void RestoreFromTray();
 
 	// to save window state
 	virtual BOOL DestroyWindow();
@@ -251,6 +252,8 @@ protected:
 	afx_msg void OnUpdateViewEqualizer(CCmdUI *pCmdUI);
 	afx_msg void OnFileSynchronizeddirectories();
 	afx_msg void OnUpdateFileSynchronizeddirectories(CCmdUI *pCmdUI);
+	afx_msg void OnViewResetinterfacetodefault();
+	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
 
 	// list of all threads running
 	bool FreeThread( CmusikThread* pThread );
@@ -278,7 +281,19 @@ protected:
 	void InitTrayIcon();
 	void ShowTrayIcon();
 	void HideTrayIcon();
-	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
+public:
+	afx_msg void OnNotificationtrayExit();
+	afx_msg void OnNotificationtrayRestore();
+	afx_msg void OnUpdateNotificationtrayPlay(CCmdUI *pCmdUI);
+	afx_msg void OnNotificationtrayPlay();
+	afx_msg void OnUpdateNotificationtrayPause(CCmdUI *pCmdUI);
+	afx_msg void OnNotificationtrayPause();
+	afx_msg void OnUpdateNotificationtrayNext(CCmdUI *pCmdUI);
+	afx_msg void OnNotificationtrayNext();
+	afx_msg void OnUpdateNotificationtrayPrev(CCmdUI *pCmdUI);
+	afx_msg void OnNotificationtrayPrev();
+	afx_msg void OnUpdateNotificationtrayStop(CCmdUI *pCmdUI);
+	afx_msg void OnNotificationtrayStop();
 };
 
 ///////////////////////////////////////////////////

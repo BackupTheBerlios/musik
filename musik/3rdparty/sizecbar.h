@@ -84,8 +84,6 @@ public:
     virtual BOOL Create(LPCTSTR lpszWindowName, CWnd* pParentWnd,
         UINT nID, DWORD dwStyle = WS_CHILD | WS_VISIBLE | CBRS_TOP);
 
-	void SetSize( const CSize& size, bool layout = true );
-
 // Attributes
 public:
     const BOOL IsFloating() const;

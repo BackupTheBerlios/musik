@@ -77,14 +77,6 @@ BOOL CmusikEqualizerSets::OnInitDialog()
 
 ///////////////////////////////////////////////////
 
-void CmusikEqualizerSets::OnBnClickedLoadActiveFromSelected()
-{
-
-
-}
-
-///////////////////////////////////////////////////
-
 int CmusikEqualizerSets::GetIndex()
 {
 	for ( size_t i = 0; i < m_IDs.size(); i++ )

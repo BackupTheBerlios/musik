@@ -26,7 +26,6 @@ public:
 	// mfc message maps / overrides
 	afx_msg void OnBnClickedCloseDlg();
 	virtual BOOL OnInitDialog();
-	afx_msg void OnBnClickedLoadActiveFromSelected();
 	afx_msg void OnBnClickedSaveActiveAsSelected();
 	afx_msg void OnBnClickedSaveActiveAsNew();
 	afx_msg void OnClose();

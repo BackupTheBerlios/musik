@@ -62,6 +62,7 @@
 #include <Direct.h>
 
 #include "3rdparty/TreePropSheet.h"
+#include ".\mainfrm.h"
 
 ///////////////////////////////////////////////////
 
@@ -152,6 +153,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_COMMAND(ID_VIEW_CROSSFADER, OnViewCrossfader)
 	ON_COMMAND(ID_VIEW_EQUALIZER, OnViewEqualizer)
 	ON_COMMAND(ID_FILE_SYNCHRONIZEDDIRECTORIES, OnFileSynchronizeddirectories)
+	ON_COMMAND(ID_VIEW_RESETINTERFACETODEFAULT, OnViewResetinterfacetodefault)
 
 	// update ui
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SOURCES, OnUpdateViewSources)
@@ -191,6 +193,18 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_PLAYER_PLAYSEL, OnPlayerPlaySel )
 	ON_REGISTERED_MESSAGE( WM_BATCHADD_VERIFY_PLAYLIST, OnVerifyPlaylist )
 	ON_REGISTERED_MESSAGE( WM_CLOSEDIRSYNC, OnCloseDirSync )
+	ON_COMMAND(ID_NOTIFICATIONTRAY_EXIT, OnNotificationtrayExit)
+	ON_COMMAND(ID_NOTIFICATIONTRAY_RESTORE, OnNotificationtrayRestore)
+	ON_UPDATE_COMMAND_UI(ID_NOTIFICATIONTRAY_PLAY, OnUpdateNotificationtrayPlay)
+	ON_COMMAND(ID_NOTIFICATIONTRAY_PLAY, OnNotificationtrayPlay)
+	ON_UPDATE_COMMAND_UI(ID_NOTIFICATIONTRAY_PAUSE, OnUpdateNotificationtrayPause)
+	ON_COMMAND(ID_NOTIFICATIONTRAY_PAUSE, OnNotificationtrayPause)
+	ON_UPDATE_COMMAND_UI(ID_NOTIFICATIONTRAY_NEXT, OnUpdateNotificationtrayNext)
+	ON_COMMAND(ID_NOTIFICATIONTRAY_NEXT, OnNotificationtrayNext)
+	ON_UPDATE_COMMAND_UI(ID_NOTIFICATIONTRAY_PREV, OnUpdateNotificationtrayPrev)
+	ON_COMMAND(ID_NOTIFICATIONTRAY_PREV, OnNotificationtrayPrev)
+	ON_UPDATE_COMMAND_UI(ID_NOTIFICATIONTRAY_STOP, OnUpdateNotificationtrayStop)
+	ON_COMMAND(ID_NOTIFICATIONTRAY_STOP, OnNotificationtrayStop)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -521,20 +535,26 @@ void CMainFrame::ResetUI()
 	CSize size;
 	
 	// now playing
-	size.cx = NULL;
+	size.cx = 800;
 	size.cy = 48;
-	m_wndNowPlaying->SetSize( size );
+	m_wndNowPlaying->ForceDockedSize( size, LM_HORZDOCK, true );
+	m_wndNowPlaying->ForceFloatSize( size );
 
 	// sources
-	size.cx = 160;
-	size.cy = NULL;
-	m_wndSources->SetSize( size );
+	size.cx = 140;
+	size.cy = 600;
+	m_wndSources->ForceDockedSize( size, LM_VERTDOCK, true );
+	m_wndSources->ForceFloatSize( size );
 
 	// selection box
 	size.cx = NULL;
-	size.cy = 160;
+	size.cy = 120;
 	for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
-		m_wndSelectionBars[i]->SetSize( size );
+		m_wndSelectionBars[i]->ForceDockedSize( size, LM_HORZDOCK, true );
+
+	// hide equalizer and crossfader
+	ShowControlBar( m_wndEqualizer, FALSE, TRUE );
+	ShowControlBar( m_wndCrossfader, FALSE, TRUE );
 }
 
 ///////////////////////////////////////////////////
@@ -683,6 +703,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndCrossfader = new CmusikCrossfaderBar( m_Library, m_Player, m_Prefs );
 	m_wndCrossfader->Create( _T( "Crossfader" ), this, ID_CROSSFADER );
 	FloatControlBar( m_wndCrossfader, CPoint( 14, 14 ) );
+	ShowControlBar( m_wndCrossfader, FALSE, FALSE );
 
 	// equalizer control
 	m_wndEqualizer = new CmusikEqualizerBar( m_Library, m_Player, m_Prefs );
@@ -690,6 +711,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndEqualizer->GetCtrl()->SetBandState( m_Prefs->GetEqualizerBandState() );
 	m_wndEqualizer->GetCtrl()->SetChannelsLocked( m_Prefs->IsEqualizerChannelsLocked() );
 	FloatControlBar( m_wndEqualizer, CPoint( 28, 28 ) );
+	ShowControlBar( m_wndEqualizer, FALSE, FALSE );
 
 	// append the system menu
 	CMenu* pMenu = GetSystemMenu( false );
@@ -976,7 +998,7 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 	CmusikSelectionCtrl* pParent	= NULL;
 
 	int nSender = (int)wParam;
-	bool force_all_updatev = (bool)lParam;
+	bool force_all_updatev = ( lParam == NULL ) ? true : false;
 
 	// find the sender and parent
 	for ( size_t i = 0; i < selbox_count; i++ )
@@ -2063,19 +2085,44 @@ LRESULT CMainFrame::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 		switch( lParam )
 		{
 		case WM_LBUTTONDBLCLK:
-			ShowWindow( SW_NORMAL );
-			SetForegroundWindow();
-			SetFocus();
-			HideTrayIcon();
+
+			RestoreFromTray();
+
 			return 1L;
 			break;
+
 		case WM_RBUTTONDOWN:
 		case WM_CONTEXTMENU:
+
+			CPoint pos;
+			::GetCursorPos( &pos );
+
+			CMenu main_menu;
+			CMenu* popup_menu;
+
+			main_menu.LoadMenu( IDR_TRAY_MENU );
+			popup_menu = main_menu.GetSubMenu( 0 );
+			
+			SetForegroundWindow();
+			popup_menu->TrackPopupMenu( 0, pos.x, pos.y, this );
+			PostMessage( WM_NULL, 0, 0 );
+
+			return 1L;
 			break;
 		}
 	}
 
 	return CFrameWnd::WindowProc(message, wParam, lParam);
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::RestoreFromTray()
+{
+	ShowWindow( SW_NORMAL );
+	SetForegroundWindow();
+	SetFocus();
+	HideTrayIcon();	
 }
 
 ///////////////////////////////////////////////////
@@ -2102,6 +2149,125 @@ void CMainFrame::SynchronizeDirs()
 		thread->Start( (ACE_THR_FUNC)musikBatchAddWorker, (void*)params );	
 	}	
 
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnViewResetinterfacetodefault()
+{
+	ResetUI();
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnNotificationtrayExit()
+{
+	RestoreFromTray();
+	OnClose();
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnNotificationtrayRestore()
+{
+	RestoreFromTray();
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnUpdateNotificationtrayPlay(CCmdUI *pCmdUI)
+{
+	if ( m_Player->IsPlaying() )
+		pCmdUI->Enable( false );
+	else
+		pCmdUI->Enable( true );
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnNotificationtrayPlay()
+{
+	if ( m_Player->GetPlaylist() )
+		m_Player->Play( 0, MUSIK_CROSSFADER_NEW_SONG );
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnUpdateNotificationtrayPause(CCmdUI *pCmdUI)
+{
+	if ( m_Player->IsPlaying() && !m_Player->IsPaused() )
+		pCmdUI->SetText( _T( "Pause" ) );
+	else
+		pCmdUI->SetText( _T( "Resume" ) );	
+
+	if ( m_Player->IsPlaying() )
+		pCmdUI->Enable( true );
+	else
+		pCmdUI->Enable( false );
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnNotificationtrayPause()
+{
+	if ( m_Player->IsPlaying() && !m_Player->IsPaused() )
+		m_Player->Pause();
+	else
+		m_Player->Resume();
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnUpdateNotificationtrayNext(CCmdUI *pCmdUI)
+{
+	if ( m_Player->IsPlaying() )
+		pCmdUI->Enable( true );
+	else
+		pCmdUI->Enable( false );
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnNotificationtrayNext()
+{
+	if ( m_Player->IsPlaying() )
+		m_Player->Next();
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnUpdateNotificationtrayPrev(CCmdUI *pCmdUI)
+{
+	if ( m_Player->IsPlaying() )
+		pCmdUI->Enable( true );
+	else
+		pCmdUI->Enable( false );
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnNotificationtrayPrev()
+{
+	if ( m_Player->IsPlaying() )
+		m_Player->Prev();
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnUpdateNotificationtrayStop(CCmdUI *pCmdUI)
+{
+	if ( m_Player->IsPlaying() )
+		pCmdUI->Enable( true );
+	else
+		pCmdUI->Enable( false );
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnNotificationtrayStop()
+{
+	if ( m_Player->IsPlaying() )
+		m_Player->Stop();
 }
 
 ///////////////////////////////////////////////////

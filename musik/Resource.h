@@ -24,6 +24,7 @@
 #define IDR_SELECTION_BOX_MENU          143
 #define IDR_SOURCES_MENU                144
 #define IDD_NAME_ENTRY                  145
+#define IDR_TRAY_MENU                   146
 #define IDC_CHECK_STARTUPSCAN           1007
 #define IDC_CHECK_PL_STRIPES            1009
 #define IDC_COMBO1                      1010
@@ -160,13 +161,22 @@
 #define ID_EQUALIZER_STATE_9BAND        32863
 #define ID_EQUALIZER_STATE_6BAND        32864
 #define ID_EQUALIZER_RESETDEFAULT       32866
+#define ID_VIEW_RESETINTERFACETODEFAULT 32867
+#define ID_NOTIFICATIONTRAY_RESTORE     32868
+#define ID_NOTIFICATIONTRAY_PLAY        32869
+#define ID_NOTIFICATIONTRAY_PAUSE       32870
+#define ID_NOTIFICATIONTRAY_NEXT        32871
+#define ID_NOTIFICATIONTRAY_PREV        32872
+#define ID_NOTIFICATIONTRAY_STOP        32873
+#define ID_NOTIFICATIONTRAY_EXIT        32874
+#define ID_NOTIFICATIONTRAY_MUSIK       32875
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        146
-#define _APS_NEXT_COMMAND_VALUE         32867
+#define _APS_NEXT_RESOURCE_VALUE        147
+#define _APS_NEXT_COMMAND_VALUE         32876
 #define _APS_NEXT_CONTROL_VALUE         1051
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
