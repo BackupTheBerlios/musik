@@ -545,11 +545,10 @@ int CmusikPlayer::InitSound( int device, int driver, int rate, int channels, int
 		}
 	}
 
-	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingStreams );
-	{
+	m_ProtectingStreams.acquire();
 		m_ActiveStreams = new CmusikStreamPtrArray();
 		m_ActiveChannels = new CIntArray();
-	}
+	m_ProtectingStreams.release();
 
 	m_MaxChannels = channels;
 
@@ -564,8 +563,8 @@ void CmusikPlayer::CleanSound()
 	CleanOldStreams( true );
 	StopSound();
 
-	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingStreams );
-	{
+	m_ProtectingStreams.acquire();
+
 		if ( m_ActiveStreams ) 
 		{
 			delete m_ActiveStreams;
@@ -577,7 +576,8 @@ void CmusikPlayer::CleanSound()
 			delete m_ActiveChannels;
 			m_ActiveChannels = NULL;
 		}
-	}
+
+	m_ProtectingStreams.release();
 
 	m_State = MUSIK_PLAYER_INIT_UNINITIALIZED;
 }
@@ -720,11 +720,10 @@ bool CmusikPlayer::Play( int index, int fade_type, int start_pos )
 	int curr_chan = PushNewChannel();
 
 	// add the new channel and stream
-	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingStreams );
-	{
+	m_ProtectingStreams.acquire();
 		m_ActiveStreams->push_back( pNewStream );
 		m_ActiveChannels->push_back( curr_chan );
-	}
+	m_ProtectingStreams.release();
 
 	// play it: set volume
 	FSOUND_Stream_Play( GetCurrChannel(), pNewStream );
@@ -764,8 +763,8 @@ bool CmusikPlayer::Play( int index, int fade_type, int start_pos )
 	// once we get here the new song is "officially"
 	// playing, so lock it up and set the new index
 	{
-		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingIndex );
-		{
+		m_ProtectingStreams.acquire();
+
 			// and, we're done.
 			TRACE0( "New song started...\n" );
 
@@ -774,7 +773,8 @@ bool CmusikPlayer::Play( int index, int fade_type, int start_pos )
 
 			// increment times played
 			m_Library->IncLastPlayed( m_Playlist->GetSongID( m_Index ) );
-		}
+		
+		m_ProtectingStreams.release();
 	}
 
 	return true;
@@ -824,11 +824,12 @@ void CmusikPlayer::EnquePaused( int index )
 
 	// add the new channel and stream
 	{
-		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingStreams );
-		{
+		m_ProtectingStreams.acquire();
+
 			m_ActiveStreams->push_back( pNewStream );
 			m_ActiveChannels->push_back( GetCurrChannel() );
-		}
+
+		m_ProtectingStreams.release();
 	}
 
 	// setup playback, then pause
@@ -838,13 +839,14 @@ void CmusikPlayer::EnquePaused( int index )
 
 	// song has officially been resumed...
 	{
-		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingIndex );
-		{
+		m_ProtectingStreams.acquire();
+
 			m_Index = index;
 
 			if ( m_Functor )
 				m_Functor->OnNewSong();
-		}
+
+		m_ProtectingStreams.release();
 	}
 }
 
@@ -1004,12 +1006,13 @@ FSOUND_STREAM* CmusikPlayer::GetCurrStream()
 {
 	FSOUND_STREAM* pStream = NULL;
 
-	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingStreams );
-	{
+	m_ProtectingStreams.acquire();
+
 		if ( m_ActiveStreams->size() )
 			pStream = m_ActiveStreams->at( m_ActiveStreams->size() - 1 );
-	}
-
+	
+	m_ProtectingStreams.release();
+	
 	return pStream;
 }
 
@@ -1068,8 +1071,8 @@ void CmusikPlayer::CleanEQ_DSP()
 
 void CmusikPlayer::CleanOldStreams( bool kill_primary )
 {
-	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingStreams );
-	{
+	m_ProtectingStreams.acquire();
+
 		ASSERT( m_ActiveStreams->size() == m_ActiveChannels->size() );
 
 		if ( !m_ActiveStreams->size() )
@@ -1090,7 +1093,8 @@ void CmusikPlayer::CleanOldStreams( bool kill_primary )
 			m_ActiveStreams->erase( m_ActiveStreams->begin() );
 			m_ActiveChannels->erase( m_ActiveChannels->begin() );
 		}	
-	}
+
+	m_ProtectingStreams.release();
 }
 
 ///////////////////////////////////////////////////
@@ -1207,10 +1211,9 @@ size_t CmusikPlayer::GetStreamCount()
 {
 	size_t count = 0;
 
-	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingStreams );
-	{
+	m_ProtectingStreams.acquire();
 		count = m_ActiveStreams->size();
-	}
+	m_ProtectingStreams.release();
 
 	return count;
 }
@@ -1228,11 +1231,10 @@ int CmusikPlayer::GetChannelID( int n )
 {
 	int channel_id = 0;
 
-	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingStreams );
-	{
+	m_ProtectingStreams.acquire();
 		if ( n < (int)m_ActiveChannels->size() )
 			channel_id = m_ActiveChannels->at( n );
-	}
+	m_ProtectingStreams.release();
 
 	return channel_id;
 }
@@ -1428,8 +1430,7 @@ void CmusikPlayer::UpdateEqualizer()
 bool CmusikPlayer::FindNewIndex( int songid )
 {	
 	bool found = false;
-	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingIndex );
-	{
+	m_ProtectingStreams.acquire();
 		for ( size_t i = 0; i < m_Playlist->GetCount(); i++ )
 		{
 			if ( m_Playlist->GetSongID( i ) == songid )
@@ -1439,7 +1440,7 @@ bool CmusikPlayer::FindNewIndex( int songid )
 				break;
 			}
 		}
-	}
+	m_ProtectingStreams.release();
 
 	return found;
 }

@@ -291,16 +291,6 @@
 					</Filter>
 				</Filter>
 				<Filter
-					Name="musikFileDialog"
-					Filter="">
-					<File
-						RelativePath=".\musikFileDialog.cpp">
-					</File>
-					<File
-						RelativePath=".\musikFileDialog.h">
-					</File>
-				</Filter>
-				<Filter
 					Name="musikEditInPlace"
 					Filter="">
 					<File
@@ -443,6 +433,16 @@
 							RelativePath=".\3rdparty\TreePropSheet.h">
 						</File>
 					</Filter>
+				</Filter>
+				<Filter
+					Name="musikFileDialog"
+					Filter="">
+					<File
+						RelativePath=".\musikFileDialog.cpp">
+					</File>
+					<File
+						RelativePath=".\musikFileDialog.h">
+					</File>
 				</Filter>
 			</Filter>
 			<Filter
