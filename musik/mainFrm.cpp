@@ -823,8 +823,18 @@ LRESULT CMainFrame::OnSelBoxEditCommit( WPARAM wParam, LPARAM lParam )
 		}
 		m_Library->EndTransaction();
 
+		delete playlist;
+
+		CmusikBatchRetag* params = new CmusikBatchRetag( m_Library, m_RemoveOldFnct, pSongInfoArray );
+		CmusikThread* thread = new CmusikThread();
+		m_Threads.push_back( thread );
+
+		thread->Start( (ACE_THR_FUNC)musikBatchRetagWorker, params );
+		
 		return 1L;
 	}
+	else
+		delete playlist;
 
 	return 0L;
 }

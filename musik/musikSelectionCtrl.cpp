@@ -596,6 +596,13 @@ void CmusikSelectionCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		GetItemRect( GetSelectionMark(), rcItem, LVIR_BOUNDS );
 		rcItem.left += 2;
 
+		if ( rcItem.top < 0 )
+		{
+			int height = rcItem.bottom - rcItem.top;
+			rcItem.top = 0 + 2;
+			rcItem.bottom = height + 2;
+		}
+
 		m_EditInPlace.EnableWindow( TRUE );
 		m_EditInPlace.MoveWindow( rcItem );
 		m_EditInPlace.SetFocus();
@@ -646,3 +653,5 @@ CStdString CmusikSelectionCtrl::GetEditCommitStr()
 {
 	return m_CommitStr;
 }
+
+///////////////////////////////////////////////////
