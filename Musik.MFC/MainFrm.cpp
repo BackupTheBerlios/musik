@@ -24,7 +24,7 @@ END_MESSAGE_MAP()
 
 CMainFrame::CMainFrame()
 {
-	// TODO: add member initialization code here
+	m_Split = false;
 }
 
 CMainFrame::~CMainFrame()
@@ -105,19 +105,37 @@ BOOL CMainFrame::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* pContext )
 		return FALSE;
 	}
 
-	if ( !m_MainSplit.CreateView( 0, 0, m_SourcesCtrl->GetWindow( NULL ), CSize( client_size.Width()/2, client_size.Height() ), pContext ) )
+	if ( !m_MainSplit.CreateView( 0, 0, RUNTIME_CLASS( CMusikSourcesCtrl ), CSize( client_size.Width()/2, client_size.Height() ), pContext ) )
 	{
 		MessageBox( "Error setting up the sources view. Please report this error to the Musik development team.", "Musik", MB_OK | MB_ICONERROR );
 		return FALSE;
 	}
-	/*
 
-	if ( !m_MainSplit.CreateView( 0, 0, RUNTIME_CLASS( CMusikPlaylistCtrl ), CSize( client_size.Width()/2, client_size.Height() ), pContext ) )
+	if ( !m_MainSplit.CreateView( 0, 1, RUNTIME_CLASS( CMusikPlaylistCtrl ), CSize( client_size.Width()/2, client_size.Height() ), pContext ) )
 	{
 		MessageBox( "Error setting up the playlist view. Please report this error to the Musik development team.", "Musik", MB_OK | MB_ICONERROR );
 		return FALSE;
 	}
-	*/
+
+	m_SourcesCtrl = m_MainSplit.GetPane( 0, 0 );
+	m_PlaylistCtrl = m_MainSplit.GetPane( 0, 1 );
+	m_Split = true;
 
 	return TRUE;
+}
+
+void CMainFrame::OnSize( UINT nType, int cx, int cy )
+{
+	CFrameWnd::OnSize( nType, cx, cy );
+	CRect client_size;
+	GetWindowRect( &client_size );
+
+	if ( m_Split && nType != SIZE_MINIMIZED )
+	{
+		m_MainSplit.SetRowInfo( 0, cy, 0 );
+		m_MainSplit.SetColumnInfo( 0, client_size.Width() / 2, 50 );
+		m_MainSplit.SetColumnInfo( 0, client_size.Width() / 2, 50 );
+
+		m_MainSplit.RecalcLayout();
+	}
 }

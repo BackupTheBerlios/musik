@@ -29,10 +29,10 @@ protected:
 public:
 
 private:
-	CMusikSourcesCtrl* m_SourcesCtrl;
-	//CMusikPlaylistCtrl m_PlaylistCtrl;
-
 	CSplitterWnd m_MainSplit;
+	CWnd* m_SourcesCtrl;
+	CWnd* m_PlaylistCtrl;
+	bool m_Split;
 
 protected:
 
@@ -52,6 +52,7 @@ public:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 	virtual BOOL OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
 	virtual BOOL OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* pContext );
+	virtual void OnSize( UINT nType, int cx, int cy );
 
 //-------------------------------------------------//
 //--- message maps								---//

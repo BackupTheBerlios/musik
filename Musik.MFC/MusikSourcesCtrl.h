@@ -2,8 +2,9 @@
 #define C_MUSIK_SOURCES_CTRL
 
 #include "stdafx.h"
+#include "afxcview.h"
 
-class CMusikSourcesCtrl : public CListCtrl
+class CMusikSourcesCtrl : public CListView
 {
 public:
 	CMusikSourcesCtrl();

@@ -2,8 +2,9 @@
 #define C_MUSIK_PLAYLIST_CTRL
 
 #include "stdafx.h"
+#include "afxcview.h"
 
-class CMusikPlaylistCtrl : public CListCtrl
+class CMusikPlaylistCtrl : public CListView
 {
 public:
 	CMusikPlaylistCtrl();
