@@ -3114,7 +3114,7 @@ void CMainFrame::GoFullScreen()
 		rcWnd.TopLeft().y + GetSystemMetrics( SM_CYBORDER ) + 1,
 		cx + 1,
 		cy + 1, 
-		SWP_NOZORDER ); 
+		NULL ); 
 
 	m_FullScreen = true;
 	m_GoingFullScreen = false;
@@ -3134,12 +3134,13 @@ void CMainFrame::RetFullScreen()
 		GetWindowLong( m_hWnd, GWL_STYLE ) | ( WS_CAPTION | WS_BORDER ) );
 
 	// restore window "always on top" status...
-	::SetWindowPos( m_hWnd, m_Prefs->IsAlwaysOnTop() ? HWND_TOPMOST : HWND_NOTOPMOST, 
+	::SetWindowPos( m_hWnd, 
+		m_Prefs->IsAlwaysOnTop() ? HWND_TOPMOST : HWND_NOTOPMOST, 
 		m_Prefs->GetDlgPos().x, 
 		m_Prefs->GetDlgPos().y, 
 		m_Prefs->GetDlgSize().cx,
 		m_Prefs->GetDlgSize().cy, 
-		SWP_NOZORDER ); 
+		NULL ); 
 
 	// set position
 	MoveWindow( CRect( m_Prefs->GetDlgPos(), m_Prefs->GetDlgSize() ) );
