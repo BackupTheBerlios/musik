@@ -255,6 +255,10 @@ void CmusikPrefs::LoadPrefs()
 	m_Crossfader_Enabled	= StringToBool( config->GetValue( "Crossfader", "Enabled", "1" ) );
 	m_Crossfader_Current	= StringToInt( config->GetValue( "Crossfader", "Set Name", "-1" ) );
 
+	// equalizer
+	m_Equalizer_Enabled		= StringToBool( config->GetValue( "Equalizer", "Enabled", "0" ) );
+	m_Equalizer_Current		= StringToInt( config->GetValue( "Equalizer", "Set Name", "-1" ) );
+
 	// dialog colors
 	MUSIK_COLOR_ACTIVECAPTION		= StringToCOLORREF( config->GetValue( "Dialog Colors", "Active Caption", "255,0,255" ) );
 	MUSIK_COLOR_CAPTIONTEXT			= StringToCOLORREF( config->GetValue( "Dialog Colors", "Active Caption Text", "255,0,255" ) );
@@ -303,6 +307,10 @@ void CmusikPrefs::SavePrefs()
 	// crossfader
 	config->SetValue( "Crossfader", "Enabled", BoolToString( m_Crossfader_Enabled ) );
 	config->SetValue( "Crossfader", "Set Name", IntToString( m_Crossfader_Current ) );	
+
+	// equalizer
+	config->SetValue( "Equalizer", "Enabled", BoolToString( m_Equalizer_Enabled ) );
+	config->SetValue( "Equalizer", "Set Name", IntToString( m_Equalizer_Current ) );
 
 	// dialog colors
 	config->SetValue( "Dialog Colors", "Active Caption", COLORREFToString( MUSIK_COLOR_ACTIVECAPTION ) );

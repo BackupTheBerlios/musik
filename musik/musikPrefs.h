@@ -84,6 +84,18 @@ public:
 	int  GetCrossfader								()					{ return m_Crossfader_Current; }
 	bool IsCrossfaderEnabled						()					{ return m_Crossfader_Enabled; }
 
+	// crossfader set
+	void SetCrossfader								( int n )			{ m_Crossfader_Current = n; }
+	void SetCrossfaderEnabled						( bool b )			{ m_Crossfader_Enabled = b; }
+
+	// equalizer get
+	int GetEqualizer								()					{ return m_Equalizer_Current; }
+	bool IsEqualizerEnabled							()					{ return m_Equalizer_Enabled; }
+
+	// equalizer set
+	void SetEqualizer								( int n )			{ m_Equalizer_Current = n; }
+	void SetEqualizerEnabled						( bool b )			{ m_Equalizer_Enabled = b; }
+
 	COLORREF MUSIK_COLOR_ACTIVECAPTION;
 	COLORREF MUSIK_COLOR_CAPTIONTEXT;
 	COLORREF MUSIK_COLOR_INACTIVECAPTION;
@@ -129,6 +141,10 @@ private:
 	// crossfader
 	int m_Crossfader_Current;
 	bool m_Crossfader_Enabled;
+
+	// equalizer
+	int m_Equalizer_Current;
+	bool m_Equalizer_Enabled;
 
 	// theme aware stuff
 	bool m_ActiveCaptionDef;

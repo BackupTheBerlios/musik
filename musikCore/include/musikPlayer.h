@@ -132,12 +132,13 @@ public:
 	void CleanPlaylist();
 
 	// crossfader stuff
-	void InitCrossfader();
-	void CleanCrossfader();
 	int GetFadeType(){ return m_FadeType; }
 	CmusikCrossfader* GetCrossfader(){ return m_Crossfader; }
 	void FinishCrossfade();
-	void SetCrossfader( CmusikCrossfader fader, bool force_init = true );
+	void SetCrossfader( CmusikCrossfader fader );
+
+	// equalizer stuff
+	CmusikEqualizer* GetEqualizer(){ return m_EQ; }
 
 	// equalizer stuff
 	void InitEQ_DSP();
@@ -217,13 +218,6 @@ private:
 	void StopSound();
 	int  StartSound( int device, int driver, int rate, int channels );
 
-	// equalizer
-	CmusikEqualizer* m_EQ;
-	
-	// crossfader
-	CmusikCrossfader* m_Crossfader;
-	int m_FadeType;
-
 	// status flags
 	bool m_IsPlaying;
 	bool m_IsPaused;
@@ -262,8 +256,18 @@ private:
 
 	// internal functions used to initialize
 	// and free any equalizer stuff used
+	CmusikEqualizer* m_EQ;
+
 	void InitEqualizer();
 	void CleanEqualizer();
+
+	// internal functions to maintain the
+	// current set of crossfader prefs...
+	CmusikCrossfader* m_Crossfader;
+	int m_FadeType;
+
+	void InitCrossfader();
+	void CleanCrossfader();
 
 	// main thread and mutex
 	CmusikThread* m_pThread;

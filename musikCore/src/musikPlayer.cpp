@@ -244,6 +244,8 @@ void* F_CALLBACKAPI CmusikPlayer::musikEQCallback( void* originalbuffer, void *n
 	// be used to process the sample
 	CmusikEqualizer* ptrEQ = (CmusikEqualizer*)param;
 
+	ptrEQ->GetSongEq(  10 );
+
 	// two channel ( stereo ), 16 bit sound
 	ptrEQ->ProcessDSP( newbuffer, length, 2, 16 );
 	return newbuffer;
@@ -358,8 +360,11 @@ void CmusikPlayer::InitEqualizer()
 
 void CmusikPlayer::CleanEqualizer()
 {
-	if ( m_EQ ) 
+	if ( m_EQ )
+	{
 		delete m_EQ;
+		m_EQ = NULL;
+	}	
 }
 
 ///////////////////////////////////////////////////
@@ -686,12 +691,15 @@ void CmusikPlayer::InitEQ_DSP()
 {
 	if ( !m_EQ_DSP )
 	{
-		if ( m_EQ )
-		{
-			void* ptrEQ = m_EQ;
-			m_EQ_DSP = FSOUND_DSP_Create( &musikEQCallback, FSOUND_DSP_DEFAULTPRIORITY_USER, (int)ptrEQ );	
-		}
+		if ( !m_EQ )
+			InitEqualizer();
+
+		void* ptrEQ = m_EQ;
+		m_EQ_DSP = FSOUND_DSP_Create( &musikEQCallback, FSOUND_DSP_DEFAULTPRIORITY_USER, (int)ptrEQ );
+		return;
 	}
+
+	TRACE0( "Equalizer failed to initialize becuase the DSP callback is already active.\n" );
 }
 
 ///////////////////////////////////////////////////
@@ -839,7 +847,7 @@ void CmusikPlayer::SetMaxVolume( int n, bool set_now )
 
 ///////////////////////////////////////////////////
 
-void CmusikPlayer::SetCrossfader( CmusikCrossfader fader, bool force_init )
+void CmusikPlayer::SetCrossfader( CmusikCrossfader fader )
 {
 	CleanCrossfader();
 
@@ -861,3 +869,4 @@ void CmusikPlayer::CleanPlaylist()
 }
 
 ///////////////////////////////////////////////////
+

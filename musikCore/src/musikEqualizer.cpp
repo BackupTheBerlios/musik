@@ -62,6 +62,11 @@ static			paramlist			paramroot;
 CmusikEqualizer::CmusikEqualizer( CmusikLibrary* library )
 {
 	m_Library = library;
+
+	// if the equalizer is active,
+	// create the table with the correct
+	// band info...
+	InitEqualizer();
 }
 
 ///////////////////////////////////////////////////
@@ -73,7 +78,7 @@ CmusikEqualizer::~CmusikEqualizer()
 
 ///////////////////////////////////////////////////
 
-void CmusikEqualizer::Set( int songid )
+void CmusikEqualizer::GetSongEq( int songid )
 {
 
 }
@@ -91,6 +96,8 @@ void CmusikEqualizer::InitEqualizer()
 {
 	// 14 is the magic number
 	equ_init( 14 ); 
+
+	// MUST be called before CmusikEqualizer::ProcessDSP()
 	equ_makeTable( m_EQ.m_Left, m_EQ.m_Right, &paramroot, 44100 );
 }
 

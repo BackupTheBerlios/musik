@@ -59,16 +59,22 @@ public:
 	CmusikEqualizer( CmusikLibrary* library );
 	~CmusikEqualizer();
 
-	void Set( int songid );
+	void GetSongEq( int songid );
 	void SetLibrary( CmusikLibrary* library );
 
-	void InitEqualizer();
-	void CleanEqualizer();
 	void ProcessDSP( void* buffer, int length, int channels, int bitspersample );
 
 private:
 
+	// internal functions for initializing and
+	// cleaning the eq settings...
+	void InitEqualizer();
+	void CleanEqualizer();
+
 	CmusikEQSettings m_EQ;
+
+	// pointer to the library that contains song
+	// and equalizer info
 	CmusikLibrary* m_Library;
 };
 

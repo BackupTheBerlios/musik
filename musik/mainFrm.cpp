@@ -50,6 +50,7 @@
 #include "../musikCore/include/musikFilename.h"
 #include "../musikCore/include/musikBatchAdd.h"
 #include "../musikCore/include/musikCrossfader.h"
+#include "../musikCore/include/musikEQSettings.h"
 
 #include <io.h>
 #include <Direct.h>
@@ -186,9 +187,9 @@ void CMainFrame::Initmusik()
 	m_Library		= new CmusikLibrary( ( CStdString )m_Database );
 	m_Prefs			= new CmusikPrefs( m_PrefsIni );
 	m_Player		= new CmusikPlayer( m_NewSong, m_Library );
-	m_Player->InitSound( m_Prefs->GetPlayerDevice(), m_Prefs->GetPlayerDriver(), m_Prefs->GetPlayerRate(), m_Prefs->GetPlayerMaxChannels() );
 	
-
+	// give player a crossfader, it will take
+	// care of loading equalizer settings itself...
 	if ( m_Prefs->IsCrossfaderEnabled() )
 	{
 		int nFader = m_Prefs->GetCrossfader();
@@ -201,6 +202,11 @@ void CMainFrame::Initmusik()
 			m_Player->SetCrossfader( fade );
 		}
 	}
+
+	m_Player->InitSound( m_Prefs->GetPlayerDevice(), m_Prefs->GetPlayerDriver(), m_Prefs->GetPlayerRate(), m_Prefs->GetPlayerMaxChannels() );
+
+	if ( m_Prefs->IsEqualizerEnabled() )
+		m_Player->EnableEQ( true );
 }
 
 ///////////////////////////////////////////////////
