@@ -52,8 +52,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 0,3,0,1
- PRODUCTVERSION 0,3,0,1
+ FILEVERSION 0,3,1,0
+ PRODUCTVERSION 0,3,1,0
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -70,12 +70,12 @@ BEGIN
         BEGIN
             VALUE "Comments", "License for most of the code is BSD License. Source code is available from musik.berlios.de"
             VALUE "FileDescription", "wxMusik Application"
-            VALUE "FileVersion", "0, 3, 0, 1"
+            VALUE "FileVersion", "0, 3, 1, 0"
             VALUE "InternalName", "wxMusik"
             VALUE "LegalCopyright", "Copyright (C) 2004"
             VALUE "OriginalFilename", "wxMusik.exe"
             VALUE "ProductName", "wx Musik Application"
-            VALUE "ProductVersion", "0, 3, 0, 1"
+            VALUE "ProductVersion", "0, 3, 1, 0"
         END
     END
     BLOCK "VarFileInfo"

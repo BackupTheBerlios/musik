@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=wxMusik
-AppVerName=wxMusik 0.3.0
+AppVerName=wxMusik 0.3.1
 AppPublisherURL=http://musik.berlios.de
 AppSupportURL=http://musik.berlios.de
 AppUpdatesURL=http://musik.berlios.de
@@ -12,8 +12,8 @@ DefaultGroupName=wxMusik
 AllowNoIcons=true
 LicenseFile=license.txt
 
-OutputBaseFilename=wxMusik_v0.3.0.1_Setup
-VersionInfoVersion=0.3.0.1
+OutputBaseFilename=wxMusik_v0.3.1.0_Setup
+VersionInfoVersion=0.3.1.0
 VersionInfoDescription=A music player and library application
 Compression=lzma/ultra
 ShowLanguageDialog=yes
@@ -25,6 +25,8 @@ DisableStartupPrompt=false
 DisableFinishedPage=true
 FlatComponentsList=false
 ShowTasksTreeLines=true
+ChangesAssociations=true
+PrivilegesRequired=poweruser
 [Tasks]
 ; NOTE: The following entry contains English phrases ("Create a desktop icon" and "Additional icons"). You are free to translate them into another language if required.
 Name: desktopicon; Description: Create a &desktop icon; GroupDescription: Additional icons:
@@ -32,7 +34,7 @@ Name: desktopicon; Description: Create a &desktop icon; GroupDescription: Additi
 Name: quicklaunchicon; Description: Create a &Quick Launch icon; GroupDescription: Additional icons:; Flags: unchecked
 
 [Files]
-Source: _release\wxMusik.exe; DestDir: {app}; Flags: ignoreversion
+Source: _release\wxMusik.exe; DestDir: {app}; Flags: promptifolder; MinVersion: 4.1.1998,0; OnlyBelowVersion: 0,4.0.1381
 Source: changelog.txt; DestDir: {app}; Flags: ignoreversion
 Source: _release\fmod.dll; DestDir: {app}; Flags: ignoreversion
 Source: license.txt; DestDir: {app}; Flags: ignoreversion
@@ -45,6 +47,7 @@ Source: contrib\playlists\*.mpd; DestDir: {userappdata}\..\.Musik\playlists; Fla
 Source: contrib\playlists\*.mpu; DestDir: {userappdata}\..\.Musik\playlists; Flags: overwritereadonly; Components: Radio_Channels
 Source: contrib\playlists\*.mpu; DestDir: {app}\..\.Musik\playlists; Flags: overwritereadonly; Components: Radio_Channels_win9x
 Source: contrib\playlists\*.mpd; DestDir: {app}\..\.Musik\playlists; Flags: overwritereadonly; Components: Dynamic_Playlist_Examples_win9x
+Source: Release Unicode\wxMusik.exe; DestDir: {app}; MinVersion: 0,4.0.1381sp6; Flags: promptifolder
 [Icons]
 Name: {group}\wxMusik; Filename: {app}\wxMusik.exe
 ; NOTE: The following entry contains an English phrase ("Uninstall"). You are free to translate it into another language if required.
@@ -64,3 +67,12 @@ Name: Dynamic_Playlist_Examples_win9x; Description: Examples of Dynamic Playlist
 Name: {app}\Musik.exe; Type: files
 [UninstallDelete]
 Name: {userappdata}\..\.Musik; Type: filesandordirs; MinVersion: 0,4.0.1381
+[Registry]
+Root: HKCR; SubKey: .mp3; ValueType: string; ValueData: Mp3 File; Flags: uninsdeletekey
+Root: HKCR; SubKey: Mp3 File; ValueType: string; ValueData: Mp3 File; Flags: uninsdeletekey
+Root: HKCR; SubKey: Mp3 File\Shell\Open\Command; ValueType: string; ValueData: """{app}\wxMusik.exe"" ""%1"""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: Mp3 File\DefaultIcon; ValueType: string; ValueData: {app}\wxMusik.exe,-1; Flags: uninsdeletevalue
+Root: HKCR; SubKey: .ogg; ValueType: string; ValueData: Ogg File; Flags: uninsdeletekey
+Root: HKCR; SubKey: Ogg File; ValueType: string; ValueData: Ogg File; Flags: uninsdeletekey
+Root: HKCR; SubKey: Ogg File\Shell\Open\Command; ValueType: string; ValueData: """{app}\wxMusik.exe"" ""%1"""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: Ogg File\DefaultIcon; ValueType: string; ValueData: {app}\wxMusik.exe,-1; Flags: uninsdeletevalue

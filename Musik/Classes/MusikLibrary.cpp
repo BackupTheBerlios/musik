@@ -521,13 +521,8 @@ bool CMusikLibrary::GetMP3MetaData( CSongMetaData & MetaData )
 		if(MetaData.Genre.IsEmpty())
             MetaData.Genre.Attach	( ID3_GetGenre	( &id3Tag ));
 
-		char *szTrack = ID3_GetTrack( &id3Tag );
-		if(szTrack)
-		{
-			MetaData.nTracknum = atol(szTrack);
-			ID3_FreeString(szTrack);
-		}
-
+		MetaData.nTracknum =ID3_GetTrackNum( &id3Tag );
+	
 		MetaData.Artist = ConvFromISO8859_1ToUTF8(MetaData.Artist);
 		MetaData.Title = ConvFromISO8859_1ToUTF8(MetaData.Title);
 		MetaData.Album = ConvFromISO8859_1ToUTF8(MetaData.Album);
