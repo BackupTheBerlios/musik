@@ -432,10 +432,9 @@ void CSourcesListBox::Save()
 	if ( wxFileExists( MUSIK_SOURCES_FILENAME ) )
 		wxRemoveFile( MUSIK_SOURCES_FILENAME );
 	
-	wxTextFile Out;
-	Out.Create( MUSIK_SOURCES_FILENAME );
-	Out.Open();
-	if ( Out.IsOpened() )
+	wxTextFile Out( MUSIK_SOURCES_FILENAME );
+	Out.Create();
+	if ( Out.Open() )
 	{
 		for ( size_t i = 0; i < g_SourcesList.GetCount(); i++ )
 			Out.AddLine( g_SourcesList.Item( i ) );
