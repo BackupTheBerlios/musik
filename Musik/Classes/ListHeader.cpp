@@ -29,7 +29,7 @@ CListHeader::CListHeader( wxPanel *pParent, wxString sCaption )
 	
 	#ifdef __WXGTK__
 		if ( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNSHADOW ) == wxSystemSettings::GetColour( wxSYS_COLOUR_GRAYTEXT ) )
-			background.Set( background.Red() + 20, background.Green() + 20, background.Blue() + 20 );
+			background.Set( background.Red() - 30, background.Green() - 30, background.Blue() - 30 );
 	#endif
 	
 	wxColour white = wxColour( 255, 255, 255 );

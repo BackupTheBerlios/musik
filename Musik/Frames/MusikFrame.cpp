@@ -294,11 +294,11 @@ void MusikFrame::GetFonts()
 		g_fntInfo = g_fntTime;
 
 		g_fntRegular.SetFaceName( sFace );
-		g_fntRegular.SetPointSize( 10 );
+		g_fntRegular.SetPointSize( 8 );
 
 		g_fntBold.SetFaceName	( sFace );
 		g_fntBold.SetWeight		( wxBOLD );
-		g_fntBold.SetPointSize	( 10 );
+		g_fntBold.SetPointSize	( 8 );
 	#endif
 
 }
