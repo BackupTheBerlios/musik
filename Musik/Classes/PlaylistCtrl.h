@@ -65,7 +65,8 @@ public:
 	void ShowMenu		( wxCommandEvent&	WXUNUSED(event) );
 	void BeginDrag		( wxEvent&			WXUNUSED(event)	);
 	void TranslateKeys	( wxKeyEvent&		pEvent			);
-	void DragCol		( wxListEvent&		event			);
+	void BeginDragCol	( wxListEvent&		event			);
+	void EndDragCol		( wxListEvent&		event			);
 	void PlaySel		( wxListEvent&		WXUNUSED(event)	);
 
 	//------------------------//

@@ -51,7 +51,7 @@ MusikFrame::MusikFrame()
 	g_MusikFrame = this;
 
 	//--- prevent destroying saved placement info while constructing the frame ---//
-	m_DisablePlacement = true;
+	g_DisablePlacement = true;
 
 	wxImage::AddHandler( new wxXPMHandler );
 
@@ -149,7 +149,7 @@ MusikFrame::MusikFrame()
 	SetSizer/*AndFit*/( vsTopBottom );
 
 	//--- restore placement or use defaults ---//
-	m_DisablePlacement = false;
+	g_DisablePlacement = false;
 
 	//--- initialize playmode, seed randomness ---//
 	srand( wxGetLocalTime() );

@@ -526,30 +526,30 @@ void MusikPrefsFrame::LoadPrefs()
 	//---------------------------//
 	//--- options -> playlist ---//
 	//---------------------------//
-	chkRatingEnable->SetValue			( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_RATING] );
-	chkTrackEnable->SetValue			( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TRACK] );
-	chkTitleEnable->SetValue			( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TITLE] );
-	chkArtistEnable->SetValue			( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_ARTIST] );
-	chkAlbumEnable->SetValue			( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_ALBUM] );
-	chkYearEnable->SetValue				( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_YEAR] );
-	chkGenreEnable->SetValue			( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_GENRE] );
-	chkTimesPlayedEnable->SetValue		( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TIMES_PLAYED] );
-	chkLastPlayedEnable->SetValue		( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_LAST_PLAYED] );
-	chkTimeEnable->SetValue				( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TIME] );
-	chkBitrateEnable->SetValue			( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_BITRATE] );
-	chkFilenameEnable->SetValue			( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_FILENAME] );		
+	chkRatingEnable->SetValue			( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_RATING]			);
+	chkTrackEnable->SetValue			( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TRACK]			);
+	chkTitleEnable->SetValue			( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TITLE]			);
+	chkArtistEnable->SetValue			( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_ARTIST]			);
+	chkAlbumEnable->SetValue			( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_ALBUM]			);
+	chkYearEnable->SetValue				( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_YEAR]			);
+	chkGenreEnable->SetValue			( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_GENRE]			);
+	chkTimesPlayedEnable->SetValue		( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TIMES_PLAYED]	);
+	chkLastPlayedEnable->SetValue		( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_LAST_PLAYED]		);
+	chkTimeEnable->SetValue				( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TIME]			);
+	chkBitrateEnable->SetValue			( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_BITRATE]			);
+	chkFilenameEnable->SetValue			( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_FILENAME]		);		
 
-	cmbTrackStatic->SetSelection		( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TRACK] );
-	cmbTitleStatic->SetSelection		( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TITLE] );
-	cmbArtistStatic->SetSelection		( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_ARTIST] );
-	cmbAlbumStatic->SetSelection		( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_ALBUM] );
-	cmbYearStatic->SetSelection			( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_YEAR] );
-	cmbGenreStatic->SetSelection		( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_GENRE] );
-	cmbTimesPlayedStatic->SetSelection	( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TIMES_PLAYED] );
-	cmbLastPlayedStatic->SetSelection	( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_LAST_PLAYED] );
-	cmbTimeStatic->SetSelection			( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TIME] );
-	cmbBitrateStatic->SetSelection		( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_BITRATE] );
-	cmbFilenameStatic->SetSelection		( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_FILENAME] );
+	cmbTrackStatic->SetSelection		( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TRACK]			);
+	cmbTitleStatic->SetSelection		( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TITLE]			);
+	cmbArtistStatic->SetSelection		( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_ARTIST]			);
+	cmbAlbumStatic->SetSelection		( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_ALBUM]			);
+	cmbYearStatic->SetSelection			( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_YEAR]			);
+	cmbGenreStatic->SetSelection		( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_GENRE]			);
+	cmbTimesPlayedStatic->SetSelection	( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TIMES_PLAYED]	);
+	cmbLastPlayedStatic->SetSelection	( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_LAST_PLAYED]	);
+	cmbTimeStatic->SetSelection			( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TIME]			);
+	cmbBitrateStatic->SetSelection		( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_BITRATE]		);
+	cmbFilenameStatic->SetSelection		( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_FILENAME]		);
 	
 
 	//--------------------------//

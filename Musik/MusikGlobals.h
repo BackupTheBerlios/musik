@@ -314,6 +314,7 @@ extern bool g_FocusDone;
 extern bool g_PlaylistChanged;
 extern bool g_FirstRun;
 extern bool g_TimeSeeking;
+extern bool g_DisablePlacement;
 
 //-----------------------//
 //--- main menu stuff ---//

@@ -140,3 +140,4 @@ bool g_DragInProg;
 bool g_PlaylistChanged;
 bool g_FirstRun;
 bool g_TimeSeeking;
+bool g_DisablePlacement;

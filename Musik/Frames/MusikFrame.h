@@ -163,7 +163,6 @@ private:
 
 
 	wxString m_customQuery;
-	bool m_DisablePlacement;
 };
 
 #endif

@@ -73,20 +73,20 @@ END_EVENT_TABLE()
 //------------------------------------------//
 void MusikFrame::OnMove ( wxCommandEvent& WXUNUSED(event) )	
 { 
-	if ( !m_DisablePlacement )
+	if ( !g_DisablePlacement )
 		g_Prefs.sFramePlacement = GetFramePlacement( this );
 }
 
 void MusikFrame::OnMaximize( wxMaximizeEvent& event )
 {
-	if ( !m_DisablePlacement )
+	if ( !g_DisablePlacement )
 		g_Prefs.sFramePlacement = GetFramePlacement( this );
 	event.Skip();
 }
 
 void MusikFrame::OnIconize( wxIconizeEvent& event )
 {
-	if ( !m_DisablePlacement )
+	if ( !g_DisablePlacement )
 		g_Prefs.sFramePlacement = GetFramePlacement( this );
 	event.Skip();
 }
@@ -95,7 +95,7 @@ void MusikFrame::OnSize	( wxCommandEvent& WXUNUSED(event) )
 {
 	this->Layout();
 
-	if ( !m_DisablePlacement )
+	if ( !g_DisablePlacement )
 		g_Prefs.sFramePlacement = GetFramePlacement( this );
 
 	g_PlaylistCtrl->RescaleColumns();

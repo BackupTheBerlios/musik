@@ -32,7 +32,8 @@ BEGIN_EVENT_TABLE(CPlaylistCtrl, wxListCtrl)
 	EVT_LIST_ITEM_ACTIVATED		( MUSIK_PLAYLIST,											CPlaylistCtrl::PlaySel			)	
 	EVT_LIST_BEGIN_DRAG			( MUSIK_PLAYLIST,											CPlaylistCtrl::BeginDrag		)
 	EVT_LIST_ITEM_SELECTED		( MUSIK_PLAYLIST,											CPlaylistCtrl::UpdateSel		)
-	EVT_LIST_COL_BEGIN_DRAG		( MUSIK_PLAYLIST,											CPlaylistCtrl::DragCol			)
+	EVT_LIST_COL_BEGIN_DRAG		( MUSIK_PLAYLIST,											CPlaylistCtrl::BeginDragCol		)
+	EVT_LIST_COL_END_DRAG		( MUSIK_PLAYLIST,											CPlaylistCtrl::EndDragCol		)
 	EVT_MENU					( MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FROM_PLAYLIST,		CPlaylistCtrl::OnDelSel			)
 	EVT_MENU					( MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FILES,				CPlaylistCtrl::OnDelFiles		)
 	EVT_MENU					( MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FROM_DB,				CPlaylistCtrl::OnDelFilesDB		)
@@ -242,23 +243,41 @@ CPlaylistCtrl::~CPlaylistCtrl()
 
 void CPlaylistCtrl::SaveColumns()
 {
-	for( int i = 0; i < NPLAYLISTCOLUMNS; i++ )
-	{
-		if( GetColumnWidth( i ) == 0 )
-		{
-			//-------------------------------------------------------------//
-			//--- special treatment of 0 columns, if column size is 0	---//
-			//--- (because its display is suppressed) and its value is ---//
-			//--- not stored already, set it to 50, else keep the		---//
-			//--- stored value											---//
-			//-------------------------------------------------------------//
-			if( g_Prefs.nPlaylistColumnSize[i] == 0 )
-				g_Prefs.nPlaylistColumnSize[i] = 50;
+	/*
+	//---------------------------------------------------------//
+	//--- get the total width of all the columns in pixels.	---//
+	//--- this value will be used to calculate dynamic		---//
+	//--- columns.											---//
+	//---------------------------------------------------------//
+	wxSize client_size = GetClientSize();
 
-			continue; //--- go to next item ---//
+	size_t nCurrCol;
+	float f_Pos;
+	int n_Pos;
+	for ( size_t i = 0; i < m_ColumnOrder.GetCount(); i++ )
+	{
+		nCurrCol = m_ColumnOrder.Item( i );
+		
+		//-----------------------------------------//
+		//--- if this column is a static type	---//
+		//-----------------------------------------//
+		if ( g_Prefs.nPlaylistColumnDynamic[nCurrCol] == 0 )
+			g_Prefs.nPlaylistColumnSize[nCurrCol] = GetColumnWidth( i );
+
+		//-----------------------------------------//
+		//--- if this column is a dynamic type	---//
+		//-----------------------------------------//
+		else
+		{
+			f_Pos = (float)GetColumnWidth( i ) / (float)client_size.GetWidth() * 100.0f;
+			n_Pos = (int)f_Pos;
+			if ( n_Pos < 1 )
+				n_Pos = 1;
+
+			g_Prefs.nPlaylistColumnSize[nCurrCol] = n_Pos;
 		}
-		g_Prefs.nPlaylistColumnSize[i] = GetColumnWidth(i);
 	}
+	*/
 }
 
 //--------------//
@@ -323,10 +342,18 @@ void CPlaylistCtrl::BeginDrag( wxEvent& WXUNUSED(event) )
 	g_DragInProg = false;
 }
 
-void CPlaylistCtrl::DragCol( wxListEvent& event )
+void CPlaylistCtrl::BeginDragCol( wxListEvent& event )
 {
 	if ( event.GetColumn() == 0 )
 		event.Veto();
+}
+
+void CPlaylistCtrl::EndDragCol( wxListEvent& event )
+{
+	if ( event.GetColumn() == 0 )
+		event.Veto();
+
+	SaveColumns();
 }
 
 void CPlaylistCtrl::PlaySel( wxListEvent& WXUNUSED(event) )
@@ -748,52 +775,82 @@ void CPlaylistCtrl::Update( bool bSelFirst )
 
 void CPlaylistCtrl::RescaleColumns()
 {
-/*+++++++++++++ do nothing, user sets column width	+++++++++++++++
+	if ( g_DisablePlacement )
+		return;
+
+	//-------------------------------------------------//
+	//--- this will rescale any "dynamic" columns	---//
+	//-------------------------------------------------//
 	Freeze();
 
+	//-------------------------------------------------//
+	//--- size of the client area.					---//
+	//-------------------------------------------------//
 	int nWidth, nHeight;
 	GetClientSize( &nWidth, &nHeight );
-	//---  we deem these first columns to be the  ---//
-	//--- important ones which are always visible ---//
-	if ( g_Prefs.nExtendedPlaylist == 0 )
-	{
-		int nRating = 0;
-		if ( g_Prefs.nShowRatings == 1 )
-			nRating	= 50;
+	size_t nOrigWidth		= nWidth;
+	size_t nStaticWidth		= 0;
+	size_t nDynamicWidth	= 0;
+	size_t nCurrItem;
 
-		int nTrack  = 50;
-		int nTime   = 50;
-		nWidth -= ( nTrack + nTime + nRating );
-		int nTitle  = (int)( nWidth * ( 0.4 ) );
-		int nArtist = (int)( nWidth * ( 0.2 ) );
-		int nAlbum  = (int)( nWidth * ( 0.2 ) );
-		int nGenre  = nWidth - ( nTitle + nArtist + nAlbum );
-		
-		#ifdef __WXGTK__
-			nGenre -= wxSystemSettings::GetMetric(wxSYS_HSCROLL_Y);	
-		#endif 
-		
-		SetColumnWidth( 0, nRating	);
-		SetColumnWidth( 1, nTitle	);
-		SetColumnWidth( 2, nTrack	);
-		SetColumnWidth( 3, nTime	);
-		SetColumnWidth( 4, nArtist	);
-		SetColumnWidth( 5, nAlbum	);
-		SetColumnWidth( 6, nGenre	);
+	//-------------------------------------------------//
+    //--- find the size of all the static members	---//
+	//-------------------------------------------------//
+	for ( size_t i = 0; i < m_ColumnOrder.GetCount(); i++ )
+	{
+		nCurrItem = m_ColumnOrder.Item( i );
+		if ( g_Prefs.nPlaylistColumnDynamic[nCurrItem] == 0 )
+			nStaticWidth += GetColumnWidth( i );
+	}
+
+	//-------------------------------------------------//
+	//--- window width - static width = remaining	---//
+	//--- client area for the dynamic items.		---//
+	//-------------------------------------------------//
+	#ifdef __WXGTK__
+		nStaticWidth -= wxSystemSettings::GetMetric(wxSYS_HSCROLL_Y);	
+	#endif 
+	nWidth -= nStaticWidth;
+
+	//-------------------------------------------------//
+	//--- calculate an array of dynamic widths		---//
+	//--- based on the remaining client area.		---//
+	//-------------------------------------------------//
+	float f_Per;
+	for ( size_t i = 0; i < m_ColumnOrder.GetCount(); i++ )
+	{
+		nCurrItem = m_ColumnOrder.Item( i );
+
+		//-------------------------//
+		//--- set static size	---//
+		//-------------------------//
+		if ( g_Prefs.nPlaylistColumnDynamic[nCurrItem] == 0 )
+			SetColumnWidth( i, g_Prefs.nPlaylistColumnSize[nCurrItem] );
+
+		//-------------------------//
+		//--- set dynamic size	---//
+		//-------------------------//
+		else
+		{
+			f_Per = (float)g_Prefs.nPlaylistColumnSize[nCurrItem] / 100.0f;
+			f_Per *= nWidth;
+			nDynamicWidth += (int)f_Per;
+			SetColumnWidth( i, (int)f_Per );
+		}
 	}
 	
-	//--- the remaining ones you have to scroll ---//
-	//---       to see. this is temporary.      ---//
-	if ( g_Prefs.nExtendedPlaylist )
-	{
-		SetColumnWidth( 7, 50		);
-		SetColumnWidth( 8, 90       );
-		SetColumnWidth( 9, 110      );
-	}
+	//-------------------------------------------------//
+	//--- remaining pixels, that may have been		---//
+	//--- lost by integer division.					---//
+	//-------------------------------------------------//
+	size_t nOverflow = nOrigWidth - ( nStaticWidth + nDynamicWidth );
+	SetColumnWidth( nCurrItem, nOverflow );
 
+	//-------------------------------------------------//
+	//--- make sure window is properly refreshed.	---//
+	//-------------------------------------------------//
 	Thaw();
 	Refresh();
-*/
 }
 
 void CPlaylistCtrl::ResetColumns( bool update )
@@ -819,31 +876,11 @@ void CPlaylistCtrl::ResetColumns( bool update )
 	for ( size_t i = 0; i < m_ColumnOrder.GetCount(); i++ )
 	{
 		nCurrType = m_ColumnOrder.Item( i );
-		InsertColumn( i, g_PlaylistColumnLabels[nCurrType], g_PlaylistColumnAlign[nCurrType], g_Prefs.nPlaylistColumnSize[nCurrType] );
+		InsertColumn( i, g_PlaylistColumnLabels[nCurrType], g_PlaylistColumnAlign[nCurrType], 50 );
 	}
-	
-/*
-	
-	bool bUpdateNeeded = false;
 
-	if( cntColumns == 0 )
-	{
-		InsertColumn( PLAYLISTCOLUMN_RATING,	_( "Rating" ),		wxLIST_FORMAT_CENTER,	g_Prefs.nPlaylistColumnSize[PLAYLISTCOLUMN_RATING]	);
-		InsertColumn( PLAYLISTCOLUMN_TITLE,		_( "Title" ),		wxLIST_FORMAT_LEFT,		g_Prefs.nPlaylistColumnSize[PLAYLISTCOLUMN_TITLE]	);
-		InsertColumn( PLAYLISTCOLUMN_TRACK,		_( "Track" ),		wxLIST_FORMAT_RIGHT,	g_Prefs.nPlaylistColumnSize[PLAYLISTCOLUMN_TRACK]	);
-		InsertColumn( PLAYLISTCOLUMN_TIME,		_( "Time" ),		wxLIST_FORMAT_RIGHT,	g_Prefs.nPlaylistColumnSize[PLAYLISTCOLUMN_TIME]	);
-		InsertColumn( PLAYLISTCOLUMN_ARTIST,	_( "Artist" ),		wxLIST_FORMAT_LEFT,		g_Prefs.nPlaylistColumnSize[PLAYLISTCOLUMN_ARTIST]	);
-		InsertColumn( PLAYLISTCOLUMN_ALBUM,		_( "Album" ),		wxLIST_FORMAT_LEFT,		g_Prefs.nPlaylistColumnSize[PLAYLISTCOLUMN_ALBUM]	);
-		InsertColumn( PLAYLISTCOLUMN_GENRE,		_( "Genre" ),		wxLIST_FORMAT_LEFT,		g_Prefs.nPlaylistColumnSize[PLAYLISTCOLUMN_GENRE]	);
-
-		bUpdateNeeded = true;
-	}
-	
-	SetColumnWidth( PLAYLISTCOLUMN_RATING, g_Prefs.nShowRatings ? g_Prefs.nPlaylistColumnSize[PLAYLISTCOLUMN_RATING]: 0);
-
-	if ( update && bUpdateNeeded )
+	if ( update )
 		Update();
-*/
 }
 
 void CPlaylistCtrl::RateSel( int nVal )
