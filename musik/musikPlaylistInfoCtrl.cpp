@@ -226,7 +226,7 @@ void CmusikPlaylistInfoCtrl::DrawEQ( HDC hdc )
 
     // we're only going to work with the lower frequencies (0 - 6.5khz) because the higher
 	// ones don't really show much
-    for ( int x = 0; x < VIZ_WIDTH; x++ )
+    for ( int x = 0; x < VIZ_WIDTH-1; x++ )
     {
 		// get the "height" of the sample
         int sample_y = min( (int)(spectrum[x] * 4.0f * (float)VIZ_HEIGHT), (VIZ_HEIGHT - 1) );
