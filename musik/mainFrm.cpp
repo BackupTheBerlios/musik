@@ -157,7 +157,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_COMMAND(ID_UNSYNCHRONIZEDTAGS_VIEW, OnUnsynchronizedtagsView)
 	ON_COMMAND(ID_UNSYNCHRONIZEDTAGS_WRITETOFILE, OnUnsynchronizedtagsWritetofile)
 	ON_COMMAND(ID_UNSYNCHRONIZEDTAGS_FINALIZEFORDATABASEONLY, OnUnsynchronizedtagsFinalizefordatabaseonly)
-	ON_COMMAND(ID_VIEW_CROSSFADER, OnViewCrossfader)
 	ON_COMMAND(ID_VIEW_EQUALIZER, OnViewEqualizer)
 	ON_COMMAND(ID_FILE_SYNCHRONIZEDDIRECTORIES, OnFileSynchronizeddirectories)
 	ON_COMMAND(ID_VIEW_RESETINTERFACETODEFAULT, OnViewResetinterfacetodefault)
@@ -183,7 +182,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_UPDATE_COMMAND_UI(ID_PLAYBACKMODE_REPEATSINGLE, OnUpdatePlaybackmodeRepeatsingle)
 	ON_UPDATE_COMMAND_UI(ID_PLAYBACKMODE_REPEATPLAYLIST, OnUpdatePlaybackmodeRepeatplaylist)
 	ON_UPDATE_COMMAND_UI(ID_PLAYBACKMODE_INTRO, OnUpdatePlaybackmodeIntro)
-	ON_UPDATE_COMMAND_UI(ID_VIEW_CROSSFADER, OnUpdateViewCrossfader)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_EQUALIZER, OnUpdateViewEqualizer)
 	ON_UPDATE_COMMAND_UI(ID_FILE_SYNCHRONIZEDDIRECTORIES, OnUpdateFileSynchronizeddirectories)
 	ON_UPDATE_COMMAND_UI(ID_NOTIFICATIONTRAY_PLAY, OnUpdateNotificationtrayPlay)
@@ -467,12 +465,6 @@ void CMainFrame::Cleanmusik()
 		m_RemoveOldFnct = NULL;
 	}
 
-	if ( m_wndCrossfader )
-	{
-		delete m_wndCrossfader;
-		m_wndCrossfader = NULL;
-	}
-
 	if ( m_wndEqualizer )
 	{
 		delete m_wndEqualizer;
@@ -526,9 +518,8 @@ void CMainFrame::ResetUI()
 	for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
 		m_wndSelectionBars.at( i )->ForceDockedSize( size, LM_HORZDOCK, true );
 
-	// hide equalizer and crossfader
+	// hide equalizer
 	ShowControlBar( m_wndEqualizer, FALSE, TRUE );
-	ShowControlBar( m_wndCrossfader, FALSE, TRUE );
 }
 
 ///////////////////////////////////////////////////
@@ -664,12 +655,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndSources = new CmusikSourcesBar( this, m_Library, m_Player, m_Prefs, m_uSourcesDrop, m_uPlaylistDrop_R, m_uSelectionDrop_R );
 	m_wndSources->Create( _T( "Sources" ), this, ID_SOURCESBOX );
 	DockControlBar( m_wndSources, AFX_IDW_DOCKBAR_LEFT );
-
-	// crossfader control
-	m_wndCrossfader = new CmusikCrossfaderBar( m_Library, m_Player, m_Prefs );
-	m_wndCrossfader->Create( _T( "Crossfader" ), this, ID_CROSSFADER );
-	FloatControlBar( m_wndCrossfader, CPoint( 14, 14 ) );
-	ShowControlBar( m_wndCrossfader, FALSE, FALSE );
 
 	// equalizer control
 	m_wndEqualizer = new CmusikEqualizerBar( m_Library, m_Player, m_Prefs );
@@ -1537,10 +1522,12 @@ void CMainFrame::OnFilePreferences()
 {
 	// initialize the property pages
 	CmusikPrefsInterfaceGeneral wndPageInterfaceGeneral( m_Prefs );
+	CmusikPrefsSoundCrossfader wndPageSoundCrossfader( m_Prefs );
 	CmusikPrefsSoundDriver wndPageSoundDriver( m_Prefs );
 
 	// remove help icon from gripper
 	wndPageInterfaceGeneral.m_psp.dwFlags&=		~PSP_HASHELP;
+	wndPageSoundCrossfader.m_psp.dwFlags&=		~PSP_HASHELP;
 	wndPageSoundDriver.m_psp.dwFlags&=			~PSP_HASHELP;
 
 	// initialize the CTreePropSheet class 
@@ -1549,15 +1536,16 @@ void CMainFrame::OnFilePreferences()
 	PrefSheet.m_psh.dwFlags&= ~PSH_HASHELP;
 
 	// physically add the preference sheets
-	PrefSheet.AddPage(&wndPageInterfaceGeneral);
-	PrefSheet.AddPage(&wndPageSoundDriver);
+	PrefSheet.AddPage( &wndPageInterfaceGeneral );
+	PrefSheet.AddPage( &wndPageSoundCrossfader );
+	PrefSheet.AddPage( &wndPageSoundDriver );
 
-	PrefSheet.SetEmptyPageText(_T("Please select a child item of '%s'."));
+	PrefSheet.SetEmptyPageText( _T( "Please select a child item of '%s'." ) );
 	
 	// set some miscellaneous tree view properties
-	PrefSheet.SetTreeViewMode(true, true, false);
+	PrefSheet.SetTreeViewMode( true, true, false );
 
-	PrefSheet.SetActivePage(&wndPageInterfaceGeneral);
+	PrefSheet.SetActivePage( &wndPageInterfaceGeneral );
 
 	PrefSheet.DoModal();
 }
@@ -2156,23 +2144,6 @@ void CMainFrame::OnSysCommand(UINT nID, LPARAM lParam)
 		SaveWindowState();
 
 	CFrameWnd::OnSysCommand(nID, lParam);
-}
-
-///////////////////////////////////////////////////
-
-void CMainFrame::OnUpdateViewCrossfader(CCmdUI *pCmdUI)
-{
-	pCmdUI->SetCheck( m_wndCrossfader->IsVisible() );
-}
-
-///////////////////////////////////////////////////
-
-void CMainFrame::OnViewCrossfader()
-{
-	if ( m_wndCrossfader->IsVisible() )
-		ShowControlBar( m_wndCrossfader, FALSE, FALSE );
-	else
-        ShowControlBar( m_wndCrossfader, TRUE, FALSE );
 }
 
 ///////////////////////////////////////////////////

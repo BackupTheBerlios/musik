@@ -113,7 +113,7 @@ BEGIN
     END
     POPUP "&View"
     BEGIN
-        MENUITEM "Reset to Default",            ID_VIEW_RESETINTERFACETODEFAULT
+        MENUITEM "Reset I&nterface",            ID_VIEW_RESETINTERFACETODEFAULT
 
         MENUITEM SEPARATOR
         MENUITEM "&Sources\tCtrl+Shift+A",      ID_VIEW_SOURCES
@@ -121,9 +121,7 @@ BEGIN
         MENUITEM "&Now Playing\tCtrl+Shift+D",  ID_VIEW_NOWPLAYING
         MENUITEM "Playlist &Information\tCtrl+Shift+F", 
                                                 ID_VIEW_PLAYLISTINFORMATION
-        MENUITEM SEPARATOR
-        MENUITEM "Crossfader\tCtrl+Shift+Z",    ID_VIEW_CROSSFADER
-        MENUITEM "Equalizer\tCtrl+Shift+X",     ID_VIEW_EQUALIZER
+        MENUITEM "E&qualizer\tCtrl+Shift+X",    ID_VIEW_EQUALIZER
     END
     POPUP "&Audio"
     BEGIN
@@ -390,17 +388,19 @@ STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Sound::Driver"
 FONT 8, "MS Shell Dlg", 0, 0, 0x0
 BEGIN
-    COMBOBOX        IDC_SOUND_DRIVER,85,24,111,84,CBS_DROPDOWNLIST | 
+    COMBOBOX        IDC_SOUND_DRIVER,84,56,111,84,CBS_DROPDOWNLIST | 
                     CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Output Driver:",IDC_STATIC,32,26,48,8
-    COMBOBOX        IDC_SOUND_DEVICE,85,9,111,69,CBS_DROPDOWNLIST | CBS_SORT | 
-                    WS_VSCROLL | WS_TABSTOP
-    COMBOBOX        IDC_SOUND_PLAYBACK_RATE,85,39,111,55,CBS_DROPDOWNLIST | 
+    LTEXT           "Output Driver:",IDC_STATIC,32,58,48,8
+    COMBOBOX        IDC_SOUND_DEVICE,84,39,111,69,CBS_DROPDOWNLIST | 
                     CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    EDITTEXT        IDC_SOUND_MAX_CHANNELS,85,53,31,14,ES_AUTOHSCROLL
-    LTEXT           "Sound Device:",IDC_STATIC,33,11,47,8
-    LTEXT           "Playback Rate (hz):",IDC_STATIC,16,41,64,8
-    LTEXT           "Max Sound Channels:",IDC_STATIC,7,56,70,8
+    COMBOBOX        IDC_SOUND_PLAYBACK_RATE,84,74,111,55,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_SOUND_MAX_CHANNELS,84,93,31,14,ES_AUTOHSCROLL
+    LTEXT           "Sound Device:",IDC_STATIC,33,42,47,8
+    LTEXT           "Playback Rate (hz):",IDC_STATIC,16,77,64,8
+    LTEXT           "Max Sound Channels:",IDC_STATIC,10,96,70,8
+    CTEXT           "You will probably not want to modify these values unless you are having problems with your sound.",
+                    IDC_STATIC,7,10,191,18
 END
 
 IDD_SAVESTDPLAYLIST DIALOGEX 0, 0, 262, 53
@@ -534,6 +534,30 @@ BEGIN
     LTEXT           "Please enter a new name:",IDC_STATIC,7,5,84,8
 END
 
+IDD_PROPPAGE_SOUND_CROSSFADER DIALOGEX 0, 0, 210, 154
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Sound::Crossfader"
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    RTEXT           "New Song:",IDC_STATIC,0,47,60,8
+    RTEXT           "Pause / Resume:",IDC_STATIC,0,63,60,8
+    RTEXT           "Seek:",IDC_STATIC,0,79,60,8
+    EDITTEXT        IDC_EDIT1,66,44,24,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT2,66,60,24,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT3,66,76,24,12,ES_AUTOHSCROLL
+    RTEXT           "Program Exit:",IDC_STATIC,0,109,60,8
+    EDITTEXT        IDC_EDIT4,66,92,24,12,ES_AUTOHSCROLL
+    RTEXT           "Stop:",IDC_STATIC,0,95,60,8
+    EDITTEXT        IDC_EDIT5,66,108,24,12,ES_AUTOHSCROLL
+    LISTBOX         IDC_LIST2,112,42,92,59,LBS_SORT | LBS_NOINTEGRALHEIGHT | 
+                    WS_VSCROLL | WS_TABSTOP
+    CTEXT           "Presets:",IDC_STATIC,113,24,89,8
+    PUSHBUTTON      "add",IDC_BUTTON5,112,104,44,14
+    PUSHBUTTON      "remove",IDC_BUTTON6,162,104,42,14
+    LTEXT           "",IDC_STATIC,101,14,1,122,0,WS_EX_STATICEDGE
+    CTEXT           "Intervals (sec):",IDC_STATIC,4,26,89,8
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -662,6 +686,14 @@ BEGIN
         RIGHTMARGIN, 195
         TOPMARGIN, 7
         BOTTOMMARGIN, 51
+    END
+
+    IDD_PROPPAGE_SOUND_CROSSFADER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 203
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 147
     END
 END
 #endif    // APSTUDIO_INVOKED

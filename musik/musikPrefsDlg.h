@@ -156,3 +156,29 @@ protected:
 };
 
 ///////////////////////////////////////////////////
+
+// Sound::Crossfader
+
+///////////////////////////////////////////////////
+
+class CmusikPrefsSoundCrossfader : public CmusikPropertyPage
+{
+
+public:
+
+	// construct and destruct
+	CmusikPrefsSoundCrossfader( CmusikPrefs* prefs );
+	virtual ~CmusikPrefsSoundCrossfader();
+	
+protected:
+
+	// misc
+	virtual void DoDataExchange(CDataExchange* pDX);
+	enum { IDD = IDD_PROPPAGE_SOUND_CROSSFADER };
+
+	// macros
+	DECLARE_DYNAMIC(CmusikPrefsSoundCrossfader)
+	DECLARE_MESSAGE_MAP()
+};
+
+///////////////////////////////////////////////////

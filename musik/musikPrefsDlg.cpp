@@ -468,4 +468,38 @@ BOOL CmusikPrefsSoundDriver::OnCommand(WPARAM wParam, LPARAM lParam)
 	return CmusikPropertyPage::OnCommand(wParam, lParam);
 }
 
+///////////////////////////////////////////////////// musikPrefsDlg.cpp : implementation file
+
+// Sound::Crossfader
+
+///////////////////////////////////////////////////
+
+IMPLEMENT_DYNAMIC( CmusikPrefsSoundCrossfader, CmusikPropertyPage )
+
+///////////////////////////////////////////////////
+
+CmusikPrefsSoundCrossfader::CmusikPrefsSoundCrossfader( CmusikPrefs* prefs )
+	: CmusikPropertyPage( CmusikPrefsSoundCrossfader::IDD, prefs )
+{
+	m_Prefs = prefs;
+}
+
+///////////////////////////////////////////////////
+
+CmusikPrefsSoundCrossfader::~CmusikPrefsSoundCrossfader()
+{
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPrefsSoundCrossfader::DoDataExchange(CDataExchange* pDX)
+{
+	CPropertyPage::DoDataExchange(pDX);
+}
+
+///////////////////////////////////////////////////
+
+BEGIN_MESSAGE_MAP(CmusikPrefsSoundCrossfader, CmusikPropertyPage)
+END_MESSAGE_MAP()
+
 ///////////////////////////////////////////////////

@@ -24,6 +24,8 @@
 #define IDR_SOURCES_MENU                144
 #define IDD_NAME_ENTRY                  145
 #define IDR_TRAY_MENU                   146
+#define IDD_PROPPAGE_MEDIUM             146
+#define IDD_PROPPAGE_SOUND_CROSSFADER   146
 #define IDB_DOWN                        151
 #define IDB_BITMAP1                     153
 #define IDB_UP                          153
@@ -48,11 +50,13 @@
 #define IDC_FIELDTYPE2                  1014
 #define IDC_SOUND_MAX_CHANNELS          1014
 #define IDC_CHECK1                      1015
+#define IDC_EDIT4                       1015
 #define IDC_CHECK2                      1016
 #define IDC_ENABLE_QUERY2               1016
 #define IDC_BTNNO                       1017
 #define IDC_FIELDVARIABLE2              1017
 #define IDC_CHECK3                      1017
+#define IDC_EDIT5                       1017
 #define IDC_BUTTON2                     1018
 #define IDC_BTNYES                      1018
 #define IDC_FIELDSTRING2                1018
@@ -108,6 +112,7 @@
 #define IDC_EDIT                        1049
 #define IDC_CHECK_ENABLETRAYICON        1051
 #define IDC_CHECK4                      1052
+#define IDC_EDIT3                       1053
 #define ID_FILE_PREFERENCES             32771
 #define ID_FILE_SEP                     32772
 #define ID_ADD_FILES                    32774
@@ -230,7 +235,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        157
 #define _APS_NEXT_COMMAND_VALUE         32924
-#define _APS_NEXT_CONTROL_VALUE         1053
+#define _APS_NEXT_CONTROL_VALUE         1054
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif

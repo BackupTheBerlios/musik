@@ -44,7 +44,6 @@
 #include "musikSourcesCtrl.h"
 #include "musikNowPlayingCtrl.h"
 #include "musikSelectionCtrl.h"
-#include "musikCrossfaderCtrl.h"
 #include "musikEqualizerCtrl.h"
 
 #include "musikPlaylistCtrl.h"
@@ -219,7 +218,6 @@ protected:
 	CmusikSourcesBar*		m_wndSources;
 	CmusikNowPlayingBar*	m_wndNowPlaying;
 	CmusikSelBarArray		m_wndSelectionBars;
-	CmusikCrossfaderBar*	m_wndCrossfader;
 	CmusikEqualizerBar*		m_wndEqualizer;
 
 	// utility functions
@@ -288,8 +286,6 @@ protected:
 	afx_msg void OnUnsynchronizedtagsWritetofile();
 	afx_msg void OnUnsynchronizedtagsFinalizefordatabaseonly();
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
-	afx_msg void OnUpdateViewCrossfader(CCmdUI *pCmdUI);
-	afx_msg void OnViewCrossfader();
 	afx_msg void OnViewEqualizer();
 	afx_msg void OnUpdateViewEqualizer(CCmdUI *pCmdUI);
 	afx_msg void OnFileSynchronizeddirectories();

@@ -270,16 +270,6 @@
 						</File>
 					</Filter>
 					<Filter
-						Name="musikCrossfaderCtrl"
-						Filter="">
-						<File
-							RelativePath=".\musikCrossfaderCtrl.cpp">
-						</File>
-						<File
-							RelativePath=".\musikCrossfaderCtrl.h">
-						</File>
-					</Filter>
-					<Filter
 						Name="musikEqualizerCtrl"
 						Filter="">
 						<File
