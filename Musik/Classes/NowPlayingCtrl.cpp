@@ -280,6 +280,8 @@ void CNowPlayingCtrl::SetTime( wxString sTimeStr )
 
 void CNowPlayingCtrl::ResetInfo()
 {
+	g_MusikFrame->SetTitle( MUSIK_VERSION );
+
 	stSong->SetLabel	( _( "Playback Stopped" )	);
 	stArtist->SetLabel	( _( "Playback Stopped" )	);
 	stCurtime->SetLabel	( _( " - 0:00" )			);
@@ -307,7 +309,7 @@ void CNowPlayingCtrl::UpdateInfo( wxString sFilename )
 		song.Title = _( "Unknown Song" );
 
 	//--- caption bar title ---//
-	g_MusikFrame->SetTitle( wxT( "Musik [ " ) + song.Artist + wxT( " - " ) +  song.Title + wxT( " ]" ) );
+	g_MusikFrame->SetTitle( wxString( MUSIK_VERSION ) + wxT( " [ " ) + song.Artist + wxT( " - " ) +  song.Title + wxT( " ]" ) );
 
 	//--- title / artist / time -//
 	song.Title.Replace	( wxT( "&" ), wxT( "&&" ), TRUE );

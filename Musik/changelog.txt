@@ -1,4 +1,5 @@
 0.1.2 to 0.1.3
+ + Fixed Bug: Pressing "Stop" resets the caption bar to "Musik"
  + Fixed Bug: Time added being calculated every time a song was added.
  + Playlist columns (header) can now be customized. Big time. Check out File -> Preferences -> General -> Playlist.
  + Dropdown box in Preferences -> Options -> Selections for selection style. Used to be a checkbox. (avatar)
