@@ -1,5 +1,7 @@
 ///////////////////////////////////////////////////
 
+#include "stdafx.h"
+
 #include "MusikOggInfo.h"
 
 #include "vcedit.h"
