@@ -6,7 +6,6 @@
 #include "MusikSelectionCtrl.h"
 
 #include "../Musik.Core/include/MusikLibrary.h"
-#include ".\musikselectionctrl.h"
 
 // CMusikSelectionCtrl
 
