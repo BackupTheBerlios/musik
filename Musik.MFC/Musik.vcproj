@@ -331,6 +331,9 @@
 				RelativePath="..\Musik.Core\include\MusikArrays.h">
 			</File>
 			<File
+				RelativePath="..\Musik.Core\include\MusikCrossfader.h">
+			</File>
+			<File
 				RelativePath="..\Musik.Core\include\MusikDynDspInfo.h">
 			</File>
 			<File

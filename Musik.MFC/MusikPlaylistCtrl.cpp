@@ -346,8 +346,8 @@ void CMusikPlaylistCtrl::OnNMClick(NMHDR *pNMHDR, LRESULT *pResult)
 			CRect sub_item_rect;
 			GetSubItemRect( hit_test.iItem, hit_test.iSubItem, LVIR_BOUNDS, sub_item_rect );
 
-			for ( size_t i = 0; i < hit_test.iSubItem; i++ )
-				ptCurr.x -= m_Prefs->GetPlaylistColWidth( i );
+			for ( int i = 0; i < hit_test.iSubItem; i++ )
+				ptCurr.x -= m_Prefs->GetPlaylistColWidth( (size_t)i );
 
 			int nRating;
 			if ( ptCurr.x <= 6 )
