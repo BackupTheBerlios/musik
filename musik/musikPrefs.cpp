@@ -235,7 +235,8 @@ void CmusikPrefs::LoadPrefs()
 	m_Dlg_Maximized				= StringToBool( config->GetValue( "Dialog", "Maximized", "0" ) );
 	m_Dlg_ResetUI				= StringToBool( config->GetValue( "Dialog", "Reset UI", "1" ) );
 	m_Dlg_StdPlaylist_Prompt	= StringToInt( config->GetValue( "Dialog", "Prompt STD Playlist Save", "-1" ) );
-
+	m_Dlg_PlaylistInfoVisible	= StringToBool( config->GetValue( "Dialog", "Playlist Info Visible", "1" ) );
+	
 	// selection area
 	m_SelectionBox_Count = StringToInt( config->GetValue( "Selection Area", "Count", "2" ) );
 
@@ -290,6 +291,7 @@ void CmusikPrefs::SavePrefs()
 	config->SetValue( "Dialog", "Maximized", BoolToString( m_Dlg_Maximized ) );
 	config->SetValue( "Dialog", "Reset UI", BoolToString( m_Dlg_ResetUI ) );
 	config->SetValue( "Dialog", "Prompt STD Playlist Save", IntToString( m_Dlg_StdPlaylist_Prompt ) );
+	config->SetValue( "Dialog", "Playlist Info Visible", BoolToString( m_Dlg_PlaylistInfoVisible ) );
 
 	// selection area
 	config->SetValue( "Selection Area", "Count", IntToString( (int)m_SelectionBox_Count ) );

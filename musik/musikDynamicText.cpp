@@ -110,8 +110,8 @@ CSize CmusikDynamicText::GetTextSize( const CString& str )
 		CDC* pDC = CDC::FromHandle( hMemDC );
 		if ( pDC )
 		{
-			CFont* pOldFont = pDC->SelectObject( pFont );
-			szText = pDC->GetTextExtent( (LPCTSTR)str, str.GetLength() );
+			CFont* pOldFont = pDC->SelectObject( this->GetFont() );
+			szText = pDC->GetTextExtent( str );
 			pOldFont = pDC->SelectObject( pOldFont );
 		}
 	}

@@ -38,6 +38,8 @@ CmusikPlaylistView::CmusikPlaylistView( CFrameWnd* mainwnd, CmusikLibrary* libra
 	m_Player = player;
 	m_Parent = mainwnd;
 	m_Prefs = prefs;
+
+	m_PlaylistInfo = NULL;
 }
 
 ///////////////////////////////////////////////////
@@ -69,6 +71,9 @@ int CmusikPlaylistView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_Playlist->Create( dwStyle, CRect( 0, 0, 0, 0 ), this, 123 );
 	m_Playlist->SetExtendedStyle( dwStyleEx );
 
+	if ( m_Prefs->PlaylistInfoVisible() )
+		InitPlaylistInfo();
+
 	return 0;
 }
 
@@ -77,6 +82,22 @@ int CmusikPlaylistView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 void CmusikPlaylistView::OnSize(UINT nType, int cx, int cy)
 {
 	CWnd::OnSize(nType, cx, cy);
+
+	if ( m_Prefs->PlaylistInfoVisible() )
+	{
+		if ( !m_PlaylistInfo )
+			InitPlaylistInfo();
+
+		m_PlaylistInfo->MoveWindow( 3, 3, cx - 6, 15 );
+		m_Playlist->MoveWindow( 3, 24, cx - 6, cy - 27 );
+
+		return;
+	}
+
+	// variable not set, but playlist info
+	// window still exists, destroy it..
+	else if ( m_PlaylistInfo )
+		CleanPlaylistInfo();
 
 	m_Playlist->MoveWindow( 3, 3, cx - 6, cy - 8 );
 }
@@ -107,11 +128,28 @@ void CmusikPlaylistView::OnNcPaint()
 
 	// draw a simple border
 	CRect rcBorder = rcWindow;
-	rcBorder.left += 2;
-	rcBorder.top += 2;
-	rcBorder.right -= 2;
-	rcBorder.bottom -= 4;
-	pDC.Draw3dRect( rcBorder, m_Prefs->MUSIK_COLOR_BTNSHADOW, m_Prefs->MUSIK_COLOR_BTNHILIGHT );
+	CRect rcInfo;
+	if ( !m_Prefs->PlaylistInfoVisible() )
+	{
+		rcBorder.left += 2;
+		rcBorder.top += 2;
+		rcBorder.right -= 2;
+		rcBorder.bottom -= 4;
+		pDC.Draw3dRect( rcBorder, m_Prefs->MUSIK_COLOR_BTNSHADOW, m_Prefs->MUSIK_COLOR_BTNHILIGHT );
+	}
+	else if ( m_Prefs->PlaylistInfoVisible() )
+	{
+		rcBorder.left += 2;
+		rcBorder.top += 23;
+		rcBorder.right -= 2;
+		rcBorder.bottom -= 4;
+		pDC.Draw3dRect( rcBorder, m_Prefs->MUSIK_COLOR_BTNSHADOW, m_Prefs->MUSIK_COLOR_BTNHILIGHT );
+
+		rcInfo = rcBorder;
+		rcInfo.top = 2;
+		rcInfo.bottom = 19;
+		pDC.Draw3dRect( rcInfo, m_Prefs->MUSIK_COLOR_BTNSHADOW, m_Prefs->MUSIK_COLOR_BTNHILIGHT );
+	}
 
 	// line at bottom
 	CRect rcBottom;
@@ -132,6 +170,9 @@ void CmusikPlaylistView::OnNcPaint()
 	rcDraw.right -= 1;
 	rcDraw.bottom -= 1;
 	dc.ExcludeClipRect( rcDraw );
+
+	//if ( m_Prefs->PlaylistInfoVisible() )
+	//	dc.ExcludeClipRect( rcInfo );
 }
 
 ///////////////////////////////////////////////////
@@ -143,3 +184,24 @@ BOOL CmusikPlaylistView::OnEraseBkgnd(CDC* pDC)
 
 ///////////////////////////////////////////////////
 
+void CmusikPlaylistView::InitPlaylistInfo() 
+{
+	if ( !m_PlaylistInfo )
+	{
+		m_PlaylistInfo = new CWnd();
+		m_PlaylistInfo->Create( NULL, NULL, WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0 ), this, 123 );
+	}
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistView::CleanPlaylistInfo()
+{
+	if ( m_PlaylistInfo )
+	{	
+		delete m_PlaylistInfo;
+		m_PlaylistInfo = NULL;
+	}	
+}
+
+///////////////////////////////////////////////////

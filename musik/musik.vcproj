@@ -174,7 +174,7 @@
 						RelativePath=".\musikSourcesDropTarget.h">
 					</File>
 					<Filter
-						Name="CmusikPropTree"
+						Name="musikPropTree"
 						Filter="">
 						<File
 							RelativePath=".\3rdparty\musikPropTree.cpp">

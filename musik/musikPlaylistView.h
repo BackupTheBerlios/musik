@@ -32,6 +32,11 @@ protected:
 	// playlist GUI object
 	CmusikPlaylistCtrl* m_Playlist;
 
+	// playlist info
+	void InitPlaylistInfo();
+	void CleanPlaylistInfo();
+	CWnd* m_PlaylistInfo;
+
 	// drop target for the playlist
 	CmusikPlaylistDropTarget* m_DropTarget;
 

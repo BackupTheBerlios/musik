@@ -91,6 +91,10 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "E&xit",                       ID_APP_EXIT
     END
+    POPUP "View"
+    BEGIN
+        MENUITEM "Playlist Information",        ID_VIEW_PLAYLISTINFORMATION
+    END
     POPUP "&Help"
     BEGIN
         MENUITEM "&About musik...",             ID_APP_ABOUT

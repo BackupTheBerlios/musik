@@ -185,6 +185,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnFileSaveplaylist();
+	afx_msg void OnViewPlaylistinformation();
 };
 
 ///////////////////////////////////////////////////

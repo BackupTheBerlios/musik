@@ -103,9 +103,11 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_COMMAND(ID_OPEN_FILES, OnOpenFiles)
 	ON_COMMAND(ID_OPEN_DIRECTORY, OnOpenDirectory)
 	ON_COMMAND(ID_FILE_SAVEPLAYLIST, OnFileSaveplaylist)
+	ON_COMMAND(ID_VIEW_PLAYLISTINFORMATION, OnViewPlaylistinformation)
 
 	// update ui
 	ON_UPDATE_COMMAND_UI(ID_FILE_SAVEPLAYLIST,OnUpdateMainMenu)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_PLAYLISTINFORMATION,OnUpdateMainMenu)
 
 	// custom message maps
 	ON_REGISTERED_MESSAGE( WM_SELBOXUPDATE, OnUpdateSel )
@@ -1037,4 +1039,20 @@ void CMainFrame::OnUpdateMainMenu( CCmdUI* pCmd )
 {
 	if ( pCmd->m_nID == ID_FILE_SAVEPLAYLIST )
 		pCmd->Enable( m_wndView->GetCtrl()->PlaylistNeedsSave() );
+
+	else if ( pCmd->m_nID == ID_VIEW_PLAYLISTINFORMATION )
+		pCmd->SetCheck( m_Prefs->PlaylistInfoVisible() );
 }
+
+///////////////////////////////////////////////////
+
+
+void CMainFrame::OnViewPlaylistinformation()
+{
+	if ( m_Prefs->PlaylistInfoVisible() )
+		m_Prefs->SetPlaylistInfoVisible( false );
+	else
+		m_Prefs->SetPlaylistInfoVisible( true );
+}
+
+///////////////////////////////////////////////////
