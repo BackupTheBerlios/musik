@@ -1,18 +1,17 @@
-//--- For compilers that support precompilation, includes "wx/wx.h". ---//
-#include "wx/wxprec.h"
-
 /*
  *  COggInfo.cpp
  *
  *  Helper functions to retrieve oggvorbis comments from a given file.
  *
  *  Copyright (c) 2003 Casey Langen (casey@bak.rr.com)
- *	Contributors: Simon Windmill, Dustin Carter
+ *	Contributors: Simon Windmill, Dustin Carter, Gunnar Roth, Wade Brainerd
  *
  *  See the file "license.txt" for information on usage and redistribution
  *  of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 */
 
+//--- For compilers that support precompilation, includes "wx/wx.h". ---//
+#include "wx/wxprec.h"
 #include "COggInfo.h"
 
 #include <vorbis/codec.h>

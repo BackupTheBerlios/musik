@@ -9,7 +9,7 @@
  *  Information about oggvorbis is available at http://www.vorbis.com/
  *  
  *  Copyright (c) 2003 Casey Langen (casey@bak.rr.com)
- *	Contributors: Simon Windmill, Dustin Carter
+ *	Contributors: Simon Windmill, Dustin Carter, Gunnar Roth, Wade Brainerd
  *
  *  See the file "license.txt" for information on usage and redistribution
  *  of this file, and for a DISCLAIMER OF ALL WARRANTIES.
