@@ -894,10 +894,13 @@ void CPlaylistCtrl::Update( bool bSelFirst, bool  bRescaleColumns)
 		g_PlaylistInfoCtrl->Update();
 }
 
-void CPlaylistCtrl::RescaleColumns( bool bFreeze )
+void CPlaylistCtrl::RescaleColumns( bool bFreeze, bool bSave )
 {
 	if ( g_DisablePlacement )
 		return;
+
+	if ( bSave )
+		SaveColumns();
 
 	if ( bFreeze )
 		Freeze();
