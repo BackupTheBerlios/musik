@@ -11,6 +11,7 @@ public:
 	~CMusikSelectionCtrl();
 
 	virtual void OnResize( wxSizeEvent& event );
+	virtual void OnColBeginDrag( wxListEvent& event );
 	virtual void RescaleColumns( bool refresh = false );
 	virtual void Reset( bool rescale = true, bool refresh = false );
 	virtual void Update( bool refresh = false );

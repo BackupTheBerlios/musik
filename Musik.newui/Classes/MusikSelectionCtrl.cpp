@@ -13,7 +13,10 @@ CMusikSelectionCtrl::~CMusikSelectionCtrl()
 
 void CMusikSelectionCtrl::RescaleColumns( bool refresh )
 {
-	SetColumnWidth( 0, GetClientSize().GetWidth() );
+	if ( GetColumnWidth( 0 ) != 0 )
+		SetColumnWidth( 0, 0 );
+
+	SetColumnWidth( 1, GetClientSize().GetWidth() );
 	if ( refresh )
 		Refresh( false );
 }
@@ -21,7 +24,17 @@ void CMusikSelectionCtrl::RescaleColumns( bool refresh )
 void CMusikSelectionCtrl::Reset( bool rescale, bool refresh )
 {
 	ClearAll();
-	InsertColumn( 0, wxT( "SelectionBox" ) );
+
+	//---------------------------------------------------------//
+	//--- we don't want the user to do a bounding box		---//
+	//--- selection in windows, becuase it causes an		---//
+	//--- event to get triggered for every item selected.	---//
+	//--- bounding box selections are only available in the	---//
+	//--- first column (0), so make an empty column and		---//
+	//--- hide it.											---//
+	//---------------------------------------------------------//
+	InsertColumn( 0, wxT( "" ) );
+	InsertColumn( 1, wxT( "SelectionBox" ) );
 	if ( rescale )
 		RescaleColumns( refresh );
 }
@@ -35,4 +48,9 @@ void CMusikSelectionCtrl::Update( bool refresh )
 void CMusikSelectionCtrl::OnResize( wxSizeEvent& event )
 {
 	RescaleColumns();
+}
+
+void CMusikSelectionCtrl::OnColBeginDrag( wxListEvent& event )
+{
+	event.Veto();
 }
