@@ -1,6 +1,7 @@
 ///////////////////////////////////////////////////
 
 #pragma once
+#include "afxwin.h"
 
 ///////////////////////////////////////////////////
 
@@ -14,25 +15,40 @@ enum
 
 ///////////////////////////////////////////////////
 
+class CmusikPrefs;
+
+///////////////////////////////////////////////////
+
 class CmusikFileDrop : public CDialog
 {
 public:
 
 	// construct and destruct
-	CmusikFileDrop( CWnd* pParent = NULL );
+	CmusikFileDrop( CWnd* pParent = NULL, CmusikPrefs* pPrefs = NULL );
 	virtual ~CmusikFileDrop();
 	virtual INT_PTR DoModal();
 
-	// dialog data
-	enum { IDD = IDD_FILEDROP };
+	// message maps
+	afx_msg void OnBnClickedCancel();
+	afx_msg void OnBnClickedRadioAddPlaylist();
+	afx_msg void OnBnClickedRadioAddNowPlaying();
+	afx_msg void OnBnClickedRadioAddLibrary();
+	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
+	afx_msg void OnBnClickedOk();
 
 protected:
 
 	// misc
 	virtual void DoDataExchange(CDataExchange* pDX);
 
+	// prefs
+	CmusikPrefs* m_Prefs;
+
 	// return
 	int m_Ret;
+
+	// remember checkbox
+	CButton m_Remember;
 
 	// first run
 	bool m_FirstRun;
@@ -40,13 +56,6 @@ protected:
 	// macros
 	DECLARE_DYNAMIC(CmusikFileDrop)
 	DECLARE_MESSAGE_MAP()
-public:
-	afx_msg void OnBnClickedCancel();
-	afx_msg void OnBnClickedRadio1();
-	afx_msg void OnBnClickedRadioAddPlaylist();
-	afx_msg void OnBnClickedRadioAddNowPlaying();
-	afx_msg void OnBnClickedRadioAddLibrary();
-	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 };
 
 ///////////////////////////////////////////////////

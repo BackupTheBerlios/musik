@@ -16,6 +16,7 @@
 #define IDI_MUSIK_48                    135
 #define IDD_SAVESTDPLAYLIST             137
 #define IDD_FILEDROP                    138
+#define IDD_FILEDROPDLG                 138
 #define IDC_CHECK_STARTUPSCAN           1007
 #define IDC_CHECK_PL_STRIPES            1009
 #define IDC_COMBO1                      1010
@@ -78,8 +79,8 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        139
-#define _APS_NEXT_COMMAND_VALUE         32821
-#define _APS_NEXT_CONTROL_VALUE         1023
+#define _APS_NEXT_COMMAND_VALUE         32823
+#define _APS_NEXT_CONTROL_VALUE         1024
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

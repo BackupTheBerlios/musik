@@ -1707,7 +1707,7 @@ void CMainFrame::OnUnsynchronizedtagsWritetofile()
 
 void CMainFrame::OnUnsynchronizedtagsFinalizefordatabaseonly()
 {
-	MessageBox( "I don't do anything yet", MUSIK_VERSION_STR, MB_ICONINFORMATION );
+	m_Library->FinalizeDirtySongs();
 }
 
 ///////////////////////////////////////////////////

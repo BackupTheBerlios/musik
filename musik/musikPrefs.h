@@ -45,6 +45,7 @@ public:
 	bool IsMaximized(){ return m_Dlg_Maximized; }
 	bool ResetUI(){ return m_Dlg_ResetUI; }
 	int	GetStdPlaylistPrompt(){ return m_Dlg_StdPlaylist_Prompt; }
+	int GetFileDropPrompt(){ return m_Dlg_FileDrop_Prompt; }
 	bool PlaylistInfoVisible(){ return m_Dlg_PlaylistInfoVisible; }
 	bool PurgeOnStartup(){ return m_Dlg_PurgeOnStartup; }
 	bool WriteTagsToFile(){ return m_Dlg_WriteTagsToFile; }
@@ -54,6 +55,7 @@ public:
 	void SetMaximized( bool max ){ m_Dlg_Maximized = max; }
 	void SetDlgResetUI( bool reset ){ m_Dlg_ResetUI = reset; }
 	void SetStdPlaylistPrompt( int prompt ){ m_Dlg_StdPlaylist_Prompt = prompt; }
+	void SetFileDropPrompt( int prompt ){ m_Dlg_FileDrop_Prompt = prompt; }
 	void SetPlaylistInfoVisible( bool visible )	{ m_Dlg_PlaylistInfoVisible = visible; }
 	void SetPurgeOnStartup( bool purge ){ m_Dlg_PurgeOnStartup = purge; }
 	void SetWriteTagsToFile( bool write ){ m_Dlg_WriteTagsToFile = write; }
@@ -154,6 +156,7 @@ private:
 	bool	m_Dlg_Maximized;
 	bool	m_Dlg_ResetUI;
 	int		m_Dlg_StdPlaylist_Prompt;
+	int		m_Dlg_FileDrop_Prompt;
 	bool	m_Dlg_PlaylistInfoVisible;
 	bool	m_Dlg_PurgeOnStartup;
 	bool	m_Dlg_WriteTagsToFile;

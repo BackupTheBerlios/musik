@@ -831,12 +831,17 @@ void CmusikPlaylistCtrl::OnDropFiles( HDROP hDropInfo )
 
 	// see if we need to prompt the user for
 	// which playlist to insert files to...
-	CmusikFileDrop* pDlg = new CmusikFileDrop( this );
-	int nRet = pDlg->DoModal();
-	delete pDlg;
+	int nRet = m_Prefs->GetFileDropPrompt();
 
-	if ( nRet == MUSIK_FILEDROP_CANCEL )
-		return;
+	if ( nRet == -1 )
+	{
+		CmusikFileDrop* pDlg = new CmusikFileDrop( this, m_Prefs );
+		nRet = pDlg->DoModal();
+		delete pDlg;
+
+		if ( nRet == MUSIK_FILEDROP_CANCEL )
+			return;
+	}
 
 	// if we get here, the drag originated from 
 	// somewhere else, such as explorer...

@@ -13,7 +13,7 @@ IMPLEMENT_DYNAMIC(CmusikSaveStdPlaylist, CDialog)
 ///////////////////////////////////////////////////
 
 CmusikSaveStdPlaylist::CmusikSaveStdPlaylist( CWnd* pParent, CmusikPrefs* prefs )
-	: CDialog(CmusikSaveStdPlaylist::IDD, pParent)
+	: CDialog( IDD_SAVESTDPLAYLIST, pParent )
 {
 	m_Prefs = prefs;
 }

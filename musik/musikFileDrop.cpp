@@ -2,9 +2,10 @@
 
 #include "stdafx.h"
 
-#include "musik.h"
 #include "musikFileDrop.h"
-#include ".\musikfiledrop.h"
+
+#include "musik.h"
+#include "musikPrefs.h"
 
 ///////////////////////////////////////////////////
 
@@ -12,11 +13,12 @@ IMPLEMENT_DYNAMIC(CmusikFileDrop, CDialog)
 
 ///////////////////////////////////////////////////
 
-CmusikFileDrop::CmusikFileDrop( CWnd* pParent )
-	: CDialog( CmusikFileDrop::IDD, pParent )
+CmusikFileDrop::CmusikFileDrop( CWnd* pParent, CmusikPrefs* pPrefs )
+	: CDialog( IDD_FILEDROP, pParent )
 {
 	m_Ret = MUSIK_FILEDROP_ADDNOWPLAYING;
 	m_FirstRun = true;
+	m_Prefs = pPrefs;
 }
 
 ///////////////////////////////////////////////////
@@ -31,6 +33,7 @@ CmusikFileDrop::~CmusikFileDrop()
 void CmusikFileDrop::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_REMEMBER, m_Remember);
 }
 
 ///////////////////////////////////////////////////
@@ -41,6 +44,7 @@ BEGIN_MESSAGE_MAP(CmusikFileDrop, CDialog)
 	ON_BN_CLICKED(IDC_RADIO_ADD_NOW_PLAYING, OnBnClickedRadioAddNowPlaying)
 	ON_BN_CLICKED(IDC_RADIO_ADD_LIBRARY, OnBnClickedRadioAddLibrary)
 	ON_WM_SHOWWINDOW()
+	ON_BN_CLICKED(IDOK, OnBnClickedOk)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -96,3 +100,15 @@ void CmusikFileDrop::OnShowWindow(BOOL bShow, UINT nStatus)
 		::SetWindowPos( GetSafeHwnd(), wndTopMost, -1, -1, -1, -1, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW );
 	}
 }
+
+///////////////////////////////////////////////////
+
+void CmusikFileDrop::OnBnClickedOk()
+{
+	if ( m_Remember.GetCheck() && m_Prefs )
+		m_Prefs->SetFileDropPrompt( m_Ret );
+
+	OnOK();
+}
+
+///////////////////////////////////////////////////
