@@ -28,6 +28,9 @@
 
 #define MUSIK_ACT_TEXT 9998
 
+//--- for CMusikSongArray ---//
+#include "MusikLibrary.h"
+
 //--- forward declarations ---//
 enum EMUSIK_ACTIVITY_TYPE;
 enum EMUSIK_LIB_TYPE;
@@ -121,23 +124,24 @@ public:
 	void OnRenameThreadProg		( wxCommandEvent& WXUNUSED(event) );
 
 	//--- sets ---//
-	void		SetCaption				( wxString sCaption )										{ pHeader->SetCaption( sCaption );						}
-	void		SetActivityType			( EMUSIK_ACTIVITY_TYPE  nType )								{ m_ActivityType = nType;								}
-	void		DeselectAll				()															{ pListBox->DeselectAll();								}
-	void		SetSel					( const wxString & sel, bool bDeselectAllFirst = true )		{ pListBox->SetSel( sel , bDeselectAllFirst );			}
-	void		SetSel					(const  wxArrayString & aList )								{ pListBox->SetSel( aList );							}	
+	void SetCaption				( wxString sCaption )										{ pHeader->SetCaption( sCaption );						}
+	void SetActivityType		( EMUSIK_ACTIVITY_TYPE  nType )								{ m_ActivityType = nType;								}
+	void DeselectAll			()															{ pListBox->DeselectAll();								}
+	void SetSel					( const wxString & sel, bool bDeselectAllFirst = true )		{ pListBox->SetSel( sel , bDeselectAllFirst );			}
+	void SetSel					( const  wxArrayString & aList )							{ pListBox->SetSel( aList );							}	
+	void SetDropTarget			(wxDropTarget* target)										{ pListBox->SetDropTarget( target );					}	
 	
 	//--- gets ---//
-	int			GetListId				()															{ return pListBox->GetId();								}
-	wxString	GetFirstSel				()															{ return pListBox->GetFirstSel( ); 						}
-	void		GetSelected				( wxArrayString & aReturn )									{ pListBox->GetSelected( aReturn );return; 				}
-	int			GetSelectedItemCount	()															{ return pListBox->GetSelectedItemCount();				}
-	void		SetDropTarget			(wxDropTarget* target)										{ pListBox->SetDropTarget( target );					}
+	int			GetListId				()													{ return pListBox->GetId();								}
+	wxString	GetFirstSel				()													{ return pListBox->GetFirstSel( ); 						}
+	void		GetSelected				( wxArrayString & aReturn )							{ pListBox->GetSelected( aReturn );return; 				}
+	int			GetSelectedItemCount	()													{ return pListBox->GetSelectedItemCount();				}
 	void		GetRelatedList			( CActivityBox *pDst, wxArrayString & aReturn );
 	wxString	GetActivityTypeStr		();
+	void		GetSelectedSongs		( CMusikSongArray& array );
 
-	CActivityListBox*			GetListBox		()													{ return pListBox;										}
-	EMUSIK_ACTIVITY_TYPE		GetActivityType	()													{ return m_ActivityType;								}
+	CActivityListBox*		GetListBox		()												{ return pListBox;										}
+	EMUSIK_ACTIVITY_TYPE	GetActivityType	()												{ return m_ActivityType;								}
 
 	//--- tag editing ---//
 	void EditBegin			();

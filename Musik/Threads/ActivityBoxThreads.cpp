@@ -21,13 +21,12 @@
 
 #include "../Frames/MusikFrame.h"
 
-MusikActivityRenameThread::MusikActivityRenameThread( CActivityBox* parent_box, int mode, const wxArrayString &sel, wxString newvalue )
+MusikActivityRenameThread::MusikActivityRenameThread( CActivityBox* parent_box, int mode, wxString newvalue )
 {
 	m_ParentBox	= parent_box;
 	m_Mode		= mode;
 	m_Type		= m_ParentBox->GetActivityType();
 	m_TypeStr	= m_ParentBox->GetActivityTypeStr();
-	m_Selected	= sel;
 	m_Replace	= newvalue;
 }
 
@@ -42,26 +41,9 @@ void* MusikActivityRenameThread::Entry()
 	wxPostEvent( m_ParentBox, RenameStartEvt );
 
 	if ( m_Mode == ACTIVITY_RENAME_ACTIVITY )
-	{
-		//---------------------------------------//
-		//--- run query to find related songs ---//
-		//---------------------------------------//
-		wxString sQuery = m_TypeStr + wxT(" like ");
-		for ( size_t i = 0; i < m_Selected.GetCount(); i++ )
-		{
-			m_Selected.Item( i ).Replace( wxT( "'" ), wxT( "''" ), true );
-			if ( i == ( m_Selected.GetCount() - 1 ) )
-				sQuery += wxT("'") + m_Selected.Item( i ) + wxT("'");
-			else
-				sQuery += wxT("'") + m_Selected.Item( i ) + wxT("' or ") + m_TypeStr + wxT(" like ");
-		}
-		g_Library.QuerySongs( sQuery, m_Songs );
-	}
-
-	else if ( m_Mode == ACTIVITY_RENAME_SONGS )
-	{
+		m_ParentBox->GetSelectedSongs( m_Songs );
+	else
 		g_PlaylistCtrl->GetSelSongs( m_Songs );
-	}
 
 	float fPos = 0;
 	int nLastProg = 0;

@@ -449,32 +449,19 @@ void CActivityBox::GetFullList( wxArrayString & aReturn )
 	}
 }
 
-void CActivityBox::SetPlaylist()
+void CActivityBox::GetSelectedSongs( CMusikSongArray& array )
 {
 	//-----------------------------------------------------//
 	//--- if we have "highlight" entires, ore this is	---//
 	//--- the parent box, select all the related		---//
 	//--- material without special regard.				---//
 	//-----------------------------------------------------//
-	if ( g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_SLOPPY || ( g_ActivityAreaCtrl->GetParentBox() == this ) )
+	if ( g_ActivityAreaCtrl->GetParentBox() == this || g_ActivityAreaCtrl->GetParentBox() == NULL )
 	{
 	  wxArrayString list;
-	  GetSelected(list);
-	  switch ( m_ActivityType )
-	  {
-	  case MUSIK_LBTYPE_ARTISTS:
-		  g_Library.GetArtistSongs( list, g_Playlist );
-		  break;
-	  case MUSIK_LBTYPE_ALBUMS:
-		  g_Library.GetAlbumSongs( list, g_Playlist );
-		  break;
-	  case MUSIK_LBTYPE_GENRES:
-		  g_Library.GetGenreSongs( list, g_Playlist );
-		  break;
-	  case MUSIK_LBTYPE_YEARS:
-		  g_Library.GetYearSongs( list, g_Playlist );
-		  break;
-	  }
+	  GetSelected( list );
+	  g_Library.GetSongs( list, ACTIVITY_TYPE2LIB_TYPE( GetActivityType() ), array );
+	  return;
 	}
 
 	//---------------------------------------------------------//
@@ -492,8 +479,8 @@ void CActivityBox::SetPlaylist()
 			//-------------------------------------------------//
 			//--- what type of box is this?					---//
 			//-------------------------------------------------//
-			int nParentType = pParentBox->GetActivityType();
-			wxString sParentType;
+			int nThisType = GetActivityType();
+			wxString sThisType;
 			if ( nThisType == MUSIK_LBTYPE_ARTISTS )
 				sThisType = wxT( "artist" );
 			else if ( nThisType == MUSIK_LBTYPE_ALBUMS )
@@ -506,8 +493,8 @@ void CActivityBox::SetPlaylist()
 			//-------------------------------------------------//
             //--- what type of box is the parent?			---//
 			//-------------------------------------------------//
-			int nThisType = GetActivityType();
-			wxString sThisType;
+			int nParentType = pParentBox->GetActivityType();
+			wxString sParentType;
 			if ( nParentType == MUSIK_LBTYPE_ARTISTS )
 				sParentType = wxT( "artist" );
 			else if ( nParentType == MUSIK_LBTYPE_ALBUMS )
@@ -570,13 +557,15 @@ void CActivityBox::SetPlaylist()
 					sParent += wxT(" or ") + sParentType + wxT( " like " );
 			}
 
-			//-------------------------------------------------//
-			//--- compile query								---//
-			//-------------------------------------------------//
-			g_Library.QuerySongs( sParent, g_Playlist );
+			g_Library.QuerySongs( sParent, array );
+			return;
 		}
 	}
+}
 
+void CActivityBox::SetPlaylist()
+{
+	GetSelectedSongs( g_Playlist );
 	g_PlaylistCtrl->Update( true, g_Prefs.nPlaylistSmartColumns );
 	g_PlaylistChanged = true;
 }
@@ -670,21 +659,7 @@ wxString CActivityBox::DNDGetList()
 	wxArrayString list;
 	CMusikSongArray songs;
 	GetSelected( list );
-	switch ( m_ActivityType )
-	{
-	case MUSIK_LBTYPE_ARTISTS:
-		g_Library.GetArtistSongs( list, songs );
-		break;
-	case MUSIK_LBTYPE_ALBUMS:
-		g_Library.GetAlbumSongs( list, songs );
-		break;
-	case MUSIK_LBTYPE_GENRES:
-		g_Library.GetGenreSongs( list, songs );
-		break;
-	case MUSIK_LBTYPE_YEARS:
-		g_Library.GetYearSongs( list, songs );
-		break;
-	}
+	GetSelectedSongs( songs );
 	list.Clear();
 
 	//--- add songs to dnd string ---//
@@ -705,13 +680,13 @@ wxString CActivityBox::DNDGetList()
 //-----------------------------//
 void CActivityBox::StartRenameThread( int mode, const wxArrayString &sel, wxString newvalue )
 {
-
+	
 	if ( g_MusikFrame->GetActiveThread() == NULL )
-        {
-		pRenameThread = new MusikActivityRenameThread( this, mode, sel, newvalue );
+     {
+		pRenameThread = new MusikActivityRenameThread( this, mode, newvalue );
 		pRenameThread->Create();
 		pRenameThread->Run();
-        }
+    }
 	else
 		wxMessageBox( _( "An internal error has occured.\nPrevious thread not terminated correctly.\n\nPlease contact the Musik development team with this error." ), MUSIK_VERSION, wxICON_STOP );
 }
@@ -738,15 +713,15 @@ void CActivityBox::OnRenameThreadStart( wxCommandEvent& WXUNUSED(event) )
 	}
 	
 void CActivityBox::OnRenameThreadProg( wxCommandEvent& WXUNUSED(event) )
-			{
+{
 	//--- relay thread progress message to g_MusikFrame ---//
 	g_MusikFrame->SetProgress( GetProgress() );
 	wxCommandEvent MusikEndProgEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_FRAME_THREAD_PROG );
 	wxPostEvent( g_MusikFrame, MusikEndProgEvt );
-				}
+}
 
 void CActivityBox::OnRenameThreadEnd( wxCommandEvent& WXUNUSED(event) )
-				{
+{
 	if ( g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_HIGHLIGHT || g_ActivityAreaCtrl->GetParentBox() == this )
 		ResetContents();
 	else

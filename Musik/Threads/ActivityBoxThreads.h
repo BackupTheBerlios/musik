@@ -37,7 +37,7 @@ enum EACTIVITY_RENAME_MODE
 class MusikActivityRenameThread : public wxThread
 {
 public:
-	MusikActivityRenameThread( CActivityBox* parent_box, int mode, const wxArrayString & sel, wxString newvalue );
+	MusikActivityRenameThread( CActivityBox* parent_box, int mode, wxString newvalue );
 
 	virtual void *Entry();
 	virtual void OnExit();
@@ -48,7 +48,6 @@ private:
 	int				m_Type;
 	wxString		m_TypeStr;
 	wxString		m_Replace;
-	wxArrayString	m_Selected;
 
 	CMusikSongArray m_Songs;
 };
