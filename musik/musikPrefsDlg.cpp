@@ -258,31 +258,137 @@ BOOL CmusikPrefsSoundDriver::OnInitDialog()
 {
 	CmusikPropertyPage::OnInitDialog();
 
-	CmusikStringArray pDevices;
-	GetSoundDevices( &pDevices );
-
-	m_SoundDevice.Clear();
-	for ( size_t i = 0; i < pDevices.size(); i++ )
-		m_SoundDevice.AddString( pDevices.at( i ) );
-
-	m_SoundDevice.SelectString( -1, pDevices.at( 0 ) );
+	LoadPrefs();
 
 	return TRUE;
 }
 
 ///////////////////////////////////////////////////
 
-void CmusikPrefsSoundDriver::GetSoundDevices( CmusikStringArray* pTarget )
+void CmusikPrefsSoundDriver::LoadPrefs()
 {
-	pTarget->clear();
+	GetSoundDevices();
+	GetSoundDrivers();
+	GetSoundPlaybackRates();
+
+	CString tmp;
+	tmp.Format( _T( "%d" ), m_Prefs->GetPlayerMaxChannels() );
+	m_SoundMaxChannels.SetWindowText( tmp );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPrefsSoundDriver::CommitChanges()
+{
+	CString tmp;
+
+	int orig_device	= m_Prefs->GetPlayerDevice();
+	int orig_driver	= m_Prefs->GetPlayerDriver();
+	int orig_rate	= m_Prefs->GetPlayerRate();
+	int orig_chan	= m_Prefs->GetPlayerMaxChannels();
+
+	int new_device	= m_SoundDevice.GetCurSel();
+	int new_driver	= m_SoundDriver.GetCurSel();
+
+	m_SoundPlaybackRate.GetWindowText( tmp );
+    int new_rate	= atoi( tmp.GetBuffer() );
+
+	m_SoundMaxChannels.GetWindowText( tmp );
+	int new_chan	= atoi( tmp.GetBuffer() );
+
+	if ( new_chan <= 0 )
+		new_chan = orig_chan;
+
+	bool fmod_needs_restart = false;
+	if ( orig_device != new_device || orig_driver != new_driver || orig_chan != new_chan || orig_rate != new_rate )
+		fmod_needs_restart = true;
+
+
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPrefsSoundDriver::GetSoundDevices( bool populate )
+{
+	m_DeviceInfo.clear();
 
 	int num_drivers = FSOUND_GetNumDrivers();
 
 	for ( int i = 0; i < num_drivers; i++ )
-		pTarget->push_back( FSOUND_GetDriverName( i ) );
+		m_DeviceInfo.push_back( FSOUND_GetDriverName( i ) );
 
-	if ( !pTarget->size() )
-		pTarget->push_back( _T( "(no devices found)" ) );
+	if ( !m_DeviceInfo.size() )
+		m_DeviceInfo.push_back( _T( "(no devices found)" ) );
+
+	if ( populate )
+	{
+		m_SoundDevice.Clear();
+		for ( size_t i = 0; i < m_DeviceInfo.size(); i++ )
+			m_SoundDevice.InsertString( i, m_DeviceInfo.at( i ) );
+
+		if ( m_DeviceInfo.size() )
+		{
+			if ( m_Prefs->GetPlayerDevice() < (int)m_DeviceInfo.size() )
+				m_SoundDevice.SelectString( -1, m_DeviceInfo.at( m_Prefs->GetPlayerDevice() ) );
+			else
+				m_SoundDevice.SelectString( -1, m_DeviceInfo.at( 0 ) );
+		}
+	}
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPrefsSoundDriver::GetSoundDrivers( bool populate )
+{
+	m_DriverInfo.clear();
+
+	m_DriverInfo.push_back( _T( "Direct Sound" ) );
+	m_DriverInfo.push_back( _T( "Windows Waveform" ) );
+	m_DriverInfo.push_back( _T( "ASIO" ) );
+
+	if ( populate )
+	{
+		m_SoundDriver.Clear();
+
+		for ( size_t i = 0; i < m_DriverInfo.size(); i++ )
+			m_SoundDriver.InsertString( i, m_DriverInfo.at( i ) );
+
+		if ( m_DriverInfo.size() )
+		{
+			if ( m_Prefs->GetPlayerDriver() < (int)m_DriverInfo.size() )
+				m_SoundDriver.SelectString( -1, m_DriverInfo.at( m_Prefs->GetPlayerDevice() ) );
+			else
+				m_SoundDriver.SelectString( -1, m_DriverInfo.at( 0 ) );
+		}
+	}
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPrefsSoundDriver::GetSoundPlaybackRates( bool populate )
+{
+	m_PlaybackRateInfo.clear();
+
+	m_PlaybackRateInfo.push_back( _T( "8000" ) );
+	m_PlaybackRateInfo.push_back( _T( "11025" ) );
+	m_PlaybackRateInfo.push_back( _T( "22050" ) );
+	m_PlaybackRateInfo.push_back( _T( "44100" ) );
+
+	if ( populate )
+	{
+		m_SoundPlaybackRate.Clear();
+
+		for ( size_t i = 0; i < m_PlaybackRateInfo.size(); i++ )
+			m_SoundPlaybackRate.InsertString( i, m_PlaybackRateInfo.at( i ) );
+
+		if ( m_PlaybackRateInfo.size() )
+		{
+			CString playback_mode_str;
+			playback_mode_str.Format( _T( "%d" ), m_Prefs->GetPlayerRate() );
+
+			m_SoundPlaybackRate.SelectString( -1, playback_mode_str );
+		}
+	}
 }
 
 ///////////////////////////////////////////////////

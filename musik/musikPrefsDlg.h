@@ -69,7 +69,7 @@ public:
 	CmusikPrefsInterfaceGeneral( CmusikPrefs* prefs );
 	virtual ~CmusikPrefsInterfaceGeneral();
 
-	// saving
+	// saving / loading
 	virtual void CommitChanges();
 	virtual void LoadPrefs();
 
@@ -120,6 +120,10 @@ public:
 	// dialog data
 	enum { IDD = IDD_PROPPAGE_SOUND_DRIVER };
 
+	// saving / loading
+	virtual void CommitChanges();
+	virtual void LoadPrefs();
+
 	// overrides
 	virtual BOOL OnInitDialog();
 
@@ -132,13 +136,20 @@ protected:
 	CmusikPrefs* m_Prefs;
 
 	// for getting sound devices
-	void GetSoundDevices( CmusikStringArray* pTarget );
+	void GetSoundDevices( bool populate = true );
+	void GetSoundDrivers( bool populate = true );
+	void GetSoundPlaybackRates( bool populate = true );
 
 	// controls
 	CComboBox m_SoundDriver;
 	CComboBox m_SoundDevice;
 	CComboBox m_SoundPlaybackRate;
 	CEdit m_SoundMaxChannels;
+
+	// arrays that hold sound driver / device info
+	CmusikStringArray m_DeviceInfo;
+	CmusikStringArray m_DriverInfo;
+	CmusikStringArray m_PlaybackRateInfo;
 
 	// macros
 	DECLARE_DYNAMIC( CmusikPrefsSoundDriver )
