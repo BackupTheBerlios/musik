@@ -460,6 +460,9 @@
 				RelativePath=".\res\bitmap2.bmp">
 			</File>
 			<File
+				RelativePath=".\res\bitmap3.bmp">
+			</File>
+			<File
 				RelativePath=".\res\icon2.ico">
 			</File>
 			<File

@@ -159,9 +159,14 @@ CmusikPlaylistCtrl::CmusikPlaylistCtrl( CFrameWnd* mainwnd, CmusikLibrary* libra
 	// icon that appears when a visible song
 	// is playing...
 	m_ImageList = new CImageList();
-	m_ImageList->Create( 16, 16, TRUE, 2, 2 );
-	m_ImageList->Add( ( HICON )LoadImage( AfxGetApp()->m_hInstance, MAKEINTRESOURCE( IDI_SONG_NOTPLAYING ), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR ) );
-	m_ImageList->Add( ( HICON )LoadImage( AfxGetApp()->m_hInstance, MAKEINTRESOURCE( IDI_SONG_PLAYING ), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR ) );
+	m_ImageList->Create( 16, 12, ILC_COLOR8 | ILC_MASK, 2, 3 );
+	CBitmap bmpPlay, bmpNPlay;
+	bmpPlay.LoadBitmap( IDB_SONG_PLAYING );
+	bmpNPlay.LoadBitmap( IDB_SONG_NOTPLAYING );
+	m_ImageList->Add( &bmpNPlay, RGB( 255, 0, 255 ) );
+	m_ImageList->Add( &bmpPlay, RGB( 255, 0, 255 ) );
+	bmpPlay.DeleteObject();
+	bmpNPlay.DeleteObject();
 }
 
 ///////////////////////////////////////////////////

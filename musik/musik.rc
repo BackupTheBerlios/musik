@@ -68,8 +68,6 @@ IDR_MAINFRAME           ICON                    "res\\musik.ico"
 IDI_MUSIK_16            ICON                    "res\\musik_16.ico"
 IDI_MUSIK_32            ICON                    "res\\musik_32.ico"
 IDI_MUSIK_48            ICON                    "res\\musik_48.ico"
-IDI_SONG_PLAYING        ICON                    "res\\icon2.ico"
-IDI_SONG_NOTPLAYING     ICON                    "res\\icon3.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -705,6 +703,8 @@ END
 
 IDB_DOWN                BITMAP                  "idb_down.bmp"
 IDB_UP                  BITMAP                  "idb_up.bmp"
+IDB_SONG_PLAYING        BITMAP                  "res\\bitmap2.bmp"
+IDB_SONG_NOTPLAYING     BITMAP                  "res\\bitmap3.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
