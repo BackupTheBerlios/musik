@@ -876,9 +876,9 @@ void CmusikPlayer::Exit()
 {
 	if ( IsCrossfaderEnabled() && IsPlaying() )
 	{
-		m_Handle++;
 		m_FadeType = MUSIK_CROSSFADER_EXIT;
 		FlagCrossfade();
+		m_Handle++;
 	}
 	else
 		FinalizeExit();
