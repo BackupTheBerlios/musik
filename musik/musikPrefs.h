@@ -124,11 +124,13 @@ public:
 	int GetWinampVisModule(){ return m_WinampVis_Module; }
 	int GetWinampVis(){ return m_WinampVis_Lib; }
 	string GetWinampPluginDir() { return m_Winamp_PluginDir; }
+	bool IsWinampVisActive(){ return m_Winamp_PluginsActive; }
 
 	void SetWinampVisName( string& name ){ m_WinampVis_Name = name; }
 	void SetWinampVisModule( int module ){ m_WinampVis_Module = module; }
 	void SetWinampVis( int vis ){ m_WinampVis_Lib = vis; }
 	void SetWinampPluginDir ( string val ) { m_Winamp_PluginDir = val; }
+	void SetWinampVisActive( bool active ){ m_Winamp_PluginsActive = active; }
 
 
 	//
@@ -288,6 +290,7 @@ private:
 	int m_WinampVis_Module;
 	int m_WinampVis_Lib;
 	string m_Winamp_PluginDir;
+	bool m_Winamp_PluginsActive;
 
 	// sources
 	bool	m_Sources_SubLibsVisible;

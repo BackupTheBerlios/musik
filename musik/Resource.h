@@ -136,8 +136,11 @@
 #define IDC_DELETE                      1054
 #define IDC_CHECK5                      1055
 #define IDC_TUNAGEENABLED               1056
+#define IDC_REFRESH                     1056
 #define IDC_TUNAGEURLENABLED            1057
+#define IDC_OK                          1057
 #define IDC_TUNAGEURL                   1058
+#define IDC_SETTINGS                    1058
 #define IDC_TUNAGEFILENAME              1060
 #define IDC_TUNAGEFILEENABLED           1061
 #define IDC_TUNAGEFILELINE              1062
@@ -145,9 +148,6 @@
 #define IDC_TUNAGECOMMANDLINE           1064
 #define IDC_RUNAPPENABLED               1065
 #define IDC_TUNAGERUNAPPENABLED         1065
-#define IDC_REFRESH                     1056
-#define IDC_OK                          1057
-#define IDC_SETTINGS                    1058
 #define ID_FILE_PREFERENCES             32771
 #define ID_FILE_SEP                     32772
 #define ID_ADD_FILES                    32774
@@ -275,14 +275,14 @@
 #define ID_VIEW_WINAMPVISUALIZATIONS    32939
 #define ID_WINAMPVISUALIZATIONS_CONFIGURE 32940
 #define ID_WINAMPVISUALIZATIONS_ENABLED 32941
+#define ID_WINAMPVISUALIZATIONS_ACTIVATE 32942
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-
 #define _APS_NEXT_RESOURCE_VALUE        164
-#define _APS_NEXT_COMMAND_VALUE         32942
+#define _APS_NEXT_COMMAND_VALUE         32943
 #define _APS_NEXT_CONTROL_VALUE         1059
 #define _APS_NEXT_SYMED_VALUE           104
 #endif

@@ -104,6 +104,7 @@ void CmusikPrefs::LoadPrefs()
 	m_WinampVis_Name			= config->GetValue( "Winamp Visualizations", "Default", "" );
 	m_WinampVis_Module			= StringToInt( config->GetValue( "Winamp Visualizations", "Module", "-1" ) );
 	m_Winamp_PluginDir			= config->GetValue( "Winamp Visualizations", "PluginDir", "c:\\program files\\winamp\\plugins\\" );
+	m_Winamp_PluginsActive		= StringToBool( config->GetValue( "Winamp Visualizations", "Active", "0" ) );
 
 	// transparency
 	m_TransEnabled				= StringToBool( config->GetValue( "Transparency", "Enabled", "0" ) );
@@ -194,7 +195,8 @@ void CmusikPrefs::SavePrefs()
 	config->SetValue( "Winamp Visualizations", "Default", m_WinampVis_Name );
 	config->SetValue( "Winamp Visualizations", "Module", IntToString( m_WinampVis_Module ) );
 	config->SetValue( "Winamp Visualizations", "PluginDir", m_Winamp_PluginDir );
-	
+	config->SetValue( "Winamp Visualizations", "Active", BoolToString( m_Winamp_PluginsActive ) );
+
 	// transparency
 	config->SetValue( "Transparency", "Enabled", BoolToString( m_TransEnabled ) );
 	config->SetValue( "Transparency", "Adaptive", BoolToString( m_TransAdaptive ) );

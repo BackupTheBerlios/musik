@@ -131,6 +131,9 @@ BEGIN
 
             MENUITEM "Configure",                   ID_WINAMPVISUALIZATIONS_CONFIGURE
 
+            MENUITEM SEPARATOR
+            MENUITEM "Activate",                    ID_WINAMPVISUALIZATIONS_ACTIVATE
+
         END
     END
     POPUP "&Audio"
@@ -620,7 +623,6 @@ BEGIN
     EDITTEXT        IDC_EDIT5,150,60,40,14,ES_AUTOHSCROLL
 END
 
-
 IDD_PROPPAGE_TUNAGE DIALOGEX 0, 0, 210, 154
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Tunage"
@@ -648,7 +650,6 @@ BEGIN
                     BS_AUTOCHECKBOX | WS_TABSTOP,6,115,57,10
 END
 
-
 IDD_WINAMP_VIS DIALOGEX 0, 0, 238, 119
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
     WS_SYSMENU
@@ -665,7 +666,6 @@ BEGIN
     LISTBOX         IDC_LIST1,6,18,228,54,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | 
                     WS_TABSTOP
 END
-
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -836,7 +836,6 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 112
     END
-
 END
 #endif    // APSTUDIO_INVOKED
 

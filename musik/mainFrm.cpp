@@ -66,6 +66,7 @@
 
 #include <io.h>
 #include <Direct.h>
+#include ".\mainfrm.h"
 
 ///////////////////////////////////////////////////
 
@@ -251,7 +252,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_GETWINAMPVISMODULES, OnGetWinampVisModules )
 	ON_REGISTERED_MESSAGE( WM_CONFIGWINAMPVIS, OnConfigWinampVis )
 
-END_MESSAGE_MAP()
+	ON_COMMAND(ID_WINAMPVISUALIZATIONS_ACTIVATE, OnWinampvisualizationsActivate)
+	END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
 
@@ -3404,6 +3406,24 @@ LRESULT CMainFrame::OnConfigWinampVis( WPARAM wParam, LPARAM lParam )
 		visConfigVis( vis_id, vis_mod );
 
 	return 0L;
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnWinampvisualizationsActivate()
+{
+	if ( !m_Prefs->IsWinampVisActive() )
+	{
+		MessageBox( 
+			_T( "You are about to enable an experimental and unsupported feature of musik. " )
+			_T( "If you find that Cube\nbecomes unstable, please deactivate this feature at once. " )
+			_T( "Some general tips for stability include:\n\n" )
+			_T( "  - Do not use Alt+Enter to enter full screen mode\n" )
+			_T( "  - If the visualization has a separate window (e.g. MilkDrop), do not close it -- " )
+			_T( "disable it by unchecking\n    \"Enable\" in the musik View menu." ),
+			MUSIK_VERSION_STR,
+			MB_ICONINFORMATION );
+	}
 }
 
 ///////////////////////////////////////////////////

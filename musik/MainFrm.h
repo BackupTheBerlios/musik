@@ -465,6 +465,8 @@ protected:
 
 	CmusikWinampVisDlg* m_VisDlg;
 
+public:
+	afx_msg void OnWinampvisualizationsActivate();
 };
 
 ///////////////////////////////////////////////////
