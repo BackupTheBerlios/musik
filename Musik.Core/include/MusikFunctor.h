@@ -57,7 +57,7 @@ public:
 		// pure virtual
 	}
 
-	virtual void Call()
+	virtual void OnNewSong()
 	{
 		// pure virtual
 	}

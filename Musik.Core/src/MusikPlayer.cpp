@@ -14,18 +14,146 @@ static void MusikPlayerWorker( CMusikPlayer* player )
 {
 	TRACE0( "Player thread initialized\n" );
 
-	ACE_Time_Value sleep;
-	sleep.set( 0.5 );
+	ACE_Thread_Mutex m_ProtectingStreams;
+
+	ACE_Time_Value sleep_regular, sleep_tight;
+	sleep_regular.set( 0.5 );
+	sleep_tight.set( 0.1 );
 
 	while ( !player->IsShuttingDown() )
 	{
 		// check every half second
 		if ( player->IsPlaying() && !player->IsPaused() )
 		{
+			// start a tighter loop if the crossfader 
+			// is inactive and there is less than
+			// two seconds remaining on the song...
+			if ( !player->IsCrossfaderActive() && player->GetTimeRemain( MUSIK_TIME_MS ) <= 2000 )
+			{
+				bool started = false;
+				while ( !started )
+				{
+					if ( player->GetTimeRemain( MUSIK_TIME_MS ) <= 10 )
+					{
+						player->Next();
+						started = true;
+					}
+					else
+						ACE_OS::sleep( sleep_tight );
+				}
+			}
+
+			// othwerwise just monitor for the
+			// crossfader flag
+			if ( player->IsCrossfaderReady() )
+			{
+				bool fade_success = true;
+
+				m_ProtectingStreams.acquire();
+
+				// if the song is shorter than twice the fade
+				// duration ( fadein + fadeout ), don't do
+				// the fade becuase something will fuck up
+				if ( player->GetDuration( MUSIK_TIME_MS ) > player->GetCrossfader()->GetDuration( player->GetFadeType() ) )
+				{
+					int temp				= 0;
+					int nFadeType			= player->GetFadeType();
+					int nMainStream			= -1;
+					size_t nChildCount		= 0;
+
+					// if the fade type is pause, resume, stop
+					// or exit, we need ALL the streams as
+					// children.
+					if ( nFadeType == MUSIK_CROSSFADER_PAUSE_RESUME || nFadeType == MUSIK_CROSSFADER_STOP || nFadeType == MUSIK_CROSSFADER_EXIT )
+						nChildCount = player->GetStreamCount();
+
+					// otherwise its a regular fade, so find the
+					// main and child streams
+					else
+					{
+						nChildCount = player->GetStreamCount() - 1;	
+						nMainStream = nChildCount;
+					}	
+
+					// fade duration in seconds, not milliseconds 
+					int nDuration = (int)( 1000.0f * player->GetCrossfader()->GetDuration( player->GetFadeType() ) );
+
+					// total number of steps ( 10 fades per second )
+					// with a minimum of 1 step
+					float fFadeSecs = (float)nDuration / 1000.0f;
+					float fFadeCount = 10.0f * fFadeSecs;
+					int nFadeCount = (int) fFadeCount;
+
+					if ( nFadeCount < 1 ) nFadeCount = 1;
+
+					// the amount of volume to be changed
+					// in the primary stream, which ranges from
+					// 0 - 255. minimum of 1 per step.
+					int nFadeStep = player->GetMaxVolume() / nFadeCount;
+
+					if ( nFadeStep < 1 ) nFadeStep = 1;
+
+					// an array containing the volume steps for
+					// all the secondary streams
+					CIntArray aChildSteps;
+					for ( size_t i = 0; i < aChildSteps.size(); i++ )
+					{
+						temp = player->GetVolume( i ) / nFadeCount;
+						if ( temp < 1 )	temp = 1;
+						aChildSteps.push_back( temp );
+					}
+
+					// current volume trackers
+					int nMainVol	= 0;
+					int nChildVol	= 0;
+					int nChildChan	= -1;
+
+					// start the main loop
+					for ( int i = 0; i < nFadeCount; i++ )
+					{
+						// see if we should abort
+						if ( player->IsCrossfaderAborted() )
+						{
+							fade_success = false;
+							break;
+						}
+
+						// modify all the child streams
+						for ( size_t j = 0; j < nChildCount; j++ )
+						{
+							nChildChan	= player->GetChannelID( i );
+							nChildVol	= player->GetVolume( nChildChan ) - aChildSteps.at( j );
+
+							if ( nChildVol < 0 ) nChildVol = 0;
+
+							player->SetVolume( nChildChan, nChildVol );
+						}
+
+						// modify primary stream, if one exists
+						if ( nMainStream > -1 )
+						{
+							nMainVol += nFadeStep;
+							if ( nMainVol > player->GetMaxVolume() )
+								nMainVol = player->GetMaxVolume();
+
+							player->SetVolume( nMainStream, nMainVol );
+						}
+
+						// sleep 10 ms
+						ACE_OS::sleep( sleep_tight );
+					}
+
+				}
+				
+				m_ProtectingStreams.release();
+
+				player->FinishCrossfade( fade_success );
+
+			}
 			
 		}
 
-		ACE_OS::sleep( sleep );
+		ACE_OS::sleep( sleep_regular );
 	}
 
 	TRACE0( "Player thread terminated\n" );	
@@ -56,6 +184,8 @@ CMusikPlayer::CMusikPlayer( CMusikFunctor* functor, CMusikLibrary* library, CMus
 	m_IsPlaying			= false;
 	m_IsPaused			= false;
 	m_ShutDown			= false;
+	m_IsCrossfaderReady	= false;
+	m_CrossfaderAbort	= false;
 
 	m_EQ				= NULL;
 	m_Crossfader		= NULL;
@@ -64,11 +194,16 @@ CMusikPlayer::CMusikPlayer( CMusikFunctor* functor, CMusikLibrary* library, CMus
 	m_Mutex				= NULL;
 	m_ThreadID			= NULL;
 	m_ThreadHND			= NULL;
-	m_DSP				= NULL;
+	m_EQ_DSP			= NULL;
 
 	m_MaxChannels		= -1;
 	m_CurrChannel		= -1;
+	m_Index				= -1;
+	m_FadeType			= -1;
 
+	m_Volume			= 128;
+
+	InitCrossfader();
 	InitThread();
 }
 
@@ -76,6 +211,8 @@ CMusikPlayer::CMusikPlayer( CMusikFunctor* functor, CMusikLibrary* library, CMus
 
 CMusikPlayer::~CMusikPlayer()
 {
+	CleanEqualizer();
+	CleanCrossfader();
 	CleanThread();
 	CleanSound();
 }
@@ -84,9 +221,6 @@ CMusikPlayer::~CMusikPlayer()
 
 void CMusikPlayer::InitThread()
 {
-	m_EQ = new CMusikEqualizer( m_Library );
-	m_Crossfader = new CMusikCrossfader();
-
 	m_Mutex	= new ACE_Thread_Mutex();
 	m_ThreadID = new ACE_thread_t();
 	m_ThreadHND = new ACE_hthread_t();
@@ -104,12 +238,45 @@ void CMusikPlayer::InitThread()
 
 void CMusikPlayer::CleanThread()
 {
-	if ( m_Crossfader ) delete m_Crossfader;
-	if ( m_EQ ) delete m_EQ;
-
 	if ( m_Mutex ) 	delete m_Mutex;
 	if ( m_ThreadID ) delete m_ThreadID;	
 	if ( m_ThreadHND ) delete m_ThreadHND;
+}
+
+///////////////////////////////////////////////////
+
+void CMusikPlayer::InitCrossfader()
+{
+	if ( m_Crossfader ) 
+		delete m_Crossfader;
+
+	m_Crossfader = new CMusikCrossfader();
+}
+
+///////////////////////////////////////////////////
+
+void CMusikPlayer::CleanCrossfader()
+{
+	if ( m_Crossfader ) 
+		delete m_Crossfader;
+}
+
+///////////////////////////////////////////////////
+
+void CMusikPlayer::InitEqualizer()
+{
+	if ( m_EQ ) 
+		delete m_EQ;
+
+	m_EQ = new CMusikEqualizer( m_Library );
+}
+
+///////////////////////////////////////////////////
+
+void CMusikPlayer::CleanEqualizer()
+{
+	if ( m_EQ ) 
+		delete m_EQ;
 }
 
 ///////////////////////////////////////////////////
@@ -229,7 +396,7 @@ void CMusikPlayer::SetPlaylist( CMusikPlaylist* playlist )
 
 ///////////////////////////////////////////////////
 
-bool CMusikPlayer::Play( int index, int play_type, int start_pos )
+bool CMusikPlayer::Play( int index, int fade_type, int start_pos )
 {
 	// verify song can even 
 	if ( index >= (int)m_Playlist->GetCount() || index < 0 )
@@ -256,6 +423,9 @@ bool CMusikPlayer::Play( int index, int play_type, int start_pos )
 		return false;
 	}
 
+	// setup the current fade type
+	m_FadeType = fade_type;
+
 	// inc the next channel, 
 	PushNewChannel();
 
@@ -264,26 +434,49 @@ bool CMusikPlayer::Play( int index, int play_type, int start_pos )
 	m_ActiveChannels->push_back( GetCurrChannel() );
 
 	// play it: set volume and time
+	FSOUND_SetVolume( GetCurrChannel(), 0 );
 	FSOUND_Stream_Play( GetCurrChannel(), pNewStream );
-	FSOUND_SetVolume( GetCurrChannel(), 128 );
 	FSOUND_Stream_SetTime( pNewStream, start_pos * 1000 );
-
-	// if the current type of crossfade is either
-	// disabled or at 0.0 seconds, just cut
-	// out any old streams before we start up the next
-	CleanOldStreams();
 
 	// toggle the flag
 	m_IsPlaying = true;
 	m_IsPaused = false;
 
+	// if the current type of crossfade is either
+	// disabled or at 0.0 seconds, just cut
+	// out any old streams before we start up the next
+	if ( !IsCrossfaderActive() || ( m_Crossfader->GetDuration( fade_type ) <= 0 && fade_type == MUSIK_CROSSFADER_NONE ) )
+	{
+		FSOUND_SetVolume( GetCurrChannel(), m_Volume );
+		CleanOldStreams();
+	}
+
+	// if we got a valid crossfade type, flag it
+	// so the thread can pick it up when we finish
+	else
+		FlagCrossfade();	
+
 	// call the functor. this is sort of like
 	// a callback, but a bit easier.
 	if ( m_Functor )
-		m_Functor->Call();
+		m_Functor->OnNewSong();
+
+	// set the new index
+	m_Index = index;
 
 	// and, we're done.
 	TRACE0( "Next song started, and functor called.\n" );
+	return true;
+}
+
+///////////////////////////////////////////////////
+
+bool CMusikPlayer::Next()
+{
+	if ( m_Index + 1 == m_Playlist->GetCount() )
+		return false;
+
+	Play( m_Index + 1 );
 	return true;
 }
 
@@ -308,53 +501,47 @@ int CMusikPlayer::GetCurrChannel()
 
 FSOUND_STREAM* CMusikPlayer::GetCurrStream()
 {
-	return m_ActiveStreams->at( m_ActiveStreams->size() );
+	return m_ActiveStreams->at( m_ActiveStreams->size() - 1 );
 }
 
 ///////////////////////////////////////////////////
 
-void CMusikPlayer::InitDSP()
+void CMusikPlayer::InitEQ_DSP()
 {
-	if ( !m_DSP )
+	if ( !m_EQ_DSP )
 	{
-		void* ptrEQ = m_EQ;
-		m_DSP = FSOUND_DSP_Create( &MusikEQCallback, FSOUND_DSP_DEFAULTPRIORITY_USER, (int)ptrEQ );		
+		if ( m_EQ )
+		{
+			void* ptrEQ = m_EQ;
+			m_EQ_DSP = FSOUND_DSP_Create( &MusikEQCallback, FSOUND_DSP_DEFAULTPRIORITY_USER, (int)ptrEQ );	
+		}
 	}
 }
 
 ///////////////////////////////////////////////////
 
-void CMusikPlayer::ToggleDSP()
+void CMusikPlayer::EnableEQ( bool enable, bool force_init )
 {
-	if ( m_DSP )
-		FSOUND_DSP_SetActive( m_DSP, m_IsEQActive );
-}
-
-///////////////////////////////////////////////////
-
-void CMusikPlayer::CleanDSP()
-{
-	if ( m_DSP )
+	if ( enable )
 	{
-		FSOUND_DSP_Free( m_DSP );
-		m_DSP = NULL;
-	}
-}
+		if ( !m_EQ_DSP && force_init )
+			InitEQ_DSP();
 
-///////////////////////////////////////////////////
-
-void CMusikPlayer::SetEqualizerActive( bool active )
-{
-	m_IsEQActive = active;
-	if ( active )
-	{
-		InitDSP();
-		ToggleDSP();
+		if ( m_EQ_DSP )
+			FSOUND_DSP_SetActive( m_EQ_DSP, m_IsEQActive );
 	}
 	else
+		CleanEQ_DSP();
+}
+
+///////////////////////////////////////////////////
+
+void CMusikPlayer::CleanEQ_DSP()
+{
+	if ( m_EQ_DSP )
 	{
-		ToggleDSP();
-		CleanDSP();		
+		FSOUND_DSP_Free( m_EQ_DSP );
+		m_EQ_DSP = NULL;
 	}
 }
 
@@ -427,6 +614,59 @@ int CMusikPlayer::GetTimeRemain( int mode )
 	return nLeft;
 }
 
+///////////////////////////////////////////////////
+
+void CMusikPlayer::FinishCrossfade( bool success )
+{
+	// success means the crossfader finished
+	// naturally, so we should clean up any
+	// old streams
+	if ( success )
+	{
+		SetVolume( m_Volume, true );
+		CleanOldStreams();
+	}
+
+	m_CrossfaderAbort = false;
+	m_IsCrossfaderReady = false;
+}
 
 ///////////////////////////////////////////////////
 
+size_t CMusikPlayer::GetStreamCount()
+{
+	return m_ActiveStreams->size();
+}
+
+///////////////////////////////////////////////////
+
+int CMusikPlayer::GetVolume( int channel_id )
+{
+	return FSOUND_GetVolume( channel_id );
+}
+
+///////////////////////////////////////////////////
+
+int CMusikPlayer::GetChannelID( int n )
+{
+	return m_ActiveChannels->at( n );
+}
+
+///////////////////////////////////////////////////
+
+void CMusikPlayer::SetVolume( int channel_id, int n )
+{
+	FSOUND_SetVolume( channel_id, n );
+}
+
+///////////////////////////////////////////////////
+
+void CMusikPlayer::SetMaxVolume( int n, bool set_now )
+{
+	m_Volume = n;
+
+	if ( set_now )
+		FSOUND_SetVolume( GetCurrChannel(), n );
+}
+
+///////////////////////////////////////////////////

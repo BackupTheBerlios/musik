@@ -79,6 +79,18 @@ public:
 	int  InitSound( int device, int driver, int rate, int channels, int mode = MUSIK_PLAYER_INIT_START );
 	void CleanSound();
 
+	// crossfader stuff
+	void InitCrossfader();
+	void CleanCrossfader();
+	int GetFadeType(){ return m_FadeType; }
+	CMusikCrossfader* GetCrossfader(){ return m_Crossfader; }
+	void FinishCrossfade( bool success );
+
+	// equalizer stuff
+	void InitEQ_DSP();
+	void CleanEQ_DSP();
+	void EnableEQ( bool enable, bool force_init = true );
+
 	// contains the information of the 
 	// currently playing song
 	CMusikSongInfo* GetCurrPlaying(){ return &m_CurrSong; }
@@ -86,15 +98,21 @@ public:
 	// sets various attributes
 	void SetPlaylist( CMusikPlaylist* playlist );
 	void SetLibrary( CMusikLibrary* library );
-	void SetEqualizerActive( bool active = true );
 
 	// time
 	int	GetTimeNow		( int mode );
 	int	GetTimeRemain	( int mode );
 	int	GetDuration		( int mode );
-		
+
+	// volume
+	int GetMaxVolume(){ return m_Volume; }
+	void SetMaxVolume( int vol, bool set_now = true );
+
+	int GetVolume( int channel_id );
+	void SetVolume( int channel_id, int vol );
+
 	// play controls
-	bool Play( int index = 0, int play_type = 0, int start_pos = 0 );
+	bool Play( int index = 0, int fade_type = -1, int start_pos = 0 );
 	bool Next();
 	bool Prev();
 	bool Pause();
@@ -106,8 +124,26 @@ public:
 	bool IsShuttingDown()		{ return m_ShutDown; }
 	bool IsEqualizerActive()	{ return m_IsEQActive; }
 	bool IsCrossfaderActive();
+	bool IsCrossfaderReady()	{ return m_IsCrossfaderReady; }
+	bool IsCrossfaderAborted()	{ return m_CrossfaderAbort; }
+
+	// crossfade flags
+	void FlagCrossfade()		{ m_IsCrossfaderReady = true; }
+	void UnflagCrossfade()		{ m_IsCrossfaderReady = false; }
+	void AbortCrossfade()		{ m_CrossfaderAbort = true; }
+	void CrossfadeAborted()		{ m_CrossfaderAbort = false; }
+
+	// misc
+	size_t GetStreamCount();
+	int GetChannelID( int n );
 
 private:
+
+	// index of the current song
+	int m_Index;
+
+	// volume
+	int m_Volume;
 
 	// start and stop sound. InitSound() will
 	// relay to these helper functions
@@ -119,12 +155,15 @@ private:
 	
 	// crossfader
 	CMusikCrossfader* m_Crossfader;
+	int m_FadeType;
 
 	// status flags
 	bool m_IsPlaying;
 	bool m_IsPaused;
 	bool m_ShutDown;
 	bool m_IsEQActive;
+	bool m_IsCrossfaderReady;
+	bool m_CrossfaderAbort;
 
 	// info on currently playing song
 	CMusikSongInfo m_CurrSong;
@@ -149,12 +188,13 @@ private:
 	CMusikStreamPtrArray* m_ActiveStreams;
 	CIntArray* m_ActiveChannels;
 
-	// dsp initialization (eq stuff)
-	void InitDSP();
-	void CleanDSP();
-	void ToggleDSP();
+	// equalizer DSP unit
+	FSOUND_DSPUNIT *m_EQ_DSP;
 
-	FSOUND_DSPUNIT *m_DSP;
+	// internal functions used to initialize
+	// and free any equalizer stuff used
+	void InitEqualizer();
+	void CleanEqualizer();
 
 	// main thread and mutex
 	void InitThread();
