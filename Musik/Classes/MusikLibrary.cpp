@@ -1254,21 +1254,52 @@ bool CMusikLibrary::RetagFile( CMusikSong* song, bool bClearCheck )
 	wxString	sFile		= filename.GetName();
 	wxString	sExt		= wxT(".") + filename.GetExt();
 
-	wxArrayString aPattern = DelimitStr( sPattern, wxT("-"), true );
-	wxArrayString aTagInfo = DelimitStr( sFile, wxT("-"), true );	
+	sPattern.Replace( wxT("%"), wxT(""), 1 );
+	sPattern.Replace( wxT(" "), wxT(""), 1 );
 
 	size_t nPatternDel	= GetDelimitCount( sPattern, wxT("-") );
 	size_t nFilenameDel = GetDelimitCount( sFile, wxT("-") );
 
+	wxArrayString aPattern = DelimitStr( sPattern, wxT("-"), true );
+	wxArrayString aTagInfo = DelimitStr( sFile, wxT("-"), true );	
+
+/*	1 - song title
+	2 - artist name
+	3 - album name
+	4 - genre
+	5 - year
+	6 - track number
+*/
 	if( nPatternDel == nFilenameDel )
 	{
 		for( size_t i = 0; i < nPatternDel; i++ )
 		{
-			switch ( aPattern.Item( i ) )
+			switch ( wxStringToInt( aPattern.Item( i ) ) )
 			{
-			case wxT("%1"):
-					wxMessageBox( wxT("bleh") );
-					break;
+			case 1:
+				//song->Title = aTagInfo.Item( i );
+				wxMessageBox( wxT("Title") );
+				break;
+			case 2:
+				//song->Artist = aTagInfo.Item( i );
+				wxMessageBox( wxT("Artist") );
+				break;
+			case 3:
+				//song->Album = aTagInfo.Item( i );
+				wxMessageBox( wxT("Album") );
+				break;
+			case 4:
+				//song->Genre = aTagInfo.Item( i );
+				wxMessageBox( wxT("Genre") );
+				break;
+			case 5:
+				//song->Year = aTagInfo.Item( i );
+				wxMessageBox( wxT("Year") );
+				break;
+			case 6:
+				//song->TrackNum = aTagInfo.Item( i );
+				wxMessageBox( wxT("Track Number") );
+				break;
 			}
 		}
 	}
