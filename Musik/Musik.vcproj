@@ -201,6 +201,16 @@
 					RelativePath=".\Frames\MusikVolumeFrame.h">
 				</File>
 			</Filter>
+			<Filter
+				Name="FX"
+				Filter="">
+				<File
+					RelativePath=".\Frames\MusikFXFrame.cpp">
+				</File>
+				<File
+					RelativePath=".\Frames\MusikFXFrame.h">
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Threads"

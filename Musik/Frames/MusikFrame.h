@@ -41,6 +41,7 @@ public:
 
 	void OnSetupPaths				( wxCommandEvent&	WXUNUSED(event) );
 	void OnPreferences				( wxCommandEvent&	event			);
+	void OnFX						( wxCommandEvent&	event			);
 
 	void OnStayOnTop				( wxCommandEvent&	WXUNUSED(event) );
 	void OnUpdateStayOnTop			( wxUpdateUIEvent&	event			);

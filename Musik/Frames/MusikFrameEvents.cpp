@@ -18,6 +18,7 @@
 //--- frames ---//
 #include "MusikLibraryFrame.h"
 #include "MusikPrefsFrame.h"
+#include "MusikFXFrame.h"
 
 //--- globals ---//
 #include "../MusikGlobals.h"
@@ -39,6 +40,7 @@ BEGIN_EVENT_TABLE(MusikFrame, wxFrame)
 	EVT_MENU					(MUSIK_MENU_SHOW_RATINGS,			MusikFrame::OnShowRatings			)	// View->Show Ratings
 	EVT_MENU					(MUSIK_MENU_STAY_ON_TOP,			MusikFrame::OnStayOnTop				)	// View->Stay On Top
 	EVT_UPDATE_UI				(MUSIK_MENU_STAY_ON_TOP,			MusikFrame::OnUpdateStayOnTop		)	// View->Stay On Top
+	EVT_MENU					(MUSIK_MENU_FX,						MusikFrame::OnFX					)
 	EVT_MENU					(MUSIK_MENU_PATHS,					MusikFrame::OnSetupPaths			)	// Library->Setup Paths
 	EVT_MENU					(MUSIK_MENU_SIMPLEQUERY,			MusikFrame::OnSimpleQueryDlg		)	// Library->Simple Query
 	EVT_MENU					(MUSIK_MENU_CUSTOMQUERY,			MusikFrame::OnCustomQuery			)	// Library->Custom Query
@@ -168,6 +170,19 @@ void MusikFrame::OnPreferences( wxCommandEvent &event )
 
 	wxFrame *pDlg = new MusikPrefsFrame( ( wxFrame* )this, _("Musik Preferences"), wxPoint( 0, 0 ), prefs_size );
 	this->Enable( FALSE );
+	pDlg->Show();
+}
+
+void MusikFrame::OnFX( wxCommandEvent &event )
+{
+	#ifdef __WXMSW__
+		wxSize fx_size( 460, 200 );
+	#elif __WXGTK__
+		wxSize fx_size( 520, 200 );
+	#endif
+
+	wxFrame *pDlg = new MusikFXFrame( ( wxFrame* )this, _("Musik FX"), wxPoint( 0, 0 ), fx_size );
+	//this->Enable( FALSE );
 	pDlg->Show();
 }
 

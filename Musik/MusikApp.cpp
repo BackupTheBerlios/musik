@@ -69,6 +69,7 @@ bool MusikApp::OnInit()
 		view_menu->Append	( MUSIK_MENU_STAY_ON_TOP, _("Always On Top\tCtrl-T"), wxT(""), wxITEM_CHECK );
 //		view_menu->Check	( MUSIK_MENU_STAY_ON_TOP, ( bool )g_Prefs.nStayOnTop );
 	#endif
+	view_menu->Append	( MUSIK_MENU_FX, _("FX") );
 
 	//--- library -> pending tags ---//
 	library_writetags_menu = new wxMenu;
