@@ -85,8 +85,10 @@ void CMainFrame::InitMusik()
 	m_NewSong		= new CMusikFrameFunctor( this );
 	m_LibPlaylist	= new CMusikPlaylist();	
 	m_Library		= new CMusikLibrary( ( CStdString )m_Database );
-	m_Player		= new CMusikPlayer( m_NewSong, m_Library, m_LibPlaylist );
 	m_Prefs			= new CMusikPrefs( m_PrefsIni );
+
+	m_Player		= new CMusikPlayer( m_NewSong, m_Library, m_LibPlaylist );
+	m_Player->InitSound( m_Prefs->GetPlayerDevice(), m_Prefs->GetPlayerDriver(), m_Prefs->GetPlayerRate(), m_Prefs->GetPlayerMaxChannels() );
 }
 
 ///////////////////////////////////////////////////

@@ -1,12 +1,19 @@
+///////////////////////////////////////////////////
+
 #include "stdafx.h"
 
 #include "MusikPrefs.h"
+
 #include "../Musik.Core/include/MusikLibrary.h"
+
+///////////////////////////////////////////////////
 
 inline int StringToInt( const string str )
 {
 	return atoi( str.c_str() );	
 }
+
+///////////////////////////////////////////////////
 
 inline string IntToString( const int &n )
 {
@@ -15,6 +22,8 @@ inline string IntToString( const int &n )
 	string str = buffer;
     return str;	
 }
+
+///////////////////////////////////////////////////
 
 inline CSize StringToCSize( const string &str )
 {
@@ -34,6 +43,8 @@ inline CSize StringToCSize( const string &str )
 	return ret;
 }
 
+///////////////////////////////////////////////////
+
 inline string CSizeToString( const CSize &size )
 {
 	string ret;
@@ -50,6 +61,8 @@ inline string CSizeToString( const CSize &size )
 
 	return str;
 }
+
+///////////////////////////////////////////////////
 
 inline CPoint StringToCPoint( const string &str )
 {
@@ -72,6 +85,8 @@ inline CPoint StringToCPoint( const string &str )
 	return ret;
 }
 
+///////////////////////////////////////////////////
+
 inline string CPointToString( const CPoint &pt )
 {
 	string ret;
@@ -88,6 +103,8 @@ inline string CPointToString( const CPoint &pt )
 
 	return str;
 }
+
+///////////////////////////////////////////////////
 
 inline CIntArray StringToCIntArray( const string &str )
 {
@@ -106,6 +123,8 @@ inline CIntArray StringToCIntArray( const string &str )
 	return ret;
 }
 
+///////////////////////////////////////////////////
+
 inline string CIntArrayToString( const CIntArray &array )
 {
 	CString CRet;
@@ -119,6 +138,8 @@ inline string CIntArrayToString( const CIntArray &array )
 	string sRet = CRet.GetBuffer();
 	return sRet;
 }
+
+///////////////////////////////////////////////////
 
 inline COLORREF StringToCOLORREF( const string str )
 {
@@ -134,6 +155,8 @@ inline COLORREF StringToCOLORREF( const string str )
 	return ret;
 }
 
+///////////////////////////////////////////////////
+
 inline string COLORREFToString( const COLORREF color )
 {
 	CString CRet;
@@ -146,6 +169,8 @@ inline string COLORREFToString( const COLORREF color )
 	return sRet;
 }
 
+///////////////////////////////////////////////////
+
 inline bool StringToBool( const string str )
 {
 	if ( str.empty() )
@@ -156,6 +181,8 @@ inline bool StringToBool( const string str )
 	return false;
 }
 
+///////////////////////////////////////////////////
+
 inline string BoolToString( const bool val )
 {
 	if ( val )
@@ -163,6 +190,8 @@ inline string BoolToString( const bool val )
 
 	return _T( "0" );
 }
+
+///////////////////////////////////////////////////
 
 CMusikPrefs::CMusikPrefs( CString filename )
 {
@@ -174,75 +203,72 @@ CMusikPrefs::CMusikPrefs( CString filename )
 	LoadPrefs();
 }
 
+///////////////////////////////////////////////////
+
 CMusikPrefs::~CMusikPrefs()
 {
 	SavePrefs();
 	delete config;
 }
 
+///////////////////////////////////////////////////
+
 void CMusikPrefs::LoadPrefs()
 {
-	//-----------------------------------------------------//
-	//--- whole dialog									---//
-	//-----------------------------------------------------//
+	// main dialog
 	m_Dlg_Size = StringToCSize( config->GetValue( "Dialog", "Dialog Size", "800x600" ) );
 	m_Dlg_Pos = StringToCPoint( config->GetValue( "Dialog", "Dialog Position", "50,50" ) );
 	m_Dlg_Maximized	= StringToBool( config->GetValue( "Dialog", "Maximized", "0" ) );
 
-	//-----------------------------------------------------//
-	//--- selection area								---//
-	//-----------------------------------------------------//
+	// selection area
 	m_SelectionBox_Count = StringToInt( config->GetValue( "Selection Area", "Count", "2" ) );
 
-	//-----------------------------------------------------//
-	//--- playlist										---//
-	//-----------------------------------------------------//
+	// playlist
 	m_Playlist_Order = StringToCIntArray( config->GetValue( "Playlist", "Column Order", GetDefPlaylistOrder() ) );
 	m_Playlist_Sizes = StringToCIntArray( config->GetValue( "Playlist", "Column Sizes", GetDefPlaylistSizes() ) );
 	m_Playlist_Stripe_Color = StringToCOLORREF( config->GetValue( "Playlist", "Stripe Color", GetDefPlaylistStripeColor() ) );
 
-	//-----------------------------------------------------//
-	//--- sources										---//
-	//-----------------------------------------------------//
-
-	//-----------------------------------------------------//
-	//--- now playing									---//
-	//-----------------------------------------------------//
+	// now playing
 	m_NowPlaying_Height = StringToInt( config->GetValue( "Now Playing", "Height", "72" ) );
+
+	// player
+	m_Player_Driver = StringToInt( config->GetValue( "Player", "Driver", "0" ) );
+	m_Player_Device = StringToInt( config->GetValue( "Player", "Device", "0" ) );
+	m_Player_Rate = StringToInt( config->GetValue( "Player", "Rate", "44100" ) );
+	m_Player_Max_Channels = StringToInt( config->GetValue( "Player", "Maximum Channels", "6" ) );
 }
+
+///////////////////////////////////////////////////
 
 void CMusikPrefs::SavePrefs()
 {
-	//-----------------------------------------------------//
-	//--- whole dialog									---//
-	//-----------------------------------------------------//
+	// main dialog
 	config->SetValue( "Dialog", "Dialog Size", CSizeToString( m_Dlg_Size ) );
 	config->SetValue( "Dialog", "Dialog Position", CPointToString( m_Dlg_Pos ) );
 	config->SetValue( "Dialog", "Maximized", BoolToString( m_Dlg_Maximized ) );
 
-	//-----------------------------------------------------//
-	//--- selection area								---//
-	//-----------------------------------------------------//
+	// selection area
 	config->SetValue( "Selection Area", "Count", IntToString( (int)m_SelectionBox_Count ) );
 
-	//-----------------------------------------------------//
-	//--- playlist										---//
-	//-----------------------------------------------------//
+	// playlist
 	config->SetValue( "Playlist", "Column Order", CIntArrayToString( m_Playlist_Order ) );
 	config->SetValue( "Playlist", "Column Sizes", CIntArrayToString( m_Playlist_Sizes ) );
 	config->SetValue( "Playlist", "Stripe Color", COLORREFToString( m_Playlist_Stripe_Color ) );
 
-	//-----------------------------------------------------//
-	//--- sources										---//
-	//-----------------------------------------------------//
-
-	//-----------------------------------------------------//
-	//--- now playing									---//
-	//-----------------------------------------------------//
+	// now playing
 	config->SetValue( "Now Playing", "Height", IntToString( m_NowPlaying_Height ) );
 
+	// player
+	config->SetValue( "Player", "Driver", IntToString( m_Player_Driver ) );
+	config->SetValue( "Player", "Device", IntToString( m_Player_Device ) );
+	config->SetValue( "Player", "Rate", IntToString( m_Player_Rate ) );
+	config->SetValue( "Player", "Maximum Channels", IntToString( m_Player_Max_Channels ) );
+
+	// write to ini file
 	config->WriteFile();
 }
+
+///////////////////////////////////////////////////
 
 string CMusikPrefs::GetDefPlaylistOrder()
 {
@@ -260,6 +286,8 @@ string CMusikPrefs::GetDefPlaylistOrder()
 	return sRet;
 }
 
+///////////////////////////////////////////////////
+
 string CMusikPrefs::GetDefPlaylistSizes()
 {
 	CString CRet;
@@ -269,6 +297,8 @@ string CMusikPrefs::GetDefPlaylistSizes()
 	return sRet;
 }
 
+///////////////////////////////////////////////////
+
 string CMusikPrefs::GetDefPlaylistStripeColor()
 {
 	CString CRet;
@@ -277,3 +307,5 @@ string CMusikPrefs::GetDefPlaylistStripeColor()
 	string sRet = CRet.GetBuffer();
 	return sRet;
 }
+
+///////////////////////////////////////////////////

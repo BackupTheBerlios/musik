@@ -34,8 +34,13 @@ static void MusikPlayerWorker( CMusikPlayer* player )
 
 void* F_CALLBACKAPI CMusikPlayer::MusikEQCallback( void* originalbuffer, void *newbuffer, int length, int param )
 {
+	// the param value is really the address
+	// to the CMusikEqualizer that is gonna
+	// be used to process the sample
+	CMusikEqualizer* ptrEQ = (CMusikEqualizer*)param;
+
 	// two channel ( stereo ), 16 bit sound
-	m_EQ->ProcessDSP( newbuffer, length, 2, 16 );
+	ptrEQ->ProcessDSP( newbuffer, length, 2, 16 );
 	return newbuffer;
 }
 
@@ -50,12 +55,16 @@ CMusikPlayer::CMusikPlayer( CMusikFunctor* functor, CMusikLibrary* library, CMus
 	m_IsPlaying			= false;
 	m_IsPaused			= false;
 	m_ShutDown			= false;
+
 	m_EQ				= NULL;
+	m_Crossfader		= NULL;
 	m_ActiveStreams		= NULL;	
 	m_ActiveChannels	= NULL;
 	m_Mutex				= NULL;
 	m_ThreadID			= NULL;
 	m_ThreadHND			= NULL;
+	m_DSP				= NULL;
+
 	m_MaxChannels		= -1;
 	m_CurrChannel		= -1;
 
@@ -75,6 +84,8 @@ CMusikPlayer::~CMusikPlayer()
 void CMusikPlayer::InitThread()
 {
 	m_EQ = new CMusikEqualizer( m_Library );
+	m_Crossfader = new CMusikCrossfader();
+
 	m_Mutex	= new ACE_Thread_Mutex();
 	m_ThreadID = new ACE_thread_t();
 	m_ThreadHND = new ACE_hthread_t();
@@ -92,7 +103,9 @@ void CMusikPlayer::InitThread()
 
 void CMusikPlayer::CleanThread()
 {
+	if ( m_Crossfader ) delete m_Crossfader;
 	if ( m_EQ ) delete m_EQ;
+
 	if ( m_Mutex ) 	delete m_Mutex;
 	if ( m_ThreadID ) delete m_ThreadID;	
 	if ( m_ThreadHND ) delete m_ThreadHND;
@@ -106,11 +119,18 @@ int CMusikPlayer::InitSound( int device, int driver, int rate, int channels, int
 		StopSound();
 
 	if ( mode == MUSIK_PLAYER_INIT_START || mode == MUSIK_PLAYER_INIT_RESTART )
-		return StartSound( device, driver, rate, channels );
+	{
+		if ( StartSound( device, driver, rate, channels ) != MUSIK_PLAYER_INIT_SUCCESS )
+		{
+			TRACE0( "FMOD failed to initialize.\n" );
+			return StartSound( device, driver, rate, channels );
+		}
+	}
 
 	m_ActiveStreams = new CMusikStreamPtrArray();
 	m_ActiveChannels = new CIntArray();
 
+	TRACE0( "FMOD successfully initialized.\n" );
 	return MUSIK_PLAYER_INIT_SUCCESS;
 }
 
@@ -177,7 +197,7 @@ int CMusikPlayer::StartSound( int device, int driver, int rate, int channels )
 		return MUSIK_PLAYER_INIT_ERROR;
 
 	// initialize the device itself.
-	if ( !FSOUND_SetDriver( driver ) )
+	if ( !FSOUND_SetDriver( device ) )
 		return MUSIK_PLAYER_INIT_ERROR;
 
 	// now initialize the whole system
@@ -210,7 +230,7 @@ bool CMusikPlayer::Play( int index, int play_type, int start_pos )
 	// verify song can even 
 	if ( index >= (int)m_Playlist->size() || index < 0 )
 	{
-		TRACE0( "Playlist song out of range." );
+		TRACE0( "Playlist song out of range.\n" );
 		return false;
 	}
 
@@ -218,7 +238,36 @@ bool CMusikPlayer::Play( int index, int play_type, int start_pos )
 	// playing song from it's ID
 	m_Library->GetSongInfoFromID( m_Playlist->items()->at( index ).GetID(), &m_CurrSong );
 
-	// setup next channel
+	// setup next stream
+	FSOUND_STREAM* pNewStream = FSOUND_Stream_Open( 
+		m_CurrSong.GetFilename().c_str(), 
+		FSOUND_NORMAL | FSOUND_2D | FSOUND_MPEGACCURATE, 
+		0,
+		0 );
+
+	// assure the stream was loaded
+	if ( pNewStream == NULL )
+	{
+		TRACE0( "Song file failed to load. Invalid filename?\n" );
+		return false;
+	}
+
+	// inc the next channel, 
+	PushNewChannel();
+
+	// add the new channel and stream
+	m_ActiveStreams->push_back( pNewStream );
+	m_ActiveChannels->push_back( GetCurrChannel() );
+
+	// play it: set volume and time
+	FSOUND_Stream_Play( GetCurrChannel(), pNewStream );
+	FSOUND_SetVolume( GetCurrChannel(), 128 );
+	FSOUND_Stream_SetTime( pNewStream, start_pos * 1000 );
+
+	// if the current type of crossfade is either
+	// disabled or at 0.0 seconds, just cut
+	// out any old streams before we start up the next
+	CleanOldStreams();
 
 	// call the functor. this is sort of like
 	// a callback, but a bit easier.
@@ -226,7 +275,7 @@ bool CMusikPlayer::Play( int index, int play_type, int start_pos )
 		m_Functor->Call();
 
 	// and, we're done.
-	TRACE0( "Next song started, and functor called." );
+	TRACE0( "Next song started, and functor called.\n" );
 	return true;
 }
 
@@ -234,8 +283,85 @@ bool CMusikPlayer::Play( int index, int play_type, int start_pos )
 
 void CMusikPlayer::PushNewChannel()
 {
-	if ( ( m_CurrChannel + 1 ) == m_MaxChannels || m_CurrChannel == -1 )
+	if ( ( m_CurrChannel + 1 ) == m_MaxChannels )
 		m_CurrChannel = 0;
 	else
 		m_CurrChannel++;
+}
+
+///////////////////////////////////////////////////
+
+int CMusikPlayer::GetCurrChannel()
+{
+	return m_CurrChannel;
+}
+
+///////////////////////////////////////////////////
+
+void CMusikPlayer::InitDSP()
+{
+	if ( !m_DSP )
+	{
+		void* ptrEQ = m_EQ;
+		m_DSP = FSOUND_DSP_Create( &MusikEQCallback, FSOUND_DSP_DEFAULTPRIORITY_USER, (int)ptrEQ );		
+	}
+}
+
+///////////////////////////////////////////////////
+
+void CMusikPlayer::ToggleDSP()
+{
+	if ( m_DSP )
+		FSOUND_DSP_SetActive( m_DSP, m_IsEQActive );
+}
+
+///////////////////////////////////////////////////
+
+void CMusikPlayer::CleanDSP()
+{
+	if ( m_DSP )
+	{
+		FSOUND_DSP_Free( m_DSP );
+		m_DSP = NULL;
+	}
+}
+
+///////////////////////////////////////////////////
+
+void CMusikPlayer::SetEqualizerActive( bool active )
+{
+	m_IsEQActive = active;
+	if ( active )
+	{
+		InitDSP();
+		ToggleDSP();
+	}
+	else
+	{
+		ToggleDSP();
+		CleanDSP();		
+	}
+}
+
+///////////////////////////////////////////////////
+
+void CMusikPlayer::CleanOldStreams( bool kill_primary )
+{
+	ASSERT( m_ActiveStreams->size() == m_ActiveChannels->size() );
+
+	size_t nStreamCount = m_ActiveStreams->size();
+
+	if ( nStreamCount <= 0 )
+		return;
+	else if ( !kill_primary )
+		nStreamCount--;
+
+	for ( size_t i = 0; i < nStreamCount; i++ )
+	{
+		FSOUND_Stream_Stop	( m_ActiveStreams->at( 0 ) );
+		FSOUND_Stream_Close	( m_ActiveStreams->at( 0 ) );
+		
+		m_ActiveStreams->erase( m_ActiveStreams->begin() );
+		m_ActiveChannels->erase( m_ActiveChannels->begin() );
+	}	
 }

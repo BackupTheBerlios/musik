@@ -392,6 +392,8 @@ void CMusikPlaylistCtrl::OnLvnItemActivate(NMHDR *pNMHDR, LRESULT *pResult)
 		m_Changed = false;
 	}			
 
+	m_Player->Play( pNMIA->iItem );
+
 	*pResult = 0;
 }
 

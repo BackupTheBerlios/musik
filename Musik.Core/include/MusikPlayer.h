@@ -47,6 +47,7 @@ class CMusikFunctor;
 class CMusikPlayer;
 class CMusikSongInfo;
 class CMusikEqualizer;
+class CMusikCrossfader;
 
 ///////////////////////////////////////////////////
 
@@ -56,7 +57,8 @@ static void MusikPlayerWorker( CMusikPlayer* player );
 
 class CMusikPlayer	
 {
-	void* F_CALLBACKAPI MusikEQCallback( void* originalbuffer, void *newbuffer, int length, int param );
+
+	static void* F_CALLBACKAPI MusikEQCallback( void* originalbuffer, void *newbuffer, int length, int param );
 
 public: 	
 	CMusikPlayer( CMusikFunctor* functor, CMusikLibrary* library, CMusikPlaylist* playlist );
@@ -67,16 +69,18 @@ public:
 
 	void SetPlaylist( CMusikPlaylist* playlist );
 	void SetLibrary( CMusikLibrary* library );
-	
+	void SetEqualizerActive( bool active = true );
+		
 	bool Play( int index = 0, int play_type = 0, int start_pos = 0 );
 	bool Next();
 	bool Prev();
 	bool Pause();
 	bool Resume();
 
-	bool IsPlaying()		{ return m_IsPlaying; }
-	bool IsPaused()			{ return m_IsPaused; }
-	bool IsShuttingDown()	{ return m_ShutDown; }
+	bool IsPlaying()			{ return m_IsPlaying; }
+	bool IsPaused()				{ return m_IsPaused; }
+	bool IsShuttingDown()		{ return m_ShutDown; }
+	bool IsEqualizerActive()	{ return m_IsEQActive; }
 
 private:
 
@@ -87,11 +91,15 @@ private:
 
 	// equalizer
 	CMusikEqualizer* m_EQ;
+	
+	// crossfader
+	CMusikCrossfader* m_Crossfader;
 
 	// status flags
 	bool m_IsPlaying;
 	bool m_IsPaused;
 	bool m_ShutDown;
+	bool m_IsEQActive;
 
 	// info on currently playing song
 	CMusikSongInfo m_CurrSong;
@@ -106,10 +114,19 @@ private:
 	int m_MaxChannels;
 	int m_CurrChannel;
 	void PushNewChannel();
+	int GetCurrChannel();
 
 	// active streams and channels
+	void CleanOldStreams( bool kill_primary = false );
 	CMusikStreamPtrArray* m_ActiveStreams;
 	CIntArray* m_ActiveChannels;
+
+	// dsp initialization (eq stuff)
+	void InitDSP();
+	void CleanDSP();
+	void ToggleDSP();
+
+	FSOUND_DSPUNIT *m_DSP;
 
 	// main thread and mutex
 	void InitThread();
