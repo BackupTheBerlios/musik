@@ -36,9 +36,8 @@
 //
 // Usage: 
 //
-//   Create the new CmusikThread and a CmusikBatch add.
-//   pass the CmusikBatchAdd to the thread's argument,
-//   and use musikBatchAddWorker as the worker
+//   Create the new CmusikBatchAddTask and a CmusikBatchAdd
+//   pass the CmusikBatchAdd to the task's argument.
 //
 ///////////////////////////////////////////////////
 
@@ -46,6 +45,8 @@
 #include "musikPlayer.h"
 #include "musikFunctor.h"
 #include "musikPlaylist.h"
+
+#include "ace/Task.h"
 
 ///////////////////////////////////////////////////
 
@@ -100,94 +101,109 @@ public:
 
 ///////////////////////////////////////////////////
 
-static void musikBatchAddWorker( CmusikThread* thread )
+class CmusikBatchAddTask : public CmusikTask
 {
-	CmusikBatchAdd* params = (CmusikBatchAdd*)thread->GetArgs();
 
-	size_t curr_prog = 0;
-	size_t last_prog = 0;
+public:
 
-	CmusikSong song;
-
-	// sleep if we go idle
-	ACE_Time_Value sleep;
-	sleep.set( 0.1f );
-
-	bool verify_failed = false;
-
-	params->m_Library->BeginTransaction();
-	params->m_Library->InitTimeAdded();
-	for( size_t i = 0; i < params->m_Files->size(); i++ )
+	CmusikBatchAddTask()
+		: CmusikTask()
 	{
-		if ( thread->IsSuspended() )
+		m_Type = MUSIK_TASK_TYPE_BATCHADD;
+	}
+
+	int open( void* params )
+	{
+		m_Params = (CmusikBatchAdd*)params;
+		int ret_code = activate( THR_NEW_LWP | THR_JOINABLE | THR_USE_AFX );
+
+		return ret_code;
+	}
+
+	int svc()
+	{
+		m_Stop = false;
+		m_Finished = false;
+		m_Active = true;
+
+		size_t curr_prog = 0;
+		size_t last_prog = 0;
+
+		CmusikSong song;
+
+		bool verify_failed = false;
+
+		m_Params->m_Library->BeginTransaction();
+		m_Params->m_Library->InitTimeAdded();
+		for( size_t i = 0; i < m_Params->m_Files->size(); i++ )
 		{
-			thread->m_Asleep = true;
-
-			while ( thread->IsSuspended() )
-				ACE_OS::sleep( sleep );
-
-			thread->m_Asleep = false;
-		}
-
-		if ( thread->m_Abort )
-		{
-			TRACE0( "CmusikBatchAdd worker function aborted...\n" );
-			break;
-		}
-
-		// add the song
-		params->m_Library->AddSong( params->m_Files->at( i ) );
-
-		// adding to now playing
-		if ( params->m_AddToPlayer && params->m_Player && params->m_Player->GetPlaylist() )
-		{
-			params->m_Library->GetSongFromFilename( params->m_Files->at( i ), song );
-			params->m_Player->GetPlaylist()->Add( song );
-		}
-
-		// adding to current playlist
-		else if ( params->m_UpdatePlaylist && params->m_Playlist )
-		{
-			if ( !verify_failed )
+			if ( m_Stop )
 			{
-				if ( params->m_Functor->VerifyPlaylist( (void*)params->m_Playlist ) )
+				TRACE0( "CmusikBatchAdd worker function aborted, but ended gracefully...\n" );
+				break;
+			}
+
+			// add the song
+			m_Params->m_Library->AddSong( m_Params->m_Files->at( i ) );
+
+			// adding to now playing
+			if ( m_Params->m_AddToPlayer && m_Params->m_Player && m_Params->m_Player->GetPlaylist() )
+			{
+				m_Params->m_Library->GetSongFromFilename( m_Params->m_Files->at( i ), song );
+				m_Params->m_Player->GetPlaylist()->Add( song );
+			}
+
+			// adding to current playlist
+			else if ( m_Params->m_UpdatePlaylist && m_Params->m_Playlist )
+			{
+				if ( !verify_failed )
 				{
-					params->m_Library->GetSongFromFilename( params->m_Files->at( i ), song );
-					params->m_Playlist->Add( song );
+					if ( m_Params->m_Functor->VerifyPlaylist( (void*)m_Params->m_Playlist ) )
+					{
+						m_Params->m_Library->GetSongFromFilename( m_Params->m_Files->at( i ), song );
+						m_Params->m_Playlist->Add( song );
+					}
+				}
+				else
+				{
+					verify_failed = true;
+					CmusikString s;
+					s.Format( "Failed to add song to playlist at address %d becuase it couldn't be verified\n", m_Params->m_Playlist );
+					TRACE0( s.c_str() );
 				}
 			}
-			else
+
+			// post progress to the functor
+			curr_prog = ( 100 * i ) / m_Params->m_Files->size();
+			if ( curr_prog != last_prog )
 			{
-				verify_failed = true;
-				CmusikString s;
-				s.Format( "Failed to add song to playlist at address %d becuase it couldn't be verified\n", params->m_Playlist );
-				TRACE0( s.c_str() );
+				if ( m_Params->m_Functor )
+					m_Params->m_Functor->OnThreadProgress( curr_prog );
+				last_prog = curr_prog;
 			}
-		}
 
-		// post progress to the functor
-		curr_prog = ( 100 * i ) / params->m_Files->size();
-		if ( curr_prog != last_prog )
-		{
-			if ( params->m_Functor )
-				params->m_Functor->OnThreadProgress( curr_prog );
-			last_prog = curr_prog;
 		}
+		m_Params->m_Library->EndTransaction();
 
+		// clean up
+		if ( m_Params->m_DeleteFilelist )
+			delete m_Params->m_Files;
+
+		if ( m_Params->m_Functor && ( ( m_Stop && m_Params->m_CallFunctorOnAbort ) || !m_Stop ) )
+			m_Params->m_Functor->OnThreadEnd( (void*)this );
+
+		delete m_Params;
+
+		// flag thread operation as complete
+		m_Finished = true;
+
+		return 0;
 	}
-	params->m_Library->EndTransaction();
 
-	// clean up
-	if ( params->m_DeleteFilelist )
-		delete params->m_Files;
+private:
 
-	if ( params->m_Functor && ( ( thread->m_Abort && params->m_CallFunctorOnAbort ) || !thread->m_Abort ) )
-		params->m_Functor->OnThreadEnd( (void*)thread );
+	CmusikBatchAdd* m_Params;
 
-	delete params;
-
-	// flag thread operation as complete
-	thread->m_Finished = true;
-}
+};
 
 ///////////////////////////////////////////////////

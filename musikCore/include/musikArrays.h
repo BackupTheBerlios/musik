@@ -61,7 +61,7 @@ class CmusikSong;
 class CmusikSongInfo;
 class CmusikPlaylist;
 class CmusikPlaylistInfo;
-class CmusikThread;
+class CmusikTask;
 
 ///////////////////////////////////////////////////
 
@@ -72,7 +72,7 @@ typedef std::vector<CmusikPlaylist> CmusikPlaylistArray;
 typedef std::vector<CmusikPlaylistInfo> CmusikPlaylistInfoArray;
 typedef std::vector<int> CIntArray;
 typedef std::vector<FSOUND_STREAM*> CmusikStreamPtrArray;
-typedef std::vector<CmusikThread*> CmusikThreadPtrArray;
+typedef std::vector<CmusikTask*> CmusikTaskPtrArray;
 
 ///////////////////////////////////////////////////
 

@@ -69,11 +69,50 @@
 
 ///////////////////////////////////////////////////
 
-static void musikPlayerWorker( CmusikThread* thread )
+CmusikPlayerWorker::CmusikPlayerWorker()
 {
-	TRACE0( "Player worker thread function started...\n" );
+	m_Finished = true;
+	m_Active = false;
+}
 
-	CmusikPlayer* player = (CmusikPlayer*)thread->GetArgs();
+///////////////////////////////////////////////////
+
+void CmusikPlayerWorker::StopWait()
+{
+	if ( m_Active )
+	{
+		ACE_Time_Value half_sec;
+		half_sec.set( (double)0.5 );
+
+		while ( !m_Finished )
+			ACE_OS::sleep( half_sec );
+
+		m_Active = false;
+	}
+}
+
+///////////////////////////////////////////////////
+
+int CmusikPlayerWorker::open( void* player )
+{
+	m_Player = (CmusikPlayer*)player;
+
+	int ret_code = activate( THR_NEW_LWP | THR_JOINABLE | THR_USE_AFX );
+
+	if ( !ret_code )
+	{
+		m_Active = true;
+		m_Finished = false;
+	}
+
+	return ret_code;
+}
+
+///////////////////////////////////////////////////
+
+int CmusikPlayerWorker::svc()
+{
+	TRACE0( "Player worker function started...\n" );
 
 	ACE_Time_Value sleep_regular, sleep_tight;
 	sleep_regular.set( 0.1 );
@@ -83,44 +122,32 @@ static void musikPlayerWorker( CmusikThread* thread )
 	int nTimeRemain;
 	int nTimeElapsed;
 
-	while ( !thread->m_Abort && !m_Exit )
+	while ( !m_Exit )
 	{
-		// suspended? go to sleep until the flag
-		// tells is its ok to resume...
-		if ( thread->IsSuspended() )
-		{
-			thread->m_Asleep = true;
-
-			while ( thread->IsSuspended() )
-				ACE_OS::sleep( sleep_regular );
-
-			thread->m_Asleep = false;
-		}
-
 		// check every half second if we're plaing
 		// and not aborting. 
-		if ( player->IsPlaying() && !thread->m_Abort && !m_Exit && !thread->IsSuspended() )
+		if ( m_Player->IsPlaying() && !m_Exit )
 		{
 			// start a tighter loop if the crossfader 
 			// is inactive and there is less than
 			// two seconds remaining on the song...
-			if ( !player->IsCrossfaderEnabled() )
+			if ( !m_Player->IsCrossfaderEnabled() )
 			{
 				// intro play mode means we only play 
 				// the first 10 seconds of every song...
-				if ( player->GetPlaymode() & MUSIK_PLAYER_PLAYMODE_INTRO )
+				if ( m_Player->GetPlaymode() & MUSIK_PLAYER_PLAYMODE_INTRO )
 				{
-					nTimeElapsed = player->GetTimeNow( MUSIK_TIME_MS );
+					nTimeElapsed = m_Player->GetTimeNow( MUSIK_TIME_MS );
 
 					if ( nTimeElapsed >= 10000 )
-						player->Next( true );
+						m_Player->Next( true );
 				}
 
 				// not intro mode, so check to see if its
 				// time to que up the next song...
 				else
 				{
-					nTimeRemain = player->GetTimeRemain( MUSIK_TIME_MS );
+					nTimeRemain = m_Player->GetTimeRemain( MUSIK_TIME_MS );
 
 					if ( nTimeRemain <= 2000 )
 					{
@@ -132,9 +159,9 @@ static void musikPlayerWorker( CmusikThread* thread )
 							// and exit the tighter loop. go along our
 							// mary way until the it sends the begin 
 							// crossfade flag back.
-							if ( player->GetTimeRemain( MUSIK_TIME_MS ) <= 10 )
+							if ( m_Player->GetTimeRemain( MUSIK_TIME_MS ) <= 10 )
 							{
-								player->Next( true );
+								m_Player->Next( true );
 								started = true;
 							}
 							else
@@ -150,42 +177,42 @@ static void musikPlayerWorker( CmusikThread* thread )
 			{
 				// intro play mode means we only play 
 				// the first 10 seconds of every song...
-				if ( player->GetPlaymode() & MUSIK_PLAYER_PLAYMODE_INTRO )
+				if ( m_Player->GetPlaymode() & MUSIK_PLAYER_PLAYMODE_INTRO )
 				{
-					nTimeElapsed = player->GetTimeNow( MUSIK_TIME_MS );
+					nTimeElapsed = m_Player->GetTimeNow( MUSIK_TIME_MS );
 
 					if ( nTimeElapsed >= 10000 )
-						player->Next( true );
+						m_Player->Next( true );
 				}
 
 				// see if its time to crossfade in the
 				// next song
 				else
 				{
-					nTimeRemain = player->GetTimeRemain( MUSIK_TIME_MS );
+					nTimeRemain = m_Player->GetTimeRemain( MUSIK_TIME_MS );
 
-					if ( nTimeRemain <= ( player->GetCrossfader()->GetDuration( player->GetFadeType() ) * 1000 ) )
-						player->Next( true );
+					if ( nTimeRemain <= ( m_Player->GetCrossfader()->GetDuration( m_Player->GetFadeType() ) * 1000 ) )
+						m_Player->Next( true );
 				}
 			}
 
 			// othwerwise just monitor for the
 			// crossfader flag
-			if ( player->IsCrossfaderReady() )
+			if ( m_Player->IsCrossfaderReady() )
 			{
 				TRACE0( "Crossfade started...\n" );
 
-				player->UnflagCrossfade();
+				m_Player->UnflagCrossfade();
 
 				bool fade_success = true;
 				
 				// if the song is shorter than twice the fade
 				// duration ( fadein + fadeout ), don't do
 				// the fade becuase something will fuck up
-				if ( player->GetDuration( MUSIK_TIME_MS ) > ( player->GetCrossfader()->GetDuration( player->GetFadeType() ) * 1000 ) )
+				if ( m_Player->GetDuration( MUSIK_TIME_MS ) > ( m_Player->GetCrossfader()->GetDuration( m_Player->GetFadeType() ) * 1000 ) )
 				{
 					// fade duration in seconds, not milliseconds 
-					int nDuration = (int)( 1000.0f * player->GetCrossfader()->GetDuration( player->GetFadeType() ) );
+					int nDuration = (int)( 1000.0f * m_Player->GetCrossfader()->GetDuration( m_Player->GetFadeType() ) );
 
 					// total number of steps ( 10 fades per second )
 					// with a minimum of 1 step
@@ -199,8 +226,8 @@ static void musikPlayerWorker( CmusikThread* thread )
 					float ftemp = 0.0f;
 					int ntemp = 0;
 
-					int nFadeType = player->GetFadeType();
-					int nCurrHandle	= player->GetHandle();
+					int nFadeType = m_Player->GetFadeType();
+					int nCurrHandle	= m_Player->GetHandle();
 					int nMainStream	= -1;
 
 					size_t nChildCount		= 0;
@@ -221,11 +248,11 @@ static void musikPlayerWorker( CmusikThread* thread )
 						// if the fade type is pause, stop
 						// or exit, we need ALL the streams as
 						// children. children always fade out
-						if ( ( nFadeType == MUSIK_CROSSFADER_PAUSE_RESUME && player->IsPlaying() && !player->IsPaused() ) || nFadeType == MUSIK_CROSSFADER_STOP || nFadeType == MUSIK_CROSSFADER_EXIT )
+						if ( ( nFadeType == MUSIK_CROSSFADER_PAUSE_RESUME && m_Player->IsPlaying() && !m_Player->IsPaused() ) || nFadeType == MUSIK_CROSSFADER_STOP || nFadeType == MUSIK_CROSSFADER_EXIT )
 						{	
-							if ( player->GetStreamCount() != nChildCount )
+							if ( m_Player->GetStreamCount() != nChildCount )
 							{
-								nChildCount = player->GetStreamCount();
+								nChildCount = m_Player->GetStreamCount();
 								recalc_steps = true;
 							}
 						}
@@ -234,9 +261,9 @@ static void musikPlayerWorker( CmusikThread* thread )
 						// main and child streams
 						else
 						{
-							if ( nChildCount != player->GetStreamCount() - 1 )
+							if ( nChildCount != m_Player->GetStreamCount() - 1 )
 							{
-								nChildCount = player->GetStreamCount() - 1;	
+								nChildCount = m_Player->GetStreamCount() - 1;	
 								recalc_steps = true;
 							}
 
@@ -257,8 +284,8 @@ static void musikPlayerWorker( CmusikThread* thread )
 							{		
 								if ( nFadeType == MUSIK_CROSSFADER_NEW_SONG || nFadeType == MUSIK_CROSSFADER_STOP )
 								{
-									if ( player->IsEqualizerActive() )
-										player->UpdateEqualizer();
+									if ( m_Player->IsEqualizerActive() )
+										m_Player->UpdateEqualizer();
 								}
 
 								eq_updated = true;
@@ -272,7 +299,7 @@ static void musikPlayerWorker( CmusikThread* thread )
 							aChildSteps.clear();
 							for ( size_t i = 0; i < nChildCount; i++ )
 							{
-								ftemp = (float)player->GetVolume( player->GetChannelID( i ) ) / fFadeCount;
+								ftemp = (float)m_Player->GetVolume( m_Player->GetChannelID( i ) ) / fFadeCount;
 								ntemp = (int)round( ftemp );
 
 								if ( ntemp < 1 )	
@@ -284,7 +311,7 @@ static void musikPlayerWorker( CmusikThread* thread )
 							// the amount of volume to be changed
 							// in the primary stream, which ranges from
 							// 0 - 255. minimum of 1 per step.
-							nFadeStep = player->GetMaxVolume() / nFadeCount;
+							nFadeStep = m_Player->GetMaxVolume() / nFadeCount;
 
 							if ( nFadeStep < 1 ) 
 								nFadeStep = 1;
@@ -293,7 +320,7 @@ static void musikPlayerWorker( CmusikThread* thread )
 						}
 
 						// see if we should abort. 
-						if ( player->GetHandle() != nCurrHandle )
+						if ( m_Player->GetHandle() != nCurrHandle )
 						{
 							TRACE0( "Crossfade aborted\n" );
 
@@ -304,23 +331,23 @@ static void musikPlayerWorker( CmusikThread* thread )
 						// modify all the child streams
 						for ( size_t j = 0; j < nChildCount; j++ )
 						{
-							nChildChan	= player->GetChannelID( j );
-							nChildVol	= player->GetVolume( nChildChan );
+							nChildChan	= m_Player->GetChannelID( j );
+							nChildVol	= m_Player->GetVolume( nChildChan );
 							nChildVol   -= aChildSteps.at( j );
 
 							if ( nChildVol < 0 ) nChildVol = 0;
 
-							player->SetVolume( nChildChan, nChildVol );
+							m_Player->SetVolume( nChildChan, nChildVol );
 						}
 
 						// modify primary stream, if one exists
 						if ( nMainStream > -1 )
 						{
 							nMainVol += nFadeStep;
-							if ( nMainVol > player->GetMaxVolume() )
-								nMainVol = player->GetMaxVolume();
+							if ( nMainVol > m_Player->GetMaxVolume() )
+								nMainVol = m_Player->GetMaxVolume();
 
-							player->SetVolume( player->GetChannelID( nMainStream ), nMainVol );
+							m_Player->SetVolume( m_Player->GetChannelID( nMainStream ), nMainVol );
 						}
 
 						// sleep 10 ms
@@ -331,28 +358,28 @@ static void musikPlayerWorker( CmusikThread* thread )
 					// clean up is in order...
 					if ( fade_success )
 					{
-						if ( player->GetFadeType() == MUSIK_CROSSFADER_PAUSE_RESUME )
+						if ( m_Player->GetFadeType() == MUSIK_CROSSFADER_PAUSE_RESUME )
 						{
-							if ( !player->IsPaused() )
-								player->FinalizePause();
+							if ( !m_Player->IsPaused() )
+								m_Player->FinalizePause();
 							else
-								player->FinalizeResume();
+								m_Player->FinalizeResume();
 						}
 
-						else if ( player->GetFadeType() == MUSIK_CROSSFADER_STOP )
-							player->FinalizeStop();
+						else if ( m_Player->GetFadeType() == MUSIK_CROSSFADER_STOP )
+							m_Player->FinalizeStop();
 
-						else if ( player->GetFadeType() == MUSIK_CROSSFADER_EXIT )
+						else if ( m_Player->GetFadeType() == MUSIK_CROSSFADER_EXIT )
 						{
-							player->FinalizeExit();
+							m_Player->FinalizeExit();
 
 							// set the kill switch
 							m_Exit = true;
 							continue;
 						}
 
-						else if ( player->GetFadeType() == MUSIK_CROSSFADER_NEW_SONG  )
-							player->FinalizeNewSong();
+						else if ( m_Player->GetFadeType() == MUSIK_CROSSFADER_NEW_SONG  )
+							m_Player->FinalizeNewSong();
 
 						TRACE0( "Crossfade finished successfully\n" );
 					}					
@@ -363,8 +390,10 @@ static void musikPlayerWorker( CmusikThread* thread )
 		ACE_OS::sleep( sleep_regular );
 	}
 
-	TRACE0( "Player thread worker function complete...\n" );	
-	thread->m_Finished = true;
+	TRACE0( "Player worker function finished...\n" );
+	m_Finished = true;
+
+	return 0;
 }
 
 ///////////////////////////////////////////////////
@@ -405,8 +434,6 @@ CmusikPlayer::CmusikPlayer( CmusikFunctor* functor, CmusikLibrary* library )
 	m_ActiveChannels	= NULL;
 	m_EQ_DSP			= NULL;
 
-	m_pThread			= NULL;
-
 	m_Handle			= 0;
 
 	m_MaxChannels		= -1;
@@ -420,7 +447,8 @@ CmusikPlayer::CmusikPlayer( CmusikFunctor* functor, CmusikLibrary* library )
 
 	m_State				= MUSIK_PLAYER_INIT_UNINITIALIZED;
 
-	InitThread();
+	m_PlayerWorker = new CmusikPlayerWorker;
+	m_PlayerWorker->open( (void*)this );
 }
 
 ///////////////////////////////////////////////////
@@ -428,58 +456,20 @@ CmusikPlayer::CmusikPlayer( CmusikFunctor* functor, CmusikLibrary* library )
 CmusikPlayer::~CmusikPlayer()
 {
 	// flag shutdown crossfade
-	Exit();
+	ThrExit();
 
-	// wait until the thread is complete
-	if ( m_pThread )
-	{
-		if ( !IsPlaying() || !IsCrossfaderEnabled() )
-			m_pThread->Abort();
+	if ( m_PlayerWorker )
+		delete m_PlayerWorker;
 
-		while ( !m_pThread->m_Finished )
-			Sleep( 100 );
-	}
-
+	// close the sound
 	FSOUND_Close();
-	
-	CleanThread();
+
+    // clean everything else up	
 	CleanEQ_DSP();
 	CleanEqualizer();
 	CleanCrossfader();
 	CleanSound();
 	CleanPlaylist();
-}
-
-///////////////////////////////////////////////////
-
-void CmusikPlayer::InitThread()
-{
-	if ( !m_pThread )
-	{
-		m_pThread = new CmusikThread();
-		m_pThread->Start( (ACE_THR_FUNC)musikPlayerWorker, (void*)this, true, MUSIK_THREAD_TYPE_PLAYER_WORKER );
-	}
-}
-
-///////////////////////////////////////////////////
-
-void CmusikPlayer::CleanThread()
-{
-	if ( m_pThread )
-	{
-		// assure thread has abort flag, although
-		// it is probably already finished
-		if ( !m_pThread->m_Abort )
-			m_pThread->Abort();
-
-		// don't delete anything until it's done
-		while ( !m_pThread->m_Finished )
-			Sleep( 100 );
-
-		// finish up
-		delete m_pThread;
-		m_pThread = NULL;
-	}
 }
 
 ///////////////////////////////////////////////////
@@ -545,10 +535,8 @@ int CmusikPlayer::InitSound( int device, int driver, int rate, int channels, int
 		}
 	}
 
-	m_ProtectingStreams.acquire();
-		m_ActiveStreams = new CmusikStreamPtrArray();
-		m_ActiveChannels = new CIntArray();
-	m_ProtectingStreams.release();
+	m_ActiveStreams = new CmusikStreamPtrArray();
+	m_ActiveChannels = new CIntArray();
 
 	m_MaxChannels = channels;
 
@@ -563,21 +551,17 @@ void CmusikPlayer::CleanSound()
 	CleanOldStreams( true );
 	StopSound();
 
-	m_ProtectingStreams.acquire();
+	if ( m_ActiveStreams ) 
+	{
+		delete m_ActiveStreams;
+		m_ActiveStreams = NULL;
+	}
 
-		if ( m_ActiveStreams ) 
-		{
-			delete m_ActiveStreams;
-			m_ActiveStreams = NULL;
-		}
-
-		if ( m_ActiveChannels ) 
-		{
-			delete m_ActiveChannels;
-			m_ActiveChannels = NULL;
-		}
-
-	m_ProtectingStreams.release();
+	if ( m_ActiveChannels ) 
+	{
+		delete m_ActiveChannels;
+		m_ActiveChannels = NULL;
+	}
 
 	m_State = MUSIK_PLAYER_INIT_UNINITIALIZED;
 }
@@ -720,10 +704,8 @@ bool CmusikPlayer::Play( int index, int fade_type, int start_pos )
 	int curr_chan = PushNewChannel();
 
 	// add the new channel and stream
-	m_ProtectingStreams.acquire();
-		m_ActiveStreams->push_back( pNewStream );
-		m_ActiveChannels->push_back( curr_chan );
-	m_ProtectingStreams.release();
+	m_ActiveStreams->push_back( pNewStream );
+	m_ActiveChannels->push_back( curr_chan );
 
 	// play it: set volume
 	FSOUND_Stream_Play( GetCurrChannel(), pNewStream );
@@ -763,18 +745,14 @@ bool CmusikPlayer::Play( int index, int fade_type, int start_pos )
 	// once we get here the new song is "officially"
 	// playing, so lock it up and set the new index
 	{
-		m_ProtectingStreams.acquire();
+		// and, we're done.
+		TRACE0( "New song started...\n" );
 
-			// and, we're done.
-			TRACE0( "New song started...\n" );
+		// set the new index
+		m_Index = index;
 
-			// set the new index
-			m_Index = index;
-
-			// increment times played
-			m_Library->IncLastPlayed( m_Playlist->GetSongID( m_Index ) );
-		
-		m_ProtectingStreams.release();
+		// increment times played
+		m_Library->IncLastPlayed( m_Playlist->GetSongID( m_Index ) );
 	}
 
 	return true;
@@ -823,14 +801,8 @@ void CmusikPlayer::EnquePaused( int index )
 	PushNewChannel();
 
 	// add the new channel and stream
-	{
-		m_ProtectingStreams.acquire();
-
-			m_ActiveStreams->push_back( pNewStream );
-			m_ActiveChannels->push_back( GetCurrChannel() );
-
-		m_ProtectingStreams.release();
-	}
+	m_ActiveStreams->push_back( pNewStream );
+	m_ActiveChannels->push_back( GetCurrChannel() );
 
 	// setup playback, then pause
 	FSOUND_Stream_Play( GetCurrChannel(), pNewStream );
@@ -838,16 +810,10 @@ void CmusikPlayer::EnquePaused( int index )
 	FSOUND_SetPaused( FSOUND_ALL, true );
 
 	// song has officially been resumed...
-	{
-		m_ProtectingStreams.acquire();
+	m_Index = index;
 
-			m_Index = index;
-
-			if ( m_Functor )
-				m_Functor->OnNewSong();
-
-		m_ProtectingStreams.release();
-	}
+	if ( m_Functor )
+		m_Functor->OnNewSong();
 }
 
 ///////////////////////////////////////////////////
@@ -969,13 +935,15 @@ void CmusikPlayer::FinalizeExit()
 
 ///////////////////////////////////////////////////
 
-void CmusikPlayer::Exit()
+void CmusikPlayer::ThrExit()
 {
 	if ( IsCrossfaderEnabled() && IsPlaying() )
 	{
 		m_FadeType = MUSIK_CROSSFADER_EXIT;
 		FlagCrossfade();
 		m_Handle++;
+
+		m_PlayerWorker->StopWait();
 	}
 	else
 		FinalizeExit();
@@ -1006,13 +974,9 @@ FSOUND_STREAM* CmusikPlayer::GetCurrStream()
 {
 	FSOUND_STREAM* pStream = NULL;
 
-	m_ProtectingStreams.acquire();
+	if ( m_ActiveStreams->size() )
+		pStream = m_ActiveStreams->at( m_ActiveStreams->size() - 1 );
 
-		if ( m_ActiveStreams->size() )
-			pStream = m_ActiveStreams->at( m_ActiveStreams->size() - 1 );
-	
-	m_ProtectingStreams.release();
-	
 	return pStream;
 }
 
@@ -1071,30 +1035,26 @@ void CmusikPlayer::CleanEQ_DSP()
 
 void CmusikPlayer::CleanOldStreams( bool kill_primary )
 {
-	m_ProtectingStreams.acquire();
+	ASSERT( m_ActiveStreams->size() == m_ActiveChannels->size() );
 
-		ASSERT( m_ActiveStreams->size() == m_ActiveChannels->size() );
+	if ( !m_ActiveStreams->size() )
+		return;
 
-		if ( !m_ActiveStreams->size() )
-			return;
+	size_t nStreamCount = m_ActiveStreams->size();
 
-		size_t nStreamCount = m_ActiveStreams->size();
+	if ( nStreamCount <= 0 )
+		return;
+	else if ( !kill_primary )
+		nStreamCount--;
 
-		if ( nStreamCount <= 0 )
-			return;
-		else if ( !kill_primary )
-			nStreamCount--;
-
-		for ( size_t i = 0; i < nStreamCount; i++ )
-		{
-			FSOUND_Stream_Stop	( m_ActiveStreams->at( 0 ) );
-			FSOUND_Stream_Close	( m_ActiveStreams->at( 0 ) );
-			
-			m_ActiveStreams->erase( m_ActiveStreams->begin() );
-			m_ActiveChannels->erase( m_ActiveChannels->begin() );
-		}	
-
-	m_ProtectingStreams.release();
+	for ( size_t i = 0; i < nStreamCount; i++ )
+	{
+		FSOUND_Stream_Stop	( m_ActiveStreams->at( 0 ) );
+		FSOUND_Stream_Close	( m_ActiveStreams->at( 0 ) );
+		
+		m_ActiveStreams->erase( m_ActiveStreams->begin() );
+		m_ActiveChannels->erase( m_ActiveChannels->begin() );
+	}	
 }
 
 ///////////////////////////////////////////////////
@@ -1211,9 +1171,7 @@ size_t CmusikPlayer::GetStreamCount()
 {
 	size_t count = 0;
 
-	m_ProtectingStreams.acquire();
-		count = m_ActiveStreams->size();
-	m_ProtectingStreams.release();
+	count = m_ActiveStreams->size();
 
 	return count;
 }
@@ -1231,10 +1189,8 @@ int CmusikPlayer::GetChannelID( int n )
 {
 	int channel_id = 0;
 
-	m_ProtectingStreams.acquire();
-		if ( n < (int)m_ActiveChannels->size() )
-			channel_id = m_ActiveChannels->at( n );
-	m_ProtectingStreams.release();
+	if ( n < (int)m_ActiveChannels->size() )
+		channel_id = m_ActiveChannels->at( n );
 
 	return channel_id;
 }
@@ -1430,17 +1386,17 @@ void CmusikPlayer::UpdateEqualizer()
 bool CmusikPlayer::FindNewIndex( int songid )
 {	
 	bool found = false;
-	m_ProtectingStreams.acquire();
-		for ( size_t i = 0; i < m_Playlist->GetCount(); i++ )
-		{
-			if ( m_Playlist->GetSongID( i ) == songid )
-			{	
-				m_Index = i;
-				found = true;
-				break;
-			}
+
+	for ( size_t i = 0; i < m_Playlist->GetCount(); i++ )
+	{
+		if ( m_Playlist->GetSongID( i ) == songid )
+		{	
+			m_Index = i;
+			found = true;
+			break;
 		}
-	m_ProtectingStreams.release();
+	}
+
 
 	return found;
 }

@@ -34,7 +34,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="../_lib/acesd.lib ../_lib/fmodvc.lib ../_lib/sqlite.lib ../_lib/vorbis_static_d.lib ../_lib/vorbisfile_static_d.lib ../_lib/ogg_static_d.lib"
+				AdditionalDependencies="../_lib/aced.lib ../_lib/fmodvc.lib ../_lib/sqlite.lib ../_lib/vorbis_static_d.lib ../_lib/vorbisfile_static_d.lib ../_lib/ogg_static_d.lib"
 				OutputFile="$(OutDir)/$(ProjectName)D.lib"
 				IgnoreAllDefaultLibraries="TRUE"/>
 			<Tool
@@ -76,7 +76,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="../_lib/aces.lib ../_lib/fmodvc.lib ../_lib/sqlite.lib ../_lib/vorbis_static.lib ../_lib/vorbisfile_static.lib ../_lib/ogg_static.lib"
+				AdditionalDependencies="../_lib/ace.lib ../_lib/fmodvc.lib ../_lib/sqlite.lib ../_lib/vorbis_static.lib ../_lib/vorbisfile_static.lib ../_lib/ogg_static.lib"
 				IgnoreAllDefaultLibraries="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -202,16 +202,6 @@
 			</Filter>
 		</Filter>
 		<Filter
-			Name="musikThread"
-			Filter="">
-			<File
-				RelativePath=".\src\musikThread.cpp">
-			</File>
-			<File
-				RelativePath=".\include\musikThread.h">
-			</File>
-		</Filter>
-		<Filter
 			Name="musikDir"
 			Filter="">
 			<File
@@ -247,6 +237,9 @@
 		</File>
 		<File
 			RelativePath=".\include\musikRemoveOld.h">
+		</File>
+		<File
+			RelativePath=".\include\musikTask.h">
 		</File>
 		<File
 			RelativePath=".\include\StdString.h">

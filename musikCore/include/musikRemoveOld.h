@@ -36,10 +36,9 @@
 //
 // Usage: 
 //
-//   Create a new CmusikThread and a CmusikRemoveOld,
-//   set the specified paramters, then run the thread
-//   sending the CmusikRemoveOld object as the argument,
-//   and musikRemoveOldWorker as the worker thread.
+//   Create a new CmusikRemoveOldTask and a CmusikRemoveOld,
+//   set the specified paramters, then run the task
+//   sending the CmusikRemoveOld object as the argument.
 //
 ///////////////////////////////////////////////////
 
@@ -81,68 +80,82 @@ public:
 
 ///////////////////////////////////////////////////
 
-static void musikRemoveOldWorker( CmusikThread* thread )
+class CmusikRemoveOldTask : public CmusikTask
 {
-	CmusikRemoveOld* params = (CmusikRemoveOld*)thread->GetArgs();
 
-	size_t curr_prog = 0;
-	size_t last_prog = 0;
+public:
 
-	CmusikStringArray all_files;
-	params->m_Library->GetAllDistinct( MUSIK_LIBRARY_TYPE_FILENAME, all_files, false );
-
-	// sleep if we go idle
-	ACE_Time_Value sleep;
-	sleep.set( 0.1f );
-
-	bool verify_failed = false;
-
-	params->m_Library->BeginTransaction();
-	for( size_t i = 0; i < all_files.size(); i++ )
+	CmusikRemoveOldTask()
+		: CmusikTask()
 	{
-		// sleep if we're told
-		if ( thread->IsSuspended() )
-		{
-			thread->m_Asleep = true;
-
-			while ( thread->IsSuspended() )
-				ACE_OS::sleep( sleep );
-
-			thread->m_Asleep = false;
-		}
-
-		// check abort flag
-		if ( thread->m_Abort )
-		{
-			TRACE0( "musikRemoveOldWorker worker function aborted...\n" );
-			break;
-		}
-
-		// see if the file exists
-		if ( !CmusikFilename::FileExists( all_files.at ( i ) ) )
-			params->m_Library->RemoveSong( all_files.at ( i ) );
-
-		// post progress to the functor
-		curr_prog = ( 100 * i ) / all_files.size();
-		if ( curr_prog != last_prog )
-		{
-			if ( params->m_Functor )
-				params->m_Functor->OnThreadProgress( curr_prog );
-
-			last_prog = curr_prog;
-		}
-
+		m_Type = MUSIK_TASK_TYPE_REMOVEOLD;
 	}
-	params->m_Library->EndTransaction();
 
-	// clean up
-	if ( ( params->m_Functor && !thread->m_Abort ) || ( thread->m_Abort && params->m_CallFunctorOnAbort ) )
-		params->m_Functor->OnThreadEnd( (void*)thread );
+	int open( void* params )
+	{
+		m_Params = (CmusikRemoveOld*)params;
+		int ret_code = activate( THR_NEW_LWP | THR_JOINABLE | THR_USE_AFX );
 
-	delete params;
+		return ret_code;
+	}
 
-	// flag as finishe&d
-	thread->m_Finished = true;
-}
+	int svc()
+	{
+		m_Stop = false;
+		m_Finished = false;
+		m_Active = true;
+
+		size_t curr_prog = 0;
+		size_t last_prog = 0;
+
+		CmusikStringArray all_files;
+		m_Params->m_Library->GetAllDistinct( MUSIK_LIBRARY_TYPE_FILENAME, all_files, false );
+
+		bool verify_failed = false;
+
+		m_Params->m_Library->BeginTransaction();
+		for( size_t i = 0; i < all_files.size(); i++ )
+		{
+			// check abort flag
+			if ( m_Stop )
+			{
+				TRACE0( "musikRemoveOldWorker worker function aborted...\n" );
+				break;
+			}
+
+			// see if the file exists
+			if ( !CmusikFilename::FileExists( all_files.at ( i ) ) )
+				m_Params->m_Library->RemoveSong( all_files.at ( i ) );
+
+			// post progress to the functor
+			curr_prog = ( 100 * i ) / all_files.size();
+			if ( curr_prog != last_prog )
+			{
+				if ( m_Params->m_Functor )
+					m_Params->m_Functor->OnThreadProgress( curr_prog );
+
+				last_prog = curr_prog;
+			}
+
+		}
+		m_Params->m_Library->EndTransaction();
+
+		// clean up
+		if ( ( m_Params->m_Functor && !m_Stop ) || ( m_Stop && m_Params->m_CallFunctorOnAbort ) )
+			m_Params->m_Functor->OnThreadEnd( (void*)this );
+
+		delete m_Params;
+
+		// flag as finished
+		m_Finished = true;
+
+		return 0;
+	}
+
+private:
+
+	CmusikRemoveOld* m_Params;
+
+};
 
 ///////////////////////////////////////////////////

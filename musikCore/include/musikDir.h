@@ -45,7 +45,6 @@
 ///////////////////////////////////////////////////
 
 #include "musikArrays.h"
-#include "musikThread.h"
 #include "musikFunctor.h"
 
 #ifndef WIN32

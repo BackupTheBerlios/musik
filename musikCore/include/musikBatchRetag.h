@@ -35,10 +35,9 @@
 //
 // Usage: 
 //
-//   Create a new CmusikThread and a CmusikBatchRetag,
-//   set the specified paramters, then run the thread
-//   sending the CmusikBatchRetag object as the argument,
-//   and musikBatchRetagWorker as the worker thread.
+//   Create a new CmusikBatchRetagTask and a CmusikBatchRetag,
+//   set the specified paramters, then run the task
+//   sending the CmusikBatchRetag object as the argument.
 //
 ///////////////////////////////////////////////////
 
@@ -47,6 +46,8 @@
 #include "musikFunctor.h"
 #include "musikMP3Info.h"
 #include "musikOggInfo.h"
+
+#include "ace/Task.h"
 
 ///////////////////////////////////////////////////
 
@@ -91,83 +92,97 @@ public:
 
 ///////////////////////////////////////////////////
 
-static void musikBatchRetagWorker( CmusikThread* thread )
+class CmusikBatchRetagTask : public CmusikTask
 {
-	CmusikBatchRetag* params = (CmusikBatchRetag*)thread->GetArgs();
 
-	size_t curr_prog = 0;
-	size_t last_prog = 0;
+public:
 
-	// sleep if we go idle
-	ACE_Time_Value sleep;
-	sleep.set( 0.1f );
-
-	params->m_Library->BeginTransaction();
-	int nFormat;
-	for( size_t i = 0; i < params->m_UpdatedTags->size(); i++ )
+	CmusikBatchRetagTask()
+		: CmusikTask()
 	{
-		// sleep if we're told
-		if ( thread->IsSuspended() )
-		{
-			thread->m_Asleep = true;
-
-			while ( thread->IsSuspended() )
-				ACE_OS::sleep( sleep );
-
-			thread->m_Asleep = false;
-		}
-
-		// check abort flag
-		if ( thread->m_Abort )
-		{
-			TRACE0( "musikBatchRetagWorker worker function aborted...\n" );
-			break;
-		}
-
-		bool success = false;	
-		if ( params->m_WriteToFile )
-		{
-			params->m_Library->GetSongFormatFromID( params->m_UpdatedTags->at( i ).GetID(), &nFormat );
-			if ( nFormat == MUSIK_LIBRARY_FORMAT_MP3 )
-				success = CmusikMp3Info::WriteInfo( params->m_UpdatedTags->at( i ) );
-			else if ( nFormat == MUSIK_LIBRARY_FORMAT_OGG )
-				success = CmusikOggInfo::WriteInfo( params->m_UpdatedTags->at( i ) );
-		}
-		else
-			success = true;
-
-		if ( success )
-		{
-			if ( !params->m_WriteToFile )
-				params->m_UpdatedTags->at( i ).SetDirtyFlag( "1" );
-
-			params->m_Library->SetSongInfo( &params->m_UpdatedTags->at( i ) );
-		}
-
-		// post progress to the functor
-		curr_prog = ( 100 * i ) / params->m_UpdatedTags->size();
-		if ( curr_prog != last_prog )
-		{
-			if ( params->m_Functor )
-				params->m_Functor->OnThreadProgress( curr_prog );
-
-			last_prog = curr_prog;
-		}
-
+		m_Type = MUSIK_TASK_TYPE_BATCHRETAG;
 	}
-	params->m_Library->EndTransaction();
 
-	// clean up
-	if ( params->m_DeleteUpdatedTags )
-		delete params->m_UpdatedTags;
+	int open( void* params )
+	{
+		m_Params = (CmusikBatchRetag*)params;
+		int ret_code = activate( THR_NEW_LWP | THR_JOINABLE | THR_USE_AFX );
 
-	if ( params->m_Functor && ( !thread->m_Abort || ( thread->m_Abort && params->m_CallFunctorOnAbort ) ) )
-		params->m_Functor->OnThreadEnd( (void*)thread );
+		return ret_code;
+	}
 
-	delete params;
+	int svc()
+	{
+		m_Stop = false;
+		m_Finished = false;
+		m_Active = true;
 
-	// flag as finished
-	thread->m_Finished = true;
-}
+		size_t curr_prog = 0;
+		size_t last_prog = 0;
+
+		m_Params->m_Library->BeginTransaction();
+		int nFormat;
+		for( size_t i = 0; i < m_Params->m_UpdatedTags->size(); i++ )
+		{
+			// check abort flag
+			if ( m_Stop )
+			{
+				TRACE0( "musikBatchRetagWorker worker function aborted...\n" );
+				break;
+			}
+
+			bool success = false;	
+			if ( m_Params->m_WriteToFile )
+			{
+				m_Params->m_Library->GetSongFormatFromID( m_Params->m_UpdatedTags->at( i ).GetID(), &nFormat );
+				if ( nFormat == MUSIK_LIBRARY_FORMAT_MP3 )
+					success = CmusikMp3Info::WriteInfo( m_Params->m_UpdatedTags->at( i ) );
+				else if ( nFormat == MUSIK_LIBRARY_FORMAT_OGG )
+					success = CmusikOggInfo::WriteInfo( m_Params->m_UpdatedTags->at( i ) );
+			}
+			else
+				success = true;
+
+			if ( success )
+			{
+				if ( !m_Params->m_WriteToFile )
+					m_Params->m_UpdatedTags->at( i ).SetDirtyFlag( "1" );
+
+				m_Params->m_Library->SetSongInfo( &m_Params->m_UpdatedTags->at( i ) );
+			}
+
+			// post progress to the functor
+			curr_prog = ( 100 * i ) / m_Params->m_UpdatedTags->size();
+			if ( curr_prog != last_prog )
+			{
+				if ( m_Params->m_Functor )
+					m_Params->m_Functor->OnThreadProgress( curr_prog );
+
+				last_prog = curr_prog;
+			}
+
+		}
+		m_Params->m_Library->EndTransaction();
+
+		// clean up
+		if ( m_Params->m_DeleteUpdatedTags )
+			delete m_Params->m_UpdatedTags;
+
+		if ( m_Params->m_Functor && ( !m_Stop || ( m_Stop && m_Params->m_CallFunctorOnAbort ) ) )
+			m_Params->m_Functor->OnThreadEnd( (void*)this );
+
+		delete m_Params;
+
+		// flag as finished
+		m_Finished = true;
+		
+		return 0;
+	}
+
+private:
+
+	CmusikBatchRetag* m_Params;
+
+};
 
 ///////////////////////////////////////////////////

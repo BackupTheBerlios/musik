@@ -60,10 +60,12 @@
 
 #include "musikPlaylist.h"
 
-#include "musikThread.h"
+#include "musikTask.h"
 #include "musikCrossfader.h"
 
 #include "fmod.h"
+
+#include "ace/Task.h"
 
 ///////////////////////////////////////////////////
 
@@ -108,10 +110,27 @@ class CmusikSongInfo;
 class CmusikEqualizer;
 class CmusikCrossfader;
 class ACE_Thread_Mutex;
+class CmusikPlayer;
 
 ///////////////////////////////////////////////////
 
-static void musikPlayerWorker( CmusikThread* thread );
+class CmusikPlayerWorker : public CmusikTask
+{
+
+public:
+
+	CmusikPlayerWorker();
+
+	int open( void* player );
+	int svc();
+
+	void StopWait();
+
+private:
+
+	CmusikPlayer* m_Player;
+
+};
 
 ///////////////////////////////////////////////////
 
@@ -180,7 +199,7 @@ public:
 	bool Pause();
 	bool Resume();
 	void Stop();
-	void Exit();
+	void ThrExit();
 
 	// used for enquing the next / prev song if
 	// playback is currently paused
@@ -301,14 +320,12 @@ private:
 	void InitCrossfader();
 	void CleanCrossfader();
 
+	// main task (OO thread)
+	CmusikPlayerWorker* m_PlayerWorker;
+
 	// mutex objects
 	ACE_Thread_Mutex m_ProtectingStreams;
 	ACE_Thread_Mutex m_ProtectingIndex;
-
-	// main thread and mutex
-	CmusikThread* m_pThread;
-	void InitThread();
-	void CleanThread();
 	
 	// pointer to library and playlist
 	CmusikLibrary* m_Library;
