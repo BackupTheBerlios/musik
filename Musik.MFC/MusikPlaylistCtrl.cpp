@@ -51,6 +51,8 @@ void CMusikPlaylistCtrl::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* l
 	lpncsp->rgrc[0].top += 4;
 	lpncsp->rgrc[0].right -= 4;
 	lpncsp->rgrc[0].left += 4;
+
+	CListCtrl::OnNcCalcSize( bCalcValidRects, lpncsp );
 }
 
 ///////////////////////////////////////////////////
