@@ -9,6 +9,7 @@
 
 #include "musikNowPlayingCtrl.h"
 #include "musikNowPlayingInfo.h"
+#include "musikTrackCtrl.h"
 
 #include "../musikCore/include/musikPlayer.h"
 
@@ -78,6 +79,14 @@ int CmusikNowPlayingCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_Info1->Set( "%b20 %a4 %c  by %b16 %a0" );
 	m_Info2->Set( "%c from the album %b16 %a1" );
 
+	m_Volume = new CmusikTrackCtrl( m_Prefs );
+	
+	if ( !m_Volume->Create( 0x00000010L | TBS_VERT | TBS_NOTICKS | WS_CHILD | WS_VISIBLE, CRect( 50, 50, 100, 200 ), this, 123 ) )
+		return -1;
+
+	m_Volume->SetRange( 0, 255 );
+	m_Volume->SetPos( 40 );
+
 	GetDC()->SetBkColor( GetSysColor( COLOR_BTNHILIGHT ) );
 
 	return 0;
@@ -121,6 +130,8 @@ void CmusikNowPlayingCtrl::RescaleInfo()
 	lpRect = CRect( CPoint( 0, m_Info1->GetHeight() ), m_Info2->GetSize() );
 	m_Info2->MoveWindow( lpRect );
 	m_Info2->Layout();
+
+	m_Volume->MoveWindow( CRect( 50, 50, 66, 100 ) );
 }
 
 ///////////////////////////////////////////////////
