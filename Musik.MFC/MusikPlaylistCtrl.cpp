@@ -3,11 +3,13 @@
 
 #include "stdafx.h"
 #include "Musik.h"
+#include "MusikPrefs.h"
+
 #include "MusikPlaylistCtrl.h"
 
+#include "../Musik.Core/include/MusikArrays.h"
 #include "../Musik.Core/include/MusikLibrary.h"
-#include "MusikPrefs.h"
-#include ".\musikplaylistctrl.h"
+
 
 // CMusikPlaylistCtrl
 
@@ -83,9 +85,10 @@ void CMusikPlaylistCtrl::OnNcPaint()
 
 void CMusikPlaylistCtrl::ResetColumns()
 {
-	for ( int i = 0; i < m_Library->GetSongFieldCnt(); i++ )
+	CIntArray order = m_Prefs->GetPlaylistOrder();
+	for ( int i = 0; i < order.size(); i++ )
 	{
-		InsertColumn( i, m_Library->GetSongField( i ) );
+		InsertColumn( i, m_Library->GetSongField( order.at( i ) ) );
 	}
 }
 

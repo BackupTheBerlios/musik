@@ -3,6 +3,8 @@
 #include "stdafx.h"
 #include "CIniEx/iniFile.h"
 
+#include "../Musik.Core/include/MusikArrays.h"
+
 using namespace std;
 
 class CMusikPrefs
@@ -32,8 +34,10 @@ public:
 	//-----------------------------------------------------//
 	//--- playlist										---//
 	//-----------------------------------------------------//
+	CIntArray	GetPlaylistOrder()				{ return m_Playlist_Order; }
 	
-
+	void		SetPlaylistOrder( CIntArray n )	{ m_Playlist_Order = n; }				
+	
 	//-----------------------------------------------------//
 	//--- sources										---//
 	//-----------------------------------------------------//
@@ -45,12 +49,33 @@ public:
 
 protected:
 	CIniFile* config;
+	string GetDefPlaylistOrder();
+	string GetDefPlaylistSizes();
 
 private:
-	size_t m_SelectionBox_Count;
+	//-----------------------------------------------------//
+	//--- whole dialog									---//
+	//-----------------------------------------------------//
+	CSize	m_Dlg_Size;
+	CPoint	m_Dlg_Pos;
 
-	CSize m_Dlg_Size;
-	CPoint m_Dlg_Pos;
+	//-----------------------------------------------------//
+	//--- selection area								---//
+	//-----------------------------------------------------//
+	size_t	m_SelectionBox_Count;
 
-	int m_NowPlaying_Height;
+	//-----------------------------------------------------//
+	//--- playlist										---//
+	//-----------------------------------------------------//
+	CIntArray m_Playlist_Order;
+	CIntArray m_Playlist_Sizes;
+
+	//-----------------------------------------------------//
+	//--- sources										---//
+	//-----------------------------------------------------//
+
+	//-----------------------------------------------------//
+	//--- now playing									---//
+	//-----------------------------------------------------//
+	int		m_NowPlaying_Height;
 };

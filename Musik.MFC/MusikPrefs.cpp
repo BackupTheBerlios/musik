@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "MusikPrefs.h"
+#include "../Musik.Core/include/MusikLibrary.h"
 
 inline int StringToInt( const string str )
 {
@@ -88,6 +89,23 @@ inline string CPointToString( CPoint pt )
 	return str;
 }
 
+inline CIntArray StringToCIntArray( string str )
+{
+	CIntArray ret;
+	CString cstr = str.c_str();
+	int pos = 0;
+
+	CString resToken;
+	resToken = cstr.Tokenize( ",", pos);
+	while ( resToken != "" )
+	{
+		ret.push_back( atoi( resToken.GetBuffer() ) );
+		resToken = cstr.Tokenize( ",", pos );
+	};
+
+	return ret;
+}
+
 CMusikPrefs::CMusikPrefs( CString filename )
 {
 	config = new CIniFile( filename.GetBuffer() );
@@ -120,6 +138,7 @@ void CMusikPrefs::LoadPrefs()
 	//-----------------------------------------------------//
 	//--- playlist										---//
 	//-----------------------------------------------------//
+	m_Playlist_Order = StringToCIntArray( config->GetValue( "Playlist", "Column Order", GetDefPlaylistOrder() ) );
 
 	//-----------------------------------------------------//
 	//--- sources										---//
@@ -158,4 +177,20 @@ void CMusikPrefs::SavePrefs()
 	config->SetValue( "Now Playing", "Height", IntToString( m_NowPlaying_Height ) );
 
 	config->WriteFile();
+}
+
+string CMusikPrefs::GetDefPlaylistOrder()
+{
+	CString CRet;
+	CRet.Format( _T( "%d,%d,%d,%d,%d,%d,%d" ), 
+		MUSIK_LIBRARY_TYPE_RATING,
+		MUSIK_LIBRARY_TYPE_TRACKNUM,
+		MUSIK_LIBRARY_TYPE_TITLE,
+		MUSIK_LIBRARY_TYPE_ARTIST,
+		MUSIK_LIBRARY_TYPE_ALBUM,
+		MUSIK_LIBRARY_TYPE_GENRE,
+		MUSIK_LIBRARY_TYPE_DURATION );
+	
+	string sRet = CRet.GetBuffer();
+	return sRet;
 }
