@@ -61,7 +61,7 @@ long Cnv16to8 ( signed short *, signed char *, unsigned long );
 #define	MAX_PLUGINS 128								// Max Plugins We Can Handle
 
 HWND	mainhwnd;									// The Hwnd Of The Parent Window
-char	SongTitle[256] = "\0";						// SongTitle Returned By The WM_GETTEXT Message
+char	SongTitle[256] = "stopped\0";				// SongTitle Returned By The WM_GETTEXT Message
 int		Elapsed,Length;								// Values Returned By The Winamp Command Messages
 
 ///////////////////////////////////////////////////

@@ -182,7 +182,7 @@ LRESULT CALLBACK WinampWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam
 					return TRUE;
 				}
 			}
-		
+
 		case WM_USER:
 			{
 				switch(lParam)
@@ -213,28 +213,20 @@ LRESULT CALLBACK WinampWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam
 
 		case WM_COMMAND:
 			{
-					/*switch(wParam)
-					{
-						case WINAMP_STOP:
-						case WINAMP_STOP2:
-						{
-
-							// msg WINAMP_STOP à envoyer
-							SetForegroundWindow(mainhwnd);
-							SendMessage(mainhwnd, WINAMP_STOP, 0, 0);
-							break;
-						}
-					}*/
-					if (wParam == WINAMP_STOP)
-						SendMessage(mainhwnd, WINAMP_STOP, 0, 0);
-					break;
+				int n;
+				break;
 			}
 
+		/*
 		default:
 
 			{
-				int n = 0;
+				char buffer[32];
+				itoa( msg, buffer, 10 );
+				TRACE0( buffer );
+				TRACE0( "\n" );
 			}
+		*/
 	}
 
 	return DefWindowProc(hwnd, msg, wParam, lParam);
@@ -264,9 +256,7 @@ void CALLBACK vis_time_event(UINT uId, UINT uMsg, DWORD dwUser, DWORD dw1, DWORD
 		// the next pcmblock (iBufferOffset + 1) is the one that is audible.
 		offset = (iBufferOffset + 1) * FSOUND_DSP_GetBufferLength();
 		if (offset >= FSOUND_DSP_GetBufferLengthTotal())
-		{
 			offset -= FSOUND_DSP_GetBufferLengthTotal();
-		}
 
 		src = &pcmBuffer[offset];	// <-- TEST : seeking for speed improvement ...
 	
@@ -287,11 +277,10 @@ void CALLBACK vis_time_event(UINT uId, UINT uMsg, DWORD dwUser, DWORD dw1, DWORD
 
 HANDLE Vis_New_Thread_Init()
 {
-	// pass the index plugin to the thread
 	Vis_hThread = CreateThread(0, 0, Vis_New_Thread, (void*)vis_index, 0, &dwVis_hThreadId);
 	if (!Vis_hThread)
 	{
-		MessageBox(mainhwnd,"Thread creation failed !","Error !!", MB_ICONEXCLAMATION | MB_ICONWARNING);
+		MessageBox( mainhwnd,"Failed to create thread for visualization", "Emulation", MB_ICONWARNING );
 		return 0;
 	}
 
@@ -300,6 +289,10 @@ HANDLE Vis_New_Thread_Init()
 	return Vis_hThread;
 
 }
+
+///////////////////////////////////////////////////
+
+// fires off a new thread
 
 DWORD WINAPI Vis_New_Thread(LPVOID lpParam)
 {
@@ -358,10 +351,10 @@ DWORD WINAPI Vis_New_Thread(LPVOID lpParam)
 		while ( msg_return_value > 0 && GetVisHwnd() );
 
 		// kill the timer
+		Vis_Enable_Rendering = 0;
+
 		timeKillEvent(vis_timer);
 		timeEndPeriod(250);
-
-		Vis_Enable_Rendering = 0;
 
 		// lock down for the cleanup
 		protect.Lock();
@@ -392,41 +385,42 @@ DWORD WINAPI Vis_New_Thread(LPVOID lpParam)
 
 }
 
-
-//////////////////////////////
-// VIS_STUFFS				//
-//////////////////////////////
+///////////////////////////////////////////////////
 
 void WINEXPORT SetHwnd(HWND hwnd)
 {
 	mainhwnd = hwnd;
 }
 
+///////////////////////////////////////////////////
+
 HWND WINEXPORT GetVisHwnd(void)
 {
-	HWND visHwnd;
-
-	visHwnd = vis_Window_Emu;
-
-	return visHwnd;
-
-	return 0;
+	return vis_Window_Emu;
 }
+
+///////////////////////////////////////////////////
 
 void WINEXPORT SetSongTitle(LPTSTR TheTitle)
 {
 	strcpy( ( char* )SongTitle, TheTitle );
 }
 
+///////////////////////////////////////////////////
+
 void WINEXPORT SetElapsed(int elapsed)
 {
 	Elapsed = elapsed;
 }
 
+///////////////////////////////////////////////////
+
 void WINEXPORT SetLength(int length)
 {
 	Length = length;
 }
+
+///////////////////////////////////////////////////
 
 void WINEXPORT IsPlaying(int playing)
 {
@@ -435,10 +429,14 @@ void WINEXPORT IsPlaying(int playing)
 	protect.Unlock();
 }
 
+///////////////////////////////////////////////////
+
 void WINEXPORT SetVisModule(int the_module)
 {
 	module = the_module;
 }
+
+///////////////////////////////////////////////////
 
 LPSTR WINEXPORT GetVisInfo(int i )
 {	
@@ -452,6 +450,8 @@ LPSTR WINEXPORT GetVisInfo(int i )
 	return strRet;
 }
 
+///////////////////////////////////////////////////
+
 UINT WINEXPORT GetVisCount()
 {
 	int i = 0;
@@ -463,6 +463,8 @@ UINT WINEXPORT GetVisCount()
 	return i;
 }
 
+///////////////////////////////////////////////////
+
 UINT WINEXPORT GetVisModuleCount(int i)
 {
 	protect.Lock();
@@ -472,6 +474,8 @@ UINT WINEXPORT GetVisModuleCount(int i)
 	return ret;
 
 }
+
+///////////////////////////////////////////////////
 
 LPSTR WINEXPORT GetVisModuleInfo(int plugin, int the_module)
 {
@@ -485,6 +489,8 @@ LPSTR WINEXPORT GetVisModuleInfo(int plugin, int the_module)
 
 }
 
+///////////////////////////////////////////////////
+
 void WINEXPORT Config_Vis(int i, int module_index)
 {
 	LoadVis(i);
@@ -496,6 +502,7 @@ void WINEXPORT Config_Vis(int i, int module_index)
 	FreeVis(i);
 }
 
+///////////////////////////////////////////////////
 
 void WINEXPORT Start_Vis( int i )
 {
@@ -533,6 +540,7 @@ void WINEXPORT Start_Vis( int i )
 		MessageBox( mainhwnd, "Visualization thread failed to spawn.","Emulation", MB_ICONEXCLAMATION | MB_ICONWARNING);
 }
 
+///////////////////////////////////////////////////
 
 void WINEXPORT Stop_Vis( int n )
 {
@@ -540,12 +548,8 @@ void WINEXPORT Stop_Vis( int n )
 		PostThreadMessage(dwVis_hThreadId, WM_QUIT, 0, 0);
 }
 
+///////////////////////////////////////////////////
 
-/*----------------------------------------------------------------------------------
-
-Free all plugins
-
-----------------------------------------------------------------------------------*/
 void Release_Vis_Plugin(int cnt)
 {
 	protect.Lock();
@@ -553,6 +557,8 @@ void Release_Vis_Plugin(int cnt)
 		FreeLibrary(gs_vWinAmpProps[cnt].pModule->getModule(0)->hDllInstance);
 	protect.Unlock();
 }
+
+///////////////////////////////////////////////////
 
 bool WINEXPORT LoadVisPlugins(LPCTSTR path)
 {
@@ -619,7 +625,7 @@ bool WINEXPORT LoadVisPlugins(LPCTSTR path)
 	return TRUE;
 }
 
-
+///////////////////////////////////////////////////
 
 void WINEXPORT FreeVisInfo()
 {
@@ -629,6 +635,8 @@ void WINEXPORT FreeVisInfo()
 	protect.Unlock();
 }
 
+///////////////////////////////////////////////////
+
 void WINEXPORT FreeVis(int i)
 {
 	protect.Lock();
@@ -636,10 +644,14 @@ void WINEXPORT FreeVis(int i)
 	protect.Unlock();
 }
 
+///////////////////////////////////////////////////
+
 void WINEXPORT LoadVis(int i)
 {
 	LoadWinampPlugin(gs_vWinAmpProps[i].strFileName, i);
 }
+
+///////////////////////////////////////////////////
 
 void  LoadWinampPlugin(LPCSTR path, int currplug)
 {
@@ -681,21 +693,16 @@ void  LoadWinampPlugin(LPCSTR path, int currplug)
 
 }
 
+///////////////////////////////////////////////////
 
-/*----------------------------------------------------------------------------------
-
-convert from 16 to 8 bits
-
-----------------------------------------------------------------------------------*/
 long Cnv16to8 (signed short *source,signed char *dest,unsigned long samples)
 {
 	unsigned long i;
 
-	for (i=0;i<samples;i=i+2)
-	{
-		dest[i>>1]=source[i]>>8;
-	}
+	for ( i = 0; i < samples; i = i + 2 )
+		dest[i>>1] = source[i] >> 8;
 
 	return i;
 }
 
+///////////////////////////////////////////////////
