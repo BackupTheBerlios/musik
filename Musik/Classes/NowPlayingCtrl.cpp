@@ -369,7 +369,7 @@ void CNowPlayingCtrl::PlayerVolume( wxCommandEvent& WXUNUSED(event) )
 
 	wxSize DlgSize = pDlg->GetSize();
 	pos.x -= DlgSize.GetWidth();
-	pos.y -= DlgSize.GetWidth();	
+	pos.y -= DlgSize.GetHeight();	
 	pDlg->Move( pos );
 	pDlg->Show();
 }

@@ -28,36 +28,49 @@ END_EVENT_TABLE()
 
 //--- default constructor ---//
 MusikVolumeFrame::MusikVolumeFrame( wxFrame* pParent, wxPoint pos )
-	: wxFrame( pParent, -1, wxT("Playback"), pos, wxSize( 16, 90 ), wxCAPTION | wxFRAME_FLOAT_ON_PARENT | wxFRAME_NO_TASKBAR | wxCLIP_CHILDREN )
+	: wxFrame( pParent, -1, wxT("Playback"), pos, wxSize( 16, 50 ), wxCAPTION | wxFRAME_FLOAT_ON_PARENT | wxFRAME_NO_TASKBAR | wxCLIP_CHILDREN )
 {
 	//------------------------------//
 	//--- initialize needed vars ---//
 	//------------------------------//
 	parent			= pParent;
-	nFirstRun		= 1;
+	
 
 	//----------------------------//
 	//--- colours and controls ---//
 	//----------------------------//
 	SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_3DFACE ) );
-	pRepeat = new wxCheckBox( this, MUSIK_CHK_REPEAT, _("Repeat"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
-	pShuffle = new wxCheckBox( this, MUSIK_CHK_SHUFFLE, _("Shuffle"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 	pCrossfade = new wxCheckBox( this, MUSIK_CHK_CROSSFADE, _("Crossfade"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
-	gSeek = new wxGauge		( this, -1, 255, wxPoint( 0, 0 ), wxSize( wxSystemSettings::GetMetric(wxSYS_HSCROLL_Y), 72 ), wxGA_SMOOTH | wxGA_VERTICAL | wxCLIP_CHILDREN );
+	gSeek = new wxGauge	( this, -1, 255, wxPoint( -1, -1 ), wxSize( wxSystemSettings::GetMetric(wxSYS_HSCROLL_Y), -1 ), wxGA_SMOOTH | wxGA_VERTICAL | wxCLIP_CHILDREN );
 	pSeekEvt = new CGaugeSeekEvt	( gSeek, wxGA_VERTICAL );
 	gSeek->PushEventHandler			( pSeekEvt );
+	static wxString choices[3] = {_("Normal"),_("Loop"),_("Shuffle")};
+	m_pRadioBoxPlaymode = new wxRadioBox( this, -1, _("Play Mode"), wxDefaultPosition, wxDefaultSize, WXSIZEOF(choices),choices, 1, wxRA_SPECIFY_COLS );
 
 	pChecks = new wxBoxSizer( wxVERTICAL );
-	pChecks->Add( pRepeat, 1, wxEXPAND | wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT, 2 );
-	pChecks->Add( pShuffle, 1, wxEXPAND | wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT, 2 );
-	pChecks->Add( pCrossfade, 1, wxEXPAND | wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT, 2 );
+	pChecks->Add( m_pRadioBoxPlaymode, 0, wxEXPAND | wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT|wxALL, 2 );
+	pChecks->Add( pCrossfade, 0, wxEXPAND | wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT|wxALL, 2 );
 
 	//-----------------//
 	//--- top sizer ---//
 	//-----------------//
 	wxBoxSizer *pTopSizer = new wxBoxSizer( wxHORIZONTAL );
-	pTopSizer->Add( gSeek, 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 2 );
-	pTopSizer->Add( pChecks, 0, wxEXPAND | wxALIGN_CENTER_HORIZONTAL | wxALL, 2 );
+	pTopSizer->Add( pChecks, 1, wxEXPAND | wxALIGN_CENTER_HORIZONTAL | wxALL, 2 );
+	pTopSizer->Add( gSeek, 0, wxEXPAND| wxALIGN_RIGHT| wxALL, 2 );
+
+
+	// init values
+	gSeek->SetValue( g_Prefs.nSndVolume );
+
+	if(g_Prefs.nRepeat)
+        	m_pRadioBoxPlaymode->SetSelection( 1 );
+	else if(g_Prefs.nShuffle)
+        	m_pRadioBoxPlaymode->SetSelection( 2 );
+	else
+		m_pRadioBoxPlaymode->SetSelection( 0 );
+
+	pCrossfade->SetValue( g_Prefs.nGlobalFadeEnable );
+
 
 	SetSizerAndFit( pTopSizer );
 
@@ -70,14 +83,6 @@ void MusikVolumeFrame::OnActivate( wxActivateEvent& event )
 	if ( !event.GetActive() )
 		Close();
 
-	if ( nFirstRun == 1 )
-	{
-		gSeek->SetValue( g_Prefs.nSndVolume );
-		pRepeat->SetValue( g_Prefs.nRepeat );
-		pShuffle->SetValue( g_Prefs.nShuffle );
-		pCrossfade->SetValue( g_Prefs.nGlobalFadeEnable );
-		nFirstRun = 0;
-	}
 }
 
 //--- translate keypress ---//
@@ -90,8 +95,24 @@ void MusikVolumeFrame::OnChar( wxKeyEvent& event )
 //--- close func ---//
 void MusikVolumeFrame::Close()
 {
-	g_Prefs.nRepeat = pRepeat->GetValue();
-	g_Prefs.nShuffle = pShuffle->GetValue();
+	int modesel = m_pRadioBoxPlaymode->GetSelection();
+	g_Prefs.nRepeat = 0;
+	g_Prefs.nShuffle = 0;
+
+	switch(modesel)
+	{
+	case 0:
+		break;
+	case 1:
+		g_Prefs.nRepeat = 1;
+		break;
+	case 2:
+		g_Prefs.nShuffle = 1;
+		break;
+		
+	default:
+		break;
+	}
 	g_Prefs.nGlobalFadeEnable = pCrossfade->GetValue();
 	g_Player.SetPlaymode();
 	Destroy();

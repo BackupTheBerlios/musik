@@ -201,6 +201,7 @@ bool MusikFrame::Show( bool show )
 			{
 				g_Library.GetAllSongs( g_Playlist );
 				g_PlaylistCtrl->Update(true,false);
+				g_Player.SetPlaylist( g_Playlist );
 			}
 		}
 	}
