@@ -828,3 +828,37 @@ void DoubleToCharString(double r, char *z){
 	}
 	*z = 0;
 }
+
+wxString GetForbiddenChars(wxPathFormat format)
+{
+	// Inits to forbidden characters that are common to (almost) all platforms.
+	wxString strForbiddenChars = wxT("*?");
+
+	// If asserts, wxPathFormat has been changed. In case of a new path format
+	// addition, the following code might have to be updated.
+	wxCOMPILE_TIME_ASSERT(wxPATH_MAX == 5, wxPathFormatChanged);
+	switch ( GetFormat(format) )
+	{
+	default :
+		wxFAIL_MSG( wxT("Unknown path format") );
+		// !! Fall through !!
+
+	case wxPATH_UNIX:
+		break;
+
+	case wxPATH_MAC:
+		// On a Mac even names with * and ? are allowed (Tested with OS
+		// 9.2.1 and OS X 10.2.5)
+		strForbiddenChars = wxEmptyString;
+		break;
+
+	case wxPATH_DOS:
+		strForbiddenChars += wxT("\\/:\"<>|");
+		break;
+
+	case wxPATH_VMS:
+		break;
+	}
+
+	return strForbiddenChars;
+}
