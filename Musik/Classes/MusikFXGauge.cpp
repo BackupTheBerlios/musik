@@ -12,7 +12,7 @@
 //--- this is the gauge					---//
 //-----------------------------------------//
 BEGIN_EVENT_TABLE(CMusikFXGauge, wxEvtHandler)
-	EVT_ERASE_BACKGROUND		( CMusikFXGauge::OnEraseBackground ) 
+	//EVT_ERASE_BACKGROUND		( CMusikFXGauge::OnEraseBackground ) 
 	EVT_LEFT_DOWN				( CMusikFXGauge::OnLeftDown	) 
 	EVT_LEFT_UP					( CMusikFXGauge::OnLeftUp		)
 	EVT_MOTION					( CMusikFXGauge::OnMouseMove	) 

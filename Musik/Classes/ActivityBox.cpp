@@ -523,15 +523,13 @@ void CActivityBox::SetPlaylist()
 				sThis += wxT("'");
 				sThis += aThisSel.Item( i );
 
+				//--- last item, so just add apostrophe ' ---//
 				if ( i == ( aThisSel.GetCount() - 1 ) )
 				    sThis + wxT("'");
 
+				//--- not last item, so format string for another ---//
 				else
-				{
-				    sThis += wxT("' or ");
-				    sThis += sThisType;
-				    sThis += wxT(" like ");
-				}
+				    sThis += wxT("' or ") + sThisType + wxT( " like " );
 			}
 
 			//--- make parent portion of query ---//
@@ -546,22 +544,21 @@ void CActivityBox::SetPlaylist()
 				sParent += wxT("' and " );
 				sParent += sThis;
 
+				//--- last item, so just add apostrophe ' ---//
 				if ( i == ( aParentSel.GetCount() - 1 ) )
 					sParent += wxT( "'" );
 
+				//--- not last item, so format string for another ---//
 				else
-				{
-					sParent += wxT(" or ");
-					sParent += sParentType;
-					sParent += wxT(" like ");
-			    }
+					sParent += wxT(" or ") + sParentType + wxT( " like " );
+
 			}
 
 			//--- compile query ---//
 			g_Playlist = g_Library.QuerySongs( sParent );
 		}
 	}
-
+	
 	g_PlaylistCtrl->Update();
 	g_PlaylistChanged = true;
 }
