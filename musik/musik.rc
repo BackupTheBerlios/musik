@@ -206,8 +206,6 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Rename\tF2",                  ID_SOURCES_RENAME
         MENUITEM "Delete\tDel",                 ID_SOURCES_DELETE
-        MENUITEM SEPARATOR
-        MENUITEM "Edit Query",                  ID_SOURCES_EDITQUERY
     END
 END
 
@@ -352,7 +350,7 @@ BEGIN
                     IDC_STATIC,12,36,222,24
     CTEXT           "website: http://www.musikcube.com\ne-mail: casey@bak.rr.com",
                     IDC_STATIC,12,174,222,18
-    CTEXT           "musikCore 0.3.0 CVS\nmusikCube a2",IDC_STATIC,12,150,
+    CTEXT           "musikCore 0.3.0 CVS\nmusikCube a3",IDC_STATIC,12,150,
                     222,18
     CTEXT           "Project musik, including musik:Core and musikCube is copyright (C) Casey Langen 2003.  Project musik is open source under the BSD license. See license.txt for more information",
                     IDC_STATIC,12,198,222,30
