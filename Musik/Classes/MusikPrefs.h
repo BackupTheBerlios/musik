@@ -40,10 +40,11 @@ struct Value
 	{
 		return val;
 	}
-	operator   T&()	
+/*	operator   T&()	
 	{
 		return val;
 	}
+*/
 	T* operator &()	
 	{
 		return &val;
@@ -340,38 +341,30 @@ public:
 	void SavePrefs();
 
 	CConfigSettingBool bFirstRun;
-	CConfigSettingBool bAutoPlayOnAppStart;
 	CConfigSettingBool bAutoAdd;
-	CConfigSettingBool bShowAllSongs;
-
+	CConfigSettingBool bAutoPlayOnAppStart;
 	CConfigSetting<Value<int>,EMUSIK_ACTIVITY_SELECTION_TYPE> eSelStyle;
-
+	CConfigSettingBool bShowAllSongs;
 	CConfigSettingInt nSndOutput;
 	CConfigSettingInt nSndDevice;
 	CConfigSettingInt nSndRate;
-	CConfigSettingInt nSndBuffer;
 	CConfigSettingInt nSndMaxChan;
+	CConfigSettingInt nSndBuffer;
  	CConfigSettingInt nSndVolume;
 
 	CConfigSettingBool bUseEQ;
 	CConfigSettingBool bUsePitch;
-
-	CConfigSettingArray<int,ActivityBoxesMaxCount,1,EMUSIK_ACTIVITY_TYPE> nActBoxType;
-
 	CConfigSettingBool bPLStripes;
 	CConfigSettingBool bActStripes;
 	CConfigSettingBool bSourcesStripes;
-
 	CConfigSettingString sPLStripeColour;
 	CConfigSettingString sActStripeColour;
 	CConfigSettingString sSourcesStripeColour;
-
 	CConfigSettingBool bShowPLInfo;
 	CConfigSettingBool bShowSources;
 	CConfigSettingBool bShowSourcesIcons;
 	CConfigSettingBool bShowActivities;
 	CConfigSettingBool bStayOnTop;
-
 	CConfigSettingBool bActBoxWrite;
 	CConfigSettingBool bActBoxClear;
 	CConfigSettingBool bActBoxRename;
@@ -380,14 +373,19 @@ public:
 	CConfigSettingBool bTagDlgClear;
 	CConfigSettingBool bTagDlgRename;
 
+
+
+
 	CConfigSetting<Value<int>,EMUSIK_PLAYMODE> ePlaymode;
+	CConfigSettingInt nMaxShuffleHistory;
+	CConfigSettingInt nAutoDjDoNotPlaySongPlayedTheLastNHours;
+	CConfigSettingInt nAutoDJChooseSongsToPlayInAdvance;
 	CConfigSettingBool bGlobalFadeEnable;
 	CConfigSettingBool bFadeEnable;
 	CConfigSettingBool bFadeSeekEnable;
 	CConfigSettingBool bFadePauseResumeEnable;
 	CConfigSettingBool bFadeStopEnable;
 	CConfigSettingBool bFadeExitEnable;
-
 	CConfigSettingInt nFadeDuration;
 	CConfigSettingInt nFadeSeekDuration;
 	CConfigSettingInt nFadePauseResumeDuration;
@@ -395,28 +393,23 @@ public:
 	CConfigSettingInt nFadeExitDuration;
 
 	CConfigSettingBool bUse_MPEGACCURATE_ForMP3VBRFiles;
-
 	CConfigSettingBool bBlankSwears;
 	CConfigSettingBool bSortArtistWithoutPrefix;
 	
+	CConfigSettingPath sAutoRename;
+	CConfigSettingPath sAutoTag;
+	CConfigSettingBool bAutoTagConvertUnderscoresToSpaces;
 	CConfigSettingBool bWebServerEnable;
 	CConfigSettingInt nWebServerPort;
-
 	CConfigSettingString sFramePlacement;
-	CConfigSettingInt nSourceBoxWidth;
-	CConfigSettingInt nActivityCtrlHeight;
+
 #ifdef wxHAS_TASK_BAR_ICON
 	CConfigSettingBool bHideOnMinimize;
 #endif
-	CConfigSettingPath sAutoRename;
-	CConfigSettingPath sAutoTag;
-    CConfigSettingBool bAutoTagConvertUnderscoresToSpaces;
 
+	CConfigSettingInt nSourceBoxWidth;
+	CConfigSettingInt nActivityCtrlHeight;
 	CConfigSettingBool bPlaylistSmartColumns;
-
-	CConfigSettingArray<bool,NPLAYLISTCOLUMNS>  bPlaylistColumnEnable;
-	CConfigSettingArray<int,NPLAYLISTCOLUMNS> nPlaylistColumnSize;
-	CConfigSettingArray<bool,NPLAYLISTCOLUMNS> bPlaylistColumnDynamic;
 
 	CConfigSettingBool bTunageWriteFile;
 	CConfigSettingPath sTunageFilename;
@@ -438,11 +431,14 @@ public:
 	CConfigSettingInt nStreamingPreBufferPercent;
 	CConfigSettingInt nStreamingReBufferPercent;
 
+	CConfigSettingArray<bool,NPLAYLISTCOLUMNS>  bPlaylistColumnEnable;
+	CConfigSettingArray<int,NPLAYLISTCOLUMNS> nPlaylistColumnSize;
+	CConfigSettingArray<bool,NPLAYLISTCOLUMNS> bPlaylistColumnDynamic;
+
+	CConfigSettingArray<int,ActivityBoxesMaxCount,1,EMUSIK_ACTIVITY_TYPE> nActBoxType;
+
 	wxString sDataPath;
 
-	CConfigSettingInt nMaxShuffleHistory;
-	CConfigSettingInt nAutoDjDoNotPlaySongPlayedTheLastNHours;
-	CConfigSettingInt nAutoDJChooseSongsToPlayInAdvance;
 
 };
 
