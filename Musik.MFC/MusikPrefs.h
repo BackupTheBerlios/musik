@@ -1,7 +1,7 @@
 #pragma once
 
 #include "stdafx.h"
-#include "CIniReader/iniFile.h"
+#include "CIniEx/iniFile.h"
 
 using namespace std;
 
@@ -34,6 +34,5 @@ protected:
 	CIniFile* config;
 
 private:
-	CString m_Filename;
 	int m_SelectionBox_Count;
 };

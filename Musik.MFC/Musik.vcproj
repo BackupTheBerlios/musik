@@ -350,7 +350,7 @@
 				RelativePath=".\MusikPrefs.h">
 			</File>
 			<Filter
-				Name="CIniFile"
+				Name="CIniEx"
 				Filter="">
 				<File
 					RelativePath=".\CIniEx\iniFile.cpp">
