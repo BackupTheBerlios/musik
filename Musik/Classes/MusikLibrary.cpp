@@ -1286,7 +1286,7 @@ bool CMusikLibrary::RetagFile( CMusikSong* song )
 		}
 	}
 
-	for( int i = 0; i < aMaskTokens.GetCount(); i++ )
+	for( size_t i = 0; i < aMaskTokens.GetCount(); i++ )
 	{
 		if( !aMaskTokens.Item( i ).IsEmpty() )
 		{
@@ -1295,7 +1295,7 @@ bool CMusikLibrary::RetagFile( CMusikSong* song )
 		}
 	}
 	aFileTokens = DelimitStr( sFile, wxT( "\n" ), true );
-	for( int i = 0; i < aFileTokens.GetCount(); i++ )
+	for( size_t i = 0; i < aFileTokens.GetCount(); i++ )
 	{
 		aFileTokens.Item( i ).Trim( true );
 		aFileTokens.Item( i ).Trim( false );
