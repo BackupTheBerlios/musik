@@ -1,4 +1,39 @@
 ///////////////////////////////////////////////////
+// 
+// Info:
+//
+//   Musik is a a cross platform, open source
+//   multimedia library. More information at:
+//
+//     http://musik.berlios.de
+//     http://musik.sourceforge.net
+//
+// Copyright and Credits:
+//
+//   Copyright      : Casey Langen, 2003
+//   Casey Langen   : Lead Developer, Project Manager. E-Mail: casey@bak.rr.com
+//   Dustin Carter  : Developer, pain in the ass
+//   Simon Windmill : Developer, the most helpful person thats immediately available ;)
+//
+// License:
+//
+//   See license.txt included with this distribution
+//
+///////////////////////////////////////////////////
+//
+// Class(s): 
+//
+//   CMainFrame,
+//
+// Filename(s): 
+//
+//   MainFrm.h, MainFrm.cpp
+//
+// Information:
+//
+//   Musik.MFC's main SDI window.
+//
+///////////////////////////////////////////////////
 
 #include "stdafx.h"
 
@@ -115,13 +150,7 @@ void CMainFrame::CleanMusik()
 	if ( m_LibPlaylist )	delete m_LibPlaylist;
 	if ( m_DynPlaylist )	delete m_DynPlaylist;
 	if ( m_StdPlaylist )	delete m_StdPlaylist;
-
-	if ( m_Player )
-	{
-		m_Player->Shutdown();
-		delete m_Player;
-	}
-
+	if ( m_Player )			delete m_Player;
 	if ( m_NewSong )		delete m_NewSong;
 }
 

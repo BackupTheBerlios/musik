@@ -355,7 +355,7 @@
 			</Filter>
 		</Filter>
 		<Filter
-			Name="Core"
+			Name="_Core"
 			Filter="">
 			<File
 				RelativePath="..\Musik.Core\include\MusikArrays.h">
