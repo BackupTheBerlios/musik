@@ -95,7 +95,9 @@ public:
 	wxString sAutoTag;
 	wxString sMusikVersion;
 
+	int nPlaylistColumnEnable[NPLAYLISTCOLUMNS];
 	int nPlaylistColumnSize[NPLAYLISTCOLUMNS];
+	int nPlaylistColumnStatic[NPLAYLISTCOLUMNS];
 };
 
 class CMusikPaths

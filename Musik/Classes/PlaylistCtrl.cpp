@@ -404,6 +404,7 @@ void CPlaylistCtrl::TranslateKeys( wxKeyEvent& pEvent )
 //---------------------------------------------------//
 wxString CPlaylistCtrl::OnGetItemText(long item, long column) const
 {
+/*
     const CMusikSong & song = g_Playlist.Item ( item );
 	switch ( column )
 	{
@@ -470,6 +471,7 @@ wxString CPlaylistCtrl::OnGetItemText(long item, long column) const
 		else
 			return wxT( "" );
 	}
+*/
 	return wxT( "" );
 }
 
@@ -773,6 +775,7 @@ void CPlaylistCtrl::RescaleColumns()
 
 void CPlaylistCtrl::ResetColumns( bool update )
 {
+/*
 	int cntColumns = GetColumnCount();
 	bool bUpdateNeeded = false;
 
@@ -793,6 +796,7 @@ void CPlaylistCtrl::ResetColumns( bool update )
 
 	if ( update && bUpdateNeeded )
 		Update();
+*/
 }
 
 void CPlaylistCtrl::RateSel( int nVal )

@@ -100,8 +100,35 @@ public:
 	//-----------------------------//
 	//--- options -> playlist	---//
 	//-----------------------------//
-	wxCheckBox*	chkPLNoHorScroll;
-	wxCheckBox*	chkPLColumnStatic;
+
+	wxCheckBox* chkRatingEnable;
+	wxCheckBox* chkTrackEnable;
+	wxCheckBox* chkTitleEnable;
+	wxCheckBox* chkArtistEnable;
+	wxCheckBox* chkAlbumEnable;
+	wxCheckBox* chkYearEnable;
+	wxCheckBox* chkGenreEnable;
+	wxCheckBox* chkTimesPlayedEnable;
+	wxCheckBox* chkLastPlayedEnable;
+	wxCheckBox* chkTimeEnable;
+	wxCheckBox* chkBitrateEnable;
+	wxCheckBox* chkFilenameEnable;
+
+	wxComboBox* cmbRatingStatic;
+	wxComboBox* cmbTrackStatic;
+	wxComboBox* cmbTitleStatic;
+	wxComboBox* cmbArtistStatic;
+	wxComboBox* cmbAlbumStatic;
+	wxComboBox* cmbYearStatic;
+	wxComboBox* cmbGenreStatic;
+	wxComboBox* cmbTimesPlayedStatic;
+	wxComboBox* cmbLastPlayedStatic;
+	wxComboBox* cmbTimeStatic;
+	wxComboBox* cmbBitrateStatic;
+	wxComboBox* cmbFilenameStatic;
+
+	//wxCheckBox*	chkPLNoHorScroll;
+	//wxCheckBox*	chkPLColumnStatic;
 
 	//--------------------------//
 	//--- tagging -> general ---//
@@ -161,6 +188,18 @@ public:
 	wxBoxSizer	*vsOutputDrv;	
 	wxBoxSizer	*vsSndDevice;
 	wxBoxSizer	*vsPlayRate;
+	wxBoxSizer	*hsPLRating;
+	wxBoxSizer	*hsPLTrack;
+	wxBoxSizer	*hsPLTitle;
+	wxBoxSizer	*hsPLArtist;
+	wxBoxSizer	*hsPLAlbum;
+	wxBoxSizer	*hsPLYear;
+	wxBoxSizer	*hsPLGenre;
+	wxBoxSizer	*hsPLTimesPlayed;
+	wxBoxSizer	*hsPLLastPlayed;
+	wxBoxSizer	*hsPLTime;
+	wxBoxSizer	*hsPLBitrate;
+	wxBoxSizer	*hsPLFilename;
 	wxBoxSizer	*hsSysButtons;
 	wxBoxSizer	*vsTopSizer;
 
