@@ -32,18 +32,18 @@ void CMusikNowPlayingCtrl::OnPaint()
 {
 	CPaintDC dc(this); 
 
-	CDC memdc;
-	memdc.CreateCompatibleDC(&dc);
-
 	CRect rc;
 	GetClientRect(rc);
 
+	//CDC memdc;
+	//memdc.CreateCompatibleDC(&dc);
+
 	// draw control background
-	memdc.SelectObject(GetSysColorBrush(COLOR_BTNFACE));
-	memdc.PatBlt(rc.left, rc.top, rc.Width(), rc.Height(), PATCOPY );
+	dc.SelectObject(GetSysColorBrush(COLOR_BTNFACE));
+	dc.PatBlt(0, 0, rc.Width(), rc.Height(), PATCOPY );
 
 	// copy back buffer to the display
-	dc.GetClipBox(&rc);
-	dc.BitBlt(rc.left, rc.top, rc.Width(), rc.Height(), &memdc, rc.left, rc.top, SRCCOPY);
-	memdc.DeleteDC();
+	//dc.GetClipBox(&rc);
+	//dc.BitBlt(0, 0, rc.Width(), rc.Height(), &memdc, rc.left, rc.top, SRCCOPY);
+	//memdc.DeleteDC();
 }
