@@ -24,6 +24,8 @@ CMusikDir::CMusikDir()
 	m_Target = NULL;
 	m_Functor = NULL;
 	m_Threaded = false;
+
+	m_pThread = NULL;
 }
 
 ///////////////////////////////////////////////////
@@ -34,6 +36,8 @@ CMusikDir::CMusikDir( CStdString dir, CStdStringArray* target, CMusikFunctor* fu
 	m_Dir = dir;
 	m_Functor = functor;
 	m_Threaded = threaded;
+
+	m_pThread = NULL;
 
 	if ( dir && start )
 		Run();
