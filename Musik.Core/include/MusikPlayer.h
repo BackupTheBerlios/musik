@@ -5,10 +5,8 @@
 
 ///////////////////////////////////////////////////
 
-#include "ace/Thread.h"
-#include "ace/Synch.h"
-
 #include "MusikPlaylist.h"
+#include "../Musik.Core/include/MusikCrossfader.h"
 #include "fmod.h"
 
 ///////////////////////////////////////////////////
@@ -38,9 +36,11 @@ enum
 ///////////////////////////////////////////////////
 
 class CMusikLibrary;
-class CMusikPlayerMain;
 class CMusikPlaylist;
 class CMusikFunctor;
+
+class ACE_Thread_Mutex;
+class ACE_Thread;
 
 ///////////////////////////////////////////////////
 
@@ -82,7 +82,7 @@ private:
 	CIntArray* m_ActiveChannels;
 
 	// main thread and mutex
-	ACE_Thread_Mutex main_mutex;
+	ACE_Thread_Mutex* main_mutex;
 	ACE_Thread* main_thread;
 
 	// pointer to library and playlist

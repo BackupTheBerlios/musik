@@ -133,10 +133,13 @@
 			RelativePath=".\include\MusikArrays.h">
 		</File>
 		<File
-			RelativePath=".\include\MusikFunctor.h">
+			RelativePath=".\include\MusikCrossfader.h">
 		</File>
 		<File
-			RelativePath=".\include\MusikSongInfoCache.h">
+			RelativePath=".\include\MusikDynDspInfo.h">
+		</File>
+		<File
+			RelativePath=".\include\MusikFunctor.h">
 		</File>
 		<File
 			RelativePath=".\include\StdString.h">

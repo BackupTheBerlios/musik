@@ -11,9 +11,6 @@
 #include "MusikArrays.h"
 #include "MusikPlaylist.h"
 
-#include "ace/Thread.h"
-#include "ace/Synch.h"
-
 ///////////////////////////////////////////////////
 
 enum
@@ -51,6 +48,9 @@ enum
 
 ///////////////////////////////////////////////////
 
+class ACE_Thread_Mutex;
+
+///////////////////////////////////////////////////
 
 class CMusikLibrary
 {
@@ -111,8 +111,6 @@ public:
 	//-----------------------------------------------------//
 	void InitTimeAdded();
 
-protected:
-
 private:
 
 	//-----------------------------------------------------//
@@ -129,9 +127,8 @@ private:
 	//--- the mutex that will be used to protect the	---//
 	//--- library within any given scope.				---//
 	//-----------------------------------------------------//
-	ACE_Thread_Mutex m_ProtectingLibrary;
+	ACE_Thread_Mutex* m_ProtectingLibrary;
 	
-
 	//-----------------------------------------------------//
 	//--- fields... artist/title/album/etc				---//
 	//-----------------------------------------------------//

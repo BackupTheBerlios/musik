@@ -4,6 +4,9 @@
 #include "../include/MusikLibrary.h"
 #include "time.h"
 
+#include "ace/Thread.h"
+#include "ace/Synch.h"
+
 ///////////////////////////////////////////////////
 
 static int sqlite_AddSongToPlaylist(void *args, int numCols, char **results, char ** columnNames )
@@ -83,6 +86,7 @@ static int sqlite_AddSongToStringArray( void *args, int numCols, char **results,
 
 CMusikLibrary::CMusikLibrary( const CStdString& filename )
 {
+	m_ProtectingLibrary = new ACE_Thread_Mutex();
 	CMusikSong::SetLibrary( this );
 	m_Filename = filename;
 	InitFields();
@@ -94,6 +98,7 @@ CMusikLibrary::CMusikLibrary( const CStdString& filename )
 CMusikLibrary::~CMusikLibrary()
 {
 	Shutdown();
+	delete m_ProtectingLibrary;
 }
 
 ///////////////////////////////////////////////////
@@ -209,7 +214,7 @@ bool CMusikLibrary::Startup()
 
 
 	// put a lock on the library and open it up
-	m_ProtectingLibrary.acquire();
+	m_ProtectingLibrary->acquire();
 
 	char *pErr = NULL;
 	m_pDB = sqlite_open( m_Filename.c_str(), 0666, &pErr );
@@ -223,7 +228,7 @@ bool CMusikLibrary::Startup()
 	if ( pErr )
 		sqlite_freemem( pErr );
 
-	m_ProtectingLibrary.release();
+	m_ProtectingLibrary->release();
 
 	return ( m_pDB != NULL );   
 }
@@ -233,31 +238,31 @@ bool CMusikLibrary::Startup()
 void CMusikLibrary::Shutdown()
 {
 	// lock it up and close it down.
-	m_ProtectingLibrary.acquire();
+	m_ProtectingLibrary->acquire();
 	if ( m_pDB )
 	{
 		sqlite_close( m_pDB );
 		m_pDB = NULL;
 	}	
-	m_ProtectingLibrary.release();
+	m_ProtectingLibrary->release();
 }
 
 ///////////////////////////////////////////////////
 
 void CMusikLibrary::BeginTransaction()
 {
-	m_ProtectingLibrary.acquire();
+	m_ProtectingLibrary->acquire();
 	sqlite_exec_printf( m_pDB, "begin transaction;", NULL, NULL, NULL );
-	m_ProtectingLibrary.release();
+	m_ProtectingLibrary->release();
 }
 
 ///////////////////////////////////////////////////
 
 void CMusikLibrary::EndTransaction()
 {
-	m_ProtectingLibrary.acquire();
+	m_ProtectingLibrary->acquire();
 	sqlite_exec_printf( m_pDB, "end transaction;", NULL, NULL, NULL );
-	m_ProtectingLibrary.release();
+	m_ProtectingLibrary->release();
 }
 
 ///////////////////////////////////////////////////
@@ -265,9 +270,9 @@ void CMusikLibrary::EndTransaction()
 void CMusikLibrary::CreateStdPlaylist( CStdString name, CIntArray songids )
 {
 	// lock it up
-	m_ProtectingLibrary.acquire();
+	m_ProtectingLibrary->acquire();
 
-	m_ProtectingLibrary.release();
+	m_ProtectingLibrary->release();
 }
 
 ///////////////////////////////////////////////////
@@ -275,9 +280,9 @@ void CMusikLibrary::CreateStdPlaylist( CStdString name, CIntArray songids )
 void CMusikLibrary::CreateDynPlaylist( CStdString name, CStdString query )
 {
 	// lock it up
-	m_ProtectingLibrary.acquire();
+	m_ProtectingLibrary->acquire();
 
-	m_ProtectingLibrary.release();
+	m_ProtectingLibrary->release();
 }
 
 ///////////////////////////////////////////////////
@@ -285,9 +290,9 @@ void CMusikLibrary::CreateDynPlaylist( CStdString name, CStdString query )
 void CMusikLibrary::DeleteStdPlaylist( CStdString name )
 {
 	// lock it up	
-	m_ProtectingLibrary.acquire();
+	m_ProtectingLibrary->acquire();
 
-	m_ProtectingLibrary.release();
+	m_ProtectingLibrary->release();
 }
 
 ///////////////////////////////////////////////////
@@ -295,9 +300,9 @@ void CMusikLibrary::DeleteStdPlaylist( CStdString name )
 void CMusikLibrary::DeleteDynPlaylist( CStdString name )
 {
 	// lock it up and close it down.
-	m_ProtectingLibrary.acquire();
+	m_ProtectingLibrary->acquire();
 
-	m_ProtectingLibrary.release();
+	m_ProtectingLibrary->release();
 }
 
 ///////////////////////////////////////////////////
@@ -380,7 +385,7 @@ int CMusikLibrary::QueryCount( const char* pQueryResult )
 	const char *pTail;
 	sqlite_vm *pVM;
 
-	m_ProtectingLibrary.acquire();
+	m_ProtectingLibrary->acquire();
 	
 	sqlite_compile( m_pDB, pQueryResult, &pTail, &pVM, NULL );
 	char *errmsg;
@@ -394,7 +399,7 @@ int CMusikLibrary::QueryCount( const char* pQueryResult )
 
 	sqlite_finalize( pVM, &errmsg );
 
-	m_ProtectingLibrary.release();
+	m_ProtectingLibrary->release();
 
 	return result;
 }
@@ -434,11 +439,11 @@ void CMusikLibrary::QuerySongs( const CStdString& query, CMusikPlaylist& target 
 	queryWhere += _T( ";" );
 
 	// lock it up and query it
-	m_ProtectingLibrary.acquire();
+	m_ProtectingLibrary->acquire();
 
 	sqlite_exec( m_pDB, queryWhere.c_str(), &sqlite_AddSongToPlaylist, &target, NULL );
 
-	m_ProtectingLibrary.release();
+	m_ProtectingLibrary->release();
 }
 
 ///////////////////////////////////////////////////
@@ -473,11 +478,11 @@ void CMusikLibrary::GetRelatedItems( int source_type, const CStdStringArray& sou
 	query += GetOrder( target_type );
 
 	// lock it up and run the query
-	m_ProtectingLibrary.acquire();
+	m_ProtectingLibrary->acquire();
 
 	sqlite_exec(m_pDB, query.c_str(), &sqlite_AddSongToStringArray, &target, NULL);
 
-	m_ProtectingLibrary.release();
+	m_ProtectingLibrary->release();
 
 	// if target is years, verify only years
 	//get displayed.
@@ -500,11 +505,11 @@ void CMusikLibrary::GetRelatedItems( CStdString sub_query, int dst_type, CStdStr
 		sOutType.c_str() );
 
 	// lock it up and run the query
-	m_ProtectingLibrary.acquire();
+	m_ProtectingLibrary->acquire();
 
 	sqlite_exec(m_pDB, query.c_str(), &sqlite_AddSongToStringArray, &target, NULL);
 
-	m_ProtectingLibrary.release();
+	m_ProtectingLibrary->release();
 
 	// if target is years, verify only years
 	// get displayed.
@@ -526,11 +531,11 @@ void CMusikLibrary::GetRelatedSongs( CStdString sub_query, int source_type, CMus
 		order_by.c_str() );
 
 	// lock it up and run the query
-	m_ProtectingLibrary.acquire();
+	m_ProtectingLibrary->acquire();
 
 	sqlite_exec(m_pDB, query.c_str(), &sqlite_AddSongToPlaylist, &target, NULL);
 
-	m_ProtectingLibrary.release();
+	m_ProtectingLibrary->release();
 }
 
 ///////////////////////////////////////////////////
@@ -545,11 +550,11 @@ void CMusikLibrary::GetAllDistinct( int source_type, CStdStringArray& target, bo
 	query.Format( _T( "select distinct %s,UPPER(%s) as UP from songs order by UP;" ), sField.c_str(), sField.c_str() );
 
 	// lock it up and run the query
-	m_ProtectingLibrary.acquire();
+	m_ProtectingLibrary->acquire();
 
 	sqlite_exec( m_pDB, query.c_str(), &sqlite_AddSongToStringArray, &target, NULL );
 
-	m_ProtectingLibrary.release();
+	m_ProtectingLibrary->release();
 }
 
 ///////////////////////////////////////////////////
@@ -572,11 +577,11 @@ void CMusikLibrary::GetFieldFromID( int id, int field, CStdString& string )
 	query.Format( _T( "select %s from songs where songid = %d;" ), type.c_str(), id );
 
 	// lock it up and run the query
-	m_ProtectingLibrary.acquire();
+	m_ProtectingLibrary->acquire();
 
 	sqlite_exec( m_pDB, query.c_str(), &sqlite_GetSongFieldFromID, &string, NULL );
 
-	m_ProtectingLibrary.release();
+	m_ProtectingLibrary->release();
 }
 
 ///////////////////////////////////////////////////
@@ -589,11 +594,11 @@ void CMusikLibrary::GetSongInfoFromID( int id, CMusikSongInfo* info )
 	info->SetID( id );
 
 	// lock it up and run the query
-	m_ProtectingLibrary.acquire();
+	m_ProtectingLibrary->acquire();
 
 	int result = sqlite_exec( m_pDB, query.c_str(), &sqlite_GetSongInfoFromID, info, NULL );
 
-	m_ProtectingLibrary.release();
+	m_ProtectingLibrary->release();
 }
 
 ///////////////////////////////////////////////////
@@ -629,11 +634,11 @@ bool CMusikLibrary::SetSongInfo( int songid, CMusikSongInfo* info )
 	MessageBox( NULL, query.c_str(), NULL, NULL );
 
 	// lock it up and run the query
-	m_ProtectingLibrary.acquire();
+	m_ProtectingLibrary->acquire();
 
 	result = sqlite_exec( m_pDB, query.c_str(), NULL, NULL, NULL );
 
-	m_ProtectingLibrary.release();
+	m_ProtectingLibrary->release();
 
 
 	if ( result != SQLITE_OK )
@@ -652,11 +657,11 @@ bool CMusikLibrary::SetSongRating( int songid, int rating )
 	query.Format( _T( "update songs set rating=%d where songid=%d" ), rating, songid );
 
 	// lock it up and run the query
-	m_ProtectingLibrary.acquire();
+	m_ProtectingLibrary->acquire();
     
 	result = sqlite_exec( m_pDB, query.c_str(), NULL, NULL, NULL );
 	
-	m_ProtectingLibrary.release();
+	m_ProtectingLibrary->release();
 
 	if ( result != SQLITE_OK )
 		return false;

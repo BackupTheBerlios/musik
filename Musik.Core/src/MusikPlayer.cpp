@@ -6,6 +6,9 @@
 #include "../include/MusikLibrary.h"
 #include "../include/MusikFunctor.h"
 
+#include "ace/Thread.h"
+#include "ace/Synch.h"
+
 ///////////////////////////////////////////////////
 
 CMusikPlayer::CMusikPlayer( CMusikFunctor* functor )
