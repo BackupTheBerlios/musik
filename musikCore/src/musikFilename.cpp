@@ -242,12 +242,16 @@ void CmusikFilename::DelimitStr( CmusikString path, CmusikString delimiter, Cmus
 
 ///////////////////////////////////////////////////
 
-bool CmusikFilename::GetSongInfo( CmusikStringArray mask, CmusikString fn_delimiter, CmusikSongInfo& target, bool clear_info, bool partial )
+bool CmusikFilename::GetSongInfo( CmusikStringArray mask, CmusikStringArray& fn_delimiters, CmusikSongInfo& target, bool clear_info, bool partial )
 {
 	CmusikString path = GetTrimPath();
 	CmusikString fn = GetJustFilenameNoExt();
 
-	fn.Replace( fn_delimiter, MUSIK_PATH_SEPARATOR );
+	SortBySize( fn_delimiters );
+
+	for ( size_t i = 0; i < fn_delimiters.size(); i++ )
+		fn.Replace( fn_delimiters.at( i ), MUSIK_PATH_SEPARATOR );
+
 	path += fn;
 
 	if ( path.IsEmpty() )
@@ -369,6 +373,30 @@ bool CmusikFilename::RecurseMkDir( char* pszDir )
 		return false;
 
     return true;
+}
+
+///////////////////////////////////////////////////
+
+// a quick bubble sort for delimiters
+
+void CmusikFilename::SortBySize( CmusikStringArray& array )
+{
+	if ( !array.size() )
+		return;
+
+	CmusikString hold;
+	for ( size_t i = 0; i < array.size() - 1; i++ )
+	{
+		for ( size_t j = 0; j < array.size() - 1 - i; j++ )
+		{
+			if ( array.at( j ).length() < array.at( j + 1 ).length() )
+			{
+				hold = array.at( j + 1 );
+				array.at( j + 1 ) = array.at( j );
+				array.at( j ) = hold;
+			}
+		}
+	}
 }
 
 ///////////////////////////////////////////////////

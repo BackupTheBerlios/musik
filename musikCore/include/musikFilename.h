@@ -77,7 +77,7 @@ public:
 	CmusikString GetExtension( bool make_lower = true );
 	CmusikString GetJustFilenameNoExt();
 
-    bool GetSongInfo( CmusikStringArray mask, CmusikString fn_delimiter, CmusikSongInfo& target, bool clear_info = true, bool accept_partial = true );
+    bool GetSongInfo( CmusikStringArray mask, CmusikStringArray& fn_delimiters, CmusikSongInfo& target, bool clear_info = true, bool accept_partial = true );
 	void GetDelimitedPath( CmusikStringArray& target, bool reverse = false, bool trimfilename = false );
 	bool RenameFromSongInfo( CmusikString mask, CmusikSongInfo& source );
 
@@ -91,7 +91,9 @@ public:
 
 private:
 
-	void DelimitStr( CmusikString path, CmusikString delimiter, CmusikStringArray& array, bool reverse, int count = -1 );
+	static void DelimitStr( CmusikString path, CmusikString delimiter, CmusikStringArray& array, bool reverse, int count = -1 );
+	void SortBySize( CmusikStringArray& array );
+	
 	CmusikString m_Filename;
 };
 
