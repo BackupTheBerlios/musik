@@ -135,7 +135,8 @@ BEGIN
 
             MENUITEM "Intro",                       ID_PLAYBACKMODE_INTRO
             MENUITEM SEPARATOR
-            MENUITEM "Shuffle Current Playlist",    ID_PLAYBACKMODE_SHUFFLECURRENTPLAYLIST
+            MENUITEM "Shuffle Now Playing\tCtrl+Alt+S", 
+                                                    ID_PLAYBACKMODE_SHUFFLECURRENTPLAYLIST
 
         END
         MENUITEM SEPARATOR
@@ -203,6 +204,9 @@ IDR_SOURCES_MENU MENU
 BEGIN
     POPUP "Sources"
     BEGIN
+        MENUITEM "Shuffle Now Playing\tCtrl+Alt+S", 
+                                                ID_SOURCES_SHUFFLEPLAYLIST
+        MENUITEM SEPARATOR
         MENUITEM "Rename\tF2",                  ID_SOURCES_RENAME
         MENUITEM "Delete\tDel",                 ID_SOURCES_DELETE
         MENUITEM SEPARATOR
@@ -253,10 +257,10 @@ BEGIN
     VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT, NOINVERT
     VK_BACK,        ID_EDIT_UNDO,           VIRTKEY, ALT, NOINVERT
     "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL, NOINVERT
-    "M",            ID_FILE_SYNCHRONIZEDDIRECTORIES, VIRTKEY, CONTROL, 
-                                                    NOINVERT
     "P",            ID_FILE_PREFERENCES,    VIRTKEY, CONTROL, NOINVERT
     "S",            ID_FILE_SAVEPLAYLIST,   VIRTKEY, CONTROL, NOINVERT
+    "M",            ID_FILE_SYNCHRONIZEDDIRECTORIES, VIRTKEY, CONTROL, 
+                                                    NOINVERT
     VK_F6,          ID_NEXT_PANE,           VIRTKEY, NOINVERT
     VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
     "Z",            ID_VIEW_CROSSFADER,     VIRTKEY, SHIFT, CONTROL, 
@@ -271,6 +275,8 @@ BEGIN
                                                     NOINVERT
     "A",            ID_VIEW_SOURCES,        VIRTKEY, SHIFT, CONTROL, 
                                                     NOINVERT
+    "S",            ID_PLAYBACKMODE_SHUFFLECURRENTPLAYLIST, VIRTKEY, CONTROL, 
+                                                    ALT, NOINVERT
 END
 
 

@@ -89,7 +89,7 @@ int WM_SOURCESQUICKSEARCH	= RegisterWindowMessage( "SOURCESQUICKSEARCH" );
 
 int WM_CLOSEDIRSYNC			= RegisterWindowMessage( "CLOSEDIRSYNC" );
 
-int WM_GETPLAYLIST			= RegisterWindowMessage( "GETPLAYLIST" );
+int WM_UPDATEPLAYLIST		= RegisterWindowMessage( "UPDATEPLAYLIST" );
 
 int WM_RESTARTSOUNDSYSTEM	= RegisterWindowMessage( "RESTARTSOUNDSYSTEM" );
 
@@ -213,9 +213,10 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_CLOSEDIRSYNC, OnCloseDirSync )
 	ON_REGISTERED_MESSAGE( WM_SELBOXADDREMOVE, OnSelBoxAddRemove )
 	ON_REGISTERED_MESSAGE( WM_SELBOXREQUESTUPDATE, OnSelBoxRequestUpdate )
-	ON_REGISTERED_MESSAGE( WM_GETPLAYLIST, OnGetCurrPlaylist )
+	ON_REGISTERED_MESSAGE( WM_UPDATEPLAYLIST, OnUpdateCurrPlaylist )
 	ON_REGISTERED_MESSAGE( WM_RESTARTSOUNDSYSTEM, OnRestartSoundSystem )
 	ON_REGISTERED_MESSAGE( WM_EQUALIZERCHANGE, OnEqualizerChange )
+	ON_COMMAND(ID_PLAYBACKMODE_SHUFFLECURRENTPLAYLIST, OnPlaybackmodeShufflecurrentplaylist)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -2649,9 +2650,10 @@ BOOL CMainFrame::PreTranslateMessage(MSG* pMsg)
 
 ///////////////////////////////////////////////////
 
-LRESULT CMainFrame::OnGetCurrPlaylist( WPARAM wParam, LPARAM lParam )
+LRESULT CMainFrame::OnUpdateCurrPlaylist( WPARAM wParam, LPARAM lParam )
 {
-	return (LRESULT)m_wndView->GetCtrl()->GetPlaylist();
+	m_wndView->GetCtrl()->UpdateV();
+	return 0L;
 }
 
 ///////////////////////////////////////////////////
@@ -2667,6 +2669,16 @@ LRESULT CMainFrame::OnRestartSoundSystem( WPARAM wParam, LPARAM lParam )
 	m_Player->InitSound( m_Prefs->GetPlayerDevice(), m_Prefs->GetPlayerDriver(), m_Prefs->GetPlayerRate(), m_Prefs->GetPlayerMaxChannels() );
 
 	return 0L;
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnPlaybackmodeShufflecurrentplaylist()
+{
+	std::random_shuffle( m_Player->GetPlaylist()->m_Songs.begin(), m_Player->GetPlaylist()->m_Songs.end() );
+
+	if ( m_wndView->GetCtrl()->GetPlaylist() == m_Player->GetPlaylist() )
+		m_wndView->GetCtrl()->UpdateV();
 }
 
 ///////////////////////////////////////////////////

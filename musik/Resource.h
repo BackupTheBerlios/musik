@@ -27,7 +27,6 @@
 #define IDB_DOWN                        151
 #define IDB_BITMAP1                     153
 #define IDB_UP                          153
-#define IDR_MENU1                       154
 #define IDR_SELECTION_BOX_CONTEXT_MENU  154
 #define IDC_CHECK_STARTUPSCAN           1007
 #define IDC_CHECK_STARTUPSCAN2          1008
@@ -195,13 +194,15 @@
 #define ID_LIBRARY_SCANFORMISSINGFILESNOW 32889
 #define ID_EQUALIZER_CLOSE_VIEW         32891
 #define ID_SELECTIONBOXCONTEXT_RENAME   32892
+#define ID_SOURCES_SHUFFLEPLAYLIST      32893
+#define ID_Menu32894                    32894
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        155
-#define _APS_NEXT_COMMAND_VALUE         32893
+#define _APS_NEXT_COMMAND_VALUE         32895
 #define _APS_NEXT_CONTROL_VALUE         1053
 #define _APS_NEXT_SYMED_VALUE           104
 #endif

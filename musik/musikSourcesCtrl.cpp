@@ -9,6 +9,7 @@
 #include "musik.h"
 #include "musikSourcesCtrl.h"
 #include "musikSourcesDropTarget.h"
+#include ".\musiksourcesctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -44,6 +45,7 @@ BEGIN_MESSAGE_MAP(CmusikSourcesBar, baseCmusikSourcesBar)
 	ON_NOTIFY( PTN_SELCHANGE, IDC_SOURCES, OnItemChanged )
 	ON_COMMAND(ID_SOURCES_RENAME, OnSourcesRename)
 	ON_COMMAND(ID_SOURCES_DELETE, OnSourcesDelete)
+	ON_COMMAND(ID_SOURCES_SHUFFLEPLAYLIST, OnSourcesShuffleplaylist)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -207,6 +209,24 @@ void CmusikSourcesBar::OnSourcesRename()
 void CmusikSourcesBar::OnSourcesDelete()
 {
 	GetCtrl()->DeleteSel();
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSourcesBar::OnSourcesShuffleplaylist()
+{
+	CmusikPlaylist* playlist = GetCtrl()->m_Player->GetPlaylist();
+	std::random_shuffle( playlist->m_Songs.begin(), playlist->m_Songs.end() );
+
+	CmusikPropTreeItem* pItem = GetCtrl()->GetFocusedItem();
+	if ( pItem )
+	{
+		if ( pItem->GetPlaylistType() == MUSIK_SOURCES_TYPE_NOWPLAYING )
+		{
+			int WM_UPDATEPLAYLIST = RegisterWindowMessage( "UPDATEPLAYLIST" );
+			GetCtrl()->m_Parent->SendMessage( WM_UPDATEPLAYLIST );
+		}
+	}
 }
 
 ///////////////////////////////////////////////////

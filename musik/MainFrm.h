@@ -232,7 +232,7 @@ protected:
 	afx_msg LRESULT OnCloseDirSync( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSelBoxAddRemove( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSelBoxRequestUpdate( WPARAM wParam, LPARAM lParam );
-	afx_msg LRESULT OnGetCurrPlaylist( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnUpdateCurrPlaylist( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnRestartSoundSystem( WPARAM wParam, LPARAM lParam );
 
 	// mfc message maps
@@ -318,6 +318,8 @@ protected:
 
 	// autostart 
 	bool m_AutoStart;
+public:
+	afx_msg void OnPlaybackmodeShufflecurrentplaylist();
 };
 
 ///////////////////////////////////////////////////
