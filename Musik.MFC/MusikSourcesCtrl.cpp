@@ -4,10 +4,11 @@
 
 #include "../Musik.Core/include/MusikPlayer.h"
 
+#include "MainFrm.h"
+
 #include "Musik.h"
 #include "MusikSourcesCtrl.h"
 #include "MusikSourcesDropTarget.h"
-#include ".\musiksourcesctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -15,10 +16,12 @@ IMPLEMENT_DYNAMIC( CMusikSourcesCtrl, CMusikPropTree )
 
 ///////////////////////////////////////////////////
 
-CMusikSourcesCtrl::CMusikSourcesCtrl( CMusikLibrary* library, CMusikPlayer* player, CMusikPrefs* prefs, UINT dropid )
+CMusikSourcesCtrl::CMusikSourcesCtrl( CFrameWnd* parent, CMusikLibrary* library, CMusikPlayer* player, CMusikPrefs* prefs, UINT dropid )
 	: CMusikPropTree( prefs, library, dropid )
 {
 	m_DropTarget = new CMusikSourcesDropTarget( this, dropid );
+
+	m_Parent			= parent;
 
 	m_LibrariesRoot		= NULL;
 	m_StdPlaylistRoot	= NULL;
@@ -312,16 +315,31 @@ void CMusikSourcesCtrl::DoDrag( CMusikPropTreeItem* pItem )
 	// now playing dragged..
 	else if ( nMode == MUSIK_SOURCES_TYPE_NOWPLAYING )
 	{
-		m_Library->BeginTransaction();
-		for ( size_t i = 0; i < m_Player->GetPlaylist()->GetCount(); i++ )
-			files.push_back( m_Player->GetPlaylist()->GetField( i, MUSIK_LIBRARY_TYPE_FILENAME ) );
-		m_Library->EndTransaction();
+		if ( m_Player->GetPlaylist() )
+		{
+			m_Library->BeginTransaction();
+			for ( size_t i = 0; i < m_Player->GetPlaylist()->GetCount(); i++ )
+				files.push_back( m_Player->GetPlaylist()->GetField( i, MUSIK_LIBRARY_TYPE_FILENAME ) );
+			m_Library->EndTransaction();
+		}
 	}
-		
+
+	// library playlist dragged
+	else if ( nMode == MUSIK_SOURCES_TYPE_LIBRARY )
+	{
+		CMainFrame* pMain = (CMainFrame*)m_Parent;
+		if ( pMain->m_LibPlaylist )
+		{
+			m_Library->BeginTransaction();
+			for ( size_t i = 0; i < pMain->m_LibPlaylist->GetCount(); i++ )
+				files.push_back( pMain->m_LibPlaylist->GetField( i, MUSIK_LIBRARY_TYPE_FILENAME ) );
+			m_Library->EndTransaction();
+		}
+	}
+
 	else if ( nMode == MUSIK_PLAYLIST_TYPE_DYNAMIC )
 		MessageBox( "This operation is not supported yet.", "Musik", MB_ICONINFORMATION | MB_OK );
-	else if ( nMode == MUSIK_SOURCES_TYPE_LIBRARY )
-		MessageBox( "This operation is not supported yet.", "Musik", MB_ICONINFORMATION | MB_OK );
+
 
 	if ( !files.size() )
 		return;

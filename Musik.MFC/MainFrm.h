@@ -72,6 +72,8 @@ class CMusikFrameFunctor;
 
 class CMainFrame : public CFrameWnd
 {
+	friend void CMusikSourcesCtrl::DoDrag( CMusikPropTreeItem* pItem );
+
 public:
 
 	// construct and destruct

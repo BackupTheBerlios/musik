@@ -26,7 +26,7 @@ class CMusikSourcesCtrl : public CMusikPropTree
 public:
 
 	// construct / destruct
-	CMusikSourcesCtrl( CMusikLibrary* library, CMusikPlayer* player, CMusikPrefs* prefs, UINT dropid );
+	CMusikSourcesCtrl( CFrameWnd* parent, CMusikLibrary* library, CMusikPlayer* player, CMusikPrefs* prefs, UINT dropid );
 	virtual ~CMusikSourcesCtrl();
 
 	// actions
@@ -42,6 +42,9 @@ public:
 	void OnDropFiles(HDROP hDropInfo);
 
 protected:
+
+	// pointer to main frame
+	CFrameWnd* m_Parent;
 
 	// message maps
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);

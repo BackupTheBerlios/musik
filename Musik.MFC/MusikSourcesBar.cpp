@@ -20,7 +20,7 @@ static char THIS_FILE[] = __FILE__;
 CMusikSourcesBar::CMusikSourcesBar( CFrameWnd* parent, CMusikLibrary* library, CMusikPlayer* player, CMusikPrefs* prefs, UINT dropid )
 	: CMusikDockBar( prefs )
 {
-	m_wndChild = new CMusikSourcesCtrl( library, player, prefs, dropid );
+	m_wndChild = new CMusikSourcesCtrl( parent, library, player, prefs, dropid );
 	m_Parent = parent;
 }
 
