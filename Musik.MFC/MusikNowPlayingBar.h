@@ -6,10 +6,12 @@
 
 #include "MusikNowPlayingCtrl.h"
 
+#include "MusikDockBar.h"
+
 ///////////////////////////////////////////////////
 
 #ifndef baseCMusikNowPlayingBar
-#define baseCMusikNowPlayingBar CSizingControlBarG
+	#define baseCMusikNowPlayingBar CMusikDockBar
 #endif
 
 ///////////////////////////////////////////////////

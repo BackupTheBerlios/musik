@@ -261,22 +261,20 @@
 						RelativePath=".\MusikListCtrl.h">
 					</File>
 				</Filter>
+				<Filter
+					Name="MusikDockBar"
+					Filter="">
+					<File
+						RelativePath=".\MusikDockBar.cpp">
+					</File>
+					<File
+						RelativePath=".\MusikDockBar.h">
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="CSizingControlBar"
 				Filter="">
-				<File
-					RelativePath=".\3rdparty\scbarcf.cpp">
-				</File>
-				<File
-					RelativePath=".\3rdparty\scbarcf.h">
-				</File>
-				<File
-					RelativePath=".\3rdparty\scbarg.cpp">
-				</File>
-				<File
-					RelativePath=".\3rdparty\scbarg.h">
-				</File>
 				<File
 					RelativePath=".\3rdparty\sizecbar.cpp">
 				</File>

@@ -51,9 +51,9 @@ void CMusikNowPlayingCtrl::OnPaint()
 	
 	CRect clip;
 	memDC.GetClipBox(&clip);
-	memDC.FillSolidRect( clip, GetSysColor( COLOR_BTNFACE ) );
+	memDC.FillSolidRect( clip, m_Prefs->MUSIK_COLOR_BTNFACE );
 
-	DefWindowProc(WM_PAINT, (WPARAM)memDC->m_hDC, (LPARAM)0);
+	DefWindowProc( WM_PAINT, (WPARAM)memDC->m_hDC, (LPARAM)0 );
 }
 
 ///////////////////////////////////////////////////

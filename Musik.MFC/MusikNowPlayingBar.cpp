@@ -59,7 +59,7 @@ int CMusikNowPlayingBar::OnCreate( LPCREATESTRUCT lpCreateStruct )
 
 void CMusikNowPlayingBar::OnSize(UINT nType, int cx, int cy)
 {
-	CSizingControlBarG::OnSize(nType, cx, cy);
+	CMusikDockBar::OnSize(nType, cx, cy);
 
 	CRect rcClient;
 	GetClientRect( &rcClient );

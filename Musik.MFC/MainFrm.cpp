@@ -48,6 +48,7 @@
 
 #include <io.h>
 #include <Direct.h>
+#include ".\mainfrm.h"
 
 ///////////////////////////////////////////////////
 
@@ -92,6 +93,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_DRAGEND, OnDragEnd )
 	ON_REGISTERED_MESSAGE( MW_NEWPLAYLISTOWNER, OnNewPlaylistOwner )
 	ON_REGISTERED_MESSAGE( WM_SELBOXRESET, OnSelBoxesReset )
+	ON_WM_ERASEBKGND()
+	ON_WM_PAINT()
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -316,7 +319,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// selection controls
 	for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
 	{
-		m_wndSelectionBars[i] = new CMusikSelectionBar( this, m_Library, i, i );
+		m_wndSelectionBars[i] = new CMusikSelectionBar( this, m_Library, m_Prefs, i, i );
 		m_wndSelectionBars[i]->Create( _T( "Musik Selection Box" ), this, ID_SELECTIONBOX_START + i );
 		m_wndSelectionBars[i]->SetBarStyle( m_wndSelectionBars[i]->GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC );
 		m_wndSelectionBars[i]->EnableDocking( CBRS_ALIGN_ANY );
@@ -329,7 +332,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 
 	// sources control
-	m_wndSources = new CMusikSourcesBar( this, m_Library );
+	m_wndSources = new CMusikSourcesBar( this, m_Library, m_Prefs );
 	m_wndSources->Create( _T( "Sources" ), this, ID_SOURCESBOX );
 	m_wndSources->EnableDocking( CBRS_ALIGN_LEFT | CBRS_ALIGN_RIGHT );
     m_wndSources->SetBarStyle( m_wndSources->GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC );
@@ -725,3 +728,17 @@ LRESULT CMainFrame::OnSelBoxesReset( WPARAM wParam, LPARAM lParam )
 
 ///////////////////////////////////////////////////
 
+BOOL CMainFrame::OnEraseBkgnd(CDC* pDC)
+{
+	return false;
+}
+
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnPaint()
+{
+	CPaintDC dc(this);
+}
+
+///////////////////////////////////////////////////

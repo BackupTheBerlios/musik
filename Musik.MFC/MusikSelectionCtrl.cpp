@@ -13,6 +13,9 @@ bool CMusikSelectionCtrl::m_Updating = false;
 ///////////////////////////////////////////////////
 
 IMPLEMENT_DYNAMIC(CMusikSelectionCtrl, CMusikListCtrl)
+
+///////////////////////////////////////////////////
+
 CMusikSelectionCtrl::CMusikSelectionCtrl( CFrameWnd* parent, CMusikLibrary* library, int type, int ctrl_id )
 {
 	m_Library = library;

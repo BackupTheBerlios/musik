@@ -25,6 +25,9 @@ public:
 	CMusikPrefs( CString filename );
 	~CMusikPrefs();
 
+	void ParseColors();
+	void UnparseColors();
+
 	// basic stuff
 	void		LoadPrefs();
 	void		SavePrefs();
@@ -83,6 +86,15 @@ public:
 	CStdString GetCurrCrossfader					()					{ return m_Crossfader_Current; }
 	bool IsCrossfaderEnabled						()					{ return m_Crossfader_Enabled; }
 
+	COLORREF MUSIK_COLOR_ACTIVECAPTION;
+	COLORREF MUSIK_COLOR_CAPTIONTEXT;
+	COLORREF MUSIK_COLOR_INACTIVECAPTION;
+	COLORREF MUSIK_COLOR_INACTIVECAPTIONTEXT;
+	COLORREF MUSIK_COLOR_BTNFACE;
+	COLORREF MUSIK_COLOR_BTNTEXT;
+	COLORREF MUSIK_COLOR_BTNHILIGHT;
+	COLORREF MUSIK_COLOR_BTNSHADOW;
+	COLORREF MUSIK_COLOR_LISTCTRL;
 
 protected:
 	CIniFile* config;

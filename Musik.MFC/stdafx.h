@@ -40,8 +40,6 @@
 #endif // _AFX_NO_AFXCMN_SUPPORT
 
 #include "3rdparty/sizecbar.h"
-#include "3rdparty/scbarg.h"
-#include "3rdparty/scbarcf.h"
 
 #ifndef MUSIK_VERSION_STR
 	#define MUSIK_VERSION_STR "Musik 0.3.0 CVS" 

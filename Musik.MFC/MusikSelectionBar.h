@@ -1,48 +1,48 @@
+///////////////////////////////////////////////////
+
 #pragma once
+
+///////////////////////////////////////////////////
 
 #include "MusikSelectionCtrl.h"
 
+#include "MusikDockBar.h"
+
+///////////////////////////////////////////////////
+
 class CMusikLibrary;
 
+///////////////////////////////////////////////////
+
 #ifndef baseCMusikSelectionBar
-#define baseCMusikSelectionBar CSizingControlBarCF
+	#define baseCMusikSelectionBar CMusikDockBar
 #endif
+
+///////////////////////////////////////////////////
 
 class CMusikSelectionBar : public baseCMusikSelectionBar
 {
-//-------------------------------------------------//
-//--- implementation							---//
-//-------------------------------------------------//
 public:
-	CMusikSelectionBar( CFrameWnd* parent, CMusikLibrary* library, int type, int ctrl_id );
+
+	// construct / destruct
+	CMusikSelectionBar( CFrameWnd* parent, CMusikLibrary* library, CMusikPrefs* prefs, int type, int ctrl_id );
 	virtual ~CMusikSelectionBar();
 
+	// gets
 	CMusikSelectionCtrl* GetCtrl(){ return m_wndChild; }
 
-//-------------------------------------------------//
-//--- variables									---//
-//-------------------------------------------------//
 protected:
+
+	// child
 	CMusikSelectionCtrl* m_wndChild;
 	CFont m_Font;
 
-//-------------------------------------------------//
-//--- operations								---//
-//-------------------------------------------------//
-
-//-------------------------------------------------//
-//--- overrides									---//
-//-------------------------------------------------//
-
-//-------------------------------------------------//
-//--- message maps								---//
-//-------------------------------------------------//
-protected:
+	// mfc message maps
 	afx_msg int OnCreate( LPCREATESTRUCT lpCreateStruct );
-	DECLARE_MESSAGE_MAP()
-
-public:
-
 	afx_msg void OnSize(UINT nType, int cx, int cy);
+
+	// macros
+	DECLARE_MESSAGE_MAP()
 };
 
+///////////////////////////////////////////////////

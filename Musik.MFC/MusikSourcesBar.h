@@ -4,6 +4,8 @@
 
 #include "MusikSourcesCtrl.h"
 
+#include "MusikDockBar.h"
+
 ///////////////////////////////////////////////////
 
 class CMusikLibrary;
@@ -15,7 +17,7 @@ class CMusikLibrary;
 ///////////////////////////////////////////////////
 
 #ifndef baseCMusikSourcesBar
-	#define baseCMusikSourcesBar CSizingControlBarCF
+	#define baseCMusikSourcesBar CMusikDockBar
 #endif
 
 ///////////////////////////////////////////////////
@@ -25,7 +27,7 @@ class CMusikSourcesBar : public baseCMusikSourcesBar
 public:
 
 	// construct / destruct
-	CMusikSourcesBar( CFrameWnd* parent, CMusikLibrary* library );
+	CMusikSourcesBar( CFrameWnd* parent, CMusikLibrary* library, CMusikPrefs* prefs );
 	virtual ~CMusikSourcesBar();
 
 	// gets

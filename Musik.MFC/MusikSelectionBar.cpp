@@ -7,7 +7,8 @@
 #include ".\musikselectionbar.h"
 
 
-CMusikSelectionBar::CMusikSelectionBar( CFrameWnd* parent, CMusikLibrary* library, int type, int ctrl_id )
+CMusikSelectionBar::CMusikSelectionBar( CFrameWnd* parent, CMusikLibrary* library, CMusikPrefs* prefs, int type, int ctrl_id )
+	: baseCMusikSelectionBar( prefs )
 {
 	m_wndChild = new CMusikSelectionCtrl( parent, library, type, ctrl_id );
 }
@@ -48,7 +49,7 @@ int CMusikSelectionBar::OnCreate( LPCREATESTRUCT lpCreateStruct )
 
 void CMusikSelectionBar::OnSize(UINT nType, int cx, int cy)
 {
-	CSizingControlBarCF::OnSize(nType, cx, cy);
+	CMusikDockBar::OnSize(nType, cx, cy);
 
 	CRect rcClient;
 	GetClientRect( &rcClient );
