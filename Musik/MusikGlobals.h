@@ -49,8 +49,8 @@
 #define	MUSIK_ACTIVITYBOX4		9995
 #define	MUSIK_SIMPLEQUERY		9996
 #define MUSIK_NOWPLAYING_TIMER	9997
-#define MUSIK_VERSION			wxT( "Musik 0.1.3 CVS" )
-#define MUSIKSERV_VERSION		wxT( "MusikServ 0.1.3 CVS" )
+#define MUSIK_VERSION			wxT( "Musik 0.1.4 CVS" )
+#define MUSIKSERV_VERSION		wxT( "MusikServ 0.1.4 CVS" )
 
 //-------------------------------------------------//
 //--- for some reason some versions of wx do	---//
