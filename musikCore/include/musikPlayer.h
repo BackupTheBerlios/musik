@@ -200,6 +200,7 @@ public:
 	bool Resume();
 	void Stop();
 	void ThrExit();
+	void Shuffle();
 
 	// used for enquing the next / prev song if
 	// playback is currently paused

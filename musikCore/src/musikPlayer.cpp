@@ -1413,3 +1413,12 @@ bool CmusikPlayer::FindNewIndex( int songid )
 }
 
 ///////////////////////////////////////////////////
+
+void CmusikPlayer::Shuffle()
+{
+	int songid = GetCurrPlaying()->GetID();
+	std::random_shuffle( m_Playlist->m_Songs.begin(), m_Playlist->m_Songs.end() );
+	FindNewIndex( songid );
+}
+
+///////////////////////////////////////////////////
