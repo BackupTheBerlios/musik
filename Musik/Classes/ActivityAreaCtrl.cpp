@@ -56,6 +56,7 @@ CActivityAreaCtrl::CActivityAreaCtrl( wxWindow *pParent )
 	pTopSizer = new wxBoxSizer( wxHORIZONTAL );
 	SetSizerAndFit( pTopSizer );
 	m_Selected = m_bFocused = m_Selecting = false;
+	m_UpdatePlaylist = true;
 	Create();
 }
 
@@ -143,12 +144,16 @@ void CActivityAreaCtrl::Delete()
 	}
 }
 
-void CActivityAreaCtrl::ResetAllContents()
+void CActivityAreaCtrl::ResetAllContents( bool bUpdatePlaylist )
 {
+	m_UpdatePlaylist = bUpdatePlaylist;
+
 	if ( m_ActivityBox1 != NULL )	m_ActivityBox1->ResetContents();
 	if ( m_ActivityBox2 != NULL )	m_ActivityBox2->ResetContents();
 	if ( m_ActivityBox3 != NULL )	m_ActivityBox3->ResetContents();
 	if ( m_ActivityBox4 != NULL )	m_ActivityBox4->ResetContents();
+
+	m_UpdatePlaylist = true;
 }
 
 void CActivityAreaCtrl::RescaleColumns()
@@ -395,8 +400,14 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 			}
 		}
 	}
-	
-	pSel->SetPlaylist();
+
+	if ( ( g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_STANDARD || g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_SLOPPY ) && ( pSel->IsSelected( 0 ) || pSel->GetSelectedItemCount() < 1 ) )
+	{
+		g_Playlist.Clear();
+		g_PlaylistCtrl->Update();
+	}
+	else
+		pSel->SetPlaylist();
 }
 
 
@@ -472,7 +483,7 @@ void CActivityAreaCtrl::OnActivityBox4SelDrag( wxListEvent& WXUNUSED(event) )
 //----------------------------//
 void CActivityAreaCtrl::OnActivityBoxActivated	( wxListEvent& event)
 {	
-	if ( !m_Selecting )
+	if ( !m_Selecting && m_UpdatePlaylist )
 	{
 		m_Selecting = true;
 

@@ -41,9 +41,8 @@ public:
 	void UpdateSel( CActivityBox *pSel );
 	bool Create();
 	void Delete();
-	void ResetAllContents();
+	void ResetAllContents( bool bUpdatePlaylist = true );
 	void RescaleColumns();
-
 
 	void SetParent( int ACTIVITY_BOX_ID, bool bUpdate = false );
 
@@ -64,6 +63,7 @@ private:
 	bool m_bFocused; // this flags are used, to make instant selection working
 	bool m_Selected;
 	bool m_Selecting;
+	bool m_UpdatePlaylist;
 };
 
 #endif

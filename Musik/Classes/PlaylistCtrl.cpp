@@ -1103,6 +1103,8 @@ void CPlaylistCtrl::DelSelSongs()
 	SetItemState( nFirstSel, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
 
 	Thaw();
+
+	g_ActivityAreaCtrl->ResetAllContents();
 }
 
 void CPlaylistCtrl::DelSelFilesDB()
@@ -1149,6 +1151,8 @@ void CPlaylistCtrl::DelSelFilesDB()
 		SetItemState( nFirstSel, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
 
 		Thaw();
+
+		g_ActivityAreaCtrl->ResetAllContents();
 	}
 }
 
@@ -1204,6 +1208,8 @@ void CPlaylistCtrl::DelSelFiles()
 		if ( nFirstSel > ( GetItemCount() - 1 ) )
 			nFirstSel = GetItemCount() - 1;
 		SetItemState( nFirstSel, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
+
+		g_ActivityAreaCtrl->ResetAllContents();
 
 		Thaw();
 	}
