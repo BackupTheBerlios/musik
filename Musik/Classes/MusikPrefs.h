@@ -118,6 +118,16 @@ public:
 	wxString sTunageCmdLine;
 	int nTunageRunOnStop;
 	wxString sTunageStoppedText;
+
+	int bUseProxyServer;			
+	wxString sProxyServer;			
+	wxString sProxyServerPort;		
+	wxString sProxyServerUser;		
+	wxString sProxyServerPassword;	
+	int nStreamingBufferSize;		
+	int nStreamingPreBufferPercent;
+	int nStreamingReBufferPercent;
+
 };
 
 class CMusikPaths

@@ -28,6 +28,7 @@
 	#define CONFIG_NAME wxT( "MusikPrefs" )
 #endif
 
+
 void CMusikPrefs::LoadPrefs()
 {
 	wxString sDefaultAutoTag = wxT( "%a/%b/%n - %t|%a/%b - %n - %t|%a - %b - %n - %t|0" );
@@ -89,6 +90,17 @@ void CMusikPrefs::LoadPrefs()
 	config->Read( wxT( "FramePlacement" ),						&sFramePlacement,			wxT("0,0,800,600,0,0")	);
 	config->Read( wxT( "SmartPlaylistColumns" ),				&nPlaylistSmartColumns,		1						);
 	config->Read( wxT( "Use_MPEGACCURATE_ForMP3VBRFiles" ),		&nUse_MPEGACCURATE_ForMP3VBRFiles,	1				);
+
+	config->Read( wxT( "UseProxyServer" ),						&bUseProxyServer,			0		);
+	config->Read( wxT( "ProxyServer" ),							&sProxyServer,				wxT("")	);
+	config->Read( wxT( "ProxyServerPort" ),						&sProxyServerPort,			wxT("")	);
+	config->Read( wxT( "ProxyServerUser" ),						&sProxyServerUser,			wxT("")	);
+	config->Read( wxT( "ProxyServerPassword" ),					&sProxyServerPassword,		wxT("")	);
+	config->Read( wxT( "StreamingBufferSize" ),					&nStreamingBufferSize,		64000	);
+	config->Read( wxT( "StreamingPreBufferPercent" ),			&nStreamingPreBufferPercent,	60	);
+	config->Read( wxT( "StreamingReBufferPercent" ),			&nStreamingReBufferPercent,		80	);
+
+
 	//-----------------------------------------------------//
 	//--- we gotta load these by hand (not with a loop)	---//
 	//--- so at one point we can mess with column		---//
@@ -319,6 +331,15 @@ void CMusikPrefs::SavePrefs()
 	config->Write( wxT( "SmartPlaylistColumns" ),			nPlaylistSmartColumns		);
 	config->Write( wxT( "Use_MPEGACCURATE_ForMP3VBRFiles" ),nUse_MPEGACCURATE_ForMP3VBRFiles );
 	
+ 	config->Read( wxT( "UseProxyServer" ),						bUseProxyServer			);
+	config->Read( wxT( "ProxyServer" ),							sProxyServer			);
+	config->Read( wxT( "ProxyServerPort" ),						sProxyServerPort		);
+	config->Read( wxT( "ProxyServerUser" ),						sProxyServerUser		);
+	config->Read( wxT( "ProxyServerPassword" ),					sProxyServerPassword	);
+	config->Read( wxT( "StreamingBufferSize" ),					nStreamingBufferSize	);	
+	config->Read( wxT( "StreamingPreBufferPercent" ),			nStreamingPreBufferPercent);
+	config->Read( wxT( "StreamingReBufferPercent" ),			nStreamingReBufferPercent);
+
 	//--- playlist columns ---//
 	for( int i = 0; i < NPLAYLISTCOLUMNS; i++ )
 	{

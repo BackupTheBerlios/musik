@@ -187,6 +187,22 @@ public:
 	wxTextCtrl	*tcBufferLength;
 	wxTextCtrl	*tcMaxChannels;
 	wxCheckBox	*chkUse_MPEGACCURATE_ForMP3VBRFiles;
+	//---------------------------//
+	//--- streaming -> buffer ---//
+	//---------------------------//
+
+	wxTextCtrl*	tcStreamingBufferSize;		
+	wxTextCtrl* tcStreamingPreBufferPercent;	
+	wxTextCtrl* tcStreamingReBufferPercent;	
+	//---------------------------------//
+	//--- streaming -> proxy server ---//
+	//---------------------------------//
+	wxCheckBox* chkUseProxyServer;
+	wxTextCtrl*	tcProxyServer;		
+	wxTextCtrl* tcProxyServerPort;	
+	wxTextCtrl* tcProxyServerUser;	
+	wxTextCtrl* tcProxyServerPassword;	
+
 	//--------------//
 	//--- sizers ---//
 	//--------------//
@@ -204,6 +220,8 @@ public:
 	wxFlexGridSizer	*fsCrossfader;
 	wxBoxSizer		*hsSysButtons;
 	wxBoxSizer		*vsTopSizer;
+	wxFlexGridSizer	*vsStreaming_Buffer;
+	wxBoxSizer		*vsStreaming_ProxyServer;
 
 	DECLARE_EVENT_TABLE()
 private:
@@ -223,6 +241,9 @@ private:
 	wxTreeItemId nInterfaceID;	
 	wxTreeItemId nGeneralTagID;
 	wxTreeItemId nAutoTagID;
+
+	wxTreeItemId nStreamingBufferID;
+	wxTreeItemId nStreamingProxyServerID;
 };
 
 #endif

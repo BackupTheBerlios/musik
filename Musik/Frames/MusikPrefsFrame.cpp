@@ -70,6 +70,7 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	nOptionsRootID	=	tcPreferencesTree->AppendItem	( nRootID, _( "Options" )	);
 	nTagRootID		=	tcPreferencesTree->AppendItem	( nRootID, _( "Tagging" )	);
 	nSoundRootID	=	tcPreferencesTree->AppendItem	( nRootID, _( "Sound" )		);	
+	wxTreeItemId nStreamingRootID	=	tcPreferencesTree->AppendItem	( nRootID, _( "Streaming" )	);
 	//--- child nodes ---//
 	nInterfaceID	=	tcPreferencesTree->AppendItem	( nOptionsRootID,	_( "General" )		);
 	nSelectionsID	=	tcPreferencesTree->AppendItem	( nOptionsRootID,	_( "Selections" )	);
@@ -79,10 +80,15 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	nAutoTagID		=	tcPreferencesTree->AppendItem	( nTagRootID,		_( "Auto Rename" )		);
 	nDriverID		=	tcPreferencesTree->AppendItem	( nSoundRootID,		_( "Driver" )		);
 	nPlaybackID		=	tcPreferencesTree->AppendItem	( nSoundRootID,		_( "Crossfader" )	);
+	nStreamingBufferID	=	tcPreferencesTree->AppendItem	( nStreamingRootID, _( "Buffer" )	);
+   	nStreamingProxyServerID	=	tcPreferencesTree->AppendItem	( nStreamingRootID, _( "Proxy Server" )	);
+
 	//--- expand all the root nodes ---//
 	tcPreferencesTree->Expand( nOptionsRootID );
 	tcPreferencesTree->Expand( nTagRootID );
 	tcPreferencesTree->Expand( nSoundRootID );
+ 	tcPreferencesTree->Expand( nSoundRootID );
+	tcPreferencesTree->Expand( nStreamingRootID );
 
 	//--------------------------//
 	//--- Sound -> Crossfader ---//
@@ -368,7 +374,7 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	vsOptions_Playlist->Add( cmbFilenameStatic,		0 );
 
 	//-------------------------//
-	//--- Options -> Tunage ---//
+	//--- options -> tunage ---//
 	//-------------------------//
 	chkTunageWriteFile	= new wxCheckBox( this, -1, _("Enable"),			wxPoint(0,0), wxSize(-1,-1) );
 	chkTunageAppendFile = new wxCheckBox( this, -1, _("Append to file"),			wxPoint(0,0), wxSize(-1,-1) );
@@ -434,7 +440,56 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	vsOptions_Tunage->Add( vsTunageApp,			0, wxALL | wxEXPAND, 2 );
 	vsOptions_Tunage->Add( vsTunageMisc,		0, wxALL | wxEXPAND, 2 );
 	
+	//---------------------------//
+	//--- Streaming -> Buffer ---//
+	//---------------------------//
 
+	wxStaticText *stStreamingBufferSize			= new wxStaticText( this, -1, _("Buffer Size (bytes):"),		wxPoint(0,0), wxSize(-1, -1 ), wxALIGN_LEFT );
+	wxStaticText *stStreamingPreBufferPercent	= new wxStaticText( this, -1, _("Prebuffering (%):"),	wxPoint(0,0), wxSize( -1, -1 ), wxALIGN_LEFT );
+	wxStaticText *stStreamingReBufferPercent	= new wxStaticText( this, -1, _("Rebuffering (%):"),			wxPoint(0,0), wxSize( -1, -1 ), wxALIGN_LEFT );
+
+	tcStreamingBufferSize		= new wxTextCtrl( this, -1, _(""),	wxPoint(0,0), wxSize( -1, -1 ) );
+	tcStreamingPreBufferPercent	= new wxTextCtrl( this, -1, _(""),	wxPoint(0,0), wxSize( -1, -1 ) );
+	tcStreamingReBufferPercent	= new wxTextCtrl( this, -1, _(""),	wxPoint(0,0), wxSize( -1, -1 ) );
+  
+	vsStreaming_Buffer = new wxFlexGridSizer( 3,2,2,2 );
+
+	vsStreaming_Buffer->Add( stStreamingBufferSize );
+	vsStreaming_Buffer->Add( tcStreamingBufferSize );
+	vsStreaming_Buffer->Add( stStreamingPreBufferPercent );
+	vsStreaming_Buffer->Add( tcStreamingPreBufferPercent );
+	vsStreaming_Buffer->Add( stStreamingReBufferPercent );
+	vsStreaming_Buffer->Add( tcStreamingReBufferPercent );
+
+ 	//--------------------------------//
+	//--- Streaming -> ProxyServer ---//
+	//--------------------------------//
+	chkUseProxyServer		= new wxCheckBox	( this, -1,	_("Use Proxy server"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+	wxStaticText *stProxyServer			= new wxStaticText( this, -1, _("Proxy server adress:"),		wxPoint(0,0), wxSize(-1, -1 ), wxALIGN_LEFT );
+	wxStaticText *stProxyServerPort	= new wxStaticText( this, -1, _("Proxy server port:"),	wxPoint(0,0), wxSize( -1, -1 ), wxALIGN_LEFT );
+	wxStaticText *stProxyServerUser	= new wxStaticText( this, -1, _("Proxy server user:"),			wxPoint(0,0), wxSize( -1, -1 ), wxALIGN_LEFT );
+	wxStaticText *stProxyServerPassword	= new wxStaticText( this, -1, _("Proxy server password:"),			wxPoint(0,0), wxSize( -1, -1 ), wxALIGN_LEFT );
+
+	tcProxyServer			= new wxTextCtrl( this, -1, _(""),	wxPoint(0,0), wxSize( -1, -1 ) );
+	tcProxyServerPort		= new wxTextCtrl( this, -1, _(""),	wxPoint(0,0), wxSize( -1, -1 ) );
+	tcProxyServerUser		= new wxTextCtrl( this, -1, _(""),	wxPoint(0,0), wxSize( -1, -1 ) );
+	tcProxyServerPassword	= new wxTextCtrl( this, -1, _(""),	wxPoint(0,0), wxSize( -1, -1 ) );
+	
+	wxFlexGridSizer * fsProxySizer		= new wxFlexGridSizer( 4,2,2,2 );
+
+	fsProxySizer->Add(stProxyServer);
+	fsProxySizer->Add(tcProxyServer);
+	fsProxySizer->Add(stProxyServerPort);
+	fsProxySizer->Add(tcProxyServerPort);
+	fsProxySizer->Add(stProxyServerUser);
+	fsProxySizer->Add(tcProxyServerUser);
+	fsProxySizer->Add(stProxyServerPassword);
+	fsProxySizer->Add(tcProxyServerPassword);
+
+	vsStreaming_ProxyServer	= new wxBoxSizer( wxVERTICAL );
+
+	vsStreaming_ProxyServer->Add( chkUseProxyServer,		0, wxALL, 2 );
+	vsStreaming_ProxyServer->Add( fsProxySizer,		0, wxALL | wxEXPAND, 4 );
 	//--------------------------//
 	//--- Tagging -> General ---//
 	//--------------------------//
@@ -518,7 +573,9 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	hsSplitter->Add( vsSound_Driver,		5 );
 	hsSplitter->Add( vsTagging_General,		5 );
 	hsSplitter->Add( vsTagging_Auto,		5 );
-
+	hsSplitter->Add( vsStreaming_Buffer,	5 );
+	hsSplitter->Add( vsStreaming_ProxyServer,	5 );
+	
 	//-----------------//
 	//--- Top Sizer ---//
 	//-----------------//
@@ -700,7 +757,21 @@ void MusikPrefsFrame::LoadPrefs()
 	cmbPlayRate->SetSelection		( cmbPlayRate->FindString ( sSndRate ) );
 	tcMaxChannels->SetValue			( IntTowxString( g_Prefs.nSndMaxChan ) );
 	chkUse_MPEGACCURATE_ForMP3VBRFiles->SetValue(g_Prefs.nUse_MPEGACCURATE_ForMP3VBRFiles);
+	//---------------------------//
+	//--- streaming -> buffer ---//
+	//---------------------------//
+	tcStreamingBufferSize->SetValue			( IntTowxString( g_Prefs.nStreamingBufferSize ) );
+	tcStreamingPreBufferPercent->SetValue	( IntTowxString( g_Prefs.nStreamingPreBufferPercent ) );
+	tcStreamingReBufferPercent->SetValue	( IntTowxString( g_Prefs.nStreamingReBufferPercent ) );
 
+	//---------------------------------//
+	//--- streaming -> proxy server ---//
+	//---------------------------------//
+	chkUseProxyServer->SetValue( g_Prefs.bUseProxyServer );
+	tcProxyServer->SetValue( g_Prefs.sProxyServer );		
+	tcProxyServerPort->SetValue( g_Prefs.sProxyServerPort );		
+	tcProxyServerUser->SetValue( g_Prefs.sProxyServerUser );	
+	tcProxyServerPassword->SetValue( g_Prefs.sProxyServerPassword );	
 }
 
 void MusikPrefsFrame::FindDevices()
@@ -727,6 +798,9 @@ void MusikPrefsFrame::HidePanels()
 	hsSplitter->Show( vsSound_Driver,		false );
 	hsSplitter->Show( vsTagging_General,	false );
 	hsSplitter->Show( vsTagging_Auto,		false );
+	hsSplitter->Show( vsStreaming_Buffer,		false );
+ 	hsSplitter->Show( vsStreaming_ProxyServer,		false );
+
 }
 
 void MusikPrefsFrame::UpdatePrefsPanel()
@@ -774,6 +848,16 @@ void MusikPrefsFrame::UpdatePrefsPanel()
 		sbTunageURL->Show( true );
 		sbTunageApp->Show( true );
 		sbTunageMisc->Show( true );
+	}
+ 	else if ( tcPreferencesTree->GetSelection() == nStreamingBufferID )
+	{
+		HidePanels();
+		hsSplitter->Show( vsStreaming_Buffer, true );
+	}
+ 	else if ( tcPreferencesTree->GetSelection() == nStreamingProxyServerID )
+	{
+		HidePanels();
+		hsSplitter->Show( vsStreaming_ProxyServer, true );
 	}
 
 	this->Layout();
@@ -1104,13 +1188,48 @@ void MusikPrefsFrame::SavePrefs()
 
 	g_Prefs.nUse_MPEGACCURATE_ForMP3VBRFiles = chkUse_MPEGACCURATE_ForMP3VBRFiles->GetValue();
 
+	//---------------------------//
+	//--- streaming -> buffer ---//
+	//---------------------------//
+	bool bNetBufferSettingChanged = false;
+ 	if ( wxStringToInt( tcStreamingBufferSize->GetValue( ) ) != g_Prefs.nStreamingBufferSize )
+	{
+		g_Prefs.nStreamingBufferSize = wxStringToInt( tcStreamingBufferSize->GetValue( ) );
+		bNetBufferSettingChanged = true;
+	}
+ 	if ( wxStringToInt( tcStreamingPreBufferPercent->GetValue( ) ) != g_Prefs.nStreamingPreBufferPercent )
+	{
+		g_Prefs.nStreamingPreBufferPercent = wxStringToInt( tcStreamingPreBufferPercent->GetValue( ) );
+		bNetBufferSettingChanged = true;
+	}
+ 	if ( wxStringToInt( tcStreamingReBufferPercent->GetValue( ) ) != g_Prefs.nStreamingReBufferPercent )
+	{
+		g_Prefs.nStreamingReBufferPercent = wxStringToInt( tcStreamingReBufferPercent->GetValue( )  );
+		bNetBufferSettingChanged = true;
+	}
+	//---------------------------------//
+	//--- streaming -> proxy server ---//
+	//---------------------------------//
+	g_Prefs.bUseProxyServer = chkUseProxyServer->GetValue();
+	g_Prefs.sProxyServer = tcProxyServer->GetValue(); 
+	g_Prefs.sProxyServer = tcProxyServer->GetValue(  );		
+	g_Prefs.sProxyServerPort = tcProxyServerPort->GetValue(  );		
+	g_Prefs.sProxyServerUser = tcProxyServerUser->GetValue(  );	
+	g_Prefs.sProxyServerPassword = tcProxyServerPassword->GetValue(  );	
+
+
 	//--- save ---//
 	g_Prefs.SavePrefs();
 
 	//--- if we need to restart fmod ---//
 	if ( bRestartFMOD )
 		g_Player.InitializeFMOD( FMOD_INIT_RESTART );
+	else if(bNetBufferSettingChanged)
+	{
+		g_Player.InitFMOD_NetBuffer();
+	}
 
+	g_Player.InitFMOD_ProxyServer();
 	//--- if playmode ( repeat / etc ) ---//
 	if ( bPlaymodeChange )
 		g_Player.SetPlaymode();

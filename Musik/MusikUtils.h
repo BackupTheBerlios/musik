@@ -65,6 +65,10 @@ inline wxString ConvA2W( const char *pChar )
 	wxString s(wxConvLocal.cMB2WX( pChar ) );
 	return s;
 }
+inline wxCharBuffer ConvW2A( const wxString &s )
+{
+	return wxConvLocal.cWX2MB( s );
+}
 inline wxCharBuffer ConvQueryToMB( const wxString &s )
 {
 	return wxConvLocal.cWX2MB( s );

@@ -56,6 +56,7 @@ enum EFMOD_INIT
 	FMOD_INIT_STOP = 0,
 	FMOD_INIT_START,
 	FMOD_INIT_RESTART,
+	FMOD_INIT_SET_NETBUFFER,
 	FMOD_INIT_ERROR_DSOUND,
 	FMOD_INIT_ERROR_WINDOWS_WAVEFORM,
 	FMOD_INIT_ERROR_ASIO,
@@ -83,6 +84,9 @@ public:
 	//--- sound system ---//
 	//--------------------//
 	int	 InitializeFMOD		( int nFunction );
+	void InitFMOD_NetBuffer	( );
+	void InitFMOD_ProxyServer	( );
+
 	void Shutdown			( bool bClose = true );
 	void ClearOldStreams	( bool bClearAll = false );
 	void SetFrequency		( );
@@ -96,7 +100,7 @@ public:
 	void OnNextSongEvt		( wxCommandEvent& WXUNUSED(event) ){ NextSong(); SetStartingNext( false );	}
 	void OnFadeCompleteEvt	( wxCommandEvent& WXUNUSED(event) ){ SetFadeComplete();						}
 	void OnPlayerStop		( wxCommandEvent& WXUNUSED(event) ){ FinalizeStop();						}
-	void OnPlayerPause		( wxCommandEvent& WXUNUSED(event) ){ FinalizePause();						}
+	void OnPlayRestart		( wxCommandEvent& event );	
 	void OnPlayerResume		( wxCommandEvent& WXUNUSED(event) ){ FinalizeResume();						}
 
 	//-------------------------------------//
@@ -172,6 +176,7 @@ public:
 	DECLARE_EVENT_TABLE()
 	
 private:
+	void _PostPlayRestart();
 	bool _IsSeekCrossFadingDisabled();
 	bool _CurrentSongNeedsMPEGACCURATE();
 	bool _CurrentSongIsNetStream();
@@ -200,6 +205,7 @@ private:
 
 	int m_Channels;
 	int m_NETSTREAM_read_percent;
+	int m_NETSTREAM_last_read_percent;
 	int m_NETSTREAM_bitrate;
 	int m_NETSTREAM_status;
 	unsigned int m_NETSTREAM_flags;
@@ -207,6 +213,9 @@ private:
 	FSOUND_STREAM * m_p_NETSTREAM_Connecting;
 	CMusikSong m_MetaDataSong;
 	wxCriticalSection m_critMetadata;
+	wxStopWatch m_StreamIsWorkingStopWatch;
+	bool m_bStreamIsWorkingStopWatchIsRunning;
+
 };
 
 #endif

@@ -48,7 +48,7 @@ BEGIN_EVENT_TABLE( CMusikPlayer, wxEvtHandler )
     EVT_MENU			( MUSIK_PLAYER_FADE_COMPLETE,	CMusikPlayer::OnFadeCompleteEvt )
     EVT_MENU			( MUSIK_PLAYER_NEW_METADATA,	CMusikPlayer::_UpdateNetstreamMetadata )
 	EVT_MENU			( MUSIK_PLAYER_STOP,			CMusikPlayer::OnPlayerStop		)
-	EVT_MENU			( MUSIK_PLAYER_PAUSE,			CMusikPlayer::OnPlayerPause		)
+	EVT_MENU			( MUSIK_PLAYER_PLAY_RESTART,	CMusikPlayer::OnPlayRestart		)
 	EVT_MENU			( MUSIK_PLAYER_RESUME,			CMusikPlayer::OnPlayerResume	)
 END_EVENT_TABLE()
 
@@ -78,6 +78,9 @@ CMusikPlayer::CMusikPlayer()
 	SeedRandom( RandomSeed );
 	//--- clear history ---//
 	m_History[0] = m_History[1] = m_History[2] = m_History[3] = m_History[4] = ~0;
+	//set stop watch into pause mode.
+	m_bStreamIsWorkingStopWatchIsRunning = false ;
+	m_NETSTREAM_last_read_percent = 0;
 }
 
 CMusikPlayer::~CMusikPlayer()
@@ -161,14 +164,37 @@ int CMusikPlayer::InitializeFMOD( int nFunction )
 
 		// initialize system
 		FSOUND_SetBufferSize( 100 );
-		FSOUND_Stream_Net_SetBufferProperties(128000, 60, 80);
-		//FSOUND_Stream_Net_SetProxy(bbb);
+		InitFMOD_NetBuffer();	
+		InitFMOD_ProxyServer();
 		if ( FSOUND_Init( g_Prefs.nSndRate , g_Prefs.nSndMaxChan, 0 ) == FALSE )
 			return FMOD_INIT_ERROR_INIT;
 	}
 	return FMOD_INIT_SUCCESS;
 }
+void CMusikPlayer::InitFMOD_NetBuffer	( )
+{
+	FSOUND_Stream_Net_SetBufferProperties(g_Prefs.nStreamingBufferSize , g_Prefs.nStreamingPreBufferPercent, g_Prefs.nStreamingReBufferPercent);
+}
+void CMusikPlayer::InitFMOD_ProxyServer	( )
+{
+	if(g_Prefs.bUseProxyServer)
+	{
+		wxString sProxyString(  g_Prefs.sProxyServer );
+		if(	!g_Prefs.sProxyServerPort.IsEmpty() )
+		{
+			sProxyString += wxT(":") + 	g_Prefs.sProxyServerPort;
+		}
+		if(	!g_Prefs.sProxyServerUser.IsEmpty() )	 
+		{
+			sProxyString =  g_Prefs.sProxyServerUser + wxT(":") + g_Prefs.sProxyServerPassword + wxT("@")  +  sProxyString;
+		}
+		FSOUND_Stream_Net_SetProxy(ConvW2A(sProxyString));
+	}
+	else
+		FSOUND_Stream_Net_SetProxy("");
 
+
+}
 void CMusikPlayer::SetPlaymode( )
 {
 	if( g_Prefs.nShuffle == 1 )
@@ -253,6 +279,17 @@ void CMusikPlayer::_UpdateNetstreamMetadata(wxCommandEvent& WXUNUSED(event))
 		UpdateUI();
 	}
 }
+void CMusikPlayer::_PostPlayRestart()
+{
+		Stop();	 // stop current stream
+		wxCommandEvent PlayRestartEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYER_PLAY_RESTART );
+		wxPostEvent( this,  PlayRestartEvt);
+}   
+
+void CMusikPlayer::OnPlayRestart( wxCommandEvent& WXUNUSED(event) )
+{//this method is used in case of a network problem when streaming
+		Play(  m_SongIndex ); // start playing of current stream
+}
 bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 {
 	if (IsPlaying() && _CurrentSongIsNetStream())
@@ -261,9 +298,8 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 		{
 			return true; // already playing this stream
 		}
-		Stop();
-		wxCommandEvent PlayEvt( wxEVT_COMMAND_BUTTON_CLICKED, MUSIK_NOWPLAYINGCTRL_PLAYPAUSE );
-		wxPostEvent( g_NowPlayingCtrl,  PlayEvt);
+
+		_PostPlayRestart(); // will restart playing postponed
 		return true;
 	}
 	else if (_IsNETSTREAMConnecting())
@@ -632,6 +668,7 @@ void CMusikPlayer::FinalizeResume()
 void CMusikPlayer::Stop( bool bCheckFade, bool bExit )
 {
 	m_b_NETSTREAM_AbortConnect = true;
+	m_Stopping = true;
 	//-------------------------------------------------//
 	//--- set the fade type, let the thread worry	---//
 	//--- about cleaning any existing fades.		---//
@@ -641,6 +678,7 @@ void CMusikPlayer::Stop( bool bCheckFade, bool bExit )
 	else
 		SetCrossfadeType( CROSSFADE_EXIT );
 
+
 	//-------------------------------------------------//
 	//--- update the ui.							---//
 	//-------------------------------------------------//
@@ -648,7 +686,7 @@ void CMusikPlayer::Stop( bool bCheckFade, bool bExit )
 	g_NowPlayingCtrl->ResetInfo();
 	g_NowPlayingCtrl->PauseBtnToPlayBtn();
 
-	m_Stopping = true;
+	
 
 	//-------------------------------------------------//
 	//--- setup crossfader and return, if the prefs	---//
@@ -861,13 +899,47 @@ int CMusikPlayer::GetTime( int nType )
 		}
 		else if (m_p_NETSTREAM_Connecting)
 		{
-			p_NETSTREAM = m_p_NETSTREAM_Connecting;
+			return m_NETSTREAM_read_percent;
 		}
-		if(p_NETSTREAM && (_NetStreamStatusUpdate(p_NETSTREAM) == FSOUND_STREAM_NET_ERROR))
+		int status = 0;
+		if(p_NETSTREAM )
 		{
-			Stop();
+			m_NETSTREAM_last_read_percent =	 m_NETSTREAM_read_percent;
+			status = _NetStreamStatusUpdate(p_NETSTREAM);
+			int openstate = FSOUND_Stream_GetOpenState(p_NETSTREAM);
+			if( openstate == 0) 
+			{
+				
+				int off = FSOUND_Stream_GetTime(p_NETSTREAM);
+				int len = FSOUND_Stream_GetLengthMs(p_NETSTREAM);
+	              
+				if((status == FSOUND_STREAM_NET_ERROR) || (off >= len))
+				{// something is wrong, we try to restart the stream
+					_PostPlayRestart();
+				}
+				else
+					m_bStreamIsWorkingStopWatchIsRunning = false;// everything is okay
+ 			}
+			else 
+			{   // openstate is not okay
+				if(m_bStreamIsWorkingStopWatchIsRunning 
+						&& m_NETSTREAM_last_read_percent == m_NETSTREAM_read_percent
+						&&	m_StreamIsWorkingStopWatch.Time() > 10 * 1000) // 10 sec
+				{  // stream is not working ( read percent did not change and FSOUND_Stream_GetOpenState failed)for 10 secs now
+				   m_bStreamIsWorkingStopWatchIsRunning = false;
+				   _PostPlayRestart();
+				}
+				else
+				{	// stream is disturbed   ,start watch ( if not already running)
+					if(!m_bStreamIsWorkingStopWatchIsRunning)					
+					{
+						m_NETSTREAM_last_read_percent =	 m_NETSTREAM_read_percent;
+						m_StreamIsWorkingStopWatch.Start();
+						m_bStreamIsWorkingStopWatchIsRunning = true;
+					}
+				}
+			}
 		}
-
 		return m_NETSTREAM_read_percent;
 	}
 

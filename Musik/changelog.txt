@@ -1,4 +1,6 @@
 0.2.1 to 0.2.2
+ + More robust reconnect feature, if the stream connection is disturbed (gunnar)
+ + Added Preferences for streaming. Proxy and buffer settings (gunnar)
  + Internet Radio streams are now supported (at least the kind of net streams, which fmod supports) (gunnar) 
  + You can search in activity list boxes for artist etc. by entering more than one char now (gunnar)
  + New option to sort the artist without prefix (e.g The Beatles become Beatles concerning sorting order) (gunnar)
