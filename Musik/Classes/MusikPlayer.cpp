@@ -299,7 +299,15 @@ void CMusikPlayer::FreeDSP()
 
 void CMusikPlayer::SetFrequency()
 {
+	//-------------------------------------------------//
+	//--- SiW: this causes problems. mp3s play fine	---//
+	//--- but ogg's are slow. or vice versa.		---//
+	//--- commented this out for the release.		---//
+	//--- See Also: MusikFXFrame::MusikFXFrame()	---//
+	//-------------------------------------------------//
+	/*
 	FSOUND_SetFrequency( FSOUND_ALL, (int)g_FX.GetFrequency() );
+	*/
 }
 
 void CMusikPlayer::UpdateUI()
