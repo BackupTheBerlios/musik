@@ -7,13 +7,18 @@
 #include "MusikPlaylist.h"
 #include "fmod.h"
 
+class CMusikLibrary;
+
+int thread_main();
+
 class CMusikPlayer : public boost::thread
 {
 public:
-	CMusikPlayer();
+	CMusikPlayer( CMusikLibrary* library );
 	~CMusikPlayer();
 
 private:
+	CMusikLibrary* m_Library;
 };
 
 #endif

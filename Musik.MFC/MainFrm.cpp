@@ -4,8 +4,10 @@
 #include "stdafx.h"
 #include "Musik.h"
 
-#include "../Musik.Core/include/MusikLibrary.h"
 #include "../Musik.Core/include/StdString.h"
+
+#include "../Musik.Core/include/MusikLibrary.h"
+#include "../Musik.Core/include/MusikPlayer.h"
 
 #include <io.h>
 #include <Direct.h>
@@ -77,6 +79,7 @@ void CMainFrame::InitPaths()
 void CMainFrame::InitMusik()
 {
 	m_Library		= new CMusikLibrary( ( CStdString )m_Database );
+	m_Player		= new CMusikPlayer( m_Library );
 	m_Prefs			= new CMusikPrefs( m_PrefsIni );
 	m_LibPlaylist	= new CMusikPlaylist();	
 }

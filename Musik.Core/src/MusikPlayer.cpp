@@ -1,14 +1,16 @@
 ///////////////////////////////////////////////////
 
 #include "stdafx.h"
+
 #include "../include/MusikPlayer.h"
+#include "../include/MusikLibrary.h"
 
 ///////////////////////////////////////////////////
 
-CMusikPlayer::CMusikPlayer()
-	: boost::thread()
+CMusikPlayer::CMusikPlayer( CMusikLibrary* library )
+	: boost::thread( thread_main )
 {
-
+	m_Library = library;
 }
 
 ///////////////////////////////////////////////////
@@ -16,6 +18,13 @@ CMusikPlayer::CMusikPlayer()
 CMusikPlayer::~CMusikPlayer()
 {
 
+}
+
+///////////////////////////////////////////////////
+
+int thread_main()
+{
+	return 0;
 }
 
 ///////////////////////////////////////////////////

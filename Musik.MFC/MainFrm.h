@@ -23,6 +23,7 @@
 //-------------------------------------------------//
 class CMusikLibrary;
 class CMusikPlaylist;
+class CMusikPlayer;
 
 class CMainFrame : public CFrameWnd
 {
@@ -63,6 +64,7 @@ protected:
 	CMusikPlaylist* m_StdPlaylist;
 
 	CMusikLibrary* m_Library;
+	CMusikPlayer* m_Player;
 	CMusikPrefs* m_Prefs;
 
 	CString m_UserDir;
