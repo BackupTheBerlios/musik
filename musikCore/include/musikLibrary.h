@@ -239,7 +239,7 @@ private:
 	CStdString m_Filename;
 
 	// currently opened database
-	sqlite	*m_pDB;
+	sqlite *m_pDB;
 	bool m_DatabaseOpen;
 
 	// number of functions that have called
@@ -247,7 +247,7 @@ private:
 	int m_Transactions;
 
 	// the mutex that will be used to protect the
-	//library within any given scope.
+	// library within any given scope.
 	ACE_Thread_Mutex m_ProtectingLibrary;
 	
 	// fields... artist/title/album/etc

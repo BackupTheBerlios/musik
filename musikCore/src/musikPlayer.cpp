@@ -1106,7 +1106,7 @@ int CmusikPlayer::GetDuration( int mode )
 int CmusikPlayer::GetTimeNow( int mode )
 {
 	if ( !IsPlaying() )
-		return 0;
+		return -1;
 
 	int nCurr = FSOUND_Stream_GetTime( GetCurrStream() );
 
@@ -1144,6 +1144,9 @@ int CmusikPlayer::GetTimeNowPer()
 {
 	int nCurr = GetTimeNow( MUSIK_TIME_SECONDS );
 	int nTotal = GetDuration( MUSIK_TIME_SECONDS );
+
+	if ( nTotal == 0 )
+		return 0;
 
 	return ( ( nCurr * 100 ) / nTotal );
 }
