@@ -28,6 +28,9 @@ public:
 	void InitColors();
 	void UpdateV();
 
+	// get the playlist
+	CMusikPlaylist* GetPlaylist(){ return m_Playlist; }
+
 	// set the playlist
 	void SetPlaylist( CMusikPlaylist* playlist );
 

@@ -9,8 +9,7 @@
 #include "../Musik.Core/include/StdString.h"
 #include "../Musik.Core/include/MusikLibrary.h"
 #include "../Musik.Core/include/MusikPlayer.h"
-
-#include "../Musik.Core/include/MusikMp3Info.h"
+#include "../Musik.Core/include/MusikFilename.h"
 
 #include <io.h>
 #include <Direct.h>
@@ -290,6 +289,72 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 
 	return 0;
+}
+
+///////////////////////////////////////////////////
+
+CStdString CMainFrame::ParseCmd( CStdString sStr )
+{
+	if ( sStr.IsEmpty() )
+		sStr = GetCommandLine();
+
+	int nLastQ = sStr.ReverseFind( "\"", sStr.GetLength() - 1 );
+	int nFirstQ = sStr.ReverseFind( "\"", nLastQ - 1 );
+
+	sStr = sStr.Left( nLastQ );
+	sStr = sStr.Right( nLastQ - ( nFirstQ + 1 ) );
+
+	if ( !sStr.IsEmpty() )
+	{
+		CMusikFilename MFN ( sStr );
+		CStdString sExt = MFN.GetExtension();
+
+		if ( sExt != "mp3" && sExt != "ogg" )
+			return _T( "" );
+	}
+
+	return sStr;
+}
+
+///////////////////////////////////////////////////
+
+bool CMainFrame::PlayCmd( const CStdString& cmd )
+{
+	CStdString fn = ParseCmd( cmd );
+
+	if ( m_Library )
+	{
+		// add song to library, if necessary
+		if ( !m_Library->IsSongInLibrary( fn ) )
+			m_Library->AddSong( fn );
+
+		// get playlist's internal player
+		CMusikPlaylist* pPlaylist = m_wndView->GetCtrl()->GetPlaylist();
+		if ( pPlaylist )
+		{
+			// get the song we just added...
+			CMusikSong song;
+			m_Library->GetSongFromFilename( fn, song );
+
+			// add to the control's playlist
+			if ( song.GetID() > 0 )
+			{
+				pPlaylist->Add( song );
+				m_wndView->GetCtrl()->UpdateV();
+
+				// set the player's playlist, and play
+				if ( m_Player )
+				{
+					m_Player->SetPlaylist( pPlaylist );
+					m_Player->Play( pPlaylist->GetCount() - 1, MUSIK_CROSSFADER_NEW_SONG );
+				}
+
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 ///////////////////////////////////////////////////

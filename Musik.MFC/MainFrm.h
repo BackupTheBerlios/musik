@@ -57,6 +57,10 @@ public:
 		virtual void Dump(CDumpContext& dc) const;
 	#endif
 
+	// misc
+	bool PlayCmd( const CStdString& cmd );
+	CStdString ParseCmd( CStdString sStr );
+
 protected: 
 
 	// init and clean musik core components

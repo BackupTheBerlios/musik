@@ -11,6 +11,7 @@
 #include "resource.h"       // main symbols
 
 #include "3rdparty/singleinstance.h"
+#include "../Musik.Core/include/stdstring.h"
 
 ///////////////////////////////////////////////////
 
@@ -23,7 +24,7 @@ public:
 
 	// overrides
 	virtual BOOL InitInstance();
-	virtual void WakeUp( LPCSTR aCommandLine );
+	virtual void WakeUp( LPCSTR aCommandLine ) const;
 
 	// message maps
 	afx_msg void OnAppAbout();
@@ -33,8 +34,7 @@ public:
 
 private:
 
-	CString ParseCmd( CString sOverride = _T( "" ) );
-	void Play( const CString& fn );
+	void Play( const CStdString& fn );
 };
 
 ///////////////////////////////////////////////////

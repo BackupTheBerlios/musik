@@ -35,7 +35,7 @@ CMusikApp theApp;
 
 BOOL CMusikApp::InitInstance()
 {
-	CString sCmd = ParseCmd();
+	CStdString sCmd = GetCommandLine();
 	
 	// only allow a single instance of Musik to run
 	if ( !CSingleInstance::Create( _T( "7f1832d0-f3be-4a1c-be03-a4b0f70998e2" ) ) )
@@ -67,8 +67,7 @@ BOOL CMusikApp::InitInstance()
 	pFrame->UpdateWindow();
 
 	// see if we opened a file
-	if ( !sCmd.IsEmpty() )
-		Play( sCmd );
+	pFrame->PlayCmd( sCmd );
 
 	// call DragAcceptFiles only if there's a suffix
 	//  In an SDI app, this should occur after ProcessShellCommand
@@ -77,51 +76,21 @@ BOOL CMusikApp::InitInstance()
 
 ///////////////////////////////////////////////////
 
-void CMusikApp::WakeUp( LPCSTR aCommandLine )
+void CMusikApp::WakeUp( LPCSTR aCommandLine ) const
 {
-	CString sCmd = ParseCmd();
-	if ( !sCmd.IsEmpty() )
-		Play( sCmd );
+	CMainFrame* pMain = (CMainFrame*) m_pMainWnd;
+	pMain->PlayCmd( aCommandLine );
 }
 
 ///////////////////////////////////////////////////
 
-void CMusikApp::Play( const CString& fn )
+void CMusikApp::Play( const CStdString& fn )
 {
 	if ( m_pMainWnd )
 	{
-		// see if file is in library
-		// add song to playlist
-		// set player's playlist
-		// startup playback
+		CMainFrame* pMain = (CMainFrame*) m_pMainWnd;
+		pMain->PlayCmd( fn );
 	}
-}
-
-///////////////////////////////////////////////////
-
-CString CMusikApp::ParseCmd( CString sCmd )
-{
-	if ( sCmd.IsEmpty() )
-		sCmd = GetCommandLine();
-
-	CStdString sStr( sCmd );
-	
-	int nLastQ = sStr.ReverseFind( "\"", sStr.GetLength() - 1 );
-	int nFirstQ = sStr.ReverseFind( "\"", nLastQ - 1 );
-
-	sStr = sStr.Left( nLastQ );
-	sStr = sStr.Right( nLastQ - ( nFirstQ + 1 ) );
-
-	if ( !sStr.IsEmpty() )
-	{
-		CMusikFilename MFN ( sStr );
-		CStdString sExt = MFN.GetExtension();
-
-		if ( sExt != "mp3" && sExt != "ogg" )
-			return _T( "" );
-	}
-
-	return (CString)sStr;
 }
 
 ///////////////////////////////////////////////////
