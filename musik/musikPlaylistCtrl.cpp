@@ -355,8 +355,7 @@ void CmusikPlaylistCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 			{
 				if ( m_Player->IsPlaying() &&
 					m_Player->GetCurrPlaying()->GetID() == m_Playlist->GetSongID( pLVCD->nmcd.dwItemSpec ) && 
-					GetPlaylist() == m_Player->GetPlaylist() && 
-					pLVCD->nmcd.dwItemSpec == m_Player->GetIndex() )
+					GetPlaylist() == m_Player->GetPlaylist() )
 					pDC->SelectObject( m_BoldFont );
 				else
 					pDC->SelectObject( m_ItemFont );
@@ -1035,7 +1034,15 @@ void CmusikPlaylistCtrl::DeleteItems( const CIntArray& items, bool update )
 	int nScrollPos = GetScrollPos( SB_VERT );
 
 	for ( size_t i = 0; i < items.size(); i++ )
+	{
+		if ( m_Player->GetPlaylist() == m_Playlist )
+		{
+			if ( m_Player->m_Index >= (size_t)items.at( i ) - i )
+				m_Player->m_Index--;
+		}
+
 		m_Playlist->DeleteAt( items.at( i ) - i );
+	}
 
 	if ( m_PlaylistType == MUSIK_PLAYLIST_TYPE_STANDARD )
 		m_PlaylistNeedsSave = true;
@@ -1196,9 +1203,19 @@ void CmusikPlaylistCtrl::OnLvnColumnclick(NMHDR *pNMHDR, LRESULT *pResult)
 		DrawSortArrow( nCurrCol );
 
 		// sort
+		int songid = -1;
+		if ( m_Player->IsPlaying() )
+			songid = m_Player->GetPlaylist()->GetSongID( m_Player->GetIndex() );
+
 		int type = m_Prefs->GetPlaylistCol( pNMLV->iSubItem );
 		m_Library->SortPlaylist( m_Playlist, type, m_Ascend );
+
+		if ( m_Player->IsPlaying() && songid != -1 )
+			m_Player->FindNewIndex( songid );
+
 		UpdateV();
+
+
 	}
 
 	*pResult = 0;

@@ -763,14 +763,23 @@ bool CmusikPlayer::Play( int index, int fade_type, int start_pos )
 	else
 		FlagCrossfade();	
 
-	// set the new index
-	m_Index = index;
+	
+	// once we get here the new song is "officially"
+	// playing, so lock it up and set the new index
+	{
+		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingIndex );
+		{
+			// and, we're done.
+			TRACE0( "New song started...\n" );
 
-	// increment times played
-	m_Library->IncLastPlayed( m_Playlist->GetSongID( m_Index ) );
+			// set the new index
+			m_Index = index;
 
-	// and, we're done.
-	TRACE0( "New song started...\n" );
+			// increment times played
+			m_Library->IncLastPlayed( m_Playlist->GetSongID( m_Index ) );
+		}
+	}
+
 	return true;
 }
 
@@ -817,10 +826,12 @@ void CmusikPlayer::EnquePaused( int index )
 	PushNewChannel();
 
 	// add the new channel and stream
-	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingStreams );
 	{
-		m_ActiveStreams->push_back( pNewStream );
-		m_ActiveChannels->push_back( GetCurrChannel() );
+		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingStreams );
+		{
+			m_ActiveStreams->push_back( pNewStream );
+			m_ActiveChannels->push_back( GetCurrChannel() );
+		}
 	}
 
 	// setup playback, then pause
@@ -828,10 +839,16 @@ void CmusikPlayer::EnquePaused( int index )
 	FSOUND_SetVolume( GetCurrChannel(), 0 );
 	FSOUND_SetPaused( FSOUND_ALL, true );
 
-	m_Index = index;
+	// song has officially been resumed...
+	{
+		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingIndex );
+		{
+			m_Index = index;
 
-	if ( m_Functor )
-		m_Functor->OnNewSong();
+			if ( m_Functor )
+				m_Functor->OnNewSong();
+		}
+	}
 }
 
 ///////////////////////////////////////////////////
@@ -876,7 +893,6 @@ bool CmusikPlayer::Next( bool expired )
 	else
 		EnquePaused( -1 );
 		
-
 	return true;
 }
 
@@ -1408,6 +1424,27 @@ void CmusikPlayer::UpdateEqualizer()
 		else
 			GetEqualizer()->SetNewSong( -1 );
 	}
+}
+
+///////////////////////////////////////////////////
+
+bool CmusikPlayer::FindNewIndex( int songid )
+{	
+	bool found = false;
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingIndex );
+	{
+		for ( size_t i = 0; i < m_Playlist->GetCount(); i++ )
+		{
+			if ( m_Playlist->GetSongID( i ) == songid )
+			{	
+				m_Index = i;
+				found = true;
+				break;
+			}
+		}
+	}
+
+	return found;
 }
 
 ///////////////////////////////////////////////////

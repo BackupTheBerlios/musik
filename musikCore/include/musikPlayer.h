@@ -158,6 +158,7 @@ public:
 
 	// item that is being played
 	int GetIndex(){ return m_Index; }
+	bool FindNewIndex( int songid );
 
 	// time
 	int	GetTimeNow		( int mode );
@@ -225,10 +226,10 @@ public:
 	CmusikString GetTimePerStr( int percent );
 	int GetTimePer ( int percent );
 
-private:
-
 	// index of the current song
 	int m_Index;
+
+private:
 
 	// volume
 	int m_Volume;
@@ -300,8 +301,11 @@ private:
 	void InitCrossfader();
 	void CleanCrossfader();
 
-	// main thread and mutex
+	// mutex objects
 	ACE_Thread_Mutex m_ProtectingStreams;
+	ACE_Thread_Mutex m_ProtectingIndex;
+
+	// main thread and mutex
 	CmusikThread* m_pThread;
 	void InitThread();
 	void CleanThread();
