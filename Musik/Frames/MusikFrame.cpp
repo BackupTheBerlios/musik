@@ -19,7 +19,7 @@
 #include "../MusikGlobals.h"
 #include "../MusikUtils.h"
 
-//--- frames ---//
+//--- frames ---	//
 #include "MusikLibraryFrame.h"
 #include "MusikPrefsFrame.h"
 #include "MusikTagFrame.h"
@@ -401,7 +401,7 @@ void MusikFrame::EnableProgress( bool enable )
 		#define APPCOMMAND_MEDIA_PREVIOUSTRACK    12
 		#define APPCOMMAND_MEDIA_STOP             13
 		#define APPCOMMAND_MEDIA_PLAY_PAUSE       14
-	#endif //WM_APPCOMMAND
+	#endif
 
 	long MusikFrame::MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam)
 	{
@@ -431,3 +431,4 @@ void MusikFrame::EnableProgress( bool enable )
 		return wxFrame::MSWWindowProc(message,wParam,lParam);
 	}	
 #endif
+	

@@ -292,9 +292,12 @@ void CSourcesListBox::UpdateSel( wxListEvent& pEvent )
 {
 	if ( !g_DragInProg && !g_FirstRun )
 	{
+		//--- save std playlist ---//
 		int nLastSel = m_CurSel;
+		if ( GetType( nLastSel ) == MUSIK_SOURCES_PLAYLIST_STANDARD )
+			RewriteStdPlaylist();
+		
 		m_CurSel = pEvent.GetIndex();
-
 		int nSelType = GetSelType();
 
 		if ( m_CurSel == -1 )

@@ -144,10 +144,6 @@ bool PlaylistDropTarget::OnDropText( wxCoord x, wxCoord y, const wxString &text 
 						n = g_PlaylistCtrl->DNDGetItemPos( sFile ) + 1;
 					}
 				}
-
-				//--- if we're messing with a 'sources' static playlist, then save it ---//
-				if ( g_SourcesCtrl->GetSelType() == MUSIK_SOURCE_CONTEXT_STANDARD_PLAYLIST )
-					g_SourcesCtrl->RewriteStdPlaylist();
 			}
 		}
 	}
@@ -831,10 +827,6 @@ void CPlaylistCtrl::DelSelSongs()
 		nFirstSel = GetItemCount() - 1;
 	SetItemState( nFirstSel, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
 
-	//--- if we just messed with a standard playlist, rewrite it ---//
-	if ( nSelCount > 0 && g_SourcesCtrl->GetSelType() == MUSIK_SOURCES_PLAYLIST_STANDARD )
-		g_SourcesCtrl->RewriteStdPlaylist();
-
 	Thaw();
 }
 
@@ -879,10 +871,6 @@ void CPlaylistCtrl::DelSelFilesDB()
 		if ( nFirstSel > ( GetItemCount() - 1 ) )
 			nFirstSel = GetItemCount() - 1;
 		SetItemState( nFirstSel, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
-
-		//--- if we just messed with a standard playlist, rewrite it ---//
-		if ( nSelCount > 0 && g_SourcesCtrl->GetSelType() == MUSIK_SOURCES_PLAYLIST_STANDARD )
-			g_SourcesCtrl->RewriteStdPlaylist();
 
 		Thaw();
 	}
@@ -939,10 +927,6 @@ void CPlaylistCtrl::DelSelFiles()
 		if ( nFirstSel > ( GetItemCount() - 1 ) )
 			nFirstSel = GetItemCount() - 1;
 		SetItemState( nFirstSel, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
-
-		//--- if we just messed with a standard playlist, rewrite it ---//
-		if ( nSelCount > 0 && g_SourcesCtrl->GetSelType() == MUSIK_SOURCES_PLAYLIST_STANDARD )
-			g_SourcesCtrl->RewriteStdPlaylist();
 
 		Thaw();
 	}
