@@ -59,7 +59,6 @@ public:
 	
 	// construct / destruct
 	CmusikThread();
-	CmusikThread( ACE_THR_FUNC func, void* args, bool join = true );
 	~CmusikThread();
 
 	// functions

@@ -56,7 +56,6 @@ class CmusikFunctor
 public:
 	CmusikFunctor()
 	{
-		// pure virtual
 	};
 
 	virtual ~CmusikFunctor()

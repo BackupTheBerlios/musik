@@ -106,8 +106,9 @@ int WM_BATCHADD_PROGRESS	= RegisterWindowMessage( "BATCHADD_PROGRESS" );
 int WM_BATCHADD_END			= RegisterWindowMessage( "BATCHADD_END" );
 
 // come from the RemoveOld functor
-int WM_REMOVEOLD_PROGRESS	= RegisterWindowMessage( "REMOVEOLD_PROGRESS" );
-int WM_REMOVEOLD_END		= RegisterWindowMessage( "REMOVEOLD_END" );
+int WM_BATCHADD_VERIFY_PLAYLIST	= RegisterWindowMessage( "BATCHADD_VERIFY_PLAYLIST" );
+int WM_REMOVEOLD_PROGRESS		= RegisterWindowMessage( "REMOVEOLD_PROGRESS" );
+int WM_REMOVEOLD_END			= RegisterWindowMessage( "REMOVEOLD_END" );
 
 ///////////////////////////////////////////////////
 
@@ -169,6 +170,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_REMOVEOLD_PROGRESS, OnRemoveOldProgress )
 	ON_REGISTERED_MESSAGE( WM_REMOVEOLD_END, OnThreadEnd )
 	ON_REGISTERED_MESSAGE( WM_PLAYER_PLAYSEL, OnPlayerPlaySel )
+	ON_REGISTERED_MESSAGE( WM_BATCHADD_VERIFY_PLAYLIST, OnVerifyPlaylist )
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -266,7 +268,7 @@ void CMainFrame::Initmusik()
 	// to remove old files...
 	if ( m_Prefs->PurgeOnStartup() )
 	{
-		CmusikRemoveOld* params = new CmusikRemoveOld( m_Library, m_BatchAddFnct );
+		CmusikRemoveOld* params = new CmusikRemoveOld( m_Library, m_RemoveOldFnct );
 		CmusikThread* thread = new CmusikThread();
 	
 		thread->Start( (ACE_THR_FUNC)musikRemoveOldWorker, params );
@@ -1112,9 +1114,9 @@ LRESULT CMainFrame::OnThreadEnd( WPARAM wParam, LPARAM lParam )
 	// has finished successfully, so go
 	// ahead and clean it up
 	CmusikThread* ptr_thr = (CmusikThread*)wParam;
-	FreeThread( ptr_thr );	
-
-	ResetSelBoxes();
+	
+	if ( FreeThread( ptr_thr ) )
+		ResetSelBoxes();
 
 	return 0L;
 }
@@ -1234,6 +1236,18 @@ LRESULT CMainFrame::OnPlayerPlaySel( WPARAM wParam, LPARAM lParam )
 		if ( !m_wndView->GetCtrl()->PlayItem() )
 			m_Player->Play( 0, MUSIK_CROSSFADER_NEW_SONG );
 	}
+
+	return 0L;
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CMainFrame::OnVerifyPlaylist( WPARAM wParam, LPARAM lParam )
+{
+	CmusikPlaylist* playlist = (CmusikPlaylist*)wParam;
+
+	if ( playlist == m_wndView->GetCtrl()->GetPlaylist() )
+		return 1L;
 
 	return 0L;
 }

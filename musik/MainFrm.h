@@ -171,6 +171,7 @@ protected:
 	afx_msg LRESULT OnThreadEnd( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnPlayerPlaySel( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnBatchAddNew( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnVerifyPlaylist( WPARAM wParam, LPARAM lParam );
 
 	// mfc message maps
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);

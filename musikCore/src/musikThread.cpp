@@ -51,31 +51,17 @@
 
 CmusikThread::CmusikThread()
 {	
-	m_ThreadID = NULL;
+	m_ThreadID	= NULL;
 	m_ThreadHND = NULL;
 
-	m_Running = false;
+	m_Running	= false;
 	m_Suspended = false;
-	m_Joined = false;
-	m_Finished = false;
-	m_Abort = false;
-	m_Asleep = false;
+	m_Joined	= false;
+	m_Finished	= false;
+	m_Abort		= false;
+	m_Asleep	= false;
 	
-	m_Args = NULL;
-}
-
-///////////////////////////////////////////////////
-
-CmusikThread::CmusikThread( ACE_THR_FUNC func, void* args, bool join )
-{
-	m_Running = false;
-	m_Suspended = false;
-	m_Joined = false;
-	m_Finished = false;
-	m_Abort = false;
-	m_Asleep = false;
-
-	m_Args = args;
+	m_Args		= NULL;
 }
 
 ///////////////////////////////////////////////////

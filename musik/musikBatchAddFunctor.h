@@ -29,7 +29,7 @@ public:
 		TRACE0( "CmusikBatchAdd thread complete...\n" );
 
 		int WM_BATCHADD_END = RegisterWindowMessage( "BATCHADD_END" );
-		m_Parent->PostMessage( WM_BATCHADD_END, (WPARAM)thr_addr );		
+		m_Parent->SendMessage( WM_BATCHADD_END, (WPARAM)thr_addr );		
 	}
 
 	virtual void OnThreadProgress( size_t progress )
