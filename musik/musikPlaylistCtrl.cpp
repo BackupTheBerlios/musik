@@ -143,9 +143,13 @@ void CmusikPlaylistCtrl::UpdateV( bool redraw )
 {
 	if ( m_Playlist )
 	{
+		int nPos = GetScrollPos( SB_VERT );
+
 		SetRedraw( false );
 		m_SongInfoCache->Set( 0, 0, true );
 		SetItemCountEx( m_Playlist->GetCount(), LVSICF_NOINVALIDATEALL | LVSICF_NOSCROLL );
+
+		SetScrollPos( SB_VERT, nPos, false );
 
 		if ( redraw )
 		{
@@ -880,7 +884,10 @@ void CmusikPlaylistCtrl::OnDropFiles( HDROP hDropInfo )
 			params = new CmusikBatchAdd( files, m_Player->GetPlaylist(), m_Library, m_Player, NULL, 0, 1, 1 );
 
 		else if ( nRet == MUSIK_FILEDROP_ADDPLAYLIST )
+		{
 			params = new CmusikBatchAdd( files, m_Playlist, m_Library, NULL, NULL, 1, 0, 1 );
+			m_PlaylistNeedsSave = true;
+		}
 
 		else if ( nRet == MUSIK_FILEDROP_ADDLIBRARY )
 			params = new CmusikBatchAdd( files, m_Player->GetPlaylist(), m_Library, NULL, NULL );
@@ -939,7 +946,6 @@ void CmusikPlaylistCtrl::DeleteItems( const CIntArray& items, bool update )
 	if ( update )
 	{
 		UpdateV();
-		SetScrollPos( SB_VERT, nScrollPos );
 
 		// deselect all, then select first...
 		SetItemState( -1, 0, LVIS_SELECTED );
@@ -950,6 +956,8 @@ void CmusikPlaylistCtrl::DeleteItems( const CIntArray& items, bool update )
 			else
 				SetItemState( items.at( 0 ), LVIS_SELECTED, LVIS_SELECTED );
 		}
+
+		SetScrollPos( SB_VERT, nScrollPos );
 	}
 }
 
@@ -977,7 +985,6 @@ void CmusikPlaylistCtrl::InsertItems( const CIntArray& items, int firstsel, int 
 	if ( update )
 	{
 		UpdateV();
-		SetScrollPos( SB_VERT, nScrollPos );
 
 		// deselect all, then select the items that
 		// were just rearranged...
@@ -986,6 +993,8 @@ void CmusikPlaylistCtrl::InsertItems( const CIntArray& items, int firstsel, int 
 			at = GetItemCount() - items.size();
 		for ( size_t i = at; i < at + items.size(); i++ )
 			SetItemState( i, LVIS_SELECTED, LVIS_SELECTED );
+
+		SetScrollPos( SB_VERT, nScrollPos );
 	}
 }
 

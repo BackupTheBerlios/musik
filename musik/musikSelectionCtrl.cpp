@@ -94,6 +94,8 @@ void CmusikSelectionCtrl::RescaleColumn()
 
 void CmusikSelectionCtrl::UpdateV( bool update_count )
 {
+	int nPos = GetScrollPos( SB_VERT );
+
 	CStdString top;
 	if ( !update_count )
 		top = m_Items.at( 0 );
@@ -109,6 +111,8 @@ void CmusikSelectionCtrl::UpdateV( bool update_count )
 
 	m_Items.insert( m_Items.begin(), top );
 	SetItemCountEx( m_Items.size(), LVSICF_NOINVALIDATEALL | LVSICF_NOSCROLL );
+
+	SetScrollPos( SB_VERT, nPos, false );
 
 	RedrawWindow();
 }

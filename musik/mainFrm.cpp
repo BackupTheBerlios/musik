@@ -1116,7 +1116,10 @@ LRESULT CMainFrame::OnThreadEnd( WPARAM wParam, LPARAM lParam )
 	CmusikThread* ptr_thr = (CmusikThread*)wParam;
 	
 	if ( FreeThread( ptr_thr ) )
+	{
 		ResetSelBoxes();
+		m_wndView->GetCtrl()->UpdateV( true );
+	}
 
 	return 0L;
 }
@@ -1245,6 +1248,9 @@ LRESULT CMainFrame::OnPlayerPlaySel( WPARAM wParam, LPARAM lParam )
 LRESULT CMainFrame::OnVerifyPlaylist( WPARAM wParam, LPARAM lParam )
 {
 	CmusikPlaylist* playlist = (CmusikPlaylist*)wParam;
+
+	if ( playlist == NULL || m_wndView->GetCtrl()->GetPlaylist() == NULL )
+		return 0L;
 
 	if ( playlist == m_wndView->GetCtrl()->GetPlaylist() )
 		return 1L;

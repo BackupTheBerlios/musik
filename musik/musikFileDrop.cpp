@@ -92,5 +92,7 @@ void CmusikFileDrop::OnShowWindow(BOOL bShow, UINT nStatus)
 		CButton* pBtn = (CButton*)GetDlgItem( IDC_RADIO_ADD_NOW_PLAYING );
 		pBtn->SetCheck( true );
 		m_FirstRun = false;
+
+		::SetWindowPos( GetSafeHwnd(), wndTopMost, -1, -1, -1, -1, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW );
 	}
 }
