@@ -1,12 +1,13 @@
 musik Todo list:
 
-1.  Preferences Dialog [dcarter]
-2.  Edit Tag Dialog [dcarter]
-3.  Dynamic Playlist Dialog [dcarter]
-4.  Jukebox playlist type [dcarter/avatar]
+1.  Edit Tag Dialog [avatar]
+2.  Dynamic Playlist Dialog [avatar]
+3.  Jukebox playlist type [dcarter/avatar]
+4.  Playlist info [avatar]
 
 Stuff Added 
 
+22. Preferences dialog.
 21. Directory synchronization 
 20. Right click menus implemented
 19. Equalizer completed

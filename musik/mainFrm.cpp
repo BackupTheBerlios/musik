@@ -1387,6 +1387,7 @@ LRESULT CMainFrame::OnSourcesNowPlaying( WPARAM wParam, LPARAM lParam )
 
 	m_wndView->GetCtrl()->SetPlaylist( m_Player->GetPlaylist(), MUSIK_SOURCES_TYPE_NOWPLAYING );
 	m_wndView->GetCtrl()->UpdateV();
+	m_wndView->GetCtrl()->ScrollToCurr();
 	m_wndView->GetCtrl()->HideSortArrow();
 
 	return 0L;
@@ -2647,6 +2648,7 @@ BOOL CMainFrame::PreTranslateMessage(MSG* pMsg)
 LRESULT CMainFrame::OnUpdateCurrPlaylist( WPARAM wParam, LPARAM lParam )
 {
 	m_wndView->GetCtrl()->UpdateV();
+	m_wndView->GetCtrl()->ScrollToCurr();
 	return 0L;
 }
 
@@ -2674,7 +2676,10 @@ void CMainFrame::OnPlaybackmodeShufflecurrentplaylist()
 	m_Player->FindNewIndex( songid );
 
 	if ( m_wndView->GetCtrl()->GetPlaylist() == m_Player->GetPlaylist() )
+	{
 		m_wndView->GetCtrl()->UpdateV();
+		m_wndView->GetCtrl()->ScrollToCurr();
+	}
 }
 
 ///////////////////////////////////////////////////

@@ -161,28 +161,6 @@
 					<File
 						RelativePath=".\musikListCtrl.h">
 					</File>
-					<Filter
-						Name="musikPlaylistCtrl"
-						Filter="">
-						<File
-							RelativePath=".\musikPlaylistCtrl.cpp">
-						</File>
-						<File
-							RelativePath=".\musikPlaylistCtrl.h">
-						</File>
-						<File
-							RelativePath=".\musikPlaylistDropTarget.cpp">
-						</File>
-						<File
-							RelativePath=".\musikPlaylistDropTarget.h">
-						</File>
-						<File
-							RelativePath=".\musikPlaylistView.cpp">
-						</File>
-						<File
-							RelativePath=".\musikPlaylistView.h">
-						</File>
-					</Filter>
 				</Filter>
 				<Filter
 					Name="musikDockBar"
@@ -340,6 +318,28 @@
 					</File>
 					<File
 						RelativePath=".\musikTrackCtrl.h">
+					</File>
+				</Filter>
+				<Filter
+					Name="musikPlaylistCtrl"
+					Filter="">
+					<File
+						RelativePath=".\musikPlaylistCtrl.cpp">
+					</File>
+					<File
+						RelativePath=".\musikPlaylistCtrl.h">
+					</File>
+					<File
+						RelativePath=".\musikPlaylistDropTarget.cpp">
+					</File>
+					<File
+						RelativePath=".\musikPlaylistDropTarget.h">
+					</File>
+					<File
+						RelativePath=".\musikPlaylistView.cpp">
+					</File>
+					<File
+						RelativePath=".\musikPlaylistView.h">
 					</File>
 				</Filter>
 			</Filter>

@@ -79,6 +79,7 @@ public:
 	// update the virtual list control
 	void InitColors();
 	void UpdateV( bool redraw = true, bool select_none = false );
+	void ScrollToCurr();
 
 	// call when new playlist is set becuase the
 	// previous playlist's sorting should not apply

@@ -160,11 +160,11 @@ void CmusikDockBar::OnNcPaint()
 	CRect rcDraw = rcBar;
 	rcDraw.InflateRect( 1, 1, 1, 1 );
 	mdc.FillSolidRect( rcDraw, m_Prefs->MUSIK_COLOR_BTNFACE );
+	NcPaintGripper( &mdc, rcClient );
 
 	// draw border and gripper...
 	if ( ( m_ShowGripper || m_ForceDrawBorder ) && !IsFloating() )
 	{
-		NcPaintGripper( &mdc, rcClient );
 		rcClient.InflateRect( 1, 1, 1, 1 );
 		mdc.Draw3dRect( rcClient, m_Prefs->MUSIK_COLOR_BTNSHADOW, m_Prefs->MUSIK_COLOR_BTNHILIGHT );
 		rcClient.DeflateRect( 1, 1, 1, 1 );

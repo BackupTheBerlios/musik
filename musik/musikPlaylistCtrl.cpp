@@ -1316,3 +1316,11 @@ void CmusikPlaylistCtrl::OnLvnBeginrdrag(NMHDR *pNMHDR, LRESULT *pResult)
 }
 
 ///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::ScrollToCurr()
+{
+	if ( m_Player->IsPlaying() )
+		EnsureVisible( m_Player->GetIndex(), FALSE );
+}
+
+///////////////////////////////////////////////////
