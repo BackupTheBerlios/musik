@@ -23,11 +23,14 @@
 //-----------------------------------------//
 //--- this is the gauge					---//
 //-----------------------------------------//
-BEGIN_EVENT_TABLE(CMusikEQGauge, wxEvtHandler)
+BEGIN_EVENT_TABLE(CMusikEQGauge, wxGauge)
 	EVT_LEFT_DOWN				( CMusikEQGauge::OnLeftDown		) 
 	EVT_LEFT_UP					( CMusikEQGauge::OnLeftUp		)
 	EVT_MOTION					( CMusikEQGauge::OnMouseMove	) 
 	EVT_ERASE_BACKGROUND		( CMusikEQGauge::OnEraseBackground )
+#ifdef __WXMSW__
+	EVT_PAINT ( CMusikEQGauge::OnPaint )
+#endif
 END_EVENT_TABLE()
 
 CMusikEQGauge::CMusikEQGauge( CMusikEQCtrl* parent, size_t nChannel, size_t nBandID )
@@ -42,7 +45,17 @@ CMusikEQGauge::CMusikEQGauge( CMusikEQCtrl* parent, size_t nChannel, size_t nBan
 CMusikEQGauge::~CMusikEQGauge()
 {
 }
+#ifdef __WXMSW__
+#include "wx/dcbuffer.h"
+void CMusikEQGauge::OnPaint(wxPaintEvent& event)
+{
 
+	wxBufferedPaintDC dc(this);
+	wxEraseEvent erase_event(GetId(), &dc);
+	wxGauge::OnEraseBackground(erase_event);
+	MSWDefWindowProc(WM_PAINT, (WPARAM) (HDC) dc.GetHDC(), 0);
+}
+#endif
 void CMusikEQGauge::OnEraseBackground( wxEraseEvent& WXUNUSED(event) )
 {	
 	// empty => no background erasing to avoid flicker

@@ -31,6 +31,9 @@ public:
 	void OnMouseMove		( wxMouseEvent& event );
 	void SetFromMousePos	( wxMouseEvent& event );
 	void OnEraseBackground  ( wxEraseEvent& event );
+#ifdef __WXMSW__
+	void OnPaint(wxPaintEvent& event);
+#endif
 	DECLARE_EVENT_TABLE()
 private:
 	bool m_Dragging;

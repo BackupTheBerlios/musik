@@ -25,6 +25,9 @@ BEGIN_EVENT_TABLE(CGaugeSeekEvt, wxEvtHandler)
 	EVT_LEFT_UP				(CGaugeSeekEvt::OnLeftUp		) 
 	EVT_MOTION				(CGaugeSeekEvt::OnMouseMove		) 
 	EVT_ERASE_BACKGROUND	( CGaugeSeekEvt::OnEraseBackground )
+#ifdef __WXMSW__
+	EVT_PAINT ( CGaugeSeekEvt::OnPaint )
+#endif
 END_EVENT_TABLE()
 
 CGaugeSeekEvt::CGaugeSeekEvt( wxGauge *parent, long style )
@@ -34,6 +37,18 @@ CGaugeSeekEvt::CGaugeSeekEvt( wxGauge *parent, long style )
 	m_LastPos	= -1;
 	m_Dragging	= false;
 }
+#ifdef __WXMSW__
+#include "wx/dcbuffer.h"
+void CGaugeSeekEvt::OnPaint(wxPaintEvent& event)
+{
+	wxControl * pControl = (wxControl*)pParent;
+	wxBufferedPaintDC dc(pControl);
+	wxEraseEvent erase_event(pControl->GetId(), &dc);
+	pControl->OnEraseBackground(erase_event);
+
+	pControl->MSWDefWindowProc(WM_PAINT, (WPARAM) (HDC) dc.GetHDC(), 0);
+}
+#endif
 void CGaugeSeekEvt::OnEraseBackground( wxEraseEvent& WXUNUSED(event) )
 {	
 	// empty => no background erasing to avoid flicker

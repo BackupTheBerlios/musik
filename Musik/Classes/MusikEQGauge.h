@@ -32,7 +32,9 @@ class CMusikEQGauge : public wxGauge
 public:
 	CMusikEQGauge( CMusikEQCtrl* parent, size_t nChannel, size_t nBandID );
 	~CMusikEQGauge();
-
+#ifdef __WXMSW__
+	void OnPaint(wxPaintEvent& event);
+#endif
 	void OnEraseBackground ( wxEraseEvent& event );
 	void OnLeftDown			( wxMouseEvent& event );
 	void OnLeftUp			( wxMouseEvent& event );

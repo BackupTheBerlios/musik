@@ -1,4 +1,5 @@
 0.2.1 to 0.2.2
+ + Fixed Bug: Reduced flicker of gauge control for position, fx and volume, NOW works correctly on win2000 too (gunnar)
  + Make Horizontal Scrollbars disappear again in Selection Boxes ( gunnar)
  + Flicker free listctrls for windows ( gunnar)
  + Made a new option (under Sound/Driver) for using  FSOUND_MPEGACCURATE when a stream is openend for a mp3-vbr file. This makes opning slower and seek crossfading unusable(which is disabled then for that cause), BUT progress bar and playing time behave correctly for that files. The option is ON as default. See BUG #958 (gunnar)
