@@ -515,38 +515,51 @@ void CmusikPlaylistCtrl::OnNMClick(NMHDR *pNMHDR, LRESULT *pResult)
 	GetCursorPos( &ptCurr );
 	ScreenToClient( &ptCurr );
 
-	// construct a hit test for the listctrl
+	// see which item was clicked
 	LVHITTESTINFO hit_test;
-	hit_test.pt = ptCurr;
+	hit_test.pt.y = ptCurr.y;
+	hit_test.pt.x = 0;
 	SubItemHitTest( &hit_test );
+	int nItem = hit_test.iItem;
 
-	// check to see if the click was over a
-	// (sub)item's label...
-	if( hit_test.flags & LVHT_ONITEMLABEL )
+	if ( nItem > -1 )
 	{
-		// if the current column is the rating
-		if ( m_Prefs->GetPlaylistCol( hit_test.iSubItem ) == MUSIK_LIBRARY_TYPE_RATING )
+		int rating_pos = -1;
+		for ( size_t i = 0; i < m_Prefs->GetPlaylistColCount(); i++ )
 		{
-			// normalize along x axis
-			for ( int i = 0; i < hit_test.iSubItem; i++ )
-				ptCurr.x -= m_Prefs->GetPlaylistColWidth( (size_t)i );
+			if ( m_Prefs->GetPlaylistCol( i ) == MUSIK_LIBRARY_TYPE_RATING )
+				rating_pos = (int)i;
+		}
 
+		if ( rating_pos == -1 )
+			return;
+
+		CRect rcRating;
+		GetSubItemRect( nItem, rating_pos, LVIR_LABEL, rcRating );
+
+		if ( rcRating.PtInRect( ptCurr ) )
+		{
 			// if an item is a sub item, there are two
 			// spaces in front of the item text -- so
 			// shift point that far in the X axis
 			int nOffset;
-			if ( hit_test.iSubItem > 0 )
+			if ( rating_pos > 0 )
 				nOffset = m_TwoSpace;
 			else
 				nOffset = 2;
 
+			// width of the column and the
+			// recalculated click locations...
+			int col_width = GetColumnWidth( rating_pos );
+			int clk_loc = ( ptCurr.x - rcRating.left );
+
 			int nRating;
-			if ( ( ptCurr.x ) <= nOffset )
+			if ( clk_loc <= nOffset )
 				nRating = 0;
-			else if ( ( ptCurr.x - nOffset ) >= m_RatingExtent + nOffset )
+			else if ( clk_loc >= m_RatingExtent + nOffset )
 				nRating = 5;
 			else
-				nRating = ( ( ptCurr.x - nOffset ) / ( m_RatingExtent / 5 ) ) + 1;
+				nRating = ( clk_loc / ( m_RatingExtent / 5 ) );
 
             m_Library->SetSongRating( m_Playlist->GetSongID( hit_test.iItem ), nRating );	
 			if ( m_SongInfoCache->ResyncItem( m_Playlist->GetSongID( hit_test.iItem ) ) )
@@ -570,7 +583,6 @@ void CmusikPlaylistCtrl::SavePlaylist( bool check_prompt )
 		// user needs to be prompted
 		if ( check_prompt )
 		{
-			
 			if ( m_Prefs->GetStdPlaylistPrompt() == -1 )
 			{
 				CmusikSaveStdPlaylist* pDlg;

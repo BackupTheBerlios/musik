@@ -4,6 +4,8 @@ musik Todo list:
 2.  Dynamic Playlist Dialog [avatar]
 3.  Jukebox playlist type [dcarter/avatar]
 4.  Playlist info [avatar]
+5.  Delete songs
+6.  Playlist column selection
 
 Stuff Added 
 

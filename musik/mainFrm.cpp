@@ -2527,7 +2527,6 @@ void CMainFrame::KillThreads( bool updater, bool helpers, bool setwindowtext )
 	{
 		if ( updater )
 		{
-			TRACE0( "KILL UPDATER\n" );
 			ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingThreads );
 			{
 				if ( m_Updater )
@@ -2549,8 +2548,6 @@ void CMainFrame::KillThreads( bool updater, bool helpers, bool setwindowtext )
 		{
 			for ( size_t i = 0; i < m_Threads.size(); i++ )
 			{
-				TRACE0( "KILL HELPER\n" );
-
 				m_Threads.at( i )->Suspend( true );
 				m_Threads.at( i )->Abort();
 				m_Threads.at( i )->Resume();
@@ -2567,6 +2564,8 @@ void CMainFrame::KillThreads( bool updater, bool helpers, bool setwindowtext )
 		if ( setwindowtext )
 			SetWindowText( m_Caption );
 	}
+
+	TRACE0( "All threads killed." );
 }
 
 ///////////////////////////////////////////////////
