@@ -62,6 +62,7 @@ enum
 	MUSIK_CROSSFADER_NONE = -1,
 	MUSIK_CROSSFADER_NEW_SONG,
 	MUSIK_CROSSFADER_PAUSE_RESUME,
+	MUSIK_CROSSFADER_SEEK,
 	MUSIK_CROSSFADER_STOP,
 	MUSIK_CROSSFADER_EXIT
 };
@@ -75,6 +76,7 @@ public:
 	{
 		m_NewSong		= 2.0f;
 		m_PauseResume	= 0.5f;
+		m_Seek			= 0.2f;
 		m_Stop			= 1.0f;
 		m_Exit			= 3.0f;
 	}
@@ -90,22 +92,30 @@ public:
 		case MUSIK_CROSSFADER_NEW_SONG:
 			m_NewSong = duration;
 			return;
+
 		case MUSIK_CROSSFADER_PAUSE_RESUME:
 			m_PauseResume = duration;
 			return;
+
+		case MUSIK_CROSSFADER_SEEK:
+			m_Seek = duration;
+			return;
+
 		case MUSIK_CROSSFADER_STOP:
 			m_Stop = duration;
 			return;
+
 		case MUSIK_CROSSFADER_EXIT:
 			m_Exit = duration;
 			return;
 		}
 	}
 
-	void Set( float newsong, float pauseresume, float stop, float exit )
+	void Set( float newsong, float pauseresume, float seek, float stop, float exit )
 	{
 		m_NewSong		= newsong;
 		m_PauseResume	= pauseresume;
+		m_Seek			= seek;
 		m_Stop			= stop;
 		m_Exit			= exit;
 	}
@@ -122,6 +132,9 @@ public:
 
 		case MUSIK_CROSSFADER_PAUSE_RESUME:
 			return m_PauseResume;
+
+		case MUSIK_CROSSFADER_SEEK:
+			return m_Seek;
 
 		case MUSIK_CROSSFADER_STOP:
 			return m_Stop;
@@ -147,6 +160,7 @@ private:
 
 	float m_NewSong;
 	float m_PauseResume;
+	float m_Seek;
 	float m_Stop;
 	float m_Exit;
 

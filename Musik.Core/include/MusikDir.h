@@ -46,8 +46,6 @@ public:
 	CMusikFunctor* m_Functor;
 	bool m_Threaded;
 
-	void Start();
-
 protected:
 
 	// thread it will run on

@@ -399,6 +399,7 @@ bool CMusikLibrary::InitCrossfaderTable()
 		"crossfader_name VARCHAR(255) PRIMARY KEY, "
 		"newsong FLOAT, "
 		"pause_resume FLOAT, "
+		"seek FLOAT, "
 		"stop FLOAT, "
 		"exit FLOAT "
 		" );";
