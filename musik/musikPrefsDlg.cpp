@@ -2,6 +2,8 @@
 
 #include "stdafx.h"
 
+#include "fmod.h"
+
 #include "musik.h"
 #include "musikPrefsDlg.h"
 
@@ -9,11 +11,15 @@
 
 ///////////////////////////////////////////////////
 
+#pragma warning (disable : 4800)	// forcing value bool 'true' to 'false'
+
+///////////////////////////////////////////////////
+
 // General::Interface
 
 ///////////////////////////////////////////////////
 
-IMPLEMENT_DYNAMIC(CmusikPrefsInterfaceGeneral, CPropertyPage)
+IMPLEMENT_DYNAMIC( CmusikPrefsInterfaceGeneral, CmusikPropertyPage )
 
 ///////////////////////////////////////////////////
 
@@ -30,9 +36,9 @@ CmusikPrefsInterfaceGeneral::~CmusikPrefsInterfaceGeneral()
 
 ///////////////////////////////////////////////////
 
-void CmusikPrefsInterfaceGeneral::DoDataExchange(CDataExchange* pDX)
+void CmusikPrefsInterfaceGeneral::DoDataExchange( CDataExchange* pDX )
 {
-	CPropertyPage::DoDataExchange(pDX);
+	CmusikPropertyPage::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_CHECK_ENABLETRAYICON, m_EnableTrayIcon);
 	DDX_Control(pDX, IDC_CHECK1, m_PromptSavePlaylists);
 	DDX_Control(pDX, IDC_CHECK2, m_PromptDropOnPlaylist);
@@ -43,7 +49,7 @@ void CmusikPrefsInterfaceGeneral::DoDataExchange(CDataExchange* pDX)
 
 ///////////////////////////////////////////////////
 
-BEGIN_MESSAGE_MAP(CmusikPrefsInterfaceGeneral, CPropertyPage)
+BEGIN_MESSAGE_MAP( CmusikPrefsInterfaceGeneral, CmusikPropertyPage )
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -207,6 +213,76 @@ BOOL CmusikPrefsInterfaceGeneral::OnInitDialog()
 	CmusikPropertyPage::OnInitDialog();
 	LoadPrefs();
 	return TRUE; 
+}
+
+///////////////////////////////////////////////////
+
+// Sound::Driver
+
+///////////////////////////////////////////////////
+
+IMPLEMENT_DYNAMIC( CmusikPrefsSoundDriver, CmusikPropertyPage )
+
+///////////////////////////////////////////////////
+
+CmusikPrefsSoundDriver::CmusikPrefsSoundDriver( CmusikPrefs* prefs )
+	: CmusikPropertyPage( CmusikPrefsSoundDriver::IDD, prefs )
+{
+	m_Prefs = prefs;
+}
+
+///////////////////////////////////////////////////
+
+CmusikPrefsSoundDriver::~CmusikPrefsSoundDriver()
+{
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPrefsSoundDriver::DoDataExchange( CDataExchange* pDX )
+{
+	DDX_Control(pDX, IDC_SOUND_DRIVER, m_SoundDriver);
+	DDX_Control(pDX, IDC_SOUND_DEVICE, m_SoundDevice);
+	DDX_Control(pDX, IDC_SOUND_PLAYBACK_RATE, m_SoundPlaybackRate);
+	DDX_Control(pDX, IDC_SOUND_MAX_CHANNELS, m_SoundMaxChannels);
+}
+
+///////////////////////////////////////////////////
+
+BEGIN_MESSAGE_MAP( CmusikPrefsSoundDriver, CmusikPropertyPage )
+END_MESSAGE_MAP()
+
+///////////////////////////////////////////////////
+
+BOOL CmusikPrefsSoundDriver::OnInitDialog()
+{
+	CmusikPropertyPage::OnInitDialog();
+
+	CmusikStringArray pDevices;
+	GetSoundDevices( &pDevices );
+
+	m_SoundDevice.Clear();
+	for ( size_t i = 0; i < pDevices.size(); i++ )
+		m_SoundDevice.AddString( pDevices.at( i ) );
+
+	m_SoundDevice.SelectString( -1, pDevices.at( 0 ) );
+
+	return TRUE;
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPrefsSoundDriver::GetSoundDevices( CmusikStringArray* pTarget )
+{
+	pTarget->clear();
+
+	int num_drivers = FSOUND_GetNumDrivers();
+
+	for ( int i = 0; i < num_drivers; i++ )
+		pTarget->push_back( FSOUND_GetDriverName( i ) );
+
+	if ( !pTarget->size() )
+		pTarget->push_back( _T( "(no devices found)" ) );
 }
 
 ///////////////////////////////////////////////////

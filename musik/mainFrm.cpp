@@ -1497,8 +1497,8 @@ void CMainFrame::OnFilePreferences()
 {
 	// initialize the property pages
 	CmusikPrefsInterfaceGeneral wndPageInterfaceGeneral( m_Prefs );
-	CmusikPropertyPage wndPageInterfaceColors		( IDD_PROPPAGE_INTERFACE_COLORS, m_Prefs );
-	CmusikPropertyPage wndPageSoundDriver			( IDD_PROPPAGE_SOUND_DRIVER, m_Prefs );
+	CmusikPropertyPage wndPageInterfaceColors	( IDD_PROPPAGE_INTERFACE_COLORS, m_Prefs );
+	CmusikPrefsSoundDriver wndPageSoundDriver( m_Prefs );
 
 	// remove help icon from gripper
 	wndPageInterfaceGeneral.m_psp.dwFlags&=		~PSP_HASHELP;

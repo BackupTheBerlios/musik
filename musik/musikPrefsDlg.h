@@ -47,8 +47,9 @@
 
 ///////////////////////////////////////////////////
 
-#include "musikPropertyPage.h"
 #include "afxwin.h"
+#include "musikPropertyPage.h"
+#include "../musikCore/include/musikArrays.h"
 
 ///////////////////////////////////////////////////
 
@@ -77,6 +78,7 @@ public:
 
 	// overrides
 	virtual BOOL OnInitDialog();
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 
 protected:
 
@@ -93,15 +95,54 @@ protected:
 	CButton m_PromptSavePlaylists;
 	CButton m_PromptDropOnPlaylist;
 	CButton m_StartWithWindows;
+	CButton m_AutoSynchronize;
+	CButton m_LibraryShowAll;
 
 	// macros
 	DECLARE_DYNAMIC(CmusikPrefsInterfaceGeneral)
 	DECLARE_MESSAGE_MAP()
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
-public:
-	CButton m_AutoSynchronize;
-	CButton m_LibraryShowAll;
 };
 
 ///////////////////////////////////////////////////
 
+// Sound::Driver
+
+///////////////////////////////////////////////////
+
+class CmusikPrefsSoundDriver : public CmusikPropertyPage
+{
+public:
+
+	// construct / destruct
+	CmusikPrefsSoundDriver( CmusikPrefs* prefs );
+	virtual ~CmusikPrefsSoundDriver();
+
+	// dialog data
+	enum { IDD = IDD_PROPPAGE_SOUND_DRIVER };
+
+	// overrides
+	virtual BOOL OnInitDialog();
+
+protected:
+
+	// misc
+	virtual void DoDataExchange(CDataExchange* pDX);
+
+	// actual prefs obj
+	CmusikPrefs* m_Prefs;
+
+	// for getting sound devices
+	void GetSoundDevices( CmusikStringArray* pTarget );
+
+	// controls
+	CComboBox m_SoundDriver;
+	CComboBox m_SoundDevice;
+	CComboBox m_SoundPlaybackRate;
+	CEdit m_SoundMaxChannels;
+
+	// macros
+	DECLARE_DYNAMIC( CmusikPrefsSoundDriver )
+	DECLARE_MESSAGE_MAP()
+};
+
+///////////////////////////////////////////////////

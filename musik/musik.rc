@@ -331,15 +331,15 @@ STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Sound::Driver"
 FONT 8, "MS Shell Dlg", 0, 0, 0x0
 BEGIN
-    COMBOBOX        IDC_COMBO1,85,9,75,30,CBS_DROPDOWN | CBS_SORT | 
+    COMBOBOX        IDC_SOUND_DRIVER,85,24,111,30,CBS_DROPDOWN | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Output Driver:",IDC_STATIC,32,11,48,8
-    COMBOBOX        IDC_COMBO2,85,24,75,30,CBS_DROPDOWN | CBS_SORT | 
+    LTEXT           "Output Driver:",IDC_STATIC,32,26,48,8
+    COMBOBOX        IDC_SOUND_DEVICE,85,9,111,44,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    COMBOBOX        IDC_COMBO3,85,39,75,30,CBS_DROPDOWN | CBS_SORT | 
-                    WS_VSCROLL | WS_TABSTOP
-    EDITTEXT        IDC_EDIT2,85,53,31,14,ES_AUTOHSCROLL
-    LTEXT           "Sound Device:",IDC_STATIC,33,26,47,8
+    COMBOBOX        IDC_SOUND_PLAYBACK_RATE,85,39,111,30,CBS_DROPDOWN | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_SOUND_MAX_CHANNELS,85,53,31,14,ES_AUTOHSCROLL
+    LTEXT           "Sound Device:",IDC_STATIC,33,11,47,8
     LTEXT           "Playback Rate (hz):",IDC_STATIC,16,41,64,8
     LTEXT           "Max Sound Channels:",IDC_STATIC,7,56,70,8
 END
@@ -557,7 +557,7 @@ BEGIN
         VERTGUIDE, 80
         VERTGUIDE, 85
         VERTGUIDE, 116
-        VERTGUIDE, 160
+        VERTGUIDE, 196
         TOPMARGIN, 7
         BOTTOMMARGIN, 147
         HORZGUIDE, 15
@@ -624,6 +624,13 @@ END
 
 IDB_DOWN                BITMAP                  "idb_down.bmp"
 IDB_UP                  BITMAP                  "idb_up.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// HTML
+//
+
+IDR_HTML_MUSIKPREFSSOUNDDRIVER HTML                    "musikPrefsSoundDriver.htm"
 
 /////////////////////////////////////////////////////////////////////////////
 //

@@ -723,6 +723,10 @@
 				</File>
 			</Filter>
 		</Filter>
+		<File
+			RelativePath=".\musikPrefsSoundDriver.htm"
+			DeploymentContent="TRUE">
+		</File>
 	</Files>
 	<Globals>
 		<Global

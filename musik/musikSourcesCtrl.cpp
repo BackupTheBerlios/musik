@@ -13,6 +13,10 @@
 
 ///////////////////////////////////////////////////
 
+#pragma warning (disable : 4312)	// conversion from int to void* of greater size
+
+///////////////////////////////////////////////////
+
 // CmusikSourcesBar
 
 ///////////////////////////////////////////////////
@@ -885,7 +889,7 @@ void CmusikSourcesCtrl::DeleteSel()
 				{
 					nPos = i;
 
-					if ( nPos >= m_StdPlaylists.size() - 2 )
+					if ( nPos >= (int)m_StdPlaylists.size() - 2 )
 						nNextPos = nPos - 1;
 					else
 						nNextPos = nPos;

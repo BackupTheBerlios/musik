@@ -3,6 +3,7 @@
 // Used by musik.rc
 //
 #define IDD_ABOUTBOX                    100
+#define IDR_HTML_MUSIKPREFSSOUNDDRIVER  103
 #define IDD_PROPPAGE_INTERFACE_GENERAL  106
 #define IDD_PROPPAGE_INTERFACE_COLORS   107
 #define IDD_PROPPAGE_SOUND_DRIVER       108
@@ -34,11 +35,15 @@
 #define IDC_CHECK_STARTWITHWINDOWS      1009
 #define IDC_COMBO1                      1010
 #define IDC_CHECK_STARTUPSCAN4          1010
+#define IDC_SOUND_DRIVER                1010
 #define IDC_COMBO2                      1011
+#define IDC_SOUND_DEVICE                1011
 #define IDC_COMBO3                      1012
+#define IDC_SOUND_PLAYBACK_RATE         1012
 #define IDC_EDIT1                       1013
 #define IDC_EDIT2                       1014
 #define IDC_FIELDTYPE2                  1014
+#define IDC_SOUND_MAX_CHANNELS          1014
 #define IDC_CHECK1                      1015
 #define IDC_CHECK2                      1016
 #define IDC_ENABLE_QUERY2               1016
@@ -196,6 +201,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        154
 #define _APS_NEXT_COMMAND_VALUE         32890
 #define _APS_NEXT_CONTROL_VALUE         1053
-#define _APS_NEXT_SYMED_VALUE           101
+#define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif
