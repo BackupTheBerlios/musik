@@ -28,7 +28,8 @@ END_MESSAGE_MAP()
 
 CMainFrame::CMainFrame()
 {
-	m_Library = new CMusikLibrary( _T( "C:\\Documents and Settings\\clangen.CORELAB-BAK\\.Musik\\musiklib.db" ) );
+	InitPaths();
+	m_Library = new CMusikLibrary( ( CStdString )m_Database );
 	//m_hIcon16 = ( HICON )LoadImage( AfxGetApp()->m_hInstance, MAKEINTRESOURCE( IDI_ICON16 ), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR );
 	//m_hIcon32 = ( HICON )LoadImage( AfxGetApp()->m_hInstance, MAKEINTRESOURCE( IDI_ICON32 ), IMAGE_ICON, 32, 32, LR_DEFAULTCOLOR );
 }
@@ -38,6 +39,16 @@ CMainFrame::~CMainFrame()
 	delete m_Library;
 	for ( int i = 0; i < 4; i++ )
 		delete m_wndSelectionBars[i];
+}
+
+void CMainFrame::InitPaths()
+{
+	char buffer[2000];
+	GetEnvironmentVariable( _T( "USERPROFILE" ), buffer, sizeof( buffer ) );
+	m_UserDir = buffer;
+	m_UserDir += _T( "\\.Musik\\" );
+
+	m_Database = m_UserDir + _T( "musiklib.db" );
 }
 
 void CMainFrame::DockBarLeftOf( CSizingControlBar* Bar, CSizingControlBar* LeftOf )

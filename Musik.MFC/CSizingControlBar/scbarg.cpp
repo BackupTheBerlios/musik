@@ -120,24 +120,27 @@ void CSizingControlBarG::NcPaintGripper(CDC* pDC, CRect rcClient)
     gripper.DeflateRect(1, 1);
     if (bHorz)
     {   // gripper at left
-        gripper.left -= m_cyGripper;
+        gripper.left -= m_cyGripper - 2 ;
         gripper.right = gripper.left + 3;
         gripper.top = rcbtn.bottom + 3;
     }
     else
     {   // gripper at top
-        gripper.top -= m_cyGripper;
+        gripper.top -= m_cyGripper - 2;
         gripper.bottom = gripper.top + 3;
         gripper.right = rcbtn.left - 3;
     }
+
+	/*
 
     pDC->Draw3dRect(gripper, ::GetSysColor(COLOR_BTNHIGHLIGHT),
         ::GetSysColor(COLOR_BTNSHADOW));
 
     gripper.OffsetRect(bHorz ? 3 : 0, bHorz ? 0 : 3);
-
+	*/
     pDC->Draw3dRect(gripper, ::GetSysColor(COLOR_BTNHIGHLIGHT),
         ::GetSysColor(COLOR_BTNSHADOW));
+
 
     m_biHide.Paint(pDC);
 }

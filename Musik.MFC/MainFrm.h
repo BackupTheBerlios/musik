@@ -25,6 +25,8 @@ public:
 #endif
 
 protected: 
+	void InitPaths();
+
 	DECLARE_DYNAMIC(CMainFrame)
 
 //-------------------------------------------------//
@@ -38,6 +40,8 @@ private:
 
 protected:
 	CMusikLibrary* m_Library;
+	CString m_UserDir;
+	CString m_Database;
 
 	CMusikPlaylistView m_wndView;
 	CMusikSourcesBar m_wndSourcesBar;
