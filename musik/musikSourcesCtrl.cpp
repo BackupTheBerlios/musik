@@ -356,7 +356,7 @@ void CmusikSourcesCtrl::InitItems()
 	SrcLoad();
 
 	// standard playlists
-	info.Set( "Standard Playlists", -1, -1 );
+	info.Set( "Playlists", -1, -1 );
 	m_StdPlaylistRoot = InsertItem( new CmusikPropTreeItem() );
 	m_StdPlaylistRoot->SetPlaylistInfo( info );
 	m_StdPlaylistRoot->Expand( true );

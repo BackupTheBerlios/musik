@@ -242,7 +242,7 @@ void CmusikNowPlayingInfo::InitObjects()
 
 			// create the object
 			CmusikDynamicText* pTemp;
-			pTemp = new CmusikDynamicText();
+			pTemp = new CmusikDynamicText( m_Prefs );
 			pTemp->Create( NULL, WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0 ), this );
 			
 			// set it to the right values
@@ -264,7 +264,7 @@ void CmusikNowPlayingInfo::InitObjects()
 			sCurr.TrimRight();
 
 			CmusikDynamicText* pTemp;
-			pTemp = new CmusikDynamicText();
+			pTemp = new CmusikDynamicText( m_Prefs );
 			pTemp->Create( NULL, WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0 ), this );
 
 			pTemp->SetDynFont( m_FontSize, m_FontBold, m_FontItalic );

@@ -45,12 +45,16 @@
 
 ///////////////////////////////////////////////////
 
+class CmusikPrefs;
+
+///////////////////////////////////////////////////
+
 class CmusikDynamicText : public CStatic
 {
 public:
 
 	// construct and destruct
-	CmusikDynamicText();
+	CmusikDynamicText( CmusikPrefs* prefs );
 	virtual ~CmusikDynamicText();
 
 	// gets
@@ -74,6 +78,9 @@ protected:
 
 	// fonts
 	CFont* pFont;
+
+	// prefs, used for theming...
+	CmusikPrefs* m_Prefs;
 
 	// vars
 	int m_Width;

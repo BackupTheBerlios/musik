@@ -125,13 +125,13 @@ int CmusikTimeCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_TimeCtrl->SetRange( 0, 100 );
 	m_TimeCtrl->SetLockIfNotPlaying();
 
-	m_CurTime = new CmusikDynamicText();
+	m_CurTime = new CmusikDynamicText( m_Prefs );
 	if ( !m_CurTime->Create( NULL, WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0 ), this ) )
 		return false;
 	m_CurTime->SetDynFont( 12, 0, 0 );
 	m_CurTime->SetDynText( _T( "0:00" ), false, false );
 	
-	m_TotalTime = new CmusikDynamicText();
+	m_TotalTime = new CmusikDynamicText( m_Prefs );
 	if ( !m_TotalTime->Create( NULL, WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0 ), this ) )
 		return false;
 	m_TotalTime->SetDynFont( 12, 0, 0 );

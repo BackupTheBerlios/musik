@@ -992,18 +992,27 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 
 	// if the first item was clicked, the user wants
 	// to display all the info
-	if ( pSender->IsItemSelected( 0 ) )
+	if ( pSender->IsItemSelected( 0 ) || ( pParent && !pParent->GetSelectedCount() ) )
 	{
+		bool unsel_parent = false;
+		if ( pParent && !pParent->GetSelectedCount() )
+			unsel_parent = true;
+
 		CmusikSelectionCtrl::SetUpdating( true );
 
 		if ( pParent )
 			pParent->SetParent( false );
 
 		pSender->SetParent( true );
+		pParent = pSender;
 
 		for( size_t i = 0; i < selbox_count; i++ )
 		{
 			pCurr = m_wndSelectionBars.at( i )->GetCtrl();
+
+			if ( unsel_parent && pCurr == pParent )
+				continue;
+
 			pCurr->SetItemState( -1, 0, LVIS_SELECTED );
 			pCurr->UpdateV();
 		}
@@ -1025,7 +1034,8 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 
 		m_wndSources->GetCtrl()->FocusLibrary();
 
-		return 0L;
+		if ( !unsel_parent )
+			return 0L;
 	}	
 
 	// no parent found, so we have a new parent!
@@ -1096,7 +1106,7 @@ void CMainFrame::RequerySelBoxes( CmusikSelectionCtrl* sender, bool deselect_ite
 				pCurr = m_wndSelectionBars.at( i )->GetCtrl();
 				if ( pCurr != pParent )
 				{
-					pCurr->SetItemState( -1, 0, LVIS_SELECTED );
+					//pCurr->SetItemState( -1, 0, LVIS_SELECTED );
 					pCurr->ResetOrder();
 				}
 			}
@@ -1129,8 +1139,10 @@ void CMainFrame::RequerySelBoxes( CmusikSelectionCtrl* sender, bool deselect_ite
 
 				if ( pCurr->GetChildOrder() > sender->GetChildOrder() || pCurr->GetChildOrder() == -1 )
 				{
+					/*
 					if ( deselect_items )
 						pCurr->SetItemState(  -1, 0, LVIS_SELECTED );
+					*/
 
 					CmusikString query = GetSelQuery( pCurr );
 					pCurr->UpdateV( query );

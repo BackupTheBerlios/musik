@@ -2,6 +2,11 @@
 
 a2:
   
+  - changed "Standard Playlists" to "Playlists" in the
+    sources panel
+  - fixes a bug where parenting a box, selecting nothing,
+    then selecting an item from another box would 
+    not reparent
   - playlists are now stored as filenames, not ids.
   - memory leak when prompting to save playlist.
   - fixed sources drag and drop from standard playlists

@@ -44,6 +44,7 @@
 #include "stdafx.h"
 #include "musik.h"
 #include "musikDynamicText.h"
+#include "musikPrefs.h"
 
 ///////////////////////////////////////////////////
 
@@ -51,10 +52,11 @@ IMPLEMENT_DYNAMIC(CmusikDynamicText, CStatic)
 
 ///////////////////////////////////////////////////
 
-CmusikDynamicText::CmusikDynamicText()
+CmusikDynamicText::CmusikDynamicText( CmusikPrefs* prefs )
 {
 	m_Width = -1;
 	m_FontSize = -1;
+	m_Prefs = prefs;
 	pFont = NULL;
 }
 
