@@ -240,24 +240,21 @@ void CmusikNowPlayingCtrl::OnBtnPlay()
 
 void CmusikNowPlayingCtrl::OnBtnPrev()
 {
-	if ( m_Player->IsPlaying() )
-		m_Player->Prev();
+	m_Player->Prev();
 }
 
 ///////////////////////////////////////////////////
 
 void CmusikNowPlayingCtrl::OnBtnStop()
 {
-	if ( m_Player->IsPlaying() )
-		m_Player->Stop();
+	m_Player->Stop();
 }
 
 ///////////////////////////////////////////////////
 
 void CmusikNowPlayingCtrl::OnBtnNext()
 {
-	if ( m_Player->IsPlaying() )
-		m_Player->Next();
+	m_Player->Next();
 }
 
 ///////////////////////////////////////////////////

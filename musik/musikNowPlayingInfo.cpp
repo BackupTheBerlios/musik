@@ -102,8 +102,13 @@ void CmusikNowPlayingInfo::UpdateInfo( bool refresh )
 	int type;
 	for ( size_t i = 0; i < m_Captions.size(); i++ )
 	{
-		type = m_Captions.at( i )->GetType();
-		m_Captions.at( i )->SetDynText( (CString)m_Player->GetCurrPlaying()->GetField( type ) );		
+		if ( m_Player->IsPlaying() )
+		{
+			type = m_Captions.at( i )->GetType();
+			m_Captions.at( i )->SetDynText( (CString)m_Player->GetCurrPlaying()->GetField( type ) );	
+		}
+		else
+			m_Captions.at( i )->SetDynText( _T( "Stopped" ) );
 	}
 	SetRedraw( true );
 

@@ -54,7 +54,7 @@ public:
 
 	// used by the main UI to trigger an "item activate"
 	// event..
-	void PlayItem( int n = -1 );
+	bool PlayItem( int n = -1 );
 
 protected:
 

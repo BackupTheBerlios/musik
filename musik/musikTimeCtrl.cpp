@@ -212,14 +212,27 @@ void CmusikTimeCtrl::OnTimer(UINT nIDEvent)
 
 void CmusikTimeCtrl::OnNewSong()
 {
-	CString sTimeStr = m_Player->GetTimeStr( m_Player->GetDuration( MUSIK_TIME_MS ) );
-	m_TotalTime->SetDynText( sTimeStr, false, false );
-
-	// avoid un necessary RescaleInfo() calls
-	if ( sTimeStr.GetLength() != m_TotalChars )
+	if ( !m_Player->IsPaused() && m_Player->IsPlaying() )
 	{
+		CString sTimeStr = m_Player->GetTimeStr( m_Player->GetDuration( MUSIK_TIME_MS ) );
+		m_TotalTime->SetDynText( sTimeStr, false, false );
+
+		// avoid un necessary RescaleInfo() calls
+		if ( sTimeStr.GetLength() != m_TotalChars )
+		{
+			RescaleInfo( -1 );
+			m_TotalChars = sTimeStr.GetLength();
+			RedrawWindow();
+		}
+
+		return;
+	}
+	else
+	{
+		m_TotalTime->SetDynText( _T( "0:00" ), false, false );
+		m_CurTime->SetDynText( _T( "0:00" ), false, false );
+		m_TimeCtrl->SetPos( 0 );
 		RescaleInfo( -1 );
-		m_TotalChars = sTimeStr.GetLength();
 		RedrawWindow();
 	}
 }

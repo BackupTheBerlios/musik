@@ -763,6 +763,16 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 
 LRESULT CMainFrame::OnSongChange( WPARAM wParam, LPARAM lParam )
 {
+	// tell the child windows to redraw their
+	// state accordingly
+	m_wndView->GetCtrl()->RedrawWindow();
+
+	m_wndNowPlaying->GetCtrl()->GetTimeCtrl()->OnNewSong();
+	m_wndNowPlaying->GetCtrl()->UpdateInfo();
+	m_wndNowPlaying->GetCtrl()->UpdateButtonStates();
+
+	// if the player is playing, then we need
+	// to do our own updating
 	if ( m_Player->IsPlaying() )
 	{
 		CString s;
@@ -772,12 +782,6 @@ LRESULT CMainFrame::OnSongChange( WPARAM wParam, LPARAM lParam )
 			m_Player->GetCurrPlaying()->GetArtist().c_str() );
 
 		SetWindowText( s );
-		
-		m_wndView->GetCtrl()->RedrawWindow();
-
-		m_wndNowPlaying->GetCtrl()->GetTimeCtrl()->OnNewSong();
-		m_wndNowPlaying->GetCtrl()->UpdateInfo();
-		m_wndNowPlaying->GetCtrl()->UpdateButtonStates();
 	}
 	else
 		SetWindowText( MUSIK_VERSION_STR );	
@@ -791,7 +795,13 @@ LRESULT CMainFrame::OnSongStop( WPARAM wParam, LPARAM lParam )
 {
 	TRACE0( "Song stop signal caught\n" );
 
+	m_wndNowPlaying->GetCtrl()->GetTimeCtrl()->OnNewSong();
+	m_wndNowPlaying->GetCtrl()->UpdateInfo();
 	m_wndNowPlaying->GetCtrl()->UpdateButtonStates();
+
+	m_wndView->GetCtrl()->RedrawWindow();
+
+	SetWindowText( MUSIK_VERSION_STR );
 	
 	return 0L;
 }
@@ -1164,11 +1174,15 @@ LRESULT CMainFrame::OnPlayerPlaySel( WPARAM wParam, LPARAM lParam )
 	if ( m_Player->IsPlaying() && m_Player->IsPaused() )
 		m_Player->Resume();
 	
-	// player is not paused, so trigger the playlist
-	// to activate the current item, which will
-	// start playback...
 	else
-		m_wndView->GetCtrl()->PlayItem();
+	{
+		// player is not paused, so trigger the playlist
+		// to activate the current item, which will
+		// start playback... if that doesn't work, tell the
+		// player to start playing it's playlist from pos 0
+		if ( !m_wndView->GetCtrl()->PlayItem() )
+			m_Player->Play( 0, MUSIK_CROSSFADER_NEW_SONG );
+	}
 
 	return 0L;
 }

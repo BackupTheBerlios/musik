@@ -287,7 +287,8 @@ void CmusikPlaylistCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 
 			else
 			{
-				if ( m_Player->GetCurrPlaying()->GetID() == m_Playlist->GetSongID( pLVCD->nmcd.dwItemSpec ) && 
+				if ( m_Player->IsPlaying() &&
+					m_Player->GetCurrPlaying()->GetID() == m_Playlist->GetSongID( pLVCD->nmcd.dwItemSpec ) && 
 					GetPlaylist() == m_Player->GetPlaylist() && 
 					pLVCD->nmcd.dwItemSpec == m_Player->GetIndex() )
 					pDC->SelectObject( m_BoldFont );
@@ -532,15 +533,18 @@ void CmusikPlaylistCtrl::SetPlaylist( CmusikPlaylist* playlist, int m_Type )
 
 ///////////////////////////////////////////////////
 
-void CmusikPlaylistCtrl::PlayItem( int n )
+bool CmusikPlaylistCtrl::PlayItem( int n )
 {
 	if ( !m_Playlist )
-		return;
+		return false;
 
 	if ( n == -1 )
 	{
 		POSITION pos = GetFirstSelectedItemPosition();
 		n = GetNextSelectedItem ( pos );
+
+		if ( n == -1 )
+			return false;
 	}	
 
 	// give the current playlist to the player,
@@ -579,7 +583,12 @@ void CmusikPlaylistCtrl::PlayItem( int n )
 	// play the song in the (new) playlist at
 	// the acitvated item.
 	if ( n > -1 )
+	{
 		m_Player->Play( n, MUSIK_CROSSFADER_NEW_SONG );
+		return true;
+	}
+
+	return false;
 }
 
 ///////////////////////////////////////////////////
