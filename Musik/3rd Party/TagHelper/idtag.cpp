@@ -8,8 +8,9 @@
 #include <stdlib.h>
 #include "idtag.h"
 
-#ifdef _WIN32
-#define strnocasecmp _stricmp
+#ifdef _MSC_VER
+#define strncasecmp strnicmp
+#define strcasecmp	stricmp 
 #endif
 
 #ifndef _MAX_PATH
@@ -22,6 +23,29 @@
 #define _MAX_FNAME 256
 #endif
 
+void splitpath (const char *inpath, char *outpath, char *outname) 
+{
+	outpath[0] = 0;
+	outname[0] = 0;
+#ifdef _WIN32
+	char * lastslash = strrchr(inpath,'/');
+	if(!lastslash)	
+		lastslash = strrchr(inpath,'\\');
+#else
+	char * lastslash = strrchr(inpath,'/');
+#endif
+	if(lastslash)
+	{
+		strncpy(outpath, inpath, lastslash - inpath);
+		outpath[lastslash - inpath + 1] = 0;
+		strcpy(outname, lastslash + 1);
+	}
+	else
+	{
+		strcpy(outname, inpath);
+	}
+	
+}
 
 size_t   unicodeToUtf8 ( const wchar_t* lpWideCharStr, char* lpMultiByteStr, int cwcChars );
 size_t   utf8ToUnicode ( const char* lpMultiByteStr, wchar_t* lpWideCharStr, int cmbChars );
@@ -148,7 +172,7 @@ size_t CSimpleTagReader::CopyTagValue ( char* dest, const char* item, size_t cou
 
     for ( i = 0; i < tagitem_count; i++ ) {
         // Are items case sensitive?
-        if ( strnocasecmp( item, tagitems[i].Item ) == 0 ) {
+        if ( strcasecmp( item, tagitems[i].Item ) == 0 ) {
             if ( count > tagitems[i].ValueSize + 1 ) count = tagitems[i].ValueSize + 1;
             memcpy ( dest, tagitems[i].Value, count );
             return count;
@@ -165,7 +189,7 @@ char* CSimpleTagReader::TagValue ( const char* item)
 
     for ( i = 0; i < tagitem_count; i++ ) {
         // Are items case sensitive?
-        if ( strnocasecmp ( item, tagitems[i].Item ) == 0 )
+        if ( strcasecmp ( item, tagitems[i].Item ) == 0 )
             return (char*)tagitems[i].Value;
     }
 
@@ -235,7 +259,7 @@ int CSimpleTagReader::InsertTagField ( const char* item, size_t itemsize, const 
 
     for ( i = 0; i < tagitem_count; i++ ) {
         // are items case sensitive?
-        if ( strnocasecmp ( item, tagitems[i].Item ) == 0 )               // replace value of first item found
+        if ( strcasecmp ( item, tagitems[i].Item ) == 0 )               // replace value of first item found
             return ReplaceTagField ( value, valuesize, flags, i, (tag_rel)0 );
     }
 
@@ -252,7 +276,7 @@ int CSimpleTagReader::InsertTagFieldLonger ( const char* item, size_t itemsize, 
 
     for ( i = 0; i < tagitem_count; i++ ) {
         // are items case sensitive?
-        if ( strnocasecmp ( item, tagitems[i].Item ) == 0 ) {
+        if ( strcasecmp ( item, tagitems[i].Item ) == 0 ) {
             if ( reliability > tagitems[i].Reliability )              // replace value of first item found
                 return ReplaceTagField ( value, valuesize, flags, i, reliability );
             else
@@ -488,7 +512,7 @@ GenreToInteger ( const char* GenreStr)
     size_t  i;
 
     for ( i = 0; i < sizeof(GenreList) / sizeof(*GenreList); i++ ) {
-        if ( 0 == strnocasecmp ( GenreStr, GenreList [i] ) )
+        if ( 0 == strcasecmp ( GenreStr, GenreList [i] ) )
             return i;
     }
 
@@ -639,11 +663,11 @@ int CSimpleTagReader::GuessTagFromName ( const char* filename, const char* namin
     for ( i = 0; i < strlen (name) - 5; i++ ) {
         if ( name[i] != '\\' && name[i] != '/' ) continue;
 
-        if ( strnocasecmp ( (char *)(name+i+1), "(CD", 3 ) == 0 || strnocasecmp ( (char *)(name+i+1), "(DVD", 4 ) == 0 )
+        if ( strncasecmp ( (char *)(name+i+1), "(CD", 3 ) == 0 || strncasecmp ( (char *)(name+i+1), "(DVD", 4 ) == 0 )
             name[i] = ' ';
     }
 
-    _splitpath( name, NULL, dir, fname, NULL );
+    splitpath( name, dir, fname );
 
     if ( strlen ( fname ) == 0 || strlen (naming_scheme) >= _MAX_PATH )
         return 1;
@@ -844,11 +868,11 @@ int GuessTagFromName_Test ( const char* filename, const char* naming_scheme, cha
     for ( i = 0; i < strlen (name) - 5; i++ ) {
         if ( name[i] != '\\' && name[i] != '/' ) continue;
 
-        if ( strnocasecmp ( (char *)(name+i+1), "(CD", 3 ) == 0 || strnocasecmp ( (char *)(name+i+1), "(DVD", 4 ) == 0 )
+        if ( strncasecmp ( (char *)(name+i+1), "(CD", 3 ) == 0 || strncasecmp ( (char *)(name+i+1), "(DVD", 4 ) == 0 )
             name[i] = ' ';
     }
 
-    _splitpath( name, NULL, dir, fname, NULL );
+    splitpath( name, dir, fname );
 
     if ( strlen ( fname ) == 0 || strlen (naming_scheme) >= _MAX_PATH )
         return 1;
