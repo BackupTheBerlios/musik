@@ -2197,6 +2197,8 @@ void CMainFrame::OnViewPlaylistinformation()
 	m_wndView->GetClientRect( &lpRect );
 	m_wndView->OnSize( NULL, lpRect.Width(), lpRect.Height() );
 	RedrawWindow();
+	m_wndView->UpdatePlaylistInfo();
+	
 }
 
 ///////////////////////////////////////////////////
