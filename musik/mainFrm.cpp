@@ -62,7 +62,6 @@
 #include <Direct.h>
 
 #include "3rdparty/TreePropSheet.h"
-#include ".\mainfrm.h"
 
 ///////////////////////////////////////////////////
 
@@ -89,6 +88,8 @@ int WM_SOURCESDYNPLAYLIST	= RegisterWindowMessage( "SOURCESDYNDPLAYLIST" );
 int WM_SOURCESQUICKSEARCH	= RegisterWindowMessage( "SOURCESQUICKSEARCH" );
 
 int WM_CLOSEDIRSYNC			= RegisterWindowMessage( "CLOSEDIRSYNC" );
+
+int WM_GETPLAYLIST			= RegisterWindowMessage( "GETPLAYLIST" );
 
 // we get these ones from the player
 // via a CmusikFrmFunctor after a
@@ -210,6 +211,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_CLOSEDIRSYNC, OnCloseDirSync )
 	ON_REGISTERED_MESSAGE( WM_SELBOXADDREMOVE, OnSelBoxAddRemove )
 	ON_REGISTERED_MESSAGE( WM_SELBOXREQUESTUPDATE, OnSelBoxRequestUpdate )
+	ON_REGISTERED_MESSAGE( WM_GETPLAYLIST, OnGetCurrPlaylist )
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -2565,7 +2567,6 @@ void CMainFrame::OnLibrarySynchronizedirectoriesnow()
 
 ///////////////////////////////////////////////////
 
-
 BOOL CMainFrame::PreTranslateMessage(MSG* pMsg)
 {
 	if ( pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_ESCAPE && GetThreadCount() )
@@ -2576,3 +2577,12 @@ BOOL CMainFrame::PreTranslateMessage(MSG* pMsg)
 
 	return CFrameWnd::PreTranslateMessage(pMsg);
 }
+
+///////////////////////////////////////////////////
+
+LRESULT CMainFrame::OnGetCurrPlaylist( WPARAM wParam, LPARAM lParam )
+{
+	return (LRESULT)m_wndView->GetCtrl()->GetPlaylist();
+}
+
+///////////////////////////////////////////////////

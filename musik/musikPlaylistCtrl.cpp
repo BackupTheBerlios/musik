@@ -1037,7 +1037,7 @@ void CmusikPlaylistCtrl::DeleteItems( const CIntArray& items, bool update )
 	{
 		if ( m_Player->GetPlaylist() == m_Playlist )
 		{
-			if ( m_Player->m_Index >= (size_t)items.at( i ) - i )
+			if ( m_Player->m_Index >= (int)items.at( i ) - i )
 				m_Player->m_Index--;
 		}
 

@@ -97,10 +97,11 @@ void CmusikSourcesBar::OnItemChanged( NMHDR* pNotifyStruct, LRESULT* plResult )
 
 		// quick search
 		if ( pNMPropTree->pItem->GetPlaylistType() == MUSIK_SOURCES_TYPE_QUICKSEARCH )
-		{
-			CmusikSourcesCtrl* pCtrl = (CmusikSourcesCtrl*)GetCtrl();
-			pCtrl->QuickSearch();
-		}
+			GetCtrl()->QuickSearch();
+
+		// create new std playlist
+		if ( pNMPropTree->pItem->GetPlaylistType() == MUSIK_SOURCES_TYPE_NEWSTDPLAYLIST )
+			GetCtrl()->NewStdPlaylist();
 
 		// now playing selected
 		else if ( pNMPropTree->pItem->GetPlaylistType() == MUSIK_SOURCES_TYPE_NOWPLAYING )
@@ -205,6 +206,7 @@ IMPLEMENT_DYNAMIC( CmusikSourcesCtrl, CmusikPropTree )
 int WM_SOURCES_EDIT_COMMIT = RegisterWindowMessage( "MUSIKEDITCOMMIT" );
 int WM_SOURCES_EDIT_CANCEL = RegisterWindowMessage( "MUSIKEDITCANCEL" );
 int WM_SOURCES_EDIT_CHANGE = RegisterWindowMessage( "MUSIKEDITCHANGE" );
+
 ///////////////////////////////////////////////////
 
 CmusikSourcesCtrl::CmusikSourcesCtrl( CFrameWnd* parent, CmusikLibrary* library, CmusikPlayer* player, CmusikPrefs* prefs, UINT dropid )
@@ -216,6 +218,8 @@ CmusikSourcesCtrl::CmusikSourcesCtrl( CFrameWnd* parent, CmusikLibrary* library,
 	m_StdPlaylistRoot	= NULL;
 	m_DynPlaylistRoot	= NULL;
 	m_QuickSearch		= NULL;
+	m_NewStdPlaylist	= NULL;
+	m_LastSel			= NULL;
 	m_DropArrange		= false;
 	m_Startup			= true;
 	m_Player			= player;
@@ -272,7 +276,7 @@ void CmusikSourcesCtrl::InitItems()
 	if ( m_QuickSearch )
 	{
 		DeleteItem( m_QuickSearch );
-		delete m_QuickSearch;
+		m_QuickSearch = NULL;
 	}
 
 	info.Set( "Quick Search", -1, -1 );
@@ -288,20 +292,21 @@ void CmusikSourcesCtrl::InitItems()
 	if ( m_StdPlaylistRoot )
 	{
 		DeleteItem( m_StdPlaylistRoot );
-		delete m_StdPlaylistRoot;
+		m_StdPlaylistRoot = NULL;
 	}
 
 	info.Set( "Standard Playlists", -1, -1 );
 	m_StdPlaylistRoot = InsertItem( new CmusikPropTreeItem() );
 	m_StdPlaylistRoot->SetPlaylistInfo( info );
 	m_StdPlaylistRoot->Expand( true );
+
 	LoadStdPlaylists();
 
 	// dynamic playlists
 	if ( m_DynPlaylistRoot )
 	{
 		DeleteItem( m_DynPlaylistRoot );
-		delete m_DynPlaylistRoot;
+		m_DynPlaylistRoot = NULL;
 	}
 
 	info.Set( "Dynamic Playlists", -1, -1 );
@@ -321,6 +326,7 @@ void CmusikSourcesCtrl::CleanItems()
 	m_StdPlaylistRoot = NULL;
 	m_DynPlaylistRoot = NULL;
 	m_QuickSearch = NULL;
+	m_LastSel = NULL;
 
 	m_Libraries.clear();
 	m_StdPlaylists.clear();
@@ -368,18 +374,13 @@ int CmusikSourcesCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		m_DropTarget->Register( this );
 
 	// quick search
-	m_QuickSearchCtrl.Create( WS_CHILD | WS_CLIPCHILDREN, CRect( 0, 0, 0, 0 ), this, IDC_QUICKSEARCH );
-	m_QuickSearchCtrl.EnableWindow( FALSE );
-
-	// edit in place
-	m_EditInPlace.Create( WS_CHILD | WS_CLIPCHILDREN, CRect( 0, 0, 0, 0 ), this, 123 );
+	m_EditInPlace.Create( WS_CHILD | WS_CLIPCHILDREN, CRect( 0, 0, 0, 0 ), this, IDC_EDITINPLACE );
 	m_EditInPlace.EnableWindow( FALSE );
 
 	CFont font;
 	font.CreateStockObject( DEFAULT_GUI_FONT );
 
 	m_EditInPlace.SetFont( &font );
-	m_QuickSearchCtrl.SetFont( &font );
 
 	InitItems();
 
@@ -410,6 +411,14 @@ void CmusikSourcesCtrl::LoadLibraries()
 
 void CmusikSourcesCtrl::LoadStdPlaylists()
 {
+	// delete the "Create..."
+	if ( m_NewStdPlaylist )
+	{
+		DeleteItem( m_NewStdPlaylist );
+		m_NewStdPlaylist = NULL;
+	}
+
+	// load the playlists...
 	for ( size_t i = 0; i < m_StdPlaylists.size(); i++ )
 		DeleteItem( m_StdPlaylists.at( i ) );
 
@@ -427,6 +436,12 @@ void CmusikSourcesCtrl::LoadStdPlaylists()
 
 		m_StdPlaylists.push_back( temp );
 	}
+
+	// create the "Create..."
+	CmusikPlaylistInfo info;
+	info.Set( "Create...", MUSIK_SOURCES_TYPE_NEWSTDPLAYLIST, -1 ); 
+	m_NewStdPlaylist = InsertItem( new CmusikPropTreeItem(), m_StdPlaylistRoot );
+	m_NewStdPlaylist->SetPlaylistInfo( info );
 }
 
 ///////////////////////////////////////////////////
@@ -817,20 +832,20 @@ CmusikPropTreeItem* CmusikSourcesCtrl::FindItem( const POINT& pt )
 	for ( size_t i = 0; i < m_Libraries.size(); i++ )
 	{
 		ipt = m_Libraries.at( i )->GetLocation();
-		if ( p.y >= ipt.y && p.y < ipt.y + m_Libraries.at( i )->GetHeight() )
+		if ( p.y >= ipt.y && p.y < ipt.y + PROPTREEITEM_DEFHEIGHT )
 			return m_Libraries.at( i );
 	}
 
 	// quick search
 	ipt = m_QuickSearch->GetLocation();
-	if ( p.y >= ipt.y && p.y < ipt.y + m_QuickSearch->GetHeight() )
+	if ( p.y >= ipt.y && p.y < ipt.y + PROPTREEITEM_DEFHEIGHT ) 
 		return m_QuickSearch;
 
 	// standard playlists...
 	for ( size_t i = 0; i < m_StdPlaylists.size(); i++ )
 	{
 		ipt = m_StdPlaylists.at( i )->GetLocation();
-		if ( p.y >= ipt.y && p.y < ipt.y + m_StdPlaylists.at( i )->GetHeight() )
+		if ( p.y >= ipt.y && p.y < ipt.y + PROPTREEITEM_DEFHEIGHT )
 			return m_StdPlaylists.at( i );
 	}
 
@@ -838,26 +853,31 @@ CmusikPropTreeItem* CmusikSourcesCtrl::FindItem( const POINT& pt )
 	for ( size_t i = 0; i < m_DynPlaylists.size(); i++ )
 	{
 		ipt = m_DynPlaylists.at( i )->GetLocation();
-		if ( p.y >= ipt.y && p.y < ipt.y + m_DynPlaylists.at( i )->GetHeight() )
+		if ( p.y >= ipt.y && p.y < ipt.y + PROPTREEITEM_DEFHEIGHT )
 			return m_DynPlaylists.at( i );
 	}
 
 	// fall back to root items...
 	ipt = m_LibrariesRoot->GetLocation();
-	if ( p.y >= ipt.y && p.y < ipt.y + m_LibrariesRoot->GetHeight() )
+	if ( p.y >= ipt.y && p.y < ipt.y + PROPTREEITEM_DEFHEIGHT )
 		return m_LibrariesRoot;
 	
 	ipt = m_StdPlaylistRoot->GetLocation();
-	if ( p.y >= ipt.y && p.y < ipt.y + m_StdPlaylistRoot->GetHeight() )
+	if ( p.y >= ipt.y && p.y < ipt.y + PROPTREEITEM_DEFHEIGHT )
 		return m_StdPlaylistRoot;
 
 	ipt = m_DynPlaylistRoot->GetLocation();
-	if ( p.y >= ipt.y && p.y < ipt.y + m_DynPlaylistRoot->GetHeight() )
+	if ( p.y >= ipt.y && p.y < ipt.y + PROPTREEITEM_DEFHEIGHT )
 		return m_DynPlaylistRoot;
 
+	// finally try quick search / new playlist items
 	ipt = m_QuickSearchRoot->GetLocation();
-	if ( p.y >= ipt.y && p.y < ipt.y + m_DynPlaylistRoot->GetHeight() )
+	if ( p.y >= ipt.y && p.y < ipt.y + PROPTREEITEM_DEFHEIGHT )
 		return m_QuickSearchRoot;
+
+	ipt = m_NewStdPlaylist->GetLocation();
+	if ( p.y >= ipt.y && p.y < ipt.y + PROPTREEITEM_DEFHEIGHT )
+		return m_NewStdPlaylist;
 
 	// item couldn't be found
 	return NULL;
@@ -901,6 +921,7 @@ void CmusikSourcesCtrl::RenameSel()
 		CRect rect( 20, nPos.y + 3, rcClient.Width(), nPos.y + PROPTREEITEM_DEFHEIGHT - 2 );
 
 		m_EditInPlace.EnableWindow( TRUE );
+		m_EditInPlace.SetArgs( (void*)MUSIK_SOURCES_EDITINPLACE_RENAME );
 		m_EditInPlace.MoveWindow( rect );
 		m_EditInPlace.SetFocus();
 		m_EditInPlace.SetString( pItem->GetLabelText() );
@@ -1090,17 +1111,32 @@ LRESULT CmusikSourcesCtrl::OnEditCancel( WPARAM wParam, LPARAM lParam )
 {
 	SetFocus();
 
+	int cmd = (int)lParam;
+
 	CmusikEditInPlace* sender = (CmusikEditInPlace*)wParam;
 
-	if ( sender == &m_EditInPlace )
-		m_EditInPlace.EnableWindow( FALSE );
+	if ( cmd == MUSIK_SOURCES_EDITINPLACE_NEWSTDPLAYLIST )
+	{
+		m_NewStdPlaylist->SetLabelText( "Create..." );
+		
+		if ( m_LastSel )
+		{
+			KillFocus( false );
+
+			m_LastSel->Select( TRUE );
+			SetFocusedItem( m_LastSel );
+
+			m_LastSel = NULL;
+		}
+	}
+
 	else
 	{
 		FinishQuickSearch();
 		m_QuickSearch->SetLabelText( "Enter Search..." );
-		m_QuickSearchCtrl.EnableWindow( FALSE );
 	}
-
+	
+	m_EditInPlace.EnableWindow( FALSE );
 	return 0L;
 }
 
@@ -1108,10 +1144,11 @@ LRESULT CmusikSourcesCtrl::OnEditCancel( WPARAM wParam, LPARAM lParam )
 
 LRESULT CmusikSourcesCtrl::OnEditCommit( WPARAM wParam, LPARAM lParam )
 {
+	int cmd = (int)lParam;
 	CmusikEditInPlace* sender = (CmusikEditInPlace*)wParam;
 	CmusikPropTreeItem* pItem = GetFocusedItem();
 
-	if ( sender == &m_EditInPlace )
+	if ( cmd == MUSIK_SOURCES_EDITINPLACE_RENAME )
 	{
 		CString sName = sender->GetString();
 		
@@ -1127,13 +1164,25 @@ LRESULT CmusikSourcesCtrl::OnEditCommit( WPARAM wParam, LPARAM lParam )
 
 		m_EditInPlace.EnableWindow( FALSE );
 	}
-	else if ( sender == &m_QuickSearchCtrl )
+	else if ( cmd == MUSIK_SOURCES_EDITINPLACE_QUICKSEARCH )
 	{
 		if ( pItem )
 		{
 			m_QuickSearch->SetLabelText( "Enter Search..." );
 			FinishQuickSearch();
 		}
+	}
+	else if ( cmd == MUSIK_SOURCES_EDITINPLACE_NEWSTDPLAYLIST )
+	{
+		CString sName = sender->GetString();
+
+		CmusikPlaylist playlist;
+		int nID = m_Library->CreateStdPlaylist( (CmusikString)sName, playlist );
+
+		// insert new
+		LoadStdPlaylists();
+
+		FocusLibrary();
 	}
 
 	SetFocus();
@@ -1163,11 +1212,12 @@ void CmusikSourcesCtrl::QuickSearch()
 		
 		CRect rect( 20, nPos.y + 3, rcClient.Width(), nPos.y + PROPTREEITEM_DEFHEIGHT - 2 );
 
-		m_QuickSearchCtrl.EnableWindow( TRUE );
-		m_QuickSearchCtrl.MoveWindow( rect );
-		m_QuickSearchCtrl.SetFocus();
-		m_QuickSearchCtrl.SetString( m_QuickSearchCtrl.GetString() );
-		m_QuickSearchCtrl.ShowWindow( SW_SHOWDEFAULT );
+		m_EditInPlace.EnableWindow( TRUE );
+		m_EditInPlace.SetArgs( (void*)MUSIK_SOURCES_EDITINPLACE_QUICKSEARCH );
+		m_EditInPlace.MoveWindow( rect );
+		m_EditInPlace.SetFocus();
+		m_EditInPlace.SetString( m_EditInPlace.GetString() );
+		m_EditInPlace.ShowWindow( SW_SHOWDEFAULT );
 	}
 }
 
@@ -1175,12 +1225,12 @@ void CmusikSourcesCtrl::QuickSearch()
 
 LRESULT CmusikSourcesCtrl::OnEditChange( WPARAM wParam, LPARAM lParam )
 {
-	CmusikEditInPlace* sender = (CmusikEditInPlace*)wParam;
+	int cmd = (int)lParam;
 
-	if ( sender == &m_QuickSearchCtrl )
+	if ( cmd == MUSIK_SOURCES_EDITINPLACE_QUICKSEARCH )
 	{
 		CString curr_query;
-		m_QuickSearchCtrl.GetWindowText( curr_query );
+		m_EditInPlace.GetWindowText( curr_query );
 
 		if ( curr_query.GetLength() >= 2 || curr_query.Left( 1 ) == "!" )
 		{
@@ -1210,3 +1260,26 @@ void CmusikSourcesCtrl::FinishQuickSearch()
 
 ///////////////////////////////////////////////////
 
+void CmusikSourcesCtrl::NewStdPlaylist()
+{
+	if ( m_NewStdPlaylist )
+	{
+		m_NewStdPlaylist->SetLabelText( "" );
+		
+		CPoint nPos = m_NewStdPlaylist->GetLocation();		
+
+		CRect rcClient;
+		GetClientRect( rcClient );
+		
+		CRect rect( 20, nPos.y + 3, rcClient.Width(), nPos.y + PROPTREEITEM_DEFHEIGHT - 2 );
+
+		m_EditInPlace.EnableWindow( TRUE );
+		m_EditInPlace.SetArgs( (void*)MUSIK_SOURCES_EDITINPLACE_NEWSTDPLAYLIST );
+		m_EditInPlace.MoveWindow( rect );
+		m_EditInPlace.SetFocus();
+		m_EditInPlace.SetString( m_EditInPlace.GetString() );
+		m_EditInPlace.ShowWindow( SW_SHOWDEFAULT );
+	}
+}
+
+///////////////////////////////////////////////////

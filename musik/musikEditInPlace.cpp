@@ -20,6 +20,7 @@ int WM_MUSIKEDITCHANGE = RegisterWindowMessage( "MUSIKEDITCHANGE" );
 CmusikEditInPlace::CmusikEditInPlace()
 {
 	m_IsVisible = false;
+	m_Args = NULL;
 }
 
 ///////////////////////////////////////////////////
@@ -44,7 +45,7 @@ void CmusikEditInPlace::Commit()
 	ShowWindow( SW_HIDE );
 
 	if ( GetParent() )
-		GetParent()->SendMessage( WM_MUSIKEDITCOMMIT, (WPARAM)this );
+		GetParent()->SendMessage( WM_MUSIKEDITCOMMIT, (WPARAM)this, (LPARAM)m_Args );
 }
 
 ///////////////////////////////////////////////////
@@ -55,7 +56,7 @@ void CmusikEditInPlace::Cancel()
 	ShowWindow( SW_HIDE );
 
 	if ( GetParent() )
-		GetParent()->SendMessage( WM_MUSIKEDITCANCEL, (WPARAM)this );
+		GetParent()->SendMessage( WM_MUSIKEDITCANCEL, (WPARAM)this, (LPARAM)m_Args );
 }
 
 ///////////////////////////////////////////////////
@@ -102,7 +103,7 @@ void CmusikEditInPlace::OnShowWindow(BOOL bShow, UINT nStatus)
 void CmusikEditInPlace::OnEnChange()
 {
 	if ( GetParent() )
-		GetParent()->SendMessage( WM_MUSIKEDITCHANGE, (WPARAM)this );
+		GetParent()->SendMessage( WM_MUSIKEDITCHANGE, (WPARAM)this, (LPARAM)m_Args );
 }
 
 ///////////////////////////////////////////////////

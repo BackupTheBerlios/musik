@@ -35,6 +35,15 @@ class CmusikSourcesCtrl;
 
 ///////////////////////////////////////////////////
 
+enum
+{
+	MUSIK_SOURCES_EDITINPLACE_RENAME = 493,
+	MUSIK_SOURCES_EDITINPLACE_QUICKSEARCH,
+	MUSIK_SOURCES_EDITINPLACE_NEWSTDPLAYLIST
+};
+
+///////////////////////////////////////////////////
+
 // CmusikSourcesBar
 
 ///////////////////////////////////////////////////
@@ -80,13 +89,13 @@ protected:
 
 ///////////////////////////////////////////////////
 
-#define IDC_QUICKSEARCH 1538
+#define IDC_EDITINPLACE 1538
 
 ///////////////////////////////////////////////////
 
 class CmusikSourcesCtrl : public CmusikPropTree
 {
-
+	friend class CmusikSourcesBar;
 	friend class CmusikSourcesDropTarget;
 
 public:
@@ -103,6 +112,7 @@ public:
 	void RenameSel();
 	void DeleteSel();
 	void QuickSearch();
+	void NewStdPlaylist();
 	void Reset(){ CleanItems(); InitItems(); }
 
 	// overrides
@@ -172,7 +182,6 @@ private:
 
 	// quick search
 	void FinishQuickSearch();
-	CmusikEditInPlace m_QuickSearchCtrl;
 
 	// startup bool, if true on startup
 	// the library will be selected by
@@ -185,6 +194,7 @@ private:
 	// items that will show up in the list
 	CmusikSourcesItemPtrArray m_Libraries;
 	CmusikPropTreeItem* m_QuickSearch;
+	CmusikPropTreeItem* m_NewStdPlaylist;
 	CmusikSourcesItemPtrArray m_StdPlaylists;
 	CmusikSourcesItemPtrArray m_DynPlaylists;
 };
