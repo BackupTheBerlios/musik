@@ -39,7 +39,7 @@
 // 
 // Example: 
 //
-//   MFC's CListCtrl's Cache-Hint mechanism, which sends
+//   MFC's CListCtrl's Cache-Hint mechanism sends
 //   a range of items in a control must be managed.
 //
 // Usage: 

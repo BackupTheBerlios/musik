@@ -163,7 +163,7 @@ CmusikString CmusikSongInfo::GetField( int field )
 		return m_Rating;
 		break;
 	case MUSIK_LIBRARY_TYPE_TIMESPLAYED:
-		return m_LastPlayed;
+		return m_TimesPlayed;
 		break;
 	case MUSIK_LIBRARY_TYPE_BITRATE:
 		return m_Bitrate;

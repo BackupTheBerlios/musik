@@ -2391,7 +2391,8 @@ int CmusikLibrary::GetFilesize( const CmusikString& fn )
 	FILE* pFile = fopen( fn.c_str(), "rb" );
 	if ( pFile )
 	{
-		int fs = fseek( pFile, 0, SEEK_END );
+		fseek( pFile, 0, SEEK_END );
+		int fs = ftell( pFile );
 		fclose( pFile );
 		return fs;
 	}
@@ -3097,6 +3098,7 @@ int CmusikLibrary::IncLastPlayed( int songid )
 	int nRet;
 	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
+		
 		nRet = sqlite_exec_printf( m_pDB, "UPDATE %Q SET timesplayed = (timesplayed + 1), lastplayed = %Q where songid = %d;",
 			NULL, NULL, NULL,
 			SONG_TABLE_NAME,
@@ -3143,6 +3145,30 @@ int CmusikLibrary::SortPlaylist( CmusikPlaylist* playlist, int field, bool desce
 	playlist->Clear();
 
 	return RawQuerySongs( sQuery, *playlist );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikLibrary::DeleteSongs( CmusikPlaylist& songs, bool delete_from_disk )
+{
+	CmusikString filename;
+	BeginTransaction();
+	for ( size_t i = 0; i < songs.GetCount(); i++ )
+	{
+		if ( delete_from_disk )
+			filename = songs.GetField( i, MUSIK_LIBRARY_TYPE_FILENAME );
+
+		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
+		{
+			sqlite_exec_printf( m_pDB, "delete from songs where songid=%d;", 
+				NULL, NULL, NULL,
+				songs.GetSongID( i ) );
+		}
+
+		if ( delete_from_disk && CmusikFilename::FileExists( filename ) )
+			remove( filename.c_str() );
+	}
+	EndTransaction();
 }
 
 ///////////////////////////////////////////////////

@@ -155,6 +155,7 @@ public:
 	// but will clear everything if the right flag
 	// is passed
 	void ClearLibrary( bool clear_all_tables = false );
+	void DeleteSongs( CmusikPlaylist& songs, bool delete_from_disk = false );
 
 	// sorting playlist by field
 	int SortPlaylist( CmusikPlaylist* playlist, int field, bool ascending = true );
