@@ -51,6 +51,10 @@
 
 ///////////////////////////////////////////////////
 
+class CmusikTask;
+
+///////////////////////////////////////////////////
+
 class CmusikFunctor
 {
 public:
@@ -83,22 +87,17 @@ public:
 		// pure virtual
 	}
 
-	virtual void OnThreadStart()
+	virtual void OnTaskStart()
 	{
 		// pure virtual
 	}
 
-	virtual void OnThreadEnd( void* thr_addr = NULL )
+	virtual void OnTaskEnd( CmusikTask* task_addr = NULL )
 	{
 		// pure virtual
 	}
 
-	virtual void OnThreadProgress( size_t progress )
-	{
-		// pure virtual
-	}
-
-	virtual void OnThreadNewFile( size_t currfile, size_t allfiles )
+	virtual void OnTaskProgress( size_t progress )
 	{
 		// pure virtual
 	}

@@ -178,7 +178,7 @@ public:
 			if ( curr_prog != last_prog )
 			{
 				if ( m_Params->m_Functor )
-					m_Params->m_Functor->OnThreadProgress( curr_prog );
+					m_Params->m_Functor->OnTaskProgress( curr_prog );
 				last_prog = curr_prog;
 			}
 
@@ -189,13 +189,14 @@ public:
 		if ( m_Params->m_DeleteFilelist )
 			delete m_Params->m_Files;
 
-		if ( m_Params->m_Functor && ( ( m_Stop && m_Params->m_CallFunctorOnAbort ) || !m_Stop ) )
-			m_Params->m_Functor->OnThreadEnd( (void*)this );
+		CmusikFunctor *functor = m_Params->m_Functor;
+		bool call_functor_abort = m_Params->m_CallFunctorOnAbort;
 
 		delete m_Params;
-
-		// flag thread operation as complete
 		m_Finished = true;
+
+		if ( functor && ( ( m_Stop && call_functor_abort ) || !m_Stop ) )
+			functor->OnTaskEnd( this );
 
 		return 0;
 	}
