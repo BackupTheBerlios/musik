@@ -64,7 +64,6 @@
 
 #include <io.h>
 #include <Direct.h>
-#include ".\mainfrm.h"
 
 ///////////////////////////////////////////////////
 
@@ -266,48 +265,34 @@ int CMainFrameWorker::svc()
 	suspend.set( 0.1f );
 	sleep.set( 1.0f );
 
+	int last_task_count = 0, task_count = 0;;
+
 	CString sCaption;
 	while ( !m_Stop )
 	{
-		if ( m_Parent->GetTaskCount() )
+		task_count = m_Parent->GetTaskCount();
+
+		if ( task_count )
 		{
-			switch ( pos )
+			// let user know how many tasks are active
+			task_count = m_Parent->GetTaskCount();
+			if ( task_count != last_task_count )
 			{
-			case 0:
-				turn = "/  ";
-				++pos;
-				break;
-			case 1:
-				turn = " | ";
-				++pos;
-				break;
-			case 2:
-				turn = "  \\";
-				++pos;
-				break;
-			case 3:
-				turn = " | ";
-				pos = 0;
-				break;			
+				sCaption.Format( _T( "%s (%d workers)" ), m_Parent->m_Caption, task_count );
+				m_Parent->SetWindowText( sCaption );
 			}
+			last_task_count = task_count;
 
-			sCaption = m_Parent->m_Caption;
-			for ( size_t i = 0; i < m_Parent->GetTaskCount(); i++ )
-			{
-				sCaption += _T( "  " );
-				sCaption += turn;
-			}
-
+			// requery every 3 seconds
 			cnt++;
 			if ( cnt == 12 )
 			{
 				m_Parent->RequerySelBoxes( NULL, true, true );
 				cnt = 0;
 			}
-
-			m_Parent->SetWindowText( sCaption );
 		}
-
+	
+		last_task_count = 0;
 		ACE_OS::sleep( sleep );
 
 	}
@@ -2965,6 +2950,12 @@ LRESULT CMainFrame::OnSelBoxDelSel( WPARAM wParam, LPARAM lParam )
 	// setup vars
 	CmusikSelectionCtrl* pSel = (CmusikSelectionCtrl*)wParam;
 	BOOL from_computer = (BOOL)lParam;
+
+	if ( from_computer )
+	{
+		if ( MessageBox( _T( "Are you sure you want to PERMANETLY delete these files from your computer?" ), MUSIK_VERSION_STR, MB_ICONWARNING | MB_YESNO ) != IDYES )
+			return 0L;
+	}
 
 	// get selected items into a new
 	// playlist

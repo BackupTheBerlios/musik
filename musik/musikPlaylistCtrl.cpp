@@ -826,7 +826,7 @@ bool CmusikPlaylistCtrl::PlayItem_AddNP( int n )
 	{
 		if ( m_Player->GetPlaylist() != m_Playlist )
 		{
-			if ( m_Player->GetIndex() + 1 >= m_Player->GetPlaylist()->GetCount() )
+			if ( m_Player->GetIndex() + 1 >= (int)m_Player->GetPlaylist()->GetCount() )
 			{
 				m_Player->GetPlaylist()->Add( song );
 				insert_at = m_Player->GetPlaylist()->GetCount() - 1;

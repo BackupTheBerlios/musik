@@ -1312,10 +1312,7 @@ void CmusikSelectionCtrl::OnLvnKeydown(NMHDR *pNMHDR, LRESULT *pResult)
 	else if ( GetKeyState( VK_CONTROL ) < 0 )
 	{
 		if ( pLVKeyDow->wVKey == VK_DELETE )
-		{
-			if ( MessageBox( _T( "Are you sure you want to PERMANETLY delete these files from your computer?" ), MUSIK_VERSION_STR, MB_ICONWARNING | MB_YESNO ) == IDYES )
-				DelSel( true );
-		}
+			DelSel( true );
 	}
 	else
 	{
