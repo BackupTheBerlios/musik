@@ -30,6 +30,7 @@ public:
 
 	void LoadPrefs();
 	void SavePrefs();
+	void ResetColumns();
 
 	int nFirstRun;
 	int nAutoAdd;

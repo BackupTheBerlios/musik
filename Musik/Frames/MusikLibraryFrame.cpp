@@ -617,7 +617,6 @@ void MusikLibraryFrame::TranslateKeys( wxKeyEvent& event )
 void MusikLibraryFrame::OnThreadStart( wxCommandEvent& WXUNUSED(event) )
 {
 	EnableProgress( true );
-
 }
 
 //-----------------------------------------------------//

@@ -160,6 +160,69 @@ void CMusikPrefs::LoadPrefs()
 	SavePrefs();
 }
 
+void CMusikPrefs::ResetColumns()
+{
+	//--- rating, 50 pixels, enabled, static ---//
+	nPlaylistColumnEnable	[PLAYLISTCOLUMN_RATING] = 1;
+	nPlaylistColumnSize		[PLAYLISTCOLUMN_RATING]	= 50;
+	nPlaylistColumnDynamic	[PLAYLISTCOLUMN_RATING]	= 0;
+
+	//--- track number, 50 pixels, enabled, static ---//
+	nPlaylistColumnEnable	[PLAYLISTCOLUMN_TRACK]	= 1;
+	nPlaylistColumnSize		[PLAYLISTCOLUMN_TRACK]	= 50;
+	nPlaylistColumnDynamic	[PLAYLISTCOLUMN_TRACK]	= 0;
+
+	//--- title, 40%, enabled, dynamic ---//
+	nPlaylistColumnEnable	[PLAYLISTCOLUMN_TITLE]	= 1;
+	nPlaylistColumnSize		[PLAYLISTCOLUMN_TITLE]	= 40;
+	nPlaylistColumnDynamic	[PLAYLISTCOLUMN_TITLE]	= 1;
+	
+	//--- artist, 20%, enabled, dynamic ---//
+	nPlaylistColumnEnable	[PLAYLISTCOLUMN_ARTIST]	= 1;
+	nPlaylistColumnSize		[PLAYLISTCOLUMN_ARTIST]	= 20;
+	nPlaylistColumnDynamic	[PLAYLISTCOLUMN_ARTIST]	= 1;
+
+	//--- album, 20%, enabled, dynamic ---//
+	nPlaylistColumnEnable	[PLAYLISTCOLUMN_ALBUM]	= 1;
+	nPlaylistColumnSize		[PLAYLISTCOLUMN_ALBUM]	= 20;
+	nPlaylistColumnDynamic	[PLAYLISTCOLUMN_ALBUM]	= 1;
+	
+	//--- year, 50 pixels, disabled, static ---//
+	nPlaylistColumnEnable	[PLAYLISTCOLUMN_YEAR]	= 0;
+	nPlaylistColumnSize		[PLAYLISTCOLUMN_YEAR]	= 50;
+	nPlaylistColumnDynamic	[PLAYLISTCOLUMN_YEAR]	= 0;
+
+	//--- genre, 20%, enabled, dynamic ---//
+	nPlaylistColumnEnable	[PLAYLISTCOLUMN_GENRE]	= 1;
+	nPlaylistColumnSize		[PLAYLISTCOLUMN_GENRE]	= 20;
+	nPlaylistColumnDynamic	[PLAYLISTCOLUMN_GENRE]	= 1;
+	
+	//--- times played, 50, disabled, static ---//
+	nPlaylistColumnEnable	[PLAYLISTCOLUMN_TIMES_PLAYED]	= 0;
+	nPlaylistColumnSize		[PLAYLISTCOLUMN_TIMES_PLAYED]	= 50;
+	nPlaylistColumnDynamic	[PLAYLISTCOLUMN_TIMES_PLAYED]	= 0;
+
+	//--- last played, 50, disabled, static ---//
+	nPlaylistColumnEnable	[PLAYLISTCOLUMN_LAST_PLAYED]	= 0;
+	nPlaylistColumnSize		[PLAYLISTCOLUMN_LAST_PLAYED]	= 50;
+	nPlaylistColumnDynamic	[PLAYLISTCOLUMN_LAST_PLAYED]	= 0;
+	
+	//--- time, 50, enabled, static ---//
+	nPlaylistColumnEnable	[PLAYLISTCOLUMN_TIME]	= 1;
+	nPlaylistColumnSize		[PLAYLISTCOLUMN_TIME]	= 50;
+	nPlaylistColumnDynamic	[PLAYLISTCOLUMN_TIME]	= 0;
+
+	//--- bitrate, 50, disabled, static ---//
+	nPlaylistColumnEnable	[PLAYLISTCOLUMN_BITRATE]	= 0;
+	nPlaylistColumnSize		[PLAYLISTCOLUMN_BITRATE]	= 50;
+	nPlaylistColumnDynamic	[PLAYLISTCOLUMN_BITRATE]	= 0;
+
+	//--- filename, 40%, disabled, dynamic ---//
+	nPlaylistColumnEnable	[PLAYLISTCOLUMN_FILENAME]	= 0;
+	nPlaylistColumnSize		[PLAYLISTCOLUMN_FILENAME]	= 40;
+	nPlaylistColumnDynamic	[PLAYLISTCOLUMN_FILENAME]	= 1;	
+}
+
 void CMusikPrefs::SavePrefs()
 {
 	//-------------------------------------------------//

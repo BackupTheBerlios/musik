@@ -76,7 +76,6 @@ bool MusikApp::OnInit()
 	#ifdef __WXMSW__
 		view_menu->AppendSeparator();
 		view_menu->Append	( MUSIK_MENU_STAY_ON_TOP, _("Always On Top\tCtrl-T"), wxT(""), wxITEM_CHECK );
-//		view_menu->Check	( MUSIK_MENU_STAY_ON_TOP, ( bool )g_Prefs.nStayOnTop );
 	#endif
 
 	//--- library -> pending tags ---//
@@ -138,10 +137,13 @@ void MusikApp::CheckVersion()
 	{
 		sVersion = ReadVersion();
 
-		//-------------------------------------------------//
-		//--- if version XXX was detected, we'll want	---//
-		//--- to do XXX. not needed right now.			---//
-		//-------------------------------------------------//
+		if ( sVersion == wxT( "Musik 0.1.3" ) )
+		{
+			wxMessageBox( wxT( "Musik has detected 0.1.3 was previously installed. Due to the changes in the playlist display preferences, your columns will be reset. We apologize for any inconvenience this may cause." ), MUSIK_VERSION, wxICON_INFORMATION );
+			g_Prefs.ResetColumns();
+		}
+
+		WriteVersion();
 	}
 	else
 	{
@@ -159,7 +161,8 @@ void MusikApp::CheckVersion()
 				wxRemoveFile( MUSIK_SOURCES_FILENAME );
 			if ( wxFileExists( MUSIK_DB_FILENAME ) )
 				wxRemoveFile( MUSIK_DB_FILENAME );
-		}		
+		}	
+
 		WriteVersion();
 	}
 }
@@ -190,6 +193,7 @@ void MusikApp::WriteVersion()
     
 	if ( ver.IsOpened() )
 	{
+		ver.Clear();
 		ver.AddLine( MUSIK_VERSION );
 		ver.Write();
 		ver.Close();
