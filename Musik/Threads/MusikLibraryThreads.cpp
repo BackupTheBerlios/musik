@@ -54,6 +54,9 @@ void *MusikUpdateLibThread::Entry()
 		}
 	}
 
+	//--- init the database add time varaible ---//
+	g_Library.InitTimeAdded();
+
 	//--- search / add new songs ---//
 	wxArrayString aFileList = GetMusicDirs( m_Add );
 

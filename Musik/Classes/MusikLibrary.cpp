@@ -203,6 +203,12 @@ void CMusikLibrary::AddItem( const wxString & filename )
 		AddAIFF( filename );
 }
 
+void CMusikLibrary::InitTimeAdded()
+{
+	wxDateTime currtime = wxDateTime::Now();
+	m_TimeAdded = currtime.Format();
+}
+
 void CMusikLibrary::AddMP3( const wxString & filename )
 {
 	wxFileName fn( filename );
@@ -222,8 +228,7 @@ void CMusikLibrary::AddMP3( const wxString & filename )
 	int duration	= 0;
 	int vbr			= 0;
 	int timesplayed = 0;
-	wxDateTime currtime = wxDateTime::Now();
-	wxString timeadded = currtime.Format();
+	wxString timeadded = m_TimeAdded;
 	int filesize = 0;
 	int dirty = 0;
 
@@ -466,8 +471,7 @@ void CMusikLibrary::AddOgg( const wxString & filename )
 		genre		= oggInfo.GetGenre();
 		tracknum	= oggInfo.GetTrackNum();
 
-		wxDateTime currtime = wxDateTime::Now();
-		wxString timeadded = currtime.Format();
+		wxString timeadded = m_TimeAdded;
 
 		if ( artist.Length() < 0 )
 			artist = justfilename;

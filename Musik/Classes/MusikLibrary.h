@@ -96,6 +96,7 @@ public:
 	void UpdateItem				( const wxString & filename, CMusikSong &newsonginfo, bool bDirty );
 	void UpdateItemLastPlayed	( const wxString & filename  );
 	void SetRating				( const wxString & sFile, int nVal );
+	void InitTimeAdded			( );
 
 	//--------------------//
 	//--- writing tags ---//
@@ -178,6 +179,8 @@ private:
 	void AddWav				( const wxString & filename );
 	void AddWMA				( const wxString & filename );
 	void AddAIFF			( const wxString & filename );
+
+	wxString m_TimeAdded;
 
 	wxArrayString VerifyYearList ( wxArrayString *aList );
 
