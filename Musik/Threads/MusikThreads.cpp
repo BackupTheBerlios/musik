@@ -35,6 +35,7 @@ MusikFaderThread::MusikFaderThread()
 	pCrossfader = NULL;
 	m_CrossfaderActive = false;
 	m_CrossfadersActive = 0;
+	m_Worker = 0;
 }
 
 void MusikFaderThread::SetCrossfaderActive( bool active )
@@ -162,6 +163,7 @@ MusikCrossfaderThread::MusikCrossfaderThread( MusikFaderThread *pParent )
 	m_Parent		= pParent;
 	m_StopPlayer	= false;
 	m_Aborted		= false;
+	m_Parent->WorkerInc();
 }
 
 void MusikCrossfaderThread::Abort()
@@ -317,7 +319,7 @@ void *MusikCrossfaderThread::Entry()
 void MusikCrossfaderThread::OnExit()
 {
 	m_Parent->SetCrossfaderActive( false );
-
+	m_Parent->WorkerDec();
 	//-------------------------------------------------//
 	//--- if we ended naturally, that means no		---//
 	//--- other crossfader spawned. tell the player	---//
@@ -353,13 +355,6 @@ void MusikCrossfaderThread::OnExit()
 			wxPostEvent( g_MusikFrame, ExitCompleteEvt );
 		}
 	}
-
-	//-------------------------------------------------//
-	//--- if aborted, something sent us the abort	---//
-	//--- signal. the thread was just killed, so	---//
-	//--- start a new one up.						---//
-	//-------------------------------------------------//
-
 }
 
 //---------------------------------------------------------//

@@ -42,14 +42,16 @@ public:
 
 	void CrossfaderAbort		();
 	void CrossfaderStop			();
+	void WorkerInc				(){ m_Worker++; };
+	void WorkerDec				(){ m_Worker--; };
+	int  GetWorkerCount			(){ return m_Worker; }
 
 	bool IsCrossfaderActive		(){ return m_CrossfaderActive; }
 	void SetCrossfaderActive	( bool active = true );
 
 private:
 
-
-	int m_Type;
+	int m_Worker;
 
 	MusikCrossfaderThread *pCrossfader;
 
