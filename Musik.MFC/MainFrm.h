@@ -43,7 +43,7 @@ protected:
 	CString m_UserDir;
 	CString m_Database;
 
-	CMusikPlaylistView m_wndView;
+	CMusikPlaylistView* m_wndView;
 	CMusikSourcesBar m_wndSourcesBar;
 	CMusikNowPlayingBar m_wndNowPlaying;
 	CMusikSelectionBar* m_wndSelectionBars[4];

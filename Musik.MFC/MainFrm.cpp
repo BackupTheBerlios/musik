@@ -37,8 +37,11 @@ CMainFrame::CMainFrame()
 CMainFrame::~CMainFrame()
 {
 	delete m_Library;
+
 	for ( int i = 0; i < 4; i++ )
 		delete m_wndSelectionBars[i];
+
+	delete m_wndView;
 }
 
 void CMainFrame::InitPaths()
@@ -84,9 +87,10 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	//-------------------------------------------------//
 	//--- create a background window				---//
 	//-------------------------------------------------//
-	m_wndView.Create( NULL, NULL, AFX_WS_DEFAULT_VIEW, CRect(0, 0, 0, 0), this, AFX_IDW_PANE_FIRST, NULL );
-	m_wndView.ModifyStyleEx( WS_EX_STATICEDGE, NULL );
-	m_wndView.ModifyStyle( WS_BORDER, 0 );
+	m_wndView = new CMusikPlaylistView( m_Library );
+	m_wndView->Create( NULL, NULL, AFX_WS_DEFAULT_VIEW, CRect(0, 0, 0, 0), this, AFX_IDW_PANE_FIRST, NULL );
+	m_wndView->ModifyStyleEx( WS_EX_STATICEDGE, NULL );
+	m_wndView->ModifyStyle( WS_BORDER, 0 );
     EnableDocking( CBRS_ALIGN_BOTTOM );
 	EnableDocking( CBRS_ALIGN_LEFT );
     EnableDocking( CBRS_ALIGN_RIGHT );
@@ -96,7 +100,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	//--- now playing control						---//
 	//-------------------------------------------------//
 	m_wndNowPlaying.Create( _T( "Musik Now Playing" ), this, 123 );
-	m_wndNowPlaying.SetBarStyle( m_wndNowPlaying.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC );
+	m_wndNowPlaying.SetBarStyle( m_wndNowPlaying.GetBarStyle() | CBRS_TOOLTIPS /*| CBRS_FLYBY*/ | CBRS_SIZE_DYNAMIC & ~SCBS_EDGEALL );
 	m_wndNowPlaying.EnableDocking( CBRS_ALIGN_BOTTOM );
 	m_wndNowPlaying.ShowGripper( false );
 	DockControlBar( &m_wndNowPlaying, AFX_IDW_DOCKBAR_BOTTOM );

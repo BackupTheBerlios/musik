@@ -5,11 +5,14 @@
 #include "Musik.h"
 #include "MusikPlaylistView.h"
 
+#include "../Musik.Core/include/MusikLibrary.h"
+
 // CMusikPlaylistView
 
 IMPLEMENT_DYNAMIC(CMusikPlaylistView, CWnd)
-CMusikPlaylistView::CMusikPlaylistView()
+CMusikPlaylistView::CMusikPlaylistView( CMusikLibrary* library )
 {
+	m_Playlist = new CMusikPlaylistCtrl( library );
 }
 
 CMusikPlaylistView::~CMusikPlaylistView()
@@ -32,7 +35,7 @@ int CMusikPlaylistView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if ( CWnd::OnCreate(lpCreateStruct) == -1 )
 		return -1;
 
-	m_Playlist.Create( WS_CHILD | WS_VISIBLE | LVS_REPORT, CRect( 0, 0, 0, 0 ), this, 123 );
+	m_Playlist->Create( WS_CHILD | WS_VISIBLE | LVS_REPORT, CRect( 0, 0, 0, 0 ), this, 123 );
 
 	return 0;
 }
@@ -41,5 +44,5 @@ void CMusikPlaylistView::OnSize(UINT nType, int cx, int cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 
-	m_Playlist.MoveWindow( 0, 0, cx, cy );
+	m_Playlist->MoveWindow( 0, 0, cx, cy );
 }

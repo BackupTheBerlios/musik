@@ -4,16 +4,18 @@
 // CMusikPlaylistView
 #include "MusikPlaylistCtrl.h"
 
+class CMusikLibrary;
+
 class CMusikPlaylistView : public CWnd
 {
 	DECLARE_DYNAMIC(CMusikPlaylistView)
 
 public:
-	CMusikPlaylistView();
+	CMusikPlaylistView( CMusikLibrary* library );
 	virtual ~CMusikPlaylistView();
 
 protected:
-	CMusikPlaylistCtrl m_Playlist;
+	CMusikPlaylistCtrl* m_Playlist;
 
 	DECLARE_MESSAGE_MAP()
 public:
