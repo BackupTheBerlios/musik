@@ -976,7 +976,6 @@ void MusikPrefsFrame::SavePrefs()
 		g_Prefs.nSndRate = nRate;
 		bRestartFMOD = true;
 	}
-	if ( tcBufferLength->GetValue() != g_Prefs.nSndBuffer )
 	{
 		double fLength = StringToDouble( tcBufferLength->GetValue() );
 		int nLength = ( int )( fLength * 1000 );

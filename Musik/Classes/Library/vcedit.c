@@ -6,7 +6,7 @@
  *
  * Comment editing backend, suitable for use by nice frontend interfaces.
  *
- * last modified: $Id: vcedit.c,v 1.1 2003/07/31 23:47:02 avatar5d Exp $
+ * last modified: $Id: vcedit.c,v 1.2 2003/09/05 22:56:11 gunnar67 Exp $
  */
 
 #include <stdio.h>
@@ -105,8 +105,8 @@ static int _commentheader_out(vorbis_comment *vc, char *vendor, ogg_packet *op)
 	_v_writestring(&opb,"vorbis", 6);
 
 	/* vendor */
-	oggpack_write(&opb,strlen(vendor),32);
-	_v_writestring(&opb,vendor, strlen(vendor));
+	oggpack_write(&opb,(unsigned long)strlen(vendor),32);
+	_v_writestring(&opb,vendor, (int)strlen(vendor));
 
 	/* comments */
 	oggpack_write(&opb,vc->comments,32);
@@ -168,7 +168,7 @@ static int _fetch_next_packet(vcedit_state *s, ogg_packet *p, ogg_page *page)
 		while(ogg_sync_pageout(s->oy, page) <= 0)
 		{
 			buffer = ogg_sync_buffer(s->oy, CHUNKSIZE);
-			bytes = s->read(buffer,1, CHUNKSIZE, s->in);
+			bytes = (int)s->read(buffer,1, CHUNKSIZE, s->in);
 			ogg_sync_wrote(s->oy, bytes);
 			if(bytes == 0) 
 				return 0;
@@ -213,10 +213,10 @@ int vcedit_open_callbacks(vcedit_state *state, void *in,
 	state->oy = malloc(sizeof(ogg_sync_state));
 	ogg_sync_init(state->oy);
 
-    while(1)
+    for(;;)
     {
     	buffer = ogg_sync_buffer(state->oy, CHUNKSIZE);
-	    bytes = state->read(buffer, 1, CHUNKSIZE, state->in);
+	    bytes = (int) state->read(buffer, 1, CHUNKSIZE, state->in);
 
     	ogg_sync_wrote(state->oy, bytes);
 
@@ -299,7 +299,7 @@ int vcedit_open_callbacks(vcedit_state *state, void *in,
 		}
 
 		buffer = ogg_sync_buffer(state->oy, CHUNKSIZE);
-		bytes = state->read(buffer, 1, CHUNKSIZE, state->in);
+		bytes = (int) state->read(buffer, 1, CHUNKSIZE, state->in);
 		if(bytes == 0 && i < 2)
 		{
 			state->lasterror = _("EOF before end of vorbis headers.");
@@ -358,7 +358,7 @@ int vcedit_write(vcedit_state *state, void *out)
 	ogg_stream_packetin(&streamout, &header_comments);
 	ogg_stream_packetin(&streamout, &header_codebooks);
 
-	while((result = ogg_stream_flush(&streamout, &ogout)))
+	while((result = ogg_stream_flush(&streamout, &ogout)) != 0)
 	{
 		if(state->write(ogout.header,1,ogout.header_len, out) !=
 				(size_t) ogout.header_len)
@@ -449,7 +449,7 @@ int vcedit_write(vcedit_state *state, void *out)
 	{
 		/* We copy the rest of the stream (other logical streams)
 		 * through, a page at a time. */
-		while(1)
+		for(;;)
 		{
 			result = ogg_sync_pageout(state->oy, &ogout);
 			if(result==0)
@@ -471,7 +471,7 @@ int vcedit_write(vcedit_state *state, void *out)
 			}
 		}
 		buffer = ogg_sync_buffer(state->oy, CHUNKSIZE);
-		bytes = state->read(buffer,1, CHUNKSIZE, state->in);
+		bytes = (int)state->read(buffer,1, CHUNKSIZE, state->in);
 		ogg_sync_wrote(state->oy, bytes);
 		if(bytes == 0) 
 		{
