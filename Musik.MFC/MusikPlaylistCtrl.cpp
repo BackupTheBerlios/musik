@@ -13,7 +13,6 @@
 #include "../Musik.Core/include/MusikPlayer.h"
 
 #include "MEMDC.H"
-#include ".\musikplaylistctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -235,18 +234,23 @@ void CMusikPlaylistCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 		// it... it is the width of the rating font
 		if ( m_RatingWidth == -1 )
 		{
-			pDC->SelectObject( m_Bullets );
+			pDC->SelectObject( m_StarFont );
 			CSize size = pDC->GetOutputTextExtent( _T( "-----" ) );
 			m_RatingWidth = size.cx;
 		}
 
 		if ( nSubType == MUSIK_LIBRARY_TYPE_RATING )
 		{
-			pDC->SelectObject( m_Bullets );
+			pDC->SelectObject( m_StarFont );
 			pDC->SetTextColor( GetSysColor( COLOR_BTNFACE ) );
 		}
 		else
-			pDC->SelectObject( m_Items );
+		{
+			if ( m_Player->GetCurrPlaying()->GetID() == m_Playlist->items()->at( pLVCD->nmcd.dwItemSpec ).GetID() )
+				pDC->SelectObject( m_BoldFont );
+			else
+				pDC->SelectObject( m_ItemFont );
+		}
 
 		if ( pLVCD->nmcd.dwItemSpec % 2 != 0 )
 			pLVCD->clrTextBk = clrStripe;
@@ -260,9 +264,14 @@ void CMusikPlaylistCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 
 void CMusikPlaylistCtrl::InitFonts()
 {
-	m_Items.CreateStockObject( DEFAULT_GUI_FONT );
-	m_Bullets.CreatePointFont( 100, "Musik" );
-}
+	m_ItemFont.CreateStockObject( DEFAULT_GUI_FONT );
+	m_StarFont.CreatePointFont( 100, "Musik" );
+
+	LOGFONT pBoldFont;
+	m_ItemFont.GetLogFont( &pBoldFont );
+	pBoldFont.lfWeight = FW_BOLD;
+
+	m_BoldFont.CreateFontIndirect( &pBoldFont );}
 
 ///////////////////////////////////////////////////
 

@@ -464,6 +464,7 @@ LRESULT CMainFrame::OnSongChange( WPARAM wParam, LPARAM lParam )
 		SetWindowText( s );
 		
 		m_wndNowPlaying->GetCtrl()->UpdateInfo();
+		m_wndView->GetCtrl()->RedrawWindow();
 	}
 	else
 		SetWindowText( _T( "Musik" ) );	

@@ -43,8 +43,9 @@ protected:
 
 	// fonts
 	void InitFonts();
-	CFont m_Bullets;
-	CFont m_Items;
+	CFont m_StarFont;
+	CFont m_ItemFont;
+	CFont m_BoldFont;
 
 	// colors
 	COLORREF clrStripe;
