@@ -208,7 +208,6 @@ public:
 	int	 GetSongCount				( bool use_temp_table = false );
 	int  GetFieldFromID				( int id, int field, CmusikString& string );
 	int  GetSongInfoFromID			( int id, CmusikSongInfo* info );
-	int  GetIDFromFilename			( CmusikString fn );
 	int  GetSongFromFilename		( CmusikString fn, CmusikSong& song );
 	bool IsSongInLibrary			( CmusikString fn );
 	int  GetSongFormatFromID		( int id, int* target );
@@ -237,9 +236,6 @@ public:
 	int  GetStdPlaylist				( int id, CmusikPlaylist& target, bool clear_target = true );
 	bool GetStdPlaylistFns			( int id, CmusikStringArray& target, bool clear_target = true );
 	bool GetStdPlaylistFns			( CmusikPlaylist& playlist, CmusikStringArray& target, bool clear_target = true );
-	
-	// deprecated
-	void GetPlaylistInfoTotals		( int id, size_t& TotalTime, double& TotalSize );
 	
 	// dynamic playlist
 	int  CreateDynPlaylist			( const CmusikString& name, const CmusikStringArray& query );

@@ -99,14 +99,20 @@ public:
 
 	// gets
 	int GetID(){ return m_ID; }
+	int GetFilesize(){ return m_Filesize; }
+	int GetDuration(){ return m_Duration; }
 	CmusikString GetField( int field );	
-
+	
 	// sets
 	void SetID( int id ){ m_ID = id; }
-	void SetField( int field, CmusikString value );	
+	void SetDuration( int duration ){ m_Duration = duration; }
+	void SetFilesize( int filesize ){ m_Filesize = filesize; }
 	static void SetLibrary( CmusikLibrary* library ){ m_musikLibrary = library; }
 
 private:
+
+	int m_Duration;
+	int m_Filesize;
 	int m_ID;
 };
 
@@ -145,6 +151,10 @@ public:
 	void SetTotalSize( double tot ) { m_TotalSize = tot; }
 
 protected:
+
+	// m_TotalSize is a double becuase type int
+	// and longint are too small for us. treat
+	// it as if it were an integer.
 	size_t m_TotalTime;
 	double m_TotalSize;
 	
@@ -169,10 +179,6 @@ public:
 	// sets
 	void Set( CmusikString name, int type, int id );
 
-	// misc
-	void Rename( CmusikString new_name );
-	void SaveToLibrary( CmusikLibrary* library );
-
 	CmusikString m_Name;
 	int m_Type;
 	int m_ID;
@@ -189,8 +195,8 @@ public:
 	CmusikString GetField( int field );
 	void SetField( int field, const CmusikString& str );
 
-	void SetID( int id )				{ m_ID = id; }
-	int	GetID()							{ return m_ID; }
+	void SetID( int id )					{ m_ID = id; }
+	int	GetID()								{ return m_ID; }
 
 	CmusikString	GetFilename()			{ return m_Filename; }
 	CmusikString	GetTitle()				{ return m_Title; }

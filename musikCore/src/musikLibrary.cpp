@@ -69,18 +69,32 @@
 
 ///////////////////////////////////////////////////
 
-static int sqlite_AddSongToPlaylist(void *args, int numCols, char **results, char ** columnNames )
+static int sqlite_AddSongToPlaylist( void *args, int numCols, char **results, char ** columnNames )
 {
-	CmusikPlaylist* p = (CmusikPlaylist*)args;
-
 	CmusikSong *pLibItem = new CmusikSong();
 	pLibItem->SetID( atoi( results[0] ) ); 
+	pLibItem->SetDuration( atoi( results[1] ) / 1000 );
+	pLibItem->SetFilesize( atoi( results[2] ) );
 	
+	CmusikPlaylist* p = (CmusikPlaylist*)args;
 	p->Add( *pLibItem );
 
 	delete pLibItem;
 
     return 0;
+}
+
+///////////////////////////////////////////////////
+
+static int sqlite_GetSongFromFilename( void *args, int numCols, char **results, char ** columnNames )
+{
+	CmusikSong* p = (CmusikSong*)args;
+
+	p->SetID( atoi( results[0] ) ); 
+	p->SetDuration( atoi( results[1] ) / 1000 );
+	p->SetFilesize( atoi( results[2] ) );
+
+	return 0;
 }
 
 ///////////////////////////////////////////////////
@@ -1288,39 +1302,18 @@ int CmusikLibrary::GetStdPlaylist( int id, CmusikPlaylist& target, bool clear_ta
 				STD_PLAYLIST_SONGS,
 				id );
 
+
+	//char* query = sqlite_mprintf( "select sum(a1.duration), sum(a1.filesize) SIZE from %Q A1, %Q A2 where A1.filename = A2.songfn and a2.std_playlist_id = %d;", SONG_TABLE_NAME, STD_PLAYLIST_SONGS, id );
+
 	m_ProtectingLibrary.release();	
 
-	// now get playlist info totals
-	const char *pTail;
-	sqlite_vm *pVM;
-
-	m_ProtectingLibrary.acquire();
-
-	char* query = sqlite_mprintf( "select sum(a1.duration), sum(a1.filesize) SIZE from %Q A1, %Q A2 where A1.filename = A2.songfn and a2.std_playlist_id = %d;", SONG_TABLE_NAME, STD_PLAYLIST_SONGS, id );
-
-	sqlite_compile( m_pDB, query, &pTail, &pVM, NULL );
-	char *errmsg;
-	int numcols = 0;
-	const char **coldata;
-	const char **coltypes;
-
-	if ( sqlite_step( pVM, &numcols, &coldata, &coltypes ) == SQLITE_ROW )
-	{
-		target.SetTotalTime( atoi( coldata[0] ) / 1000 );
-		target.SetTotalSize( atof( coldata[1] ) );
-	}
-
-	sqlite_freemem( query );
-
-	sqlite_finalize( pVM, &errmsg );
-
-	m_ProtectingLibrary.release();
+	//GetPlaylistTotals( target, query );
 
 	// add all the items to the playlist
 	CmusikSong song;
 	for ( size_t i = 0; i < items->size(); i++ )
 	{
-		song.SetID( GetIDFromFilename( items->at( i ) ) );
+		GetSongFromFilename( items->at( i ), song );
 		target.Add( song );
 	}
 
@@ -1379,45 +1372,6 @@ bool CmusikLibrary::GetStdPlaylistFns( CmusikPlaylist& playlist, CmusikStringArr
 	EndTransaction();
 
 	return ( target.size() > 0 ? true : false );
-}
-
-///////////////////////////////////////////////////
-
-// this is deprecated.. keeping the code around for a while in case
-// it's useful
-void CmusikLibrary::GetPlaylistInfoTotals( int id, size_t& TotalTime, double& TotalSize )
-{
-	size_t tot = 0;
-
-	const char *pTail;
-	sqlite_vm *pVM;
-
-	m_ProtectingLibrary.acquire();
-
-	char* query;
-	if ( id == -1 )
-		query = sqlite_mprintf( "select sum(duration), sum(filesize) from %Q;", SONG_TABLE_NAME );
-	else
-		query = sqlite_mprintf( "select sum(a1.duration), sum(a1.filesize) SIZE from %Q A1, %Q A2 where A1.filename = A2.songfn and a2.std_playlist_id = %d;", SONG_TABLE_NAME, STD_PLAYLIST_SONGS, id );
-
-	sqlite_compile( m_pDB, query, &pTail, &pVM, NULL );
-	char *errmsg;
-	int numcols = 0;
-	const char **coldata;
-	const char **coltypes;
-
-	if ( sqlite_step( pVM, &numcols, &coldata, &coltypes ) == SQLITE_ROW )
-	{
-		TotalTime = atoi( coldata[0] ) / 1000;
-		TotalSize = atof( coldata[1] );
-	}
-
-	sqlite_freemem( query );
-
-	sqlite_finalize( pVM, &errmsg );
-
-	m_ProtectingLibrary.release();
-
 }
 
 ///////////////////////////////////////////////////
@@ -1996,32 +1950,6 @@ int CmusikLibrary::GetAllSongs( CmusikPlaylist& target, bool use_temp_table )
 			target.m_Type = MUSIK_PLAYLIST_TYPE_LIBRARY;
 	}
 
-	// now get playlist info totals
-	const char *pTail;
-	sqlite_vm *pVM;
-
-	m_ProtectingLibrary.acquire();
-
-	char* query = sqlite_mprintf( "select sum(duration), sum(filesize) from %Q;", use_temp_table ? TEMP_SONG_TABLE_NAME : SONG_TABLE_NAME );
-	
-	sqlite_compile( m_pDB, query, &pTail, &pVM, NULL );
-	char *errmsg;
-	int numcols = 0;
-	const char **coldata;
-	const char **coltypes;
-
-	if ( sqlite_step( pVM, &numcols, &coldata, &coltypes ) == SQLITE_ROW )
-	{
-		target.SetTotalTime( atoi( coldata[0] ) / 1000 );
-		target.SetTotalSize( atof( coldata[1] ) );
-	}
-
-	sqlite_freemem( query );
-
-	sqlite_finalize( pVM, &errmsg );
-
-	m_ProtectingLibrary.release();
-
 	return nRet;
 }
 
@@ -2038,7 +1966,7 @@ int CmusikLibrary::QuickQuery( CmusikString str, CmusikPlaylist& target, bool us
 
 	int nRet;
 	m_ProtectingLibrary.acquire();
-		nRet = sqlite_exec_printf( m_pDB, "SELECT songid FROM %Q WHERE artist LIKE %Q OR album LIKE %Q OR title LIKE %Q OR filename LIKE %Q;", 
+		nRet = sqlite_exec_printf( m_pDB, "SELECT songid,duration,filesize FROM %Q WHERE artist LIKE %Q OR album LIKE %Q OR title LIKE %Q OR filename LIKE %Q;", 
 			&sqlite_AddSongToPlaylist, &target, NULL,
 			use_temp_table ? TEMP_SONG_TABLE_NAME : SONG_TABLE_NAME, 
 			str.c_str(),
@@ -2046,39 +1974,6 @@ int CmusikLibrary::QuickQuery( CmusikString str, CmusikPlaylist& target, bool us
 			str.c_str(),
 			str.c_str() );
 	m_ProtectingLibrary.release();
-
-	// now get playlist info totals
-	const char *pTail;
-	sqlite_vm *pVM;
-
-	m_ProtectingLibrary.acquire();
-
-	char* query = sqlite_mprintf( "select sum(duration), sum(filesize) from %Q WHERE artist LIKE %Q OR album LIKE %Q OR title LIKE %Q OR filename LIKE %Q;",
-		use_temp_table ? TEMP_SONG_TABLE_NAME : SONG_TABLE_NAME, 
-			str.c_str(),
-			str.c_str(),
-			str.c_str(),
-			str.c_str() );
-	
-	sqlite_compile( m_pDB, query, &pTail, &pVM, NULL );
-	char *errmsg;
-	int numcols = 0;
-	const char **coldata;
-	const char **coltypes;
-
-	if ( sqlite_step( pVM, &numcols, &coldata, &coltypes ) == SQLITE_ROW )
-	{
-		target.SetTotalTime( atoi( coldata[0] ) / 1000 );
-		target.SetTotalSize( atof( coldata[1] ) );
-	}
-
-	sqlite_freemem( query );
-
-	sqlite_finalize( pVM, &errmsg );
-
-	m_ProtectingLibrary.release();
-
-
 
 	return nRet;
 }
@@ -2095,7 +1990,7 @@ int CmusikLibrary::QuerySongs( const CmusikString& query, CmusikPlaylist& target
 	// lock it up and query it
 	int nRet;
 	m_ProtectingLibrary.acquire();
-		nRet = sqlite_exec_printf( m_pDB, "SELECT DISTINCT songid FROM %Q WHERE %q;", 
+		nRet = sqlite_exec_printf( m_pDB, "SELECT DISTINCT songid,duration,filesize FROM %Q WHERE %q;", 
 			&sqlite_AddSongToPlaylist, &target, NULL,
 			use_temp_table ? TEMP_SONG_TABLE_NAME : SONG_TABLE_NAME, 
 			query.c_str() );
@@ -2226,10 +2121,11 @@ int CmusikLibrary::GetRelatedSongs( CmusikString partial_query, int source_type,
 
 	// do it
 	int nRet;
+	//char* query = NULL;
 	m_ProtectingLibrary.acquire();
 		if ( !sub_query )
 		{
-			nRet = sqlite_exec_printf(m_pDB, "SELECT DISTINCT songid FROM %Q %s %q;", 
+			nRet = sqlite_exec_printf(m_pDB, "SELECT DISTINCT songid,duration,filesize FROM %Q %s %q;", 
 				&sqlite_AddSongToPlaylist, &target, NULL,
 				use_temp_table ? TEMP_SONG_TABLE_NAME : SONG_TABLE_NAME,
 				partial_query.c_str(),
@@ -2239,11 +2135,12 @@ int CmusikLibrary::GetRelatedSongs( CmusikString partial_query, int source_type,
 		{
 			partial_query.Replace( "%T", "songid,tracknum,artist,album,genre,title,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize,filename,equalizer" );
 
-			nRet = sqlite_exec_printf(m_pDB, "SELECT DISTINCT songid FROM %s %q;", 
+			nRet = sqlite_exec_printf(m_pDB, "SELECT DISTINCT songid,duration,filesize FROM %s %q;", 
 				&sqlite_AddSongToPlaylist, &target, NULL,
 				partial_query.c_str(),
 				GetOrder( source_type ).c_str() );		
 		}
+
 	m_ProtectingLibrary.release();
 
 	return nRet;
@@ -2549,30 +2446,19 @@ int CmusikLibrary::GetCrossfader( int id, CmusikCrossfader* fader )
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetIDFromFilename( CmusikString fn )
+int CmusikLibrary::GetSongFromFilename( CmusikString fn, CmusikSong& song )
 {
 	if ( !m_DatabaseOpen )
 		return MUSIK_LIBRARY_NOT_OPEN;
 
-	int target;
-
 	// do it
+	int nRet;
 	m_ProtectingLibrary.acquire();
-		sqlite_exec_printf( m_pDB, "SELECT songid FROM %Q WHERE filename = %Q;", 
-			&sqlite_GetIntFromRow, &target, NULL,
+		nRet = sqlite_exec_printf( m_pDB, "SELECT songid,duration,filesize FROM %Q WHERE filename = %Q;", 
+			&sqlite_GetSongFromFilename, &song, NULL,
 			SONG_TABLE_NAME,
 			fn.c_str() );
 	m_ProtectingLibrary.release();
-
-	return target;
-}
-
-///////////////////////////////////////////////////
-
-int CmusikLibrary::GetSongFromFilename( CmusikString fn, CmusikSong& song )
-{
-	int nRet = GetIDFromFilename( fn );
-	song.SetID( nRet );
 
 	return nRet;
 }
@@ -3515,7 +3401,7 @@ int CmusikLibrary::SortPlaylist( CmusikPlaylist* playlist, int field, bool desce
 
 	CmusikString sQuery;
 
-	sQuery = "SELECT songid FROM songs where ";
+	sQuery = "SELECT songid,duration,filesize FROM songs where ";
 
 	CmusikString sCurr;
 	for ( size_t i = 0; i < playlist->GetCount(); i++ )

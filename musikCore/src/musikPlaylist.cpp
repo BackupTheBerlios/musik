@@ -82,6 +82,8 @@ CmusikLibrary* CmusikSong::m_musikLibrary = NULL;
 CmusikSong::CmusikSong()
 {
 	m_ID = -1;
+	m_Filesize = 0;
+	m_Duration = 0;
 }
 
 ///////////////////////////////////////////////////
@@ -97,13 +99,6 @@ CmusikString CmusikSong::GetField( int field )
 	CmusikString ret;
 	m_musikLibrary->GetFieldFromID( m_ID, field, ret );
 	return ret;
-}
-
-///////////////////////////////////////////////////
-
-void CmusikSong::SetField( int field, CmusikString value )
-{
-
 }
 
 ///////////////////////////////////////////////////
@@ -242,7 +237,7 @@ CmusikPlaylist::CmusikPlaylist()
 	m_Type = MUSIK_PLAYLIST_TYPE_UNKNOWN;
 
 	m_TotalTime = 0;
-	m_TotalSize = 0.0;
+	m_TotalSize = 0.0f;
 }
 
 ///////////////////////////////////////////////////
@@ -264,6 +259,9 @@ CmusikString CmusikPlaylist::GetField( int index, int field )
 void CmusikPlaylist::Clear()
 {
 	m_Songs.clear();
+
+	m_TotalTime = 0;
+	m_TotalSize = 0.0f;
 }	
 
 ///////////////////////////////////////////////////
@@ -271,6 +269,8 @@ void CmusikPlaylist::Clear()
 void CmusikPlaylist::Add( CmusikSong& song )
 { 
 	m_Songs.push_back( song ); 
+	m_TotalTime += song.GetDuration();
+	m_TotalSize += (double)song.GetFilesize();
 }
 
 ///////////////////////////////////////////////////
@@ -368,10 +368,4 @@ void CmusikPlaylistInfo::Set( CmusikString name, int type, int id )
 
 ///////////////////////////////////////////////////
 
-void CmusikPlaylistInfo::SaveToLibrary( CmusikLibrary* lib )
-{
-	
-}
-
-///////////////////////////////////////////////////
 
