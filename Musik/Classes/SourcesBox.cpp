@@ -995,9 +995,6 @@ void CSourcesListBox::ShowIconsChecked( bool bCheck )
 	sources_context_menu->Check( MUSIK_SOURCE_CONTEXT_SHOW_ICONS, bCheck );
 }
 
-//-------------------//
-//--- CSourcesBox ---//
-//-------------------//
 CSourcesBox::CSourcesBox( wxWindow *parent, wxWindowID id )
 	: wxPanel( parent, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxSIMPLE_BORDER | wxCLIP_CHILDREN )
 {

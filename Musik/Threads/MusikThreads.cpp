@@ -160,6 +160,18 @@ void *MusikCrossfaderThread::Entry()
 		nFadeStep = 1;
 
 	//-----------------------------------------//
+	//--- array of steps for the secondary	---//
+	//--- audio streams.					---//
+	//-----------------------------------------//
+	wxArrayInt aSecSteps;
+	int nGetVol;
+	for ( size_t i = 0; i < g_ActiveStreams.GetCount() - 1; i++ )
+	{
+		nGetVol = FSOUND_GetVolume( g_ActiveChannels.Item( i ) );
+		aSecSteps.Add( nGetVol / nFadeCount );
+	}
+
+	//-----------------------------------------//
 	//--- how long the crossfade will sleep	---//
 	//-----------------------------------------//
 	float fSleepTime	= (float)nFadeDuration / nFadeCount; 
@@ -185,7 +197,7 @@ void *MusikCrossfaderThread::Entry()
 		//--- fade down ---//
 		for ( size_t j = 0; j < g_ActiveStreams.GetCount() - 1; j++ )
 		{
-			nLastVol =  FSOUND_GetVolume( g_ActiveChannels.Item( j ) ) - nFadeStep;
+			nLastVol = FSOUND_GetVolume( g_ActiveChannels.Item( j ) ) - aSecSteps.Item( j );
 			FSOUND_SetVolume( g_ActiveChannels.Item( j ), nLastVol );
 		}
 
