@@ -8,11 +8,14 @@
 #include "MEMDC.H"
 
 #include "../musikCore/include/musikLibrary.h"
-#include ".\musikselectionctrl.h"
 
 ///////////////////////////////////////////////////
 
 // CmusikSelectionBar
+
+///////////////////////////////////////////////////
+
+IMPLEMENT_DYNAMIC(CmusikSelectionBar, baseCmusikSelectionBar)
 
 ///////////////////////////////////////////////////
 
@@ -34,6 +37,7 @@ CmusikSelectionBar::~CmusikSelectionBar()
 BEGIN_MESSAGE_MAP(CmusikSelectionBar, baseCmusikSelectionBar)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
+	ON_COMMAND(ID_SELECTIONBOX_RENAME, OnSelectionboxRename)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -82,7 +86,30 @@ void CmusikSelectionBar::OnSize(UINT nType, int cx, int cy)
 
 void CmusikSelectionBar::OnOptions()
 {
-	m_wndChild->ShowMenu();
+	ShowMenu();
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionBar::OnSelectionboxRename()
+{
+	GetCtrl()->RenameSel();
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionBar::ShowMenu()
+{
+	CPoint pos;
+	::GetCursorPos( &pos );
+
+	CMenu main_menu;
+	CMenu* popup_menu;
+
+	main_menu.LoadMenu( IDR_SELECTION_BOX_MENU );
+	popup_menu = main_menu.GetSubMenu( 0 );
+
+	popup_menu->TrackPopupMenu( 0, pos.x, pos.y, this );
 }
 
 ///////////////////////////////////////////////////
@@ -663,7 +690,15 @@ void CmusikSelectionCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	// user pressed f2 to rename an entry
 	if ( nChar == VK_F2 )
-	{
+		RenameSel();
+
+	CmusikListCtrl::OnKeyDown(nChar, nRepCnt, nFlags);
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionCtrl::RenameSel()
+{
 		CStdStringArray items;
 		GetSelItems( items );
 
@@ -688,9 +723,6 @@ void CmusikSelectionCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		m_EditInPlace.SetFocus();
 		m_EditInPlace.SetString( m_Items.at( GetSelectionMark() ).c_str() );
 		m_EditInPlace.ShowWindow( SW_SHOWDEFAULT );		
-	}
-
-	CmusikListCtrl::OnKeyDown(nChar, nRepCnt, nFlags);
 }
 
 ///////////////////////////////////////////////////
@@ -736,16 +768,11 @@ CStdString CmusikSelectionCtrl::GetEditCommitStr()
 
 ///////////////////////////////////////////////////
 
-void CmusikSelectionCtrl::ShowMenu()
-{
-	MessageBox( "Some day I will popup a menu of things to do.", MUSIK_VERSION_STR, MB_ICONINFORMATION );
-}
-
-///////////////////////////////////////////////////
-
 void CmusikSelectionCtrl::OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/)
 {
-	// ShowMenu();
+	CmusikSelectionBar* parent = (CmusikSelectionBar*)GetParent();
+	parent->ShowMenu();
 }
 
 ///////////////////////////////////////////////////
+

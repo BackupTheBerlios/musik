@@ -47,6 +47,10 @@ public:
 	CmusikSourcesBar( CFrameWnd* parent, CmusikLibrary* library, CmusikPlayer* player, CmusikPrefs* prefs, UINT dropid );
 	virtual ~CmusikSourcesBar();
 
+	// options
+	virtual void OnOptions();
+	void ShowMenu();
+
 	// gets
 	CmusikSourcesCtrl* GetCtrl(){ return m_wndChild; }
 
@@ -64,6 +68,9 @@ protected:
 
 	// macros
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnSourcesRename();
+	afx_msg void OnSourcesDelete();
 };
 
 ///////////////////////////////////////////////////
@@ -87,6 +94,8 @@ public:
 	void KillFocus( bool redraw = true );
 	void FocusLibrary();
 	void FocusNowPlaying();
+	void RenameSel();
+	void DeleteSel();
 
 	// overrides
 	void DoDrag( CmusikPropTreeItem* pItem );
@@ -161,6 +170,8 @@ private:
 	CmusikSourcesItemPtrArray m_Libraries;
 	CmusikSourcesItemPtrArray m_StdPlaylists;
 	CmusikSourcesItemPtrArray m_DynPlaylists;
+public:
+	afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
 };
 
 ///////////////////////////////////////////////////

@@ -35,8 +35,8 @@ END_MESSAGE_MAP()
 
 void CmusikEqualizerSets::OnBnClickedCloseDlg()
 {
-	int WM_CLOSEEQUALIZERSETS = RegisterWindowMessage( "CLOSEEQUALIZERSETS" );
+	int WM_CLOSEEQUALIZERPRESETS = RegisterWindowMessage( "CLOSEEQUALIZERPRESETS" );
 
 	CmusikEqualizerBar* pBar = (CmusikEqualizerBar*)GetParent();
-	pBar->PostMessage( WM_CLOSEEQUALIZERSETS );
+	pBar->PostMessage( WM_CLOSEEQUALIZERPRESETS );
 }

@@ -10,6 +10,7 @@
 #include "musikEqualizerSets.h"
 
 #include "MEMDC.H"
+#include ".\musikequalizerctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -17,7 +18,11 @@
 
 ///////////////////////////////////////////////////
 
-int WM_CLOSEEQUALIZERSETS = RegisterWindowMessage( "CLOSEEQUALIZERSETS" );
+IMPLEMENT_DYNAMIC(CmusikEqualizerBar, baseCmusikEqualizerBar)
+
+///////////////////////////////////////////////////
+
+int WM_CLOSEEQUALIZERPRESETS = RegisterWindowMessage( "CLOSEEQUALIZERPRESETS" );
 
 ///////////////////////////////////////////////////
 
@@ -41,7 +46,8 @@ CmusikEqualizerBar::~CmusikEqualizerBar()
 BEGIN_MESSAGE_MAP(CmusikEqualizerBar, baseCmusikEqualizerBar)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
-	ON_REGISTERED_MESSAGE( WM_CLOSEEQUALIZERSETS, OnClosePresets )
+	ON_REGISTERED_MESSAGE( WM_CLOSEEQUALIZERPRESETS, OnClosePresets )
+	ON_COMMAND(ID_EQUALIZER_PRESETS, OnEqualizerPresets)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -71,12 +77,28 @@ int CmusikEqualizerBar::OnCreate( LPCREATESTRUCT lpCreateStruct )
 
 void CmusikEqualizerBar::OnOptions()
 {
+	CPoint pos;
+	::GetCursorPos( &pos );
+
+	CMenu main_menu;
+	CMenu* popup_menu;
+
+	main_menu.LoadMenu( IDR_EQUALIZER_MENU );
+	popup_menu = main_menu.GetSubMenu( 0 );
+
+	popup_menu->TrackPopupMenu( 0, pos.x, pos.y, this );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikEqualizerBar::OnEqualizerPresets()
+{
 	if ( !m_Presets )
 	{
 		m_Presets = new CmusikEqualizerSets( this );
 		m_Presets->Create( IDD_EQUALIZER_SETS, this );
 		m_Presets->ShowWindow( SW_SHOW );
-	}
+	}	
 }
 
 ///////////////////////////////////////////////////
@@ -208,3 +230,4 @@ void CmusikEqualizerCtrl::OnSize(UINT nType, int cx, int cy)
 }
 
 ///////////////////////////////////////////////////
+

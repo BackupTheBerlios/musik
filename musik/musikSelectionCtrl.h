@@ -40,6 +40,14 @@ public:
 	// gets
 	CmusikSelectionCtrl* GetCtrl(){ return m_wndChild; }
 
+	// mfc message maps
+	afx_msg int OnCreate( LPCREATESTRUCT lpCreateStruct );
+	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnSelectionboxRename();
+
+	// misc
+	void ShowMenu();
+
 	// showing options menu
 	virtual void OnOptions();
 
@@ -49,11 +57,8 @@ protected:
 	CmusikSelectionCtrl* m_wndChild;
 	CFont m_Font;
 
-	// mfc message maps
-	afx_msg int OnCreate( LPCREATESTRUCT lpCreateStruct );
-	afx_msg void OnSize(UINT nType, int cx, int cy);
-
 	// macros
+	DECLARE_DYNAMIC(CmusikSelectionBar)
 	DECLARE_MESSAGE_MAP()
 };
 
@@ -90,13 +95,11 @@ public:
 	void RescaleColumn();
 	void UpdateV( bool update_count = false );
 	void UpdateV( CStdString query, bool update_count = false );
+	void RenameSel();
 
 	// queries
 	bool IsItemSelected( int item );
 	bool IsParent(){ return m_ParentBox; }
-
-	// showing the dropdown menu
-	void ShowMenu();
 
 	// mfc message maps
 	afx_msg void OnSize(UINT nType, int cx, int cy);
@@ -109,6 +112,7 @@ public:
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnLvnMarqueeBegin(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
 
 	// custom message maps
 	LRESULT OnEditCommit( WPARAM wParam, LPARAM lParam );
@@ -149,10 +153,8 @@ protected:
 	CFont m_Bold;
 
 	// macros
-	DECLARE_MESSAGE_MAP()
 	DECLARE_DYNAMIC(CmusikSelectionCtrl)
-public:
-	afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
+	DECLARE_MESSAGE_MAP()
 };
 
 ///////////////////////////////////////////////////

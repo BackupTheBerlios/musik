@@ -60,17 +60,30 @@ protected:
 	// message maps
 	afx_msg int OnCreate( LPCREATESTRUCT lpCreateStruct );
 	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnEqualizerPresets();
 
 	// custom message maps
 	afx_msg LRESULT OnClosePresets( WPARAM wParam, LPARAM lParam );
 
 	// macros
+	DECLARE_DYNAMIC(CmusikEqualizerBar)
 	DECLARE_MESSAGE_MAP()
 };
 
 ///////////////////////////////////////////////////
 
 // CmusikEqualizerCtrl
+
+///////////////////////////////////////////////////
+
+enum 
+{
+	MUSIK_EQUALIZER_CTRL_16BANDS = 0,
+	MUSIK_EQUALIZER_CTRL_8BANDS,
+	MUSIK_EQUALIZER_CTRL_4BANDS,
+	MUSIK_EQUALIZER_CTRL_CHANNELS_LOCKED,
+	MUSIK_EQUALIZER_CTRL_CHANNELS_UNLOCKED
+};
 
 ///////////////////////////////////////////////////
 
@@ -83,6 +96,9 @@ public:
 	// construct and destruct
 	CmusikEqualizerCtrl( CmusikLibrary* library, CmusikPlayer* player, CmusikPrefs* prefs );
 	virtual ~CmusikEqualizerCtrl();
+
+	void SetBandCount( int band_state );
+	void SetBandLockState( int lock_state );
 
 	// message maps
 	afx_msg void OnPaint();

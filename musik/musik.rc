@@ -137,6 +137,62 @@ BEGIN
     END
 END
 
+IDR_EQUALIZER_MENU MENU 
+BEGIN
+    POPUP "Equalizer"
+    BEGIN
+        POPUP "Display"
+        BEGIN
+            MENUITEM "16 Band",                     ID_DISPLAY_16BAND
+            MENUITEM "8 Band",                      ID_DISPLAY_8BAND
+            MENUITEM "4 Band",                      ID_DISPLAY_4BAND
+        END
+        MENUITEM "Lock Channels",               ID_EQUALIZER_LOCKCHANNELS
+        MENUITEM SEPARATOR
+        MENUITEM "Presets",                     ID_EQUALIZER_PRESETS
+    END
+END
+
+IDR_SELECTION_BOX_MENU MENU 
+BEGIN
+    POPUP "Selection Box"
+    BEGIN
+        POPUP "Change Type"
+        BEGIN
+            MENUITEM "Artist",                      ID_CHANGETYPE_ARTIST
+            MENUITEM "Album",                       ID_CHANGETYPE_ALBUM
+            MENUITEM "Year",                        ID_CHANGETYPE_YEAR
+            MENUITEM "Genre",                       ID_CHANGETYPE_GENRE
+            MENUITEM "Title",                       ID_CHANGETYPE_TITLE
+            MENUITEM "Track Number",                ID_CHANGETYPE_TRACKNUMBER
+
+            MENUITEM "Time Added",                  ID_CHANGETYPE_TIMEADDED
+            MENUITEM "Last Played",                 ID_CHANGETYPE_LASTPLAYED
+            MENUITEM "Filesize",                    ID_CHANGETYPE_FILESIZE
+            MENUITEM "Format",                      ID_CHANGETYPE_FORMAT
+            MENUITEM "Duration",                    ID_CHANGETYPE_DURATION
+            MENUITEM "Rating",                      ID_CHANGETYPE_RATING
+            MENUITEM "Times Played",                ID_CHANGETYPE_TIMESPLAYED
+
+            MENUITEM "Bitrate",                     ID_CHANGETYPE_BITRATE
+            MENUITEM "Equalizer",                   ID_CHANGETYPE_EQUALIZER
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "Rename\tF2",                  ID_SELECTIONBOX_RENAME
+    END
+END
+
+IDR_SOURCES_MENU MENU 
+BEGIN
+    POPUP "Sources"
+    BEGIN
+        MENUITEM "Rename\tF2",                  ID_SOURCES_RENAME
+        MENUITEM "Delete\tDel",                 ID_SOURCES_DELETE
+        MENUITEM SEPARATOR
+        MENUITEM "Edit Query",                  ID_SOURCES_EDITQUERY
+    END
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //

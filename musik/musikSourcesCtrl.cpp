@@ -9,6 +9,7 @@
 #include "musik.h"
 #include "musikSourcesCtrl.h"
 #include "musikSourcesDropTarget.h"
+#include ".\musiksourcesctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -36,6 +37,8 @@ BEGIN_MESSAGE_MAP(CmusikSourcesBar, baseCmusikSourcesBar)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
 	ON_NOTIFY( PTN_SELCHANGE, IDC_SOURCES, OnItemChanged )
+	ON_COMMAND(ID_SOURCES_RENAME, OnSourcesRename)
+	ON_COMMAND(ID_SOURCES_DELETE, OnSourcesDelete)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -122,6 +125,29 @@ void CmusikSourcesBar::OnItemChanged( NMHDR* pNotifyStruct, LRESULT* plResult )
 
 ///////////////////////////////////////////////////
 
+void CmusikSourcesBar::OnOptions()
+{
+	ShowMenu();
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSourcesBar::ShowMenu()
+{
+	CPoint pos;
+	::GetCursorPos( &pos );
+
+	CMenu main_menu;
+	CMenu* popup_menu;
+
+	main_menu.LoadMenu( IDR_SOURCES_MENU );
+	popup_menu = main_menu.GetSubMenu( 0 );
+
+	popup_menu->TrackPopupMenu( 0, pos.x, pos.y, this );
+}
+
+///////////////////////////////////////////////////
+
 // CmusikSourcesCtrl
 
 ///////////////////////////////////////////////////
@@ -171,6 +197,7 @@ BEGIN_MESSAGE_MAP( CmusikSourcesCtrl, CmusikPropTree )
 	// custom message maps
 	ON_REGISTERED_MESSAGE(WM_SOURCES_EDIT_COMMIT, OnEditCommit)
 	ON_REGISTERED_MESSAGE(WM_SOURCES_EDIT_CANCEL, OnEditCancel)
+	ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -745,101 +772,111 @@ void CmusikSourcesCtrl::OnShowWindow(BOOL bShow, UINT nStatus)
 
 ///////////////////////////////////////////////////
 
+void CmusikSourcesCtrl::RenameSel()
+{
+	CmusikPropTreeItem* pItem = GetFocusedItem();
+
+	// not trying to rename a root
+	if ( pItem->IsRootLevel() )
+		return;
+
+	// not renaming the library or the
+	// now playing...
+	if ( pItem == m_Libraries.at( 0 ) || pItem == m_Libraries.at( 1 ) )
+		return;
+
+	if ( pItem )
+	{
+		CPoint nPos = pItem->GetLocation();		
+
+		CRect rcClient;
+		GetClientRect( rcClient );
+		
+		CRect rect( 20, nPos.y + 1, rcClient.Width(), nPos.y + PROPTREEITEM_DEFHEIGHT - 2 );
+
+		m_EditInPlace.EnableWindow( TRUE );
+		m_EditInPlace.MoveWindow( rect );
+		m_EditInPlace.SetFocus();
+		m_EditInPlace.SetString( pItem->GetLabelText() );
+		m_EditInPlace.ShowWindow( SW_SHOWDEFAULT );
+	}
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSourcesCtrl::DeleteSel()
+{
+	CmusikPropTreeItem* pItem = GetFocusedItem();
+	if ( pItem )
+	{
+		// type was standard playlist...
+		if ( pItem->GetPlaylistType() == MUSIK_PLAYLIST_TYPE_STANDARD )
+		{
+			int nID = pItem->GetPlaylistID();
+			int nPos = -1;
+			int nNextPos = -1;
+			
+			// find the position...
+			for ( size_t i = 0; i < m_StdPlaylists.size(); i++ )
+			{
+				if ( m_StdPlaylists.at( i ) == pItem )
+				{
+					nPos = i;
+
+					if ( nPos == m_StdPlaylists.size() - 1 )
+						nNextPos = nPos - 1;
+					else
+						nNextPos = nPos;
+
+					break;
+				}
+			}
+
+			// if the position is valid, then delete it
+			// and reload the playlists...
+			if ( nPos != -1 )
+			{
+				m_Library->DeleteStdPlaylist( nID );
+				LoadStdPlaylists();
+
+				// now select the next entry in the
+				// list... if -1 select the library...
+				KillFocus( false );
+				if ( nNextPos == -1 )
+				{
+					m_Libraries.at( 0 )->Select( TRUE );
+					SetFocusedItem( m_Libraries.at( 0 ) );
+					int WM_SOURCESLIBRARY = RegisterWindowMessage( "SOURCESLIBRARY" );
+					m_Parent->SendMessage( WM_SOURCESLIBRARY, NULL );
+				}
+				else
+				{
+					m_StdPlaylists.at( nNextPos )->Select( TRUE );
+					SetFocusedItem( m_StdPlaylists.at( nNextPos  ) );
+					int WM_SOURCESSTDPLAYLIST = RegisterWindowMessage( "SOURCESSTDPLAYLIST" );
+					m_Parent->SendMessage( WM_SOURCESSTDPLAYLIST, NULL );
+				}
+
+				Invalidate();
+
+			}
+		}		
+	}
+}
+
+///////////////////////////////////////////////////
+
 void CmusikSourcesCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	m_LockHover = true;
 
 	// user pressed f2 to rename an entry
 	if ( nChar == VK_F2 )
-	{
-		CmusikPropTreeItem* pItem = GetFocusedItem();
-	
-		// not trying to rename a root
-		if ( pItem->IsRootLevel() )
-			return;
-
-		// not renaming the library or the
-		// now playing...
-		if ( pItem == m_Libraries.at( 0 ) || pItem == m_Libraries.at( 1 ) )
-			return;
-
-		if ( pItem )
-		{
-			CPoint nPos = pItem->GetLocation();		
-	
-			CRect rcClient;
-			GetClientRect( rcClient );
-			
-			CRect rect( 20, nPos.y + 1, rcClient.Width(), nPos.y + PROPTREEITEM_DEFHEIGHT - 2 );
-
-			m_EditInPlace.EnableWindow( TRUE );
-			m_EditInPlace.MoveWindow( rect );
-			m_EditInPlace.SetFocus();
-			m_EditInPlace.SetString( pItem->GetLabelText() );
-			m_EditInPlace.ShowWindow( SW_SHOWDEFAULT );
-		}
-	}
+		RenameSel();
 
 	// user requested playlist deletion
 	if ( nChar == VK_DELETE )
-	{
-		CmusikPropTreeItem* pItem = GetFocusedItem();
-		if ( pItem )
-		{
-			// type was standard playlist...
-			if ( pItem->GetPlaylistType() == MUSIK_PLAYLIST_TYPE_STANDARD )
-			{
-				int nID = pItem->GetPlaylistID();
-				int nPos = -1;
-				int nNextPos = -1;
-				
-				// find the position...
-				for ( size_t i = 0; i < m_StdPlaylists.size(); i++ )
-				{
-					if ( m_StdPlaylists.at( i ) == pItem )
-					{
-						nPos = i;
-
-						if ( nPos == m_StdPlaylists.size() - 1 )
-							nNextPos = nPos - 1;
-						else
-							nNextPos = nPos;
-
-						break;
-					}
-				}
-
-				// if the position is valid, then delete it
-				// and reload the playlists...
-				if ( nPos != -1 )
-				{
-					m_Library->DeleteStdPlaylist( nID );
-					LoadStdPlaylists();
-
-					// now select the next entry in the
-					// list... if -1 select the library...
-					KillFocus( false );
-					if ( nNextPos == -1 )
-					{
-						m_Libraries.at( 0 )->Select( TRUE );
-						SetFocusedItem( m_Libraries.at( 0 ) );
-						int WM_SOURCESLIBRARY = RegisterWindowMessage( "SOURCESLIBRARY" );
-						m_Parent->SendMessage( WM_SOURCESLIBRARY, NULL );
-					}
-					else
-					{
-						m_StdPlaylists.at( nNextPos )->Select( TRUE );
-						SetFocusedItem( m_StdPlaylists.at( nNextPos  ) );
-						int WM_SOURCESSTDPLAYLIST = RegisterWindowMessage( "SOURCESSTDPLAYLIST" );
-						m_Parent->SendMessage( WM_SOURCESSTDPLAYLIST, NULL );
-					}
-
-					Invalidate();
-	
-				}
-			}		
-		}
-	}
+		DeleteSel();
 
 	m_LockHover = false;
 }
@@ -962,6 +999,28 @@ LRESULT CmusikSourcesCtrl::OnEditCommit( WPARAM wParam, LPARAM lParam )
 
 	SetFocus();
 	return 0L;
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSourcesCtrl::OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/)
+{
+	CmusikSourcesBar* pBar = (CmusikSourcesBar*)GetParent();
+	pBar->ShowMenu();
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSourcesBar::OnSourcesRename()
+{
+	GetCtrl()->RenameSel();
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSourcesBar::OnSourcesDelete()
+{
+	GetCtrl()->DeleteSel();
 }
 
 ///////////////////////////////////////////////////
