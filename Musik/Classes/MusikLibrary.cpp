@@ -1245,6 +1245,7 @@ bool CMusikLibrary::RenameFile( CMusikSong* song, bool bClearCheck )
 bool CMusikLibrary::RetagFile( CMusikSong* song )
 {
 	CMusikSong* NewSong		= new CMusikSong;
+	NewSong = song;
 	wxFileName	filename	( song->Filename );
 
 	wxString	sMask		= g_Prefs.sAutoTag;
