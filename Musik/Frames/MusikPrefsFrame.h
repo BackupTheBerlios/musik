@@ -114,6 +114,7 @@ public:
 	wxCheckBox* chkBitrateEnable;
 	wxCheckBox* chkFilenameEnable;
 
+	wxComboBox*	cmbRatingStatic;
 	wxComboBox* cmbTrackStatic;
 	wxComboBox* cmbTitleStatic;
 	wxComboBox* cmbArtistStatic;

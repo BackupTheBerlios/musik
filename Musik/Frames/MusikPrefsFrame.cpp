@@ -87,18 +87,18 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//--- Sound -> Playback ---//
 	//-------------------------//
 	//--- shuffle, repeat, and crossfade checkboxes ---//
-	chkRepeat				= new wxCheckBox( this, -1, _("Repeat"), 											wxPoint( -1, -1 ), wxSize( -1, -1 ) );
-	chkShuffle				= new wxCheckBox( this, -1, _("Shuffle"), 										wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+	chkRepeat				= new wxCheckBox( this, -1, _("Repeat"), 									wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+	chkShuffle				= new wxCheckBox( this, -1, _("Shuffle"), 									wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 	chkCrossfade			= new wxCheckBox( this, -1, _("Crossfade on new song (seconds)"), 			wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 	chkCrossfadeSeek		= new wxCheckBox( this, -1, _("Crossfade on track seek (seconds)"), 		wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 	chkCrossfadePauseResume	= new wxCheckBox( this, -1, _("Crossfade on pause or resume (seconds)"),	wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 	chkCrossfadeStop		= new wxCheckBox( this, -1, _("Crossfade on stop (seconds)"),				wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 	chkCrossfadeExit		= new wxCheckBox( this, -1, _("Crossfade on program exit (seconds)"),		wxPoint( -1, -1 ), wxSize( -1, -1 ) );
-	tcDuration 				= new wxTextCtrl( this, -1, _(""), 												wxPoint( -1, -1 ), wxSize( -1, -1 ) );
-	tcSeekDuration 			= new wxTextCtrl( this, -1, _(""), 												wxPoint( -1, -1 ), wxSize( -1, -1 ) );
-	tcPauseResumeDuration	= new wxTextCtrl( this, -1, _(""), 												wxPoint( -1, -1 ), wxSize( -1, -1 ) );
-	tcStopDuration			= new wxTextCtrl( this, -1, _(""), 												wxPoint( -1, -1 ), wxSize( -1, -1 ) );
-	tcExitDuration			= new wxTextCtrl( this, -1, _(""), 												wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+	tcDuration 				= new wxTextCtrl( this, -1, _(""), 											wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+	tcSeekDuration 			= new wxTextCtrl( this, -1, _(""), 											wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+	tcPauseResumeDuration	= new wxTextCtrl( this, -1, _(""), 											wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+	tcStopDuration			= new wxTextCtrl( this, -1, _(""), 											wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+	tcExitDuration			= new wxTextCtrl( this, -1, _(""), 											wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 	//--- crossfader sizer ---//
 	fsCrossfader = new wxFlexGridSizer( 5, 2, 2, 2 );
 	fsCrossfader->Add( chkCrossfade				);
@@ -275,6 +275,11 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	chkBitrateEnable		= new wxCheckBox(	this, -1, _("Bitrate:"),		wxPoint( 0, 0 ), wxSize( -1, -1 ) );
 	chkFilenameEnable		= new wxCheckBox(	this, -1, _("Filename:"),		wxPoint( 0, 0 ), wxSize( -1, -1 ) );
 
+	//--- rating combo box ---//
+	cmbRatingStatic	= new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
+	cmbRatingStatic->Append( _("Static")  );
+	cmbRatingStatic->Append( _("Dynamic") );
+
 	//--- track num combo box ---//
 	cmbTrackStatic	= new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
 	cmbTrackStatic->Append( _("Static")  );
@@ -335,7 +340,7 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//---------------------------------//
 	vsOptions_Playlist = new wxFlexGridSizer( 12, 2, 2, 2 );
 	vsOptions_Playlist->Add( chkRatingEnable,		0, wxALIGN_CENTER_VERTICAL | wxADJUST_MINSIZE );
-	vsOptions_Playlist->Add( 0,						0 );
+	vsOptions_Playlist->Add( cmbRatingStatic,		0 );
 	vsOptions_Playlist->Add( chkTrackEnable,		0, wxALIGN_CENTER_VERTICAL | wxADJUST_MINSIZE );
 	vsOptions_Playlist->Add( cmbTrackStatic,		0 );
 	vsOptions_Playlist->Add( chkTitleEnable,		0, wxALIGN_CENTER_VERTICAL | wxADJUST_MINSIZE );
@@ -540,6 +545,7 @@ void MusikPrefsFrame::LoadPrefs()
 	chkBitrateEnable->SetValue			( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_BITRATE]			);
 	chkFilenameEnable->SetValue			( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_FILENAME]		);		
 
+	cmbRatingStatic->SetSelection		( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_RATING]			);
 	cmbTrackStatic->SetSelection		( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TRACK]			);
 	cmbTitleStatic->SetSelection		( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TITLE]			);
 	cmbArtistStatic->SetSelection		( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_ARTIST]			);
@@ -841,6 +847,11 @@ void MusikPrefsFrame::SavePrefs()
 	}
 
 	//--- standard / dynamic ---//
+	if ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_RATING] != cmbRatingStatic->GetSelection() )
+	{
+		g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_RATING] = cmbRatingStatic->GetSelection();
+		bResetColumns = true;
+	}
 	if ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TRACK] != cmbTrackStatic->GetSelection() )
 	{
 		g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TRACK] = cmbTrackStatic->GetSelection();
