@@ -45,7 +45,8 @@
 #include "musikPrefs.h"
 
 #include "../musikCore/include/musikPlayer.h"
-#include ".\musiktagdlg.h"
+
+#include "id3/globals.h"
 
 ///////////////////////////////////////////////////
 
@@ -168,6 +169,8 @@ void CmusikTagDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CmusikTagDlg, CDialog)
 	ON_WM_CLOSE()
 	ON_BN_CLICKED(IDC_CLOSE, OnBnClickedClose)
+	ON_BN_CLICKED(IDC_NEXT, OnBnClickedNext)
+	ON_BN_CLICKED(IDC_PREV, OnBnClickedPrev)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -189,6 +192,18 @@ BOOL CmusikTagDlg::PreTranslateMessage(MSG* pMsg)
 			OnClose();
 			return true;
 		}
+		else
+		{
+			if ( pMsg->wParam == VK_RETURN )
+			{
+				if ( !GetKeyState( VK_SHIFT ) )
+					OnBnClickedNext();
+				else
+					OnBnClickedPrev();
+			}
+
+			return true;
+		}
 	}
 
 	return CDialog::PreTranslateMessage( pMsg );
@@ -200,13 +215,17 @@ BOOL CmusikTagDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	CComboBox* rating = (CComboBox*)GetDlgItem( IDC_RATING );
-	rating->AddString( _T( "Unrated" ) );
-	rating->AddString( _T( "1" ) );
-	rating->AddString( _T( "2" ) );
-	rating->AddString( _T( "3" ) );
-    rating->AddString( _T( "4" ) );
-	rating->AddString( _T( "5" ) );
+	CComboBox* combo = (CComboBox*)GetDlgItem( IDC_RATING );
+	combo->AddString( _T( "Unrated" ) );
+	combo->AddString( _T( "1" ) );
+	combo->AddString( _T( "2" ) );
+	combo->AddString( _T( "3" ) );
+    combo->AddString( _T( "4" ) );
+	combo->AddString( _T( "5" ) );
+
+	combo = (CComboBox*)GetDlgItem( IDC_GENRE );
+	for ( int i = 0; i < ID3_NR_OF_V1_GENRES; i++ )
+		combo->AddString( ID3_v1_genre_description[i] );
 
 	return TRUE;
 }
@@ -216,6 +235,22 @@ BOOL CmusikTagDlg::OnInitDialog()
 void CmusikTagDlg::OnBnClickedClose()
 {
 	OnClose();
+}
+
+///////////////////////////////////////////////////
+
+void CmusikTagDlg::OnBnClickedNext()
+{
+	int WM_TAGNEXT = RegisterWindowMessage( "TAGNEXT" );
+	m_Parent->SendMessage( WM_TAGNEXT );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikTagDlg::OnBnClickedPrev()
+{
+	int WM_TAGPREV = RegisterWindowMessage( "TAGPREV" );
+	m_Parent->SendMessage( WM_TAGPREV );
 }
 
 ///////////////////////////////////////////////////

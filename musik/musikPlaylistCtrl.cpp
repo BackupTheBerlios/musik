@@ -68,6 +68,8 @@ IMPLEMENT_DYNAMIC( CmusikPlaylistCtrl, CWnd )
 // messages that we can receive
 
 int WM_TAGPROPERTIESDESTROY = RegisterWindowMessage( "TAGPROPERTIESDESTROY" );
+int WM_TAGNEXT = RegisterWindowMessage( "TAGNEXT" );
+int WM_TAGPREV = RegisterWindowMessage( "TAGPREV" );
 
 ///////////////////////////////////////////////////
 
@@ -89,6 +91,7 @@ BEGIN_MESSAGE_MAP(CmusikPlaylistCtrl, CmusikListCtrl)
 	ON_NOTIFY(HDN_ENDTRACKA, 0, OnHdnEndtrack)
 	ON_NOTIFY(HDN_ENDTRACKW, 0, OnHdnEndtrack)
 	ON_NOTIFY_REFLECT(LVN_KEYDOWN, OnLvnKeydown)
+	ON_NOTIFY_REFLECT(LVN_ITEMCHANGED, OnLvnItemchanged)
 
 	// menu
 	ON_COMMAND(ID_PLAYLISTCOLUMNS_ARTIST, OnPlaylistcolumnsArtist)
@@ -114,7 +117,8 @@ BEGIN_MESSAGE_MAP(CmusikPlaylistCtrl, CmusikListCtrl)
 
 	// custom messages
 	ON_REGISTERED_MESSAGE( WM_TAGPROPERTIESDESTROY, OnTagEditDestroy )
-	ON_NOTIFY_REFLECT(LVN_ITEMCHANGED, OnLvnItemchanged)
+	ON_REGISTERED_MESSAGE( WM_TAGNEXT, OnTagNext )
+	ON_REGISTERED_MESSAGE( WM_TAGPREV, OnTagPrev )
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -1949,3 +1953,38 @@ void CmusikPlaylistCtrl::OnLvnItemchanged(NMHDR *pNMHDR, LRESULT *pResult)
 
 ///////////////////////////////////////////////////
 
+LRESULT CmusikPlaylistCtrl::OnTagNext( WPARAM wParam, LPARAM lParam )
+{
+	int sel = GetFirstSelected();
+	if ( sel + 1 == m_Playlist->GetCount() )
+		sel = 0;
+	else
+		sel++;
+
+	SetSelectionMark( sel );
+	SetItemState( -1, 0, LVIS_SELECTED );
+	SetItemState( sel, LVIS_SELECTED, LVIS_SELECTED );
+	EnsureVisible( sel, FALSE );
+
+	return 0L;
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CmusikPlaylistCtrl::OnTagPrev( WPARAM wParam, LPARAM lParam )
+{
+	int sel = GetFirstSelected();
+	if ( sel - 1 == -1 )
+		sel = m_Playlist->GetCount() - 1;
+	else
+		sel--;
+
+	SetSelectionMark( sel );
+	SetItemState( -1, 0, LVIS_SELECTED );
+	SetItemState( sel, LVIS_SELECTED, LVIS_SELECTED );
+	EnsureVisible( sel, FALSE );
+
+	return 0L;
+}
+
+///////////////////////////////////////////////////

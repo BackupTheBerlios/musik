@@ -88,6 +88,9 @@ protected:
 	DECLARE_DYNAMIC(CmusikTagDlg)
 	DECLARE_MESSAGE_MAP()
 
+public:
+	afx_msg void OnBnClickedNext();
+	afx_msg void OnBnClickedPrev();
 };
 
 ///////////////////////////////////////////////////
