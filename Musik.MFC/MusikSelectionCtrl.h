@@ -18,6 +18,7 @@ public:
 	int GetCtrlID	(){ return m_ID; }
 	CString			GetTypeDB();
 	CString			GetTypeStr();
+	int				GetType(){ return m_Type; }
 	void			GetSelItems( CStdStringArray& items, bool format_query = true );
 	CStdString		GetSelQuery();
 

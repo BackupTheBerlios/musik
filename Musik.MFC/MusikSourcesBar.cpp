@@ -42,7 +42,7 @@ int CMusikSourcesBar::OnCreate( LPCREATESTRUCT lpCreateStruct )
 
 void CMusikSourcesBar::OnSize(UINT nType, int cx, int cy)
 {
-	CSizingControlBarG::OnSize(nType, cx, cy);
+	CSizingControlBarCF::OnSize(nType, cx, cy);
 
 	CRect client_size;
 	GetClientRect( &client_size );

@@ -41,7 +41,11 @@ int CMusikSelectionCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CMusikListCtrl::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-	InsertColumn( 0, m_Library->GetSongField( m_Type ) );
+	CString sTitle = (CString)m_Library->GetSongField( m_Type );
+	sTitle += _T( "s" );
+
+	InsertColumn( 0, sTitle );
+	GetParent()->SetWindowText( sTitle );
 
 	CRect client_size;
 	GetClientRect( &client_size );

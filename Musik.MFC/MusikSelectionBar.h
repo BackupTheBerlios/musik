@@ -5,7 +5,7 @@
 class CMusikLibrary;
 
 #ifndef baseCMusikSelectionBar
-#define baseCMusikSelectionBar CSizingControlBarG
+#define baseCMusikSelectionBar CSizingControlBarCF
 #endif
 
 class CMusikSelectionBar : public baseCMusikSelectionBar

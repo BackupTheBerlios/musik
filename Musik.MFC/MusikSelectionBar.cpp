@@ -29,7 +29,7 @@ int CMusikSelectionBar::OnCreate( LPCREATESTRUCT lpCreateStruct )
 	if ( baseCMusikSelectionBar::OnCreate(lpCreateStruct) == -1 )
 		return -1;
 
-	long dwStyle = WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_OWNERDATA | LVS_SHOWSELALWAYS;
+	long dwStyle = WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_OWNERDATA | LVS_SHOWSELALWAYS | LVS_NOCOLUMNHEADER;
 	long dwStyleEx =  LVS_EX_FULLROWSELECT;
 
 	if ( !m_wndChild->Create( dwStyle, CRect( 0, 0, 0, 0), this, 123 ) )
@@ -49,7 +49,7 @@ int CMusikSelectionBar::OnCreate( LPCREATESTRUCT lpCreateStruct )
 
 void CMusikSelectionBar::OnSize(UINT nType, int cx, int cy)
 {
-	CSizingControlBarG::OnSize(nType, cx, cy);
+	CSizingControlBarCF::OnSize(nType, cx, cy);
 
 	CRect rcClient;
 	GetClientRect( &rcClient );

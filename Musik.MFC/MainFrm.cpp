@@ -209,7 +209,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	//--- sources control							---//
 	//-------------------------------------------------//
 	m_wndSources = new CMusikSourcesBar();
-	m_wndSources->Create( _T( "Musik Sources" ), this, ID_SOURCESBOX );
+	m_wndSources->Create( _T( "Sources" ), this, ID_SOURCESBOX );
 	m_wndSources->EnableDocking( CBRS_ALIGN_LEFT | CBRS_ALIGN_RIGHT );
     m_wndSources->SetBarStyle( m_wndSources->GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC );
 	DockControlBar( m_wndSources, AFX_IDW_DOCKBAR_LEFT );
@@ -359,6 +359,9 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 			pCurr->SetUpdating( false );
 		}
 	}
+
+	m_Library->GetRelatedSongs( sSender, pSender->GetType(), *m_LibPlaylist );
+	m_wndView->GetCtrl()->UpdateV();
 
 	return 0L;
 }

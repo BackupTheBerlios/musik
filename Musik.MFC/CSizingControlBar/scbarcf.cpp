@@ -63,8 +63,6 @@ CSizingControlBarCF::CSizingControlBarCF()
 }
 
 BEGIN_MESSAGE_MAP(CSizingControlBarCF, baseCSizingControlBarCF)
-    //{{AFX_MSG_MAP(CSizingControlBarCF)
-    //}}AFX_MSG_MAP
     ON_MESSAGE(WM_SETTEXT, OnSetText)
 END_MESSAGE_MAP()
 
@@ -102,22 +100,14 @@ void CSizingControlBarCF::NcPaintGripper(CDC* pDC, CRect rcClient)
         return;
 
     // compute the caption rectangle
-    BOOL bHorz = IsHorzDocked();
     CRect rcGrip = rcClient;
-    CRect rcBtn = m_biHide->GetRect();
-    if (bHorz)
-    {   // right side gripper
-        rcGrip.left -= m_cyGripper + 1;
-        rcGrip.right = rcGrip.left + 11;
-        rcGrip.top = rcBtn.bottom + 3;
-    }
-    else
-    {   // gripper at top
-        rcGrip.top -= m_cyGripper + 1;
-        rcGrip.bottom = rcGrip.top + 11;
-        rcGrip.right = rcBtn.left - 3;
-    }
-    rcGrip.InflateRect(bHorz ? 1 : 0, bHorz ? 0 : 1);
+    CRect rcBtn = m_biOptions->GetRect();
+
+	// gripper at top
+    rcGrip.top -= m_cyGripper + 1;
+    rcGrip.bottom = rcGrip.top + 11;
+    rcGrip.right = rcBtn.left - 3;
+    rcGrip.InflateRect( 0, 1 );
 
     // draw the caption background
     //CBrush br;
@@ -157,24 +147,12 @@ void CSizingControlBarCF::NcPaintGripper(CDC* pDC, CRect rcClient)
 
             // then paint with the resulting color
             CRect r2 = rcGrip;
-            if (bHorz)
-            {
-                r2.bottom = rcGrip.bottom - 
-                    ((i * rcGrip.Height()) >> nShift);
-                r2.top = rcGrip.bottom - 
-                    (((i + 1) * rcGrip.Height()) >> nShift);
-                if (r2.Height() > 0)
-                    pDC->FillSolidRect(r2, cr);
-            }
-            else
-            {
-                r2.left = rcGrip.left + 
-                    ((i * rcGrip.Width()) >> nShift);
-                r2.right = rcGrip.left + 
-                    (((i + 1) * rcGrip.Width()) >> nShift);
-                if (r2.Width() > 0)
-                    pDC->FillSolidRect(r2, cr);
-            }
+            r2.left = rcGrip.left + 
+                ((i * rcGrip.Width()) >> nShift);
+            r2.right = rcGrip.left + 
+                (((i + 1) * rcGrip.Width()) >> nShift);
+            if (r2.Width() > 0)
+                pDC->FillSolidRect(r2, cr);
         }
     }
 
@@ -195,22 +173,11 @@ void CSizingControlBarCF::NcPaintGripper(CDC* pDC, CRect rcClient)
         int nOldBkMode = pDC->SetBkMode(TRANSPARENT);
         COLORREF clrOldText = pDC->SetTextColor(clrCptnText);
 
-        if (bHorz)
-        {
-            // rotate text 90 degrees CCW if horizontally docked
-            font.GetLogFont(&lf);
-            font.DeleteObject();
-            lf.lfEscapement = 900;
-            font.CreateFontIndirect(&lf);
-        }
-        
         CFont* pOldFont = pDC->SelectObject(&font);
         CString sTitle;
         GetWindowText(sTitle);
 
-        CPoint ptOrg = bHorz ?
-            CPoint(rcGrip.left - 1, rcGrip.bottom - 3) :
-            CPoint(rcGrip.left + 3, rcGrip.top - 1);
+        CPoint ptOrg = CPoint(rcGrip.left + 3, rcGrip.top - 1);
 
         pDC->ExtTextOut(ptOrg.x, ptOrg.y,
             ETO_CLIPPED, rcGrip, sTitle, NULL);
@@ -222,6 +189,7 @@ void CSizingControlBarCF::NcPaintGripper(CDC* pDC, CRect rcClient)
 
     // draw the button
     m_biHide->Paint(pDC);
+	m_biOptions->Paint(pDC);
 }
 
 LRESULT CSizingControlBarCF::OnSetText(WPARAM wParam, LPARAM lParam)

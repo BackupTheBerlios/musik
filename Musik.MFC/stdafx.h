@@ -41,3 +41,4 @@
 
 #include "CSizingControlBar/sizecbar.h"
 #include "CSizingControlBar/scbarg.h"
+#include "CSizingControlBar/scbarcf.h"

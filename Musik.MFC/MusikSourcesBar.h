@@ -3,7 +3,7 @@
 #include "MusikSourcesCtrl.h"
 
 #ifndef baseCMusikSourcesBar
-#define baseCMusikSourcesBar CSizingControlBarG
+#define baseCMusikSourcesBar CSizingControlBarCF
 #endif
 
 class CMusikSourcesBar : public baseCMusikSourcesBar
