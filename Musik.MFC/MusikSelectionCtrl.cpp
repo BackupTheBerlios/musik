@@ -14,7 +14,7 @@ CMusikSelectionCtrl::CMusikSelectionCtrl( CMusikLibrary* library, int type )
 {
 	m_Library = library;
 	m_Type = type;
-	HideScrollBars( LCSB_NCOVERRIDE, SB_HORZ );
+	HideScrollBars( LCSB_NCOVERRIDE, /*SB_HORZ*/ SB_BOTH );
 }
 
 CMusikSelectionCtrl::~CMusikSelectionCtrl()
@@ -74,6 +74,5 @@ void CMusikSelectionCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 			break;
 		}
 	}
-	
 	*pResult = 0;
 }

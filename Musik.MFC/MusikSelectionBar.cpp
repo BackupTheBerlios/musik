@@ -23,6 +23,7 @@ CMusikSelectionBar::~CMusikSelectionBar()
 
 BEGIN_MESSAGE_MAP(CMusikSelectionBar, baseCMusikSelectionBar)
 	ON_WM_CREATE()
+	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
 
@@ -33,7 +34,7 @@ int CMusikSelectionBar::OnCreate( LPCREATESTRUCT lpCreateStruct )
 
 	SetSCBStyle( GetSCBStyle() | SCBS_SIZECHILD );
 
-	if ( !m_wndChild->Create( WS_CHILD|WS_VISIBLE|LVS_REPORT|LVS_OWNERDATA|LVS_SHOWSELALWAYS, CRect(0,0,0,0), this, 123) )
+	if ( !m_wndChild->Create( WS_CHILD | WS_VISIBLE | LVS_NOCOLUMNHEADER | LVS_REPORT | LVS_OWNERDATA | LVS_SHOWSELALWAYS, CRect(0,0,0,0), this, 123) )
 		return -1;
 
 	m_wndChild->ModifyStyleEx( 0, WS_EX_STATICEDGE );
@@ -44,4 +45,11 @@ int CMusikSelectionBar::OnCreate( LPCREATESTRUCT lpCreateStruct )
 	m_wndChild->SetFont( &m_Font );
 
 	return 0;
+}
+
+void CMusikSelectionBar::OnSize(UINT nType, int cx, int cy)
+{
+	CSizingControlBarG::OnSize(nType, cx, cy);
+
+	// TODO: Add your message handler code here
 }
