@@ -13,9 +13,13 @@ CMusikSourcesCtrl::~CMusikSourcesCtrl()
 
 void CMusikSourcesCtrl::RescaleColumns( bool refresh )
 {
+	Freeze();
+
 	SetColumnWidth( 0, GetClientSize().GetWidth() );
 	if ( refresh )
 		Refresh( false );
+
+	Thaw();
 }
 
 void CMusikSourcesCtrl::Reset( bool rescale, bool refresh )

@@ -13,12 +13,16 @@ CMusikSelectionCtrl::~CMusikSelectionCtrl()
 
 void CMusikSelectionCtrl::RescaleColumns( bool refresh )
 {
+	Freeze();
+
 	if ( GetColumnWidth( 0 ) != 0 )
 		SetColumnWidth( 0, 0 );
 
 	SetColumnWidth( 1, GetClientSize().GetWidth() );
 	if ( refresh )
 		Refresh( false );
+
+	Thaw();
 }
 
 void CMusikSelectionCtrl::Reset( bool rescale, bool refresh )
