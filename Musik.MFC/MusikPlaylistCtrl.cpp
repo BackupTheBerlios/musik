@@ -404,17 +404,22 @@ CString CMusikPlaylistCtrl::GetRating( int item )
 
 void CMusikPlaylistCtrl::OnNMClick(NMHDR *pNMHDR, LRESULT *pResult)
 {
-	DWORD dwPos = ::GetMessagePos();
-	CPoint ptCurr( (int)LOWORD( dwPos ), (int)HIWORD( dwPos ) );
+	// get cursor pos at time of click in relation
+	// to the client
+	CPoint ptCurr;
+	GetCursorPos( &ptCurr );
 	ScreenToClient( &ptCurr );
 
+	// construct a hit test for the listctrl
 	LVHITTESTINFO hit_test;
 	hit_test.pt = ptCurr;
 	SubItemHitTest( &hit_test );
 
-	// click column to rate
+	// check to see if the click was over a
+	// (sub)item's label...
 	if( hit_test.flags & LVHT_ONITEMLABEL )
 	{
+		// if the current column is the rating
 		if ( m_Prefs->GetPlaylistCol( hit_test.iSubItem ) == MUSIK_LIBRARY_TYPE_RATING )
 		{
 			CRect sub_item_rect;
