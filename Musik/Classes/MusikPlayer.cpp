@@ -372,16 +372,13 @@ void CMusikPlayer::Resume( bool bCheckFade )
 
 void CMusikPlayer::Stop( bool bCheckFade, bool bExit )
 {
-	if ( g_FaderThread->IsCrossfaderActive() )
-		g_FaderThread->CrossfaderAbort();
+	//if ( g_FaderThread->IsCrossfaderActive() )
+	//	g_FaderThread->CrossfaderAbort();
 
-	m_Playing = false;
-	
 	//-------------------------------------------------//
 	//--- setup crossfader and return, if the prefs	---//
 	//--- say so.									---//
 	//-------------------------------------------------//
-	/*
 	if ( bCheckFade )
 	{
 		//--- use exit duration ---//
@@ -406,7 +403,8 @@ void CMusikPlayer::Stop( bool bCheckFade, bool bExit )
 			}				
 		}
 	}
-	*/
+	
+	m_Playing = false;
 
 	int nStreamCount = g_ActiveStreams.GetCount();
 	for ( int i = 0; i < nStreamCount; i++ )
