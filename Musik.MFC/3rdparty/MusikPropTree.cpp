@@ -430,7 +430,7 @@ void CMusikPropTree::Delete(CMusikPropTreeItem* pItem)
 void CMusikPropTree::SetFocusedItem(CMusikPropTreeItem* pItem)
 {
 	m_pFocus = pItem;
-	EnsureVisible(m_pFocus);
+	//EnsureVisible(m_pFocus);
 
 	if (!IsWindow(m_hWnd))
 		return;

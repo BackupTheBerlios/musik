@@ -78,17 +78,16 @@ IDR_MAINFRAME MENU
 BEGIN
     POPUP "&File"
     BEGIN
+        POPUP "Open"
+        BEGIN
+            MENUITEM "Files",                       ID_OPEN_FILES
+            MENUITEM "Directory",                   ID_OPEN_DIRECTORY
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "Manage Directories",          ID_FILE_MANAGEDIRECTORIES
         MENUITEM "&Preferences\tCtrl+P",        ID_FILE_PREFERENCES
         MENUITEM SEPARATOR
         MENUITEM "E&xit",                       ID_APP_EXIT
-    END
-    POPUP "&Edit"
-    BEGIN
-        MENUITEM "&Undo\tCtrl+Z",               ID_EDIT_UNDO
-        MENUITEM SEPARATOR
-        MENUITEM "Cu&t\tCtrl+X",                ID_EDIT_CUT
-        MENUITEM "&Copy\tCtrl+C",               ID_EDIT_COPY
-        MENUITEM "&Paste\tCtrl+V",              ID_EDIT_PASTE
     END
     POPUP "&Help"
     BEGIN

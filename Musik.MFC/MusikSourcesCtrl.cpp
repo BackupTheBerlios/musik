@@ -184,6 +184,25 @@ void CMusikSourcesCtrl::LoadDynPlaylists()
 
 void CMusikSourcesCtrl::OnDropFiles(HDROP hDropInfo)
 {
+	// set cursor back to hour glass
+	SetCursor( LoadCursor( NULL, IDC_WAIT ) );
+
+	// see if the drag landed on an existing
+	// playlist, if it did, we'll append
+	CPoint pos;
+	::GetCursorPos( &pos );
+	ScreenToClient( &pos );
+
+	CMusikPropTreeItem* pItem = FindItem( pos );
+
+	if ( pItem )
+	{
+		KillFocus();
+		pItem->Select( TRUE );
+		SetFocusedItem( pItem );	
+	}
+
+	// dnd stuff
 	size_t nNumFiles;
 	TCHAR szNextFile [MAX_PATH];
 	SHFILEINFO  rFileInfo;
@@ -222,14 +241,6 @@ void CMusikSourcesCtrl::OnDropFiles(HDROP hDropInfo)
 
 	DragFinish( hDropInfo );
 
-	CPoint pos;
-	::GetCursorPos( &pos );
-	ScreenToClient( &pos );
-
-	// see if the drag landed on an existing
-	// playlist, if it did, we'll append
-	CMusikPropTreeItem* pItem = FindItem( pos );
-
 	// did we actually hit an item?
 	if ( pItem )
 	{
@@ -264,10 +275,24 @@ void CMusikSourcesCtrl::OnDropFiles(HDROP hDropInfo)
 		CStdString playlist_str;
 		playlist_str.Format( _T( "New Playlist %d" ), m_StdPlaylists.size() );
 		m_Library->CreateStdPlaylist( playlist_str.c_str(), files );
+		LoadStdPlaylists();
 	}
 
-	// show
-	LoadStdPlaylists();
+	// didn't hit an item, a new 
+	// playlist was created, so it
+	// was pushed to the back of the list
+	if ( !pItem )
+	{
+		pItem = m_StdPlaylists.at( m_StdPlaylists.size() - 1 );
+
+		// focus
+		KillFocus();
+		pItem->Select( TRUE );
+		SetFocusedItem( pItem );
+	}
+
+	if ( pItem )
+		SendNotify( PTN_SELCHANGE, pItem );
 }
 
 ///////////////////////////////////////////////////
