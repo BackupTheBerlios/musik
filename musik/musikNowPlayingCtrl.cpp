@@ -55,6 +55,7 @@
 #include "3rdparty/BtnST.h"
 
 #include "../musikCore/include/musikPlayer.h"
+#include ".\musiknowplayingctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -230,6 +231,8 @@ int CmusikNowPlayingCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 	m_Next->SetFont( &m_Font );
 
+	ResetBtnColors();
+
 	CDC* pDC = GetDC();
 	pDC->SetBkColor( GetSysColor( COLOR_BTNHILIGHT ) );
 	ReleaseDC( pDC );
@@ -365,6 +368,27 @@ void CmusikNowPlayingCtrl::OnBtnStop()
 void CmusikNowPlayingCtrl::OnBtnNext()
 {
 	m_Player->Next();
+}
+
+///////////////////////////////////////////////////
+
+void CmusikNowPlayingCtrl::ResetBtnColors()
+{
+	m_Prev->SetColor( 0, m_Prefs->MUSIK_COLOR_ACTIVECAPTION, FALSE );
+	m_Prev->SetColor( 1, m_Prefs->MUSIK_COLOR_CAPTIONTEXT, FALSE );
+	m_Prev->DrawBorder( FALSE, FALSE );
+
+	m_Play->SetColor( 0, m_Prefs->MUSIK_COLOR_ACTIVECAPTION, FALSE );
+	m_Play->SetColor( 1, m_Prefs->MUSIK_COLOR_CAPTIONTEXT, FALSE );
+	m_Play->DrawBorder( FALSE, FALSE );
+
+	m_Next->SetColor( 0, m_Prefs->MUSIK_COLOR_ACTIVECAPTION, FALSE );
+	m_Next->SetColor( 1, m_Prefs->MUSIK_COLOR_CAPTIONTEXT, FALSE );
+	m_Next->DrawBorder( FALSE, FALSE );
+
+	m_Stop->SetColor( 0, m_Prefs->MUSIK_COLOR_ACTIVECAPTION, FALSE );
+	m_Stop->SetColor( 1, m_Prefs->MUSIK_COLOR_CAPTIONTEXT, FALSE );
+	m_Stop->DrawBorder( FALSE, FALSE );
 }
 
 ///////////////////////////////////////////////////

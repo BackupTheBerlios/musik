@@ -527,7 +527,8 @@ LONG CmusikPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 
 			CRect dr;
 			dr = drc;
-			dr.left = PROPTREEITEM_EXPANDCOLUMN;
+
+			dr.left = 8;
 			
 			pDC->Rectangle(&dr);
 			

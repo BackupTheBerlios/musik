@@ -124,6 +124,7 @@ public:
 	void UpdateInfo( bool redraw = true );
 	void RescaleInfo();
 	void UpdateButtonStates();
+	void ResetBtnColors();
 
 protected:
 
@@ -167,9 +168,6 @@ protected:
 	// macros
 	DECLARE_DYNAMIC(CmusikNowPlayingCtrl)
 	DECLARE_MESSAGE_MAP()
-
-public:
-
 };
 
 ///////////////////////////////////////////////////
