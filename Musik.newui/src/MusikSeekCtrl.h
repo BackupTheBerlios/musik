@@ -4,7 +4,7 @@
 #include "wx/wxprec.h"
 #include "MusikDragGaugeCtrl.h"
 
-class CMusikSeekCtrl : public CMusikDragGauge
+class CMusikSeekCtrl : public CMusikDragGaugeCtrl
 {
 public:
 	CMusikSeekCtrl( wxWindow* parent, wxWindowID id );

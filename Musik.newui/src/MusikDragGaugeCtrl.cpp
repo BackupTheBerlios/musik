@@ -1,14 +1,14 @@
 #include "wx/wxprec.h"
 #include "MusikDragGaugeCtrl.h"
 
-BEGIN_EVENT_TABLE( CMusikDragGauge, wxGauge )
-	EVT_LEFT_DOWN			( CMusikDragGauge::OnLeftDown		) 
-	EVT_LEFT_UP				( CMusikDragGauge::OnLeftUp			) 
-	EVT_MOTION				( CMusikDragGauge::OnMotion			) 
-	EVT_SIZE				( CMusikDragGauge::OnSize			)
+BEGIN_EVENT_TABLE( CMusikDragGaugeCtrl, wxGauge )
+	EVT_LEFT_DOWN			( CMusikDragGaugeCtrl::OnLeftDown		) 
+	EVT_LEFT_UP				( CMusikDragGaugeCtrl::OnLeftUp			) 
+	EVT_MOTION				( CMusikDragGaugeCtrl::OnMotion			) 
+	EVT_SIZE				( CMusikDragGaugeCtrl::OnSize			)
 END_EVENT_TABLE()
 
-CMusikDragGauge::CMusikDragGauge( wxWindow* parent, wxWindowID id, long style )
+CMusikDragGaugeCtrl::CMusikDragGaugeCtrl( wxWindow* parent, wxWindowID id, long style )
 	: wxGauge( parent, id, 100, wxDefaultPosition, wxDefaultSize, style | wxGA_SMOOTH )
 {
 	m_Parent	= parent;
@@ -18,11 +18,11 @@ CMusikDragGauge::CMusikDragGauge( wxWindow* parent, wxWindowID id, long style )
 	m_WndSize	= GetSize();
 }
 
-CMusikDragGauge::~CMusikDragGauge()
+CMusikDragGaugeCtrl::~CMusikDragGaugeCtrl()
 {
 }
 
-void CMusikDragGauge::OnLeftDown( wxMouseEvent& event )
+void CMusikDragGaugeCtrl::OnLeftDown( wxMouseEvent& event )
 {
 	if ( IsEnabled() )
 	{
@@ -36,7 +36,7 @@ void CMusikDragGauge::OnLeftDown( wxMouseEvent& event )
 	event.Skip();
 }
 
-void CMusikDragGauge::OnLeftUp( wxMouseEvent& event )
+void CMusikDragGaugeCtrl::OnLeftUp( wxMouseEvent& event )
 {
 	if ( m_Dragging )
 	{
@@ -49,7 +49,7 @@ void CMusikDragGauge::OnLeftUp( wxMouseEvent& event )
 	event.Skip();
 }
 
-void CMusikDragGauge::OnMotion( wxMouseEvent& event )
+void CMusikDragGaugeCtrl::OnMotion( wxMouseEvent& event )
 {
 	if ( m_Dragging )
 	{
@@ -94,7 +94,7 @@ void CMusikDragGauge::OnMotion( wxMouseEvent& event )
 	}
 }
 
-void CMusikDragGauge::OnSize( wxSizeEvent& event )
+void CMusikDragGaugeCtrl::OnSize( wxSizeEvent& event )
 {
 	m_WndSize = event.GetSize();
 }

@@ -3,11 +3,11 @@
 
 #include "wx/wxprec.h"
 
-class CMusikDragGauge : public wxGauge
+class CMusikDragGaugeCtrl : public wxGauge
 {
 public:
-	CMusikDragGauge( wxWindow* parent, wxWindowID id, long type );
-	~CMusikDragGauge();
+	CMusikDragGaugeCtrl( wxWindow* parent, wxWindowID id, long type );
+	~CMusikDragGaugeCtrl();
 
 	void OnLeftUp			( wxMouseEvent& event );
 	void OnLeftDown			( wxMouseEvent& event );

@@ -2,7 +2,7 @@
 #include "MusikSeekCtrl.h"
 
 CMusikSeekCtrl::CMusikSeekCtrl( wxWindow* parent, wxWindowID id )
-	: CMusikDragGauge( parent, id, wxGA_HORIZONTAL )
+	: CMusikDragGaugeCtrl( parent, id, wxGA_HORIZONTAL )
 {
 }
 
