@@ -601,14 +601,14 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "Comments", "musik is a small, portable media library"
+            VALUE "Comments", "musikCube is a small, portable audio library"
             VALUE "CompanyName", "Casey Langen"
-            VALUE "FileDescription", "musik"
+            VALUE "FileDescription", "musikCube"
             VALUE "FileVersion", "1.0.0.1"
             VALUE "InternalName", "musik.exe"
             VALUE "LegalCopyright", "Copyright Casey Langen 2002-2003.  All rights reserved."
             VALUE "OriginalFilename", "musik.exe"
-            VALUE "ProductName", "musik Win32"
+            VALUE "ProductName", "musikCube"
             VALUE "ProductVersion", "1.0.0.1"
         END
     END

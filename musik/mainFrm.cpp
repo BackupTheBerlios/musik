@@ -1656,6 +1656,8 @@ LRESULT CMainFrame::OnSourcesQuickSearch( WPARAM wParam, LPARAM lParam )
 {
 	m_PlaylistSel = false;
 
+	ShowSelectionBoxes( false );
+
 	if ( !m_Playlist )
 		m_Playlist = new CmusikPlaylist();
 

@@ -1203,6 +1203,8 @@ void CmusikSourcesCtrl::QuickSearch()
 	m_EditInPlace.SetFocus();
 	m_EditInPlace.SetString( m_EditInPlace.GetString() );
 	m_EditInPlace.ShowWindow( SW_SHOWDEFAULT );
+
+	OnEditChange( (WPARAM)MUSIK_SOURCES_EDITINPLACE_QUICKSEARCH, TRUE );
 }
 
 ///////////////////////////////////////////////////
@@ -1210,17 +1212,15 @@ void CmusikSourcesCtrl::QuickSearch()
 LRESULT CmusikSourcesCtrl::OnEditChange( WPARAM wParam, LPARAM lParam )
 {
 	int cmd = (int)lParam;
+	BOOL force = (BOOL)lParam;
 
 	if ( cmd == MUSIK_SOURCES_EDITINPLACE_QUICKSEARCH )
 	{
 		CString curr_query;
 		m_EditInPlace.GetWindowText( curr_query );
 
-		if ( curr_query.GetLength() >= 2 || curr_query.Left( 1 ) == "!" )
+		if ( force || curr_query.GetLength() >= 1 )
 		{
-			if ( curr_query.Left( 1 ) == "!" )
-				curr_query = curr_query.Right( curr_query.GetLength() - 1 );
-
 			int WM_SOURCESQUICKSEARCH = RegisterWindowMessage( "SOURCESQUICKSEARCH" );
 			CmusikSourcesBar* pBar = (CmusikSourcesBar*)GetParent();
 			pBar->m_Parent->SendMessage( WM_SOURCESQUICKSEARCH, (WPARAM)&curr_query );
@@ -1235,6 +1235,10 @@ LRESULT CmusikSourcesCtrl::OnEditChange( WPARAM wParam, LPARAM lParam )
 void CmusikSourcesCtrl::FinishQuickSearch()
 {
 	CmusikSourcesBar* parent = (CmusikSourcesBar*)GetParent();
+
+	m_Src.at( 0 )->Select( FALSE );
+	SetFocusedItem( NULL );
+	KillFocus( true );
 }
 
 ///////////////////////////////////////////////////
