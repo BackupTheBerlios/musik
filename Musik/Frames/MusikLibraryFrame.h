@@ -39,7 +39,7 @@ class MusikLibraryFrame : public wxFrame
 {
 public:
 
-	MusikLibraryFrame( wxFrame* pParent ,const wxArrayString &arrFilenamesToScan = wxArrayString(),DWORD flags = 0);
+	MusikLibraryFrame( wxFrame* pParent ,const wxArrayString &arrFilenamesToScan = wxArrayString(),unsigned long flags = 0);
 	MusikLibraryFrame( wxFrame* pParent, const wxPoint &pos, const wxSize &size );
 
 	//--- functions ---//
@@ -129,7 +129,7 @@ private:
 	bool m_AutoStart;
 	bool m_Close;
 	bool m_MenuCreated;
-	DWORD m_flagsUpdate;
+	unsigned long m_flagsUpdate;
 	wxString m_Title; //--- so it doesn't have to be recreated millions of times ---//
 
 	wxArrayString aDelDirs;

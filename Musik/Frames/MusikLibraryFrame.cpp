@@ -58,7 +58,7 @@ END_EVENT_TABLE()
 //---  gets called automatically  ---//
 //--- on startup to add new files ---//
 //-----------------------------------//
-MusikLibraryFrame::MusikLibraryFrame( wxFrame* pParent ,const wxArrayString &arrFilenamesToScan,DWORD flags)
+MusikLibraryFrame::MusikLibraryFrame( wxFrame* pParent ,const wxArrayString &arrFilenamesToScan,unsigned long flags)
 	: wxFrame( pParent, -1, _("Searching for and Adding New Files"), wxPoint( -1, -1 ), wxSize( 600, 48 ), wxCAPTION | wxFRAME_FLOAT_ON_PARENT | wxFRAME_NO_TASKBAR | wxCLIP_CHILDREN )
 {
 	m_arrScannedFiles = arrFilenamesToScan;
