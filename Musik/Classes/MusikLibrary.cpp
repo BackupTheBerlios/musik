@@ -363,7 +363,7 @@ bool CMusikLibrary::WriteOGGTag( const CMusikSong & song, bool ClearAll )
 
     	//--- if file couldn't be loaded, return ---//
 	wxString read_state = wxT( "r+b" );
-	if ( !in.Open( sRename.c_str(), read_state.c_str() ) )
+	if ( !in.Open( sRename.c_str(), "r+b" ) )
 	{
 		wxRenameFile( sRename, filename );
 		return false;
@@ -393,7 +393,7 @@ bool CMusikLibrary::WriteOGGTag( const CMusikSong & song, bool ClearAll )
 
 	//--- write new file ---//
 	wxString write_state = wxT( "w+b" );
-	if ( out.Open( filename.c_str(), write_state.c_str() ) )
+	if ( out.Open( filename.c_str(), "w+b" ) )
 		vcedit_write( state, out.fp() );
 
 	//--- clean up ---//

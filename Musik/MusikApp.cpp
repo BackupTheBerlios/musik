@@ -199,7 +199,7 @@ void MusikApp::WriteVersion()
 	}
   else
   {
-    wxASSERT(0)
+    wxASSERT(0);
   }
 }
 

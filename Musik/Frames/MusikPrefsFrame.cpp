@@ -359,7 +359,7 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//--------------------------//
 	//--- Tagging -> General ---//
 	//--------------------------//
-	wxStaticText *stActivityTag =	new wxStaticText( this, -1, _("Activity Boxes (artist/album/etc):"), wxPoint( 0, 0 ), wxSize( 50, -1 ), wxALIGN_LEFT );
+	wxStaticText *stActivityTag =	new wxStaticText( this, -1, _("Selection Boxes (artist/album/etc):"), wxPoint( 0, 0 ), wxSize( 50, -1 ), wxALIGN_LEFT );
 	chkActivityWrite			=	new wxCheckBox	( this, -1,	_("Write tag to file"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 	chkActivityClear			=	new wxCheckBox	( this, -1,	_("Clear old tag"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 	chkActivityRename			=	new wxCheckBox	( this, -1,	_("Automatically rename file"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
