@@ -80,6 +80,7 @@ public:
 	int nFadeSeekEnable;
 	int nFadeDuration;
 	int nFadeSeekDuration;
+	int nFadeStopEnable;
 
 	int nAutoDelta;
 

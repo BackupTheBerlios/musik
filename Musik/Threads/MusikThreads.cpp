@@ -143,6 +143,17 @@ void MusikCrossfaderThread::Abort()
 
 void *MusikCrossfaderThread::Entry()
 {
+	//---------------------------------------------//
+	//--- if the fade duration * 2				---//
+	//--- (fade in + fade out) is shorter		---//
+	//--- than that stream duration, no fading	---//
+	//---------------------------------------------//
+	if ( g_Player.GetDuration( FMOD_MSEC ) < ( g_Prefs.nFadeDuration * 2 ) )
+	{
+		FSOUND_SetVolume( g_ActiveChannels.Item( g_ActiveChannels.GetCount() - 1 ), g_Prefs.nSndVolume );
+		return NULL;
+	}
+
 	int nFadeDuration = 0; 
 	if ( g_Player.GetCrossfadeType() == CROSSFADE_NORMAL )
 		nFadeDuration = g_Prefs.nFadeDuration;
