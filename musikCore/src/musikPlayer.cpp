@@ -121,6 +121,7 @@ int CmusikPlayerWorker::svc()
 	bool m_Exit = false;
 	int nTimeRemain;
 	int nTimeElapsed;
+	int nFadeTime;
 
 	while ( !m_Exit && !m_Stop )
 	{
@@ -190,8 +191,9 @@ int CmusikPlayerWorker::svc()
 				else
 				{
 					nTimeRemain = m_Player->GetTimeRemain( MUSIK_TIME_MS );
+					nFadeTime = m_Player->GetCrossfader()->GetDuration( MUSIK_CROSSFADER_NEW_SONG ) * 1000;
 
-					if ( nTimeRemain <= ( m_Player->GetCrossfader()->GetDuration( m_Player->GetFadeType() ) * 1000 ) )
+					if ( nTimeRemain <= nFadeTime )
 						m_Player->Next( true );
 				}
 			}
@@ -674,8 +676,6 @@ bool CmusikPlayer::Play( int index, int fade_type, int start_pos )
 	if ( fade_type != MUSIK_CROSSFADER_SEEK )
 		m_Library->GetSongInfoFromID( m_Playlist->GetSongID( index ), &m_CurrSong );
 
-	m_Functor->OnNewSong();
-
 	// setup next stream
 	FSOUND_STREAM* pNewStream = FSOUND_Stream_Open( 
 		m_CurrSong.GetFilename().c_str(), 
@@ -703,9 +703,11 @@ bool CmusikPlayer::Play( int index, int fade_type, int start_pos )
 	// inc the next channel, 
 	int curr_chan = PushNewChannel();
 
-	// add the new channel and stream
+	// add the new channel and stream, and
+	// call the OnNewSong
 	m_ActiveStreams->push_back( pNewStream );
 	m_ActiveChannels->push_back( curr_chan );
+	m_Functor->OnNewSong();
 
 	// play it: set volume
 	FSOUND_Stream_Play( GetCurrChannel(), pNewStream );
