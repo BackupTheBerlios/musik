@@ -154,9 +154,9 @@ void *MusikCrossfaderThread::Entry()
 		return NULL;
 	}
 	
-	//----------------------------------------//
-	//--- how many channels to fade out	---//
-	//---------------------------------------//
+	//---------------------------------------------//
+	//--- how many channels to fade out			---//
+	//---------------------------------------------//
 	size_t m_FadeType = g_Player.GetCrossfadeType();
 	int nFadeInStreamID	= -1;
 	size_t nFadeOutStreams = 0;
@@ -170,7 +170,7 @@ void *MusikCrossfaderThread::Entry()
 	}
 	else
 	{
-		nFadeOutStreams = g_ActiveStreams.GetCount() - 1;													//--- else, fade ( all - 1 ) out, 	last in	---//
+		nFadeOutStreams = g_ActiveStreams.GetCount() - 1;													//--- else, fade ( all - 1 ) out, 	last in		---//
 		nFadeInStreamID = g_ActiveStreams.GetCount() - 1;
 	}
 
@@ -186,27 +186,27 @@ void *MusikCrossfaderThread::Entry()
 	else if ( m_FadeType == CROSSFADE_EXIT )
 		nFadeDuration = g_Prefs.nFadeExitDuration;
 
-	float fFadeSecs 	= (float)nFadeDuration / 1000.0f;				//--- number of seconds		---//
+	float fFadeSecs 	= (float)nFadeDuration / 1000.0f;				//--- number of seconds								---//
 	
 	float fFadeCount;
 	int nSleepTime;
 	if ( fFadeSecs < 1.0f )
 	{
-		fFadeCount = 20.0f * fFadeSecs;								//--- 20 fades per sec if fade less than 1 sec ---//
+		fFadeCount = 20.0f * fFadeSecs;									//--- 20 fades per sec if fade less than 1 sec		---//
 		nSleepTime = 50;
 	}
 	else
 	{
-		fFadeCount 	= 10.0f * fFadeSecs;								//--- 10fades per sec if fade greater than 1 sec ---//
+		fFadeCount 	= 10.0f * fFadeSecs;								//--- 10 fades per sec if fade greater than 1 sec	---//
 		nSleepTime = 100;
 	}
 	
-	int nFadeCount = (int)fFadeCount;									//--- total number of fades	---//
+	int nFadeCount = (int)fFadeCount;									//--- total number of fades							---//
 	
 	if ( nFadeCount < 1 )
 		nFadeCount = 1;
 
-	int nFadeStep = g_Prefs.nSndVolume / nFadeCount;					//--- volume steps				----//
+	int nFadeStep = g_Prefs.nSndVolume / nFadeCount;					//--- volume steps									----//
 	
 	//-----------------------------------------//
 	//--- array of steps for the secondary	---//

@@ -323,15 +323,15 @@ void CMusikPlayer::Pause( bool bCheckFade )
 	if ( m_Fading )
 		SetFadeComplete();
 	
-	//-----------------------------------------------//
-	//--- if this type of crossfade is enabled,	---//
+	//-------------------------------------------------//
+	//--- if this type of crossfade is enabled,		---//
 	//--- then just setup a fade signal. an event	---//
 	//--- will get posted back to actually pause	---//
 	//--- once the fade is complete.				---//
-	//----------------------------------------------//
+	//-------------------------------------------------//
 	if ( bCheckFade )
 	{
-		if ( g_Prefs.nFadePauseResumeEnable == 1 )
+		if ( g_Prefs.nFadePauseResumeEnable == 1 && IsPlaying() )
 		{
 			SetCrossfadeType( CROSSFADE_PAUSE );
 			SetFadeStart();
@@ -350,13 +350,13 @@ void CMusikPlayer::Resume( bool bCheckFade )
 	
 	FSOUND_SetPaused( FSOUND_ALL, FALSE );
 	
-	//--------------------------------------------------//
+	//-----------------------------------------------------//
 	//--- setup crossfader and return, if	the prefs	---//
-	//--- say so.											---//
-	//--------------------------------------------------//
+	//--- say so.										---//
+	//-----------------------------------------------------//
 	if ( bCheckFade )
 	{
-		if ( g_Prefs.nFadePauseResumeEnable == 1 )
+		if ( g_Prefs.nFadePauseResumeEnable == 1 && IsPaused() )
 		{
 			SetCrossfadeType( CROSSFADE_RESUME );
 			SetFadeStart();
@@ -377,10 +377,10 @@ void CMusikPlayer::Stop( bool bCheckFade, bool bExit )
 
 	m_Playing = false;
 	
-	//--------------------------------------------------//
-	//--- setup crossfader and return, if	the prefs	---//
-	//--- say so.											---//
-	//--------------------------------------------------//
+	//-------------------------------------------------//
+	//--- setup crossfader and return, if the prefs	---//
+	//--- say so.									---//
+	//-------------------------------------------------//
 	if ( bCheckFade )
 	{
 		//--- use exit duration ---//
