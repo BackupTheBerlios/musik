@@ -25,7 +25,7 @@ class CMusikSourcesBar : public baseCMusikSourcesBar
 public:
 
 	// construct / destruct
-	CMusikSourcesBar( CMusikLibrary* library );
+	CMusikSourcesBar( CFrameWnd* parent, CMusikLibrary* library );
 	virtual ~CMusikSourcesBar();
 
 protected:
@@ -33,6 +33,7 @@ protected:
 	// children
 	CMusikSourcesCtrl* m_wndChild;
 	CFont m_Font;
+	CFrameWnd* m_Parent;
 
 	// message maps
 	afx_msg int OnCreate( LPCREATESTRUCT lpCreateStruct );

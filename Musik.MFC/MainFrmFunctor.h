@@ -30,7 +30,7 @@ public:
 	virtual void Call()
 	{
 		int WM_SONGCHANGE = RegisterWindowMessage( "SONGCHANGE" );
-		m_Parent->SendMessage( WM_SONGCHANGE, NULL );
+		m_Parent->PostMessage( WM_SONGCHANGE, NULL );
 	};
 
 private:

@@ -17,9 +17,10 @@ static char THIS_FILE[] = __FILE__;
 
 ///////////////////////////////////////////////////
 
-CMusikSourcesBar::CMusikSourcesBar( CMusikLibrary* library )
+CMusikSourcesBar::CMusikSourcesBar( CFrameWnd* parent, CMusikLibrary* library )
 {
 	m_wndChild = new CMusikSourcesCtrl( library );
+	m_Parent = parent;
 }
 
 ///////////////////////////////////////////////////
@@ -83,19 +84,22 @@ void CMusikSourcesBar::OnItemChanged( NMHDR* pNotifyStruct, LRESULT* plResult )
 		// library or device selected
 		if ( pNMPropTree->pItem->GetSourcesType() == MUSIK_SOURCES_LIBRARY_OR_DEVICE )
 		{
-
+			int WM_SOURCESLIBRARY = RegisterWindowMessage( "SOURCESLIBRARY" );
+			m_Parent->SendMessage( WM_SOURCESLIBRARY, NULL );
 		}
 
 		// standard playlist selected
 		if ( pNMPropTree->pItem->GetSourcesType() == MUSIK_SOURCES_STANDARD_PLAYLIST )
 		{
-
+			int WM_SOURCESSTDPLAYLIST = RegisterWindowMessage( "SOURCESSTDPLAYLIST" );
+			m_Parent->SendMessage( WM_SOURCESSTDPLAYLIST, NULL );
 		}
 
 		// standard playlist selected
 		if ( pNMPropTree->pItem->GetSourcesType() == MUSIK_SOURCES_DYNAMIC_PLAYLIST )
 		{
-
+			int WM_SOURCESDYNPLAYLIST = RegisterWindowMessage( "SOURCESDYNDPLAYLIST" );		
+			m_Parent->SendMessage( WM_SOURCESDYNPLAYLIST, NULL );
 		}
 	}
 
