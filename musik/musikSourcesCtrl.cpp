@@ -229,7 +229,7 @@ void CmusikSourcesCtrl::OnDropFiles(HDROP hDropInfo)
 	}
 
 	// make sure the item isn't root
-	if ( pItem != NULL && pItem != m_StdPlaylistRoot )
+	if ( pItem == NULL )
 		return;
 
 	if ( pItem )
