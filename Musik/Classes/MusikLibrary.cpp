@@ -409,11 +409,7 @@ void CMusikLibrary::ClearDirtyTags( bool bInform )
 		if ( nCount < 1 )
 			wxMessageBox( _( "There are no pending tags to finalize." ), MUSIK_VERSION, wxICON_INFORMATION );
 		else
-		{
-			wxString sMsg;
-			sMsg.sprintf( wxT( "%d tags pending to be written were finalized for the database only. These tags will not be written to file." ), nCount );
-			wxMessageBox( sMsg, MUSIK_VERSION, wxICON_INFORMATION );
-		}
+			wxMessageBox( IntTowxString( nCount ) + wxT( " tags pending to be written were finalized for the database only. These tags will not be written to file." ), MUSIK_VERSION, wxICON_INFORMATION );
 	}
 }
 
