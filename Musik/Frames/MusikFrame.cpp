@@ -333,7 +333,7 @@ void MusikFrame::CreateMainMenu()
 	SetMenuBar( menu_bar );
 
 }
-void MusikFrame::AutoUpdate	( const wxArrayString & Filenames ,DWORD flags )
+void MusikFrame::AutoUpdate	( const wxArrayString & Filenames ,unsigned long flags )
 {
 	MusikLibraryFrame *p= new MusikLibraryFrame( ( wxFrame* )this, Filenames,flags );
 	this->Enable	( FALSE );

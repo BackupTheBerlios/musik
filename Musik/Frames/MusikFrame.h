@@ -144,7 +144,7 @@ public:
 	void	LibrarySimpleQueryDlg	();
 	void	LibrarySimpleQueryEdit	();
 
-	void	AutoUpdate	( const wxArrayString & Filenames = wxArrayString(),DWORD flags = 0);
+	void	AutoUpdate	( const wxArrayString & Filenames = wxArrayString(),unsigned long flags = 0);
 	//--- tag related ---//
 	void	WriteTags				();
 
