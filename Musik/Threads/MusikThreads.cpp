@@ -288,16 +288,40 @@ void MusikCrossfaderThread::OnExit()
 		wxCommandEvent StopPlayerEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYER_STOP );	
 		wxPostEvent( &g_Player, StopPlayerEvt );
 		Yield();
+
+		//-----------------------------------------------------//
+		//--- and if its an exit, clean up. this probably	---//
+		//--- needs work.									---//
+		//-----------------------------------------------------//
+		if ( m_FadeType == CROSSFADE_EXIT )
+		{
+			m_Parent->Delete();
+			Yield();
+
+			wxCommandEvent ExitPlayerEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_FRAME_EXIT_FADE_DONE );
+			wxPostEvent( g_MusikFrame, ExitPlayerEvt );
+			Yield();	
+		}
+
+		return;
 	}
 
-	if ( m_FadeType == CROSSFADE_EXIT )
+	else if ( m_FadeType == CROSSFADE_PAUSE )
 	{
-		m_Parent->Delete();
+		wxCommandEvent PausePlayerEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYER_PAUSE );	
+		wxPostEvent( &g_Player, PausePlayerEvt );
 		Yield();
 
-		wxCommandEvent ExitPlayerEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_FRAME_EXIT_FADE_DONE );
-		wxPostEvent( g_MusikFrame, ExitPlayerEvt );
-		Yield();		
+		return;
+	}
+
+	else if ( m_FadeType == CROSSFADE_RESUME )
+	{
+		wxCommandEvent ResumePlayerEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYER_RESUME );	
+		wxPostEvent( &g_Player, ResumePlayerEvt );
+		Yield();
+
+		return;
 	}
 }
 

@@ -96,6 +96,8 @@ public:
 	void OnNextSongEvt		( wxCommandEvent& WXUNUSED(event) ){ NextSong(); SetStartingNext( false );	}
 	void OnFadeCompleteEvt	( wxCommandEvent& WXUNUSED(event) ){ SetFadeComplete();						}
 	void OnPlayerStop		( wxCommandEvent& WXUNUSED(event) ){ Stop( true, false );					}
+	void OnPlayerPause		( wxCommandEvent& WXUNUSED(event) ){ Pause( true );							}
+	void OnPlayerResume		( wxCommandEvent& WXUNUSED(event) ){ Resume( true );						}
 
 	//----------------//
 	//--- booleans ---//

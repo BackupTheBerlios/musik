@@ -45,6 +45,8 @@ BEGIN_EVENT_TABLE( CMusikPlayer, wxEvtHandler )
     EVT_MENU			( MUSIK_PLAYER_NEXT_SONG,		CMusikPlayer::OnNextSongEvt		)
     EVT_MENU			( MUSIK_PLAYER_FADE_COMPLETE,	CMusikPlayer::OnFadeCompleteEvt )
 	EVT_MENU			( MUSIK_PLAYER_STOP,			CMusikPlayer::OnPlayerStop		)
+	EVT_MENU			( MUSIK_PLAYER_PAUSE,			CMusikPlayer::OnPlayerPause		)
+	EVT_MENU			( MUSIK_PLAYER_RESUME,			CMusikPlayer::OnPlayerResume	)
 END_EVENT_TABLE()
 
 CMusikPlayer::CMusikPlayer()
@@ -317,12 +319,20 @@ void CMusikPlayer::ClearOldStreams()
 
 void CMusikPlayer::Pause( bool bCheckFade )
 {
+	if ( !IsPlaying() )
+		return;
+
 	//-------------------------------------------------//
-	//--- if we pause during a crossfade, just		---//
-	//--- delete the channel and stop fading		---//
+	//--- if we pause during a crossfade, kill the	---//
+	//--- thread and wait for it to call this		---//
+	//--- function again upon termination.			---//
 	//-------------------------------------------------//
-	if ( m_Fading )
-		SetFadeComplete();
+	SetCrossfadeType( CROSSFADE_PAUSE );
+	if ( g_FaderThread->IsCrossfaderActive() )
+	{
+		g_FaderThread->CrossfaderAbort();
+		return;
+	}
 	
 	//-------------------------------------------------//
 	//--- if this type of crossfade is enabled,		---//
@@ -334,11 +344,16 @@ void CMusikPlayer::Pause( bool bCheckFade )
 	{
 		if ( g_Prefs.nFadePauseResumeEnable == 1 && IsPlaying() )
 		{
-			SetCrossfadeType( CROSSFADE_PAUSE );
 			SetFadeStart();
 			return;
 		}
 	}
+
+	//-------------------------------------------------//
+	//--- if we get here, the fade out is done, or	---//
+	//--- fading is disabled. so actually pause the	---//
+	//--- stream and update the UI.					---//
+	//-------------------------------------------------//
 	m_Paused = true;
 	FSOUND_SetPaused( FSOUND_ALL, TRUE );
 
@@ -347,8 +362,22 @@ void CMusikPlayer::Pause( bool bCheckFade )
 
 void CMusikPlayer::Resume( bool bCheckFade )
 {
+	if ( !IsPaused() )
+		return;
+
+	//-------------------------------------------------//
+	//--- if we resume during a crossfade, kill the	---//
+	//--- thread and wait for it to call this		---//
+	//--- function again upon termination.			---//
+	//-------------------------------------------------//
+	SetCrossfadeType( CROSSFADE_RESUME );
+	if ( g_FaderThread->IsCrossfaderActive() )
+	{
+		g_FaderThread->CrossfaderAbort();
+		return;
+	}
+
 	m_Paused = false;
-	
 	FSOUND_SetPaused( FSOUND_ALL, FALSE );
 	
 	//-----------------------------------------------------//
@@ -359,7 +388,6 @@ void CMusikPlayer::Resume( bool bCheckFade )
 	{
 		if ( g_Prefs.nFadePauseResumeEnable == 1 && IsPaused() )
 		{
-			SetCrossfadeType( CROSSFADE_RESUME );
 			SetFadeStart();
 			return;
 		}
@@ -377,7 +405,10 @@ void CMusikPlayer::Stop( bool bCheckFade, bool bExit )
 		return;
 
 	if ( g_FaderThread->IsCrossfaderActive() )
+	{
 		g_FaderThread->CrossfaderAbort();
+		return;
+	}
 
 	//-------------------------------------------------//
 	//--- setup crossfader and return, if the prefs	---//

@@ -342,7 +342,7 @@ void CNowPlayingCtrl::PlayerPlayPause( wxCommandEvent& WXUNUSED(event) )
 	{
 		int nCurSel = g_PlaylistCtrl->GetNextItem( -1, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
 		if ( nCurSel > -1 )
-		g_Player.PlayCurSel();
+			g_Player.PlayCurSel();
 	}
 }
 
