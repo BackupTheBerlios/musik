@@ -171,6 +171,12 @@ void CMusikPlayer::SetPlaymode( )
 void CMusikPlayer::PlayCurSel()
 {
 	m_LastSong	= m_SongIndex;
+
+	if ( IsPaused() )
+	{
+		ClearOldStreams();
+		m_Paused = false;
+	}
 	
 	int nCurSel = g_PlaylistCtrl->GetNextItem( -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED );
 	if ( nCurSel > -1 )
@@ -667,12 +673,14 @@ void CMusikPlayer::SetFadeComplete()
 {
 	m_Fading = false; 
 	
+	/*
 	if ( GetCrossfadeType() == CROSSFADE_PAUSE )
 		FinalizePause();
 	else if ( GetCrossfadeType() == CROSSFADE_RESUME )
 		FinalizeResume();
 	else if ( GetCrossfadeType() == CROSSFADE_STOP || GetCrossfadeType() == CROSSFADE_EXIT )
 		FinalizeStop();
+		*/
 	
 	ClearOldStreams();
 }

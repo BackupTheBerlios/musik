@@ -290,21 +290,6 @@ void MusikCrossfaderThread::OnExit()
 	m_Parent->SetCrossfaderActive( false );
 
 	//-------------------------------------------------//
-	//--- finalize whatever type of fade was going	---//
-	//--- on.										---//
-	//-------------------------------------------------//
-	/*
-	if ( m_FadeType == CROSSFADE_STOP || m_FadeType == CROSSFADE_EXIT )
-		g_Player.FinalizeStop();
-	else if ( m_FadeType == CROSSFADE_PAUSE )
-		g_Player.FinalizePause();
-	else if ( m_FadeType == CROSSFADE_RESUME )
-		g_Player.FinalizeResume();
-	Yield();
-	*/
-
-
-	//-------------------------------------------------//
 	//--- if we ended naturally, that means no		---//
 	//--- other crossfader spawned. tell the player	---//
 	//--- no other fading is going on, so it can	---//
@@ -314,6 +299,18 @@ void MusikCrossfaderThread::OnExit()
 	{
 		wxCommandEvent FadeCompleteEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYER_FADE_COMPLETE );	
 		wxPostEvent( &g_Player, FadeCompleteEvt );
+		Yield();
+
+		//-------------------------------------------------//
+		//--- finalize whatever type of fade was going	---//
+		//--- on.										---//
+		//-------------------------------------------------//
+		if ( m_FadeType == CROSSFADE_STOP || m_FadeType == CROSSFADE_EXIT )
+			g_Player.FinalizeStop();
+		else if ( m_FadeType == CROSSFADE_PAUSE )
+			g_Player.FinalizePause();
+		else if ( m_FadeType == CROSSFADE_RESUME )
+			g_Player.FinalizeResume();
 		Yield();
 	}
 
