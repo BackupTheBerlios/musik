@@ -79,11 +79,11 @@ void CActivityListBox::RescaleColumns()
 	int nWidth, nHeight;
 	GetClientSize	( &nWidth, &nHeight );
 	SetColumnWidth	( 0, 0 );
-	SetColumnWidth	( 1, nWidth );
-
-	#ifdef __WXGTK__
-		nWidth -= wxSystemSettings::GetMetric(wxSYS_HSCROLL_Y);
-		SetColumnWidth( 1, nWidth - GetColumnWidth( 0 ) );			
+	
+	#ifdef __WXMSW__
+		SetColumnWidth	( 1, nWidth );
+	#elif defined __WXGTK__
+		SetColumnWidth( 1, nWidth - wxSystemSettings::GetMetric(wxSYS_HSCROLL_Y) );			
 	#endif 
 
 	Thaw();

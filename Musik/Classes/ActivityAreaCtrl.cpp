@@ -51,7 +51,6 @@ CActivityAreaCtrl::CActivityAreaCtrl( wxWindow *pParent )
 	m_ActivityBox2	= NULL;
 	m_ActivityBox3	= NULL;
 	m_ActivityBox4	= NULL;
-
 	
 	pTopSizer = new wxBoxSizer( wxHORIZONTAL );
 	SetSizerAndFit( pTopSizer );
@@ -140,7 +139,7 @@ void CActivityAreaCtrl::Delete()
 		pTopSizer->Remove( m_ActivityBox4 );
 		delete m_ActivityBox4;
 		m_ActivityBox4 = NULL;
-	}	
+	}
 }
 
 void CActivityAreaCtrl::ResetAllContents()
@@ -205,6 +204,9 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 {
 	//-- avoid updating playlists when dragging over activity area --//
 	if ( g_DragInProg )
+		return;
+	
+	if ( !pSel )
 		return;
 
 	//-------------------------------------//
@@ -497,4 +499,3 @@ void CActivityAreaCtrl::OnActivityBoxActivated	( wxListEvent& event)
 		m_Selected = m_bFocused = m_Selecting = false;
 	}
 }
-

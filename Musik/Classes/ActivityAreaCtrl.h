@@ -63,7 +63,6 @@ private:
 	wxBoxSizer* pTopSizer;
 	bool m_bFocused; // this flags are used, to make instant selection working
 	bool m_Selected;
-
 	bool m_Selecting;
 };
 
