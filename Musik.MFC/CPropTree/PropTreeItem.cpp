@@ -450,7 +450,7 @@ LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 			if ( !IsRootLevel() )
 				oBrush = pDC->SelectObject(GetSysColorBrush(COLOR_INFOBK));
 			else
-				oBrush = pDC->SelectObject(GetSysColorBrush(COLOR_ACTIVECAPTION));
+				oBrush = pDC->SelectObject(GetSysColorBrush(COLOR_INACTIVECAPTION));
 			
 			CRect dr;
 			dr = drc;

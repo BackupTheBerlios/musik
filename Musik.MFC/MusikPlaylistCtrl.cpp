@@ -370,7 +370,6 @@ void CMusikPlaylistCtrl::InitFonts()
 	lf.lfWeight = info.lfMenuFont.lfWeight;
 	lf.lfItalic = info.lfMenuFont.lfItalic;	
 
-	// check if we should use system font
 	_tcscpy(lf.lfFaceName, info.lfMenuFont.lfFaceName);
 
 	m_Items = new CFont();
