@@ -226,7 +226,7 @@ void CMusikPlaylistCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 void CMusikPlaylistCtrl::InitFonts()
 {
 	m_Items.CreateStockObject( DEFAULT_GUI_FONT );
-	m_Bullets.CreatePointFont( 100, "Wingdings" );
+	m_Bullets.CreatePointFont( 100, "Musik" );
 }
 
 ///////////////////////////////////////////////////
@@ -293,23 +293,23 @@ CString CMusikPlaylistCtrl::GetRating( int item )
 	switch ( nRating )
 	{
 	case 1:
-		sRating = _T( "µwwww" );
+		sRating = _T( "-,,,," );
 		break;
 	case 2:
-		sRating = _T( "µµwww" );
+		sRating = _T( "--,,," );
 		break;
 	case 3:
-		sRating = _T( "µµµww" );
+		sRating = _T( "---,," );
 		break;
 	case 4:
-		sRating = _T( "µµµµw" );
+		sRating = _T( "----," );
 		break;
 	case 5:
-        sRating = _T( "µµµµµ" );
+        sRating = _T( "-----" );
 		break;
 	case 0:
 	default:
-		sRating = _T( "wwwww" );
+		sRating = _T( ",,,,," );
 		break;
 	}
 
