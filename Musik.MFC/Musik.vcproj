@@ -121,32 +121,19 @@
 	</References>
 	<Files>
 		<Filter
-			Name="Source Files"
-			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
-			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
+			Name="Main Frame"
+			Filter="">
 			<File
 				RelativePath=".\ChildView.cpp">
+			</File>
+			<File
+				RelativePath=".\ChildView.h">
 			</File>
 			<File
 				RelativePath=".\MainFrm.cpp">
 			</File>
 			<File
-				RelativePath=".\Musik.cpp">
-			</File>
-			<File
-				RelativePath=".\stdafx.cpp">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"/>
-				</FileConfiguration>
+				RelativePath=".\MainFrm.h">
 			</File>
 		</Filter>
 		<Filter
@@ -212,20 +199,32 @@
 			</Filter>
 		</Filter>
 		<Filter
-			Name="Header Files"
+			Name="App Stuff"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
-				RelativePath=".\ChildView.h">
-			</File>
-			<File
-				RelativePath=".\MainFrm.h">
+				RelativePath=".\Musik.cpp">
 			</File>
 			<File
 				RelativePath=".\Musik.h">
 			</File>
 			<File
 				RelativePath=".\Resource.h">
+			</File>
+			<File
+				RelativePath=".\stdafx.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\stdafx.h">
