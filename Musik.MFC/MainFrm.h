@@ -40,6 +40,9 @@ public:
 
 protected: 
 	void InitPaths();
+	void InitMusik();
+
+	void CleanMusik();
 
 	DECLARE_DYNAMIC(CMainFrame)
 
@@ -51,6 +54,8 @@ public:
 private:
 	HICON m_Icon16;
 	HICON m_Icon32;
+	HICON m_Tray_Playing;
+	HICON m_Tray_Stopped;
 
 protected:
 	CMusikPlaylist* m_LibPlaylist;

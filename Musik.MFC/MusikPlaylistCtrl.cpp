@@ -12,6 +12,7 @@
 #include "../Musik.Core/include/MusikDynDspInfo.h"
 
 #include "MEMDC.H"
+#include ".\musikplaylistctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -37,60 +38,14 @@ CMusikPlaylistCtrl::~CMusikPlaylistCtrl()
 ///////////////////////////////////////////////////
 
 BEGIN_MESSAGE_MAP(CMusikPlaylistCtrl, CListCtrl)
-	ON_WM_NCPAINT()
-	ON_WM_NCCALCSIZE()
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_NOTIFY_REFLECT(LVN_GETDISPINFO, OnLvnGetdispinfo)
-	ON_WM_PAINT()
 	ON_WM_ERASEBKGND()
 	ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, OnNMCustomdraw)
-	ON_NOTIFY_REFLECT(LVN_ITEMACTIVATE, OnLvnItemActivate)
 	ON_NOTIFY_REFLECT(LVN_ODCACHEHINT, OnLvnOdcachehint)
+	ON_WM_PAINT()
 END_MESSAGE_MAP()
-
-///////////////////////////////////////////////////
-
-void CMusikPlaylistCtrl::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp)
-{
-	lpncsp->rgrc[0].bottom -= 6;
-	lpncsp->rgrc[0].top += 4;
-	lpncsp->rgrc[0].right -= 4;
-	lpncsp->rgrc[0].left += 4;
-
-	CListCtrl::OnNcCalcSize( bCalcValidRects, lpncsp );
-}
-
-///////////////////////////////////////////////////
-
-void CMusikPlaylistCtrl::OnNcPaint()
-{
-    // get window DC that is clipped to the non-client area
-    CWindowDC dc(this);
-
-    CRect rcClient, rcBar;
-
-    GetClientRect(rcClient);
-    ClientToScreen(rcClient);
-    GetWindowRect(rcBar);
-
-    rcClient.OffsetRect(-rcBar.TopLeft());
-    rcBar.OffsetRect(-rcBar.TopLeft());
-
-	CMemDC pDC( &dc );
-
-    // draw borders in non-client area
-    CRect rcDraw = rcBar;
-
-    // erase the NC background
-	CBrush *back = CBrush::FromHandle( GetSysColorBrush( COLOR_BTNFACE ) );
-    pDC.FillRect(rcDraw, back );
-	pDC.Draw3dRect( 3, 3, rcClient.Width() + 2, rcClient.Height() + 2, GetSysColor( COLOR_BTNSHADOW ), GetSysColor( COLOR_BTNHILIGHT ) );
-
-    // client area is not our bussiness
-	dc.IntersectClipRect(rcBar);
-    dc.ExcludeClipRect(rcClient);
-}
 
 ///////////////////////////////////////////////////
 
@@ -218,27 +173,6 @@ void CMusikPlaylistCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 
 ///////////////////////////////////////////////////
 
-void CMusikPlaylistCtrl::OnPaint()
-{
-	CPaintDC dc(this);
-	CRect rect;
-	GetClientRect(&rect);
-	CMemDC memDC(&dc, &rect);
-	
-	CRect headerRect;
-	GetDlgItem(0)->GetWindowRect(&headerRect);
-	ScreenToClient(&headerRect);
-	dc.ExcludeClipRect(&headerRect);
-	   
-	CRect clip;
-	memDC.GetClipBox(&clip);
-	memDC.FillSolidRect( clip, GetSysColor( COLOR_BTNHILIGHT ) );
-	   
-	DefWindowProc(WM_PAINT, (WPARAM)memDC->m_hDC, (LPARAM)0);
-}
-
-///////////////////////////////////////////////////
-
 BOOL CMusikPlaylistCtrl::OnEraseBkgnd(CDC* pDC)
 {
 	return false;
@@ -321,14 +255,6 @@ void CMusikPlaylistCtrl::InitFonts()
 	m_Items.CreateStockObject( DEFAULT_GUI_FONT );
 	m_Bullets.CreatePointFont( 100, "Marlett" );
 }
-///////////////////////////////////////////////////
-
-void CMusikPlaylistCtrl::OnLvnItemActivate(NMHDR *pNMHDR, LRESULT *pResult)
-{
-	LPNMITEMACTIVATE pNMIA = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
-	// TODO: Add your control notification handler code here
-	*pResult = 0;
-}
 
 ///////////////////////////////////////////////////
 void CMusikPlaylistCtrl::OnLvnOdcachehint(NMHDR *pNMHDR, LRESULT *pResult)
@@ -339,3 +265,27 @@ void CMusikPlaylistCtrl::OnLvnOdcachehint(NMHDR *pNMHDR, LRESULT *pResult)
 
 	*pResult = 0;
 }
+
+///////////////////////////////////////////////////
+
+void CMusikPlaylistCtrl::OnPaint()
+{
+	CPaintDC dc(this);
+	CRect rect;
+	GetClientRect(&rect);
+	CMemDC memDC(&dc, &rect);
+	
+	CRect headerRect;
+	GetDlgItem(0)->GetWindowRect(&headerRect);
+	ScreenToClient(&headerRect);
+	dc.ExcludeClipRect(&headerRect);
+	   
+	CRect clip;
+	memDC.GetClipBox(&clip);
+	memDC.FillSolidRect( clip, GetSysColor( COLOR_BTNHILIGHT ) );
+	   
+	DefWindowProc(WM_PAINT, (WPARAM)memDC->m_hDC, (LPARAM)0);
+}
+
+///////////////////////////////////////////////////
+

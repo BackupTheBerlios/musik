@@ -35,8 +35,7 @@ int CMusikSelectionBar::OnCreate( LPCREATESTRUCT lpCreateStruct )
 	if ( !m_wndChild->Create( dwStyle, CRect( 0, 0, 0, 0), this, 123 ) )
 		return -1;
 
-    
-	m_wndChild->SetExtendedStyle( dwStyleEx );
+    m_wndChild->SetExtendedStyle( dwStyleEx );
 	m_wndChild->ModifyStyleEx( dwStyleEx, WS_EX_STATICEDGE );
 
 	if ( !m_Font.CreateStockObject(DEFAULT_GUI_FONT) )

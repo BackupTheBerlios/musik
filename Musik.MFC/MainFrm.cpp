@@ -11,7 +11,6 @@
 #include <Direct.h>
 
 #include "MainFrm.h"
-#include ".\mainfrm.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -34,11 +33,7 @@ END_MESSAGE_MAP()
 CMainFrame::CMainFrame()
 {
 	InitPaths();
-
-	m_Library = new CMusikLibrary( ( CStdString )m_Database );
-	m_Prefs = new CMusikPrefs( m_PrefsIni );
-
-	m_LibPlaylist = new CMusikPlaylist();
+	InitMusik();
 
 	m_DynPlaylist = NULL;
 	m_StdPlaylist = NULL;
@@ -58,15 +53,7 @@ CMainFrame::~CMainFrame()
 	delete m_wndSources;
 	delete m_wndNowPlaying;
 
-	delete m_Library;
-	delete m_Prefs;
-
-	if ( m_LibPlaylist )
-		delete m_LibPlaylist;
-	if ( m_DynPlaylist )
-		delete m_DynPlaylist;
-	if ( m_StdPlaylist )
-		delete m_StdPlaylist;
+	CleanMusik();
 }
 
 ///////////////////////////////////////////////////
@@ -82,6 +69,32 @@ void CMainFrame::InitPaths()
 
 	m_Database = m_UserDir + _T( "musiklib.db" );
 	m_PrefsIni = m_UserDir + _T( "musikprefs.ini" );
+}
+
+
+///////////////////////////////////////////////////
+
+void CMainFrame::InitMusik()
+{
+	m_Library		= new CMusikLibrary( ( CStdString )m_Database );
+	m_Prefs			= new CMusikPrefs( m_PrefsIni );
+	m_LibPlaylist	= new CMusikPlaylist();	
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::CleanMusik()
+{
+	if ( m_Library )
+		delete m_Library;
+	if ( m_Prefs )
+		delete m_Prefs;
+	if ( m_LibPlaylist )
+		delete m_LibPlaylist;
+	if ( m_DynPlaylist )
+		delete m_DynPlaylist;
+	if ( m_StdPlaylist )
+		delete m_StdPlaylist;
 }
 
 ///////////////////////////////////////////////////
