@@ -136,7 +136,7 @@ protected:
 	CmusikDir m_Dir;
 
 	// pointer to main window
-	CFrameWnd* m_MainWnd;
+	CFrameWnd* m_Parent;
 
 	// core stuff
 	CmusikLibrary* m_Library;
@@ -173,10 +173,12 @@ protected:
 	// manipulating items..
 	bool m_PlaylistNeedsSave;
 	void GetSelectedItems( CIntArray* items );
+	void GetSelectedSongs( CmusikPlaylist& playlist );
 	void GetItemIDs( const CIntArray& items, CIntArray* target );
 	void DeleteItems( const CIntArray& items, bool update = true );
 	void InsertItems( const CIntArray& items, int first_sel, int at, bool update = true );
 	int GetFirstSelected();
+	void DeleteSelectedItems( bool from_library = false, bool from_computer = false );
 
 	// misc
 	bool m_Changed;
@@ -192,7 +194,6 @@ protected:
 	afx_msg void OnNMClick(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnLvnItemActivate(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnLvnBegindrag(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnLvnMarqueeBegin(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnLvnColumnclick(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnPlaylistcolumnsArtist();
@@ -200,6 +201,22 @@ protected:
 	afx_msg void OnHdnEndtrack(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnPlaylistcolumnsAlbum();
 	afx_msg void OnPlaylistcolumnsYear();
+	afx_msg void OnPlaylistcolumnsGenre();
+	afx_msg void OnPlaylistcolumnsTitle();
+	afx_msg void OnPlaylistcolumnsTracknumber();
+	afx_msg void OnPlaylistcolumnsTimeadded();
+	afx_msg void OnPlaylistcolumnsLastplayed();
+	afx_msg void OnPlaylistcolumnsFilesize();
+	afx_msg void OnPlaylistcolumnsFormat();
+	afx_msg void OnPlaylistcolumnsDuration();
+	afx_msg void OnPlaylistcolumnsRating();
+	afx_msg void OnPlaylistcolumnsTimesplayed();
+	afx_msg void OnPlaylistcolumnsBitrate();
+	afx_msg void OnPlaylistcolumnsFilename();
+	afx_msg void OnLvnKeydown(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnPlcDeleteFromplaylist();
+	afx_msg void OnPlcDeleteFromlibrary();
+	afx_msg void OnPlcDeleteFromcomputer();
 
 	// CmusikPlaylistDropTarget calls
 	// this function once files have
@@ -227,20 +244,6 @@ private:
 	void DrawSortArrow( int col );
 	int m_LastCol;
 	bool m_Ascend;
-public:
-
-	afx_msg void OnPlaylistcolumnsGenre();
-	afx_msg void OnPlaylistcolumnsTitle();
-	afx_msg void OnPlaylistcolumnsTracknumber();
-	afx_msg void OnPlaylistcolumnsTimeadded();
-	afx_msg void OnPlaylistcolumnsLastplayed();
-	afx_msg void OnPlaylistcolumnsFilesize();
-	afx_msg void OnPlaylistcolumnsFormat();
-	afx_msg void OnPlaylistcolumnsDuration();
-	afx_msg void OnPlaylistcolumnsRating();
-	afx_msg void OnPlaylistcolumnsTimesplayed();
-	afx_msg void OnPlaylistcolumnsBitrate();
-	afx_msg void OnPlaylistcolumnsFilename();
 };
 
 ///////////////////////////////////////////////////

@@ -62,7 +62,6 @@
 #include "../musikCore/include/musikBatchAdd.h"
 
 #include "MEMDC.H"
-#include ".\musikplaylistctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -86,7 +85,6 @@ BEGIN_MESSAGE_MAP(CmusikPlaylistCtrl, CmusikListCtrl)
 	ON_NOTIFY_REFLECT(NM_CLICK, OnNMClick)
 	ON_NOTIFY_REFLECT(LVN_ITEMACTIVATE, OnLvnItemActivate)
 	ON_NOTIFY_REFLECT(LVN_BEGINDRAG, OnLvnBegindrag)
-	ON_WM_KEYDOWN()
 	ON_NOTIFY_REFLECT(LVN_MARQUEEBEGIN, OnLvnMarqueeBegin)
 	ON_NOTIFY_REFLECT(LVN_COLUMNCLICK, OnLvnColumnclick)
 	ON_NOTIFY_REFLECT(LVN_BEGINRDRAG, OnLvnBeginrdrag)
@@ -107,6 +105,10 @@ BEGIN_MESSAGE_MAP(CmusikPlaylistCtrl, CmusikListCtrl)
 	ON_COMMAND(ID_PLAYLISTCOLUMNS_TIMESPLAYED, OnPlaylistcolumnsTimesplayed)
 	ON_COMMAND(ID_PLAYLISTCOLUMNS_BITRATE, OnPlaylistcolumnsBitrate)
 	ON_COMMAND(ID_PLAYLISTCOLUMNS_FILENAME, OnPlaylistcolumnsFilename)
+	ON_NOTIFY_REFLECT(LVN_KEYDOWN, OnLvnKeydown)
+	ON_COMMAND(ID_PLC_DELETE_FROMPLAYLIST, OnPlcDeleteFromplaylist)
+	ON_COMMAND(ID_PLC_DELETE_FROMLIBRARY, OnPlcDeleteFromlibrary)
+	ON_COMMAND(ID_PLC_DELETE_FROMCOMPUTER, OnPlcDeleteFromcomputer)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -134,7 +136,7 @@ CmusikPlaylistCtrl::CmusikPlaylistCtrl( CFrameWnd* mainwnd, CmusikLibrary* libra
 	m_DropID_R = dropid_r;
 
 	// main window
-	m_MainWnd = mainwnd;
+	m_Parent = mainwnd;
 
 	// misc
 	m_Changed = true;
@@ -769,7 +771,7 @@ bool CmusikPlaylistCtrl::PlayItem( int n )
 		// post a message to our parent, letting it
 		// know the player owns the playlist.
 		int WM_PLAYERNEWPLAYLIST = RegisterWindowMessage( "PLAYERNEWPLAYLIST" );
-		m_MainWnd->SendMessage( WM_PLAYERNEWPLAYLIST, (WPARAM)m_PlaylistType );
+		m_Parent->SendMessage( WM_PLAYERNEWPLAYLIST, (WPARAM)m_PlaylistType );
 
 		// the current playlist always becomes the
 		// now playing after an item is activated,
@@ -907,7 +909,7 @@ void CmusikPlaylistCtrl::BeginDrag( NMHDR* pNMHDR, bool right_button )
 	// post a message to the main frame, letting
 	// it know that drag and drop has started
 	int WM_DRAGSTART = RegisterWindowMessage( "DRAGSTART" );
-	m_MainWnd->SendMessage( WM_DRAGSTART, NULL );
+	m_Parent->SendMessage( WM_DRAGSTART, NULL );
 
     // Start the drag 'n' drop!
 	DROPEFFECT dwEffect = datasrc.DoDragDrop ( DROPEFFECT_COPY | DROPEFFECT_MOVE );
@@ -915,7 +917,7 @@ void CmusikPlaylistCtrl::BeginDrag( NMHDR* pNMHDR, bool right_button )
 	// post a message to the main frame, letting
 	// it know that drag and drop has completed
 	int WM_DRAGEND = RegisterWindowMessage( "DRAGEND" );
-	m_MainWnd->SendMessage( WM_DRAGEND, NULL );
+	m_Parent->SendMessage( WM_DRAGEND, NULL );
 
     // If the DnD completed OK, we remove all of the dragged items from our
     // list.
@@ -1109,7 +1111,7 @@ void CmusikPlaylistCtrl::OnDropFiles( HDROP hDropInfo )
 			params = new CmusikBatchAdd( files, m_Player->GetPlaylist(), m_Library, NULL, NULL );
 
 		int WM_BATCHADD_NEW = RegisterWindowMessage( "BATCHADD_NEW" );
-		m_MainWnd->SendMessage( WM_BATCHADD_NEW, (WPARAM)params );
+		m_Parent->SendMessage( WM_BATCHADD_NEW, (WPARAM)params );
 	}
 }
 
@@ -1220,21 +1222,6 @@ void CmusikPlaylistCtrl::InsertItems( const CIntArray& items, int firstsel, int 
 
 		SetScrollPos( SB_VERT, nScrollPos );
 	}
-}
-
-///////////////////////////////////////////////////
-
-void CmusikPlaylistCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
-{
-	if ( nChar == VK_DELETE )
-	{
-		CIntArray sel;
-		GetSelectedItems( &sel );
-		DeleteItems( sel, true );
-		return;
-	}
-
-	CmusikListCtrl::OnKeyDown( nChar, nRepCnt, nFlags );
 }
 
 ///////////////////////////////////////////////////
@@ -1697,6 +1684,94 @@ void CmusikPlaylistCtrl::OnPlaylistcolumnsBitrate()
 void CmusikPlaylistCtrl::OnPlaylistcolumnsFilename()
 {
 	ToggleColumn( MUSIK_LIBRARY_TYPE_FILENAME );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::OnLvnKeydown(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMLVKEYDOWN pLVKeyDow = reinterpret_cast<LPNMLVKEYDOWN>(pNMHDR);
+	*pResult = 0;
+
+	WORD nChar = pLVKeyDow->wVKey;
+
+	if ( nChar == VK_DELETE )
+	{
+		bool delete_from_lib = false;
+		bool delete_from_comp = false;
+
+		// delete from library
+		if ( GetKeyState( VK_MENU ) < 0 )
+			delete_from_lib = true;
+
+		// delete from computer
+		else if ( GetKeyState( VK_CONTROL ) < 0 )
+		{
+			delete_from_lib = true;
+			delete_from_comp = true;
+		}
+
+		// delete from playlist
+		DeleteSelectedItems( delete_from_lib, delete_from_comp );
+	}
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::DeleteSelectedItems( bool from_library, bool from_computer )
+{
+	if ( from_library )
+	{
+		CmusikPlaylist sel_songs;
+		GetSelectedSongs( sel_songs );
+		m_Library->DeleteSongs( sel_songs, from_computer );
+	}
+
+	CIntArray sel;
+	GetSelectedItems( &sel );
+	DeleteItems( sel, true );
+
+	if ( from_library )
+	{
+		int WM_SELBOXREQUESTUPDATE = RegisterWindowMessage( "SELBOXREQUESTUPDATE" );
+		m_Parent->SendMessage( WM_SELBOXREQUESTUPDATE );
+	}
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::GetSelectedSongs( CmusikPlaylist& playlist )
+{
+	playlist.Clear();
+
+	CmusikSong song;
+    POSITION pos = GetFirstSelectedItemPosition();
+	while ( pos )
+	{
+		song.SetID( m_Playlist->GetSongID( GetNextSelectedItem( pos ) ) );
+        playlist.Add( song );
+	}
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::OnPlcDeleteFromplaylist()
+{
+	DeleteSelectedItems();
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::OnPlcDeleteFromlibrary()
+{
+	DeleteSelectedItems( true, false );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::OnPlcDeleteFromcomputer()
+{
+	DeleteSelectedItems( true, true );
 }
 
 ///////////////////////////////////////////////////
