@@ -127,7 +127,7 @@ void CSizingControlBarCF::NcPaintGripper(CDC* pDC, CRect rcClient)
         // get second gradient color (the right end)
         COLORREF clrCptnRight = m_bActive ?
             ::GetSysColor(COLOR_GRADIENTACTIVECAPTION) :
-            ::GetSysColor(COLOR_GRADIENTINACTIVECAPTION);
+			::GetSysColor(COLOR_BTNFACE);
 
         // this will make 2^6 = 64 fountain steps
         int nShift = 6;
