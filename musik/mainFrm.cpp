@@ -486,8 +486,6 @@ CMainFrame::CMainFrame( bool autostart )
 
 CMainFrame::~CMainFrame()
 {
-	DeinitWinamp();
-
 	CIntArray sel_modes;
 	for ( size_t i = 0; i < m_wndSelectionBars.size(); i++ )
 	{
@@ -509,6 +507,8 @@ CMainFrame::~CMainFrame()
 		delete m_VisDlg;
 
 	Cleanmusik();
+
+	DeinitWinamp();
 }
 
 ///////////////////////////////////////////////////
@@ -3366,11 +3366,20 @@ void CMainFrame::GetVisList()
 
 void CMainFrame::DeinitWinamp()
 {
+	// TODO: if the vis is open when you close musik
+	// then it creates a small leak...
 	if ( m_WinampVis )
 	{
-		visStopVis( m_Prefs->GetWinampVis() );
+		visStopVis( -1 );
+		/*	
+		// wait for it to clean up
+		while ( visGetVisHwnd() )
+			Sleep( 25 );
+
+						
 		FreeLibrary( m_WinampVis );
 		m_WinampVis = NULL;
+		*/
 	}
 }
 
