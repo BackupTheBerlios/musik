@@ -227,7 +227,7 @@ static int sqlite_AddSongToStringArray( void *args, int numCols, char **results,
 
 ///////////////////////////////////////////////////
 
-static int sqlite_GetIDFromFilename( void *args, int numCols, char **results, char ** columnNames )
+static int sqlite_GetIntFromField( void *args, int numCols, char **results, char ** columnNames )
 {
 	// this is a callback for sqlite to use when 
 	// finding the song id from a filename	
@@ -1769,7 +1769,7 @@ int CmusikLibrary::GetIDFromFilename( CStdString fn )
 	m_ProtectingLibrary->acquire();
 
 	sqlite_exec_printf( m_pDB, "SELECT songid FROM %Q WHERE filename = %Q;", 
-		&sqlite_GetIDFromFilename, &target, NULL,
+		&sqlite_GetIntFromField, &target, NULL,
 		SONG_TABLE_NAME,
 		fn.c_str() );
 
@@ -2173,7 +2173,7 @@ int CmusikLibrary::GetSongFormatFromID( int id, int* target )
 	m_ProtectingLibrary->acquire();
 
 	int nRet = sqlite_exec_printf( m_pDB, "SELECT format FROM %Q WHERE songid = %d;", 
-		&sqlite_GetIDFromFilename, target, NULL,
+		&sqlite_GetIntFromField, target, NULL,
 		SONG_TABLE_NAME,
 		id );
 
