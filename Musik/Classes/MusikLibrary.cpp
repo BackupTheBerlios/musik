@@ -1248,27 +1248,23 @@ bool CMusikLibrary::RetagFile( CMusikSong* song )
 	wxFileName	filename	( song->Filename );
 
 	wxString	sMask		= g_Prefs.sAutoTag;
-
-	size_t		nValidStart	= 1;
-	size_t		nValidEnd	= 6;
-
 	wxString	sPath		= filename.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR );
 	wxString	sFile		= filename.GetName();
 	wxString	sExt		= wxT(".") + filename.GetExt();
 
+	size_t		nValidStart	= 1;
+	size_t		nValidEnd	= 6;
+
 	wxArrayString aMaskOrder;
 	wxArrayString aMaskTokens	= DelimitStr( sMask, wxT("%"), true );
+	wxArrayString aFileTokens;
+
 	aMaskTokens.Remove(0, 1);
 
-//	for( size_t i = 0; i < aMaskTokens.GetCount(); i++ )
-//	{
-//		wxMessageBox( aMaskTokens.Item( i ) );
-//	}
-
-//////////////////////////
 	wxString sTemp;
 	bool bSuccess = false;
 
+// Get mask order and delimiter order.
 	for( size_t i = 0; i < aMaskTokens.GetCount(); i++ )
 	{
 		bSuccess = false;
@@ -1276,70 +1272,68 @@ bool CMusikLibrary::RetagFile( CMusikSong* song )
 		{
 			if( aMaskTokens.Item( i ).StartsWith( IntTowxString(j) ) )
 			{	
-				aMaskOrder.Insert( IntTowxString( j ), 0 );
-				aMaskTokens.Item( i ).Remove( 0, 1 );
+				aMaskOrder.Insert( IntTowxString( j ), i );
+				aMaskTokens.Item( i ) = aMaskTokens.Item( i ).Right( aMaskTokens.Item( i ).Length() - 1 );
 				bSuccess = true;
+				break;
 			}
 
 		}
-		if( bSuccess )
-		{
-			wxMessageBox( aMaskOrder.Item( i ) );
-			wxMessageBox( aMaskTokens.Item( i ) );
-		}
-		else
+		if( !bSuccess )
 		{
 			wxMessageBox( wxT( "Invalid Mask." ) );
 			return false;
 		}
 	}
-/*	1 - song title
-	2 - artist name
-	3 - album name
-	4 - genre
-	5 - year
-	6 - track number
-*/
-/*	if( nMaskDel == nFilenameDel )
+
+	for( int i = 0; i < aMaskTokens.GetCount(); i++ )
 	{
-		for( size_t i = 0; i < nMaskDel; i++ )
+		if( !aMaskTokens.Item( i ).IsEmpty() )
 		{
-			switch ( wxStringToInt( aTagInfo.Item( i ) ) )
+			if( sFile.Replace( aMaskTokens.Item( i ), wxT( "\n" ), false ) != 1 )
+				return false;
+		}
+	}
+	aFileTokens = DelimitStr( sFile, wxT( "\n" ), true );
+	for( int i = 0; i < aFileTokens.GetCount(); i++ )
+	{
+		aFileTokens.Item( i ).Trim( true );
+		aFileTokens.Item( i ).Trim( false );
+	}
+
+// put in proper order.
+	if( aMaskOrder.GetCount() != aFileTokens.GetCount() )
+		return false;
+
+	for( size_t i = 0; i < aMaskOrder.GetCount(); i++ )
+		{
+			switch ( wxStringToInt( aMaskOrder.Item( i ) ) )
 			{
 			case 1:
-				NewSong->Title = aTagInfo.Item( i );
+				NewSong->Title = aFileTokens.Item( i );
 				break;
 			case 2:
-				NewSong->Artist = aTagInfo.Item( i );
+				NewSong->Artist = aFileTokens.Item( i );
 				break;
 			case 3:
-				NewSong->Album = aTagInfo.Item( i );
+				NewSong->Album = aFileTokens.Item( i );
 				break;
 			case 4:
-				NewSong->Genre = aTagInfo.Item( i );
+				NewSong->Genre = aFileTokens.Item( i );
 				break;
 			case 5:
-				NewSong->Year = aTagInfo.Item( i );
+				NewSong->Year = aFileTokens.Item( i );
 				break;
 			case 6:
-				NewSong->TrackNum = wxStringToInt( aTagInfo.Item( i ) );
+				NewSong->TrackNum = wxStringToInt( aFileTokens.Item( i ) );
 				break;
 			default:
-				wxMessageBox( wxT("Invalid auto-tag pattern") );
+				wxMessageBox( wxT("Fuckup.") );
 				break;
 			}
 		}
 
-//		g_Library.UpdateItem( 
-
-		wxMessageBox( NewSong->Title );
-		wxMessageBox( NewSong->Artist );
-		wxMessageBox( NewSong->Album );
-		wxMessageBox( NewSong->Genre );
-		wxMessageBox( NewSong->Year );
-		wxMessageBox( IntTowxString( NewSong->TrackNum ) );
-	}
-*/
+	g_Library.UpdateItem( song->Filename, *NewSong, true );
 	return true;
 }
 
