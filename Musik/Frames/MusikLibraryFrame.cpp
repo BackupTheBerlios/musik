@@ -199,8 +199,8 @@ void MusikLibraryFrame::CreateControls()
 	//----------------------//
 	//--- system buttons ---//
 	//----------------------//
-	btnCancel =	new wxButton( this, MUSIK_PATHS_CANCEL,	_("Cancel"),	wxPoint( 0, 0 ), wxSize( 64, 24 ) );
-	btnOK =		new wxButton( this, MUSIK_PATHS_OK,		_("OK"),		wxPoint( 0, 0 ), wxSize( 64, 24 ) );
+	btnCancel =	new wxButton( this, MUSIK_PATHS_CANCEL,	_("Cancel"));
+	btnOK =		new wxButton( this, MUSIK_PATHS_OK,		_("OK"));
 
 	//----------------------------//
 	//--- system buttons sizer ---//
@@ -418,7 +418,7 @@ void MusikLibraryFrame::PathsListProcessKeys( wxListEvent & event )
 
 void MusikLibraryFrame::PathsListAdd()
 {
-	wxDirDialog *dlgBrowse = new wxDirDialog( this, _("Please choose music directory."), wxT(""), 0, wxPoint( 0, 0 ), wxSize( 0, 0 ) );
+	wxDirDialog *dlgBrowse = new wxDirDialog( this, _("Please choose music directory."));
 	if ( dlgBrowse->ShowModal() == wxID_OK )
 	{
 		wxString sPath = dlgBrowse->GetPath();

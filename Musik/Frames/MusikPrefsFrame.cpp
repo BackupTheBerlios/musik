@@ -198,16 +198,17 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle )
 
 	wxFlexGridSizer *fsSound_Driver = new wxFlexGridSizer( 6, 2, 2, 2 );
 	fsSound_Driver->Add( PREF_STATICTEXT(_("Ouput Driver:")), 0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
-	fsSound_Driver->Add( cmbOutputDrv, 1, wxCENTER, 0 );
+	fsSound_Driver->Add( cmbOutputDrv, 1, 0, 0 );
 	fsSound_Driver->Add( PREF_STATICTEXT( _("Sound Device:")), 0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
-	fsSound_Driver->Add( cmbSndDevice, 1, wxCENTER, 0 );
+	fsSound_Driver->Add( cmbSndDevice, 1, 0, 0 );
 	fsSound_Driver->Add( PREF_STATICTEXT(_("Playback Rate (hz):")), 0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
-	fsSound_Driver->Add( cmbPlayRate, 1, wxCENTER, 0 );	
+	fsSound_Driver->Add( cmbPlayRate, 1, 0, 0 );	
 	fsSound_Driver->Add( PREF_STATICTEXT(_(" second buffer length") ), 0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
-	fsSound_Driver->Add( tcBufferLength, 1, wxCENTER, 0 );
+	fsSound_Driver->Add( tcBufferLength, 1, 0, 0 );
 	fsSound_Driver->Add( PREF_STATICTEXT(_("Maximum sound channels:")), 0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
-	fsSound_Driver->Add( sc2SndMaxChan, 1, wxCENTER, 0 );
+	fsSound_Driver->Add( sc2SndMaxChan, 1, 0, 0 );
 
+	fsSound_Driver->AddGrowableCol(1);
 	vsSound_Driver = new wxBoxSizer( wxVERTICAL );
 	vsSound_Driver->Add( fsSound_Driver,	0, wxALL, 4  );
 	vsSound_Driver->Add( chkUse_MPEGACCURATE_ForMP3VBRFiles );
