@@ -51,22 +51,17 @@
 #include "musikTunage.h"
 #include "musikWinampVisDlg.h"
 
-#include "../musikCore/include/StdString.h"
 #include "../musikCore/include/musikLibrary.h"
 #include "../musikCore/include/musikPlayer.h"
 #include "../musikCore/include/musikFilename.h"
 #include "../musikCore/include/musikBatchAdd.h"
 #include "../musikCore/include/musikRemoveOld.h"
 #include "../musikCore/include/musikBatchRetag.h"
-#include "../musikCore/include/musikCrossfader.h"
-#include "../musikCore/include/musikEQSettings.h"
-#include "../musikCore/include/musikEqualizer.h"
 
 #include "memdc.h"
 
 #include <io.h>
 #include <Direct.h>
-#include ".\mainfrm.h"
 
 ///////////////////////////////////////////////////
 

@@ -44,14 +44,13 @@
 
 #include "stdafx.h"
 
-#include "../musikCore/include/musikPlayer.h"
-
 #include "MainFrm.h"
 
 #include "musik.h"
 #include "musikSourcesCtrl.h"
 #include "musikSourcesDropTarget.h"
-#include ".\musiksourcesctrl.h"
+
+#include "../musikCore/include/musikPlayer.h"
 
 ///////////////////////////////////////////////////
 

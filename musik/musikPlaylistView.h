@@ -45,6 +45,11 @@
 
 #include "musikPlaylistCtrl.h"
 #include "musikPlaylistInfoCtrl.h"
+#include "musikPrefs.h"
+#include "musikPlaylistDropTarget.h"
+
+#include "../musikCore/include/musikLibrary.h"
+#include "../musikCore/include/musikPlayer.h"
 
 ///////////////////////////////////////////////////
 

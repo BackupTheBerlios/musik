@@ -44,22 +44,12 @@
 
 ///////////////////////////////////////////////////
 
-#include "../musikCore/include/StdString.h"
-#include "../musikCore/include/musikFunctor.h"
-#include "../musikCore/include/musikDir.h"
-#include "../musikCore/include/musikTask.h"
+#include "musikPrefs.h"
+
+#include "../musikCore/include/musikLibrary.h"
+#include "../musikCore/include/musikPlayer.h"
 
 ///////////////////////////////////////////////////
-
-class CmusikLibrary;
-class CmusikPlayer;
-class CmusikPrefs;
-class CmusikPlaylist;
-class CmusikDynDspInfo;
-class CmusikDir;
-class CmusikPlaylistCtrl;
-class ACE_Mutex;
-
 
 class CmusikTunage
 {
@@ -73,8 +63,8 @@ public:
 	void Execute_RunApp();
 	void Execute_WriteFile();
 
-
 private:
+
 	// our player and prefs
 	CmusikLibrary* m_Library;
 	CmusikPlayer* m_Player;
@@ -83,3 +73,5 @@ private:
 	void ParseTags( CmusikString& str, bool encode );
 	void URLEncode( CmusikString& str );
 };
+
+///////////////////////////////////////////////////

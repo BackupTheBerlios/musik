@@ -36,35 +36,27 @@
 // 
 // Usage: 
 //
-//
-//
 ///////////////////////////////////////////////////
 
 #pragma once
 
 ///////////////////////////////////////////////////
 
-#include "../musikCore/include/StdString.h"
+#include "musikPrefs.h"
+
+#include "../musikCore/include/musikLibrary.h"
+#include "../musikCore/include/musikPlayer.h"
 #include "../musikCore/include/musikFunctor.h"
 #include "../musikCore/include/musikDir.h"
 #include "../musikCore/include/musikTask.h"
+
+#include "ace/Synch.h"
 
 ///////////////////////////////////////////////////
 
 #define VIZ_WIDTH		128
 #define VIZ_HEIGHT		19
 #define MUSIK_VIZ_TIMER	WM_USER + 2
-
-///////////////////////////////////////////////////
-
-class CmusikLibrary;
-class CmusikPlayer;
-class CmusikPrefs;
-class CmusikPlaylist;
-class CmusikDynDspInfo;
-class CmusikDir;
-class CmusikPlaylistCtrl;
-class ACE_Mutex;
 
 ///////////////////////////////////////////////////
 

@@ -50,18 +50,17 @@
 
 #include "musikListCtrl.h"
 
-#include "../musikCore/include/StdString.h"
+#include "musikPrefs.h"
+
+#include "../musikCore/include/musikLibrary.h"
+#include "../musikCore/include/musikPlayer.h"
+#include "../musikCore/include/musikBatchAdd.h"
 #include "../musikCore/include/musikFunctor.h"
 #include "../musikCore/include/musikDir.h"
+#include "../musikCore/include/musikDynDspInfo.h"
 
 ///////////////////////////////////////////////////
 
-class CmusikLibrary;
-class CmusikPlayer;
-class CmusikPrefs;
-class CmusikPlaylist;
-class CmusikDynDspInfo;
-class CmusikDir;
 class CmusikPlaylistInfoCtrl;
 
 ///////////////////////////////////////////////////

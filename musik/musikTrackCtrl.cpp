@@ -49,7 +49,6 @@
 #include "../musikCore/include/musikPlayer.h"
 
 #include "MEMDC.H"
-#include ".\musiktrackctrl.h"
 
 ///////////////////////////////////////////////////
 

@@ -46,12 +46,8 @@
 
 #include "afxwin.h"
 
-#include "../musikCore/include/musikArrays.h"
-
-///////////////////////////////////////////////////
-
-class CmusikLibrary;
-class CmusikEQSettings;
+#include "../musikCore/include/musikLibrary.h"
+#include "../musikCore/include/musikPlayer.h"
 
 ///////////////////////////////////////////////////
 

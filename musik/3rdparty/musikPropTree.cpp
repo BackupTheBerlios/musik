@@ -1032,7 +1032,6 @@ void CmusikPropTree::OnLButtonDblClk(UINT, CPoint point)
 		return;
 
 	CmusikPropTreeItem* pItem;
-	CmusikPropTreeItem* pOldFocus;
 
 	if ( (pItem = FindItem(point))!=NULL )
 	{

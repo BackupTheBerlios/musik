@@ -51,7 +51,6 @@
 #include "3rdparty/iniFile.h"
 
 #include "../musikCore/include/musikCrossfader.h"
-#include "../musikCore/include/musikArrays.h"
 
 ///////////////////////////////////////////////////
 

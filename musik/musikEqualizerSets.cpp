@@ -47,9 +47,6 @@
 #include "musikEqualizerCtrl.h"
 #include "musikNameEntry.h"
 
-#include "../musikCore/include/musikLibrary.h"
-#include "../musikCore/include/musikEQSettings.h"
-
 ///////////////////////////////////////////////////
 
 IMPLEMENT_DYNAMIC(CmusikEqualizerSets, CDialog)

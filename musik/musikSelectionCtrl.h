@@ -46,14 +46,13 @@
 #include "musikListCtrl.h"
 #include "musikEditInPlace.h"
 #include "musikDockBar.h"
+#include "musikPrefs.h"
 
-#include "../musikCore/include/StdString.h"
-#include "../musikCore/include/musikArrays.h"
+#include "../musikCore/include/musikLibrary.h"
+#include "../musikCore/include/musikPlayer.h"
 
 ///////////////////////////////////////////////////
 
-class CmusikLibrary;
-class CmusikPrefs;
 class CmusikSelectionCtrl;
 
 ///////////////////////////////////////////////////

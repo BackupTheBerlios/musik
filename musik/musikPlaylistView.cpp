@@ -45,14 +45,7 @@
 #include "musikPlaylistView.h"
 #include "musikPrefs.h"
 
-#include "../musikCore/include/musikLibrary.h"
-#include "../musikCore/include/musikArrays.h"
-#include "../musikCore/include/musikPlayer.h"
-
-#include "musikPlaylistDropTarget.h"
-
 #include "MEMDC.H"
-#include ".\musikplaylistview.h"
 
 ///////////////////////////////////////////////////
 

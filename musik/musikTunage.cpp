@@ -51,12 +51,16 @@
 #include "../musikCore/include/musikFilename.h"
 #include "../musikCore/include/musikPlayer.h"
 
+///////////////////////////////////////////////////
+
 CmusikTunage::CmusikTunage( CmusikLibrary* library, CmusikPlayer* player, CmusikPrefs* prefs )
 {
 	m_Library = library;
 	m_Player = player;
 	m_Prefs = prefs;
 }
+
+///////////////////////////////////////////////////
 
 CmusikTunage::~CmusikTunage(void)
 {

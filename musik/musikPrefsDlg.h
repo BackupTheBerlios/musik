@@ -49,7 +49,6 @@
 
 #include "afxwin.h"
 #include "musikPropertyPage.h"
-#include "../musikCore/include/musikArrays.h"
 
 ///////////////////////////////////////////////////
 

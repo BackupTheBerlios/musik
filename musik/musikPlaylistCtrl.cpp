@@ -47,20 +47,11 @@
 #include "stdafx.h"
 #include "musik.h"
 #include "musikPrefs.h"
-
 #include "musikPlaylistView.h"
 #include "musikPlaylistCtrl.h"
 #include "musikSourcesCtrl.h"
 #include "musikFileDrop.h"
-
 #include "musikSaveStdPlaylist.h"
-
-#include "../musikCore/include/musikPlaylist.h"
-#include "../musikCore/include/musikArrays.h"
-#include "../musikCore/include/musikLibrary.h"
-#include "../musikCore/include/musikDynDspInfo.h"
-#include "../musikCore/include/musikPlayer.h"
-#include "../musikCore/include/musikBatchAdd.h"
 
 #include "MEMDC.H"
 

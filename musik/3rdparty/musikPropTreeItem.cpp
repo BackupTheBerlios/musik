@@ -31,11 +31,12 @@
 
 #include "stdafx.h"
 
-#include "../../musikCore/include/musikPlaylist.h"
-#include "../musikPrefs.h"
-
 #include "musikPropTree.h"
 #include "musikPropTreeItem.h"
+
+#include "../musikPrefs.h"
+
+#include "../../musikCore/include/musikPlaylist.h"
 
 ///////////////////////////////////////////////////
 

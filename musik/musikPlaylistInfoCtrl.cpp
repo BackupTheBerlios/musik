@@ -46,11 +46,6 @@
 #include "musikPlaylistInfoCtrl.h"
 #include "musikPrefs.h"
 
-#include "../musikCore/include/musikTask.h"
-#include "../musikCore/include/musikLibrary.h"
-#include "../musikCore/include/musikArrays.h"
-#include "../musikCore/include/musikPlayer.h"
-
 #include "MEMDC.H"
 
 ///////////////////////////////////////////////////
@@ -71,10 +66,6 @@ int CmusikPlaylistInfoWorker::open( void* parent )
 
 int CmusikPlaylistInfoWorker::svc()
 {
-	// sleep time inside the loop
-	ACE_Time_Value suspend;
-	suspend.set( 0.10 );
-
 	// set flags
 	m_Stop = false;
 	m_Active = true;
@@ -95,7 +86,7 @@ int CmusikPlaylistInfoWorker::svc()
 				m_Parent->Invalidate();
 		}
 		// HEY SIMON DO WORK HERE
-		ACE_OS::sleep( suspend );
+		Sleep( 100 );
 	}
 
 	// be sure to flag as finished

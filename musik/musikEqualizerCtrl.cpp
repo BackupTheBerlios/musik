@@ -47,11 +47,6 @@
 #include "musikPrefs.h"
 #include "musikEqualizerSets.h"
 
-#include "../musikCore/include/musikEqualizer.h"
-#include "../musikCore/include/musikEQSettings.h"
-#include "../musikCore/include/musikPlayer.h"
-#include "../musikCore/include/musikLibrary.h"
-
 #include "MEMDC.H"
 
 ///////////////////////////////////////////////////

@@ -46,10 +46,10 @@
 
 ///////////////////////////////////////////////////
 
-#include "../musikCore/include/musikDir.h"
-
 #include "musikEditInPlace.h"
 #include "musikDockBar.h"
+
+#include "../musikCore/include/musikDir.h"
 
 #include "3rdparty/musikPropTree.h"
 
