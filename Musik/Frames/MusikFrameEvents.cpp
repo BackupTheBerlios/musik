@@ -312,7 +312,7 @@ void MusikFrame::LibraryCustomQuery()
 	{
 		m_customQuery = sQuery;
 
-		g_Library.QuerySongs( m_customQuery, g_Playlist );
+		g_Library.QuerySongsWhere( m_customQuery, g_Playlist );
 		g_PlaylistBox->Update( );
 		g_PlaylistChanged = true;
 	}
@@ -321,7 +321,7 @@ void MusikFrame::LibraryCustomQuery()
 void MusikFrame::LibrarySimpleQueryEdit()
 {
 	wxString sQueryval = g_PlaylistBox->TextSimpleQuery().GetValue();
-	if ( ( sQueryval.Length() < 2 ) || ( ( sQueryval.Left( 1 ) != wxT("!") ) && ( sQueryval.Length() < 4 ) ) || ( sQueryval == wxT("") ) )
+	if ( ( sQueryval.Length() < 3 )  )
 		return;
 	else
 		LibrarySimpleQuery( sQueryval );
@@ -345,9 +345,9 @@ void MusikFrame::LibrarySimpleQuery( wxString sQueryVal )
 	sQueryVal.Replace( wxT("'"), wxT("''") ); //--- double apostrophe to make valid syntax ---//
 	wxString sString = wxT("'%") + sQueryVal + wxT("%'");
 	wxString sQuery;
-	sQuery.sprintf( wxT("artist like %s or album like %s or title like %s or filename like %s order by album,tracknum,filename"),
+	sQuery.sprintf( wxT("artist like %s or album like %s or title like %s or filename like %s "),
 		( const wxChar *)sString, (const wxChar *) sString, (const wxChar *)sString,(const wxChar*) sString );
-	g_Library.QuerySongs( sQuery, g_Playlist );
+	g_Library.QuerySongsWhere( sQuery, g_Playlist ,true);  // true means query sorted
 	g_PlaylistBox->Update( );
 	g_PlaylistChanged = true;
 }
