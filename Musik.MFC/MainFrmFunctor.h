@@ -5,6 +5,7 @@
 ///////////////////////////////////////////////////
 
 #include "MainFrm.h"
+
 #include "../Musik.Core/include/MusikFunctor.h"
 
 ///////////////////////////////////////////////////
@@ -16,7 +17,7 @@ class CMainFrame;
 class CMusikFrameFunctor : public CMusikFunctor
 {
 public:
-	CMusikFrameFunctor( CMainFrame* parent )
+	CMusikFrameFunctor( CMainFrame* parent)
 	{ 
 		m_Parent = parent; 
 	}
@@ -28,7 +29,8 @@ public:
 
 	virtual void Call()
 	{
-		
+		int WM_SONGCHANGE = RegisterWindowMessage( "SONGCHANGE" );
+		m_Parent->SendMessage( WM_SONGCHANGE, NULL );
 	};
 
 private:

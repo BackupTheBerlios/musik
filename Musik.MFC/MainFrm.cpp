@@ -23,6 +23,7 @@
 ///////////////////////////////////////////////////
 
 int WM_SELBOXUPDATE = RegisterWindowMessage( "SELBOXUPDATE" );
+int WM_SONGCHANGE = RegisterWindowMessage( "SONGCHANGE" );
 
 ///////////////////////////////////////////////////
 
@@ -32,6 +33,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_REGISTERED_MESSAGE( WM_SELBOXUPDATE, OnUpdateSel )
+	ON_REGISTERED_MESSAGE( WM_SONGCHANGE, OnSongChange )
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -425,3 +427,20 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 
 	return 0L;
 }
+
+LRESULT CMainFrame::OnSongChange( WPARAM wParam, LPARAM lParam )
+{
+	if ( m_Player->IsPlaying() )
+	{
+		CString s;
+		s.Format( _T( "Musik [ %s - %s ]" ), 
+			m_Player->GetCurrPlaying()->GetTitle().c_str(), 
+			m_Player->GetCurrPlaying()->GetArtist().c_str() );
+
+		SetWindowText( s );
+	}
+	else
+		SetWindowText( _T( "Musik" ) );	
+
+	return 0L;
+}	

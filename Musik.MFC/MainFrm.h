@@ -114,6 +114,7 @@ public:
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg LRESULT OnUpdateSel( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnSongChange( WPARAM wParam, LPARAM lParam );
 
 	DECLARE_MESSAGE_MAP()
 public:
