@@ -92,6 +92,7 @@ BEGIN_MESSAGE_MAP(CmusikPropTree, CWnd)
 	ON_WM_VSCROLL()
 	ON_WM_MOUSEMOVE()
 	ON_MESSAGE(WM_MOUSELEAVE, OnMouseLeave)
+	ON_WM_RBUTTONDOWN()
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -1368,6 +1369,13 @@ LRESULT CmusikPropTree::OnMouseLeave(WPARAM wParam, LPARAM lParam)
     SetHoveredItem( NULL );
 
 	return 0L;
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPropTree::OnRButtonDown(UINT nFlags, CPoint point)
+{
+	CmusikPropTree::OnLButtonDown(nFlags, point);
 }
 
 ///////////////////////////////////////////////////

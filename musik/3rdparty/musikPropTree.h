@@ -281,6 +281,7 @@ private:
 	static BOOL CALLBACK EnumRefreshAll(CmusikPropTree*, CmusikPropTreeItem* pItem, LPARAM);
 public:
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
 };
 
 ///////////////////////////////////////////////////

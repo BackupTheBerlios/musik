@@ -56,6 +56,7 @@
 #include "../musikCore/include/musikBatchRetag.h"
 #include "../musikCore/include/musikCrossfader.h"
 #include "../musikCore/include/musikEQSettings.h"
+#include "../musikCore/include/musikEqualizer.h"
 
 #include <io.h>
 #include <Direct.h>
@@ -1668,6 +1669,7 @@ void CMainFrame::OnAudioEqualizerEnabled()
 	{
 		m_Prefs->SetEqualizerEnabled( true );
 		m_Player->EnableEqualizer( true );
+		m_Player->UpdateEqualizer();
 	}
 }
 
