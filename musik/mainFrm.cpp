@@ -46,6 +46,7 @@
 #include "musikFileDialog.h"
 #include "musikTimeCtrl.h"
 #include "musikDirSync.h"
+#include "musikPropertyPage.h"
 
 #include "../musikCore/include/StdString.h"
 #include "../musikCore/include/musikLibrary.h"
@@ -60,8 +61,6 @@
 
 #include <io.h>
 #include <Direct.h>
-
-#include "3rdparty/TreePropSheet.h"
 
 ///////////////////////////////////////////////////
 
@@ -1473,7 +1472,7 @@ void CMainFrame::OnFilePreferences()
 
 	// initialize the CTreePropSheet class 
 	// and remove help icon from gripper
-	TreePropSheet::CTreePropSheet PrefSheet( _T( "musikCube Preferences" ) );
+	CmusikProptertySheet PrefSheet( _T( "musikCube Preferences" ) );
 	PrefSheet.m_psh.dwFlags&= ~PSH_HASHELP;
 
 	// physically add the preference sheets

@@ -429,6 +429,9 @@
 						RelativePath=".\musikPrefsDlg.h">
 					</File>
 					<File
+						RelativePath=".\musikPropertyPage.cpp">
+					</File>
+					<File
 						RelativePath=".\musikPropertyPage.h">
 					</File>
 					<Filter

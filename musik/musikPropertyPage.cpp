@@ -39,16 +39,9 @@
 //
 ///////////////////////////////////////////////////
 
-#pragma once
+#include "stdafx.h"
 
-///////////////////////////////////////////////////
-
-#include "musikPrefs.h"
-#include "3rdparty/TreePropSheet.h"
-
-///////////////////////////////////////////////////
-
-using namespace TreePropSheet;
+#include "musikPropertyPage.h"
 
 ///////////////////////////////////////////////////
 
@@ -56,17 +49,11 @@ using namespace TreePropSheet;
 
 ///////////////////////////////////////////////////
 
-class CmusikPropertyPage : public CPropertyPage
+CmusikPropertyPage::CmusikPropertyPage( UINT nIDTemplate, CmusikPrefs* prefs )
+	: CPropertyPage( nIDTemplate )
 {
-public:
-
-	CmusikPropertyPage( UINT nIDTemplate, CmusikPrefs* prefs );
-	virtual ~CmusikPropertyPage(){}
-
-protected:
-
-	CmusikPrefs* m_Prefs;
-};
+	m_Prefs = prefs;
+}
 
 ///////////////////////////////////////////////////
 
@@ -74,16 +61,44 @@ protected:
 
 ///////////////////////////////////////////////////
 
-class CmusikProptertySheet : public CTreePropSheet
+
+///////////////////////////////////////////////////
+
+CmusikProptertySheet::CmusikProptertySheet( LPCSTR pszCaption, CWnd* pParentWnd, UINT iSelectPage )
+	: CTreePropSheet( pszCaption, pParentWnd, iSelectPage )
 {
-public:
 
-	CmusikProptertySheet( LPCSTR pszCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0 );
-	virtual ~CmusikProptertySheet(){}
+}
 
-protected:
+///////////////////////////////////////////////////
 
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
-};
+BOOL CmusikProptertySheet::OnCommand(WPARAM wParam, LPARAM lParam)
+{
+	switch ( wParam )
+	{
+	case IDCANCEL:
+
+		// cancel
+
+		return true;
+		break;
+
+	case IDOK:
+
+		//ok
+
+		return true;
+		break;
+
+	case ID_APPLY_NOW:
+
+		// apply
+
+		return true;
+		break;
+	}
+	
+	return CTreePropSheet::OnCommand( wParam, lParam );
+}
 
 ///////////////////////////////////////////////////
