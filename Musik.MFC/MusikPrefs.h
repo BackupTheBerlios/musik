@@ -6,7 +6,7 @@
 
 #include "stdafx.h"
 
-#include "CIniEx/iniFile.h"
+#include "3rdparty/iniFile.h"
 
 #include "../Musik.Core/include/MusikCrossfader.h"
 #include "../Musik.Core/include/MusikArrays.h"

@@ -4,7 +4,7 @@
 
 ///////////////////////////////////////////////////
 
-#include "CPropTree/PropTree.h"
+#include "3rdparty/PropTree.h"
 
 #include <vector>
 

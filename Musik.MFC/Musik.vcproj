@@ -166,22 +166,22 @@
 						Name="CPropTree"
 						Filter="">
 						<File
-							RelativePath=".\CPropTree\PropTree.cpp">
+							RelativePath=".\3rdparty\PropTree.cpp">
 						</File>
 						<File
-							RelativePath=".\CPropTree\PropTree.h">
+							RelativePath=".\3rdparty\PropTree.h">
 						</File>
 						<File
-							RelativePath=".\CPropTree\PropTreeItem.cpp">
+							RelativePath=".\3rdparty\PropTreeItem.cpp">
 						</File>
 						<File
-							RelativePath=".\CPropTree\PropTreeItem.h">
+							RelativePath=".\3rdparty\PropTreeItem.h">
 						</File>
 						<File
-							RelativePath=".\CPropTree\PropTreeList.cpp">
+							RelativePath=".\3rdparty\PropTreeList.cpp">
 						</File>
 						<File
-							RelativePath=".\CPropTree\PropTreeList.h">
+							RelativePath=".\3rdparty\PropTreeList.h">
 						</File>
 					</Filter>
 				</Filter>
@@ -264,22 +264,22 @@
 				Name="CSizingControlBar"
 				Filter="">
 				<File
-					RelativePath=".\CSizingControlBar\scbarcf.cpp">
+					RelativePath=".\3rdparty\scbarcf.cpp">
 				</File>
 				<File
-					RelativePath=".\CSizingControlBar\scbarcf.h">
+					RelativePath=".\3rdparty\scbarcf.h">
 				</File>
 				<File
-					RelativePath=".\CSizingControlBar\scbarg.cpp">
+					RelativePath=".\3rdparty\scbarg.cpp">
 				</File>
 				<File
-					RelativePath=".\CSizingControlBar\scbarg.h">
+					RelativePath=".\3rdparty\scbarg.h">
 				</File>
 				<File
-					RelativePath=".\CSizingControlBar\sizecbar.cpp">
+					RelativePath=".\3rdparty\sizecbar.cpp">
 				</File>
 				<File
-					RelativePath=".\CSizingControlBar\sizecbar.h">
+					RelativePath=".\3rdparty\sizecbar.h">
 				</File>
 			</Filter>
 		</Filter>
@@ -343,6 +343,16 @@
 			<File
 				RelativePath=".\stdafx.h">
 			</File>
+			<Filter
+				Name="CSingleInstance"
+				Filter="">
+				<File
+					RelativePath=".\3rdparty\singleinstance.cpp">
+				</File>
+				<File
+					RelativePath=".\3rdparty\singleinstance.h">
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Core"
@@ -483,10 +493,10 @@
 				Name="CIniEx"
 				Filter="">
 				<File
-					RelativePath=".\CIniEx\iniFile.cpp">
+					RelativePath=".\3rdparty\iniFile.cpp">
 				</File>
 				<File
-					RelativePath=".\CIniEx\iniFile.h">
+					RelativePath=".\3rdparty\iniFile.h">
 				</File>
 			</Filter>
 		</Filter>

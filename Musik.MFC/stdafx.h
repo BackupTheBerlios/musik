@@ -39,7 +39,8 @@
 #include <afxcmn.h>			// MFC support for Windows Common Controls
 #endif // _AFX_NO_AFXCMN_SUPPORT
 
-#include "CSizingControlBar/sizecbar.h"
-#include "CSizingControlBar/scbarg.h"
-#include "CSizingControlBar/scbarcf.h"
+#include "3rdparty/sizecbar.h"
+#include "3rdparty/scbarg.h"
+#include "3rdparty/scbarcf.h"
+
 #include <afxole.h>
