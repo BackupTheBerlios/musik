@@ -13,12 +13,16 @@ class CMusikOggInfo
 {
 public:
 
+	// construct and destruct
 	CMusikOggInfo();
 	~CMusikOggInfo();
 
+	// reading and writing tag
 	bool LoadInfo( const CStdString& fn );
-	CStdString GetField( int field );
+	static bool WriteInfo( CMusikSongInfo info, bool clear_old = true );
 
+	// gets
+	CStdString GetField( int field );
 	CMusikSongInfo* Get(){ return &m_Info; }
 
 private:

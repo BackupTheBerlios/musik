@@ -1058,8 +1058,8 @@ bool CMusikLibrary::RemoveSong( const CStdString& fn )
 
 bool CMusikLibrary::AddOGG( const CStdString& fn )
 {
-	CMusikOggInfo m_Info;
-	if ( m_Info.LoadInfo( fn ) )
+	CMusikOggInfo info;
+	if ( info.LoadInfo( fn ) )
 	{
 		m_ProtectingLibrary->acquire();
 
@@ -1069,18 +1069,58 @@ bool CMusikLibrary::AddOGG( const CStdString& fn )
 			MUSIK_LIBRARY_FORMAT_OGG,						// format
 			1,												// vbr
 			fn.c_str(),										// filename
-			m_Info.Get()->GetArtist().c_str(),				// artist 
-			m_Info.Get()->GetTitle().c_str(),				// title
-			m_Info.Get()->GetAlbum().c_str(),				// album
-			atoi( m_Info.Get()->GetTrackNum().c_str() ),	// tracknum
-			m_Info.Get()->GetYear().c_str(),				// year
-			m_Info.Get()->GetGenre().c_str(),				// genre
+			info.Get()->GetArtist().c_str(),				// artist 
+			info.Get()->GetTitle().c_str(),					// title
+			info.Get()->GetAlbum().c_str(),					// album
+			atoi( info.Get()->GetTrackNum().c_str() ),		// tracknum
+			info.Get()->GetYear().c_str(),					// year
+			info.Get()->GetGenre().c_str(),					// genre
 			0,												// rating
-			atoi( m_Info.Get()->GetBitrate() ),				// bitrate
+			atoi( info.Get()->GetBitrate() ),				// bitrate
 			"",												// last played
 			"",												// notes
 			0,												// times played
-			atoi( m_Info.Get()->GetDuration() ),			// duration
+			atoi( info.Get()->GetDuration() ),				// duration
+			m_TimeAdded.c_str(),							// time added
+			GetFilesize( fn ),								// file size
+			0 );											// dirty
+
+		m_ProtectingLibrary->release();
+
+		if ( result == SQLITE_OK )
+			return true;
+	}
+
+	return false;
+}
+
+///////////////////////////////////////////////////
+
+bool CMusikLibrary::AddMP3( const CStdString& fn )
+{
+	CMusikMp3Info info;
+	if ( info.LoadInfo( fn ) )
+	{
+		m_ProtectingLibrary->acquire();
+
+		int result = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %d, %d, %Q, %Q, %Q, %Q, %d, %Q, %Q, %d, %d, %Q, %Q, %d, %d, %Q, %d, %d );", NULL, NULL, NULL, 
+			SONG_TABLE_NAME,								// song table 		
+			NULL,											// id
+			MUSIK_LIBRARY_FORMAT_MP3,						// format
+			atoi( info.Get()->GetVBR() ),					// vbr
+			fn.c_str(),										// filename
+			info.Get()->GetArtist().c_str(),				// artist 
+			info.Get()->GetTitle().c_str(),					// title
+			info.Get()->GetAlbum().c_str(),					// album
+			atoi( info.Get()->GetTrackNum().c_str() ),		// tracknum
+			info.Get()->GetYear().c_str(),					// year
+			info.Get()->GetGenre().c_str(),					// genre
+			0,												// rating
+			atoi( info.Get()->GetBitrate() ),				// bitrate
+			"",												// last played
+			"",												// notes
+			0,												// times played
+			atoi( info.Get()->GetDuration() ),				// duration
 			m_TimeAdded.c_str(),							// time added
 			GetFilesize( fn ),								// file size
 			0 );											// dirty

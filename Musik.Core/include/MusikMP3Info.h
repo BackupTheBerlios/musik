@@ -13,17 +13,19 @@ class CMusikMp3Info
 {
 public:
 
+	// construct and destruct
 	CMusikMp3Info();
 	~CMusikMp3Info();
 
 	// reading and writing tag
 	bool LoadInfo( const CStdString& fn );
-	bool WriteInfo( CMusikSongInfo info, bool clear_old = true );
+	static bool WriteInfo( CMusikSongInfo info, bool clear_old = true );
 
 	// gets
 	CStdString GetField( int field );
-	CStdString GetGenre( CStdString genre );
-	int GetGenreID( CStdString genre );
+	CMusikSongInfo* Get(){ return &m_Info; }
+	static CStdString GetGenre( CStdString genre );
+	static int GetGenreID( CStdString genre );
 
 private:
 
