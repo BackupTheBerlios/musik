@@ -15,11 +15,11 @@ AllowNoIcons=true
 LicenseFile=license.txt
 
 #emit 'OutputBaseFilename=' + MyAppName + '_v' + MyAppVer+ '_Setup'
-VersionInfoVersion=0.3.1.2
+VersionInfoVersion={#MyAppVer}
 VersionInfoDescription=A music player and library application
 Compression=lzma/ultra
 ShowLanguageDialog=yes
-AppID={9EB87F75-0968-42F8-AD3F-01C2B13A1FE2}
+AppID={{9EB87F75-0968-42F8-AD3F-01C2B13A1FE2}}
 AlwaysShowDirOnReadyPage=true
 AlwaysShowGroupOnReadyPage=true
 AppCopyright=© 2004, Gunnar Roth, Casey Langen, Simon Windmill
@@ -27,7 +27,7 @@ DisableStartupPrompt=false
 DisableFinishedPage=true
 FlatComponentsList=false
 ShowTasksTreeLines=true
-ChangesAssociations=true
+ChangesAssociations=false
 PrivilegesRequired=poweruser
 AppMutex={#MyAppName}
 InternalCompressLevel=ultra
@@ -54,6 +54,12 @@ Source: Release Unicode\{#MyAppExe}; DestDir: {app}; MinVersion: 0,4.0.1381sp6; 
 Source: locale\de\*.mo; DestDir: {app}\locale\de; Flags: overwritereadonly; Languages: de
 Source: data\*; DestDir: {app}\data; Flags: overwritereadonly
 Source: locale\fr\*.mo; DestDir: {app}\locale\fr; Flags: overwritereadonly; Languages: fr
+Source: locale\cs\*.mo; DestDir: {app}\locale\cs; Flags: overwritereadonly; Languages: cs
+Source: locale\nb\*.mo; DestDir: {app}\locale\nb; Flags: overwritereadonly; Languages: nb
+Source: locale\pt_BR\*.mo; DestDir: {app}\locale\pt_BR; Flags: overwritereadonly; Languages: de pt
+Source: locale\es\*.mo; DestDir: {app}\locale\es; Flags: overwritereadonly; Languages: es
+Source: locale\nl\*.mo; DestDir: {app}\locale\nl; Flags: overwritereadonly; Languages: nl
+Source: locale\it\*.mo; DestDir: {app}\locale\it; Flags: overwritereadonly; Languages: it
 [Icons]
 Name: {group}\{#MyAppName}; Filename: {app}\{#MyAppExe}; WorkingDir: {app}; IconIndex: 0
 Name: {group}\{cm:UninstallProgram,{#MyAppName}}; Filename: {uninstallexe}
@@ -73,24 +79,17 @@ Name: {app}\Musik.exe; Type: files
 Name: {userappdata}\..\.Musik; Type: filesandordirs; MinVersion: 0,4.0.1381
 Name: {app}\.Musik; Type: filesandordirs; MinVersion: 4.0.950,0; OnlyBelowVersion: 0,4.0.1381
 [Registry]
-Root: HKCR; SubKey: .mp3; ValueType: string; ValueData: Mp3 File; Flags: uninsdeletekey
-Root: HKCR; SubKey: Mp3 File; ValueType: string; ValueData: Mp3 File; Flags: uninsdeletekey; Languages: en
-Root: HKCR; SubKey: Mp3 File\Shell\Open\Command; ValueType: string; ValueData: """{app}\{#MyAppExe}"" ""%1"""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: Mp3 File\DefaultIcon; ValueType: string; ValueData: {app}\{#MyAppExe},0; Flags: uninsdeletevalue
-Root: HKCR; SubKey: Ogg File; ValueType: string; ValueData: Ogg File; Flags: uninsdeletekey; Languages: en
-Root: HKCR; SubKey: Ogg File\Shell\Open\Command; ValueType: string; ValueData: """{app}\{#MyAppExe}"" ""%1"""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: Ogg File\DefaultIcon; ValueType: string; ValueData: {app}\{#MyAppExe},0; Flags: uninsdeletevalue
-Root: HKCR; SubKey: Mp3 File; ValueType: string; ValueData: Mp3 Datei; Flags: uninsdeletekey; Languages: de
-Root: HKCR; SubKey: Ogg File; ValueType: string; ValueData: Ogg Datei; Flags: uninsdeletekey; Languages: de
-Root: HKCR; SubKey: Mp3 File; ValueType: string; ValueData: Mp3 fichier; Flags: uninsdeletekey; Languages: fr
-Root: HKCR; SubKey: Ogg File; ValueType: string; ValueData: Ogg fichier; Flags: uninsdeletekey; Languages: fr
 
-Root: HKCR; SubKey: .ogg; ValueType: string; ValueData: Ogg File; Flags: uninsdeletekey
 [Languages]
 Name: en; MessagesFile: compiler:Default.isl
 Name: de; MessagesFile: compiler:Languages\German.isl
 Name: fr; MessagesFile: compiler:Languages\French.isl
-
+Name: cs; MessagesFile: compiler:Languages\Czech.isl
+Name: nb; MessagesFile: compiler:Languages\Norwegian.isl
+Name: pt; MessagesFile: compiler:Languages\PortugueseStd.isl
+Name: es; MessagesFile: compiler:Languages\Spanish.isl
+Name: nl; MessagesFile: compiler:Languages\Dutch.isl
+Name: it; MessagesFile: compiler:Languages\Italian-3-4.2.1.isl
 
 [CustomMessages]
 en.Examples_of_Dynamic_Playlists=Examples of Dynamic Playlists
@@ -99,3 +98,17 @@ de.Examples_of_Dynamic_Playlists=Beispiele für dynamische Liedlisten
 de.Examples_of_Net_Radio_Channels=Beispiele für Netzradios
 fr.Examples_of_Dynamic_Playlists=Exemples de sélections dynamiques
 fr.Examples_of_Net_Radio_Channels=Exemples de webradios
+cs.Examples_of_Dynamic_Playlists=Ukázky dynamických seznamu
+cs.Examples_of_Net_Radio_Channels=Ukázky Sítových Kanálu Rádia
+cs.Examples_of_Dynamic_Playlists=Examples of Dynamic Playlists
+cs.Examples_of_Net_Radio_Channels=Examples of Net Radio Channels
+nb.Examples_of_Dynamic_Playlists=Eksempler på Dynamiske Spillelister
+nb.Examples_of_Net_Radio_Channels=Eksempler på Nettradio Kanaler
+pt.Examples_of_Dynamic_Playlists=Exemplos de Seleções musicais dinâmicas
+pt.Examples_of_Net_Radio_Channels=Exemplos de webrádios
+es.Examples_of_Dynamic_Playlists=Ejemplos de Listas de reproducción Dinámicas
+es.Examples_of_Net_Radio_Channels=Ejemplos de canales de Radio de Red
+nl.Examples_of_Dynamic_Playlists=Voorbeelden van dynamische afspeellijsten
+nl.Examples_of_Net_Radio_Channels=Voorbeelden van webradiokanalen
+it.Examples_of_Dynamic_Playlists=Esempi di Playlist Dinamiche
+it.Examples_of_Net_Radio_Channels=Esempi di Canali Radio in Rete

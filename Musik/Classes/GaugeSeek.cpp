@@ -91,22 +91,19 @@ void CGaugeSeekEvt::OnLeftUp( wxMouseEvent& WXUNUSED(event) )
 	{
 		pParent->ReleaseMouse();
 
-		if ( g_ActiveStreams.GetCount() )
+		//-----------------------------------------------//
+		//--- if we have left up and modifying time	  ---//
+		//--- assume user is done. update pos		  ---//
+		//-----------------------------------------------//   		
+		if ( lType == wxGA_HORIZONTAL )
 		{
-			//-----------------------------------------------//
-			//--- if we have left up and modifying time	  ---//
-			//--- assume user is done. update pos		  ---//
-			//-----------------------------------------------//   		
-			if ( lType == wxGA_HORIZONTAL )
+			if(wxGetApp().Player.IsSeekable())
 			{
-				if(wxGetApp().Player.IsSeekable())
-				{
-					//--- set player pos ---//
-					int nTime = ( (int)fPos * (int)wxGetApp().Player.GetDuration( FMOD_SEC ) ) / (int)100;
-					wxGetApp().Player.SetTime( nTime );	
-				}
-				g_TimeSeeking = false;
+				//--- set player pos ---//
+				int nTime = ( (int)fPos * (int)wxGetApp().Player.GetDuration( FMOD_SEC ) ) / (int)100;
+				wxGetApp().Player.SetTime( nTime );	
 			}
+			g_TimeSeeking = false;
 		}
 	}
 }

@@ -22,7 +22,7 @@
 				AdditionalOptions="/D ID3LIB_LINKOPTION=1"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(VORBISDIR)\include&quot;;&quot;$(FMODDIR)\api\inc&quot;;&quot;$(ID3LIBDIR)\include&quot;;&quot;$(OGGDIR)\include&quot;;&quot;$(SQLITEDIR)&quot;;MMShellHook;&quot;$(WXDIR)\lib\vc_lib\mswd&quot;;&quot;$(WXDIR)\include&quot;"
-				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;WINVER=0x400;_MT"
+				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;WINVER=0x400;_WIN32_IE=0x0600;_MT"
 				StringPooling="TRUE"
 				MinimalRebuild="TRUE"
 				ExceptionHandling="TRUE"
@@ -94,7 +94,7 @@
 				OptimizeForProcessor="0"
 				OptimizeForWindowsApplication="TRUE"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(VORBISDIR)\include&quot;;&quot;$(FMODDIR)\api\inc&quot;;&quot;$(ID3LIBDIR)\include&quot;;&quot;$(OGGDIR)\include&quot;;&quot;$(WXDIR)\include&quot;;&quot;$(WXDIR)\lib\vc_lib\msw&quot;;&quot;$(SQLITEDIR)&quot;;MMShellHook"
-				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;WINVER=0x400;_MT"
+				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;WINVER=0x400;_WIN32_IE=0x0600;_MT"
 				StringPooling="TRUE"
 				ExceptionHandling="TRUE"
 				RuntimeLibrary="2"
@@ -159,7 +159,7 @@
 				AdditionalOptions="/D ID3LIB_LINKOPTION=1"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(VORBISDIR)\include&quot;;&quot;$(FMODDIR)\api\inc&quot;;&quot;$(WXDIR)\lib\vc_lib\mswud&quot;;&quot;$(ID3LIBDIR)\include&quot;;&quot;$(OGGDIR)\include&quot;;&quot;$(WXDIR)\include&quot;;&quot;$(SQLITEDIR)&quot;;MMShellHook"
-				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;WINVER=0x400;_MT;_UNICODE;wxUSE_UNICODE"
+				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;WINVER=0x400;_WIN32_IE=0x0600;_MT;_UNICODE;wxUSE_UNICODE"
 				StringPooling="TRUE"
 				MinimalRebuild="TRUE"
 				ExceptionHandling="TRUE"
@@ -227,7 +227,7 @@
 				OptimizeForProcessor="0"
 				OptimizeForWindowsApplication="TRUE"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(VORBISDIR)\include&quot;;&quot;$(FMODDIR)\api\inc&quot;;&quot;$(WXDIR)\lib\vc_lib\mswu&quot;;&quot;$(ID3LIBDIR)\include&quot;;&quot;$(OGGDIR)\include&quot;;&quot;$(WXDIR)\include&quot;;&quot;$(SQLITEDIR)&quot;;MMShellHook"
-				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;WINVER=0x400;_MT;_UNICODE;wxUSE_UNICODE"
+				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;WINVER=0x400;_WIN32_IE=0x0600;_MT;_UNICODE;wxUSE_UNICODE"
 				StringPooling="TRUE"
 				ExceptionHandling="TRUE"
 				RuntimeLibrary="2"
@@ -841,6 +841,46 @@
 				</File>
 				<File
 					RelativePath=".\3rd Party\Bitap\libbitap.h">
+				</File>
+			</Filter>
+			<Filter
+				Name="TagHelper"
+				Filter="">
+				<File
+					RelativePath=".\3rd Party\TagHelper\idtag.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug Unicode|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Unicode|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Universal Unicode Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\3rd Party\TagHelper\idtag.h">
 				</File>
 			</Filter>
 		</Filter>

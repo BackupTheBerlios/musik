@@ -6,6 +6,7 @@
 struct tSongClass
 {
 	const wxChar * szExtension;
+	const wxChar * szDescription;
 	EMUSIK_FORMAT_TYPE eFormat;
 	CInfoRead * pInfoRead;
 	CInfoWrite * pInfoWrite;

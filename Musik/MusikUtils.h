@@ -21,7 +21,7 @@
 #include <wx/regex.h>
 #include <wx/listctrl.h>
 #include <wx/textdlg.h>
-
+#include <wx/mimetype.h>
 #include "MusikDefines.h"
 
 class CSongPath
@@ -302,6 +302,7 @@ wxArrayString	FileToStringArray	(  const wxString &  sFilename );
 int				MusikRound			( float x );
 int				FindStrInArray		( wxArrayString* array, wxString pattern );
 wxString		MoveArtistPrefixToEnd( const wxString & str );
+const wxChar*	BeginsWithPreposition( const wxString & str );
 wxString		SanitizedString		( const wxString & str );
 void			wxListCtrlSelAll	( wxListCtrl* listctrl );
 void			wxListCtrlSelNone	( wxListCtrl* listctrl );
@@ -424,6 +425,15 @@ wxLongLong GetTotalFilesize(const CMusikSongArray &songs);
 
 wxString SecToStr	( int nSec );
 
+bool GetFileTypeAssociationInfo(const wxString &sExt,wxString *psDescription,bool * pbAssociatedWithApp);
+inline bool FileTypeIsAssociated(const wxString &sExt)
+{
+	bool bAssociated = false;
+	return GetFileTypeAssociationInfo(sExt,NULL,&bAssociated) && bAssociated;
+}
+bool FileTypeIsAssociated(const wxFileType &ft);
+void AssociateWithFileType(const wxString &sExt,const wxString &sDescription);
+void UnassociateWithFileType(const wxString &sExt);
 class CNiceFilesize
 {
 public:
@@ -466,7 +476,7 @@ public:
 #define	 MUSIK_LW_ShowOnLog			  0x00000008
 
 
-class  MusikLogWindow : public wxLogWindow,public wxEvtHandler
+class  MusikLogWindow : public wxEvtHandler,public wxLogWindow
 {
 public:
 	MusikLogWindow(wxFrame *pParent,         // the parent frame (can be NULL)
@@ -653,3 +663,9 @@ protected:
 };
 
 #endif
+
+#ifdef __WXMSW__
+#define PACKVERSION(major,minor) MAKELONG(minor,major)
+DWORD GetDllVersion(LPCTSTR lpszDllName);
+#endif
+

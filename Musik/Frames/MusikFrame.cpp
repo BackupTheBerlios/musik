@@ -84,7 +84,7 @@ BEGIN_EVENT_TABLE(MusikTaskBarIcon, wxTaskBarIcon)
 
     EVT_MENU(PU_EXIT,		MusikTaskBarIcon::OnMenuExit)
     EVT_TASKBAR_RIGHT_UP     (MusikTaskBarIcon::OnRButtonUp)
-    EVT_TASKBAR_LEFT_DCLICK  (MusikTaskBarIcon::OnLButtonDClick)
+    EVT_TASKBAR_LEFT_DOWN  (MusikTaskBarIcon::OnLButtonDown)
 END_EVENT_TABLE()
 
 void MusikTaskBarIcon::RestoreFrame()
@@ -184,8 +184,11 @@ void MusikTaskBarIcon::OnRButtonUp(wxTaskBarIconEvent&)
     PopupMenu(&menu);
 }
 
-void MusikTaskBarIcon::OnLButtonDClick(wxTaskBarIconEvent&)
+void MusikTaskBarIcon::OnLButtonDown(wxTaskBarIconEvent&)
 {
+	if(m_pFrame->IsShown())
+		m_pFrame->Show(FALSE);
+	else
     RestoreFrame();
 }
 
@@ -577,11 +580,46 @@ void MusikFrame::SetTitle(const wxString& title)
 {
 	wxFrame::SetTitle(wxT( "[ " ) + title + wxT( " ] " )+ wxString( MUSIKAPPNAME_VERSION ));
 }
-void MusikFrame::SetSongInfoText(const wxString& info)
+void MusikFrame::SetSongInfoText(const wxString & sSongInfoText)
 {
 #ifdef wxHAS_TASK_BAR_ICON
 	if(	m_pTaskBarIcon )
-		m_pTaskBarIcon->SetIcon(wxIcon(tray_xpm), info);
+	{
+		m_pTaskBarIcon->SetIcon(wxIcon(tray_xpm), sSongInfoText);
+	}
+#endif
+}
+void MusikFrame::SetSongInfoText(const CMusikSong& song)
+{
+#ifdef wxHAS_TASK_BAR_ICON
+	wxString sArtist = SanitizedString( ConvFromUTF8( song.MetaData.Artist ));
+	wxString sTitle = SanitizedString( ConvFromUTF8( song.MetaData.Title ));
+	wxString sAlbum = SanitizedString( ConvFromUTF8( song.MetaData.Album ));
+	/* this is usually to large for the current wxWidgets implemetation on window */
+	/* Tip text can only be 64 chars	*/
+	//#ifndef __WXMSW__
+//	wxString sSongInfoText(
+//		wxString(_("Title")+wxT(":")+ sTitle +	wxT("\n") +
+//		_("Artist")+wxT(":")+ sArtist + wxT("\n") +
+//		_("Album"))+wxT(":")+ sAlbum;
+//		
+//		 
+//
+//		);
+	//#else
+	//	wxString sSongInfoText(
+	//		sAlbum + wxT("\n") +
+	//		sArtist + wxT("\n") +
+	//		sTitle + wxT("\n") 
+	//		);
+	//#endif
+	wxString sInfo(_("by ") + sArtist + wxT("\n") + _("from the album")+ wxT(" '") + sAlbum + wxT("'"));
+
+	if(	m_pTaskBarIcon )
+	{
+		m_pTaskBarIcon->SetIcon(wxIcon(tray_xpm), sTitle + wxT("\n") + sInfo );
+		m_pTaskBarIcon->ShowBalloonInfo(sTitle,sInfo);
+	}
 #endif
 }
 

@@ -317,7 +317,7 @@ public:
 
 		,bUse_MPEGACCURATE_ForMP3VBRFiles(this,wxT( "Use_MPEGACCURATE_ForMP3VBRFiles" ),true)
 		,bBlankSwears(this,wxT( "BlankSwears" ),false)
-		,bSortArtistWithoutPrefix(this,wxT( "BlankSwears" ),false)
+		,bSortArtistWithoutPrefix(this,wxT( "SortArtistWithoutPrefix" ),false)
 
 		,sAutoRename(this,wxT( "AutoRenameMask" ),wxT( "%6 - %2 - %1" ))
 		,sAutoTag(this,wxT( "AutoTagMask" ),wxT( "%a/%b/%n - %t|%a/%b - %n - %t|%a - %b - %n - %t|0" ))

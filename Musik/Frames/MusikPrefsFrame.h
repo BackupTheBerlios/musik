@@ -16,10 +16,11 @@
 //--- wx ---//
 #include "wx/wxprec.h"
 #ifndef WX_PRECOMP
-	#include "wx/wx.h"
+	#include <wx/wx.h>
 #endif 
-#include "wx/treectrl.h"
-#include "wx/spinctrl.h"
+#include <wx/treectrl.h>
+#include <wx/spinctrl.h>
+#include <wx/checklst.h>
 
 #include "../MusikDefines.h"
 #include "../Classes/ActivityBox.h"
@@ -35,7 +36,8 @@ enum EMUSIK_PREFERENCES_OBJECT_ID
 	MUSIK_PREFERENCES_PLAYLIST_STRIPE_COLOUR,
 	MUSIK_PREFERENCES_ACTIVITY_STRIPE_COLOUR,
 	MUSIK_PREFERENCES_SOURCES_STRIPE_COLOUR,
-	MUSIK_PREFERENCES_PLAYLIST_BORDER_COLOUR
+	MUSIK_PREFERENCES_PLAYLIST_BORDER_COLOUR,
+	MUSIK_PREFERENCES_FILE_ASSOC_CHKLB
 };
 
 class MusikPrefsFrame : public wxFrame
@@ -54,7 +56,7 @@ public:
 	void OnClickCancel		( wxCommandEvent& WXUNUSED(event) );
 	void OnClose			( wxCloseEvent& WXUNUSED(event) );
 	void OnClickColour		( wxCommandEvent& event );
-
+protected:
 	//-------------------------//
 	//--- utility functions ---//
 	//-------------------------//
@@ -64,7 +66,7 @@ public:
 	void HidePanels			();
 	void UpdatePrefsPanel	();
 	void Close				( bool bCancel );
-
+	void DoFileAssociations();
 	//--------------------//
 	//--- tree control ---//
 	//--------------------//
@@ -99,6 +101,7 @@ public:
 
 	wxComboBox*	cmbPLColumnStatic[NPLAYLISTCOLUMNS];
 
+	wxCheckListBox *chklbFileAssocs;
 
 	//-------------------------//
 	//--- options -> tunage ---//
@@ -161,7 +164,7 @@ public:
 	wxFlexGridSizer	*vsOptions_Selections;
 	wxBoxSizer		*vsOptions_Playlist;
 	wxBoxSizer		*vsOptions_Interface;
-	wxBoxSizer		*vsOptions_Misc;
+	wxBoxSizer		*vsOptions_FileAssoc;
 	wxBoxSizer		*vsOptions_Tunage;
 	wxBoxSizer		*vsOptions_AutoDj;
 	wxBoxSizer		*vsTagging_General;
@@ -187,6 +190,7 @@ private:
 	wxTreeItemId nDriverID;
 	wxTreeItemId nSelectionsID;
 	wxTreeItemId nPlaylistID;
+	wxTreeItemId nFileAssocsID;
 	wxTreeItemId nInterfaceID;	
 	wxTreeItemId nGeneralTagID;
 	wxTreeItemId nAutoTagID;

@@ -869,7 +869,11 @@ void CSourcesListBox::RescanPlaylistDir()
 	GetPlaylistDir( playlists );
 
 	if ( playlists.GetCount() > 0 )
-		AddMissing( playlists );
+	{
+		AddMissing( playlists ,MUSIK_SOURCES_PLAYLIST_STANDARD);
+		AddMissing( playlists ,MUSIK_SOURCES_PLAYLIST_DYNAMIC);
+		AddMissing( playlists ,MUSIK_SOURCES_NETSTREAM);
+	}
 }
 
 void CSourcesListBox::ShowIcons()
@@ -901,7 +905,8 @@ void CSourcesListBox::NewPlaylist( wxString sName, wxString sVal, int nType )
 		wxMessageBox( _( "Invalid playlist name." ), MUSIKAPPNAME_VERSION, wxOK | wxICON_INFORMATION );
 		return;
 	}
-
+	sName.Trim();
+	sName.Trim(false);
 	switch ( nType )
 	{
 	case MUSIK_SOURCES_PLAYLIST_STANDARD:
@@ -1293,41 +1298,49 @@ void CSourcesListBox::LoadNetStream(wxString sName, CMusikSong & song )
 
 	return;
 }
-void CSourcesListBox::AddMissing( const wxArrayString & playlists )
+void CSourcesListBox::AddMissing( const wxArrayString & playlists ,EMUSIK_SOURCES_TYPE t)
 {
-	wxString sExt, sName, sAdd;
-	int nType;
-
+	wxString sExt, sName, sAdd,sTypeExt;
+	sTypeExt = GetExtFromType(t);
+	GetTypeAsString( t, sAdd);
 	for ( size_t i = 0; i < playlists.GetCount(); i++ )
 	{
 		sName = playlists.Item( i );
 
 		sExt = sName.Right( 3 );
 		sExt.MakeLower();
+		if ( sExt != sTypeExt )
+		{
+			continue;
+		}
 
 		sName = sName.Left( sName.Length() - 4 );
 		sName.Replace( wxT( "_" ), wxT( " " ), true );
 
-		if ( sExt == wxT( "mpl" ) )
-		{
-			nType = MUSIK_SOURCES_PLAYLIST_STANDARD;
-		}
-		else if ( sExt == wxT( "mpd" ) )
-		{
-			nType = MUSIK_SOURCES_PLAYLIST_DYNAMIC;
-		}
-		else if ( sExt == wxT( "mpu" ) )
-		{
-			nType = MUSIK_SOURCES_NETSTREAM;
-		}
-		else
-			return;
-	    GetTypeAsString( nType, sAdd);
-		sAdd += sName;
-		if ( FindInSources( sName, nType ) == -1 )
-			m_SourcesList.Add( sAdd );
+		if ( FindInSources( sName, t ) == -1 )
+			m_SourcesList.Add( sAdd + sName);
 	}
 }
+wxString CSourcesListBox::GetExtFromType(EMUSIK_SOURCES_TYPE t)const
+ {
+	 wxString sExt;
+	 switch( t )
+	 {
+	 case MUSIK_SOURCES_PLAYLIST_STANDARD:
+		 sExt = wxT( "mpl" );
+		 break;
+	 case MUSIK_SOURCES_PLAYLIST_DYNAMIC:
+		 sExt = wxT( "mpd" );
+		 break;
+	 case MUSIK_SOURCES_NETSTREAM:
+		 sExt = wxT( "mpu" );
+		 break;
+	 default:
+		 return wxEmptyString;
+	 }
+	 return sExt;
+ }
+
 bool CSourcesListBox::GetTypeAsString(int nType,wxString &sType)  const
 {
 	switch( nType )

@@ -1,7 +1,12 @@
 0.3.1.5 to 0.3.1.6
++ Reads APE Tags (V1 and V2) if no other tags present.
++ Uses filename to guess tags, if no tags are present, on library build and rebuild.
++ If the playlists are read on first startup they are now sorted after categories.(delete musiksources.dat if you want sort it as default again) 
++ Added italian translation, (thanks to mirko_3)
++ Setup (on windows) no longer associated .mp3 and .ogg with wxMusik. Instead you can set the associations in the preferences now.
 - fix AutoDj selection routine. Was made in good intention,but badly done,so didnt work quite right. Random selection has been enhance for shuffle play too.
 + Trayicon text displays now  song  properties multiple lines. Album  info has been added.
-+ Added DisableTrayIcon setting in perfs file, for people who dont like it, or have a windowmanager which is not supported.
++ Added DisableTrayIcon setting in prefs file, for people who dont like it, or have a windowmanager which is not supported.
 + Searching with the search box, now includes the genre
 + added new hotkey i in playlist to play selected songs instantly ( useful if option "Double click replaces playlist" is active but you dont want to replace playlist 
 - Hotkey F8 did not work in playlist
@@ -20,7 +25,7 @@
 - fixed crash while drag and drop under some circumstances
 +added norsk bokmal translation( thanks to 
 + added czech translation (thanks to Vit Hrachovy)
-
+- fixed sorting in selection boxes. now the sorting order honors the current locale setting of the OS.
 
 0.3.1.4 to 0.3.1.5
 + supported new formats: mp2, wav , aiff and wma(windows only).  wav , aiff and wma tag writing is not (yet) supported.

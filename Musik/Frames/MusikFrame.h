@@ -24,6 +24,27 @@
 #include <wx/socket.h>
 #ifdef wxHAS_TASK_BAR_ICON
 #include "wx/taskbar.h"
+#ifdef __WXMSW__
+#include <ShellAPI.h>
+//
+// Here i define wxTaskBarIconWindow as it is only define privately in taskbar,cpp of wxwidgets
+// This is a hack, but which choice do i have else?
+class wxTaskBarIconWindow : public wxFrame
+{
+public:
+	wxTaskBarIconWindow(wxTaskBarIcon *icon)
+		: wxFrame(NULL, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0),
+		m_icon(icon)
+	{
+	}
+
+
+private:
+	wxTaskBarIcon *m_icon;
+};
+
+#endif
+
 //class CNowPlayingCtrl;
 class MusikLibraryFrame;
 
@@ -37,11 +58,70 @@ class MusikLibraryFrame;
 class MusikTaskBarIcon: public wxTaskBarIcon
 {
 public:
-	MusikTaskBarIcon(wxFrame * frame) {m_pFrame = frame;};
+	MusikTaskBarIcon(wxFrame * frame) 
+	{
+#ifdef __WXMSW__
+		m_dwShellDllVersion = GetDllVersion(wxT("shell32.dll"));
+#endif			
+		m_pFrame = frame;
+	};
+	virtual bool SetIcon(const wxIcon& icon,
+		const wxString& tooltip = wxEmptyString)
+	{
+		bool bRes = false;
+#ifndef __WXMSW__
+		bRes =  wxTaskBarIcon::SetIcon(icon,tooltip);
+#else
+		if(m_dwShellDllVersion < PACKVERSION(5,00))
+			 bRes =  wxTaskBarIcon::SetIcon(icon,tooltip);
+		else
+		{
+			// we can use NOTIFYICONDATA V2,where the szTip has 128 chars instead of 64
+			bRes =  wxTaskBarIcon::SetIcon(icon,wxEmptyString);//just set the icon.
+			if(!tooltip.empty())
+			{// now set the tooltip text with the help of NOTIFYICONDATA V2 struct.
+				NOTIFYICONDATA nid;
+				memset(&nid,0,sizeof(nid));
+				nid.cbSize = NOTIFYICONDATAW_V2_SIZE;
+				nid.hWnd = (HWND)m_win->GetHWND();
+				nid.uID = 99;
+				nid.uFlags = NIF_TIP;
+				wxStrncpy(nid.szTip, tooltip.c_str(), WXSIZEOF(nid.szTip));
+				Shell_NotifyIcon(NIM_MODIFY, &nid);
+			}
+		}
+#endif
+		return bRes;
+	}
+#ifdef __WXMSW__
+	virtual bool ShowBalloonInfo(const wxString &sTitle,const wxString & sText)
+	{
+		bool bRes = true;
+		if(m_dwShellDllVersion >= PACKVERSION(5,00))
+		{
+			NOTIFYICONDATA nid;
+			memset(&nid,0,sizeof(nid));
+			nid.cbSize = NOTIFYICONDATAW_V2_SIZE;
+			nid.hWnd = (HWND)m_win->GetHWND();
+			nid.uID = 99;
+			nid.uFlags = NIF_INFO;
+			wxStrncpy(nid.szInfo, sText.c_str(), WXSIZEOF(nid.szInfo));
+			wxStrncpy(nid.szInfoTitle, sTitle.c_str(), WXSIZEOF(nid.szInfoTitle));
+			nid.dwInfoFlags = NIIF_NOSOUND|NIIF_INFO;
+			nid.uTimeout = 5000;
 
+
+			Shell_NotifyIcon(NIM_MODIFY, &nid);
+		}
+		else
+			return false;
+
+		return bRes;
+	}
+#endif
 	void RestoreFrame();
     void OnRButtonUp(wxTaskBarIconEvent&);
-    void OnLButtonDClick(wxTaskBarIconEvent&);
+    void OnLButtonDown(wxTaskBarIconEvent&);
     void OnMenuRestore(wxCommandEvent&);
     void OnMenuHide(wxCommandEvent&);
     void OnMenuPlayPause(wxCommandEvent&);
@@ -57,6 +137,9 @@ DECLARE_EVENT_TABLE()
 
 private:
 	wxFrame *m_pFrame;
+#ifdef __WXMSW__
+	DWORD m_dwShellDllVersion;
+#endif
 };
 
 #endif
@@ -116,7 +199,8 @@ public:
 	//--- virtual overrides ---//
 	//-------------------------//
 	virtual void SetTitle(const wxString& title);
-	virtual void SetSongInfoText(const wxString& info);
+	virtual void SetSongInfoText(const CMusikSong& song);
+	virtual void SetSongInfoText(const wxString & sSongInfoText);
 
 	//------------------------------//
 	//---     activity boxes     ---//

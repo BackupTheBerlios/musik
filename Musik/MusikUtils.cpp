@@ -29,7 +29,7 @@
 #include <wx/tokenzr.h>
 #include <wx/dir.h>
 #include "wx/defs.h"
-
+#include <wx/mimetype.h>
 
 #if wxUSE_STATLINE
 #include "wx/statline.h"
@@ -239,14 +239,40 @@ void ReplaceNoCase( wxString& str, const wxString& oldstr, const wxString& newst
 wxString MoveArtistPrefixToEnd( const wxString & str )
 {
 	wxString Artist = str;
-	wxString Prefix = Artist.Left(4);
-	if(Prefix.IsSameAs(wxT("The "),false))
+	const wxChar* Prefix = BeginsWithPreposition(Artist);
+	if(Prefix)
 	{
-		Artist = Artist.Right(Artist.Len()-Prefix.Len());
+		Artist = Artist.Right(Artist.Len()-wxStrlen(Prefix));
 		Artist += wxT(", ");
-		Artist += Prefix.Left(Prefix.Len()-1);
+		Artist += Prefix;
 	}
 	return Artist;
+}
+const wxChar * BeginsWithPreposition( const wxString & s )
+{
+	static const wxChar * pPrefixArray[] =
+	{
+		wxT("The "),
+			wxT("Der "),
+			wxT("Die "),
+			wxT("Das "),
+			wxT("Le "),
+			wxT("La ")
+	};
+
+	for(size_t i=0; i<sizeof(pPrefixArray)/sizeof(pPrefixArray[0]); i++)
+	{
+		int prefixlen = wxStrlen(pPrefixArray[i]);
+		if(wxStrnicmp(pPrefixArray[i],s.c_str(),prefixlen) == 0)
+		{
+			if(s.size() >= prefixlen)
+			{
+				return pPrefixArray[i];
+			}
+		}
+	}
+	return NULL;
+
 }
 wxString SanitizedString( const wxString & str )
 {
@@ -887,10 +913,61 @@ wxString SecToStr( int nSec )
 	return result;
 }
 
+bool GetFileTypeAssociationInfo(const wxString &sExt,wxString*psDescription,bool * pbAssociatedWithApp)
+{
+	*pbAssociatedWithApp = false;
+	
+	wxFileType *pFT = wxTheMimeTypesManager->GetFileTypeFromExtension(sExt);
+	if(!pFT)
+		return false;
+	if(psDescription)
+		pFT->GetDescription(psDescription);	 // use description from filetype.
+	*pbAssociatedWithApp = FileTypeIsAssociated(*pFT);
+	delete pFT;
+	return true;
+}
+bool FileTypeIsAssociated(const wxFileType &ft)
+{
+	wxString appname = wxGetApp().GetAppName();
+	wxString sCommmand = ft.GetOpenCommand(wxEmptyString).Lower();
+	return sCommmand.Contains(appname.Lower());// if open command contains our appname, it is associated with us
+}
+
+void AssociateWithFileType(const wxString &sExt,const wxString &sDescription)
+{
+	wxFileType *pFT = wxTheMimeTypesManager->GetFileTypeFromExtension(sExt);
+	wxString sMimetype;
+	if(pFT)
+	{
+		pFT->GetMimeType(&sMimetype);
+		delete pFT;
+	}
+
+	wxString sAppName = wxString::Format(wxT("\"%s\""),wxGetApp().argv[0]);
+	
+
+    wxFileTypeInfo fti(sMimetype,sAppName,wxT(""),sDescription,sExt,NULL);
+	wxString sShortDesc=wxT("wxMusik ")+sExt + wxT(" File");
+#ifdef __WXMSW__
+	fti.SetShortDesc(sShortDesc);
+	fti.SetIcon(sAppName);
+#endif
+	pFT = wxTheMimeTypesManager->Associate(fti);
+	delete pFT; // really weird api... Associate returns a wxFileType, which i don't need, but must delete
+}
+void UnassociateWithFileType(const wxString &sExt)
+{
+	wxFileType *pFT = wxTheMimeTypesManager->GetFileTypeFromExtension(sExt);
+	if(pFT && FileTypeIsAssociated(*pFT))   //only unassociate, if file is associated with us
+	{
+		pFT->Unassociate();	
+	}	
+	delete pFT;
+}
 // MusikLogWindow
 // -----------
 BEGIN_EVENT_TABLE(MusikLogWindow, wxEvtHandler)
-  EVT_MENU			( MUSIK_LOGWINDOW_SHOW,		MusikLogWindow::OnShow		)
+  EVT_MENU			( MUSIK_LOGWINDOW_SHOW,		MusikLogWindow::OnShow)
 END_EVENT_TABLE()
 
 MusikLogWindow::MusikLogWindow(wxFrame *pParent,
@@ -1056,3 +1133,48 @@ END_EVENT_TABLE()
 
 
 IMPLEMENT_CLASS(wxGenericIntValidator, wxGenericValidator)
+
+#ifdef __WXMSW__
+#include <Shlwapi.h>
+DWORD GetDllVersion(LPCTSTR lpszDllName)
+{
+	HINSTANCE hinstDll;
+	DWORD dwVersion = 0;
+
+	/* For security purposes, LoadLibrary should be provided with a 
+	fully-qualified path to the DLL. The lpszDllName variable should be
+	tested to ensure that it is a fully qualified path before it is used. */
+	hinstDll = LoadLibrary(lpszDllName);
+
+	if(hinstDll)
+	{
+		DLLGETVERSIONPROC pDllGetVersion;
+		pDllGetVersion = (DLLGETVERSIONPROC)GetProcAddress(hinstDll, 
+			"DllGetVersion");
+
+		/* Because some DLLs might not implement this function, you
+		must test for it explicitly. Depending on the particular 
+		DLL, the lack of a DllGetVersion function can be a useful
+		indicator of the version. */
+
+		if(pDllGetVersion)
+		{
+			DLLVERSIONINFO dvi;
+			HRESULT hr;
+
+			ZeroMemory(&dvi, sizeof(dvi));
+			dvi.cbSize = sizeof(dvi);
+
+			hr = (*pDllGetVersion)(&dvi);
+
+			if(SUCCEEDED(hr))
+			{
+				dwVersion = PACKVERSION(dvi.dwMajorVersion, dvi.dwMinorVersion);
+			}
+		}
+
+		FreeLibrary(hinstDll);
+	}
+	return dwVersion;
+}
+#endif //__WXMSW__

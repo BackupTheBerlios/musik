@@ -89,6 +89,7 @@ public:
 	EMUSIK_SOURCES_TYPE  GetSelType				( )						{ return  GetType( m_CurSel );	}
 	EMUSIK_SOURCES_TYPE  GetType				( long index ) const ;
 	bool GetTypeAsString		( int nType, wxString &sType ) const ;
+	wxString GetExtFromType(EMUSIK_SOURCES_TYPE t) const;
 	int  GetItemImage			( long index );
 	
 	void RescanPlaylistDir		( );
@@ -99,7 +100,7 @@ public:
 	//-------------------------//
 	//--- playlist routines ---//
 	//-------------------------//
-	void AddMissing			( const wxArrayString & playlists );
+	void AddMissing			( const wxArrayString & playlists,EMUSIK_SOURCES_TYPE t);
 	void NewPlaylist		( wxString sName, wxString sVal, int nType );
 	bool PlaylistExists		( wxString sName, int type = MUSIK_SOURCES_PLAYLIST_STANDARD );
 	void FilenameToSources	( wxString* sFilename );

@@ -437,14 +437,7 @@ void CNowPlayingCtrl::UpdateInfo( const CMusikSong &song )
 
 	//--- caption bar title ---//
 	g_MusikFrame->SetTitle( sArtist + wxT( " - " ) +  sTitle + (!sAlbum.IsEmpty() ? wxT( " - " ) + sAlbum : wxEmptyString) );
-
-	wxString sSongInfoText(
-		wxString(_("Album"))+wxT(":")+ sAlbum + wxT("\n") +
-		_("Artist")+wxT(":")+ sArtist + wxT("\n") +
-		_("Title")+wxT(":")+ sTitle +	wxT("\n") 
-
-		);
-	g_MusikFrame->SetSongInfoText( sSongInfoText );
+	g_MusikFrame->SetSongInfoText( song );
 
 	//--- title / artist / time -//
 	sTitle.Replace	( wxT( "&" ), wxT( "&&" ), TRUE );

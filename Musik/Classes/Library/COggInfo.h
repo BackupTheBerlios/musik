@@ -14,7 +14,7 @@
 #define OGGINFO_H
 #include "CInfo.h"
 //--- globals ---//
-#include "../../MusikGlobals.h"
+#include "../../MusikUtils.h"
 
 
 class COggInfo : public CInfoRead,public CInfoWrite

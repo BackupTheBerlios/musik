@@ -12,7 +12,9 @@
 
 //--- For compilers that support precompilation, includes "wx/wx.h". ---//
 #include "wx/wxprec.h"
-
+#ifdef __WXMSW__
+#include <shlobj.h>
+#endif
 #include "MusikPrefsFrame.h"
 
 //--- globals ---//
@@ -21,12 +23,14 @@
 
 //--- classes ---//
 #include "../Classes/MusikPlayer.h"
-
+#include "../Classes/Library/MetaDataHandler.h"
 //--- related frames ---//
 #include "../Frames/MusikFrame.h"
 
 #include <wx/colordlg.h>
 #include <wx/valgen.h>
+#include <wx/mimetype.h>
+
 BEGIN_EVENT_TABLE(MusikPrefsFrame, wxFrame)
 	EVT_CHAR_HOOK			(											MusikPrefsFrame::OnTranslateKeys	)
 	EVT_TREE_SEL_CHANGED	(MUSIK_PREFERENCES_TREE,					MusikPrefsFrame::OnTreeChange		)
@@ -36,6 +40,7 @@ BEGIN_EVENT_TABLE(MusikPrefsFrame, wxFrame)
 	EVT_BUTTON				(MUSIK_PREFERENCES_PLAYLIST_STRIPE_COLOUR,	MusikPrefsFrame::OnClickColour		)
 	EVT_BUTTON				(MUSIK_PREFERENCES_ACTIVITY_STRIPE_COLOUR,	MusikPrefsFrame::OnClickColour		)
 	EVT_BUTTON				(MUSIK_PREFERENCES_SOURCES_STRIPE_COLOUR,	MusikPrefsFrame::OnClickColour		)
+	EVT_BUTTON				(MUSIK_PREFERENCES_PLAYLIST_BORDER_COLOUR,	MusikPrefsFrame::OnClickColour		)
 	EVT_COMBOBOX			(MUSIK_PREFERENCES_OUTPUT_DRV,				MusikPrefsFrame::OnOutputChanged	)
 	EVT_CLOSE				(											MusikPrefsFrame::OnClose			)
 END_EVENT_TABLE()
@@ -100,6 +105,7 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle )
 	nInterfaceID	=	tcPreferencesTree->AppendItem	( nOptionsRootID,	_( "General" )		);
 	nSelectionsID	=	tcPreferencesTree->AppendItem	( nOptionsRootID,	_( "Selections" )	);
 	nPlaylistID		=	tcPreferencesTree->AppendItem	( nOptionsRootID,	_( "Playlist" )		);
+	nFileAssocsID	=	tcPreferencesTree->AppendItem	( nOptionsRootID,	_( "File Associations"));
 	nTunageID		=	tcPreferencesTree->AppendItem	( nOptionsRootID,	_( "Tunage" )		);
 	nAutoDjID		= 	tcPreferencesTree->AppendItem	( nOptionsRootID,	wxString(_("Shuffle")) +wxT("/") + _( "Auto DJ" ));
 	nGeneralTagID	=	tcPreferencesTree->AppendItem	( nTagRootID,		_( "General" )		);
@@ -311,6 +317,30 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle )
 	}
 	PREF_CREATE_CHECKBOX(DisplayEmptyPlaylistColumnAsUnkown,_("Display <unknown> in empty colums"));
 	vsOptions_Playlist->Add( chkDisplayEmptyPlaylistColumnAsUnkown,		0, wxTOP, 5 );
+	//------------------------------------//
+	//--- options -> file associations ---//
+	//------------------------------------//
+	vsOptions_FileAssoc = new wxBoxSizer( wxVERTICAL );
+	
+	chklbFileAssocs = new wxCheckListBox(this,MUSIK_PREFERENCES_FILE_ASSOC_CHKLB);
+	vsOptions_FileAssoc->Add(chklbFileAssocs,1,wxALL,5);
+	
+	for(int i = 0; i < COUNT_MUSIK_FORMAT ; i++)
+	{
+		const tSongClass *pSongClass = CMetaDataHandler::GetSongClass((EMUSIK_FORMAT_TYPE)i);
+		if(pSongClass)
+		{
+			bool bRegisterdForwxMusik = false;
+			wxString sDesc = wxGetTranslation(pSongClass->szDescription);
+			GetFileTypeAssociationInfo(pSongClass->szExtension,NULL,&bRegisterdForwxMusik);
+			chklbFileAssocs->Append(wxString::Format(wxT("%s %s"),pSongClass->szExtension,sDesc));
+			if(bRegisterdForwxMusik)
+				chklbFileAssocs->Check(chklbFileAssocs->GetCount()-1);
+		}
+	}
+	
+	
+
 	//-------------------------//
 	//--- options -> tunage ---//
 	//-------------------------//
@@ -516,7 +546,7 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle )
 	//--- information ---//
 	wxString sRenameInfo = 
 		wxString( _("\nAuto Rename syntax:\n\n") ) + 
-		wxString(wxFileName::GetPathSeparator() + _( " - Directory Separator\n" ) ) +
+		wxString(wxFileName::GetPathSeparator()) + _( " - Directory Separator\n" )  +
 		wxString( _("%1 - Song Title\n")				) + 
 		wxString( _("%2 - Artist Name\n")				) +
 		wxString( _("%3 - Album Name\n")				) +
@@ -557,6 +587,7 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle )
 	hsSplitter->Add( vsOptions_Selections,	3 );
 	hsSplitter->Add( vsOptions_Interface,	3 );
 	hsSplitter->Add( vsOptions_Playlist,	3 );
+	hsSplitter->Add( vsOptions_FileAssoc,	3 );
 	hsSplitter->Add( vsOptions_Tunage,		3 );
 	hsSplitter->Add( vsOptions_AutoDj,		3 );
 	hsSplitter->Add( vsSound_Crossfader,	3 );
@@ -716,6 +747,8 @@ void MusikPrefsFrame::HidePanels()
 	hsSplitter->Show( vsOptions_Selections,	false );
 	hsSplitter->Show( vsOptions_Interface,	false );
 	hsSplitter->Show( vsOptions_Playlist,	false );
+	hsSplitter->Show( vsOptions_FileAssoc,	false );
+	
 	hsSplitter->Show( vsOptions_Tunage,		false );
 	sbTunageFile->Show( false );
 	sbTunageURL->Show( false );
@@ -769,6 +802,11 @@ void MusikPrefsFrame::UpdatePrefsPanel()
 	{
 		HidePanels();
 		hsSplitter->Show( vsOptions_Playlist, true );
+	}
+	else if ( tcPreferencesTree->GetSelection() == nFileAssocsID )
+	{
+		HidePanels();
+		hsSplitter->Show( vsOptions_FileAssoc, true );
 	}
 	else if ( tcPreferencesTree->GetSelection() == nTunageID )
 	{
@@ -1039,6 +1077,45 @@ bool MusikPrefsFrame::SavePrefs()
 		g_MusikFrame->Show(false);
 		g_MusikFrame->Show();	
 	}
+	DoFileAssociations();
 	TransferDataFromWindow();
 	return true;
+}
+
+void MusikPrefsFrame::DoFileAssociations()
+{
+
+	bool bNotifyExplorer = false;
+	for(int i = 0; i < chklbFileAssocs->GetCount() ; i++)
+	{
+		wxString sEntry =	chklbFileAssocs->GetString(i);
+		wxArrayString arrElements;
+		DelimitStr(sEntry,wxT(" "),arrElements);
+		if(chklbFileAssocs->IsChecked(i))
+		{
+			if(!FileTypeIsAssociated(arrElements[0]))
+			{
+				const tSongClass *pSongClass = CMetaDataHandler::GetSongClass(arrElements[0]);
+				if(pSongClass)
+				{
+					wxString sDesc = wxGetTranslation(pSongClass->szDescription);
+					AssociateWithFileType(arrElements[0],sDesc);
+					bNotifyExplorer = true;
+				}
+			}
+
+		}
+		else
+		{
+			if(FileTypeIsAssociated(arrElements[0]))
+			{
+				UnassociateWithFileType(arrElements[0]);
+				bNotifyExplorer = true;
+			}
+		}
+	}
+#ifdef __WXMSW__
+	if(bNotifyExplorer)
+		SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, NULL, NULL);
+#endif
 }

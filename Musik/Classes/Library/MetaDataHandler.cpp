@@ -17,6 +17,7 @@
 #include "wx/wxprec.h"
 //--- mp3 / ogg helpers ---//
 #include "../../MusikUtils.h"
+#include "../../3rd Party/TagHelper/idtag.h"
 #include "CMP3Info.h"
 #include "COggInfo.h"
 #include "CFMODInfo.h"
@@ -25,16 +26,42 @@
 static CMP3Info mp3info;
 static COggInfo ogginfo;
 static CFMODInfo fmodinfo;
+class CDummyInfo : public CInfoRead
+{
+public:
 
+	bool ReadMetaData(CSongMetaData & MetaData) const
+	{
+		FILE *fp = wxFopen( MetaData.Filename.GetFullPath(), wxT("rb") );
+		if (!fp) 
+			return false;
+		CSimpleTagReader tr;
+		CSimpleTagReader::CFile trf(fp,true);
+		tr.ReadTags(trf,ConvToUTF8(MetaData.Filename.GetFullPath()));
+		MetaData.Album =  tr.TagValue(SIMPLETAG_FIELD_ALBUM);
+		MetaData.Title =  tr.TagValue(SIMPLETAG_FIELD_TITLE);
+		MetaData.Notes =  tr.TagValue(SIMPLETAG_FIELD_NOTES);
+		MetaData.Artist =  tr.TagValue(SIMPLETAG_FIELD_ARTIST);
+		MetaData.Year =  tr.TagValue(SIMPLETAG_FIELD_YEAR);
+		MetaData.Genre =  tr.TagValue(SIMPLETAG_FIELD_GENRE);
+		char* track = tr.TagValue(SIMPLETAG_FIELD_TRACK);
+		MetaData.nTracknum = track ? atoi(track) : 0;
+		return true;
+	}
+protected:
+
+private:
+};
+static CDummyInfo dummyinfo;
 static const tSongClass valid_SongClasses[] = 
 {
-	{wxT("mp3"),MUSIK_FORMAT_MP3,&mp3info,&mp3info}
-	,{wxT("ogg"),MUSIK_FORMAT_OGG,&ogginfo,&ogginfo}
-	,{wxT("wav"),MUSIK_FORMAT_WAV,&fmodinfo,NULL}
-	,{wxT("mp2"),MUSIK_FORMAT_MP2,&mp3info,&mp3info}
-	,{wxT("aiff"),MUSIK_FORMAT_AIFF,&fmodinfo,NULL}
+	{wxT("mp3"),wxTRANSLATE("MPEG Layer 3 Audio File"),MUSIK_FORMAT_MP3,&mp3info,&mp3info}
+	,{wxT("ogg"),wxTRANSLATE("OGG Vorbis Audio File"),MUSIK_FORMAT_OGG,&ogginfo,&ogginfo}
+	,{wxT("wav"),wxTRANSLATE("WAVE Audio File"),MUSIK_FORMAT_WAV,&fmodinfo,NULL}
+	,{wxT("mp2"),wxTRANSLATE("MPEG Layer 2 Audio File"),MUSIK_FORMAT_MP2,&mp3info,&mp3info}
+	,{wxT("aiff"),wxTRANSLATE("AIFF Audio File"),MUSIK_FORMAT_AIFF,&fmodinfo,NULL}
 	#ifdef __WXMSW__
-	,{wxT("wma"),MUSIK_FORMAT_WMA,&fmodinfo,NULL}
+	,{wxT("wma"),wxTRANSLATE("Windows Media Audio File"),MUSIK_FORMAT_WMA,&fmodinfo,NULL}
 #endif
 };
 
@@ -73,8 +100,11 @@ CMetaDataHandler::RetCode CMetaDataHandler::GetMetaData( CSongMetaData & MetaDat
 		rc = notsupported;
 
 	if ( MetaData.Title.Length() == 0 )
-		MetaData.Title = ConvToUTF8( MetaData.Filename.GetFullPath() );
-
+	{
+		dummyinfo.ReadMetaData(MetaData);
+		if ( MetaData.Title.Length() == 0 )
+			MetaData.Title = ConvToUTF8( MetaData.Filename.GetFullPath() );
+	}
 	return rc;
 
 }

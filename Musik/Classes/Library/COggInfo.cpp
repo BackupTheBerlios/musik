@@ -64,7 +64,7 @@ bool COggInfo::ReadMetaData(CSongMetaData & MetaData) const
 			MetaData.Notes	= vorbis_comment_query( pComment, "DESCRIPTION",0 );
 		MetaData.Year	= vorbis_comment_query( pComment, "DATE", 		0 );
 		char *szTracknum = vorbis_comment_query( pComment, "TRACKNUMBER", 0 );
-		MetaData.nTracknum = atol( szTracknum ? szTracknum : "0" );
+		MetaData.nTracknum = szTracknum ? atol( szTracknum ): 0;
 
 		//--- grab the bitrate ---//
 		vorbis_info *pInfo = ov_info( &vorbisfile,-1 );

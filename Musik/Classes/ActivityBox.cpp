@@ -84,7 +84,11 @@ END_EVENT_TABLE()
 
 void CActivityListBox::OnChar(wxKeyEvent& event)
 {
+#if wxUSE_UNICODE
 	wxChar keycode=event.GetUnicodeKey();
+#else
+	int keycode=event.GetKeyCode();
+#endif
 	if ((keycode>=WXK_SPACE))
 	{
 		if(m_OnCharStopWatch.Time()>1000)
@@ -542,6 +546,21 @@ EMUSIK_LIB_TYPE CActivityBox::ACTIVITY_TYPE2LIB_TYPE( EMUSIK_ACTIVITY_TYPE lbtyp
 		return MUSIK_LIB_INVALID;
 	}
 }
+wxString wxStringRemovePrefixLower(const wxString &s)
+{
+	const wxChar* Prefix = BeginsWithPreposition(s);
+	if(Prefix)
+	{
+		wxString r = s.Right(s.size() - wxStrlen(Prefix));
+		r.LowerCase();
+		return r;
+			}
+	return s.Lower();
+}
+int wxCMPFUNC_CONV wxStringSortAscendingLocaleRemovePrefix(wxString* s1, wxString* s2)
+{
+	return wxStrcoll(wxStringRemovePrefixLower(*s1).c_str(), wxStringRemovePrefixLower(*s2).c_str());
+}
 
 int wxCMPFUNC_CONV wxStringSortAscendingLocale(wxString* s1, wxString* s2)
 {
@@ -558,6 +577,9 @@ void CActivityBox::GetRelatedList( CActivityBox *pDst, wxArrayString & aReturn )
 	EMUSIK_LIB_TYPE OutType	= ACTIVITY_TYPE2LIB_TYPE( pDst->GetActivityType() );
 
 	wxGetApp().Library.GetInfo( sel, InType, OutType, aReturn ,false);
+	if(wxGetApp().Prefs.bSortArtistWithoutPrefix)
+		aReturn.Sort(wxStringSortAscendingLocaleRemovePrefix);
+	else
 	aReturn.Sort(wxStringSortAscendingLocale);
 }
 
@@ -566,6 +588,9 @@ void CActivityBox::ResetContents(bool selectnone)
 {
 	wxArrayString list;
 	GetFullList(list,false);
+	if(wxGetApp().Prefs.bSortArtistWithoutPrefix)
+		list.Sort(wxStringSortAscendingLocaleRemovePrefix);
+	else
 	list.Sort(wxStringSortAscendingLocale);
 	SetContents( list , selectnone );
 }
