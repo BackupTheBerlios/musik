@@ -1,4 +1,7 @@
+0.2.1 to 0.2.2
+
 0.2.0 to 0.2.1
+ - Fixed Bug: seek progress not updated if UI abused (avatar)
  - Fixed Bug: Now compiles with wxGtk 2.4.1 again. (gunnar)
  + The query text field is now disabled if a user playlist is displayed, because one ould easily destroy his playlist, by typing something in the textfield for search. (gunnar)
  + Simplified some routines, by reusing existing code and by make for loops as short as possible (break from them as soon as possible) (gunnar)
