@@ -377,6 +377,7 @@ void MusikFrame::ShowActivityArea( bool bShow )
 	m_TextSimpleQuery->Enable(bShow);
 	vsRightSide->Show( g_ActivityAreaCtrl, bShow );
 	Layout();
+	g_ActivityAreaCtrl->RescaleColumns();
 	g_PlaylistInfoCtrl->Refresh();
 }
 
