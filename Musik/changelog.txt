@@ -1,59 +1,54 @@
 0.1.2 to 0.1.3
- - fixed bug where adjusting the volume during song playback could cause the next crossfade to cut out.
- - fixed vbr crashing. if non Xing VBR, bitrate will be stored as 0 for the time being
- - fixed confusion when attempting to add / show a playlist that exists or is not visible in the sources box
- - Sources box now virtual. another big update.
- - couple patches from Gunnar Roth that should address any non ANSI character issues
- - setup wxMutex (mutual exclusion) objects to keep threads from messing with each other
- - bug where "&" would be displayed "&&" on caption bar
- - activity box drop target, thanks Wade Brainerd!
- - paths are stored in their own file.. (*nix) ~/.Musik/musikpaths.dat or (win32) docs and settings\<user>\.Musik\musikpaths.dat
- - if there are no pending tags to view, activity area status will not change
- - preferences saved in an ini file rather than registry. docs and serttings\<user>\.Musik\Musik.ini
- - swapped ordering of activity box stripes.
- - fixed some flashing problems when updating some progress bars
- - threading routines completely redone and now complete. 
- - auto rename now supports renaming to nested directories.. like <root dir>\Artist\Album\Song.mp3.. or whatever
-   other combo you can dream up.
- - fixed uninstall problem where changelog wasn't getting removed
- - new selection routine to assure that, for example, if two artists share a common album name (such as "unplugged"), 
+ - Fixed Bug: adjusting the volume during song playback could cause the next crossfade to cut out
+ - Fixed Bug: VBR crashing. If non Xing VBR, Musik would crash.
+ - Fixed Bug: Confusion when attempting to add / show a playlist that exists or is not visible in the Sources box
+ + Sources box now virtual. Less flashy.
+ + Couple patches from Gunnar Roth that should address any non ANSI character issues (crashing)
+ + setup wxMutex (mutual exclusion) objects to keep threads from interfering with each other
+ - Fixed Bug: "&" would be displayed "&&" on caption bar
+ + Selection box drop target. Drag files from playlist to artist / album / genre / year to have that song updated. (WaneB)
+ + Paths are stored in their own file.. (*nix) ~/.Musik/musikpaths.dat or (win32) docs and settings\<user>\.Musik\musikpaths.dat
+ - Fixed Bug: If there are no pending tags to view, activity area status will not change
+ + Preferences saved in an ini file rather than registry. (*nix) ~/.MusikPrefs or (win32) docs and serttings\<user>\.Musik\Musik.ini
+ - Fixed Bug: Swapped ordering of activity box stripes.
+ - Fixed Bug: Flashing problems when updating some progress bars
+ + Threading routines completely redone and now complete. 
+ + auto rename now supports renaming to nested directories.. like <root dir>\Artist\Album\Song.mp3
+ - Fixed Bug: Uninstall problem where changelog wasn't getting removed
+ + New selection routine to assure that, for example, if two artists share a common album name (such as "unplugged"), 
    only the correct, selected artist's album songs get displayed
- - selection (activity) boxes may be have been getting updated twice under certain circumstances. fixed.
- - deleting songs from a playlist / database / computer no longer makes selection jump to first item
- - deleting songs from database / computer actually WORKS again. oops.
- - purging old files from database works again
+ - Fixed Bug: Selection boxes may be have been getting updated twice under certain circumstances.
+ - Fixed Bug: Deleting songs from a playlist / database / computer no longer makes selection jump to first item
+ - Fixed Bug: Deleting songs from database / computer actually WORKS again. oops.
+ - Fixed Bug: Purging old files from database works again
 
 0.1.1 to 0.1.2
- - database, sources list, and playlists are now stored in your home folder, or Documents and Settings in windows2k/xp
- - bug that can deter the window from loading if there are no paths configured
- - brand new selection scheme for hiding unrelated material. 
- - improved activity box tag editing again, with better ogg support
- - playlist change crashing fixed (SiW)
- - any font related issues should be fixed
- - player component tear down and rebuild
- - about 5 crossfader rewrites. it should be AWESOME now
- - threaded crossfade and playback updating (time, seek, etc)
- - any bugs with activity box tagging should be fixed.
- - project converted to unicode
- - LINUX MAKE FILES! Thanks malenfant!
- - new developer: Un-Thesis.
- - wxListBox's are now virtual wxListCtrls. big switch. This means faster updating, less flashing, and smaller exe size.
- - First implmentation of threads. maybe more to come.
- - Slightly re-designed database setup dialog now called "Library Setup"
- - Bug fixed with attempting to edit an unknown genre type
- - Profanity filter
- - Layout problems with tag edit frame fixed. been meaning to do that for a while.
- - Tag edit frame has progress that can be aborted
- - Memory leak when tagging vorbis files
- - broke then fixed activity box tag editing.
- - Volume adjustment improvements. window gets killed when focus is lost
- - shortcut keys. tag dialog: enter/shift-enter/escape. prefs dialog: escape. library dialog: escape
+ + Database, sources list, and playlists are now stored (*nix) ~/.Musik/ or (win32) docs and settings\<user>\.Musik\
+ - Fixed Bug: Windows may not have loaded if no paths configured
+ + Brand new selection scheme for hiding unrelated material. 
+ + New activity box tag editing again, with better ogg support
+ - Fixed Bug: Changing a playlist in certain circumstances could cause a crash (SiW)
+ - Fixed Bug: font related issues
+ + Player component tear down and rebuild
+ + About 5 crossfader rewrites.
+ + Threaded crossfade and playback updating (time, seek, etc)
+ + project converted to unicode
+ + Linux CMake files (malenfant)
+ + wxListBox's are now virtual wxListCtrls. big switch. This means faster updating, less flashing, and smaller exe size.
+ + Slightly re-designed database setup dialog now called "Library Setup"
+ - Fixed Bug: Crash when attempting to edit an unknown genre type
+ + Profanity filter (SiW)
+ - Fixed Bug: Layout problems with tag edit frame fixed.
+ + Tag edit frame has progress that can be aborted
+ - Fixed Bug: Memory leak when tagging vorbis files
+ - Fixed Bug: Volume adjustment improvements. window gets killed when focus is lost
+ + shortcut keys. tag dialog: enter/shift-enter/escape. prefs dialog: escape. library dialog: escape
 
 0.1.1
- - new volume popup window
- - seek bar is now a progress bar. looks nice.
- - various tagging problems addressed
- - little things people complained about *cough*dustin*cough* ;)
+ + New volume popup window
+ + seek bar is now a progress bar.
+ - Fixed Bug: All reported tagging problems addressed
+ - Little things people complained about *cough*dustin*cough* ;)
 
 0.1
- - first public release
+ - First public release
