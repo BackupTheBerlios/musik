@@ -30,7 +30,6 @@ public:
 	void OnLeftUp			( wxMouseEvent& event );
 	void OnMouseMove		( wxMouseEvent& event );
 	void SetFromMousePos	( wxMouseEvent& WXUNUSED(event) );
-	void OnLeaveWindow		( wxMouseEvent& WXUNUSED(event) );
 
 	DECLARE_EVENT_TABLE()
 private:

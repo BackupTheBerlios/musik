@@ -22,34 +22,26 @@ public:
 	CMusikFXGauge( MusikFXFrame* parent, size_t nChannel, size_t nBandID );
 	~CMusikFXGauge();
 
-	void SetEQ();
-	void SetPos( size_t m_Pos );
-	void Colourize( );
-
-private:
-	CMusikFXHandler *m_EvtHandler;
-	MusikFXFrame *m_Parent;
-	size_t m_Channel;
-	size_t m_BandID;
-};
-
-class CMusikFXHandler : public wxEvtHandler
-{
-public:
-	CMusikFXHandler( CMusikFXGauge *parent );
-	~CMusikFXHandler();
-	
+	void OnEraseBackground ( wxEraseEvent& event );
 	void OnLeftDown			( wxMouseEvent& event );
 	void OnLeftUp			( wxMouseEvent& event );
 	void OnMouseMove		( wxMouseEvent& event );
 	void SetFromMousePos	( wxMouseEvent& event );
 
+	void SetEQ();
+	void SetPos( size_t m_Pos );
+	void Colourize( );
+
 	DECLARE_EVENT_TABLE()
 
 private:
+	MusikFXFrame *m_Parent;
+	size_t m_Channel;
+	size_t m_BandID;
+
+	//--- for the mouse events ---//
 	wxPoint m_MousePos;
 	wxSize m_WndSize;
-	CMusikFXGauge *m_Parent;
 	float m_Pos;
 	float m_Temp;
 	float m_Value;

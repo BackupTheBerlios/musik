@@ -24,7 +24,6 @@ BEGIN_EVENT_TABLE(CGaugeSeekEvt, wxEvtHandler)
 	EVT_LEFT_DOWN			(CGaugeSeekEvt::OnLeftDown		) 
 	EVT_LEFT_UP				(CGaugeSeekEvt::OnLeftUp		) 
 	EVT_MOTION				(CGaugeSeekEvt::OnMouseMove		) 
-	EVT_LEAVE_WINDOW		(CGaugeSeekEvt::OnLeaveWindow	) 
 END_EVENT_TABLE()
 
 void CGaugeSeekEvt::OnLeftDown( wxMouseEvent& event )
@@ -33,6 +32,8 @@ void CGaugeSeekEvt::OnLeftDown( wxMouseEvent& event )
 	//--- we're using the seek bar AND music is playing ---//
 	//--- OR we're adjusting volume                     ---//
 	//-----------------------------------------------------//
+	pParent->CaptureMouse();
+
 	if ( lType == wxGA_HORIZONTAL )
 		g_TimeSeeking = true;
 
@@ -56,12 +57,14 @@ void CGaugeSeekEvt::OnMouseMove( wxMouseEvent& event )
 
 void CGaugeSeekEvt::OnLeftUp( wxMouseEvent& event )
 {
-	if ( !event.LeftIsDown() && g_ActiveStreams.GetCount() )
+	pParent->ReleaseMouse();
+
+	if ( g_ActiveStreams.GetCount() )
 	{
-	//-----------------------------------------------//
-	//--- if we have left up and modifying volume ---//
-	//--- assume user is done. destroy the frame  ---//
-	//-----------------------------------------------//
+		//-----------------------------------------------//
+		//--- if we have left up and modifying volume ---//
+		//--- assume user is done. destroy the frame  ---//
+		//-----------------------------------------------//
 		if ( lType == wxGA_VERTICAL )
 			g_VolumeFrame->Close();
 
@@ -77,12 +80,6 @@ void CGaugeSeekEvt::OnLeftUp( wxMouseEvent& event )
 			g_TimeSeeking = false;
 		}
 	}	
-}
-
-void CGaugeSeekEvt::OnLeaveWindow( wxMouseEvent& WXUNUSED(event) )
-{
-	if ( g_TimeSeeking )
-		g_TimeSeeking = false;
 }
 
 void CGaugeSeekEvt::SetFromMousePos( wxMouseEvent& WXUNUSED(event) )
@@ -102,11 +99,15 @@ void CGaugeSeekEvt::SetFromMousePos( wxMouseEvent& WXUNUSED(event) )
 
 		//--- set value ---//
 		fPos = (float)100* ( (float)nMouseX / (float)nSizeX );
-		int nThisPos = (int)fPos;
+		if ( fPos < 0.0f )
+			fPos = 0.0f;
+		else if ( fPos > 100.0f )
+			fPos = 100.0f;
 
+		int nThisPos = (int)fPos;
 		if ( nThisPos != m_LastPos )
 		{
-			pParent->SetValue( (int)fPos );
+			pParent->SetValue( nThisPos );
 			m_LastPos = nThisPos;
 		}
 
@@ -126,7 +127,17 @@ void CGaugeSeekEvt::SetFromMousePos( wxMouseEvent& WXUNUSED(event) )
 
 		//--- set value ---//
 		fPos = (float)255* ( (float)nMouseY / (float)nSizeY );
-		pParent->SetValue( 255 - (int)fPos );
+		if ( fPos < 0.0f )
+			fPos = 0.0f;
+		else if ( fPos > 255.0f )
+			fPos = 255.0f;
+
+		int nThisPos = (int)fPos;
+		if ( nThisPos != m_LastPos )
+		{
+			pParent->SetValue( 255 - (int)fPos );
+			m_LastPos = nThisPos;
+		}
 
 		//--- set volume ---//
 		g_Prefs.nSndVolume = (int)pParent->GetValue();
