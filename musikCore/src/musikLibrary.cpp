@@ -1369,7 +1369,7 @@ int CmusikLibrary::QuerySongs( const CStdString& query, CmusikPlaylist& target )
 	// lock it up and query it
 	m_ProtectingLibrary->acquire();
 
-	int nRet = sqlite_exec_printf( m_pDB, "SELECT songid FROM %Q where %q;", 
+	int nRet = sqlite_exec_printf( m_pDB, "SELECT songid FROM %Q WHERE %q;", 
 		&sqlite_AddSongToPlaylist, &target, NULL,
 		SONG_TABLE_NAME, 
 		query.c_str() );
@@ -2170,3 +2170,36 @@ int CmusikLibrary::GetSongFormatFromID( int id, int* target )
 }
 
 ///////////////////////////////////////////////////
+
+void CmusikLibrary::GetInfoArrayFromPlaylist(  CmusikPlaylist* playlist, CmusikSongInfoArray* info, int replace_field_type, CStdString new_field, bool clear )
+{
+	if ( !m_pDB )
+		return;
+
+	if ( clear )
+		info->clear();
+
+	CmusikSongInfo tmp_info;
+
+	BeginTransaction();
+	for ( size_t i = 0; i < playlist->GetCount(); i++ )
+	{
+		GetSongInfoFromID( playlist->GetSongID( i ), &tmp_info );
+
+		if ( replace_field_type != -1 )
+			tmp_info.SetField( replace_field_type, new_field );
+
+		info->push_back( tmp_info );
+	}
+	EndTransaction();
+}
+
+///////////////////////////////////////////////////
+
+int CmusikLibrary::GetDirtySongs( CmusikPlaylist* target, bool clear )
+{
+	if ( clear )
+		target->Clear();
+
+	return QuerySongs( "dirty = 1", *target );
+}

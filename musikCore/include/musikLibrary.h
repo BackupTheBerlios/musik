@@ -168,6 +168,8 @@ public:
 	int  GetSongFromFilename		( CStdString fn, CmusikSong& song );
 	bool IsSongInLibrary			( CStdString fn );
 	int  GetSongFormatFromID		( int id, int* target );
+	void GetInfoArrayFromPlaylist	( CmusikPlaylist* playlist, CmusikSongInfoArray* info, int replace_field_type = -1, CStdString new_field = "", bool clear = true );
+	int  GetDirtySongs				( CmusikPlaylist* target, bool clear = true );
 
 	// updating songs
 	bool SetSongInfo				( CmusikSongInfo* info, int songid = -1 );
