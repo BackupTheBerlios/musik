@@ -23,6 +23,10 @@
 
 ///////////////////////////////////////////////////
 
+#pragma warning( disable : 4244 )
+
+///////////////////////////////////////////////////
+
 IMPLEMENT_DYNAMIC(CmusikPlaylistCtrl, CmusikListCtrl)
 
 ///////////////////////////////////////////////////
@@ -987,7 +991,7 @@ void CmusikPlaylistCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	{
 		CIntArray sel;
 		GetSelectedItems( &sel );
-		DeleteItems( sel, -1 );
+		DeleteItems( sel, true );
 		return;
 	}
 

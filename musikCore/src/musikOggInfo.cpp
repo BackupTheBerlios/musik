@@ -85,7 +85,7 @@ bool CmusikOggInfo::LoadInfo( const CStdString& fn )
 		m_Info.SetBitrate( temp );
 
 		// duration
-		float duration = ov_time_total ( &vorbisfile, -1 );
+		float duration = (float)ov_time_total ( &vorbisfile, -1 );
 		temp.Format( "%d",  (int)( duration * 1000.0f ) );
 		m_Info.SetDuration( temp );
 

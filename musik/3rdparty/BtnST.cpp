@@ -12,11 +12,18 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+// ignore these warnings
+#pragma warning (disable : 4311)
+#pragma warning (disable : 4312)	// conversion from ulong to HICON
+#pragma warning (disable : 4244)
+
 /////////////////////////////////////////////////////////////////////////////
 // CButtonST
 
 // Mask for control's type
+#ifndef BS_TYPEMASK
 #define BS_TYPEMASK SS_TYPEMASK
+#endif
 
 #ifndef	TTM_SETTITLE
 #define TTM_SETTITLEA           (WM_USER + 32)  // wParam = TTI_*, lParam = char* szTitle

@@ -4,6 +4,11 @@
 
 typedef float REAL;
 
+// ignore these warnings in win32
+#ifdef WIN32
+#pragma warning (disable : 4244)		// conversion from double to float
+#endif
+
 /*
 Fast Fourier/Cosine/Sine Transform
     dimension   :one

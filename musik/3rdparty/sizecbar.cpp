@@ -64,6 +64,11 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+// ignore these warnings
+#pragma warning (disable : 4244)
+#pragma warning (disable : 4311)
+#pragma warning (disable : 4312)
+
 /////////////////////////////////////////////////////////////////////////
 // CSizingControlBar
 

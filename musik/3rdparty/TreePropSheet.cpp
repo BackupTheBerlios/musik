@@ -8,7 +8,7 @@
 * Redistribution is appreciated.
 *
 * $Workfile:$
-* $Revision: 1.1 $
+* $Revision: 1.2 $
 * $Modtime:$
 * $Author: avatar5d $
 *
@@ -28,7 +28,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-
+// ignore these
+#pragma warning (disable : 4244)
 
 namespace TreePropSheet
 {

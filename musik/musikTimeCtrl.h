@@ -56,7 +56,7 @@ protected:
 	bool m_TimeDrag;
 
 	// timer
-	UINT m_TimerID;
+	UINT_PTR m_TimerID;
 
 	// macros
 	DECLARE_DYNAMIC(CmusikTimeCtrl)

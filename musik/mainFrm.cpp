@@ -221,7 +221,7 @@ void CMainFrame::Initmusik()
 		if ( nFader == -1 )
 		{
 			CmusikCrossfader fade;
-			fade.Set( 2.0, 0.5, 0.2, 1.0, 3.0 );
+			fade.Set( 2.0f, 0.5f, 0.2f, 1.0f, 3.0f );
 
 			m_Player->SetCrossfader( fade );
 		}
