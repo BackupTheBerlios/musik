@@ -315,7 +315,7 @@ void ActivityDropTarget::HighlightSel( wxPoint pPos )
 	nLastHit = n;
 }
 
-CActivityBox::CActivityBox( wxWindow *parent, wxWindowID id, enum EMUSIK_ACTIVITY_TYPE  nType )
+CActivityBox::CActivityBox( wxWindow *parent, wxWindowID id, EMUSIK_ACTIVITY_TYPE nType )
 	:  wxPanel( parent, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxSIMPLE_BORDER | wxCLIP_CHILDREN )
 {
 	//--- CListHeader and CActivityListBox ---//
@@ -387,7 +387,7 @@ wxString CActivityBox::GetActivityTypeStr()
 	}
 	return wxT( "" );
 }
-enum EMUSIK_LIB_TYPE CActivityBox::ACTIVITY_TYPE2LIB_TYPE(enum EMUSIK_ACTIVITY_TYPE lbtype)
+EMUSIK_LIB_TYPE CActivityBox::ACTIVITY_TYPE2LIB_TYPE( EMUSIK_ACTIVITY_TYPE lbtype )
 {
 	switch (lbtype)
 	{
@@ -407,10 +407,12 @@ void CActivityBox::GetRelatedList( CActivityBox *pDst, wxArrayString & aReturn )
 {
 	aReturn.Clear();
 	wxArrayString sel;
-	GetSelected(sel);
-	enum EMUSIK_LIB_TYPE  InType = ACTIVITY_TYPE2LIB_TYPE(m_ActivityType);
-	enum EMUSIK_LIB_TYPE  OutType = ACTIVITY_TYPE2LIB_TYPE(pDst->GetActivityType());
-	g_Library.GetInfo(sel,InType, OutType, aReturn );
+	GetSelected( sel );
+
+	EMUSIK_LIB_TYPE InType	= ACTIVITY_TYPE2LIB_TYPE( m_ActivityType );
+	EMUSIK_LIB_TYPE OutType	= ACTIVITY_TYPE2LIB_TYPE( pDst->GetActivityType() );
+
+	g_Library.GetInfo( sel, InType, OutType, aReturn );
 }
 
 void CActivityBox::ResetCaption()
@@ -437,13 +439,13 @@ void CActivityBox::GetFullList( wxArrayString & aReturn )
 	switch	( m_ActivityType)
 	{
 	case MUSIK_LBTYPE_ARTISTS:
-		g_Library.GetAllArtists(aReturn);
+		g_Library.GetAllArtists( aReturn );
 	case MUSIK_LBTYPE_ALBUMS:
-		g_Library.GetAllAlbums(aReturn);
+		g_Library.GetAllAlbums( aReturn );
 	case MUSIK_LBTYPE_GENRES:
-		g_Library.GetAllGenres(aReturn);
+		g_Library.GetAllGenres( aReturn );
 	case MUSIK_LBTYPE_YEARS:
-		g_Library.GetAllYears(aReturn);
+		g_Library.GetAllYears( aReturn );
 	}
 }
 

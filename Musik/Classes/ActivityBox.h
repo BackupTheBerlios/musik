@@ -28,7 +28,9 @@
 
 #define MUSIK_ACT_TEXT 9998
 
-//--- forward declaration for threads ---//
+//--- forward declarations ---//
+enum EMUSIK_ACTIVITY_TYPE;
+enum EMUSIK_LIB_TYPE;
 class CActivityBox;
 class MusikActivityRenameThread;
 
@@ -109,7 +111,7 @@ private:
 class CActivityBox : public wxPanel
 {
 public:
-	CActivityBox( wxWindow *parent, wxWindowID id, enum EMUSIK_ACTIVITY_TYPE nType );
+	CActivityBox( wxWindow *parent, wxWindowID id, EMUSIK_ACTIVITY_TYPE nType );
 	~CActivityBox();
 	
 	//--- thread event handlers ---//
@@ -120,7 +122,7 @@ public:
 
 	//--- sets ---//
 	void		SetCaption				( wxString sCaption )										{ pHeader->SetCaption( sCaption );						}
-	void		SetActivityType			( enum EMUSIK_ACTIVITY_TYPE  nType )						{ m_ActivityType = nType;								}
+	void		SetActivityType			( EMUSIK_ACTIVITY_TYPE  nType )								{ m_ActivityType = nType;								}
 	void		DeselectAll				()															{ pListBox->DeselectAll();								}
 	void		SetSel					( const wxString & sel, bool bDeselectAllFirst = true )		{ pListBox->SetSel( sel , bDeselectAllFirst );			}
 	void		SetSel					(const  wxArrayString & aList )								{ pListBox->SetSel( aList );							}	
@@ -135,7 +137,7 @@ public:
 	wxString	GetActivityTypeStr		();
 
 	CActivityListBox*			GetListBox		()													{ return pListBox;										}
-	enum EMUSIK_ACTIVITY_TYPE	GetActivityType	()													{ return m_ActivityType;								}
+	EMUSIK_ACTIVITY_TYPE		GetActivityType	()													{ return m_ActivityType;								}
 
 	//--- tag editing ---//
 	void EditBegin			();
@@ -173,7 +175,7 @@ public:
 
 private:
 
-	enum EMUSIK_LIB_TYPE ACTIVITY_TYPE2LIB_TYPE(enum EMUSIK_ACTIVITY_TYPE lbtype);
+	EMUSIK_LIB_TYPE ACTIVITY_TYPE2LIB_TYPE ( EMUSIK_ACTIVITY_TYPE lbtype );
 	EMUSIK_ACTIVITY_TYPE   m_ActivityType;
 	bool m_EditVisible;
 
