@@ -145,3 +145,17 @@ void MusikActivityRenameThread::OnExit()
 	wxPostEvent( m_ParentBox, RenameEndEvt );
 }
 
+MusikActivityRetagThread::MusikActivityRetagThread( CActivityBox* parent_box, int mode, wxArrayString sel, wxString newvalue )
+{
+
+}
+
+void* MusikActivityRetagThread::Entry()
+{
+return NULL;
+}
+
+void MusikActivityRetagThread::OnExit()
+{
+
+}

@@ -40,5 +40,17 @@ private:
 	CMusikSongArray m_Songs;
 };
 
+class MusikPlaylistRetagThread : public wxThread
+{
+public:
+	MusikPlaylistRetagThread( CMusikSongArray songs );
+
+	virtual void *Entry();
+	virtual void OnExit();
+
+private:
+	CMusikSongArray m_Songs;
+};
+
 #endif
 

@@ -99,6 +99,7 @@ public:
 	//--- writing tags ---//
 	//--------------------//
 	bool RenameFile		( CMusikSong* song, bool bClearCheck = false );
+	bool RetagFile		( CMusikSong* song, bool bClearCheck = false );
 	void WriteMP3Tag	( const wxString & filename, bool ClearAll );
 	bool WriteOGGTag	( const wxString & filename, bool ClearAll );
 	void ClearDirtyTags	( bool bInform );

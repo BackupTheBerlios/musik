@@ -29,8 +29,8 @@ void* MusikPlaylistRenameThread::Entry()
 	//----------------------------------------//
 	//--- events we'll post as we go along ---//
 	//----------------------------------------//
-	wxCommandEvent RenameStartEvt	( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYLIST_RENAME_THREAD_START );
-	wxCommandEvent RenameProgEvt	( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYLIST_RENAME_THREAD_PROG );	
+	wxCommandEvent RenameStartEvt	( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYLIST_THREAD_START );
+	wxCommandEvent RenameProgEvt	( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYLIST_THREAD_PROG );	
 
 	wxPostEvent( g_PlaylistCtrl, RenameStartEvt );
 
@@ -65,7 +65,56 @@ void* MusikPlaylistRenameThread::Entry()
 
 void MusikPlaylistRenameThread::OnExit()
 {
-	wxCommandEvent RenameEndEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYLIST_RENAME_THREAD_END );
+	wxCommandEvent RenameEndEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYLIST_THREAD_END );
 	wxPostEvent( g_PlaylistCtrl, RenameEndEvt );
 }
 
+MusikPlaylistRetagThread::MusikPlaylistRetagThread( CMusikSongArray songs )
+{
+	m_Songs = songs;
+}
+
+void* MusikPlaylistRetagThread::Entry()
+{
+	//----------------------------------------//
+	//--- events we'll post as we go along ---//
+	//----------------------------------------//
+	wxCommandEvent RetagStartEvt	( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYLIST_THREAD_START );
+	wxCommandEvent RetagProgEvt		( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYLIST_THREAD_PROG );	
+
+	wxPostEvent( g_PlaylistCtrl, RetagStartEvt );
+
+    float fPos = 0;
+	int nLastProg = 0;
+	int nCurrProg = 0;
+	for ( size_t i = 0; i < m_Songs.GetCount(); i++ )
+	{
+		//-----------------------//
+		//--- update progress ---//
+		//-----------------------//
+		fPos = (float)( i * 100 ) / (float)m_Songs.GetCount();
+		nCurrProg = (int)fPos;
+		if ( nCurrProg > nLastProg )
+		{
+			g_PlaylistCtrl->SetProgress( nCurrProg );
+			wxPostEvent( g_PlaylistCtrl, RetagProgEvt );
+		}
+		nLastProg = nCurrProg;
+
+		if ( TestDestroy() )
+			break;
+
+		g_Library.RetagFile( &m_Songs.Item( i ) );
+		Yield();
+	}
+
+	g_Playlist = m_Songs;
+
+	return NULL;
+}
+
+void MusikPlaylistRetagThread::OnExit()
+{
+	wxCommandEvent RetagEndEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYLIST_THREAD_END );
+	wxPostEvent( g_PlaylistCtrl, RetagEndEvt );
+}

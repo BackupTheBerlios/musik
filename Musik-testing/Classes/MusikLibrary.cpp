@@ -1246,6 +1246,13 @@ bool CMusikLibrary::RenameFile( CMusikSong* song, bool bClearCheck )
 	return false;
 }
 
+bool CMusikLibrary::RetagFile( CMusikSong* song, bool bClearCheck )
+{
+return true;
+}
+
+
+
 //-----------------------------------//
 //--- pre-defined queries to make ---//
 //---   life a little bit easier  ---//

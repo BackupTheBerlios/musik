@@ -53,5 +53,23 @@ private:
 	CMusikSongArray m_Songs;
 };
 
+class MusikActivityRetagThread : public wxThread
+{
+public:
+	MusikActivityRetagThread( CActivityBox* parent_box, int mode, wxArrayString sel, wxString newvalue );
+
+	virtual void *Entry();
+	virtual void OnExit();
+
+private:
+	CActivityBox*	m_ParentBox;
+	int				m_Mode;
+	int				m_Type;
+	wxString		m_TypeStr;
+	wxString		m_Replace;
+	wxArrayString	m_Selected;
+
+	CMusikSongArray	m_Songs;
+};
 
 #endif
