@@ -52,7 +52,7 @@ void CMusikPrefs::LoadPrefs()
 	config->Read( wxT( "ShowPlaylistInfo" ),						&nShowPLInfo,			1						);
 	config->Read( wxT( "ShowSources" ),								&nShowSources,			1						);
 	config->Read( wxT( "ShowSourcesIcons" ),						&nShowSourcesIcons,		1						);
-	config->Read( wxT( "ShowAc                                                                                                                                                                                      tivities" ),							&nShowActivities,		1						);
+	config->Read( wxT( "ShowActivities" ),							&nShowActivities,		1						);
 	config->Read( wxT( "ShowRating" ),								&nShowRatings,			1						);
 	config->Read( wxT( "StayOnTop" ),								&nStayOnTop,			0						);
 	config->Read( wxT( "AutomaticallyScanDelta" ),					&nAutoDelta,			1						);
