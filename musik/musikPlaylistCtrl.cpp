@@ -102,7 +102,7 @@ CmusikPlaylistCtrl::CmusikPlaylistCtrl( CFrameWnd* mainwnd, CmusikLibrary* libra
 	m_Player	= player;
 
 	// no sorting yet
-	m_Col		= -1;
+	m_LastCol	= -1;
 
 	// is a column being rearranged?
 	m_Arranging = false;
@@ -618,7 +618,7 @@ void CmusikPlaylistCtrl::SetPlaylist( CmusikPlaylist* playlist, int m_Type )
 	    
 		m_Playlist = playlist;
 		m_PlaylistType = m_Type;
-		
+
 		m_Changed = true;
 	}
 }
@@ -1191,20 +1191,84 @@ void CmusikPlaylistCtrl::OnLvnColumnclick(NMHDR *pNMHDR, LRESULT *pResult)
 	
 	if ( pNMLV->iSubItem >= 0 )
 	{
-		bool ascending = true;
-		if ( m_Col != -1 && m_Col == pNMLV->iSubItem )
-		{
-			ascending = false;
-			m_Col = -1;
-		}
-		else
-			m_Col = pNMLV->iSubItem;
+		// draw sort arrow
+		int nCurrCol = pNMLV->iSubItem;
+		DrawSortArrow( nCurrCol );
 
+		// sort
 		int type = m_Prefs->GetPlaylistCol( pNMLV->iSubItem );
-		m_Library->SortPlaylist( m_Playlist, type, ascending );
-
+		m_Library->SortPlaylist( m_Playlist, type, m_Ascend );
 		UpdateV();
 	}
 
 	*pResult = 0;
 }
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::DrawSortArrow( int nCurrCol )
+{
+	if ( nCurrCol == m_LastCol )
+		m_Ascend = ( m_Ascend == true ) ? false : true;
+	else
+		m_Ascend = true;
+
+	// set new arrow
+	HDITEM header_item;
+	CHeaderCtrl* header_ctrl = GetHeaderCtrl();
+
+	header_item.mask = HDI_FORMAT | HDI_BITMAP;
+	header_ctrl->GetItem( nCurrCol, &header_item );
+
+	if ( header_item.hbm != 0 ) 
+	{
+		DeleteObject( header_item.hbm );
+		header_item.hbm = 0;
+	}
+
+	header_item.fmt |= HDF_BITMAP | HDF_BITMAP_ON_RIGHT;
+	header_item.hbm  = (HBITMAP)LoadImage( AfxGetInstanceHandle(), MAKEINTRESOURCE( m_Ascend ? IDB_UP : IDB_DOWN ), IMAGE_BITMAP, 0, 0, LR_LOADMAP3DCOLORS );
+
+	header_ctrl->SetItem( nCurrCol, &header_item );
+
+	// unset old arrow
+	if ( m_LastCol != -1 && m_LastCol != nCurrCol )
+	{
+		header_ctrl->GetItem( m_LastCol, &header_item );
+		header_item.fmt &= ~(HDF_BITMAP | HDF_BITMAP_ON_RIGHT);
+
+		if ( header_item.hbm != 0 ) 
+		{
+			DeleteObject( header_item.hbm );
+			header_item.hbm = 0;
+		}
+
+		header_ctrl->SetItem( m_LastCol, &header_item );
+	}
+
+	m_LastCol = nCurrCol;
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::HideSortArrow()
+{
+	HDITEM header_item;
+	CHeaderCtrl* header_ctrl = GetHeaderCtrl();
+
+	if ( m_LastCol > -1 && m_LastCol < (int)m_Prefs->GetPlaylistColCount() )
+	{
+		header_ctrl->GetItem( m_LastCol, &header_item );
+		header_item.fmt &= ~(HDF_BITMAP | HDF_BITMAP_ON_RIGHT);
+
+		if ( header_item.hbm != 0 ) 
+		{
+			DeleteObject( header_item.hbm );
+			header_item.hbm = 0;
+		}
+
+		header_ctrl->SetItem( m_LastCol, &header_item );
+	}
+}
+
+///////////////////////////////////////////////////

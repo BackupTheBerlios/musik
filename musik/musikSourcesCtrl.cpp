@@ -280,7 +280,7 @@ void CmusikSourcesCtrl::InitItems()
 	m_QuickSearchRoot->SetPlaylistInfo( info );
 	m_QuickSearchRoot->Expand( 1 );
 
-	info.Set( "Search...", MUSIK_SOURCES_TYPE_QUICKSEARCH, -1 ); 
+	info.Set( "Enter Search...", MUSIK_SOURCES_TYPE_QUICKSEARCH, -1 ); 
 	m_QuickSearch = InsertItem( new CmusikPropTreeItem(), m_QuickSearchRoot );
 	m_QuickSearch->SetPlaylistInfo( info );
 
@@ -1097,7 +1097,7 @@ LRESULT CmusikSourcesCtrl::OnEditCancel( WPARAM wParam, LPARAM lParam )
 	else
 	{
 		FinishQuickSearch();
-		m_QuickSearch->SetLabelText( "Search..." );
+		m_QuickSearch->SetLabelText( "Enter Search..." );
 		m_QuickSearchCtrl.EnableWindow( FALSE );
 	}
 
@@ -1131,7 +1131,7 @@ LRESULT CmusikSourcesCtrl::OnEditCommit( WPARAM wParam, LPARAM lParam )
 	{
 		if ( pItem )
 		{
-			m_QuickSearch->SetLabelText( "Search..." );
+			m_QuickSearch->SetLabelText( "Enter Search..." );
 			FinishQuickSearch();
 		}
 	}

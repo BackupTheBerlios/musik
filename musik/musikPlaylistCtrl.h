@@ -67,7 +67,6 @@ class CmusikDir;
 
 class CmusikPlaylistCtrl : public CmusikListCtrl
 {
-
 	friend class CmusikPlaylistDropTarget;
 
 public:
@@ -79,6 +78,11 @@ public:
 	// update the virtual list control
 	void InitColors();
 	void UpdateV( bool redraw = true );
+
+	// call when new playlist is set becuase the
+	// previous playlist's sorting should not apply
+	// to the current one's...
+	void HideSortArrow();
 
 	// returns TRUE if user has deleted, inserted,
 	// or otherwise modified a playlist that may
@@ -200,7 +204,9 @@ private:
 	size_t m_ClipboardFormat;
 
 	// current sorted column
-	int m_Col;
+	void DrawSortArrow( int col );
+	int m_LastCol;
+	bool m_Ascend;
 };
 
 ///////////////////////////////////////////////////

@@ -156,6 +156,9 @@ public:
 	// is passed
 	void ClearLibrary( bool clear_all_tables = false );
 
+	// sorting playlist by field
+	int SortPlaylist( CmusikPlaylist* playlist, int field, bool ascending = true );
+
 	// functions that external threads should use
 	// if they attempt to modify the database directly
 	void InitTimeAdded();
@@ -289,7 +292,8 @@ private:
 	CmusikString m_TimeAdded;
 
 	// internal song query functions
-	int				QuerySongs		( const CmusikString & query, CmusikPlaylist & target );	
+	int				QuerySongs		( const CmusikString & query, CmusikPlaylist & target );
+	int				RawQuerySongs	( const CmusikString & query, CmusikPlaylist & target );
 	CmusikString	GetOrder		( int type, bool terminate = true );
 	int				QueryCount		( const char* pQueryResult );
 	void			VerifyYearList	( CmusikStringArray & list );

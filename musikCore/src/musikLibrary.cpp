@@ -1549,6 +1549,26 @@ int CmusikLibrary::QuerySongs( const CmusikString& query, CmusikPlaylist& target
 
 ///////////////////////////////////////////////////
 
+int CmusikLibrary::RawQuerySongs( const CmusikString& query, CmusikPlaylist& target )
+{
+	if ( !m_DatabaseOpen )
+		return -1;
+
+	target.Clear();
+
+	// lock it up and query it
+	int nRet;
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
+	{
+		nRet = sqlite_exec_printf( m_pDB, query.c_str(), 
+			&sqlite_AddSongToPlaylist, &target, NULL );
+	}
+
+	return nRet;
+}
+
+///////////////////////////////////////////////////
+
 int CmusikLibrary::GetRelatedItems( int source_type, const CmusikStringArray& source_items, int target_type, CmusikStringArray& target )
 {
 	if ( !m_DatabaseOpen )
@@ -2675,6 +2695,9 @@ void CmusikLibrary::ClearLibrary( bool clear_all_tables )
 
 int CmusikLibrary::IncLastPlayed( int songid )
 {
+	if ( !m_DatabaseOpen )
+		return -1;
+
 	InitTimeAdded();
 
 	int nRet;
@@ -2691,3 +2714,45 @@ int CmusikLibrary::IncLastPlayed( int songid )
 }
 
 ///////////////////////////////////////////////////
+
+int CmusikLibrary::SortPlaylist( CmusikPlaylist* playlist, int field, bool ascending )
+{
+	if ( !m_DatabaseOpen )
+		return -1;
+
+	CmusikString sQuery;
+
+	sQuery = "SELECT songid FROM songs where ";
+
+	CmusikString sCurr;
+	for ( size_t i = 0; i < playlist->GetCount(); i++ )
+	{
+		if ( i < playlist->GetCount() - 1 )
+			sCurr.Format( "songid = %d or ", playlist->GetSongID( i ) );
+		else
+            sCurr.Format( "songid = %d ", playlist->GetSongID( i ) );
+
+		sQuery += sCurr;
+	}
+
+	if ( field == MUSIK_LIBRARY_TYPE_FORMAT || field == MUSIK_LIBRARY_TYPE_TRACKNUM ||
+		field == MUSIK_LIBRARY_TYPE_YEAR || field == MUSIK_LIBRARY_TYPE_RATING || field == MUSIK_LIBRARY_TYPE_BITRATE ||
+		field == MUSIK_LIBRARY_TYPE_FILESIZE )
+		sCurr.Format( "ORDER BY %s", GetSongFieldDB( field ) );
+	else
+		sCurr.Format( "ORDER BY UPPER(%s)", GetSongFieldDB( field ) );
+
+	sQuery += sCurr;
+
+	if ( !ascending )
+		sQuery += " desc";
+
+	sQuery += ";";
+
+	playlist->Clear();
+
+	return RawQuerySongs( sQuery, *playlist );
+}
+
+///////////////////////////////////////////////////
+

@@ -750,7 +750,6 @@ bool CMainFrame::PlayCmd( const CString& fn )
 			if ( song.GetID() >= 0 )
 			{
 				pPlaylist->Add( song );
-				m_wndView->GetCtrl()->UpdateV();
 
 				// set the player's playlist, and play
 				if ( m_Player )
@@ -1027,6 +1026,7 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 			m_Library->GetAllSongs( *m_LibPlaylist );
 			m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, MUSIK_SOURCES_TYPE_LIBRARY );
 			m_wndView->GetCtrl()->UpdateV();
+			m_wndView->GetCtrl()->HideSortArrow();
 		}
 
 		m_wndSources->GetCtrl()->FocusLibrary();
@@ -1140,8 +1140,8 @@ void CMainFrame::RequeryPlaylist( CmusikString query, CmusikSelectionCtrl* sende
 
 		// do it
 		m_Library->GetRelatedSongs( query, order_by, *m_LibPlaylist );
-		
 		m_wndView->GetCtrl()->UpdateV();
+		m_wndView->GetCtrl()->HideSortArrow();
 
 		// set focus to library in sources
 		if ( focus_library )
@@ -1296,6 +1296,7 @@ LRESULT CMainFrame::OnSourcesLibrary( WPARAM wParam, LPARAM lParam )
 
 	m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, MUSIK_SOURCES_TYPE_LIBRARY );
 	m_wndView->GetCtrl()->UpdateV();
+	m_wndView->GetCtrl()->HideSortArrow();
 
 	return 0L;
 }
@@ -1315,6 +1316,7 @@ LRESULT CMainFrame::OnSourcesQuickSearch( WPARAM wParam, LPARAM lParam )
 		m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, MUSIK_SOURCES_TYPE_LIBRARY );
 
 	m_wndView->GetCtrl()->UpdateV();
+	m_wndView->GetCtrl()->HideSortArrow();
 
 	return 0L;
 }
@@ -1333,6 +1335,7 @@ LRESULT CMainFrame::OnSourcesNowPlaying( WPARAM wParam, LPARAM lParam )
 
 	m_wndView->GetCtrl()->SetPlaylist( m_Player->GetPlaylist(), MUSIK_SOURCES_TYPE_NOWPLAYING );
 	m_wndView->GetCtrl()->UpdateV();
+	m_wndView->GetCtrl()->HideSortArrow();
 
 	return 0L;
 }
@@ -1353,6 +1356,7 @@ LRESULT CMainFrame::OnSourcesStdPlaylist( WPARAM wParam, LPARAM lParam )
 
 	m_wndView->GetCtrl()->SetPlaylist( m_StdPlaylist, MUSIK_PLAYLIST_TYPE_STANDARD );
 	m_wndView->GetCtrl()->UpdateV();
+	m_wndView->GetCtrl()->HideSortArrow();
 
 	return 0L;
 }
@@ -1976,6 +1980,7 @@ void CMainFrame::OnUnsynchronizedtagsView()
 
 	// update the windows
 	m_wndView->GetCtrl()->UpdateV();
+	m_wndView->GetCtrl()->HideSortArrow();
 	m_wndSources->GetCtrl()->FocusLibrary();
 }
 
