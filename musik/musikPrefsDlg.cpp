@@ -51,6 +51,8 @@
 #include "musikPrefsDlg.h"
 
 #include "../musikCore/include/musikFilename.h"
+#include "../musikCore/include/musikLibrary.h"
+#include "../musikCore/include/musikPlayer.h"
 
 ///////////////////////////////////////////////////
 
@@ -70,8 +72,8 @@ IMPLEMENT_DYNAMIC( CmusikPrefsInterfaceGeneral, CmusikPropertyPage )
 
 ///////////////////////////////////////////////////
 
-CmusikPrefsInterfaceGeneral::CmusikPrefsInterfaceGeneral( CmusikPrefs* prefs )
-	: CmusikPropertyPage( CmusikPrefsInterfaceGeneral::IDD, prefs )
+CmusikPrefsInterfaceGeneral::CmusikPrefsInterfaceGeneral( CmusikPrefs* prefs, CmusikLibrary* library, CmusikPlayer* player )
+	: CmusikPropertyPage( CmusikPrefsInterfaceGeneral::IDD, prefs, library, player )
 {
 }
 
@@ -276,10 +278,9 @@ IMPLEMENT_DYNAMIC( CmusikPrefsSoundDriver, CmusikPropertyPage )
 
 ///////////////////////////////////////////////////
 
-CmusikPrefsSoundDriver::CmusikPrefsSoundDriver( CmusikPrefs* prefs )
-	: CmusikPropertyPage( CmusikPrefsSoundDriver::IDD, prefs )
+CmusikPrefsSoundDriver::CmusikPrefsSoundDriver( CmusikPrefs* prefs, CmusikLibrary* library, CmusikPlayer* player )
+	: CmusikPropertyPage( CmusikPrefsSoundDriver::IDD, prefs, library, player )
 {
-	m_Prefs = prefs;
 }
 
 ///////////////////////////////////////////////////
@@ -308,7 +309,6 @@ END_MESSAGE_MAP()
 BOOL CmusikPrefsSoundDriver::OnInitDialog()
 {
 	CmusikPropertyPage::OnInitDialog();
-
 	LoadPrefs();
 
 	return TRUE;
@@ -358,6 +358,10 @@ void CmusikPrefsSoundDriver::CommitChanges()
 	m_Prefs->SetPlayerDriver( new_driver );
 	m_Prefs->SetPlayerRate( new_rate );
 	m_Prefs->SetPlayerMaxChannels( new_chan );
+
+	// note: we could restart using m_Player but
+	// to be safe we'll post the event to the main
+	// frame so it can update itself.
 
 	if ( fmod_needs_restart )
 	{
@@ -478,10 +482,9 @@ IMPLEMENT_DYNAMIC( CmusikPrefsSoundCrossfader, CmusikPropertyPage )
 
 ///////////////////////////////////////////////////
 
-CmusikPrefsSoundCrossfader::CmusikPrefsSoundCrossfader( CmusikPrefs* prefs )
-	: CmusikPropertyPage( CmusikPrefsSoundCrossfader::IDD, prefs )
+CmusikPrefsSoundCrossfader::CmusikPrefsSoundCrossfader( CmusikPrefs* prefs, CmusikLibrary* library, CmusikPlayer* player )
+	: CmusikPropertyPage( CmusikPrefsSoundCrossfader::IDD, prefs, library, player )
 {
-	m_Prefs = prefs;
 }
 
 ///////////////////////////////////////////////////
@@ -495,11 +498,80 @@ CmusikPrefsSoundCrossfader::~CmusikPrefsSoundCrossfader()
 void CmusikPrefsSoundCrossfader::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_NEWSONG, m_NewSong);
+	DDX_Control(pDX, IDC_PAUSERESUME, m_PauseResume);
+	DDX_Control(pDX, IDC_SEEK, m_Seek);
+	DDX_Control(pDX, IDC_STOP, m_Stop);
+	DDX_Control(pDX, IDC_EXIT, m_Exit);
 }
 
 ///////////////////////////////////////////////////
 
 BEGIN_MESSAGE_MAP(CmusikPrefsSoundCrossfader, CmusikPropertyPage)
 END_MESSAGE_MAP()
+
+///////////////////////////////////////////////////
+
+BOOL CmusikPrefsSoundCrossfader::OnInitDialog()
+{
+	CmusikPropertyPage::OnInitDialog();
+
+	CmusikCrossfader fader;
+	m_Library->GetDefaultCrossfader( &fader );
+
+	Populate( fader );
+
+	return TRUE;
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPrefsSoundCrossfader::Populate( const CmusikCrossfader& fader )
+{
+	m_NewSong.SetWindowText( FloatToCString( fader.m_NewSong ) );
+	m_PauseResume.SetWindowText( FloatToCString( fader.m_PauseResume ) );
+	m_Seek.SetWindowText( FloatToCString( fader.m_Seek ) );
+	m_Stop.SetWindowText( FloatToCString( fader.m_Stop ) );
+	m_Exit.SetWindowText( FloatToCString( fader.m_Exit ) );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPrefsSoundCrossfader::CommitChanges()
+{
+	CmusikCrossfader fader_save;
+	
+	CString sWnd;
+
+	m_NewSong.GetWindowText( sWnd );
+	fader_save.m_NewSong = StringToFloat( sWnd.GetBuffer() );
+
+	m_PauseResume.GetWindowText( sWnd );
+	fader_save.m_PauseResume = StringToFloat( sWnd.GetBuffer() );
+
+	m_Seek.GetWindowText( sWnd );
+	fader_save.m_Seek = StringToFloat( sWnd.GetBuffer() );
+
+	m_Stop.GetWindowText( sWnd );
+	fader_save.m_Stop = StringToFloat( sWnd.GetBuffer() );
+
+	m_Exit.GetWindowText( sWnd );
+	fader_save.m_Exit = StringToFloat( sWnd.GetBuffer() );
+
+	m_Library->UpdateDefaultCrossfader( fader_save );
+
+	if ( m_Player->IsCrossfaderEnabled() )
+		m_Player->SetCrossfader( fader_save );
+}
+
+///////////////////////////////////////////////////
+
+BOOL CmusikPrefsSoundCrossfader::OnCommand(WPARAM wParam, LPARAM lParam)
+{
+	SetModified( TRUE );
+	m_Modified = true;
+
+	return CmusikPropertyPage::OnCommand(wParam, lParam);
+}
 
 ///////////////////////////////////////////////////

@@ -1521,9 +1521,9 @@ void CMainFrame::OnSysColorChange()
 void CMainFrame::OnFilePreferences()
 {
 	// initialize the property pages
-	CmusikPrefsInterfaceGeneral wndPageInterfaceGeneral( m_Prefs );
-	CmusikPrefsSoundCrossfader wndPageSoundCrossfader( m_Prefs );
-	CmusikPrefsSoundDriver wndPageSoundDriver( m_Prefs );
+	CmusikPrefsInterfaceGeneral wndPageInterfaceGeneral( m_Prefs, m_Library, m_Player );
+	CmusikPrefsSoundCrossfader wndPageSoundCrossfader( m_Prefs, m_Library, m_Player );
+	CmusikPrefsSoundDriver wndPageSoundDriver( m_Prefs, m_Library, m_Player );
 
 	// remove help icon from gripper
 	wndPageInterfaceGeneral.m_psp.dwFlags&=		~PSP_HASHELP;
@@ -1745,18 +1745,11 @@ void CMainFrame::OnAddDirectory()
 
 void CMainFrame::GetCrossfader( CmusikCrossfader* fader )
 {
-	bool gotfader = true;
-    
-	int nFader = m_Prefs->GetCrossfader();
-
-	if ( nFader != -1 )
+	if ( m_Library->GetDefaultCrossfader( fader ) != SQLITE_OK )
 	{
-		if ( m_Library->GetCrossfader( nFader, fader ) != SQLITE_OK )
-			gotfader = false;
-	}
-
-	if ( nFader == -1 || !gotfader )
 		fader->Set( 2.0f, 0.5f, 0.2f, 1.0f, 3.0f );
+		m_Library->UpdateDefaultCrossfader( *fader );
+	}
 }
 
 ///////////////////////////////////////////////////

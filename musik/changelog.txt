@@ -2,8 +2,9 @@
 
 a2:
   
+  - fixed tab ordering in all dialogs
   - added "Shuffle Now Playing" to playlist context menu
-  - "Shuffle Now Playing" menu options disabled if now playing
+  - "Shuffle Now Playing" menu option disabled if now playing
     playlist is empty.
   - changed "Standard Playlists" to "Playlists" in the
     sources panel

@@ -54,6 +54,8 @@
 ///////////////////////////////////////////////////
 
 class CmusikPrefs;
+class CmusikLibrary;
+class CmusikPlayer;
 
 ///////////////////////////////////////////////////
 
@@ -66,7 +68,7 @@ class CmusikPrefsInterfaceGeneral : public CmusikPropertyPage
 public:
 
 	// construct / destruct
-	CmusikPrefsInterfaceGeneral( CmusikPrefs* prefs );
+	CmusikPrefsInterfaceGeneral( CmusikPrefs* prefs, CmusikLibrary* library, CmusikPlayer* player );
 	virtual ~CmusikPrefsInterfaceGeneral();
 
 	// saving / loading
@@ -113,7 +115,7 @@ class CmusikPrefsSoundDriver : public CmusikPropertyPage
 public:
 
 	// construct / destruct
-	CmusikPrefsSoundDriver( CmusikPrefs* prefs );
+	CmusikPrefsSoundDriver( CmusikPrefs* prefs, CmusikLibrary* library, CmusikPlayer* player );
 	virtual ~CmusikPrefsSoundDriver();
 
 	// dialog data
@@ -130,13 +132,11 @@ public:
 	// macros
 	DECLARE_DYNAMIC( CmusikPrefsSoundDriver )
 	DECLARE_MESSAGE_MAP()
+
 protected:
 
 	// misc
 	virtual void DoDataExchange(CDataExchange* pDX);
-
-	// actual prefs obj
-	CmusikPrefs* m_Prefs;
 
 	// for getting sound devices
 	void GetSoundDevices( bool populate = true );
@@ -167,14 +167,27 @@ class CmusikPrefsSoundCrossfader : public CmusikPropertyPage
 public:
 
 	// construct and destruct
-	CmusikPrefsSoundCrossfader( CmusikPrefs* prefs );
+	CmusikPrefsSoundCrossfader( CmusikPrefs* prefs, CmusikLibrary* library, CmusikPlayer* player );
 	virtual ~CmusikPrefsSoundCrossfader();
 	
+	virtual void CommitChanges();
+	
+	// mfc vars and messages
+	virtual BOOL OnInitDialog();
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+
+	CEdit m_NewSong;
+	CEdit m_PauseResume;
+	CEdit m_Seek;
+	CEdit m_Stop;
+	CEdit m_Exit;
+
 protected:
 
 	// misc
 	virtual void DoDataExchange(CDataExchange* pDX);
 	enum { IDD = IDD_PROPPAGE_SOUND_CROSSFADER };
+	void Populate( const CmusikCrossfader& fader );
 
 	// macros
 	DECLARE_DYNAMIC(CmusikPrefsSoundCrossfader)

@@ -368,19 +368,21 @@ FONT 8, "MS Shell Dlg", 0, 0, 0x0
 BEGIN
     CONTROL         "Minimize to notification tray (next to clock)",
                     IDC_CHECK_ENABLETRAYICON,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,5,11,151,10
+                    WS_TABSTOP,5,35,151,10
     CONTROL         "Start musikCube in tray on Windows startup",
                     IDC_CHECK_STARTWITHWINDOWS,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,5,24,157,10
+                    WS_TABSTOP,5,48,157,10
     CONTROL         "Prompt to save changes to playlists",IDC_CHECK1,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,6,42,129,10
+                    BS_AUTOCHECKBOX | WS_TABSTOP,6,66,129,10
     CONTROL         "Prompt when dropping files onto playlist",IDC_CHECK2,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,53,143,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,77,143,10
     CONTROL         "Automatically synchronize directories on startup",
-                    IDC_CHECK4,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,72,
+                    IDC_CHECK4,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,96,
                     169,10
     CONTROL         "Selecting ""Library"" displays all files",IDC_CHECK3,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,90,125,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,114,125,10
+    CTEXT           "All users should consider setting up the following options:",
+                    IDC_STATIC,12,11,186,13
 END
 
 IDD_PROPPAGE_SOUND_DRIVER DIALOGEX 0, 0, 210, 154
@@ -388,14 +390,14 @@ STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Sound::Driver"
 FONT 8, "MS Shell Dlg", 0, 0, 0x0
 BEGIN
-    COMBOBOX        IDC_SOUND_DRIVER,84,56,111,84,CBS_DROPDOWNLIST | 
-                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Output Driver:",IDC_STATIC,32,58,48,8
     COMBOBOX        IDC_SOUND_DEVICE,84,39,111,69,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_SOUND_DRIVER,84,56,111,84,CBS_DROPDOWNLIST | 
                     CBS_SORT | WS_VSCROLL | WS_TABSTOP
     COMBOBOX        IDC_SOUND_PLAYBACK_RATE,84,74,111,55,CBS_DROPDOWNLIST | 
                     CBS_SORT | WS_VSCROLL | WS_TABSTOP
     EDITTEXT        IDC_SOUND_MAX_CHANNELS,84,93,31,14,ES_AUTOHSCROLL
+    LTEXT           "Output Driver:",IDC_STATIC,32,58,48,8
     LTEXT           "Sound Device:",IDC_STATIC,33,42,47,8
     LTEXT           "Playback Rate (hz):",IDC_STATIC,16,77,64,8
     LTEXT           "Max Sound Channels:",IDC_STATIC,10,96,70,8
@@ -423,21 +425,21 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION |
 CAPTION "musikCube"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "ok",IDOK,167,84,50,14
-    PUSHBUTTON      "cancel",IDCANCEL,113,84,50,14
-    CONTROL         "Remember my answer",IDC_REMEMBER,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,6,86,87,10
-    LTEXT           "Files from another application have been dropped onto the musikCube interface. Which of the following actions would you like to perform? ",
-                    IDC_STATIC,6,6,210,24
-    CONTROL         "Add these files to the currently active playlist",
-                    IDC_RADIO_ADD_PLAYLIST,"Button",BS_AUTORADIOBUTTON,6,50,
-                    210,10
     CONTROL         "Add these files to the ""Now Playing"" playlist",
                     IDC_RADIO_ADD_NOW_PLAYING,"Button",BS_AUTORADIOBUTTON,6,
                     38,210,10
+    CONTROL         "Add these files to the currently active playlist",
+                    IDC_RADIO_ADD_PLAYLIST,"Button",BS_AUTORADIOBUTTON,6,50,
+                    210,10
     CONTROL         "Add these files to the library only",
                     IDC_RADIO_ADD_LIBRARY,"Button",BS_AUTORADIOBUTTON,6,62,
                     210,10
+    CONTROL         "Remember my answer",IDC_REMEMBER,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,6,86,87,10
+    PUSHBUTTON      "cancel",IDCANCEL,113,84,50,14
+    DEFPUSHBUTTON   "ok",IDOK,167,84,50,14
+    LTEXT           "Files from another application have been dropped onto the musikCube interface. Which of the following actions would you like to perform? ",
+                    IDC_STATIC,6,6,210,24
 END
 
 IDD_DYNPLAYLISTEDITOR DIALOGEX 0, 0, 262, 149
@@ -494,10 +496,10 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
 CAPTION "musikCube Directory Synchronization"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    PUSHBUTTON      "add",IDC_ADD,6,108,50,14
-    PUSHBUTTON      "remove",IDC_REMOVE,60,108,50,14
     LISTBOX         IDC_DIRS,6,5,282,97,LBS_SORT | LBS_NOINTEGRALHEIGHT | 
                     LBS_EXTENDEDSEL | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "add",IDC_ADD,6,108,50,14
+    PUSHBUTTON      "remove",IDC_REMOVE,60,108,50,14
     PUSHBUTTON      "close",IDC_CLOSE,238,108,50,14
 END
 
@@ -506,18 +508,18 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
 CAPTION "musikCube Equalizer Sets"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    LISTBOX         IDC_PRESET_BOX,108,17,114,169,LBS_SORT | 
-                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "save as...",IDC_SAVE_ACTIVE_AS_NEW,6,18,90,14
     PUSHBUTTON      "save to selected",IDC_SAVE_ACTIVE_AS_SELECTED,6,35,90,
                     14
-    CTEXT           "Active Equalizer:",IDC_STATIC,6,6,90,8
-    PUSHBUTTON      "reset defaults",IDC_RESET_DEFAULTS,6,125,90,14
-    CTEXT           "Selected Equalizer:",IDC_STATIC,6,59,90,8
-    PUSHBUTTON      "save as...",IDC_SAVE_ACTIVE_AS_NEW,6,18,90,14
     PUSHBUTTON      "delete",IDC_DELETE_SEL,6,72,90,14
-    PUSHBUTTON      "set as default",IDC_SET_AS_DEFAULT,6,144,90,14
     PUSHBUTTON      "rename",IDC_RENAME_SEL,6,90,90,14
+    PUSHBUTTON      "reset defaults",IDC_RESET_DEFAULTS,6,125,90,14
+    PUSHBUTTON      "set as default",IDC_SET_AS_DEFAULT,6,144,90,14
+    LISTBOX         IDC_PRESET_BOX,108,17,114,169,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "close",IDC_CLOSE_DLG,6,172,90,14
+    CTEXT           "Active Equalizer:",IDC_STATIC,6,6,90,8
+    CTEXT           "Selected Equalizer:",IDC_STATIC,6,59,90,8
     CTEXT           "All Equalizers:",IDC_STATIC,108,6,114,8
     CTEXT           "Defaults:",IDC_STATIC,6,114,90,8
 END
@@ -528,9 +530,9 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION |
 CAPTION "musikCube"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
+    EDITTEXT        IDC_EDIT,6,18,192,14,ES_AUTOHSCROLL
     DEFPUSHBUTTON   "OK",IDOK,94,39,50,14
     PUSHBUTTON      "Cancel",IDCANCEL,148,39,50,14
-    EDITTEXT        IDC_EDIT,6,18,192,14,ES_AUTOHSCROLL
     LTEXT           "Please enter a new name:",IDC_STATIC,7,5,84,8
 END
 
@@ -539,21 +541,21 @@ STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Sound::Crossfader"
 FONT 8, "MS Shell Dlg", 0, 0, 0x0
 BEGIN
-    RTEXT           "New Song:",IDC_STATIC,0,47,60,8
-    RTEXT           "Pause / Resume:",IDC_STATIC,0,63,60,8
-    RTEXT           "Seek:",IDC_STATIC,0,79,60,8
-    EDITTEXT        IDC_EDIT1,66,44,24,12,ES_AUTOHSCROLL
-    EDITTEXT        IDC_EDIT2,66,60,24,12,ES_AUTOHSCROLL
-    EDITTEXT        IDC_EDIT3,66,76,24,12,ES_AUTOHSCROLL
-    RTEXT           "Program Exit:",IDC_STATIC,0,109,60,8
-    EDITTEXT        IDC_EDIT4,66,92,24,12,ES_AUTOHSCROLL
-    RTEXT           "Stop:",IDC_STATIC,0,95,60,8
-    EDITTEXT        IDC_EDIT5,66,108,24,12,ES_AUTOHSCROLL
-    LISTBOX         IDC_LIST2,112,42,92,59,LBS_SORT | LBS_NOINTEGRALHEIGHT | 
+    EDITTEXT        IDC_NEWSONG,66,44,24,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_PAUSERESUME,66,60,24,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_SEEK,66,76,24,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_STOP,66,92,24,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EXIT,66,108,24,12,ES_AUTOHSCROLL
+    LISTBOX         IDC_LIST2,112,44,92,59,LBS_SORT | LBS_NOINTEGRALHEIGHT | 
                     WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "add",IDC_BUTTON5,112,107,44,14
+    PUSHBUTTON      "remove",IDC_BUTTON6,162,107,42,14
+    RTEXT           "New Song:",IDC_STATIC,0,46,60,8
+    RTEXT           "Pause / Resume:",IDC_STATIC,0,62,60,8
+    RTEXT           "Seek:",IDC_STATIC,0,79,60,8
+    RTEXT           "Program Exit:",IDC_STATIC,0,110,60,8
+    RTEXT           "Stop:",IDC_STATIC,0,95,60,8
     CTEXT           "Presets:",IDC_STATIC,113,24,89,8
-    PUSHBUTTON      "add",IDC_BUTTON5,112,104,44,14
-    PUSHBUTTON      "remove",IDC_BUTTON6,162,104,42,14
     LTEXT           "",IDC_STATIC,101,14,1,122,0,WS_EX_STATICEDGE
     CTEXT           "Intervals (sec):",IDC_STATIC,4,26,89,8
 END

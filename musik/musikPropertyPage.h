@@ -50,6 +50,10 @@
 
 using namespace TreePropSheet;
 
+class CmusikPrefs;
+class CmusikLibrary;
+class CmusikPlayer;
+
 ///////////////////////////////////////////////////
 
 // CmusikPropertyPage
@@ -58,9 +62,10 @@ using namespace TreePropSheet;
 
 class CmusikPropertyPage : public CPropertyPage
 {
+
 public:
 
-	CmusikPropertyPage( UINT nIDTemplate, CmusikPrefs* prefs );
+	CmusikPropertyPage( UINT nIDTemplate, CmusikPrefs* prefs, CmusikLibrary* library, CmusikPlayer* player );
 	virtual ~CmusikPropertyPage(){}
 
 	bool IsModified(){ return m_Modified; }
@@ -71,7 +76,11 @@ public:
 protected:
 
 	bool m_Modified;
+
 	CmusikPrefs* m_Prefs;
+	CmusikLibrary* m_Library;
+	CmusikPlayer* m_Player;
+
 };
 
 ///////////////////////////////////////////////////

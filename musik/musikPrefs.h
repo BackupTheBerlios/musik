@@ -46,6 +46,7 @@
 ///////////////////////////////////////////////////
 
 #include "stdafx.h"
+#include <sstream>
 
 #include "3rdparty/iniFile.h"
 
@@ -266,5 +267,257 @@ private:
 	bool m_HilightDef;
 	bool m_HilightTextDef;
 };
+
+///////////////////////////////////////////////////
+
+// handy conversion functions
+
+///////////////////////////////////////////////////
+
+inline int StringToInt( const string str )
+{
+	return atoi( str.c_str() );	
+}
+
+///////////////////////////////////////////////////
+
+inline string IntToString( const int &n )
+{
+	char buffer[20];
+	itoa( n, buffer, 10 );
+	string str = buffer;
+    return str;	
+}
+
+///////////////////////////////////////////////////
+
+inline float StringToFloat( string s )
+{
+	float fRet;
+
+	istringstream aStream;
+	aStream.str( s );
+	aStream >> (float)fRet;
+
+	return fRet;
+}
+
+///////////////////////////////////////////////////
+
+inline string FloatToString( float f )
+{
+	ostringstream aStream;
+	aStream << f << "\0";
+
+	string str = aStream.str();
+
+	return str;
+}
+
+///////////////////////////////////////////////////
+
+inline CString FloatToCString( float f )
+{
+	ostringstream aStream;
+	aStream << f << "\0";
+
+	CString str = aStream.str().c_str();
+
+	return str;
+}
+
+///////////////////////////////////////////////////
+
+inline unsigned long StringToULong( string s )
+{
+	unsigned long nRet;
+
+	istringstream aStream;
+	aStream.str( s );
+	aStream >> (unsigned long)nRet;
+
+	return nRet;
+}
+
+///////////////////////////////////////////////////
+
+inline string ULongToString( unsigned long ul )
+{
+	ostringstream aStream;
+	aStream << ul << "\0";
+
+	string str = aStream.str();
+
+	return str;
+}
+
+///////////////////////////////////////////////////
+
+inline CSize StringToCSize( const string &str )
+{
+	CSize ret;
+	CString cstr = str.c_str();
+	if ( cstr.Find( "x", 0 ) )
+	{
+		int currpos = 0;
+		CString strx = cstr.Tokenize( "x", currpos );
+		CString stry = cstr.Tokenize( "x", currpos );
+		ret.cx = atoi( strx );
+		ret.cy = atoi( stry );
+	}
+	else
+		ret.SetSize( 0, 0 );
+
+	return ret;
+}
+
+///////////////////////////////////////////////////
+
+inline string CSizeToString( const CSize &size )
+{
+	string ret;
+	char buffer_w[10];
+	char buffer_h[10];
+
+	itoa( size.cx, buffer_w, 10 );
+	itoa( size.cy, buffer_h, 10 );
+
+	string str;
+	str += buffer_w;
+	str += "x";
+	str += buffer_h;
+
+	return str;
+}
+
+///////////////////////////////////////////////////
+
+inline CPoint StringToCPoint( const string &str )
+{
+	CPoint ret;
+	CString cstr = str.c_str();
+	if ( cstr.Find( ",", 0 ) )
+	{
+		int currpos = 0;
+		CString strx = cstr.Tokenize( ",", currpos );
+		CString stry = cstr.Tokenize( ",", currpos );
+		ret.x = atoi( strx );
+		ret.y = atoi( stry );
+	}
+	else
+	{
+		ret.x = 0;
+		ret.y = 0;
+	}
+
+	return ret;
+}
+
+///////////////////////////////////////////////////
+
+inline string CPointToString( const CPoint &pt )
+{
+	string ret;
+	char buffer_x[10];
+	char buffer_y[10];
+
+	itoa( pt.x, buffer_x, 10 );
+	itoa( pt.y, buffer_y, 10 );
+
+	string str;
+	str += buffer_x;
+	str += ",";
+	str += buffer_y;
+
+	return str;
+}
+
+///////////////////////////////////////////////////
+
+inline CIntArray StringToCIntArray( const string &str )
+{
+	CIntArray ret;
+	CString cstr = str.c_str();
+	int pos = 0;
+
+	CString resToken;
+	resToken = cstr.Tokenize( ",", pos);
+	while ( resToken != "" )
+	{
+		ret.push_back( atoi( resToken.GetBuffer() ) );
+		resToken = cstr.Tokenize( ",", pos );
+	};
+
+	return ret;
+}
+
+///////////////////////////////////////////////////
+
+inline string CIntArrayToString( const CIntArray &array )
+{
+	CString CRet;
+	char buffer[10];
+	for ( size_t i = 0; i < array.size(); i++ )
+	{
+		CRet += itoa( array.at( i ), buffer, 10 );
+		if ( i != ( array.size() - 1 ) )
+			CRet += ",";
+	}
+	string sRet = CRet.GetBuffer();
+	return sRet;
+}
+
+///////////////////////////////////////////////////
+
+inline COLORREF StringToCOLORREF( const string str )
+{
+	int r = 0, g = 0, b = 0;
+	CString CStr = str.c_str();
+	int pos = 0;
+	CString resToken;
+	r = atoi( CStr.Tokenize( ",", pos ) );
+	g = atoi( CStr.Tokenize( ",", pos ) );
+	b = atoi( CStr.Tokenize( ",", pos ) );
+
+	COLORREF ret = RGB( r, g, b );
+	return ret;
+}
+
+///////////////////////////////////////////////////
+
+inline string COLORREFToString( const COLORREF color )
+{
+	CString CRet;
+	CRet.Format( _T( "%d,%d,%d" ), 
+		GetRValue( color ), 
+		GetGValue( color ), 
+		GetBValue( color ) );
+
+	string sRet = CRet.GetBuffer();
+	return sRet;
+}
+
+///////////////////////////////////////////////////
+
+inline bool StringToBool( const string str )
+{
+	if ( str.empty() )
+		return false;
+
+	if ( str == _T( "1" ) )
+		return true;
+
+	return false;
+}
+
+///////////////////////////////////////////////////
+
+inline string BoolToString( const bool val )
+{
+	if ( val )
+		return _T( "1" );
+
+	return _T( "0" );
+}
 
 ///////////////////////////////////////////////////

@@ -43,16 +43,22 @@
 
 #include "musikPropertyPage.h"
 
+#include "../musikCore/include/musikLibrary.h"
+#include "../musikCore/include/musikPlayer.h"
+
 ///////////////////////////////////////////////////
 
 // CmusikPropertyPage
 
 ///////////////////////////////////////////////////
 
-CmusikPropertyPage::CmusikPropertyPage( UINT nIDTemplate, CmusikPrefs* prefs )
+CmusikPropertyPage::CmusikPropertyPage( UINT nIDTemplate, CmusikPrefs* prefs, CmusikLibrary* library, CmusikPlayer* player )
 	: CPropertyPage( nIDTemplate )
 {
 	m_Prefs = prefs;
+	m_Library = library;
+	m_Player = player;
+
 	m_Modified = false;
 }
 
