@@ -302,13 +302,12 @@ STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Interface::General"
 FONT 8, "MS Shell Dlg", 0, 0, 0x0
 BEGIN
-    CONTROL         "Enable tray icon",IDC_CHECK_STARTUPSCAN2,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,5,10,67,10
+    CONTROL         "Minimize to notification tray (next to clock)",
+                    IDC_CHECK_ENABLETRAYICON,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,5,10,151,10
     CONTROL         "Start musikCube in tray on Windows startup",
-                    IDC_CHECK_STARTUPSCAN3,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,15,22,157,10
-    CONTROL         "Minimize to tray",IDC_CHECK_STARTUPSCAN4,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,15,32,66,10
+                    IDC_CHECK_STARTWITHWINDOWS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,5,22,157,10
 END
 
 IDD_PROPPAGE_INTERFACE_COLORS DIALOGEX 0, 0, 210, 154

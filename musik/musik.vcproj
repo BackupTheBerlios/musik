@@ -313,28 +313,6 @@
 					</Filter>
 				</Filter>
 				<Filter
-					Name="musikTreePrefs"
-					Filter="">
-					<File
-						RelativePath=".\3rdparty\PropPageFrame.cpp">
-					</File>
-					<File
-						RelativePath=".\3rdparty\PropPageFrame.h">
-					</File>
-					<File
-						RelativePath=".\3rdparty\PropPageFrameDefault.cpp">
-					</File>
-					<File
-						RelativePath=".\3rdparty\PropPageFrameDefault.h">
-					</File>
-					<File
-						RelativePath=".\3rdparty\TreePropSheet.cpp">
-					</File>
-					<File
-						RelativePath=".\3rdparty\TreePropSheet.h">
-					</File>
-				</Filter>
-				<Filter
 					Name="musikFileDialog"
 					Filter="">
 					<File
@@ -440,6 +418,41 @@
 					<File
 						RelativePath=".\musikNameEntry.h">
 					</File>
+				</Filter>
+				<Filter
+					Name="musikPrefsDlg"
+					Filter="">
+					<File
+						RelativePath=".\musikPrefsDlg.cpp">
+					</File>
+					<File
+						RelativePath=".\musikPrefsDlg.h">
+					</File>
+					<File
+						RelativePath=".\musikPropertyPage.h">
+					</File>
+					<Filter
+						Name="PropPage"
+						Filter="">
+						<File
+							RelativePath=".\3rdparty\PropPageFrame.cpp">
+						</File>
+						<File
+							RelativePath=".\3rdparty\PropPageFrame.h">
+						</File>
+						<File
+							RelativePath=".\3rdparty\PropPageFrameDefault.cpp">
+						</File>
+						<File
+							RelativePath=".\3rdparty\PropPageFrameDefault.h">
+						</File>
+						<File
+							RelativePath=".\3rdparty\TreePropSheet.cpp">
+						</File>
+						<File
+							RelativePath=".\3rdparty\TreePropSheet.h">
+						</File>
+					</Filter>
 				</Filter>
 			</Filter>
 		</Filter>

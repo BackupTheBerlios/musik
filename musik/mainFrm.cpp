@@ -1473,7 +1473,7 @@ void CMainFrame::OnFilePreferences()
 
 	// initialize the CTreePropSheet class 
 	// and remove help icon from gripper
-	TreePropSheet::CTreePropSheet PrefSheet(_T("musik Preferences"));
+	TreePropSheet::CTreePropSheet PrefSheet( _T( "musikCube Preferences" ) );
 	PrefSheet.m_psh.dwFlags&= ~PSH_HASHELP;
 
 	// physically add the preference sheets

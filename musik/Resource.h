@@ -34,6 +34,7 @@
 #define IDC_CHECK_STARTUPSCAN2          1008
 #define IDC_CHECK_PL_STRIPES            1009
 #define IDC_CHECK_STARTUPSCAN3          1009
+#define IDC_CHECK_STARTWITHWINDOWS      1009
 #define IDC_COMBO1                      1010
 #define IDC_CHECK_STARTUPSCAN4          1010
 #define IDC_COMBO2                      1011
@@ -100,6 +101,7 @@
 #define IDC_CLOSE_DLG                   1047
 #define IDC_IPADDRESS1                  1048
 #define IDC_EDIT                        1049
+#define IDC_CHECK_ENABLETRAYICON        1051
 #define ID_FILE_PREFERENCES             32771
 #define ID_FILE_SEP                     32772
 #define ID_ADD_FILES                    32774
@@ -195,7 +197,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        154
 #define _APS_NEXT_COMMAND_VALUE         32890
-#define _APS_NEXT_CONTROL_VALUE         1051
+#define _APS_NEXT_CONTROL_VALUE         1052
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
