@@ -269,7 +269,6 @@ void CSourcesListBox::ToggleIconsEvt( wxCommandEvent& WXUNUSED(event) )
 What could be improved here:
 -Option to prepend a numerical value to the destination filename to maintain 
  the same order as the playlist
--Option to make a directory in the directory chooser (is this possible with the standard dialog?)
 -Option to create a directory in the destination directory based on playlist name
 -A progress dialog
 SiW
@@ -280,7 +279,7 @@ void CSourcesListBox::CopyFiles( wxCommandEvent& WXUNUSED(event) )
 	//--- first choose a directory ---//
 	//--------------------------------//
 	wxString destdir;
-	wxDirDialog dirdlg( this, _("Please choose location to copy songs to:") );
+	wxDirDialog dirdlg( this, _("Please choose location to copy songs to:"), _(""), wxDD_NEW_DIR_BUTTON );
 	if ( dirdlg.ShowModal() == wxID_OK )
 		destdir = dirdlg.GetPath();
 	else
