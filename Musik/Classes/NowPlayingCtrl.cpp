@@ -127,12 +127,12 @@ CNowPlayingCtrl::CNowPlayingCtrl( wxWindow *parent )
 	//--- sizer for artist and time ---//
 	//---------------------------------//
 	hsArtistTime = new wxBoxSizer( wxHORIZONTAL );
-	hsArtistTime->Add( stArtist, 0, wxADJUST_MINSIZE /*| wxEXPAND /*| wxALIGN_CENTRE_VERTICAL*/ );
-	hsArtistTime->Add( stCurtime, 0, wxADJUST_MINSIZE /*| wxEXPAND | wxALIGN_CENTRE_VERTICAL*/ );
+	hsArtistTime->Add( stArtist, 0, wxADJUST_MINSIZE | wxALIGN_CENTRE_VERTICAL /*| wxEXPAND*/ );
+	hsArtistTime->Add( stCurtime, 0, wxADJUST_MINSIZE | wxALIGN_CENTRE_VERTICAL /*| wxEXPAND*/ );
 
 	//--- song title, artist and time ---//
 	vsLeftCol = new wxBoxSizer( wxVERTICAL );
-	vsLeftCol->Add( stSong, 0, wxADJUST_MINSIZE /*| wxEXPAND | wxBOTTOM*/, 4 );
+	vsLeftCol->Add( stSong, 0, wxADJUST_MINSIZE | wxBOTTOM /*| wxEXPAND*/, 4 );
 	vsLeftCol->Add( hsArtistTime, 0, wxEXPAND );
 
 	pLeftPanel->SetSizerAndFit( vsLeftCol );
@@ -163,7 +163,7 @@ CNowPlayingCtrl::CNowPlayingCtrl( wxWindow *parent )
 	g_TimeSeeking = false;
 
 	stSong->SetLabel	( _( "Playback Stopped" )	);
-	stArtist->SetLabel	( _( "No Artist" )			);
+	stArtist->SetLabel	( _( "Playback Stopped" )	);
 	stCurtime->SetLabel	( _( " - 0:00" )			);
 }
 
