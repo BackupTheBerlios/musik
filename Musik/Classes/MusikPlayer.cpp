@@ -316,19 +316,30 @@ void CMusikPlayer::ClearOldStreams()
 
 void CMusikPlayer::Pause( bool bCheckFade )
 {
-	if ( bCheckFade )
-	{
-		
-	}
-	m_Paused = true;
-	FSOUND_SetPaused( FSOUND_ALL, TRUE );
-
 	//-------------------------------------------------//
 	//--- if we pause during a crossfade, just		---//
 	//--- delete the channel and stop fading		---//
 	//-------------------------------------------------//
 	if ( m_Fading )
 		SetFadeComplete();
+	
+	//-----------------------------------------------//
+	//--- if this type of crossfade is enabled,	---//
+	//--- then just setup a fade signal. an event	---//
+	//--- will get posted back to actually pause	---//
+	//--- once the fade is complete.				---//
+	//----------------------------------------------//
+	if ( bCheckFade )
+	{
+		if ( g_Prefs.nFadePauseResumeEnable == 1 )
+		{
+			SetCrossfadeType( CROSSFADE_PAUSE );
+			SetFadeStart();
+			return;
+		}
+	}
+	m_Paused = true;
+	FSOUND_SetPaused( FSOUND_ALL, TRUE );
 
 	g_NowPlayingCtrl->PauseBtnToPlayBtn();
 }
@@ -593,6 +604,14 @@ int CMusikPlayer::GetFileDuration( wxString sFilename, int nType )
 void CMusikPlayer::SetFadeComplete()
 {
 	m_Fading = false; 
+	
+	if ( GetCrossfadeType() == CROSSFADE_PAUSE )
+		Pause( false );
+	else if ( GetCrossfadeType() == CROSSFADE_RESUME )
+		Resume( false );
+	else if ( GetCrossfadeType() == CROSSFADE_STOP || GetCrossfadeType() == CROSSFADE_EXIT )
+		Stop( false );
+	
 	ClearOldStreams();
 }
 
