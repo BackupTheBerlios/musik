@@ -1,4 +1,5 @@
 #include "wx/wxprec.h"
+#include <wx/laywin.h>
 #include "MusikFrame.h"
 
 #ifdef __WXMSW__
@@ -26,8 +27,8 @@ MusikFrame::MusikFrame()
 	wxBoxSizer *p = new wxBoxSizer( wxHORIZONTAL );
 	m_SourcesCtrl = new CMusikSourcesCtrl( this, -1 );
 	m_SelectionCtrl = new CMusikSelectionAreaCtrl( this, -1 );
-	p->Add( m_SourcesCtrl, 1, wxEXPAND | wxALL, 2 );
-	p->Add( m_SelectionCtrl, 3, wxEXPAND | wxALL, 2 );
+	p->Add( m_SourcesCtrl, 1, wxEXPAND | wxALL, 1 );
+	p->Add( m_SelectionCtrl, 3, wxEXPAND | wxALL, 1 );
 	SetSizer( p );
 	Layout();
 	Centre();
