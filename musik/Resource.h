@@ -253,13 +253,14 @@
 #define ID_SHOW_SUBLIBRARIES            32927
 #define ID_SHOW_PLAYLISTS               32928
 #define ID_SHOW_SEARCH                  32931
+#define ID_VIEW_VISUALIZATION           32932
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        162
-#define _APS_NEXT_COMMAND_VALUE         32932
+#define _APS_NEXT_COMMAND_VALUE         32935
 #define _APS_NEXT_CONTROL_VALUE         1056
 #define _APS_NEXT_SYMED_VALUE           104
 #endif

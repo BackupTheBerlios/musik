@@ -70,6 +70,7 @@ BEGIN_MESSAGE_MAP(CmusikPlaylistView, CWnd)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
+
 CmusikPlaylistView::CmusikPlaylistView( CFrameWnd* mainwnd, CmusikLibrary* library, CmusikPlayer* player, CmusikPrefs* prefs, UINT dropid_l, UINT dropid_r, UINT dropid_sources, UINT dropid_selection_l, UINT dropid_selection_r )
 {
 	m_Playlist = new CmusikPlaylistCtrl( mainwnd, library, player, prefs, dropid_l, dropid_r );
@@ -89,7 +90,7 @@ CmusikPlaylistView::~CmusikPlaylistView()
 {
 	m_DropTarget->Revoke();
 	delete m_DropTarget;
-	CleanPlaylistInfo();
+	DeinitPlaylistInfo();
 	delete m_Playlist;
 	
 }
@@ -119,8 +120,6 @@ int CmusikPlaylistView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_Playlist->SubclassHeader();
 
-	
-
 	return 0;
 }
 
@@ -130,7 +129,7 @@ void CmusikPlaylistView::OnSize(UINT nType, int cx, int cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 
-	if ( m_Prefs->PlaylistInfoVisible() )
+	if ( m_Prefs->PlaylistInfoVisible() || m_Prefs->GetPlaylistInfoVizStyle() )
 	{
 		if ( !m_PlaylistInfo )
 			InitPlaylistInfo();
@@ -144,7 +143,7 @@ void CmusikPlaylistView::OnSize(UINT nType, int cx, int cy)
 	// variable not set, but playlist info
 	// window still exists, destroy it..
 	else if ( m_PlaylistInfo )
-		CleanPlaylistInfo();
+		DeinitPlaylistInfo();
 
 	m_Playlist->MoveWindow( 3, 3, cx - 6, cy - 8 );
 }
@@ -176,7 +175,7 @@ void CmusikPlaylistView::OnNcPaint()
 	// draw a simple border
 	CRect rcBorder = rcWindow;
 	CRect rcInfo;
-	if ( !m_Prefs->PlaylistInfoVisible() )
+	if ( !m_Prefs->PlaylistInfoVisible() && !m_Prefs->GetPlaylistInfoVizStyle() )
 	{
 		rcBorder.left += 2;
 		rcBorder.top += 2;
@@ -184,7 +183,7 @@ void CmusikPlaylistView::OnNcPaint()
 		rcBorder.bottom -= 4;
 		pDC.Draw3dRect( rcBorder, m_Prefs->MUSIK_COLOR_BTNSHADOW, m_Prefs->MUSIK_COLOR_BTNHILIGHT );
 	}
-	else if ( m_Prefs->PlaylistInfoVisible() )
+	else
 	{
 		rcBorder.left += 2;
 		rcBorder.top += 23;
@@ -243,11 +242,10 @@ void CmusikPlaylistView::InitPlaylistInfo()
 
 ///////////////////////////////////////////////////
 
-void CmusikPlaylistView::CleanPlaylistInfo()
+void CmusikPlaylistView::DeinitPlaylistInfo()
 {
 	if ( m_PlaylistInfo )
 	{	
-		//m_Playlist->SetInfoCtrl( NULL );
 		delete m_PlaylistInfo;
 		m_PlaylistInfo = NULL;
 	}	

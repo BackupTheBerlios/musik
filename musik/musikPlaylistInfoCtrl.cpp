@@ -50,7 +50,6 @@
 #include "../musikCore/include/musikPlayer.h"
 
 #include "MEMDC.H"
-#include ".\musikplaylistinfoctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -94,13 +93,12 @@ END_MESSAGE_MAP()
 void CmusikPlaylistInfoCtrl::OnPaint()
 {
 	CPaintDC dc(this);
+
 	CRect rect;
 	GetClientRect( &rect );
 	CRect innerrect(rect);
 	innerrect.DeflateRect( 1, 1, 1, 1 );
 	CMemDC memDC( &dc, &rect );
-
-	CFont* oldfont = memDC.SelectObject( &m_Font );
 
 	memDC.Draw3dRect( rect, m_Prefs->MUSIK_COLOR_BTNSHADOW, m_Prefs->MUSIK_COLOR_BTNHILIGHT );
 
@@ -119,12 +117,18 @@ void CmusikPlaylistInfoCtrl::OnPaint()
 	}	
 
 	// put the text over it
-	SetTextAlign( memDC.GetSafeHdc(), TA_CENTER );
-	SetBkMode( memDC.GetSafeHdc(), TRANSPARENT ); 
-	memDC.TextOut( rect.Width() / 2, 3, m_strInfo.c_str() );
+	if ( m_Prefs->PlaylistInfoVisible() )
+	{
+		// select the proper font
+		CFont* oldfont = memDC.SelectObject( &m_Font );
 
-	// get the old font back
-	memDC.SelectObject( oldfont );
+		SetTextAlign( memDC.GetSafeHdc(), TA_CENTER );
+		SetBkMode( memDC.GetSafeHdc(), TRANSPARENT ); 
+		memDC.TextOut( rect.Width() / 2, 3, m_strInfo.c_str() );
+
+		// get the old font back
+		memDC.SelectObject( oldfont );
+	}
 }
 
 ///////////////////////////////////////////////////
@@ -181,16 +185,8 @@ int CmusikPlaylistInfoCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	
 	m_hBGBitmap = CreateDIBSection ( NULL, &bminfo, DIB_RGB_COLORS, (void **)&m_pBGBitmapBits, NULL, NULL ); 
 
-
-	//UpdateInfo();
-
-
-
 	FSOUND_DSP_SetActive( FSOUND_DSP_GetFFTUnit(), TRUE );
-
-
-
-	m_TimerID = SetTimer( MUSIK_VIZ_TIMER, 50, NULL );
+	m_TimerID = SetTimer( MUSIK_VIZ_TIMER, m_Prefs->GetPlaylistVizDur(), NULL );
 
 	return 0;
 }
@@ -214,6 +210,7 @@ void CmusikPlaylistInfoCtrl::UpdateBG()
 // draws a visualization of the current sound spectrum
 // to a small bitmap, then stretches it to the size of
 // the control to paint it
+
 void CmusikPlaylistInfoCtrl::DrawEQ( HDC hdc )
 {
 	// get an array of 512 floats
@@ -221,9 +218,7 @@ void CmusikPlaylistInfoCtrl::DrawEQ( HDC hdc )
     if ( !spectrum )
         return;
 	
-	// fill the bitmap data with the background color
-	COLORREF bg;
-	
+	// fill with the proper bg color	
 	for ( int n = 0; n < (VIZ_WIDTH * VIZ_HEIGHT); n++ )
 		m_pBGBitmapBits[n] = m_BGColor;
 

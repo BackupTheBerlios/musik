@@ -68,6 +68,9 @@ public:
 	// get the playlist control
 	CmusikPlaylistCtrl* GetCtrl(){ return m_Playlist; }
 
+	// playlist info
+	void InitPlaylistInfo();
+	void DeinitPlaylistInfo();
 	void UpdatePlaylistInfo();
 
 	// mfc message maps
@@ -81,11 +84,6 @@ protected:
 
 	// playlist GUI object
 	CmusikPlaylistCtrl* m_Playlist;
-
-	// playlist info
-	void InitPlaylistInfo();
-	void CleanPlaylistInfo();
-	
 	CmusikPlaylistInfoCtrl* m_PlaylistInfo;
 	
 	// drop target for the playlist

@@ -117,6 +117,7 @@ void CmusikPrefs::LoadPrefs()
 	// playlist
 	m_Playlist_Order		= StringToCIntArray( config->GetValue( "Playlist", "Column Order", GetDefPlaylistOrder() ) );
 	m_Playlist_Sizes		= StringToCIntArray( config->GetValue( "Playlist", "Column Sizes", GetDefPlaylistSizes() ) );
+	m_PlaylistInfo_VizDur	= StringToInt( config->GetValue( "Playlist", "Viz Duration", "75" ) );
 
 	// now playing
 	m_NowPlaying_CaptionFont = StringToInt( config->GetValue( "Now Playing", "Caption Font Size", "12" ) );
@@ -196,6 +197,7 @@ void CmusikPrefs::SavePrefs()
 	// playlist
 	config->SetValue( "Playlist", "Column Order", CIntArrayToString( m_Playlist_Order ) );
 	config->SetValue( "Playlist", "Column Sizes", CIntArrayToString( m_Playlist_Sizes ) );
+	config->SetValue( "Playlist", "Viz Duration", IntToString( m_PlaylistInfo_VizDur ) );
 
 	// now playing
 	config->SetValue( "Now Playing", "Caption Font Size", IntToString( m_NowPlaying_CaptionFont ) );

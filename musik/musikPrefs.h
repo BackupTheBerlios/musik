@@ -146,9 +146,11 @@ public:
 	int GetPlaylistCol( int n ){ return m_Playlist_Order.at( n ); }
 	int	GetPlaylistColWidth( int n ){ return m_Playlist_Sizes.at( n ); }
 	size_t GetPlaylistColCount(){ return m_Playlist_Order.size(); }
-	
+	int GetPlaylistVizDur(){ return m_PlaylistInfo_VizDur; }
+
 	void SetPlaylistOrder( CIntArray n ){ m_Playlist_Order = n; }	
 	void SetPlaylistSizes( CIntArray n ){ m_Playlist_Sizes = n; }
+	void SetPlaylistVizDur( int duration ) { m_PlaylistInfo_VizDur = duration; }
 
 	//
 	// transparency
@@ -274,6 +276,7 @@ private:
 	// playlist
 	CIntArray m_Playlist_Order;
 	CIntArray m_Playlist_Sizes;
+	int m_PlaylistInfo_VizDur;
 
 	// now playing
 	int m_NowPlaying_CaptionFont;

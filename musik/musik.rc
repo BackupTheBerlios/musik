@@ -120,6 +120,7 @@ BEGIN
         MENUITEM "&Now Playing\tCtrl+Shift+S",  ID_VIEW_NOWPLAYING
         MENUITEM "Playlist &Information\tCtrl+Shift+D", 
                                                 ID_VIEW_PLAYLISTINFORMATION
+        MENUITEM "Visualization\tCtrl+Shift+G", ID_VIEW_VISUALIZATION
         MENUITEM "E&qualizer\tCtrl+Shift+F",    ID_VIEW_EQUALIZER
     END
     POPUP "&Audio"
@@ -329,6 +330,8 @@ BEGIN
     "D",            ID_VIEW_PLAYLISTINFORMATION, VIRTKEY, SHIFT, CONTROL, 
                                                     NOINVERT
     "A",            ID_VIEW_SOURCES,        VIRTKEY, SHIFT, CONTROL, 
+                                                    NOINVERT
+    "G",            ID_VIEW_VISUALIZATION,  VIRTKEY, SHIFT, CONTROL, 
                                                     NOINVERT
 END
 

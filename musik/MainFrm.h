@@ -352,6 +352,8 @@ protected:
 	afx_msg void OnLibrarySynchronizedirectoriesnow();
 	afx_msg void OnPlaybackmodeShufflecurrentplaylist();
 	afx_msg void OnUpdatePlaybackmodeShufflecurrentplaylist(CCmdUI *pCmdUI);
+	afx_msg void OnViewVisualization();
+	afx_msg void OnUpdateViewVisualization(CCmdUI *pCmdUI);
 
 	// list of all taskss running
 	int FreeTask( CmusikTask* pTask );
@@ -387,6 +389,7 @@ protected:
 	bool m_TransEnb;
 	int m_Trans;
 	void ImportTrans();
+
 };
 
 ///////////////////////////////////////////////////

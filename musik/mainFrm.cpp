@@ -64,6 +64,7 @@
 
 #include <io.h>
 #include <Direct.h>
+#include ".\mainfrm.h"
 
 ///////////////////////////////////////////////////
 
@@ -139,6 +140,7 @@ IMPLEMENT_DYNAMIC(CMainFrame, CFrameWnd)
 ///////////////////////////////////////////////////
 
 BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
+
 	// mfc message maps
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
@@ -176,6 +178,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_COMMAND(ID_FILE_CLEARLIBRARY, OnFileClearlibrary)
 	ON_COMMAND(ID_LIBRARY_SYNCHRONIZEDIRECTORIESNOW, OnLibrarySynchronizedirectoriesnow)
 	ON_COMMAND(ID_PLAYBACKMODE_SHUFFLECURRENTPLAYLIST, OnPlaybackmodeShufflecurrentplaylist)
+	ON_COMMAND(ID_VIEW_VISUALIZATION, OnViewVisualization)
 
 	// update ui
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SOURCES, OnUpdateViewSources)
@@ -228,6 +231,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_SOURCESITEMCLICKED, OnSourcesItemClicked )
 	ON_REGISTERED_MESSAGE( WM_INITTRANS, OnInitTrans )
 	ON_REGISTERED_MESSAGE( WM_DEINITTRANS, OnDeinitTrans )
+
+	ON_UPDATE_COMMAND_UI(ID_VIEW_VISUALIZATION, OnUpdateViewVisualization)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -2959,6 +2964,39 @@ LRESULT CMainFrame::OnSelBoxDelSel( WPARAM wParam, LPARAM lParam )
 void CMainFrame::OnUpdatePlaybackmodeShufflecurrentplaylist(CCmdUI *pCmdUI)
 {
 	pCmdUI->Enable( m_Player->GetPlaylist()->GetCount() );
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnViewVisualization()
+{
+	if ( m_Prefs->GetPlaylistInfoVizStyle() )
+	{
+		m_Prefs->SetPlaylistInfoVizStyle( NULL );
+		m_wndView->DeinitPlaylistInfo();
+	}
+	else
+	{
+		m_Prefs->SetPlaylistInfoVizStyle( 1 );
+		m_wndView->InitPlaylistInfo();
+	}
+
+	// send a "dummy" size event to the
+	// window, so it re-creates or removes
+	// the now playing window.
+	CRect lpRect;
+	m_wndView->GetClientRect( &lpRect );
+	m_wndView->OnSize( NULL, lpRect.Width(), lpRect.Height() );
+	RedrawWindow();
+	m_wndView->UpdatePlaylistInfo();
+
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnUpdateViewVisualization(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck( m_Prefs->GetPlaylistInfoVizStyle() );
 }
 
 ///////////////////////////////////////////////////
