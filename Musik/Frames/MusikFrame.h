@@ -17,14 +17,14 @@
 #include "../Classes/PlaylistCtrl.h"
 #include "../Classes/ActivityBox.h"
 #include "../Classes/SourcesBox.h"
-
+#include "../Classes/NowPlayingCtrl.h"
 //--- crossfader, other threads ---//
 #include "../Threads/MusikThreads.h"
 
 #include <wx/socket.h>
 #ifdef wxHAS_TASK_BAR_ICON
 #include "wx/taskbar.h"
-class CNowPlayingCtrl;
+//class CNowPlayingCtrl;
 class MusikLibraryFrame;
 
 class MusikTaskBarIcon: public wxTaskBarIcon
