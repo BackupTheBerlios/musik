@@ -542,9 +542,6 @@ bool CmusikPlaylistCtrl::PlayItem( int n )
 	{
 		POSITION pos = GetFirstSelectedItemPosition();
 		n = GetNextSelectedItem ( pos );
-
-		if ( n == -1 )
-			return false;
 	}	
 
 	// give the current playlist to the player,
