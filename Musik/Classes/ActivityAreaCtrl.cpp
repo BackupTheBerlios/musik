@@ -263,6 +263,7 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 			{
 				g_Library.GetAllSongs( g_Playlist );
 				g_PlaylistCtrl->Update();
+				g_PlaylistChanged = true;
 			}
 			return;
 		}
@@ -314,6 +315,7 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 			{
 				g_Library.GetAllSongs( g_Playlist );
 				g_PlaylistCtrl->Update();
+				g_PlaylistChanged = true;
 			}
 			return;
 		}		
