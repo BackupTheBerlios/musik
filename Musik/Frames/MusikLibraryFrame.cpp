@@ -87,7 +87,7 @@ MusikLibraryFrame::MusikLibraryFrame( wxFrame* pParent )
 	wxSize size = vsTopSizer->GetMinSize();
 	SetSize( 480, size.GetHeight() );
 	#endif
-	
+
 	Centre();
 }
 
@@ -510,12 +510,15 @@ void MusikLibraryFrame::OnThreadStart( wxCommandEvent& WXUNUSED(event) )
 
 	if ( GetProgressType() == MUSIK_LIBRARY_SCANNEW_THREAD )
 	{
+		SetActiveThread	( pScanNewThread );
 	}
 	else if ( GetProgressType() == MUSIK_LIBRARY_UPDATE_THREAD )
 	{
+		SetActiveThread	( pUpdateLibThread );
 	}
 	else if ( GetProgressType() == MUSIK_LIBRARY_PURGE_THREAD )
 	{
+		SetActiveThread	( pPurgeLibThread );
 	}
 }
 
@@ -568,8 +571,9 @@ void MusikLibraryFrame::OnThreadProg( wxCommandEvent& WXUNUSED(event) )
 {	
 	if ( GetProgressType() == MUSIK_LIBRARY_SCANNEW_THREAD )
 	{
-		SetActiveThread	( pScanNewThread );
-		SetTitle( _( "Scanning paths for changes: " ) + GetProgressStr() + _( " - (ESC to abort)" ) );
+		//----------------------------------------------------------//
+		//--- MusikLibraryFrame::OnThreadScanProg will set title ---//
+		//----------------------------------------------------------//
 
 		lcPaths->SetItem( m_ListItem, 1, IntTowxString( m_Total ), -1 );
 		lcPaths->SetItem( m_ListItem, 2, IntTowxString( m_New ), -1 );
@@ -577,14 +581,14 @@ void MusikLibraryFrame::OnThreadProg( wxCommandEvent& WXUNUSED(event) )
 
 	else if ( GetProgressType() == MUSIK_LIBRARY_UPDATE_THREAD )
 	{
-		SetActiveThread	( pUpdateLibThread );
-		SetTitle( _( "Scanning for and adding new files: " ) + GetProgressStr() + _( " - (ESC to abort)" ) );
+		m_Title.sprintf( _( "Scanning for and adding new files: %d / %d (ESC to abort)" ), GetCurrent(), GetTotal() );
+		SetTitle( m_Title );
 	}
 
 	else if ( GetProgressType() == MUSIK_LIBRARY_PURGE_THREAD )
 	{
-		SetActiveThread	( pPurgeLibThread );
-		SetTitle( _( "Scanning library for obselete files: " ) + GetProgressStr() + _( " - (ESC to abort)" ) );
+		m_Title.sprintf( _( "Scanning library for obselete files: %d / %d (ESC to abort)" ), GetCurrent(), GetTotal() );
+		SetTitle( m_Title );
 	}
 
 	gProgress->SetValue( GetProgress() );
@@ -595,6 +599,7 @@ void MusikLibraryFrame::OnThreadProg( wxCommandEvent& WXUNUSED(event) )
 //-------------------------------------------------------------------//
 void MusikLibraryFrame::OnThreadScanProg( wxCommandEvent& WXUNUSED(event) )
 {
-	SetTitle( _( "Scanning directory for audio files: " ) + IntTowxString( GetScanCount() ) );
+	m_Title.sprintf( _( "Scanning directory for audio files: %d files scanned" ), GetScanCount() );
+	SetTitle( m_Title );
 }
 

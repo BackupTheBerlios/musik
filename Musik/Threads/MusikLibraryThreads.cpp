@@ -61,10 +61,11 @@ void *MusikUpdateLibThread::Entry()
 	int nLastProg = 0;
 	int nCurrProg = 0;
 	wxString sProgress;
-	size_t nCount = aFileList.GetCount();
+	size_t nTotal = aFileList.GetCount();
 
-	g_MusikLibraryFrame->SetTotal( nCount );
-	for ( size_t i = 0; i < nCount; i++ )
+	g_MusikLibraryFrame->SetTotal( nTotal );
+
+	for ( size_t i = 0; i < nTotal; i++ )
 	{
 		if ( TestDestroy() )
 			break;
@@ -72,12 +73,11 @@ void *MusikUpdateLibThread::Entry()
 		else
 		{
 			//--- figure out progress, then post the event ---//
-			fPos = ( i * 100 ) / nCount;
+			fPos = ( i * 100 ) / nTotal;
 			nCurrProg = (int)fPos;
 			if ( nCurrProg > nLastProg )
 			{
-				sProgress.sprintf( wxT( "%d / %d" ), i, nCount );
-				g_MusikLibraryFrame->SetProgressStr( sProgress );
+				g_MusikLibraryFrame->SetCurrent( i );
 				g_MusikLibraryFrame->SetProgress( nCurrProg );
 				wxPostEvent( g_MusikLibraryFrame, UpdateProgEvt );
 				Yield();
@@ -102,8 +102,6 @@ void MusikUpdateLibThread::OnExit()
 	wxPostEvent( g_MusikLibraryFrame, UpdateLibEndEvt );
 }
 
-//---------------------------------//
-//--- MusikLibraryFrame specifc	---//
 //---------------------------------//
 //---	scan for new files		---//
 //---------------------------------//
@@ -143,14 +141,14 @@ void *MusikScanNewThread::Entry()
 			aFiles = GetMusicDir( &sCurrPath );
 
 			//--- do math ---//
-			int nCount		= aFiles.GetCount();
-			int nCompare		= g_Library.GetSongDirCount( sCurrPath );
-			int nResult		= nCount - nCompare;
+			int nTotal		= aFiles.GetCount();
+			int nCompare	= g_Library.GetSongDirCount( sCurrPath );
+			int nResult		= nTotal - nCompare;
 
 			//--- post update progress event ---//
 			fPos = ( i * 100 ) / g_Paths.GetCount();
 			g_MusikLibraryFrame->SetProgress( (int)fPos );
-			g_MusikLibraryFrame->SetTotal( nCount );
+			g_MusikLibraryFrame->SetTotal( nTotal );
 			g_MusikLibraryFrame->SetNew( nResult );
 			g_MusikLibraryFrame->SetListItem( i );
 			wxPostEvent( g_MusikLibraryFrame, ScanNewProgEvt );
@@ -167,8 +165,6 @@ void MusikScanNewThread::OnExit()
 	wxPostEvent( g_MusikLibraryFrame, ScanNewEndEvt );
 }
 
-//---------------------------------//
-//--- MusikLibraryFrame specifc	---//
 //---------------------------------//
 //---	  purge old files		---//
 //---------------------------------//
@@ -199,6 +195,7 @@ void *MusikPurgeLibThread::Entry()
 	size_t nTotal = songs.GetCount();
 
 	g_MusikLibraryFrame->SetTotal( nTotal );
+
 	for ( size_t i = 0; i < nTotal; i++ )
 	{
 		if ( TestDestroy() )
@@ -210,8 +207,7 @@ void *MusikPurgeLibThread::Entry()
 			nCurrProg = (int)fPos;
 			if ( nCurrProg > nLastProg )
 			{
-				sProgress.sprintf( wxT( "%d / %d" ), i, nTotal );
-				g_MusikLibraryFrame->SetProgressStr( sProgress );
+				g_MusikLibraryFrame->SetCurrent( i );
 				g_MusikLibraryFrame->SetProgress( nCurrProg );
 				wxPostEvent( g_MusikLibraryFrame, PurgeProgEvt );
 				Yield();
@@ -228,11 +224,7 @@ void *MusikPurgeLibThread::Entry()
 
 void MusikPurgeLibThread::OnExit()
 {
-	wxCommandEvent PurgeEndEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_FRAME_THREAD_END );	
+	wxCommandEvent PurgeEndEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_LIBRARY_THREAD_END );	
 	wxPostEvent( g_MusikLibraryFrame, PurgeEndEvt );
 }
-
-//------------------------//
-//--- helper functions ---//
-//------------------------//
 

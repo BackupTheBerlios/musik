@@ -77,14 +77,15 @@ public:
 	void SetProgress			( int n )			{ m_Progress = n;			}
 	void SetProgressType		( int n )			{ m_ProgressType = n;		}
 	void SetActiveThread		( wxThread* thread)	{ m_ActiveThread = thread;	}	
-	void SetProgressStr			( wxString s )		{ m_ProgressStr = s;		}
 
 	size_t  GetProgress			()	{ return m_Progress;		}
 	size_t  GetProgressType		()	{ return m_ProgressType;	}
 	size_t	GetScanCount		()	{ return m_ScanCount;		}
 	wxThread* GetActiveThread	()	{ return m_ActiveThread;	}
-	wxString GetProgressStr		()	{ return m_ProgressStr;		}
+	size_t	GetCurrent			()	{ return m_Current;			}
+	size_t	GetTotal			()	{ return m_Total;			}
 
+	void SetCurrent				( size_t n )	{ m_Current = n;	}
 	void SetTotal				( size_t n )	{ m_Total = n;		}
 	void SetListItem			( size_t n )	{ m_ListItem = n;	}
 	void SetNew					( size_t n )	{ m_New = n;		}
@@ -121,7 +122,6 @@ private:
 	//--- variables the threads use to talk to the main ui ---//
 	int m_Progress;
 	int m_ProgressType;
-	wxString m_ProgressStr;
 
 	wxThread* m_ActiveThread;
 
@@ -129,11 +129,14 @@ private:
 	size_t m_Total;
 	size_t m_New;
 	size_t m_ScanCount;
+	size_t m_Current;
 
 	bool m_FirstStart;
 	bool m_AutoStart;
 	bool m_Close;
 	bool m_MenuCreated;
+
+	wxString m_Title; //--- so it doesn't have to be recreated millions of times ---//
 
 	wxArrayString aDelDirs;
 	bool bRebuild;
