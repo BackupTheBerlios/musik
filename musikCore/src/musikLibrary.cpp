@@ -1262,17 +1262,28 @@ int CmusikLibrary::GetStdPlaylist( int id, CmusikPlaylist& target, bool clear_ta
 
 	int nRet1, nRet2;
 	m_ProtectingLibrary.acquire();
-		// get the items
-		nRet1 = sqlite_exec_printf( m_pDB, "SELECT songfn FROM %Q WHERE std_playlist_id = %d;", 
-			&sqlite_AddSongToStringArray, items, NULL,
-			STD_PLAYLIST_SONGS,
-			id );
 
 		// get the type
 		nRet2 = sqlite_exec_printf( m_pDB, "SELECT std_playlist_type FROM %Q WHERE std_playlist_id = %d;", 
 			&sqlite_GetIntFromRow, &playlist_type, NULL,
 			STD_PLAYLIST_TABLE_NAME,
 			id );
+
+		// get the items. if its a sublib then we don't care about
+		// multiply defined instances of the same song. they are
+		// retained in case the user wants to convert a sub
+		// library back to a regular playlist
+		if ( playlist_type == MUSIK_PLAYLIST_TYPE_SUBLIBRARY )
+			nRet1 = sqlite_exec_printf( m_pDB, "SELECT DISTINCT songfn FROM %Q WHERE std_playlist_id = %d;", 
+				&sqlite_AddSongToStringArray, items, NULL,
+				STD_PLAYLIST_SONGS,
+				id );
+		else
+			nRet1 = sqlite_exec_printf( m_pDB, "SELECT songfn FROM %Q WHERE std_playlist_id = %d;", 
+				&sqlite_AddSongToStringArray, items, NULL,
+				STD_PLAYLIST_SONGS,
+				id );
+
 	m_ProtectingLibrary.release();	
 
 	// add all the items to the playlist
@@ -1956,7 +1967,7 @@ int CmusikLibrary::QuerySongs( const CmusikString& query, CmusikPlaylist& target
 	// lock it up and query it
 	int nRet;
 	m_ProtectingLibrary.acquire();
-		nRet = sqlite_exec_printf( m_pDB, "SELECT songid FROM %Q WHERE %q;", 
+		nRet = sqlite_exec_printf( m_pDB, "SELECT DISTINCT songid FROM %Q WHERE %q;", 
 			&sqlite_AddSongToPlaylist, &target, NULL,
 			use_temp_table ? TEMP_SONG_TABLE_NAME : SONG_TABLE_NAME, 
 			query.c_str() );
