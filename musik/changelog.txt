@@ -2,6 +2,7 @@
 
 a5:
 
+  - updated default icon
   - tag editing dialog (right click in playlist -> properties)
   - fixed a nasty mutex deadlock in the backend
   - ditched ACE for OpenThreads

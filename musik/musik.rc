@@ -27,18 +27,18 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // TEXTINCLUDE
 //
 
-1 TEXTINCLUDE 
+1 TEXTINCLUDE
 BEGIN
     "resource.h\0"
 END
 
-2 TEXTINCLUDE 
+2 TEXTINCLUDE
 BEGIN
     "#include ""afxres.h""\r\n"
     "\0"
 END
 
-3 TEXTINCLUDE 
+3 TEXTINCLUDE
 BEGIN
     "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
     "#define _AFX_NO_OLE_RESOURCES\r\n"
@@ -66,15 +66,15 @@ END
 // remains consistent on all systems.
 IDR_MAINFRAME           ICON                    "res\\musik.ico"
 IDI_MUSIK_16            ICON                    "res\\musik_16.ico"
-IDI_MUSIK_32            ICON                    "res\\musik_32.ico"
 IDI_MUSIK_48            ICON                    "res\\musik_48.ico"
+IDI_MUSIK_32            ICON                    "res\\musik_32.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Menu
 //
 
-IDR_MAINFRAME MENU 
+IDR_MAINFRAME MENU
 BEGIN
     POPUP "&File"
     BEGIN
@@ -86,7 +86,7 @@ BEGIN
         POPUP "Library"
         BEGIN
             MENUITEM "Clear Library...",            ID_FILE_CLEARLIBRARY
-            MENUITEM "Synchronized Directories...\tCtrl+M", 
+            MENUITEM "Synchronized Directories...\tCtrl+M",
                                                     ID_FILE_SYNCHRONIZEDDIRECTORIES
 
             MENUITEM SEPARATOR
@@ -162,7 +162,7 @@ BEGIN
     END
 END
 
-IDR_EQUALIZER_MENU MENU 
+IDR_EQUALIZER_MENU MENU
 BEGIN
     POPUP "Equalizer"
     BEGIN
@@ -187,7 +187,7 @@ BEGIN
     END
 END
 
-IDR_SELECTION_BOX_OPTIONS_MENU MENU 
+IDR_SELECTION_BOX_OPTIONS_MENU MENU
 BEGIN
     POPUP "Selection Box"
     BEGIN
@@ -213,7 +213,7 @@ BEGIN
     END
 END
 
-IDR_SOURCES_MENU MENU 
+IDR_SOURCES_MENU MENU
 BEGIN
     POPUP "Sources"
     BEGIN
@@ -230,7 +230,7 @@ BEGIN
     END
 END
 
-IDR_TRAY_MENU MENU 
+IDR_TRAY_MENU MENU
 BEGIN
     POPUP "Notification Tray"
     BEGIN
@@ -246,7 +246,7 @@ BEGIN
     END
 END
 
-IDR_SELECTION_BOX_CONTEXT_MENU MENU 
+IDR_SELECTION_BOX_CONTEXT_MENU MENU
 BEGIN
     POPUP "Selection Box Context"
     BEGIN
@@ -260,7 +260,7 @@ BEGIN
     END
 END
 
-IDR_PLAYLIST_CONTEXT_MENU MENU 
+IDR_PLAYLIST_CONTEXT_MENU MENU
 BEGIN
     POPUP "Playlist Context Menu"
     BEGIN
@@ -281,7 +281,7 @@ BEGIN
     END
 END
 
-IDR_PLAYLIST_COLUMNS_MENU MENU 
+IDR_PLAYLIST_COLUMNS_MENU MENU
 BEGIN
     POPUP "Playlist Columns"
     BEGIN
@@ -312,7 +312,7 @@ END
 // Accelerator
 //
 
-IDR_MAINFRAME ACCELERATORS 
+IDR_MAINFRAME ACCELERATORS
 BEGIN
     "G",            ID_ADD_DIRECTORY,       VIRTKEY, CONTROL, NOINVERT
     "F",            ID_ADD_FILES,           VIRTKEY, CONTROL, NOINVERT
@@ -326,25 +326,25 @@ BEGIN
     "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL, NOINVERT
     "P",            ID_FILE_PREFERENCES,    VIRTKEY, CONTROL, NOINVERT
     "S",            ID_FILE_SAVEPLAYLIST,   VIRTKEY, CONTROL, NOINVERT
-    "M",            ID_FILE_SYNCHRONIZEDDIRECTORIES, VIRTKEY, CONTROL, 
+    "M",            ID_FILE_SYNCHRONIZEDDIRECTORIES, VIRTKEY, CONTROL,
                                                     NOINVERT
-    "S",            ID_LIBRARY_SYNCHRONIZEDIRECTORIESNOW, VIRTKEY, CONTROL, 
+    "S",            ID_LIBRARY_SYNCHRONIZEDIRECTORIESNOW, VIRTKEY, CONTROL,
                                                     ALT, NOINVERT
     VK_F6,          ID_NEXT_PANE,           VIRTKEY, NOINVERT
-    "A",            ID_PLAYBACKMODE_SHUFFLECURRENTPLAYLIST, VIRTKEY, CONTROL, 
+    "A",            ID_PLAYBACKMODE_SHUFFLECURRENTPLAYLIST, VIRTKEY, CONTROL,
                                                     ALT, NOINVERT
     VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
-    "Z",            ID_VIEW_CROSSFADER,     VIRTKEY, SHIFT, CONTROL, 
+    "Z",            ID_VIEW_CROSSFADER,     VIRTKEY, SHIFT, CONTROL,
                                                     NOINVERT
-    "F",            ID_VIEW_EQUALIZER,      VIRTKEY, SHIFT, CONTROL, 
+    "F",            ID_VIEW_EQUALIZER,      VIRTKEY, SHIFT, CONTROL,
                                                     NOINVERT
-    "S",            ID_VIEW_NOWPLAYING,     VIRTKEY, SHIFT, CONTROL, 
+    "S",            ID_VIEW_NOWPLAYING,     VIRTKEY, SHIFT, CONTROL,
                                                     NOINVERT
-    "D",            ID_VIEW_PLAYLISTINFORMATION, VIRTKEY, SHIFT, CONTROL, 
+    "D",            ID_VIEW_PLAYLISTINFORMATION, VIRTKEY, SHIFT, CONTROL,
                                                     NOINVERT
-    "A",            ID_VIEW_SOURCES,        VIRTKEY, SHIFT, CONTROL, 
+    "A",            ID_VIEW_SOURCES,        VIRTKEY, SHIFT, CONTROL,
                                                     NOINVERT
-    "G",            ID_VIEW_VISUALIZATION,  VIRTKEY, SHIFT, CONTROL, 
+    "G",            ID_VIEW_VISUALIZATION,  VIRTKEY, SHIFT, CONTROL,
                                                     NOINVERT
     VK_RETURN,      ID_VIEW_FULLSCREEN,     VIRTKEY, ALT, NOINVERT
 END
@@ -356,7 +356,7 @@ END
 //
 
 IDD_ABOUTBOX DIALOGEX 0, 0, 246, 215
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION |
     WS_SYSMENU
 CAPTION "About musikCube"
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
@@ -383,10 +383,10 @@ CAPTION "Interface::Workflow"
 FONT 8, "MS Shell Dlg", 0, 0, 0x0
 BEGIN
     CONTROL         "Minimize to notification tray (next to clock)",
-                    IDC_CHECK_ENABLETRAYICON,"Button",BS_AUTOCHECKBOX | 
+                    IDC_CHECK_ENABLETRAYICON,"Button",BS_AUTOCHECKBOX |
                     WS_TABSTOP,5,33,151,10
     CONTROL         "Start musikCube in tray on Windows startup",
-                    IDC_CHECK_STARTWITHWINDOWS,"Button",BS_AUTOCHECKBOX | 
+                    IDC_CHECK_STARTWITHWINDOWS,"Button",BS_AUTOCHECKBOX |
                     WS_TABSTOP,5,46,157,10
     CONTROL         "Prompt to save changes to playlists",IDC_CHECK1,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,6,64,129,10
@@ -401,7 +401,7 @@ BEGIN
     CTEXT           "All users should consider setting up the following options:",
                     IDC_STATIC,12,11,186,13
     CONTROL         "Starting a new song replaces current ""Now Playing"" with the active playlist (old musik style).",
-                    IDC_CHECK6,"Button",BS_AUTOCHECKBOX | BS_LEFT | BS_TOP | 
+                    IDC_CHECK6,"Button",BS_AUTOCHECKBOX | BS_LEFT | BS_TOP |
                     BS_MULTILINE | WS_TABSTOP,6,123,186,21
 END
 
@@ -410,11 +410,11 @@ STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Sound::Driver"
 FONT 8, "MS Shell Dlg", 0, 0, 0x0
 BEGIN
-    COMBOBOX        IDC_SOUND_DEVICE,84,39,111,69,CBS_DROPDOWNLIST | 
+    COMBOBOX        IDC_SOUND_DEVICE,84,39,111,69,CBS_DROPDOWNLIST |
                     CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    COMBOBOX        IDC_SOUND_DRIVER,84,56,111,84,CBS_DROPDOWNLIST | 
+    COMBOBOX        IDC_SOUND_DRIVER,84,56,111,84,CBS_DROPDOWNLIST |
                     CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    COMBOBOX        IDC_SOUND_PLAYBACK_RATE,84,74,111,55,CBS_DROPDOWNLIST | 
+    COMBOBOX        IDC_SOUND_PLAYBACK_RATE,84,74,111,55,CBS_DROPDOWNLIST |
                     CBS_SORT | WS_VSCROLL | WS_TABSTOP
     EDITTEXT        IDC_SOUND_MAX_CHANNELS,84,93,31,14,ES_AUTOHSCROLL
     LTEXT           "Output Driver:",IDC_STATIC,32,58,48,8
@@ -426,7 +426,7 @@ BEGIN
 END
 
 IDD_SAVESTDPLAYLIST DIALOGEX 0, 0, 262, 53
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION |
     WS_SYSMENU
 CAPTION "musikCube"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -440,7 +440,7 @@ BEGIN
 END
 
 IDD_FILEDROP DIALOGEX 0, 0, 220, 101
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION |
     WS_SYSMENU
 CAPTION "musikCube"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -463,7 +463,7 @@ BEGIN
 END
 
 IDD_DYNPLAYLISTEDITOR DIALOGEX 0, 0, 262, 149
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION |
     WS_SYSMENU
 CAPTION "musikCube Dynamic Playlist Editor"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -471,42 +471,42 @@ BEGIN
     DEFPUSHBUTTON   "Save",IDOK,208,131,50,14
     PUSHBUTTON      "Cancel",IDCANCEL,154,131,50,14
     LTEXT           "Match",IDC_STATIC,6,9,20,8
-    COMBOBOX        IDC_ANYALL,30,6,36,30,CBS_DROPDOWN | CBS_SORT | 
+    COMBOBOX        IDC_ANYALL,30,6,36,30,CBS_DROPDOWN | CBS_SORT |
                     WS_VSCROLL | WS_TABSTOP
     LTEXT           "of the following conditions:",IDC_STATIC,72,9,87,8
-    CONTROL         "",IDC_ENABLE_QUERY1,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "",IDC_ENABLE_QUERY1,"Button",BS_AUTOCHECKBOX |
                     WS_TABSTOP,6,33,12,8
-    COMBOBOX        IDC_FIELDTYPE1,24,30,66,30,CBS_DROPDOWN | CBS_SORT | 
+    COMBOBOX        IDC_FIELDTYPE1,24,30,66,30,CBS_DROPDOWN | CBS_SORT |
                     WS_VSCROLL | WS_TABSTOP
-    COMBOBOX        IDC_FIELDVARIABLE1,96,30,90,30,CBS_DROPDOWN | CBS_SORT | 
+    COMBOBOX        IDC_FIELDVARIABLE1,96,30,90,30,CBS_DROPDOWN | CBS_SORT |
                     WS_VSCROLL | WS_TABSTOP
     EDITTEXT        IDC_FIELDSTRING1,192,30,66,14,ES_AUTOHSCROLL
-    CONTROL         "",IDC_ENABLE_QUERY2,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "",IDC_ENABLE_QUERY2,"Button",BS_AUTOCHECKBOX |
                     WS_TABSTOP,6,51,12,8
-    COMBOBOX        IDC_FIELDTYPE2,24,48,66,30,CBS_DROPDOWN | CBS_SORT | 
+    COMBOBOX        IDC_FIELDTYPE2,24,48,66,30,CBS_DROPDOWN | CBS_SORT |
                     WS_VSCROLL | WS_TABSTOP
-    COMBOBOX        IDC_FIELDVARIABLE2,96,48,90,30,CBS_DROPDOWN | CBS_SORT | 
+    COMBOBOX        IDC_FIELDVARIABLE2,96,48,90,30,CBS_DROPDOWN | CBS_SORT |
                     WS_VSCROLL | WS_TABSTOP
     EDITTEXT        IDC_FIELDSTRING2,192,48,66,14,ES_AUTOHSCROLL
-    CONTROL         "",IDC_ENABLE_QUERY3,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "",IDC_ENABLE_QUERY3,"Button",BS_AUTOCHECKBOX |
                     WS_TABSTOP,6,69,12,8
-    COMBOBOX        IDC_FIELDTYPE3,24,66,66,30,CBS_DROPDOWN | CBS_SORT | 
+    COMBOBOX        IDC_FIELDTYPE3,24,66,66,30,CBS_DROPDOWN | CBS_SORT |
                     WS_VSCROLL | WS_TABSTOP
-    COMBOBOX        IDC_FIELDVARIABLE3,96,66,90,30,CBS_DROPDOWN | CBS_SORT | 
+    COMBOBOX        IDC_FIELDVARIABLE3,96,66,90,30,CBS_DROPDOWN | CBS_SORT |
                     WS_VSCROLL | WS_TABSTOP
     EDITTEXT        IDC_FIELDSTRING3,192,66,66,14,ES_AUTOHSCROLL
-    CONTROL         "",IDC_ENABLE_QUERY4,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "",IDC_ENABLE_QUERY4,"Button",BS_AUTOCHECKBOX |
                     WS_TABSTOP,6,87,12,8
-    COMBOBOX        IDC_FIELDTYPE4,24,84,66,30,CBS_DROPDOWN | CBS_SORT | 
+    COMBOBOX        IDC_FIELDTYPE4,24,84,66,30,CBS_DROPDOWN | CBS_SORT |
                     WS_VSCROLL | WS_TABSTOP
-    COMBOBOX        IDC_FIELDVARIABLE4,96,84,90,30,CBS_DROPDOWN | CBS_SORT | 
+    COMBOBOX        IDC_FIELDVARIABLE4,96,84,90,30,CBS_DROPDOWN | CBS_SORT |
                     WS_VSCROLL | WS_TABSTOP
     EDITTEXT        IDC_FIELDSTRING4,192,84,66,14,ES_AUTOHSCROLL
-    CONTROL         "",IDC_ENABLE_QUERY5,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "",IDC_ENABLE_QUERY5,"Button",BS_AUTOCHECKBOX |
                     WS_TABSTOP,6,105,12,8
-    COMBOBOX        IDC_FIELDTYPE5,24,103,66,30,CBS_DROPDOWN | CBS_SORT | 
+    COMBOBOX        IDC_FIELDTYPE5,24,103,66,30,CBS_DROPDOWN | CBS_SORT |
                     WS_VSCROLL | WS_TABSTOP
-    COMBOBOX        IDC_FIELDVARIABLE5,96,103,90,30,CBS_DROPDOWN | CBS_SORT | 
+    COMBOBOX        IDC_FIELDVARIABLE5,96,103,90,30,CBS_DROPDOWN | CBS_SORT |
                     WS_VSCROLL | WS_TABSTOP
     EDITTEXT        IDC_FIELDSTRING5,192,102,66,14,ES_AUTOHSCROLL
 END
@@ -516,7 +516,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
 CAPTION "musikCube Directory Synchronization"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    LISTBOX         IDC_DIRS,6,5,282,97,LBS_SORT | LBS_NOINTEGRALHEIGHT | 
+    LISTBOX         IDC_DIRS,6,5,282,97,LBS_SORT | LBS_NOINTEGRALHEIGHT |
                     LBS_EXTENDEDSEL | WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "add",IDC_ADD,6,108,50,14
     PUSHBUTTON      "remove",IDC_REMOVE,60,108,50,14
@@ -531,13 +531,13 @@ BEGIN
     PUSHBUTTON      "add",IDC_ADD,6,102,54,14
     PUSHBUTTON      "delete",IDC_DELETE_SEL,66,102,54,14
     PUSHBUTTON      "rename",IDC_RENAME_SEL,6,120,54,14
-    LISTBOX         IDC_PRESET_BOX,6,6,114,90,LBS_SORT | 
+    LISTBOX         IDC_PRESET_BOX,6,6,114,90,LBS_SORT |
                     LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "close",IDC_CLOSE_DLG,66,120,54,14
 END
 
 IDD_NAME_ENTRY DIALOGEX 0, 0, 202, 58
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION |
     WS_SYSMENU
 CAPTION "musikCube"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -558,7 +558,7 @@ BEGIN
     EDITTEXT        IDC_SEEK,66,81,24,12,ES_AUTOHSCROLL
     EDITTEXT        IDC_STOP,66,97,24,12,ES_AUTOHSCROLL
     EDITTEXT        IDC_EXIT,66,113,24,12,ES_AUTOHSCROLL
-    LISTBOX         IDC_PRESETBOX,112,49,92,76,LBS_SORT | 
+    LISTBOX         IDC_PRESETBOX,112,49,92,76,LBS_SORT |
                     LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "add",IDC_ADD,112,131,44,14
     PUSHBUTTON      "delete",IDC_DELETE,162,131,42,14
@@ -580,7 +580,7 @@ STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Interface::Transparency"
 FONT 8, "MS Shell Dlg", 0, 0, 0x0
 BEGIN
-    CONTROL         "Enabled",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "Enabled",IDC_CHECK1,"Button",BS_AUTOCHECKBOX |
                     WS_TABSTOP,6,42,41,10
     CONTROL         "Adaptive Fading (smoother, but CPU intensive)",
                     IDC_CHECK2,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,54,
@@ -596,7 +596,7 @@ BEGIN
 END
 
 IDD_TAG_PROPERTIES DIALOGEX 0, 0, 269, 221
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION |
     WS_SYSMENU
 CAPTION "musikCube Song Properties"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -605,10 +605,10 @@ BEGIN
     EDITTEXT        IDC_TRACK,240,114,24,14,ES_AUTOHSCROLL
     EDITTEXT        IDC_ARTIST,36,132,228,14,ES_AUTOHSCROLL
     EDITTEXT        IDC_ALBUM,36,150,228,14,ES_AUTOHSCROLL
-    COMBOBOX        IDC_GENRE,36,168,90,78,CBS_DROPDOWN | CBS_SORT | 
+    COMBOBOX        IDC_GENRE,36,168,90,78,CBS_DROPDOWN | CBS_SORT |
                     WS_VSCROLL | WS_TABSTOP
     EDITTEXT        IDC_YEAR,158,168,24,14,ES_AUTOHSCROLL
-    COMBOBOX        IDC_RATING,216,169,48,65,CBS_DROPDOWNLIST | WS_VSCROLL | 
+    COMBOBOX        IDC_RATING,216,169,48,65,CBS_DROPDOWNLIST | WS_VSCROLL |
                     WS_TABSTOP
     PUSHBUTTON      "Prev",IDC_PREV,6,203,50,14
     PUSHBUTTON      "Next",IDC_NEXT,60,203,50,14
@@ -644,7 +644,7 @@ BEGIN
     GROUPBOX        "",IDC_STATIC,6,123,198,29
     GROUPBOX        "",IDC_STATIC,6,69,198,50
     GROUPBOX        "",IDC_STATIC,6,38,198,27
-    CONTROL         "Enabled",IDC_TUNAGEENABLED,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "Enabled",IDC_TUNAGEENABLED,"Button",BS_AUTOCHECKBOX |
                     WS_TABSTOP,84,29,41,10
     CONTROL         "Post URL:",IDC_TUNAGEURLENABLED,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,12,37,47,10
@@ -653,7 +653,7 @@ BEGIN
                     BS_AUTOCHECKBOX | WS_TABSTOP,12,69,49,10
     LTEXT           "Filename:",IDC_STATIC,21,82,49,8
     EDITTEXT        IDC_TUNAGEFILENAME,73,79,125,12,ES_AUTOHSCROLL
-    CONTROL         "Append",IDC_TUNAGEAPPEND,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "Append",IDC_TUNAGEAPPEND,"Button",BS_AUTOCHECKBOX |
                     WS_TABSTOP,21,106,41,10
     EDITTEXT        IDC_TUNAGEFILELINE,73,93,125,12,ES_AUTOHSCROLL
     CONTROL         "Run program",IDC_TUNAGERUNAPPENABLED,"Button",
@@ -667,18 +667,18 @@ BEGIN
 END
 
 IDD_WINAMP_VIS DIALOGEX 0, 0, 238, 119
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION |
     WS_SYSMENU
 CAPTION "musikCube Winamp Visualization"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     LTEXT           "Select the winamp visualization you would like to emulate:",
                     IDC_STATIC,6,6,185,8
-    COMBOBOX        IDC_COMBO1,6,75,228,78,CBS_DROPDOWNLIST | WS_VSCROLL | 
+    COMBOBOX        IDC_COMBO1,6,75,228,78,CBS_DROPDOWNLIST | WS_VSCROLL |
                     WS_TABSTOP
     PUSHBUTTON      "cancel",IDC_CANCEL,131,100,50,14
     PUSHBUTTON      "settings",IDC_SETTINGS,6,100,50,14
-    LISTBOX         IDC_LIST1,6,18,228,54,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | 
+    LISTBOX         IDC_LIST1,6,18,228,54,LBS_NOINTEGRALHEIGHT | WS_VSCROLL |
                     WS_TABSTOP
     PUSHBUTTON      "ok",IDC_OK,185,100,50,14
 END
@@ -730,7 +730,7 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
+GUIDELINES DESIGNINFO
 BEGIN
     IDD_ABOUTBOX, DIALOG
     BEGIN
@@ -869,18 +869,18 @@ IDB_UP                  BITMAP                  "idb_up.bmp"
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDR_MAINFRAME           "musik"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     AFX_IDS_APP_TITLE       "musik"
     AFX_IDS_IDLEMESSAGE     "Ready"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_INDICATOR_EXT        "EXT"
     ID_INDICATOR_CAPS       "CAP"
@@ -890,24 +890,24 @@ BEGIN
     ID_INDICATOR_REC        "REC"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_APP_ABOUT            "Display program information, version number and copyright\nAbout"
     ID_APP_EXIT             "Quit the application; prompts to save documents\nExit"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_NEXT_PANE            "Switch to the next window pane\nNext Pane"
     ID_PREV_PANE            "Switch back to the previous window pane\nPrevious Pane"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_WINDOW_SPLIT         "Split the active window into panes\nSplit"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_EDIT_CLEAR           "Erase the selection\nErase"
     ID_EDIT_CLEAR_ALL       "Erase everything\nErase All"
@@ -922,7 +922,7 @@ BEGIN
     ID_EDIT_REDO            "Redo the previously undone action\nRedo"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     AFX_IDS_SCSIZE          "Change the window size"
     AFX_IDS_SCMOVE          "Change the window position"
@@ -933,13 +933,13 @@ BEGIN
     AFX_IDS_SCCLOSE         "Close the active window and prompts to save the documents"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     AFX_IDS_SCRESTORE       "Restore the window to normal size"
     AFX_IDS_SCTASKLIST      "Activate Task List"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_FILE_PREFERENCES     "Change your musik preferences."
 END
@@ -968,4 +968,3 @@ LANGUAGE 9, 1
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
-
