@@ -3298,7 +3298,10 @@ void CMainFrame::OnWinampvisualizationsEnabled()
 		return;
 	}
 	else
+	{
+		visSetVisPlaying( FALSE );
 		visStopVis( m_Prefs->GetWinampVis() );	
+	}
 }
 
 ///////////////////////////////////////////////////
@@ -3320,10 +3323,14 @@ void CMainFrame::ImportWinamp()
 	visConfigVis = ( lpfnConfigVis )GetProcAddress( m_WinampVis, _T( "_Config_Vis@8" ) );
 	visStopVis = ( lpfnStopVis )GetProcAddress( m_WinampVis, _T( "_Stop_Vis@4" ) );
 	visGetVisHwnd = ( lpfnGetVisHwnd )GetProcAddress( m_WinampVis, _T( "_GetVisHwnd@0" ) );
+	visSetVisHwnd = ( lpfnSetVisHwnd )GetProcAddress( m_WinampVis, _T( "_SetHwnd@4" ) );
 	visSetVisModule = ( lpfnSetVisModule )GetProcAddress( m_WinampVis, _T( "_SetVisModule@4" ) );
 	visGetVisModuleCount = ( lpfnGetVisModuleCount )GetProcAddress( m_WinampVis, _T( "_GetVisModuleCount@4" ) );
 	visGetVisModuleInfo = ( lpfnGetVisModuleInfo )GetProcAddress( m_WinampVis, _T( "_GetVisModuleInfo@8" ) );
 	visSetVisPlaying = ( lpfnSetVisPlaying )GetProcAddress( m_WinampVis, _T( "_IsPlaying@4" ) );
+
+	// make sure the DLL has our HWND
+	visSetVisHwnd( GetSafeHwnd() );
 }
 
 ///////////////////////////////////////////////////

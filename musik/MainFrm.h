@@ -137,6 +137,7 @@ typedef void	( WINAPI* lpfnSetVisModule )( int );
 typedef UINT	( WINAPI* lpfnGetVisModuleCount )( int );
 typedef LPSTR	( WINAPI* lpfnGetVisModuleInfo )( int, int );
 typedef HWND	( WINAPI* lpfnGetVisHwnd )();
+typedef void	( WINAPI* lpfnSetVisHwnd )( HWND hwnd );
 typedef void	( WINAPI* lpfnConfigVis )( int, int );
 typedef void	( WINAPI* lpfnSetVisPlaying ) ( int );
 
@@ -456,6 +457,7 @@ protected:
 	lpfnFreeVis visFreeVis;
 	lpfnStopVis visStopVis;
 	lpfnGetVisHwnd visGetVisHwnd;
+	lpfnSetVisHwnd visSetVisHwnd;
 	lpfnConfigVis visConfigVis;
 	lpfnSetVisPlaying visSetVisPlaying;
 
