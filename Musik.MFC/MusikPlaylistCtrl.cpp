@@ -131,6 +131,10 @@ void CMusikPlaylistCtrl::SaveColumns()
 void CMusikPlaylistCtrl::UpdateV()
 {
 	SetItemCountEx( m_Playlist->size(), LVSICF_NOINVALIDATEALL | LVSICF_NOSCROLL );
+
+	CRect rcClient;
+	GetClientRect( &rcClient );
+	RedrawWindow( rcClient );
 }
 
 ///////////////////////////////////////////////////
