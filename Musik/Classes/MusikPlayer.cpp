@@ -77,8 +77,8 @@ CMusikPlayer::~CMusikPlayer()
 
 void CMusikPlayer::Shutdown()
 {
+	Stop( true, true );
 	FSOUND_Close();
-
 	g_FX.EndEQ();
 }
 
@@ -350,6 +350,10 @@ void CMusikPlayer::Resume( bool bCheckFade )
 	
 	FSOUND_SetPaused( FSOUND_ALL, FALSE );
 	
+	//--------------------------------------------------//
+	//--- setup crossfader and return, if	the prefs	---//
+	//--- say so.											---//
+	//--------------------------------------------------//
 	if ( bCheckFade )
 	{
 		if ( g_Prefs.nFadePauseResumeEnable == 1 )
@@ -372,7 +376,35 @@ void CMusikPlayer::Stop( bool bCheckFade, bool bExit )
 		g_FaderThread->CrossfaderAbort();
 
 	m_Playing = false;
-
+	
+	//--------------------------------------------------//
+	//--- setup crossfader and return, if	the prefs	---//
+	//--- say so.											---//
+	//--------------------------------------------------//
+	if ( bCheckFade )
+	{
+		//--- use exit duration ---//
+		if ( bExit )
+		{
+			if ( g_Prefs.nFadeExitEnable == 1 )
+			{
+				SetCrossfadeType( CROSSFADE_EXIT );
+				SetFadeStart();
+				return;
+			}
+		}
+		
+		//--- use stop duration ---//
+		else
+		{
+			if ( g_Prefs.nFadeStopEnable == 1 )
+			{
+				SetCrossfadeType( CROSSFADE_STOP );
+				SetFadeStart();
+				return;
+			}				
+		}
+	}
 
 	int nStreamCount = g_ActiveStreams.GetCount();
 	for ( int i = 0; i < nStreamCount; i++ )

@@ -127,13 +127,6 @@ void MusikFrame::OnClose( wxCloseEvent& WXUNUSED(event) )
     //-------------------------------------------------//
     SetTitle( wxString( MUSIK_VERSION ) + wxT( " - Cleaning up threads and saving settings..." ) );
 
-    //-------------------------------------------------//
-    //--- make sure the SQL database and the player ---//
-    //--- shut down cleanly							---//
-    //-------------------------------------------------//
-    g_Player.Shutdown();
-    g_Library.Shutdown();
-
 	//-------------------------------------------------//
 	//--- write playlist columns to prefs			---//
 	//-------------------------------------------------//
@@ -161,6 +154,13 @@ void MusikFrame::OnClose( wxCloseEvent& WXUNUSED(event) )
     //--- so just delete them, no checks required	---//
     //-------------------------------------------------//
     g_FaderThread->Delete();
+	
+    //-------------------------------------------------//
+    //--- make sure the SQL database and the player ---//
+    //--- shut down cleanly							---//
+    //-------------------------------------------------//
+    g_Player.Shutdown();
+    g_Library.Shutdown();
 
 	Destroy();	
 }
