@@ -124,7 +124,7 @@ bool SourcesDropTarget::OnDropSonglist( wxCoord x, wxCoord y, const wxString &sF
 		//--- where did we land? ---//
 		const wxPoint& pt = wxPoint( x, y );
 		int nFlags;
-		size_t n = m_SourcesListBox->HitTest( pt, nFlags );
+		long n = m_SourcesListBox->HitTest( pt, nFlags );
 
 	
 		//--- drag not over an object, create new list ---//
@@ -136,7 +136,6 @@ bool SourcesDropTarget::OnDropSonglist( wxCoord x, wxCoord y, const wxString &sF
 				wxString sName = dlg.GetValue();
 				m_SourcesListBox->NewPlaylist( sName, sFiles, MUSIK_SOURCES_PLAYLIST_STANDARD );		
 			}
-			n = 0;
 		}
 
 		//--- drag over library, can't do that ---//

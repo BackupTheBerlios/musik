@@ -157,7 +157,7 @@ CNowPlayingCtrl::CNowPlayingCtrl( wxWindow *parent )
 	const wxString playmode_choices[] ={_("Normal"),_("Loop Song"),_("Loop List"),_("Shuffle"),_("Auto DJ")};
 	
 	wxChoice *choicePlaymode = new wxChoice(this,MUSIK_NOWPLAYINGCTRL_PLAYMODE,wxDefaultPosition,wxDefaultSize,WXSIZEOF(playmode_choices),playmode_choices);
-	int playmode = wxGetApp().Prefs.ePlaymode;
+	int playmode = wxGetApp().Prefs.ePlaymode.val;
 	choicePlaymode->SetSelection(playmode);
 	vsPlayModeCol->Add( choicePlaymode,0, wxRIGHT|wxLEFT|wxALIGN_CENTRE_VERTICAL, 5 ); //-- small top border --//
 	wxCheckBox * pCrossfade = new wxCheckBox( this, MUSIK_CHK_CROSSFADE, _("Crossfade"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
