@@ -39,7 +39,6 @@ CMainFrame::CMainFrame()
 	m_Prefs = new CMusikPrefs( m_PrefsIni );
 
 	m_LibPlaylist = new CMusikPlaylist();
-	m_Library->GetAllSongs( *m_LibPlaylist );
 
 	m_DynPlaylist = NULL;
 	m_StdPlaylist = NULL;
@@ -331,6 +330,7 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 	// to display all the info
 	if ( pSender->IsItemSelected( 0 ) )
 	{
+		pSender->SetItemState( -1, 0, LVIS_SELECTED );
 		pSender->UpdateV();
 		pParent->SetParent( false );
 		return 0L;
