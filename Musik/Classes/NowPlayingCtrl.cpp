@@ -329,7 +329,7 @@ void CNowPlayingCtrl::PlayerStop( wxCommandEvent& WXUNUSED(event) )
 
 void CNowPlayingCtrl::PlayerPlayPause( wxCommandEvent& WXUNUSED(event) )	
 {	
-	//--- paused, so play ---//
+	//--- playing, so pause ---//
 	if ( g_Player.IsPlaying() && !g_Player.IsPaused() )
 		g_Player.Pause();
 

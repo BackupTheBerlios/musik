@@ -205,10 +205,11 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 		//--- if there is already a fade in			---//
 		//--- progress, then we need to abort it	---//
 		//---------------------------------------------//
+		SetCrossfadeType( nFadeType );
 		if ( g_FaderThread->IsCrossfaderActive() )
 		{
 			g_FaderThread->CrossfaderAbort();
-			//return;
+			//return false;
 		}
 
 		//---------------------------------------------//
@@ -229,11 +230,6 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 		}
 
 		//---------------------------------------------//
-		//--- set the crossfade type...				---//
-		//---------------------------------------------//
-		SetCrossfadeType( nFadeType );
-		
-		//---------------------------------------------//
 		//--- start playback on the new stream on	---//
 		//--- the designated channel.				---//
 		//---------------------------------------------//
@@ -244,13 +240,12 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 
 		SetFrequency();
 
-		
 		//---------------------------------------------//
 		//--- playback has been started, update the	---//
 		//--- user interface to reflect it			---//
 		//---------------------------------------------//
 		if ( nStartPos <= 0 )
-		UpdateUI();
+			UpdateUI();
 
 		//---------------------------------------------//
 		//--- update the global arrays containing	---//
@@ -277,10 +272,10 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 		else if ( g_Prefs.nFadeEnable == 1 )
 			SetFadeStart();
 		
+		m_Playing = true;
 		g_NowPlayingCtrl->PlayBtnToPauseBtn();
 	}
 
-	m_Playing = true;
 	return true;
 }
 
@@ -299,7 +294,7 @@ void CMusikPlayer::UpdateUI()
 	//-------------------------------------------------//
 	//--- this will resynch the current item if the	---//
 	//--- playlist appears to be the same. a better	---//
-	//--- check is not necessary.						---//
+	//--- check is not necessary.					---//
 	//-------------------------------------------------//
 	if ( m_Playlist.GetCount() == g_Playlist.GetCount() )
 		g_PlaylistCtrl->ResynchItem	( m_SongIndex, m_LastSong );
@@ -322,9 +317,6 @@ void CMusikPlayer::ClearOldStreams()
 
 void CMusikPlayer::Pause( bool bCheckFade )
 {
-	if ( !IsPlaying() )
-		return;
-
 	//-------------------------------------------------//
 	//--- if we pause during a crossfade, kill the	---//
 	//--- thread and wait for it to call this		---//
@@ -337,6 +329,7 @@ void CMusikPlayer::Pause( bool bCheckFade )
 		return;
 	}
 
+	m_Paused = true;
 	g_NowPlayingCtrl->PauseBtnToPlayBtn();
 	
 	//-------------------------------------------------//
@@ -360,14 +353,10 @@ void CMusikPlayer::Pause( bool bCheckFade )
 	//--- stream and update the UI.					---//
 	//-------------------------------------------------//
 	FSOUND_SetPaused( FSOUND_ALL, TRUE );
-	m_Paused = true;
 }
 
 void CMusikPlayer::Resume( bool bCheckFade )
 {
-	if ( !IsPaused() )
-		return;
-
 	//-------------------------------------------------//
 	//--- if we resume during a crossfade, kill the	---//
 	//--- thread and wait for it to call this		---//
@@ -399,9 +388,6 @@ void CMusikPlayer::Resume( bool bCheckFade )
 
 void CMusikPlayer::Stop( bool bCheckFade, bool bExit )
 {
-	if ( !IsPlaying() )
-		return;
-
 	if ( g_FaderThread->IsCrossfaderActive() )
 	{
 		g_FaderThread->CrossfaderAbort();
