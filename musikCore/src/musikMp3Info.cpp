@@ -181,7 +181,6 @@ bool CmusikMp3Info::WriteInfo( CmusikSongInfo info, bool clear_old )
 	// write to file
 	id3Tag.Update();
 	
-
 	return true;
 }
 
@@ -219,7 +218,7 @@ CmusikString CmusikMp3Info::GetGenre( CmusikString genre )
 			sRet = ID3_v1_genre_description[nGenreID];
 	}
 	else
-		sRet = "(unknown)";
+		return genre;
 
 	return sRet;
 }
