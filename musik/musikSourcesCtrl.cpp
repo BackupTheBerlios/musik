@@ -610,6 +610,7 @@ void CmusikSourcesCtrl::OnDropFiles( HDROP hDropInfo, bool right_button )
 		// hit now playing?
 		else if ( pItem->GetPlaylistType() == MUSIK_SOURCES_TYPE_NOWPLAYING )
 		{
+			bool was_nowplaying_empty = m_Player->GetPlaylist()->GetCount() ? false : true;
 			bool begin_trans = false;
 
 			m_Library->BeginTransaction();
@@ -623,6 +624,16 @@ void CmusikSourcesCtrl::OnDropFiles( HDROP hDropInfo, bool right_button )
 					m_Player->GetPlaylist()->Add( song );
 			}
 			m_Library->EndTransaction();
+
+			// post a message to the main frame, letting
+			// it know that drag and drop has completed
+			if ( was_nowplaying_empty )
+			{
+				if ( !m_Player->IsPlaying() )
+					m_Player->Play( 0, MUSIK_CROSSFADER_NEW_SONG );
+				else
+					m_Player->FindNewIndex( m_Player->GetCurrPlaying()->GetID() );
+			}
 		}
 
 		// hit create?

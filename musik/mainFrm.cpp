@@ -299,6 +299,7 @@ int CMainFrameWorker::svc()
 CMainFrame::CMainFrame( bool autostart )
 {
 	m_AutoStart = autostart;
+	m_SelBoxesVisible = false;
 
 	m_hIcon16 = ( HICON )LoadImage( AfxGetApp()->m_hInstance, MAKEINTRESOURCE( IDI_MUSIK_16 ), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR );
 	m_hIcon32 = ( HICON )LoadImage( AfxGetApp()->m_hInstance, MAKEINTRESOURCE( IDI_MUSIK_32 ), IMAGE_ICON, 32, 32, LR_DEFAULTCOLOR );
@@ -1394,7 +1395,7 @@ LRESULT CMainFrame::OnSourcesNowPlaying( WPARAM wParam, LPARAM lParam )
 
 	if ( !m_Player->GetPlaylist() )
 	{
-		TRACE0( "Something strange happened, m_Player doesn't have a playlist...\n" );
+		TRACE0( "Something strange happened, m_Player doesn't have a playlist\n" );
 		ASSERT( 1 );
 	}
 
@@ -1822,13 +1823,15 @@ void CMainFrame::OnUpdateViewSources(CCmdUI *pCmdUI)
 
 void CMainFrame::ShowSelectionBoxes( BOOL show )
 {
-	if ( show )
+	if ( show && !m_SelBoxesVisible )
 		CSizingControlBar::GlobalLoadState( this, _T( "musikProfile" ) );
 	else
 		CSizingControlBar::GlobalSaveState( this, _T( "musikProfile" ) );
 
 	for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
 		ShowControlBar( m_wndSelectionBars.at( i ), show, TRUE );
+
+	m_SelBoxesVisible = show;
 }
 
 ///////////////////////////////////////////////////

@@ -739,7 +739,7 @@ void CmusikPlaylistCtrl::SetPlaylist( CmusikPlaylist* playlist, int m_Type )
 
 	if ( playlist == NULL )
 	{
-		TRACE0( "Well, something messed up, our playlist is now NULL...\n" );
+		TRACE0( "Well, something messed up, our playlist is now NULL\n" );
 	}
 
 	// if the last item was a standard playlist,
@@ -936,10 +936,6 @@ void CmusikPlaylistCtrl::BeginDrag( NMHDR* pNMHDR, bool right_button )
 
 	datasrc.CacheGlobalData ( right_button ? m_DropID_R : m_DropID_L, hgBool, &etc );
 
-	bool was_player_empty = false;
-	if ( m_Player->GetPlaylist() && !m_Player->GetPlaylist()->GetCount() )
-		was_player_empty = true;
-
 	// post a message to the main frame, letting
 	// it know that drag and drop has started
 	int WM_DRAGSTART = RegisterWindowMessage( "DRAGSTART" );
@@ -947,16 +943,6 @@ void CmusikPlaylistCtrl::BeginDrag( NMHDR* pNMHDR, bool right_button )
 
     // Start the drag 'n' drop!
 	DROPEFFECT dwEffect = datasrc.DoDragDrop ( DROPEFFECT_COPY | DROPEFFECT_MOVE );
-
-	// post a message to the main frame, letting
-	// it know that drag and drop has completed
-	if ( was_player_empty )
-	{
-		if ( !m_Player->IsPlaying() )
-			m_Player->Play( 0, MUSIK_CROSSFADER_NEW_SONG );
-		else
-			m_Player->FindNewIndex( m_Player->GetCurrPlaying()->GetID() );
-	}
 
 	int WM_DRAGEND = RegisterWindowMessage( "DRAGEND" );
 	m_Parent->SendMessage( WM_DRAGEND, NULL );

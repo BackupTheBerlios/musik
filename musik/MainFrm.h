@@ -333,6 +333,7 @@ protected:
 	// tray icon
 	NOTIFYICONDATA m_TrayIcon;
 	bool m_TrayIconVisible;
+	bool m_SelBoxesVisible;
 	void InitTrayIcon();
 
 	// autostart 

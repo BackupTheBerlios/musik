@@ -57,12 +57,12 @@ public:
 
 	virtual void OnThreadStart()
 	{
-		TRACE0( "CmusikRemoveOldFunctor thread started...\n" );
+		TRACE0( "CmusikRemoveOldFunctor thread started\n" );
 	}
 
 	virtual void OnThreadEnd( void* thr_addr = NULL )
 	{
-		TRACE0( "CmusikRemoveOldFunctor thread complete...\n" );
+		TRACE0( "CmusikRemoveOldFunctor thread complete\n" );
 
 		int WM_REMOVEOLD_END = RegisterWindowMessage( "REMOVEOLD_END" );
 		m_Parent->PostMessage( WM_REMOVEOLD_END, (WPARAM)thr_addr );		

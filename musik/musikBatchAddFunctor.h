@@ -57,12 +57,12 @@ public:
 
 	virtual void OnThreadStart()
 	{
-		TRACE0( "CmusikBatchAdd thread started...\n" );
+		TRACE0( "CmusikBatchAdd thread started\n" );
 	}
 
 	virtual void OnThreadEnd( void* thr_addr = NULL )
 	{
-		TRACE0( "CmusikBatchAdd thread complete...\n" );
+		TRACE0( "CmusikBatchAdd thread complete\n" );
 
 		int WM_BATCHADD_END = RegisterWindowMessage( "BATCHADD_END" );
 		m_Parent->PostMessage( WM_BATCHADD_END, (WPARAM)thr_addr );	
