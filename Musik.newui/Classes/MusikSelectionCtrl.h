@@ -1,14 +1,14 @@
-#ifndef C_MUSIK_SOURCES_CTRL_H
-#define C_MUSIK_SOURCES_CTRL_H
+#ifndef C_MUSIK_SELECTION_CTRL_H
+#define C_MUSIK_SELECTION_CTRL_H
 
 #include "wx/wxprec.h"
 #include "MusikListCtrl.h"
 
-class CMusikSourcesCtrl : public CMusikListCtrl
+class CMusikSelectionCtrl : public CMusikListCtrl
 {
 public:
-	CMusikSourcesCtrl( wxWindow* parent, wxWindowID id );
-	~CMusikSourcesCtrl();
+	CMusikSelectionCtrl( wxWindow* parent, wxWindowID id );
+	~CMusikSelectionCtrl();
 
 	virtual void OnResize( wxSizeEvent& event );
 	virtual void RescaleColumns( bool refresh = false );

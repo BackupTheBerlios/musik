@@ -2,10 +2,6 @@
 #define C_MUSIK_LIST_CTRL_H
 
 #include "wx/wxprec.h"
-#ifndef WX_PRECOMP
-	#include "wx/wx.h"
-#endif 
-
 #include "wx/listctrl.h"
 
 class CMusikListCtrl : public wxListCtrl

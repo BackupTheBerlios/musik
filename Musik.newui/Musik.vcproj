@@ -151,7 +151,7 @@
 			Name="Controls"
 			Filter="">
 			<Filter
-				Name="Sources"
+				Name="SourcesCtrl"
 				Filter="">
 				<File
 					RelativePath=".\Classes\MusikSourcesCtrl.cpp">
@@ -168,6 +168,16 @@
 				</File>
 				<File
 					RelativePath=".\Classes\MusikListCtrl.h">
+				</File>
+			</Filter>
+			<Filter
+				Name="SelectionCtrl"
+				Filter="">
+				<File
+					RelativePath=".\Classes\MusikSelectionCtrl.cpp">
+				</File>
+				<File
+					RelativePath=".\Classes\MusikSelectionCtrl.h">
 				</File>
 			</Filter>
 		</Filter>

@@ -1,3 +1,4 @@
+#include "wx/wxprec.h"
 #include "MusikSourcesCtrl.h"
 
 CMusikSourcesCtrl::CMusikSourcesCtrl( wxWindow* parent, wxWindowID id )

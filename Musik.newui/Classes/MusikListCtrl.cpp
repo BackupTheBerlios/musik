@@ -1,3 +1,4 @@
+#include "wx/wxprec.h"
 #include "MusikListCtrl.h"
 
 BEGIN_EVENT_TABLE( CMusikListCtrl, wxListCtrl )
