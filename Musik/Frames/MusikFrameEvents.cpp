@@ -315,7 +315,7 @@ void MusikFrame::LibrarySimpleQueryEdit()
 
 void MusikFrame::LibrarySimpleQueryDlg()
 {
-	wxTextEntryDialog dlg( this, _("Enter Query:"), MUSIK_VERSION, m_customQuery.c_str() );
+	wxTextEntryDialog dlg( this, _("Enter Query:"), MUSIK_VERSION, m_customQuery );
 	if ( dlg.ShowModal() == wxID_OK )
 	{
 		wxString sQuery = dlg.GetValue();
@@ -325,16 +325,16 @@ void MusikFrame::LibrarySimpleQueryDlg()
 
 void MusikFrame::LibrarySimpleQuery( wxString sQueryVal )
 {
-		if ( sQueryVal.Left( 1 ) == wxT("!") )
-			sQueryVal = sQueryVal.Right( sQueryVal.Length() - 1 );	//--- remove "!" ---//
+	if ( sQueryVal.Left( 1 ) == wxT("!") )
+		sQueryVal = sQueryVal.Right( sQueryVal.Length() - 1 );	//--- remove "!" ---//
 
-		sQueryVal.Replace( wxT("'"), wxT("''") ); //--- double apostrophe to make valid syntax ---//
-		wxString sString = wxT("'%") + sQueryVal + wxT("%'");
-		wxString sQuery;
-		sQuery.sprintf( _("artist like %s or album like %s or title like %s or filename like %s order by album,tracknum,filename"), sString.c_str(), sString.c_str(), sString.c_str(), sString.c_str() );
-		g_Library.QuerySongs( sQuery, g_Playlist );
-		g_PlaylistCtrl->Update( );
-		g_PlaylistChanged = true;
+	sQueryVal.Replace( wxT("'"), wxT("''") ); //--- double apostrophe to make valid syntax ---//
+	wxString sString = wxT("'%") + sQueryVal + wxT("%'");
+	wxString sQuery;
+	sQuery.sprintf( _("artist like %s or album like %s or title like %s or filename like %s order by album,tracknum,filename"), sString, sString, sString, sString );
+	g_Library.QuerySongs( sQuery, g_Playlist );
+	g_PlaylistCtrl->Update( );
+	g_PlaylistChanged = true;
 }
 
 //------------------------//
