@@ -275,7 +275,7 @@ wxArrayString FileToStringArray(  const wxString & sName )
 			{
 				wxString sCheck = In.GetLine( i );
 				sCheck.Replace( wxT(" "), wxT(""), TRUE );
-				if ( sCheck != wxT("") )
+				if ( !sCheck.IsEmpty())
 					aReturn.Add( In.GetLine( i ) );
 			}
 			In.Close();

@@ -193,7 +193,7 @@ void *MusikPurgeLibThread::Entry()
 
 	//--- start the process ---//
 	wxArrayString songs;
-	g_Library.Query( _("select filename from songs;"), songs );
+	g_Library.Query( wxT("select filename from songs;"), songs );
 
 	float fPos;
 	int nLastProg = 0;

@@ -30,12 +30,8 @@
 
 BEGIN_EVENT_TABLE( MusikTagFrame, wxFrame )
 	EVT_CHAR_HOOK		(							MusikTagFrame::OnTranslateKeys			)
-	EVT_CHECKBOX		( MUSIK_TAG_CHK_TITLE,		MusikTagFrame::OnClickCheckTitle		)
-	EVT_CHECKBOX		( MUSIK_TAG_CHK_TRACKNUM,	MusikTagFrame::OnClickCheckTrackNum		)
-	EVT_CHECKBOX		( MUSIK_TAG_CHK_ARTIST,		MusikTagFrame::OnClickCheckArtist		)
-	EVT_CHECKBOX		( MUSIK_TAG_CHK_ALBUM,		MusikTagFrame::OnClickCheckAlbum		)
-	EVT_CHECKBOX		( MUSIK_TAG_CHK_GENRE,		MusikTagFrame::OnClickCheckGenre		)
-	EVT_CHECKBOX		( MUSIK_TAG_CHK_YEAR,		MusikTagFrame::OnClickCheckYear			)
+	EVT_COMMAND_RANGE		( MUSIK_TAG_CHK_TAGFIRST,MUSIK_TAG_CHK_TAGLAST,wxEVT_COMMAND_CHECKBOX_CLICKED ,	MusikTagFrame::OnClickCheckTags		)
+
 	EVT_BUTTON			( MUSIK_TAG_CANCEL,			MusikTagFrame::OnClickCancel			)
 	EVT_BUTTON			( MUSIK_TAG_APPLY,			MusikTagFrame::OnClickApply				)
 	EVT_BUTTON			( MUSIK_TAG_OK,				MusikTagFrame::OnClickOK				)
@@ -102,13 +98,12 @@ MusikTagFrame::MusikTagFrame( wxFrame* pParent, CMusikSongArray aSongs, int nCur
 	//---------------//
 	wxStaticText *stFilename	=	new wxStaticText	( this, -1, _("File"), wxPoint( 0, 0 ), wxSize( 40, -1 ), wxALIGN_LEFT );
 	tcFilename					=	new wxTextCtrl		( this, -1,	wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), wxTE_READONLY );
-	tcFilename->Enable( FALSE );
 
 	wxStaticText *stTitle		=	new wxStaticText	( this, -1, _("Title"), wxPoint( 0, 0 ), wxSize( 40, -1 ), wxALIGN_LEFT );
 	tcTitle						=	new wxTextCtrl		( this, MUSIK_TAG_TITLE, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ) );
 	chkTitle					=	new wxCheckBox		( this, MUSIK_TAG_CHK_TITLE, wxT(""), wxPoint( -1, -1 ), wxSize( -1, -1 ) ); 
 	
-	wxStaticText *stTrackNum	=	new wxStaticText	( this, -1, wxT("Track #  "), wxPoint( 0, 0 ), wxSize( 50, -1 ), wxALIGN_RIGHT );
+	wxStaticText *stTrackNum	=	new wxStaticText	( this, -1, _("Track #  "), wxPoint( 0, 0 ), wxSize( 50, -1 ), wxALIGN_RIGHT );
 	tcTrackNum					=	new wxTextCtrl		( this, MUSIK_TAG_TRACKNUM,	wxT(""), wxPoint( 0, 0 ), wxSize( 22, -1 ) );
 	chkTrackNum					=	new wxCheckBox		( this, MUSIK_TAG_CHK_TRACKNUM,	wxT(""), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 
@@ -359,7 +354,7 @@ void MusikTagFrame::PopulateTagDlg()
 		cmbGenre->SetValue( _("Other") );
 
     //--- year ---//
-	if( m_Songs.Item( nIndex ).Year == wxT("") || m_Songs.Item( nIndex ).Year == _("<unknown>") )
+	if( m_Songs.Item( nIndex ).Year.IsEmpty() || m_Songs.Item( nIndex ).Year == _("<unknown>") )
 		tcYear->SetValue( wxT("") );
 	else
 		tcYear->SetValue( m_Songs.Item( nIndex ).Year );

@@ -333,7 +333,7 @@ void MusikFrame::LibrarySimpleQuery( wxString sQueryVal )
 	sQueryVal.Replace( wxT("'"), wxT("''") ); //--- double apostrophe to make valid syntax ---//
 	wxString sString = wxT("'%") + sQueryVal + wxT("%'");
 	wxString sQuery;
-	sQuery.sprintf( _("artist like %s or album like %s or title like %s or filename like %s order by album,tracknum,filename"),
+	sQuery.sprintf( wxT("artist like %s or album like %s or title like %s or filename like %s order by album,tracknum,filename"),
 		( const wxChar *)sString, (const wxChar *) sString, (const wxChar *)sString,(const wxChar*) sString );
 	g_Library.QuerySongs( sQuery, g_Playlist );
 	g_PlaylistCtrl->Update( );

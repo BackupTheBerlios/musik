@@ -503,7 +503,7 @@ void CActivityBox::GetSelectedSongs( CMusikSongArray& array )
 	  g_Library.GetSongs( list, ACTIVITY_TYPE2LIB_TYPE( GetActivityType() ), array );
 	  return;
 	}
-
+ 
 	//---------------------------------------------------------//
 	//--- standard or sloppy style. this routine			---//
 	//--- helps assure that, for example, if two artists	---//
@@ -519,35 +519,17 @@ void CActivityBox::GetSelectedSongs( CMusikSongArray& array )
 			//-------------------------------------------------//
 			//--- what type of box is this?					---//
 			//-------------------------------------------------//
-			int nThisType = GetActivityType();
-			wxString sThisType;
-			if ( nThisType == MUSIK_LBTYPE_ARTISTS )
-				sThisType = wxT( "artist" );
-			else if ( nThisType == MUSIK_LBTYPE_ALBUMS )
-				sThisType = wxT( "album" );
-			else if ( nThisType == MUSIK_LBTYPE_GENRES )
-				sThisType = wxT( "genre" );
-			else if ( nThisType == MUSIK_LBTYPE_YEARS )
-				sThisType = wxT( "year" );
+			wxString sThisType = GetActivityTypeStr();
 
 			//-------------------------------------------------//
             //--- what type of box is the parent?			---//
 			//-------------------------------------------------//
-			int nParentType = pParentBox->GetActivityType();
-			wxString sParentType;
-			if ( nParentType == MUSIK_LBTYPE_ARTISTS )
-				sParentType = wxT( "artist" );
-			else if ( nParentType == MUSIK_LBTYPE_ALBUMS )
-				sParentType = wxT( "album" );
-			else if ( nParentType == MUSIK_LBTYPE_GENRES )
-				sParentType = wxT( "genre" );
-			else if ( nParentType == MUSIK_LBTYPE_YEARS )
-				sParentType = wxT( "year" );
+			wxString sParentType = pParentBox->GetActivityTypeStr();
 
 			//-------------------------------------------------//
             //--- return if there is an invalid type		---//
 			//-------------------------------------------------//
-			if ( sThisType == wxT( "" ) || sParentType == wxT( "" ) )
+			if ( sThisType.IsEmpty() || sParentType.IsEmpty() )
 				return;
 
 			//-------------------------------------------------//

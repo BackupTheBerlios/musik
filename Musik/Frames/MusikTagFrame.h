@@ -51,6 +51,9 @@ enum EMUSIK_TAG_OBJECT_ID
 	MUSIK_TAG_PREV
 };
 
+const EMUSIK_TAG_OBJECT_ID	MUSIK_TAG_CHK_TAGFIRST =  MUSIK_TAG_CHK_TITLE;
+const EMUSIK_TAG_OBJECT_ID	MUSIK_TAG_CHK_TAGLAST =  MUSIK_TAG_CHK_YEAR;
+
 class MusikTagFrame : public wxFrame
 {
 public:
@@ -99,12 +102,8 @@ public:
 	void OnClickOK				( wxCommandEvent &WXUNUSED(event) );
 	void OnClickCancel			( wxCommandEvent &WXUNUSED(event) );
 	void OnClickApply			( wxCommandEvent &WXUNUSED(event) ) { Apply(); 							}
-	void OnClickCheckTitle		( wxCommandEvent &WXUNUSED(event) ) { nFrame = 0; SetEnabled();			}
-	void OnClickCheckTrackNum	( wxCommandEvent &WXUNUSED(event) ) { nFrame = 1; SetEnabled();			}
-	void OnClickCheckArtist		( wxCommandEvent &WXUNUSED(event) ) { nFrame = 2; SetEnabled();			}
-	void OnClickCheckAlbum		( wxCommandEvent &WXUNUSED(event) ) { nFrame = 3; SetEnabled();			}
-	void OnClickCheckGenre		( wxCommandEvent &WXUNUSED(event) ) { nFrame = 4; SetEnabled();			}
-	void OnClickCheckYear		( wxCommandEvent &WXUNUSED(event) ) { nFrame = 5; SetEnabled();			}
+	void OnClickCheckTags		( wxCommandEvent &event ) { nFrame = event.GetId() - MUSIK_TAG_CHK_TAGFIRST ; SetEnabled();			}
+
 	void OnClickNext			( wxCommandEvent &WXUNUSED(event) ) { Next();								}
 	void OnClickPrev			( wxCommandEvent &WXUNUSED(event) ) { Prev();								}
 	void OnClose				( wxCommandEvent &WXUNUSED(event) ); 

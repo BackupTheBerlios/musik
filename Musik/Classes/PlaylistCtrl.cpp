@@ -38,18 +38,9 @@ BEGIN_EVENT_TABLE(CPlaylistCtrl, wxListCtrl)
 	EVT_MENU					( MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FROM_DB,				CPlaylistCtrl::OnDelFilesDB		)
 	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_RENAME_FILES,						CPlaylistCtrl::OnRenameFiles	)
 	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_RETAG_FILES,						CPlaylistCtrl::OnRetagFiles		)
-	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_UNRATED,							CPlaylistCtrl::UnrateSel		) 	
-	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_RATE1,								CPlaylistCtrl::Rate1Sel			) 	
-	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_RATE2,								CPlaylistCtrl::Rate2Sel			) 
-	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_RATE3,								CPlaylistCtrl::Rate3Sel			) 
-	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_RATE4,								CPlaylistCtrl::Rate4Sel			) 
-	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_RATE5,								CPlaylistCtrl::Rate5Sel			)
-	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_TAG_TITLE,							CPlaylistCtrl::ClickTitle		)
-	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_TAG_TRACKNUM,						CPlaylistCtrl::ClickTrackNum	)
-	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_TAG_ARTIST,						CPlaylistCtrl::ClickArtist		)
-	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_TAG_ALBUM,							CPlaylistCtrl::ClickAlbum		)
-	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_TAG_GENRE,							CPlaylistCtrl::ClickGenre		)
-	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_TAG_YEAR,							CPlaylistCtrl::ClickYear		)
+	EVT_MENU_RANGE		( MUSIK_PLAYLIST_CONTEXT_UNRATED, MUSIK_PLAYLIST_CONTEXT_RATE5, CPlaylistCtrl::OnRateSel) 	
+	EVT_UPDATE_UI_RANGE		( MUSIK_PLAYLIST_CONTEXT_UNRATED, MUSIK_PLAYLIST_CONTEXT_RATE5,	CPlaylistCtrl::OnUpdateUIRateSel	)
+	EVT_MENU_RANGE				( MUSIK_PLAYLIST_CONTEXT_TAG_TITLE,	MUSIK_PLAYLIST_CONTEXT_TAG_YEAR,	CPlaylistCtrl::OnClickEditTag		)
 	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_SMART,								CPlaylistCtrl::OnDisplaySmart	)
 	EVT_CONTEXT_MENU			(															CPlaylistCtrl::ShowMenu			)
 	EVT_CHAR					(															CPlaylistCtrl::TranslateKeys	)
@@ -57,21 +48,9 @@ BEGIN_EVENT_TABLE(CPlaylistCtrl, wxListCtrl)
 
 	//---------------------------------------------------------//
 	//--- column on off stuff.								---//
-	//---------------------------------------------------------//
-	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_RATING,							CPlaylistCtrl::OnDisplayMenu	)
-	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_TRACK,								CPlaylistCtrl::OnDisplayMenu	)
-	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_TITLE,								CPlaylistCtrl::OnDisplayMenu	)
-	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_ARTIST,							CPlaylistCtrl::OnDisplayMenu	)
-	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_ALBUM,								CPlaylistCtrl::OnDisplayMenu	)
-	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_YEAR,								CPlaylistCtrl::OnDisplayMenu	)
-	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_GENRE,								CPlaylistCtrl::OnDisplayMenu	)
-	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_TIMES_PLAYED,						CPlaylistCtrl::OnDisplayMenu	)
-	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_LAST_PLAYED,						CPlaylistCtrl::OnDisplayMenu	)
-	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_TIME,								CPlaylistCtrl::OnDisplayMenu	)
-	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_BITRATE,							CPlaylistCtrl::OnDisplayMenu	)
-	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_FILENAME,							CPlaylistCtrl::OnDisplayMenu	)
-	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_FIT,								CPlaylistCtrl::OnDisplayMenu	)
-
+	//-------------  		--------------------------------------------//
+	EVT_MENU_RANGE				( MUSIK_PLAYLIST_DISPLAY_FIRST, MUSIK_PLAYLIST_DISPLAY_LAST,	CPlaylistCtrl::OnDisplayMenu	)
+	EVT_UPDATE_UI_RANGE		( MUSIK_PLAYLIST_DISPLAY_FIRST, MUSIK_PLAYLIST_DISPLAY_LAST,	CPlaylistCtrl::OnUpdateUIDisplayMenu	)
 	//---------------------------------------------------------//
 	//--- threading events.. we use EVT_MENU becuase its	---//
 	//--- nice and simple, and gets the job done. this may	---//
@@ -287,27 +266,10 @@ CPlaylistCtrl::~CPlaylistCtrl()
 
 void CPlaylistCtrl::OnColumnClick( wxListEvent& event )
 {
-	int colid = event.GetColumn();
-	wxListItem col;
-	col.m_mask = wxLIST_MASK_TEXT;
-	GetColumn( colid, col );
-
-	wxString sortstr;
-	if ( col.m_text == wxT("Track") )
-		sortstr = wxT("TrackNum");
-	else if ( col.m_text == wxT("Times Played") )
-		sortstr = wxT("TimesPlayed");
-	else if ( col.m_text == wxT("Last Played") )
-		sortstr = wxT("LastPlayed");
-	else if ( col.m_text == wxT("Time") )
-		sortstr = wxT("Duration");
-	else
-		sortstr = col.m_text;
-
-	bool desc = false;
-	m_aColumnSorting.Item( colid ) = -m_aColumnSorting.Item( colid );	
-	if ( m_aColumnSorting.Item( colid ) < 0 )
-		desc = true;
+	int ActualColumn = m_ColumnOrder.Item( event.GetColumn() );
+	wxString sortstr = g_PlaylistColumnDBNames[ ActualColumn ];
+	m_aColumnSorting.Item( ActualColumn ) = -m_aColumnSorting.Item( ActualColumn );	
+	bool desc = ( m_aColumnSorting.Item( ActualColumn ) < 0 );
 
 	g_Library.SortPlaylist( sortstr, desc );
 	g_PlaylistCtrl->Update();
@@ -386,68 +348,13 @@ void CPlaylistCtrl::ShowMenu( wxCommandEvent& WXUNUSED(event) )
 	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_RATENODE,		bItemSel );
 	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_TAGNODE,		bItemSel );
 
-	if ( bItemSel )
-	{
-		//--- uncheck all ratings ---//
-		playlist_context_rating_menu->Check( MUSIK_PLAYLIST_CONTEXT_UNRATED, false );
-		playlist_context_rating_menu->Check( MUSIK_PLAYLIST_CONTEXT_RATE1, false );
-		playlist_context_rating_menu->Check( MUSIK_PLAYLIST_CONTEXT_RATE2, false );
-		playlist_context_rating_menu->Check( MUSIK_PLAYLIST_CONTEXT_RATE3, false );
-		playlist_context_rating_menu->Check( MUSIK_PLAYLIST_CONTEXT_RATE4, false );
-		playlist_context_rating_menu->Check( MUSIK_PLAYLIST_CONTEXT_RATE5, false );
-
-		//--- get rating for first sel ---//
-		int nFirst = g_Playlist.Item( GetNextItem( -1, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED ) ).Rating;
-		switch ( nFirst )
-		{
-		case 0:
-			playlist_context_rating_menu->Check( MUSIK_PLAYLIST_CONTEXT_UNRATED, true );
-			break;
-		case 1:
-			playlist_context_rating_menu->Check( MUSIK_PLAYLIST_CONTEXT_RATE1, true );
-			break;
-		case 2:
-			playlist_context_rating_menu->Check( MUSIK_PLAYLIST_CONTEXT_RATE2, true );
-			break;
-		case 3:
-			playlist_context_rating_menu->Check( MUSIK_PLAYLIST_CONTEXT_RATE3, true );
-			break;
-		case 4:
-			playlist_context_rating_menu->Check( MUSIK_PLAYLIST_CONTEXT_RATE4, true );
-			break;
-		case 5:
-			playlist_context_rating_menu->Check( MUSIK_PLAYLIST_CONTEXT_RATE5, true );
-			break;
-		}
-		
-	}
-
-	//--- check which columns are displayed ---//
-	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_RATING,		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_RATING]		);
-	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_TRACK,			g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TRACK]			);
-	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_TITLE,			g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TITLE]			);
-	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_ARTIST,		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_ARTIST]		);
-	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_ALBUM,			g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_ALBUM]			);
-	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_YEAR,			g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_YEAR]			);
-	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_GENRE,			g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_GENRE]			);
-	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_TIMES_PLAYED,	g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TIMES_PLAYED]	);
-	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_LAST_PLAYED,	g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_LAST_PLAYED]	);
-	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_TIME,			g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TIME]			);
-	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_BITRATE,		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_BITRATE]		);
-	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_FILENAME,		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_FILENAME]		);
-	playlist_context_display_menu->Check( MUSIK_PLAYLIST_DISPLAY_SMART,			g_Prefs.nPlaylistSmartColumns								);
-
 	PopupMenu( playlist_context_menu, pos );
 }
-
-void CPlaylistCtrl::OnDisplayMenu( wxCommandEvent& event )
+int CPlaylistCtrl::DisplayEventId2ColumnId( int evid)
 {
-  int nColumn = -1;
-	switch ( event.GetId() )
+	int nColumn = -1;
+	switch ( evid )
 	{
-	case MUSIK_PLAYLIST_DISPLAY_FIT:
-		RescaleColumns( true, false, true );
-		break;
 	case MUSIK_PLAYLIST_DISPLAY_RATING:
 		nColumn = PLAYLISTCOLUMN_RATING;
 		break;
@@ -484,6 +391,29 @@ void CPlaylistCtrl::OnDisplayMenu( wxCommandEvent& event )
 	case MUSIK_PLAYLIST_DISPLAY_FILENAME:
 		nColumn = PLAYLISTCOLUMN_FILENAME;
 		break;
+	default:
+		wxASSERT(0);
+	}
+	return nColumn;
+}
+void CPlaylistCtrl::OnRateSel( wxCommandEvent& event )
+{
+	RateSel( event.GetId() - MUSIK_PLAYLIST_CONTEXT_UNRATED );
+}
+void CPlaylistCtrl::OnClickEditTag( wxCommandEvent& event )
+{
+	EditTag( event.GetId() - MUSIK_PLAYLIST_CONTEXT_TAG_TITLE );
+}
+void CPlaylistCtrl::OnDisplayMenu( wxCommandEvent& event )
+{
+  int nColumn = -1;
+	switch ( event.GetId() )
+	{
+	case MUSIK_PLAYLIST_DISPLAY_FIT:
+		RescaleColumns( true, false, true );
+		break;
+	default:
+		nColumn = DisplayEventId2ColumnId(event.GetId());
 	}
 	if( nColumn > -1)
 	{
@@ -492,13 +422,29 @@ void CPlaylistCtrl::OnDisplayMenu( wxCommandEvent& event )
 	ResetColumns( false, true );
 }
 
+void CPlaylistCtrl::OnUpdateUIDisplayMenu ( wxUpdateUIEvent &event)
+{
+	int nColumn = DisplayEventId2ColumnId(event.GetId());
+	if(nColumn > -1)
+		event.Check(g_Prefs.nPlaylistColumnEnable[nColumn]);	
+}
+
+void CPlaylistCtrl::OnUpdateUIRateSel ( wxUpdateUIEvent &event)
+{
+	//--- get rating for first sel ---//
+	int item = GetNextItem( -1, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
+	
+	if(item > -1)
+	{
+		int nRating = g_Playlist.Item( item ).Rating;
+		wxASSERT(nRating >= 0 && nRating <= 5);
+		event.Check( event.GetId() == MUSIK_PLAYLIST_CONTEXT_UNRATED + nRating);
+	}
+}
+
 void CPlaylistCtrl::OnDisplaySmart( wxCommandEvent& event )
 {
-	if ( g_Prefs.nPlaylistSmartColumns == 0 )
-		g_Prefs.nPlaylistSmartColumns = 1;
-	else
-		g_Prefs.nPlaylistSmartColumns = 0;
-
+	g_Prefs.nPlaylistSmartColumns = !g_Prefs.nPlaylistSmartColumns;
 	RescaleColumns();
 }
 
@@ -633,21 +579,21 @@ wxString CPlaylistCtrl::OnGetItemText(long item, long column) const
 		break;
 
 	case PLAYLISTCOLUMN_ALBUM:
-		if ( song.Album == wxT( "<unknown>" ) )
+		if ( song.Album == _( "<unknown>" ) )
 			return wxT( "-" );
 		else
 			return SanitizedString( song.Album );
 		break;
 
 	case PLAYLISTCOLUMN_YEAR:
-		if ( song.Year == wxT( "<unknown>" ) )
+		if ( song.Year == _( "<unknown>" ) )
 			return wxT( "-" );
 		else
 			return song.Year;
 		break;
 
 	case PLAYLISTCOLUMN_GENRE:
-		if ( song.Genre == wxT( "<unknown>" ) )
+		if ( song.Genre == _( "<unknown>" ) )
 			return wxT( "-" );
 		else
 			return SanitizedString( song.Genre );

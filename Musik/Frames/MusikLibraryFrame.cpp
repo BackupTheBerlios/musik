@@ -274,7 +274,7 @@ void MusikLibraryFrame::PathsLoad()
 {
 	for ( size_t i = 0; i < g_Paths.GetCount(); i++ )
 	{
-		if ( g_Paths.Item( i ) != wxT("") )	
+		if ( !g_Paths.Item( i ).IsEmpty() )
 		{
 			lcPaths->InsertItem( i, g_Paths.Item( i ) );
 			lcPaths->SetItem( i, 1, wxT("-"), -1 );

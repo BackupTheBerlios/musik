@@ -14,16 +14,17 @@
 #ifndef PLAYLISTCTRL_H
 #define PLAYLISTCTRL_H
 
-//--- definition CMusikSongArray is here ---//
-#include "MusikLibrary.h"
 
 //--- wx ---//
 #include "wx/wxprec.h"
 #ifndef WX_PRECOMP
 	#include "wx/wx.h"
 #endif
+//--- definition CMusikSongArray is here ---//
+#include "MusikLibrary.h"
 #include "wx/listctrl.h"
 #include <wx/dnd.h>
+
 
 class MusikPlaylistRenameThread;
 class MusikPlaylistRetagThread;
@@ -47,21 +48,13 @@ public:
 	void OnRenameFiles	( wxCommandEvent& WXUNUSED(event) )	{ RenameSelFiles();	}
 	void OnRetagFiles	( wxCommandEvent& WXUNUSED(event) ) { RetagSelFiles();	}
 	//--- rating ---//
-	void UnrateSel		( wxCommandEvent& WXUNUSED(event) )	{ RateSel( 0 ); }
-	void Rate1Sel		( wxCommandEvent& WXUNUSED(event) )	{ RateSel( 1 ); }
-	void Rate2Sel		( wxCommandEvent& WXUNUSED(event) )	{ RateSel( 2 ); }
-	void Rate3Sel		( wxCommandEvent& WXUNUSED(event) )	{ RateSel( 3 ); }
-	void Rate4Sel		( wxCommandEvent& WXUNUSED(event) )	{ RateSel( 4 ); }
-	void Rate5Sel		( wxCommandEvent& WXUNUSED(event) )	{ RateSel( 5 ); }
+	void OnRateSel		( wxCommandEvent& event );
+	void OnUpdateUIRateSel ( wxUpdateUIEvent &event);
 	//--- tagging ---//
-	void ClickTitle		( wxCommandEvent& WXUNUSED(event) )	{ EditTag( 0 );	}
-	void ClickTrackNum	( wxCommandEvent& WXUNUSED(event) )	{ EditTag( 1 );	}
-	void ClickArtist	( wxCommandEvent& WXUNUSED(event) )	{ EditTag( 2 );	}
-	void ClickAlbum		( wxCommandEvent& WXUNUSED(event) )	{ EditTag( 3 );	}
-	void ClickGenre		( wxCommandEvent& WXUNUSED(event) )	{ EditTag( 4 ); }
-	void ClickYear		( wxCommandEvent& WXUNUSED(event) )	{ EditTag( 5 ); }
+	void OnClickEditTag		( wxCommandEvent& event );
 	//--- columns ---//
 	void OnDisplayMenu	( wxCommandEvent& event				);
+	void OnUpdateUIDisplayMenu ( wxUpdateUIEvent &event);
 	void OnDisplaySmart	( wxCommandEvent& WXUNUSED(event)	);
 	void OnColumnClick	( wxListEvent& event );
 	//--- other ---//
@@ -153,6 +146,7 @@ public:
 
 	DECLARE_EVENT_TABLE()
 private:
+	int DisplayEventId2ColumnId(int evid);
 	//-------------------------//
 	//--- virtual functions ---//
 	//-------------------------//

@@ -55,20 +55,34 @@ const int g_PlaylistColumnAlign[NPLAYLISTCOLUMNS] =
 
 extern const wxString g_PlaylistColumnLabels[NPLAYLISTCOLUMNS] =
 {
-	wxT( "Rating"		),
-	wxT( "Track"		),
-	wxT( "Title"		),
-	wxT( "Artist"		),
-	wxT( "Album"		),
-	wxT( "Year"			),
-	wxT( "Genre"		),
-	wxT( "Times Played" ),
-	wxT( "Last Played"	),
-	wxT( "Time"			),
-	wxT( "Bitrate"		),
-	wxT( "Filename"		)
+	_( "Rating"		),
+	_( "Track"		),
+	_( "Title"		),
+	_( "Artist"		),
+	_( "Album"		),
+	_( "Year"			),
+	_( "Genre"		),
+	_( "Times Played" ),
+	_( "Last Played"	),
+	_( "Time"			),
+	_( "Bitrate"		),
+	_( "Filename"		)
 };
-
+extern const wxString g_PlaylistColumnDBNames[NPLAYLISTCOLUMNS] =
+{
+	wxT( "rating"		),
+	wxT( "tracknum"		),
+	wxT( "title"		),
+	wxT( "artist"		),
+	wxT( "album"		),
+	wxT( "year"			),
+	wxT( "genre"		),
+	wxT( "timesplayed" ),
+	wxT( "lastplayed"	),
+	wxT( "duration"			),
+	wxT( "bitrate"		),
+	wxT( "filename"		)
+};
 //------------------------//
 //--- internal objects ---//
 //------------------------//

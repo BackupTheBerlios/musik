@@ -102,6 +102,7 @@ enum EPLAYLISTCOLUMNS
 
 extern const int g_PlaylistColumnAlign[NPLAYLISTCOLUMNS];
 extern const wxString g_PlaylistColumnLabels[NPLAYLISTCOLUMNS];
+extern const wxString g_PlaylistColumnDBNames[NPLAYLISTCOLUMNS];
 
 
 enum EMUSIK_ACTIVITY_SELECTION_TYPE
@@ -238,6 +239,8 @@ enum EMUSIK_MENU_ITEMS
     
 };
 
+const EMUSIK_MENU_ITEMS MUSIK_PLAYLIST_DISPLAY_FIRST = MUSIK_PLAYLIST_DISPLAY_RATING;
+const EMUSIK_MENU_ITEMS MUSIK_PLAYLIST_DISPLAY_LAST = MUSIK_PLAYLIST_DISPLAY_FIT;
 //----------------------//
 //--- pointer to app ---//
 //----------------------//
