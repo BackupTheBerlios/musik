@@ -205,23 +205,25 @@ void CmusikPlaylistCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 		
 		// if the item we want to access is out of the
 		// cache's range, something bad happened
-		if ( nItem > m_SongInfoCache->GetLast() || nItem < m_SongInfoCache->GetFirst() )
-			sValue = _T( "[musik.uncached]" );
+		if ( nItem >= m_SongInfoCache->GetFirst() && nItem <= m_SongInfoCache->GetLast() )
+		{
+			// if the current subitem type is rating, then
+			// we need to format it correctly... pass the
+			// value to GetRating()
+			if ( m_Prefs->GetPlaylistCol( nSub ) == MUSIK_LIBRARY_TYPE_RATING )
+				sValue = GetRating( nItem );
 
-		// if the current subitem type is rating, then
-		// we need to format it correctly... pass the
-		// value to GetRating()
-		else if ( m_Prefs->GetPlaylistCol( nSub ) == MUSIK_LIBRARY_TYPE_RATING )
-			sValue = GetRating( nItem );
+			// if we have a time value, it was stored as 
+			// milliseconds, so it needs to be formatted
+			else if ( m_Prefs->GetPlaylistCol( nSub ) == MUSIK_LIBRARY_TYPE_DURATION )
+				sValue = GetTimeStr( nItem );
 
-		// if we have a time value, it was stored as 
-		// milliseconds, so it needs to be formatted
-		else if ( m_Prefs->GetPlaylistCol( nSub ) == MUSIK_LIBRARY_TYPE_DURATION )
-			sValue = GetTimeStr( nItem );
-
-		// otherwise, just use the value we are supposed to
+			// otherwise, just use the value we are supposed to
+			else
+				sValue = m_SongInfoCache->GetValue( nItem - m_SongInfoCache->GetFirst(), nType );
+		}
 		else
-			sValue = m_SongInfoCache->GetValue( nItem - m_SongInfoCache->GetFirst(), nType );
+			sValue = _T( "[musik.uncached]" );
 
 		// copy the buffer of the correct display string
 		// to the current LV_ITEM
@@ -268,44 +270,47 @@ void CmusikPlaylistCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 	// draw the sub items
 	else if ( pLVCD->nmcd.dwDrawStage == ( CDDS_ITEMPREPAINT | CDDS_SUBITEM ) )
 	{
-		CDC *pDC = CDC::FromHandle(pLVCD->nmcd.hdc);
-		int nSubType = m_Prefs->GetPlaylistCol( pLVCD->iSubItem );
-
-		// if this value is uninitialized we need to find
-		// it... it is the width of the rating font
-		if ( m_RatingWidth == -1 )
+		if ( pLVCD->nmcd.dwItemSpec < m_Playlist->GetCount() )
 		{
-			pDC->SelectObject( m_StarFont );
-			CSize size = pDC->GetOutputTextExtent( _T( "-----" ) );
-			m_RatingWidth = size.cx;
-		}
+			CDC *pDC = CDC::FromHandle(pLVCD->nmcd.hdc);
+			int nSubType = m_Prefs->GetPlaylistCol( pLVCD->iSubItem );
 
-		if ( nSubType == MUSIK_LIBRARY_TYPE_RATING )
-		{
-			pDC->SelectObject( m_StarFont );
-			pDC->SetTextColor( m_Prefs->MUSIK_COLOR_LISTCTRLTEXT );
-		}
+			// if this value is uninitialized we need to find
+			// it... it is the width of the rating font
+			if ( m_RatingWidth == -1 )
+			{
+				pDC->SelectObject( m_StarFont );
+				CSize size = pDC->GetOutputTextExtent( _T( "-----" ) );
+				m_RatingWidth = size.cx;
+			}
 
-		else
-		{
-			if ( m_Player->GetCurrPlaying()->GetID() == m_Playlist->GetSongID( pLVCD->nmcd.dwItemSpec ) && 
-				GetPlaylist() == m_Player->GetPlaylist() && 
-				pLVCD->nmcd.dwItemSpec == m_Player->GetIndex() )
-				pDC->SelectObject( m_BoldFont );
+			if ( nSubType == MUSIK_LIBRARY_TYPE_RATING )
+			{
+				pDC->SelectObject( m_StarFont );
+				pDC->SetTextColor( m_Prefs->MUSIK_COLOR_LISTCTRLTEXT );
+			}
+
 			else
-				pDC->SelectObject( m_ItemFont );
+			{
+				if ( m_Player->GetCurrPlaying()->GetID() == m_Playlist->GetSongID( pLVCD->nmcd.dwItemSpec ) && 
+					GetPlaylist() == m_Player->GetPlaylist() && 
+					pLVCD->nmcd.dwItemSpec == m_Player->GetIndex() )
+					pDC->SelectObject( m_BoldFont );
+				else
+					pDC->SelectObject( m_ItemFont );
+			}
+
+			// which stripe color to use
+			if ( pLVCD->nmcd.dwItemSpec % 2 != 0 )
+				pLVCD->clrTextBk = clrStripe;
+			else
+				pLVCD->clrTextBk = m_Prefs->MUSIK_COLOR_LISTCTRL;
+
+			pLVCD->clrText = m_Prefs->MUSIK_COLOR_LISTCTRLTEXT;		
+
+			*pResult = CDRF_NEWFONT;
+			return;
 		}
-
-		// which stripe color to use
-		if ( pLVCD->nmcd.dwItemSpec % 2 != 0 )
-			pLVCD->clrTextBk = clrStripe;
-		else
-			pLVCD->clrTextBk = m_Prefs->MUSIK_COLOR_LISTCTRL;
-
-		pLVCD->clrText = m_Prefs->MUSIK_COLOR_LISTCTRLTEXT;		
-
-		*pResult = CDRF_NEWFONT;
-		return;
 	}
 }
 
@@ -368,7 +373,7 @@ void CmusikPlaylistCtrl::OnLvnOdcachehint(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMLVCACHEHINT pCacheHint = reinterpret_cast<LPNMLVCACHEHINT>(pNMHDR);
 
-	m_SongInfoCache->Set( pCacheHint->iFrom, pCacheHint->iTo );
+	m_SongInfoCache->Set( pCacheHint->iFrom, pCacheHint->iTo, false );
 
 	*pResult = 0;
 }
@@ -501,7 +506,9 @@ void CmusikPlaylistCtrl::SetPlaylist( CmusikPlaylist* playlist, int m_Type )
 			{
 				CmusikSaveStdPlaylist* pDlg;
 				pDlg = new CmusikSaveStdPlaylist( this, m_Prefs );
-				if ( pDlg->DoModal() == IDOK )
+				int nRes = pDlg->DoModal();
+
+				if ( nRes == IDOK )
 				{
 					// save playlist...
 				}
