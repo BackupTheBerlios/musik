@@ -679,7 +679,7 @@ void MusikPrefsFrame::OnTranslateKeys( wxKeyEvent& event )
 {
 	if ( event.GetKeyCode() == WXK_ESCAPE )
 		Close( true );
-	event.Skip();
+	// swallow all keys => no event.Skip();
 }
 
 void MusikPrefsFrame::SavePrefs()

@@ -272,7 +272,7 @@ void CPlaylistCtrl::OnColumnClick( wxListEvent& event )
 	bool desc = ( m_aColumnSorting.Item( ActualColumn ) < 0 );
 
 	g_Library.SortPlaylist( sortstr, desc );
-	g_PlaylistCtrl->Update();
+	Update();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -477,10 +477,10 @@ void CPlaylistCtrl::PlaySel( wxListEvent& WXUNUSED(event) )
 	g_Player.PlayCurSel();
 }
 
-void CPlaylistCtrl::TranslateKeys( wxKeyEvent& pEvent )
+void CPlaylistCtrl::TranslateKeys( wxKeyEvent& event )
 {	 
-	int nKeyCode = pEvent.GetKeyCode();
-	if ( pEvent.AltDown() == TRUE )
+	int nKeyCode = event.GetKeyCode();
+	if ( event.AltDown() == TRUE )
 	{
 		switch( nKeyCode )
 		{
@@ -490,7 +490,7 @@ void CPlaylistCtrl::TranslateKeys( wxKeyEvent& pEvent )
 				break;
 		}
 	}
-	else if ( pEvent.ControlDown() == TRUE )
+	else if ( event.ControlDown() == TRUE )
 	{
 		switch( nKeyCode )
 		{
@@ -506,7 +506,7 @@ void CPlaylistCtrl::TranslateKeys( wxKeyEvent& pEvent )
 			break;
 		}
 	}
-	else if ( pEvent.AltDown() == FALSE )
+	else if ( event.AltDown() == FALSE )
 	{
 		if( GetSelectedItemCount() > 0 )
 		{			
@@ -537,8 +537,8 @@ void CPlaylistCtrl::TranslateKeys( wxKeyEvent& pEvent )
 			}
 		}
 	}
-
-	pEvent.Skip();
+	else
+		event.Skip();   // we did not handle the key, so propagate it further
 }
 
 //---------------------------------------------------//
@@ -1105,11 +1105,14 @@ void CPlaylistCtrl::EditTag( int i )
 
 void CPlaylistCtrl::DelSelSongs(bool bDeleteFromDB, bool bDeleteFromComputer)
 {
-	if( bDeleteFromComputer )
-{
-	wxMessageDialog confirm( this, _( "Delete the selected songs from your computer?" ), MUSIK_VERSION, wxYES_NO | wxICON_STOP );
-	if ( confirm.ShowModal() == wxID_NO )
+	int nSelCount = GetSelectedItemCount();
+	if( nSelCount == 0)
 		return;
+	if( bDeleteFromComputer )
+	{
+		wxMessageDialog confirm( this, _( "Delete the selected songs from your computer?" ), MUSIK_VERSION, wxYES_NO | wxICON_STOP );
+		if ( confirm.ShowModal() == wxID_NO )
+			return;
 	}
 	else if( bDeleteFromDB )
 	{
@@ -1120,44 +1123,41 @@ void CPlaylistCtrl::DelSelSongs(bool bDeleteFromDB, bool bDeleteFromComputer)
 	wxString sError;
 	Freeze();
 	int nIndex = -1;
-	int nSelCount = GetSelectedItemCount();
+	
 
 	//--- find which songs are selected, delete as we go along ---//
 	wxString sFile;
 	nIndex = -1;
 	int n = 0;
-	int nFirstSel = 0;
+	int nFirstSel = GetNextItem( nIndex, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
+	g_PlaylistChanged = true;  // playlist will be changed, else we would not be here
 	for ( int i = 0; i < nSelCount; i++ )
 	{
 		//--- find next item to delete ---//
 		nIndex = GetNextItem( nIndex, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
 		if ( nIndex == -1 )
 			break;
-		//--- if its valid, delete ---//
-		g_Playlist.RemoveAt( nIndex - n, 1 );
-		g_PlaylistChanged = true;
-
-		sFile = g_Playlist.Item( nIndex - n ).Filename;
-		if( bDeleteFromComputer )
+		// correct nIndex, substract the number of entry,
+		// which have been already deleted from the array
+		// because GetNextItem() still returns the old index values
+  		nIndex -= i; 
+	   //--- if its valid, delete ---//
+		if( bDeleteFromDB )
 		{
-			if ( wxRemoveFile( sFile ) )
-				g_Library.RemoveSong( sFile );
-			else
-				sError = sError + sFile + wxT( "\n" );
-		}
-		else if( bDeleteFromDB )
-		{
+	    	sFile = g_Playlist.Item( nIndex ).Filename; // get the filename before song is deleted from the array
+			if( bDeleteFromComputer )
+			{
+				if ( !wxRemoveFile( sFile ) )
+					sError +=  sFile + wxT( "\n" );
+			}
 			g_Library.RemoveSong( sFile );
 		}
-		if ( i == 0 )
-			nFirstSel = nIndex;
-
-		n++;
+		g_Playlist.RemoveAt( nIndex, 1 );
 	}
 
 	//--- if certain files couldn't be deleted ---//
 	if ( !sError.IsEmpty() )
-		wxMessageBox( _( "Failed to delete the following files:\n\n " ) + sError, MUSIK_VERSION, wxICON_STOP );
+		wxMessageBox( _( "Failed to delete the following files from your computer:\n\n " ) + sError, MUSIK_VERSION, wxICON_STOP );
 
 	Update( false );
 

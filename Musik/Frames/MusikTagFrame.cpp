@@ -656,7 +656,7 @@ void MusikTagFrame::OnTranslateKeys( wxKeyEvent& event )
 	}
 
 	//--- enter, go next ---//
-	if ( event.GetKeyCode() == WXK_RETURN && !event.ShiftDown() )
+	else if ( event.GetKeyCode() == WXK_RETURN && !event.ShiftDown() )
 	{
 		if ( GetActiveThread() == NULL )
 		{
@@ -673,16 +673,17 @@ void MusikTagFrame::OnTranslateKeys( wxKeyEvent& event )
 	}
 
 	//--- shift-enter, go back ---//
-	if ( event.GetKeyCode() == WXK_RETURN && event.ShiftDown() && m_EditType == MUSIK_TAG_SINGLE )
+	else if ( event.GetKeyCode() == WXK_RETURN && event.ShiftDown() && m_EditType == MUSIK_TAG_SINGLE )
 	{
 		if ( GetActiveThread() == NULL )
 		{
 			if ( nIndex > 0 )
 				Prev();
 		}
+		return;
 	}
-
-	event.Skip();	
+  else
+		event.Skip();	
 }
 
 //--------------------------------------------------------------//

@@ -213,23 +213,14 @@ void CSourcesListBox::ShowMenu( wxCommandEvent &WXUNUSED(event) )
 	//--- if a dynamic playlist is selected, it can have	---//
 	//--- its query edited. other playlists cannot.			---//
 	//---------------------------------------------------------//
-	if ( GetSelType() == MUSIK_SOURCES_PLAYLIST_DYNAMIC )
-		sources_context_menu->Enable( MUSIK_SOURCE_CONTEXT_EDIT_QUERY, true );
-	else
-		sources_context_menu->Enable( MUSIK_SOURCE_CONTEXT_EDIT_QUERY, false );
+	sources_context_menu->Enable( MUSIK_SOURCE_CONTEXT_EDIT_QUERY, GetSelType() == MUSIK_SOURCES_PLAYLIST_DYNAMIC );
 
 	//---------------------------------------------------------//
 	//--- if a library is selected, it can't be deleted		---//
 	//---------------------------------------------------------//
-	if ( GetSelType() == MUSIK_SOURCES_LIBRARY )
-		sources_context_menu->Enable( MUSIK_SOURCE_CONTEXT_DELETE, false );
-	else
-		sources_context_menu->Enable( MUSIK_SOURCE_CONTEXT_DELETE, true );
+	sources_context_menu->Enable( MUSIK_SOURCE_CONTEXT_DELETE, GetSelType() != MUSIK_SOURCES_LIBRARY  );
 	
-	if ( nSelIndex ==  -1 )
-		sources_context_menu->Enable( MUSIK_SOURCE_CONTEXT_RENAME, false );
-	else
-		sources_context_menu->Enable( MUSIK_SOURCE_CONTEXT_RENAME, true );
+	sources_context_menu->Enable( MUSIK_SOURCE_CONTEXT_RENAME, nSelIndex !=  -1 );
 
 	PopupMenu( sources_context_menu, pos );
 }
@@ -455,15 +446,14 @@ void CSourcesListBox::EndEditLabel( wxListEvent& pEvent )
 	}
 }
 
-void CSourcesListBox::TranslateKeys( wxListEvent& pEvent )
+void CSourcesListBox::TranslateKeys( wxListEvent& event )
 {
-	if ( GetSelectedItemCount() == 1 )
-	{
-		if ( pEvent.GetKeyCode() == WXK_DELETE || pEvent.GetKeyCode() == WXK_BACK )
-			DelSel();
-		else if ( pEvent.GetKeyCode() == WXK_F2 )
-			RenameSel();
-	}
+	if ( event.GetKeyCode() == WXK_DELETE || event.GetKeyCode() == WXK_BACK )
+		DelSel();
+	else if ( event.GetKeyCode() == WXK_F2 )
+		RenameSel();
+	else
+		event.Skip();
 }
 
 void CSourcesListBox::Create()
@@ -656,6 +646,8 @@ void CSourcesListBox::RenameSel()
 
 int CSourcesListBox::GetType(long index)
 {
+	if( index < 0)
+		return -1;
 	wxString sType = g_SourcesList.Item( index ).Left( 3 );
 
 	if ( sType == wxT( "[l]" ) )

@@ -607,8 +607,8 @@ void MusikLibraryFrame::TranslateKeys( wxKeyEvent& event )
 		else
 			Close( true );
 	}
-
-	event.Skip();
+	
+	// swallow all keys => no event.Skip()
 }
 
 //-----------------------------------------------------------//
