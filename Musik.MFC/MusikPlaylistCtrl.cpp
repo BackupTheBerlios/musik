@@ -13,6 +13,7 @@
 #include "../Musik.Core/include/MusikLibrary.h"
 #include "../Musik.Core/include/MusikDynDspInfo.h"
 #include "../Musik.Core/include/MusikPlayer.h"
+#include "../Musik.Core/include/MusikBatchAdd.h"
 
 #include "MEMDC.H"
 
@@ -22,6 +23,10 @@ IMPLEMENT_DYNAMIC(CMusikPlaylistCtrl, CListCtrl)
 
 ///////////////////////////////////////////////////
 
+int WM_BATCHADD_PROGRESS	= RegisterWindowMessage( "BATCHADD_PROGRESS" );
+int WM_BATCHADD_END			= RegisterWindowMessage( "BATCHADD_END" );
+
+///////////////////////////////////////////////////
 
 BEGIN_MESSAGE_MAP(CMusikPlaylistCtrl, CListCtrl)
 	// mfc message maps
@@ -35,17 +40,28 @@ BEGIN_MESSAGE_MAP(CMusikPlaylistCtrl, CListCtrl)
 	ON_NOTIFY_REFLECT(NM_CLICK, OnNMClick)
 	ON_NOTIFY_REFLECT(LVN_ITEMACTIVATE, OnLvnItemActivate)
 	ON_NOTIFY_REFLECT(LVN_BEGINDRAG, OnLvnBegindrag)
+	
+	// custom messages
+	ON_REGISTERED_MESSAGE( WM_BATCHADD_PROGRESS, OnBatchAddProgress )
+	ON_REGISTERED_MESSAGE( WM_BATCHADD_END, OnBatchAddEnd )
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
 
-CMusikPlaylistCtrl::CMusikPlaylistCtrl( CFrameWnd* mainwnd, CMusikLibrary* library, CMusikPlayer* player, CMusikPrefs* prefs )
+CMusikPlaylistCtrl::CMusikPlaylistCtrl( CFrameWnd* mainwnd, CMusikLibrary* library, CMusikPlayer* player, CMusikPrefs* prefs, UINT dropid )
 {
 	// core
 	m_Playlist	= NULL;
 	m_Library	= library;
 	m_Prefs		= prefs;
 	m_Player	= player;
+
+	// dnd drop id
+	m_DropID = dropid;
+
+	// batch add thread
+	m_BatchAddThr = NULL;
+	m_BatchAddFnct = NULL;
 
 	// main window
 	m_MainWnd = mainwnd;
@@ -57,7 +73,6 @@ CMusikPlaylistCtrl::CMusikPlaylistCtrl( CFrameWnd* mainwnd, CMusikLibrary* libra
 
 	// dnd variables
 	m_IsWinNT = ( 0 == ( GetVersion() & 0x80000000 ) );
-	m_ClipboardFormat = RegisterClipboardFormat ( _T("MusikMFCPlaylist_3BCFE9D1_6D61_4cb6_9D0B_3BB3F643CA82") );
 
 	// fonts and colors
 	InitFonts();
@@ -545,8 +560,7 @@ void CMusikPlaylistCtrl::OnLvnBegindrag(NMHDR *pNMHDR, LRESULT *pResult)
 
     // For every selected item in the list, put the filename into lsDraggedFiles.
     pos = GetFirstSelectedItemPosition();
-	
-    while ( pos )
+	while ( pos )
     {
         nSelItem = GetNextSelectedItem ( pos );
 		sFile = m_Playlist->GetField( nSelItem, MUSIK_LIBRARY_TYPE_FILENAME );
@@ -614,8 +628,8 @@ void CMusikPlaylistCtrl::OnLvnBegindrag(NMHDR *pNMHDR, LRESULT *pResult)
     }
 
     // Put the data in the data source.
-    etc.cfFormat = m_ClipboardFormat;
-    datasrc.CacheGlobalData ( m_ClipboardFormat, hgBool, &etc );
+    etc.cfFormat = m_DropID;
+    datasrc.CacheGlobalData ( m_DropID, hgBool, &etc );
 
 	// post a message to the main frame, letting
 	// it know that drag and drop has started
@@ -704,3 +718,72 @@ void CMusikPlaylistCtrl::OnLvnBegindrag(NMHDR *pNMHDR, LRESULT *pResult)
 
 	*pResult = 0;
 }
+
+void CMusikPlaylistCtrl::OnDropFiles(HDROP hDropInfo)
+{
+	size_t nNumFiles;
+	TCHAR szNextFile [MAX_PATH];
+	
+	nNumFiles = DragQueryFile ( hDropInfo, -1, NULL, 0 );
+	CStdStringArray* files = NULL;
+
+	// if the thread exists, pause it
+	if ( m_BatchAddThr )
+		m_BatchAddThr->Pause();
+
+	// otherwise create a new list of files
+	else
+		files = new CStdStringArray();
+
+	for ( size_t i = 0; i < nNumFiles; i++ )
+	{
+		if ( DragQueryFile( hDropInfo, i, szNextFile, MAX_PATH ) > 0 )
+		{
+			if ( m_BatchAddThr )
+				m_BatchAddThr->m_Files->push_back( szNextFile );
+			else
+				files->push_back( szNextFile );
+		}
+	}
+
+	// if thread exists, resume it.
+	if ( m_BatchAddThr )
+		m_BatchAddThr->Resume();
+	else
+	{
+		m_BatchAddFnct = new CMusikBatchAddFunctor( this );
+		m_BatchAddThr = new CMusikBatchAdd( files, m_Player->GetPlaylist(), m_Library, m_BatchAddFnct );
+		m_BatchAddThr->Run();
+	}
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CMusikPlaylistCtrl::OnBatchAddProgress( WPARAM wParam, LPARAM lParam )
+{
+	return 0L;
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CMusikPlaylistCtrl::OnBatchAddEnd( WPARAM wParam, LPARAM lParam )
+{
+	if ( m_BatchAddThr )
+	{
+		delete m_BatchAddThr;
+		m_BatchAddThr = NULL;
+	}
+
+	if ( m_BatchAddFnct )
+	{
+		delete m_BatchAddFnct;
+		m_BatchAddFnct = NULL;
+	}
+
+	int WM_SELBOXRESET = RegisterWindowMessage( "SELBOXRESET" );
+	m_MainWnd->PostMessage( WM_SELBOXRESET );
+
+	return 0L;
+}
+
+///////////////////////////////////////////////////

@@ -197,6 +197,12 @@
 						RelativePath=".\MusikPlaylistCtrl.h">
 					</File>
 					<File
+						RelativePath=".\MusikPlaylistDropTarget.cpp">
+					</File>
+					<File
+						RelativePath=".\MusikPlaylistDropTarget.h">
+					</File>
+					<File
 						RelativePath=".\MusikPlaylistView.cpp">
 					</File>
 					<File

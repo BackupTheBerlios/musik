@@ -97,12 +97,14 @@ public:
 	bool PlayCmd( const CStdString& fn );
 
 	UINT m_uMsgCheckInst;
+	UINT m_uPlaylistDrop;
 
 protected: 
 
 	// init and clean musik core components
 	void InitPaths();
 	void InitMusik();
+	void InitDragTypes();
 	void CleanMusik();
 
 	// memory management

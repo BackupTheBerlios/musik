@@ -104,6 +104,7 @@ CMainFrame::CMainFrame()
 {
 	InitPaths();
 	InitMusik();
+	InitDragTypes();
 
 	m_CurPlaylist = NULL;
 	m_DynPlaylist = NULL;
@@ -142,6 +143,10 @@ void CMainFrame::InitPaths()
 	m_PrefsIni = m_UserDir + _T( "musikprefs.ini" );
 }
 
+void CMainFrame::InitDragTypes()
+{
+	m_uPlaylistDrop = RegisterClipboardFormat ( _T("MusikPlaylist_3BCFE9D1_6D61_4cb6_9D0B_3BB3F643CA82") );
+}
 
 ///////////////////////////////////////////////////
 
@@ -310,7 +315,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	#endif
 
 	// create the background window, which is the playlist
-	m_wndView = new CMusikPlaylistView( this, m_Library, m_Player, m_Prefs );
+	m_wndView = new CMusikPlaylistView( this, m_Library, m_Player, m_Prefs, m_uPlaylistDrop );
 	m_wndView->Create( NULL, NULL, AFX_WS_DEFAULT_VIEW, CRect(0, 0, 0, 0), this, AFX_IDW_PANE_FIRST, NULL );
 	m_wndView->GetCtrl()->UpdateV();
 

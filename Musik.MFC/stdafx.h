@@ -46,4 +46,5 @@
 	#define MUSIK_VERSION_STR "Musik 0.3.0 CVS" 
 #endif
 
+#include <shlwapi.h>
 #include <afxole.h>

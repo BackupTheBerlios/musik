@@ -6,6 +6,9 @@
 
 #include "MusikListCtrl.h"
 
+#include "../Musik.Core/include/StdString.h"
+#include "../Musik.Core/include/MusikFunctor.h"
+
 ///////////////////////////////////////////////////
 
 class CMusikLibrary;
@@ -13,15 +16,20 @@ class CMusikPlayer;
 class CMusikPrefs;
 class CMusikPlaylist;
 class CMusikDynDspInfo;
+class CMusikBatchAdd;
+class CMusikBatchAddFunctor;
 
 ///////////////////////////////////////////////////
 
 class CMusikPlaylistCtrl : public CListCtrl
 {
+
+	friend class CMusikPlaylistDropTarget;
+
 public:
 
 	// construct and destruct
-	CMusikPlaylistCtrl( CFrameWnd* mainwnd, CMusikLibrary* library, CMusikPlayer* player, CMusikPrefs* prefs );
+	CMusikPlaylistCtrl( CFrameWnd* mainwnd, CMusikLibrary* library, CMusikPlayer* player, CMusikPrefs* prefs, UINT dropid );
 	virtual ~CMusikPlaylistCtrl();
 
 	// update the virtual list control
@@ -35,6 +43,9 @@ public:
 	void SetPlaylist( CMusikPlaylist* playlist );
 
 protected:
+
+	// is dnd active
+	UINT m_DropID;
 
 	// pointer to main window
 	CFrameWnd* m_MainWnd;
@@ -76,6 +87,15 @@ protected:
 	afx_msg void OnLvnItemActivate(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnLvnBegindrag(NMHDR *pNMHDR, LRESULT *pResult);
 
+	// CMusikPlaylistDropTarget calls
+	// this function once files have
+	// been dropped...
+	void OnDropFiles(HDROP hDropInfo);
+
+	// custom message maps
+	afx_msg LRESULT OnBatchAddProgress( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnBatchAddEnd( WPARAM wParam, LPARAM lParam );
+
 	// macros
 	DECLARE_DYNAMIC(CMusikPlaylistCtrl)
 	DECLARE_MESSAGE_MAP()
@@ -91,6 +111,45 @@ private:
 	// dnd stuff
 	bool m_IsWinNT;
 	size_t m_ClipboardFormat;
+
+	// batch add files thread
+	CMusikBatchAdd* m_BatchAddThr;
+	CMusikBatchAddFunctor* m_BatchAddFnct;
+};
+
+///////////////////////////////////////////////////
+
+class CMusikBatchAddFunctor : public CMusikFunctor
+{
+public:
+
+	CMusikBatchAddFunctor( CWnd* parent)
+	{ 
+		m_Parent = parent; 
+	}
+
+	virtual void OnThreadStart()
+	{
+		TRACE0( "CMusikBatchAdd thread started...\n" );
+	}
+
+	virtual void OnThreadEnd()
+	{
+		TRACE0( "CMusikBatchAdd thread complete...\n" );
+
+		int WM_BATCHADD_END = RegisterWindowMessage( "BATCHADD_END" );
+		m_Parent->PostMessage( WM_BATCHADD_END );		
+	}
+
+	virtual void OnThreadProgress( size_t progress )
+	{
+		CStdString s;
+		s.Format( "CMusikBatchAdd %d%% complete.\n", progress );
+		TRACE0( s.c_str() );
+	}
+
+private:
+	CWnd* m_Parent;
 };
 
 ///////////////////////////////////////////////////
