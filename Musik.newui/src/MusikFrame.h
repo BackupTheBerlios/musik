@@ -1,8 +1,8 @@
 #ifndef C_MUSIK_FRAME_H
 #define C_MUSIK_FRAME_H
 
-#include <wx/socket.h>
-#include <wx/laywin.h>
+#include "wx/wxprec.h"
+
 #include "MusikSourcesCtrl.h"
 #include "MusikSelectionAreaCtrl.h"
 #include "MusikPlaylistCtrl.h"
@@ -21,9 +21,11 @@ private:
 	//-------------------------------------------------//
 	//--- sashes that are of interest				---//
 	//-------------------------------------------------//
-	wxSashLayoutWindow* m_SourcesSash;
-	wxSashLayoutWindow* m_SelectionAreaSash;
-	wxSashLayoutWindow* m_PlaylistSash;	
+	wxWindow*	m_NowPlayingSash;
+	wxWindow*	m_SourcesSash;
+	wxWindow*	m_SelectionAreaSash;
+	wxWindow*	m_PlaylistSash;	
+	wxWindow*	m_SimpleQuerySash;
 
 	//-------------------------------------------------//
 	//--- main controls								---//
@@ -32,13 +34,6 @@ private:
 	CMusikSelectionAreaCtrl *m_SelectionCtrl;
 	CMusikPlaylistCtrl *m_PlaylistCtrl;
 	CMusikSimpleQueryCtrl *m_SimpleQueryCtrl;
-
-	//-------------------------------------------------//
-	//--- main controls' respective sizers			---//
-	//-------------------------------------------------//
-	wxBoxSizer *m_SourcesSizer;
-	wxBoxSizer *m_SelectionSizer;
-	wxBoxSizer *m_PlaylistSizer;
 };
 
 #endif

@@ -34,7 +34,10 @@ void CMusikSelectionAreaCtrl::Create()
 	for ( size_t i = 0; i < MAX_SELECTION_CTRLS; i++ )
 	{
 		m_SelectionCtrls[i] = new CMusikSelectionCtrl( this, -1 );
-		m_SelectionSizer->Add( m_SelectionCtrls[i], 1, wxALL | wxEXPAND, 1 );
+		if ( i < ( MAX_SELECTION_CTRLS - 1 ) )
+			m_SelectionSizer->Add( m_SelectionCtrls[i], 1, wxRIGHT | wxEXPAND, 4 );
+		else
+			m_SelectionSizer->Add( m_SelectionCtrls[i], 1, wxEXPAND );
 	}
 
 	Layout();

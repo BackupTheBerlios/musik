@@ -9,15 +9,16 @@
 CMusikFrame::CMusikFrame() 
 	: wxFrame( (wxFrame*)NULL, -1, wxT( "Musik Test UI" ), wxDefaultPosition, wxSize( 800, 600 ), wxDEFAULT_FRAME_STYLE | wxTAB_TRAVERSAL | wxCLIP_CHILDREN | wxNO_FULL_REPAINT_ON_RESIZE )
 {
+	Centre();
+
 	SetIcon( wxICON( musicbox ) );
 	SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNFACE ) );
 
 	CreateSashes();
 	CreateControls();
 
-
 	Layout();
-	Centre();
+	Refresh();
 }
 
 CMusikFrame::~CMusikFrame()
@@ -31,22 +32,51 @@ void CMusikFrame::CreateSashes()
 	//---------------------------------//	
 	wxSashLayoutWindow *pSash;
 	pSash = new wxSashLayoutWindow( this, -1, wxDefaultPosition, wxDefaultSize, wxNO_BORDER );
-	pSash->SetAlignment( wxLAYOUT_LEFT );
-	pSash->SetDefaultSize( wxSize( 500, 500 ) );
-	pSash->SetOrientation( wxLAYOUT_VERTICAL );
 	pSash->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNFACE ) );
-	wxWindow* pMain = pSash;
+	wxSashLayoutWindow* pMain = pSash;
 
 	//---------------------------------//
-	//--- sources					---//
+	//--- now playing				---//
+	//---------------------------------//
+	pSash = new wxSashLayoutWindow( pMain, -1, wxDefaultPosition, wxDefaultSize, wxNO_BORDER );
+	pSash->SetAlignment( wxLAYOUT_BOTTOM );
+	pSash->SetDefaultSize( wxSize( -1, 80 ) );
+	pSash->SetOrientation( wxLAYOUT_HORIZONTAL );
+	pSash->SetBackgroundColour( wxColour( 255, 0, 255 ) );
+	pSash->SetSashVisible( wxSASH_TOP, true );
+	m_NowPlayingSash = pSash;
+	
+	
+	//---------------------------------//
+	//--- left side					---//
 	//---------------------------------//	
 	pSash = new wxSashLayoutWindow( pMain, -1, wxDefaultPosition, wxDefaultSize, wxNO_BORDER );
 	pSash->SetAlignment( wxLAYOUT_LEFT );
 	pSash->SetDefaultSize( wxSize( 120, -1 ) );
 	pSash->SetOrientation( wxLAYOUT_VERTICAL );
-	pSash->SetBackgroundColour( wxColour( 255, 0, 0 ) );
 	pSash->SetSashVisible( wxSASH_RIGHT, true );
+	wxWindow* pLeft = pSash;
+
+	//---------------------------------//
+	//--- sources					---//
+	//---------------------------------//
+	pSash = new wxSashLayoutWindow( pLeft, -1, wxDefaultPosition, wxDefaultSize, wxNO_BORDER );
+	pSash->SetAlignment( wxLAYOUT_TOP );
+	pSash->SetOrientation( wxLAYOUT_HORIZONTAL );
+	pSash->SetBackgroundColour( wxColour( 0, 0, 255 ) );
 	m_SourcesSash = pSash;
+
+	//---------------------------------//
+	//--- simple query				---//
+	//---------------------------------//
+	/*
+	pSash = new wxSashLayoutWindow( pLeft, -1, wxDefaultPosition, wxDefaultSize, wxNO_BORDER );
+	pSash->SetAlignment( wxLAYOUT_BOTTOM );
+	pSash->SetDefaultSize( wxSize( 20, 20 ) );
+	pSash->SetOrientation( wxLAYOUT_HORIZONTAL );
+	pSash->SetBackgroundColour( wxColour( 0, 255, 255 ) );
+	m_SimpleQuerySash = pSash;
+	*/
 
 	//---------------------------------//
 	//--- right side				---//
@@ -83,29 +113,7 @@ void CMusikFrame::CreateSashes()
 void CMusikFrame::CreateControls()
 {
 	//--- left or "sources" area	---//
-	m_SourcesCtrl = new CMusikSourcesCtrl( m_SourcesSash, -1 );
-	m_SimpleQueryCtrl = new CMusikSimpleQueryCtrl( m_SourcesSash, -1 );
-
-	m_SourcesSizer = new wxBoxSizer( wxVERTICAL );
-	m_SourcesSizer->Add( m_SourcesCtrl, 1, wxALL | wxEXPAND, 1 );
-	m_SourcesSizer->Add( m_SimpleQueryCtrl, 0, wxALL, 1 );
-	//m_SourcesSash->SetSizer( m_SourcesSizer );
-	//m_SourcesSash->Layout();
-
-	/*
-	wxBoxSizer *p1 = new wxBoxSizer( wxVERTICAL );
-	wxBoxSizer *p2 = new wxBoxSizer( wxHORIZONTAL );
-
-	m_SourcesCtrl = new CMusikSourcesCtrl( this, -1 );
-	m_SelectionCtrl = new CMusikSelectionAreaCtrl( this, -1 );
-	m_PlaylistCtrl = new CMusikPlaylistCtrl( this, -1 );
-
-	p1->Add( m_SelectionCtrl, 1, wxEXPAND | wxALL, 1 );
-	p1->Add( m_PlaylistCtrl, 3, wxEXPAND | wxALL, 1 );
-
-	p2->Add( m_SourcesCtrl, 1, wxEXPAND | wxALL, 1 );
-	p2->Add( p1, 5, wxEXPAND | wxALL, 1 );
-
-	SetSizer( p2 );
-	*/
+	//m_SourcesCtrl = new CMusikSourcesCtrl( m_SourcesSash, -1 );
+	//m_SelectionCtrl = new CMusikSelectionAreaCtrl( m_SelectionAreaSash, -1 );
+	//m_PlaylistCtrl = new CMusikPlaylistCtrl( m_PlaylistSash, -1 );
 }
