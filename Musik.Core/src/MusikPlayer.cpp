@@ -180,6 +180,9 @@ static void MusikPlayerWorker( CMusikPlayer* player )
 			
 		}
 
+		else if ( !player->IsPlaying() && player->IsShuttingDown() )
+			player->SetSafeShutdown();
+
 		ACE_OS::sleep( sleep_regular );
 	}
 
@@ -244,7 +247,7 @@ CMusikPlayer::~CMusikPlayer()
 
 	// thread will trigger this back
 	// once it has exited
-	if ( IsPlaying() )
+	if ( IsPlaying() && IsCrossfaderActive() )
 	{
 		while ( !m_ShutDown )
 			Sleep( 100 );
@@ -597,16 +600,16 @@ void CMusikPlayer::Stop()
 
 void CMusikPlayer::Exit()
 {
-	if ( !IsCrossfaderActive() )
-	{
-		m_ShutDown = true;
-		CleanOldStreams( true );
-	}
-	else
+	if ( IsCrossfaderActive() && IsPlaying() )
 	{
 		m_Handle++;
 		m_FadeType = MUSIK_CROSSFADER_EXIT;
 		FlagCrossfade();
+	}
+	else
+	{
+		m_ShutDown = true;
+		CleanOldStreams( true );
 	}
 }
 

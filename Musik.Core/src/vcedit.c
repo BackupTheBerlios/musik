@@ -6,7 +6,7 @@
  *
  * Comment editing backend, suitable for use by nice frontend interfaces.
  *
- * last modified: $Id: vcedit.c,v 1.3 2003/11/25 04:59:11 avatar5d Exp $
+ * last modified: $Id: vcedit.c,v 1.4 2003/11/28 20:03:14 avatar5d Exp $
  */
 
 #ifndef _(x)
@@ -21,7 +21,7 @@
 #include <ogg/ogg.h>
 #include <vorbis/codec.h>
 
-#include "vcedit.h"
+#include "../include/vcedit.h"
 //#include "i18n.h"
 
 #define CHUNKSIZE 4096
