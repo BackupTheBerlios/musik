@@ -23,6 +23,8 @@
 //
 // Class(es)
 //
+//   CmusikString
+//
 // Filename(s): 
 //
 //   musikConfig.h
@@ -32,6 +34,9 @@
 //   Some stl vector arrays for objects commonly used.
 //   Using dynamic arrays helps to keep things easily
 //   maintained.
+//
+//   A CmusikString is a CStdString, renamed becuase 
+//   I think it looks prettier.
 //
 ///////////////////////////////////////////////////
 

@@ -289,10 +289,10 @@ private:
 	CmusikString m_TimeAdded;
 
 	// internal song query functions
-	int			QuerySongs		( const CmusikString & query, CmusikPlaylist & target );	
+	int				QuerySongs		( const CmusikString & query, CmusikPlaylist & target );	
 	CmusikString	GetOrder		( int type, bool terminate = true );
-	int			QueryCount		( const char* pQueryResult );
-	void		VerifyYearList	( CmusikStringArray & list );
+	int				QueryCount		( const char* pQueryResult );
+	void			VerifyYearList	( CmusikStringArray & list );
 };
 
 ///////////////////////////////////////////////////
