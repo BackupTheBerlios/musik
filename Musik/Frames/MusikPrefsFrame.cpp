@@ -321,6 +321,14 @@ MusikPrefsDialog::MusikPrefsDialog( wxWindow *pParent, const wxString &sTitle )
 	//-------------------------//
 	//--- options -> tunage ---//
 	//-------------------------//
+// IMPORTANT! Create wxStaticBox BEFORE creation of
+// controls which should be placed inside
+// or else they wont be displayed on wxGTK		
+	sbTunageFile = new wxStaticBox( this, -1, _("Write to file") );
+	sbTunageURL = new wxStaticBox( this, -1, _("Post to a website") );
+	sbTunageApp = new wxStaticBox( this, -1, _("Run a program") );
+	sbTunageMisc = new wxStaticBox( this, -1, _("Misc.") );
+
 	PREF_CREATE_CHECKBOX(TunageWriteFile,_("Enable"));
 	PREF_CREATE_CHECKBOX(TunageAppendFile, _("Append to file"));
 	PREF_CREATE_CHECKBOX(TunagePostURL, _("Enable"));
@@ -350,10 +358,6 @@ MusikPrefsDialog::MusikPrefsDialog( wxWindow *pParent, const wxString &sTitle )
 	hsTunageStoppedText->Add( tcTunageStoppedText, 1, 0, 0 );
 
 	
-	sbTunageFile = new wxStaticBox( this, -1, _("Write to file") );
-	sbTunageURL = new wxStaticBox( this, -1, _("Post to a website") );
-	sbTunageApp = new wxStaticBox( this, -1, _("Run a program") );
-	sbTunageMisc = new wxStaticBox( this, -1, _("Misc.") );
 
 	wxStaticBoxSizer *vsTunageFile = new wxStaticBoxSizer( sbTunageFile, wxVERTICAL );
 	vsTunageFile->Add( chkTunageWriteFile,		0, wxALL, 2 );
@@ -403,6 +407,9 @@ MusikPrefsDialog::MusikPrefsDialog( wxWindow *pParent, const wxString &sTitle )
 	//-------------------------//
 	//--- options -> Auto DJ ---//
 	//-------------------------//
+	sbAutoDj = new wxStaticBox( this, -1, _("Auto DJ") );// IMPORTANT! Create wxStaticBox BEFORE creation of
+							     // controls which should be placed inside
+							     // or else they wont be displayed on wxGTK						
 
 	PREF_CREATE_MULTILINETEXTCTRL2(AutoDjFilter,80,wxFILTER_NONE);
 	
@@ -423,7 +430,6 @@ MusikPrefsDialog::MusikPrefsDialog( wxWindow *pParent, const wxString &sTitle )
 	hsAutoDJChooseAlbumsToPlayInAdvance->Add( scAutoDJChooseAlbumsToPlayInAdvance, 1, 0, 0 );
 
 
-	sbAutoDj = new wxStaticBox( this, -1, _("Auto DJ") );
 	wxStaticBoxSizer *vsAutoDj = new wxStaticBoxSizer( sbAutoDj, wxVERTICAL );
 	vsAutoDj->Add( hsAutoDjFilter,								0, wxALL | wxEXPAND, 2 );
 	vsAutoDj->Add( hsAutoDjDoNotPlaySongPlayedTheLastNHours,	0, wxALL | wxEXPAND, 2 );
