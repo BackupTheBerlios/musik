@@ -16,20 +16,7 @@
 //--- globals ---//
 #include "../../MusikGlobals.h"
 
-class COggInfo
-{
-public:
-	bool loadInfo( const wxString &filename );
+bool loadOGGInfo( CSongMetaData & MetaData );
 
-	wxString GetArtist()	{ return m_Song.Artist; }
-	wxString GetTitle()		{ return m_Song.Title; }
-	wxString GetAlbum()		{ return m_Song.Album; }
-	wxString GetGenre()		{ return m_Song.Genre; }
-	wxString GetYear()		{ return m_Song.Year; }
-	int		 GetTrackNum()	{ return m_Song.TrackNum; }
-	int		 GetBitrate()	{ return m_Song.Bitrate; }
-private:
-	CMusikSong m_Song;
-};
 
 #endif

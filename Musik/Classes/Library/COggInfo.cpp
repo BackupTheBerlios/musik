@@ -21,39 +21,35 @@
 
 #include "../../MusikUtils.h"
 
-bool COggInfo::loadInfo( const wxString &filename )
+bool loadOGGInfo( CSongMetaData & MetaData )
 {
-	if ( !wxFileExists( filename ) )
+	FILE *audiofile = wxFopen( MetaData.Filename.GetFullPath(), wxT("rb") );
+	if( !audiofile )
 		return false;
+	// get filesize
+	fseek(audiofile,0,SEEK_END);
+	MetaData.nFilesize = ftell(audiofile);
+	fseek(audiofile,0,SEEK_SET);
 
-	
-	FILE *audiofile = wxFopen( filename, wxT("rb") );
 	OggVorbis_File vorbisfile;
 
 	if ( ov_open( audiofile, &vorbisfile, NULL, 0 ) >= 0 )
 	{
 		vorbis_comment *pComment = ov_comment( &vorbisfile, -1 );
 
-		m_Song.Artist		= ConvDBFieldToWX( vorbis_comment_query( pComment, "artist",	0 ) );
-		m_Song.Album		= ConvDBFieldToWX( vorbis_comment_query( pComment, "album",		0 ) );
-		m_Song.Title		= ConvDBFieldToWX( vorbis_comment_query( pComment, "title",		0 ) );
-		m_Song.Genre		= ConvDBFieldToWX( vorbis_comment_query( pComment, "genre",		0 ) );
-		m_Song.Year			= ConvDBFieldToWX( vorbis_comment_query( pComment, "date", 		0 ) );
-		m_Song.TrackNum		= wxStringToInt( ConvDBFieldToWX( vorbis_comment_query( pComment, "tracknumber", 0 ) ) );
-
-		//--- if the title is empty, make it the filenaem ---//
-		if ( m_Song.Title.IsEmpty() )
-		{
-			wxFileName fn( filename );
-			wxString fullname = fn.GetFullName();
-			wxString justfilename = fullname.Left( fullname.Length() - fn.GetExt().Len()-1 );
-			m_Song.Title = justfilename;
-		}
+		MetaData.Artist = vorbis_comment_query( pComment, "artist",	0 );
+		MetaData.Album	= vorbis_comment_query( pComment, "album",		0 );
+		MetaData.Title	= vorbis_comment_query( pComment, "title",		0 );
+		MetaData.Genre	= vorbis_comment_query( pComment, "genre",		0 );
+		MetaData.Year	= vorbis_comment_query( pComment, "date", 		0 );
+		char *szTracknum = vorbis_comment_query( pComment, "tracknumber", 0 );
+		MetaData.nTracknum = atol( szTracknum ? szTracknum : "0" );
 
 		//--- grab the bitrate ---//
 		vorbis_info *pInfo = ov_info( &vorbisfile,-1 );
-		m_Song.Bitrate = (int)pInfo->bitrate_nominal / 1000;
-
+		MetaData.nBitrate = (int)pInfo->bitrate_nominal / 1000;
+		MetaData.nDuration_ms = ov_time_total(&vorbisfile,-1) *1000;
+		
 		//--- cleanup ---//
 		vorbis_comment_clear( pComment );
 		vorbis_info_clear( pInfo );
