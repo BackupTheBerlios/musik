@@ -1071,12 +1071,6 @@ void CPlaylistCtrl::Update( bool bSelFirst)
 	//--- sel first item, if we're supposed to ---//
 	if ( bSelFirst && GetItemCount() )
 		SetItemState( 0, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );	
-	
-	if(g_SourcesCtrl->GetSelType() == MUSIK_SOURCES_NOW_PLAYING)
-	{
-		wxGetApp().Player.RefreshInternalPlaylist();
-	}
-	
 }
 
 void CPlaylistCtrl::RescaleColumns( bool bFreeze, bool WXUNUSED(bSave), bool bAutoFit )

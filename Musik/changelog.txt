@@ -1,4 +1,5 @@
 0.3.1.1 to 0.3.1.2
+- fixed bug: now playing list was not properly refreshed , when view was changed back to now playing.
 - fixed bug: rename mask setting change was not used or saved.
 + Query enter dialog has now a multi line text control for better input comfort
 + now it is possible to use songhistory in your dynamic paylist query. for example to display the last 50 played songs, the query is

@@ -148,7 +148,11 @@ public:
 	int GetCrossfadeType		() { return m_CrossfadeType; }
 	size_t GetShuffledSong		();
 	EMUSIK_PLAYMODE GetPlaymode () { return m_Playmode; }
-	const CMusikSongArray &	GetPlaylist	( ) {return  m_Playlist;}
+	const CMusikSongArray &	GetPlaylist	( ) 
+	{
+		RefreshInternalPlaylist();
+		return  m_Playlist;
+	}
 	void RefreshInternalPlaylist();
 	
 	//------------//

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-06-19 12:33+0200\n"
+"POT-Creation-Date: 2004-06-20 15:14+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -45,7 +45,7 @@ msgstr ""
 msgid " Library Setup"
 msgstr ""
 
-#: ../Frames/MusikLibraryFrame.cpp:689
+#: ../Frames/MusikLibraryFrame.cpp:686
 msgid " Library Setup - Elapsed Time: "
 msgstr ""
 
@@ -53,7 +53,7 @@ msgstr ""
 msgid " Preferences"
 msgstr ""
 
-#: ../Frames/MusikLibraryFrame.cpp:568
+#: ../Frames/MusikLibraryFrame.cpp:565
 msgid ""
 " has detected that your library configuration has changed.\n"
 "\n"
@@ -526,11 +526,11 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:1294
+#: ../Classes/PlaylistCtrl.cpp:1288
 msgid "Delete the selected songs from wxMusik's internal database?"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:1288
+#: ../Classes/PlaylistCtrl.cpp:1282
 msgid "Delete the selected songs from your computer?"
 msgstr ""
 
@@ -653,7 +653,7 @@ msgstr ""
 msgid "Failed to copy file %s. Continue?"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:1350
+#: ../Classes/PlaylistCtrl.cpp:1344
 msgid ""
 "Failed to delete the following files from your computer:\n"
 "\n"
@@ -895,7 +895,7 @@ msgstr ""
 msgid "Please choose location to copy songs to:"
 msgstr ""
 
-#: ../Frames/MusikLibraryFrame.cpp:424
+#: ../Frames/MusikLibraryFrame.cpp:421
 msgid "Please choose music directory."
 msgstr ""
 
@@ -996,12 +996,12 @@ msgstr ""
 msgid "S&imple Query"
 msgstr ""
 
-#: ../Frames/MusikLibraryFrame.cpp:750
+#: ../Frames/MusikLibraryFrame.cpp:747
 #, c-format
 msgid "Scanning directory for audio files: %d files scanned"
 msgstr ""
 
-#: ../Frames/MusikLibraryFrame.cpp:725
+#: ../Frames/MusikLibraryFrame.cpp:722
 #, c-format
 msgid "Scanning for and adding new files: %d / %d (ESC to abort)"
 msgstr ""
@@ -1010,7 +1010,7 @@ msgstr ""
 msgid "Scanning for changed attributes"
 msgstr ""
 
-#: ../Frames/MusikLibraryFrame.cpp:737
+#: ../Frames/MusikLibraryFrame.cpp:734
 #, c-format
 msgid "Scanning library for obsolete files: %d / %d (ESC to abort)"
 msgstr ""
@@ -1146,7 +1146,7 @@ msgstr ""
 msgid "The following fields can be used in your query"
 msgstr ""
 
-#: ../Classes/PlaylistCtrl.cpp:1409
+#: ../Classes/PlaylistCtrl.cpp:1403
 msgid "There are no pending tags available to display."
 msgstr ""
 
@@ -1177,7 +1177,20 @@ msgstr ""
 msgid "This genre"
 msgstr ""
 
-#: ../Frames/MusikLibraryFrame.cpp:540
+#: ../Frames/MusikLibraryFrame.cpp:250
+#, c-format
+msgid ""
+"This is the first time %s has been run.\n"
+"\n"
+"To begin, you must first add directories to the database. Select \"Add "
+"Directory\" from the \"Directories\" menu, then press the \"OK\" button to "
+"rebuild the library.\n"
+"\n"
+"To display this window again, press CTRL+L in the main window, or select "
+"\"Library Setup\" from the \"Library\" menu."
+msgstr ""
+
+#: ../Frames/MusikLibraryFrame.cpp:537
 msgid ""
 "This will wipe the library clean. Are you ABSOLUTELY SURE you want to do "
 "this?"

@@ -48,19 +48,19 @@ Source: ..\..\WINDOWS\SYSTEM32\msvcr71.dll; DestDir: {app}; Flags: promptifolder
 
 Source: contrib\playlists\*.mpd; DestDir: {userappdata}\..\.Musik\playlists; Flags: overwritereadonly; Components: Dynamic_Playlist_Examples
 Source: contrib\playlists\*.mpu; DestDir: {userappdata}\..\.Musik\playlists; Flags: overwritereadonly; Components: Radio_Channels
-Source: contrib\playlists\*.mpu; DestDir: {app}\..\.Musik\playlists; Flags: overwritereadonly; Components: Radio_Channels_win9x
-Source: contrib\playlists\*.mpd; DestDir: {app}\..\.Musik\playlists; Flags: overwritereadonly; Components: Dynamic_Playlist_Examples_win9x
+Source: contrib\playlists\*.mpu; DestDir: {app}\.Musik\playlists; Flags: overwritereadonly; Components: Radio_Channels_win9x
+Source: contrib\playlists\*.mpd; DestDir: {app}\.Musik\playlists; Flags: overwritereadonly; Components: Dynamic_Playlist_Examples_win9x
 Source: Release Unicode\{#MyAppExe}; DestDir: {app}; MinVersion: 0,4.0.1381sp6; Flags: promptifolder
 Source: locale\de\*.mo; DestDir: {app}\locale\de; Flags: overwritereadonly; Languages: de
 Source: data\*; DestDir: {app}\data; Flags: overwritereadonly
 [Icons]
 Name: {group}\{#MyAppName}; Filename: {app}\{#MyAppExe}; WorkingDir: {app}; IconIndex: 0
-Name: {group}\{cm:UninstallProgram,{cm:{#MyAppName}}}; Filename: {uninstallexe}
+Name: {group}\{cm:UninstallProgram,{#MyAppName}}; Filename: {uninstallexe}
 Name: {userdesktop}\{#MyAppName}; Filename: {app}\{#MyAppExe}; Tasks: desktopicon; WorkingDir: {app}; IconIndex: 0
 Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}; Filename: {app}\{#MyAppExe}; Tasks: quicklaunchicon; WorkingDir: {app}; IconIndex: 0
 
 [Run]
-Filename: {app}\{#MyAppExe}; Description: {cm:Launch,{cm:{#MyAppName}}}; Flags: nowait postinstall skipifsilent
+Filename: {app}\{#MyAppExe}; Description: {cm:Launch,{#MyAppName}}; Flags: nowait postinstall skipifsilent
 [Components]
 Name: Dynamic_Playlist_Examples; Description: {cm:Examples_of_Dynamic_Playlists}; Types: custom full; MinVersion: 0,4.0.1381
 Name: Radio_Channels; Description: {cm:Examples_of_Net_Radio_Channels}; Types: custom full; MinVersion: 0,4.0.1381
@@ -70,6 +70,7 @@ Name: Dynamic_Playlist_Examples_win9x; Description: {cm:Examples_of_Dynamic_Play
 Name: {app}\Musik.exe; Type: files
 [UninstallDelete]
 Name: {userappdata}\..\.Musik; Type: filesandordirs; MinVersion: 0,4.0.1381
+Name: {app}\.Musik; Type: filesandordirs; MinVersion: 4.0.950,0; OnlyBelowVersion: 0,4.0.1381
 [Registry]
 Root: HKCR; SubKey: .mp3; ValueType: string; ValueData: Mp3 File; Flags: uninsdeletekey
 Root: HKCR; SubKey: Mp3 File; ValueType: string; ValueData: Mp3 File; Flags: uninsdeletekey; Languages: en
@@ -90,14 +91,12 @@ de.BeveledLabel=Deutsch
 
 [CustomMessages]
 en.Launch=Launch %1
-en.{#MyAppName}=MyAppName
 en.Examples_of_Dynamic_Playlists=Examples of Dynamic Playlists
 en.Examples_of_Net_Radio_Channels=Examples of Net Radio Channels
 en.Create_a_Destop_Icon =Create a &desktop icon
 en.Additional_icons=Additional icons
 en.Create_a_Quick_Launch_Icon=Create a &Quick Launch icon
 de.Launch=Starte %1
-de.{#MyAppName}=MyAppName
 de.Examples_of_Dynamic_Playlists=Beispiele für dynamische Liedlisten
 de.Examples_of_Net_Radio_Channels=Beispiele für Netzradios
 de.Create_a_Destop_Icon =Erzeuge ein &Desktop Icon

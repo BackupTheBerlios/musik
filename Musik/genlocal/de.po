@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wxMusik-0.3.1.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-06-19 12:33+0200\n"
+"POT-Creation-Date: 2004-06-20 15:14+0200\n"
 "PO-Revision-Date: 2004-05-30 19:46+0100\n"
 "Last-Translator:Gunnar Roth <gunnar.roth@gmx.de>\n"
 "Language-Team: wxMusik Team <gunnar.roth@gmx.de>\n"
@@ -44,7 +44,7 @@ msgstr " Effekte"
 msgid " Library Setup"
 msgstr " Einrichten der Bibliothek"
 
-#: ../Frames/MusikLibraryFrame.cpp:689
+#: ../Frames/MusikLibraryFrame.cpp:686
 msgid " Library Setup - Elapsed Time: "
 msgstr " Die zum Einrichten der Bibliothek benötigte Zeit ist: "
 
@@ -52,7 +52,7 @@ msgstr " Die zum Einrichten der Bibliothek benötigte Zeit ist: "
 msgid " Preferences"
 msgstr " Voreinstellungen"
 
-#: ../Frames/MusikLibraryFrame.cpp:568
+#: ../Frames/MusikLibraryFrame.cpp:565
 msgid ""
 " has detected that your library configuration has changed.\n"
 "\n"
@@ -558,11 +558,11 @@ msgstr "Überblender (Crossfader)"
 msgid "Delete"
 msgstr "Entferne"
 
-#: ../Classes/PlaylistCtrl.cpp:1294
+#: ../Classes/PlaylistCtrl.cpp:1288
 msgid "Delete the selected songs from wxMusik's internal database?"
 msgstr "Entferne die ausgewählten Lieder aus der Datenbank von wxMusik?"
 
-#: ../Classes/PlaylistCtrl.cpp:1288
+#: ../Classes/PlaylistCtrl.cpp:1282
 msgid "Delete the selected songs from your computer?"
 msgstr "Lösche die ausgewählten Liededateien von Ihrem Computer?"
 
@@ -685,7 +685,7 @@ msgstr "Effekte\tCtrl-E"
 msgid "Failed to copy file %s. Continue?"
 msgstr "Ein Fehler ist beim Kopieren der Datei %s aufgetreten. Fortsetzen?"
 
-#: ../Classes/PlaylistCtrl.cpp:1350
+#: ../Classes/PlaylistCtrl.cpp:1344
 msgid ""
 "Failed to delete the following files from your computer:\n"
 "\n"
@@ -934,7 +934,7 @@ msgstr "Liedlistengröße:"
 msgid "Please choose location to copy songs to:"
 msgstr "Bitte geben sie den Ort an, zu dem kopiert werden soll:"
 
-#: ../Frames/MusikLibraryFrame.cpp:424
+#: ../Frames/MusikLibraryFrame.cpp:421
 msgid "Please choose music directory."
 msgstr "Bitte wählen sie ein Verzeichnis aus."
 
@@ -1035,12 +1035,12 @@ msgstr "Starte ein Programm"
 msgid "S&imple Query"
 msgstr "&Einfache Suche"
 
-#: ../Frames/MusikLibraryFrame.cpp:750
+#: ../Frames/MusikLibraryFrame.cpp:747
 #, c-format
 msgid "Scanning directory for audio files: %d files scanned"
 msgstr "Durchsuche Verzeichnis nach Audiodateien: %d Dateien gefunden"
 
-#: ../Frames/MusikLibraryFrame.cpp:725
+#: ../Frames/MusikLibraryFrame.cpp:722
 #, c-format
 msgid "Scanning for and adding new files: %d / %d (ESC to abort)"
 msgstr "Durchsuche und füge neue Dateien hinzu: %d / %d (Mit ESC abbrechen)"
@@ -1049,7 +1049,7 @@ msgstr "Durchsuche und füge neue Dateien hinzu: %d / %d (Mit ESC abbrechen)"
 msgid "Scanning for changed attributes"
 msgstr "Durchsuche nach geänderten Attributen"
 
-#: ../Frames/MusikLibraryFrame.cpp:737
+#: ../Frames/MusikLibraryFrame.cpp:734
 #, c-format
 msgid "Scanning library for obsolete files: %d / %d (ESC to abort)"
 msgstr ""
@@ -1186,7 +1186,7 @@ msgstr "Taggen"
 msgid "The following fields can be used in your query"
 msgstr "Die folgenden Felder können sie in der Abfrage verwenden"
 
-#: ../Classes/PlaylistCtrl.cpp:1409
+#: ../Classes/PlaylistCtrl.cpp:1403
 msgid "There are no pending tags available to display."
 msgstr "Es sind keine unfertigen Tags vorhanden."
 
@@ -1221,7 +1221,28 @@ msgstr "Diesen Künstler"
 msgid "This genre"
 msgstr "Dieses Genre"
 
-#: ../Frames/MusikLibraryFrame.cpp:540
+#: ../Frames/MusikLibraryFrame.cpp:250
+#, c-format
+msgid ""
+"This is the first time %s has been run.\n"
+"\n"
+"To begin, you must first add directories to the database. Select \"Add "
+"Directory\" from the \"Directories\" menu, then press the \"OK\" button to "
+"rebuild the library.\n"
+"\n"
+"To display this window again, press CTRL+L in the main window, or select "
+"\"Library Setup\" from the \"Library\" menu."
+msgstr ""
+"Sie starten %s zum ersten Mal.\n"
+"\n"
+"Zu Anfang müssen Sie die Verzeichnisse zur Datenbank hinzufügen. Wählen Sie "
+"dazu den Menüpunkt \"Verzeichnisse hinzufügen\" aus dem \"Verzeichnisse\" "
+"Menü, dann drücken Sie auf \"OK\" um die Bibliothek aufzubauen.\n"
+"\n"
+"Um dieses Fenster wieder anzuzeigen, drücken Sie STRG+B im Hauptfenster, "
+"oder wählen Sie \"Bibliothek einrichten\" aus dem \"Bibliothek\" Menü."
+
+#: ../Frames/MusikLibraryFrame.cpp:537
 msgid ""
 "This will wipe the library clean. Are you ABSOLUTELY SURE you want to do "
 "this?"
