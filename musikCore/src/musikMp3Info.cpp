@@ -210,7 +210,7 @@ CStdString CmusikMp3Info::GetGenre( CStdString genre )
 			sRet = ID3_v1_genre_description[nGenreID];
 	}
 	else
-		sRet = "[unknown]";
+		sRet = "(unknown)";
 
 	return sRet;
 }
