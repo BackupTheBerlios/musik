@@ -9,8 +9,6 @@
 
 #include "../Musik.Core/include/MusikArrays.h"
 #include "../Musik.Core/include/MusikLibrary.h"
-#include ".\musikplaylistctrl.h"
-
 
 // CMusikPlaylistCtrl
 
@@ -108,12 +106,20 @@ void CMusikPlaylistCtrl::SaveColumns()
 	pColumn.pszText = sCol;
 	pColumn.cchTextMax = sizeof( sCol );
 
-	for ( int i = 0; i < GetHeaderCtrl()->GetItemCount(); i++ )
+	int nColCount = GetHeaderCtrl()->GetItemCount();
+	LPINT lpiCols = new int[nColCount];
+
+	// get header order array
+	GetHeaderCtrl()->GetOrderArray( lpiCols, nColCount );
+
+	int nItem;
+	for (int i = 0; i < nColCount; i++)
 	{
-		GetColumn( i, &pColumn );
+		GetColumn( lpiCols[i], &pColumn );
 		last_order.push_back( m_Library->GetSongFieldID( pColumn.pszText ) );
 		last_sizes.push_back( pColumn.cx );
-	}
+	} 
+	delete[] lpiCols;
 
 	m_Prefs->SetPlaylistOrder( last_order );
 	m_Prefs->SetPlaylistSizes( last_sizes );

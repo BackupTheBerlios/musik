@@ -37,7 +37,11 @@ int CMusikPlaylistView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if ( CWnd::OnCreate(lpCreateStruct) == -1 )
 		return -1;
 
-	m_Playlist->Create( WS_CHILD | WS_VISIBLE | LVS_REPORT, CRect( 0, 0, 0, 0 ), this, 123 );
+	long dwStyle = WS_CHILD | WS_VISIBLE | LVS_REPORT;
+	long dwStyleEx = LVS_EX_FULLROWSELECT | LVS_EX_HEADERDRAGDROP;
+	
+	m_Playlist->Create( dwStyle, CRect( 0, 0, 0, 0 ), this, 123 );
+	m_Playlist->SetExtendedStyle( dwStyleEx );
 
 	return 0;
 }

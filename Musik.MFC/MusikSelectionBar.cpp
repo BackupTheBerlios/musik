@@ -30,10 +30,15 @@ int CMusikSelectionBar::OnCreate( LPCREATESTRUCT lpCreateStruct )
 
 	SetSCBStyle( GetSCBStyle() | SCBS_SIZECHILD );
 
-	if ( !m_wndChild->Create( WS_CHILD | WS_VISIBLE | LVS_NOCOLUMNHEADER | LVS_REPORT | LVS_OWNERDATA | LVS_SHOWSELALWAYS, CRect(0,0,0,0), this, 123 ) )
+	long dwStyle = WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_OWNERDATA | LVS_SHOWSELALWAYS;
+	long dwStyleEx =  LVS_EX_FULLROWSELECT | LVS_EX_HEADERDRAGDROP;
+
+	if ( !m_wndChild->Create( dwStyle, CRect( 0, 0, 0, 0), this, 123 ) )
 		return -1;
 
-	m_wndChild->ModifyStyleEx( 0, WS_EX_STATICEDGE );
+    
+	m_wndChild->SetExtendedStyle( dwStyleEx );
+	m_wndChild->ModifyStyleEx( dwStyleEx, WS_EX_STATICEDGE );
 
 	if ( !m_Font.CreateStockObject(DEFAULT_GUI_FONT) )
 		return -1;
