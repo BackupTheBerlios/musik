@@ -1,7 +1,11 @@
+///////////////////////////////////////////////////
+
 #include "stdafx.h"
+
 #include "Musik.h"
 #include "MusikNowPlayingBar.h"
-#include ".\musiknowplayingbar.h"
+
+///////////////////////////////////////////////////
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -9,21 +13,26 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+///////////////////////////////////////////////////
+
 CMusikNowPlayingBar::CMusikNowPlayingBar()
 {
 }
+
+///////////////////////////////////////////////////
 
 CMusikNowPlayingBar::~CMusikNowPlayingBar()
 {
 }
 
+///////////////////////////////////////////////////
 
 BEGIN_MESSAGE_MAP(CMusikNowPlayingBar, baseCMusikNowPlayingBar)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
-	ON_WM_SIZING()
 END_MESSAGE_MAP()
 
+///////////////////////////////////////////////////
 
 int CMusikNowPlayingBar::OnCreate( LPCREATESTRUCT lpCreateStruct ) 
 {
@@ -41,12 +50,16 @@ int CMusikNowPlayingBar::OnCreate( LPCREATESTRUCT lpCreateStruct )
 	return 0;
 }
 
-void CMusikNowPlayingBar::OnSizing(UINT fwSide, LPRECT pRect)
+///////////////////////////////////////////////////
+
+void CMusikNowPlayingBar::OnSize(UINT nType, int cx, int cy)
 {
-	CSizingControlBarG::OnSizing(fwSide, pRect);
+	CSizingControlBarG::OnSize(nType, cx, cy);
 
 	CRect rcClient;
 	GetClientRect( &rcClient );
 
 	m_wndChild.MoveWindow( &rcClient );
 }
+
+///////////////////////////////////////////////////

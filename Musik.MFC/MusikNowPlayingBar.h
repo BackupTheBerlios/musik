@@ -1,10 +1,18 @@
+///////////////////////////////////////////////////
+
 #pragma once
 
+///////////////////////////////////////////////////
+
 #include "MusikNowPlayingCtrl.h"
+
+///////////////////////////////////////////////////
 
 #ifndef baseCMusikNowPlayingBar
 #define baseCMusikNowPlayingBar CSizingControlBarG
 #endif
+
+///////////////////////////////////////////////////
 
 class CMusikNowPlayingBar : public baseCMusikNowPlayingBar
 {
@@ -38,6 +46,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 
-	afx_msg void OnSizing(UINT fwSide, LPRECT pRect);
+	afx_msg void OnSize(UINT nType, int cx, int cy);
 };
+
+///////////////////////////////////////////////////
 
