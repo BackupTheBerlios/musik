@@ -1,6 +1,6 @@
-02.0 to 0.2.1
- - Fixed Bug: Random Song selection code was wrong in the way, that an endless loop could be entered. (gunnar)
 0.1.3 to 0.2.0 (aka 0.1.4)
+ + Added "Shuffle," "Random," and "Crossfade" to volume popup window.
+ - Fixed Bug: Random Song selection code was wrong in the way that an endless loop could be entered. (gunnar)
  + Added check for older (0.1.3) Musik column style, and a routine to reset if detected. (avatar)
  + Changed threading for library and fader. should now be safe. no more crashes for this hopefully (gunnar)
  - Fixed Bug: Genre string was not correctly put into the db, if the mp3 had also a pure text Genre field (ID3V2) (gunnar)
