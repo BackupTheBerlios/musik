@@ -140,7 +140,7 @@ void CmusikNowPlayingInfo::Layout( bool refresh )
 		ptLoc.y = blLargest.m_Ascending - blCurrent.m_Ascending;	
 
 		m_LayoutOrder.at( i )->GetClientRect( rcClient );
-		m_LayoutOrder.at( i )->MoveWindow( CRect( ptLoc, CSize( rcClient.Width(), blLargest.m_Height/*rcClient.Height()*/ ) ) );
+		m_LayoutOrder.at( i )->MoveWindow( CRect( ptLoc, CSize( rcClient.Width(), blLargest.m_Height ) ) );
 
 		nCurrX += m_LayoutOrder.at( i )->GetWidth();
 	}
@@ -338,6 +338,9 @@ void CmusikNowPlayingInfo::GetBaseline( int font_size, CmusikFontBaseline* basel
 
 	delete temp_font;
 
+	// SH 2004-01 GDI leak cleanup  -- when doing GetDC, ReleaseDC is a must afterwards.
+	ReleaseDC(pDC);
+	
 	baseline->m_Ascending = metrics.tmAscent;
 	baseline->m_Descending = metrics.tmDescent;
 	baseline->m_Height = metrics.tmHeight;

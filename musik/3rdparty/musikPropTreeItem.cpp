@@ -447,7 +447,12 @@ LONG CmusikPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 	// root level items have a dark, colored background
 	if (IsRootLevel())
 	{
-		HGDIOBJ hOld = pDC->SelectObject( CreateSolidBrush( m_pProp->m_Prefs->MUSIK_COLOR_INACTIVECAPTION ) );
+		// SH 2004-01-03 GDI leak cleanup : was previously plain old Win32 CreateSolidBrush without any variable
+		// assignment and cleanup. Changed to CBrush, as its destructor handles cleanup properly.
+
+		CBrush newBrush;
+		newBrush.CreateSolidBrush( m_pProp->m_Prefs->MUSIK_COLOR_INACTIVECAPTION );
+		HGDIOBJ hOld = pDC->SelectObject( newBrush );
 		pDC->PatBlt(rc.left, drc.top, rc.right - rc.left + 1, drc.Height(), PATCOPY);
 		pDC->SelectObject(hOld);
 	}
@@ -457,28 +462,40 @@ LONG CmusikPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 	{
 		HGDIOBJ hOld;
 
+		// SH 2004-01-03 GDI leak cleanup : was previously plain old Win32 CreateSolidBrush without any variable
+		// assignment and cleanup. Changed to CBrush, as its destructor handles cleanup properly.
+
+		CBrush listBrush, gutterBrush;
+
 		//the object
-		hOld = pDC->SelectObject( CreateSolidBrush( m_pProp->m_Prefs->MUSIK_COLOR_LISTCTRL ) );
+
+		listBrush.CreateSolidBrush( m_pProp->m_Prefs->MUSIK_COLOR_LISTCTRL );
+		hOld = pDC->SelectObject( listBrush );
 		pDC->PatBlt(rc.left, drc.top, rc.right - rc.left + 1, drc.Height(), PATCOPY);
 
 		//the gutter
 		if ( IsSelected() )
 		{
-			hOld = pDC->SelectObject( CreateSolidBrush( m_pProp->m_Prefs->MUSIK_COLOR_ACTIVECAPTION ) );
+			gutterBrush.CreateSolidBrush( m_pProp->m_Prefs->MUSIK_COLOR_ACTIVECAPTION );
+			hOld = pDC->SelectObject( gutterBrush );
 			pDC->PatBlt( rc.left, drc.top, 8, drc.Height(), PATCOPY);
 		}
 		else if ( IsHovered() )
 		{
-			hOld = pDC->SelectObject( CreateSolidBrush( m_pProp->m_Prefs->MUSIK_COLOR_INACTIVECAPTION ) );
+
+			gutterBrush.CreateSolidBrush( m_pProp->m_Prefs->MUSIK_COLOR_INACTIVECAPTION );
+			hOld = pDC->SelectObject( gutterBrush );
 			pDC->PatBlt( rc.left, drc.top, 8, drc.Height(), PATCOPY);
 		}
 		else
 		{
-			hOld = pDC->SelectObject( CreateSolidBrush( m_pProp->m_Prefs->MUSIK_COLOR_BTNFACE ) );
+			gutterBrush.CreateSolidBrush( m_pProp->m_Prefs->MUSIK_COLOR_BTNFACE );
+			hOld = pDC->SelectObject( gutterBrush );
 			pDC->PatBlt( rc.left, drc.top, 8, drc.Height(), PATCOPY);
 		}
 
 		pDC->SelectObject(hOld);
+		
 	}
 
 	// draw the show / expand (+/-) box
@@ -545,6 +562,7 @@ LONG CmusikPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 			pDC->SetTextColor(GetSysColor(COLOR_GRAYTEXT));
 
 		pDC->DrawText(m_sLabel, &ir, DT_SINGLELINE|DT_VCENTER);
+
 	}
 
 	// remove clip region
