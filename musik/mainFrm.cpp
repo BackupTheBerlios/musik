@@ -75,6 +75,7 @@
 int WM_SELBOXUPDATE			= RegisterWindowMessage( "SELBOXUPDATE" );
 int WM_SELBOXRESET			= RegisterWindowMessage( "SELBOXRESET" );
 int WM_SELBOXEDITCOMMIT		= RegisterWindowMessage( "SELBOXEDITCOMMIT" );
+int WM_SELBOXADDREMOVE		= RegisterWindowMessage( "SELBOXADDREMOVE" );
 
 int WM_PLAYERNEWPLAYLIST	= RegisterWindowMessage( "PLAYERNEWPLAYLIST" );
 
@@ -205,6 +206,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_PLAYER_PLAYSEL, OnPlayerPlaySel )
 	ON_REGISTERED_MESSAGE( WM_BATCHADD_VERIFY_PLAYLIST, OnVerifyPlaylist )
 	ON_REGISTERED_MESSAGE( WM_CLOSEDIRSYNC, OnCloseDirSync )
+	ON_REGISTERED_MESSAGE( WM_SELBOXADDREMOVE, OnSelBoxAddRemove )
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -306,9 +308,8 @@ CMainFrame::~CMainFrame()
 	CIntArray sel_modes;
 	for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
 	{
-		sel_modes.push_back( m_wndSelectionBars[i]->GetCtrl()->GetType() );
-		if ( m_wndSelectionBars[i] )
-			delete m_wndSelectionBars[i];
+		sel_modes.push_back( m_wndSelectionBars.at( i )->GetCtrl()->GetType() );
+		delete m_wndSelectionBars.at( i );
 	}
 	m_Prefs->SetSelBoxTypes( sel_modes );
 
@@ -549,7 +550,7 @@ void CMainFrame::ResetUI()
 	size.cx = NULL;
 	size.cy = 120;
 	for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
-		m_wndSelectionBars[i]->ForceDockedSize( size, LM_HORZDOCK, true );
+		m_wndSelectionBars.at( i )->ForceDockedSize( size, LM_HORZDOCK, true );
 
 	// hide equalizer and crossfader
 	ShowControlBar( m_wndEqualizer, FALSE, TRUE );
@@ -564,9 +565,9 @@ void CMainFrame::ResetSelBoxes( bool requery, bool resetparent )
 	{
 		for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
 		{
-			if ( m_wndSelectionBars[i]->GetCtrl()->IsParent() )
+			if ( m_wndSelectionBars.at( i )->GetCtrl()->IsParent() )
 			{
-				OnUpdateSel( (WPARAM)m_wndSelectionBars[i]->GetCtrl()->GetCtrlID(), (LPARAM)resetparent );
+				OnUpdateSel( (WPARAM)m_wndSelectionBars.at( i )->GetCtrl()->GetCtrlID(), (LPARAM)resetparent );
 				return;
 			}
 		}	
@@ -575,8 +576,8 @@ void CMainFrame::ResetSelBoxes( bool requery, bool resetparent )
 	CmusikSelectionCtrl::SetUpdating( true );
 	for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
 	{
-		m_wndSelectionBars[i]->GetCtrl()->SetParent( false );
-		m_wndSelectionBars[i]->GetCtrl()->UpdateV( true );
+		m_wndSelectionBars.at( i )->GetCtrl()->SetParent( false );
+		m_wndSelectionBars.at( i )->GetCtrl()->UpdateV( true );
 	}
 	CmusikSelectionCtrl::SetUpdating( false );
 }
@@ -683,14 +684,17 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	DockControlBar( m_wndNowPlaying, AFX_IDW_DOCKBAR_BOTTOM );
 
 	// selection controls
+	CmusikSelectionBar* pBar;
 	for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
 	{
-		m_wndSelectionBars[i] = new CmusikSelectionBar( this, m_Library, m_Prefs, m_Prefs->GetSelBoxType( i ), i, m_uSelectionDrop );
-		m_wndSelectionBars[i]->Create( _T( "musik Selection Box" ), this, ID_SELECTIONBOX_START + i );
+		pBar = new CmusikSelectionBar( this, m_Library, m_Prefs, m_Prefs->GetSelBoxType( i ), i, m_uSelectionDrop );
+		pBar->Create( _T( "musik Selection Box" ), this, ID_SELECTIONBOX_START + i );
 		if ( i == 0 )
-			DockControlBar( m_wndSelectionBars[i] );
+			DockControlBar( pBar );
 		else
-			DockBarLeftOf( m_wndSelectionBars[i], m_wndSelectionBars[i-1] );
+			DockBarLeftOf( pBar, m_wndSelectionBars.at( i - 1 ) );
+
+		m_wndSelectionBars.push_back( pBar );
 	}
 
 	// sources control
@@ -1002,7 +1006,7 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 	// find the sender and parent
 	for ( size_t i = 0; i < selbox_count; i++ )
 	{
-		pCurr = m_wndSelectionBars[i]->GetCtrl();
+		pCurr = m_wndSelectionBars.at( i )->GetCtrl();
 		if ( pCurr->GetCtrlID() == nSender )
 			pSender = pCurr;
 		if ( pCurr->IsParent() )
@@ -1028,7 +1032,7 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 
 		for( size_t i = 0; i < selbox_count; i++ )
 		{
-			pCurr = m_wndSelectionBars[i]->GetCtrl();
+			pCurr = m_wndSelectionBars.at( i )->GetCtrl();
 			pCurr->SetItemState( -1, 0, LVIS_SELECTED );
 		}
 
@@ -1062,7 +1066,7 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 	{
 		for ( size_t i = 0; i < selbox_count; i++ )
 		{
-			pCurr = m_wndSelectionBars[i]->GetCtrl();
+			pCurr = m_wndSelectionBars.at( i )->GetCtrl();
 			if ( pCurr != pSender && pCurr->GetSelectedCount() )
 				sSender += pCurr->GetSelQuery( sel_query );
 		}
@@ -1075,7 +1079,7 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 	CmusikSelectionCtrl::SetUpdating( true );
 	for( size_t i = 0; i < selbox_count; i++ )
 	{
-		pCurr = m_wndSelectionBars[i]->GetCtrl();
+		pCurr = m_wndSelectionBars.at( i )->GetCtrl();
 		if ( pCurr != pSender || force_all_updatev )
 		{
 			if ( pCurr != pParent )
@@ -1661,7 +1665,7 @@ void CMainFrame::OnViewSelectionboxes()
 	BOOL allvisible = TRUE;
 	for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
 	{
-		if ( !m_wndSelectionBars[i]->IsVisible() )
+		if ( !m_wndSelectionBars.at( i )->IsVisible() )
 		{
 			allvisible = FALSE;
 			break;
@@ -1671,12 +1675,12 @@ void CMainFrame::OnViewSelectionboxes()
 	if ( allvisible )
 	{
 		for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
-			ShowControlBar( m_wndSelectionBars[i], FALSE, TRUE );
+			ShowControlBar( m_wndSelectionBars.at( i ), FALSE, TRUE );
 	}
 	else
 	{
 		for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
-			ShowControlBar( m_wndSelectionBars[i], TRUE, TRUE );
+			ShowControlBar( m_wndSelectionBars.at( i ), TRUE, TRUE );
 	}
 
 	RecalcLayout();
@@ -1689,7 +1693,7 @@ void CMainFrame::OnUpdateViewSelectionboxes(CCmdUI *pCmdUI)
 	BOOL allvisible = TRUE;
 	for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
 	{
-		if ( !m_wndSelectionBars[i]->IsVisible() )
+		if ( !m_wndSelectionBars.at( i )->IsVisible() )
 		{
 			allvisible = FALSE;
 			break;
@@ -2276,3 +2280,23 @@ void CMainFrame::OnNotificationtrayStop()
 }
 
 ///////////////////////////////////////////////////
+
+LRESULT CMainFrame::OnSelBoxAddRemove( WPARAM wParam, LPARAM lParam )
+{
+	BOOL add_new = (BOOL)wParam;
+
+	if ( add_new )
+	{
+
+	}
+
+	else
+	{
+		CmusikSelectionBar* pRemove = (CmusikSelectionBar*)lParam;
+	}
+
+	return 0L;
+}
+
+///////////////////////////////////////////////////
+

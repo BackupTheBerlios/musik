@@ -50,6 +50,8 @@
 
 #include "musikPrefs.h"
 
+#include <vector>
+
 ///////////////////////////////////////////////////
 
 // these need to remain constant, or
@@ -94,6 +96,10 @@ class CmusikBatchAddFunctor;
 class CmusikRemoveOldFunctor;
 class CmusikDirSync;
 class ACE_Thread_Mutex;
+
+///////////////////////////////////////////////////
+
+typedef std::vector<CmusikSelectionBar*> CmusikSelBarArray;
 
 ///////////////////////////////////////////////////
 
@@ -181,7 +187,7 @@ protected:
 	CmusikPlaylistView*		m_wndView;
 	CmusikSourcesBar*		m_wndSources;
 	CmusikNowPlayingBar*	m_wndNowPlaying;
-	CmusikSelectionBar*		m_wndSelectionBars[12];
+	CmusikSelBarArray		m_wndSelectionBars;
 	CmusikCrossfaderBar*	m_wndCrossfader;
 	CmusikEqualizerBar*		m_wndEqualizer;
 
@@ -212,6 +218,7 @@ protected:
 	afx_msg LRESULT OnBatchAddNew( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnVerifyPlaylist( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnCloseDirSync( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnSelBoxAddRemove( WPARAM wParam, LPARAM lParam );
 
 	// mfc message maps
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
