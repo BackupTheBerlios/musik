@@ -67,8 +67,6 @@ static void musikPlayerWorker( CmusikThread* thread )
 {
 	TRACE0( "Player worker thread function started...\n" );
 
-	void *pArgs = thread->GetArgs();
-
 	CmusikPlayer* player = (CmusikPlayer*)thread->GetArgs();
 
 	ACE_Thread_Mutex m_ProtectingStreams;
@@ -742,7 +740,7 @@ void CmusikPlayer::EnquePaused( int index )
 	// setup playback, then pause
 	FSOUND_Stream_Play( GetCurrChannel(), pNewStream );
 	FSOUND_SetVolume( GetCurrChannel(), 0 );
-	FSOUND_SetPaused( FSOUND_ALL, TRUE );
+	FSOUND_SetPaused( FSOUND_ALL, true );
 
 	m_Index = index;
 
@@ -939,7 +937,7 @@ void CmusikPlayer::EnableEqualizer( bool enable )
 			InitEQ_DSP();
 
 		if ( m_EQ_DSP )
-			FSOUND_DSP_SetActive( m_EQ_DSP, TRUE );
+			FSOUND_DSP_SetActive( m_EQ_DSP, true );
 	}
 	else
 	{
@@ -1218,7 +1216,7 @@ bool CmusikPlayer::Pause()
 
 void CmusikPlayer::FinalizePause()
 {
-	FSOUND_SetPaused( FSOUND_ALL, TRUE );
+	FSOUND_SetPaused( FSOUND_ALL, true );
 
 	CleanOldStreams();
 	m_IsPaused = true;
@@ -1235,7 +1233,7 @@ bool CmusikPlayer::Resume()
 	if ( IsPlaying() && IsPaused() )
 	{
 		CleanOldStreams();
-		FSOUND_SetPaused( FSOUND_ALL, FALSE );
+		FSOUND_SetPaused( FSOUND_ALL, false );
 
 		if ( IsCrossfaderEnabled() && m_Crossfader->GetDuration ( MUSIK_CROSSFADER_PAUSE_RESUME ) > 0.0f )
 		{

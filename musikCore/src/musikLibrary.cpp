@@ -1756,7 +1756,7 @@ int CmusikLibrary::GetIDFromFilename( CStdString fn )
 	// do it
 	m_ProtectingLibrary->acquire();
 
-	int nRet = sqlite_exec_printf( m_pDB, "SELECT songid FROM %Q WHERE filename = %Q;", 
+	sqlite_exec_printf( m_pDB, "SELECT songid FROM %Q WHERE filename = %Q;", 
 		&sqlite_GetIDFromFilename, &target, NULL,
 		SONG_TABLE_NAME,
 		fn.c_str() );
@@ -2152,3 +2152,4 @@ int CmusikLibrary::GetEqualizer( int eq_id, CmusikEQSettings* target )
 }
 
 ///////////////////////////////////////////////////
+

@@ -45,6 +45,7 @@
 
 #include "stdafx.h"
 
+#include "../include/musikConfig.h"
 #include "../include/musikThread.h"
 
 ///////////////////////////////////////////////////

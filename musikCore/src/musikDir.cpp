@@ -109,7 +109,8 @@ void OpenDir( CStdString dir, CStdStringArray* target, CmusikFunctor* functor, b
 
 	if ( pDir == opendir( dir.c_str() ) )
 	{
-		while( entry = readdir( pDir ) )
+		CStdString temp;
+		while( pEntry = readdir( pDir ) )
 		{
 			temp = (CStdString)pEntry->d_name;
 			temp = temp.Right( 3 );

@@ -72,7 +72,7 @@ enum
 	// playmodes
 	MUSIK_PLAYER_PLAYMODE_REPEAT_SINGLE = 1,
 	MUSIK_PLAYER_PLAYMODE_REPEAT_PLAYLIST = 2,
-	MUSIK_PLAYER_PLAYMODE_INTRO = 4,
+	MUSIK_PLAYER_PLAYMODE_INTRO = 4
 };
 
 ///////////////////////////////////////////////////
@@ -310,3 +310,4 @@ private:
 #endif
 
 ///////////////////////////////////////////////////
+

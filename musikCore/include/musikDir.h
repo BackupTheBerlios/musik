@@ -19,7 +19,6 @@ class CmusikDir;
 
 ///////////////////////////////////////////////////
 
-static void musikDirAddWorker( CmusikDir* params );
 void OpenDir( CStdString dir, CStdStringArray* target = NULL, CmusikFunctor* functor = NULL, bool reset = false );
 
 ///////////////////////////////////////////////////
@@ -48,3 +47,4 @@ public:
 #endif
 
 ///////////////////////////////////////////////////
+
