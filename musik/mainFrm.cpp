@@ -2558,7 +2558,7 @@ void CMainFrame::SynchronizeDirs()
 	for ( size_t i = 0; i < synchs.size(); i++ )
 	{
 		CmusikStringArray* files = new CmusikStringArray();
-		CmusikDir scan( synchs.at( i ) + _T( "\\*.*" ), files );
+		CmusikDir scan( synchs.at( i ) + _T( "*.*" ), files );
 		scan.Run();
 
 		// setup params

@@ -145,6 +145,12 @@ public:
 		size_t curr_prog = 0;
 		size_t last_prog = 0;
 
+		// wait until previous transaction has finished
+		ACE_Time_Value sleep_t;
+		sleep_t.set( 0.5 );
+		while ( m_Params->m_Library->GetOpenTransactions() )
+			ACE_OS::sleep( sleep_t );
+
 		m_Params->m_Library->BeginTransaction();
 		int nFormat;
 		for( size_t i = 0; i < m_Params->m_UpdatedTags->size(); i++ )
@@ -172,6 +178,8 @@ public:
 			{
 				if ( !m_Params->m_WriteToFile )
 					m_Params->m_UpdatedTags->at( i ).SetDirtyFlag( "1" );
+				else
+					m_Params->m_UpdatedTags->at( i ).SetDirtyFlag( "0" );
 
 				m_Params->m_Library->SetSongInfo( &m_Params->m_UpdatedTags->at( i ) );
 			}

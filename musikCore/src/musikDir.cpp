@@ -88,7 +88,12 @@ void OpenDir( CmusikString dir, CmusikStringArray* target )
 				{
 					fn = dir.Left( dir.GetLength() - 3 );	// remove *.* from full path
 					fn += lpFindFileData.cFileName;			// append to make new path
-					fn += "\\*.*";							// add *.* to the end of the new path
+
+					if ( fn.Left( 0 ) != "\\" )
+						fn += "\\*.*";						// add \\*.* to the end of the new path
+					else
+						fn += "*.*";						// add *.* to the end of the new path
+
 					OpenDir( fn, target );
 				}
 
@@ -136,7 +141,12 @@ void OpenDir( CmusikString dir, CmusikStringArray* target )
 		// not a directory, so check file attributes
 		else
 		{
-			fn = dir + CmusikString ( "/") + CmusikString ( pEntry->d_name );
+			if ( fn.Left( 0 ) != "/" )
+				fn = dir + CmusikString( "/" );
+			else
+				fn = dir;
+
+			fn += CmusikString ( pEntry->d_name );
 	
 			MFN.SetFilename( fn );
 			if ( MFN.GetExtension() == "mp3" || MFN.GetExtension() == "ogg" )

@@ -135,6 +135,12 @@ public:
 
 		bool verify_failed = false;
 
+		// wait until previous transaction has finished
+		ACE_Time_Value sleep_t;
+		sleep_t.set( 0.5 );
+		while ( m_Params->m_Library->GetOpenTransactions() )
+			ACE_OS::sleep( sleep_t );
+
 		m_Params->m_Library->BeginTransaction();
 		for( size_t i = 0; i < all_files.size(); i++ )
 		{

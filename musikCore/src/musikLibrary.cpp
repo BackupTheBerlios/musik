@@ -2127,6 +2127,13 @@ int CmusikLibrary::GetRelatedSongs( CmusikString partial_query, int source_type,
 
 ///////////////////////////////////////////////////
 
+int CmusikLibrary::GetOpenTransactions()
+{
+	return m_Transactions;
+}
+
+///////////////////////////////////////////////////
+
 int CmusikLibrary::GetAllDistinct( int source_type, CmusikStringArray& target, bool clear_target, bool use_temp_table )
 {
 	if ( !m_DatabaseOpen )
