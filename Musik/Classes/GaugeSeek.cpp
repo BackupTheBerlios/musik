@@ -63,9 +63,7 @@ void CGaugeSeekEvt::OnLeftUp( wxMouseEvent& event )
 	//--- assume user is done. destroy the frame  ---//
 	//-----------------------------------------------//
 		if ( lType == wxGA_VERTICAL )
-		{
-		g_VolumeFrame->Close();
-		}
+			g_VolumeFrame->Close();
 
      	//-----------------------------------------------//
 		//--- if we have left up and modifying time	  ---//
@@ -107,8 +105,10 @@ void CGaugeSeekEvt::SetFromMousePos( wxMouseEvent& WXUNUSED(event) )
 		int nThisPos = (int)fPos;
 
 		if ( nThisPos != m_LastPos )
-		pParent->SetValue( (int)fPos );
-		m_LastPos = nThisPos;
+		{
+			pParent->SetValue( (int)fPos );
+			m_LastPos = nThisPos;
+		}
 
 		//--- set string ---//
 		int nCurrTime = (int)( (float)g_Player.GetDuration( FMOD_MSEC ) * (float)( fPos / (float)100 ) );
