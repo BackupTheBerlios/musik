@@ -1352,16 +1352,20 @@ void CMainFrame::OnSysColorChange()
 void CMainFrame::OnFilePreferences()
 {
 	// initialize the property pages
-	CPropertyPage wndPageInterfaceColors(	IDD_PROPPAGE_INTERFACE_COLORS);
-	CPropertyPage wndPageInterfaceGeneral(	IDD_PROPPAGE_INTERFACE_GENERAL);
-	CPropertyPage wndPageSoundCrossfader(	IDD_PROPPAGE_SOUND_CROSSFADER);
-	CPropertyPage wndPageSoundDriver(		IDD_PROPPAGE_SOUND_DRIVER);
+	CPropertyPage wndPageInterfaceGeneral(		IDD_PROPPAGE_INTERFACE_GENERAL);
+	CPropertyPage wndPageInterfaceColors(		IDD_PROPPAGE_INTERFACE_COLORS);
+	CPropertyPage wndPageInterfaceSynchronize(	IDD_PROPPAGE_INTERFACE_SYNCHRONIZE);
+	CPropertyPage wndPageSoundDriver(			IDD_PROPPAGE_SOUND_DRIVER);
+	CPropertyPage wndPageSoundEqualizer(		IDD_PROPPAGE_SOUND_EQUALIZER);
+	CPropertyPage wndPageSoundCrossfader(		IDD_PROPPAGE_SOUND_CROSSFADER);
 
 	// remove help icon from gripper
-	wndPageInterfaceColors.m_psp.dwFlags&=	~PSP_HASHELP;
-	wndPageInterfaceGeneral.m_psp.dwFlags&= ~PSP_HASHELP;
-	wndPageSoundCrossfader.m_psp.dwFlags&=	~PSP_HASHELP;
-	wndPageSoundDriver.m_psp.dwFlags&=		~PSP_HASHELP;
+	wndPageInterfaceGeneral.m_psp.dwFlags&=		~PSP_HASHELP;
+	wndPageInterfaceColors.m_psp.dwFlags&=		~PSP_HASHELP;
+	wndPageInterfaceSynchronize.m_psp.dwFlags&=	~PSP_HASHELP;
+	wndPageSoundDriver.m_psp.dwFlags&=			~PSP_HASHELP;
+	wndPageSoundEqualizer.m_psp.dwFlags&=		~PSP_HASHELP;
+	wndPageSoundCrossfader.m_psp.dwFlags&=		~PSP_HASHELP;
 
 	// initialize the CTreePropSheet class 
 	// and remove help icon from gripper
@@ -1371,7 +1375,9 @@ void CMainFrame::OnFilePreferences()
 	// physically add the preference sheets
 	PrefSheet.AddPage(&wndPageInterfaceGeneral);
 	PrefSheet.AddPage(&wndPageInterfaceColors);
+	PrefSheet.AddPage(&wndPageInterfaceSynchronize);
 	PrefSheet.AddPage(&wndPageSoundDriver);
+	PrefSheet.AddPage(&wndPageSoundEqualizer);
 	PrefSheet.AddPage(&wndPageSoundCrossfader);
 
 	PrefSheet.SetEmptyPageText(_T("Please select a child item of '%s'."));

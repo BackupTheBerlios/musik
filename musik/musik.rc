@@ -293,9 +293,13 @@ STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Interface::General"
 FONT 8, "MS Shell Dlg", 0, 0, 0x0
 BEGIN
-    CONTROL         "Automatically scan for new songs on startup",
-                    IDC_CHECK_STARTUPSCAN,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,7,7,158,10
+    CONTROL         "Enable tray icon",IDC_CHECK_STARTUPSCAN2,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,5,10,67,10
+    CONTROL         "Start musikCube in tray on Windows startup",
+                    IDC_CHECK_STARTUPSCAN3,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,15,22,157,10
+    CONTROL         "Minimize to tray",IDC_CHECK_STARTUPSCAN4,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,15,32,66,10
 END
 
 IDD_PROPPAGE_INTERFACE_COLORS DIALOGEX 0, 0, 210, 154
@@ -304,7 +308,7 @@ CAPTION "Interface::Colors"
 FONT 8, "MS Shell Dlg", 0, 0, 0x0
 BEGIN
     CONTROL         "Show stripes in playlist",IDC_CHECK_PL_STRIPES,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,7,7,88,10
+                    BS_AUTOCHECKBOX | WS_TABSTOP,5,10,88,10
 END
 
 IDD_PROPPAGE_SOUND_DRIVER DIALOGEX 0, 0, 210, 154
@@ -319,12 +323,10 @@ BEGIN
                     WS_VSCROLL | WS_TABSTOP
     COMBOBOX        IDC_COMBO3,85,39,75,30,CBS_DROPDOWN | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    EDITTEXT        IDC_EDIT1,85,53,31,14,ES_AUTOHSCROLL
-    EDITTEXT        IDC_EDIT2,85,68,31,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT2,85,53,31,14,ES_AUTOHSCROLL
     LTEXT           "Sound Device:",IDC_STATIC,33,26,47,8
     LTEXT           "Playback Rate (hz):",IDC_STATIC,16,41,64,8
-    LTEXT           "Buffer Length (sec):",IDC_STATIC,14,56,66,8
-    LTEXT           "Max Sound Channels:",IDC_STATIC,10,71,70,8
+    LTEXT           "Max Sound Channels:",IDC_STATIC,7,56,70,8
 END
 
 IDD_PROPPAGE_SOUND_CROSSFADER DIALOGEX 0, 0, 210, 154
@@ -332,8 +334,8 @@ STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Sound::Crossfader"
 FONT 8, "MS Shell Dlg", 0, 0, 0x0
 BEGIN
-    CONTROL         "Crossfader Enabled",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,7,7,79,10
+    CONTROL         "Crossfader enabled",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,5,10,79,10
 END
 
 IDD_SAVESTDPLAYLIST DIALOGEX 0, 0, 262, 53
@@ -467,6 +469,35 @@ BEGIN
     LTEXT           "Please enter a new name:",IDC_STATIC,7,5,84,8
 END
 
+IDD_PROPPAGE_INTERFACE_SYNCHRONIZE DIALOGEX 0, 0, 210, 154
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Interface::Synchronize"
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    CONTROL         "Automatically scan for new songs on startup",
+                    IDC_CHECK_STARTUPSCAN,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,5,10,158,10
+    CONTROL         "Automatically remove bad links in database - REPHRASE",
+                    IDC_CHECK_STARTUPSCAN2,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,5,25,195,10
+END
+
+IDD_PROPPAGE_SOUND_EQUALIZER DIALOGEX 0, 0, 210, 154
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Sound::Equalizer"
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    CONTROL         "Equalizer Enabled",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,5,10,72,10
+    CONTROL         "Automatically manage equalizer",IDC_CHECK2,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,15,22,117,10
+    CONTROL         "Lock equalizer channels",IDC_CHECK3,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,15,32,91,10
+    COMBOBOX        IDC_COMBO1,15,43,36,30,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Band equalizer",IDC_STATIC,57,45,48,8
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -526,18 +557,23 @@ BEGIN
 
     IDD_PROPPAGE_INTERFACE_GENERAL, DIALOG
     BEGIN
-        LEFTMARGIN, 7
+        LEFTMARGIN, 5
         RIGHTMARGIN, 203
+        VERTGUIDE, 15
         TOPMARGIN, 7
         BOTTOMMARGIN, 147
+        HORZGUIDE, 15
+        HORZGUIDE, 27
+        HORZGUIDE, 37
     END
 
     IDD_PROPPAGE_INTERFACE_COLORS, DIALOG
     BEGIN
-        LEFTMARGIN, 7
+        LEFTMARGIN, 5
         RIGHTMARGIN, 203
         TOPMARGIN, 7
         BOTTOMMARGIN, 147
+        HORZGUIDE, 15
     END
 
     IDD_PROPPAGE_SOUND_DRIVER, DIALOG
@@ -554,15 +590,16 @@ BEGIN
         HORZGUIDE, 30
         HORZGUIDE, 45
         HORZGUIDE, 60
-        HORZGUIDE, 75
     END
 
     IDD_PROPPAGE_SOUND_CROSSFADER, DIALOG
     BEGIN
-        LEFTMARGIN, 7
+        LEFTMARGIN, 5
         RIGHTMARGIN, 203
+        VERTGUIDE, 15
         TOPMARGIN, 7
         BOTTOMMARGIN, 147
+        HORZGUIDE, 15
     END
 
     IDD_SAVESTDPLAYLIST, DIALOG
@@ -611,6 +648,31 @@ BEGIN
         RIGHTMARGIN, 195
         TOPMARGIN, 7
         BOTTOMMARGIN, 51
+    END
+
+    IDD_PROPPAGE_INTERFACE_SYNCHRONIZE, DIALOG
+    BEGIN
+        LEFTMARGIN, 5
+        RIGHTMARGIN, 203
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 147
+        HORZGUIDE, 15
+        HORZGUIDE, 30
+    END
+
+    IDD_PROPPAGE_SOUND_EQUALIZER, DIALOG
+    BEGIN
+        LEFTMARGIN, 5
+        RIGHTMARGIN, 203
+        VERTGUIDE, 15
+        VERTGUIDE, 51
+        VERTGUIDE, 57
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 147
+        HORZGUIDE, 15
+        HORZGUIDE, 27
+        HORZGUIDE, 37
+        HORZGUIDE, 49
     END
 END
 #endif    // APSTUDIO_INVOKED
