@@ -33,6 +33,8 @@ protected:
 	CFont m_Bullets;
 	CFont m_Items;
 
+	int m_RatingWidth;
+		
 	CMusikDynDspInfo* m_SongInfoCache;
 
 //-------------------------------------------------//
@@ -58,6 +60,7 @@ public:
 	afx_msg void OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnLvnOdcachehint(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnPaint();
+	afx_msg void OnNMClick(NMHDR *pNMHDR, LRESULT *pResult);
 };
 
 

@@ -121,8 +121,23 @@ public:
 		// store the last known range, so we
 		// can later compare it to anew one
 		m_LastItemRange = m_ItemRange;
-	}
+	}	
 
+	bool ResyncItem( int songid )
+	{
+		for ( size_t i = 0; i < m_Items.size(); i++ )
+		{
+			if ( m_Items.at( i ).GetID() == songid )
+			{
+				CMusikSongInfo item;
+				m_Library->GetSongInfoFromID( songid, &item );
+				m_Items.at( i ) = item;
+				return true;
+			}
+		}
+
+		return false;
+	}
 	
 	CMusikSongInfoArray* items()
 	{ 

@@ -116,3 +116,4 @@ BOOL CMusikPlaylistView::OnEraseBkgnd(CDC* pDC)
 }
 
 ///////////////////////////////////////////////////
+	

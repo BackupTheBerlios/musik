@@ -45,6 +45,7 @@ BEGIN_MESSAGE_MAP(CMusikPlaylistCtrl, CListCtrl)
 	ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, OnNMCustomdraw)
 	ON_NOTIFY_REFLECT(LVN_ODCACHEHINT, OnLvnOdcachehint)
 	ON_WM_PAINT()
+	ON_NOTIFY_REFLECT(NM_CLICK, OnNMClick)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -313,6 +314,36 @@ CString CMusikPlaylistCtrl::GetRating( int item )
 	}
 
 	return sRating;
+}
+
+///////////////////////////////////////////////////
+
+void CMusikPlaylistCtrl::OnNMClick(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	DWORD dwPos = ::GetMessagePos();
+	CPoint ptCurr( (int)LOWORD( dwPos ), (int)HIWORD( dwPos ) );
+	ScreenToClient( &ptCurr );
+
+	LVHITTESTINFO hit_test;
+	hit_test.pt = ptCurr;
+	SubItemHitTest( &hit_test );
+
+	if( hit_test.flags & LVHT_ONITEMLABEL )
+	{
+		if ( m_Prefs->GetPlaylistCol( hit_test.iSubItem ) == MUSIK_LIBRARY_TYPE_RATING )
+		{
+			CRect sub_item_rect;
+			GetSubItemRect( hit_test.iItem, hit_test.iSubItem, LVIR_BOUNDS, sub_item_rect );
+
+			int nRating = ( ( ptCurr.x * 100 ) / ( m_Prefs->GetPlaylistColWidth( hit_test.iSubItem ) ) ) / 20;
+            m_Library->SetSongRating( m_Playlist->items()->at( hit_test.iItem ).GetID(), nRating + 1 );	
+
+			if ( m_SongInfoCache->ResyncItem( m_Playlist->items()->at( hit_test.iItem ).GetID() ) )
+				RedrawItems( hit_test.iItem, hit_test.iItem );
+		}
+	}
+
+	*pResult = 0;
 }
 
 ///////////////////////////////////////////////////
