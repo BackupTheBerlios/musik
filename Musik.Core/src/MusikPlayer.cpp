@@ -285,8 +285,10 @@ void CMusikPlayer::InitThread()
 
 void CMusikPlayer::CleanThread()
 {
+	// suspend the thread so we can kill it
 	ACE_Thread::suspend( *m_ThreadHND );
 
+	// delete 'em
 	if ( m_Mutex ) 	delete m_Mutex;
 	if ( m_ThreadID ) delete m_ThreadID;	
 	if ( m_ThreadHND ) delete m_ThreadHND;

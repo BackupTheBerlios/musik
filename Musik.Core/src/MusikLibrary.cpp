@@ -231,7 +231,7 @@ bool CMusikLibrary::InitStdTables()
 	// all the standard playlist names
 	static const char *szCreateDBQuery1  = 
 		"CREATE TABLE " STD_PLAYLIST_TABLE_NAME " ( "	
-		"std_playlist_id INTEGER PRIMARY KEY, "
+		"std_playlist_id INTEGER AUTO_INCREMENT PRIMARY KEY, "
 		"std_playlist_name varchar(255) "
 		" );";
 
@@ -239,7 +239,7 @@ bool CMusikLibrary::InitStdTables()
 	// songs that pertain to all the playlists
 	static const char *szCreateDBQuery2  = 
 		"CREATE TABLE " STD_PLAYLIST_SONGS " ( "	
-		"std_playlist_songid INTEGER PRIMARY KEY, "
+		"std_playlist_songid INTEGER AUTO_INCREMENT PRIMARY KEY, "
 		"std_playlist_id INTEGER, "
 		"songid INTEGER"
 		" );";
@@ -487,12 +487,13 @@ void CMusikLibrary::CreateStdPlaylist( const CStdString& name, const CIntArray& 
 
 	// create query to make new entry to 
 	// std_playlist table
-	sQuery.Format( "INSERT INTO %s VALUES ( '%s' ); ",
+	sQuery.Format( "INSERT INTO %s VALUES ( %d,'%s' ); ",
 		STD_PLAYLIST_TABLE_NAME,
+		NULL,
 		name.c_str() );
 
 	// insert the new playlist name
-	sqlite_exec_printf( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
+	sqlite_exec( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
 
 	// get the ID of the newly created entry
 	sQuery.Format( "SELECT %s FROM %s WHERE %s = '%s';", 
@@ -504,15 +505,18 @@ void CMusikLibrary::CreateStdPlaylist( const CStdString& name, const CIntArray& 
 	sqlite_exec( m_pDB, sQuery.c_str(), &sqlite_GetPlaylistID, &nID, NULL );
 	
 	// insert songs into playlist
-	for ( size_t i = 0; i < songids.size(); i++ )
+	if ( nID >= 0 )
 	{
-		sQuery.Format( "INSERT INTO %s VALUES ( %n, %n ); ",
-			STD_PLAYLIST_SONGS,
-			nID,
-			songids.at( i ) );
+		for ( size_t i = 0; i < songids.size(); i++ )
+		{
+			sQuery.Format( "INSERT INTO %s VALUES ( %n, %n ); ",
+				STD_PLAYLIST_SONGS,
+				nID,
+				songids.at( i ) );
 
-		sqlite_exec_printf( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
-	}
+			sqlite_exec_printf( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
+		}
+	}	
 
 	// release the mutex lock
 	m_ProtectingLibrary->release();
@@ -973,7 +977,7 @@ void CMusikLibrary::GetAllCrossfaders( CStdStringArray* target, bool clear_targe
 	if ( clear_target )
 		target->clear();
 
-	CStdString sQuery( "SELECT crossfader_name  FROM " CROSSFADER_PRESETS " WHERE crossfader_name <> ''" );
+	CStdString sQuery( "SELECT crossfader_name FROM " CROSSFADER_PRESETS " WHERE crossfader_name <> ''" );
 
 	m_ProtectingLibrary->acquire();
 	sqlite_exec( m_pDB, sQuery.c_str(), &sqlite_AddRowToStringArray, target, NULL );
@@ -987,7 +991,7 @@ int CMusikLibrary::GetIDFromFilename( const CStdString& fn )
 	int target;
 
 	CStdString sQuery;
-	sQuery.Format( "SELECT songid  FROM " SONG_TABLE_NAME " WHERE filename = '%s'", fn.c_str() );
+	sQuery.Format( "SELECT songid FROM " SONG_TABLE_NAME " WHERE filename = '%s';", fn.c_str() );
 
 	m_ProtectingLibrary->acquire();
 	sqlite_exec( m_pDB, sQuery.c_str(), &sqlite_GetIDFromFilename, &target, NULL );
