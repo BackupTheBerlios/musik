@@ -112,7 +112,7 @@ enum
 #define STD_PLAYLIST_TABLE_NAME "std_playlist"
 #define STD_PLAYLIST_SONGS "std_playlist_song"
 #define DYN_PLAYLIST_TABLE_NAME "dyn_playlist"
-#define CROSSFADER_PRESETS "crossfader_presets"
+#define CROSSFADER_PRESET "crossfader_preset"
 
 ///////////////////////////////////////////////////
 

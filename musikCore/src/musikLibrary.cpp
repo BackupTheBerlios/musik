@@ -412,7 +412,7 @@ bool CmusikLibrary::InitCrossfaderTable()
 	// construct the table that contains a list of
 	// all the crossfader presets
 	static const char *szCreateDBQuery  = 
-		"CREATE TABLE " CROSSFADER_PRESETS " ( "	
+		"CREATE TABLE " CROSSFADER_PRESET " ( "	
 		"crossfader_name VARCHAR(255) PRIMARY KEY, "
 		"newsong FLOAT, "
 		"pause_resume FLOAT, "
@@ -525,6 +525,9 @@ bool CmusikLibrary::Startup()
 
 		if ( !InitDynTable() )
 			error = true;
+
+		if ( !InitCrossfaderTable() )
+			error = true;
    }
    else
 	   error = true;
@@ -583,7 +586,7 @@ void CmusikLibrary::CreateCrossfader( CmusikCrossfader* fader )
 	CStdString sQuery;
 
 	sQuery.Format( "INSERT INTO %s VALUES ( %f,%f,%f,%f ); ",
-		CROSSFADER_PRESETS,
+		CROSSFADER_PRESET,
 		fader->GetDuration( MUSIK_CROSSFADER_NEW_SONG ),
 		fader->GetDuration( MUSIK_CROSSFADER_PAUSE_RESUME ),
 		fader->GetDuration( MUSIK_CROSSFADER_STOP ),
@@ -604,7 +607,7 @@ void CmusikLibrary::DeleteCrossfader( const CStdString& name )
 	CStdString sQuery;
 
 	sQuery.Format( "DELETE FROM %s WHERE crossfader_name = %s",
-		CROSSFADER_PRESETS,
+		CROSSFADER_PRESET,
 		name.c_str() );
 
 	m_ProtectingLibrary->acquire();
@@ -622,7 +625,7 @@ void CmusikLibrary::DeleteCrossfader( CmusikCrossfader* fader )
 	CStdString sQuery;
 
 	sQuery.Format( "DELETE FROM %s WHERE crossfader_name = %s",
-		CROSSFADER_PRESETS,
+		CROSSFADER_PRESET,
 		fader->GetName().c_str() );
 
 	m_ProtectingLibrary->acquire();
@@ -1333,7 +1336,7 @@ void CmusikLibrary::GetAllCrossfaders( CStdStringArray* target, bool clear_targe
 	if ( clear_target )
 		target->clear();
 
-	CStdString sQuery( "SELECT crossfader_name FROM " CROSSFADER_PRESETS " WHERE crossfader_name <> '';" );
+	CStdString sQuery( "SELECT crossfader_name FROM " CROSSFADER_PRESET " WHERE crossfader_name <> '';" );
 
 	m_ProtectingLibrary->acquire();
 	sqlite_exec( m_pDB, sQuery.c_str(), &sqlite_AddRowToStringArray, target, NULL );
@@ -1346,7 +1349,7 @@ void CmusikLibrary::GetCrossfader( const CStdString& name, CmusikCrossfader* fad
 {
 	CStdString sQuery;
 	sQuery.Format( "SELECT newsong, pause_resume, seek, stop, exit FROM %s WHERE crossfader_name is '%s';",
-		CROSSFADER_PRESETS,
+		CROSSFADER_PRESET,
 		name.c_str() );
 
 	m_ProtectingLibrary->acquire();

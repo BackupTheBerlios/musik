@@ -152,6 +152,9 @@ public:
 	void SetPlaylist( CmusikPlaylist* playlist );
 	void SetLibrary( CmusikLibrary* library );
 
+	// item that is being played
+	int GetIndex(){ return m_Index; }
+
 	// time
 	int	GetTimeNow		( int mode );
 	int	GetTimeRemain	( int mode );
