@@ -783,24 +783,33 @@ bool CmusikPlaylistCtrl::PlayItem( int n )
 		m_Player->SetPlaylist( new CmusikPlaylist() );
 
 	// insert song into player's playlist
-	if ( m_Player->GetPlaylist() != m_Playlist )
+	if ( GetKeyState( VK_MENU ) >= 0 )
 	{
-		if ( m_Player->GetIndex() + 1 >= m_Player->GetPlaylist()->GetCount() )
+		if ( m_Player->GetPlaylist() != m_Playlist )
 		{
-			m_Player->GetPlaylist()->Add( song );
-			insert_at = m_Player->GetPlaylist()->GetCount() - 1;
+			if ( m_Player->GetIndex() + 1 >= m_Player->GetPlaylist()->GetCount() )
+			{
+				m_Player->GetPlaylist()->Add( song );
+				insert_at = m_Player->GetPlaylist()->GetCount() - 1;
+			}
+			else
+			{
+				insert_at = m_Player->GetIndex() + 1;
+				m_Player->GetPlaylist()->InsertAt( song.GetID(), insert_at ); 
+			}
 		}
 		else
-		{
-			insert_at = m_Player->GetIndex() + 1;
-			m_Player->GetPlaylist()->InsertAt( song.GetID(), insert_at ); 
-		}
+			insert_at = n;
 	}
 	else
+	{
+		CmusikPlaylist* copy = new CmusikPlaylist( *m_Playlist );
+		m_Player->SetPlaylist( copy );
 		insert_at = n;
+	}
 	
 	// play it
-	if ( insert_at > -1 )
+	if ( insert_at > -1 && GetKeyState( VK_CONTROL ) >= 0 )
 		m_Player->Play( insert_at, MUSIK_CROSSFADER_NEW_SONG );
 
 	SetItemState( n, 0, LVIS_SELECTED );
@@ -919,7 +928,7 @@ void CmusikPlaylistCtrl::BeginDrag( NMHDR* pNMHDR, bool right_button )
         return;
     }
 
-    // Put the data in the data source.
+    // Put the data in the data coosource.
 	if ( right_button )
 		etc.cfFormat = m_DropID_R;
 	else 

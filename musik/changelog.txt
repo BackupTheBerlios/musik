@@ -6,7 +6,7 @@ a2:
     to the now playing queue. it is played in the background
     until either another song is clicked or it expires. also
     dropping files onto now playing not only queues the songs
-    but starts playback.
+    but starts playback if not playing.
   - fixed a bug where clearing the now playing and clicking
     a column to sort would crash 
   - the playlist now has an icon to indicate if a song is
