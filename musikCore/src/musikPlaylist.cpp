@@ -279,6 +279,34 @@ size_t CmusikPlaylist::GetCount()
 
 ///////////////////////////////////////////////////
 
+size_t CmusikPlaylist::GetRunningTime()
+{
+	size_t TotTime = 0;
+	
+	for ( int n = 0; n < GetCount(); n++ )
+	{
+		TotTime += (atoi( m_Songs[n].GetField( 10 ) ) / 1000);
+	}
+	
+	return TotTime;
+}
+
+///////////////////////////////////////////////////
+
+double CmusikPlaylist::GetDiskspace()
+{
+	double space = 0.0f;
+	
+	for ( int n = 0; n < GetCount(); n++ )
+	{
+		space += (atof( m_Songs[n].GetField( 8 ) ) );
+	}
+	
+	return space;
+}
+
+///////////////////////////////////////////////////
+
 int CmusikPlaylist::GetSongID( int index )
 {
 	if ( index >= (int)m_Songs.size() || index < 0 )
