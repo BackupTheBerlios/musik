@@ -675,7 +675,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 			LoadBarState( sProfile );
 		}
 
-		ShowSelectionBoxes( true );
+		ShowSelectionBoxes( true, true );
 	}
 
 	// fire the updater task off
@@ -1530,7 +1530,7 @@ void CMainFrame::OnFilePreferences()
 	CmusikPrefsSoundDriver wndPageSoundDriver( m_Prefs, m_Library, m_Player );
 
 	// remove help icon from gripper
-	wndPageInterfaceWorkflow.m_psp.dwFlags&=		~PSP_HASHELP;
+	wndPageInterfaceWorkflow.m_psp.dwFlags&=	~PSP_HASHELP;
 	wndPageSoundCrossfader.m_psp.dwFlags&=		~PSP_HASHELP;
 	wndPageSoundDriver.m_psp.dwFlags&=			~PSP_HASHELP;
 
@@ -1819,9 +1819,9 @@ void CMainFrame::OnUpdateViewSources(CCmdUI *pCmdUI)
 
 ///////////////////////////////////////////////////
 
-void CMainFrame::ShowSelectionBoxes( bool show )
+void CMainFrame::ShowSelectionBoxes( bool show, bool force )
 {
-	if ( m_SelBoxesVisible == show )
+	if ( !force && m_SelBoxesVisible == show )
 		return;
 
 	if ( show && !m_SelBoxesVisible )

@@ -223,7 +223,7 @@ protected:
 	CmusikSelBarArray		m_wndSelectionBars;
 	CmusikEqualizerBar*		m_wndEqualizer;
 
-	void ShowSelectionBoxes( bool show = true );
+	void ShowSelectionBoxes( bool show = true, bool force = false );
 
 	// utility functions
 	void DockBarLeftOf( CSizingControlBar* Bar, CSizingControlBar* LeftOf );
