@@ -363,6 +363,16 @@
 					</File>
 				</Filter>
 			</Filter>
+			<Filter
+				Name="SaveStdPlaylist"
+				Filter="">
+				<File
+					RelativePath=".\musikSaveStdPlaylist.cpp">
+				</File>
+				<File
+					RelativePath=".\musikSaveStdPlaylist.h">
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Resource Files"

@@ -230,10 +230,11 @@ CmusikPrefs::~CmusikPrefs()
 void CmusikPrefs::LoadPrefs()
 {
 	// main dialog
-	m_Dlg_Size		= StringToCSize( config->GetValue( "Dialog", "Dialog Size", "800x600" ) );
-	m_Dlg_Pos		= StringToCPoint( config->GetValue( "Dialog", "Dialog Position", "50,50" ) );
-	m_Dlg_Maximized	= StringToBool( config->GetValue( "Dialog", "Maximized", "0" ) );
-	m_Dlg_ResetUI	= StringToBool( config->GetValue( "Dialog", "Reset UI", "1" ) );
+	m_Dlg_Size					= StringToCSize( config->GetValue( "Dialog", "Dialog Size", "800x600" ) );
+	m_Dlg_Pos					= StringToCPoint( config->GetValue( "Dialog", "Dialog Position", "50,50" ) );
+	m_Dlg_Maximized				= StringToBool( config->GetValue( "Dialog", "Maximized", "0" ) );
+	m_Dlg_ResetUI				= StringToBool( config->GetValue( "Dialog", "Reset UI", "1" ) );
+	m_Dlg_StdPlaylist_Prompt	= StringToInt( config->GetValue( "Dialog", "Prompt STD Playlist Save", "-1" ) );
 
 	// selection area
 	m_SelectionBox_Count = StringToInt( config->GetValue( "Selection Area", "Count", "2" ) );
@@ -288,6 +289,7 @@ void CmusikPrefs::SavePrefs()
 	config->SetValue( "Dialog", "Dialog Position", CPointToString( m_Dlg_Pos ) );
 	config->SetValue( "Dialog", "Maximized", BoolToString( m_Dlg_Maximized ) );
 	config->SetValue( "Dialog", "Reset UI", BoolToString( m_Dlg_ResetUI ) );
+	config->SetValue( "Dialog", "Prompt STD Playlist Save", IntToString( m_Dlg_StdPlaylist_Prompt ) );
 
 	// selection area
 	config->SetValue( "Selection Area", "Count", IntToString( (int)m_SelectionBox_Count ) );

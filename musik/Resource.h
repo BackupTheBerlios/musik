@@ -14,6 +14,7 @@
 #define IDI_MUSIK_32                    134
 #define IDI_ICON1                       135
 #define IDI_MUSIK_48                    135
+#define IDD_SAVESTDPLAYLIST             137
 #define IDC_CHECK_STARTUPSCAN           1007
 #define IDC_CHECK_PL_STRIPES            1009
 #define IDC_COMBO1                      1010
@@ -23,6 +24,10 @@
 #define IDC_EDIT2                       1014
 #define IDC_CHECK1                      1015
 #define IDC_CHECK2                      1016
+#define IDC_BTNNO                       1017
+#define IDC_BUTTON2                     1018
+#define IDC_BTNYES                      1018
+#define IDC_REMEMBER                    1019
 #define ID_FILE_PREFERENCES             32771
 #define ID_FILE_SEP                     32772
 #define ID_OPEN_FILES                   32774
@@ -34,9 +39,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        137
+#define _APS_NEXT_RESOURCE_VALUE        138
 #define _APS_NEXT_COMMAND_VALUE         32778
-#define _APS_NEXT_CONTROL_VALUE         1017
+#define _APS_NEXT_CONTROL_VALUE         1020
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

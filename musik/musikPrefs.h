@@ -38,12 +38,14 @@ public:
 	CPoint		GetDlgPos							( )					{ return m_Dlg_Pos; }
 	bool		IsMaximized							( )					{ return m_Dlg_Maximized; }
 	bool		ResetUI								( )					{ return m_Dlg_ResetUI; }
+	int			GetStdPlaylistPrompt				( )					{ return m_Dlg_StdPlaylist_Prompt; }
 
 	// main dialog sets
 	void		SetDlgSize							( const CSize sz )	{ m_Dlg_Size = sz; }
 	void		SetDlgPos							( const CPoint pt )	{ m_Dlg_Pos = pt; }
 	void		SetMaximized						( bool max )		{ m_Dlg_Maximized = max; }
 	void		SetDlgResetUI						( bool reset )		{ m_Dlg_ResetUI = reset; }
+	void		SetStdPlaylistPrompt				( int prompt )		{ m_Dlg_StdPlaylist_Prompt = prompt; }
 
 	// selection box gets
 	size_t		GetSelBoxCount						( )					{ return m_SelectionBox_Count; }
@@ -123,6 +125,7 @@ private:
 	CPoint	m_Dlg_Pos;
 	bool	m_Dlg_Maximized;
 	bool	m_Dlg_ResetUI;
+	int		m_Dlg_StdPlaylist_Prompt;
 
 	// selection area
 	size_t	m_SelectionBox_Count;

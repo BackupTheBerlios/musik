@@ -10,6 +10,8 @@
 #include "musikSourcesCtrl.h"
 #include "musikBatchAddFunctor.h"
 
+#include "musikSaveStdPlaylist.h"
+
 #include "../musikCore/include/musikPlaylist.h"
 #include "../musikCore/include/musikArrays.h"
 #include "../musikCore/include/musikLibrary.h"
@@ -18,7 +20,6 @@
 #include "../musikCore/include/musikBatchAdd.h"
 
 #include "MEMDC.H"
-#include ".\musikplaylistctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -488,7 +489,38 @@ void CmusikPlaylistCtrl::SetPlaylist( CmusikPlaylist* playlist, int m_Type )
 		TRACE0( "Well, something messed up, our playlist is now NULL...\n" );
 	}
 
-	else if ( playlist != m_Playlist )
+	// if the last item was a standard playlist,
+	// we may need to save it. so check...
+	if ( m_PlaylistType == MUSIK_PLAYLIST_TYPE_STANDARD )
+	{
+		// if the user wants to be prompted...
+		if ( m_PlaylistNeedsSave )
+		{
+			// user wants to be prompted
+			if ( m_Prefs->GetStdPlaylistPrompt() == -1 )
+			{
+				CmusikSaveStdPlaylist* pDlg;
+				pDlg = new CmusikSaveStdPlaylist( this, m_Prefs );
+				if ( pDlg->DoModal() == IDOK )
+				{
+					// save playlist...
+				}
+			}
+
+			// otherwise just take the pref's default
+			else
+			{
+				if ( m_Prefs->GetStdPlaylistPrompt() == 1 )
+				{
+					// save playlist...
+				}
+			}
+
+			m_PlaylistNeedsSave = false;
+		}
+	}
+
+	if ( playlist != m_Playlist )
 	{
 		if ( m_SongInfoCache )
 			m_SongInfoCache->SetPlaylist( playlist );
@@ -497,7 +529,6 @@ void CmusikPlaylistCtrl::SetPlaylist( CmusikPlaylist* playlist, int m_Type )
 		m_PlaylistType = m_Type;
 		
 		m_Changed = true;
-		m_PlaylistNeedsSave = false;
 	}
 }
 

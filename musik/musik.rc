@@ -198,6 +198,20 @@ BEGIN
                     WS_TABSTOP,7,7,79,10
 END
 
+IDD_SAVESTDPLAYLIST DIALOGEX 0, 0, 262, 53
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "musik"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    PUSHBUTTON      "No",IDC_BTNNO,209,35,50,14
+    PUSHBUTTON      "Yes",IDC_BTNYES,155,35,50,14
+    CONTROL         "Remember my answer",IDC_REMEMBER,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,6,37,87,10
+    LTEXT           "Save changes to modified playlist?",IDC_STATIC,6,5,252,
+                    24
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -294,6 +308,14 @@ BEGIN
         RIGHTMARGIN, 203
         TOPMARGIN, 7
         BOTTOMMARGIN, 147
+    END
+
+    IDD_SAVESTDPLAYLIST, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 255
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 46
     END
 END
 #endif    // APSTUDIO_INVOKED
