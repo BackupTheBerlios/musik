@@ -9,10 +9,9 @@
 #include "../Musik.Core/include/MusikPlaylist.h"
 #include "../Musik.Core/include/MusikArrays.h"
 #include "../Musik.Core/include/MusikLibrary.h"
-#include "../Musik.Core/include/MusikSongInfoCache.h"
+#include "../Musik.Core/include/MusikDynDspInfo.h"
 
 #include "MEMDC.H"
-#include ".\musikplaylistctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -23,7 +22,7 @@ CMusikPlaylistCtrl::CMusikPlaylistCtrl( CMusikLibrary* library, CMusikPrefs* pre
 	m_Prefs		= prefs;
 	m_Playlist	= playlist;
 
-	m_SongInfoCache = new CMusikSongInfoCache( m_Playlist, m_Library );
+	m_SongInfoCache = new CMusikDynDspInfo( m_Playlist, m_Library );
 
 	InitFonts();
 }
@@ -143,6 +142,7 @@ void CMusikPlaylistCtrl::SaveColumns()
 void CMusikPlaylistCtrl::UpdateV()
 {
 	SetRedraw( false );
+	m_SongInfoCache->Set( 0, 0 );
 	SetItemCountEx( m_Playlist->size(), LVSICF_NOINVALIDATEALL /*| LVSICF_NOSCROLL*/ );
 
 	CRect rcClient;
@@ -180,6 +180,7 @@ void CMusikPlaylistCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 
 	LV_ITEM* pItem = &( pDispInfo->item );
 
+	// only need to worry about item text
 	if ( pItem->mask & LVIF_TEXT )
 	{
 		int nItem = pItem->iItem;
@@ -190,13 +191,24 @@ void CMusikPlaylistCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 
 		CString sValue;
 		
-		if ( m_Prefs->GetPlaylistCol( nSub ) == MUSIK_LIBRARY_TYPE_RATING )
+		// if the item we want to access is out of the
+		// cache's range, something bad happened
+		if ( nItem > m_SongInfoCache->GetLast() )
+			sValue = _T( "[musik.error]" );
+
+		// if the current subitem type is rating, then
+		// we need to format it correctly... pass the
+		// value to GetRating()
+		else if ( m_Prefs->GetPlaylistCol( nSub ) == MUSIK_LIBRARY_TYPE_RATING )
 			sValue = GetRating( nItem );
+
+		// otherwise, just use the value we are supposed to
 		else
-			sValue = m_Playlist->GetField( nItem, nType );
+			sValue = m_SongInfoCache->items()->at( nItem - m_SongInfoCache->GetFirst() ).GetField( nType );
 
+		// copy the buffer of the correct display string
+		// to the current LV_ITEM
 		char* pStr = sValue.GetBuffer();
-
 		pItem->cchTextMax = sizeof( *pStr );
 		lstrcpy( pItem->pszText, pStr );
 	}
@@ -273,7 +285,8 @@ void CMusikPlaylistCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 
 CString CMusikPlaylistCtrl::GetRating( int item )
 {
-	int nRating = atoi( m_Playlist->items()->at( item ).GetField( MUSIK_LIBRARY_TYPE_RATING ) );
+	int nRating = atoi( m_SongInfoCache->items()->at( item - m_SongInfoCache->GetFirst() ).GetRating() );
+
 	CString sRating;
 	switch ( nRating )
 	{

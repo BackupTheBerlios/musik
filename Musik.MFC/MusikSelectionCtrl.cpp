@@ -118,19 +118,30 @@ void CMusikSelectionCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 
 	LV_ITEM* pItem = &(pDispInfo)->item;
 
-	// a safeguard... just make sure the item we're
-	// getting passed has a respective value in the
-	// array of items.
-	if ( pItem->iItem > (int)m_Items.size() )
-		lstrcpy( pItem->pszText, "" );
-
-	// got a valid item, so go ahead and add it.
-	else
+	// only need to worry about item text
+	if ( pItem->mask & LVIF_TEXT )
 	{
-		const char* pStr = m_Items.at( pItem->iItem ).c_str();
+		// a safeguard... just make sure the item we're
+		// getting passed has a respective value in the
+		// array of items.
+		if ( pItem->iItem >= (int)m_Items.size() )
+		{
+			CString sNull = _T( "[musik.error]" );
+			char* pStr = sNull.GetBuffer();
 
-		pItem->cchTextMax = sizeof( *pStr );
-		lstrcpy( pItem->pszText, pStr );
+			pItem->cchTextMax = sizeof( *pStr );
+			lstrcpy( pItem->pszText, pStr );
+
+		}
+
+		// got a valid item, so go ahead and add it.
+		else
+		{
+			const char* pStr = m_Items.at( pItem->iItem ).c_str();
+
+			pItem->cchTextMax = sizeof( *pStr );
+			lstrcpy( pItem->pszText, pStr );
+		}
 	}
 
 	*pResult = 0;
@@ -150,7 +161,7 @@ void CMusikSelectionCtrl::OnLvnItemchanged(NMHDR *pNMHDR, LRESULT *pResult)
 			if ( pNMLV->uNewState & LVIS_SELECTED )
 			{
 				int WM_SELBOXUPDATE = RegisterWindowMessage( "SELBOXUPDATE" );
-				m_Parent->PostMessage( WM_SELBOXUPDATE, GetCtrlID() );
+				m_Parent->SendMessage( WM_SELBOXUPDATE, GetCtrlID() );
 			}
 		}
 	}

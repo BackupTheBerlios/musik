@@ -319,6 +319,9 @@
 				RelativePath="..\Musik.Core\include\MusikArrays.h">
 			</File>
 			<File
+				RelativePath="..\Musik.Core\include\MusikDynDspInfo.h">
+			</File>
+			<File
 				RelativePath="..\Musik.Core\src\MusikLibrary.cpp">
 			</File>
 			<File
@@ -335,9 +338,6 @@
 			</File>
 			<File
 				RelativePath="..\Musik.Core\include\MusikPlaylist.h">
-			</File>
-			<File
-				RelativePath="..\Musik.Core\include\MusikSongInfoCache.h">
 			</File>
 			<File
 				RelativePath="..\Musik.Core\include\StdString.h">
