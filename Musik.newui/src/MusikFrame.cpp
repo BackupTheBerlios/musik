@@ -82,6 +82,16 @@ void CMusikFrame::CreateSashes()
 
 void CMusikFrame::CreateControls()
 {
+	//--- left or "sources" area	---//
+	m_SourcesCtrl = new CMusikSourcesCtrl( m_SourcesSash, -1 );
+	m_SimpleQueryCtrl = new CMusikSimpleQueryCtrl( m_SourcesSash, -1 );
+
+	m_SourcesSizer = new wxBoxSizer( wxVERTICAL );
+	m_SourcesSizer->Add( m_SourcesCtrl, 1, wxALL | wxEXPAND, 1 );
+	m_SourcesSizer->Add( m_SimpleQueryCtrl, 0, wxALL, 1 );
+	//m_SourcesSash->SetSizer( m_SourcesSizer );
+	//m_SourcesSash->Layout();
+
 	/*
 	wxBoxSizer *p1 = new wxBoxSizer( wxVERTICAL );
 	wxBoxSizer *p2 = new wxBoxSizer( wxHORIZONTAL );
