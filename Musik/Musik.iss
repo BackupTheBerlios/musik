@@ -12,8 +12,8 @@ DefaultGroupName=wxMusik
 AllowNoIcons=true
 LicenseFile=license.txt
 
-OutputBaseFilename=wxMusikSetup
-VersionInfoVersion=0.3.0
+OutputBaseFilename=wxMusik_v0.3.0.1_Setup
+VersionInfoVersion=0.3.0.1
 VersionInfoDescription=A music player and library application
 Compression=lzma/ultra
 ShowLanguageDialog=yes
@@ -41,17 +41,10 @@ Source: ..\..\WINDOWS\SYSTEM32\msvcp71.dll; DestDir: {app}; Flags: promptifolder
 Source: ..\..\WINDOWS\SYSTEM32\msvcr71.dll; DestDir: {app}; Flags: promptifolder onlyifdoesntexist
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
-Source: contrib\playlists\top_10_rated_songs_played_this_year.mpd; DestDir: {userappdata}\..\.Musik\playlists; Flags: overwritereadonly; Components: Dynamic_Playlist_Examples
-Source: contrib\playlists\added_in_the_last_2_days.mpd; DestDir: {userappdata}\..\.Musik\playlists; Flags: overwritereadonly; Components: Dynamic_Playlist_Examples
-Source: contrib\playlists\energy_club.mpu; DestDir: {userappdata}\..\.Musik\playlists; Flags: overwritereadonly; Components: Radio_Channels
-Source: contrib\playlists\mistagged_files.mpd; DestDir: {userappdata}\..\.Musik\playlists; Flags: overwritereadonly; Components: Dynamic_Playlist_Examples
-Source: contrib\playlists\mp3_vbr_files.mpd; DestDir: {userappdata}\..\.Musik\playlists; Flags: overwritereadonly; Components: Dynamic_Playlist_Examples
-Source: contrib\playlists\not_played_for_at_least_3_months.mpd; DestDir: {userappdata}\..\.Musik\playlists; Flags: overwritereadonly; Components: Dynamic_Playlist_Examples
-Source: contrib\playlists\played_this_month.mpd; DestDir: {userappdata}\..\.Musik\playlists; Flags: overwritereadonly; Components: Dynamic_Playlist_Examples
-Source: contrib\playlists\progrock_radio.mpu; DestDir: {userappdata}\..\.Musik\playlists; Flags: overwritereadonly; Components: Radio_Channels
-Source: contrib\playlists\snakemetal.mpu; DestDir: {userappdata}\..\.Musik\playlists; Flags: overwritereadonly; Components: Radio_Channels
-Source: contrib\playlists\songs_you_never_played.mpd; DestDir: {userappdata}\..\.Musik\playlists; Flags: overwritereadonly; Components: Dynamic_Playlist_Examples
-Source: contrib\playlists\top_10_most_played_in_last_2_weeks.mpd; DestDir: {userappdata}\..\.Musik\playlists; Flags: overwritereadonly; Components: Dynamic_Playlist_Examples
+Source: contrib\playlists\*.mpd; DestDir: {userappdata}\..\.Musik\playlists; Flags: overwritereadonly; Components: Dynamic_Playlist_Examples
+Source: contrib\playlists\*.mpu; DestDir: {userappdata}\..\.Musik\playlists; Flags: overwritereadonly; Components: Radio_Channels
+Source: contrib\playlists\*.mpu; DestDir: {app}\..\.Musik\playlists; Flags: overwritereadonly; Components: Radio_Channels_win9x
+Source: contrib\playlists\*.mpd; DestDir: {app}\..\.Musik\playlists; Flags: overwritereadonly; Components: Dynamic_Playlist_Examples_win9x
 [Icons]
 Name: {group}\wxMusik; Filename: {app}\wxMusik.exe
 ; NOTE: The following entry contains an English phrase ("Uninstall"). You are free to translate it into another language if required.
@@ -63,9 +56,11 @@ Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\wxMusik; Filename: 
 ; NOTE: The following entry contains an English phrase ("Launch"). You are free to translate it into another language if required.
 Filename: {app}\wxMusik.exe; Description: Launch Musik; Flags: nowait postinstall skipifsilent
 [Components]
-Name: Dynamic_Playlist_Examples; Description: Examples of Dynamic Playlists; Types: custom full
-Name: Radio_Channels; Description: Examples of Net Radio Channels; Types: custom full
+Name: Dynamic_Playlist_Examples; Description: Examples of Dynamic Playlists; Types: custom full; MinVersion: 0,4.0.1381
+Name: Radio_Channels; Description: Examples of Net Radio Channels; Types: custom full; MinVersion: 0,4.0.1381
+Name: Radio_Channels_win9x; Description: Examples of Net Radio Channels; Types: custom full; MinVersion: 4.0.950,0; OnlyBelowVersion: 0,4.0.1381
+Name: Dynamic_Playlist_Examples_win9x; Description: Examples of Dynamic Playlists; Types: custom full; MinVersion: 4.0.950,0; OnlyBelowVersion: 0,4.0.1381
 [InstallDelete]
 Name: {app}\Musik.exe; Type: files
 [UninstallDelete]
-Name: {userappdata}\.Musik; Type: filesandordirs
+Name: {userappdata}\..\.Musik; Type: filesandordirs; MinVersion: 0,4.0.1381
