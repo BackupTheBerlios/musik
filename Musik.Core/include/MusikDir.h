@@ -28,6 +28,7 @@ class CMusikDir
 {
 public:
 
+	CMusikDir();
 	CMusikDir( CStdString dir, CStdStringArray* target = NULL, CMusikFunctor* functor = NULL, bool threaded = false, bool start = false );
 	~CMusikDir();
 

@@ -2,6 +2,7 @@
 
 #include "stdafx.h"
 #include "../include/MusikDir.h"
+#include "../include/MusikFilename.h"
 
 ///////////////////////////////////////////////////
 
@@ -14,6 +15,15 @@ static void MusikDirAddWorker( CMusikDir* params )
 
 	if ( params->m_Functor )
 		params->m_Functor->OnThreadEnd();
+}
+
+///////////////////////////////////////////////////
+
+CMusikDir::CMusikDir()
+{
+	m_Target = NULL;
+	m_Functor = NULL;
+	m_Threaded = false;
 }
 
 ///////////////////////////////////////////////////
@@ -74,45 +84,37 @@ void OpenDir( CStdString dir, CStdStringArray* target, CMusikFunctor* functor, b
 	if ( hDir != INVALID_HANDLE_VALUE )
 	{
 		CStdString fn, temp;
-		while ( true )
+		CMusikFilename MFN;
+		do
 		{
-			fn = lpFindFileData.cFileName;
-
-			if ( !fn.IsEmpty() && fn != "." && fn != ".." )
+			if ( lpFindFileData.cFileName[0] != '.' )
 			{
-				// file was a directory
+				// file is a directory
 				if ( lpFindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY )
 				{
-					fn += CStdString( "\\*.*" );
-					OpenDir( fn );
+					fn = dir.Left( dir.GetLength() - 3 );	// remove *.* from full path
+					fn += lpFindFileData.cFileName;			// append to make new path
+					fn += "\\*.*";							// add *.* to the end of the new path
+					OpenDir( fn, NULL, NULL, false );
 				}
 
-				// file was a file
+				// file is a file...
 				else
 				{
-					temp = fn.Right( 3 );
-					temp.MakeLower();
-
-					if ( temp == "ogg" || temp == "mp3" )
-					{
-						target->push_back( fn );
-						g_Found++;
-					}
-
-					if ( g_Functor )
-					{
-						g_Count++;
-						g_Functor->OnThreadNewFile( g_Found, g_Count );
-					}	
+					fn = dir.Left( dir.GetLength() - 3 );	// remove *.* from full path...
+					fn += lpFindFileData.cFileName;			// append filename
+					
+					MFN.SetFilename( fn );
+					if ( MFN.GetExtension() == "mp3" || MFN.GetExtension() == "ogg" )
+						g_Target->push_back( fn );
 				}
 			}
 
-			// find next
-			if ( !FindNextFile( hDir, &lpFindFileData ) )
-				break;
 		}
+		while ( FindNextFile( hDir, &lpFindFileData ) );
+
+		FindClose( hDir );
 	}
-	FindClose( hDir );
 }
 
 #else
@@ -156,11 +158,14 @@ void CMusikDir::Run()
 			m_pThread->Start( (ACE_THR_FUNC)MusikDirAddWorker, this );
 			return;
 		}
+
+		TRACE0( "CMusikDir::Run() thread failed\n" );
 	}
 	else
+	{
 		OpenDir( m_Dir, m_Target, m_Functor, true );
-
-	TRACE0( "CMusikDir::Run() failed\n" );
+		return;
+	}
 }
 
 ///////////////////////////////////////////////////
