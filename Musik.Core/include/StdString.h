@@ -2989,7 +2989,17 @@ public:
 	// ReverseFind overload that's not in CString but might be useful
 	int ReverseFind(PCMYSTR szFind, MYSIZE pos=MYBASE::npos) const
 	{
-		MYSIZE nIdx	= this->rfind(0 == szFind ? MYTYPE() : szFind, pos);
+		MYSIZE nIdx;
+		
+		#ifdef WIN32
+			nIdx	= this->rfind(0 == szFind ? MYTYPE() : szFind, pos);
+		#else		
+			if ( szFind == 0 )
+				nIdx = rfind( MYTYPE(), pos );
+			else
+				nIdx = rfind( szFind, pos );
+		#endif
+			
 		return static_cast<int>(MYBASE::npos == nIdx ? -1 : nIdx);
 	}
 
