@@ -1,3 +1,7 @@
+Hotfix2 0.3.1.6
+- fix crash while (re)building the library on systems where sizeof(wchar_t) != 2, bug in idtag.cpp
+- add files missing in hotfix1 tag.gz
+
 Hotfix1 0.3.1.6
 - Fixed linux segfault on prefs win open
 - Fixed linux data path access for about and picture view

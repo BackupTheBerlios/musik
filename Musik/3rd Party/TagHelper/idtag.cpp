@@ -154,6 +154,10 @@ const char *SchemeList[] = {
     "%A - %L/%A - %T",
     "%L/%A - %T",
     "%A/%L/%N. %T",
+    "%A/%L/%N-%T",
+    "%A/%L/%N.%T",
+    "%A/%L/%N - %L - %T",
+
 };
 
 /* V A R I A B L E S */
@@ -416,7 +420,7 @@ int ConvertANSIToUTF8 ( const char* ansi, char* utf8 )
 
     ansi_len = strlen ( ansi );
 
-    if ( (wszValue = (wchar_t *)malloc ( (ansi_len + 1) * 2 )) == NULL )
+    if ( (wszValue = (wchar_t *)malloc ( (ansi_len + 1) * sizeof(wchar_t) )) == NULL )
         return -1;
 
     // Convert ANSI value to Unicode
