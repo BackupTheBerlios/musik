@@ -111,9 +111,9 @@ void CMusikSelectionCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 			lstrcpy( pItem->pszText, m_Items.at( index ).c_str() );
 			break;
 		}
-
-		*pResult = 0;
 	}
+
+	*pResult = 0;
 }
 
 void CMusikSelectionCtrl::OnLvnItemchanged(NMHDR *pNMHDR, LRESULT *pResult)

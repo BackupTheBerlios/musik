@@ -39,6 +39,12 @@ CMainFrame::CMainFrame()
 	m_Library = new CMusikLibrary( ( CStdString )m_Database );
 	m_Prefs = new CMusikPrefs( m_PrefsIni );
 
+	m_LibPlaylist = new CMusikPlaylist();
+	//m_Library->GetAllSongs( *m_LibPlaylist );
+
+	m_DynPlaylist = NULL;
+	m_StdPlaylist = NULL;
+
 	//m_hIcon16 = ( HICON )LoadImage( AfxGetApp()->m_hInstance, MAKEINTRESOURCE( IDI_ICON16 ), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR );
 	//m_hIcon32 = ( HICON )LoadImage( AfxGetApp()->m_hInstance, MAKEINTRESOURCE( IDI_ICON32 ), IMAGE_ICON, 32, 32, LR_DEFAULTCOLOR );
 }
@@ -47,12 +53,20 @@ CMainFrame::~CMainFrame()
 {
 	for ( int i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
 		delete m_wndSelectionBars[i];
+
 	delete m_wndView;
 	delete m_wndSources;
 	delete m_wndNowPlaying;
 
 	delete m_Library;
 	delete m_Prefs;
+
+	if ( m_LibPlaylist )
+		delete m_LibPlaylist;
+	if ( m_DynPlaylist )
+		delete m_DynPlaylist;
+	if ( m_StdPlaylist )
+		delete m_StdPlaylist;
 }
 
 void CMainFrame::InitPaths()
@@ -154,10 +168,11 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	//-------------------------------------------------//
 	//--- create a background window				---//
 	//-------------------------------------------------//
-	m_wndView = new CMusikPlaylistView( m_Library, m_Prefs );
+	m_wndView = new CMusikPlaylistView( m_Library, m_Prefs, m_LibPlaylist );
 	m_wndView->Create( NULL, NULL, AFX_WS_DEFAULT_VIEW, CRect(0, 0, 0, 0), this, AFX_IDW_PANE_FIRST, NULL );
 	m_wndView->ModifyStyleEx( WS_EX_STATICEDGE, NULL );
 	m_wndView->ModifyStyle( WS_BORDER, 0 );
+	m_wndView->GetCtrl()->UpdateV();
     EnableDocking( CBRS_ALIGN_BOTTOM );
 	EnableDocking( CBRS_ALIGN_LEFT );
     EnableDocking( CBRS_ALIGN_RIGHT );

@@ -6,14 +6,15 @@
 #include "MusikPlaylistView.h"
 
 #include "../Musik.Core/include/MusikLibrary.h"
+#include "../Musik.Core/include/MusikArrays.h"
 #include "MusikPrefs.h"
 
 // CMusikPlaylistView
 
 IMPLEMENT_DYNAMIC(CMusikPlaylistView, CWnd)
-CMusikPlaylistView::CMusikPlaylistView( CMusikLibrary* library, CMusikPrefs* prefs )
+CMusikPlaylistView::CMusikPlaylistView( CMusikLibrary* library, CMusikPrefs* prefs, CMusikPlaylist* playlist )
 {
-	m_Playlist = new CMusikPlaylistCtrl( library, prefs );
+	m_Playlist = new CMusikPlaylistCtrl( library, prefs, playlist );
 }
 
 CMusikPlaylistView::~CMusikPlaylistView()
@@ -37,7 +38,7 @@ int CMusikPlaylistView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if ( CWnd::OnCreate(lpCreateStruct) == -1 )
 		return -1;
 
-	long dwStyle = WS_CHILD | WS_VISIBLE | LVS_REPORT;
+	long dwStyle = WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_OWNERDATA;
 	long dwStyleEx = LVS_EX_FULLROWSELECT | LVS_EX_HEADERDRAGDROP;
 	
 	m_Playlist->Create( dwStyle, CRect( 0, 0, 0, 0 ), this, 123 );

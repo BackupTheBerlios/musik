@@ -13,10 +13,11 @@
 // CMusikPlaylistCtrl
 
 IMPLEMENT_DYNAMIC(CMusikPlaylistCtrl, CListCtrl)
-CMusikPlaylistCtrl::CMusikPlaylistCtrl( CMusikLibrary* library, CMusikPrefs* prefs )
+CMusikPlaylistCtrl::CMusikPlaylistCtrl( CMusikLibrary* library, CMusikPrefs* prefs, CMusikPlaylist* playlist )
 {
 	m_Library = library;
 	m_Prefs = prefs;
+	m_Playlist = playlist;
 }
 
 CMusikPlaylistCtrl::~CMusikPlaylistCtrl()
@@ -29,6 +30,7 @@ BEGIN_MESSAGE_MAP(CMusikPlaylistCtrl, CListCtrl)
 	ON_WM_NCCALCSIZE()
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
+	ON_NOTIFY_REFLECT(LVN_GETDISPINFO, OnLvnGetdispinfo)
 END_MESSAGE_MAP()
 
 void CMusikPlaylistCtrl::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp)
@@ -127,6 +129,13 @@ void CMusikPlaylistCtrl::SaveColumns()
 
 ///////////////////////////////////////////////////
 
+void CMusikPlaylistCtrl::UpdateV()
+{
+	SetItemCountEx( m_Playlist->size(), LVSICF_NOINVALIDATEALL | LVSICF_NOSCROLL );
+}
+
+///////////////////////////////////////////////////
+
 int CMusikPlaylistCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if ( CListCtrl::OnCreate( lpCreateStruct ) == -1 )
@@ -144,4 +153,20 @@ void CMusikPlaylistCtrl::OnDestroy()
 	SaveColumns();
 
 	CListCtrl::OnDestroy();
+}
+
+void CMusikPlaylistCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	NMLVDISPINFO *pDispInfo = reinterpret_cast<NMLVDISPINFO*>(pNMHDR);
+
+	LV_ITEM* pItem= &(pDispInfo)->item;
+
+	int index= pItem->iItem;
+
+	if ( pItem->mask & LVIF_TEXT )
+	{
+		lstrcpy( pItem->pszText, m_Playlist->GetField( index, m_Prefs->GetPlaylistCol( pItem->iSubItem ) ) );
+	}
+
+	*pResult = 0;
 }

@@ -6,14 +6,17 @@
 
 class CMusikLibrary;
 class CMusikPrefs;
+class CMusikPlaylist;
 
 class CMusikPlaylistView : public CWnd
 {
 	DECLARE_DYNAMIC(CMusikPlaylistView)
 
 public:
-	CMusikPlaylistView( CMusikLibrary* library, CMusikPrefs* prefs );
+	CMusikPlaylistView( CMusikLibrary* library, CMusikPrefs* prefs, CMusikPlaylist* playlist );
 	virtual ~CMusikPlaylistView();
+
+	CMusikPlaylistCtrl* GetCtrl(){ return m_Playlist; }
 
 protected:
 	CMusikPlaylistCtrl* m_Playlist;

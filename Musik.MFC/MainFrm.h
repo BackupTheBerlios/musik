@@ -17,7 +17,12 @@
 #define ID_SOURCESBOX 1345
 #define ID_SELECTIONBOX_START 1346
 
+//-------------------------------------------------//
+//--- forward declarations, the headers files	---//
+//--- are included in the implmentation			---//
+//-------------------------------------------------//
 class CMusikLibrary;
+class CMusikPlaylist;
 
 class CMainFrame : public CFrameWnd
 {
@@ -48,6 +53,10 @@ private:
 	HICON m_Icon32;
 
 protected:
+	CMusikPlaylist* m_LibPlaylist;
+	CMusikPlaylist* m_DynPlaylist;
+	CMusikPlaylist* m_StdPlaylist;
+
 	CMusikLibrary* m_Library;
 	CMusikPrefs* m_Prefs;
 
@@ -55,10 +64,10 @@ protected:
 	CString m_Database;
 	CString m_PrefsIni;
 
-	CMusikPlaylistView* m_wndView;
-	CMusikSourcesBar* m_wndSources;
-	CMusikNowPlayingBar* m_wndNowPlaying;
-	CMusikSelectionBar* m_wndSelectionBars[4];
+	CMusikPlaylistView*		m_wndView;
+	CMusikSourcesBar*		m_wndSources;
+	CMusikNowPlayingBar*	m_wndNowPlaying;
+	CMusikSelectionBar*		m_wndSelectionBars[4];
 
 //-------------------------------------------------//
 //--- operations								---//
