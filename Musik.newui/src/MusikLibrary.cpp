@@ -3,8 +3,14 @@
 
 CMusikLibrary::CMusikLibrary()
 {
+	InitFields();
 }
 
 CMusikLibrary::~CMusikLibrary()
 {
+}
+
+CMusikLibrary::InitFields()
+{
+
 }
