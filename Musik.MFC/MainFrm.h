@@ -31,6 +31,8 @@ protected:
 public:
 
 private:
+	HICON m_Icon16;
+	HICON m_Icon32;
 
 protected:
 	CMusikPlaylistView m_wndView;
