@@ -1,7 +1,9 @@
 -------------------------------------------------------------------------
 
 a2:
- 
+  
+  - the playlist now has an icon to indicate if a song is
+    playing or not.
   - bug where hiding selection boxes and reshowing would 
     scramble sizes
   - if musik is playing and a song is double clicked, the 
