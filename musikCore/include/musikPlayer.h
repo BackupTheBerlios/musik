@@ -156,6 +156,7 @@ public:
 
 	// time
 	int	GetTimeNow		( int mode );
+	int GetTimeNowPer	();
 	int	GetTimeRemain	( int mode );
 	int	GetDuration		( int mode );
 
@@ -195,6 +196,10 @@ public:
 	void SetPlaymode( int mode ){ m_PlayMode = mode; }
 	void SetSafeShutdown(){ m_ShutDown = true; }
 	CmusikPlaylist* GetPlaylist(){ return m_Playlist; }
+	CStdString GetTimeStr( int time_ms );
+	void SetTimeNowPer( int percent );
+	CStdString GetTimePerStr( int percent );
+	int GetTimePer ( int percent );
 
 	// getting the current channel
 	int GetCurrChannel();

@@ -549,7 +549,7 @@ bool CmusikPlayer::Play( int index, int fade_type, int start_pos )
 
 	// set time
 	if ( start_pos )
-		FSOUND_Stream_SetTime( pNewStream, start_pos * 1000 );
+		FSOUND_Stream_SetTime( pNewStream, start_pos );
 
 	// toggle the flag
 	m_IsPlaying = true;
@@ -573,7 +573,7 @@ bool CmusikPlayer::Play( int index, int fade_type, int start_pos )
 
 	// call the functor. this is sort of like
 	// a callback, but a bit easier.
-	if ( m_Functor )
+	if ( m_Functor && fade_type != MUSIK_CROSSFADER_SEEK )
 		m_Functor->OnNewSong();
 
 	// set the new index
@@ -804,6 +804,54 @@ int CmusikPlayer::GetTimeNow( int mode )
 
 ///////////////////////////////////////////////////
 
+int CmusikPlayer::GetTimePer ( int percent )
+{
+	if ( percent == 0 )
+		percent = 1;
+	else if ( percent > 99 )
+		percent = 100;
+	
+	int nDuration = GetDuration( MUSIK_TIME_MS );
+	float fFinal = (float)nDuration * ( (float)percent / 100.0f );
+
+	return (int)fFinal;
+}
+
+///////////////////////////////////////////////////
+
+CStdString CmusikPlayer::GetTimePerStr( int percent )
+{
+	return GetTimeStr( GetTimePer( percent ) );
+}
+
+///////////////////////////////////////////////////
+
+int CmusikPlayer::GetTimeNowPer()
+{
+	int nCurr = GetTimeNow( MUSIK_TIME_SECONDS );
+	int nTotal = GetDuration( MUSIK_TIME_SECONDS );
+
+	return ( ( nCurr * 100 ) / nTotal );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlayer::SetTimeNowPer( int percent )
+{
+	if ( percent > 99 )
+		percent = 99;
+
+	int nPos = GetDuration( MUSIK_TIME_MS );
+	float fPos = ( (float)percent / 100.0f ) * nPos;
+
+	if ( !IsCrossfaderActive() )
+		FSOUND_Stream_SetTime( GetCurrStream(), (int)fPos );
+	else
+		Play( m_Index, MUSIK_CROSSFADER_SEEK, (int)fPos );
+}
+
+///////////////////////////////////////////////////
+
 int CmusikPlayer::GetTimeRemain( int mode )
 {
 	int nLeft = GetDuration( mode ) - GetTimeNow( mode );
@@ -889,3 +937,23 @@ void CmusikPlayer::CleanPlaylist()
 
 ///////////////////////////////////////////////////
 
+CStdString CmusikPlayer::GetTimeStr( int time_ms )
+{
+	CStdString sTime;
+
+	int ms = time_ms;
+	int hours = ms / 1000 / 60 / 60;
+	ms -= hours * 1000 * 60 * 60;
+	int minutes = ms / 1000 / 60;
+	ms -= minutes * 1000 * 60;
+	int seconds = ms / 1000;
+
+	if ( hours > 0 )
+		sTime.Format( "%d:%02d:%02d", hours, minutes, seconds );
+	else
+		sTime.Format( "%d:%02d", minutes, seconds );
+	
+	return sTime;
+}
+
+///////////////////////////////////////////////////
