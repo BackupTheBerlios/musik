@@ -234,18 +234,18 @@ CMusikPrefs::CMusikPrefs( CString filename )
 	if ( !config->ReadFile() )
 		config->WriteFile();
 
-	bool m_ActiveCaptionDef			= false;
-	bool m_CaptionDef				= false;
-	bool m_InctiveCaptionDef		= false;
-	bool m_InctiveCaptionTextDef	= false;
-	bool m_BtnFaceDef				= false;
-	bool m_BtnTextDef				= false;
-	bool m_BtnHilightDef			= false;
-	bool m_BtnShadowDef				= false;
-	bool m_ListCtrlDef				= false;
-	bool m_ListCtrlTextDef			= false;
-	bool m_HilightDef				= false;
-	bool m_HilightTextDef			= false;
+	m_ActiveCaptionDef		= false;
+	m_CaptionDef			= false;
+	m_InctiveCaptionDef		= false;
+	m_InctiveCaptionTextDef	= false;
+	m_BtnFaceDef			= false;
+	m_BtnTextDef			= false;
+	m_BtnHilightDef			= false;
+	m_BtnShadowDef			= false;
+	m_ListCtrlDef			= false;
+	m_ListCtrlTextDef		= false;
+	m_HilightDef			= false;
+	m_HilightTextDef		= false;
 
 	LoadPrefs();
 }
@@ -513,40 +513,40 @@ void CMusikPrefs::UnparseColors()
 {
 	const COLORREF transparent = RGB( 255, 0, 255 );
 
-	if ( MUSIK_COLOR_ACTIVECAPTION == GetSysColor( COLOR_ACTIVECAPTION ) )
+	if ( MUSIK_COLOR_ACTIVECAPTION == GetSysColor( COLOR_ACTIVECAPTION ) && m_ActiveCaptionDef )
 		MUSIK_COLOR_ACTIVECAPTION = transparent;
 
-	if ( MUSIK_COLOR_CAPTIONTEXT == GetSysColor( COLOR_CAPTIONTEXT ) )
+	if ( MUSIK_COLOR_CAPTIONTEXT == GetSysColor( COLOR_CAPTIONTEXT ) && m_CaptionDef )
 		MUSIK_COLOR_CAPTIONTEXT = transparent;
 
-	if ( MUSIK_COLOR_INACTIVECAPTION == GetSysColor( COLOR_INACTIVECAPTION ) )
+	if ( MUSIK_COLOR_INACTIVECAPTION == GetSysColor( COLOR_INACTIVECAPTION ) && m_InctiveCaptionDef )
 		MUSIK_COLOR_INACTIVECAPTION = transparent;
 
-	if ( MUSIK_COLOR_INACTIVECAPTIONTEXT == GetSysColor( COLOR_INACTIVECAPTIONTEXT ) )
+	if ( MUSIK_COLOR_INACTIVECAPTIONTEXT == GetSysColor( COLOR_INACTIVECAPTIONTEXT ) && m_InctiveCaptionTextDef )
 		MUSIK_COLOR_INACTIVECAPTIONTEXT = transparent;
 	
-	if ( MUSIK_COLOR_BTNFACE == GetSysColor( COLOR_BTNFACE ) )
+	if ( MUSIK_COLOR_BTNFACE == GetSysColor( COLOR_BTNFACE ) && m_BtnFaceDef )
 		MUSIK_COLOR_BTNFACE = transparent;
 
-	if ( MUSIK_COLOR_BTNTEXT == GetSysColor( COLOR_BTNTEXT ) )
+	if ( MUSIK_COLOR_BTNTEXT == GetSysColor( COLOR_BTNTEXT ) && m_BtnTextDef )
 		MUSIK_COLOR_BTNTEXT = transparent;
 
-	if ( MUSIK_COLOR_BTNHILIGHT == GetSysColor( COLOR_BTNHILIGHT ) )
+	if ( MUSIK_COLOR_BTNHILIGHT == GetSysColor( COLOR_BTNHILIGHT ) && m_BtnHilightDef )
 		MUSIK_COLOR_BTNHILIGHT = transparent;
 	
-	if ( MUSIK_COLOR_BTNSHADOW == GetSysColor( COLOR_BTNSHADOW ) )
+	if ( MUSIK_COLOR_BTNSHADOW == GetSysColor( COLOR_BTNSHADOW ) && m_BtnShadowDef )
 		MUSIK_COLOR_BTNSHADOW = transparent;
 	
-	if ( MUSIK_COLOR_LISTCTRL == GetSysColor( COLOR_BTNHILIGHT ) )
+	if ( MUSIK_COLOR_LISTCTRL == GetSysColor( COLOR_BTNHILIGHT ) && m_ListCtrlDef )
 		MUSIK_COLOR_LISTCTRL = transparent;
 
-	if ( MUSIK_COLOR_LISTCTRLTEXT == GetSysColor( COLOR_BTNTEXT ) )
+	if ( MUSIK_COLOR_LISTCTRLTEXT == GetSysColor( COLOR_BTNTEXT ) && m_ListCtrlTextDef )
 		MUSIK_COLOR_LISTCTRLTEXT = transparent;
 
-	if ( MUSIK_COLOR_HIGHLIGHT == GetSysColor( COLOR_HIGHLIGHT ) )
+	if ( MUSIK_COLOR_HIGHLIGHT == GetSysColor( COLOR_HIGHLIGHT ) && m_HilightDef )
 		MUSIK_COLOR_HIGHLIGHT = transparent;
 
-	if ( MUSIK_COLOR_HIGHLIGHTTEXT == GetSysColor( COLOR_HIGHLIGHTTEXT ) )
+	if ( MUSIK_COLOR_HIGHLIGHTTEXT == GetSysColor( COLOR_HIGHLIGHTTEXT ) && m_HilightTextDef )
 		MUSIK_COLOR_HIGHLIGHTTEXT = transparent;
 }
 

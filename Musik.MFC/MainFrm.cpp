@@ -520,7 +520,7 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 			pCurr->SetItemState( -1, 0, LVIS_SELECTED );
 		}
 
-		pSender->SetParent( false );
+		pParent->SetParent( false );
 		pSender->UpdateV();
 
 		CMusikSelectionCtrl::SetUpdating( false );
