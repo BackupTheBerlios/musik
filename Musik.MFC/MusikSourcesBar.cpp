@@ -89,10 +89,10 @@ void CMusikSourcesBar::OnItemChanged( NMHDR* pNotifyStruct, LRESULT* plResult )
 			return;
 
 		// library or device selected
-		if ( pNMPropTree->pItem->GetPlaylistType() == MUSIK_PLAYLIST_TYPE_LIBRARY_OR_DEVICE )
+		if ( pNMPropTree->pItem->GetPlaylistType() == MUSIK_SOURCES_TYPE_NOWPLAYING )
 		{
-			int WM_SOURCESLIBRARY = RegisterWindowMessage( "SOURCESLIBRARY" );
-			m_Parent->SendMessage( WM_SOURCESLIBRARY, NULL );
+			int WM_SOURCESNOWPLAYING = RegisterWindowMessage( "SOURCESNOWPLAYING" );
+			m_Parent->SendMessage( WM_SOURCESNOWPLAYING, NULL );
 		}
 
 		// standard playlist selected

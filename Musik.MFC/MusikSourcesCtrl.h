@@ -19,6 +19,13 @@ class CMusikPrefs;
 
 ///////////////////////////////////////////////////
 
+enum 
+{
+	MUSIK_SOURCES_TYPE_NOWPLAYING = 0
+};
+
+///////////////////////////////////////////////////
+
 class CMusikSourcesCtrl : public CPropTree
 {
 public:

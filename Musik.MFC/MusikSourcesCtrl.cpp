@@ -54,6 +54,7 @@ void CMusikSourcesCtrl::InitItems()
 	m_LibrariesRoot->SetLabelText( _T( "Libraries / Devices" ) );
 	m_LibrariesRoot->SetInfoText(_T(""));
 	m_LibrariesRoot->Expand( true );
+	LoadLibraries();
 
 	// standard playlists
 	if ( m_StdPlaylistRoot )
@@ -98,7 +99,14 @@ int CMusikSourcesCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CMusikSourcesCtrl::LoadLibraries()
 {
+	CMusikPlaylistInfo info;
+	info.Set( "Now Playing", MUSIK_SOURCES_TYPE_NOWPLAYING, NULL );
 
+	CPropTreeItem* temp;
+	temp = InsertItem( new CPropTreeItem(), m_LibrariesRoot );
+	temp->SetPlaylistInfo( info );
+
+	m_Libraries.push_back( temp );
 }
 
 ///////////////////////////////////////////////////

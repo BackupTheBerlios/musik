@@ -69,7 +69,7 @@ int WM_SONGSTOP				= RegisterWindowMessage( "SONGSTOP" );
 int WM_DRAGSTART			= RegisterWindowMessage( "DRAGSTART" );
 int WM_DRAGEND				= RegisterWindowMessage( "DRAGEND" );
 
-int WM_SOURCESLIBRARY		= RegisterWindowMessage( "SOURCESLIBRARY" );
+int WM_SOURCESNOWPLAYING	= RegisterWindowMessage( "SOURCESNOWPLAYING" );
 int WM_SOURCESSTDPLAYLIST	= RegisterWindowMessage( "SOURCESSTDPLAYLIST" );
 int WM_SOURCESDYNPLAYLIST	= RegisterWindowMessage( "SOURCESDYNDPLAYLIST" );
 
@@ -86,7 +86,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_SELBOXUPDATE, OnUpdateSel )
 	ON_REGISTERED_MESSAGE( WM_SONGCHANGE, OnSongChange )
 	ON_REGISTERED_MESSAGE( WM_SONGSTOP, OnSongStop )
-	ON_REGISTERED_MESSAGE( WM_SOURCESLIBRARY, OnSourcesLibrary )
+	ON_REGISTERED_MESSAGE( WM_SOURCESNOWPLAYING, OnSourcesNowPlaying )
 	ON_REGISTERED_MESSAGE( WM_SOURCESSTDPLAYLIST, OnSourcesStdPlaylist )
 	ON_REGISTERED_MESSAGE( WM_SOURCESDYNPLAYLIST, OnSourcesDynPlaylist )
 	ON_REGISTERED_MESSAGE( WM_DRAGSTART, OnDragStart )
@@ -623,9 +623,12 @@ LRESULT CMainFrame::OnSongStop( WPARAM wParam, LPARAM lParam )
 
 ///////////////////////////////////////////////////
 
-LRESULT CMainFrame::OnSourcesLibrary( WPARAM wParam, LPARAM lParam )
+LRESULT CMainFrame::OnSourcesNowPlaying( WPARAM wParam, LPARAM lParam )
 {
-	TRACE0( "A library or device was clicked\n" );
+	TRACE0( "'Now Playing' was clicked\n" );
+
+	m_wndView->GetCtrl()->SetPlaylist( m_Player->GetPlaylist() );
+	m_wndView->GetCtrl()->UpdateV();
 
 	return 0L;
 }

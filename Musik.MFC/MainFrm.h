@@ -159,7 +159,7 @@ protected:
 	afx_msg LRESULT OnUpdateSel( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSongChange( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSongStop( WPARAM wParam, LPARAM lParam );
-	afx_msg LRESULT OnSourcesLibrary( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnSourcesNowPlaying( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSourcesStdPlaylist( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSourcesDynPlaylist( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnDragStart(  WPARAM wParam, LPARAM lParam );
