@@ -128,9 +128,6 @@ BOOL CmusikPlaylistDropTarget::OnDrop ( CWnd* pWnd, COleDataObject* pDataObject,
 {
 	BOOL bRet;
 
-    // Read the CF_HDROP data and put the files in the main window's list.
-	bRet = ReadHdropData ( pDataObject );
-
     // Call the DnD helper.
 	if ( m_bUseDnDHelper )
 	{
@@ -141,7 +138,10 @@ BOOL CmusikPlaylistDropTarget::OnDrop ( CWnd* pWnd, COleDataObject* pDataObject,
 		IDataObject* piDataObj = pDataObject->GetIDataObject ( FALSE ); 
 		m_piDropHelper->Drop ( piDataObj, &point, dropEffect );
 	}
-    
+
+    // Read the CF_HDROP data call list's OnDrop()
+	bRet = ReadHdropData ( pDataObject );
+
     return bRet;
 }
 

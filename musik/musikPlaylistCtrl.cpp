@@ -853,6 +853,7 @@ void CmusikPlaylistCtrl::OnDropFiles( HDROP hDropInfo )
 	// which playlist to insert files to...
 	CmusikFileDrop* pDlg = new CmusikFileDrop( this );
 	pDlg->DoModal();
+	delete pDlg;
 
 	CStdString sTemp;
 	for ( size_t i = 0; i < nNumFiles; i++ )
