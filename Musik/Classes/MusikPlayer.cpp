@@ -57,6 +57,7 @@ CMusikPlayer::CMusikPlayer()
 	m_Fading		= false;
 	m_BeginFade		= false;
 	m_StartingNext	= false;
+	m_Stopping		= false;
 	m_SongIndex		= 0;
 	m_LastSong		= 0;
 	m_Channels		= -1;
@@ -399,6 +400,8 @@ void CMusikPlayer::Stop( bool bCheckFade, bool bExit )
 	g_NowPlayingCtrl->ResetInfo();
 	g_NowPlayingCtrl->PauseBtnToPlayBtn();
 
+	m_Stopping = true;
+
 	//-------------------------------------------------//
 	//--- setup crossfader and return, if the prefs	---//
 	//--- say so.									---//
@@ -432,6 +435,7 @@ void CMusikPlayer::Stop( bool bCheckFade, bool bExit )
 void CMusikPlayer::FinalizeStop()
 {
 	m_Playing = false;
+	m_Stopping = false;
 
 	int nStreamCount = g_ActiveStreams.GetCount();
 	for ( int i = 0; i < nStreamCount; i++ )

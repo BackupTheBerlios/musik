@@ -114,6 +114,7 @@ public:
 	bool IsPaused			( ) { return ( m_Paused );		}
 	bool IsFading			( ) { return ( m_Fading );		}
 	bool IsStartingNext		( ) { return ( m_StartingNext );}
+	bool IsStopping			( ) { return ( m_Stopping );	}
 	bool BeginFade			( )	{ return ( m_BeginFade );	}
 	void CaughtBeginFade	( )	{ m_BeginFade = false;		}
 
@@ -177,6 +178,7 @@ private:
 	bool			m_BeginFade;		//--- should we begin fading?						---//
 	bool			m_Fading;			//--- currently (cross)fading?						---//
 	bool			m_StartingNext;		//--- in the middle of starting up a next song?		---//
+	bool			m_Stopping;			//--- is the player currently stopping?				---//
 	wxString		m_CurrentFile;		//--- filename of current song						---//
 	int				m_CrossfadeType;	
 

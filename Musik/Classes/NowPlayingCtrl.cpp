@@ -196,7 +196,7 @@ CNowPlayingCtrl::~CNowPlayingCtrl()
 //-------------------//
 void CNowPlayingCtrl::OnTimer( wxTimerEvent& WXUNUSED(event) )
 {
-	if ( g_Player.IsPlaying() )
+	if ( g_Player.IsPlaying() && !g_Player.IsStopping() )
 		UpdateTime();
 }
 
