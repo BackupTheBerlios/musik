@@ -60,6 +60,18 @@
 
 ///////////////////////////////////////////////////
 
+enum 
+{
+	SYSMENU_RESETDIALOG = 85904,
+	SYSMENU_PLAYSEL,
+	SYSMENU_PAUSERESUME,
+	SYSMENU_NEXT,
+	SYSMENU_PREV,
+	SYSMENU_STOP
+};
+
+///////////////////////////////////////////////////
+
 // forward declarations, the headers files
 // are included in the implmentation	
 
@@ -225,6 +237,7 @@ public:
 	afx_msg void OnUnsynchronizedtagsView();
 	afx_msg void OnUnsynchronizedtagsWritetofile();
 	afx_msg void OnUnsynchronizedtagsFinalizefordatabaseonly();
+	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 };
 
 ///////////////////////////////////////////////////

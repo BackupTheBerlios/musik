@@ -178,6 +178,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_COMMAND(ID_UNSYNCHRONIZEDTAGS_VIEW, OnUnsynchronizedtagsView)
 	ON_COMMAND(ID_UNSYNCHRONIZEDTAGS_WRITETOFILE, OnUnsynchronizedtagsWritetofile)
 	ON_COMMAND(ID_UNSYNCHRONIZEDTAGS_FINALIZEFORDATABASEONLY, OnUnsynchronizedtagsFinalizefordatabaseonly)
+	ON_WM_SYSCOMMAND()
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -608,6 +609,11 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndSources = new CmusikSourcesBar( this, m_Library, m_Player, m_Prefs, m_uSourcesDrop );
 	m_wndSources->Create( _T( "Sources" ), this, ID_SOURCESBOX );
 	DockControlBar( m_wndSources, AFX_IDW_DOCKBAR_LEFT );
+
+	// append the system menu
+	CMenu* pMenu = GetSystemMenu( false );
+	if ( pMenu )
+		pMenu->InsertMenu( 0, MF_STRING, SYSMENU_RESETDIALOG, _T( "Reset Dialog" ) );
 
 	// load dockbar sizes and positions
 	if ( m_Prefs->ResetUI() )
@@ -1708,6 +1714,19 @@ void CMainFrame::OnUnsynchronizedtagsWritetofile()
 void CMainFrame::OnUnsynchronizedtagsFinalizefordatabaseonly()
 {
 	m_Library->FinalizeDirtySongs();
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnSysCommand(UINT nID, LPARAM lParam)
+{
+	if ( nID == SYSMENU_RESETDIALOG )
+	{
+		this->ResetUI();
+		return;
+	}
+
+	CFrameWnd::OnSysCommand(nID, lParam);
 }
 
 ///////////////////////////////////////////////////
