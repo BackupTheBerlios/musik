@@ -7,6 +7,7 @@
 
 #include "musikTrackCtrl.h"
 #include "musikPrefs.h"
+#include "musikEqualizerSets.h"
 
 #include "MEMDC.H"
 
@@ -16,16 +17,22 @@
 
 ///////////////////////////////////////////////////
 
+int WM_CLOSEEQUALIZERSETS = RegisterWindowMessage( "CLOSEEQUALIZERSETS" );
+
+///////////////////////////////////////////////////
+
 CmusikEqualizerBar::CmusikEqualizerBar( CmusikLibrary* library, CmusikPlayer* player, CmusikPrefs* prefs )
 	: CmusikDockBar( prefs )
 {
 	m_wndChild = new CmusikEqualizerCtrl( library, player, prefs );
+	m_Presets = NULL;
 }
 
 ///////////////////////////////////////////////////
 
 CmusikEqualizerBar::~CmusikEqualizerBar()
 {
+	OnClosePresets( NULL, NULL );
 	delete m_wndChild;
 }
 
@@ -34,6 +41,7 @@ CmusikEqualizerBar::~CmusikEqualizerBar()
 BEGIN_MESSAGE_MAP(CmusikEqualizerBar, baseCmusikEqualizerBar)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
+	ON_REGISTERED_MESSAGE( WM_CLOSEEQUALIZERSETS, OnClosePresets )
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -57,6 +65,31 @@ int CmusikEqualizerBar::OnCreate( LPCREATESTRUCT lpCreateStruct )
 	m_wndChild->SetFont( &m_Font );
 
 	return 0;
+}
+
+///////////////////////////////////////////////////
+
+void CmusikEqualizerBar::OnOptions()
+{
+	if ( !m_Presets )
+	{
+		m_Presets = new CmusikEqualizerSets( this );
+		m_Presets->Create( IDD_EQUALIZER_SETS, this );
+		m_Presets->ShowWindow( SW_SHOW );
+	}
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CmusikEqualizerBar::OnClosePresets( WPARAM wParam, LPARAM lParam )
+{
+	if ( m_Presets )
+	{
+		delete m_Presets;
+		m_Presets = NULL;
+	}
+
+	return 0L;
 }
 
 ///////////////////////////////////////////////////

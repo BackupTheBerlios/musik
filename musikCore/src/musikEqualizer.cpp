@@ -62,6 +62,8 @@ static			paramlist			paramroot;
 CmusikEqualizer::CmusikEqualizer( CmusikLibrary* library )
 {
 	m_TableSet = false;
+	m_EQ_Values_Modified = false;
+	m_SongID = -1;
 
 	m_Library = library;
 
@@ -97,7 +99,7 @@ void CmusikEqualizer::InitEqualizer()
 	equ_init( 14 ); 
 
 	// MUST be called before CmusikEqualizer::ProcessDSP()
-	equ_makeTable( m_EQ.m_Left, m_EQ.m_Right, &paramroot, 44100 );
+	equ_makeTable( m_EQ_Values.m_Left, m_EQ_Values.m_Right, &paramroot, 44100 );
 
 	m_TableSet = true;
 }
@@ -121,6 +123,27 @@ void CmusikEqualizer::ProcessDSP( void* buffer, int length, int channels, int bi
 
 void CmusikEqualizer::GetSongEq( int songid )
 {
+	// save the old equalizer if it has been
+	// flagged as modified...
+	if ( m_SongID != -1 )
+	{
+		if ( m_EQ_Values_Modified )
+		{
+			if ( m_EQ_Values.m_ID == -1 )
+			{
+				CStdString fn;
+				m_Library->GetFieldFromID( m_SongID, MUSIK_LIBRARY_TYPE_FILENAME, fn );
+
+				m_Library->CreateEqualizer( m_EQ_Values, fn );
+			}
+			else
+				m_Library->UpdateEqualizer( m_EQ_Values.m_ID, m_EQ_Values );
+
+			m_EQ_Values_Modified = false;
+		}
+	}
+
+	// load the current equalizer
 	if ( m_Library )
 	{
 		int nID = m_Library->GetEqualizerIDFromSongID( songid );
@@ -130,14 +153,16 @@ void CmusikEqualizer::GetSongEq( int songid )
 			CmusikEQSettings eq;
 			m_Library->GetEqualizer( nID, &eq );
 
-			m_EQ.Set( MUSIK_EQ_SETTINGS_LEFT_BAND, eq.m_Left );
-			m_EQ.Set( MUSIK_EQ_SETTINGS_RIGHT_BAND, eq.m_Right );
+			m_EQ_Values.Set( MUSIK_EQ_SETTINGS_LEFT_BAND, eq.m_Left );
+			m_EQ_Values.Set( MUSIK_EQ_SETTINGS_RIGHT_BAND, eq.m_Right );
 		}
 		else
 		{
 			// TODO: load default equalizer!
 		}
 	}
+
+	m_SongID = songid;
 }
 
 ///////////////////////////////////////////////////

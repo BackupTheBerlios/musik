@@ -164,6 +164,7 @@ static int sqlite_GetEqualizer( void *args, int numCols, char **results, char **
 	p->m_Right[17]		= (float)atof( results[35] );
 
     p->m_Name = results[36];
+	p->m_ID	= atoi( results[37] );
 
 	return 0;
 }
@@ -297,6 +298,7 @@ CmusikLibrary::CmusikLibrary( const CStdString& filename )
 {
 	m_pDB = NULL;
 	m_Transactions = NULL;
+	m_DatabaseOpen = false;
 
 	m_ProtectingLibrary = new ACE_Thread_Mutex();
 	CmusikSong::SetLibrary( this );
@@ -395,7 +397,7 @@ int CmusikLibrary::GetSongFieldDBID( CStdString field )
 
 bool CmusikLibrary::InitStdTables()
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return false;
 
 	bool error = false;
@@ -440,7 +442,7 @@ bool CmusikLibrary::InitStdTables()
 
 bool CmusikLibrary::InitEqTable()
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return false;
 
 	bool error = false;
@@ -451,6 +453,7 @@ bool CmusikLibrary::InitEqTable()
 		"CREATE TABLE " EQUALIZER_PRESET " ( "	
 		"equalizer_id INTEGER AUTO_INCREMENT PRIMARY KEY, "
 		"equalizer_name VARCHAR(255), "
+		"equalizer_is_preset INTEGER, "
 		"hz55_left INTEGER, "
 		"hz77_left INTEGER, "
 		"hz110_left INTEGER, "
@@ -509,7 +512,7 @@ bool CmusikLibrary::InitEqTable()
 
 bool CmusikLibrary::InitPathTable()
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return false;
 
 	bool error = false;
@@ -540,7 +543,7 @@ bool CmusikLibrary::InitPathTable()
 
 bool CmusikLibrary::InitDynTable()
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return false;
 
 	bool error = false;
@@ -574,7 +577,7 @@ bool CmusikLibrary::InitDynTable()
 
 bool CmusikLibrary::InitCrossfaderTable()
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return false;
 
 	bool error = false;
@@ -612,7 +615,7 @@ bool CmusikLibrary::InitCrossfaderTable()
 
 bool CmusikLibrary::InitLibTable()
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return false;
 
 	bool error = false;
@@ -675,16 +678,26 @@ bool CmusikLibrary::InitLibTable()
 
 bool CmusikLibrary::Startup()
 {
-   bool error = false;
+	bool error = false;
 
-   if ( m_pDB )
-	   Shutdown();
 
-   char* pErr = NULL;
-   m_pDB = sqlite_open( m_Filename.c_str(), 0666, &pErr );
+	if ( m_DatabaseOpen )
+		Shutdown();
 
-   if ( m_pDB && !pErr )
-   {
+	char* pErr = NULL;
+
+	m_ProtectingLibrary->acquire();
+
+	m_pDB = sqlite_open( m_Filename.c_str(), 0666, &pErr );
+
+	if ( m_pDB )
+		m_DatabaseOpen = true;
+
+	m_ProtectingLibrary->release();
+
+
+	if ( m_DatabaseOpen && !pErr )	
+	{
 		if ( !InitLibTable() )
 		{
 			error = true;
@@ -730,10 +743,11 @@ void CmusikLibrary::Shutdown()
 {
 	// lock it up and close it down.
 	m_ProtectingLibrary->acquire();
-	if ( m_pDB )
+	if ( m_DatabaseOpen )
 	{
 		sqlite_close( m_pDB );
 		m_pDB = NULL;
+		m_DatabaseOpen = false;
 	}	
 	m_ProtectingLibrary->release();
 }
@@ -742,7 +756,7 @@ void CmusikLibrary::Shutdown()
 
 void CmusikLibrary::BeginTransaction()
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return;
 
 	if ( m_Transactions == NULL )
@@ -750,36 +764,37 @@ void CmusikLibrary::BeginTransaction()
 		m_ProtectingLibrary->acquire();
 		sqlite_exec_printf( m_pDB, "begin transaction;", NULL, NULL, NULL );
 		m_ProtectingLibrary->release();
+
+		TRACE0( "Begin transaction\n" );
 	}
 
 	++m_Transactions;
-	
-	TRACE0( "Begin transaction\n" );
 }
 
 ///////////////////////////////////////////////////
 
 void CmusikLibrary::EndTransaction()
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return;
 
 	--m_Transactions;
+
 	if ( m_Transactions == NULL )
 	{
 		m_ProtectingLibrary->acquire();
 		sqlite_exec_printf( m_pDB, "end transaction;", NULL, NULL, NULL );
 		m_ProtectingLibrary->release();
-	}
 
-	TRACE0( "End transaction\n" );
+		TRACE0( "End transaction\n" );
+	}
 }
 
 ///////////////////////////////////////////////////
 
 int CmusikLibrary::CreateCrossfader( CmusikCrossfader* fader )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return -1;
 
 	m_ProtectingLibrary->acquire();
@@ -802,7 +817,7 @@ int CmusikLibrary::CreateCrossfader( CmusikCrossfader* fader )
 
 int CmusikLibrary::DeleteCrossfader( int id )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return -1;
 
 	m_ProtectingLibrary->acquire();
@@ -821,7 +836,7 @@ int CmusikLibrary::DeleteCrossfader( int id )
 
 int CmusikLibrary::CreateStdPlaylist( const CStdString& name, const CStdStringArray& songids )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return -1;
 
 	int nID, nRet;
@@ -889,7 +904,7 @@ int CmusikLibrary::CreateStdPlaylist( const CStdString& name, const CStdStringAr
 
 int CmusikLibrary::AppendStdPlaylist( int id, const CStdStringArray& files )
 {
-	if ( !m_pDB ) 
+	if ( !m_DatabaseOpen ) 
 		return -1;
 
 	int nRet;
@@ -930,7 +945,7 @@ int CmusikLibrary::AppendStdPlaylist( int id, const CStdStringArray& files )
 
 int CmusikLibrary::RewriteStdPlaylist( int id, CmusikPlaylist* playlist )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return -1;
 
 	int nRet;
@@ -981,7 +996,7 @@ int CmusikLibrary::RewriteStdPlaylist( int id, CmusikPlaylist* playlist )
 
 int CmusikLibrary::RenameStdPlaylist( int id, const CStdString& str )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return -1;
 
 	int nRet;
@@ -1008,7 +1023,7 @@ int CmusikLibrary::RenameStdPlaylist( int id, const CStdString& str )
 
 int CmusikLibrary::GetStdPlaylist( int id, CmusikPlaylist& target, bool clear_target )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return -1;
 
 	if ( clear_target )
@@ -1076,7 +1091,7 @@ bool CmusikLibrary::GetStdPlaylistFns( CmusikPlaylist& playlist, CStdStringArray
 
 int CmusikLibrary::CreateDynPlaylist( const CStdString& name, const CStdString& query )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return -1;
 
 	// do it
@@ -1098,7 +1113,7 @@ int CmusikLibrary::CreateDynPlaylist( const CStdString& name, const CStdString& 
 
 int CmusikLibrary::DeleteStdPlaylist( const CStdString& name )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return -1;
 
 	int nID, nRet;
@@ -1149,7 +1164,7 @@ int CmusikLibrary::DeleteStdPlaylist( const CStdString& name )
 
 int CmusikLibrary::DeleteStdPlaylist( int id )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return -1;
 
 	int nRet;
@@ -1186,7 +1201,7 @@ int CmusikLibrary::DeleteStdPlaylist( int id )
 
 int CmusikLibrary::DeleteDynPlaylist( const CStdString& name )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return -1;
 
 	int nRet;
@@ -1208,7 +1223,7 @@ int CmusikLibrary::DeleteDynPlaylist( const CStdString& name )
 
 int CmusikLibrary::DeleteDynPlaylist( int id )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return -1;
 
 	// do it
@@ -1301,7 +1316,7 @@ CStdString CmusikLibrary::GetOrder( int type, bool terminate )
 
 int CmusikLibrary::QueryCount( const char* pQueryResult )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return -1;
 
 	const char *pTail;
@@ -1354,7 +1369,7 @@ int CmusikLibrary::GetAllSongs( CmusikPlaylist& target )
 
 int CmusikLibrary::QuerySongs( const CStdString& query, CmusikPlaylist& target )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return -1;
 
 	target.Clear();
@@ -1376,7 +1391,7 @@ int CmusikLibrary::QuerySongs( const CStdString& query, CmusikPlaylist& target )
 
 int CmusikLibrary::GetRelatedItems( int source_type, const CStdStringArray& source_items, int target_type, CStdStringArray& target )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return -1;
 
 	target.clear();
@@ -1454,7 +1469,7 @@ int CmusikLibrary::GetRelatedItems( CStdString sub_query, int dst_type, CStdStri
 
 int CmusikLibrary::GetRelatedSongs( CStdString sub_query, int source_type, CmusikPlaylist& target )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return -1;
 
 	target.Clear();
@@ -1477,7 +1492,7 @@ int CmusikLibrary::GetRelatedSongs( CStdString sub_query, int source_type, Cmusi
 
 int CmusikLibrary::GetAllDistinct( int source_type, CStdStringArray& target, bool clear_target )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return -1;
 
 	if ( clear_target )
@@ -1503,7 +1518,7 @@ int CmusikLibrary::GetAllDistinct( int source_type, CStdStringArray& target, boo
 
 int CmusikLibrary::GetSongCount()
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return -1;
 
 	char *query = sqlite_mprintf( "SELECT COUNT(*) FROM " SONG_TABLE_NAME " ;" );
@@ -1516,7 +1531,7 @@ int CmusikLibrary::GetSongCount()
 
 int CmusikLibrary::GetFieldFromID( int id, int field, CStdString& string )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return -1;
 
 	CStdString type = GetSongFieldDB( field );
@@ -1539,7 +1554,7 @@ int CmusikLibrary::GetFieldFromID( int id, int field, CStdString& string )
 
 int CmusikLibrary::GetSongInfoFromID( int id, CmusikSongInfo* info )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return -1;
 
 	info->SetID( id );
@@ -1561,7 +1576,7 @@ int CmusikLibrary::GetSongInfoFromID( int id, CmusikSongInfo* info )
 
 bool CmusikLibrary::SetSongInfo( CmusikSongInfo* info, int songid )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return false;
 
 	int result = 0;
@@ -1607,7 +1622,7 @@ bool CmusikLibrary::SetSongInfo( CmusikSongInfo* info, int songid )
 
 bool CmusikLibrary::SetSongRating( int songid, int rating )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return false;
 
 	int result = 0;
@@ -1633,7 +1648,7 @@ bool CmusikLibrary::SetSongRating( int songid, int rating )
 
 int CmusikLibrary::GetAllStdPlaylists( CmusikPlaylistInfoArray* target, bool clear_target )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return -1;
 
 	if ( clear_target )
@@ -1655,7 +1670,7 @@ int CmusikLibrary::GetAllStdPlaylists( CmusikPlaylistInfoArray* target, bool cle
 
 int CmusikLibrary::GetAllDynPlaylists( CmusikPlaylistInfoArray* target, bool clear_target )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return -1;
 
 	if ( clear_target )
@@ -1677,7 +1692,7 @@ int CmusikLibrary::GetAllDynPlaylists( CmusikPlaylistInfoArray* target, bool cle
 
 int CmusikLibrary::GetAllCrossfaders( CStdStringArray* target, bool clear_target )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return -1;
 
 	if ( clear_target )
@@ -1699,7 +1714,7 @@ int CmusikLibrary::GetAllCrossfaders( CStdStringArray* target, bool clear_target
 
 int CmusikLibrary::GetAllCrossfaders( CIntArray* target, bool clear_target )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return -1;
 
 	if ( clear_target )
@@ -1721,7 +1736,7 @@ int CmusikLibrary::GetAllCrossfaders( CIntArray* target, bool clear_target )
 
 int CmusikLibrary::GetCrossfader( int id, CmusikCrossfader* fader )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return -1;
 
 	m_ProtectingLibrary->acquire();
@@ -1740,7 +1755,7 @@ int CmusikLibrary::GetCrossfader( int id, CmusikCrossfader* fader )
 
 int CmusikLibrary::GetIDFromFilename( CStdString fn )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return -1;
 
 	int target;
@@ -1787,7 +1802,7 @@ int CmusikLibrary::GetFilesize( const CStdString& fn )
 
 bool CmusikLibrary::RemoveSong( int songid )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return false;
 
 	m_ProtectingLibrary->acquire();
@@ -1808,7 +1823,7 @@ bool CmusikLibrary::RemoveSong( int songid )
 
 bool CmusikLibrary::RemoveSong( const CStdString& fn )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return false;
 
 	m_ProtectingLibrary->acquire();
@@ -1849,7 +1864,7 @@ bool CmusikLibrary::AddSong( const CStdString& fn )
 
 bool CmusikLibrary::AddOGG( const CStdString& fn )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return false;
 
 	CmusikOggInfo info;
@@ -1893,7 +1908,7 @@ bool CmusikLibrary::AddOGG( const CStdString& fn )
 
 bool CmusikLibrary::AddMP3( const CStdString& fn )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return false;
 
 	CmusikMp3Info info;
@@ -1937,7 +1952,7 @@ bool CmusikLibrary::AddMP3( const CStdString& fn )
 
 bool CmusikLibrary::IsSongInLibrary( CStdString fn )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return false;
 
 
@@ -1980,7 +1995,7 @@ bool CmusikLibrary::IsSongInLibrary( CStdString fn )
 
 int CmusikLibrary::GetEqualizerIDFromSongID( int id )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return -1;
 
 	int target;
@@ -2000,17 +2015,18 @@ int CmusikLibrary::GetEqualizerIDFromSongID( int id )
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::CreateEqualizer( const CmusikEQSettings& eq, const CStdString& name )
+int CmusikLibrary::CreateEqualizer( const CmusikEQSettings& eq, const CStdString& name, bool is_preset )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return -1;
 
 	m_ProtectingLibrary->acquire();
 
-	int nRes = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %Q, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, );", NULL, NULL, NULL, 
+	int nRes = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %Q, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, );", NULL, NULL, NULL, 
 		CROSSFADER_PRESET,								// song table 		
 		NULL,											// id
 		name.c_str(),									// name
+		(int)is_preset,									// preset?
 		eq.m_Left[0],
 		eq.m_Left[1],
 		eq.m_Left[2],
@@ -2057,7 +2073,7 @@ int CmusikLibrary::CreateEqualizer( const CmusikEQSettings& eq, const CStdString
 
 int CmusikLibrary::DeleteEqualizer( int id )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return -1;
 
 	m_ProtectingLibrary->acquire();
@@ -2076,7 +2092,7 @@ int CmusikLibrary::DeleteEqualizer( int id )
 
 int CmusikLibrary::UpdateEqualizer( int id, const CmusikEQSettings& eq )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return -1;
 
 	m_ProtectingLibrary->acquire();
@@ -2132,13 +2148,13 @@ int CmusikLibrary::UpdateEqualizer( int id, const CmusikEQSettings& eq )
 
 int CmusikLibrary::GetEqualizer( int eq_id, CmusikEQSettings* target )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return -1;
 
 	m_ProtectingLibrary->acquire();
 
 	int nRet = sqlite_exec_printf( m_pDB, "SELECT hz55_left, hz77_left, hz110_left, hz156_left, hz220_left, hz311_left, hz440_left, hz622_left, hz880_left, hz1244_left, hz1760_left, hz2489_left, hz3520_left, hz4978_left, hz7040_left, hz9956_left, hz14080_left, hz19912_left,"
-								" hz55_right, hz77_right, hz110_right, hz156_right, hz220_right, hz311_right, hz440_right, hz622_right, hz880_right, hz1244_right, hz1760_right, hz2489_right, hz3520_right, hz4978_right, hz7040_right, hz9956_right, hz14080_right hz19912_right, equalizer_name"
+								" hz55_right, hz77_right, hz110_right, hz156_right, hz220_right, hz311_right, hz440_right, hz622_right, hz880_right, hz1244_right, hz1760_right, hz2489_right, hz3520_right, hz4978_right, hz7040_right, hz9956_right, hz14080_right hz19912_right, equalizer_name, equalizer_id"
 								" WHERE equalizer_id = %d;", &sqlite_GetEqualizer, &target, NULL, eq_id );
 	
 	m_ProtectingLibrary->release();
@@ -2148,9 +2164,27 @@ int CmusikLibrary::GetEqualizer( int eq_id, CmusikEQSettings* target )
 
 ///////////////////////////////////////////////////
 
+int  CmusikLibrary::GetAllEqualizerPresets( CStdStringArray* target, bool clear_target )
+{
+	if ( !m_DatabaseOpen )
+		return -1;
+
+	m_ProtectingLibrary->acquire();
+
+	int nRet = sqlite_exec_printf( m_pDB, "SELECT equalizer_name FROM %Q WHERE equalizer_is_preset = 1;",
+		&sqlite_AddRowToStringArray, target, NULL,
+		EQUALIZER_PRESET );
+
+	m_ProtectingLibrary->release();
+
+	return nRet;
+}
+
+///////////////////////////////////////////////////
+
 int CmusikLibrary::GetSongFormatFromID( int id, int* target )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return -1;
 
 	m_ProtectingLibrary->acquire();
@@ -2169,7 +2203,7 @@ int CmusikLibrary::GetSongFormatFromID( int id, int* target )
 
 void CmusikLibrary::GetInfoArrayFromPlaylist(  CmusikPlaylist* playlist, CmusikSongInfoArray* info, int replace_field_type, CStdString new_field, bool clear )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return;
 
 	if ( clear )
@@ -2204,7 +2238,7 @@ int CmusikLibrary::GetDirtySongs( CmusikPlaylist* target, bool clear )
 
 int CmusikLibrary::FinalizeDirtySongs()
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return -1;
 
 	m_ProtectingLibrary->acquire();
@@ -2222,7 +2256,7 @@ int CmusikLibrary::FinalizeDirtySongs()
 
 int CmusikLibrary::AddPath( const CStdString& path )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return -1;
 
 	m_ProtectingLibrary->acquire();
@@ -2241,7 +2275,7 @@ int CmusikLibrary::AddPath( const CStdString& path )
 
 int CmusikLibrary::RemovePath( const CStdString& path )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return -1;
 
 	m_ProtectingLibrary->acquire();
@@ -2260,7 +2294,7 @@ int CmusikLibrary::RemovePath( const CStdString& path )
 
 int CmusikLibrary::GetAllPaths( CStdStringArray* target, bool clear_target )
 {
-	if ( !m_pDB )
+	if ( !m_DatabaseOpen )
 		return -1;
 
 	if ( clear_target )

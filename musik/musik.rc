@@ -359,15 +359,17 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     LISTBOX         IDC_LIST1,102,8,138,172,LBS_SORT | LBS_NOINTEGRALHEIGHT | 
                     WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "save as selected",IDC_BUTTON2,6,36,90,14
+    PUSHBUTTON      "save as selected",IDC_SAVE_ACTIVE_AS_SELECTED,6,36,90,
+                    14
     CTEXT           "Active Equalizer:",IDC_STATIC,6,6,90,8
-    PUSHBUTTON      "load from selected",IDC_BUTTON4,6,18,90,14
+    PUSHBUTTON      "load from selected",IDC_LOAD_ACTIVE_FROM_SELECTED,6,18,
+                    90,14
     CTEXT           "Selected Equalizer:",IDC_STATIC,6,84,90,8
-    PUSHBUTTON      "save as new preset",IDC_BUTTON3,6,54,90,14
-    PUSHBUTTON      "delete",IDC_BUTTON5,6,96,90,14
-    PUSHBUTTON      "set as default",IDC_BUTTON6,6,132,90,14
-    PUSHBUTTON      "rename",IDC_BUTTON8,6,114,90,14
-    PUSHBUTTON      "close",IDC_BUTTON9,6,166,90,14
+    PUSHBUTTON      "save as new preset",IDC_SAVE_ACTIVE_AS_NEW,6,54,90,14
+    PUSHBUTTON      "delete",IDC_DELETE_SEL,6,96,90,14
+    PUSHBUTTON      "set as default",IDC_SET_AS_DEFAULT,6,132,90,14
+    PUSHBUTTON      "rename",IDC_RENAME_SEL,6,114,90,14
+    PUSHBUTTON      "close",IDC_CLOSE_DLG,6,166,90,14
 END
 
 

@@ -59,7 +59,8 @@ public:
 	CmusikEqualizer( CmusikLibrary* library );
 	~CmusikEqualizer();
 
-	CmusikEQSettings m_EQ;
+	CmusikEQSettings m_EQ_Values;
+	bool m_EQ_Values_Modified;
 
 	void GetSongEq( int songid );
 	void SetLibrary( CmusikLibrary* library );
@@ -74,6 +75,7 @@ private:
 	void CleanEqualizer();
 
 	bool m_TableSet;
+	int m_SongID;
 
 	// pointer to the library that contains song
 	// and equalizer info

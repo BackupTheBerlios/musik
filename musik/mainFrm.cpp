@@ -198,7 +198,7 @@ static void MainFrameWorker( CmusikThread* thread )
 
 	size_t pos = 0;
 	size_t cnt = 0;
-	char turn;
+	CString turn;
 
 	// sleep if we go idle
 	ACE_Time_Value suspend, sleep;
@@ -227,19 +227,19 @@ static void MainFrameWorker( CmusikThread* thread )
 			switch ( pos )
 			{
 			case 0:
-				turn = '|';
+				turn = "/  ";
 				++pos;
 				break;
 			case 1:
-				turn = '/';
+				turn = " | ";
 				++pos;
 				break;
 			case 2:
-				turn = '-';
+				turn = "  \\";
 				++pos;
 				break;
 			case 3:
-				turn = '\\';
+				turn = " | ";
 				pos = 0;
 				break;			
 			}

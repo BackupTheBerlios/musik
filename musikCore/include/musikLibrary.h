@@ -201,11 +201,12 @@ public:
 	int  GetAllCrossfaders			( CIntArray* ids, bool clear_target = true );
 
 	// equalizers
-	int  CreateEqualizer			( const CmusikEQSettings& eq, const CStdString& name );
+	int  CreateEqualizer			( const CmusikEQSettings& eq, const CStdString& name, bool is_preset = false );
 	int  DeleteEqualizer			( int id );
 	int  GetEqualizer				( int eq_id, CmusikEQSettings* eq );
 	int  UpdateEqualizer			( int id, const CmusikEQSettings& eq );
 	int  GetEqualizerIDFromSongID	( int id );
+	int  GetAllEqualizerPresets		( CStdStringArray* target, bool clear_target = true );
 
 	// paths
 	int	 AddPath					( const CStdString& path );
@@ -229,6 +230,7 @@ private:
 
 	// currently opened database
 	sqlite	*m_pDB;
+	bool m_DatabaseOpen;
 
 	// number of functions that have called
 	// begin transaction 

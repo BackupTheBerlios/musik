@@ -68,6 +68,8 @@ class CmusikEQSettings
 public:
 	CmusikEQSettings()
 	{
+		m_ID = -1;
+
 		for ( size_t i = 0; i < MUSIK_EQ_SETTINGS_NUM_BANDS; i++ )
 		{
 			m_Left[i] = 1.0f;
@@ -112,6 +114,7 @@ public:
 	float m_Right[MUSIK_EQ_SETTINGS_NUM_BANDS];
 
 	CStdString m_Name;
+	int m_ID;
 };
 
 ///////////////////////////////////////////////////

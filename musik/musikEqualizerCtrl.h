@@ -16,6 +16,7 @@ class CmusikPrefs;
 class CmusikDockBar;
 class CmusikEQSettings;
 class CmusikEqualizer;
+class CmusikEqualizerSets;
 
 ///////////////////////////////////////////////////
 
@@ -31,11 +32,16 @@ class CmusikEqualizer;
 
 class CmusikEqualizerBar : public baseCmusikEqualizerBar
 {
+	friend class CmusikEqualizerSets;
+
 public:
 
 	// construct / destruct
 	CmusikEqualizerBar( CmusikLibrary* library, CmusikPlayer* player, CmusikPrefs* prefs );
 	virtual ~CmusikEqualizerBar();
+
+	// virtual
+	virtual void OnOptions();
 
 	// gets
 	CmusikEqualizerCtrl* GetCtrl(){ return m_wndChild; }
@@ -48,9 +54,15 @@ protected:
 	// child's font
 	CFont m_Font;
 
+	// presets dialog
+	CmusikEqualizerSets* m_Presets;
+
 	// message maps
 	afx_msg int OnCreate( LPCREATESTRUCT lpCreateStruct );
 	afx_msg void OnSize(UINT nType, int cx, int cy);
+
+	// custom message maps
+	afx_msg LRESULT OnClosePresets( WPARAM wParam, LPARAM lParam );
 
 	// macros
 	DECLARE_MESSAGE_MAP()
@@ -64,6 +76,8 @@ protected:
 
 class CmusikEqualizerCtrl : public CWnd
 {
+	friend class CmusikEqualizerSets;
+
 public:
 
 	// construct and destruct
