@@ -140,10 +140,10 @@
 				Name="Musik"
 				Filter="">
 				<File
-					RelativePath=".\Frames\MusikFrame.cpp">
+					RelativePath=".\Classes\MusikFrame.cpp">
 				</File>
 				<File
-					RelativePath=".\Frames\MusikFrame.h">
+					RelativePath=".\Classes\MusikFrame.h">
 				</File>
 			</Filter>
 		</Filter>
@@ -179,6 +179,16 @@
 						RelativePath=".\Classes\MusikSourcesCtrl.h">
 					</File>
 				</Filter>
+			</Filter>
+			<Filter
+				Name="SelectionAreaCtrl"
+				Filter="">
+				<File
+					RelativePath=".\Classes\MusikSelectionAreaCtrl.cpp">
+				</File>
+				<File
+					RelativePath=".\Classes\MusikSelectionAreaCtrl.h">
+				</File>
 			</Filter>
 		</Filter>
 		<File

@@ -4,7 +4,7 @@
 IMPLEMENT_APP( MusikApp )
 
 //--- related frames ---//
-#include "Frames/MusikFrame.h"
+#include "Classes/MusikFrame.h"
 
 bool MusikApp::OnInit()
 {
