@@ -8,6 +8,7 @@
 #include "MEMDC.H"
 
 #include "../musikCore/include/musikLibrary.h"
+#include ".\musikselectionctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -370,14 +371,15 @@ BEGIN_MESSAGE_MAP(CmusikSelectionCtrl, CmusikListCtrl)
 	ON_NOTIFY_REFLECT(LVN_BEGINDRAG, OnLvnBegindrag)
 	ON_NOTIFY_REFLECT(LVN_BEGINRDRAG, OnLvnBeginrdrag)
 	ON_WM_CONTEXTMENU()
-
-	// custom message maps
-	ON_REGISTERED_MESSAGE(WM_SELECTION_EDIT_COMMIT,OnEditCommit)
-	ON_REGISTERED_MESSAGE(WM_SELECTION_EDIT_CANCEL,OnEditCancel)
 	ON_NOTIFY_REFLECT(LVN_KEYDOWN, OnLvnKeydown)
 	ON_WM_KEYUP()
 	ON_WM_KILLFOCUS()
 	ON_WM_CHAR()
+
+	// custom message maps
+	ON_REGISTERED_MESSAGE(WM_SELECTION_EDIT_COMMIT,OnEditCommit)
+	ON_REGISTERED_MESSAGE(WM_SELECTION_EDIT_CANCEL,OnEditCancel)
+	ON_WM_SETFOCUS()
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -593,6 +595,15 @@ void CmusikSelectionCtrl::OnLvnItemchanged(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
 
+	m_NeedsUpdate = false;
+
+	// set the new order of presedence
+	if ( !IsParent() && GetChildOrder() == -1 )
+	{
+		CmusikSelectionCtrl::IncChildOrder();
+		m_ChildOrder = m_Count;
+	}
+
 	if ( !m_Updating )
 	{
 		// only interested in state changes
@@ -604,13 +615,6 @@ void CmusikSelectionCtrl::OnLvnItemchanged(NMHDR *pNMHDR, LRESULT *pResult)
 				m_Parent->SendMessage( WM_SELBOXUPDATE, GetCtrlID() );
 			}
 		}
-	}
-
-	// set the new order of presedence
-	if ( !IsParent() && GetChildOrder() == -1 )
-	{
-		CmusikSelectionCtrl::IncChildOrder();
-		m_ChildOrder = m_Count;
 	}
 
 	*pResult = 0;
@@ -1244,6 +1248,7 @@ void CmusikSelectionCtrl::OnKillFocus(CWnd* pNewWnd)
 	CmusikListCtrl::OnKillFocus(pNewWnd);
 
 	m_ShiftDown = false;
+	m_NeedsUpdate = true;
 }
 
 ///////////////////////////////////////////////////
@@ -1265,6 +1270,21 @@ void CmusikSelectionCtrl::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 			EnsureVisible( i, FALSE );
 			return;
 		}
+	}
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionCtrl::OnSetFocus(CWnd* pOldWnd)
+{
+	CmusikListCtrl::OnSetFocus(pOldWnd);
+
+	if ( m_NeedsUpdate )
+	{
+		m_NeedsUpdate = false;
+	
+		int WM_SELBOXUPDATE = RegisterWindowMessage( "SELBOXUPDATE" );
+		m_Parent->SendMessage( WM_SELBOXUPDATE, GetCtrlID() );
 	}
 }
 

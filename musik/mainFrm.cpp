@@ -1122,6 +1122,7 @@ void CMainFrame::RequerySelBoxes( CmusikSelectionCtrl* sender )
 
 				if ( pCurr->GetChildOrder() > sender->GetChildOrder() || pCurr->GetChildOrder() == -1 )
 				{
+					pCurr->SetItemState(  -1, 0, LVIS_SELECTED );
 					CmusikString query = GetSelQuery( pCurr );
 					pCurr->UpdateV( query );
 				}

@@ -142,6 +142,10 @@ public:
 	afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
 	afx_msg void OnLvnBegindrag(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnLvnBeginrdrag(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnLvnKeydown(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg void OnKillFocus(CWnd* pNewWnd);
+	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
 
 	// custom message maps
 	LRESULT OnEditCommit( WPARAM wParam, LPARAM lParam );
@@ -152,13 +156,10 @@ public:
 
 protected:
 
-	// 
 	int m_ChildOrder;
 
-	// inits
+	// misc
 	void InitFonts();
-
-	// set window text
 	void SetWindowCap();
 
 	// drag / drop id
@@ -167,9 +168,8 @@ protected:
 	UINT m_DropID_R;
 	void BeginDrag( bool right_button );
 
-	// tracking mouse / selection
-	bool m_MouseTrack;
 	bool m_ShiftDown;
+	bool m_NeedsUpdate;
 
 	// bg color if child
 	void InitColors();
@@ -187,7 +187,6 @@ protected:
 	int m_ID;
 	bool m_ParentBox;
 
-	// prefs
 	CmusikPrefs *m_Prefs;
 
 	// fonts
@@ -199,10 +198,7 @@ protected:
 	DECLARE_DYNAMIC(CmusikSelectionCtrl)
 	DECLARE_MESSAGE_MAP()
 public:
-	afx_msg void OnLvnKeydown(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnKillFocus(CWnd* pNewWnd);
-	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg void OnSetFocus(CWnd* pOldWnd);
 };
 
 ///////////////////////////////////////////////////
