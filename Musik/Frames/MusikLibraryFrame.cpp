@@ -182,10 +182,6 @@ void MusikLibraryFrame::CreateControls()
 		SetIcon( wxICON( musicbox ) );
 	#endif
 
-	//--------------------//
-	//--- dummy window ---//
-	//--------------------//
-	wxWindow *wndDummy = new wxWindow( this, -1, wxPoint( 0, 0 ), wxSize( 0, 0 ) );
 
 	//----------------------//
 	//--- Paths ListCtrl ---//
@@ -211,7 +207,7 @@ void MusikLibraryFrame::CreateControls()
 	//----------------------------//
 	hsSysButtons = new wxBoxSizer( wxHORIZONTAL );
 	hsSysButtons->Add( btnCancel,	0, wxALIGN_LEFT		);
-	hsSysButtons->Add( wndDummy,	1, wxEXPAND			);
+	hsSysButtons->Add(-1,-1 ,	1, wxEXPAND			);
 	hsSysButtons->Add( btnOK,		0, wxALIGN_RIGHT	);	
 
 	//-----------------//

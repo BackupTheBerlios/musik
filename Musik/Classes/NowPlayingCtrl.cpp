@@ -168,8 +168,10 @@ CNowPlayingCtrl::CNowPlayingCtrl( wxWindow *parent )
 
 
 
-	wxGridSizer *hsCols = new wxGridSizer( 1,2,0,0);
+//	wxGridSizer *hsCols = new wxGridSizer( 1,2,0,0);
+	wxBoxSizer *hsCols = new wxBoxSizer(wxHORIZONTAL);
 	hsCols->Add( vsLeftCol,	0, wxADJUST_MINSIZE | wxALL, 2	);
+	hsCols->Add(-1,-1,1,wxEXPAND);
 	hsCols->Add( vsRightCol,	0, wxALIGN_RIGHT|wxADJUST_MINSIZE | wxALL, 2	);
 
 	SetSizerAndFit( hsCols );

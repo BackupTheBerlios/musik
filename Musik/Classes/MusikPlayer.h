@@ -213,6 +213,7 @@ private:
 	int m_NETSTREAM_status;
 	unsigned int m_NETSTREAM_flags;
 	bool m_b_NETSTREAM_AbortConnect;
+	bool m_bSuppressAutomaticSongPicking;
 	FSOUND_STREAM * m_p_NETSTREAM_Connecting;
 	CMusikSong m_MetaDataSong;
 	wxCriticalSection m_critMetadata;

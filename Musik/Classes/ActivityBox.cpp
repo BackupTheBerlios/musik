@@ -72,9 +72,14 @@ CActivityListBox::CActivityListBox( CActivityBox *parent,  wxWindowID id )
 
 	InsertColumn( 0, wxT(""), wxLIST_FORMAT_LEFT, 0 );
 	InsertColumn( 1, wxT(""), wxLIST_FORMAT_LEFT, 0 );
+	m_bIgnoreSetItemStateEvents = false;
 }
 BEGIN_EVENT_TABLE(CActivityListBox, CMusikListCtrl)
 	EVT_CHAR	( CActivityListBox::OnChar )
+	EVT_LIST_ITEM_FOCUSED	( -1, CActivityListBox::OnFocused	)
+//	EVT_LIST_ITEM_SELECTED	( -1, CActivityListBox::OnFocused	)
+//	EVT_LIST_ITEM_ACTIVATED	( -1, CActivityListBox::OnFocused	)
+
 END_EVENT_TABLE()
 
 void CActivityListBox::OnChar(wxKeyEvent& event)
@@ -107,8 +112,10 @@ void CActivityListBox::OnChar(wxKeyEvent& event)
 					showitem = wxMax(0, i-centeroffset);
 				}
 				EnsureVisible(showitem);
+				m_bIgnoreSetItemStateEvents = true;
 				// Move the focus (*not* the selection) to the matching item.
 				SetItemState(i,wxLIST_STATE_FOCUSED,wxLIST_STATE_FOCUSED);
+				m_bIgnoreSetItemStateEvents = false;
 				break;
 			}
 		}
@@ -118,6 +125,11 @@ void CActivityListBox::OnChar(wxKeyEvent& event)
 		event.Skip();
 }
 
+void CActivityListBox::OnFocused( wxListEvent& event )
+{
+	event.Skip(m_bIgnoreSetItemStateEvents == false);
+	
+}
 void CActivityListBox::RescaleColumns( bool bFreeze )
 {
 	if( bFreeze )
@@ -291,7 +303,20 @@ wxString CActivityListBox::GetFirstSel()
 	return wxT("");
 }
 
+void CActivityListBox::SetRelated( int n )
+{
+	if((n == -1) && (m_Related > 0)	)
+	{
+		//		int nIndex = GetNextItem( -1, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
+		m_pParent->ResetContents(false);
+	}
+	m_Related = n; 
+}
 
+void CActivityBox::SetRelated( int n )
+{
+	pListBox->SetRelated( n ); 
+}
 //--------------------//
 //--- CActivityBox ---//
 //--------------------//
@@ -512,11 +537,11 @@ void CActivityBox::ResetCaption()
 	else if ( m_ActivityType == MUSIK_LBTYPE_YEARS		)	SetCaption( _("Years") );
 }
 
-void CActivityBox::ResetContents()
+void CActivityBox::ResetContents(bool selectnone)
 {
 	wxArrayString list;
 	GetFullList(list);
-	SetContents( list );
+	SetContents( list , selectnone );
 }
 
 void CActivityBox::GetFullList( wxArrayString & aReturn )
@@ -654,13 +679,12 @@ void CActivityBox::SetPlaylist()
 	g_PlaylistBox->Update( true );
 }
 
-void CActivityBox::SetContents( const wxArrayString & aList )
+void CActivityBox::SetContents( const wxArrayString & aList , bool selectnone )
 {
 
 	pListBox->SetList( aList );
-	pListBox->Update( true );
+	pListBox->Update( selectnone );
 }
-
 //------------------------//
 //--- tag info editing ---//
 //------------------------//
@@ -847,14 +871,7 @@ void CActivityBox::OnRenameThreadProg( wxCommandEvent& WXUNUSED(event) )
 void CActivityBox::OnRenameThreadEnd( wxCommandEvent& WXUNUSED(event) )
 {
 	m_ActiveThreadController.Join();// waits until threads really ends
-	if ( wxGetApp().Prefs.eSelStyle == MUSIK_SELECTION_TYPE_HIGHLIGHT || g_ActivityAreaCtrl->GetParentBox() == this )
-		ResetContents();
-	else
-	{
-		if ( g_ActivityAreaCtrl->GetParentBox() != NULL )
-			g_ActivityAreaCtrl->UpdateSel( g_ActivityAreaCtrl->GetParentBox() );
-	}
-
+	ResetContents(false);
 	EnableProgress( false );
 	g_PlaylistBox->Update();
 

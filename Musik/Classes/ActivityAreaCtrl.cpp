@@ -292,11 +292,12 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSelectedBox )
 					}
 					pOtherBoxes[j]->SetRelated( rel.GetCount() );
 					pOtherBoxes[j]->SetContents( all );
-					pSelectedBox->SetRelated( -1 );
-					pSelectedBox->Update( false );
 				}
 			}
 		}
+		pSelectedBox->SetRelated( -1 );
+		pSelectedBox->Update( false );
+
 	}
 
 	if ( ( wxGetApp().Prefs.eSelStyle == MUSIK_SELECTION_TYPE_STANDARD || wxGetApp().Prefs.eSelStyle == MUSIK_SELECTION_TYPE_SLOPPY ) && ( pSelectedBox->IsSelected( 0 ) || pSelectedBox->GetSelectedItemCount() < 1 ) )

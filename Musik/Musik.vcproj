@@ -158,7 +158,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/D ID3LIB_LINKOPTION=1"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(VORBISDIR)\include&quot;;$(FMODDIR)\api\inc;&quot;$(WXDIR)\lib\vc_lib\mswd&quot;;&quot;$(ID3LIBDIR)\include&quot;;&quot;$(OGGDIR)\include&quot;;&quot;$(WXDIR)\include&quot;;&quot;$(SQLITEDIR)&quot;;MMShellHook"
+				AdditionalIncludeDirectories="&quot;$(VORBISDIR)\include&quot;;&quot;$(FMODDIR)\api\inc&quot;;&quot;$(WXDIR)\lib\vc_lib\mswud&quot;;&quot;$(ID3LIBDIR)\include&quot;;&quot;$(OGGDIR)\include&quot;;&quot;$(WXDIR)\include&quot;;&quot;$(SQLITEDIR)&quot;;MMShellHook"
 				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;WINVER=0x400;_MT;_UNICODE;wxUSE_UNICODE"
 				StringPooling="TRUE"
 				MinimalRebuild="TRUE"

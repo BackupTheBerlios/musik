@@ -56,7 +56,7 @@ public:
 	void SetList		(const  wxArrayString & );
 	void SetSel			( const  wxArrayString & aList );
 	void SetSel			( const wxString & sel, bool bEnsureVisible = true,bool bDeselectAllFirst = true);
-	void SetRelated		( int n ){ m_Related = n; }
+	void SetRelated		( int n );
 
 	//--- others ---//
 	void DeselectAll	();
@@ -64,7 +64,7 @@ public:
 	void Update			( bool selectnone );
 
 	void OnChar( wxKeyEvent& event );
-	
+	void OnFocused( wxListEvent& event );
 
   DECLARE_EVENT_TABLE()
 protected:
@@ -91,6 +91,8 @@ private:
 	wxString m_sSearch;
 	wxArrayString m_Items;
 	CActivityBox *m_pParent;
+
+	bool m_bIgnoreSetItemStateEvents;
 };
 
 class CActivityBoxEvt : public wxEvtHandler
@@ -184,12 +186,12 @@ public:
 	bool IsSelected			( int n )							{ return pListBox->IsSelected( n );		}
 	void Update				( bool selectnone = true )			{ pListBox->Update( selectnone );		}	
 	void ResetCaption		();
-	void ResetContents		();
-	void SetContents		( const wxArrayString &list ); 
+	void ResetContents		(bool selectnone = true);
+	void SetContents		( const wxArrayString &list ,bool selectnone = true); 
 	void GetFullList		( wxArrayString & aReturn );
 	void SetPlaylist		();
 	void EnableProgress		( bool enable = true );
-	void SetRelated			( int n ){ pListBox->SetRelated( n ); }
+	void SetRelated			( int n );
 
 	//--- custom, thread event handlers ---//
 	void SetProgress			( int n )				{ m_Progress = n; }

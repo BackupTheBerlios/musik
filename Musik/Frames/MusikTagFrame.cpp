@@ -142,8 +142,6 @@ MusikTagFrame::MusikTagFrame( wxFrame* pParent, CPlaylistCtrl * pPlaylistctrl, i
 	btnApply	= new wxButton( this, MUSIK_TAG_APPLY,	_("Apply"),	wxPoint( 0, 0 ), wxSize( 60, 24 ) );
 	btnOK		= new wxButton( this, MUSIK_TAG_OK,		_("OK"),		wxPoint( 0, 0 ), wxSize( 60, 24 ) );
 
-	wxWindow *wndDummy1 = new wxWindow( this, -1, wxPoint( 0, 0 ), wxSize( 0, 0 ) );
-	wxWindow *wndDummy2 = new wxWindow( this, -1, wxPoint( 0, 0 ), wxSize( 0, 0 ) );
 
 	//-------------------------//
 	//---  top row sizer    ---//
@@ -240,10 +238,10 @@ MusikTagFrame::MusikTagFrame( wxFrame* pParent, CPlaylistCtrl * pPlaylistctrl, i
 	//---------------------------//
 	hsNav = new wxBoxSizer( wxHORIZONTAL );
 	hsNav->Add( btnCancel,	0, wxALIGN_LEFT | wxLEFT,			2	);
-	hsNav->Add( wndDummy1,	1, wxEXPAND								);
+	hsNav->Add( -1,-1,	1, wxEXPAND								);
 	hsNav->Add( btnPrev,	0, wxALIGN_LEFT							);
 	hsNav->Add( btnNext,	0, wxALIGN_LEFT							);
-	hsNav->Add( wndDummy2,	1, wxEXPAND								);
+	hsNav->Add( -1,-1,	1, wxEXPAND								);
 	hsNav->Add( btnApply,	0, wxALIGN_RIGHT						);
 	hsNav->Add( btnOK,		0, wxALIGN_RIGHT | wxLEFT | wxRIGHT, 2	);
 

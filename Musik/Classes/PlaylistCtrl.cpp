@@ -728,6 +728,8 @@ wxString CPlaylistCtrl::OnGetItemText(long item, long column) const
 
 wxString CPlaylistCtrl::GetItemText(long item, EPLAYLISTCOLUMNS eColumnType) const
 {
+	if(item > g_Playlist.GetCount() - 1)
+		return wxT( "" );
 	const CMusikSong & song = g_Playlist.Item ( item );
 	switch ( eColumnType )
 	{
@@ -841,6 +843,8 @@ int CPlaylistCtrl::OnGetItemImage(long item) const
 
 wxListItemAttr* CPlaylistCtrl::OnGetItemAttr(long item) const
 {
+	if(item > g_Playlist.GetCount() - 1)
+		return (wxListItemAttr *)&m_LightAttr;
 	const CMusikSong & song = g_Playlist.Item ( item );
 	if(wxGetApp().Player.IsPlaying() && (g_SourcesCtrl->GetSelType() == MUSIK_SOURCES_NOW_PLAYING) 
 		&& (wxGetApp().Player.GetCurIndex() == (size_t)item ) && (song.songid == wxGetApp().Player.GetCurrentSongid()))
@@ -1629,8 +1633,9 @@ void CPlaylistCtrl::OnShowInLibrary( wxCommandEvent& event )
 			break;
 		}
 		sEntry = GetItemText( nCurSel, column);
-		g_SourcesCtrl->SelectLibrary();
 		g_ActivityAreaCtrl->ResetAllContents();
+		g_SourcesCtrl->SelectLibrary();
+		pBox->SetFocus();
 		pBox->SetSel(sEntry);
 	}
 }

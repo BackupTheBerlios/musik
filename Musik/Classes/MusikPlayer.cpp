@@ -82,6 +82,7 @@ CMusikPlayer::CMusikPlayer()
 	m_bStreamIsWorkingStopWatchIsRunning = false ;
 	m_NETSTREAM_last_read_percent = 0;
 	m_nLastSongTime = 0;
+	m_bSuppressAutomaticSongPicking = false;
 }
 
 void CMusikPlayer::Init(bool bSuppressAutoPlay)
@@ -112,10 +113,19 @@ void CMusikPlayer::Init(bool bSuppressAutoPlay)
 			}
 			In.Close();
 			wxGetApp().Library.GetFilelistSongs( aFilelist, m_Playlist );
+			if(m_SongIndex > m_Playlist.GetCount() - 1)
+			{
+				m_SongIndex = 0;
+				m_nLastSongTime = 0;
+			}
 		}
 	}
-	if(!bSuppressAutoPlay && wxGetApp().Prefs.bAutoPlayOnAppStart && m_Playlist.GetCount())
+	if(!bSuppressAutoPlay && wxGetApp().Prefs.bAutoPlayOnAppStart && (m_Playlist.GetCount() ||  (wxGetApp().Prefs.ePlaymode == MUSIK_PLAYMODE_AUTO_DJ)))
+	{
 		_PostPlayRestart( nPlayStartPos ); 
+		if(m_Playlist.GetCount())
+			m_bSuppressAutomaticSongPicking = true; // set this flag , so that auto djing does not interfere with starting to play last song.
+	}
 }
 CMusikPlayer::~CMusikPlayer()
 {
@@ -125,6 +135,11 @@ CMusikPlayer::~CMusikPlayer()
 		Out.Open();
 		if ( Out.IsOpened() )
 		{
+			if(m_SongIndex > m_Playlist.GetCount() - 1)
+			{
+				m_SongIndex = 0;
+				m_nLastSongTime = 0;
+			}
 			Out.AddLine( wxString::Format(wxT("%d:%d"),m_SongIndex, m_nLastSongTime));
 			for ( size_t i = 0; i < m_Playlist.GetCount(); i++ )
 			{
@@ -362,7 +377,7 @@ void CMusikPlayer::OnPlayRestart( wxCommandEvent& event )
 }
 bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 {
-	if(m_Playlist.GetCount() < (size_t)wxGetApp().Prefs.nAutoDJChooseSongsToPlayInAdvance && MUSIK_PLAYMODE_AUTO_DJ == m_Playmode)
+	if((m_bSuppressAutomaticSongPicking == false) && m_Playlist.GetCount() < (size_t)wxGetApp().Prefs.nAutoDJChooseSongsToPlayInAdvance && MUSIK_PLAYMODE_AUTO_DJ == m_Playmode)
 	{
 		if(m_Playlist.GetCount() == 0)
 			nItem = 0;
@@ -373,6 +388,7 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 			return false;
 		}
 	}
+	m_bSuppressAutomaticSongPicking = false;
 	//--- check for an invalid playlist ---//
 	if ( ( nItem >= m_Playlist.GetCount() ) || ( m_Playlist.GetCount() == 0 ) )
 	{
@@ -1307,6 +1323,7 @@ void CMusikPlayer::AddToPlaylist( CMusikSongArray & songstoadd ,bool bPlayFirstA
 		{
 			Stop();
 			m_SongIndex = plsize;
+			m_bSuppressAutomaticSongPicking = true;
 			Play(m_SongIndex);
 		}
 		if(g_SourcesCtrl->GetSelType() == MUSIK_SOURCES_NOW_PLAYING)
@@ -1329,6 +1346,7 @@ void CMusikPlayer::InsertToPlaylist( CMusikSongArray & songstoadd ,bool bPlayFir
 		{
 			Stop();
 			m_SongIndex = plsize;
+			m_bSuppressAutomaticSongPicking = true;
 			Play(m_SongIndex);
 		}
 		else
@@ -1345,6 +1363,7 @@ void CMusikPlayer::InsertToPlaylist( CMusikSongArray & songstoadd ,bool bPlayFir
 	{
 		Stop();
 		m_SongIndex++;
+		m_bSuppressAutomaticSongPicking = true;
 		Play(m_SongIndex);
 	}
 }
