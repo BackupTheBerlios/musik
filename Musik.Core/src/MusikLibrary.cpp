@@ -349,7 +349,7 @@ void CMusikLibrary::CreateStdPlaylist( const CStdString& name, const CIntArray& 
 
 	// create query to make new entry to 
 	// std_playlist table
-	sQuery.Format( _T( "INSERT INTO %s VALUES ( %s ); " ),
+	sQuery.Format( _T( "INSERT INTO %s VALUES ( '%s' ); " ),
 		STD_PLAYLIST_TABLE_NAME,
 		name.c_str() );
 
@@ -357,7 +357,7 @@ void CMusikLibrary::CreateStdPlaylist( const CStdString& name, const CIntArray& 
 	sqlite_exec_printf( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
 
 	// get the ID of the newly created entry
-	sQuery.Format( _T( "SELECT %s FROM %s WHERE %s = %s;" ), 
+	sQuery.Format( _T( "SELECT %s FROM %s WHERE %s = '%s';" ), 
 		"std_playlist_id", 
 		STD_PLAYLIST_TABLE_NAME, 
 		"std_playlist_name",
@@ -391,28 +391,25 @@ void CMusikLibrary::DeleteStdPlaylist( const CStdString& name )
 	m_ProtectingLibrary->acquire();
 
 	// get ID of the currently named playlist
-	sQuery.Format( _T( "SELECT %s FROM %s WHERE %s = %s;" ), 
+	sQuery.Format( _T( "SELECT %s FROM %s WHERE std_playlist_name = '%s';" ), 
 		"std_playlist_id", 
 		STD_PLAYLIST_TABLE_NAME, 
-		"std_playlist_name",
 		name.c_str() );
 
 	sqlite_exec( m_pDB, sQuery.c_str(), &sqlite_GetPlaylistID, &nID, NULL );
 
 	// remove entry from table containing
 	// the list of standard playlists
-	sQuery.Format( _T( "DELETE FROM %s WHERE %s = %s" ),
+	sQuery.Format( _T( "DELETE FROM %s WHERE std_playlist_name = '%s';" ),
 		STD_PLAYLIST_TABLE_NAME,
-		"std_playlist_name",
 		name.c_str() );
 
 	sqlite_exec_printf( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
 
 	// delete corresponding songs from the
 	// other table
-	sQuery.Format( _T( "DELETE FROM %s WHERE %s = %d" ),
+	sQuery.Format( _T( "DELETE FROM %s WHERE std_playlist_id = %d" ),
 		STD_PLAYLIST_SONGS,
-		"std_playlist_id",
 		nID );
 
 	sqlite_exec_printf( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
@@ -596,7 +593,10 @@ void CMusikLibrary::GetRelatedItems( int source_type, const CStdStringArray& sou
 
 	// construct the query
 	CStdString query;
-	query.Format( _T( "select distinct %s,UPPER(%s) as UP from %s where " ), sOutType.c_str(), sOutType.c_str(), SONG_TABLE_NAME );
+	query.Format( _T( "SELECT DISTINCT %s,UPPER(%s) AS UP FROM %s where " ), 
+		sOutType.c_str(), 
+		sOutType.c_str(), 
+		SONG_TABLE_NAME );
 
 	CStdString sCurrentItem;
 	for ( size_t i = 0; i < source_items.size(); i++ )
@@ -634,7 +634,7 @@ void CMusikLibrary::GetRelatedItems( CStdString sub_query, int dst_type, CStdStr
 	CStdString sOutType = GetSongFieldDB( dst_type );
 
 	CStdString query;
-	query.Format( _T( "select distinct %s,UPPER(%s) as UP from %s where %s order by %s;" ), 
+	query.Format( _T( "SELECT DISTINCT %s, UPPER( %s ) AS UP FROM %s WHERE %s order by %s;" ), 
 		sOutType.c_str(), 
 		sOutType.c_str(), 
 		SONG_TABLE_NAME,
@@ -663,7 +663,7 @@ void CMusikLibrary::GetRelatedSongs( CStdString sub_query, int source_type, CMus
 	CStdString order_by = GetOrder( source_type );
 
 	CStdString query;
-	query.Format( _T( "select distinct songid from %s where %s %s" ),
+	query.Format( _T( "SELECT DISTINCT songid FROM %s WHERE %s %s" ),
 		SONG_TABLE_NAME,
 		sub_query.c_str(),
 		order_by.c_str() );
@@ -685,7 +685,7 @@ void CMusikLibrary::GetAllDistinct( int source_type, CStdStringArray& target, bo
 
 	CStdString query;
 	CStdString sField = GetSongFieldDB( source_type );
-	query.Format( _T( "select distinct %s,UPPER(%s) as UP from %s order by UP;" ), 
+	query.Format( _T( "SELECT DISTINCT %s, UPPER( %s ) AS UP FROM %s ORDER BY UP;" ), 
 		sField.c_str(), 
 		sField.c_str(),
 		SONG_TABLE_NAME );
@@ -715,7 +715,7 @@ void CMusikLibrary::GetFieldFromID( int id, int field, CStdString& string )
 	CStdString query;
 	CStdString type = GetSongFieldDB( field );
 
-	query.Format( _T( "select %s from %s where songid = %d;" ), 
+	query.Format( _T( "SELECT %s FROM %s WHERE songid = %d;" ), 
 		type.c_str(), 
 		SONG_TABLE_NAME, 
 		id );
@@ -755,7 +755,7 @@ bool CMusikLibrary::SetSongInfo( int songid, CMusikSongInfo* info )
 	int result = 0;
 
 	CStdString query;
-	query.Format( _T( "update %s set format=%d, vbr=%d, filename='%s', artist='%s', title='%s', album='%s', tracknum=%d, year='%s', genre='%s', rating=%d," ),
+	query.Format( _T( "UPDATE %s SET format=%d, vbr=%d, filename='%s', artist='%s', title='%s', album='%s', tracknum=%d, year='%s', genre='%s', rating=%d," ),
 			SONG_TABLE_NAME,
 			info->GetFormat(),
 			info->GetVBR(),
@@ -768,7 +768,8 @@ bool CMusikLibrary::SetSongInfo( int songid, CMusikSongInfo* info )
 			info->GetGenre().c_str(),
 			info->GetRating() );
 		
-	query.Format( _T( "%s bitrate=%d, lastplayed='%s', notes='%s', timesplayed=%d, duration=%d, timeadded='%s', filesize=%d, dirty=%d where songid = %d;" ),
+	query.Format( _T( "%s bitrate=%d, lastplayed='%s', notes='%s', timesplayed=%d, duration=%d, timeadded='%s', filesize=%d, dirty=%d WHERE songid = %d;" ),
+			query.c_str(),	
 			info->GetBitrate(),
 			info->GetLastPlayed().c_str(),
 			info->GetNotes().c_str(),
@@ -802,7 +803,7 @@ bool CMusikLibrary::SetSongRating( int songid, int rating )
 	int result = 0;
 
 	CStdString query;
-	query.Format( _T( "update %s set rating=%d where songid=%d" ), 
+	query.Format( _T( "UPDATE %s SET rating=%d WHERE songid=%d" ), 
 		SONG_TABLE_NAME,
 		rating, 
 		songid );
