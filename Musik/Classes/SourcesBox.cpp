@@ -423,7 +423,7 @@ void CSourcesListBox::BeginDrag( wxListEvent &event )
 
 void CSourcesListBox::OnUpdateSel( wxListEvent& pEvent )
 {
-	if ( !g_DragInProg && !g_FirstRun && !m_Deleting )
+	if ( !g_DragInProg && !m_Deleting )
         UpdateSel( pEvent.GetIndex() );	
 }
 
@@ -480,7 +480,7 @@ void CSourcesListBox::UpdateSel( size_t index )
 			g_Playlist = g_LibPlaylist;
 
 		//--- show all songs ---//
-		else if ( g_Prefs.bShowAllSongs == 1 && !g_FirstRun )
+		else if ( g_Prefs.bShowAllSongs == 1 )
 		{
 				if ( g_ActivityAreaCtrl->GetParentBox() != NULL )
 					g_ActivityAreaCtrl->UpdateSel( g_ActivityAreaCtrl->GetParentBox() );
@@ -869,7 +869,6 @@ void CSourcesListBox::ToggleIcons()
 	ShowIcons();
 
 	//--- check menu items accordingly ---//
-	view_menu->Check( MUSIK_MENU_SOURCES_STATE, ( bool )g_Prefs.bShowSources );
 	sources_context_menu->Check( MUSIK_SOURCE_CONTEXT_SHOW_ICONS, ( bool )g_Prefs.bShowSourcesIcons );
 }
 

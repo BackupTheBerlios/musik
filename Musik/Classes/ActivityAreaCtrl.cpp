@@ -199,12 +199,10 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSelectedBox )
 		}
 		if ( g_Prefs.bShowAllSongs == 1 )
 		{
-			if ( !g_FirstRun )
-			{
-				g_Library.GetAllSongs( g_Playlist );
-				g_PlaylistBox->Update();
-				g_PlaylistChanged = true;
-			}
+			g_Library.GetAllSongs( g_Playlist );
+			g_PlaylistBox->Update();
+			g_PlaylistChanged = true;
+
 			return;
 		}
 	}
@@ -245,12 +243,9 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSelectedBox )
 
 		if ( g_Prefs.bShowAllSongs == 1 )
 		{
-			if ( !g_FirstRun )
-			{
-				g_Library.GetAllSongs( g_Playlist );
-				g_PlaylistBox->Update();
-				g_PlaylistChanged = true;
-			}
+			g_Library.GetAllSongs( g_Playlist );
+			g_PlaylistBox->Update();
+			g_PlaylistChanged = true;
 			return;
 		}		
 	}

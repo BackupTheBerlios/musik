@@ -71,12 +71,14 @@ public:
 	void OnFX						( wxCommandEvent&	event			);
 
 	void OnStayOnTop				( wxCommandEvent&	WXUNUSED(event) );
-	void OnUpdateStayOnTop			( wxUpdateUIEvent&	event			);
+	void OnUpdateUIStayOnTop		( wxUpdateUIEvent&	event			);
 
-	void OnShowRatings				( wxCommandEvent&	WXUNUSED(event) );
 	void OnSourcesState				( wxCommandEvent&	WXUNUSED(event) );
+	void OnUpdateUISourcesState		( wxUpdateUIEvent&	event			);
 	void OnActivitiesState			( wxCommandEvent&	WXUNUSED(event) );
+	void OnUpdateUIActivitiesState	( wxUpdateUIEvent&	event			);
 	void OnPlaylistInfoState		( wxCommandEvent&	WXUNUSED(event) );
+	void OnUpdateUIPlaylistInfoState( wxUpdateUIEvent&	event			);
 
 	void OnSimpleQueryDlg			( wxCommandEvent&	WXUNUSED(event) );
 	void OnSimpleQueryEdit			( wxCommandEvent&	WXUNUSED(event) );
@@ -98,7 +100,6 @@ public:
 	//-------------------------//
 	//--- virtual overrides ---//
 	//-------------------------//
-	virtual bool Show( bool show = true );
 	virtual void SetTitle(const wxString& title);
 
 
@@ -143,7 +144,7 @@ public:
 	void	LibrarySimpleQueryDlg	();
 	void	LibrarySimpleQueryEdit	();
 
-	void	AutoUpdate	( const wxArrayString & Filenames = wxArrayString(),bool bFilesWereDropped = false);
+	void	AutoUpdate	( const wxArrayString & Filenames = wxArrayString(),bool bPlayFilesAfterAdding = false);
 	//--- tag related ---//
 	void	WriteTags				();
 
@@ -180,6 +181,8 @@ public:
 	wxThread* GetActiveThread	()						{ return m_ActiveThread;	}
 
 	DECLARE_EVENT_TABLE()
+protected:
+	void CreateMainMenu();
 #ifdef __WXMSW__
 protected:
     	long MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam);
@@ -198,6 +201,7 @@ private:
 	wxString m_customQuery;
 
 	wxSashLayoutWindow *m_pBottomPanel;
+
 };
 
 #endif

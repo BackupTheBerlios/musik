@@ -117,14 +117,6 @@ CSourcesBox			*g_SourcesCtrl;
 CNowPlayingCtrl		*g_NowPlayingCtrl;
 wxGauge				*g_Progress;
 
-//-----------------------//
-//--- main menu stuff ---//
-//-----------------------//
-wxMenu *file_menu;
-wxMenu *library_menu;
-wxMenu *library_writetags_menu;
-wxMenu *view_menu;
-
 //-------------//
 //--- fonts ---//
 //-------------//
@@ -143,7 +135,6 @@ bool g_SelInProg;
 bool g_FocusDone;
 bool g_DragInProg;
 bool g_PlaylistChanged;
-bool g_FirstRun;
 bool g_TimeSeeking;
 bool g_DisablePlacement;
 

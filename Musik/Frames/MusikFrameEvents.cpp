@@ -37,10 +37,13 @@ BEGIN_EVENT_TABLE(MusikFrame, wxFrame)
 	EVT_MENU					(MUSIK_MENU_PREFERENCES,			MusikFrame::OnPreferences			)	// File->Preferences
 	EVT_MENU					(MUSIK_MENU_EXIT,					MusikFrame::OnMenuClose				)	// File->Exit
 	EVT_MENU					(MUSIK_MENU_SOURCES_STATE,			MusikFrame::OnSourcesState			)	// View->Show Sources
+	EVT_UPDATE_UI				(MUSIK_MENU_SOURCES_STATE,			MusikFrame::OnUpdateUISourcesState		)	
 	EVT_MENU					(MUSIK_MENU_ACTIVITIES_STATE,		MusikFrame::OnActivitiesState		)	// View->Show Selections
+	EVT_UPDATE_UI				(MUSIK_MENU_ACTIVITIES_STATE,		MusikFrame::OnUpdateUIActivitiesState)	
 	EVT_MENU					(MUSIK_MENU_PLAYLISTINFO_STATE,		MusikFrame::OnPlaylistInfoState		)	// View->Show Playlist Info
+	EVT_UPDATE_UI				(MUSIK_MENU_PLAYLISTINFO_STATE,		MusikFrame::OnUpdateUIPlaylistInfoState	)	
 	EVT_MENU					(MUSIK_MENU_STAY_ON_TOP,			MusikFrame::OnStayOnTop				)	// View->Stay On Top
-	EVT_UPDATE_UI				(MUSIK_MENU_STAY_ON_TOP,			MusikFrame::OnUpdateStayOnTop		)	// View->Stay On Top
+	EVT_UPDATE_UI				(MUSIK_MENU_STAY_ON_TOP,			MusikFrame::OnUpdateUIStayOnTop		)	
 	EVT_MENU					(MUSIK_MENU_FX,						MusikFrame::OnFX					)
 	EVT_MENU					(MUSIK_MENU_PATHS,					MusikFrame::OnSetupPaths			)	// Library->Setup Paths
 	EVT_MENU					(MUSIK_MENU_SIMPLEQUERY,			MusikFrame::OnSimpleQueryDlg		)	// Library->Simple Query
@@ -215,7 +218,7 @@ void MusikFrame::OnStayOnTop( wxCommandEvent &WXUNUSED(event) )
 		SetStayOnTop(g_Prefs.bStayOnTop);
 	#endif
 }
-void MusikFrame::OnUpdateStayOnTop( wxUpdateUIEvent& event)
+void MusikFrame::OnUpdateUIStayOnTop( wxUpdateUIEvent& event)
 {
 	event.Check(g_Prefs.bStayOnTop);
 }
@@ -223,15 +226,27 @@ void MusikFrame::OnPlaylistInfoState( wxCommandEvent& WXUNUSED(event) )
 { 
 	TogglePlaylistInfo();
 }
+void MusikFrame::OnUpdateUIPlaylistInfoState( wxUpdateUIEvent& event)
+{
+	event.Check(g_Prefs.bShowPLInfo);
+}
 
 void MusikFrame::OnSourcesState( wxCommandEvent& WXUNUSED(event) )
 { 
 	ToggleSources();
 }
+void MusikFrame::OnUpdateUISourcesState( wxUpdateUIEvent& event)
+{
+	event.Check( g_Prefs.bShowSources );
+}
 
 void MusikFrame::OnActivitiesState( wxCommandEvent& WXUNUSED(event) )
 { 
 	ToggleActivities();
+}
+void MusikFrame::OnUpdateUIActivitiesState( wxUpdateUIEvent& event)
+{
+	event.Check(g_Prefs.bShowActivities);
 }
 
 void MusikFrame::OnSimpleQueryDlg( wxCommandEvent& WXUNUSED(event) )

@@ -1544,6 +1544,11 @@ void CPlaylistCtrl::OnPlayEnqueued	( wxCommandEvent& WXUNUSED(event) )
 	g_Player.AddToPlaylist(aResult,g_Player.IsPlaying() ? false : true);
 }
 void CPlaylistCtrl::OnPlayReplace	( wxCommandEvent& WXUNUSED(event) )
-{
-	g_Player.PlayCurSel();
+{	
+	
+	int nCurSel = g_PlaylistBox->PlaylistCtrl().GetNextItem( -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED );
+	if ( nCurSel > -1 )
+	{
+		g_Player.PlayReplaceList(nCurSel,g_Playlist);
+	}
 }

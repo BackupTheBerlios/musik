@@ -120,17 +120,8 @@ extern bool g_DragInProg;
 extern bool g_SelInProg;
 extern bool g_FocusDone;
 extern bool g_PlaylistChanged;
-extern bool g_FirstRun;
 extern bool g_TimeSeeking;
 extern bool g_DisablePlacement;
-
-//-----------------------//
-//--- main menu stuff ---//
-//-----------------------//
-extern wxMenu *file_menu;
-extern wxMenu *view_menu;
-extern wxMenu *library_writetags_menu;
-extern wxMenu *library_menu;
 
 //-------------//
 //--- fonts ---//

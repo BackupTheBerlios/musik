@@ -13,7 +13,7 @@
 //--- For compilers that support precompilation, includes "wx/wx.h". ---//
 #include "wx/wxprec.h"
 #include "wx/textfile.h"
-
+#include "wx/cmdline.h"
 #include "MusikApp.h"
 IMPLEMENT_APP( MusikApp )
 
@@ -30,8 +30,30 @@ IMPLEMENT_APP( MusikApp )
 
 bool MusikApp::OnInit()
 {
-	g_FirstRun = true;
-	
+	static const wxCmdLineEntryDesc cmdLineDesc[] =
+	{
+		{ wxCMD_LINE_PARAM,  NULL, NULL, "mp3/ogg file", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE | wxCMD_LINE_PARAM_OPTIONAL},
+		{ wxCMD_LINE_NONE }
+	};
+
+	wxCmdLineParser parser(argc, argv);
+	parser.SetDesc(cmdLineDesc);
+
+	parser.Parse(false);
+
+	wxArrayString arrParams;
+	for (size_t i = 0; i <parser.GetParamCount(); i++)
+	{
+		arrParams.Add(parser.GetParam(i));
+	}
+	m_pSingleInstanceChecker = new wxSingleInstanceChecker(GetAppName());
+	if ( m_pSingleInstanceChecker->IsAnotherRunning() )
+	{
+		//wxLogError(_("Another program instance is already running, aborting."));
+		//TODO: send params somehow to the other instannce. maybe using wxServer/wxClient
+		return false;
+	}
+
 	//--- setup our home dir ---//
 	if ( !wxDirExists( MUSIK_HOME_DIR ) )
 		wxMkdir( MUSIK_HOME_DIR );
@@ -55,7 +77,7 @@ bool MusikApp::OnInit()
 		return FALSE;
 	}
 	g_Paths.Load();
-	g_Player.Init();
+	g_Player.Init(arrParams.GetCount() > 0);
 	//--- initialize fmod ---//
 	if ( g_Player.InitializeFMOD( FMOD_INIT_START ) != FMOD_INIT_SUCCESS )
 		wxMessageBox( _("Initialization of FMOD sound system failed."), MUSIKAPPNAME_VERSION, wxOK | wxICON_ERROR );
@@ -63,54 +85,6 @@ bool MusikApp::OnInit()
 
 	wxImage::AddHandler( new wxXPMHandler );
 
-	//------------------//
-	//--- menu stuff ---//
-	//------------------//
-	//--- file ---//
-    file_menu = new wxMenu;
-	file_menu->Append( MUSIK_MENU_PREFERENCES, _("&Preferences\tCtrl-P") );
-	file_menu->AppendSeparator();
-	file_menu->Append( MUSIK_MENU_EXIT, _("E&xit") );
-
-	//--- view ---//
-	view_menu = new wxMenu;
-	view_menu->Append	( MUSIK_MENU_SOURCES_STATE,	_("Show Sources\tCtrl-1"), wxT(""), wxITEM_CHECK );
-	view_menu->Check	( MUSIK_MENU_SOURCES_STATE,	( bool )g_Prefs.bShowSources );
-	view_menu->Append	( MUSIK_MENU_ACTIVITIES_STATE, _("Show Selections\tCtrl-2"), wxT(""), wxITEM_CHECK );
-	view_menu->Check	( MUSIK_MENU_ACTIVITIES_STATE, ( bool )g_Prefs.bShowActivities );
-	view_menu->Append	( MUSIK_MENU_PLAYLISTINFO_STATE, _("Show Playlist Info\tCtrl-3"), wxT(""), wxITEM_CHECK );
-	view_menu->Check	( MUSIK_MENU_PLAYLISTINFO_STATE, ( bool )g_Prefs.bShowPLInfo );
-	view_menu->AppendSeparator();
-	view_menu->Append	( MUSIK_MENU_FX, _("FX\tCtrl-F") );
-	#ifdef __WXMSW__
-		view_menu->AppendSeparator();
-		view_menu->Append	( MUSIK_MENU_STAY_ON_TOP, _("Always On Top\tCtrl-T"), wxT(""), wxITEM_CHECK );
-//		view_menu->Check	( MUSIK_MENU_STAY_ON_TOP, ( bool )g_Prefs.bStayOnTop );
-	#endif
-
-	//--- library -> pending tags ---//
-	library_writetags_menu = new wxMenu;
-	library_writetags_menu->Append( MUSIK_MENU_VIEW_DIRTY_TAGS, _("Vie&w") );
-    library_writetags_menu->AppendSeparator();
-	library_writetags_menu->Append( MUSIK_MENU_WRITE_TAGS, _("Write Changes to &File") );
-	library_writetags_menu->Append( MUSIK_MENU_WRITE_CLEAR_DIRTY, _("Finalize for Database &Only") );
-
-	//--- library ---//
-    library_menu = new wxMenu;
-	library_menu->Append( MUSIK_MENU_PATHS, _("&Setup Library\tCtrl-L") );
-    library_menu->AppendSeparator();
-	library_menu->Append( MUSIK_MENU_SIMPLEQUERY, _("S&imple Query") );
-	library_menu->Append( MUSIK_MENU_CUSTOMQUERY, _("&Custom Query") );
-	library_menu->AppendSeparator();
-	library_menu->Append( MUSIK_MENU_WRITE, _("&Pending Tags"), library_writetags_menu );
-
-	//----------------//
-	//--- menu bar ---//
-	//----------------//
-	wxMenuBar *menu_bar = new wxMenuBar;
-    menu_bar->Append( file_menu,	_("&File") );
-	menu_bar->Append( view_menu, 	_("&View") );
-	menu_bar->Append( library_menu,	_("&Library") );
 
 	//-------------------//
 	//--- main window ---//
@@ -127,14 +101,36 @@ bool MusikApp::OnInit()
 		pMain->Center();
 	}
 	pMain->SetTitle( MUSIKAPPNAME_VERSION );
-	pMain->SetMenuBar( menu_bar );
-	pMain->Show(TRUE);
+	pMain->Show();
 
 	SetTopWindow( pMain );
 
 	//--- start webserver if necessary ---//
 	if ( g_Prefs.bWebServerEnable )
 		g_WebServer.Start();
+
+	//--- autostart stuff ---//
+	if ( g_Prefs.bFirstRun )
+	{
+		g_MusikLibraryFrame = new MusikLibraryFrame( ( wxFrame* )pMain, wxPoint( 0, 0 ), wxSize( 480, 240 ) );
+		pMain->Enable	( FALSE );
+		g_MusikLibraryFrame->Show	( TRUE	);
+	}
+	else if (g_Prefs.bAutoAdd || arrParams.GetCount() > 0)
+	{	if(g_Prefs.bAutoAdd)
+			pMain->AutoUpdate();
+		if(arrParams.GetCount() > 0)
+			pMain->AutoUpdate(arrParams,true);
+	}
+	else
+	{// as standard select now playing, its faster than selecting the library.
+		g_SourcesCtrl->SelectNowPlaying();
+		g_PlaylistBox->Update();
+	}
+	//--- startup the crossfader			---//
+	g_FaderThread = new MusikFaderThread();
+	g_FaderThread->Create();
+	g_FaderThread->Run();
 
 	return TRUE;
 }

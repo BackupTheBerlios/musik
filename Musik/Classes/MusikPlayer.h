@@ -82,7 +82,7 @@ public:
 	CMusikPlayer();
 	~CMusikPlayer();
 
-	void Init();
+	void Init(bool bSuppressAutoPlay);
 	//--------------------//
 	//--- sound system ---//
 	//--------------------//
@@ -129,7 +129,7 @@ public:
 	//-------------------------//
 	//--- playback controls ---//
 	//-------------------------//
-	void PlayCurSel	( );
+	void PlayReplaceList(int nItemToPlay,const CMusikSongArray & playlist);
 	void PlayPause();
     bool Play		( size_t nItem, int nStartPos = 0, int nFadeType = CROSSFADE_NORMAL );
 	void Stop		( bool bFade = true, bool bExit = false );

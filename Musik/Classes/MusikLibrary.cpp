@@ -1074,36 +1074,22 @@ bool CMusikLibrary::GetSongFromSongid( int songid, CMusikSong *pSong )
 
 void CMusikLibrary::UpdateItem( CMusikSong & newsonginfo, bool bDirty )
 {
-	
-	//--- run statement to update current item ---//
-
+	// this only updates user changeable properties of the song.	
 	int result = 0;
-	char szLastPlayed[20];
-	DoubleToCharString( newsonginfo.LastPlayed, szLastPlayed );
-	char szTimeAdded[20];
-	DoubleToCharString( newsonginfo.TimeAdded, szTimeAdded );
-
-
 	{// keep lock as short as possible by using {} scope
 		wxCriticalSectionLocker lock( m_csDBAccess );
-		result = sqlite_exec_printf( m_pDB, "update songs set format=%d, vbr=%d, filename=%Q, artist=%Q, title=%Q, album=%Q, tracknum=%d, year=%Q, genre=%Q, rating=%d, bitrate=%d, lastplayed=%s, notes=%Q, timesplayed=%d, duration=%d, timeadded=%s, filesize=%d, dirty=%d where songid = %d;", NULL, NULL, NULL, 
-			newsonginfo.Format, 
-			newsonginfo.VBR, 
+		result = sqlite_exec_printf( m_pDB, "update songs set filename=%Q, artist=%Q, title=%Q,"
+											"album=%Q, tracknum=%d, year=%Q, genre=%Q, rating=%d,"
+											"notes=%Q, dirty=%d where songid = %d;", NULL, NULL, NULL, 
 			( const char* )ConvFNToFieldMB( newsonginfo.Filename ), 
 			( const char* )ConvDBFieldToMB( newsonginfo.Artist ), 
 			( const char* )ConvDBFieldToMB( newsonginfo.Title ), 
 			( const char * )ConvDBFieldToMB( newsonginfo.Album ), 
 			newsonginfo.TrackNum, 
 			( const char* )ConvDBFieldToMB( newsonginfo.Year ), 
-			( const char* )ConvDBFieldToMB( newsonginfo.Genre ), 
+			( const char* )ConvDBFieldToMB( newsonginfo.Genre ),
 			newsonginfo.Rating, 
-			newsonginfo.Bitrate, 
-			szLastPlayed, 
 			( const char* )ConvDBFieldToMB( newsonginfo.Notes ), 
-			newsonginfo.TimesPlayed, 
-			newsonginfo.Duration, 
-			szTimeAdded, 
-			newsonginfo.Filesize,
 			(int)bDirty, 
 			 newsonginfo.songid);
 	}

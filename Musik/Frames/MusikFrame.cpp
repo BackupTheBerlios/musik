@@ -243,6 +243,7 @@ MusikFrame::MusikFrame()
 	ShowSources();
 	SetStayOnTop(( bool )g_Prefs.bStayOnTop);
 
+	CreateMainMenu();
 
 	//--- restore placement or use defaults ---//
 	g_DisablePlacement = false;
@@ -253,7 +254,6 @@ MusikFrame::MusikFrame()
 	g_Player.SetVolume();
 
 	SetActiveThread( NULL );
-
 
 	#ifdef __WXMSW__
 		SetMMShellHook((HWND)GetHWND());
@@ -266,59 +266,63 @@ MusikFrame::~MusikFrame()
   delete m_pTaskBarIcon;
 #endif 
 }
-
-void MusikFrame::AutoUpdate	( const wxArrayString & Filenames ,bool bFilesWereDropped)
+void MusikFrame::CreateMainMenu()
 {
-	g_MusikLibraryFrame = new MusikLibraryFrame( ( wxFrame* )this, Filenames,bFilesWereDropped );
+	//------------------//
+	//--- menu stuff ---//
+	//------------------//
+	//--- file ---//
+	wxMenu* file_menu = new wxMenu;
+	file_menu->Append( MUSIK_MENU_PREFERENCES, _("&Preferences\tCtrl-P") );
+	file_menu->AppendSeparator();
+	file_menu->Append( MUSIK_MENU_EXIT, _("E&xit") );
+
+	//--- view ---//
+	wxMenu* view_menu = new wxMenu;
+	view_menu->Append	( MUSIK_MENU_SOURCES_STATE,	_("Show Sources\tCtrl-1"), wxT(""), wxITEM_CHECK );
+	view_menu->Append	( MUSIK_MENU_ACTIVITIES_STATE, _("Show Selections\tCtrl-2"), wxT(""), wxITEM_CHECK );
+	view_menu->Append	( MUSIK_MENU_PLAYLISTINFO_STATE, _("Show Playlist Info\tCtrl-3"), wxT(""), wxITEM_CHECK );
+	view_menu->AppendSeparator();
+	view_menu->Append	( MUSIK_MENU_FX, _("FX\tCtrl-F") );
+#ifdef __WXMSW__
+	view_menu->AppendSeparator();
+	view_menu->Append	( MUSIK_MENU_STAY_ON_TOP, _("Always On Top\tCtrl-T"), wxT(""), wxITEM_CHECK );
+#endif
+
+	//--- library -> pending tags ---//
+	wxMenu* library_writetags_menu = new wxMenu;
+	library_writetags_menu->Append( MUSIK_MENU_VIEW_DIRTY_TAGS, _("Vie&w") );
+	library_writetags_menu->AppendSeparator();
+	library_writetags_menu->Append( MUSIK_MENU_WRITE_TAGS, _("Write Changes to &File") );
+	library_writetags_menu->Append( MUSIK_MENU_WRITE_CLEAR_DIRTY, _("Finalize for Database &Only") );
+
+	//--- library ---//
+	wxMenu *library_menu = new wxMenu;
+	library_menu->Append( MUSIK_MENU_PATHS, _("&Setup Library\tCtrl-L") );
+	library_menu->AppendSeparator();
+	library_menu->Append( MUSIK_MENU_SIMPLEQUERY, _("S&imple Query") );
+	library_menu->Append( MUSIK_MENU_CUSTOMQUERY, _("&Custom Query") );
+	library_menu->AppendSeparator();
+	library_menu->Append( MUSIK_MENU_WRITE, _("&Pending Tags"), library_writetags_menu );
+
+	//----------------//
+	//--- menu bar ---//
+	//----------------//
+	wxMenuBar *menu_bar = new wxMenuBar;
+	menu_bar->Append( file_menu,	_("&File") );
+	menu_bar->Append( view_menu, 	_("&View") );
+	menu_bar->Append( library_menu,	_("&Library") );
+
+	SetMenuBar( menu_bar );
+
+}
+void MusikFrame::AutoUpdate	( const wxArrayString & Filenames ,bool bPlayFilesAfterAdding)
+{
+	g_MusikLibraryFrame = new MusikLibraryFrame( ( wxFrame* )this, Filenames,bPlayFilesAfterAdding );
 	this->Enable	( FALSE );
 	g_MusikLibraryFrame->Show	( TRUE	); 
 }
-bool MusikFrame::Show( bool show )
-{
-	bool bRet = false;
-    bRet =	 wxWindow::Show( show );
-	
-	if ( g_FirstRun && show )
-	{
-		g_FirstRun = false;
 
-
-		//--- autostart stuff ---//
-		if ( g_Prefs.bFirstRun || g_Prefs.bAutoAdd )
-		{
-			if(g_Prefs.bFirstRun)
-			{
-				g_MusikLibraryFrame = new MusikLibraryFrame( ( wxFrame* )this, wxPoint( 0, 0 ), wxSize( 480, 240 ) );
-				this->Enable	( FALSE );
-				g_MusikLibraryFrame->Show	( TRUE	);
-			}
-			else
-				AutoUpdate();
-		}
-		else
-		{
-			g_SourcesCtrl->SelectNowPlaying();
-			g_PlaylistBox->Update();
-
-			/*
-			ShowActivityArea( g_Prefs.bShowActivities );
-    		g_ActivityAreaCtrl->ResetAllContents();
-			if ( g_Prefs.bShowAllSongs == 1 )
-			{
-				g_Library.GetAllSongs( g_Playlist );
-				g_SourcesCtrl->SelectLibrary();
-				g_PlaylistBox->Update(true);
-			}
-			*/
-		}
-		//--- startup the crossfader			---//
-		g_FaderThread = new MusikFaderThread();
-		g_FaderThread->Create();
-		g_FaderThread->Run();
-
-	}
-	return bRet;	
-}
 
 //----------------------------------//
 //--- Image and image list stuff ---//
@@ -439,7 +443,6 @@ void MusikFrame::TogglePlaylistInfo()
 	g_Prefs.bShowPLInfo = !g_Prefs.bShowPLInfo;
 	ShowPlaylistInfo();
 
-	view_menu->Check( MUSIK_MENU_PLAYLISTINFO_STATE, ( bool )g_Prefs.bShowPLInfo );
 }
 
 void MusikFrame::ShowPlaylistInfo()
@@ -459,8 +462,6 @@ void MusikFrame::ToggleSources()
 	g_Prefs.bShowSources = !g_Prefs.bShowSources;
 
 	ShowSources();
-
-	view_menu->Check( MUSIK_MENU_SOURCES_STATE,	( bool )g_Prefs.bShowSources );
 }
 void MusikFrame::SetStayOnTop( bool bStayOnTop )
 {
@@ -491,9 +492,7 @@ void MusikFrame::ToggleActivities()
 	
 	g_Prefs.bShowActivities = !g_Prefs.bShowActivities;
 
-	ShowActivityArea( (bool)g_Prefs.bShowActivities );
-
-	view_menu->Check( MUSIK_MENU_ACTIVITIES_STATE,	( bool )g_Prefs.bShowActivities );
+	ShowActivityArea( g_Prefs.bShowActivities );
 }
 
 void MusikFrame::EnableProgress( bool enable )

@@ -322,7 +322,7 @@ private:
 		pSong->Genre		= ConvDBFieldToWX	( coldata[6] );
 		pSong->Duration		= StringToInt		( coldata[7] );
 		pSong->Format		= StringToInt		( coldata[8] );
-		pSong->VBR			= StringToInt		( coldata[9] );
+		pSong->VBR			= StringToInt		( coldata[9] ) ? true: false;
 		pSong->Year			= ConvDBFieldToWX	( coldata[10] );
 		pSong->Rating		= StringToInt		( coldata[11] );
 		pSong->Bitrate		= StringToInt		( coldata[12] );

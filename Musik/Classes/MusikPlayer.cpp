@@ -82,7 +82,7 @@ CMusikPlayer::CMusikPlayer()
 	m_nLastSongTime = 0;
 }
 
-void CMusikPlayer::Init()
+void CMusikPlayer::Init(bool bSuppressAutoPlay)
 {
 	int nPlayStartPos = 0;
 // load old playlist
@@ -112,7 +112,7 @@ void CMusikPlayer::Init()
 			g_Library.GetFilelistSongs( aFilelist, m_Playlist );
 		}
 	}
-	if(g_Prefs.bAutoPlayOnAppStart && m_Playlist.GetCount())
+	if(!bSuppressAutoPlay && g_Prefs.bAutoPlayOnAppStart && m_Playlist.GetCount())
 		_PostPlayRestart( nPlayStartPos ); 
 }
 CMusikPlayer::~CMusikPlayer()
@@ -280,7 +280,7 @@ void CMusikPlayer::PlayPause()
 		}
 	}
 }
-void CMusikPlayer::PlayCurSel()
+void CMusikPlayer::PlayReplaceList(int nItemToPlay,const CMusikSongArray & playlist)
 {
 	if ( IsPaused() )
 	{
@@ -288,19 +288,8 @@ void CMusikPlayer::PlayCurSel()
 		m_Paused = false;
 	}
 	
-	int nCurSel = g_PlaylistBox->PlaylistCtrl().GetNextItem( -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED );
-	if ( nCurSel > -1 )
-	{
-		if(g_SourcesCtrl->GetSelType() != MUSIK_SOURCES_NOW_PLAYING)
-		{
-			if ( g_PlaylistChanged )
-			{
-				SetPlaylist( g_Playlist );
-				g_PlaylistChanged = false;
-			}
-		}
-		Play( nCurSel );
-	}	
+	SetPlaylist( playlist );
+	Play( nItemToPlay );
 }
 signed char F_CALLBACKAPI CMusikPlayer::MetadataCallback(char *name, char *value, int userdata)
 {

@@ -58,14 +58,14 @@ END_EVENT_TABLE()
 //---  gets called automatically  ---//
 //--- on startup to add new files ---//
 //-----------------------------------//
-MusikLibraryFrame::MusikLibraryFrame( wxFrame* pParent ,const wxArrayString &arrFilenamesToScan, bool bFilesWereDropped)
+MusikLibraryFrame::MusikLibraryFrame( wxFrame* pParent ,const wxArrayString &arrFilenamesToScan, bool bPlayFilesAfterAdding)
 	: wxFrame( pParent, -1, _("Searching for and Adding New Files"), wxPoint( -1, -1 ), wxSize( 480, 48 ), wxCAPTION | wxFRAME_FLOAT_ON_PARENT | wxFRAME_NO_TASKBAR | wxCLIP_CHILDREN )
 {
 	m_arrScannedFiles = arrFilenamesToScan;
 	//------------------------------//
 	//--- initialize needed vars ---//
 	//------------------------------//
-	m_bFilesWereDropped =  bFilesWereDropped;
+	m_bPlayFilesAfterAdding =  bPlayFilesAfterAdding;
 	m_Close			= true;
 	m_AutoStart		= true;
 	m_FirstStart	= false;
@@ -160,7 +160,7 @@ MusikLibraryFrame::MusikLibraryFrame( wxFrame* pParent, const wxPoint &pos, cons
 	m_AutoStart		= false;
 	m_Close			= false;
 	m_MenuCreated	= true;
-	m_bFilesWereDropped = false;
+	m_bPlayFilesAfterAdding = false;
 	//--------------------//
 	//--- center frame ---//
 	//--------------------//
@@ -640,11 +640,11 @@ void MusikLibraryFrame::OnThreadEnd( wxCommandEvent& WXUNUSED(event) )
 			Close( true );
 
 		g_ActivityAreaCtrl->ResetAllContents();
-		if(m_bFilesWereDropped)
+		if(m_bPlayFilesAfterAdding && m_arrScannedFiles.GetCount())
 		{
 			CMusikSongArray songs;
 			g_Library.GetFilelistSongs( m_arrScannedFiles, songs );
-			g_Player.AddToPlaylist(songs,true);
+			g_Player.InsertToPlaylist(songs,true);
 			g_SourcesCtrl->SelectNowPlaying();
 			g_PlaylistBox->Update();
 		}

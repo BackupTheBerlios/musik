@@ -17,15 +17,22 @@
 #ifndef WX_PRECOMP
 	#include "wx/wx.h"
 #endif 
+#include <wx/snglinst.h>
 
 class MusikApp : public wxApp
 {
 public:
+	~MusikApp() 
+	{
+		delete m_pSingleInstanceChecker;
+	}
 	virtual bool OnInit();
 private:
 	wxString ReadVersion();
 	void WriteVersion();
 	void CheckVersion();
+
+	wxSingleInstanceChecker *m_pSingleInstanceChecker;
 };
 
 DECLARE_APP(MusikApp)
