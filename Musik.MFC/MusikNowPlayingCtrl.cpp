@@ -70,7 +70,9 @@ int CMusikNowPlayingCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if ( !m_Info->Create( NULL, NULL, WS_CHILD | WS_VISIBLE, rcClient, this, 123, NULL ) )
 		return -1;
 
-	m_Info->Set( "%f20 %cthe song %a1" );
+	m_Info->Set( "%f20 %c test %a4 %c in the year %a2" );
+	
+	GetDC()->SetBkColor( GetSysColor( COLOR_BTNHILIGHT ) );
 
 	return 0;
 }
@@ -88,7 +90,8 @@ void CMusikNowPlayingCtrl::OnSize(UINT nType, int cx, int cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 
-	m_Info->MoveWindow( 0, 0, cx, cy );
+	CRect lpRect = CRect( CPoint( 0, 0 ), m_Info->GetSize() );
+	m_Info->MoveWindow( lpRect );
 	m_Info->Layout();
 }
 

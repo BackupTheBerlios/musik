@@ -52,10 +52,11 @@ public:
 	virtual ~CMusikDynamicText();
 
 	// gets
-	int GetFontSize();
+	int GetFontSize(){ return abs( m_FontSize ); }
 	int GetHeight() { return GetFontSize(); }
 	int GetWidth() { return m_Width; }
 	int GetType(){ return m_Type; }
+	CSize GetSize() { return CSize( GetWidth(), GetHeight() ); }
 
 	// sets
 	void SetDynText( const CString& str );
@@ -73,6 +74,7 @@ protected:
 	// vars
 	int m_Width;
 	int m_Type;
+	int m_FontSize;
 
 	// macros
 	DECLARE_DYNAMIC(CMusikDynamicText)

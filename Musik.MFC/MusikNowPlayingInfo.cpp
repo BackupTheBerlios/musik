@@ -47,6 +47,7 @@ void CMusikNowPlayingInfo::UpdateInfo( bool refresh )
 		type = m_Captions.at( i )->GetType();
 		m_Captions.at( i )->SetDynText( (CString)m_Player->GetCurrPlaying()->GetField( type ) );		
 	}
+	Layout( refresh );
 }
 
 ///////////////////////////////////////////////////
@@ -55,8 +56,25 @@ void CMusikNowPlayingInfo::Layout( bool refresh )
 {
 	CSize rect = GetSize();
 
-	// basics, heres the baseline
-	int nBaseline = GetBaseline();
+	int nBaseline = GetBaseline( GetHeight() );
+
+	int nCurrX = 0;
+	int nCurrY = 0;
+	int nCurrBase;
+	CRect rcClient;
+	for ( size_t i = 0; i < m_LayoutOrder.size(); i++ )
+	{
+		nCurrBase = GetBaseline( m_LayoutOrder.at( i )->GetFontSize() );
+		nCurrY = nBaseline - nCurrBase;
+
+		m_LayoutOrder.at( i )->GetClientRect( rcClient );
+		m_LayoutOrder.at( i )->MoveWindow( CRect( CPoint( nCurrX, nCurrY ), CSize( rcClient.Width(), rcClient.Height() ) ) );
+
+		if ( refresh )
+			m_LayoutOrder.at( i )->RedrawWindow();
+
+		nCurrX += m_LayoutOrder.at( i )->GetWidth();
+	}
 }
 
 ///////////////////////////////////////////////////
@@ -105,6 +123,7 @@ void CMusikNowPlayingInfo::InitObjects()
 	
 	m_Captions.clear();
 	m_Comments.clear();
+	m_LayoutOrder.clear();
 
 	// make new items
     size_t nObjs = m_Items.size();
@@ -142,6 +161,7 @@ void CMusikNowPlayingInfo::InitObjects()
 
 			// add to comment array
 			m_Comments.push_back( pTemp );
+			m_LayoutOrder.push_back( pTemp );
 		}
 
 		// found a new object, so create it
@@ -161,6 +181,7 @@ void CMusikNowPlayingInfo::InitObjects()
 			pTemp->SetType( atoi( sCurr.GetBuffer() ) );
 
 			m_Captions.push_back( pTemp );
+			m_LayoutOrder.push_back( pTemp );
 		}
 	}
 }
@@ -170,9 +191,9 @@ void CMusikNowPlayingInfo::InitObjects()
 int CMusikNowPlayingInfo::GetHeight()
 {
 	int largest = -1;
-	for ( size_t i = 0; i < m_Captions.size(); i++ )
+	for ( size_t i = 0; i < m_LayoutOrder.size(); i++ )
 	{
-		if ( m_Captions.at( i )->GetFontSize() > largest )
+		if ( m_LayoutOrder.at( i )->GetFontSize() > largest )
 			largest = m_Captions.at( i )->GetFontSize();
 	}
 
@@ -203,7 +224,7 @@ CSize CMusikNowPlayingInfo::GetSize()
 
 ///////////////////////////////////////////////////
 
-int CMusikNowPlayingInfo::GetBaseline()
+int CMusikNowPlayingInfo::GetBaseline( int font_size )
 {
 	CFont *temp_font;
 
@@ -212,16 +233,17 @@ int CMusikNowPlayingInfo::GetBaseline()
 	
 	LOGFONT temp_log_font;
 	temp_font->GetLogFont( &temp_log_font );
-	temp_log_font.lfHeight = GetHeight();
+	temp_log_font.lfHeight = font_size;
 
 	delete temp_font;
 	temp_font = new CFont();
 	temp_font->CreateFontIndirect( &temp_log_font );
     
+	CDC *pDC = GetDC();
 	TEXTMETRIC metrics;
-	CFont* pOldFont = GetDC()->SelectObject( temp_font );
-	GetDC()->GetTextMetrics( &metrics );
-	GetDC()->SelectObject( pOldFont );
+	CFont* pOldFont = pDC->SelectObject( temp_font );
+	pDC->GetTextMetrics( &metrics );
+	pDC->SelectObject( pOldFont );
 
 	delete temp_font;
 

@@ -35,7 +35,7 @@ public:
 	CSize GetSize();
 	int GetHeight();
 	int GetWidth();
-	int GetBaseline();
+	int GetBaseline( int font_size );
 
 	// setting
 	void Set( CString mask );
@@ -61,6 +61,7 @@ protected:
 	// of which font goes to which item...
 	CMusikDynamicTextArray m_Captions;
 	CMusikDynamicTextArray m_Comments;
+	CMusikDynamicTextArray m_LayoutOrder;
 	CCStringArray m_Items;
 
 	// macros

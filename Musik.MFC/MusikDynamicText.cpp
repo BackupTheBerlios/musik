@@ -50,6 +50,7 @@ IMPLEMENT_DYNAMIC(CMusikDynamicText, CStatic)
 CMusikDynamicText::CMusikDynamicText()
 {
 	m_Width = -1;
+	m_FontSize = -1;
 	pFont = NULL;
 }
 
@@ -70,6 +71,7 @@ END_MESSAGE_MAP()
 
 void CMusikDynamicText::SetDynText( const CString& str )
 {
+	ASSERT( pFont != NULL );
 	SetWindowText( str );
 	UpdateDynSize();
 }
@@ -105,16 +107,6 @@ void CMusikDynamicText::UpdateDynSize()
 
 ///////////////////////////////////////////////////
 
-int CMusikDynamicText::GetFontSize()
-{
-	LOGFONT temp_log_font;
-	GetFont()->GetLogFont( &temp_log_font );
-
-	return temp_log_font.lfHeight;
-}
-
-///////////////////////////////////////////////////
-
 void CMusikDynamicText::SetDynFont( int size, int bold, int italic, int underline, int strikethrough )
 {
 	if ( pFont )
@@ -123,15 +115,13 @@ void CMusikDynamicText::SetDynFont( int size, int bold, int italic, int underlin
 	pFont = new CFont();
 	pFont->CreateStockObject( DEFAULT_GUI_FONT );
 
-	// comment
-	if ( size == -1 || !size )
-		return;
-
 	// get the font
 	LOGFONT pLogFont;
 	pFont->GetLogFont( &pLogFont );
 
-	pLogFont.lfHeight = size;
+	if ( size > 0 )
+		pLogFont.lfHeight = size;
+
 	if ( bold )
 		pLogFont.lfWeight = FW_BOLD;
 	if ( italic )
@@ -148,6 +138,7 @@ void CMusikDynamicText::SetDynFont( int size, int bold, int italic, int underlin
 	pFont->CreateFontIndirect( &pLogFont );	
 
 	SetFont( pFont, true );
+	m_FontSize = pLogFont.lfHeight;
 }
 
 ///////////////////////////////////////////////////
