@@ -69,8 +69,6 @@ static void musikPlayerWorker( CmusikThread* thread )
 
 	CmusikPlayer* player = (CmusikPlayer*)thread->GetArgs();
 
-	ACE_Thread_Mutex m_ProtectingStreams;
-
 	ACE_Time_Value sleep_regular, sleep_tight;
 	sleep_regular.set( 0.1 );
 	sleep_tight.set( 0.1 );
@@ -171,6 +169,8 @@ static void musikPlayerWorker( CmusikThread* thread )
 			{
 				TRACE0( "Crossfade started... " );
 
+				player->m_ProtectingStreams->acquire();
+
 				player->UnflagCrossfade();
 
 				bool fade_success = true;
@@ -180,8 +180,6 @@ static void musikPlayerWorker( CmusikThread* thread )
 				// the fade becuase something will fuck up
 				if ( player->GetDuration( MUSIK_TIME_MS ) > ( player->GetCrossfader()->GetDuration( player->GetFadeType() ) * 1000 ) )
 				{
-					m_ProtectingStreams.acquire();
-
 					int temp				= 0;
 					int nFadeType			= player->GetFadeType();
 					int nCurrHandle			= player->GetHandle();
@@ -243,6 +241,8 @@ static void musikPlayerWorker( CmusikThread* thread )
 						if ( player->GetHandle() != nCurrHandle )
 						{
 							TRACE0( "Crossfade aborted\n" );
+
+							player->m_ProtectingStreams->release();
 							fade_success = false;
 							break;
 						}
@@ -273,8 +273,6 @@ static void musikPlayerWorker( CmusikThread* thread )
 						ACE_OS::sleep( sleep_tight );
 					}
 
-					m_ProtectingStreams.release();
-
 					// if there was a successful fade, then some
 					// clean up is in order...
 					if ( fade_success )
@@ -296,11 +294,14 @@ static void musikPlayerWorker( CmusikThread* thread )
 
 							// set the kill switch
 							m_Exit = true;
+							player->m_ProtectingStreams->release();
 							continue;
 						}
 
 						else if ( player->GetFadeType() == MUSIK_CROSSFADER_NEW_SONG  )
 							player->FinalizeNewSong();
+
+						player->m_ProtectingStreams->release();
 
 						TRACE0( "Crossfade finished successfully\n" );
 					}					
@@ -368,6 +369,8 @@ CmusikPlayer::CmusikPlayer( CmusikFunctor* functor, CmusikLibrary* library )
 
 	m_State				= MUSIK_PLAYER_INIT_UNINITIALIZED;
 
+	m_ProtectingStreams	= new ACE_Thread_Mutex();
+
 	InitThread();
 }
 
@@ -396,6 +399,8 @@ CmusikPlayer::~CmusikPlayer()
 	CleanCrossfader();
 	CleanSound();
 	CleanPlaylist();
+
+	delete m_ProtectingStreams;
 }
 
 ///////////////////////////////////////////////////
@@ -491,8 +496,10 @@ int CmusikPlayer::InitSound( int device, int driver, int rate, int channels, int
 		}
 	}
 
+	m_ProtectingStreams->acquire();
 	m_ActiveStreams = new CmusikStreamPtrArray();
 	m_ActiveChannels = new CIntArray();
+	m_ProtectingStreams->release();
 
 	m_MaxChannels = channels;
 
@@ -507,8 +514,19 @@ void CmusikPlayer::CleanSound()
 	CleanOldStreams( true );
 	StopSound();
 
-	if ( m_ActiveStreams ) delete m_ActiveStreams;
-	if ( m_ActiveChannels ) delete m_ActiveChannels;
+	m_ProtectingStreams->acquire();
+	if ( m_ActiveStreams ) 
+	{
+		delete m_ActiveStreams;
+		m_ActiveStreams = NULL;
+	}
+
+	if ( m_ActiveChannels ) 
+	{
+		delete m_ActiveChannels;
+		m_ActiveChannels = NULL;
+	}
+	m_ProtectingStreams->release();
 
 	m_State = MUSIK_PLAYER_INIT_UNINITIALIZED;
 }
@@ -647,8 +665,10 @@ bool CmusikPlayer::Play( int index, int fade_type, int start_pos )
 	PushNewChannel();
 
 	// add the new channel and stream
+	m_ProtectingStreams->acquire();
 	m_ActiveStreams->push_back( pNewStream );
 	m_ActiveChannels->push_back( GetCurrChannel() );
+	m_ProtectingStreams->release();
 
 	// play it: set volume
 	FSOUND_Stream_Play( GetCurrChannel(), pNewStream );
@@ -738,8 +758,10 @@ void CmusikPlayer::EnquePaused( int index )
 	PushNewChannel();
 
 	// add the new channel and stream
+	m_ProtectingStreams->acquire();
 	m_ActiveStreams->push_back( pNewStream );
 	m_ActiveChannels->push_back( GetCurrChannel() );
+	m_ProtectingStreams->release();
 
 	// setup playback, then pause
 	FSOUND_Stream_Play( GetCurrChannel(), pNewStream );
@@ -970,6 +992,8 @@ void CmusikPlayer::CleanOldStreams( bool kill_primary )
 {
 	ASSERT( m_ActiveStreams->size() == m_ActiveChannels->size() );
 
+	m_ProtectingStreams->acquire();
+
 	if ( !m_ActiveStreams->size() )
 		return;
 
@@ -988,6 +1012,8 @@ void CmusikPlayer::CleanOldStreams( bool kill_primary )
 		m_ActiveStreams->erase( m_ActiveStreams->begin() );
 		m_ActiveChannels->erase( m_ActiveChannels->begin() );
 	}	
+
+	m_ProtectingStreams->release();
 }
 
 ///////////////////////////////////////////////////
