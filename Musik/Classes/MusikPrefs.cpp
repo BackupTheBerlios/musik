@@ -88,9 +88,9 @@ void CMusikPrefs::LoadPrefs()
 	#endif
 
 	//--- apply unweildy defaults ---//
-	if ( sPLStripeColour.IsEmpty()		) sPLStripeColour		= ColourToString( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNFACE ) );
-	if ( sActStripeColour.IsEmpty()		) sActStripeColour		= ColourToString( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNFACE ) );
-	if ( sSourcesStripeColour.IsEmpty()	) sSourcesStripeColour	= ColourToString( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNFACE ) );
+	if ( sPLStripeColour.IsEmpty()		) sPLStripeColour		= wxT("244, 244, 244");
+	if ( sActStripeColour.IsEmpty()		) sActStripeColour		= wxT("244, 244, 244");
+	if ( sSourcesStripeColour.IsEmpty()	) sSourcesStripeColour	= wxT("244, 244, 244");
 
 	delete config;
 	SavePrefs();
