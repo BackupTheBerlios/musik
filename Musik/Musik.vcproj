@@ -186,6 +186,12 @@
 				Name="Tag"
 				Filter="">
 				<File
+					RelativePath=".\Frames\MusikAutoTaggerFrame.cpp">
+				</File>
+				<File
+					RelativePath=".\Frames\MusikAutoTaggerFrame.h">
+				</File>
+				<File
 					RelativePath=".\Frames\MusikTagFrame.cpp">
 				</File>
 				<File

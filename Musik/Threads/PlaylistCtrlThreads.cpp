@@ -12,7 +12,6 @@
 
 //--- For compilers that support precompilation, includes "wx/wx.h". ---//
 #include "wx/wxprec.h"
-
 #include "PlaylistCtrlThreads.h"
 #include "../Classes/PlaylistCtrl.h"
 //--- globals ---//
@@ -20,13 +19,13 @@
 #include "../MusikUtils.h"
 
 MusikPlaylistRenameThread::MusikPlaylistRenameThread( const  CMusikSongArray & songs )
+	:wxThread(wxTHREAD_JOINABLE)
 {
 	m_Songs = songs;
 }
 
 void* MusikPlaylistRenameThread::Entry()
 {
-	g_PlaylistCtrl->SetActiveThread	( this );
 	g_PlaylistCtrl->SetProgressType	( MUSIK_PLAYLIST_RENAME_THREAD );
 	g_PlaylistCtrl->SetProgress		( 0 );
 
@@ -61,9 +60,6 @@ void* MusikPlaylistRenameThread::Entry()
 		g_Library.RenameFile( &m_Songs.Item( i ) );
 		Yield();
 	}
-
-	g_Playlist = m_Songs;
-
 	return NULL;
 }
 
@@ -73,14 +69,16 @@ void MusikPlaylistRenameThread::OnExit()
 	wxPostEvent( g_PlaylistCtrl, RenameEndEvt );
 }
 
-MusikPlaylistRetagThread::MusikPlaylistRetagThread(const  CMusikSongArray & songs )
+MusikPlaylistRetagThread::MusikPlaylistRetagThread(const wxString &TagMask, const  CMusikSongArray & songs )
+	:wxThread(wxTHREAD_JOINABLE)
 {
 	m_Songs = songs;
+	m_sTagMask = TagMask;
 }
 
 void* MusikPlaylistRetagThread::Entry()
 {
-	g_PlaylistCtrl->SetActiveThread	( this );
+	
 	g_PlaylistCtrl->SetProgressType	( MUSIK_PLAYLIST_RETAG_THREAD );
 	g_PlaylistCtrl->SetProgress		( 0 );
 
@@ -95,6 +93,9 @@ void* MusikPlaylistRetagThread::Entry()
     float fPos = 0;
 	int nLastProg = 0;
 	int nCurrProg = 0;
+//	wxString sMask	= g_Prefs.sAutoTag;
+	CMusikTagger tagger(m_sTagMask);
+//////////////////////////////////////////////////////////////////////////////
 	g_Library.BeginTransaction();
 	for ( size_t i = 0; i < m_Songs.GetCount(); i++ )
 	{
@@ -113,12 +114,10 @@ void* MusikPlaylistRetagThread::Entry()
 		if ( TestDestroy() )
 			break;
 
-		g_Library.RetagFile( &m_Songs.Item( i ) );
+		g_Library.RetagFile(tagger, &m_Songs.Item( i ) );
 		Yield();
 	}
 	g_Library.EndTransaction();
-	g_Playlist = m_Songs;
-
 	return NULL;
 }
 

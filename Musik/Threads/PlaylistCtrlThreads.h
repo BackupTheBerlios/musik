@@ -43,13 +43,14 @@ private:
 class MusikPlaylistRetagThread : public wxThread
 {
 public:
-	MusikPlaylistRetagThread( const  CMusikSongArray & songs );
+	MusikPlaylistRetagThread(const wxString &TagMask, const  CMusikSongArray & songs );
 
 	virtual void *Entry();
 	virtual void OnExit();
-
+	const CMusikSongArray & GetReTaggedSongs(){return m_Songs;}
 private:
 	CMusikSongArray m_Songs;
+	wxString m_sTagMask;
 };
 
 #endif

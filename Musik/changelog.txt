@@ -1,4 +1,7 @@
 0.2.1 to 0.2.2
+ - Fixed bug in window placement on tsart, if Musik was closed iconized before. (on restart the window was not visible)(gunnar)
+ + Enhanced AutoTagging. Uses regex to be more robust. Dialog with option to store tag masks added (gunnar)
+ - Fixed Bug: Threads handling for Rename and tagging changed to joinable threads ( more robust) (gunnar)
  + Pitch control added, with option to toggle (SiW)
  + Fixed Bug: Reduced flicker of gauge control for position, fx and volume, NOW works correctly on win2000 too (gunnar)
  + Make Horizontal Scrollbars disappear again in Selection Boxes ( gunnar)

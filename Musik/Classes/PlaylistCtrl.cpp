@@ -25,6 +25,7 @@
 //--- frames ---//
 #include "../Frames/MusikFrame.h"
 #include "../Frames/MusikTagFrame.h"
+#include "../Frames/MusikAutoTaggerFrame.h"
 //--- threads ---//
 #include "../Threads/PlaylistCtrlThreads.h"
 
@@ -62,6 +63,7 @@ BEGIN_EVENT_TABLE(CPlaylistCtrl, CMusikListCtrl)
     EVT_MENU			( MUSIK_PLAYLIST_THREAD_START,	CPlaylistCtrl::OnThreadStart)
 	EVT_MENU			( MUSIK_PLAYLIST_THREAD_END,	CPlaylistCtrl::OnThreadEnd	)
 	EVT_MENU			( MUSIK_PLAYLIST_THREAD_PROG,	CPlaylistCtrl::OnThreadProg	)
+
 END_EVENT_TABLE()
 
 //-----------------//
@@ -214,7 +216,7 @@ CPlaylistCtrl::CPlaylistCtrl( wxWindow *parent, const wxWindowID id, const wxPoi
 	playlist_context_edit_tag_menu->Append( MUSIK_PLAYLIST_CONTEXT_TAG_YEAR,		_( "Edit Year\tF7" ) );
 	playlist_context_edit_tag_menu->AppendSeparator();
 	playlist_context_edit_tag_menu->Append( MUSIK_PLAYLIST_CONTEXT_RENAME_FILES,	_( "&Auto Rename" ) );
-	playlist_context_edit_tag_menu->Append( MUSIK_PLAYLIST_CONTEXT_RETAG_FILES,		_( "A&uto Retag" ) );
+	playlist_context_edit_tag_menu->Append( MUSIK_PLAYLIST_CONTEXT_RETAG_FILES,		_( "A&uto Retag..." ) );
 
 	//--- delete menu ---//
 	playlist_context_delete_menu = new wxMenu;
@@ -257,9 +259,8 @@ CPlaylistCtrl::CPlaylistCtrl( wxWindow *parent, const wxWindowID id, const wxPoi
 	g_DragInProg = false;
 	nCurSel = -1;
 	m_Overflow = 0;
-
+	m_ActiveThread  = NULL;
 	m_bColDragging = false;
-	SetActiveThread( NULL );
 
 }
 
@@ -412,8 +413,8 @@ void CPlaylistCtrl::OnClickEditTag( wxCommandEvent& event )
 }
 void CPlaylistCtrl::OnDisplayMenu( wxCommandEvent& event )
 {
-  int nColumn = -1;
-		nColumn = DisplayEventId2ColumnId(event.GetId());
+	int nColumn = -1;
+	nColumn = DisplayEventId2ColumnId(event.GetId());
 	if( nColumn > -1)
 	{
 		g_Prefs.nPlaylistColumnEnable[nColumn] = !g_Prefs.nPlaylistColumnEnable[nColumn];
@@ -477,6 +478,7 @@ void CPlaylistCtrl::EndDragCol( wxListEvent& event )
 	m_bColDragging = false;
 	m_ColSaveNeeded = true;
 }
+
 
 void CPlaylistCtrl::PlaySel( wxListEvent& WXUNUSED(event) )
 {
@@ -646,8 +648,8 @@ void CPlaylistCtrl::FindColumnOrder()
 		if ( g_Prefs.nPlaylistColumnEnable[i] == 1 )
 		{
 			m_ColumnOrder.Add( i );
-			m_aColumnSorting.Add( -1 );			
 		}
+		m_aColumnSorting.Add( -1 );
 	}
 }
 
@@ -820,6 +822,7 @@ wxString CPlaylistCtrl::GetFilename( int nItem )
 }
 
 
+
 //----------------------------------------//
 //--- various other functions we need. ---//
 //----------------------------------------//
@@ -872,6 +875,7 @@ void CPlaylistCtrl::Update( bool bSelFirst)
 	m_SelectedDarkAttr	= wxListItemAttr( *wxBLACK, StringToColour( g_Prefs.sPLStripeColour ), g_fntListBold );
 
 	//--- SetItemCount() kinda tells the virtual list control to udpate ---//
+	// no Freeze() here , because RescaleColumns(); will not work correctly then
 	SetItemCount( ( long )g_Playlist.GetCount() );
 	RescaleColumns();
 
@@ -880,9 +884,10 @@ void CPlaylistCtrl::Update( bool bSelFirst)
 	//--- sel first item, if we're supposed to ---//
 	if ( bSelFirst && GetItemCount() )
 		SetItemState( 0, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );	
-
+	
 	if ( g_Prefs.nShowPLInfo )
 		g_PlaylistInfoCtrl->Update();
+
 
 }
 
@@ -1136,7 +1141,8 @@ void CPlaylistCtrl::DelSelSongs(bool bDeleteFromDB, bool bDeleteFromComputer)
 		nIndex = GetNextItem( nIndex, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
 		if ( nIndex == -1 )
 			break;
-		// correct nIndex, substract the number of entry,
+		
+		// correct nIndex by nIndex - i, substract the number of entry,
 		// which have been already deleted from the array
 		// because GetNextItem() still returns the old index values
   		
@@ -1169,6 +1175,7 @@ void CPlaylistCtrl::DelSelSongs(bool bDeleteFromDB, bool bDeleteFromComputer)
 
 	g_ActivityAreaCtrl->ResetAllContents();
 
+	
 }
 
 void CPlaylistCtrl::RenameSelFiles()
@@ -1179,6 +1186,7 @@ void CPlaylistCtrl::RenameSelFiles()
 		GetSelSongs( songs );
 		pRenameThread = new MusikPlaylistRenameThread( songs );
 		pRenameThread->Create();
+		SetActiveThread(pRenameThread);
 		pRenameThread->Run();
 	}
 	else
@@ -1190,10 +1198,15 @@ void CPlaylistCtrl::RetagSelFiles()
 {
 	if ( GetActiveThread() == 0 )
 	{
+		CMusikAutoTaggerFrame dlg(this);
+		if(dlg.ShowModal()==wxID_CANCEL)
+			return;
+
 		CMusikSongArray songs;
 		GetSelSongs( songs );
-		pRetagThread = new MusikPlaylistRetagThread( songs );
+		pRetagThread = new MusikPlaylistRetagThread(dlg.GetMask(), songs );
 		pRetagThread->Create();
+		SetActiveThread	( pRetagThread );
 		pRetagThread->Run();
 	}
 	else
@@ -1343,16 +1356,35 @@ void CPlaylistCtrl::OnThreadProg( wxCommandEvent& WXUNUSED(event) )
 void CPlaylistCtrl::OnThreadEnd( wxCommandEvent& WXUNUSED(event) )
 {
 	if( GetProgressType() == MUSIK_PLAYLIST_RETAG_THREAD )
+	{
+		g_Playlist = pRetagThread->GetReTaggedSongs();
 		g_ActivityAreaCtrl->ResetAllContents();
 
+	}
+	SetActiveThread	( NULL );
 	Update();
 
 	//--- update locally ---//
-	SetActiveThread	( NULL );
 	SetProgressType	( 0 );
 	SetProgress	( 0 );
 
     //--- relay thread end message to g_MusikFrame ---//
 	wxCommandEvent MusikEndProgEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_FRAME_THREAD_END );
 	wxPostEvent( g_MusikFrame, MusikEndProgEvt );
+}
+void CPlaylistCtrl::SetActiveThread( wxThread* newactivethread)
+{
+	wxThread * pCurrThread = GetActiveThread();
+	if(newactivethread == NULL)
+	{
+		
+		wxASSERT(pCurrThread);
+		pCurrThread->Wait();// wait until thread has completed
+		delete pCurrThread;
+	}
+	else
+	{
+		wxASSERT(pCurrThread == NULL); // ATTENTION!!! there is an active thread. someone forgot to call SetActiveThread(NULL)
+	}
+	m_ActiveThread = newactivethread;
 }

@@ -22,6 +22,7 @@
 #include "../Frames/MusikFrame.h"
 
 MusikActivityRenameThread::MusikActivityRenameThread( CActivityBox* parent_box, int mode, wxString newvalue )
+	:wxThread(wxTHREAD_JOINABLE)
 {
 	m_ParentBox	= parent_box;
 	m_Mode		= mode;
@@ -42,7 +43,7 @@ void* MusikActivityRenameThread::Entry()
 
 	if ( m_Mode == ACTIVITY_RENAME_ACTIVITY )
 		m_ParentBox->GetSelectedSongs( m_Songs );
-	else
+			else
 		g_PlaylistCtrl->GetSelSongs( m_Songs );
 
 	float fPos = 0;

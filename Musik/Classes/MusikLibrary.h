@@ -28,7 +28,8 @@
 #endif
 #include <wx/dynarray.h>
 #include <wx/datetime.h>
-
+#include <wx/regex.h>
+#include "../MusikUtils.h"
 enum EMUSIK_LIB_TYPE
 {
 	MUSIK_LIB_INVALID = -1,
@@ -111,7 +112,7 @@ public:
 	//--- writing tags ---//
 	//--------------------//
 	bool RenameFile			( CMusikSong* song, bool bClearCheck = false );
-	bool RetagFile			( CMusikSong* song );
+	bool RetagFile			( const CMusikTagger & tagger, CMusikSong* song );
 	bool ReplaceMask		( wxString *sSrc, wxString sMask, wxString sTarget, bool bReplaceAll = true  );
 	int  ClearDirtyTags		( );
 	void WriteTag			(  CMusikSong & song, bool ClearAll, bool bUpdateDB = true );

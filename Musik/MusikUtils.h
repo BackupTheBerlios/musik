@@ -18,7 +18,7 @@
 #ifndef WX_PRECOMP
 	#include "wx/wx.h"
 #endif
-
+#include <wx/regex.h>
 #include <wx/listctrl.h>
 
 
@@ -132,6 +132,18 @@ public:
 	void	AddT( long t );
 
 	wxString	GetFormatted();
+};
+
+class CMusikSong;
+
+class CMusikTagger
+{
+
+	wxArrayInt 	m_PlaceHolderArray;
+	wxRegEx 	m_reMask;
+public:
+	CMusikTagger(const wxString &sMask);
+	bool Retag(CMusikSong * Song) const;
 };
 
 #endif

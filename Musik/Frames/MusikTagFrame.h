@@ -132,7 +132,7 @@ public:
 
 	void Close();
 	//--- thread related functions ---//
-	void SetActiveThread		( wxThread* thread	);
+	void SetActiveThread		( wxThread* newactivethread	);
 	wxThread* GetActiveThread	()						{ return m_ActiveThread;	}
 	CMusikSongArray* GetSongs	()						{ return &m_Songs;			}
 

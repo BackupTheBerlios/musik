@@ -68,7 +68,9 @@ public:
 	bool IsSelected		( int n );
 	void Update			( bool selectnone );
 
-  void OnChar( wxKeyEvent& event );
+	void OnChar( wxKeyEvent& event );
+	
+
   DECLARE_EVENT_TABLE()
 protected:
 	void RescaleColumns	( bool bFreeze = true );	
@@ -102,7 +104,6 @@ public:
 	~CActivityBoxEvt(){};
 
 	void TranslateKeys	( wxKeyEvent& event	);
-
 	DECLARE_EVENT_TABLE()
 private:
 	CActivityBox	 *pParent;
@@ -116,7 +117,7 @@ public:
 	~CActivityEditEvt(){};
 	void TranslateKeys( wxKeyEvent& event );
 	void EditCommit();
-
+	
 	DECLARE_EVENT_TABLE()
 private:
 	CActivityBox	*pParent;
@@ -181,7 +182,7 @@ public:
 	//--- custom, thread event handlers ---//
 	void SetProgress			( int n )				{ m_Progress = n; }
 	void SetProgressType		( int n )				{ m_ProgressType = n;		}
-	void SetActiveThread		( wxThread* thread )	{ m_ActiveThread = thread;	}	
+	void SetActiveThread		( wxThread* newactivethread );
 
 	int GetProgress()			{ return m_Progress;		}
 	int GetProgressType()		{ return m_ProgressType;	}

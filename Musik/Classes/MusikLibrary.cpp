@@ -32,6 +32,8 @@
 #include <wx/file.h>
 #include <wx/ffile.h>
 #include <wx/filename.h>
+
+
 #include <wx/arrimpl.cpp>
 WX_DEFINE_OBJARRAY( CMusikSongArray );
 WX_DECLARE_STRING_HASH_MAP( CMusikSong *, myStringToMusikSongPtrMap );
@@ -89,7 +91,7 @@ bool CMusikLibrary::Load()
 	//--- look for database.. if need be, create it and create tables ---//
 	char *errmsg = NULL;
 	
-		//--- create the tables ---//
+	//--- create the tables ---//
 	static const char *szCreateDBQuery  = 
 			"CREATE TABLE songs ( "	
 			"songid INTEGER PRIMARY KEY, "
@@ -636,6 +638,7 @@ void CMusikLibrary::GetInfo( const wxArrayString & aList, int nInType, int nOutT
 static int sqlite_callbackAddToSongArray(void *args, int WXUNUSED(numCols), char **results, char ** WXUNUSED(columnNames))
 {
 
+	
 	CMusikSongArray * p = (CMusikSongArray*)args;
 
 	CMusikSong *pLibItem = new CMusikSong();
@@ -871,8 +874,7 @@ void CMusikLibrary::SortPlaylist( const wxString& sortstr, bool descending )
 		wxCriticalSectionLocker lock( m_csDBAccess );
 		sqlite_exec( m_pDB, ConvQueryToMB( sQuery ), &sqlite_callbackAddToSongArray, &g_Playlist, NULL );
 	}
-
-	g_PlaylistChanged = true;
+  g_PlaylistChanged = true;
 	return;
 }
 
@@ -1336,106 +1338,12 @@ bool CMusikLibrary::RenameFile( CMusikSong* song, bool bClearCheck )
 	return false;
 }
 
-bool CMusikLibrary::RetagFile( CMusikSong* Song )
+bool CMusikLibrary::RetagFile(const CMusikTagger & tagger, CMusikSong* Song )
 {
-	wxString sMask	= g_Prefs.sAutoTag;
-	wxString sFile	= Song->Filename;
-
-	//-------------------------------------------------//
-	//--- get rid of the file extension.			---//
-	//-------------------------------------------------//
-	sFile = sFile.Left( sFile.Length() - 4 );
-
-	//-------------------------------------------------//
-	//--- get the order of the values in the mask,	---//
-	//--- as well as the order of the delimiters	---//
-	//--- (space inbetween the mask)				---//
-	//---											---//
-	//--- Example:									---//
-	//---    %1_-_%2_-_%3-.mp3						---//
-	//-------------------------------------------------//
-	wxArrayString aMaskDelimiters = DelimitStr( sMask, wxT("%"), true );
-	aMaskDelimiters.Remove( 0, 1 );	//--- will be blank. working right to left, not left to right ---//
-
-	wxString sIsNumber;
-	wxArrayString aMaskOrder;
-	for ( size_t i = 0; i < aMaskDelimiters.GetCount(); i++ )
-	{
-		sIsNumber= aMaskDelimiters.Item( i ).Left( 1 );
-		if( sIsNumber.IsNumber() )
-		{
-			aMaskOrder.Add( sIsNumber );
-			aMaskDelimiters.Item( i ) = aMaskDelimiters.Item( i ).Right( aMaskDelimiters.Item( i ).Length() - 1 );	//--- chop off mask value ---//
-		}
-
-		else
-		{
-			wxMessageBox( wxT( "Invalid Mask." ) );
-			return false;
-		}
-	}
-
-	//-------------------------------------------------//
-	//--- sort delimiters in order of length		---//
-	//-------------------------------------------------//
-	SortArrayByLength( &aMaskDelimiters );
-
-	//-------------------------------------------------//
-	//--- Convert path separators and delimiters	---// 
-	//--- to newline constants ("\n")				---//
-	//-------------------------------------------------//
-	sFile.Replace( wxString( MUSIK_PATH_SEPARATOR ), wxT( "\n" ), true );
-
-	for( size_t i = 0; i < aMaskDelimiters.GetCount() - 1; i++ )
-		sFile.Replace( aMaskDelimiters.Item( i ), wxT( "\n" ), true );
-
-	//-------------------------------------------------//
-	//--- delimit the string for future parsing		---//
-	//-------------------------------------------------//
-	wxArrayString aFileTokens = DelimitStr( sFile, wxT( "\n" ), true );
-	for( size_t i = 0; i < aFileTokens.GetCount(); i++ )
-	{
-		aFileTokens.Item( i ).Trim( true );
-		aFileTokens.Item( i ).Trim( false );
-	}
-
-	//-------------------------------------------------//
-	//--- reading right to left, (bottom to top in	---//
-	//--- array terms), assign the needed values	---//
-	//--- to the new song.							---//
-	//-------------------------------------------------//
-	size_t nTokenIndex	= aFileTokens.GetCount() - 1;
-	size_t nMaskIndex	= aMaskOrder.GetCount() - 1;
-
-	for( size_t i = 0; i < aMaskOrder.GetCount(); i++ )
-	{
-		switch ( wxStringToInt( aMaskOrder.Item( nMaskIndex - i ) ) )
-		{
-		case 1:
-			Song->Title = aFileTokens.Item	( nTokenIndex - i );
-			break;
-		case 2:
-			Song->Artist = aFileTokens.Item	( nTokenIndex - i );
-			break;
-		case 3:
-			Song->Album = aFileTokens.Item	( nTokenIndex - i );
-			break;
-		case 4:
-			Song->Genre = aFileTokens.Item	( nTokenIndex - i );
-			break;
-		case 5:
-			Song->Year = aFileTokens.Item	( nTokenIndex - i );
-			break;
-		case 6:
-			Song->TrackNum = wxStringToInt( aFileTokens.Item( nTokenIndex - i ) );
-			break;
-		default:
-			return false;
-			break;
-		}
-	}
-
-	g_Library.UpdateItem( Song->Filename, *Song, true );
+	
+	if(!tagger.Retag(Song))
+		return false;
+	UpdateItem( Song->Filename, *Song, true );
 	return true;
 }
 
@@ -1443,29 +1351,29 @@ bool CMusikLibrary::RetagFile( CMusikSong* Song )
 //--- pre-defined queries to make ---//
 //---   life a little bit easier  ---//
 //-----------------------------------//
-void CMusikLibrary::GetAllYears(wxArrayString & years)	
-{ 
+void CMusikLibrary::GetAllYears(wxArrayString & years)
+{
 	years.Clear();
 	Query( wxT("select distinct year from songs order by year;"), years );
 	wxArrayString verifiedyears;
 	VerifyYearList( years, verifiedyears );
 	years = verifiedyears;
-	return;	
+	return;
 }
 
-void CMusikLibrary::GetAllSongs( CMusikSongArray & aReturn )	
-{ 
-	QuerySongs( wxT(""), aReturn );												
+void CMusikLibrary::GetAllSongs( CMusikSongArray & aReturn )
+{
+	QuerySongs( wxT(""), aReturn );
 }
 
-void CMusikLibrary::GetAllArtists( wxArrayString & aReturn )	
-{ 
+void CMusikLibrary::GetAllArtists( wxArrayString & aReturn )
+{
 	Query( wxT("select distinct artist,UPPER(artist) as UP from songs order by UP;"), aReturn );
 }
 
-void CMusikLibrary::GetAllAlbums( wxArrayString & aReturn )	
-{ 
-	Query( wxT("select distinct album,UPPER(album) as UP from songs order by UP;"), aReturn );					
+void CMusikLibrary::GetAllAlbums( wxArrayString & aReturn )
+{
+	Query( wxT("select distinct album,UPPER(album) as UP from songs order by UP;"), aReturn );
 }
 
 void CMusikLibrary::GetAllGenres( wxArrayString & aReturn )	

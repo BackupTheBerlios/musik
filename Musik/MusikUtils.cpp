@@ -424,6 +424,7 @@ bool SetFramePlacement( wxFrame* frame, wxString place )
 	ok = ok && st.GetNextToken().ToULong( &maximized );
 	ok = ok && st.GetNextToken().ToULong( &iconized );
 
+	ok = ok && (x+w <= (unsigned long)wxSystemSettings::GetMetric( wxSYS_SCREEN_X )) && (y+h <= (unsigned long)wxSystemSettings::GetMetric( wxSYS_SCREEN_Y ));
 	if ( ok )
 	{
 		frame->SetSize( wxRect( x, y, w, h ) );
@@ -643,4 +644,92 @@ wxString CNiceFilesize::GetFormatted()
 		return wxString::Format( _("%d.%02d KB"), m_Kilobytes, m_Bytes );
 
 	return wxString( _("Empty") );
+}
+
+CMusikTagger::CMusikTagger(const wxString &sTheMask)
+{
+	wxString sMask(sTheMask);
+	sMask.Trim();
+	if(sMask.Left(1) != wxString(MUSIK_PATH_SEPARATOR))
+	{
+		sMask = MUSIK_PATH_SEPARATOR + sMask;
+	}
+	wxRegEx reMatchRegexSpecialChars(wxT("([{}\\:\\^\\*\\.\\+\\$\\(\\)\\|\\?\\\\]|\\[|\\])"));
+	reMatchRegexSpecialChars.ReplaceAll(&sMask,wxT("\\\\\\1"));// replace all special regex chars by \char
+
+	wxRegEx reMatchPlaceHolder(wxT("%([[:alnum:]])"));
+	wxString sMaskParse = sMask;
+	while(reMatchPlaceHolder.Matches(sMaskParse))
+	{
+		size_t start=0, len=0;
+		reMatchPlaceHolder.GetMatch(&start,&len,1);
+		int nPlaceHolder = sMaskParse.Mid(start,len).c_str()[0];
+		m_PlaceHolderArray.Add(nPlaceHolder);
+		sMaskParse = sMaskParse.Right(sMaskParse.Length() - (start + len));
+	}
+	wxRegEx reMatchPlaceHolderRemoveTracknum(wxT("(%6|%n)"));// tracknum
+	reMatchPlaceHolderRemoveTracknum.ReplaceAll(&sMask,wxT("([[:digit:]]+)"));
+	// replace all other %x by ([^\\/]+)
+	wxRegEx reMatchPlaceHolderRemove(wxT("(%[[:alnum:]])"));
+	reMatchPlaceHolderRemove.ReplaceAll(&sMask,wxT("([^\\\\/]+)"));
+
+	sMask += '$';
+	m_reMask.Compile(sMask);
+}
+
+bool CMusikTagger::Retag(CMusikSong * Song) const
+{
+	wxString sFile	= Song->Filename;
+	//-------------------------------------------------//
+	//--- get rid of the file extension.		---//
+	//-------------------------------------------------//
+	sFile = sFile.Left( sFile.Length() - 4 );
+
+	if(m_reMask.Matches(sFile))
+	{
+		for(size_t i = 0;i < m_PlaceHolderArray.GetCount(); i++ )
+		{
+			wxString sField;
+			size_t start = 0,len = 0;
+			if(!m_reMask.GetMatch(&start,&len,i + 1))
+				break;
+			sField = sFile.Mid(start, len);
+			switch ( m_PlaceHolderArray[i] )
+			{
+			case '1':
+			case 't':
+				Song->Title = sField;
+				break;
+			case '2':
+			case 'a':
+				Song->Artist = sField;
+				break;
+			case '3':
+			case 'b':
+				Song->Album = sField;
+				break;
+			case '4':
+			case 'g':
+				Song->Genre = sField;
+				break;
+			case '5':
+			case 'y':
+				Song->Year = sField;
+				break;
+			case '6':
+			case 'n':
+				Song->TrackNum = wxStringToInt( sField);
+				break;
+			default:
+				// skip
+				break;
+			}
+
+		}
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }

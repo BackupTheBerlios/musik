@@ -30,6 +30,7 @@
 
 void CMusikPrefs::LoadPrefs()
 {
+	wxString sDefaultAutoTag = wxT( "%a/%b/%n - %t|%a/%b - %n - %t|%a - %b - %n - %t|0" );
 	wxFileConfig *config;
 	config = new wxFileConfig( CONFIG_NAME );
 	config->Read( wxT( "SelectionStyle" ),						(int*)&eSelStyle,			0						);
@@ -70,7 +71,7 @@ void CMusikPrefs::LoadPrefs()
 	config->Read( wxT( "TagDialogClear" ),						&nTagDlgClear,				0						);
 	config->Read( wxT( "TagDialogRename" ),						&nTagDlgRename,				0						);
 	config->Read( wxT( "AutoRenameMask" ),						&sAutoRename,				wxT( "%6 - %2 - %1" )	);
-	config->Read( wxT( "AutoTagMask" ),							&sAutoTag,					wxT( "%1 - %2" )		);
+	config->Read( wxT( "AutoTagMask" ),							&sAutoTag,					sDefaultAutoTag			);
 	config->Read( wxT( "FirstRun" ),							&nFirstRun,					1						);
 	config->Read( wxT( "AddFilesonStartup" ),					&nAutoAdd,					1						);
 	config->Read( wxT( "SelectingLibraryDisplaysSongs" ),		&nShowAllSongs,				1						);
@@ -313,7 +314,7 @@ void CMusikPrefs::SavePrefs()
 	config->Write( wxT( "FramePlacement" ),					sFramePlacement				);
 	config->Write( wxT( "SmartPlaylistColumns" ),			nPlaylistSmartColumns		);
 	config->Write( wxT( "Use_MPEGACCURATE_ForMP3VBRFiles" ),nUse_MPEGACCURATE_ForMP3VBRFiles );
-
+	
 	//--- playlist columns ---//
 	for( int i = 0; i < NPLAYLISTCOLUMNS; i++ )
 	{

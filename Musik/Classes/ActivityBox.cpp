@@ -378,6 +378,7 @@ CActivityBox::CActivityBox( wxWindow *parent, wxWindowID id, EMUSIK_ACTIVITY_TYP
 
 	m_EditVisible = false;
 	m_ActivityType = nType;
+	m_ActiveThread  = NULL;
 }
 
 CActivityBox::~CActivityBox()
@@ -716,6 +717,7 @@ void CActivityBox::StartRenameThread( int mode, const wxArrayString &sel, wxStri
      {
 		pRenameThread = new MusikActivityRenameThread( this, mode, newvalue );
 		pRenameThread->Create();
+		SetActiveThread	( pRenameThread );
 		pRenameThread->Run();
     }
 	else
@@ -729,7 +731,6 @@ void CActivityBox::StartRenameThread( int mode, const wxArrayString &sel, wxStri
 void CActivityBox::OnRenameThreadStart( wxCommandEvent& WXUNUSED(event) )
 {
 	//--- update locally ---//
-	SetActiveThread	( pRenameThread );
 	SetProgressType	( MUSIK_ACTIVITY_RENAME_THREAD );
 	SetProgress		( 0 );
 
@@ -753,6 +754,7 @@ void CActivityBox::OnRenameThreadProg( wxCommandEvent& WXUNUSED(event) )
 
 void CActivityBox::OnRenameThreadEnd( wxCommandEvent& WXUNUSED(event) )
 {
+	SetActiveThread	( NULL );// waits until threads really ends
 	if ( g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_HIGHLIGHT || g_ActivityAreaCtrl->GetParentBox() == this )
 		ResetContents();
 	else
@@ -765,11 +767,27 @@ void CActivityBox::OnRenameThreadEnd( wxCommandEvent& WXUNUSED(event) )
 	g_PlaylistCtrl->Update();
 
 	//--- update locally ---//
-	SetActiveThread	( NULL );
 	SetProgressType	( 0 );
 	SetProgress		( 0 );
 
     //--- relay thread end message to g_MusikFrame ---//
 	wxCommandEvent MusikEndProgEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_FRAME_THREAD_END );
 	wxPostEvent( g_MusikFrame, MusikEndProgEvt );
+}
+
+void CActivityBox::SetActiveThread( wxThread* newactivethread)
+{
+	wxThread * pCurrThread = GetActiveThread();
+	if(newactivethread == NULL)
+	{
+		
+		wxASSERT(pCurrThread);
+		pCurrThread->Wait();// wait until thread has completed
+		delete pCurrThread;
+	}
+	else
+	{
+		wxASSERT(pCurrThread == NULL); // ATTENTION!!! there is an active thread. someone forgot to call SetActiveThread(NULL)
+	}
+	m_ActiveThread = newactivethread;
 }

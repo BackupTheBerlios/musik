@@ -76,7 +76,7 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	nPlaylistID		=	tcPreferencesTree->AppendItem	( nOptionsRootID,	_( "Playlist" )		);
 	nTunageID		=	tcPreferencesTree->AppendItem	( nOptionsRootID,	_( "Tunage" )		);
 	nGeneralTagID	=	tcPreferencesTree->AppendItem	( nTagRootID,		_( "General" )		);
-	nAutoTagID		=	tcPreferencesTree->AppendItem	( nTagRootID,		_( "Auto Tag" )		);
+	nAutoTagID		=	tcPreferencesTree->AppendItem	( nTagRootID,		_( "Auto Rename" )		);
 	nDriverID		=	tcPreferencesTree->AppendItem	( nSoundRootID,		_( "Driver" )		);
 	nPlaybackID		=	tcPreferencesTree->AppendItem	( nSoundRootID,		_( "Crossfader" )	);
 	//--- expand all the root nodes ---//
@@ -157,6 +157,7 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//-----------------------------//
 	//--- Sound -> Driver Sizer ---//
 	//-----------------------------//
+
 	wxFlexGridSizer *fsSound_Driver = new wxFlexGridSizer( 6, 2, 2, 2 );
 	fsSound_Driver->Add( stOutputDrv, 0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
 	fsSound_Driver->Add( cmbOutputDrv, 1, wxCENTER, 0 );
@@ -466,15 +467,9 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	wxBoxSizer *hsRename	= new wxBoxSizer	( wxHORIZONTAL );
 	hsRename->Add ( stRename, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 2 );
 	hsRename->Add ( tcAutoRename, 1, wxEXPAND, 0 );
-	//--- tag options and sizer ---//
-	wxStaticText *stTag		= new wxStaticText	( this, -1, _("AutoTag:"), wxPoint( 0, 0 ), wxSize( 50, -1 ), wxALIGN_LEFT );
-	tcAutoTag				= new wxTextCtrl	( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ) );
-	wxBoxSizer *hsTag	= new wxBoxSizer		( wxHORIZONTAL );
-	hsTag->Add ( stTag, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 2 );
-	hsTag->Add ( tcAutoTag, 1, wxEXPAND, 0 );
 	//--- information ---//
 	wxString sInfo = 
-		wxString( _("\nAuto Tag and Rename syntax:\n\n") ) + 
+		wxString( _("\nAuto Rename syntax:\n\n") ) + 
 		wxString( wxString( MUSIK_PATH_SEPARATOR ) + _( " - Directory Separator\n" ) ) +
 		wxString( _("%1 - Song Title\n")				) + 
 		wxString( _("%2 - Artist Name\n")				) +
@@ -490,7 +485,6 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//---------------------------------//
 	vsTagging_Auto = new wxBoxSizer( wxVERTICAL );
 	vsTagging_Auto->Add	( hsRename, 0, wxALL | wxEXPAND, 4 );
-	vsTagging_Auto->Add	( hsTag, 0, wxALL | wxEXPAND, 4 );
 	vsTagging_Auto->Add ( stInfo, 0, wxADJUST_MINSIZE | wxALL | wxEXPAND, 4 );
 
 	//----------------------//
@@ -655,7 +649,6 @@ void MusikPrefsFrame::LoadPrefs()
 	//--- tagging -> auto tag ---//
 	//---------------------------//
 	tcAutoRename->SetValue			( g_Prefs.sAutoRename	);
-	tcAutoTag->SetValue				( g_Prefs.sAutoTag		);
 
 	//---------------------------//
 	//--- sound -> crossfader ---//
@@ -1039,7 +1032,6 @@ void MusikPrefsFrame::SavePrefs()
 	//--- tagging -> auto ---//
 	//-----------------------//
 	g_Prefs.sAutoRename = tcAutoRename->GetValue();
-	g_Prefs.sAutoTag	= tcAutoTag->GetValue();
 
 	//---------------------------//
 	//--- sound -> crossfader ---//

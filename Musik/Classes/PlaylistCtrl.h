@@ -22,6 +22,7 @@
 #endif
 //--- definition CMusikSongArray is here ---//
 #include "MusikLibrary.h"
+
 #include <wx/dnd.h>
 
 #include "MusikListCtrl.h"
@@ -73,7 +74,6 @@ public:
 	void OnThreadStart	( wxCommandEvent& WXUNUSED(event) );
 	void OnThreadEnd	( wxCommandEvent& WXUNUSED(event) );
 	void OnThreadProg	( wxCommandEvent& WXUNUSED(event) );
-
 	//------------//
 	//--- gets ---//
 	//------------//
@@ -92,6 +92,7 @@ public:
 	//------------//
 	//--- sets ---//
 	//------------//
+	
 	void			SetIndex			( int n ){ nCurSel = n; }
 
 	//--------------//
@@ -128,7 +129,7 @@ public:
 	//-----------------//
 	void SetProgress			( int n )				{ m_Progress = n;			}
 	void SetProgressType		( int n )				{ m_ProgressType = n;		}
-	void SetActiveThread		( wxThread* thread )	{ m_ActiveThread = thread;	}
+	void SetActiveThread		( wxThread* newactivethread );	
 
 	int GetProgress				()						{ return m_Progress;		}
 	int GetProgressType			()						{ return m_ProgressType;	}

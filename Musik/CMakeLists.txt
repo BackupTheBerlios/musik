@@ -42,7 +42,7 @@ ADD_EXECUTABLE(Musik
         ${Musik_SOURCE_DIR}/Classes/NowPlayingCtrl
         ${Musik_SOURCE_DIR}/Classes/MusikListCtrl
         ${Musik_SOURCE_DIR}/Classes/PlaylistCtrl
-	${Musik_SOURCE_DIR}/Classes/PlaylistInfoCtrl
+		${Musik_SOURCE_DIR}/Classes/PlaylistInfoCtrl
         ${Musik_SOURCE_DIR}/Classes/SourcesBox
         ${Musik_SOURCE_DIR}/Classes/WebServer
         ${Musik_SOURCE_DIR}/Classes/MusikFX
@@ -63,8 +63,8 @@ ADD_EXECUTABLE(Musik
         ${Musik_SOURCE_DIR}/Frames/MusikTagFrame
         ${Musik_SOURCE_DIR}/Frames/MusikVolumeFrame
         ${Musik_SOURCE_DIR}/Frames/MusikFXFrame
-
- 	${Musik_SOURCE_DIR}/Threads/ActivityBoxThreads
+		${Musik_SOURCE_DIR}/Frames/MusikAutoTaggerFrame
+ 		${Musik_SOURCE_DIR}/Threads/ActivityBoxThreads
         ${Musik_SOURCE_DIR}/Threads/PlaylistCtrlThreads
         ${Musik_SOURCE_DIR}/Threads/MusikLibraryThreads
         ${Musik_SOURCE_DIR}/Threads/MusikTagThreads
