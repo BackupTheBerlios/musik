@@ -55,7 +55,7 @@ CActivityAreaCtrl::CActivityAreaCtrl( wxWindow *pParent )
 	
 	pTopSizer = new wxBoxSizer( wxHORIZONTAL );
 	SetSizerAndFit( pTopSizer );
-	m_Selected = m_bFocused = false;
+	m_Selected = m_bFocused = m_Selecting = false;
 	Create();
 }
 
@@ -253,6 +253,7 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 				g_Playlist = g_Library.GetAllSongs();
 				g_PlaylistCtrl->Update();
 			}
+
 			return;
 		}
 	}
@@ -265,7 +266,7 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 	else if ( ( g_Prefs.nSelStyle == 0 || g_Prefs.nSelStyle == 1 ) && ( !pSel->IsSelected( 0 ) && pSel->GetSelectedItemCount() > 0 ) )
 	{
 		wxArrayString temp_list;
-		if ( GetParentId() == pSel->GetListId() || g_Prefs.nSelStyle == 1 )
+		if ( ( g_Prefs.nSelStyle == 0 && GetParentId() == pSel->GetListId() ) || g_Prefs.nSelStyle == 1 )
 		{
 			if ( pBox1 != NULL )
 			{
@@ -304,6 +305,7 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 				g_Playlist = g_Library.GetAllSongs();
 				g_PlaylistCtrl->Update();
 			}
+
 			return;
 		}		
 	}
@@ -414,31 +416,33 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 //--- event will be called twice. no good. thats why there are three events that do the same	---//
 //--- thing.																					---//
 //--- to save the #ifdef code on linux and win is the same, would not be						---//
-//--- neccessary but doesnt harm.																	---//
+//--- neccessary but doesnt harm.																---//
 //-------------------------------------------------------------------------------------------------//
 
 void CActivityAreaCtrl::OnActivityBoxFocused( wxListEvent& event )
 {
-	if(m_Selected)
+	if( m_Selected )
 	{
 		m_Selected = false;
 		return;
 	}
-	wxListEvent ev(wxEVT_COMMAND_LIST_ITEM_ACTIVATED,event.GetId());
+
+	wxListEvent ev(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, event.GetId() );
 	m_bFocused = true;
-	::wxPostEvent(this,ev);
+	::wxPostEvent( this, ev );
 }
 
 void CActivityAreaCtrl::OnActivityBoxSelected( wxListEvent& event )
 {
-	if(m_bFocused)
+	if( m_bFocused )
 	{
 		m_bFocused = false;
 		return;
-}
+	}
+
 	wxListEvent ev(wxEVT_COMMAND_LIST_ITEM_ACTIVATED,event.GetId());
 	m_Selected = true;
-	::wxPostEvent(this,ev);
+	::wxPostEvent( this, ev );
 }
 //--------------------------//
 //--- drag and drop event ---//
@@ -468,8 +472,29 @@ void CActivityAreaCtrl::OnActivityBox4SelDrag( wxListEvent& WXUNUSED(event) )
 //----------------------------//
 void CActivityAreaCtrl::OnActivityBoxActivated	( wxListEvent& event)
 {	
-		SetParent( event.GetId(), true );
-		m_Selected = m_bFocused = false;
-}
+	if ( !m_Selecting )
+	{
+		m_Selecting = true;
 
+		switch( event.GetId() )
+		{
+		case MUSIK_ACTIVITYBOX1:
+			UpdateSel( m_ActivityBox1 );
+			break;
+		case MUSIK_ACTIVITYBOX2:
+			UpdateSel( m_ActivityBox2 );
+			break;
+		case MUSIK_ACTIVITYBOX3:
+			UpdateSel( m_ActivityBox3 );
+			break;
+		case MUSIK_ACTIVITYBOX4:
+			UpdateSel( m_ActivityBox4 );
+			break;
+		default:
+			break;
+		}
+		
+		m_Selected = m_bFocused = m_Selecting = false;
+	}
+}
 

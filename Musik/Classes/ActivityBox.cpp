@@ -522,15 +522,15 @@ void CActivityBox::SetPlaylist()
 				aThisSel.Item( i ).Replace( wxT( "'" ), wxT( "''" ), true );
 				sThis += wxT("'");
 				sThis += aThisSel.Item( i );
+
 				if ( i == ( aThisSel.GetCount() - 1 ) )
-				{// end of line
-				      sThis + wxT("'");
-				}
+				    sThis + wxT("'");
+
 				else
 				{
-				      sThis += wxT("' or ");
-				      sThis += sThisType;
-				      sThis += wxT(" like ");
+				    sThis += wxT("' or ");
+				    sThis += sThisType;
+				    sThis += wxT(" like ");
 				}
 			}
 
@@ -545,12 +545,16 @@ void CActivityBox::SetPlaylist()
 				sParent += aParentSel.Item( i );
 				sParent += wxT("' and " );
 				sParent += sThis;
-				if ( i != ( aParentSel.GetCount() - 1 ) )
+
+				if ( i == ( aParentSel.GetCount() - 1 ) )
+					sParent += wxT( "'" );
+
+				else
 				{
 					sParent += wxT(" or ");
 					sParent += sParentType;
 					sParent += wxT(" like ");
-			    	}
+			    }
 			}
 
 			//--- compile query ---//

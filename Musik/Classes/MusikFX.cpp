@@ -151,14 +151,14 @@ void CMusikFX::SaveBands( wxFileConfig *pConfig )
 	pConfig->Write( wxT( "EQR7" ),		(double)m_RightBands[7]	);
 	pConfig->Write( wxT( "EQR8" ),		(double)m_RightBands[8]	);
 	pConfig->Write( wxT( "EQR9" ),		(double)m_RightBands[9]	);
-	pConfig->Write( wxT( "EQR10" ),		(double)m_RightBands[10]	);
-	pConfig->Write( wxT( "EQR11" ),		(double)m_RightBands[11]	);
-	pConfig->Write( wxT( "EQR12" ),		(double)m_RightBands[12]	);
-	pConfig->Write( wxT( "EQR13" ),		(double)m_RightBands[13]	);
-	pConfig->Write( wxT( "EQR14" ),		(double)m_RightBands[14]	);
-	pConfig->Write( wxT( "EQR15" ),		(double)m_RightBands[15]	);
-	pConfig->Write( wxT( "EQR16" ),		(double)m_RightBands[16]	);
-	pConfig->Write( wxT( "EQR17" ),		(double)m_RightBands[17]	);	
+	pConfig->Write( wxT( "EQR10" ),		(double)m_RightBands[10] );
+	pConfig->Write( wxT( "EQR11" ),		(double)m_RightBands[11] );
+	pConfig->Write( wxT( "EQR12" ),		(double)m_RightBands[12] );
+	pConfig->Write( wxT( "EQR13" ),		(double)m_RightBands[13] );
+	pConfig->Write( wxT( "EQR14" ),		(double)m_RightBands[14] );
+	pConfig->Write( wxT( "EQR15" ),		(double)m_RightBands[15] );
+	pConfig->Write( wxT( "EQR16" ),		(double)m_RightBands[16] );
+	pConfig->Write( wxT( "EQR17" ),		(double)m_RightBands[17] );	
 }
 
 ///////////////////////////////////////////////////////////////////////////////
