@@ -142,7 +142,7 @@ bool PlaylistDropTarget::OnDropText( wxCoord x, wxCoord y, const wxString &text 
 					}
 				}
 
-				//--- if we're fucking with a 'sources' static playlist, then save it ---//
+				//--- if we're messing with a 'sources' static playlist, then save it ---//
 				if ( g_SourcesCtrl->GetSelType() == MUSIK_SOURCE_CONTEXT_STANDARD_PLAYLIST )
 					g_SourcesCtrl->RewriteStdPlaylist();
 			}

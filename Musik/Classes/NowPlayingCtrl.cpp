@@ -247,9 +247,11 @@ void CNowPlayingCtrl::UpdateTime()
 	{
 		float fPos = (float)100* ( (float)g_Player.GetTime( FMOD_SEC ) / (float)g_Player.GetDuration( FMOD_SEC ) );
 	
+		//-----------------------------------------------------//
 		//--- now, if we're in gtk and we set the wxGauge 	---//
 		//--- to a value below 2.0, it changes to 100%		---//
-		//--- why? who fucking knows. i hope they fix this	---//
+		//--- why? who knows. i hope they fix this			---//
+		//-----------------------------------------------------//
 		#ifdef __WXGTK__
 		if ( fPos < 2.0f )
 			fPos = 2.0f;
