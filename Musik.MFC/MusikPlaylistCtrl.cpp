@@ -317,6 +317,13 @@ void CMusikPlaylistCtrl::DrawItem( CDC* pDC, int item, const CRect& rect )
 			text = GetSysColor( COLOR_WINDOWTEXT );
 		}
 	}
-
+	
 	dc.FillSolidRect( &rect, bg );
+
+	// draw the text
+	for ( size_t i = 0; i < m_Prefs->GetPlaylistColCount(); i++ )
+	{
+	
+	}
+
 }

@@ -379,10 +379,10 @@ LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 	// draws the label the whole size
 	drc.SetRect(pt.x + PROPTREEITEM_EXPANDCOLUMN, pt.y, rc.right, pt.y + nTotal);
 
-	// root level items have a dark, color'd background
+	// root level items have a dark, colored background
 	if (IsRootLevel())
 	{
-		HGDIOBJ hOld = pDC->SelectObject(GetSysColorBrush(COLOR_ACTIVECAPTION));
+		HGDIOBJ hOld = pDC->SelectObject(GetSysColorBrush(COLOR_INACTIVECAPTION));
 		pDC->PatBlt(rc.left, drc.top, rc.right - rc.left + 1, drc.Height(), PATCOPY);
 		pDC->SelectObject(hOld);
 	}

@@ -111,23 +111,20 @@ void CSizingControlBarCF::NcPaintGripper(CDC* pDC, CRect rcClient)
 
     // draw the caption background
     //CBrush br;
-    COLORREF clrCptn = m_bActive ?
-        ::GetSysColor(COLOR_ACTIVECAPTION) :
-        ::GetSysColor(COLOR_INACTIVECAPTION);
+    COLORREF clrCptn = ::GetSysColor(COLOR_ACTIVECAPTION);
 
     // query gradient info (usually TRUE for Win98/Win2k)
     BOOL bGradient = FALSE;
     ::SystemParametersInfo(SPI_GETGRADIENTCAPTIONS, 0, &bGradient, 0);
     
-    if (!bGradient)
+    //if (!bGradient)
         pDC->FillSolidRect(&rcGrip, clrCptn); // solid color
+	/*
     else
     {
         // gradient from left to right or from bottom to top
         // get second gradient color (the right end)
-        COLORREF clrCptnRight = m_bActive ?
-            ::GetSysColor(COLOR_GRADIENTACTIVECAPTION) :
-			::GetSysColor(COLOR_BTNFACE);
+        COLORREF clrCptnRight = ::GetSysColor(COLOR_GRADIENTACTIVECAPTION);
 
         // this will make 2^6 = 64 fountain steps
         int nShift = 6;
@@ -155,13 +152,13 @@ void CSizingControlBarCF::NcPaintGripper(CDC* pDC, CRect rcClient)
                 pDC->FillSolidRect(r2, cr);
         }
     }
+	*/
 
     // draw the caption text - first select a font
     CFont font;
     int ppi = pDC->GetDeviceCaps(LOGPIXELSX);
     int pointsize = MulDiv(85, 96, ppi); // 8.5 points at 96 ppi
 
-    LOGFONT lf;
     BOOL bFont = font.CreatePointFont(pointsize, m_sFontFace);
     if (bFont)
     {
