@@ -279,6 +279,65 @@ void CMusikLibrary::QuerySongs( const wxString& query, CMusikPlaylist& target )
 	target.Shrink();
 }
 
+void CMusikLibrary::GetRelatedSongs( int source_type, const wxArrayString& source_items, int target_type, wxArrayString& target )
+{
+	target.Clear();
+
+	if ( source_type == -1 || target_type == -1 )
+		return;
+
+	const wxString sInType = GetSongFieldDB( source_type );
+	const wxString sOutType = GetSongFieldDB( target_type );
+
+	//-----------------------------------------------------//
+	//--- construct the query							---//
+	//-----------------------------------------------------//
+	wxString query;
+	query.Alloc(50 * source_items.GetCount()+ 40);
+	query.sprintf( wxT( "select distinct %s,UPPER(%s) as UP from songs where " ), sOutType, sOutType );
+
+	wxString sCurrentItem;
+	for ( int i = 0; i < (int)source_items.GetCount(); i++ )
+	{
+		sCurrentItem = source_items.Item( i );
+		sCurrentItem.Replace( wxT("'"), wxT("''") );
+
+		if ( i > 0 )
+			query += wxT("or ");
+
+        query.sprintf( wxT( "%s%s = '%s' " ), query, sInType, sCurrentItem );
+	}
+
+	//-----------------------------------------------------//
+	//--- get sorting order								---//
+	//-----------------------------------------------------//
+	query += GetOrder( target_type );
+
+	//-----------------------------------------------------//
+	//--- run the query									---//
+	//-----------------------------------------------------//
+	{
+		wxCriticalSectionLocker lock( m_csDBAccess );
+		sqlite_exec(m_pDB, wxStringToMB( query ), &sqlite_AddSongCallback, &target, NULL);
+	}
+
+	//-----------------------------------------------------//
+	//--- if target is years, verify only years			---//
+	//--- get displayed.								---//
+	//-----------------------------------------------------//
+	if ( target_type == MUSIK_LIBRARY_TYPE_YEAR )
+	{
+		wxArrayString verified_years;
+		VerifyYearList( target, verified_years );
+		target = verified_years;
+	}
+}
+
+void CMusikLibrary::GetAllSongs( CMusikPlaylist& target )
+{
+	QuerySongs( wxT( "filename <> ''" ), target );
+}
+
 int CMusikLibrary::GetSongCount()
 {
 	char *query = sqlite_mprintf( "select count(*) from songs;" );
@@ -305,5 +364,15 @@ int CMusikLibrary::QueryCount( const char* pQueryResult )
 
 	sqlite_finalize( pVM, &errmsg );
 	return result;
+}
+
+void CMusikLibrary::VerifyYearList( const wxArrayString & source_list,wxArrayString & target_list )
+{
+	target_list.Clear();
+	for ( int i = 0; i < (int)source_list.GetCount(); i++ )
+	{
+		if ( ( !source_list.Item( i ).IsEmpty() ) && ( source_list.Item( i ).IsNumber() ) )
+			target_list.Add( source_list.Item( i ) );
+	}
 }
 

@@ -53,7 +53,7 @@ public:
 	const wxString	GetSongFieldDB	( int n )	{ return m_FieldsDB.Item( n ); }
 
 	//-----------------------------------------------------//
-	//--- used for querying the database. if nInType is	---//
+	//--- for querying the database. if source_type is	---//
 	//--- -1, we will will get all the songs relating	---//
 	//--- to the out type.								---//
 	//-----------------------------------------------------//
@@ -78,6 +78,7 @@ private:
 	//-----------------------------------------------------//
 	int			QueryCount( const char* pQueryResult );
 	wxString	GetOrder( int type, bool terminate = true );
+	void		VerifyYearList( const wxArrayString & source_list,wxArrayString & target_list );
 
 	//-----------------------------------------------------//
 	//--- start / shutdown database.					---//
