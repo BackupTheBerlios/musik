@@ -388,10 +388,10 @@ void CmusikSelectionCtrl::UpdateV( bool update_count )
 		case MUSIK_LIBRARY_TYPE_TIMEADDED:
 		case MUSIK_LIBRARY_TYPE_LASTPLAYED:
 		case MUSIK_LIBRARY_TYPE_TIMESPLAYED:
-			top.Format( _T( "Show all %s (%d)" ), type, m_Items.size() );
+			top.Format( _T( "Show all %s (%d visible)" ), type, m_Items.size() );
 			break;
 		default:
-			top.Format( _T( "Show all %ss (%d)" ), type, m_Items.size() );
+			top.Format( _T( "Show all %ss (%d visible)" ), type, m_Items.size() );
 			break;
 		}
 	}
@@ -421,7 +421,7 @@ void CmusikSelectionCtrl::UpdateV( CStdString query, bool update_count )
 	{
 		CString type = GetTypeStr();
 		type.MakeLower();
-		top.Format( _T( "Show all %ss ( %d )" ), type, m_Items.size() );
+		top.Format( _T( "Show all %ss (%d visible)" ), type, m_Items.size() );
 	}
 
 	m_Items.insert( m_Items.begin(), top );
@@ -1098,10 +1098,8 @@ void CmusikSelectionCtrl::SetType( int type, bool update )
 	m_Type = type;
 	SetWindowCap();
 
-	if ( update )
-		UpdateV( true );
-
-	RedrawWindow();
+	int WM_SELBOXREQUESTUPDATE = RegisterWindowMessage( "SELBOXREQUESTUPDATE" );
+	m_Parent->PostMessage( WM_SELBOXREQUESTUPDATE, (WPARAM)this );
 }
 
 ///////////////////////////////////////////////////

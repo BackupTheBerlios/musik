@@ -116,7 +116,7 @@ public:
 
 	// ui related functions
 	void ResetUI();
-	void ResetSelBoxes( bool requery = true, bool resetparent = false );
+	void ResetSelBoxes();
 
 	// overrides
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
@@ -136,6 +136,9 @@ public:
 	void PurgeObseleteFiles();
 	void RestoreFromTray();
 	void SaveWindowState();
+	void RequeryPlaylist( CStdString query = "", CmusikSelectionCtrl* sender = NULL, bool focus_library = true );
+	void RequerySelBoxes( CStdString query = "", CmusikSelectionCtrl* parent = NULL );
+	CStdString GetSelQuery( CmusikSelectionCtrl* sender = NULL, CmusikSelectionCtrl* parent = NULL );
 
 	// to save window state
 	virtual BOOL DestroyWindow();
@@ -211,7 +214,6 @@ protected:
 	afx_msg LRESULT OnSourcesQuickSearch( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnDragStart( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnDragEnd( WPARAM wParam, LPARAM lParam );
-	afx_msg LRESULT OnSelBoxesReset( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSelBoxEditCommit( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnPlayerNewPlaylist( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnBatchAddProgress( WPARAM wParam, LPARAM lParam );
@@ -222,6 +224,7 @@ protected:
 	afx_msg LRESULT OnVerifyPlaylist( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnCloseDirSync( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSelBoxAddRemove( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnSelBoxRequestUpdate( WPARAM wParam, LPARAM lParam );
 
 	// mfc message maps
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);

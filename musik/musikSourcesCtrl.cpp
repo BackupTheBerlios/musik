@@ -419,6 +419,7 @@ void CmusikSourcesCtrl::LoadStdPlaylists()
 	m_Library->GetAllStdPlaylists( &items );
 
 	CmusikPropTreeItem* temp;
+	CString sTemp;
 	for ( size_t i = 0; i < items.size(); i++ )
 	{
 		temp = InsertItem( new CmusikPropTreeItem(), m_StdPlaylistRoot );
