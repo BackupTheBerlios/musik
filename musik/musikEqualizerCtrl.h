@@ -132,7 +132,7 @@ protected:
 
 	// eq -> bands, bands -> eq
 	void SetBandsFrom( const CmusikEQSettings& settings );
-	void EQSettingsFromBands( CmusikEQSettings* settings );
+	void BandsToEQSettings( CmusikEQSettings* settings );
 
 	// core
 	CmusikLibrary* m_Library;

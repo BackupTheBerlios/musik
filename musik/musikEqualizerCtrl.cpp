@@ -14,7 +14,6 @@
 #include "../musikCore/include/musikLibrary.h"
 
 #include "MEMDC.H"
-#include ".\musikequalizerctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -524,7 +523,7 @@ void CmusikEqualizerCtrl::SetBandsFrom( const CmusikEQSettings& settings )
 
 ///////////////////////////////////////////////////
 
-void CmusikEqualizerCtrl::EQSettingsFromBands( CmusikEQSettings* settings )
+void CmusikEqualizerCtrl::BandsToEQSettings( CmusikEQSettings* settings )
 {
 	float left_chan[18];
 	float right_chan[18];
@@ -552,10 +551,10 @@ void CmusikEqualizerCtrl::EQSettingsFromBands( CmusikEQSettings* settings )
 		{
 			chan_set_l[0] = chan_set_r[0] = (float)( ( 100.0f - (float)m_LeftBands[0].GetPos() ) / 50.0f );
 			chan_set_l[1] = chan_set_r[1] = (float)( ( 100.0f - (float)m_LeftBands[3].GetPos() ) / 50.0f );
-			chan_set_l[2] = chan_set_r[2] = (float)( ( 100.0f - (float)m_LeftBands[6].GetPos() ) / 50.0f );
-			chan_set_l[3] = chan_set_r[3] = (float)( ( 100.0f - (float)m_LeftBands[9].GetPos() ) / 50.0f );
-			chan_set_l[4] = chan_set_r[4] = (float)( ( 100.0f - (float)m_LeftBands[12].GetPos() ) / 50.0f );
-			chan_set_l[5] = chan_set_r[5] = (float)( ( 100.0f - (float)m_LeftBands[15].GetPos() ) / 50.0f );
+			chan_set_l[2] = chan_set_r[2] = (float)( ( 100.0f - (float)m_LeftBands[7].GetPos() ) / 50.0f );
+			chan_set_l[3] = chan_set_r[3] = (float)( ( 100.0f - (float)m_LeftBands[10].GetPos() ) / 50.0f );
+			chan_set_l[4] = chan_set_r[4] = (float)( ( 100.0f - (float)m_LeftBands[14].GetPos() ) / 50.0f );
+			chan_set_l[5] = chan_set_r[5] = (float)( ( 100.0f - (float)m_LeftBands[17].GetPos() ) / 50.0f );
 		
 		}
 		else
@@ -597,21 +596,21 @@ void CmusikEqualizerCtrl::EQSettingsFromBands( CmusikEQSettings* settings )
 		right_chan[0]	= chan_set_r[0];
 		right_chan[1]	= right_chan[0]  + ( ( chan_set_r[1] - chan_set_r[0] ) / 2.0f );
 		right_chan[2]	= right_chan[1]  + ( ( chan_set_r[1] - chan_set_r[0] ) / 2.0f );
-		right_chan[3]	= chan_set_l[1];
+		right_chan[3]	= chan_set_r[1];
 		right_chan[4]	= right_chan[3]  + ( ( chan_set_r[2] - chan_set_r[1] ) / 3.0f );
 		right_chan[5]	= right_chan[4]  + ( ( chan_set_r[2] - chan_set_r[1] ) / 3.0f );
 		right_chan[6]	= right_chan[5]  + ( ( chan_set_r[2] - chan_set_r[1] ) / 3.0f );
-		right_chan[7]	= chan_set_l[2];					
+		right_chan[7]	= chan_set_r[2];					
 		right_chan[8]	= right_chan[7]  + ( ( chan_set_r[3] - chan_set_r[2] ) / 2.0f );		
 		right_chan[9]	= right_chan[8]  + ( ( chan_set_r[3] - chan_set_r[2] ) / 2.0f );							
-		right_chan[10]	= chan_set_l[3];
+		right_chan[10]	= chan_set_r[3];
 		right_chan[11]	= right_chan[10] + ( ( chan_set_r[4] - chan_set_r[3] ) / 3.0f );
 		right_chan[12]	= right_chan[11] + ( ( chan_set_r[4] - chan_set_r[3] ) / 3.0f );
 		right_chan[13]	= right_chan[12] + ( ( chan_set_r[4] - chan_set_r[3] ) / 3.0f );
-		right_chan[14]	= chan_set_l[4];
+		right_chan[14]	= chan_set_r[4];
 		right_chan[15]	= right_chan[14] + ( ( chan_set_r[5] - chan_set_r[4] ) / 2.0f );
 		right_chan[16]	= right_chan[15] + ( ( chan_set_r[5] - chan_set_r[4] ) / 2.0f );
-		right_chan[17]	= chan_set_l[5];
+		right_chan[17]	= chan_set_r[5];
 	}
 
 	settings->Set( MUSIK_EQ_SETTINGS_LEFT_BAND, left_chan );
@@ -624,7 +623,7 @@ LRESULT CmusikEqualizerCtrl::OnBandChange( WPARAM wParam, LPARAM lParam )
 {
 	if ( m_Player->IsEqualizerActive() )
 	{
-		EQSettingsFromBands( &m_Player->GetEqualizer()->m_EQ_Values );
+		BandsToEQSettings( &m_Player->GetEqualizer()->m_EQ_Values );
 
 		m_Player->GetEqualizer()->UpdateTable();
 		m_Player->GetEqualizer()->m_EQ_Values_Modified = true;
@@ -638,7 +637,7 @@ LRESULT CmusikEqualizerCtrl::OnBandChange( WPARAM wParam, LPARAM lParam )
 void CmusikEqualizerCtrl::SetAsDefault()
 {
 	CmusikEQSettings curr_eq;
-	EQSettingsFromBands( &curr_eq );
+	BandsToEQSettings( &curr_eq );
 	m_Library->UpdateDefaultEqualizer( curr_eq );
 }
 
