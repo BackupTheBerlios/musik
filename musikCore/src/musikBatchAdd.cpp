@@ -87,7 +87,7 @@ static void musikBatchAddWorker( CmusikBatchAdd* params )
 	if ( params->m_DeleteFilelist )
 		delete params->m_Files;
 
-	params->m_Functor->OnThreadEnd();
+	params->m_Functor->OnThreadEnd( (void*)params );
 }
 
 ///////////////////////////////////////////////////

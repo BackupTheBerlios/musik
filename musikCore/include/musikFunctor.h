@@ -89,7 +89,7 @@ public:
 		// pure virtual
 	}
 
-	virtual void OnThreadEnd()
+	virtual void OnThreadEnd( void* thr_addr = NULL )
 	{
 		// pure virtual
 	}
