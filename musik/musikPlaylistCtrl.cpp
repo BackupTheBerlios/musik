@@ -510,6 +510,7 @@ void CmusikPlaylistCtrl::OnLvnItemActivate(NMHDR *pNMHDR, LRESULT *pResult)
 		GivePlaylistToPlayer();		
 
 	m_Player->Play( pNMIA->iItem, MUSIK_CROSSFADER_NEW_SONG );
+	m_PlaylistType = MUSIK_SOURCES_TYPE_NOWPLAYING;
 
 	*pResult = 0;
 }

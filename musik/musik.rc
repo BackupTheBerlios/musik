@@ -122,16 +122,32 @@ END
 // Dialog
 //
 
-IDD_ABOUTBOX DIALOGEX 0, 0, 235, 55
+IDD_ABOUTBOX DIALOGEX 0, 0, 256, 197
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
     WS_SYSMENU
 CAPTION "About musik"
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
-    ICON            IDR_MAINFRAME,IDC_STATIC,11,17,20,20
-    LTEXT           "musik Version 1.0",IDC_STATIC,40,10,119,8,SS_NOPREFIX
-    LTEXT           "Copyright (C) 2003",IDC_STATIC,40,25,119,8
-    DEFPUSHBUTTON   "OK",IDOK,178,7,50,16,WS_GROUP
+    ICON            IDR_MAINFRAME,IDC_STATIC,6,6,21,20
+    LTEXT           "musik Version 0.3.0 CVS, Copyright (C) Casey Langen 2003",
+                    IDC_STATIC,6,180,192,8
+    DEFPUSHBUTTON   "OK",IDOK,204,176,50,16,WS_GROUP
+    LTEXT           "Casey Langen: Lead developer, project manager",
+                    IDC_STATIC,12,42,186,8
+    LTEXT           "Dustin Carter: Developer, webmaster",IDC_STATIC,12,54,
+                    186,8
+    LTEXT           "The  musik team would like to thank the following people:",
+                    IDC_STATIC,12,78,186,8
+    LTEXT           "If you enjoy using musik, donations are much appreciated. musik will always be free and open source, although food isn't, and we programmers have to eat too.  Visit the website above to contribute!",
+                    IDC_STATIC,12,138,222,24
+    LTEXT           "    - Jared Dickinson for making us laugh",IDC_STATIC,
+                    12,102,186,8
+    LTEXT           "    - Colby Langen for being the most annoying beta tester ever",
+                    IDC_STATIC,12,114,222,8
+    LTEXT           "    - Simon Windmill for his bottomless well of patience",
+                    IDC_STATIC,12,90,186,8
+    LTEXT           "website: http://musik.berlios.de",IDC_STATIC,36,6,186,8
+    LTEXT           "email: casey@bak.rr.com",IDC_STATIC,36,18,186,8
 END
 
 IDD_PROPPAGE_INTERFACE_GENERAL DIALOGEX 0, 0, 210, 154
@@ -234,9 +250,9 @@ BEGIN
     IDD_ABOUTBOX, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 228
+        RIGHTMARGIN, 249
         TOPMARGIN, 7
-        BOTTOMMARGIN, 48
+        BOTTOMMARGIN, 190
     END
 
     IDD_PROPPAGE_INTERFACE_GENERAL, DIALOG
