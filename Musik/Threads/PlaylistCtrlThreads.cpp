@@ -94,7 +94,7 @@ void* MusikPlaylistRetagThread::Entry()
 	int nLastProg = 0;
 	int nCurrProg = 0;
 //	wxString sMask	= g_Prefs.sAutoTag;
-	CMusikTagger tagger(m_sTagMask);
+	CMusikTagger tagger(m_sTagMask,g_Prefs.nAutoTagConvertUnderscoresToSpaces);
 //////////////////////////////////////////////////////////////////////////////
 	g_Library.BeginTransaction();
 	for ( size_t i = 0; i < m_Songs.GetCount(); i++ )

@@ -72,6 +72,7 @@ void CMusikPrefs::LoadPrefs()
 	config->Read( wxT( "TagDialogRename" ),						&nTagDlgRename,				0						);
 	config->Read( wxT( "AutoRenameMask" ),						&sAutoRename,				wxT( "%6 - %2 - %1" )	);
 	config->Read( wxT( "AutoTagMask" ),							&sAutoTag,					sDefaultAutoTag			);
+	config->Read( wxT( "AutoTagConvertUnderscoresToSpaces" ),	&nAutoTagConvertUnderscoresToSpaces,	0			);
 	config->Read( wxT( "FirstRun" ),							&nFirstRun,					1						);
 	config->Read( wxT( "AddFilesonStartup" ),					&nAutoAdd,					1						);
 	config->Read( wxT( "SelectingLibraryDisplaysSongs" ),		&nShowAllSongs,				1						);
@@ -299,6 +300,7 @@ void CMusikPrefs::SavePrefs()
 	config->Write( wxT( "TagDialogRename" ),				nTagDlgRename				);
 	config->Write( wxT( "AutoRenameMask" ),					sAutoRename					);
 	config->Write( wxT( "AutoTagMask" ),					sAutoTag					);
+	config->Write( wxT( "AutoTagConvertUnderscoresToSpaces" ), nAutoTagConvertUnderscoresToSpaces);
 	config->Write( wxT( "FirstRun" ),						nFirstRun					);
 	config->Write( wxT( "AddFilesonStartup" ),				nAutoAdd					);
 	config->Write( wxT( "SelectingLibraryDisplaysSongs" ),	nShowAllSongs				);

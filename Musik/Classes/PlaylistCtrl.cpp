@@ -1199,9 +1199,10 @@ void CPlaylistCtrl::RetagSelFiles()
 	if ( GetActiveThread() == 0 )
 	{
 		CMusikAutoTaggerFrame dlg(this);
+		dlg.SetConvertUnderscoresToSpaces((bool)g_Prefs.nAutoTagConvertUnderscoresToSpaces);
 		if(dlg.ShowModal()==wxID_CANCEL)
 			return;
-
+		g_Prefs.nAutoTagConvertUnderscoresToSpaces = dlg.GetConvertUnderscoresToSpaces() ?1:0;
 		CMusikSongArray songs;
 		GetSelSongs( songs );
 		pRetagThread = new MusikPlaylistRetagThread(dlg.GetMask(), songs );

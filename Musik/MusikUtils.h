@@ -141,8 +141,9 @@ class CMusikTagger
 
 	wxArrayInt 	m_PlaceHolderArray;
 	wxRegEx 	m_reMask;
+	bool		m_bConvertUnderscoresToSpaces;
 public:
-	CMusikTagger(const wxString &sMask);
+	CMusikTagger(const wxString &sMask, bool bConvertUnderscoresToSpaces);
 	bool Retag(CMusikSong * Song) const;
 };
 

@@ -39,6 +39,7 @@
 #define ID_COMBOBOX 10001
 #define ID_BN_ADDMASK 10002
 #define ID_BN_REMOVEMASK 10003
+#define ID_CHECKBOX 10004
 ////@end control identifiers
 
 /*!
@@ -60,7 +61,6 @@ public:
 
     /// Creates the controls and sizers
     void CreateControls();
-	void OnOK(wxCommandEvent& event);
 
 ////@begin CMusikAutoTaggerFrame event handler declarations
 
@@ -70,12 +70,18 @@ public:
     /// wxEVT_COMMAND_BUTTON_CLICKED event handler for ID_BN_REMOVEMASK
     void OnBnRemoveMask( wxCommandEvent& event );
 
+    /// wxEVT_COMMAND_BUTTON_CLICKED event handler for wxID_OK
+    void OnOk( wxCommandEvent& event );
+
 ////@end CMusikAutoTaggerFrame event handler declarations
 
 ////@begin CMusikAutoTaggerFrame member function declarations
 
     wxString GetMask() const { return m_sMask ; }
     void SetMask(wxString value) { m_sMask = value ; }
+
+    bool GetConvertUnderscoresToSpaces() const { return m_bConvertUnderscoresToSpaces ; }
+    void SetConvertUnderscoresToSpaces(bool value) { m_bConvertUnderscoresToSpaces = value ; }
 
 ////@end CMusikAutoTaggerFrame member function declarations
 
@@ -85,6 +91,7 @@ public:
 ////@begin CMusikAutoTaggerFrame member variables
     wxComboBox* m_CBTagMask;
     wxString m_sMask;
+    bool m_bConvertUnderscoresToSpaces;
 ////@end CMusikAutoTaggerFrame member variables
 };
 

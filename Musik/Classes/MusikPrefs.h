@@ -102,7 +102,7 @@ public:
 
 	wxString sAutoRename;
 	wxString sAutoTag;
-
+	int nAutoTagConvertUnderscoresToSpaces;
 	int nPlaylistSmartColumns;
 	int nPlaylistColumnEnable[NPLAYLISTCOLUMNS];
 	int nPlaylistColumnSize[NPLAYLISTCOLUMNS];

@@ -646,7 +646,8 @@ wxString CNiceFilesize::GetFormatted()
 	return wxString( _("Empty") );
 }
 
-CMusikTagger::CMusikTagger(const wxString &sTheMask)
+CMusikTagger::CMusikTagger(const wxString &sTheMask, bool bConvertUnderscoresToSpaces)
+:m_bConvertUnderscoresToSpaces(bConvertUnderscoresToSpaces)
 {
 	wxString sMask(sTheMask);
 	sMask.Trim();
@@ -669,9 +670,15 @@ CMusikTagger::CMusikTagger(const wxString &sTheMask)
 	}
 	wxRegEx reMatchPlaceHolderRemoveTracknum(wxT("(%6|%n)"));// tracknum
 	reMatchPlaceHolderRemoveTracknum.ReplaceAll(&sMask,wxT("([[:digit:]]+)"));
+
+	wxRegEx reMatchPlaceHolderRemoveTracknumUC(wxT("(%N)"));// tracknum ( eat up surrounding spaces)
+	reMatchPlaceHolderRemoveTracknumUC.ReplaceAll(&sMask,wxT("\\ *([[:digit:]]+)\\ *"));
 	// replace all other %x by ([^\\/]+)
-	wxRegEx reMatchPlaceHolderRemove(wxT("(%[[:alnum:]])"));
+	wxRegEx reMatchPlaceHolderRemove(wxT("(%[a-z0-9])"));
 	reMatchPlaceHolderRemove.ReplaceAll(&sMask,wxT("([^\\\\/]+)"));
+	// replace all other %X by "\ *([^\\\\/]+)\ *" this eats up all surrounding spaces
+	wxRegEx reMatchPlaceHolderRemoveUC(wxT("(%[A-Z])"));
+	reMatchPlaceHolderRemoveUC.ReplaceAll(&sMask,wxT("\\ *([^\\\\/]+)\\ *"));
 
 	sMask += '$';
 	m_reMask.Compile(sMask);
@@ -683,7 +690,9 @@ bool CMusikTagger::Retag(CMusikSong * Song) const
 	//-------------------------------------------------//
 	//--- get rid of the file extension.		---//
 	//-------------------------------------------------//
-	sFile = sFile.Left( sFile.Length() - 4 );
+	wxStripExtension(sFile);
+	if(m_bConvertUnderscoresToSpaces)
+		sFile.Replace(wxT( "_" ), wxT( " " ));
 
 	if(m_reMask.Matches(sFile))
 	{
@@ -698,26 +707,32 @@ bool CMusikTagger::Retag(CMusikSong * Song) const
 			{
 			case '1':
 			case 't':
+			case 'T':
 				Song->Title = sField;
 				break;
 			case '2':
 			case 'a':
+			case 'A':
 				Song->Artist = sField;
 				break;
 			case '3':
 			case 'b':
+			case 'B':
 				Song->Album = sField;
 				break;
 			case '4':
 			case 'g':
+			case 'G':
 				Song->Genre = sField;
 				break;
 			case '5':
 			case 'y':
+			case 'Y':
 				Song->Year = sField;
 				break;
 			case '6':
 			case 'n':
+			case 'N':
 				Song->TrackNum = wxStringToInt( sField);
 				break;
 			default:

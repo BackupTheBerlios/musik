@@ -47,8 +47,9 @@ BEGIN_EVENT_TABLE( CMusikAutoTaggerFrame, wxDialog )
 
     EVT_BUTTON( ID_BN_REMOVEMASK, CMusikAutoTaggerFrame::OnBnRemoveMask )
 
+    EVT_BUTTON( wxID_OK, CMusikAutoTaggerFrame::OnOk )
+
 ////@end CMusikAutoTaggerFrame event table entries
-    EVT_BUTTON( wxID_OK, CMusikAutoTaggerFrame::OnOK )
 
 END_EVENT_TABLE()
 
@@ -78,6 +79,7 @@ CMusikAutoTaggerFrame::CMusikAutoTaggerFrame( wxWindow* parent, wxWindowID id, c
 bool CMusikAutoTaggerFrame::Create( wxWindow* parent, wxWindowID id, const wxString& caption, const wxPoint& pos, const wxSize& size, long style )
 {
 ////@begin CMusikAutoTaggerFrame member initialisation
+    m_bConvertUnderscoresToSpaces = true;
 ////@end CMusikAutoTaggerFrame member initialisation
 
 ////@begin CMusikAutoTaggerFrame creation
@@ -105,22 +107,22 @@ void CMusikAutoTaggerFrame::CreateControls()
     item1->SetSizer(item2);
     item1->SetAutoLayout(TRUE);
 
-    wxBoxSizer* item3 = new wxBoxSizer(wxVERTICAL);
-    item2->Add(item3, 1, wxGROW|wxALL, 5);
+    wxStaticText* item3 = new wxStaticText( item1, wxID_STATIC, _("Enter Tag Mask:"), wxDefaultPosition, wxDefaultSize, 0 );
+    item2->Add(item3, 0, wxALIGN_LEFT|wxLEFT|wxRIGHT|wxTOP, 5);
 
-    wxBoxSizer* item4 = new wxBoxSizer(wxHORIZONTAL);
-    item3->Add(item4, 0, wxGROW, 5);
+    wxBoxSizer* item4 = new wxBoxSizer(wxVERTICAL);
+    item2->Add(item4, 1, wxGROW|wxALL, 5);
 
-    wxStaticText* item5 = new wxStaticText( item1, wxID_STATIC, _("Enter Tag Mask:"), wxDefaultPosition, wxDefaultSize, 0 );
-    item4->Add(item5, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM, 5);
+    wxBoxSizer* item5 = new wxBoxSizer(wxHORIZONTAL);
+    item4->Add(item5, 0, wxGROW, 5);
 
     wxString* item6Strings = NULL;
-    wxComboBox* item6 = new wxComboBox( item1, ID_COMBOBOX, wxT(""), wxDefaultPosition, wxDefaultSize, 0, item6Strings, wxCB_DROPDOWN );
+    wxComboBox* item6 = new wxComboBox( item1, ID_COMBOBOX, _T(""), wxDefaultPosition, wxDefaultSize, 0, item6Strings, wxCB_DROPDOWN );
     m_CBTagMask = item6;
-    item4->Add(item6, 1, wxGROW|wxALL, 5);
+    item5->Add(item6, 1, wxGROW|wxRIGHT|wxBOTTOM, 5);
 
     wxBoxSizer* item7 = new wxBoxSizer(wxHORIZONTAL);
-    item4->Add(item7, 0, wxALIGN_CENTER_VERTICAL, 5);
+    item5->Add(item7, 0, wxALIGN_CENTER_VERTICAL, 5);
 
     wxButton* item8 = new wxButton( item1, ID_BN_ADDMASK, _("+"), wxDefaultPosition, item1->ConvertDialogToPixels(wxSize(12, -1)), 0 );
     item7->Add(item8, 0, wxALIGN_CENTER_VERTICAL, 5);
@@ -128,28 +130,33 @@ void CMusikAutoTaggerFrame::CreateControls()
     wxButton* item9 = new wxButton( item1, ID_BN_REMOVEMASK, _("-"), wxDefaultPosition, item1->ConvertDialogToPixels(wxSize(12, -1)), 0 );
     item7->Add(item9, 0, wxALIGN_CENTER_VERTICAL, 5);
 
-    wxStaticBox* item10Static = new wxStaticBox(item1, -1, _("Usage:"));
-    wxStaticBoxSizer* item10 = new wxStaticBoxSizer(item10Static, wxHORIZONTAL);
-    item3->Add(item10, 1, wxGROW|wxALL, 5);
+    wxCheckBox* item10 = new wxCheckBox( item1, ID_CHECKBOX, _("Convert '_' to Space"), wxDefaultPosition, wxDefaultSize, 0 );
+    item10->SetValue(FALSE);
+    item4->Add(item10, 0, wxALIGN_LEFT|wxRIGHT|wxTOP|wxBOTTOM, 5);
 
-    wxStaticText* item11 = new wxStaticText( item1, wxID_STATIC, _("%t for Title, %a for Artist, %b for album,\n%n for tracknumber and %y for year.\n%u can be use for unused parts of the filename."), wxDefaultPosition, wxDefaultSize, 0 );
-    item10->Add(item11, 0, wxGROW|wxALL|wxADJUST_MINSIZE, 5);
+    wxStaticBox* item11Static = new wxStaticBox(item1, -1, _("Usage:"));
+    wxStaticBoxSizer* item11 = new wxStaticBoxSizer(item11Static, wxHORIZONTAL);
+    item4->Add(item11, 1, wxGROW|wxALL, 5);
 
-    wxBoxSizer* item12 = new wxBoxSizer(wxHORIZONTAL);
-    item3->Add(item12, 0, wxGROW, 5);
+    wxStaticText* item12 = new wxStaticText( item1, wxID_STATIC, _("%t for Title, %a for Artist, %b for album,%n for tracknumber \nand %y for year.\n%u can be use for unused parts of the filename.\nIf you use the uppercase variants surrounding spaces\nwill be ignored.\n(A mask %A-%T will match artist - title and artist-title)\n\nIf Convert '_' to Space option is active, you must use\nspaces in the mask to match '_'. \n\n"), wxDefaultPosition, wxDefaultSize, 0 );
+    item11->Add(item12, 0, wxGROW|wxALL|wxADJUST_MINSIZE, 5);
 
-    item12->Add(0, 4, 6, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+    wxBoxSizer* item13 = new wxBoxSizer(wxHORIZONTAL);
+    item4->Add(item13, 0, wxGROW, 5);
 
-    wxButton* item14 = new wxButton( item1, wxID_OK, _("OK"), wxDefaultPosition, wxDefaultSize, 0 );
-    item14->SetDefault();
-    item12->Add(item14, 0, wxALIGN_BOTTOM|wxALL, 5);
+    item13->Add(0, 4, 6, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
-    wxButton* item15 = new wxButton( item1, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
-    item12->Add(item15, 0, wxALIGN_BOTTOM|wxALL, 5);
+    wxButton* item15 = new wxButton( item1, wxID_OK, _("OK"), wxDefaultPosition, wxDefaultSize, 0 );
+    item15->SetDefault();
+    item13->Add(item15, 0, wxALIGN_BOTTOM|wxALL, 5);
+
+    wxButton* item16 = new wxButton( item1, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+    item13->Add(item16, 0, wxALIGN_BOTTOM|wxALL, 5);
 
 
     // Set validators
-    item6->SetValidator( wxGenericValidator( & m_sMask) );
+    item6->SetValidator( wxGenericValidator(& m_sMask) );
+    item10->SetValidator( wxGenericValidator(& m_bConvertUnderscoresToSpaces) );
 ////@end CMusikAutoTaggerFrame content construction
 }
 
@@ -199,7 +206,12 @@ void CMusikAutoTaggerFrame::OnBnRemoveMask( wxCommandEvent& event )
     event.Skip();
 }
 
-void CMusikAutoTaggerFrame::OnOK(wxCommandEvent& event)
+
+/*!
+ * wxEVT_COMMAND_BUTTON_CLICKED event handler for wxID_OK
+ */
+
+void CMusikAutoTaggerFrame::OnOk( wxCommandEvent& event )
 {
 	g_Prefs.sAutoTag.Empty();
 	for(int i = 0 ; i < m_CBTagMask->GetCount();i++)
@@ -213,4 +225,6 @@ void CMusikAutoTaggerFrame::OnOK(wxCommandEvent& event)
 	sel = (wxNOT_FOUND == sel) ? 0 : sel;
 	g_Prefs.sAutoTag += IntTowxString(sel);
 	wxDialog::OnOK(event);
+	// Insert custom code here
+	event.Skip();
 }
