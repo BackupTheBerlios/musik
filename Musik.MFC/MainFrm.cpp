@@ -66,20 +66,24 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	//--- create a background window				---//
 	//-------------------------------------------------//
 	m_wndView.Create( NULL, NULL, AFX_WS_DEFAULT_VIEW, CRect(0, 0, 0, 0), this, AFX_IDW_PANE_FIRST, NULL );
-	EnableDocking(CBRS_ALIGN_ANY);
+    EnableDocking( CBRS_ALIGN_BOTTOM );
+	EnableDocking( CBRS_ALIGN_LEFT );
+    EnableDocking( CBRS_ALIGN_RIGHT );
+	EnableDocking( CBRS_ALIGN_TOP );
 
 	//-------------------------------------------------//
 	//--- selection controls						---//
 	//-------------------------------------------------//
-	/*
 	for ( size_t i = 0; i < 4; i++ )
 	{
 		m_wndSelectionBars[i].Create( _T( "Musik Selection Box" ), this, 123 );
-		m_wndSelectionBars[i].EnableDocking( CBRS_ALIGN_TOP | CBRS_ALIGN_BOTTOM );
 		m_wndSelectionBars[i].SetBarStyle( m_wndSelectionBars[i].GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC );
-		DockControlBar( &m_wndSelectionBars[i], AFX_IDW_DOCKBAR_RIGHT  );
+		m_wndSelectionBars[i].EnableDocking( CBRS_ALIGN_ANY );
+		if ( i == 0 )
+			DockControlBar( &m_wndSelectionBars[i] );
+		else
+			DockBarLeftOf( &m_wndSelectionBars[i], &m_wndSelectionBars[i-1] );
 	}
-	*/
 
 	//-------------------------------------------------//
 	//--- sources control							---//
@@ -96,6 +100,7 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 {
 	if( !CFrameWnd::PreCreateWindow(cs) )
 		return FALSE;
+
 	// TODO: Modify the Window class or styles here by modifying
 	//  the CREATESTRUCT cs
 
