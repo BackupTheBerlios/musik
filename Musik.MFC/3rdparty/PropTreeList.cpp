@@ -28,7 +28,6 @@
 #include "PropTree.h"
 #include "Resource.h"
 #include "PropTreeList.h"
-#include ".\proptreelist.h"
 
 ///////////////////////////////////////////////////
 
@@ -382,7 +381,7 @@ void CPropTreeList::OnMouseMove(UINT, CPoint point)
 					m_HoverLast->SetMouseOver( FALSE );
 
 				m_HoverCurrent->SetMouseOver( TRUE );
-				m_pProp->SetFocusedItem( m_HoverCurrent );
+				m_pProp->Invalidate();
 			}		
 
 			m_HoverLast = m_HoverCurrent;
