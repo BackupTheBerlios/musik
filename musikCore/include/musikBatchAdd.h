@@ -71,8 +71,6 @@ public:
 		m_Library				= NULL;
 		m_Player				= NULL;
 		m_CallFunctorOnAbort	= false;
-		m_Abort					= false;
-
 	}
 
 	CmusikBatchAdd( CStdStringArray* pFiles, CmusikPlaylist* pPlaylist, CmusikLibrary* pLibrary, CmusikPlayer* pPlayer, 
@@ -87,7 +85,6 @@ public:
 		m_Player				= pPlayer;
 		m_AddToPlayer			= bAddToPlayer;
 		m_CallFunctorOnAbort	= false;
-		m_Abort					= false;
 	}
 
 	~CmusikBatchAdd();
@@ -103,8 +100,6 @@ public:
 	bool m_DeleteFilelist;
 	bool m_AddToPlayer;				// negates UpdatePlaylist() and m_Playlist()... will add files to player's playlist
 	bool m_CallFunctorOnAbort;
-
-	bool m_Abort;
 };
 
 ///////////////////////////////////////////////////
@@ -122,6 +117,8 @@ static void musikBatchAddWorker( CmusikThread* thread )
 	ACE_Time_Value sleep;
 	sleep.set( 0.1f );
 
+	bool verify_failed = false;
+
 	params->m_Library->BeginTransaction();
 	for( size_t i = 0; i < params->m_Files->size(); i++ )
 	{
@@ -135,7 +132,7 @@ static void musikBatchAddWorker( CmusikThread* thread )
 
 		if ( thread->m_Abort )
 		{
-			TRACE0( "CmusikBatchAdd worker function terminated...\n" );
+			TRACE0( "CmusikBatchAdd worker function aborted...\n" );
 			break;
 		}
 
@@ -150,15 +147,19 @@ static void musikBatchAddWorker( CmusikThread* thread )
 
 		else if ( params->m_UpdatePlaylist && params->m_Playlist )
 		{
-			if ( params->m_Functor->VerifyPlaylist( (void*)params->m_Playlist ) )
+			if ( !verify_failed )
 			{
-				params->m_Library->GetSongFromFilename( params->m_Files->at( i ), song );
-				params->m_Playlist->Add( song );
+				if ( params->m_Functor->VerifyPlaylist( (void*)params->m_Playlist ) )
+				{
+					params->m_Library->GetSongFromFilename( params->m_Files->at( i ), song );
+					params->m_Playlist->Add( song );
+				}
 			}
 			else
 			{
+				verify_failed = true;
 				CStdString s;
-				s.Format( "Failed to add song to playlist at address %d becuase it couldn't be verified", params->m_Playlist );
+				s.Format( "Failed to add song to playlist at address %d becuase it couldn't be verified\n", params->m_Playlist );
 				TRACE0( s.c_str() );
 			}
 		}
@@ -180,7 +181,7 @@ static void musikBatchAddWorker( CmusikThread* thread )
 	if ( params->m_DeleteFilelist )
 		delete params->m_Files;
 
-	if ( ( params->m_Abort && params->m_CallFunctorOnAbort ) || !params->m_Abort )
+	if ( ( thread->m_Abort && params->m_CallFunctorOnAbort ) || !thread->m_Abort )
 		params->m_Functor->OnThreadEnd( (void*)thread );
 
 	thread->m_Finished = true;

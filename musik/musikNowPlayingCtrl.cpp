@@ -89,7 +89,7 @@ int CmusikNowPlayingCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	m_Info1->Set( "%b20 %a4" );
-	m_Info2->Set( "%c by %b16 %a0 %c  from the album %b14 %a1" );
+	m_Info2->Set( "%c by %b16 %a0 %c from the album %b14 %a1" );
 
 	m_Volume = new CmusikVolumeCtrl( m_Prefs, m_Player );
 	if ( !m_Volume->Create( TBS_VERT | TBS_NOTICKS | WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0 ), this, 123 ) )
