@@ -150,16 +150,16 @@ public:
 	
 private:
 	
-	CMusikSongArray m_Playlist;			//--- heart and soul.							---//
+	CMusikSongArray m_Playlist;			//--- heart and soul.									---//
 	int				m_Playmode;			//--- repeat, shuffle, etc                      ---//
 	size_t			m_SongIndex;		//--- current index in playlist                 ---//
-	int			m_LastSong;			//--- last song played, used for updating		---//
-	bool			m_Playing;			//--- currently playing?						---//
-	bool			m_Paused;			//--- currently paused?							---//
-	bool			m_BeginFade;		//--- should we begin fading?					---//
-	bool			m_Fading;			//--- currently (cross)fading?					---//
+	int				m_LastSong;			//--- last song played, used for updating			---//
+	bool			m_Playing;			//--- currently playing?								---//
+	bool			m_Paused;			//--- currently paused?								---//
+	bool			m_BeginFade;		//--- should we begin fading?						---//
+	bool			m_Fading;			//--- currently (cross)fading?						---//
 	bool			m_StartingNext;		//--- in the middle of starting up a next song?	---//
-	wxString		m_CurrentFile;		//--- filename of current song					---//
+	wxString		m_CurrentFile;		//--- filename of current song						---//
 	int				m_CrossfadeType;	
 
 	int				m_RandomSeed;		//--- random seed for consistent results        ---//
