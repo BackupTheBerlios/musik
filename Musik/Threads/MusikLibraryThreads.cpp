@@ -125,7 +125,7 @@ void MusikUpdateLibThread::OnExit()
 //---	scan for new files		---//
 //---------------------------------//
 MusikScanNewThread::MusikScanNewThread(wxEvtHandler *pParent,wxArrayString & refFiles)
-        :m_pParent(pParent), wxThread(wxTHREAD_JOINABLE)
+        :wxThread(wxTHREAD_JOINABLE),m_pParent(pParent) 
 		,m_refFiles(refFiles)
 {
 }
@@ -272,7 +272,7 @@ void MusikScanNewThread::GetMusicDir( const wxString & sDir, wxArrayString & aFi
 //---	  purge old files		---//
 //---------------------------------//
 MusikPurgeLibThread::MusikPurgeLibThread(wxEvtHandler *pParent)
-        : m_pParent(pParent), wxThread(wxTHREAD_JOINABLE)
+        : wxThread(wxTHREAD_JOINABLE),m_pParent(pParent)
 {
 }
 

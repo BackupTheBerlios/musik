@@ -40,7 +40,4 @@ private:
 
 	void ParseTags( wxString& str );
 };
-
-
-
 #endif

@@ -19,7 +19,7 @@
 //---  so we can see whats going on  ---//
 //--------------------------------------//
 /*
-#if defined (__WXMSW__)
+#ifdef _MSC_VER
 	#pragma warning(disable : 4018)		//--- '<' signed/unsigned mismatch										---//
 	#pragma warning(disable : 4288)		//--- nonstandard extension used : 'i'									---//
 	#pragma warning(disable : 4238)		//--- nonstandard extension used : class rvalue as lvalue				---//
@@ -35,8 +35,8 @@
 	#pragma warning(disable : 4996)		//--- declared deprecated												---//
 #endif
 */
-#if defined (__WXMSW__)
-#pragma warning(disable : 4800)		//--- 'int' forcing bool to true or false								---//
+#ifdef _MSC_VER
+//#pragma warning(disable : 4800)		//--- 'int' forcing bool to true or false								---//
 #endif
 #include "MusikDefines.h"
 #include "Frames/MusikFrame.h"

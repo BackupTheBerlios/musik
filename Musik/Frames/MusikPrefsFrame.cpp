@@ -545,7 +545,7 @@ void MusikPrefsFrame::LoadPrefs()
 	//-----------------------------//
 	//--- options -> selections ---//
 	//-----------------------------//
-	cmbSelStyle->SetSelection		( wxGetApp().Prefs.eSelStyle );
+	cmbSelStyle->SetSelection		( wxGetApp().Prefs.eSelStyle.val );
 	for(size_t i = 0; i < WXSIZEOF(cmbActivityBoxes);i++)
 		cmbActivityBoxes[i]->SetSelection	( wxGetApp().Prefs.nActBoxType[i] );
 
@@ -628,7 +628,7 @@ void MusikPrefsFrame::LoadPrefs()
 	float fLength;
 	cmbOutputDrv->SetSelection		( wxGetApp().Prefs.nSndOutput );
     cmbSndDevice->SetSelection		( wxGetApp().Prefs.nSndDevice );
-	sSndRate.sprintf				( wxT("%d"), wxGetApp().Prefs.nSndRate );
+	sSndRate.sprintf				( wxT("%d"), wxGetApp().Prefs.nSndRate.val );
 	fLength =						(float)wxGetApp().Prefs.nSndBuffer / 1000;
 	sLength.sprintf					( wxT("%.1f"), fLength );
 	tcBufferLength->SetValue		( sLength );

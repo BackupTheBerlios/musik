@@ -231,7 +231,9 @@ static const bool DefaultPlaylistColumnDynamic[NPLAYLISTCOLUMNS] = {
 		false
 };
 static const EMUSIK_ACTIVITY_TYPE DefaultActBoxType[ActivityBoxesMaxCount] = {MUSIK_LBTYPE_ARTISTS,MUSIK_LBTYPE_ALBUMS,MUSIK_LBTYPE_NULL,MUSIK_LBTYPE_NULL};
+#ifdef _MSC_VER
 #pragma warning(disable : 4355)	
+#endif
 class CMusikPrefs  : public wxFileConfig
 {
 public:
@@ -462,6 +464,7 @@ public:
 private:
 	wxArrayString m_Paths;
 };
-
+#ifdef _MSC_VER
 #pragma warning( default : 4355)
+#endif
 #endif

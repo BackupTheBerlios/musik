@@ -1027,7 +1027,8 @@ void CMusikPlayer::_ChooseRandomAlbums(int nAlbumsToAdd,wxArrayString &arrAlbums
 		return;
 	int nMaxRepeatCount = 30;
 	bool repeat = true;
-	char * count_query = sqlite_mprintf("select count(*) from valid_albums where most_lastplayed < julianday('now','-%d hours');",wxGetApp().Prefs.nAutoDjDoNotPlaySongPlayedTheLastNHours);
+	int hours = wxGetApp().Prefs.nAutoDjDoNotPlaySongPlayedTheLastNHours;
+	char * count_query = sqlite_mprintf("select count(*) from valid_albums where most_lastplayed < julianday('now','-%d hours');",hours);
 	int albums_count = wxGetApp().Library.QueryCount(count_query);
 	sqlite_freemem( count_query );
 
