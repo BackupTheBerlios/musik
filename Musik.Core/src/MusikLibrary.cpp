@@ -509,7 +509,7 @@ void CMusikLibrary::CreateStdPlaylist( const CStdString& name, const CIntArray& 
 	{
 		for ( size_t i = 0; i < songids.size(); i++ )
 		{
-			sQuery.Format( "INSERT INTO %s VALUES ( %n, %n ); ",
+			sQuery.Format( "INSERT INTO %s VALUES ( %d, %d ); ",
 				STD_PLAYLIST_SONGS,
 				nID,
 				songids.at( i ) );
@@ -963,7 +963,7 @@ void CMusikLibrary::GetAllStdPlaylists( CStdStringArray* target, bool clear_targ
 	if ( clear_target )
 		target->clear();
 
-	CStdString sQuery( "SELECT std_playlist_name  FROM " STD_PLAYLIST_TABLE_NAME " WHERE std_playlist_name <> ''" );
+	CStdString sQuery( "SELECT std_playlist_name FROM " STD_PLAYLIST_TABLE_NAME " WHERE std_playlist_name <> ''" );
 
 	m_ProtectingLibrary->acquire();
 	sqlite_exec( m_pDB, sQuery.c_str(), &sqlite_AddRowToStringArray, target, NULL );
