@@ -10,19 +10,22 @@
 //
 // Information:
 //
-//   A simple class to manage the band positions of
-//   Musik's built in 18 band, dual channel equalizer.
+//   A simple class to manage crossfade durations for
+//   various events.
 //
 // Example: 
 //
 //   The UI can construct these objects and pass them to
-//   the player via CMusikPlayer::SetEQ()
+//   the player via CMusikPlayer::SetCrossfader()
+//
+//   CMusikLibrary, however, will load the default values
+//   on a per song basis.
 //
 // Usage: 
 //
 //   Construct the object (takes no args), then use 
 //   CMusikCrossfader::Set() to set the values, then
-//   CMusikPlayer::SetEQ()
+//   CMusikPlayer::SetCrossfader()
 //
 // Copyright and Credits:
 //
@@ -45,14 +48,11 @@
 
 enum 
 {
-	MUSIK_CROSSFADER_LEFT_BAND = 0,
-	MUSIK_CROSSFADER_RIGHT_BAND,
-	MUSIK_CROSSFADER_BOTH_BANDS
+	MUSIK_CROSSFADER_NEW_SONG = 0,
+	MUSIK_CROSSFADER_PAUSE_RESUME,
+	MUSIK_CROSSFADER_STOP,
+	MUSIK_CROSSFADER_EXIT
 };
-
-///////////////////////////////////////////////////
-
-#define MUSIK_CROSSFADER_NUM_BANDS 18
 
 ///////////////////////////////////////////////////
 
@@ -61,49 +61,35 @@ class CMusikCrossfader
 public:
 	CMusikCrossfader()
 	{
-		for ( size_t i = 0; i < MUSIK_CROSSFADER_NUM_BANDS; i++ )
-		{
-			m_Left[i] = 1.0f;
-			m_Right[i] = 1.0f;
-		}
+		m_NewSong		= 0.0f;
+		m_PauseResume	= 0.0f;
+		m_Stop			= 0.0f;
+		m_Exit			= 0.0f;
 	}
 
 	~CMusikCrossfader()
 	{
 	}
 
-	void Set( int which_band, float values[MUSIK_CROSSFADER_NUM_BANDS] )
+	void Set( int songid )
 	{
-		// left band
-		if ( which_band == MUSIK_CROSSFADER_LEFT_BAND )
-		{
-			for ( size_t i = 0; i < MUSIK_CROSSFADER_NUM_BANDS; i++ )
-				m_Left[i] = values[i];
-			return;
-		}
+		// will set from a song id
+	}
 
-		// right band
-		else if ( which_band == MUSIK_CROSSFADER_RIGHT_BAND )
-		{
-			for ( size_t i = 0; i < MUSIK_CROSSFADER_NUM_BANDS; i++ )
-				m_Right[i] = values[i];
-			return;
-		}
-
-		// both bands
-		else if ( which_band == MUSIK_CROSSFADER_BOTH_BANDS )
-		{
-			for ( size_t i = 0; i < MUSIK_CROSSFADER_NUM_BANDS; i++ )
-			{
-				m_Left[i] = values[i];
-				m_Right[i] = values[i];
-			}
-		}
+	void Set( float newsong, float pauseresume, float stop, float exit )
+	{
+		m_NewSong		= newsong;
+		m_PauseResume	= pauseresume;
+		m_Stop			= stop;
+		m_Exit			= exit;
 	}
 
 private:
 
-	float m_Left[MUSIK_CROSSFADER_NUM_BANDS], m_Right[MUSIK_CROSSFADER_NUM_BANDS];
+	float m_NewSong;
+	float m_PauseResume;
+	float m_Stop;
+	float m_Exit;
 };
 
 ///////////////////////////////////////////////////

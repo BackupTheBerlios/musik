@@ -6,7 +6,10 @@
 ///////////////////////////////////////////////////
 
 #include "MusikPlaylist.h"
+
 #include "../Musik.Core/include/MusikCrossfader.h"
+#include "../Musik.Core/include/MusikEqualizer.h"
+
 #include "fmod.h"
 
 ///////////////////////////////////////////////////

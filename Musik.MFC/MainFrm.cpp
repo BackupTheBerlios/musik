@@ -247,6 +247,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
     m_wndSources->SetBarStyle( m_wndSources->GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC );
 	DockControlBar( m_wndSources, AFX_IDW_DOCKBAR_LEFT );
 
+
 	// rescale dialog based on prefs
 	ResetDialogRect();
 

@@ -141,6 +141,9 @@
 			RelativePath=".\include\MusikDynDspInfo.h">
 		</File>
 		<File
+			RelativePath=".\include\MusikEqualizer.h">
+		</File>
+		<File
 			RelativePath=".\include\MusikFunctor.h">
 		</File>
 		<File
