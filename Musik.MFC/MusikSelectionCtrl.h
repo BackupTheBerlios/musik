@@ -15,11 +15,12 @@ public:
 	CMusikSelectionCtrl( CFrameWnd* parent, CMusikLibrary* library, int type, int ctrl_id );
 	virtual ~CMusikSelectionCtrl();
 
-	int GetCtrlID(){ return m_ID; }
+	int GetCtrlID	(){ return m_ID; }
+	CString			GetTypeDB();
+	void			GetSelItems( CStdStringArray& items, bool format_query = true );
+	CStdString		GetSelQuery();
+
 	void SetUpdating( bool updating = true ){ m_Updating = updating; }
-	CString GetTypeDB();
-	void GetSelItems( CStdStringArray& items, bool format_query = true );
-	CStdString GetSelQuery();
 
 	void UpdateV();
 	void UpdateV( CStdString query );
