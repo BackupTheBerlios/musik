@@ -72,6 +72,7 @@ END_EVENT_TABLE()
 void MusikTaskBarIcon::RestoreFrame()
 {
 	m_pFrame->Show(TRUE);
+	m_pFrame->Raise();
 	//RemoveIcon();
 }
 void MusikTaskBarIcon::OnMenuRestore(wxCommandEvent& )

@@ -48,12 +48,21 @@ public:
 bool MusikAppConnection::OnPoke(const wxString& WXUNUSED(topic), const wxString& item, wxChar *data, int size, wxIPCFormat format)
 
 {
+#ifdef wxUSE_UNICODE
+	if((item == wxT("PlayFiles")) && (format == wxIPC_UNICODETEXT) )
+#else
 	if((item == wxT("PlayFiles")) && (format == wxIPC_TEXT) )
+#endif
 	{
-		wxString sData(data,size);
+		wxString sData(data,size/sizeof(wxChar));
 		wxArrayString aFilelist;
 		DelimitStr(sData,wxT("\n"),aFilelist);
 		wxGetApp().OnPlayFiles(aFilelist);
+	}
+	else if(item == wxT("RaiseFrame"))
+	{
+		g_MusikFrame->Show();
+		g_MusikFrame->Raise();
 	}
 	return TRUE;
 }
@@ -97,13 +106,21 @@ bool MusikApp::OnInit()
 		MusikAppClient client;
 		MusikAppConnection *pConn = (MusikAppConnection *)client.MakeConnection(wxT("localhost"),MUSIK_APP_SERVICE,wxT("wxMusikInternal"));
 		wxString sData;
+
+		if(arrParams.GetCount())
+		{
 		for( size_t i = 0; i < arrParams.GetCount(); i++)
 		{
 			sData += arrParams[i];
 			sData += wxT("\n");
 		}
+	#ifdef wxUSE_UNICODE
+			pConn->Poke(wxT("PlayFiles"),sData.GetWriteBuf(sData.Length()),sData.Length()*sizeof(wxChar),wxIPC_UNICODETEXT);
+	#else
 		pConn->Poke(wxT("PlayFiles"),sData.GetWriteBuf(sData.Length()),sData.Length(),wxIPC_TEXT);
-
+	#endif
+			pConn->Poke(wxT("RaiseFrame"),NULL,0,wxIPC_PRIVATE);
+		}
 		return false;
 	}
 	//--- setup our home dir ---//

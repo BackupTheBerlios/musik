@@ -965,6 +965,13 @@ void CMusikPlayer::_AddRandomSongs()
 	int nSongsToAdd = (wxGetApp().Prefs.nAutoDJChooseSongsToPlayInAdvance - (m_Playlist.GetCount() - m_SongIndex) + 1);
 	if(nSongsToAdd <= 0)
 		return;
+	_ChooseRandomSongs(nSongsToAdd,arrSongs);
+	AddToPlaylist(arrSongs,false);
+}
+void CMusikPlayer::_ChooseRandomSongs(int nSongsToAdd,CMusikSongArray &arrSongs)
+{
+	if(nSongsToAdd <= 0)
+		return;
 	int nMaxRepeatCount = 30;
 	bool repeat = true;
 	int maxsongid = wxGetApp().Library.QueryCount("select max(songid) from songs;");
@@ -1012,8 +1019,42 @@ void CMusikPlayer::_AddRandomSongs()
 					}
 			}
 		}
-	}; 
-	AddToPlaylist(arrSongs,false);
+	} 
+}
+void CMusikPlayer::_ChooseRandomAlbums(int nAlbumsToAdd,wxArrayString &arrAlbums)
+{
+	if(nAlbumsToAdd <= 0)
+		return;
+	int nMaxRepeatCount = 30;
+	bool repeat = true;
+	char * count_query = sqlite_mprintf("select count(*) from valid_albums where most_lastplayed < julianday('now','-%d hours');",wxGetApp().Prefs.nAutoDjDoNotPlaySongPlayedTheLastNHours);
+	int albums_count = wxGetApp().Library.QueryCount(count_query);
+	sqlite_freemem( count_query );
+
+	while ( nMaxRepeatCount-- && (repeat || (arrAlbums.GetCount() < (size_t)nAlbumsToAdd)))
+	{
+		repeat = false;
+		int r = GetRandomNumber() % (albums_count);
+		wxString sQueryRandomAlbum = wxString::Format(wxT("select album from valid_albums where most_lastplayed < julianday('now','-%d hours') limit 1 offset %d;") 
+											,nMaxRepeatCount == 5 ? 1 : wxGetApp().Prefs.nAutoDjDoNotPlaySongPlayedTheLastNHours,r);
+
+		wxArrayString newAlbums;
+		wxGetApp().Library.Query(sQueryRandomAlbum,newAlbums,false);
+		if(newAlbums.GetCount() > 0)
+		{
+			//--- check for repeats ---//
+			for ( size_t j = 0;  j < arrAlbums.GetCount(); j++ )
+			{
+				if ( newAlbums[0] == arrAlbums[j] )
+				{
+					repeat = true; 
+					break;
+				}
+			}
+			if(!repeat)
+				arrAlbums.Add(newAlbums[0]);
+		}
+	} 
 }
 int CMusikPlayer::GetFilesize( wxString sFilename )
 {
@@ -1331,6 +1372,9 @@ void CMusikPlayer::RemovePlaylistEntry( size_t index )
 	}
 	else if(m_SongIndex == index)
 	{
+		if(IsPlaying() && !IsPaused() && (m_SongIndex < m_Playlist.GetCount() - 1))
+			_PostPlayRestart();
+		else
 		Stop();
 	}
 	m_Playlist.RemoveAt(index);

@@ -52,6 +52,7 @@ CMusikLibrary::CMusikLibrary()
 	: wxEvtHandler()
 {
 	m_nCachedSongCount = -1;
+	m_pDB = NULL;
 	SetSortOrderField( PLAYLISTCOLUMN_ARTIST );
 }
 
@@ -142,8 +143,10 @@ bool CMusikLibrary::Load()
 							"DELETE FROM songhistory WHERE songid = old.songid;"
 							"END;", NULL, NULL, NULL );
 
-
-
+		sqlite_exec( m_pDB,	"CREATE VIEW valid_albums as select album,artist,most_lastplayed from ("
+							"select album,artist,sum(duration) as sum_duration,max(lastplayed+0) as most_lastplayed "  
+							"from songs where album != '' group by album) where sum_duration > 1500000;"
+							, NULL, NULL, NULL );	
 		CreateDBFuncs();
 		sqlite_exec( m_pDB, "PRAGMA synchronous = OFF;", NULL, NULL, NULL );
 		sqlite_exec( m_pDB, "PRAGMA cache_size = 10000;", NULL, NULL, NULL );
@@ -706,12 +709,15 @@ void CMusikLibrary::GetSongs( const wxArrayString & aList, int nInType, CMusikSo
 	return;
 }
 
-void CMusikLibrary::Query( const wxString & query, wxArrayString & aReturn )
+void CMusikLibrary::Query( const wxString & query, wxArrayString & aReturn ,bool bClearArray )
+{
+	if(bClearArray)
 {
 
 	aReturn.Clear();
 	//--- run the query ---//
 	aReturn.Alloc( GetSongCount() );
+	}
 	wxCriticalSectionLocker lock( m_csDBAccess );
 	sqlite_exec(m_pDB, ConvQueryToMB( query ), &sqlite_callbackAddToStringArray, &aReturn, NULL);
 }

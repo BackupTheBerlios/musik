@@ -184,6 +184,8 @@ private:
 	void _SetMetaData(char *name, char *value);
 	void _UpdateNetstreamMetadata( wxCommandEvent& event );
 	void _AddRandomSongs();
+	void _ChooseRandomSongs(int nSongsToAdd,CMusikSongArray &arrSongs);
+	void _ChooseRandomAlbums(int nAlbumsToAdd,wxArrayString &arrAlbums);
 	int _NetStreamStatusUpdate(FSOUND_STREAM * pStream);
 
 	

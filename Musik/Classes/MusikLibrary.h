@@ -125,7 +125,7 @@ public:
 	//------------------------//
 	//--- generic querying ---//
 	//------------------------//
-	void Query				( const wxString & query, wxArrayString & aReturn );
+	void Query				( const wxString & query, wxArrayString & aReturn ,bool bClearArray = true);
 	void QuerySongsWhere	( const wxString & query, CMusikSongArray & aReturn ,bool bSorted = false);	  //if bSorted ==true,  use SetSortOrderField to set sorting string
 	void RedoLastQuerySongsWhere( CMusikSongArray & aReturn ,bool bSorted = false);
 	//-----------------------------------//
