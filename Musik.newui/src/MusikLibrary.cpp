@@ -4,7 +4,7 @@
 
 //-------------------------------------------------//
 //--- this is a callback for sqlite to use when ---//
-//--- adding songs to a CMusikPlaylist.			---//
+//--- adding songs to a CMusikPlaylist			---//
 //-------------------------------------------------//
 static int sqlite_AddSongToPlaylist(void *args, int WXUNUSED( numCols ), char **results, char ** WXUNUSED( columnNames ) )
 {
@@ -35,6 +35,10 @@ static int sqlite_AddSongToPlaylist(void *args, int WXUNUSED( numCols ), char **
     return 0;
 }
 
+//-------------------------------------------------//
+//--- this is a callback for sqlite to use when ---//
+//--- adding items (fields) to a wxArrayString	---//
+//-------------------------------------------------//
 static int sqlite_AddSongToStringArray( void *args, int WXUNUSED(numCols), char **results, char ** WXUNUSED( columnNames ) )
 {
 	wxArrayString * p = (wxArrayString*)args;
@@ -42,7 +46,6 @@ static int sqlite_AddSongToStringArray( void *args, int WXUNUSED(numCols), char 
 
     return 0;
 }
-
 
 CMusikLibrary::CMusikLibrary( const wxString& filename )
 {
@@ -55,7 +58,6 @@ CMusikLibrary::~CMusikLibrary()
 {
 	Shutdown();
 }
-
 
 void CMusikLibrary::InitFields()
 {
