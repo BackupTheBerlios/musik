@@ -1,7 +1,9 @@
 -------------------------------------------------------------------------
 
 a2:
-  
+ 
+  - fixed a bug where clearing the now playing and clicking
+    a column to sort would crash 
   - the playlist now has an icon to indicate if a song is
     playing or not.
   - bug where hiding selection boxes and reshowing would 

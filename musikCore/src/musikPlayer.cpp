@@ -674,7 +674,11 @@ bool CmusikPlayer::Play( int index, int fade_type, int start_pos )
 	// info about the currently playing song 
 	// from it's ID
 	if ( fade_type != MUSIK_CROSSFADER_SEEK )
-		m_Library->GetSongInfoFromID( m_Playlist->GetSongID( index ), &m_CurrSong );
+	{
+		int songid = m_Playlist->GetSongID( index );
+		if ( songid != -1 )
+			m_Library->GetSongInfoFromID( songid, &m_CurrSong );
+	}
 
 	// setup next stream
 	FSOUND_STREAM* pNewStream = FSOUND_Stream_Open( 
@@ -730,7 +734,11 @@ bool CmusikPlayer::Play( int index, int fade_type, int start_pos )
 		// functor... else do it when the
 		// crossfade completes
 		if ( IsEqualizerActive() )
-			m_EQ->SetNewSong( m_Playlist->GetSongID( index ) );
+		{
+			int songid = m_Playlist->GetSongID( index );
+			if ( songid != -1 )
+				m_EQ->SetNewSong( m_Playlist->GetSongID( index ) );
+		}
 
 		FSOUND_SetVolume( GetCurrChannel(), m_Volume );
 		CleanOldStreams();
@@ -754,7 +762,9 @@ bool CmusikPlayer::Play( int index, int fade_type, int start_pos )
 		m_Index = index;
 
 		// increment times played
-		m_Library->IncLastPlayed( m_Playlist->GetSongID( m_Index ) );
+		int songid = m_Playlist->GetSongID( index );
+		if ( songid != -1 )
+			m_Library->IncLastPlayed( m_Playlist->GetSongID( m_Index ) );
 	}
 
 	return true;
@@ -777,7 +787,9 @@ void CmusikPlayer::EnquePaused( int index )
 	if ( !m_Playlist || index > (int)m_Playlist->GetCount() - 1 || index < -1 )
 		return;
 
-	m_Library->GetSongInfoFromID( m_Playlist->GetSongID( index ), &m_CurrSong );
+	int songid = m_Playlist->GetSongID( index );
+	if ( songid != -1 )
+		m_Library->GetSongInfoFromID( songid, &m_CurrSong );
 
 	// setup next stream
 	FSOUND_STREAM* pNewStream = FSOUND_Stream_Open( 
@@ -1378,7 +1390,11 @@ void CmusikPlayer::UpdateEqualizer()
 	if ( IsEqualizerActive() && IsEqualizerEnabled() && m_Playlist && m_Index > -1 )
 	{	
 		if ( m_Index < (int)m_Playlist->GetCount() )
-			GetEqualizer()->SetNewSong( m_Playlist->GetSongID( m_Index ) );
+		{
+			int songid = m_Playlist->GetSongID( m_Index );
+			if ( songid != -1 )
+				GetEqualizer()->SetNewSong( m_Playlist->GetSongID( m_Index ) );
+		}
 		else
 			GetEqualizer()->SetNewSong( -1 );
 
@@ -1395,7 +1411,7 @@ bool CmusikPlayer::FindNewIndex( int songid )
 	if ( !IsPlaying() || !m_Playlist )
 		return false;
 
-	if ( songid == m_Playlist->GetSongID( m_Index ) )
+	if ( songid == m_Playlist->GetSongID( m_Index ) && songid != -1 && m_Playlist->GetCount() > m_Index )
 		return true;
 
 	for ( size_t i = 0; i < m_Playlist->GetCount(); i++ )

@@ -280,6 +280,9 @@ size_t CmusikPlaylist::GetCount()
 
 int CmusikPlaylist::GetSongID( int index )
 {
+	if ( index >= (int)m_Songs.size() || index < 0 )
+		return -1;
+
 	return m_Songs.at( index ).GetID();
 }
 
