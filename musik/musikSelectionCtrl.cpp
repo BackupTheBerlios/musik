@@ -126,7 +126,11 @@ void CmusikSelectionBar::ShowContextMenu()
 
 	// check / enable / disable menu items
 	if ( GetCtrl()->GetSelectedCount() == 0 )
+	{
 		popup_menu->EnableMenuItem( ID_SELECTIONBOXCONTEXT_RENAME, MF_DISABLED | MF_GRAYED );
+		popup_menu->EnableMenuItem( ID_DELETE_FROMLIBRARY, MF_DISABLED | MF_GRAYED );
+		popup_menu->EnableMenuItem( ID_DELETE_FROMCOMPUTER, MF_DISABLED | MF_GRAYED );
+	}
 		
 	popup_menu->TrackPopupMenu( 0, pos.x, pos.y, this );
 }

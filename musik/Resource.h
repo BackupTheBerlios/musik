@@ -28,7 +28,6 @@
 #define IDB_BITMAP1                     153
 #define IDB_UP                          153
 #define IDR_SELECTION_BOX_CONTEXT_MENU  154
-#define IDR_MENU1                       155
 #define IDR_PLAYLIST_CONTEXT_MENU       155
 #define IDC_CHECK_STARTUPSCAN           1007
 #define IDC_CHECK_STARTUPSCAN2          1008
@@ -205,13 +204,14 @@
 #define ID_DELETE_FROMLIBRARY32901      32901
 #define ID_DELETE_FROMCOMPUTER32902     32902
 #define ID_PLAYLISTCONTEXTMENU_PROPERTIES 32903
+#define ID_DELETE_FROMPLAYLIST          32904
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        156
-#define _APS_NEXT_COMMAND_VALUE         32904
+#define _APS_NEXT_COMMAND_VALUE         32905
 #define _APS_NEXT_CONTROL_VALUE         1053
 #define _APS_NEXT_SYMED_VALUE           104
 #endif

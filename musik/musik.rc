@@ -250,9 +250,10 @@ BEGIN
     BEGIN
         POPUP "Delete"
         BEGIN
-            MENUITEM "From Library\tDel",           ID_DELETE_FROMLIBRARY32901
+            MENUITEM "From Playlist\tDel",          ID_DELETE_FROMPLAYLIST
+            MENUITEM "From Library\tAlt+Del",       ID_DELETE_FROMLIBRARY32901
 
-            MENUITEM "From Computer\tShift+Del",    ID_DELETE_FROMCOMPUTER32902
+            MENUITEM "From Computer\tCtrl+Del",     ID_DELETE_FROMCOMPUTER32902
 
         END
         MENUITEM SEPARATOR
