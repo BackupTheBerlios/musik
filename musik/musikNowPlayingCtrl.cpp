@@ -42,6 +42,10 @@ BEGIN_MESSAGE_MAP(CmusikNowPlayingCtrl, CWnd)
 	ON_WM_SIZE()
 	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
+	ON_BN_CLICKED(MUSIK_NOWPLAYING_BTN_PREV, OnBtnPrev)
+	ON_BN_CLICKED(MUSIK_NOWPLAYING_BTN_PLAY, OnBtnPlay)
+	ON_BN_CLICKED(MUSIK_NOWPLAYING_BTN_STOP, OnBtnStop)
+	ON_BN_CLICKED(MUSIK_NOWPLAYING_BTN_NEXT, OnBtnNext)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -87,6 +91,22 @@ int CmusikNowPlayingCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_Track = new CmusikTimeCtrl( m_Prefs, m_Player );
 	if ( !m_Track->Create( NULL, NULL, WS_CLIPCHILDREN | WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0 ), this, 123 ) )
+		return -1;
+
+	m_Prev = new CButton();
+	if ( !m_Prev->Create( "|<", WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0 ), this, MUSIK_NOWPLAYING_BTN_PREV ) )
+		return -1;
+
+	m_Play = new CButton();
+	if ( !m_Play->Create( "|>", WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0 ), this, MUSIK_NOWPLAYING_BTN_PLAY ) )
+		return -1;
+
+	m_Stop = new CButton();
+	if ( !m_Stop->Create( "[ ]", WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0 ), this, MUSIK_NOWPLAYING_BTN_STOP ) )
+		return -1;
+
+	m_Next = new CButton();
+	if ( !m_Next->Create( ">|", WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0 ), this, MUSIK_NOWPLAYING_BTN_NEXT ) )
 		return -1;
 
 	GetDC()->SetBkColor( GetSysColor( COLOR_BTNHILIGHT ) );
@@ -140,6 +160,11 @@ void CmusikNowPlayingCtrl::RescaleInfo()
 	CPoint ptTemp( rcClient.right - 240 - 16, rcClient.bottom - 16 );
 	CSize szTemp( 240, 16 );
 	m_Track->MoveWindow( CRect( ptTemp, szTemp ) );
+
+	m_Prev->MoveWindow( 0, 50, 24, 24 );
+	m_Play->MoveWindow( 24, 50, 24, 24 );
+	m_Stop->MoveWindow( 48, 50, 24, 24 );
+	m_Next->MoveWindow( 72, 50, 24, 24 );
 }
 
 ///////////////////////////////////////////////////
@@ -151,3 +176,30 @@ BOOL CmusikNowPlayingCtrl::OnEraseBkgnd(CDC* pDC)
 
 ///////////////////////////////////////////////////
 
+void CmusikNowPlayingCtrl::OnBtnPlay()
+{
+	MessageBox( "Play" );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikNowPlayingCtrl::OnBtnPrev()
+{
+	MessageBox( "Prev" );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikNowPlayingCtrl::OnBtnStop()
+{
+	MessageBox( "Stop" );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikNowPlayingCtrl::OnBtnNext()
+{
+	MessageBox( "Next" );
+}
+
+///////////////////////////////////////////////////

@@ -12,6 +12,16 @@ class CmusikTimeCtrl;
 
 ///////////////////////////////////////////////////
 
+enum
+{
+	MUSIK_NOWPLAYING_BTN_PLAY = 4957,
+	MUSIK_NOWPLAYING_BTN_STOP,
+	MUSIK_NOWPLAYING_BTN_PREV,
+	MUSIK_NOWPLAYING_BTN_NEXT
+};
+
+///////////////////////////////////////////////////
+
 class CmusikNowPlayingCtrl : public CWnd
 {
 public:
@@ -36,7 +46,11 @@ protected:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
-	
+	afx_msg void OnBtnPlay();
+	afx_msg void OnBtnPrev();
+	afx_msg void OnBtnStop();
+	afx_msg void OnBtnNext();
+
 	// info object (title/artist/album)
 	CmusikNowPlayingInfo* m_Info1;
 	CmusikNowPlayingInfo* m_Info2;
@@ -46,6 +60,12 @@ protected:
 
 	// seek slider
 	CmusikTimeCtrl* m_Track;
+
+	// buttons
+	CButton* m_Play;
+	CButton* m_Stop;
+	CButton* m_Prev;
+	CButton* m_Next;
 
 	// our player and prefs
 	CmusikPlayer* m_Player;
