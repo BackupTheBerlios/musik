@@ -838,7 +838,7 @@ void CPlaylistCtrl::ResynchItem( int item, int lastitem, bool refreshonly )
 	RefreshItem( item );
 
 	if ( lastitem > -1 && lastitem != item )
-		RefreshItem( lastitem );
+		RefreshItem( lastitem );	
 }
 
 void CPlaylistCtrl::Update( bool bSelFirst, bool  bRescaleColumns)
@@ -976,11 +976,11 @@ void CPlaylistCtrl::RescaleColumns()
 	//--- remaining pixels, that may have been		---//
 	//--- lost by integer division.					---//
 	//-------------------------------------------------//
-	if ( g_Prefs.nPlaylistSmartColumns == 1 && nTotalPercent )
+	if ( g_Prefs.nPlaylistSmartColumns == 1 && nTotalPercent && nDynamicWidth )
 	{
 		m_Overflow = client_size.GetWidth() - ( nStaticWidth + nDynamicWidth );
 		size_t nLastSize = GetColumnWidth( 0 ) + m_Overflow;
-		SetColumnWidth( 0, nLastSize );
+		SetColumnWidth( GetColumnCount()-1, nLastSize );
 	}
 
 	//-------------------------------------------------//
