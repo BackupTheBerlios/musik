@@ -2,6 +2,8 @@
 
 a5:
 
+  - song is no longer bolded unless it is it in the now
+    playing playlist.
   - updated default icon
   - tag editing dialog (right click in playlist -> properties)
   - fixed a nasty mutex deadlock in the backend
