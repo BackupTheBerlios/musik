@@ -1,6 +1,7 @@
 ///////////////////////////////////////////////////
 
 #include "stdafx.h"
+#include <sstream>
 
 #include "musikPrefs.h"
 
@@ -13,6 +14,7 @@ inline int StringToInt( const string str )
 	return atoi( str.c_str() );	
 }
 
+
 ///////////////////////////////////////////////////
 
 inline string IntToString( const int &n )
@@ -21,6 +23,31 @@ inline string IntToString( const int &n )
 	itoa( n, buffer, 10 );
 	string str = buffer;
     return str;	
+}
+
+///////////////////////////////////////////////////
+
+inline unsigned long StringToULong( string s )
+{
+	unsigned long nRet;
+
+	istringstream aStream;
+	aStream.str( s );
+	aStream >> (unsigned long)nRet;
+
+	return nRet;
+}
+
+///////////////////////////////////////////////////
+
+inline string ULongToString( unsigned long ul )
+{
+	ostringstream aStream;
+	aStream << ul << "\0";
+
+	string str = aStream.str();
+
+	return str;
 }
 
 ///////////////////////////////////////////////////
@@ -236,7 +263,8 @@ void CmusikPrefs::LoadPrefs()
 	m_Dlg_ResetUI				= StringToBool( config->GetValue( "Dialog", "Reset UI", "1" ) );
 	m_Dlg_StdPlaylist_Prompt	= StringToInt( config->GetValue( "Dialog", "Prompt STD Playlist Save", "-1" ) );
 	m_Dlg_PlaylistInfoVisible	= StringToBool( config->GetValue( "Dialog", "Playlist Info Visible", "1" ) );
-	
+	m_Dlg_PurgeOnStartup		= StringToBool( config->GetValue( "Dialog", "Purge Old Files on Startup", "1" ) );
+
 	// selection area
 	m_SelectionBox_Count = StringToInt( config->GetValue( "Selection Area", "Count", "2" ) );
 
@@ -253,6 +281,7 @@ void CmusikPrefs::LoadPrefs()
 	m_Player_Rate			= StringToInt( config->GetValue( "Player", "Rate", "44100" ) );
 	m_Player_Max_Channels	= StringToInt( config->GetValue( "Player", "Maximum Channels", "6" ) );
 	m_Player_Volume			= StringToInt( config->GetValue( "Player", "Volume", "200" ) );
+	m_Player_Playmode		= StringToULong( config->GetValue( "Player", "Playmode", "0" ) );	
 
 	// crossfader
 	m_Crossfader_Enabled	= StringToBool( config->GetValue( "Crossfader", "Enabled", "1" ) );
@@ -292,6 +321,7 @@ void CmusikPrefs::SavePrefs()
 	config->SetValue( "Dialog", "Reset UI", BoolToString( m_Dlg_ResetUI ) );
 	config->SetValue( "Dialog", "Prompt STD Playlist Save", IntToString( m_Dlg_StdPlaylist_Prompt ) );
 	config->SetValue( "Dialog", "Playlist Info Visible", BoolToString( m_Dlg_PlaylistInfoVisible ) );
+	config->SetValue( "Dialog", "Purge Old Files on Startup", BoolToString( m_Dlg_PurgeOnStartup ) );
 
 	// selection area
 	config->SetValue( "Selection Area", "Count", IntToString( (int)m_SelectionBox_Count ) );
@@ -309,6 +339,7 @@ void CmusikPrefs::SavePrefs()
 	config->SetValue( "Player", "Rate", IntToString( m_Player_Rate ) );
 	config->SetValue( "Player", "Maximum Channels", IntToString( m_Player_Max_Channels ) );
 	config->SetValue( "Player", "Volume", IntToString( m_Player_Volume ) );	
+	config->SetValue( "Player", "Playmode", ULongToString( m_Player_Playmode ) );
 
 	// crossfader
 	config->SetValue( "Crossfader", "Enabled", BoolToString( m_Crossfader_Enabled ) );

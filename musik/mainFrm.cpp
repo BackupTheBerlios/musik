@@ -42,6 +42,7 @@
 #include "MainFrm.h"
 #include "MainFrmFunctor.h"
 #include "musikBatchAddFunctor.h"
+#include "musikRemoveOldFunctor.h"
 #include "musikFileDialog.h"
 #include "musikTimeCtrl.h"
 
@@ -50,6 +51,7 @@
 #include "../musikCore/include/musikPlayer.h"
 #include "../musikCore/include/musikFilename.h"
 #include "../musikCore/include/musikBatchAdd.h"
+#include "../musikCore/include/musikRemoveOld.h"
 #include "../musikCore/include/musikCrossfader.h"
 #include "../musikCore/include/musikEQSettings.h"
 
@@ -57,7 +59,6 @@
 #include <Direct.h>
 
 #include "3rdparty/TreePropSheet.h"
-#include ".\mainfrm.h"
 
 ///////////////////////////////////////////////////
 
@@ -69,10 +70,6 @@
 
 int WM_SELBOXUPDATE			= RegisterWindowMessage( "SELBOXUPDATE" );
 int WM_SELBOXRESET			= RegisterWindowMessage( "SELBOXRESET" );
-
-int WM_BATCHADD_NEW			= RegisterWindowMessage( "BATCHADD_NEW" );
-int WM_BATCHADD_PROGRESS	= RegisterWindowMessage( "BATCHADD_PROGRESS" );
-int WM_BATCHADD_END			= RegisterWindowMessage( "BATCHADD_END" );
 
 int WM_PLAYERNEWPLAYLIST	= RegisterWindowMessage( "PLAYERNEWPLAYLIST" );
 
@@ -100,6 +97,18 @@ int WM_PLAYER_NEXT			= RegisterWindowMessage( "PLAYER_NEXT" );
 int WM_PLAYER_PREV			= RegisterWindowMessage( "PLAYER_PREV" );
 int WM_PLAYER_STOP			= RegisterWindowMessage( "PLAYER_STOP" );
 
+// comes from other child controls when
+// files have been dropped
+int WM_BATCHADD_NEW			= RegisterWindowMessage( "BATCHADD_NEW" );
+
+// come from the batch add functor
+int WM_BATCHADD_PROGRESS	= RegisterWindowMessage( "BATCHADD_PROGRESS" );
+int WM_BATCHADD_END			= RegisterWindowMessage( "BATCHADD_END" );
+
+// come from the RemoveOld functor
+int WM_REMOVEOLD_PROGRESS	= RegisterWindowMessage( "REMOVEOLD_PROGRESS" );
+int WM_REMOVEOLD_END		= RegisterWindowMessage( "REMOVEOLD_END" );
+
 ///////////////////////////////////////////////////
 
 IMPLEMENT_DYNAMIC(CMainFrame, CFrameWnd)
@@ -125,6 +134,9 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_COMMAND(ID_VIEW_NOWPLAYING, OnViewNowplaying)
 	ON_COMMAND(ID_AUDIO_EQUALIZER_ENABLED, OnAudioEqualizerEnabled)
 	ON_COMMAND(ID_AUDIO_CROSSFADER_ENABLED, OnAudioCrossfaderEnabled)
+	ON_COMMAND(ID_PLAYBACKMODE_REPEATSINGLE, OnPlaybackmodeRepeatsingle)
+	ON_COMMAND(ID_PLAYBACKMODE_REPEATPLAYLIST, OnPlaybackmodeRepeatplaylist)
+	ON_COMMAND(ID_PLAYBACKMODE_INTRO, OnPlaybackmodeIntro)
 
 	// update ui
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SOURCES, OnUpdateViewSources)
@@ -134,6 +146,9 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_UPDATE_COMMAND_UI(ID_AUDIO_CROSSFADER_ENABLED, OnUpdateAudioCrossfaderEnabled)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_PLAYLISTINFORMATION, OnUpdateViewPlaylistinformation)
 	ON_UPDATE_COMMAND_UI(ID_FILE_SAVEPLAYLIST, OnUpdateFileSaveplaylist)
+	ON_UPDATE_COMMAND_UI(ID_PLAYBACKMODE_REPEATSINGLE, OnUpdatePlaybackmodeRepeatsingle)
+	ON_UPDATE_COMMAND_UI(ID_PLAYBACKMODE_REPEATPLAYLIST, OnUpdatePlaybackmodeRepeatplaylist)
+	ON_UPDATE_COMMAND_UI(ID_PLAYBACKMODE_INTRO, OnUpdatePlaybackmodeIntro)
 
 	// custom message maps
 	ON_REGISTERED_MESSAGE( WM_SELBOXUPDATE, OnUpdateSel )
@@ -150,7 +165,9 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_SELBOXRESET, OnSelBoxesReset )
 	ON_REGISTERED_MESSAGE( WM_BATCHADD_NEW, OnBatchAddNew )
 	ON_REGISTERED_MESSAGE( WM_BATCHADD_PROGRESS, OnBatchAddProgress )
-	ON_REGISTERED_MESSAGE( WM_BATCHADD_END, OnBatchAddEnd )
+	ON_REGISTERED_MESSAGE( WM_BATCHADD_END, OnThreadEnd )
+	ON_REGISTERED_MESSAGE( WM_REMOVEOLD_PROGRESS, OnRemoveOldProgress )
+	ON_REGISTERED_MESSAGE( WM_REMOVEOLD_END, OnThreadEnd )
 	ON_REGISTERED_MESSAGE( WM_PLAYER_PLAYSEL, OnPlayerPlaySel )
 END_MESSAGE_MAP()
 
@@ -220,6 +237,7 @@ void CMainFrame::Initmusik()
 	m_LibPlaylist	= NULL;	
 	m_StdPlaylist	= NULL;
 	m_BatchAddFnct	= new CmusikBatchAddFunctor( this );
+	m_RemoveOldFnct	= new CmusikRemoveOldFunctor( this );
 	m_Library		= new CmusikLibrary( ( CStdString )m_Database );
 	m_Prefs			= new CmusikPrefs( m_PrefsIni );
 
@@ -227,6 +245,7 @@ void CMainFrame::Initmusik()
 	m_Player		= new CmusikPlayer( m_NewSong, m_Library );
 	m_Player->SetMaxVolume( m_Prefs->GetPlayerVolume() );
 	m_Player->InitSound( m_Prefs->GetPlayerDevice(), m_Prefs->GetPlayerDriver(), m_Prefs->GetPlayerRate(), m_Prefs->GetPlayerMaxChannels() );
+	m_Player->SetPlaymode( m_Prefs->GetPlayerPlaymode() );
 
 	// give player a crossfader, it will take
 	// care of loading equalizer settings itself...
@@ -242,6 +261,18 @@ void CMainFrame::Initmusik()
 	// enable the equalizer...
 	if ( m_Prefs->IsEqualizerEnabled() )
 		m_Player->EnableEqualizer( true );
+
+	// startup a thread in the background
+	// to remove old files...
+	if ( m_Prefs->PurgeOnStartup() )
+	{
+		CmusikRemoveOld* params = new CmusikRemoveOld( m_Library, m_BatchAddFnct );
+		CmusikThread* thread = new CmusikThread();
+	
+		thread->Start( (ACE_THR_FUNC)musikRemoveOldWorker, params );
+	
+		m_Threads.push_back( thread );
+	}
 }
 
 ///////////////////////////////////////////////////
@@ -305,6 +336,12 @@ void CMainFrame::Cleanmusik()
 	{
 		delete m_BatchAddFnct;
 		m_BatchAddFnct = NULL;
+	}
+
+	if ( m_RemoveOldFnct )
+	{
+		delete m_RemoveOldFnct;
+		m_RemoveOldFnct = NULL;
 	}
 }
 
@@ -1069,29 +1106,44 @@ LRESULT CMainFrame::OnBatchAddProgress( WPARAM wParam, LPARAM lParam )
 
 ///////////////////////////////////////////////////
 
-LRESULT CMainFrame::OnBatchAddEnd( WPARAM wParam, LPARAM lParam )
+LRESULT CMainFrame::OnThreadEnd( WPARAM wParam, LPARAM lParam )
 {
-	CmusikThread* ptr_thr = (CmusikThread*)wParam;
-
 	// if we get here, a batch add thread
 	// has finished successfully, so go
 	// ahead and clean it up
+	CmusikThread* ptr_thr = (CmusikThread*)wParam;
+	FreeThread( ptr_thr );	
+
+	ResetSelBoxes();
+
+	return 0L;
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CMainFrame::OnRemoveOldProgress( WPARAM wParam, LPARAM lParam )
+{
+	return 0L;
+}
+
+///////////////////////////////////////////////////
+
+bool CMainFrame::FreeThread( CmusikThread* pThread )
+{
 	for ( size_t i = 0; i < m_Threads.size(); i++ )
 	{
-		if ( ptr_thr == m_Threads.at( i ) )
+		if ( pThread == m_Threads.at( i ) )
 		{
 			// delete the completed thread
 			delete m_Threads.at( i );
 
 			// erase from array
 			m_Threads.erase( m_Threads.begin() + i );
-			break;
+			return true;
 		}
 	}
 
-	ResetSelBoxes();
-
-	return 0L;
+	return false;
 }
 
 ///////////////////////////////////////////////////
@@ -1350,6 +1402,72 @@ void CMainFrame::OnUpdateViewPlaylistinformation(CCmdUI *pCmdUI)
 void CMainFrame::OnUpdateFileSaveplaylist(CCmdUI *pCmdUI)
 {
 	pCmdUI->Enable( m_wndView->GetCtrl()->PlaylistNeedsSave() );
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnUpdatePlaybackmodeRepeatsingle(CCmdUI *pCmdUI)
+{
+	if ( m_Player->GetPlaymode() & MUSIK_PLAYER_PLAYMODE_REPEAT_SINGLE )
+		pCmdUI->SetCheck( true );
+	else
+		pCmdUI->SetCheck( false );
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnPlaybackmodeRepeatsingle()
+{
+	if ( m_Player->GetPlaymode() & MUSIK_PLAYER_PLAYMODE_REPEAT_SINGLE )
+		m_Player->ModifyPlaymode( NULL, MUSIK_PLAYER_PLAYMODE_REPEAT_SINGLE );
+	else
+		m_Player->ModifyPlaymode( MUSIK_PLAYER_PLAYMODE_REPEAT_SINGLE, NULL );
+
+	m_Prefs->SetPlayerPlaymode( m_Player->GetPlaymode() );
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnUpdatePlaybackmodeRepeatplaylist(CCmdUI *pCmdUI)
+{
+	if ( m_Player->GetPlaymode() & MUSIK_PLAYER_PLAYMODE_REPEAT_PLAYLIST )
+		pCmdUI->SetCheck( true );
+	else
+		pCmdUI->SetCheck( false );
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnPlaybackmodeRepeatplaylist()
+{
+	if ( m_Player->GetPlaymode() & MUSIK_PLAYER_PLAYMODE_REPEAT_PLAYLIST )
+		m_Player->ModifyPlaymode( NULL, MUSIK_PLAYER_PLAYMODE_REPEAT_PLAYLIST );
+	else
+		m_Player->ModifyPlaymode( MUSIK_PLAYER_PLAYMODE_REPEAT_PLAYLIST, NULL );
+
+	m_Prefs->SetPlayerPlaymode( m_Player->GetPlaymode() );
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnUpdatePlaybackmodeIntro(CCmdUI *pCmdUI)
+{
+	if ( m_Player->GetPlaymode() & MUSIK_PLAYER_PLAYMODE_INTRO )
+		pCmdUI->SetCheck( true );
+	else
+		pCmdUI->SetCheck( false );
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnPlaybackmodeIntro()
+{
+	if ( m_Player->GetPlaymode() & MUSIK_PLAYER_PLAYMODE_INTRO )
+		m_Player->ModifyPlaymode( NULL, MUSIK_PLAYER_PLAYMODE_INTRO );
+	else
+		m_Player->ModifyPlaymode( MUSIK_PLAYER_PLAYMODE_INTRO, NULL );
+
+	m_Prefs->SetPlayerPlaymode( m_Player->GetPlaymode() );
 }
 
 ///////////////////////////////////////////////////

@@ -54,6 +54,7 @@ public:
 	}
 
 private:
+
 	CWnd* m_Parent;
 };
 

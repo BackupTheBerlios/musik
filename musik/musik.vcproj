@@ -149,6 +149,9 @@
 			<File
 				RelativePath=".\musikBatchAddFunctor.h">
 			</File>
+			<File
+				RelativePath=".\musikRemoveOldFunctor.h">
+			</File>
 			<Filter
 				Name="Controls"
 				Filter="">
@@ -490,6 +493,9 @@
 			</File>
 			<File
 				RelativePath="..\musikCore\include\musikFunctor.h">
+			</File>
+			<File
+				RelativePath="..\musikCore\include\musikRemoveOld.h">
 			</File>
 			<File
 				RelativePath="..\musikCore\include\StdString.h">

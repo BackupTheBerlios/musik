@@ -68,7 +68,7 @@ class CmusikPlaylist;
 class CmusikPlayer;
 class CmusikFrameFunctor;
 class CmusikBatchAddFunctor;
-//class CmusikThreadPtrArray;
+class CmusikRemoveOldFunctor;
 
 ///////////////////////////////////////////////////
 
@@ -167,7 +167,8 @@ protected:
 	afx_msg LRESULT OnSelBoxesReset( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnPlayerNewPlaylist( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnBatchAddProgress( WPARAM wParam, LPARAM lParam );
-	afx_msg LRESULT OnBatchAddEnd( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnRemoveOldProgress( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnThreadEnd( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnPlayerPlaySel( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnBatchAddNew( WPARAM wParam, LPARAM lParam );
 
@@ -194,12 +195,20 @@ protected:
 	afx_msg void OnAudioCrossfaderEnabled();
 	afx_msg void OnUpdateViewPlaylistinformation(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateFileSaveplaylist(CCmdUI *pCmdUI);
+	afx_msg void OnUpdatePlaybackmodeRepeatsingle(CCmdUI *pCmdUI);
+	afx_msg void OnPlaybackmodeRepeatsingle();
+	afx_msg void OnUpdatePlaybackmodeRepeatplaylist(CCmdUI *pCmdUI);
+	afx_msg void OnPlaybackmodeRepeatplaylist();
+	afx_msg void OnUpdatePlaybackmodeIntro(CCmdUI *pCmdUI);
+	afx_msg void OnPlaybackmodeIntro();
 
 	// list of all threads running
+	bool FreeThread( CmusikThread* pThread );
 	CmusikThreadPtrArray m_Threads;
 
-	// batch add files threads to use
+	// batch functors threads will use
 	CmusikBatchAddFunctor* m_BatchAddFnct;
+	CmusikRemoveOldFunctor* m_RemoveOldFnct;
 
 	// macros
 	DECLARE_DYNAMIC(CMainFrame)

@@ -29,78 +29,103 @@ public:
 	void UnparseColors();
 	void ThemeChanged();
 
+	//
 	// basic stuff
-	void		LoadPrefs();
-	void		SavePrefs();
+	//
 
-	// main dialog gets
-	CSize		GetDlgSize							( )					{ return m_Dlg_Size; }
-	CPoint		GetDlgPos							( )					{ return m_Dlg_Pos; }
-	bool		IsMaximized							( )					{ return m_Dlg_Maximized; }
-	bool		ResetUI								( )					{ return m_Dlg_ResetUI; }
-	int			GetStdPlaylistPrompt				( )					{ return m_Dlg_StdPlaylist_Prompt; }
-	bool		PlaylistInfoVisible					( )					{ return m_Dlg_PlaylistInfoVisible; }
+	void LoadPrefs();
+	void SavePrefs();
 
-	// main dialog sets
-	void		SetDlgSize							( const CSize sz )	{ m_Dlg_Size = sz; }
-	void		SetDlgPos							( const CPoint pt )	{ m_Dlg_Pos = pt; }
-	void		SetMaximized						( bool max )		{ m_Dlg_Maximized = max; }
-	void		SetDlgResetUI						( bool reset )		{ m_Dlg_ResetUI = reset; }
-	void		SetStdPlaylistPrompt				( int prompt )		{ m_Dlg_StdPlaylist_Prompt = prompt; }
-	void		SetPlaylistInfoVisible				( bool visible )	{ m_Dlg_PlaylistInfoVisible = visible; }
+	//
+	// main dialog
+	//
 
-	// selection box gets
-	size_t		GetSelBoxCount						( )					{ return m_SelectionBox_Count; }
+	CSize GetDlgSize( ){ return m_Dlg_Size; }
+	CPoint GetDlgPos( ){ return m_Dlg_Pos; }
+	bool IsMaximized( ){ return m_Dlg_Maximized; }
+	bool ResetUI( ){ return m_Dlg_ResetUI; }
+	int	GetStdPlaylistPrompt( ){ return m_Dlg_StdPlaylist_Prompt; }
+	bool PlaylistInfoVisible( ){ return m_Dlg_PlaylistInfoVisible; }
+	bool PurgeOnStartup( ){ return m_Dlg_PurgeOnStartup; }
 
-	// selection box sets
-	void		SetSelBoxCount						( size_t n )		{ m_SelectionBox_Count = n; }
+	void SetDlgSize( const CSize sz ){ m_Dlg_Size = sz; }
+	void SetDlgPos( const CPoint pt ){ m_Dlg_Pos = pt; }
+	void SetMaximized( bool max ){ m_Dlg_Maximized = max; }
+	void SetDlgResetUI( bool reset ){ m_Dlg_ResetUI = reset; }
+	void SetStdPlaylistPrompt( int prompt ){ m_Dlg_StdPlaylist_Prompt = prompt; }
+	void SetPlaylistInfoVisible( bool visible )	{ m_Dlg_PlaylistInfoVisible = visible; }
+	void SetPurgeOnStartup( bool purge ){ m_Dlg_PurgeOnStartup = purge; }
 
-	// playlist gets
-	CIntArray	GetPlaylistOrder					( )					{ return m_Playlist_Order; }
-	CIntArray	GetPlaylistSizes					( )					{ return m_Playlist_Sizes; }
-	int			GetPlaylistCol						( int n )			{ return m_Playlist_Order.at( n ); }
-	int			GetPlaylistColWidth					( int n )			{ return m_Playlist_Sizes.at( n ); }
-	size_t		GetPlaylistColCount					( )					{ return m_Playlist_Order.size(); }
+	//
+	// selection box
+	//
+
+	size_t GetSelBoxCount ( ){ return m_SelectionBox_Count; }
+
+	void SetSelBoxCount ( size_t n ) { m_SelectionBox_Count = n; }
+
+	//
+	// playlist 
+	//
+
+	CIntArray GetPlaylistOrder( ){ return m_Playlist_Order; }
+	CIntArray GetPlaylistSizes( ){ return m_Playlist_Sizes; }
+	int GetPlaylistCol( int n ){ return m_Playlist_Order.at( n ); }
+	int	GetPlaylistColWidth( int n ){ return m_Playlist_Sizes.at( n ); }
+	size_t GetPlaylistColCount( ){ return m_Playlist_Order.size(); }
 	
-	// playlist sets
-	void		SetPlaylistOrder					( CIntArray n )		{ m_Playlist_Order = n; }	
-	void		SetPlaylistSizes					( CIntArray n )		{ m_Playlist_Sizes = n; }
+	void SetPlaylistOrder( CIntArray n ){ m_Playlist_Order = n; }	
+	void SetPlaylistSizes( CIntArray n ){ m_Playlist_Sizes = n; }
 	
-	// now playing gets
-	int			GetNowPlayingCaptionFontSize		( )					{ return m_NowPlaying_CaptionFont; }
+	//
+	// now playing
+	//
 
-	// now playing sets
-	void		SetNowPlayingCaptionFontSize		( int y )			{ m_NowPlaying_CaptionFont = y; }
+	int	GetNowPlayingCaptionFontSize( ){ return m_NowPlaying_CaptionFont; }
 
-	// player gets
-	int			GetPlayerDriver						( )					{ return m_Player_Driver; }					
-	int			GetPlayerDevice						( )					{ return m_Player_Device; }
-	int			GetPlayerRate						( )					{ return m_Player_Rate; }
-	int			GetPlayerMaxChannels				( )					{ return m_Player_Max_Channels; }
-	int			GetPlayerVolume						( )					{ return m_Player_Volume; }
+	void SetNowPlayingCaptionFontSize( int y ){ m_NowPlaying_CaptionFont = y; }
 
-	// player sets
-	void		SetPlayerDrive						( int n )			{ m_Player_Driver = n; }
-	void		SetPlayerDevice						( int n )			{ m_Player_Device = n; }
-	void		SetPlayerRate						( int n )			{ m_Player_Rate = n; }
-	void		SetPlayerMaxChannels				( int n )			{ m_Player_Max_Channels = n; }
-	void		SetPlayerVolume						( int n )			{ m_Player_Volume = n; }
+	//
+	// player
+	//
 
-	// default crossfader get
-	int  GetCrossfader								()					{ return m_Crossfader_Current; }
-	bool IsCrossfaderEnabled						()					{ return m_Crossfader_Enabled; }
+	int	GetPlayerDriver( ){ return m_Player_Driver; }					
+	int	GetPlayerDevice( ){ return m_Player_Device; }
+	int	GetPlayerRate( ){ return m_Player_Rate; }
+	int	GetPlayerMaxChannels( )	{ return m_Player_Max_Channels; }
+	int	GetPlayerVolume( ){ return m_Player_Volume; }
+	unsigned long GetPlayerPlaymode( ){ return m_Player_Playmode; }
 
-	// crossfader set
-	void SetCrossfader								( int n )			{ m_Crossfader_Current = n; }
-	void SetCrossfaderEnabled						( bool b )			{ m_Crossfader_Enabled = b; }
+	void SetPlayerDrive( int n ){ m_Player_Driver = n; }
+	void SetPlayerDevice( int n ){ m_Player_Device = n; }
+	void SetPlayerRate( int n ){ m_Player_Rate = n; }
+	void SetPlayerMaxChannels( int n ){ m_Player_Max_Channels = n; }
+	void SetPlayerVolume( int n ){ m_Player_Volume = n; }
+	void SetPlayerPlaymode( unsigned long un ){ m_Player_Playmode = un; }
 
-	// equalizer get
-	int GetEqualizer								()					{ return m_Equalizer_Current; }
-	bool IsEqualizerEnabled							()					{ return m_Equalizer_Enabled; }
+	//
+	// crossfader
+	//
+	
+	int  GetCrossfader(){ return m_Crossfader_Current; }
+	bool IsCrossfaderEnabled(){ return m_Crossfader_Enabled; }
 
-	// equalizer set
-	void SetEqualizer								( int n )			{ m_Equalizer_Current = n; }
-	void SetEqualizerEnabled						( bool b )			{ m_Equalizer_Enabled = b; }
+	void SetCrossfader( int n ){ m_Crossfader_Current = n; }
+	void SetCrossfaderEnabled( bool b ){ m_Crossfader_Enabled = b; }
+
+	//
+	// equalizer
+	//
+
+	int GetEqualizer(){ return m_Equalizer_Current; }
+	bool IsEqualizerEnabled(){ return m_Equalizer_Enabled; }
+
+	void SetEqualizer( int n ){ m_Equalizer_Current = n; }
+	void SetEqualizerEnabled( bool b ){ m_Equalizer_Enabled = b; }
+
+	//
+	// theme
+	//
 
 	COLORREF MUSIK_COLOR_ACTIVECAPTION;
 	COLORREF MUSIK_COLOR_CAPTIONTEXT;
@@ -116,6 +141,7 @@ public:
 	COLORREF MUSIK_COLOR_HIGHLIGHTTEXT;
 
 protected:
+
 	CIniFile* config;
 	string GetDefPlaylistOrder();
 	string GetDefPlaylistSizes();
@@ -129,6 +155,7 @@ private:
 	bool	m_Dlg_ResetUI;
 	int		m_Dlg_StdPlaylist_Prompt;
 	bool	m_Dlg_PlaylistInfoVisible;
+	bool	m_Dlg_PurgeOnStartup;
 
 	// selection area
 	size_t	m_SelectionBox_Count;
@@ -146,7 +173,7 @@ private:
 	int m_Player_Rate;
 	int m_Player_Max_Channels;
 	int m_Player_Volume;
-	int m_Player_Playmode;
+	unsigned long m_Player_Playmode;
 
 	// crossfader
 	int m_Crossfader_Current;
