@@ -19,9 +19,10 @@ static void MusikPlayerWorker( CMusikPlayer* player )
 
 	while ( !player->IsShuttingDown() )
 	{
+		// check every half second
 		if ( player->IsPlaying() && !player->IsPaused() )
 		{
-
+			
 		}
 
 		ACE_OS::sleep( sleep );
@@ -129,6 +130,8 @@ int CMusikPlayer::InitSound( int device, int driver, int rate, int channels, int
 
 	m_ActiveStreams = new CMusikStreamPtrArray();
 	m_ActiveChannels = new CIntArray();
+
+	m_MaxChannels = channels;
 
 	TRACE0( "FMOD successfully initialized.\n" );
 	return MUSIK_PLAYER_INIT_SUCCESS;
