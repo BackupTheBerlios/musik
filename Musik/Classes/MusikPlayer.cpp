@@ -225,7 +225,7 @@ int CMusikPlayer::InitializeFMOD( int nFunction )
 			if( FSOUND_SetOutput( FSOUND_OUTPUT_MAC ) == FALSE )
 				return FMOD_INIT_ERROR_MAC;
 		#endif
-		if(wxGetApp().Prefs.nSndDevice >= 0)
+		if(wxGetApp().Prefs.nSndDevice > 0)
 		{
 		//---------------------//
 		//--- setup device	---//
