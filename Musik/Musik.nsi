@@ -2,7 +2,7 @@
 ;Written by Casey Langen
 
 !define MUI_PRODUCT "Musik" 
-!define MUI_VERSION "0.1.2"
+!define MUI_VERSION "0.1.3"
 
 !include "MUI.nsh"
 
@@ -10,7 +10,7 @@
 ;Configuration
 
   ;General
-  OutFile "MusikSetup-0.1.2.exe"
+  OutFile "MusikSetup-0.1.3.exe"
 
   ;Folder selection page
   InstallDir "$PROGRAMFILES\${MUI_PRODUCT}"
@@ -53,7 +53,7 @@
 ;Language Strings
 
   ;Description
-  LangString DESC_SecCopyUI ${LANG_ENGLISH} "Musik 0.1.2"
+  LangString DESC_SecCopyUI ${LANG_ENGLISH} "Musik 0.1.3"
 
 ;--------------------------------
 ;Data
@@ -63,7 +63,7 @@
 ;--------------------------------
 ;Installer Sections
 
-Section "Musik 0.1.2" SecCopyUI
+Section "Musik 0.1.3" SecCopyUI
 
   SetOutPath "$INSTDIR"
   File "Musik.exe"	
