@@ -247,12 +247,19 @@ void MusikFrame::LoadImageLists()
 
 void MusikFrame::DeleteImageLists()
 {
-	g_SourcesImages->RemoveAll();
-	g_NullImageList->RemoveAll();
-	g_RatingImages->RemoveAll();
-	delete g_SourcesImages;
-	delete g_NullImageList;
-	delete g_RatingImages;
+	//-------------------------------------------------//
+	//--- wxListCtrl::SetImageList() is supposed to	---//
+	//--- NOT delete the image list, but in wxGTK	---//
+	//--- it apparently does. 							---//
+	//-------------------------------------------------//
+	#ifdef __WXMSW__
+		g_SourcesImages->RemoveAll();
+		g_NullImageList->RemoveAll();
+		g_RatingImages->RemoveAll();
+		delete g_SourcesImages;
+		delete g_NullImageList;
+		delete g_RatingImages;
+	#endif
 }
 
 void MusikFrame::GetFonts()
