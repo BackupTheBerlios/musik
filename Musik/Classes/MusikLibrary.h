@@ -133,7 +133,7 @@ public:
 	void GetStdPlaylistSongs	( const wxArrayString & aFiles, CMusikSongArray & aReturn );
 	bool 			GetSongFromFilename	( const wxString& filename, CMusikSong *pSong );
 
-	void SortPlaylist( const wxString& sortstr, bool descending );
+	void SetSortOrderField( int nField, bool descending = false);
 	double GetTotalPlaylistSize();
 
 	//--------------------//
@@ -152,33 +152,19 @@ public:
 	//--- generic querying ---//
 	//------------------------//
 	void Query				( const wxString & query, wxArrayString & aReturn );
-	void QuerySongs			( const wxString & query, CMusikSongArray & aReturn );
-
+	void QuerySongsWhere	( const wxString & query, CMusikSongArray & aReturn ,bool bSorted = false);	  //if bSorted ==true,  use SetSortOrderField to set sorting string
+	void RedoLastQuerySongsWhere( CMusikSongArray & aReturn ,bool bSorted = false);
 	//-----------------------------------//
 	//--- pre-defined queries to make ---//
 	//---   life a little bit easier  ---//
 	//-----------------------------------//
-	void GetAllSongs		( CMusikSongArray & aReturn	);
+	void GetAllSongs		( CMusikSongArray & aReturn	,bool bSorted = true);
 	void GetAllArtists		( wxArrayString & aReturn );
 	void GetAllAlbums		( wxArrayString & aReturn );
 	void GetAllGenres		( wxArrayString & aReturn );
 	void GetAllYears		( wxArrayString & aReturn );
 	void GetArtistAlbums	( const wxArrayString & aArtists, wxArrayString & aReturn );
-	void GetArtistGenres	( const wxArrayString & aArtists, wxArrayString & aReturn );
-	void GetArtistYears		( const wxArrayString & aArtists, wxArrayString & aReturn );
-	void GetArtistSongs		( const wxArrayString & aArtists, CMusikSongArray & aReturn );
-	void GetAlbumArtists	( const wxArrayString & aAlbums, wxArrayString & aReturn );
-	void GetAlbumGenres		( const wxArrayString & aAlbums, wxArrayString & aReturn );
-	void GetAlbumYears		( const wxArrayString & aAlbums, wxArrayString & aReturn );
-	void GetAlbumSongs		( const wxArrayString & aAlbums, CMusikSongArray & aReturn );
-	void GetGenreArtists	( const wxArrayString & aGenres, wxArrayString & aReturn );
-	void GetGenreAlbums		( const wxArrayString & aGenres, wxArrayString & aReturn );
-	void GetGenreYears		( const wxArrayString & aGenres, wxArrayString & aReturn );
-	void GetGenreSongs		( const wxArrayString & aGenres, CMusikSongArray & aReturn );
-	void GetYearArtists		( const wxArrayString & aYears, wxArrayString & aReturn );
-	void GetYearAlbums		( const wxArrayString & aYears, wxArrayString & aReturn );
-	void GetYearGenres		( const wxArrayString & aYears, wxArrayString & aReturn );
-	void GetYearSongs		( const wxArrayString & aYears, CMusikSongArray & aReturn );
+
 	void GetInfo			( const wxArrayString & aInfo, int nInType, int nOutType, wxArrayString & aReturn );
 	void GetSongs			( const wxArrayString & aInfo, int nInType, CMusikSongArray & aReturn );
 private:
@@ -198,6 +184,9 @@ private:
 	bool WriteOGGTag		( const CMusikSong & song, bool ClearAll );
 
 	wxString m_TimeAdded;
+
+	wxString  m_sSortAllSongsQuery;
+	wxString m_lastQueryWhere;
 
 	void VerifyYearList ( const wxArrayString & aList,wxArrayString & aVerifiedList );
 

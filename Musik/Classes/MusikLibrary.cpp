@@ -66,6 +66,7 @@ CMusikSong::CMusikSong()
 CMusikLibrary::CMusikLibrary()
 	: wxEvtHandler()
 {
+	SetSortOrderField( PLAYLISTCOLUMN_ARTIST );
 }
 
 CMusikLibrary::~CMusikLibrary()
@@ -761,7 +762,7 @@ void CMusikLibrary::GetSongs( const wxArrayString & aList, int nInType, CMusikSo
 	aReturn.Clear();
 	wxString sInfo;
 	aReturn.Alloc(GetSongCount()); // optimize item adding performance,
-  	wxString sQuery(wxT( "select filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize from songs where "));
+  	wxString sQuery;
   
    
   	if ( nInType == MUSIK_LIB_ARTIST )
@@ -789,21 +790,7 @@ void CMusikLibrary::GetSongs( const wxArrayString & aList, int nInType, CMusikSo
 		else
 			sQuery += wxT("' ) ");
  	}
-	if ( nInType == MUSIK_LIB_ARTIST )
-    		sQuery +=wxT("order by artist,album,tracknum;");
-	else if ( nInType == MUSIK_LIB_ALBUM )
-		sQuery += wxT( "order by album,tracknum,artist;");
-	else if ( nInType == MUSIK_LIB_GENRE )
-		sQuery += wxT( "order by genre,artist,album,tracknum;");
-	else if ( nInType == MUSIK_LIB_YEAR )
-		sQuery += wxT( "order by year,artist,album,tracknum;");
-
-	//--- run query ---//
-	{
-		wxCriticalSectionLocker lock( m_csDBAccess );
-		sqlite_exec(m_pDB, ConvQueryToMB( sQuery ), &sqlite_callbackAddToSongArray, &aReturn, NULL);
-	}
-	aReturn.Shrink();
+	QuerySongsWhere( sQuery, aReturn,true); // query sorted
 	return;
 }
 
@@ -811,8 +798,6 @@ void CMusikLibrary::Query( const wxString & query, wxArrayString & aReturn )
 {
 
 	aReturn.Clear();
-	wxString sInfo;
-
 	//--- run the query ---//
 	aReturn.Alloc( GetSongCount() );
 	wxCriticalSectionLocker lock( m_csDBAccess );
@@ -909,75 +894,59 @@ void CMusikLibrary::GetStdPlaylistSongs( const wxArrayString & aFiles, CMusikSon
 	return;
 }
 
-void CMusikLibrary::SortPlaylist( const wxString& sortstr, bool descending )
+void CMusikLibrary::SetSortOrderField( int nField, bool descending )
 {
-	
-	wxString sQuery;
+	m_sSortAllSongsQuery.Empty();
 	
 	bool numeric = false;
+	const wxString & sortstr = g_PlaylistColumnDBNames[ nField ];	
 	if ( ( sortstr == wxT("duration") ) || ( sortstr == wxT("tracknum") ) || ( sortstr == wxT("timesplayed") ) || ( sortstr == wxT("bitrate") ) || ( sortstr == wxT("lastplayed") ) )
 		numeric = true;
 
 	if ( !numeric )
 	{
-		sQuery = wxT("select filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize, UPPER(");
+		m_sSortAllSongsQuery = wxT("select filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize, UPPER(");
 		if(g_Prefs.nSortArtistWithoutPrefix && (sortstr == wxT("artist")) )
 		{
-			sQuery += wxT("REMPREFIX(");
-			sQuery += sortstr;
-			sQuery += wxT(")");
+			m_sSortAllSongsQuery += wxT("REMPREFIX(");
+			m_sSortAllSongsQuery += sortstr;
+			m_sSortAllSongsQuery += wxT(")");
 		}
 		else
-			sQuery += sortstr;
+			m_sSortAllSongsQuery += sortstr;
 
-		sQuery += wxT(") as up");
-		sQuery += sortstr;		
-		sQuery += wxT(" from songs where filename in (");
+		m_sSortAllSongsQuery += wxT(") as up");
+		m_sSortAllSongsQuery += sortstr;		
+		m_sSortAllSongsQuery += wxT(" from songs ");
 	}
 	else
-		sQuery = wxT("select filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize from songs where filename in (");
+		m_sSortAllSongsQuery = wxT("select filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize from songs ");
 
-	int count = g_Playlist.GetCount();
-	sQuery.Alloc(sQuery.Len() + count * 30); // optimization ( the 30 is a wild guess)
-	for ( size_t i = 0; i < count ; i++ )
+	m_sSortAllSongsQuery += wxT("%s"); // add placeholder for possible where clause
+
+	if ( !numeric )
+		m_sSortAllSongsQuery += wxT(" order by up");
+	else
+		m_sSortAllSongsQuery += wxT(" order by ");
+	if (sortstr == wxT("lastplayed"))
 	{
-		//--- if song has a ' ---//	
-		const CMusikSong& song = g_Playlist.Item ( i );
-		wxString filename(  song.Filename );
-		filename.Replace( wxT("'"), wxT("''"), TRUE );
-
-		sQuery += wxT("'");
-		sQuery += filename;
-		//--- not at the end ---//
-		if ( i != count - 1 )
-			sQuery += wxT("', ");
-		//--- at the end ---//
-		else
-		{
-			if ( !numeric )
-				sQuery += wxT("' ) order by up");
-			else
-				sQuery += wxT("' ) order by ");
-			sQuery += sortstr;
-			if ( descending )
-				sQuery += wxT(" desc");
-			if(sortstr == wxT("artist"))
-			{
-			  sQuery += wxT(" ,album , tracknum");
-			}
-			sQuery += wxT(";");
-		}
+		m_sSortAllSongsQuery +=wxT("wxjulianday(lastplayed)");
 	}
+	else
+		m_sSortAllSongsQuery += sortstr;
+	if ( descending )
+		m_sSortAllSongsQuery += wxT(" desc");
 
+	if(sortstr == wxT("artist"))
+		m_sSortAllSongsQuery += wxT(" ,album , tracknum");
+	else if(sortstr == wxT("album")) 
+		m_sSortAllSongsQuery += wxT(" ,tracknum,artist");
+	else if(sortstr == wxT("genre")) 
+		m_sSortAllSongsQuery += wxT(" ,artist,album,tracknum");
+	else if(sortstr == wxT("year")) 
+		m_sSortAllSongsQuery += wxT(" ,artist,album,tracknum");
+	m_sSortAllSongsQuery += wxT(";");
 
-    g_Playlist.Clear();
-
-	g_Playlist.Alloc( count );
-	{
-		wxCriticalSectionLocker lock( m_csDBAccess );
-		sqlite_exec( m_pDB, ConvQueryToMB( sQuery ), &sqlite_callbackAddToSongArray, &g_Playlist, NULL );
-	}
-  g_PlaylistChanged = true;
 	return;
 }
 
@@ -1038,20 +1007,28 @@ double CMusikLibrary::GetTotalPlaylistSize()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-
-void CMusikLibrary::QuerySongs( const wxString & queryWhere, CMusikSongArray & aReturn )
+void CMusikLibrary::RedoLastQuerySongsWhere( CMusikSongArray & aReturn ,bool bSorted)
+{
+	QuerySongsWhere(m_lastQueryWhere,aReturn,bSorted);
+}
+void CMusikLibrary::QuerySongsWhere( const wxString & queryWhere, CMusikSongArray & aReturn ,bool bSorted)
 {
 	aReturn.Clear();
-	wxString sInfo;
-
 	//--- run query ---//
-	wxString query(wxT("select filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize from songs"));
-	if(!queryWhere.IsEmpty()) 
-	{	
-		query += wxT(" where ");
-		query += queryWhere; 
+	wxString query;
+	wxString myqueryWhere = queryWhere.IsEmpty()  ? wxT("") : wxT(" where ") + queryWhere;
+	m_lastQueryWhere = queryWhere;
+	if( bSorted && !m_sSortAllSongsQuery.IsEmpty() )
+	{
+		query = wxString::Format(  m_sSortAllSongsQuery , myqueryWhere );
 	}
-	query += wxT(";");		
+	else
+	{
+		query = wxT("select filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize from songs");
+		query += myqueryWhere; 
+		query += wxT(";");		
+	}
+	
 	const wxCharBuffer pQuery = ConvQueryToMB(query);
 	aReturn.Alloc(GetSongCount());
 	{
@@ -1453,9 +1430,9 @@ void CMusikLibrary::GetAllYears(wxArrayString & years)
 	return;
 }
 
-void CMusikLibrary::GetAllSongs( CMusikSongArray & aReturn )
+void CMusikLibrary::GetAllSongs( CMusikSongArray & aReturn, bool bSorted )
 {
-	QuerySongs( wxT(""), aReturn );
+	QuerySongsWhere( wxT(""), aReturn ,bSorted);
 }
 
 void CMusikLibrary::GetAllArtists( wxArrayString & aReturn )
@@ -1477,82 +1454,3 @@ void CMusikLibrary::GetAllGenres( wxArrayString & aReturn )
 	Query( wxT("select distinct genre,UPPER(genre) as UP from songs order by UP;"), aReturn );					
 }
 
-void CMusikLibrary::GetArtistAlbums( const wxArrayString & aArtists, wxArrayString & aReturn )	
-{ 
-	GetInfo( aArtists, MUSIK_LIB_ARTIST, MUSIK_LIB_ALBUM, aReturn );				
-}
-
-void CMusikLibrary::GetArtistGenres( const wxArrayString & aArtists, wxArrayString & aReturn )
-{ 
-	GetInfo( aArtists, MUSIK_LIB_ARTIST, MUSIK_LIB_GENRE, aReturn );					
-}
-
-void CMusikLibrary::GetArtistYears( const wxArrayString & aArtists, wxArrayString & aReturn )	
-{ 
-	GetInfo( aArtists, MUSIK_LIB_ARTIST, MUSIK_LIB_YEAR, aReturn );		
-}
-
-void CMusikLibrary::GetArtistSongs( const wxArrayString & aArtists, CMusikSongArray & aReturn )
-{ 
-	GetSongs( aArtists, MUSIK_LIB_ARTIST, aReturn );									
-}
-
-void CMusikLibrary::GetAlbumArtists( const wxArrayString & aAlbums, wxArrayString & aReturn )	
-{ 
-	GetInfo( aAlbums, MUSIK_LIB_ALBUM, MUSIK_LIB_ARTIST, aReturn );			
-}
-
-void CMusikLibrary::GetAlbumGenres( const wxArrayString & aAlbums, wxArrayString & aReturn )
-{ 
-	GetInfo( aAlbums, MUSIK_LIB_ALBUM, MUSIK_LIB_GENRE, aReturn );	
-}
-
-void CMusikLibrary::GetAlbumYears( const wxArrayString & aAlbums, wxArrayString & aReturn )	
-{ 
-	GetInfo( aAlbums, MUSIK_LIB_ALBUM, MUSIK_LIB_YEAR, aReturn );		
-}
-
-void CMusikLibrary::GetAlbumSongs( const wxArrayString & aAlbums, CMusikSongArray & aReturn )	
-{ 
-	GetSongs( aAlbums, MUSIK_LIB_ALBUM, aReturn );
-}
-
-void CMusikLibrary::GetGenreArtists( const wxArrayString & aGenres, wxArrayString & aReturn )	
-{ 
-	GetInfo( aGenres, MUSIK_LIB_GENRE, MUSIK_LIB_ARTIST, aReturn );		
-}
-
-void CMusikLibrary::GetGenreAlbums( const wxArrayString & aGenres, wxArrayString & aReturn )	
-{ 
-	GetInfo( aGenres, MUSIK_LIB_GENRE, MUSIK_LIB_ALBUM, aReturn );	
-}
-
-void CMusikLibrary::GetGenreYears( const wxArrayString & aGenres, wxArrayString & aReturn )	
-{
-	GetInfo( aGenres, MUSIK_LIB_GENRE, MUSIK_LIB_YEAR, aReturn );	
-}
-
-void CMusikLibrary::GetGenreSongs( const wxArrayString & aGenres, CMusikSongArray & aReturn )	
-{ 
-	GetSongs( aGenres, MUSIK_LIB_GENRE, aReturn );
-}
-
-void CMusikLibrary::GetYearArtists( const wxArrayString & aYears, wxArrayString & aReturn )	
-{ 
-	GetInfo( aYears, MUSIK_LIB_YEAR, MUSIK_LIB_ARTIST, aReturn );				
-}
-
-void CMusikLibrary::GetYearAlbums( const wxArrayString & aYears, wxArrayString & aReturn )	
-{ 
-	GetInfo( aYears, MUSIK_LIB_YEAR, MUSIK_LIB_ALBUM, aReturn );		
-}
-
-void CMusikLibrary::GetYearGenres( const wxArrayString & aYears, wxArrayString & aReturn )	
-{ 
-	GetInfo( aYears, MUSIK_LIB_YEAR, MUSIK_LIB_GENRE, aReturn );			
-}
-
-void CMusikLibrary::GetYearSongs( const wxArrayString & aYears, CMusikSongArray & aReturn )	
-{ 
-	GetSongs( aYears, MUSIK_LIB_YEAR, aReturn );		
-}
