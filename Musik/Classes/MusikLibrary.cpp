@@ -283,14 +283,14 @@ void CMusikLibrary::AddMP3( const wxString & filename )
 	}
 }
 
-bool CMusikLibrary::WriteTag(  CMusikSong & song, bool ClearAll , bool bUpdateDB )
+void CMusikLibrary::WriteTag(  CMusikSong & song, bool ClearAll , bool bUpdateDB )
 {
 
 	if ( song.Format == MUSIK_FORMAT_MP3 )
 		WriteMP3Tag( song, ClearAll );
 	else if ( song.Format == MUSIK_FORMAT_OGG )
 		WriteOGGTag( song, ClearAll );
-	if(bUpdateDB)
+	if(bUpdateDB )
 	{
 		//-----------------------------//
 		//--- flag item as clean	---//
@@ -303,7 +303,7 @@ bool CMusikLibrary::WriteTag(  CMusikSong & song, bool ClearAll , bool bUpdateDB
 void CMusikLibrary::WriteMP3Tag( const CMusikSong & song, bool ClearAll )
 {
 	ID3_Tag	id3Tag;
-	id3Tag.Link( ( const char* )ConvFNToFieldMB( filename ) , ID3TT_ALL );
+	id3Tag.Link( ( const char* )ConvFNToFieldMB( song.Filename ) , ID3TT_ALL );
 
 	//--- itterate through and delete ALL TAG INFO ---//
 	if ( ClearAll )

@@ -110,7 +110,7 @@ void* MusikActivityRenameThread::Entry()
 			//--------------------------//
 			if ( g_Prefs.nActBoxWrite == 1 )
 			{
-				WriteTag( m_Songs.Item( i ), (bool)g_Prefs.nActBoxClear );
+				g_Library.WriteTag( m_Songs.Item( i ), (bool)g_Prefs.nActBoxClear );
 			}
 
 			//-------------------//

@@ -114,7 +114,7 @@ public:
 	bool RetagFile			( CMusikSong* song );
 	bool ReplaceMask		( wxString *sSrc, wxString sMask, wxString sTarget, bool bReplaceAll = true  );
 	void ClearDirtyTags		( bool bInform );
-	bool WriteTag			(  CMusikSong & song, bool ClearAll, bool bUpdateDB = true );
+	void WriteTag			(  CMusikSong & song, bool ClearAll, bool bUpdateDB = true );
 	
 	//----------------//
 	//--- removing ---//
