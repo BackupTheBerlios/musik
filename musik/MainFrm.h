@@ -135,6 +135,7 @@ public:
 	void SynchronizeDirs();
 	void PurgeObseleteFiles();
 	void RestoreFromTray();
+	void SaveWindowState();
 
 	// to save window state
 	virtual BOOL DestroyWindow();

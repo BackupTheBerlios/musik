@@ -511,15 +511,13 @@ void CMainFrame::Cleanmusik()
 
 void CMainFrame::LoadDlgSize()
 {
-	CSize dlg_size = m_Prefs->GetDlgSize();
-	CPoint dlg_pos = m_Prefs->GetDlgPos();
-
-	CRect rcNormal = CRect( dlg_pos, dlg_size );
+	CRect rcNormal = CRect( m_Prefs->GetDlgPos(), m_Prefs->GetDlgSize() );
+	MoveWindow( rcNormal );
 	
 	if ( m_Prefs->IsMaximized() )
 	{
 		WINDOWPLACEMENT max;
-		max.showCmd = SW_SHOWMAXIMIZED;
+		max.showCmd = SW_MAXIMIZE;
 		max.rcNormalPosition = rcNormal;
 		SetWindowPlacement( &max );
 		return;
@@ -932,22 +930,33 @@ void CMainFrame::OnDestroy()
 {
 	CSizingControlBar::GlobalSaveState( this, "musikDockBars" );
 	
-	CRect rc_dlg;
-	GetWindowRect( &rc_dlg );
+	SaveWindowState();
 
-	bool maximized = false;
+	CFrameWnd::OnDestroy();
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::SaveWindowState()
+{
 	WINDOWPLACEMENT max;
 	GetWindowPlacement( &max );
 
-	if ( max.showCmd == SW_SHOWMAXIMIZED )
-		maximized = true;
+
+	if ( max.showCmd & SW_SHOWMAXIMIZED )
+		m_Prefs->SetMaximized( true );
 	else
+		m_Prefs->SetMaximized( false );
+
+	if ( !( max.showCmd & SW_SHOWMINIMIZED ) && !( max.showCmd & SW_HIDE ) )
+	{
+		CRect rc_dlg;
+		GetWindowRect( &rc_dlg );
+
 		m_Prefs->SetDlgSize( CSize( rc_dlg.right - rc_dlg.left, rc_dlg.bottom - rc_dlg.top ) );
-
-	m_Prefs->SetDlgPos( CPoint( rc_dlg.left, rc_dlg.top ) );
-	m_Prefs->SetMaximized( maximized );
-
-	CFrameWnd::OnDestroy();
+		m_Prefs->SetDlgPos( CPoint( rc_dlg.left, rc_dlg.top ) );
+		m_Prefs->SetMaximized( false );
+	}
 }
 
 ///////////////////////////////////////////////////
@@ -1952,22 +1961,37 @@ void CMainFrame::OnSysCommand(UINT nID, LPARAM lParam)
 		return;
 	}
 
-	if ( m_Prefs->MinimizeToTray() )
+	if ( nID == SC_MINIMIZE )
 	{
-		if ( nID == SC_MINIMIZE )
-		{
-			ShowWindow( SW_MINIMIZE );
-			ShowWindow( SW_HIDE );
+		SaveWindowState();
+
+		ShowWindow( SW_MINIMIZE );
+		ShowWindow( SW_HIDE );
+
+		if ( m_Prefs->MinimizeToTray() )
 			ShowTrayIcon();
-			return;
-		}
-		else if ( nID == SC_RESTORE )
-		{
-			ShowWindow( SW_SHOW );
-			HideTrayIcon();
-			return;
-		}
+
+		return;
 	}
+
+	// dunno what it is, but 61730 gets
+	// called when double clicking the title
+	// bar to restore...
+	else if ( nID == SC_RESTORE || nID == 61730 )
+	{
+		ShowWindow( SW_RESTORE );
+
+		CRect rcNormal = CRect( m_Prefs->GetDlgPos(), m_Prefs->GetDlgSize() );
+		MoveWindow( rcNormal );
+
+		if ( m_Prefs->MinimizeToTray() )
+			HideTrayIcon();
+
+		return;
+	}
+
+	else if ( nID == SC_MAXIMIZE || nID == 61458 )
+		SaveWindowState();
 
 	CFrameWnd::OnSysCommand(nID, lParam);
 }

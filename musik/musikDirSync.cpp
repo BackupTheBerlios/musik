@@ -5,7 +5,6 @@
 #include "musikDirSync.h"
 
 #include "../musikCore/include/musikLibrary.h"
-#include ".\musikdirsync.h"
 
 ///////////////////////////////////////////////////
 
@@ -184,7 +183,7 @@ bool CmusikDirSync::ValidatePath( const CString& path )
 	// display conflicts and ask user what to do
 	if ( conflict_arr.size() )
 	{
-		if ( MessageBox( _T( "The path entered conflicts with the following paths:\n\n" ) + conflict_err + _T( "\nWould you like musik:Cube to fix this conflict for you?" ), MUSIK_VERSION_STR, MB_ICONINFORMATION | MB_YESNO ) == IDYES )
+		if ( MessageBox( _T( "The path entered conflicts with the following paths:\n\n" ) + conflict_err + _T( "\nWould you like musikCube to fix this conflict for you?" ), MUSIK_VERSION_STR, MB_ICONINFORMATION | MB_YESNO ) == IDYES )
 		{
 			int count = m_wndPaths.GetCount();
 		

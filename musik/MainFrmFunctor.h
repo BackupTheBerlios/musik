@@ -48,7 +48,7 @@ public:
 
 	virtual void OnPlaybackFailed()
 	{
-		MessageBox( NULL, "Playback failed.\n\nThis needs to post an event to the main frame.", "musik:Cube", MB_ICONINFORMATION );
+		MessageBox( NULL, "Playback failed.\n\nThis needs to post an event to the main frame.", "musikCube", MB_ICONINFORMATION );
 	}
 
 private:
