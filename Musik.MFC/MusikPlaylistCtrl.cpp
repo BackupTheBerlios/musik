@@ -157,6 +157,11 @@ void CMusikPlaylistCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 		else if ( m_Prefs->GetPlaylistCol( nSub ) == MUSIK_LIBRARY_TYPE_RATING )
 			sValue = GetRating( nItem );
 
+		// if we have a time value, it was stored as 
+		// milliseconds, so it needs to be formatted
+		else if ( m_Prefs->GetPlaylistCol( nSub ) == MUSIK_LIBRARY_TYPE_DURATION )
+			sValue = GetTimeStr( nItem );
+
 		// otherwise, just use the value we are supposed to
 		else
 			sValue = m_SongInfoCache->items()->at( nItem - m_SongInfoCache->GetFirst() ).GetField( nType );
@@ -217,39 +222,6 @@ void CMusikPlaylistCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 
 ///////////////////////////////////////////////////
 
-CString CMusikPlaylistCtrl::GetRating( int item )
-{
-	int nRating = atoi( m_SongInfoCache->items()->at( item - m_SongInfoCache->GetFirst() ).GetRating() );
-
-	CString sRating;
-	switch ( nRating )
-	{
-	case 1:
-		sRating = _T( "hiiii" );
-		break;
-	case 2:
-		sRating = _T( "hhiii" );
-		break;
-	case 3:
-		sRating = _T( "hhhii" );
-		break;
-	case 4:
-		sRating = _T( "hhhhi" );
-		break;
-	case 5:
-        sRating = _T( "hhhhh" );
-		break;
-	case 0:
-	default:
-		sRating = _T( "iiiii" );
-		break;
-	}
-
-	return sRating;
-}
-
-///////////////////////////////////////////////////
-
 void CMusikPlaylistCtrl::InitFonts()
 {
 	m_Items.CreateStockObject( DEFAULT_GUI_FONT );
@@ -289,3 +261,58 @@ void CMusikPlaylistCtrl::OnPaint()
 
 ///////////////////////////////////////////////////
 
+CString CMusikPlaylistCtrl::GetTimeStr( int item )
+{
+	int time_ms  = atoi( m_SongInfoCache->items()->at( item - m_SongInfoCache->GetFirst() ).GetDuration() );
+
+	CString sTime;
+
+	int ms = time_ms;
+	int hours = ms / 1000 / 60 / 60;
+	ms -= hours * 1000 * 60 * 60;
+	int minutes = ms / 1000 / 60;
+	ms -= minutes * 1000 * 60;
+	int seconds = ms / 1000;
+
+	if ( hours > 0 )
+		sTime.Format( _T( "%d:%02d:%02d" ), hours, minutes, seconds );
+	else
+		sTime.Format( _T( "%d:%02d" ), minutes, seconds );
+	
+	return sTime;
+}
+
+///////////////////////////////////////////////////
+
+CString CMusikPlaylistCtrl::GetRating( int item )
+{
+	int nRating = atoi( m_SongInfoCache->items()->at( item - m_SongInfoCache->GetFirst() ).GetRating() );
+
+	CString sRating;
+	switch ( nRating )
+	{
+	case 1:
+		sRating = _T( "hiiii" );
+		break;
+	case 2:
+		sRating = _T( "hhiii" );
+		break;
+	case 3:
+		sRating = _T( "hhhii" );
+		break;
+	case 4:
+		sRating = _T( "hhhhi" );
+		break;
+	case 5:
+        sRating = _T( "hhhhh" );
+		break;
+	case 0:
+	default:
+		sRating = _T( "iiiii" );
+		break;
+	}
+
+	return sRating;
+}
+
+///////////////////////////////////////////////////

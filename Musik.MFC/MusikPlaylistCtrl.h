@@ -45,7 +45,8 @@ private:
 	void ResetColumns();
 	void SaveColumns();
 	CString GetRating( int item );
-	
+	CString GetTimeStr( int item );
+
 //-------------------------------------------------//
 //--- message maps								---//
 //-------------------------------------------------//
