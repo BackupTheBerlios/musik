@@ -225,7 +225,7 @@ static void MainFrameWorker( CmusikThread* thread )
 	// sleep if we go idle
 	ACE_Time_Value suspend, sleep;
 	suspend.set( 0.1f );
-	sleep.set( 0.5f );
+	sleep.set( 1.0f );
 
 	CString sCaption;
 	while ( !thread->m_Abort )

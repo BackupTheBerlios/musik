@@ -175,6 +175,7 @@ protected:
 	afx_msg void OnLvnBegindrag(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnLvnMarqueeBegin(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnLvnColumnclick(NMHDR *pNMHDR, LRESULT *pResult);
 
 	// CmusikPlaylistDropTarget calls
 	// this function once files have
@@ -197,6 +198,9 @@ private:
 	// dnd stuff
 	bool m_IsWinNT;
 	size_t m_ClipboardFormat;
+
+	// current sorted column
+	int m_Col;
 };
 
 ///////////////////////////////////////////////////

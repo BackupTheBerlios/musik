@@ -62,6 +62,7 @@
 #include "../musikCore/include/musikBatchAdd.h"
 
 #include "MEMDC.H"
+#include ".\musikplaylistctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -87,6 +88,7 @@ BEGIN_MESSAGE_MAP(CmusikPlaylistCtrl, CmusikListCtrl)
 	ON_NOTIFY_REFLECT(LVN_BEGINDRAG, OnLvnBegindrag)
 	ON_WM_KEYDOWN()
 	ON_NOTIFY_REFLECT(LVN_MARQUEEBEGIN, OnLvnMarqueeBegin)
+	ON_NOTIFY_REFLECT(LVN_COLUMNCLICK, OnLvnColumnclick)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -98,6 +100,9 @@ CmusikPlaylistCtrl::CmusikPlaylistCtrl( CFrameWnd* mainwnd, CmusikLibrary* libra
 	m_Library	= library;
 	m_Prefs		= prefs;
 	m_Player	= player;
+
+	// no sorting yet
+	m_Col		= -1;
 
 	// is a column being rearranged?
 	m_Arranging = false;
@@ -140,6 +145,15 @@ CmusikPlaylistCtrl::~CmusikPlaylistCtrl()
 
 void CmusikPlaylistCtrl::ResetColumns()
 {
+	SetRedraw( FALSE );
+	GetHeaderCtrl()->SetRedraw( FALSE );
+
+	DeleteAllItems();
+
+	CmusikPlaylist* pList = GetPlaylist();
+	m_Playlist = NULL;
+	UpdateV();
+
 	while ( DeleteColumn( 0 ) );
 
 	for ( size_t i = 0; i < m_Prefs->GetPlaylistColCount(); i++ )
@@ -147,6 +161,12 @@ void CmusikPlaylistCtrl::ResetColumns()
 		InsertColumn( (int)i, m_Library->GetSongField( m_Prefs->GetPlaylistCol( i ) ) );
 		SetColumnWidth( (int)i, m_Prefs->GetPlaylistColWidth( i ) );
 	}
+
+	SetRedraw( TRUE );
+	GetHeaderCtrl()->SetRedraw( TRUE );
+
+	m_Playlist = pList;
+	UpdateV();
 }
 
 ///////////////////////////////////////////////////
@@ -1110,19 +1130,24 @@ void CmusikPlaylistCtrl::OnDragColumn( int source, int dest )
 
 	m_Arranging = true;
 
+	CIntArray order = m_Prefs->GetPlaylistOrder();
+	CIntArray sizes = m_Prefs->GetPlaylistSizes();
 
-	/*
+	order.insert( order.begin() + dest, order.at( source ) );
+	sizes.insert( sizes.begin() + dest, sizes.at( source ) );
 
-	LV_COLUMN col;
-	GetColumn( source, &col );
+	if ( source > dest )
+		source++;
 
-	InsertColumn( source, &col );
-*/
-	InsertColumn( source, "test" );
+	order.erase( order.begin() + source );
+	sizes.erase( sizes.begin() + source );
+
+	m_Prefs->SetPlaylistOrder( order );
+	m_Prefs->SetPlaylistSizes( sizes );
 
 	m_Arranging = false;
 
-   // ResetColumns();
+	ResetColumns();
 }
 
 ///////////////////////////////////////////////////
@@ -1159,3 +1184,27 @@ void CmusikPlaylistCtrl::GetRatingExtent()
 }
 
 ///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::OnLvnColumnclick(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
+	
+	if ( pNMLV->iSubItem >= 0 )
+	{
+		bool ascending = true;
+		if ( m_Col != -1 && m_Col == pNMLV->iSubItem )
+		{
+			ascending = false;
+			m_Col = -1;
+		}
+		else
+			m_Col = pNMLV->iSubItem;
+
+		int type = m_Prefs->GetPlaylistCol( pNMLV->iSubItem );
+		m_Library->SortPlaylist( m_Playlist, type, ascending );
+
+		UpdateV();
+	}
+
+	*pResult = 0;
+}
