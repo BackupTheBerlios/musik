@@ -146,6 +146,7 @@ private:
 	int m_Player_Rate;
 	int m_Player_Max_Channels;
 	int m_Player_Volume;
+	int m_Player_Playmode;
 
 	// crossfader
 	int m_Crossfader_Current;

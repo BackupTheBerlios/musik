@@ -105,8 +105,14 @@ BEGIN
     BEGIN
         POPUP "Playback Mode"
         BEGIN
-            MENUITEM "Repeat",                      ID_PLAYBACKMODE_REPEAT
-            MENUITEM "Shuffle",                     ID_PLAYBACKMODE_SHUFFLE
+            MENUITEM "Repeat Single",               ID_PLAYBACKMODE_REPEATSINGLE
+
+            MENUITEM "Repeat Playlist",             ID_PLAYBACKMODE_REPEATPLAYLIST
+
+            MENUITEM "Intro",                       ID_PLAYBACKMODE_INTRO
+            MENUITEM SEPARATOR
+            MENUITEM "Shuffle Current Playlist",    ID_PLAYBACKMODE_SHUFFLECURRENTPLAYLIST
+
         END
         MENUITEM SEPARATOR
         MENUITEM "Crossfader Enabled",          ID_AUDIO_CROSSFADER_ENABLED
