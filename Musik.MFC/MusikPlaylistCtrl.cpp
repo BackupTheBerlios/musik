@@ -21,12 +21,15 @@ CMusikPlaylistCtrl::CMusikPlaylistCtrl( CMusikLibrary* library, CMusikPrefs* pre
 	m_Library = library;
 	m_Prefs = prefs;
 	m_Playlist = playlist;
+	InitFonts();
 }
 
 ///////////////////////////////////////////////////
 
 CMusikPlaylistCtrl::~CMusikPlaylistCtrl()
 {
+	delete m_Bullets;
+	delete m_Items;
 }
 
 ///////////////////////////////////////////////////
@@ -143,10 +146,12 @@ void CMusikPlaylistCtrl::SaveColumns()
 
 void CMusikPlaylistCtrl::UpdateV()
 {
+	SetRedraw( false );
 	SetItemCountEx( m_Playlist->size(), LVSICF_NOINVALIDATEALL | LVSICF_NOSCROLL );
 
 	CRect rcClient;
 	GetClientRect( &rcClient );
+	SetRedraw( true );
 	RedrawWindow( rcClient );
 }
 
@@ -180,6 +185,10 @@ void CMusikPlaylistCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 	// dummy function, its just here to relay messages to the
 	// NM_CUSTOMDRAW function, which will draw the actual items
 
+	//CRect rcItem;
+	//GetItemRect( pDispInfo->item.iItem, &rcItem, LVIR_BOUNDS );
+	//DrawItem( GetDC(), pDispInfo->item.iItem, rcItem );
+
 	*pResult = 0;
 }
 
@@ -200,8 +209,6 @@ void CMusikPlaylistCtrl::OnPaint()
 	CRect clip;
 	memDC.GetClipBox(&clip);
 	memDC.FillSolidRect( clip, GetSysColor( COLOR_BTNHILIGHT ) );
-
-	SetTextBkColor( GetSysColor( COLOR_BTNHILIGHT ) );
 	   
 	DefWindowProc(WM_PAINT, (WPARAM)memDC->m_hDC, (LPARAM)0);
 }
@@ -235,6 +242,7 @@ void CMusikPlaylistCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 		CDC* pDC = CDC::FromHandle(pLVCD->nmcd.hdc);
 		CRect item_rect;
 		GetItemRect( iRow, &item_rect, LVIR_BOUNDS ); 
+
 		DrawItem( pDC, iRow, item_rect );
 
 		*pResult = CDRF_SKIPDEFAULT;
@@ -317,13 +325,57 @@ void CMusikPlaylistCtrl::DrawItem( CDC* pDC, int item, const CRect& rect )
 			text = GetSysColor( COLOR_WINDOWTEXT );
 		}
 	}
-	
-	dc.FillSolidRect( &rect, bg );
 
 	// draw the text
+	CRect rcSubItem;
+	CString sSubItem;
+	dc.SetTextColor( text );
 	for ( size_t i = 0; i < m_Prefs->GetPlaylistColCount(); i++ )
 	{
-	
+		GetSubItemRect( item, i, LVIR_BOUNDS, rcSubItem );
+		if ( m_Prefs->GetPlaylistCol( i ) == MUSIK_LIBRARY_TYPE_RATING )
+		{
+			sSubItem = GetRating( item );
+			dc.FillSolidRect( &rcSubItem, bg );
+			dc.SelectObject( m_Bullets );
+			dc.TextOut( rcSubItem.left + 6, rcSubItem.top, sSubItem );
+		}
+		
+		else
+		{
+			sSubItem = m_Playlist->items()->at( item ).GetField( m_Prefs->GetPlaylistCol ( i ) );
+			dc.FillSolidRect( &rcSubItem, bg );
+			dc.SelectObject( m_Items );
+			dc.TextOut( rcSubItem.left + 6, rcSubItem.top, sSubItem );
+		}
 	}
+}
 
+///////////////////////////////////////////////////
+
+void CMusikPlaylistCtrl::InitFonts()
+{
+	NONCLIENTMETRICS info;
+	info.cbSize = sizeof( info );
+
+	::SystemParametersInfo( SPI_GETNONCLIENTMETRICS, sizeof( info ), &info, 0 );
+
+	LOGFONT lf;
+	memset(&lf, 0, sizeof (LOGFONT));
+
+	CWindowDC dc(NULL);
+	lf.lfCharSet = (BYTE)GetTextCharsetInfo(dc.GetSafeHdc(), NULL, 0);
+
+	lf.lfHeight = info.lfMenuFont.lfHeight;
+	lf.lfWeight = info.lfMenuFont.lfWeight;
+	lf.lfItalic = info.lfMenuFont.lfItalic;	
+
+	// check if we should use system font
+	_tcscpy(lf.lfFaceName, info.lfMenuFont.lfFaceName);
+
+	m_Items = new CFont();
+	m_Items->CreateFontIndirect( &lf );
+
+    m_Bullets = new CFont();
+	m_Bullets->CreatePointFont( 96, "Marlett" );
 }
