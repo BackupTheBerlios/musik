@@ -4,8 +4,7 @@
 #include "wx/wxprec.h"
 #include "wx/filename.h"
 #include "sqlite.h"
-
-
+#include "MusikPlaylist.h"
 
 class CMusikLibrary
 {
