@@ -22,3 +22,4 @@ public:
 	bool WriteMetaData(const CSongMetaData & MetaData,bool bClearAll = false);
 };
 #endif
+
