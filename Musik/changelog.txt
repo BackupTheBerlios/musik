@@ -1,4 +1,5 @@
 0.1.2 to 0.1.3
+ + Optimized for wxWindows 2.5 (CVS), and share a common codebase now.
  - Fixed Bug: adjusting the volume during song playback could cause the next crossfade to cut out
  - Fixed Bug: VBR crashing. If non Xing VBR, Musik would crash.
  - Fixed Bug: Confusion when attempting to add / show a playlist that exists or is not visible in the Sources box
