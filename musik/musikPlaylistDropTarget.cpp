@@ -83,12 +83,14 @@ extern "C" const GUID __declspec(selectany) IID_IDropTargetHelper =
 
 ///////////////////////////////////////////////////
 
-CmusikPlaylistDropTarget::CmusikPlaylistDropTarget( CmusikPlaylistCtrl* pList, UINT uSourceID, UINT uSelectionID_L, UINT uSelectionID_R )
+CmusikPlaylistDropTarget::CmusikPlaylistDropTarget( CmusikPlaylistCtrl* pList, UINT uDropID_L, UINT uDropID_R, UINT uSourcesID, UINT uSelectionID_L, UINT uSelectionID_R )
 {
 	m_pList = pList;
 	m_piDropHelper = NULL;
 	m_bUseDnDHelper = false;
-	m_uSourceID = uSourceID;
+	m_uDropID_L = uDropID_L;
+	m_uDropID_R = uDropID_R;
+	m_uSourcesID = uSourcesID;
 	m_uSelectionID_L = uSelectionID_L;
 	m_uSelectionID_R = uSelectionID_R;
 
@@ -118,14 +120,15 @@ DROPEFFECT CmusikPlaylistDropTarget::OnDragEnter ( CWnd* pWnd, COleDataObject* p
 {
 	DROPEFFECT dwEffect = DROPEFFECT_NONE;
 
-    // Check for our own custom clipboard format in the data object.  If it's
-    // present, then the DnD was initiated from our own window, and we won't
-    // accept the drop.
-    // If it's not present, then we check for CF_HDROP data in the data object.
-	if ( pDataObject->GetGlobalData( m_uSelectionID_L ) || pDataObject->GetGlobalData( m_uSelectionID_R ) )
+	// we don't want to accept dnd from the selection controls,
+	// the sources controls, or the right click playlist
+	if ( pDataObject->GetGlobalData( m_uSelectionID_L ) || 
+		pDataObject->GetGlobalData( m_uSelectionID_R ) ||
+		pDataObject->GetGlobalData( m_uSourcesID ) ||
+		pDataObject->GetGlobalData( m_uDropID_R ) )
 		return DROPEFFECT_NONE;
 
-	if ( pDataObject->GetGlobalData ( m_uSourceID ) == NULL )
+	if ( pDataObject->GetGlobalData ( m_uDropID_L ) )
 	{
 		// Look for CF_HDROP data in the data object, and accept the drop if
 		// it's there.
@@ -157,10 +160,13 @@ DROPEFFECT CmusikPlaylistDropTarget::OnDragOver ( CWnd* pWnd, COleDataObject* pD
     // Check for our own custom clipboard format in the data object.  If it's
     // present, then the DnD was initiated from our own window, and we want to
 	// rearrange items. Set the flag in the playlist control.
-	if ( pDataObject->GetGlobalData( m_uSelectionID_L ) || pDataObject->GetGlobalData( m_uSelectionID_R ) )
+	if ( pDataObject->GetGlobalData( m_uSelectionID_L ) || 
+		pDataObject->GetGlobalData( m_uSelectionID_R ) ||
+		pDataObject->GetGlobalData( m_uSourcesID ) ||
+		pDataObject->GetGlobalData( m_uDropID_R ) )
 		return DROPEFFECT_NONE;
 
-    if ( pDataObject->GetGlobalData ( m_uSourceID ) != NULL )
+    if ( pDataObject->GetGlobalData ( m_uDropID_L ) )
 		m_pList->m_DropArrange = true;
 	else
 		m_pList->m_DropArrange = false;

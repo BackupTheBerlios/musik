@@ -1,7 +1,12 @@
 -------------------------------------------------------------------------
 
 a2:
-
+  
+  - playlists are now stored as filenames, not ids.
+  - memory leak when prompting to save playlist.
+  - fixed sources drag and drop from standard playlists
+  - disallow any undesirable drag and drop activity
+  - playlist drag and dropping crash when not playing
   - from selection boxes -> playlist drag and drop bug fix
   - CTRL + A / CTRL + D in playlist to select and deslect 
     all the items

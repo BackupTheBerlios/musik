@@ -749,18 +749,19 @@ void CmusikSourcesCtrl::DoDrag( CmusikPropTreeItem* pItem )
 		MessageBox( "This operation is not supported yet.", "musik", MB_ICONINFORMATION | MB_OK );
 
 
-	if ( !files.size() )
-		return;
-
-	// CStringList containing files
-	for ( size_t i = 0; i < files.size(); i++ )
+	if ( files.size() )
 	{
-		lsDraggedFiles.AddTail( files.at( i ) );
-		uBuffSize += files.at( i ).GetLength() + 1;
+		// CStringList containing files
+		for ( size_t i = 0; i < files.size(); i++ )
+		{
+			lsDraggedFiles.AddTail( files.at( i ) );
+			uBuffSize += files.at( i ).GetLength() + 1;
+		}
+
+		files.clear();
 	}
 
-	files.clear();
-
+	
 	// Add 1 extra for the final null char, and the size of the DROPFILES struct.
 	uBuffSize = sizeof(DROPFILES) + sizeof(TCHAR) * (uBuffSize + 1);
 

@@ -685,6 +685,8 @@ void CmusikPlaylistCtrl::SavePlaylist( bool check_prompt )
 
 				if ( nRes == IDOK )
 					m_Library->RewriteStdPlaylist( m_Playlist->GetPlaylistID(), m_Playlist );
+
+				delete pDlg;
 			}
 
 			// otherwise just take the pref's default

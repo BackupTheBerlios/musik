@@ -763,12 +763,6 @@ CmusikString CmusikSelectionCtrl::GetSelQuery()
 	CmusikStringArray selected_items;
 	GetSelItems( selected_items );
 
-	// parent:
-	//{select songid from song} where album like ... and 
-
-	// child:
-	//{select songid from song} album like {album1} and ( artist = 'a' or artist = 'b' or artist = 'c' ) or album like {album2} and ( artist = 'a'... ) 
-
 	if ( selected_items.size() )
 	{
 		CmusikString sSel;

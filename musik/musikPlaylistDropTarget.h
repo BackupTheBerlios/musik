@@ -64,14 +64,16 @@ public:
 				
 	void OnDragLeave ( CWnd* pWnd );
 
-    CmusikPlaylistDropTarget ( CmusikPlaylistCtrl* pList, UINT uSourceID, UINT uSelectionID_L, UINT uSelectionID_R );
+    CmusikPlaylistDropTarget ( CmusikPlaylistCtrl* pList, UINT uDropID_L, UINT uDropID_R, UINT uSourcesID, UINT uSelectionID_L, UINT uSelectionID_R );
 	virtual ~CmusikPlaylistDropTarget();
 
 protected:
     CmusikPlaylistCtrl*	m_pList;
     IDropTargetHelper*	m_piDropHelper;
     bool				m_bUseDnDHelper;
-	UINT				m_uSourceID;
+	UINT				m_uDropID_L;
+	UINT				m_uDropID_R;
+	UINT				m_uSourcesID;
 	UINT				m_uSelectionID_L;
 	UINT				m_uSelectionID_R;
 
