@@ -24,15 +24,12 @@
 //------------------------------------------------------------------//
 //--- misc utility functions, see implementation for description ---//
 //------------------------------------------------------------------//
-wxString		DelimitedInfoAt		( wxString sStr, int nIndex );
 wxString		GetGenre			( wxString sGenre );
 int				GetGenreID			( wxString sGenre );
 wxArrayString	DelimitStr			( wxString sStr, wxString sDel, bool bRemoveDelimiter = true );
 wxArrayString	GetPlaylistDir		();
 wxString		MStoStr				( int timems );
-int				TimeToSec			( wxString sTime );
 wxArrayString	FileToStringArray	( wxString sFilename );
-bool			FileExists			( wxString sName );
 int				MusikRound			( float x );
 int				FindStrInArray		( wxArrayString* array, wxString pattern );
 wxString		SanitizedString		( wxString str );
@@ -50,14 +47,6 @@ bool			SetFramePlacement	( wxFrame* frame, wxString place );
 
 void			SeedRandom			( unsigned long s );
 long			GetRandomNumber		();
-
-//-------------------------//
-//--- unicode functions ---//
-//-------------------------//
-int StringToInt			( wxString str );
-int StringToInt			( const char* pChar );
-wxString IntTowxString	( int n );
-double StringToDouble	( wxString str );
 
 //-------------------------//
 //--- Unicode functions ---//
@@ -88,7 +77,8 @@ inline wxString ConvDBFieldToWX( const char *pchar )
 {
 	return wxConvLocal.cMB2WX( pchar );
 }
-inline int StringToInt( const wxString &str )
+
+inline int wxStringToInt( const wxString &str )
 {
 	long lRet;
 	str.ToLong( &lRet );

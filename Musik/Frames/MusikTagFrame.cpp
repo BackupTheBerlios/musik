@@ -536,7 +536,7 @@ void MusikTagFrame::CheckChangesBatch()
 		}
 
 		//--- track number ---//
-		int nTrackNum = StringToInt( tcTitle->GetValue() );
+		int nTrackNum = wxStringToInt( tcTitle->GetValue() );
 		if ( tcTrackNum->IsEnabled() && m_Songs.Item( i ).TrackNum != nTrackNum )
 		{
 			m_Songs.Item( i ).TrackNum = nTrackNum;

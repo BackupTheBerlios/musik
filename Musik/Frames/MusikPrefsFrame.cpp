@@ -692,9 +692,9 @@ void MusikPrefsFrame::SavePrefs()
 		g_Prefs.nSndDevice = cmbSndDevice->GetSelection();
 		bRestartFMOD = true;
 	}
-	if ( StringToInt( cmbPlayRate->GetString( cmbPlayRate->GetSelection() ) ) != g_Prefs.nSndRate )
+	if ( wxStringToInt( cmbPlayRate->GetString( cmbPlayRate->GetSelection() ) ) != g_Prefs.nSndRate )
 	{
-		int nRate = StringToInt( cmbPlayRate->GetString( cmbPlayRate->GetSelection() ) );
+		int nRate = wxStringToInt( cmbPlayRate->GetString( cmbPlayRate->GetSelection() ) );
 		g_Prefs.nSndRate = nRate;
 		bRestartFMOD = true;
 	}

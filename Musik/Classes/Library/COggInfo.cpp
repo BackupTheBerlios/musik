@@ -65,7 +65,7 @@ bool COggInfo::loadInfo( const wxString &filename )
 			m_Song.Title = justfilename;
 		}
 		if ( tracknum.Length() > 0 )
-			m_Song.TrackNum = StringToInt( tracknum );
+			m_Song.TrackNum = wxStringToInt( tracknum );
 		if ( genre.Length() > 0 )
 			m_Song.Genre = genre;
 		if ( year.Length() > 0 )

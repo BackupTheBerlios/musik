@@ -429,7 +429,7 @@ void CSourcesListBox::Load()
 
 void CSourcesListBox::Save()
 {
-	if ( FileExists( MUSIK_SOURCES_FILENAME ) )
+	if ( wxFileExists( MUSIK_SOURCES_FILENAME ) )
 		wxRemoveFile( MUSIK_SOURCES_FILENAME );
 	
 	wxTextFile Out;
