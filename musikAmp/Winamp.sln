@@ -1,0 +1,21 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Time", "Winamp.vcproj", "{181115CC-1671-4C14-8D60-A94EAC63DCBB}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{181115CC-1671-4C14-8D60-A94EAC63DCBB}.Debug.ActiveCfg = Debug|Win32
+		{181115CC-1671-4C14-8D60-A94EAC63DCBB}.Debug.Build.0 = Debug|Win32
+		{181115CC-1671-4C14-8D60-A94EAC63DCBB}.Release.ActiveCfg = Release|Win32
+		{181115CC-1671-4C14-8D60-A94EAC63DCBB}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
