@@ -1,4 +1,49 @@
 ///////////////////////////////////////////////////
+// 
+// Info:
+//
+//   musik is a cross platform, open source
+//   multimedia library. More information at:
+//
+//     http://musik.berlios.de
+//     http://musik.sourceforge.net
+//
+// Copyright and Credits:
+//
+//   Copyright      : Casey Langen, 2003
+//   Casey Langen   : Lead Developer, Project Manager. E-Mail: casey@bak.rr.com
+//   Dustin Carter  : Developer, pain in the ass
+//   Simon Windmill : Developer, the most helpful person thats immediately available ;)
+//
+// License:
+//
+//   See license.txt included with this distribution
+//
+///////////////////////////////////////////////////
+//
+// Class(s): 
+//
+//   CmusikHeaderCtrl
+//
+// Filename(s): 
+//
+//   musikHeaderCtrl.h, musikHeaderCtrl.cpp
+//
+// Information:
+//
+//   A custom header control that allows drag and drop rearranging
+//   to replace the one that was done very poorly in MFC
+// 
+// Usage: 
+//
+//   CmusikListCtrl will subclass the default header with this one,
+//   so integration should be seamless.
+//
+// Original Credit:
+//
+//   http://www.codeguru.com/listview/drag_col.shtml
+//
+///////////////////////////////////////////////////
 
 #include "stdafx.h"
 #include "musik.h"

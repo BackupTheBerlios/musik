@@ -1,44 +1,46 @@
 ///////////////////////////////////////////////////
+// 
+// Info:
 //
-// Class(s): 
+//   musik is a cross platform, open source
+//   multimedia library. More information at:
 //
-//   CmusikListCtrl 
-//
-// Filename(s): 
-//
-//   CmusikListCtrl.h,
-//   CmusikListCtrl.cpp
-//
-// Information:
-//
-//   A CListCtrl instance that does things that musik needs,
-//   such as drag and drop and hiding scrollbars.
-//
-// Example: 
-//
-//   CmusikSourcesCtrl, CmusikPlaylistCtrl
-//
-// Usage: 
-//
-//   See examples.
+//     http://musik.berlios.de
+//     http://musik.sourceforge.net
 //
 // Copyright and Credits:
 //
 //   Copyright      : Casey Langen, 2003
-//
-//   Casey Langen   : Lead Developer, Project Manager
+//   Casey Langen   : Lead Developer, Project Manager. E-Mail: casey@bak.rr.com
 //   Dustin Carter  : Developer, pain in the ass
 //   Simon Windmill : Developer, the most helpful person thats immediately available ;)
-// 
+//
 // License:
 //
 //   See license.txt included with this distribution
 //
 ///////////////////////////////////////////////////
 //
-// Hide Scrollbar code taken from: 
-//   Lars [Large] Werner
-//   http://www.codeproject.com/listctrl/listctrlsbhide.asp
+// Class(s): 
+//
+//   CmusikListCtrl
+//
+// Filename(s): 
+//
+//   musikListCtrl.h, musikListCtrl.cpp
+//
+// Information:
+//
+//   musikCube's custom list control
+// 
+// Usage: 
+//
+//   A few specialized functions, like hiding scrollbars
+//   and a better header DND implementation
+//
+// Some code adapted from:
+//
+//   Lars [Large] Werner: http://www.codeproject.com/listctrl/listctrlsbhide.asp
 //
 ///////////////////////////////////////////////////
 

@@ -1,4 +1,48 @@
 ///////////////////////////////////////////////////
+// 
+// Info:
+//
+//   musik is a cross platform, open source
+//   multimedia library. More information at:
+//
+//     http://musik.berlios.de
+//     http://musik.sourceforge.net
+//
+// Copyright and Credits:
+//
+//   Copyright      : Casey Langen, 2003
+//   Casey Langen   : Lead Developer, Project Manager. E-Mail: casey@bak.rr.com
+//   Dustin Carter  : Developer, pain in the ass
+//   Simon Windmill : Developer, the most helpful person thats immediately available ;)
+//
+// License:
+//
+//   See license.txt included with this distribution
+//
+///////////////////////////////////////////////////
+//
+// Class(s): 
+//
+//   CmusikPlaylistCtrl
+//
+// Filename(s): 
+//
+//   musikPlaylistCtrl.h, musikPlaylistCtrl.cpp
+//
+// Information:
+//
+//   musikCube's playlist control, based on a CmusikListCtrl
+// 
+// Usage: 
+//
+//   The control is virtual and fairly specialized, read
+//   the header file for more information.
+//
+// Some code adapted from:
+//
+//   Michael Dunn: http://www.codeproject.com/shell/explorerdragdrop.asp?target=drag%7C%2Bdrop
+//
+///////////////////////////////////////////////////
 
 #pragma once
 
