@@ -814,8 +814,7 @@ bool CmusikPlaylistCtrl::PlayItem_AddNP( int n )
 	int insert_at = -1;
 
 	// get activated item's songid
-	CmusikSong song;
-	song.SetID( m_Playlist->GetSongID( n ) );
+	CmusikSong song = m_Playlist->GetSong( n );
 
 	// assure player has a playlist
 	if ( !m_Player->GetPlaylist() )
@@ -834,7 +833,7 @@ bool CmusikPlaylistCtrl::PlayItem_AddNP( int n )
 			else
 			{
 				insert_at = m_Player->GetIndex() + 1;
-				m_Player->GetPlaylist()->InsertAt( song.GetID(), insert_at ); 
+				m_Player->GetPlaylist()->InsertAt( song, insert_at ); 
 			}
 		}
 		else
@@ -1085,14 +1084,17 @@ void CmusikPlaylistCtrl::OnDropFiles( HDROP hDropInfo )
 		if ( nPos == nFirstSel )
 			return;
 
-		// save the items that are selected
-		CIntArray sel, selids;
-		GetSelectedItems( &sel );
-		GetItemIDs( sel, &selids );
+		// get selected
+		CIntArray sel;
+		GetSelectedItems( sel );
+		
+		CmusikPlaylist sel_songs;
+		GetSelectedSongs( sel_songs );
 
 		// remove selected items from their
 		// current position
 		DeleteItems( sel, false );
+		sel.clear();
 
 		// get the id of the currently playing
 		// song, we'll find it once the drag is done
@@ -1101,7 +1103,8 @@ void CmusikPlaylistCtrl::OnDropFiles( HDROP hDropInfo )
 
 		// insert the items back to their new
 		// position...
-		InsertItems( selids, nFirstSel, nPos );
+		InsertItems( sel_songs, nFirstSel, nPos );
+		sel_songs.Clear();
 
 		// grab the new index..
 		m_Player->FindNewIndex( songid );
@@ -1188,13 +1191,24 @@ void CmusikPlaylistCtrl::OnDropFiles( HDROP hDropInfo )
 
 ///////////////////////////////////////////////////
 
-void CmusikPlaylistCtrl::GetSelectedItems( CIntArray* items )
+void CmusikPlaylistCtrl::GetSelectedItems( CIntArray& items )
 {
-	items->clear();
+	items.clear();
 
     POSITION pos = GetFirstSelectedItemPosition();
 	while ( pos )
-        items->push_back( GetNextSelectedItem ( pos ) );
+        items.push_back( GetNextSelectedItem ( pos ) );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::GetSelectedSongs( CmusikPlaylist& items )
+{
+	items.Clear();
+	
+	POSITION pos = GetFirstSelectedItemPosition();
+	while ( pos )
+        items.Add( m_Playlist->GetSong( GetNextSelectedItem( pos ) ) );
 }
 
 ///////////////////////////////////////////////////
@@ -1264,9 +1278,9 @@ void CmusikPlaylistCtrl::DeleteItems( const CIntArray& items, bool update )
 
 ///////////////////////////////////////////////////
 
-void CmusikPlaylistCtrl::InsertItems( const CIntArray& items, int firstsel, int at, bool update )
+void CmusikPlaylistCtrl::InsertItems( CmusikPlaylist& items, int firstsel, int at, bool update )
 {
-	if ( items.size() <= 0 )
+	if ( items.GetCount() <= 0 )
 		return;
 
 	int nScrollPos = GetScrollPos( SB_VERT );
@@ -1276,12 +1290,12 @@ void CmusikPlaylistCtrl::InsertItems( const CIntArray& items, int firstsel, int 
 	// are dragging up or down.
 	if ( firstsel < at )
 	{
-		at -= ( items.size() - 1 );
+		at -= ( items.GetCount() - 1 );
 		if ( at < -1 )
 			at = -1;
 	}
 
-	m_Playlist->InsertAt( items, at );
+	m_Playlist->InsertAt( items.m_Songs, at );
 
 	if ( update )
 	{
@@ -1291,8 +1305,8 @@ void CmusikPlaylistCtrl::InsertItems( const CIntArray& items, int firstsel, int 
 		// were just rearranged...
 		SetItemState( -1, 0, LVIS_SELECTED );
 		if ( at == -1 )
-			at = GetItemCount() - items.size();
-		for ( size_t i = at; i < at + items.size(); i++ )
+			at = GetItemCount() - items.GetCount();
+		for ( size_t i = at; i < at + items.GetCount(); i++ )
 			SetItemState( i, LVIS_SELECTED, LVIS_SELECTED );
 
 		SetScrollPos( SB_VERT, nScrollPos );
@@ -1846,28 +1860,13 @@ void CmusikPlaylistCtrl::DeleteSelectedItems( bool from_library, bool from_compu
 	}
 
 	CIntArray sel;
-	GetSelectedItems( &sel );
+	GetSelectedItems( sel );
 	DeleteItems( sel, true );
 
 	if ( from_library || ( from_computer && UseTempTable() ) )
 	{
 		int WM_SELBOXREQUESTUPDATE = RegisterWindowMessage( "SELBOXREQUESTUPDATE" );
 		m_Parent->SendMessage( WM_SELBOXREQUESTUPDATE );
-	}
-}
-
-///////////////////////////////////////////////////
-
-void CmusikPlaylistCtrl::GetSelectedSongs( CmusikPlaylist& playlist )
-{
-	playlist.Clear();
-
-	CmusikSong song;
-    POSITION pos = GetFirstSelectedItemPosition();
-	while ( pos )
-	{
-		song.SetID( m_Playlist->GetSongID( GetNextSelectedItem( pos ) ) );
-        playlist.Add( song );
 	}
 }
 

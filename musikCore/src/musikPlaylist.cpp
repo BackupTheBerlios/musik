@@ -237,7 +237,7 @@ CmusikPlaylist::CmusikPlaylist()
 	m_Type = MUSIK_PLAYLIST_TYPE_UNKNOWN;
 
 	m_TotalTime = 0;
-	m_TotalSize = 0.0f;
+	m_TotalSize = 0.0;
 }
 
 ///////////////////////////////////////////////////
@@ -261,7 +261,7 @@ void CmusikPlaylist::Clear()
 	m_Songs.clear();
 
 	m_TotalTime = 0;
-	m_TotalSize = 0.0f;
+	m_TotalSize = 0.0;
 }	
 
 ///////////////////////////////////////////////////
@@ -292,41 +292,55 @@ int CmusikPlaylist::GetSongID( int index )
 
 ///////////////////////////////////////////////////
 
+CmusikSong CmusikPlaylist::GetSong( int index )
+{
+	if ( index >= (int)m_Songs.size() || index < 0 )
+	{
+		CmusikSong bad;
+		return bad;
+	}
+
+	return m_Songs.at( index );
+}
+
+///////////////////////////////////////////////////
+
 void CmusikPlaylist::DeleteAt( size_t pos )
 {
 	if ( pos > m_Songs.size() - 1 )
 		ASSERT( 1 );
 
+	m_TotalTime -= m_Songs.at( pos ).GetDuration();
+	m_TotalSize -= (double)m_Songs.at( pos ).GetFilesize();
 	m_Songs.erase( m_Songs.begin() + pos );
 }
 
 ///////////////////////////////////////////////////
 
-void CmusikPlaylist::InsertAt( int songid, int at )
+void CmusikPlaylist::InsertAt( CmusikSong& song, int at )
 {
-	CmusikSong song;
-	song.SetID( songid );
-
 	if ( at == -1 )
 		m_Songs.push_back( song );
 	else
 		m_Songs.insert( m_Songs.begin() + at, song );
+
+	m_TotalTime += song.GetDuration();
+	m_TotalSize += (double)song.GetFilesize();
 }
 
 ///////////////////////////////////////////////////
 
-void CmusikPlaylist::InsertAt( const CIntArray& songids, int pos )
+void CmusikPlaylist::InsertAt( CmusikSongArray& songs, int pos )
 {
-	CmusikSong song;
-
-	for ( size_t i = 0; i < songids.size(); i++ )
+	for ( size_t i = 0; i < songs.size(); i++ )
 	{
-		song.SetID( songids.at( i ) );
-
 		if ( pos == -1 )
-			m_Songs.push_back( song );
+			m_Songs.push_back( songs.at( i ) );
 		else
-			m_Songs.insert( m_Songs.begin() + pos + i, song );
+			m_Songs.insert( m_Songs.begin() + pos + i, songs.at( i ) );
+
+		m_TotalTime += songs.at( i ).GetDuration();
+		m_TotalSize += (double)songs.at( i ).GetFilesize();
 	}
 }
 
@@ -367,5 +381,4 @@ void CmusikPlaylistInfo::Set( CmusikString name, int type, int id )
 }
 
 ///////////////////////////////////////////////////
-
 

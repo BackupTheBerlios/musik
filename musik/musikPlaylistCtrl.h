@@ -166,11 +166,11 @@ protected:
 
 	// manipulating items..
 	bool m_PlaylistNeedsSave;
-	void GetSelectedItems( CIntArray* items );
-	void GetSelectedSongs( CmusikPlaylist& playlist );
+	void GetSelectedItems( CIntArray& items );
+	void GetSelectedSongs( CmusikPlaylist& songs );
 	void GetItemIDs( const CIntArray& items, CIntArray* target );
 	void DeleteItems( const CIntArray& items, bool update = true );
-	void InsertItems( const CIntArray& items, int first_sel, int at, bool update = true );
+	void InsertItems( CmusikPlaylist& items, int first_sel, int at, bool update = true );
 	int GetFirstSelected();
 	void DeleteSelectedItems( bool from_library = false, bool from_computer = false );
 

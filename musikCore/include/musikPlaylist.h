@@ -129,6 +129,7 @@ public:
 	int GetSongID( int index );
 	size_t GetCount();
 	int GetPlaylistID(){ return m_ID; }
+	CmusikSong GetSong( int index );
 
 	// sets
 	void SetField( int index, int field );
@@ -137,8 +138,8 @@ public:
 	// misc
 	void Add( CmusikSong& song );
 	void DeleteAt( size_t pos );
-	void InsertAt( int songid, int pos );
-	void InsertAt( const CIntArray& songids, int pos );
+	void InsertAt( CmusikSong& song, int pos );
+	void InsertAt( CmusikSongArray& songs, int pos );
 	void Clear();
 
 	int m_ID;
