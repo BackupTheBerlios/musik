@@ -13,8 +13,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="../musikCube/Debug/"
-			IntermediateDirectory="../musikCube/Debug/"
+			OutputDirectory="./Debug/"
+			IntermediateDirectory="./Debug/"
 			ConfigurationType="2"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -38,7 +38,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="winmm.lib odbc32.lib odbccp32.lib ../_lib/fmodvc.lib"
-				OutputFile="../musikCube/Debug/winamp.dll"
+				OutputFile="../musik/Debug/winamp.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				GenerateDebugInformation="TRUE"
@@ -104,7 +104,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="../_lib/fmodvc.lib winmm.lib"
-				OutputFile="Release/winamp.dll"
+				OutputFile="../musik/Release/winamp.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				ProgramDatabaseFile=".\Release/winamp.pdb"
