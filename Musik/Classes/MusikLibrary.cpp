@@ -127,7 +127,6 @@ bool CMusikLibrary::Load()
 		"CREATE INDEX songhistory_percent_played_idx on songhistory (percent_played);"
 		;
 	
-	wxCriticalSectionLocker lock( m_csDBAccess ); // just in case...
 	m_pDB = sqlite_open( wxConvertWX2MB(sFilename), 0666, &errmsg );
 
 	if( m_pDB )
@@ -150,16 +149,6 @@ bool CMusikLibrary::Load()
 		CreateDBFuncs();
 		sqlite_exec( m_pDB, "PRAGMA synchronous = OFF;", NULL, NULL, NULL );
 		sqlite_exec( m_pDB, "PRAGMA cache_size = 10000;", NULL, NULL, NULL );
-		// check for old datetime format 
-		wxArrayString aOldDateStrings;
-		Query(wxT(" select timeadded  from songs where timeadded like '%:%' limit 1;"),aOldDateStrings);// does an entry contains a colon?
-		if(aOldDateStrings.GetCount() == 1)
-		{
-			// db contains old string format. m/d/y h:m:s
-			//convert it to julianday
-			sqlite_exec( m_pDB, "update songs set lastplayed = cnvMusikOldDTFormatToJulianday(lastplayed), timeadded = cnvMusikOldDTFormatToJulianday(timeadded) where 1; ;", NULL, NULL, NULL );
-
-		}
 	}
 	if ( errmsg )
 			free( errmsg );
