@@ -73,20 +73,22 @@ CActivityListBox::CActivityListBox( CActivityBox *parent,  wxWindowID id )
 
 void CActivityListBox::RescaleColumns()
 {
-	Freeze();
-
 	int nWidth, nHeight;
 	GetClientSize	( &nWidth, &nHeight );
 	SetColumnWidth	( 0, 0 );
-	
-	#ifdef __WXMSW__
-	SetColumnWidth	( 1, nWidth );
-	#elif defined __WXGTK__
-		SetColumnWidth( 1, nWidth - wxSystemSettings::GetMetric(wxSYS_HSCROLL_Y) - GetColumnWidth( 0 ) - 1 );			
-	#endif 
 
-	Thaw();
-	Refresh();
+	if ( GetColumnWidth( 1 ) != nWidth )
+	{
+		Freeze();
+
+		#ifdef __WXMSW__
+			SetColumnWidth	( 1, nWidth );
+		#elif defined __WXGTK__
+			SetColumnWidth( 1, nWidth - wxSystemSettings::GetMetric(wxSYS_HSCROLL_Y) - GetColumnWidth( 0 ) - 1 );			
+		#endif 
+
+		Thaw();
+	}
 }
 
 void CActivityListBox::SetList( const wxArrayString &  aList )
@@ -112,8 +114,9 @@ void CActivityListBox::Update( bool selnone )
 	SetItemCount( GetRowCount() );
 	if ( selnone )
 		wxListCtrlSelNone( this );
+
 	Thaw();
-	Refresh( false );
+
 	RescaleColumns();
 }
 
