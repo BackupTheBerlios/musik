@@ -42,6 +42,7 @@ private:
 //--- CMusikSongArray: an array of songs			---//
 //-----------------------------------------------------//
 typedef std::vector<CMusikSong> CMusikSongArray;
+typedef std::vector<int> CIntArray;
 
 //-----------------------------------------------------//
 //--- CMusikPlaylist: a class that manages an array	---//

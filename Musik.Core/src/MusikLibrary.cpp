@@ -212,6 +212,38 @@ void CMusikLibrary::EndTransaction()
 	sqlite_exec_printf( m_pDB, "end transaction;", NULL, NULL, NULL );
 }
 
+void CMusikLibrary::CreateStdPlaylist( CStdString name, CIntArray songids )
+{
+	//-----------------------------------------------------//
+	//--- lock it up									---//
+	//-----------------------------------------------------//
+	boost::mutex::scoped_lock scoped_lock( m_ProtectingLibrary );
+}
+
+void CMusikLibrary::CreateDynPlaylist( CStdString name, CStdString query )
+{
+	//-----------------------------------------------------//
+	//--- lock it up									---//
+	//-----------------------------------------------------//
+	boost::mutex::scoped_lock scoped_lock( m_ProtectingLibrary );	
+}
+
+void CMusikLibrary::DeleteStdPlaylist( CStdString name )
+{
+	//-----------------------------------------------------//
+	//--- lock it up and close it down.					---//
+	//-----------------------------------------------------//
+	boost::mutex::scoped_lock scoped_lock( m_ProtectingLibrary );
+}
+
+void CMusikLibrary::DeleteDynPlaylist( CStdString name )
+{
+	//-----------------------------------------------------//
+	//--- lock it up and close it down.					---//
+	//-----------------------------------------------------//
+	boost::mutex::scoped_lock scoped_lock( m_ProtectingLibrary );
+}
+
 CStdString CMusikLibrary::GetOrder( int type, bool terminate )
 {
 	CStdString sTerminate = _T( "" );

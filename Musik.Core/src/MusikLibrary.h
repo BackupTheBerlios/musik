@@ -75,6 +75,14 @@ public:
 	void GetSongInfoFromID	( int id, CMusikSongInfo* info );
 
 	//-----------------------------------------------------//
+	//--- for creating and retrieving playlists			---//
+	//-----------------------------------------------------//
+	void CreateStdPlaylist	( CStdString name, CIntArray songids );
+	void CreateDynPlaylist	( CStdString name, CStdString query );
+	void DeleteStdPlaylist	( CStdString name );
+	void DeleteDynPlaylist	( CStdString name );
+
+	//-----------------------------------------------------//
 	//--- for updating the database						---//
 	//-----------------------------------------------------//
 	bool SetSongInfo		( int songid, CMusikSongInfo* info );
