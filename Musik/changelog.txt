@@ -1,3 +1,4 @@
+HO HO HO
 0.2.1 to 0.2.2
  + Pitch control added, with option to toggle (SiW)
  + Fixed Bug: Reduced flicker of gauge control for position, fx and volume, NOW works correctly on win2000 too (gunnar)
