@@ -12,7 +12,11 @@
 
 #ifndef MUSIKDEFINES_H
 #define MUSIKDEFINES_H
-
+#if wxVERSION_NUMBER >= 2500  
+#define WXSYSTEMCOLOUR(x)	wxTheColourDatabase->Find(x)
+#else
+#define WXSYSTEMCOLOUR(x)	*wxTheColourDatabase->FindColour(x)
+#endif
 #ifndef max
 #define max(a, b)   (((a) > (b)) ? (a) : (b))
 #endif

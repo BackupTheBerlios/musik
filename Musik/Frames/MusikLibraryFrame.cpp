@@ -554,7 +554,7 @@ void MusikLibraryFrame::ScanNew()
 	if ( g_Paths.GetCount() == 0 )
 		return;
 	m_arrScannedFiles.Clear();
-	if ( m_ActiveThreadController.IsAlive() == NULL )
+	if ( m_ActiveThreadController.IsAlive())
 	{
 		m_ActiveThreadController.AttachAndRun( new MusikScanNewThread(this,m_arrScannedFiles) );
 	}
@@ -570,7 +570,7 @@ void MusikLibraryFrame::UpdateLibrary( bool bConfirm , bool bCompleteRebuild)
 			return;
 	}
     
-	if ( m_ActiveThreadController.IsAlive() == NULL )
+	if ( m_ActiveThreadController.IsAlive())
 	{
 		m_ActiveThreadController.AttachAndRun( new MusikUpdateLibThread(this, &aDelDirs,m_arrScannedFiles ,bCompleteRebuild) );
 	}
@@ -580,7 +580,7 @@ void MusikLibraryFrame::UpdateLibrary( bool bConfirm , bool bCompleteRebuild)
 
 void MusikLibraryFrame::PurgeLibrary()
 {
-	if ( m_ActiveThreadController.IsAlive() == NULL )
+	if ( m_ActiveThreadController.IsAlive())
 	{
 		m_ActiveThreadController.AttachAndRun( new MusikPurgeLibThread(this) );
 	}

@@ -556,7 +556,7 @@ void CSourcesListBox::BeginEditLabel( wxListEvent& event )
 
 void CSourcesListBox::EndEditLabel( wxListEvent& event )
 {
-#if wxMINOR_VERSION > 4
+#if wxVERSION_NUMBER >= 2500
 	if(event.IsEditCancelled())
 		return;
 #endif

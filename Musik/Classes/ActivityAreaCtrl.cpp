@@ -36,7 +36,7 @@ CActivityAreaCtrl::CActivityAreaCtrl( wxWindow *pParent )
 	: wxSashLayoutWindow( pParent, MUSIK_ACTIVITYCTRL, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxTAB_TRAVERSAL|wxNO_BORDER|wxCLIP_CHILDREN | wxSW_3D )
 {
 	memset(m_ActivityBox,0,sizeof(m_ActivityBox));
-	SetBackgroundColour( wxTheColourDatabase->Find(wxT("LIGHT STEEL BLUE")));
+	SetBackgroundColour(WXSYSTEMCOLOUR(wxT("LIGHT STEEL BLUE")));
 	m_pPanel = new wxPanel( this, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxNO_BORDER|wxCLIP_CHILDREN|wxTAB_TRAVERSAL );
 	pTopSizer = new wxBoxSizer( wxHORIZONTAL );
 	m_pPanel->SetSizer( pTopSizer );
@@ -79,7 +79,11 @@ void CActivityAreaCtrl::Delete()
 	{
 		if ( m_ActivityBox[i] != NULL )
 		{
+#if wxVERSION_NUMBER >= 2500
 			pTopSizer->Detach( m_ActivityBox[i] );
+#else
+			pTopSizer->Remove( m_ActivityBox[i] );
+#endif
 			delete m_ActivityBox[i];
 			m_ActivityBox[i] = NULL;
 		}
