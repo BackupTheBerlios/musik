@@ -134,9 +134,10 @@ public:
 	void SetStayOnTop( bool bStayOnTop );
 
 	//--- images and fonts ---//
-	void	GetFonts();
-	void	LoadImageLists();
-	void	DeleteImageLists();
+	void GetFonts();
+	void GetListCtrlFont();
+	void LoadImageLists();
+	void DeleteImageLists();
 
 	//--- sets ---//
 	void SetProgress			( int n )				{ m_Progress = n;			}

@@ -337,6 +337,7 @@ extern wxFont g_fntSong;
 extern wxFont g_fntTime;
 extern wxFont g_fntRegular;
 extern wxFont g_fntBold;
+extern wxFont g_fntListBold;
 extern wxFont g_fntInfo;
 
 #endif

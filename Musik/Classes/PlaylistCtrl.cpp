@@ -746,9 +746,9 @@ void CPlaylistCtrl::Update( bool bSelFirst )
 
 	//--- setup listbox colours from prefs	---//
 	m_LightAttr			= wxListItemAttr( *wxBLACK, wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ), wxNullFont );
-	m_SelectedLightAttr	= wxListItemAttr( *wxBLACK, wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ), g_fntBold );
+	m_SelectedLightAttr	= wxListItemAttr( *wxBLACK, wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ), g_fntListBold );
 	m_DarkAttr			= wxListItemAttr( *wxBLACK, StringToColour( g_Prefs.sPLStripeColour ), wxNullFont );
-	m_SelectedDarkAttr	= wxListItemAttr( *wxBLACK, StringToColour( g_Prefs.sPLStripeColour ), g_fntBold );
+	m_SelectedDarkAttr	= wxListItemAttr( *wxBLACK, StringToColour( g_Prefs.sPLStripeColour ), g_fntListBold );
 
 	//--- SetItemCount() kinda tells the virtual list control to udpate ---//
 	SetItemCount( ( long )g_Playlist.GetCount() );

@@ -130,6 +130,7 @@ wxFont g_fntTime;
 wxFont g_fntRegular;
 wxFont g_fntBold;
 wxFont g_fntInfo;
+wxFont g_fntListBold;
 
 //------------//
 //--- misc ---//
@@ -141,4 +142,5 @@ bool g_PlaylistChanged;
 bool g_FirstRun;
 bool g_TimeSeeking;
 bool g_DisablePlacement;
+
 

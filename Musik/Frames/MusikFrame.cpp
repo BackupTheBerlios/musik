@@ -89,6 +89,7 @@ MusikFrame::MusikFrame()
 	//--- playlist info ---//
 	//---------------------//
 	g_PlaylistInfoCtrl = new CPlaylistInfoCtrl( this );
+	GetListCtrlFont();
 
 	//-------------------//
 	//--- now playing ---//
@@ -277,6 +278,7 @@ void MusikFrame::GetFonts()
 
 		g_fntBold.SetFaceName	( sFace );
 		g_fntBold.SetWeight		( wxBOLD );
+
 	#elif defined __WXGTK__
 		sFace = wxT( "Sans" );
 	
@@ -299,6 +301,12 @@ void MusikFrame::GetFonts()
 		g_fntBold.SetPointSize	( 10 );
 	#endif
 
+}
+
+void MusikFrame::GetListCtrlFont()
+{
+	g_fntListBold = g_PlaylistCtrl->GetFont();
+	g_fntListBold.SetWeight( wxBOLD );
 }
 
 //--------------------------------------------//
