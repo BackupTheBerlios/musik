@@ -337,6 +337,9 @@
 				RelativePath="..\Musik.Core\include\MusikPlaylist.h">
 			</File>
 			<File
+				RelativePath="..\Musik.Core\include\MusikSongInfoCache.h">
+			</File>
+			<File
 				RelativePath="..\Musik.Core\include\StdString.h">
 			</File>
 		</Filter>
