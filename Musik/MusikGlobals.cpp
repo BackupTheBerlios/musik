@@ -28,11 +28,6 @@ MusikApp *pMusikApp;
 //----------------------------//
 MusikFrame *g_MusikFrame;
 
-//---------------------------//
-//--- pointer to main dlg ---//
-//---------------------------//
-MusikVolumeFrame *g_VolumeFrame;
-
 //--------------------------------//
 //--- pointer to MusikTagFrame ---//
 //--------------------------------//

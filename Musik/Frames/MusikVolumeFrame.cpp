@@ -35,7 +35,6 @@ MusikVolumeFrame::MusikVolumeFrame( wxFrame* pParent, wxPoint pos )
 	//------------------------------//
 	parent			= pParent;
 	nFirstRun		= 1;
-	g_VolumeFrame	= this;	//--- so it can be auto destroyed by event handler ---//
 
 	//----------------------------//
 	//--- colours and controls ---//
@@ -94,5 +93,6 @@ void MusikVolumeFrame::Close()
 	g_Prefs.nRepeat = pRepeat->GetValue();
 	g_Prefs.nShuffle = pShuffle->GetValue();
 	g_Prefs.nGlobalFadeEnable = pCrossfade->GetValue();
+	g_Player.SetPlaymode();
 	Destroy();
 }

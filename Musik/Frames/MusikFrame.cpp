@@ -152,8 +152,6 @@ MusikFrame::MusikFrame()
 	//--- restore placement or use defaults ---//
 	g_DisablePlacement = false;
 
-	//--- initialize playmode, seed randomness ---//
-	srand( wxGetLocalTime() );
 	g_Player.SetPlaymode();
 
 	//--- update database information, then set sound volume ---//

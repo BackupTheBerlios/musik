@@ -22,7 +22,7 @@
 
 //--- frames ---//
 #include "../Frames/MusikFrame.h"
-
+#include "../Frames/MusikVolumeFrame.h"
 //--- images ---//
 #include "../images/playback/next.xpm"
 #include "../images/playback/next_down.xpm"
@@ -339,9 +339,14 @@ void CNowPlayingCtrl::PlayerPlayPause( wxCommandEvent& WXUNUSED(event) )
 	//--- start playing ---//
 	else if ( !g_Player.IsPlaying() )
 	{
-		int nCurSel = g_PlaylistCtrl->GetNextItem( -1, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
-		if ( nCurSel > -1 )
+		if(g_Player.GetPlaymode() == MUSIK_PLAYMODE_RANDOM)
+		{
+			g_Player.NextSong();
+		}
+		else
+		{
 			g_Player.PlayCurSel();
+		}
 	}
 }
 
@@ -365,6 +370,6 @@ void CNowPlayingCtrl::PlayerVolume( wxCommandEvent& WXUNUSED(event) )
 	wxSize DlgSize = pDlg->GetSize();
 	pos.x -= DlgSize.GetWidth();
 	pos.y -= DlgSize.GetWidth();	
-	pDlg->SetPosition( pos );
+	pDlg->Move( pos );
 	pDlg->Show();
 }

@@ -145,6 +145,8 @@ public:
 	wxString GetCurrentFile		() { return m_CurrentFile; }
 	int GetCrossfadeType		() { return m_CrossfadeType; }
 	size_t GetRandomSong		();
+	EMUSIK_PLAYMODE GetPlaymode () { return m_Playmode; }
+
 
 	//------------//
 	//--- sets ---//
@@ -171,7 +173,7 @@ public:
 private:
 	
 	CMusikSongArray m_Playlist;			//--- heart and soul.								---//
-	int				m_Playmode;			//--- repeat, shuffle, etc							---//
+	EMUSIK_PLAYMODE	m_Playmode;			//--- repeat, shuffle, etc							---//
 	size_t			m_SongIndex;		//--- current index in playlist						---//
 	size_t			m_LastSong;			//--- last song played, used for updating			---//
 	bool			m_Playing;			//--- currently playing?							---//

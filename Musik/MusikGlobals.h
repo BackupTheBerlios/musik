@@ -250,13 +250,6 @@ extern	MusikApp *pMusikApp;
 class	MusikFrame;
 extern	MusikFrame *g_MusikFrame;
 
-//-----------------------------//
-//--- pointer to volume dlg ---//
-//-----------------------------//
-#include "Frames/MusikVolumeFrame.h"
-class	MusikVolumeFrame;
-extern	MusikVolumeFrame *g_VolumeFrame;
-
 //----------------------------//
 //--- pointer to tag frame ---//
 //----------------------------//
