@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------------
-musik (http://musik.sourceforge.net) License Agreement
+musik / musik:Core / musik:Cube (http://www.musikcube.com) License Agreement
 ----------------------------------------------------------------------------
 
 Copyright (c) 2002-2003, Casey Langen
