@@ -222,7 +222,7 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 		//--- bottom of the g_ActiveStreams array	---//
 		//---------------------------------------------//
 		FSOUND_Stream_SetBufferSize( g_Prefs.nSndBuffer );
-		FSOUND_STREAM* pNewStream = FSOUND_Stream_OpenFile( ( const char* )ConvFNToFieldMB( m_CurrentFile ), FSOUND_2D, 0 );
+		FSOUND_STREAM* pNewStream = FSOUND_Stream_Open( ( const char* )ConvFNToFieldMB( m_CurrentFile ), FSOUND_2D, 0, 0 );
 
 		InitDSP();
 		
@@ -601,7 +601,7 @@ void CMusikPlayer::PrevSong()
 int CMusikPlayer::GetFilesize( wxString sFilename )
 {
 	int filesize = -1;
-	FSOUND_STREAM *pStream = FSOUND_Stream_OpenFile( ( const char* )ConvFNToFieldMB( sFilename ), FSOUND_2D, 0 );
+	FSOUND_STREAM *pStream = FSOUND_Stream_Open( ( const char* )ConvFNToFieldMB( sFilename ), FSOUND_2D, 0, 0 );
 
 	if ( pStream )
 	{
@@ -689,7 +689,7 @@ int CMusikPlayer::GetFileDuration( wxString sFilename, int nType )
 	//--- this should be FSOUND_MPEGACCURATE to get	---//
 	//--- an accurate length, but it's way slower..	---//
 	//-------------------------------------------------//
-	FSOUND_STREAM *pStream = FSOUND_Stream_OpenFile( ( const char* )ConvFNToFieldMB( sFilename ), FSOUND_2D, 0 );
+	FSOUND_STREAM *pStream = FSOUND_Stream_Open( ( const char* )ConvFNToFieldMB( sFilename ), FSOUND_2D, 0, 0 );
 
 	if ( pStream )
 	{
