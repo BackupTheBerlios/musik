@@ -135,7 +135,7 @@ void CmusikPlaylistView::OnSize(UINT nType, int cx, int cy)
 		if ( !m_PlaylistInfo )
 			InitPlaylistInfo();
 
-		m_PlaylistInfo->MoveWindow( 1, 1, cx - 2, 20 );
+		m_PlaylistInfo->MoveWindow( 2, 1, cx - 4, 20 );
 		m_Playlist->MoveWindow( 3, 24, cx - 6, cy - 27 );
 
 		return;
@@ -195,9 +195,9 @@ void CmusikPlaylistView::OnNcPaint()
 		// don't draw over the playist info ctrl
 		rcInfo = rcWindow;
 		rcInfo.top = 1;
-		rcInfo.left = 1;
+		rcInfo.left = 2;
 		rcInfo.bottom = 21;
-		rcInfo.right -= 1;
+		rcInfo.right -= 2;
 		dc.ExcludeClipRect( rcInfo );
 	}
 
