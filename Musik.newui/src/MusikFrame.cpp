@@ -1,5 +1,5 @@
 #include "wx/wxprec.h"
-#include <wx/laywin.h>
+
 #include "MusikFrame.h"
 
 #ifdef __WXMSW__
@@ -45,8 +45,7 @@ void CMusikFrame::CreateSashes()
 	pSash->SetBackgroundColour( wxColour( 255, 0, 255 ) );
 	pSash->SetSashVisible( wxSASH_TOP, true );
 	m_NowPlayingSash = pSash;
-	
-	
+
 	//---------------------------------//
 	//--- left side					---//
 	//---------------------------------//	
@@ -62,7 +61,7 @@ void CMusikFrame::CreateSashes()
 	//---------------------------------//
 	pSash = new wxSashLayoutWindow( pLeft, -1, wxDefaultPosition, wxDefaultSize, wxNO_BORDER );
 	pSash->SetAlignment( wxLAYOUT_BOTTOM );
-	pSash->SetDefaultSize( wxSize( -1, 26 ) );
+	pSash->SetDefaultSize( wxSize( -1, 24 ) );
 	pSash->SetOrientation( wxLAYOUT_HORIZONTAL );
 	pSash->SetBackgroundColour( wxColour( 0, 255, 255 ) );
 	m_SimpleQuerySash = pSash;
@@ -101,7 +100,7 @@ void CMusikFrame::CreateSashes()
 	//---------------------------------//
 	//--- playlist area				---//
 	//---------------------------------//
-	pSash = new wxSashLayoutWindow( pRight, -1, wxDefaultPosition, wxDefaultSize, wxNO_BORDER );
+	pSash = new wxSashLayoutWindow( pRight, -1, wxDefaultPosition, wxDefaultSize, wxNO_BORDER | wxTRANSPARENT_WINDOW );
 	pSash->SetAlignment( wxLAYOUT_BOTTOM );
 	pSash->SetDefaultSize( wxSize( -1, -1 ) );
 	pSash->SetOrientation( wxLAYOUT_HORIZONTAL );
@@ -111,8 +110,19 @@ void CMusikFrame::CreateSashes()
 
 void CMusikFrame::CreateControls()
 {
+	//-------------------------------------------------//
+	//--- grab the default size of a wxTextCtrl,	---//
+	//--- then set it to the sizer for the query	---//
+	//-------------------------------------------------//
+	wxTextCtrl* tmp = new wxTextCtrl( this, -1, wxT( "" ), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+	m_SimpleQuerySash->SetDefaultSize( wxSize( -1, tmp->GetSize().GetHeight() ) );
+	delete tmp;
+
 	//--- left or "sources" area	---//
-	//m_SourcesCtrl = new CMusikSourcesCtrl( m_SourcesSash, -1 );
-	//m_SelectionCtrl = new CMusikSelectionAreaCtrl( m_SelectionAreaSash, -1 );
-	//m_PlaylistCtrl = new CMusikPlaylistCtrl( m_PlaylistSash, -1 );
+	m_SourcesCtrl		= new CMusikSourcesCtrl			( m_SourcesSash, -1 );
+	m_SelectionCtrl		= new CMusikSelectionAreaCtrl	( m_SelectionAreaSash, -1 );
+	m_PlaylistCtrl		= new CMusikPlaylistCtrl		( m_PlaylistSash, -1 );
+	m_SimpleQueryCtrl	= new CMusikSimpleQueryCtrl		( m_SimpleQuerySash, -1 );
+
+	Layout();
 }
