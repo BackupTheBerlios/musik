@@ -52,7 +52,7 @@ void CMusikPrefs::LoadPrefs()
 	config->Read( wxT( "ShowPlaylistInfo" ),						&nShowPLInfo,			1						);
 	config->Read( wxT( "ShowSources" ),								&nShowSources,			1						);
 	config->Read( wxT( "ShowSourcesIcons" ),						&nShowSourcesIcons,		1						);
-	config->Read( wxT( "ShowActivities" ),							&nShowActivities,		1						);
+	config->Read( wxT( "ShowAc                                                                                                                                                                                      tivities" ),							&nShowActivities,		1						);
 	config->Read( wxT( "ShowRating" ),								&nShowRatings,			1						);
 	config->Read( wxT( "StayOnTop" ),								&nStayOnTop,			0						);
 	config->Read( wxT( "AutomaticallyScanDelta" ),					&nAutoDelta,			1						);
@@ -79,12 +79,59 @@ void CMusikPrefs::LoadPrefs()
 	config->Read( wxT( "FramePlacement" ),							&sFramePlacement,		wxT("0,0,800,600,0,0")	);
 	config->Read( wxT( "MusikVersion" ),							&sMusikVersion,			wxT("Musik 0.1.2")		);
 
-	for( int i = 0;i < NPLAYLISTCOLUMNS; i++ )
-	{
-		config->Read( wxString::Format(wxT("PlaylistColumn%dEnable"),i),	&nPlaylistColumnEnable[i],	1	);
-		config->Read( wxString::Format(wxT("PlaylistColumn%dSize")	,i),	&nPlaylistColumnSize[i],	50	);
-		config->Read( wxString::Format(wxT("PlaylistColumn%dDynamic"),i),	&nPlaylistColumnDynamic[i],	0	);
-	}
+	//-------------------------------------------------//
+	//--- unfortunately, these must be setup		---//
+	//--- individually so the user can jump right 	---//
+	//--- in and start using musik.					---//
+	//-------------------------------------------------//
+	//--- rating, 50 pixels, enabled, static ---//
+	config->Read( wxString::Format( wxT( "PlaylistColumn%dEnable"	),	PLAYLISTCOLUMN_RATING		),	&nPlaylistColumnEnable	[PLAYLISTCOLUMN_RATING],		1	);
+	config->Read( wxString::Format( wxT( "PlaylistColumn%dSize"		),	PLAYLISTCOLUMN_RATING		),	&nPlaylistColumnSize	[PLAYLISTCOLUMN_RATING],		50	);
+	config->Read( wxString::Format( wxT( "PlaylistColumn%dDynamic"	),	PLAYLISTCOLUMN_RATING		),	&nPlaylistColumnDynamic	[PLAYLISTCOLUMN_RATING],		0	);
+	//--- track number, 50 pixels, enabled, static ---//
+	config->Read( wxString::Format( wxT( "PlaylistColumn%dEnable"	),	PLAYLISTCOLUMN_TRACK		),	&nPlaylistColumnEnable	[PLAYLISTCOLUMN_TRACK],			1	);
+	config->Read( wxString::Format( wxT( "PlaylistColumn%dSize"		),	PLAYLISTCOLUMN_TRACK		),	&nPlaylistColumnSize	[PLAYLISTCOLUMN_TRACK],			50	);
+	config->Read( wxString::Format( wxT( "PlaylistColumn%dDynamic"	),	PLAYLISTCOLUMN_TRACK		),	&nPlaylistColumnDynamic	[PLAYLISTCOLUMN_TRACK],			0	);
+	//--- title, 40%, enabled, dynamic ---//
+	config->Read( wxString::Format( wxT( "PlaylistColumn%dEnable"	),	PLAYLISTCOLUMN_TITLE		),	&nPlaylistColumnEnable	[PLAYLISTCOLUMN_TITLE],			1	);
+	config->Read( wxString::Format( wxT( "PlaylistColumn%dSize"		),	PLAYLISTCOLUMN_TITLE		),	&nPlaylistColumnSize	[PLAYLISTCOLUMN_TITLE],			40	);
+	config->Read( wxString::Format( wxT( "PlaylistColumn%dDynamic"	),	PLAYLISTCOLUMN_TITLE		),	&nPlaylistColumnDynamic	[PLAYLISTCOLUMN_TITLE],			1	);
+	//--- artist, 20%, enabled, dynamic ---//
+	config->Read( wxString::Format( wxT( "PlaylistColumn%dEnable"	),	PLAYLISTCOLUMN_ARTIST		),	&nPlaylistColumnEnable	[PLAYLISTCOLUMN_ARTIST],		1	);
+	config->Read( wxString::Format( wxT( "PlaylistColumn%dSize"		),	PLAYLISTCOLUMN_ARTIST		),	&nPlaylistColumnSize	[PLAYLISTCOLUMN_ARTIST],		20	);
+	config->Read( wxString::Format( wxT( "PlaylistColumn%dDynamic"	),	PLAYLISTCOLUMN_ARTIST		),	&nPlaylistColumnDynamic	[PLAYLISTCOLUMN_ARTIST],		1	);
+	//--- album, 20%, enabled, dynamic ---//
+	config->Read( wxString::Format( wxT( "PlaylistColumn%dEnable"	),	PLAYLISTCOLUMN_ALBUM		),	&nPlaylistColumnEnable	[PLAYLISTCOLUMN_ALBUM],			1	);
+	config->Read( wxString::Format( wxT( "PlaylistColumn%dSize"		),	PLAYLISTCOLUMN_ALBUM		),	&nPlaylistColumnSize	[PLAYLISTCOLUMN_ALBUM],			20	);
+	config->Read( wxString::Format( wxT( "PlaylistColumn%dDynamic"	),	PLAYLISTCOLUMN_ALBUM		),	&nPlaylistColumnDynamic	[PLAYLISTCOLUMN_ALBUM],			1	);
+	//--- year, 50 pixels, disabled, static ---//
+	config->Read( wxString::Format( wxT( "PlaylistColumn%dEnable"	),	PLAYLISTCOLUMN_YEAR			),	&nPlaylistColumnEnable	[PLAYLISTCOLUMN_YEAR],			0	);
+	config->Read( wxString::Format( wxT( "PlaylistColumn%dSize"		),	PLAYLISTCOLUMN_YEAR			),	&nPlaylistColumnSize	[PLAYLISTCOLUMN_YEAR],			50	);
+	config->Read( wxString::Format( wxT( "PlaylistColumn%dDynamic"	),	PLAYLISTCOLUMN_YEAR			),	&nPlaylistColumnDynamic	[PLAYLISTCOLUMN_YEAR],			0	);
+	//--- genre, 20%, enabled, dynamic ---//
+	config->Read( wxString::Format( wxT( "PlaylistColumn%dEnable"	),	PLAYLISTCOLUMN_GENRE		),	&nPlaylistColumnEnable	[PLAYLISTCOLUMN_GENRE],			1	);
+	config->Read( wxString::Format( wxT( "PlaylistColumn%dSize"		),	PLAYLISTCOLUMN_GENRE		),	&nPlaylistColumnSize	[PLAYLISTCOLUMN_GENRE],			20	);
+	config->Read( wxString::Format( wxT( "PlaylistColumn%dDynamic"	),	PLAYLISTCOLUMN_GENRE		),	&nPlaylistColumnDynamic	[PLAYLISTCOLUMN_GENRE],			1	);
+	//--- times played, 50, disabled, static ---//
+	config->Read( wxString::Format( wxT( "PlaylistColumn%dEnable"	),	PLAYLISTCOLUMN_TIMES_PLAYED	),	&nPlaylistColumnEnable	[PLAYLISTCOLUMN_TIMES_PLAYED],	0	);
+	config->Read( wxString::Format( wxT( "PlaylistColumn%dSize"		),	PLAYLISTCOLUMN_TIMES_PLAYED	),	&nPlaylistColumnSize	[PLAYLISTCOLUMN_TIMES_PLAYED],	50	);
+	config->Read( wxString::Format( wxT( "PlaylistColumn%dDynamic"	),	PLAYLISTCOLUMN_TIMES_PLAYED	),	&nPlaylistColumnDynamic	[PLAYLISTCOLUMN_TIMES_PLAYED],	0	);
+	//--- last played, 50, disabled, static ---//
+	config->Read( wxString::Format( wxT( "PlaylistColumn%dEnable"	),	PLAYLISTCOLUMN_LAST_PLAYED	),	&nPlaylistColumnEnable	[PLAYLISTCOLUMN_LAST_PLAYED],	0	);
+	config->Read( wxString::Format( wxT( "PlaylistColumn%dSize"		),	PLAYLISTCOLUMN_LAST_PLAYED	),	&nPlaylistColumnSize	[PLAYLISTCOLUMN_LAST_PLAYED],	50	);
+	config->Read( wxString::Format( wxT( "PlaylistColumn%dDynamic"	),	PLAYLISTCOLUMN_LAST_PLAYED	),	&nPlaylistColumnDynamic	[PLAYLISTCOLUMN_LAST_PLAYED],	0	);
+	//--- time, 50, enabled, static ---//
+	config->Read( wxString::Format( wxT( "PlaylistColumn%dEnable"	),	PLAYLISTCOLUMN_TIME			),	&nPlaylistColumnEnable	[PLAYLISTCOLUMN_TIME],			1	);
+	config->Read( wxString::Format( wxT( "PlaylistColumn%dSize"		),	PLAYLISTCOLUMN_TIME			),	&nPlaylistColumnSize	[PLAYLISTCOLUMN_TIME],			50	);
+	config->Read( wxString::Format( wxT( "PlaylistColumn%dDynamic"	),	PLAYLISTCOLUMN_TIME			),	&nPlaylistColumnDynamic	[PLAYLISTCOLUMN_TIME],			0	);
+	//--- bitrate, 50, disabled, static ---//
+	config->Read( wxString::Format( wxT( "PlaylistColumn%dEnable"	),	PLAYLISTCOLUMN_BITRATE		),	&nPlaylistColumnEnable	[PLAYLISTCOLUMN_BITRATE],			0	);
+	config->Read( wxString::Format( wxT( "PlaylistColumn%dSize"		),	PLAYLISTCOLUMN_BITRATE		),	&nPlaylistColumnSize	[PLAYLISTCOLUMN_BITRATE],			50	);
+	config->Read( wxString::Format( wxT( "PlaylistColumn%dDynamic"	),	PLAYLISTCOLUMN_BITRATE		),	&nPlaylistColumnDynamic	[PLAYLISTCOLUMN_BITRATE],			0	);
+	//--- filename, 40%, disabled, dynamic ---//
+	config->Read( wxString::Format( wxT( "PlaylistColumn%dEnable"	),	PLAYLISTCOLUMN_FILENAME		),	&nPlaylistColumnEnable	[PLAYLISTCOLUMN_FILENAME],		0	);
+	config->Read( wxString::Format( wxT( "PlaylistColumn%dSize"		),	PLAYLISTCOLUMN_FILENAME		),	&nPlaylistColumnSize	[PLAYLISTCOLUMN_FILENAME],		40	);
+	config->Read( wxString::Format( wxT( "PlaylistColumn%dDynamic"	),	PLAYLISTCOLUMN_FILENAME		),	&nPlaylistColumnDynamic	[PLAYLISTCOLUMN_FILENAME],		1	);		
 
 	g_FX.LoadBands( config );
 
@@ -174,9 +221,9 @@ void CMusikPrefs::SavePrefs()
 	//--- playlist columns ---//
 	for( int i = 0; i < NPLAYLISTCOLUMNS; i++ )
 	{
-		config->Write( wxString::Format(wxT("PlaylistColumn%dEnable"),	i),	nPlaylistColumnEnable[i]	);
-		config->Write( wxString::Format(wxT("PlaylistColumn%dSize"),	i),	nPlaylistColumnSize[i]		);
-		config->Write( wxString::Format(wxT("PlaylistColumn%dDynamic"),	i),	nPlaylistColumnDynamic[i]	);
+		config->Write( wxString::Format( wxT( "PlaylistColumn%dEnable" ),	i ),	nPlaylistColumnEnable[i]	);
+		config->Write( wxString::Format( wxT( "PlaylistColumn%dSize" ),		i ),	nPlaylistColumnSize[i]		);
+		config->Write( wxString::Format( wxT( "PlaylistColumn%dDynamic" ),	i ),	nPlaylistColumnDynamic[i]	);
 	}
 
 	g_FX.SaveBands( config );
