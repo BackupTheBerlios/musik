@@ -9,6 +9,7 @@
 #include "MusikNowPlayingInfo.h"
 
 #include "../Musik.Core/include/MusikPlayer.h"
+#include ".\musiknowplayinginfo.h"
 
 ///////////////////////////////////////////////////
 
@@ -37,6 +38,8 @@ CMusikNowPlayingInfo::~CMusikNowPlayingInfo()
 
 BEGIN_MESSAGE_MAP(CMusikNowPlayingInfo, CWnd)
 	ON_WM_CREATE()
+	ON_WM_PAINT()
+	ON_WM_ERASEBKGND()
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -76,13 +79,11 @@ void CMusikNowPlayingInfo::Layout( bool refresh )
 		GetBaseline( m_LayoutOrder.at( i )->GetFontSize(), &blCurrent );
 
 		ptLoc.x = nCurrX;
+		ptLoc.y = 0;
 		ptLoc.y = blLargest.m_Ascending - blCurrent.m_Ascending;	
 
-		if ( ptLoc.y )
-			ptLoc.y -= 2 * blCurrent.m_Descending;
-
 		m_LayoutOrder.at( i )->GetClientRect( rcClient );
-		m_LayoutOrder.at( i )->MoveWindow( CRect( ptLoc, CSize( rcClient.Width(), rcClient.Height() ) ) );
+		m_LayoutOrder.at( i )->MoveWindow( CRect( ptLoc, CSize( rcClient.Width(), blLargest.m_Height/*rcClient.Height()*/ ) ) );
 
 		nCurrX += m_LayoutOrder.at( i )->GetWidth();
 	}
@@ -283,6 +284,29 @@ void CMusikNowPlayingInfo::GetBaseline( int font_size, CMusikFontBaseline* basel
 	baseline->m_Ascending = metrics.tmAscent;
 	baseline->m_Descending = metrics.tmDescent;
 	baseline->m_Height = metrics.tmHeight;
+}
+
+///////////////////////////////////////////////////
+
+void CMusikNowPlayingInfo::OnPaint()
+{
+	CPaintDC dc(this);
+	CRect rect;
+	GetClientRect(&rect);
+	CMemDC memDC(&dc, &rect);
+	
+	CRect clip;
+	memDC.GetClipBox(&clip);
+	memDC.FillSolidRect( clip, GetSysColor( COLOR_BTNFACE ) );
+
+	DefWindowProc(WM_PAINT, (WPARAM)memDC->m_hDC, (LPARAM)0);
+}
+
+///////////////////////////////////////////////////
+
+BOOL CMusikNowPlayingInfo::OnEraseBkgnd(CDC* pDC)
+{
+	return false;
 }
 
 ///////////////////////////////////////////////////

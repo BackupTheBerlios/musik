@@ -121,6 +121,8 @@ void CMusikDynamicText::SetDynFont( int size, int bold, int italic )
 
 	if ( size > 0 )
 		pLogFont.lfHeight = size;
+	else
+		pLogFont.lfHeight = abs( pLogFont.lfHeight );
 
 	if ( bold )
 		pLogFont.lfWeight = FW_BOLD;
