@@ -34,7 +34,7 @@ CPlaylistInfoCtrl::CPlaylistInfoCtrl( wxWindow *parent )
 	stRuntime		= new wxStaticText( this, -1, _( "Playlist Runtime: " ),	wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
 	stRuntimeVal	= new wxStaticText( this, -1, wxT( "0:00" ),				wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
 	stFilesize		= new wxStaticText( this, -1, _( "Playlist size: " ),		wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
-	stFilesizeVal	= new wxStaticText( this, -1, wxT( "0.0 mb" ),				wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
+	stFilesizeVal	= new wxStaticText( this, -1, wxT( "Empty" ),				wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
 	
 	//--- window spacers ---//
 	wxWindow *pSpacer1 = new wxWindow( this, -1, wxPoint( -1, -1 ), wxSize( -1, 0 ), wxNO_BORDER );

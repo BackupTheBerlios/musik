@@ -644,5 +644,5 @@ wxString CNiceFilesize::GetFormatted()
 	if ( m_Kilobytes > 0 )
 		return wxString::Format( _("%d.%02d KB"), m_Kilobytes, m_Bytes );
 
-	return wxString( _("empty") );
+	return wxString( _("Empty") );
 }
