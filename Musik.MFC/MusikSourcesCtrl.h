@@ -4,6 +4,7 @@
 
 ///////////////////////////////////////////////////
 
+#include "MusikEditInPlace.h"
 #include "3rdparty/MusikPropTree.h"
 
 #include "../Musik.Core/include/MusikDir.h"
@@ -54,6 +55,8 @@ protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+	LRESULT OnEditCommit( WPARAM wParam, LPARAM lParam );
+	LRESULT OnEditCancel( WPARAM wParam, LPARAM lParam );
 
 	// drop target for the playlist
 	CMusikSourcesDropTarget* m_DropTarget;
@@ -82,6 +85,9 @@ private:
 	// NULL in the constructor. at any rate,
 	// its created here...
 	CMusikDir m_Dir;
+
+	// F2...
+	CMusikEditInPlace m_EditInPlace;
 
 	// startup bool, if true on startup
 	// the library will be selected by

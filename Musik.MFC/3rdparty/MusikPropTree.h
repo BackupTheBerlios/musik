@@ -48,6 +48,12 @@ class CMusikPrefs;
 
 ///////////////////////////////////////////////////
 
+#define PROPTREEITEM_EXPANDCOLUMN		16			// width of the expand column
+#define PROPTREEITEM_COLRNG				5			// width of splitter
+#define PROPTREEITEM_DEFHEIGHT			21			// default heigt of an item
+
+///////////////////////////////////////////////////
+
 enum 
 {
 	MUSIK_SOURCES_TYPE_NOWPLAYING = MUSIK_PLAYLIST_TYPE_COUNT,

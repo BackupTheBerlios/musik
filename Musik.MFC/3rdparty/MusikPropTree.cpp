@@ -48,12 +48,6 @@ static char THIS_FILE[] = __FILE__;
 
 ///////////////////////////////////////////////////
 
-#define PROPTREEITEM_EXPANDCOLUMN		16			// width of the expand column
-#define PROPTREEITEM_COLRNG				5			// width of splitter
-#define PROPTREEITEM_DEFHEIGHT			21			// default heigt of an item
-
-///////////////////////////////////////////////////
-
 #pragma warning (disable : 4311) // pointer truncation from 'HMENU' to 'UINT'
 #pragma warning (disable : 4312) // conversion from 'DWORD' to 'HBRUSH' of greater size
 

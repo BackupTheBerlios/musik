@@ -9,11 +9,15 @@
 #include "Musik.h"
 #include "MusikSourcesCtrl.h"
 #include "MusikSourcesDropTarget.h"
-#include ".\musiksourcesctrl.h"
 
 ///////////////////////////////////////////////////
 
 IMPLEMENT_DYNAMIC( CMusikSourcesCtrl, CMusikPropTree )
+
+///////////////////////////////////////////////////
+
+int WM_MUSIKEDITCOMMIT_SOURCES = RegisterWindowMessage( "MUSIKEDITCOMMIT" );
+int WM_MUSIKEDITCANCEL_SOURCES = RegisterWindowMessage( "MUSIKEDITCANCEL" );
 
 ///////////////////////////////////////////////////
 
@@ -47,6 +51,8 @@ BEGIN_MESSAGE_MAP( CMusikSourcesCtrl, CMusikPropTree )
 	ON_WM_SHOWWINDOW()
 	ON_WM_KEYDOWN()
 	ON_WM_MOUSEMOVE()
+	ON_REGISTERED_MESSAGE(WM_MUSIKEDITCOMMIT_SOURCES,OnEditCommit)
+	ON_REGISTERED_MESSAGE(WM_MUSIKEDITCANCEL_SOURCES,OnEditCancel)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -124,6 +130,14 @@ int CMusikSourcesCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	if ( m_DropTarget )
 		m_DropTarget->Register( this );
+
+
+	// edit in place
+	m_EditInPlace.Create( WS_CHILD, CRect( 0, 0, 0, 0 ), this, 123 );
+
+	CFont font;
+	font.CreateStockObject( DEFAULT_GUI_FONT );
+	m_EditInPlace.SetFont( &font );
 
 	InitItems();
 
@@ -566,6 +580,26 @@ void CMusikSourcesCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	m_LockHover = true;
 
+	// user pressed f2 to rename an entry
+	if ( nChar == VK_F2 )
+	{
+		CMusikPropTreeItem* pItem = GetFocusedItem();
+		if ( pItem )
+		{
+			CPoint nPos = pItem->GetLocation();		
+	
+			CRect rcClient;
+			GetClientRect( rcClient );
+			
+			CRect rect( 20, nPos.y + 1, rcClient.Width(), nPos.y + PROPTREEITEM_DEFHEIGHT - 2 );
+
+			m_EditInPlace.SetString( pItem->GetLabelText() );
+			m_EditInPlace.ShowWindow( SW_SHOWDEFAULT );
+			m_EditInPlace.MoveWindow( rect );
+			m_EditInPlace.SetFocus();
+		}
+	}
+
 	// user requested playlist deletion
 	if ( nChar == VK_DELETE )
 	{
@@ -634,7 +668,7 @@ void CMusikSourcesCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 // something here breaks if deleting
 // items while moving the mouse... not
-// exactly sure why.
+// exactly sure why. 
 
 void CMusikSourcesCtrl::OnNewHoveredItem( int nIndex )
 {
@@ -690,16 +724,17 @@ CMusikPropTreeItem* CMusikSourcesCtrl::FindItemAtIndex( int nIndex )
 }
 
 ///////////////////////////////////////////////////
+
 void CMusikSourcesCtrl::OnMouseMove(UINT nFlags, CPoint point)
 {
 	if ( !m_MouseTrack )
 	{
 		TRACKMOUSEEVENT tme;
-		tme.cbSize = sizeof(tme);
+		tme.cbSize = sizeof( tme );
 		tme.dwFlags = TME_LEAVE;
 		tme.hwndTrack = m_hWnd;
 		tme.dwHoverTime = HOVER_DEFAULT;
-		::_TrackMouseEvent(&tme);
+		::_TrackMouseEvent( &tme );
 
 		m_MouseTrack = true; 	
 	}
@@ -714,3 +749,27 @@ void CMusikSourcesCtrl::OnMouseMove(UINT nFlags, CPoint point)
 		}
 	}
 }
+
+///////////////////////////////////////////////////
+
+LRESULT CMusikSourcesCtrl::OnEditCancel( WPARAM wParam, LPARAM lParam )
+{
+	SetFocus();
+	return 0L;
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CMusikSourcesCtrl::OnEditCommit( WPARAM wParam, LPARAM lParam )
+{
+	CString str;
+	m_EditInPlace.GetWindowText( str );
+
+	MessageBox( str );
+
+	
+	SetFocus();
+	return 0L;
+}
+
+///////////////////////////////////////////////////

@@ -312,6 +312,16 @@
 						RelativePath=".\MusikFileDialog.h">
 					</File>
 				</Filter>
+				<Filter
+					Name="MusikEditInPlace"
+					Filter="">
+					<File
+						RelativePath=".\MusikEditInPlace.cpp">
+					</File>
+					<File
+						RelativePath=".\MusikEditInPlace.h">
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="CSizingControlBar"
