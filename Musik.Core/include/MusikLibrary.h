@@ -4,6 +4,7 @@
 #include <iostream>
 #include "sqlite.h"
 #include "StdString.h"
+#include "MusikArrays.h"
 
 #include "boost/thread/mutex.hpp"
 #include "boost/thread/thread.hpp"
@@ -28,6 +29,7 @@ enum
 	MUSIK_LIBRARY_TYPE_TIMESPLAYED,
 	MUSIK_LIBRARY_TYPE_BITRATE,
 	MUSIK_LIBRARY_TYPE_FILENAME,
+	MUSIK_LIBRARY_FIELD_COUNT
 };
 
 enum
@@ -62,6 +64,7 @@ public:
 	CStdStringArray*	GetSongFieldsDB	( )			{ return &m_FieldsDB; }
 	const CStdString	GetSongField	( int n )	{ return m_Fields.at( n ); }
 	const CStdString	GetSongFieldDB	( int n )	{ return m_FieldsDB.at( n ); }
+	int					GetSongFieldCnt	( )			{ return MUSIK_LIBRARY_FIELD_COUNT; }
 
 	//-----------------------------------------------------//
 	//--- for querying the database.					---//

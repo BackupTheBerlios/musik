@@ -130,6 +130,9 @@
 			</File>
 		</Filter>
 		<File
+			RelativePath=".\include\MusikArrays.h">
+		</File>
+		<File
 			RelativePath=".\include\StdString.h">
 		</File>
 	</Files>

@@ -275,7 +275,8 @@ inline const Type& SSMAX(const Type& arg1, const Type& arg2)
 			#ifdef UNICODE
 				typedef wchar_t		TCHAR;
 			#else
-				typedef char		TCHAR;#include <vector>
+				typedef char		TCHAR;
+				#include <vector>
 			#endif
 			typedef wchar_t			OLECHAR;
 
@@ -340,7 +341,6 @@ inline const Type& SSMAX(const Type& arg1, const Type& arg2)
 #include <algorithm>		// for_each, etc.
 #include <functional>		// for StdStringLessNoCase, et al
 #include <locale>			// for various facets
-#include <vector>
 
 // If this is a recent enough version of VC include comdef.h, so we can write
 // member functions to deal with COM types & compiler support classes e.g. _bstr_t
@@ -779,11 +779,11 @@ template<typename CT> inline int sslen(const CT* pT)
 }
 inline SS_NOTHROW int sslen(const std::string& s)
 {
-	return s.length();
+	return (int)s.length();
 }
 inline SS_NOTHROW int sslen(const std::wstring& s)
 {
-	return s.length();
+	return (int)s.length();
 }
 
 
@@ -3014,7 +3014,5 @@ struct StdStringEqualsNoCaseA
 	#undef TRACE
 	#undef TRACE_DEFINED_HERE
 #endif
-
-typedef std::vector<CStdString> CStdStringArray;
 
 #endif	// #ifndef STDSTRING_H

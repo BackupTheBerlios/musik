@@ -6,6 +6,8 @@
 #include <vector>
 #include <iostream>
 
+#include "MusikArrays.h"
+
 #ifndef BOOST_HAS_THREADS
 #define BOOST_HAS_THREADS 1
 #endif
@@ -39,12 +41,6 @@ public:
 private:
 	int m_ID;
 };
-
-//-----------------------------------------------------//
-//--- CMusikSongArray: an array of songs			---//
-//-----------------------------------------------------//
-typedef std::vector<CMusikSong> CMusikSongArray;
-typedef std::vector<int> CIntArray;
 
 //-----------------------------------------------------//
 //--- CMusikPlaylist: a class that manages an array	---//
