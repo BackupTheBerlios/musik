@@ -70,8 +70,10 @@ CmusikPlaylistCtrl::CmusikPlaylistCtrl( CFrameWnd* mainwnd, CmusikLibrary* libra
 	// main window
 	m_MainWnd = mainwnd;
 
+	// get rating extent
+	GetRatingExtent();
+
 	// misc
-	m_RatingWidth = -1;
 	m_Changed = true;
 	m_DropArrange = false;
 	m_PlaylistNeedsSave = false;
@@ -274,15 +276,6 @@ void CmusikPlaylistCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 			CDC *pDC = CDC::FromHandle(pLVCD->nmcd.hdc);
 			int nSubType = m_Prefs->GetPlaylistCol( pLVCD->iSubItem );
 
-			// if this value is uninitialized we need to find
-			// it... it is the width of the rating font
-			if ( m_RatingWidth == -1 )
-			{
-				pDC->SelectObject( m_StarFont );
-				CSize size = pDC->GetOutputTextExtent( _T( "-----" ) );
-				m_RatingWidth = size.cx;
-			}
-
 			if ( nSubType == MUSIK_LIBRARY_TYPE_RATING )
 			{
 				pDC->SelectObject( m_StarFont );
@@ -462,19 +455,26 @@ void CmusikPlaylistCtrl::OnNMClick(NMHDR *pNMHDR, LRESULT *pResult)
 		// if the current column is the rating
 		if ( m_Prefs->GetPlaylistCol( hit_test.iSubItem ) == MUSIK_LIBRARY_TYPE_RATING )
 		{
-			CRect sub_item_rect;
-			GetSubItemRect( hit_test.iItem, hit_test.iSubItem, LVIR_BOUNDS, sub_item_rect );
-
+			// normalize along x axis
 			for ( int i = 0; i < hit_test.iSubItem; i++ )
 				ptCurr.x -= m_Prefs->GetPlaylistColWidth( (size_t)i );
 
+			// if an item is a sub item, there are two
+			// spaces in front of the item text -- so
+			// shift point that far in the X axis
+			int nOffset;
+			if ( hit_test.iSubItem != 0 )
+				nOffset = m_TwoSpace;
+			else
+				nOffset = 2;
+
 			int nRating;
-			if ( ptCurr.x <= 6 )
+			if ( ptCurr.x <= nOffset )
 				nRating = 0;
-			else if ( ptCurr.x >= m_RatingWidth )
+			else if ( ptCurr.x >= m_RatingExtent + m_TwoSpace )
 				nRating = 5;
 			else
-				nRating = ( ( ptCurr.x - 6 ) / ( m_RatingWidth / 5 ) ) + 1;
+				nRating = ( ( ptCurr.x - nOffset ) / ( m_RatingExtent / 5 ) ) + 1;
 
             m_Library->SetSongRating( m_Playlist->GetSongID( hit_test.iItem ), nRating );	
 			if ( m_SongInfoCache->ResyncItem( m_Playlist->GetSongID( hit_test.iItem ) ) )
@@ -1061,3 +1061,33 @@ void CmusikPlaylistCtrl::OnDragColumn( int source, int dest )
 }
 
 ///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::GetRatingExtent()
+{
+	int spc = 0;
+	CSize szText;
+
+	HDC	hMemDC	= NULL;
+	hMemDC = CreateCompatibleDC( NULL );
+	if ( hMemDC )
+	{
+		CDC* pDC = CDC::FromHandle( hMemDC );
+		if ( pDC )
+		{
+			CFont* pOldFont = pDC->SelectObject( &m_StarFont );
+
+			// list control always adds two spaces after
+			// each string in a column, this must be
+			// subtracted.
+			szText = pDC->GetTextExtent( _T( "  " ) );
+			m_TwoSpace = szText.cx;
+
+			// supposed extent of the five stars
+			szText = pDC->GetTextExtent( ",,,,," );
+
+			pOldFont = pDC->SelectObject( pOldFont );
+		}
+	}
+
+	m_RatingExtent = szText.cx;
+}

@@ -26,6 +26,7 @@ Source: "sqlite.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "fmod.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "musik.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "license.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "musik.ttf"; DestDir: "{fonts}"; FontInstall: "musik:Cube TrueType Font"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

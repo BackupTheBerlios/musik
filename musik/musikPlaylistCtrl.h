@@ -98,6 +98,11 @@ protected:
 	CFont m_ItemFont;
 	CFont m_BoldFont;
 
+	// rating ***** text extent
+	void GetRatingExtent();
+	int m_RatingExtent;
+	int m_TwoSpace;
+
 	// colors
 	COLORREF clrStripe;
 	COLORREF clrStripText;
@@ -112,7 +117,6 @@ protected:
 
 	// misc
 	bool m_Changed;
-	int m_RatingWidth;
 
 	// mfc message maps
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
