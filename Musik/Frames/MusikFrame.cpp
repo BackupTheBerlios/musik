@@ -545,13 +545,9 @@ void MusikFrame::ShowActivityArea( bool bShow )
 {
 	if(g_SourcesCtrl->GetSelType() != MUSIK_SOURCES_LIBRARY)
 		bShow=false;
-	g_PlaylistBox->ShowSearchBox(bShow);
 	g_ActivityAreaCtrl->Show( bShow );
 	wxLayoutAlgorithm layout;
     layout.LayoutWindow(this,g_PlaylistBox);
-
-	g_PlaylistBox->Layout();
-	//g_PlaylistBox->Refresh();
 }
 
 void MusikFrame::ToggleActivities()

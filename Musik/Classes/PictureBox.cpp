@@ -39,7 +39,7 @@ CPictureBox::CPictureBox( wxWindow *parent )
 }
 void CPictureBox::OnIdle(wxIdleEvent & event)
 {
-	if(IsShown() == false)
+	if(IsShown() == false || (GetParent() && (GetParent()->IsShown() == false)))
 		return;
 	int nSel = g_PlaylistBox->PlaylistCtrl().GetNextItem( -1, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED|wxLIST_STATE_FOCUSED );
 	if(g_Playlist.GetCount())
@@ -66,8 +66,11 @@ void CPictureBox::OnIdle(wxIdleEvent & event)
 	}
 	if(!g_Playlist.GetCount())
 	{
-		m_image	= m_DefImage;
-		Refresh();
+		if(m_image	!= m_DefImage)
+		{
+			m_image	= m_DefImage;
+			Refresh();
+		}
 	}
 }
 void CPictureBox::OnLeftDown(wxMouseEvent & event)

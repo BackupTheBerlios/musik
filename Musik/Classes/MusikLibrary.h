@@ -104,7 +104,7 @@ public:
 	//------------//
 	bool FileInLibrary		( const wxString & filename, bool fullpath );
 
-	void RecordSongHistory( const CMusikSong & song ,int playedtime,bool bSelectedByUser);
+	void RecordSongHistory( const CMusikSong & song ,int playedtime);
 	//------------------------//
 	//--- generic querying ---//
 	//------------------------//

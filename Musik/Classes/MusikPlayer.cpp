@@ -291,7 +291,7 @@ void CMusikPlayer::PlayPause()
 		}
 		else
 		{
-			Play( m_SongIndex );
+			PlayByUser( m_SongIndex );
 		}
 	}
 }
@@ -426,13 +426,18 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 			return false;
 	}
 
-	if(m_CurrentSong.songid >= 0 &&IsPlaying())
-		wxGetApp().Library.RecordSongHistory(m_CurrentSong,GetTime(FMOD_MSEC),true);
+	bool bNewSongStarted = (m_Playlist[nItem].songid != m_CurrentSong.songid) && (nStartPos == 0);
+	if(bNewSongStarted && m_CurrentSong.songid != -1 && IsPlaying())
+	{
+	  // player is currently playing, so we have to record history here, because Stop() is not 
+	  // called between the playing of the songs of the playlist.
+			wxGetApp().Library.RecordSongHistory(m_CurrentSong,GetTime(FMOD_MSEC));
+	}
 	//---------------------------------------------//
 	//--- start with the basics					---//
 	//---------------------------------------------//
 	m_Stopping		= false;
-	m_SongIndex		= nItem;	
+	m_SongIndex		= nItem;
 	m_CurrentSong	= m_Playlist.Item( m_SongIndex );
 
 	//---------------------------------------------//
@@ -455,7 +460,7 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 	wxString sFilename;
 	sFilename = m_CurrentSong.MetaData.Filename.GetFullPath();
 
-	FSOUND_STREAM* pNewStream = FSOUND_Stream_Open( ( const char* )ConvW2A( sFilename ), nFlags , 0, 0 );
+	FSOUND_STREAM* pNewStream = FSOUND_Stream_Open( ( const char* )ConvFn2A( sFilename ), nFlags , 0, 0 );
 	if(pNewStream == NULL)
 	{
 		wxMessageBox( _( "Playback will be stopped, because loading failed.\n Filename:" ) + sFilename, MUSIKAPPNAME_VERSION, wxICON_STOP );
@@ -566,7 +571,13 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 	//---------------------------------------------//
 	g_MusikFrame->m_pNowPlayingCtrl->PlayBtnToPauseBtn();
 	UpdateUI();
-
+	//---------------------------------------------//
+	//--- record history in database			---//
+	//---------------------------------------------//
+	if(bNewSongStarted)
+	{
+		wxGetApp().Library.UpdateItemLastPlayed	( m_CurrentSong );
+	}
 	//---------------------------------------------//
 	//--- if fading is not enabled, shut down	---//
 	//--- all of the old channels, and set the	---//
@@ -665,7 +676,6 @@ void CMusikPlayer::UpdateUI()
 	else
 	{
 		g_PlaylistBox->PlaylistCtrl().Update(false);
-		wxGetApp().Library.UpdateItemLastPlayed	( m_CurrentSong );
 	}
 	if(g_SourcesCtrl->GetSelType() == MUSIK_SOURCES_NOW_PLAYING)
 	{
@@ -828,7 +838,7 @@ void CMusikPlayer::FinalizeStop()
 {
 	if(m_CurrentSong.songid >= 0 &&IsPlaying())
 	{
-		wxGetApp().Library.RecordSongHistory(m_CurrentSong,m_nLastSongTime,true);
+		wxGetApp().Library.RecordSongHistory(m_CurrentSong,m_nLastSongTime);
 	}
 	else
 		m_nLastSongTime = 0;
@@ -936,7 +946,19 @@ void CMusikPlayer::NextSong()
 		break;
 
 	case MUSIK_PLAYMODE_SHUFFLE:
-		Play( GetShuffledSong() );
+		{
+			if (m_Playlist.GetCount() && (m_SongIndex < m_Playlist.GetCount() - 1) )
+			{  // check if the following song , should always be played(even if we are in shuffle mode)
+			   if(m_Playlist[m_SongIndex + 1].bForcePlay)
+			   {
+				   m_Playlist[m_SongIndex + 1].bForcePlay = 0; //reset flag
+				   m_SongIndex++;
+				   Play(m_SongIndex);
+			   }
+			   else
+				   Play( GetShuffledSong() );
+			}
+		}
 		break;
 	}
 }
@@ -985,8 +1007,11 @@ void CMusikPlayer::_AddRandomSongs()
 {
 	CMusikSongArray  arrSongs;
 
-	m_SongIndex = wxMin(m_SongIndex,m_Playlist.GetCount() - 1);
-	int nSongsToAdd = (wxGetApp().Prefs.nAutoDJChooseSongsToPlayInAdvance - (m_Playlist.GetCount() - 1 - m_SongIndex));
+	if(m_SongIndex + 1 > m_Playlist.GetCount())
+		m_SongIndex = 0;
+
+	int nSongsToAdd = m_Playlist.GetCount() ? (wxGetApp().Prefs.nAutoDJChooseSongsToPlayInAdvance - (m_Playlist.GetCount() - 1 - m_SongIndex))
+											:wxGetApp().Prefs.nAutoDJChooseSongsToPlayInAdvance;
 	if(nSongsToAdd <= 0)
 		return;
 	if(MUSIK_PLAYMODE_AUTO_DJ == m_Playmode)
@@ -996,8 +1021,10 @@ void CMusikPlayer::_AddRandomSongs()
 	}
 	else if(MUSIK_PLAYMODE_AUTO_DJ_ALBUM == m_Playmode)
 	{
-		_ChooseRandomAlbumSongs(5,arrSongs);
+		_ChooseRandomAlbumSongs(wxGetApp().Prefs.nAutoDJChooseAlbumsToPlayInAdvance,arrSongs);
 	}
+	for(size_t i = 0; i < arrSongs.GetCount();i++)
+		arrSongs[i].bChosenByUser = 0;
 	AddToPlaylist(arrSongs,false);
 }
 void CMusikPlayer::_ChooseRandomSongs(int nSongsToAdd,CMusikSongArray &arrSongs)
@@ -1117,19 +1144,6 @@ void CMusikPlayer::_ChooseRandomAlbumSongs(int nAlbumsToAdd,CMusikSongArray &arr
 	}
 	
 
-}
-int CMusikPlayer::GetFilesize( wxString sFilename )
-{
-	int filesize = -1;
-	FSOUND_STREAM *pStream = FSOUND_Stream_Open( ( const char* )ConvW2A( sFilename ), FSOUND_2D, 0, 0 );
-
-	if ( pStream )
-	{
-		filesize = FSOUND_Stream_GetLength( pStream );
-		FSOUND_Stream_Close( pStream );
-	}
-	
-	return filesize;
 }
 
 void CMusikPlayer::SetVolume()
@@ -1300,28 +1314,6 @@ bool CMusikPlayer::_CurrentSongIsNetStream()
 			&& (m_CurrentSong.MetaData.eFormat == MUSIK_FORMAT_NETSTREAM) ); 
 }
 
-int CMusikPlayer::GetFileDuration( wxString sFilename, int nType )
-{
-	int duration = -1;
-
-	//-------------------------------------------------//
-	//--- this should be FSOUND_MPEGACCURATE to get	---//
-	//--- an accurate length, but it's way slower..	---//
-	//-------------------------------------------------//
-	FSOUND_STREAM *pStream = FSOUND_Stream_Open( ( const char* )ConvW2A( sFilename ), FSOUND_2D, 0, 0 );
-
-	if ( pStream )
-	{
-		duration = FSOUND_Stream_GetLengthMs( pStream );
-		FSOUND_Stream_Close( pStream );
-	}
-
-    if ( nType == FMOD_MSEC )
-		return duration;
-	else
-		return ( duration / 1000 );	
-}
-
 void CMusikPlayer::OnFadeCompleteEvt( wxCommandEvent& event )
 {
 	long FadeType = event.GetExtraLong();
@@ -1376,6 +1368,9 @@ void CMusikPlayer::InsertToPlaylist( CMusikSongArray & songstoadd ,bool bPlayFir
 {
 	//wxCriticalSectionLocker locker( m_critInternalData);
 	size_t size = songstoadd.GetCount();
+	for(size_t i = 0; i < size; i++)
+		songstoadd[i].bForcePlay=1;// mark each song such as it is played even in shuffle mode
+
 	size_t plsize = m_Playlist.GetCount();
 	if(plsize == 0 || !IsPlaying())
 	{// list empty, add

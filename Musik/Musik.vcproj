@@ -657,22 +657,10 @@
 					Name="MP3Info"
 					Filter="">
 					<File
-						RelativePath=".\Classes\Library\CFrameHeader.cpp">
-					</File>
-					<File
-						RelativePath=".\Classes\Library\CFrameHeader.h">
-					</File>
-					<File
 						RelativePath=".\Classes\Library\CMP3Info.cpp">
 					</File>
 					<File
 						RelativePath=".\Classes\Library\CMP3Info.h">
-					</File>
-					<File
-						RelativePath=".\Classes\Library\CVBitRate.cpp">
-					</File>
-					<File
-						RelativePath=".\Classes\Library\CVBitRate.h">
 					</File>
 				</Filter>
 				<Filter

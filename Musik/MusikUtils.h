@@ -259,7 +259,11 @@ public:
 	int			Rating;
 	int			TimesPlayed;
 	double		TimeAdded;
-	int			Check1;		//--- for tag dlg stuff, checks to see if it needs to be written to file / db ---//
+	unsigned int			Check1:1;		//--- for tag dlg stuff, checks to see if it needs to be written to file / db ---//
+	unsigned int			bChosenByUser:1;
+	unsigned int			bForcePlay:1;
+
+
 };
 
 #define MUSIK_LIB_ALL_SONGCOLUMNS	wxT(" songs.songid,")	  \
@@ -325,6 +329,10 @@ inline wxString ConvA2W( const char *pChar )
 inline const wxCharBuffer ConvW2A( const wxString &s )
 {
 	return wxConvISO8859_1.cWX2MB( s );
+}
+inline const wxCharBuffer ConvFn2A( const wxString &s )
+{
+	return wxConvFile.cWX2MB( s );
 }
 
 
@@ -592,6 +600,55 @@ public:
 			:wxTextCtrl(parent,id,value,pos,size,style,validator,name){}
 		void OnEraseBackground(wxEraseEvent& event) { event.Skip();}
 		DECLARE_EVENT_TABLE()
+};
+
+#include <wx/valgen.h>
+#include <wx/spinbutt.h>
+#include <wx/spinctrl.h>
+
+class WXDLLEXPORT wxGenericIntValidator: public wxGenericValidator
+{
+	DECLARE_CLASS(wxGenericIntValidator)
+public:
+	wxGenericIntValidator(int* val)
+		:wxGenericValidator(val)
+	{
+	}
+
+	virtual wxObject *Clone() const { return new wxGenericIntValidator(*this); }
+
+	// Called when the value in the window must be validated.
+	// This function can pop up an error message.
+	virtual bool Validate(wxWindow *  WXUNUSED(parent)) 
+	{
+#if wxUSE_SPINCTRL && !defined(__WXMOTIF__)
+		if (m_validatorWindow->IsKindOf(CLASSINFO(wxSpinCtrl)) )
+		{
+			wxSpinCtrl* pControl = (wxSpinCtrl*) m_validatorWindow;
+			return pControl && IsValid(pControl->GetValue(),pControl->GetMin(),pControl->GetMax());
+		} else
+#endif
+#if wxUSE_SPINBTN
+		if (m_validatorWindow->IsKindOf(CLASSINFO(wxSpinButton)) )
+		{
+			wxSpinButton* pControl = (wxSpinButton*) m_validatorWindow;
+			return pControl && IsValid(pControl->GetValue(), pControl->GetMin(),pControl->GetMax());
+		} else
+#endif
+		{
+		}
+		return true; 
+	}
+protected:
+	bool IsValid(int val,int min,int max) const
+	{
+		if (val)
+		{
+			if(val >= min && val <= max)
+				return true;
+		}
+		return false;
+	}
 };
 
 #endif

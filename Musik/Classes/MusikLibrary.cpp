@@ -25,8 +25,6 @@
 //--- mp3 / ogg helpers ---//
 #include "Library/CMP3Info.h"
 #include "Library/COggInfo.h"
-#include "id3/misc_support.h"
-
 //--- wx ---//
 #include <wx/file.h>
 #include <wx/filename.h>
@@ -47,6 +45,8 @@ CMusikSong::CMusikSong()
 	Check1 		= 0;
 	songid		= -1;
 	LastPlayed = TimeAdded	= 0.0;
+	bChosenByUser = 1;
+	bForcePlay = 0;
 
 }
 
@@ -138,7 +138,7 @@ bool CMusikLibrary::Load()
 	if( m_pDB )
 	{
 
-		// always create table, if it exists can error will be returned by sqlite_exec, but we dont care.
+		// always create table, if it exists an error will be returned by sqlite_exec, but we dont care.
 		sqlite_exec( m_pDB, szCreateVersionQuery, NULL, NULL, NULL );
 		sqlite_exec( m_pDB, szCreateSongTableQuery, NULL, NULL, NULL );
 		sqlite_exec( m_pDB, szCreateSongTableIdxQuery, NULL, NULL, NULL );
@@ -529,40 +529,8 @@ bool CMusikLibrary::GetMetaData( CSongMetaData & MetaData  )
 }
 bool CMusikLibrary::GetMP3MetaData( CSongMetaData & MetaData )
 {
-	//--- first get the things that can be gleaned from the header ---//
-	CMP3Info mp3info;
-	wxString sFilename = MetaData.Filename.GetFullPath();
-	if ( mp3info.loadInfo( sFilename ) == 0 )
-	{
-		MetaData.eFormat = MUSIK_FORMAT_MP3;
-		MetaData.nDuration_ms = mp3info.getLengthInSeconds() * 1000;
-		MetaData.nBitrate     = mp3info.getBitrate();
-		MetaData.bVBR         = mp3info.isVBitRate();
-		MetaData.nFilesize	  = mp3info.getFileSize();
-		
-		//--- link and load mp3 ---//
-		ID3_Tag		id3Tag;
-		id3Tag.Link( ( const char* )ConvW2A( sFilename ), (flags_t)ID3TT_ALL );
-		
-		MetaData.Artist.Attach	( ID3_GetArtist	( &id3Tag ));
-		MetaData.Title.Attach	( ID3_GetTitle	( &id3Tag ));
-		MetaData.Album.Attach	( ID3_GetAlbum	( &id3Tag ));
-		MetaData.Year.Attach	( ID3_GetYear	( &id3Tag ));
-		MetaData.Notes.Attach	( ID3_GetComment( &id3Tag ));
-		MetaData.Genre = ID3_V1GENRE2DESCRIPTION(ID3_GetGenreNum( &id3Tag ));
-		if(MetaData.Genre.IsEmpty())
-            MetaData.Genre.Attach	( ID3_GetGenre	( &id3Tag ));
-
-		MetaData.nTracknum =ID3_GetTrackNum( &id3Tag );
-	
-		MetaData.Artist = ConvFromISO8859_1ToUTF8(MetaData.Artist);
-		MetaData.Title = ConvFromISO8859_1ToUTF8(MetaData.Title);
-		MetaData.Album = ConvFromISO8859_1ToUTF8(MetaData.Album);
-		MetaData.Notes = ConvFromISO8859_1ToUTF8(MetaData.Notes);
-		MetaData.Genre = ConvFromISO8859_1ToUTF8(MetaData.Genre);
-		return true;
-	}
-	return false;
+	CMP3Info info;
+	return info.ReadMetaData(MetaData);
 }
 
 bool CMusikLibrary::WriteTag(  CMusikSong & song, bool ClearAll , bool bUpdateDB )
@@ -595,58 +563,16 @@ bool CMusikLibrary::WriteTag(  CMusikSong & song, bool ClearAll , bool bUpdateDB
    return bRet;
 }
 
-bool CMusikLibrary::WriteMP3Tag( const CSongMetaData & MetaData, bool ClearAll )
+bool CMusikLibrary::WriteMP3Tag( const CSongMetaData & MetaData, bool bClearAll )
 {
-	ID3_Tag	id3Tag;
-	id3Tag.Link( ( const char* )ConvW2A( MetaData.Filename.GetFullPath () ) , (flags_t)ID3TT_ALL );
-
-	//--- iterate through and delete ALL TAG INFO ---//
-	if ( ClearAll )
-	{
-		ID3_Tag::Iterator* iter = id3Tag.CreateIterator();
-		ID3_Frame* frame = NULL;
-		while (NULL != (frame = iter->GetNext()))
-		{
-			frame = id3Tag.RemoveFrame(frame);
-			delete frame;
-		}
-	}
-
-	//--- clear only fields of interest ---//
-	else if ( !ClearAll )
-	{
-		ID3_RemoveTitles	( &id3Tag ); 
-		ID3_RemoveArtists	( &id3Tag );
-		ID3_RemoveAlbums	( &id3Tag );
-		ID3_RemoveTracks	( &id3Tag );
-		ID3_RemoveYears		( &id3Tag );
-		ID3_RemoveGenres	( &id3Tag );
-		ID3_RemoveComments	( &id3Tag );
-
-	}
-
-	//--- tag ---//
-	ID3_AddTitle	( &id3Tag,  ConvFromUTF8ToISO8859_1( MetaData.Title ),	true ); 
-	ID3_AddArtist	( &id3Tag, ConvFromUTF8ToISO8859_1( MetaData.Artist ),	true );
-	ID3_AddAlbum	( &id3Tag, ConvFromUTF8ToISO8859_1( MetaData.Album ),	true );
-	ID3_AddYear		( &id3Tag, ConvFromUTF8ToISO8859_1( MetaData.Year ), 	true );
-	ID3_AddComment	( &id3Tag, ConvFromUTF8ToISO8859_1( MetaData.Notes ), 	true );
-	ID3_AddTrack	( &id3Tag, MetaData.nTracknum,				true );
-	
-	int genreid = GetGenreID( MetaData.Genre );
-	if( genreid == -1 )
-		ID3_AddGenre( &id3Tag, ConvFromUTF8ToISO8859_1( MetaData.Genre ),	true ); // write ID3V2 string genre tag
-	else
-		ID3_AddGenre( &id3Tag, genreid,	true );											// write ID3V1 integer genre id
-
-	//--- write to file ---//
-	return (id3Tag.Update() != ID3TT_NONE);
+	CMP3Info info;
+	return info.WriteMetaData (MetaData, bClearAll);
 }
 
 bool CMusikLibrary::WriteOGGTag( const CSongMetaData & MetaData, bool bClearAll )
 {
-	COggInfo ogg;
-	return ogg.WriteMetaData (MetaData, bClearAll);
+	COggInfo info;
+	return info.WriteMetaData (MetaData, bClearAll);
 }
 
 int CMusikLibrary::ClearDirtyTags()
@@ -1118,10 +1044,11 @@ void CMusikLibrary::UpdateItemLastPlayed( const CMusikSong & song )
 }
 
 
-void CMusikLibrary::RecordSongHistory( const CMusikSong & song ,int playedtime,bool bSelectedByUser)
+void CMusikLibrary::RecordSongHistory( const CMusikSong & song ,int playedtime)
 {
 
 	{
+		bool bSelectedByUser = song.bChosenByUser == 1;
 		int percentplayed = playedtime * 100 / song.MetaData.nDuration_ms;  
 		wxCriticalSectionLocker lock( m_csDBAccess );
 		sqlite_exec_printf( m_pDB, "insert into songhistory values ( %d, julianday('now'),%d,%d );",

@@ -569,7 +569,8 @@ void CPlaylistCtrl::OnClearPlayerlist( wxCommandEvent& WXUNUSED(event) )
 
 	g_Playlist.Clear();
 	wxGetApp().Player.SetPlaylist(g_Playlist);
-	wxGetApp().Player.Stop();
+	if(wxGetApp().Prefs.bStopSongOnNowPlayingClear)
+		wxGetApp().Player.Stop();
 	Update(false);
 }
 void CPlaylistCtrl::OnUpdateUIDisplayMenu ( wxUpdateUIEvent &event)
@@ -656,9 +657,9 @@ void CPlaylistCtrl::EndDragCol( wxListEvent& WXUNUSED(event) )
 void CPlaylistCtrl::PlaySel( wxListEvent& (event) )
 {
 	if(g_SourcesCtrl->GetSelType() == MUSIK_SOURCES_NOW_PLAYING)
-		wxGetApp().Player.Play(event.GetIndex());
+		wxGetApp().Player.PlayByUser(event.GetIndex());
 	else
-	OnPlayInstantly(event);
+		OnPlayInstantly(event);
 }
 
 void CPlaylistCtrl::OnKeyDown( wxKeyEvent& event )

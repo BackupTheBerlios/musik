@@ -26,7 +26,7 @@
 #include "../Frames/MusikFrame.h"
 
 #include <wx/colordlg.h>
-
+#include <wx/valgen.h>
 BEGIN_EVENT_TABLE(MusikPrefsFrame, wxFrame)
 	EVT_CHAR_HOOK			(											MusikPrefsFrame::OnTranslateKeys	)
 	EVT_TREE_SEL_CHANGED	(MUSIK_PREFERENCES_TREE,					MusikPrefsFrame::OnTreeChange		)
@@ -40,8 +40,37 @@ BEGIN_EVENT_TABLE(MusikPrefsFrame, wxFrame)
 	EVT_CLOSE				(											MusikPrefsFrame::OnClose			)
 END_EVENT_TABLE()
 
+#define PREF_CREATE_CHECKBOX(prefname,text) \
+	wxCheckBox *chk##prefname	=	new wxCheckBox_NoFlicker( this, -1,text,wxDefaultPosition,wxDefaultSize,0 \
+	,wxGenericValidator(&wxGetApp().Prefs.b##prefname));
+
+#define PREF_CREATE_SPINCTRL(prefname,minval,maxval,curval) \
+wxSpinCtrl *sc##prefname	= new wxSpinCtrl( this, -1,wxEmptyString,wxDefaultPosition,wxDefaultSize,wxSP_ARROW_KEYS,minval,maxval,curval);\
+{   	wxGenericIntValidator v(&wxGetApp().Prefs.n##prefname);		\
+	sc##prefname->SetValidator(v);								}
+#define PREF_CREATE_SPINCTRL2(prefname,minval,maxval,curval) \
+	sc2##prefname	= new wxSpinCtrl( this, -1,wxEmptyString,wxDefaultPosition,wxDefaultSize,wxSP_ARROW_KEYS,minval,maxval,curval);\
+{   	wxGenericIntValidator v(&wxGetApp().Prefs.n##prefname);		\
+	sc2##prefname->SetValidator(v);								}
+#define PREF_CREATE_TEXTCTRL(prefname,valmode)	 \
+	wxTextCtrl *tc##prefname	=	new wxTextCtrl_NoFlicker( this, -1,wxEmptyString,wxDefaultPosition,wxDefaultSize,0 \
+	,wxTextValidator(valmode,&wxGetApp().Prefs.s##prefname));
+#define PREF_CREATE_TEXTCTRL2(prefname,valmode)	 \
+	tc2##prefname	=	new wxTextCtrl_NoFlicker( this, -1,wxEmptyString,wxDefaultPosition,wxDefaultSize,0 \
+	,wxTextValidator(valmode,&wxGetApp().Prefs.s##prefname));
+
+#define PREF_CREATE_MULTILINETEXTCTRL(prefname,height,valmode)	 \
+	wxTextCtrl *tc##prefname	=	new wxTextCtrl_NoFlicker( this, -1,wxEmptyString,wxDefaultPosition,wxSize(-1,height),wxTE_MULTILINE \
+	,wxTextValidator(valmode,&wxGetApp().Prefs.s##prefname));
+#define PREF_CREATE_MULTILINETEXTCTRL2(prefname,height,valmode)	  \
+	tc2##prefname	=	new wxTextCtrl_NoFlicker( this, -1,wxEmptyString,wxDefaultPosition,wxSize(-1,height),wxTE_MULTILINE \
+	,wxTextValidator(valmode,&wxGetApp().Prefs.s##prefname));
+
+#define PREF_STATICTEXT(text)	\
+	new wxStaticText_NoFlicker( this, -1, text)
+
 MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, const wxPoint &pos, const wxSize &size ) 
-	: wxFrame( pParent, -1, sTitle, pos, wxSize(600,560), wxDEFAULT_FRAME_STYLE|wxRESIZE_BORDER|wxCAPTION | wxTAB_TRAVERSAL | wxFRAME_FLOAT_ON_PARENT | wxFRAME_NO_TASKBAR )
+	: wxFrame( pParent, -1, sTitle, pos, wxSize(600,600), wxDEFAULT_FRAME_STYLE|wxRESIZE_BORDER|wxCAPTION | wxTAB_TRAVERSAL | wxFRAME_FLOAT_ON_PARENT | wxFRAME_NO_TASKBAR )
 {
 	//---------------//
 	//--- colours ---//
@@ -90,27 +119,29 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//--------------------------//
 	//--- Sound -> Crossfader ---//
 	//---------------------------//
-	chkCrossfade			= new wxCheckBox_NoFlicker( this, -1, _("Crossfade on new song (seconds)"));
-	chkCrossfadeSeek		= new wxCheckBox_NoFlicker( this, -1, _("Crossfade on track seek (seconds)"));
-	chkCrossfadePauseResume	= new wxCheckBox_NoFlicker( this, -1, _("Crossfade on pause or resume (seconds)"));
-	chkCrossfadeStop		= new wxCheckBox_NoFlicker( this, -1, _("Crossfade on stop (seconds)"));
-	chkCrossfadeExit		= new wxCheckBox_NoFlicker( this, -1, _("Crossfade on program exit (seconds)"));
+	PREF_CREATE_CHECKBOX(FadeEnable, _("Crossfade on new song (seconds)"));
+	PREF_CREATE_CHECKBOX(FadeSeekEnable, _("Crossfade on track seek (seconds)"));
+	PREF_CREATE_CHECKBOX(FadePauseResumeEnable, _("Crossfade on pause or resume (seconds)"));
+	PREF_CREATE_CHECKBOX(FadeStopEnable, _("Crossfade on stop (seconds)"));
+	PREF_CREATE_CHECKBOX(FadeExitEnable, _("Crossfade on program exit (seconds)"));
+
+
 	tcDuration 				= new wxTextCtrl_NoFlicker( this, -1);
 	tcSeekDuration 			= new wxTextCtrl_NoFlicker( this, -1);
 	tcPauseResumeDuration	= new wxTextCtrl_NoFlicker( this, -1);
 	tcStopDuration			= new wxTextCtrl_NoFlicker( this, -1);
 	tcExitDuration			= new wxTextCtrl_NoFlicker( this, -1);
 	//--- crossfader sizer ---//
-	fsCrossfader = new wxFlexGridSizer( 5, 2, 2, 2 );
-	fsCrossfader->Add( chkCrossfade				);
+	wxFlexGridSizer	*fsCrossfader = new wxFlexGridSizer( 5, 2, 2, 2 );
+	fsCrossfader->Add( chkFadeEnable				);
 	fsCrossfader->Add( tcDuration 				);
-	fsCrossfader->Add( chkCrossfadeSeek			);
+	fsCrossfader->Add( chkFadeSeekEnable		);
 	fsCrossfader->Add( tcSeekDuration		 	);
-	fsCrossfader->Add( chkCrossfadePauseResume	);
+	fsCrossfader->Add( chkFadePauseResumeEnable	);
 	fsCrossfader->Add( tcPauseResumeDuration	);
-	fsCrossfader->Add( chkCrossfadeStop			);
+	fsCrossfader->Add( chkFadeStopEnable		);
 	fsCrossfader->Add( tcStopDuration			);
-	fsCrossfader->Add( chkCrossfadeExit			);
+	fsCrossfader->Add( chkFadeExitEnable		);
 	fsCrossfader->Add( tcExitDuration			);
 
 	//---------------------------------//
@@ -123,7 +154,7 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//--- Sound -> Driver ---//
 	//-----------------------//
 	//--- output driver ---//
-	wxStaticText_NoFlicker *stOutputDrv = new wxStaticText_NoFlicker	( this, -1, _("Ouput Driver:"));
+	
 	cmbOutputDrv = new wxComboBox ( this, MUSIK_PREFERENCES_OUTPUT_DRV, wxT(""), wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY );
 	#if defined (__WXMSW__)
 		cmbOutputDrv->Append ( wxT("Direct Sound") );
@@ -138,10 +169,9 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 		cmbOutputDrv->Append ( wxT("ALSA 0.9") );
 	#endif
 	//--- sound device ---//
-	wxStaticText_NoFlicker *stSndDevice = new wxStaticText_NoFlicker	( this, -1, _("Sound Device:"));
+	
 	cmbSndDevice	= new wxComboBox ( this, MUSIK_PREFERENCES_SND_DEVICE, wxT(""), wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY );	
 	//--- playrate ---//
-	wxStaticText_NoFlicker *stPlayRate = new wxStaticText_NoFlicker( this, -1, _("Playback Rate (hz):"));
 	cmbPlayRate  = new wxComboBox( this, -1, wxT(""), wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY );
 	cmbPlayRate->Append ( wxT("48000") );
 	cmbPlayRate->Append ( wxT("44100") );
@@ -150,29 +180,27 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	cmbPlayRate->Append ( wxT("8000") );
 	//--- buffer length ---//
 	tcBufferLength = new wxTextCtrl_NoFlicker	( this, -1, wxT("") );
-	wxStaticText_NoFlicker *stBufferLength = new wxStaticText_NoFlicker	( this, -1, _(" second buffer length") );
 	//--- max channels ---//
-	tcMaxChannels = new wxTextCtrl_NoFlicker	( this, -1, wxT("") );
-	wxStaticText_NoFlicker *stMaxChannels = new wxStaticText_NoFlicker( this, -1, _("Maximum sound channels:"));
+	PREF_CREATE_SPINCTRL2(SndMaxChan,4,32,4);
 	
 	//Use_MPEGACCURATE_ForMP3VBRFiles
-	chkUse_MPEGACCURATE_ForMP3VBRFiles = new wxCheckBox_NoFlicker( this, -1, _("Use MPEGACCURATE for Mp3-VBR Files"),		wxDefaultPosition, wxDefaultSize );
+	PREF_CREATE_CHECKBOX(Use_MPEGACCURATE_ForMP3VBRFiles,_("Use MPEGACCURATE for Mp3-VBR Files"));
 	
 	//-----------------------------//
 	//--- Sound -> Driver Sizer ---//
 	//-----------------------------//
 
 	wxFlexGridSizer *fsSound_Driver = new wxFlexGridSizer( 6, 2, 2, 2 );
-	fsSound_Driver->Add( stOutputDrv, 0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
+	fsSound_Driver->Add( PREF_STATICTEXT(_("Ouput Driver:")), 0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
 	fsSound_Driver->Add( cmbOutputDrv, 1, wxCENTER, 0 );
-	fsSound_Driver->Add( stSndDevice, 0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
+	fsSound_Driver->Add( PREF_STATICTEXT( _("Sound Device:")), 0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
 	fsSound_Driver->Add( cmbSndDevice, 1, wxCENTER, 0 );
-	fsSound_Driver->Add( stPlayRate, 0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
+	fsSound_Driver->Add( PREF_STATICTEXT(_("Playback Rate (hz):")), 0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
 	fsSound_Driver->Add( cmbPlayRate, 1, wxCENTER, 0 );	
-	fsSound_Driver->Add( stBufferLength, 0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
+	fsSound_Driver->Add( PREF_STATICTEXT(_(" second buffer length") ), 0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
 	fsSound_Driver->Add( tcBufferLength, 1, wxCENTER, 0 );
-	fsSound_Driver->Add( stMaxChannels, 0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
-	fsSound_Driver->Add( tcMaxChannels, 1, wxCENTER, 0 );
+	fsSound_Driver->Add( PREF_STATICTEXT(_("Maximum sound channels:")), 0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
+	fsSound_Driver->Add( sc2SndMaxChan, 1, wxCENTER, 0 );
 
 	vsSound_Driver = new wxBoxSizer( wxVERTICAL );
 	vsSound_Driver->Add( fsSound_Driver,	0, wxALL, 4  );
@@ -198,36 +226,36 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//--- activity boxes ---//
 	for(size_t i = 0; i < WXSIZEOF(cmbActivityBoxes);i++)
 	{
-		wxStaticText_NoFlicker *stActivityBox = new wxStaticText_NoFlicker( this, -1, wxString::Format(_("Selection Box %d:"),i + 1));
-		vsOptions_Selections->Add( stActivityBox,	0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
+		vsOptions_Selections->Add(  PREF_STATICTEXT( wxString::Format(_("Selection Box %d:"),i + 1)),	0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
 		cmbActivityBoxes[i] = new wxComboBox( this, -1, wxEmptyString, wxDefaultPosition, wxDefaultSize, WXSIZEOF(arrSelectionBoxes), arrSelectionBoxes, wxCB_READONLY );
 		vsOptions_Selections->Add( cmbActivityBoxes[i],	1, wxCENTER, 0 );
 	}
 	//--- selection style ---//
-	wxStaticText_NoFlicker *stSelStyle = new wxStaticText_NoFlicker( this, -1, _("Selection Style:" ));
 	cmbSelStyle = new wxComboBox( this, -1, wxT(""), wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY );
 	cmbSelStyle->Append( _( "Standard" ) );
 	cmbSelStyle->Append( _( "Sloppy" ) );
 	cmbSelStyle->Append( _( "Highlight") );
 
-	vsOptions_Selections->Add( stSelStyle,		0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
+	vsOptions_Selections->Add( PREF_STATICTEXT(_("Selection Style:" )),		0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
 	vsOptions_Selections->Add( cmbSelStyle,		1, wxCENTER, 0 );
 
 	//--------------------------//
 	//--- Options -> General ---//
 	//--------------------------//
-	chkAutoPlayOnAppStart	=	new wxCheckBox_NoFlicker( this, -1,	_("Automatically play song on startup") );
-	chkAutoPlayOnDropFilesInPlaylist =	new wxCheckBox_NoFlicker( this, -1,	_("Automatically play songs, dropped into playlist") );
+	PREF_CREATE_CHECKBOX(AutoPlayOnAppStart,_("Automatically play song on startup"));
+	PREF_CREATE_CHECKBOX(AutoPlayOnDropFilesInPlaylist,	_("Automatically play songs, dropped into playlist"));
+	PREF_CREATE_CHECKBOX(StopSongOnNowPlayingClear,	_("Stop song, if Now Playing is cleared"));
 #ifdef wxHAS_TASK_BAR_ICON
-	chkHideOnMinimize		=	new wxCheckBox_NoFlicker( this, -1,	_("Hide Window on Mimimize") );
+	PREF_CREATE_CHECKBOX(HideOnMinimize,	_("Hide Window on Minimize"));
 #endif
-	chkAutoScan				=	new wxCheckBox_NoFlicker( this, -1,	_("Automatically scan for new songs on startup") );
-	chkShowAllSongs			=	new wxCheckBox_NoFlicker( this, -1,	_("Selecting library shows all songs in playlist") );
-	chkBlankSwears			=	new wxCheckBox_NoFlicker( this, -1,	_("Censor common swearwords") );
-	chkSortArtistWithoutPrefix	=	new wxCheckBox_NoFlicker( this, -1,	_("Sort Artist without prefix") );
-	chkPlaylistStripes		=	new wxCheckBox_NoFlicker( this, -1,	_("Show \"stripes\" in playlist") );
-	chkActivityBoxStripes	=	new wxCheckBox_NoFlicker( this, -1,	_("Show \"stripes\" in selection boxes") );
-	chkSourcesBoxStripes	=	new wxCheckBox_NoFlicker( this, -1,	_("Show \"stripes\" in sources box") );
+	PREF_CREATE_CHECKBOX(AutoAdd,_("Automatically scan for new songs on startup"));
+	PREF_CREATE_CHECKBOX(ShowAllSongs,	_("Selecting library shows all songs in playlist"));
+	PREF_CREATE_CHECKBOX(BlankSwears,_("Censor common swearwords"));
+
+	chkSortArtistWithoutPrefix	=	new wxCheckBox_NoFlicker( this, -1,	_("Sort Artist without prefix"),wxDefaultPosition,wxDefaultSize,0 );
+	chkPlaylistStripes		=	new wxCheckBox_NoFlicker( this, -1,	_("Show \"stripes\" in playlist"),wxDefaultPosition,wxDefaultSize,0 );
+	chkActivityBoxStripes	=	new wxCheckBox_NoFlicker( this, -1,	_("Show \"stripes\" in selection boxes"),wxDefaultPosition,wxDefaultSize,0 );
+	chkSourcesBoxStripes	=	new wxCheckBox_NoFlicker( this, -1,	_("Show \"stripes\" in sources box"),wxDefaultPosition,wxDefaultSize,0 );
 
 	btnPlaylistStripeColour	=	new wxButton_NoFlicker( this, MUSIK_PREFERENCES_PLAYLIST_STRIPE_COLOUR,	_("Set Color") );
 	btnActivityStripeColour	=	new wxButton_NoFlicker( this, MUSIK_PREFERENCES_ACTIVITY_STRIPE_COLOUR,	_("Set Color") );
@@ -239,10 +267,11 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	vsOptions_Interface = new wxBoxSizer( wxVERTICAL );
 	vsOptions_Interface->Add( chkAutoPlayOnAppStart,	0, wxALL, 4 );
 	vsOptions_Interface->Add( chkAutoPlayOnDropFilesInPlaylist,	0, wxALL, 4 );
+	vsOptions_Interface->Add( chkStopSongOnNowPlayingClear,	0, wxALL, 4 );
 #ifdef wxHAS_TASK_BAR_ICON
 	vsOptions_Interface->Add( chkHideOnMinimize,		0, wxALL, 4 );
 #endif
-	vsOptions_Interface->Add( chkAutoScan,				0, wxALL, 4 );
+	vsOptions_Interface->Add( chkAutoAdd,				0, wxALL, 4 );
 	vsOptions_Interface->Add( chkShowAllSongs,			0, wxALL, 4 );
 	vsOptions_Interface->Add( chkBlankSwears,			0, wxALL, 4 );
 	vsOptions_Interface->Add( chkSortArtistWithoutPrefix,0, wxALL, 4 );
@@ -274,38 +303,32 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//-------------------------//
 	//--- options -> tunage ---//
 	//-------------------------//
-	chkTunageWriteFile	= new wxCheckBox_NoFlicker( this, -1, _("Enable"));
-	chkTunageAppendFile = new wxCheckBox_NoFlicker( this, -1, _("Append to file"));
-	chkTunagePostURL	= new wxCheckBox_NoFlicker( this, -1, _("Enable"));
-	chkTunageRunApp		= new wxCheckBox_NoFlicker( this, -1, _("Enable"));
-	chkTunageRunOnStop	= new wxCheckBox_NoFlicker( this, -1, _("Update when playing is stopped"));
-
-	wxStaticText_NoFlicker *stTunageFilename	= new wxStaticText_NoFlicker( this, -1, _("Filename:"));
-	wxStaticText_NoFlicker *stTunageFileLine	= new wxStaticText_NoFlicker( this, -1, _("Line to write:"));
-	wxStaticText_NoFlicker *stTunageURL		= new wxStaticText_NoFlicker( this, -1, _("URL:"));
-	wxStaticText_NoFlicker *stTunageCmdLine	= new wxStaticText_NoFlicker( this, -1, _("Command line:"));
-	wxStaticText_NoFlicker *stTunageStoppedText = new wxStaticText_NoFlicker( this, -1, _("Stopped Text:"));
-
-	tcTunageFilename	= new wxTextCtrl_NoFlicker( this, -1);
-	tcTunageFileLine	= new wxTextCtrl_NoFlicker( this, -1);
-	tcTunageURL			= new wxTextCtrl_NoFlicker( this, -1);
-	tcTunageCmdLine		= new wxTextCtrl_NoFlicker( this, -1);
-	tcTunageStoppedText = new wxTextCtrl_NoFlicker( this, -1);
+	PREF_CREATE_CHECKBOX(TunageWriteFile,_("Enable"));
+	PREF_CREATE_CHECKBOX(TunageAppendFile, _("Append to file"));
+	PREF_CREATE_CHECKBOX(TunagePostURL, _("Enable"));
+	PREF_CREATE_CHECKBOX(TunageRunApp, _("Enable"));
+	PREF_CREATE_CHECKBOX(TunageRunOnStop,  _("Update when playing is stopped"));
+	
+	PREF_CREATE_TEXTCTRL(TunageFilename,wxFILTER_NONE);
+	PREF_CREATE_TEXTCTRL(TunageFileLine,wxFILTER_NONE);
+	PREF_CREATE_TEXTCTRL(TunageURL,wxFILTER_NONE);
+	PREF_CREATE_TEXTCTRL(TunageCmdLine,wxFILTER_NONE);
+	PREF_CREATE_TEXTCTRL(TunageStoppedText,wxFILTER_NONE);
 
 	wxBoxSizer *hsTunageFilename = new wxBoxSizer( wxHORIZONTAL );
-	hsTunageFilename->Add( stTunageFilename, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 2 );
+	hsTunageFilename->Add( PREF_STATICTEXT( _("Filename:")), 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 2 );
 	hsTunageFilename->Add( tcTunageFilename, 1, 0, 0 );
 	wxBoxSizer *hsTunageFileLine = new wxBoxSizer( wxHORIZONTAL );
-	hsTunageFileLine->Add( stTunageFileLine, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 2 );
+	hsTunageFileLine->Add( PREF_STATICTEXT(_("Line to write:")), 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 2 );
 	hsTunageFileLine->Add( tcTunageFileLine, 1, 0, 0 );
 	wxBoxSizer *hsTunageURL = new wxBoxSizer( wxHORIZONTAL );
-	hsTunageURL->Add( stTunageURL, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 2 );
+	hsTunageURL->Add( PREF_STATICTEXT(_("URL:")), 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 2 );
 	hsTunageURL->Add( tcTunageURL, 1, 0, 0 );
 	wxBoxSizer *hsTunageCmdLine = new wxBoxSizer( wxHORIZONTAL );
-	hsTunageCmdLine->Add( stTunageCmdLine, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 2 );
+	hsTunageCmdLine->Add( PREF_STATICTEXT( _("Command line:")), 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 2 );
 	hsTunageCmdLine->Add( tcTunageCmdLine, 1, 0, 0 );
 	wxBoxSizer *hsTunageStoppedText = new wxBoxSizer( wxHORIZONTAL );
-	hsTunageStoppedText->Add( stTunageStoppedText, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 2 );
+	hsTunageStoppedText->Add( PREF_STATICTEXT(_("Stopped Text:")), 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 2 );
 	hsTunageStoppedText->Add( tcTunageStoppedText, 1, 0, 0 );
 
 	
@@ -357,31 +380,29 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 		wxT("$TIMESPLAYED\t\t") + _("Times played")				+  _(" of current song\n") +
 		wxT("$NAME       \t\t\t") + _("Results in \"Artist - Title\", or in Stopped Text")	+  wxT("\n");
 
-	wxStaticText_NoFlicker *stTunageInfo = new wxStaticText_NoFlicker( this, -1, sTunageInfo);
-
-	vsOptions_Tunage->Add( stTunageInfo,		1, wxADJUST_MINSIZE| wxALL , 2 );
+	vsOptions_Tunage->Add( PREF_STATICTEXT(sTunageInfo),		1, wxADJUST_MINSIZE| wxALL , 2 );
 
 	//-------------------------//
 	//--- options -> Auto DJ ---//
 	//-------------------------//
 
-	wxStaticText_NoFlicker *stAutoDjFilter							= new wxStaticText_NoFlicker( this, -1, _("Use this filter to select songs:"));
-	wxStaticText_NoFlicker *stAutoDjDoNotPlaySongPlayedTheLastNHours	= new wxStaticText_NoFlicker( this, -1, _("Number of hours a song must not have been played to be chosen:"));
-	wxStaticText_NoFlicker *stAutoDJChooseSongsToPlayInAdvance		= new wxStaticText_NoFlicker( this, -1, _("Number of songs to choose in advance:"));
-
-	tcAutoDjFilter								= new wxTextCtrl_NoFlicker( this, -1,wxEmptyString,wxDefaultPosition,wxSize(-1,80),wxTE_MULTILINE);
-	tcAutoDjDoNotPlaySongPlayedTheLastNHours	= new wxTextCtrl_NoFlicker( this, -1);
-	tcAutoDJChooseSongsToPlayInAdvance			= new wxTextCtrl_NoFlicker( this, -1);
-
+	PREF_CREATE_MULTILINETEXTCTRL2(AutoDjFilter,80,wxFILTER_NONE);
+	
+	PREF_CREATE_SPINCTRL(AutoDjDoNotPlaySongPlayedTheLastNHours,1,2000000,1);
+	PREF_CREATE_SPINCTRL(AutoDJChooseSongsToPlayInAdvance,1,1000,1);
+	PREF_CREATE_SPINCTRL(AutoDJChooseAlbumsToPlayInAdvance,1,20,1);
 	wxBoxSizer *hsAutoDjFilter = new wxBoxSizer( wxVERTICAL );
-	hsAutoDjFilter->Add( stAutoDjFilter, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 2 );
-	hsAutoDjFilter->Add( tcAutoDjFilter, 1, wxEXPAND, 0 );
+	hsAutoDjFilter->Add( PREF_STATICTEXT( _("Use this filter to select songs:")), 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 2 );
+	hsAutoDjFilter->Add( tc2AutoDjFilter, 1, wxEXPAND, 0 );
 	wxBoxSizer *hsAutoDjDoNotPlaySongPlayedTheLastNHours = new wxBoxSizer( wxHORIZONTAL );
-	hsAutoDjDoNotPlaySongPlayedTheLastNHours->Add( stAutoDjDoNotPlaySongPlayedTheLastNHours, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 2 );
-	hsAutoDjDoNotPlaySongPlayedTheLastNHours->Add( tcAutoDjDoNotPlaySongPlayedTheLastNHours, 1, 0, 0 );
+	hsAutoDjDoNotPlaySongPlayedTheLastNHours->Add( PREF_STATICTEXT(_("Number of hours a song must not have been played to be chosen:")), 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 2 );
+	hsAutoDjDoNotPlaySongPlayedTheLastNHours->Add( scAutoDjDoNotPlaySongPlayedTheLastNHours, 1, 0, 0 );
 	wxBoxSizer *hsAutoDJChooseSongsToPlayInAdvance = new wxBoxSizer( wxHORIZONTAL );
-	hsAutoDJChooseSongsToPlayInAdvance->Add( stAutoDJChooseSongsToPlayInAdvance, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 2 );
-	hsAutoDJChooseSongsToPlayInAdvance->Add( tcAutoDJChooseSongsToPlayInAdvance, 1, 0, 0 );
+	hsAutoDJChooseSongsToPlayInAdvance->Add( PREF_STATICTEXT(_("Number of songs to choose in advance:")), 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 2 );
+	hsAutoDJChooseSongsToPlayInAdvance->Add( scAutoDJChooseSongsToPlayInAdvance, 1, 0, 0 );
+	wxBoxSizer *hsAutoDJChooseAlbumsToPlayInAdvance = new wxBoxSizer( wxHORIZONTAL );
+	hsAutoDJChooseAlbumsToPlayInAdvance->Add( PREF_STATICTEXT(_("Number of albums to choose in advance:")), 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 2 );
+	hsAutoDJChooseAlbumsToPlayInAdvance->Add( scAutoDJChooseAlbumsToPlayInAdvance, 1, 0, 0 );
 
 
 	sbAutoDj = new wxStaticBox( this, -1, _("Auto DJ") );
@@ -389,14 +410,14 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	vsAutoDj->Add( hsAutoDjFilter,								0, wxALL | wxEXPAND, 2 );
 	vsAutoDj->Add( hsAutoDjDoNotPlaySongPlayedTheLastNHours,	0, wxALL | wxEXPAND, 2 );
 	vsAutoDj->Add( hsAutoDJChooseSongsToPlayInAdvance,			0, wxALL | wxEXPAND, 2 );
+	vsAutoDj->Add( hsAutoDJChooseAlbumsToPlayInAdvance,			0, wxALL | wxEXPAND, 2 );
 
 
 	sbShuffle =	 new wxStaticBox( this, -1, _("Shuffle") );
-	wxStaticText_NoFlicker *stMaxShuffleHistory		= new wxStaticText_NoFlicker( this, -1, _("Shuffle history size:"));
-	tcMaxShuffleHistory	= new wxTextCtrl_NoFlicker( this, -1);
+	PREF_CREATE_SPINCTRL(MaxShuffleHistory,0,10000,0);
 	wxBoxSizer *hsMaxShuffleHistory = new wxBoxSizer( wxHORIZONTAL );
-	hsMaxShuffleHistory->Add( stMaxShuffleHistory, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 2 );
-	hsMaxShuffleHistory->Add( tcMaxShuffleHistory, 1, 0, 0 );
+	hsMaxShuffleHistory->Add( PREF_STATICTEXT(_("Shuffle history size:")), 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 2 );
+	hsMaxShuffleHistory->Add( scMaxShuffleHistory, 1, 0, 0 );
 
 
 	wxStaticBoxSizer *vsShuffle = new wxStaticBoxSizer( sbShuffle, wxVERTICAL );
@@ -412,31 +433,24 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//--- Streaming -> Buffer ---//
 	//---------------------------//
 
-	wxStaticText_NoFlicker *stStreamingBufferSize			= new wxStaticText_NoFlicker( this, -1, _("Buffer Size (bytes):"));
-	wxStaticText_NoFlicker *stStreamingPreBufferPercent	= new wxStaticText_NoFlicker( this, -1, _("Prebuffering (%):"));
-	wxStaticText_NoFlicker *stStreamingReBufferPercent	= new wxStaticText_NoFlicker( this, -1, _("Rebuffering (%):"));
+	
+	PREF_CREATE_SPINCTRL2(StreamingBufferSize,64000,256000,64000);
+	PREF_CREATE_SPINCTRL2(StreamingPreBufferPercent,10,99,10);
+	PREF_CREATE_SPINCTRL2(StreamingReBufferPercent,10,99,10);
 
-	tcStreamingBufferSize		= new wxTextCtrl_NoFlicker( this, -1);
-	tcStreamingPreBufferPercent	= new wxTextCtrl_NoFlicker( this, -1);
-	tcStreamingReBufferPercent	= new wxTextCtrl_NoFlicker( this, -1);
-  
 	vsStreaming_Buffer = new wxFlexGridSizer( 3,2,2,2 );
 
-	vsStreaming_Buffer->Add( stStreamingBufferSize );
-	vsStreaming_Buffer->Add( tcStreamingBufferSize );
-	vsStreaming_Buffer->Add( stStreamingPreBufferPercent );
-	vsStreaming_Buffer->Add( tcStreamingPreBufferPercent );
-	vsStreaming_Buffer->Add( stStreamingReBufferPercent );
-	vsStreaming_Buffer->Add( tcStreamingReBufferPercent );
+	vsStreaming_Buffer->Add( PREF_STATICTEXT( _("Buffer Size (bytes):")) );
+	vsStreaming_Buffer->Add( sc2StreamingBufferSize );
+	vsStreaming_Buffer->Add( PREF_STATICTEXT( _("Prebuffering (%):")) );
+	vsStreaming_Buffer->Add( sc2StreamingPreBufferPercent );
+	vsStreaming_Buffer->Add( PREF_STATICTEXT(_("Rebuffering (%):")) );
+	vsStreaming_Buffer->Add( sc2StreamingReBufferPercent );
 
  	//--------------------------------//
 	//--- Streaming -> ProxyServer ---//
 	//--------------------------------//
 	chkUseProxyServer		= new wxCheckBox_NoFlicker	( this, -1,	_("Use Proxy server") );
-	wxStaticText_NoFlicker *stProxyServer			= new wxStaticText_NoFlicker( this, -1, _("Proxy server address:"));
-	wxStaticText_NoFlicker *stProxyServerPort	= new wxStaticText_NoFlicker( this, -1, _("Proxy server port:"));
-	wxStaticText_NoFlicker *stProxyServerUser	= new wxStaticText_NoFlicker( this, -1, _("Proxy server user:"));
-	wxStaticText_NoFlicker *stProxyServerPassword	= new wxStaticText_NoFlicker( this, -1, _("Proxy server password:"));
 
 	tcProxyServer			= new wxTextCtrl_NoFlicker( this, -1);
 	tcProxyServerPort		= new wxTextCtrl_NoFlicker( this, -1);
@@ -445,13 +459,13 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	
 	wxFlexGridSizer * fsProxySizer		= new wxFlexGridSizer( 4,2,2,2 );
 
-	fsProxySizer->Add(stProxyServer);
+	fsProxySizer->Add(PREF_STATICTEXT(_("Proxy server address:")));
 	fsProxySizer->Add(tcProxyServer);
-	fsProxySizer->Add(stProxyServerPort);
+	fsProxySizer->Add(PREF_STATICTEXT(_("Proxy server port:")));
 	fsProxySizer->Add(tcProxyServerPort);
-	fsProxySizer->Add(stProxyServerUser);
+	fsProxySizer->Add(PREF_STATICTEXT(_("Proxy server user:")));
 	fsProxySizer->Add(tcProxyServerUser);
-	fsProxySizer->Add(stProxyServerPassword);
+	fsProxySizer->Add(PREF_STATICTEXT(_("Proxy server password:")));
 	fsProxySizer->Add(tcProxyServerPassword);
 
 	vsStreaming_ProxyServer	= new wxBoxSizer( wxVERTICAL );
@@ -461,24 +475,21 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//--------------------------//
 	//--- Tagging -> General ---//
 	//--------------------------//
-	wxStaticText_NoFlicker *stActivityTag =	new wxStaticText_NoFlicker( this, -1, _("Selection Boxes (artist/album/etc):"));
-	chkActivityWrite			=	new wxCheckBox_NoFlicker	( this, -1,	_("Write tag to file") );
-	chkActivityClear			=	new wxCheckBox_NoFlicker	( this, -1,	_("Clear old tag") );
-	chkActivityRename			=	new wxCheckBox_NoFlicker	( this, -1,	_("Automatically rename file") );
-	wxStaticText_NoFlicker *stTagDlgTag	=	new wxStaticText_NoFlicker( this, -1, _("\nTag Dialog Box:"));
-	chkTagDlgWrite				=	new wxCheckBox_NoFlicker	( this, -1,	_("Write tag to file") );
-	chkTagDlgClear				=	new wxCheckBox_NoFlicker	( this, -1,	_("Clear old tag") );
-	chkTagDlgRename				=	new wxCheckBox_NoFlicker	( this, -1,	_("Automatically rename file") );
-
+	PREF_CREATE_CHECKBOX(ActBoxWrite,_("Write tag to file"));
+	PREF_CREATE_CHECKBOX(ActBoxClear,_("Clear old tag"));
+	PREF_CREATE_CHECKBOX(ActBoxRename,_("Automatically rename file"));
+	PREF_CREATE_CHECKBOX(TagDlgWrite,_("Write tag to file"));
+	PREF_CREATE_CHECKBOX(TagDlgClear,_("Clear old tag"));
+	PREF_CREATE_CHECKBOX(TagDlgRename,_("Automatically rename file"));
 	//--------------------------------//
 	//--- Tagging -> General Sizer ---//
 	//--------------------------------//
 	vsTagging_General = new wxBoxSizer( wxVERTICAL );
-	vsTagging_General->Add	( stActivityTag,		0, wxALL | wxEXPAND, 4 );
-	vsTagging_General->Add	( chkActivityWrite,		0, wxALL | wxEXPAND, 4 );
-	vsTagging_General->Add	( chkActivityClear,		1, wxALL | wxEXPAND, 4 );
-	vsTagging_General->Add	( chkActivityRename,	1, wxALL | wxEXPAND, 4 );
-	vsTagging_General->Add	( stTagDlgTag,			0, wxALL | wxEXPAND, 4 );
+	vsTagging_General->Add	( PREF_STATICTEXT( _("Selection Boxes (artist/album/etc):")),		0, wxALL | wxEXPAND, 4 );
+	vsTagging_General->Add	( chkActBoxWrite,		0, wxALL | wxEXPAND, 4 );
+	vsTagging_General->Add	( chkActBoxClear,		1, wxALL | wxEXPAND, 4 );
+	vsTagging_General->Add	( chkActBoxRename,	1, wxALL | wxEXPAND, 4 );
+	vsTagging_General->Add	( PREF_STATICTEXT(_("\nTag Dialog Box:")),			0, wxALL | wxEXPAND, 4 );
 	vsTagging_General->Add	( chkTagDlgWrite,		0, wxALL | wxEXPAND, 4 );
 	vsTagging_General->Add	( chkTagDlgClear,		1, wxALL | wxEXPAND, 4 );
 	vsTagging_General->Add	( chkTagDlgRename,		1, wxALL | wxEXPAND, 4 );
@@ -487,10 +498,9 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//--- Tagging -> Auto Tag ---//
 	//---------------------------//
 	//--- rename options and sizer ---//
-	wxStaticText_NoFlicker *stRename	= new wxStaticText_NoFlicker	( this, -1, _("Rename:"));
-	tcAutoRename			= new wxTextCtrl_NoFlicker	( this, -1);
+	PREF_CREATE_TEXTCTRL(  AutoRename,wxFILTER_NONE);
 	wxBoxSizer *hsRename	= new wxBoxSizer	( wxHORIZONTAL );
-	hsRename->Add ( stRename, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 2 );
+	hsRename->Add ( PREF_STATICTEXT( _("Rename:")), 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 2 );
 	hsRename->Add ( tcAutoRename, 1, wxEXPAND, 0 );
 	//--- information ---//
 	wxString sRenameInfo = 
@@ -504,26 +514,25 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 		wxString( _("%6 - Track Number\n\n")			) +
 		wxString(MUSIKAPPNAME)							  +	
 		wxString( _(" will not delete empty directories!" ) );
-	wxStaticText_NoFlicker *stInfo = new wxStaticText_NoFlicker( this, -1, sRenameInfo);
 
 	//---------------------------------//
 	//--- Tagging -> Auto Tag Sizer ---//
 	//---------------------------------//
 	vsTagging_Auto = new wxBoxSizer( wxVERTICAL );
 	vsTagging_Auto->Add	( hsRename, 0, wxALL | wxEXPAND, 4 );
-	vsTagging_Auto->Add ( stInfo, 0, wxADJUST_MINSIZE | wxALL | wxEXPAND, 4 );
+	vsTagging_Auto->Add ( PREF_STATICTEXT(sRenameInfo), 0, wxADJUST_MINSIZE | wxALL | wxEXPAND, 4 );
 
 	//----------------------//
 	//--- System Buttons ---//
 	//----------------------//
-	btnCancel =	new wxButton_NoFlicker( this, MUSIK_PREFERENCES_CANCEL,	_("Cancel"),	wxDefaultPosition, wxDefaultSize );
-	btnApply =	new wxButton_NoFlicker( this, MUSIK_PREFERENCES_APPLY,	_("Apply"),		wxDefaultPosition, wxDefaultSize );
-	btnOK =		new wxButton_NoFlicker( this, MUSIK_PREFERENCES_OK,		_("OK"),		wxDefaultPosition, wxDefaultSize );
+	wxButton* btnCancel =	new wxButton_NoFlicker( this, MUSIK_PREFERENCES_CANCEL,	_("Cancel"),	wxDefaultPosition, wxDefaultSize );
+	wxButton* btnApply =	new wxButton_NoFlicker( this, MUSIK_PREFERENCES_APPLY,	_("Apply"),		wxDefaultPosition, wxDefaultSize );
+	wxButton* btnOK =		new wxButton_NoFlicker( this, MUSIK_PREFERENCES_OK,		_("OK"),		wxDefaultPosition, wxDefaultSize );
 
 	//----------------------------//
 	//--- System Buttons Sizer ---//
 	//----------------------------//
-	hsSysButtons = new wxBoxSizer( wxHORIZONTAL );
+	wxBoxSizer *hsSysButtons = new wxBoxSizer( wxHORIZONTAL );
 	hsSysButtons->Add( btnCancel,	0, wxALIGN_LEFT		);
 	hsSysButtons->Add( -1,-1,	1, wxEXPAND			);
 	hsSysButtons->Add( btnApply,	0, wxALIGN_RIGHT	);
@@ -589,7 +598,8 @@ void MusikPrefsFrame::OnClickColour		( wxCommandEvent &event )
 void MusikPrefsFrame::Close( bool bCancel )
 {
 	if ( !bCancel )
-		SavePrefs();
+		if(!SavePrefs())
+			return;
 
 	g_MusikFrame->Enable( TRUE );
 	this->Destroy();
@@ -598,17 +608,10 @@ void MusikPrefsFrame::Close( bool bCancel )
 
 void MusikPrefsFrame::LoadPrefs()
 {
+	TransferDataToWindow();
 	//--------------------------//
 	//--- options -> general ---//
 	//--------------------------//
-	chkAutoPlayOnAppStart->SetValue	( wxGetApp().Prefs.bAutoPlayOnAppStart	);
-	chkAutoPlayOnDropFilesInPlaylist->SetValue	( wxGetApp().Prefs.bAutoPlayOnDropFilesInPlaylist);
-#ifdef wxHAS_TASK_BAR_ICON
-	chkHideOnMinimize->SetValue		( wxGetApp().Prefs.bHideOnMinimize	);
-#endif
-	chkAutoScan->SetValue			( wxGetApp().Prefs.bAutoAdd	);
-	chkShowAllSongs->SetValue		( wxGetApp().Prefs.bShowAllSongs );
-	chkBlankSwears->SetValue		( wxGetApp().Prefs.bBlankSwears );
 	chkSortArtistWithoutPrefix->SetValue( wxGetApp().Prefs.bSortArtistWithoutPrefix );
 	chkPlaylistStripes->SetValue	( wxGetApp().Prefs.bPLStripes );
 	chkActivityBoxStripes->SetValue	( wxGetApp().Prefs.bActStripes );
@@ -634,44 +637,6 @@ void MusikPrefsFrame::LoadPrefs()
 		cmbPLColumnStatic[i]->SetSelection		( wxGetApp().Prefs.bPlaylistColumnDynamic[PLAYLISTCOLUMN_RATING]			);
 	}
 
-
-	//-------------------------//
-	//--- options -> tunage ---//
-	//-------------------------//
-	chkTunageWriteFile->SetValue		( wxGetApp().Prefs.bTunageWriteFile );
-	chkTunageAppendFile->SetValue		( wxGetApp().Prefs.bTunageAppendFile );
-	chkTunagePostURL->SetValue			( wxGetApp().Prefs.bTunagePostURL );
-	chkTunageRunApp->SetValue			( wxGetApp().Prefs.bTunageRunApp );
-	chkTunageRunOnStop->SetValue		( wxGetApp().Prefs.bTunageRunOnStop );
-	tcTunageFilename->SetValue			( wxGetApp().Prefs.sTunageFilename );
-	tcTunageFileLine->SetValue			( wxGetApp().Prefs.sTunageFileLine );
-	tcTunageURL->SetValue				( wxGetApp().Prefs.sTunageURL );
-	tcTunageCmdLine->SetValue			( wxGetApp().Prefs.sTunageCmdLine );
-	tcTunageStoppedText->SetValue		( wxGetApp().Prefs.sTunageStoppedText );
-
-	//-------------------------//
-	//-- options -> Auto DJ ---//
-	//-------------------------//
-	tcMaxShuffleHistory->SetValue		(IntToString( wxGetApp().Prefs.nMaxShuffleHistory));
-	tcAutoDjFilter->SetValue			( wxGetApp().Prefs.sAutoDjFilter);
-	tcAutoDjDoNotPlaySongPlayedTheLastNHours->SetValue(IntToString( wxGetApp().Prefs.nAutoDjDoNotPlaySongPlayedTheLastNHours));
-	tcAutoDJChooseSongsToPlayInAdvance->SetValue		(IntToString( wxGetApp().Prefs.nAutoDJChooseSongsToPlayInAdvance));
-
-	//--------------------------//
-	//--- tagging -> general ---//
-	//--------------------------//
-	chkActivityWrite->SetValue		( wxGetApp().Prefs.bActBoxWrite	);
-	chkActivityClear->SetValue		( wxGetApp().Prefs.bActBoxClear	);
-	chkActivityRename->SetValue		( wxGetApp().Prefs.bActBoxRename );
-	chkTagDlgWrite->SetValue		( wxGetApp().Prefs.bTagDlgWrite	);
-	chkTagDlgClear->SetValue		( wxGetApp().Prefs.bTagDlgClear	);
-	chkTagDlgRename->SetValue		( wxGetApp().Prefs.bTagDlgRename );
-
-	//---------------------------//
-	//--- tagging -> auto tag ---//
-	//---------------------------//
-	tcAutoRename->SetValue			( wxGetApp().Prefs.sAutoRename	);
-
 	//---------------------------//
 	//--- sound -> crossfader ---//
 	//---------------------------//
@@ -679,27 +644,22 @@ void MusikPrefsFrame::LoadPrefs()
 	float		fDuration;
 	wxString	sDuration;
 
-	chkCrossfade->SetValue				( wxGetApp().Prefs.bFadeEnable );
 	fDuration =							(float)wxGetApp().Prefs.nFadeDuration / 1000;
 	sDuration.sprintf					( wxT("%.1f"), fDuration );
 	tcDuration->SetValue				( sDuration );
 
-	chkCrossfadeSeek->SetValue			( wxGetApp().Prefs.bFadeSeekEnable );
 	fDuration =							(float)wxGetApp().Prefs.nFadeSeekDuration / 1000;
 	sDuration.sprintf					( wxT("%.1f"), fDuration );
 	tcSeekDuration->SetValue			( sDuration );
 
-	chkCrossfadePauseResume->SetValue	( wxGetApp().Prefs.bFadePauseResumeEnable );
 	fDuration =							(float)wxGetApp().Prefs.nFadePauseResumeDuration / 1000;
 	sDuration.sprintf					( wxT("%.1f"), fDuration );
 	tcPauseResumeDuration->SetValue		( sDuration );
 
-	chkCrossfadeStop->SetValue			( wxGetApp().Prefs.bFadeStopEnable );
 	fDuration =							(float)wxGetApp().Prefs.nFadeStopDuration / 1000;
 	sDuration.sprintf					( wxT("%.1f"), fDuration );
 	tcStopDuration->SetValue			( sDuration );
 
-	chkCrossfadeExit->SetValue			( wxGetApp().Prefs.bFadeExitEnable );
 	fDuration =							(float)wxGetApp().Prefs.nFadeExitDuration / 1000;
 	sDuration.sprintf					( wxT("%.1f"), fDuration );
 	tcExitDuration->SetValue			( sDuration );
@@ -717,14 +677,6 @@ void MusikPrefsFrame::LoadPrefs()
 	sLength.sprintf					( wxT("%.1f"), fLength );
 	tcBufferLength->SetValue		( sLength );
 	cmbPlayRate->SetSelection		( cmbPlayRate->FindString ( sSndRate ) );
-	tcMaxChannels->SetValue			( IntTowxString( wxGetApp().Prefs.nSndMaxChan ) );
-	chkUse_MPEGACCURATE_ForMP3VBRFiles->SetValue(wxGetApp().Prefs.bUse_MPEGACCURATE_ForMP3VBRFiles);
-	//---------------------------//
-	//--- streaming -> buffer ---//
-	//---------------------------//
-	tcStreamingBufferSize->SetValue			( IntTowxString( wxGetApp().Prefs.nStreamingBufferSize ) );
-	tcStreamingPreBufferPercent->SetValue	( IntTowxString( wxGetApp().Prefs.nStreamingPreBufferPercent ) );
-	tcStreamingReBufferPercent->SetValue	( IntTowxString( wxGetApp().Prefs.nStreamingReBufferPercent ) );
 
 	//---------------------------------//
 	//--- streaming -> proxy server ---//
@@ -844,8 +796,10 @@ void MusikPrefsFrame::OnTranslateKeys( wxKeyEvent& event )
 		event.Skip();
 }
 
-void MusikPrefsFrame::SavePrefs()
+bool MusikPrefsFrame::SavePrefs()
 {
+	if(!Validate() )
+		return false;
 	bool bRestartFMOD		= false;
 	bool bShowUnselChange	= false;
 	bool bActivityChange	= false;
@@ -856,15 +810,6 @@ void MusikPrefsFrame::SavePrefs()
 	//--- Options -> general ---//
 	//--------------------------//
 
-	wxGetApp().Prefs.bAutoAdd		= chkAutoScan->GetValue();
-	wxGetApp().Prefs.bAutoPlayOnAppStart	= chkAutoPlayOnAppStart->GetValue();
-	wxGetApp().Prefs.bAutoPlayOnDropFilesInPlaylist	= chkAutoPlayOnDropFilesInPlaylist->GetValue();
-
-#ifdef wxHAS_TASK_BAR_ICON
-	wxGetApp().Prefs.bHideOnMinimize	= chkHideOnMinimize->GetValue();
-#endif
-	wxGetApp().Prefs.bShowAllSongs	= chkShowAllSongs->GetValue();
-	wxGetApp().Prefs.bBlankSwears	= chkBlankSwears->GetValue();
 
 	if(wxGetApp().Prefs.bSortArtistWithoutPrefix != chkSortArtistWithoutPrefix->GetValue())
 	{
@@ -949,63 +894,17 @@ void MusikPrefsFrame::SavePrefs()
 			bResetColumns = true;
 		}
 	}
-
-
-	//-------------------------//
-	//--- options -> tunage ---//
-	//-------------------------//
-	wxGetApp().Prefs.bTunageWriteFile	= chkTunageWriteFile->GetValue();
-	wxGetApp().Prefs.bTunageAppendFile	= chkTunageAppendFile->GetValue();
-	wxGetApp().Prefs.bTunagePostURL		= chkTunagePostURL->GetValue();
-	wxGetApp().Prefs.bTunageRunApp		= chkTunageRunApp->GetValue();
-	wxGetApp().Prefs.bTunageRunOnStop	= chkTunageRunOnStop->GetValue();
-	wxGetApp().Prefs.sTunageFilename		= tcTunageFilename->GetValue();
-	wxGetApp().Prefs.sTunageFileLine		= tcTunageFileLine->GetValue();
-	wxGetApp().Prefs.sTunageURL			= tcTunageURL->GetValue();
-	wxGetApp().Prefs.sTunageCmdLine		= tcTunageCmdLine->GetValue();
-	wxGetApp().Prefs.sTunageStoppedText	= tcTunageStoppedText->GetValue();
 	//-------------------------//
 	//--- options -> Auto DJ ---//
 	//-------------------------//
-
-
-	//--------------------------//
-	//--- tagging -> general ---//
-	//--------------------------//
-	wxGetApp().Prefs.bActBoxWrite	= chkActivityWrite->GetValue();
-	wxGetApp().Prefs.bActBoxClear	= chkActivityClear->GetValue();
-	wxGetApp().Prefs.bActBoxRename	= chkActivityRename->GetValue();
-	wxGetApp().Prefs.bTagDlgWrite	= chkTagDlgWrite->GetValue();
-	wxGetApp().Prefs.bTagDlgClear	= chkTagDlgClear->GetValue();
-	wxGetApp().Prefs.bTagDlgRename	= chkTagDlgRename->GetValue();
-
-	//-----------------------//
-	//--- tagging -> auto ---//
-	//-----------------------//
-	wxGetApp().Prefs.sAutoRename = tcAutoRename->GetValue( 	);
-	
-	//-------------------------//
-	//--- options -> Auto DJ ---//
-	//-------------------------//
-	if ( tcAutoDjFilter->GetValue()  != wxGetApp().Prefs.sAutoDjFilter )
+	if ( tc2AutoDjFilter->GetValue()  != wxGetApp().Prefs.sAutoDjFilter )
 	{
-		wxGetApp().Prefs.sAutoDjFilter = tcAutoDjFilter->GetValue(); 
+		wxGetApp().Prefs.sAutoDjFilter = tc2AutoDjFilter->GetValue(); 
 		if(!wxGetApp().Library.SetAutoDjFilter(wxGetApp().Prefs.sAutoDjFilter))
 		{
 			wxMessageBox( _( "An error occured when setting the Auto DJ Filter" ), MUSIKAPPNAME_VERSION, wxOK | wxICON_ERROR );
 		}
 	}
-	wxGetApp().Prefs.nMaxShuffleHistory	= wxStringToInt(tcMaxShuffleHistory->GetValue());
-	wxGetApp().Prefs.nAutoDJChooseSongsToPlayInAdvance	= wxStringToInt(tcAutoDJChooseSongsToPlayInAdvance->GetValue());
-	wxGetApp().Prefs.nAutoDjDoNotPlaySongPlayedTheLastNHours	= wxStringToInt(tcAutoDjDoNotPlaySongPlayedTheLastNHours->GetValue());
-	//---------------------------//
-	//--- sound -> crossfader ---//
-	//---------------------------//
-	wxGetApp().Prefs.bFadeEnable = chkCrossfade->GetValue();
-	wxGetApp().Prefs.bFadeSeekEnable = chkCrossfadeSeek->GetValue();
-	wxGetApp().Prefs.bFadePauseResumeEnable = chkCrossfadePauseResume->GetValue();
-	wxGetApp().Prefs.bFadeStopEnable = chkCrossfadeStop->GetValue();
-	wxGetApp().Prefs.bFadeExitEnable = chkCrossfadeExit->GetValue();
 	
 	double fDuration;
 	int nDuration;
@@ -1049,34 +948,29 @@ void MusikPrefsFrame::SavePrefs()
 		wxGetApp().Prefs.nSndRate = nRate;
 		bRestartFMOD = true;
 	}
-	if ( wxStringToInt( tcMaxChannels->GetValue() ) != wxGetApp().Prefs.nSndMaxChan )
+	if ( sc2SndMaxChan->GetValue() != wxGetApp().Prefs.nSndMaxChan )
 	{
-		wxGetApp().Prefs.nSndMaxChan = wxStringToInt( tcMaxChannels->GetValue() );
 		bRestartFMOD = true;
 	}
 	double fLength = StringToDouble( tcBufferLength->GetValue() );
 	int nLength = ( int )( fLength * 1000 );
 	wxGetApp().Prefs.nSndBuffer = nLength;
 
-	wxGetApp().Prefs.bUse_MPEGACCURATE_ForMP3VBRFiles = chkUse_MPEGACCURATE_ForMP3VBRFiles->GetValue();
 
 	//---------------------------//
 	//--- streaming -> buffer ---//
 	//---------------------------//
 	bool bNetBufferSettingChanged = false;
- 	if ( wxStringToInt( tcStreamingBufferSize->GetValue( ) ) != wxGetApp().Prefs.nStreamingBufferSize )
+ 	if (  sc2StreamingBufferSize->GetValue( )  != wxGetApp().Prefs.nStreamingBufferSize )
 	{
-		wxGetApp().Prefs.nStreamingBufferSize = wxStringToInt( tcStreamingBufferSize->GetValue( ) );
 		bNetBufferSettingChanged = true;
 	}
- 	if ( wxStringToInt( tcStreamingPreBufferPercent->GetValue( ) ) != wxGetApp().Prefs.nStreamingPreBufferPercent )
+ 	if ( sc2StreamingPreBufferPercent->GetValue( ) != wxGetApp().Prefs.nStreamingPreBufferPercent )
 	{
-		wxGetApp().Prefs.nStreamingPreBufferPercent = wxStringToInt( tcStreamingPreBufferPercent->GetValue( ) );
 		bNetBufferSettingChanged = true;
 	}
- 	if ( wxStringToInt( tcStreamingReBufferPercent->GetValue( ) ) != wxGetApp().Prefs.nStreamingReBufferPercent )
+ 	if ( sc2StreamingReBufferPercent->GetValue( ) != wxGetApp().Prefs.nStreamingReBufferPercent )
 	{
-		wxGetApp().Prefs.nStreamingReBufferPercent = wxStringToInt( tcStreamingReBufferPercent->GetValue( )  );
 		bNetBufferSettingChanged = true;
 	}
 	//---------------------------------//
@@ -1112,4 +1006,7 @@ void MusikPrefsFrame::SavePrefs()
 
 	if ( bResetColumns )
 		g_PlaylistBox->PlaylistCtrl().ResetColumns( true, true );
+	
+	TransferDataFromWindow();
+	return true;
 }

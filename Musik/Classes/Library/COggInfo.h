@@ -13,11 +13,9 @@
 #ifndef OGGINFO_H
 #define OGGINFO_H
 
-#include <wx/filename.h>
 //--- globals ---//
 #include "../../MusikGlobals.h"
-#include <vorbis/vorbisfile.h>
-#include <map>
+
 
 class COggInfo
 {
@@ -27,17 +25,6 @@ public:
 	bool WriteMetaData(const CSongMetaData & MetaData,bool bClearAll = false);
 
 protected:
-	class CVCTagMap
-	{
-	public:
-		void AddTagsFromVC( vorbis_comment *pComment );
-		void CopyTagsToVC( vorbis_comment *pComment );
-		void AddTag( const char *tag,const char *val, bool bUnique = true );
-	protected:
-	private:
-		typedef std::multimap<wxString ,CSongMetaData::StringData> tagmap_t;
-		tagmap_t m_mapTags;
-	};
 	
 private:
 };

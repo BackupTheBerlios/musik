@@ -20,9 +20,22 @@
 #include <wx/ffile.h>
 #include <wx/filename.h>
 #include "vcedit.h"
-
+#include <map>
 #include "../../MusikUtils.h"
+#include <vorbis/vorbisfile.h>
+#include <wx/filename.h>
 
+class CVCTagMap
+{
+public:
+	void AddTagsFromVC( vorbis_comment *pComment );
+	void CopyTagsToVC( vorbis_comment *pComment );
+	void AddTag( const char *tag,const char *val, bool bUnique = true );
+protected:
+private:
+	typedef std::multimap<wxString ,CSongMetaData::StringData> tagmap_t;
+	tagmap_t m_mapTags;
+};
 
 
 
@@ -154,7 +167,7 @@ bool  COggInfo::WriteMetaData(const CSongMetaData & MetaData,bool bClearAll)
 		return false;
 }
 
-void COggInfo::CVCTagMap::AddTagsFromVC(vorbis_comment *pComment)
+void CVCTagMap::AddTagsFromVC(vorbis_comment *pComment)
 {
 	CSongMetaData::StringData entry;
 	CSongMetaData::StringData val;
@@ -172,18 +185,18 @@ void COggInfo::CVCTagMap::AddTagsFromVC(vorbis_comment *pComment)
 	}
 }
 
-void COggInfo::CVCTagMap::CopyTagsToVC(vorbis_comment *pComment) 
+void CVCTagMap::CopyTagsToVC(vorbis_comment *pComment) 
 {
 
 	CSongMetaData::StringData val;
 	
 	for (tagmap_t::iterator it = m_mapTags.begin(); it != m_mapTags.end(); it++) 
 	{
-		vorbis_comment_add_tag (pComment, (char*)((const char*)ConvW2A((*it).first)),(char*)((const char*)(*it).second));
+		vorbis_comment_add_tag (pComment, (char*)((const char*)ConvFn2A((*it).first)),(char*)((const char*)(*it).second));
 	}
 }
 
-void COggInfo::CVCTagMap::AddTag(const char *tag,const char *val, bool bUnique)
+void CVCTagMap::AddTag(const char *tag,const char *val, bool bUnique)
 {
 	if (!val || strlen(val) == 0 ) return;
 	// if the tag should be unique, erase all previous contained tags 

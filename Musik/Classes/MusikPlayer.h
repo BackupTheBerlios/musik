@@ -124,6 +124,12 @@ public:
 	void PlayReplaceList(int nItemToPlay,const CMusikSongArray & playlist);
 	void PlayPause();
     bool Play		( size_t nItem, int nStartPos = 0, int nFadeType = CROSSFADE_NORMAL );
+	bool PlayByUser	( size_t nItem)
+	{
+		if (m_Playlist.GetCount() && (nItem < m_Playlist.GetCount()) )
+				m_Playlist[nItem].bChosenByUser = 1;   // set this flag explicitly
+		return Play(nItem);
+	}
 	void Stop		( bool bFade = true, bool bExit = false );
 	void NextSong	( );		
 	void PrevSong	( );		
@@ -135,8 +141,6 @@ public:
 	//------------//
 	size_t	GetCurIndex			( ) { return ( m_SongIndex ); }
 	int	 GetDuration			( int nType );
-	int	 GetFileDuration		( wxString sFilename, int nType );
-	int  GetFilesize			( wxString sFilename );
 	int	 GetLastTime			( int nType );
 	int	 GetTime				( int nType );
 	int	 GetTimeLeft			( int nType );

@@ -33,8 +33,8 @@ AppMutex={#MyAppName}
 InternalCompressLevel=ultra
 SolidCompression=true
 [Tasks]
-Name: desktopicon; Description: {cm:Create_a_Destop_Icon}; GroupDescription: {cm:Additional_icons}
-Name: quicklaunchicon; Description: {cm:Create_a_Quick_Launch_Icon}; GroupDescription: {cm:Additional_icons}; Flags: unchecked
+Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:AdditionalIcons}
+Name: quicklaunchicon; Description: {cm:CreateQuickLaunchIcon}; GroupDescription: {cm:AdditionalIcons}; Flags: unchecked
 
 [Files]
 Source: _release\{#MyAppExe}; DestDir: {app}; Flags: promptifolder; MinVersion: 4.1.1998,0; OnlyBelowVersion: 0,4.0.1381
@@ -53,6 +53,7 @@ Source: contrib\playlists\*.mpd; DestDir: {app}\.Musik\playlists; Flags: overwri
 Source: Release Unicode\{#MyAppExe}; DestDir: {app}; MinVersion: 0,4.0.1381sp6; Flags: promptifolder
 Source: locale\de\*.mo; DestDir: {app}\locale\de; Flags: overwritereadonly; Languages: de
 Source: data\*; DestDir: {app}\data; Flags: overwritereadonly
+Source: locale\fr\*.mo; DestDir: {app}\locale\fr; Flags: overwritereadonly; Languages: fr
 [Icons]
 Name: {group}\{#MyAppName}; Filename: {app}\{#MyAppExe}; WorkingDir: {app}; IconIndex: 0
 Name: {group}\{cm:UninstallProgram,{#MyAppName}}; Filename: {uninstallexe}
@@ -60,7 +61,7 @@ Name: {userdesktop}\{#MyAppName}; Filename: {app}\{#MyAppExe}; Tasks: desktopico
 Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}; Filename: {app}\{#MyAppExe}; Tasks: quicklaunchicon; WorkingDir: {app}; IconIndex: 0
 
 [Run]
-Filename: {app}\{#MyAppExe}; Description: {cm:Launch,{#MyAppName}}; Flags: nowait postinstall skipifsilent
+Filename: {app}\{#MyAppExe}; Description: {cm:LaunchProgram,{#MyAppName}}; Flags: nowait postinstall skipifsilent
 [Components]
 Name: Dynamic_Playlist_Examples; Description: {cm:Examples_of_Dynamic_Playlists}; Types: custom full; MinVersion: 0,4.0.1381
 Name: Radio_Channels; Description: {cm:Examples_of_Net_Radio_Channels}; Types: custom full; MinVersion: 0,4.0.1381
@@ -81,24 +82,20 @@ Root: HKCR; SubKey: Ogg File\Shell\Open\Command; ValueType: string; ValueData: "
 Root: HKCR; Subkey: Ogg File\DefaultIcon; ValueType: string; ValueData: {app}\{#MyAppExe},0; Flags: uninsdeletevalue
 Root: HKCR; SubKey: Mp3 File; ValueType: string; ValueData: Mp3 Datei; Flags: uninsdeletekey; Languages: de
 Root: HKCR; SubKey: Ogg File; ValueType: string; ValueData: Ogg Datei; Flags: uninsdeletekey; Languages: de
+Root: HKCR; SubKey: Mp3 File; ValueType: string; ValueData: Mp3 fichier; Flags: uninsdeletekey; Languages: fr
+Root: HKCR; SubKey: Ogg File; ValueType: string; ValueData: Ogg fichier; Flags: uninsdeletekey; Languages: fr
+
 Root: HKCR; SubKey: .ogg; ValueType: string; ValueData: Ogg File; Flags: uninsdeletekey
 [Languages]
 Name: en; MessagesFile: compiler:Default.isl
 Name: de; MessagesFile: compiler:Languages\German.isl
-[Messages]
-en.BeveledLabel=English
-de.BeveledLabel=Deutsch
+Name: fr; MessagesFile: compiler:Languages\French.isl
+
 
 [CustomMessages]
-en.Launch=Launch %1
 en.Examples_of_Dynamic_Playlists=Examples of Dynamic Playlists
 en.Examples_of_Net_Radio_Channels=Examples of Net Radio Channels
-en.Create_a_Destop_Icon =Create a &desktop icon
-en.Additional_icons=Additional icons
-en.Create_a_Quick_Launch_Icon=Create a &Quick Launch icon
-de.Launch=Starte %1
 de.Examples_of_Dynamic_Playlists=Beispiele für dynamische Liedlisten
 de.Examples_of_Net_Radio_Channels=Beispiele für Netzradios
-de.Create_a_Destop_Icon =Erzeuge ein &Desktop Icon
-de.Additional_icons=Zusätzliche Icons
-de.Create_a_Quick_Launch_Icon=Erzeuge ein Icon in der &Schnellstartleiste
+fr.Examples_of_Dynamic_Playlists=Exemples de sélections dynamiques
+fr.Examples_of_Net_Radio_Channels=Exemples de webradios

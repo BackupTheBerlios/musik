@@ -49,7 +49,7 @@ BEGIN_EVENT_TABLE(CNowPlayingCtrl, wxPanel)
 	EVT_TIMER	(MUSIK_NOWPLAYING_TIMER,				CNowPlayingCtrl::OnTimer				)	// timer
 	EVT_CHOICE	(MUSIK_NOWPLAYINGCTRL_PLAYMODE,			CNowPlayingCtrl::OnPlayMode) 
 	EVT_CHECKBOX(MUSIK_CHK_CROSSFADE,					CNowPlayingCtrl::OnCheckCrossfade)
-	EVT_LEFT_DOWN(CNowPlayingCtrl::OnClickTimeDisplay)
+	
 #ifdef wxUSE_HOTKEY
 	EVT_HOTKEY(MUSIK_HOTKEYID_STOP, CNowPlayingCtrl::PlayerStopHK)
 	EVT_HOTKEY(MUSIK_HOTKEYID_PLAYPAUSE, CNowPlayingCtrl::PlayerPlayPauseHK)
@@ -133,7 +133,7 @@ CNowPlayingCtrl::CNowPlayingCtrl( wxWindow *parent )
 	//----------------//
 	//--- seek bar ---//
 	//----------------//
-	gSeek		= new wxGauge		( this, -1, 100, wxDefaultPosition, wxSize( 12* wxSystemSettings::GetMetric( wxSYS_HSCROLL_Y ), wxSystemSettings::GetMetric( wxSYS_HSCROLL_Y ) ), wxGA_SMOOTH | wxGA_HORIZONTAL | wxCLIP_CHILDREN );
+	gSeek		= new wxGauge		( this, MUSIK_NOWPLAYINGCTRL_SEEK, 100, wxDefaultPosition, wxSize( 12* wxSystemSettings::GetMetric( wxSYS_HSCROLL_Y ), wxSystemSettings::GetMetric( wxSYS_HSCROLL_Y ) ), wxGA_SMOOTH | wxGA_HORIZONTAL | wxCLIP_CHILDREN );
 	pSeekEvt	= new CGaugeSeekEvt	( gSeek );
 	gSeek->PushEventHandler( pSeekEvt );
 
@@ -141,13 +141,13 @@ CNowPlayingCtrl::CNowPlayingCtrl( wxWindow *parent )
 	//--- sizer for artist and time ---//
 	//---------------------------------//
 	hsArtistTime = new wxBoxSizer( wxHORIZONTAL );
-	hsArtistTime->Add( stArtist, 0, wxADJUST_MINSIZE | wxALIGN_CENTRE_VERTICAL  );
-	hsArtistTime->Add( stCurtime, 0, wxADJUST_MINSIZE | wxALIGN_CENTRE_VERTICAL|wxLEFT,3 );
+	hsArtistTime->Add( stArtist, 0,  wxALIGN_CENTRE_VERTICAL  );
+	hsArtistTime->Add( stCurtime, 1,  wxALIGN_CENTRE_VERTICAL|wxLEFT,3 );
 
 	//--- song title, artist and time ---//
 	vsLeftCol = new wxBoxSizer( wxVERTICAL );
-	vsLeftCol->Add( stSong, 0, wxADJUST_MINSIZE | wxBOTTOM , 3 );
-	vsLeftCol->Add( hsArtistTime, 0, wxADJUST_MINSIZE );
+	vsLeftCol->Add( stSong, 1,  wxBOTTOM|wxEXPAND , 3 );
+	vsLeftCol->Add( hsArtistTime, 1, wxEXPAND );
 
 
 	//--- buttons, seek bar panel ---//
@@ -181,11 +181,11 @@ CNowPlayingCtrl::CNowPlayingCtrl( wxWindow *parent )
 
 //	wxGridSizer *hsCols = new wxGridSizer( 1,2,0,0);
 	wxBoxSizer *hsCols = new wxBoxSizer(wxHORIZONTAL);
-	hsCols->Add( vsLeftCol,	0, wxADJUST_MINSIZE | wxALL, 2	);
-	hsCols->Add(-1,-1,1,wxEXPAND);
-	hsCols->Add( vsRightCol,	0, wxALIGN_RIGHT|wxADJUST_MINSIZE | wxALL, 2	);
+	hsCols->Add( vsLeftCol,	1,  wxALL, 2	);
+	//hsCols->Add(-1,-1,1,wxEXPAND);
+	hsCols->Add( vsRightCol,	0, wxALIGN_RIGHT| wxALL, 2	);
 
-	SetSizerAndFit( hsCols );
+	SetSizer( hsCols );
 
 	m_pTunage = new CTunage;
 	pSecTimer = NULL;

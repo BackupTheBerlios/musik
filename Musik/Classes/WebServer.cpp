@@ -149,7 +149,7 @@ void CMusikWebServer::ProcessRequest(wxString reqstr)
 
 		WriteLine( wxT("HTTP/1.1 200 OK\r\n") );
 		WriteLine( server_version );
-		WriteLine( wxT("Content-Type: text/html\r\n") );
+		WriteLine( wxT("Content-Type: text/html; charset=utf8\r\n") );
 		WriteLine( wxT("\r\n") );
 		WriteLine( server_title );
 		WriteLine( wxT("<body>\r\n") );
@@ -193,5 +193,5 @@ int CMusikWebServer::ReadLine(wxString& outstr)
 // writes a line of output to the socket
 void CMusikWebServer::WriteLine( wxString str )
 {
-    pSocket->Write( ( const char* )ConvW2A( str ), str.Length() );
+    pSocket->Write( ( const char* )ConvToUTF8( str ), str.Length() );
 }

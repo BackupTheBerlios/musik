@@ -151,6 +151,20 @@ void CActivityListBox::RescaleColumns( bool bFreeze )
 		Thaw();
 }
 
+void CActivityListBox::SetCaption( const wxString & sCaption )
+{
+	m_sCaption = sCaption;
+	RefreshCaption();
+}
+void CActivityListBox::RefreshCaption()
+{
+	wxListItem item;
+	item.SetId( 1 );
+	item.SetMask( wxLIST_MASK_TEXT );
+	item.SetText( wxString::Format(wxT("%s (%d)"), m_sCaption.c_str(),m_Items.GetCount()));
+	SetColumn( 1, item );
+}
+
 void CActivityListBox::SetList( const wxArrayString &  aList )
 {
 	m_Items = aList;
@@ -174,6 +188,7 @@ void CActivityListBox::Update( bool selnone )
 	RescaleColumns();
 	if ( selnone )
 		wxListCtrlSelNone( this );
+	RefreshCaption();
 	wxWindow::Update(); // instantly update window content
 }
 
@@ -208,7 +223,7 @@ bool CActivityListBox::HasShowAllRow() const
 wxString CActivityListBox::GetRowText( long row, bool bPure ) const
 {
 		if( row == 0 && HasShowAllRow())
-			return _("Show all ") + m_pParent->GetActivityTypeStringTranslated();
+			return wxString::Format(wxT("%s%s"),_("Show all "), m_sCaption.c_str());
 		if(HasShowAllRow())
 			row--;
 		if(wxGetApp().Prefs.bSortArtistWithoutPrefix && !bPure && m_pParent->GetActivityType() == MUSIK_LBTYPE_ARTISTS)
@@ -417,9 +432,11 @@ void ActivityDropTarget::HighlightSel( wxPoint pPos )
 CActivityBox::CActivityBox( wxWindow *parent, wxWindowID id, EMUSIK_ACTIVITY_TYPE nType )
 	:  wxPanel( parent, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ),wxTAB_TRAVERSAL | wxNO_BORDER | wxCLIP_CHILDREN )
 {
+	m_EditVisible = false;
+	m_ActivityType = nType;
 	//--- CActivityListBox ---//
 	pListBox	= new CActivityListBox	( this, id );
-	
+	pListBox->SetCaption(GetActivityTypeStringTranslated());
 	//--- drag and drop handler ---//
 	// what is the drag and drop handler for in this case? it just disturbs dragging
 	// from playlist to sources box, if you cross the listbox area. after the dragging the playlist display changes to 
@@ -452,8 +469,6 @@ CActivityBox::CActivityBox( wxWindow *parent, wxWindowID id, EMUSIK_ACTIVITY_TYP
 	pActivityEditEvt = new CActivityEditEvt( this, pEdit );
 	pEdit->PushEventHandler( pActivityEditEvt );
 
-	m_EditVisible = false;
-	m_ActivityType = nType;
 }
 
 CActivityBox::~CActivityBox()
@@ -462,15 +477,6 @@ CActivityBox::~CActivityBox()
 	delete pEdit;
 	delete pActivityBoxEvt;
 	delete pActivityEditEvt;
-}
-
-void CActivityBox::SetCaption( const wxString & sCaption )
-{
-	wxListItem item;
-	item.SetId( 1 );
-	item.SetMask( wxLIST_MASK_TEXT );
-	item.SetText( sCaption );
-	pListBox->SetColumn( 1, item );
 }
 
 wxString CActivityBox::GetActivityTypeStr()
@@ -548,13 +554,6 @@ void CActivityBox::GetRelatedList( CActivityBox *pDst, wxArrayString & aReturn )
 	wxGetApp().Library.GetInfo( sel, InType, OutType, aReturn );
 }
 
-void CActivityBox::ResetCaption()
-{
-	if		( m_ActivityType == MUSIK_LBTYPE_ARTISTS	)	SetCaption( _("Artists") );
-	else if ( m_ActivityType == MUSIK_LBTYPE_ALBUMS		)	SetCaption( _("Albums") );
-	else if ( m_ActivityType == MUSIK_LBTYPE_GENRES		)	SetCaption( _("Genres") );
-	else if ( m_ActivityType == MUSIK_LBTYPE_YEARS		)	SetCaption( _("Years") );
-}
 
 void CActivityBox::ResetContents(bool selectnone)
 {

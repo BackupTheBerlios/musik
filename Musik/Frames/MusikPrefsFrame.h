@@ -19,6 +19,7 @@
 	#include "wx/wx.h"
 #endif 
 #include "wx/treectrl.h"
+#include "wx/spinctrl.h"
 
 #include "../MusikDefines.h"
 #include "../Classes/ActivityBox.h"
@@ -57,7 +58,7 @@ public:
 	//--- utility functions ---//
 	//-------------------------//
 	void LoadPrefs			();
-	void SavePrefs			();
+	bool SavePrefs			();
 	void FindDevices		();
 	void HidePanels			();
 	void UpdatePrefsPanel	();
@@ -68,25 +69,11 @@ public:
 	//--------------------//
 	wxTreeCtrl	*tcPreferencesTree;
 
-	//----------------------//
-	//--- system buttons ---//
-	//----------------------//
-	wxButton	*btnOK;
-	wxButton	*btnApply;
-	wxButton	*btnCancel;
 
 	//--------------------------//
 	//--- options -> general ---//
 	//--------------------------//
-	wxCheckBox	*chkAutoScan;
-	wxCheckBox	*chkAutoPlayOnAppStart;
-	wxCheckBox	*chkAutoPlayOnDropFilesInPlaylist;
-#ifdef wxHAS_TASK_BAR_ICON
-	wxCheckBox	*chkHideOnMinimize;
-#endif
-	wxCheckBox	*chkExtendedPlaylist;
-	wxCheckBox	*chkShowAllSongs;
-	wxCheckBox	*chkBlankSwears;
+	
 	wxCheckBox	*chkSortArtistWithoutPrefix;
 	wxCheckBox	*chkPlaylistStripes;
 	wxButton	*btnPlaylistStripeColour;
@@ -113,11 +100,6 @@ public:
 	//-------------------------//
 	//--- options -> tunage ---//
 	//-------------------------//
-	wxCheckBox*	chkTunageWriteFile;
-	wxCheckBox* chkTunageAppendFile;
-	wxCheckBox* chkTunagePostURL;
-	wxCheckBox* chkTunageRunApp;
-	wxCheckBox* chkTunageRunOnStop;
 
 	wxTextCtrl*	tcTunageFilename;
 	wxTextCtrl* tcTunageFileLine;
@@ -134,42 +116,18 @@ public:
 	//--- options -> Auto DJ ---//
 	//-------------------------//
 
-	wxTextCtrl*	tcAutoDjFilter;
-	wxTextCtrl* tcAutoDjDoNotPlaySongPlayedTheLastNHours;
-	wxTextCtrl* tcAutoDJChooseSongsToPlayInAdvance;
-	
-	wxTextCtrl* tcMaxShuffleHistory;
+	wxTextCtrl*	tc2AutoDjFilter;
 
 	wxStaticBox *sbShuffle;
 	wxStaticBox *sbAutoDj;
-	//--------------------------//
-	//--- tagging -> general ---//
-	//--------------------------//
-	wxCheckBox	*chkActivityWrite;
-	wxCheckBox	*chkActivityClear;
-	wxCheckBox	*chkActivityRename;
-	wxCheckBox	*chkTagDlgWrite;
-	wxCheckBox	*chkTagDlgClear;
-	wxCheckBox	*chkTagDlgRename;
-
-	//---------------------------//
-	//--- tagging -> auto tag ---//
-	//---------------------------//
-	wxTextCtrl	*tcAutoRename;
-	wxTextCtrl	*tcAutoTag;
 
 	//-------------------------//
 	//--- sound -> playback ---//
 	//-------------------------//
-	wxCheckBox	*chkCrossfade;
 	wxTextCtrl	*tcDuration;
-	wxCheckBox	*chkCrossfadeSeek;
 	wxTextCtrl	*tcSeekDuration;
-	wxCheckBox	*chkCrossfadePauseResume;
 	wxTextCtrl	*tcPauseResumeDuration;
-	wxCheckBox	*chkCrossfadeStop;
 	wxTextCtrl	*tcStopDuration;
-	wxCheckBox	*chkCrossfadeExit;
 	wxTextCtrl	*tcExitDuration;
 
 	//-----------------------//
@@ -179,18 +137,13 @@ public:
 	wxComboBox	*cmbSndDevice;
 	wxComboBox	*cmbPlayRate;
 	wxTextCtrl	*tcBufferLength;
-	wxTextCtrl	*tcMaxChannels;
-	wxCheckBox	*chkUse_MPEGACCURATE_ForMP3VBRFiles;
-	//---------------------------//
-	//--- streaming -> buffer ---//
-	//---------------------------//
-
-	wxTextCtrl*	tcStreamingBufferSize;		
-	wxTextCtrl* tcStreamingPreBufferPercent;	
-	wxTextCtrl* tcStreamingReBufferPercent;	
+	wxSpinCtrl * sc2SndMaxChan;
 	//---------------------------------//
 	//--- streaming -> proxy server ---//
 	//---------------------------------//
+	wxSpinCtrl* sc2StreamingBufferSize;
+	wxSpinCtrl* sc2StreamingPreBufferPercent;
+	wxSpinCtrl* sc2StreamingReBufferPercent;
 	wxCheckBox* chkUseProxyServer;
 	wxTextCtrl*	tcProxyServer;		
 	wxTextCtrl* tcProxyServerPort;	
@@ -211,9 +164,6 @@ public:
 	wxBoxSizer		*vsTagging_General;
 	wxBoxSizer		*vsTagging_Auto;
 	wxBoxSizer		*hsSplitter;
-	wxBoxSizer		*hsSelectionStyle;
-	wxFlexGridSizer	*fsCrossfader;
-	wxBoxSizer		*hsSysButtons;
 	wxBoxSizer		*vsTopSizer;
 	wxFlexGridSizer	*vsStreaming_Buffer;
 	wxBoxSizer		*vsStreaming_ProxyServer;

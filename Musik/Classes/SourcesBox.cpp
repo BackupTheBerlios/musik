@@ -491,9 +491,9 @@ void CSourcesListBox::UpdateSel( size_t index )
 	else if ( nSelType == MUSIK_SOURCES_LIBRARY )
 	{
 		g_ActivityAreaCtrl->UpdateSel( g_ActivityAreaCtrl->GetParentBox() );
-		g_PlaylistBox->Update();
 		g_MusikFrame->ShowActivityArea( wxGetApp().Prefs.bShowActivities );
-		
+		g_PlaylistBox->ShowSearchBox(true);
+		g_PlaylistBox->Update();
 	}
 
 	else 
@@ -523,6 +523,7 @@ void CSourcesListBox::UpdateSel( size_t index )
 		{
 			g_Playlist = wxGetApp().Player.GetPlaylist();
 		}
+		g_PlaylistBox->ShowSearchBox(false);
 		//--- update ui with new list ---//
 		g_PlaylistBox->Update(true);
 		if ( m_CurSel != -1 && nSelType == MUSIK_SOURCES_NOW_PLAYING )
@@ -1440,10 +1441,10 @@ BEGIN_EVENT_TABLE(CSourcesBox, wxSashLayoutWindow)
 END_EVENT_TABLE()
 
 CSourcesBox::CSourcesBox( wxWindow *parent )
-	: wxSashLayoutWindow( parent, MUSIK_SOURCES, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxNO_BORDER | wxCLIP_CHILDREN |wxSW_3D|wxTAB_TRAVERSAL )
+	: wxSashLayoutWindow( parent, MUSIK_SOURCES, wxDefaultPosition , wxDefaultSize, wxNO_BORDER | wxCLIP_CHILDREN |wxSW_3D|wxTAB_TRAVERSAL )
 {
 
-	m_pPanel = new wxPanel( this, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxNO_BORDER|wxCLIP_CHILDREN|wxTAB_TRAVERSAL );
+	m_pPanel = new wxPanel( this, -1, wxDefaultPosition , wxDefaultSize , wxNO_BORDER|wxCLIP_CHILDREN|wxTAB_TRAVERSAL );
 	//--- CSourcesListBox ---//
 	m_pListBox	= new CSourcesListBox( m_pPanel );
 	m_pPictureBox = new CPictureBox(m_pPanel);

@@ -18,6 +18,7 @@
 
 BEGIN_EVENT_TABLE(CGaugeSeekEvt, wxEvtHandler)
 	EVT_LEFT_DOWN			(CGaugeSeekEvt::OnLeftDown		) 
+	EVT_RIGHT_DOWN			(CGaugeSeekEvt::OnRightDown		)
 	EVT_LEFT_UP				(CGaugeSeekEvt::OnLeftUp		) 
 	EVT_MOTION				(CGaugeSeekEvt::OnMouseMove		) 
 	EVT_ERASE_BACKGROUND	( CGaugeSeekEvt::OnEraseBackground )
@@ -41,12 +42,11 @@ void CGaugeSeekEvt::OnPaint(wxPaintEvent& WXUNUSED(event))
 	wxBufferedPaintDC dc(pControl);
 	wxEraseEvent erase_event(pControl->GetId(), &dc);
 	pControl->OnEraseBackground(erase_event);
-
 	pControl->MSWDefWindowProc(WM_PAINT, (WPARAM) (HDC) dc.GetHDC(), 0);
 }
 #endif
 void CGaugeSeekEvt::OnEraseBackground( wxEraseEvent& WXUNUSED(event) )
-{	
+{
 	// empty => no background erasing to avoid flicker
 }
 
@@ -177,4 +177,8 @@ void CGaugeSeekEvt::SetFromMousePos( wxMouseEvent& event )
 
 		wxGetApp().Player.SetVolume();
 	}
+}
+void CGaugeSeekEvt::OnRightDown	(wxMouseEvent& event)
+{
+	g_MusikFrame->m_pNowPlayingCtrl->OnClickTimeDisplay(event);
 }

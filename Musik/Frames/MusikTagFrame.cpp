@@ -61,7 +61,7 @@ MusikTagFrame::MusikTagFrame( wxFrame* pParent, CPlaylistCtrl * pPlaylistctrl, i
 {
 	pPlaylistctrl->GetSelItems(m_arrSongsSelected);
 
-	m_bDirty = true;
+	m_bDirty = false;
 	//---------------//
  	//--- colours ---//
 	//---------------//
@@ -417,7 +417,7 @@ void MusikTagFrame::PopulateTagDlg()
 	//--- enable text controls accordingly ---//
 	SetEnabled();
 	SetFocus();
-	m_bDirty = true;
+	m_bDirty = false;
 }
 
 void MusikTagFrame::SetEnabled()

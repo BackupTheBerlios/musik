@@ -53,6 +53,7 @@ public:
 	const wxArrayString&	GetList		() const { return m_Items; }
 
 	//--- sets ---//
+	void SetCaption( const wxString & sCaption );
 	void SetList		(const  wxArrayString & );
 	void SetSel			( const  wxArrayString & aList );
 	void SetSel			( const wxString & sel, bool bEnsureVisible = true,bool bDeselectAllFirst = true);
@@ -80,6 +81,7 @@ private:
 	size_t			GetRowCount		() const { return HasShowAllRow()?( size_t )m_Items.GetCount()+ 1: ( size_t )m_Items.GetCount(); }
 	inline wxString GetRowText		( long row, bool bPure = true ) const ;
 
+	void RefreshCaption();
 	//--- stripe colors ---//
 	wxListItemAttr m_LightAttr;
 	wxListItemAttr m_DarkAttr;
@@ -91,7 +93,7 @@ private:
 	wxString m_sSearch;
 	wxArrayString m_Items;
 	CActivityBox *m_pParent;
-
+	wxString m_sCaption;
 	bool m_bIgnoreSetItemStateEvents;
 };
 
@@ -152,8 +154,6 @@ public:
 	void OnRenameThreadProg		( wxCommandEvent& WXUNUSED(event) );
 
 	//--- sets ---//
-	void SetCaption				( const wxString & sCaption );
-	void SetActivityType		( EMUSIK_ACTIVITY_TYPE  nType )								{ m_ActivityType = nType;								}
 	void DeselectAll			()															{ pListBox->DeselectAll();								}
 	void SetSel					( const wxString & sel, bool bDeselectAllFirst = true )		{ pListBox->SetSel( sel , bDeselectAllFirst );			}
 	void SetSel					( const  wxArrayString & aList )							{ pListBox->SetSel( aList );							}	
@@ -186,7 +186,6 @@ public:
 	//---misc ---//
 	bool IsSelected			( int n )							{ return pListBox->IsSelected( n );		}
 	void Update				( bool selectnone = true )			{ pListBox->Update( selectnone );		}	
-	void ResetCaption		();
 	void ResetContents		(bool selectnone = true);
 	void SetContents		( const wxArrayString &list ,bool selectnone = true); 
 	void GetFullList		( wxArrayString & aReturn );

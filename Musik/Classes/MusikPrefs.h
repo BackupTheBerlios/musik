@@ -253,6 +253,7 @@ public:
 		,bAutoAdd(this,wxT( "AddFilesonStartup" ),false)
 		,bAutoPlayOnAppStart(this,wxT( "AutoPlayOnAppStart" ),false)
 		,bAutoPlayOnDropFilesInPlaylist(this,wxT( "AutoPlayOnDropFilesInPlaylist" ),true)
+		,bStopSongOnNowPlayingClear(this,wxT( "StopSongOnNowPlayingClear" ),true)
 		,eSelStyle(this,wxT( "SelectionStyle" ),MUSIK_SELECTION_TYPE_STANDARD)
 		,bShowAllSongs(this,wxT( "SelectingLibraryDisplaysSongs" ),true)
 		,nSndOutput(this,wxT( "OutputDriver" ),0)
@@ -288,6 +289,7 @@ public:
 		,nMaxShuffleHistory(this,wxT( "MaxShuffleHistory" ),500)
 		,nAutoDjDoNotPlaySongPlayedTheLastNHours(this,wxT( "AutoDjDoNotPlaySongPlayedTheLastNHours" ),5*24)
 		,nAutoDJChooseSongsToPlayInAdvance(this,wxT( "AutoDJChooseSongsToPlayInAdvance" ),15)
+		,nAutoDJChooseAlbumsToPlayInAdvance(this,wxT( "AutoDJChooseAlbumsToPlayInAdvance" ),5)
 		,sAutoDjFilter(this,wxT( "AutoDjFilter" ), wxT("rating >= 0 and genre != 'Speech' and genre != 'Comedy'"))
 
 		,bGlobalFadeEnable(this,wxT( "GlobalFaderEnabled" ),true)
@@ -371,6 +373,7 @@ public:
 	CConfigSettingBool bAutoAdd;
 	CConfigSettingBool bAutoPlayOnAppStart;
 	CConfigSettingBool bAutoPlayOnDropFilesInPlaylist;
+	CConfigSettingBool bStopSongOnNowPlayingClear;
 	CConfigSetting<Value<int>,EMUSIK_ACTIVITY_SELECTION_TYPE> eSelStyle;
 	CConfigSettingBool bShowAllSongs;
 	CConfigSettingInt nSndOutput;
@@ -409,6 +412,7 @@ public:
 	CConfigSettingInt nMaxShuffleHistory;
 	CConfigSettingInt nAutoDjDoNotPlaySongPlayedTheLastNHours;
 	CConfigSettingInt nAutoDJChooseSongsToPlayInAdvance;
+	CConfigSettingInt nAutoDJChooseAlbumsToPlayInAdvance;
 	CConfigSettingString sAutoDjFilter;
 	CConfigSettingBool bGlobalFadeEnable;
 	CConfigSettingBool bFadeEnable;

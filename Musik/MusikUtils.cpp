@@ -1040,3 +1040,6 @@ END_EVENT_TABLE()
 BEGIN_EVENT_TABLE(wxTextCtrl_NoFlicker,wxWindow)
 EVT_ERASE_BACKGROUND(wxTextCtrl_NoFlicker::OnEraseBackground)
 END_EVENT_TABLE()
+
+
+IMPLEMENT_CLASS(wxGenericIntValidator, wxGenericValidator)

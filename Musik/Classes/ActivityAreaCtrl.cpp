@@ -64,7 +64,6 @@ bool CActivityAreaCtrl::Create()
 		if ( wxGetApp().Prefs.nActBoxType[i] > 0 && m_ActivityBox[i] == NULL )
 		{
 			m_ActivityBox[i] = new CActivityBox( m_pPanel, MUSIK_ACTIVITYBOX1 + i, wxGetApp().Prefs.nActBoxType[i] );
-			m_ActivityBox[i]->ResetCaption();
 			pTopSizer->Add( m_ActivityBox[i], 1, wxEXPAND | wxRIGHT, 1 );
 		}
 	}
