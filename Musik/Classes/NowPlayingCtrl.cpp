@@ -346,6 +346,14 @@ void CNowPlayingCtrl::PlayerPlayPause( wxCommandEvent& WXUNUSED(event) )
 	{
 		if(g_Player.GetPlaymode() == MUSIK_PLAYMODE_RANDOM)
 		{
+			// if playlist has changed set new playlist for the player
+			// in random mode
+			if ( g_PlaylistChanged )
+			{
+				g_Player.SetPlaylist( g_Playlist );
+				g_PlaylistChanged = false;
+			}
+
 			g_Player.NextSong();
 		}
 		else
