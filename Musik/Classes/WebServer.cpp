@@ -10,14 +10,16 @@
  *  See the file "license.txt" for information on usage and redistribution
  *  of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 */
-// For compilers that support precompilation, includes "wx/wx.h".
-#include "wx/wxprec.h"
-#include "../MusikUtils.h"
-#include "../MusikGlobals.h"
 
-#include "../Frames/MusikFrame.h"
+//--- For compilers that support precompilation, includes "wx/wx.h". ---//
+#include "wx/wxprec.h"
 
 #include "WebServer.h"
+#include "../Frames/MusikFrame.h"
+
+//--- globals ---//
+#include "../MusikUtils.h"
+#include "../MusikGlobals.h"
 
 CMusikWebServer::CMusikWebServer()
 {

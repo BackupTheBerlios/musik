@@ -1,5 +1,19 @@
-// For compilers that support precompilation, includes "wx/wx.h".
+/*
+ *  MusikTagThreads.cpp
+ *
+ *  Threads related to MusikFrame and/or global threads,
+ *	such as the crossfader.
+ *  
+ *  Copyright (c) 2003 Casey Langen (casey@bak.rr.com)
+ *	Contributors: Simon Windmill, Dustin Carter
+ *
+ *  See the file "license.txt" for information on usage and redistribution
+ *  of this file, and for a DISCLAIMER OF ALL WARRANTIES.
+*/
+
+//--- For compilers that support precompilation, includes "wx/wx.h". ---//
 #include "wx/wxprec.h"
+
 #include "MusikThreads.h"
 
 //--- globals ---//

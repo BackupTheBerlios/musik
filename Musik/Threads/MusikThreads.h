@@ -1,5 +1,18 @@
-#ifndef MUSIK_FADER_H
-#define MUSIK_FADER_H
+/*
+ *  MusikTagThreads.h
+ *
+ *  Threads related to MusikFrame and/or global threads,
+ *	such as the crossfader.
+ *  
+ *  Copyright (c) 2003 Casey Langen (casey@bak.rr.com)
+ *	Contributors: Simon Windmill, Dustin Carter
+ *
+ *  See the file "license.txt" for information on usage and redistribution
+ *  of this file, and for a DISCLAIMER OF ALL WARRANTIES.
+*/
+
+#ifndef MUSIK_THREADS_H
+#define MUSIK_THREADS_H
 
 #include "wx/wxprec.h"
 #ifndef WX_PRECOMP

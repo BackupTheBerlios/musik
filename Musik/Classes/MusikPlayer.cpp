@@ -15,9 +15,8 @@
 
 //--- For compilers that support precompilation, includes "wx/wx.h". ---//
 #include "wx/wxprec.h"
-#include "MusikPlayer.h"
 
-//--- so we can use a pointer to the main frame ---//
+#include "MusikPlayer.h"
 #include "../Frames/MusikFrame.h"
 
 //--- globals: library / player / prefs ---//

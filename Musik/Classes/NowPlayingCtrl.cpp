@@ -12,6 +12,9 @@
  *  of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 */
 
+//--- For compilers that support precompilation, includes "wx/wx.h". ---//
+#include "wx/wxprec.h"
+
 //--- globals ---//
 #include "NowPlayingCtrl.h"
 #include "../MusikGlobals.h"
@@ -218,26 +221,28 @@ void CNowPlayingCtrl::KillTimer()
 void CNowPlayingCtrl::PlayBtnToPauseBtn()
 {
 	#ifdef __WXGTK__
-	btnPlayPause->SetBitmapLabel( bmPause );
-	btnPlayPause->SetBitmapFocus( bmPauseDown );
+		btnPlayPause->SetBitmapLabel( bmPause );
+		btnPlayPause->SetBitmapFocus( bmPauseDown );
 	#elif defined __WXMSW__
-	btnPlayPause->SetBitmapLabel( bmPause );
-	btnPlayPause->PopEventHandler();
-	btnPlayPause->PushEventHandler( pPauseEvt );
+		btnPlayPause->SetBitmapLabel( bmPause );
+		btnPlayPause->PopEventHandler();
+		btnPlayPause->PushEventHandler( pPauseEvt );
 	#endif
+
 	btnPlayPause->Refresh();
 }
 
 void CNowPlayingCtrl::PauseBtnToPlayBtn()
 {
 	#ifdef __WXGTK__
-	btnPlayPause->SetBitmapLabel( bmPlay );
-	btnPlayPause->SetBitmapFocus( bmPlayDown );
+		btnPlayPause->SetBitmapLabel( bmPlay );
+		btnPlayPause->SetBitmapFocus( bmPlayDown );
 	#elif defined __WXMSW__
-	btnPlayPause->SetBitmapLabel( bmPlay );
-	btnPlayPause->PopEventHandler();
-	btnPlayPause->PushEventHandler( pPlayEvt );
+		btnPlayPause->SetBitmapLabel( bmPlay );
+		btnPlayPause->PopEventHandler();
+		btnPlayPause->PushEventHandler( pPlayEvt );
 	#endif
+
 	btnPlayPause->Refresh();
 }
 

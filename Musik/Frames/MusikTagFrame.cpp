@@ -9,10 +9,13 @@
  *  See the file "license.txt" for information on usage and redistribution
  *  of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 */
-// For compilers that support precompilation, includes "wx/wx.h".
+
+//--- For compilers that support precompilation, includes "wx/wx.h". ---//
 #include "wx/wxprec.h"
+
 #include "MusikTagFrame.h"
-#include "../MusikUtils.h"
+
+//--- id3 tagging ( to populate genres box ) ---//
 #include <id3/tag.h>
 
 //--- related frames ---//
@@ -20,6 +23,7 @@
 
 //--- globals ---//
 #include "../MusikGlobals.h"
+#include "../MusikUtils.h"
 
 //--- threads ---//
 #include "../Threads/MusikTagThreads.h"

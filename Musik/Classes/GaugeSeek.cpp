@@ -10,9 +10,13 @@
  *  See the file "license.txt" for information on usage and redistribution
  *  of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 */
-// For compilers that support precompilation, includes "wx/wx.h".
+
+//--- For compilers that support precompilation, includes "wx/wx.h". ---//
 #include "wx/wxprec.h"
+
 #include "GaugeSeek.h"
+
+//--- globals ---//
 #include "../MusikGlobals.h"
 #include "../MusikUtils.h" 
 
@@ -25,6 +29,7 @@ END_EVENT_TABLE()
 
 void CGaugeSeekEvt::OnLeftDown( wxMouseEvent& event )
 {
+	//-----------------------------------------------------//
 	//--- we're using the seek bar AND music is playing ---//
 	//--- OR we're adjusting volume                     ---//
 	//-----------------------------------------------------//
