@@ -173,6 +173,10 @@
 					RelativePath=".\MusikPlaylistCtrl.h">
 				</File>
 			</Filter>
+			<Filter
+				Name="MusikNowPlayingCtrl"
+				Filter="">
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Views"

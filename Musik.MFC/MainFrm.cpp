@@ -94,16 +94,18 @@ BOOL CMainFrame::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* pContext )
 	//--- now playing portion.						---//
 	//--- +--------+								---//
 	//--- |        |								---//
-	//--- |        |								---//
+	//--- |        | 0,0							---//
 	//--- +--------+								---//
-	//--- +--------+								---//
+	//--- +--------+ 1,0							---//
 	//-------------------------------------------------//
 	m_MainSplit.CreateStatic( this, 2, 1 );
-	m_MainSplit.CreateView( 1, 0, RUNTIME_CLASS( CMusikSourcesView ), CSize( client_size.Width(), client_size.Height() / 2 ), pContext );
+	m_MainSplit.SetRowInfo( 0, client_size.Height() - 72, 72 );
+	m_MainSplit.CreateView( 1, 0, RUNTIME_CLASS( CMusikSourcesView ), CSize( client_size.Width(), 100 ), pContext );
 
 	//-------------------------------------------------//
 	//--- separates the sources area and the right	---//
 	//--- half of the top							---//
+	//--- 0,0  0,1									---//
 	//--- +-+------+								---//
 	//--- | |      |								---//
 	//--- | |      |								---//
@@ -112,13 +114,14 @@ BOOL CMainFrame::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* pContext )
 	//-------------------------------------------------//
 	m_SourcesSplit.CreateStatic( &m_MainSplit, 1, 2, WS_CHILD | WS_VISIBLE, m_MainSplit.IdFromRowCol( 0, 0 ) );
 	m_SourcesSplit.CreateView( 0, 0, RUNTIME_CLASS( CMusikSourcesView ), CSize( 100, client_size.Height() ), pContext );
+	m_SourcesSplit.SetColumnInfo( 0, 128, 128 );
 
 	//-------------------------------------------------//
 	//--- separates the selection area and the		---//
 	//--- playlist									---//
 	//--- +-+------+								---//
-	//--- | +------|								---//
-	//--- | |      |								---//
+	//--- | +------| 0,0							---//
+	//--- | |      | 1,0							---//
 	//--- +-+------+								---//
 	//--- +--------+								---//
 	//-------------------------------------------------//
