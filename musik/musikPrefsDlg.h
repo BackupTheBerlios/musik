@@ -49,12 +49,9 @@
 
 #include "afxwin.h"
 #include "musikPropertyPage.h"
+#include "musikPrefs.h"
 
-///////////////////////////////////////////////////
-
-class CmusikPrefs;
-class CmusikLibrary;
-class CmusikPlayer;
+#include "../musikCore/include/musikPlayer.h"
 
 ///////////////////////////////////////////////////
 

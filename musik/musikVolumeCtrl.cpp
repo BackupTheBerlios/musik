@@ -42,9 +42,6 @@
 #include "stdafx.h"
 
 #include "musikVolumeCtrl.h"
-#include "musikPrefs.h"
-
-#include "../musikCore/include/musikPlayer.h"
 
 ///////////////////////////////////////////////////
 

@@ -50,7 +50,13 @@
 #include "resource.h"       // main symbols
 
 #include "3rdparty/WinAppEx.h"
+
 #include "../musikCore/include/stdstring.h"
+#include "../musikCore/include/musikFilename.h"
+
+///////////////////////////////////////////////////
+
+using namespace musik;
 
 ///////////////////////////////////////////////////
 

@@ -53,12 +53,7 @@
 
 ///////////////////////////////////////////////////
 
-class CmusikLibrary;
-class CmusikPlayer;
-class CmusikPrefs;
-class CmusikPlaylist;
-class CmusikPlaylistDropTarget;
-class CFrameWnd;
+using namespace musik;
 
 ///////////////////////////////////////////////////
 

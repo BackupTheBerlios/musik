@@ -46,13 +46,13 @@
 #include "musikPrefs.h"
 #include "3rdparty/TreePropSheet.h"
 
+#include "../musikCore/include/musikLibrary.h"
+#include "../musikCore/include/musikPlayer.h"
+
 ///////////////////////////////////////////////////
 
+using namespace musik;
 using namespace TreePropSheet;
-
-class CmusikPrefs;
-class CmusikLibrary;
-class CmusikPlayer;
 
 ///////////////////////////////////////////////////
 

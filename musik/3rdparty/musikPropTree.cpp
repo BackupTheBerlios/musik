@@ -32,8 +32,6 @@
 #include "stdafx.h"
 #include "musikPropTree.h"
 
-#include "../musikPrefs.h"
-
 #include "../MEMDC.H"
 
 ///////////////////////////////////////////////////

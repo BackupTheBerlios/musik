@@ -48,8 +48,10 @@
 
 #include "musikEditInPlace.h"
 #include "musikDockBar.h"
+#include "musikSourcesDropTarget.h"
 
 #include "../musikCore/include/musikDir.h"
+#include "../musikCore/include/musikPlayer.h"
 
 #include "3rdparty/musikPropTree.h"
 
@@ -57,12 +59,14 @@
 
 ///////////////////////////////////////////////////
 
+using namespace musik;
+
+///////////////////////////////////////////////////
+
 typedef std::vector<CmusikPropTreeItem*> CmusikSourcesItemPtrArray;
 
 ///////////////////////////////////////////////////
 
-class CmusikPlayer;
-class CmusikSourcesDropTarget;
 class CmusikSourcesCtrl;
 
 ///////////////////////////////////////////////////

@@ -48,9 +48,6 @@
 
 #include "musik.h"
 #include "musikSourcesCtrl.h"
-#include "musikSourcesDropTarget.h"
-
-#include "../musikCore/include/musikPlayer.h"
 
 ///////////////////////////////////////////////////
 

@@ -45,17 +45,16 @@
 
 #include "musikDockBar.h"
 #include "musikTrackCtrl.h"
+#include "musikPrefs.h"
+#include "musikEqualizerSets.h"
+#include "musikTrackCtrl.h"
+
+#include "../musikCore/include/musikLibrary.h"
+#include "../musikCore/include/musikPlayer.h"
 
 ///////////////////////////////////////////////////
 
 class CmusikEqualizerCtrl;
-class CmusikLibrary;
-class CmusikPlayer;
-class CmusikPrefs;
-class CmusikDockBar;
-class CmusikEQSettings;
-class CmusikEqualizer;
-class CmusikEqualizerSets;
 
 ///////////////////////////////////////////////////
 

@@ -62,14 +62,16 @@
 
 ///////////////////////////////////////////////////
 
-#include <vector>
-
 #include "musikDynamicText.h"
+#include "musikPrefs.h"
+
+#include "../musikCore/include/musikPlayer.h"
+
+#include <vector>
 
 ///////////////////////////////////////////////////
 
-class CmusikPlayer;
-class CmusikPrefs;
+using namespace musik;
 
 ///////////////////////////////////////////////////
 

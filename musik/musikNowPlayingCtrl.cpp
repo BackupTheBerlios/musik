@@ -42,19 +42,10 @@
 ///////////////////////////////////////////////////
 
 #include "stdafx.h"
+#include "musik.h"
+#include "musikNowPlayingCtrl.h"
 
 #include "Memdc.h"
-
-#include "musik.h"
-#include "musikPrefs.h"
-
-#include "musikNowPlayingCtrl.h"
-#include "musikNowPlayingInfo.h"
-#include "musikVolumeCtrl.h"
-#include "musikTimeCtrl.h."
-#include "3rdparty/BtnST.h"
-
-#include "../musikCore/include/musikPlayer.h"
 
 ///////////////////////////////////////////////////
 

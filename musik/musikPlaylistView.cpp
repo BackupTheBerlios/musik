@@ -40,10 +40,8 @@
 ///////////////////////////////////////////////////
 
 #include "stdafx.h"
-
 #include "musik.h"
 #include "musikPlaylistView.h"
-#include "musikPrefs.h"
 
 #include "MEMDC.H"
 

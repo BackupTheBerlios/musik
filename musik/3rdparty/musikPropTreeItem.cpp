@@ -34,10 +34,6 @@
 #include "musikPropTree.h"
 #include "musikPropTreeItem.h"
 
-#include "../musikPrefs.h"
-
-#include "../../musikCore/include/musikPlaylist.h"
-
 ///////////////////////////////////////////////////
 
 #define PROPTREEITEM_DEFHEIGHT			21			// default heigt of an item

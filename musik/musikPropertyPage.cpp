@@ -40,11 +40,7 @@
 ///////////////////////////////////////////////////
 
 #include "stdafx.h"
-
 #include "musikPropertyPage.h"
-
-#include "../musikCore/include/musikLibrary.h"
-#include "../musikCore/include/musikPlayer.h"
 
 ///////////////////////////////////////////////////
 

@@ -41,11 +41,9 @@
 
 #include "stdafx.h"
 #include "musik.h"
-
-#include "../musikCore/include/musikFilename.h"
+#include "MainFrm.h"
 
 #include "ace/ACE.h"
-#include "MainFrm.h"
 
 ///////////////////////////////////////////////////
 

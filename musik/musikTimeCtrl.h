@@ -43,10 +43,15 @@
 
 ///////////////////////////////////////////////////
 
-class CmusikTrackCtrl;
-class CmusikPrefs;
-class CmusikPlayer;
-class CmusikDynamicText;
+#include "musikDynamicText.h"
+#include "musikTrackCtrl.h"
+#include "musikPrefs.h"
+
+#include "../musikCore/include/musikPlayer.h"
+
+///////////////////////////////////////////////////
+
+using namespace musik;
 
 ///////////////////////////////////////////////////
 

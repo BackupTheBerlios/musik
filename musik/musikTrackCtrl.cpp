@@ -44,10 +44,6 @@
 #include "musik.h"
 #include "musikTrackCtrl.h"
 
-#include "musikPrefs.h"
-
-#include "../musikCore/include/musikPlayer.h"
-
 #include "MEMDC.H"
 
 ///////////////////////////////////////////////////

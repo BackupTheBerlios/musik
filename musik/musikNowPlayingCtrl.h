@@ -46,15 +46,17 @@
 ///////////////////////////////////////////////////
 
 #include "musikDockBar.h"
+#include "musikNowPlayingInfo.h"
+#include "musikVolumeCtrl.h"
+#include "musikTimeCtrl.h."
+#include "musikPrefs.h"
+
+#include "3rdparty/BtnST.h"
+
+#include "../musikCore/include/musikPlayer.h"
 
 ///////////////////////////////////////////////////
 
-class CmusikPlayer;
-class CmusikPrefs;
-class CmusikNowPlayingInfo;
-class CmusikVolumeCtrl;
-class CmusikTimeCtrl;
-class CButtonST;
 class CmusikNowPlayingCtrl;
 
 ///////////////////////////////////////////////////

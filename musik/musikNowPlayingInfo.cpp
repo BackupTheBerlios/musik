@@ -60,13 +60,9 @@
 
 #include "stdafx.h"
 #include "musik.h"
-
-#include "MEMDC.H"
-
-#include "musikPrefs.h"
 #include "musikNowPlayingInfo.h"
 
-#include "../musikCore/include/musikPlayer.h"
+#include "MEMDC.H"
 
 ///////////////////////////////////////////////////
 

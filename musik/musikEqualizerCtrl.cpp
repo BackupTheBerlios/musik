@@ -43,9 +43,6 @@
 #include "musik.h"
 
 #include "musikEqualizerCtrl.h"
-#include "musikTrackCtrl.h"
-#include "musikPrefs.h"
-#include "musikEqualizerSets.h"
 
 #include "MEMDC.H"
 

@@ -50,7 +50,11 @@
 #include "../musikCore/include/musikDir.h"
 #include "../musikCore/include/musikTask.h"
 
-#include "ace/Synch.h"
+#include "ace/Mutex.h"
+
+///////////////////////////////////////////////////
+
+using namespace musik;
 
 ///////////////////////////////////////////////////
 
