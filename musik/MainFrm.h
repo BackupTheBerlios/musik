@@ -215,7 +215,8 @@ public:
 	// transparency
 	lpfnSetLayeredWindowAttributes m_pSetLayeredWindowAttributes;
 	void SetTransparency( int trans );
-	bool InitTrans();
+	void InitTrans( bool set_trans = false );
+	void DeinitTrans();
 	bool IsTransEnb(){ return m_TransEnb; }
 
 protected: 
@@ -295,6 +296,8 @@ protected:
 	afx_msg LRESULT OnRestartSoundSystem( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSelBoxDelSel( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSourcesItemClicked( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnInitTrans( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnDeinitTrans( WPARAM wParam, LPARAM lParam );
 
 	// mfc message maps
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -383,6 +386,7 @@ protected:
 	bool m_AutoStart;
 	bool m_TransEnb;
 	int m_Trans;
+	void ImportTrans();
 };
 
 ///////////////////////////////////////////////////

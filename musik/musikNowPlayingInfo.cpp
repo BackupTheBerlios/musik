@@ -356,13 +356,12 @@ void CmusikNowPlayingInfo::GetBaseline( int font_size, CmusikFontBaseline* basel
 void CmusikNowPlayingInfo::OnPaint()
 {
 	CPaintDC dc(this);
+
 	CRect rect;
-	GetClientRect(&rect);
-	CMemDC memDC(&dc, &rect);
-	
-	CRect clip;
-	memDC.GetClipBox(&clip);
-	memDC.FillSolidRect( clip, GetSysColor( COLOR_BTNFACE ) );
+	GetClientRect( &rect );
+	CMemDC memDC( &dc, &rect );
+
+	memDC.FillSolidRect( rect, m_Prefs->MUSIK_COLOR_BTNFACE );
 
 	DefWindowProc(WM_PAINT, (WPARAM)memDC->m_hDC, (LPARAM)0);
 }

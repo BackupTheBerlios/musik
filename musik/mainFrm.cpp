@@ -60,6 +60,8 @@
 #include "../musikCore/include/musikEQSettings.h"
 #include "../musikCore/include/musikEqualizer.h"
 
+#include "memdc.h"
+
 #include <io.h>
 #include <Direct.h>
 
@@ -123,6 +125,12 @@ int WM_BATCHADD_END			= RegisterWindowMessage( "BATCHADD_END" );
 int WM_BATCHADD_VERIFY_PLAYLIST	= RegisterWindowMessage( "BATCHADD_VERIFY_PLAYLIST" );
 int WM_REMOVEOLD_PROGRESS		= RegisterWindowMessage( "REMOVEOLD_PROGRESS" );
 int WM_REMOVEOLD_END			= RegisterWindowMessage( "REMOVEOLD_END" );
+
+// other dialogs, such as dockable windows, can
+// call these to disable and enable transparency
+// effects
+int WM_INITTRANS	= RegisterWindowMessage( "INITTRANS" );
+int WM_DEINITTRANS	= RegisterWindowMessage( "DEINITTRANS" );
 
 ///////////////////////////////////////////////////
 
@@ -218,6 +226,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_RESTARTSOUNDSYSTEM, OnRestartSoundSystem )
 	ON_REGISTERED_MESSAGE( WM_EQUALIZERCHANGE, OnEqualizerChange )
 	ON_REGISTERED_MESSAGE( WM_SOURCESITEMCLICKED, OnSourcesItemClicked )
+	ON_REGISTERED_MESSAGE( WM_INITTRANS, OnInitTrans )
+	ON_REGISTERED_MESSAGE( WM_DEINITTRANS, OnDeinitTrans )
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -346,7 +356,7 @@ CMainFrameFader::svc()
 					suspend.set( m_Prefs->GetTransDur() / (float)( 1 + ( m_Prefs->GetTransFocus() - m_Prefs->GetTransUnFocus() ) ) );
 					for ( int i = trans; i < m_Prefs->GetTransFocus(); i++ )
 					{
-						if ( m_Stop ) 
+						if ( m_Stop || !m_Parent->IsTransEnb() ) 
 							break;
 
 						trans++;
@@ -365,7 +375,7 @@ CMainFrameFader::svc()
 
 					for ( int i = 0; i < fade_steps; i++ )
 					{
-						if ( m_Stop )
+						if ( m_Stop || !m_Parent->IsTransEnb() )
 							break;
 
 						trans += interval;
@@ -394,7 +404,7 @@ CMainFrameFader::svc()
 					suspend.set( m_Prefs->GetTransDur() / ( 1 + ( m_Prefs->GetTransFocus() - m_Prefs->GetTransUnFocus() ) ) );
 					for ( int i = 1; i < m_Prefs->GetTransFocus() - m_Prefs->GetTransUnFocus(); i++ )
 					{
-						if ( m_Stop )
+						if ( m_Stop || !m_Parent->IsTransEnb() )
 							break;
 
 						trans--;
@@ -413,7 +423,7 @@ CMainFrameFader::svc()
 
 					for ( int i = 0; i < fade_steps; i++ )
 					{
-						if ( m_Stop )
+						if ( m_Stop || !m_Parent->IsTransEnb() )
 							break;
 
 						trans -= interval;
@@ -837,16 +847,15 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if ( !m_AutoStart && m_Prefs->SynchronizeOnStartup() )
 		SynchronizeDirs();
 
-	m_TransEnb = InitTrans();
-
-	if ( m_TransEnb && !m_Prefs->IsTransEnabled() )
-		SetTransparency( 255 );
-
 	// fire off the fader task
 	m_ProtectingTasks.acquire();
 		m_Fader = new CMainFrameFader;
 		m_Fader->open( this );
 	m_ProtectingTasks.release();
+
+	ImportTrans();
+	if ( m_Prefs->IsTransEnabled() )
+		InitTrans();
 
 	return 0;
 }
@@ -1252,23 +1261,59 @@ void CMainFrame::SetTransparency( int trans )
 
 ///////////////////////////////////////////////////
 
-bool CMainFrame::InitTrans()
+void CMainFrame::ImportTrans()
 {
-	// Here we import the function from USER32.DLL
 	HMODULE hUser32 = GetModuleHandle(_T("USER32.DLL"));
 	m_pSetLayeredWindowAttributes = 
 						(lpfnSetLayeredWindowAttributes)GetProcAddress(hUser32, 
 						"SetLayeredWindowAttributes");
+}
 
-	// If the import did not succeed then bail
-	if ( m_pSetLayeredWindowAttributes == NULL )
-		return false;
+///////////////////////////////////////////////////
 
-	// add the WS_EX_LAYERED attribute
-	SetWindowLong( GetSafeHwnd(), GWL_EXSTYLE, GetWindowLong( GetSafeHwnd(), GWL_EXSTYLE ) 
-			| WS_EX_LAYERED );
+void CMainFrame::DeinitTrans()
+{
+	if ( m_TransEnb )
+	{
+		SetWindowLong( GetSafeHwnd(), GWL_EXSTYLE, GetWindowLong( GetSafeHwnd() , GWL_EXSTYLE) & ~WS_EX_LAYERED );
+		RedrawWindow();
 
-	return true;
+		m_TransEnb = false;
+	}
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::InitTrans( bool set_trans )
+{
+	if ( !m_TransEnb )
+	{
+		SetWindowLong( GetSafeHwnd(), GWL_EXSTYLE, GetWindowLong( GetSafeHwnd(), GWL_EXSTYLE ) 
+				| WS_EX_LAYERED );
+
+		if ( set_trans )
+			SetTransparency( m_Trans );
+		else
+			RedrawWindow();
+
+		m_TransEnb = true;
+	}
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CMainFrame::OnInitTrans( WPARAM wParam, LPARAM lParam )
+{
+	InitTrans( true );
+	return 0L;
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CMainFrame::OnDeinitTrans( WPARAM wParam, LPARAM lParam )
+{
+	DeinitTrans();
+	return 0L;
 }
 
 ///////////////////////////////////////////////////

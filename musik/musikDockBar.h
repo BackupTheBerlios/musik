@@ -50,6 +50,7 @@
 
 class CmusikPrefs;
 class CmusikDockbarBtn;
+class CmusikDockContext;
 
 ///////////////////////////////////////////////////
 
@@ -95,6 +96,9 @@ protected:
 	afx_msg void OnNcPaint();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 
+	void EnableDocking( DWORD dwDockStyle );
+	//virtual void StartDrag( CPoint pt );
+
 	// custom message maps
     afx_msg LRESULT OnSetText(WPARAM wParam, LPARAM lParam);
 
@@ -119,6 +123,22 @@ protected:
 	// macros
     DECLARE_DYNAMIC(CmusikDockBar)
 	DECLARE_MESSAGE_MAP()
+};
+
+///////////////////////////////////////////////////
+
+class CmusikDockContext : public CDockContext
+{
+public:
+	// construction
+    CmusikDockContext( CControlBar* pBar, CmusikPrefs* prefs );
+
+	// drag Operations
+    virtual void StartDrag(CPoint pt);
+
+protected:
+
+	CmusikPrefs* m_Prefs;
 };
 
 ///////////////////////////////////////////////////

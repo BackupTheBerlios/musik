@@ -404,6 +404,28 @@ BOOL CmusikDockBar::HasGripper() const
 
 ///////////////////////////////////////////////////
 
+#if defined(_SCB_REPLACE_MINIFRAME) && !defined(_SCB_MINIFRAME_CAPTION)
+void CmusikDockBar::EnableDocking(DWORD dwDockStyle)
+{
+    // must be CBRS_ALIGN_XXX or CBRS_FLOAT_MULTI only
+	// cannot have the CBRS_FLOAT_MULTI style
+    // the bar must have CBRS_SIZE_DYNAMIC style
+    ASSERT( ( dwDockStyle & ~( CBRS_ALIGN_ANY|CBRS_FLOAT_MULTI ) ) == 0 );
+    ASSERT( ( dwDockStyle & CBRS_FLOAT_MULTI ) == 0 );
+    ASSERT( ( m_dwStyle & CBRS_SIZE_DYNAMIC ) != 0 );
+
+    m_dwDockStyle = dwDockStyle;
+    if ( m_pDockContext == NULL )
+        m_pDockContext = new CmusikDockContext( this, m_Prefs );
+
+    // permanently wire the bar's owner to its current parent
+    if ( m_hWndOwner == NULL )
+        m_hWndOwner = ::GetParent( m_hWnd );
+}
+#endif
+
+///////////////////////////////////////////////////
+
 BOOL CmusikDockBar::OnEraseBkgnd(CDC* pDC)
 {
 	return false;
@@ -434,6 +456,84 @@ void CmusikDockBar::ForceDockedSize( const CSize& size, int dockstate, bool layo
 void CmusikDockBar::ForceFloatSize( const CSize& size )
 {
 	m_szFloat = size;
+}
+
+///////////////////////////////////////////////////
+
+CmusikDockContext::CmusikDockContext( CControlBar* pBar, CmusikPrefs* prefs )
+	: CDockContext( pBar )
+{
+	m_Prefs = prefs; 
+}
+
+///////////////////////////////////////////////////
+
+static void AdjustRectangle( CRect& rect, CPoint pt )
+{
+    int nXOffset = (pt.x < rect.left) ? (pt.x - rect.left) :
+                    (pt.x > rect.right) ? (pt.x - rect.right) : 0;
+    int nYOffset = (pt.y < rect.top) ? (pt.y - rect.top) :
+                    (pt.y > rect.bottom) ? (pt.y - rect.bottom) : 0;
+    rect.OffsetRect(nXOffset, nYOffset);
+}
+
+///////////////////////////////////////////////////
+
+void CmusikDockContext::StartDrag( CPoint pt )
+{
+	int WM_INITTRANS	= RegisterWindowMessage( "INITTRANS" );
+	int WM_DEINITTRANS	= RegisterWindowMessage( "DEINITTRANS" );
+
+	bool trans_enb = false;
+	if ( m_Prefs->IsTransEnabled() )
+		trans_enb = true;
+
+	if ( trans_enb )
+		AfxGetApp()->m_pMainWnd ->SendMessage( WM_DEINITTRANS );
+
+	ASSERT_VALID(m_pBar);
+	m_bDragging = TRUE;
+
+	InitLoop();
+
+	ASSERT((m_pBar->m_dwStyle & CBRS_SIZE_DYNAMIC) != 0);
+
+    // get true bar size (including borders)
+	CRect rect;
+	m_pBar->GetWindowRect(rect);
+	m_ptLast = pt;
+	CSize sizeHorz = m_pBar->CalcDynamicLayout(0, LM_HORZ | LM_HORZDOCK);
+	CSize sizeVert = m_pBar->CalcDynamicLayout(0, LM_VERTDOCK);
+	CSize sizeFloat = m_pBar->CalcDynamicLayout(0, LM_HORZ | LM_MRUWIDTH);
+
+	m_rectDragHorz = CRect(rect.TopLeft(), sizeHorz);
+	m_rectDragVert = CRect(rect.TopLeft(), sizeVert);
+
+	// calculate frame dragging rectangle
+	m_rectFrameDragHorz = CRect(rect.TopLeft(), sizeFloat);
+
+#ifdef _MAC
+    CMiniFrameWnd::CalcBorders(&m_rectFrameDragHorz,
+        WS_THICKFRAME, WS_EX_FORCESIZEBOX);
+#else
+    CMiniFrameWnd::CalcBorders(&m_rectFrameDragHorz, WS_THICKFRAME);
+#endif
+    m_rectFrameDragHorz.DeflateRect(2, 2);
+    m_rectFrameDragVert = m_rectFrameDragHorz;
+    
+    // adjust rectangles so that point is inside
+    AdjustRectangle(m_rectDragHorz, pt);
+    AdjustRectangle(m_rectDragVert, pt);
+    AdjustRectangle(m_rectFrameDragHorz, pt);
+    AdjustRectangle(m_rectFrameDragVert, pt);
+
+    // initialize tracking state and enter tracking loop
+    m_dwOverDockStyle = CanDock();
+    Move(pt);   // call it here to handle special keys
+    Track();
+
+	if ( trans_enb )
+		AfxGetApp()->m_pMainWnd->PostMessage( WM_INITTRANS );
 }
 
 ///////////////////////////////////////////////////

@@ -800,6 +800,18 @@ void CmusikPrefsInterfaceTrans::CommitChanges()
 
 	m_Prefs->SetTransDur( duration );
 
+	if ( m_Prefs->IsTransEnabled() )
+	{
+		int WM_INITTRANS = RegisterWindowMessage( "INITTRANS" );
+		AfxGetApp()->m_pMainWnd ->SendMessage( WM_INITTRANS );
+	}
+	else
+	{
+		int WM_DEINITTRANS = RegisterWindowMessage( "DEINITTRANS" );
+		AfxGetApp()->m_pMainWnd ->SendMessage( WM_DEINITTRANS );
+	}
+		
+
 	// reload
 	LoadPrefs();
 

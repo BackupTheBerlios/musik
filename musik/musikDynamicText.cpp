@@ -182,6 +182,7 @@ HBRUSH CmusikDynamicText::CtlColor( CDC* pDC, UINT nCtlColor )
 		hbr = (HBRUSH)m_BgColor;
 		pDC->SetBkColor( m_Prefs->MUSIK_COLOR_BTNFACE  );
 		pDC->SetTextColor( m_Prefs->MUSIK_COLOR_BTNTEXT );
+		pDC->SetBkMode( TRANSPARENT );
 		
 		return hbr;
 	}
