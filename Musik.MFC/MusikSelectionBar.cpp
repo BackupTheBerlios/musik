@@ -19,7 +19,6 @@ CMusikSelectionBar::~CMusikSelectionBar()
 
 BEGIN_MESSAGE_MAP(CMusikSelectionBar, baseCMusikSelectionBar)
 	ON_WM_CREATE()
-	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
 
@@ -46,11 +45,4 @@ int CMusikSelectionBar::OnCreate( LPCREATESTRUCT lpCreateStruct )
 	m_wndChild->SetFont( &m_Font );
 
 	return 0;
-}
-
-void CMusikSelectionBar::OnSize(UINT nType, int cx, int cy)
-{
-	CSizingControlBarG::OnSize(nType, cx, cy);
-
-	// TODO: Add your message handler code here
 }
