@@ -233,7 +233,6 @@ CPlaylistCtrl::CPlaylistCtrl( wxWindow *parent, const wxWindowID id, const wxPoi
 	g_DragInProg = false;
 	nCurSel = -1;
 
-	ShowIcons();
 	SetActiveThread( NULL );
 }
 
@@ -697,23 +696,9 @@ void CPlaylistCtrl::SetSelFirst()
 //----------------------------------------//
 //--- various other functions we need. ---//
 //----------------------------------------//
-void CPlaylistCtrl::ToggleIcons()
-{
-	if ( g_Prefs.nShowRatings == 0 )
-		g_Prefs.nShowRatings = 1;
-	else
-		g_Prefs.nShowRatings = 0;
-
-	ShowIcons();
-
-	ResetColumns( true );
-
-	view_menu->Check( MUSIK_MENU_SHOW_RATINGS, ( bool )g_Prefs.nShowRatings );
-}
-
 void CPlaylistCtrl::ShowIcons()
 {
-	if ( g_Prefs.nShowRatings == 0 )
+	if ( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_RATING] == 0 )
 		SetImageList( g_NullImageList, wxIMAGE_LIST_SMALL );
 	else
 		SetImageList( g_RatingImages, wxIMAGE_LIST_SMALL );
@@ -910,6 +895,8 @@ void CPlaylistCtrl::ResetColumns( bool update, bool rescale )
 		nCurrType = m_ColumnOrder.Item( i );
 		InsertColumn( i, g_PlaylistColumnLabels[nCurrType], g_PlaylistColumnAlign[nCurrType], 50 );
 	}
+
+	ShowIcons();
 
 	if ( rescale )
 		RescaleColumns();

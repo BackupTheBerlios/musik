@@ -112,7 +112,6 @@ public:
 	void RenameSelFiles		( );
 	void RetagSelFiles		( );
 	bool ViewDirtyTags		( );
-	void ToggleIcons		( );
 	void ShowIcons			( );
 	void SaveColumns		( );
 	void FindColumnOrder	( );

@@ -70,8 +70,6 @@ bool MusikApp::OnInit()
 	view_menu->Check	( MUSIK_MENU_ACTIVITIES_STATE, ( bool )g_Prefs.nShowActivities );
 	view_menu->Append	( MUSIK_MENU_PLAYLISTINFO_STATE, _("Show Playlist Info\tCtrl-3"), wxT(""), wxITEM_CHECK );
 	view_menu->Check	( MUSIK_MENU_PLAYLISTINFO_STATE, ( bool )g_Prefs.nShowPLInfo );
-	view_menu->Append	( MUSIK_MENU_SHOW_RATINGS, _("Show Ratings\tCtrl-4"), wxT(""), wxITEM_CHECK );
-	view_menu->Check	( MUSIK_MENU_SHOW_RATINGS, ( bool )g_Prefs.nShowRatings );
 	view_menu->AppendSeparator();
 	view_menu->Append	( MUSIK_MENU_FX, _("FX\tCtrl-F") );
 	#ifdef __WXMSW__

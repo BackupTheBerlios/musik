@@ -37,7 +37,6 @@ BEGIN_EVENT_TABLE(MusikFrame, wxFrame)
 	EVT_MENU					(MUSIK_MENU_SOURCES_STATE,			MusikFrame::OnSourcesState			)	// View->Show Sources
 	EVT_MENU					(MUSIK_MENU_ACTIVITIES_STATE,		MusikFrame::OnActivitiesState		)	// View->Show Selections
 	EVT_MENU					(MUSIK_MENU_PLAYLISTINFO_STATE,		MusikFrame::OnPlaylistInfoState		)	// View->Show Playlist Info
-	EVT_MENU					(MUSIK_MENU_SHOW_RATINGS,			MusikFrame::OnShowRatings			)	// View->Show Ratings
 	EVT_MENU					(MUSIK_MENU_STAY_ON_TOP,			MusikFrame::OnStayOnTop				)	// View->Stay On Top
 	EVT_UPDATE_UI				(MUSIK_MENU_STAY_ON_TOP,			MusikFrame::OnUpdateStayOnTop		)	// View->Stay On Top
 	EVT_MENU					(MUSIK_MENU_FX,						MusikFrame::OnFX					)
@@ -185,11 +184,6 @@ void MusikFrame::OnFX( wxCommandEvent &event )
 	wxFrame *pDlg = new MusikFXFrame( ( wxFrame* )this, _("Musik FX"), wxPoint( 0, 0 ), fx_size );
 	//this->Enable( FALSE );
 	pDlg->Show();
-}
-
-void MusikFrame::OnShowRatings( wxCommandEvent& WXUNUSED(event) )	
-{ 
-	g_PlaylistCtrl->ToggleIcons();
 }
 
 void MusikFrame::OnStayOnTop( wxCommandEvent &event )	
