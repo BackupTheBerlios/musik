@@ -2203,3 +2203,23 @@ int CmusikLibrary::GetDirtySongs( CmusikPlaylist* target, bool clear )
 
 	return QuerySongs( "dirty = 1", *target );
 }
+
+///////////////////////////////////////////////////
+
+int CmusikLibrary::FinalizeDirtySongs()
+{
+	if ( !m_pDB )
+		return -1;
+
+	m_ProtectingLibrary->acquire();
+
+	int nRet = sqlite_exec_printf( m_pDB, "UPDATE %Q SET dirty = 0 WHERE dirty = 1",
+		NULL, NULL, NULL,
+		SONG_TABLE_NAME );
+
+	m_ProtectingLibrary->release();
+
+	return nRet;
+}
+
+///////////////////////////////////////////////////
