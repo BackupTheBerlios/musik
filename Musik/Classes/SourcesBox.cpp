@@ -703,7 +703,7 @@ bool CSourcesListBox::CreateStdPlaylist( wxString sName, wxString sSongs )
 		//-----------------------------------------------------//
 		if ( sSongs != wxT( "" ) )
 		{
-			if ( wxMessageBox( _( "This playlist already exists, would you like to append the existing one?" ), MUSIK_VERSION, wxYES_NO | wxICON_QUESTION ) == wxYES )
+			if ( wxMessageBox( _( "A playlist with this name already exists, would you like to append the existing one?" ), MUSIK_VERSION, wxYES_NO | wxICON_QUESTION ) == wxYES )
 				AppendStdPlaylist( sName, sSongs );
 		}
 
@@ -774,7 +774,7 @@ bool CSourcesListBox::CreateDynPlaylist( wxString sName )
 		//--- ask the user if he wants to edit the current	---//
 		//--- query since it already exists					---//
 		//-----------------------------------------------------//
-		int nAnswer = wxMessageBox( _( "Would you like to edit the existing dynamic playlist's query?" ), MUSIK_VERSION, wxYES_NO | wxICON_QUESTION );
+		int nAnswer = wxMessageBox( _( "A dynamic playlist with this name already exists, would you like to edit the existing query?" ), MUSIK_VERSION, wxYES_NO | wxICON_QUESTION );
 		if ( nAnswer == wxYES )
 			UpdateDynPlaylist( nItemPos );
 
@@ -807,10 +807,11 @@ bool CSourcesListBox::CreateDynPlaylist( wxString sName )
 
 void CSourcesListBox::UpdateDynPlaylist( int nIndex )
 {
+	wxString sName	= GetPlaylistName( nIndex );
+	wxString sQuery = LoadDynPlaylist( sName );
 
-	wxString sName = GetPlaylistName( nIndex );
-	wxString sQuery = PromptDynamicPlaylist( LoadDynPlaylist( sName ) );
-	
+	sQuery = PromptDynamicPlaylist( sQuery );
+
 	if ( sQuery != wxT( "" ) )
 	{
 		g_SourcesList.Item( nIndex ) = wxT( "[d] " ) + sName;
@@ -823,7 +824,7 @@ void CSourcesListBox::UpdateDynPlaylist( int nIndex )
 
 wxString CSourcesListBox::PromptDynamicPlaylist( wxString sQuery )
 {
-	wxTextEntryDialog dlg( this, _( "Examples:\ntitle like '%funky%'    (all titles containing funky)\nbitrate < 128, vbr = 0    (all low quality, non-VBR)\ntimesplayed > 10 order by artist    (your popular tracks)" ), MUSIK_VERSION, wxT( "" ) );
+	wxTextEntryDialog dlg( this, _( "Examples:\ntitle like '%funky%'    (all titles containing funky)\nbitrate < 128, vbr = 0    (all low quality, non-VBR)\ntimesplayed > 10 order by artist    (your popular tracks)" ), MUSIK_VERSION, sQuery );
 
 	if ( dlg.ShowModal() == wxID_OK )
 		return dlg.GetValue();	
@@ -834,7 +835,7 @@ wxString CSourcesListBox::PromptDynamicPlaylist( wxString sQuery )
 wxString CSourcesListBox::GetPlaylistName( int nIndex )
 {
 	wxString sRet = g_SourcesList.Item( nIndex );
-	sRet = sRet.Right( sRet.Length() - 3 );
+	sRet = sRet.Right( sRet.Length() - 4 );
 	return sRet;
 }
 
@@ -977,6 +978,7 @@ int CSourcesListBox::FindInSources( wxString sName, int nType )
 void CSourcesListBox::SourcesToFilename( wxString* sSources, int nType )
 {
 	wxString sName = *sSources;
+
 	sName.Replace( wxT( " " ), wxT( "_" ), TRUE );
 	sName = sName.Lower();	
 
