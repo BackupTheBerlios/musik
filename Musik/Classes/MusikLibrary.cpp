@@ -785,7 +785,7 @@ void CMusikLibrary::GetStdPlaylistSongs( const wxArrayString & aFiles, CMusikSon
 		sqlite_exec(m_pDB, ConvQueryToMB( sQuery ), &sqlite_callbackAddToSongMap, &theMap, NULL);
 	}
 
-	aReturn.Alloc(aFiles.GetCount());
+	aReturn.Alloc( aFiles.GetCount() );
 	for ( size_t i = 0; i < aFiles.GetCount(); i++ )
 	{
 		CMusikSong *pSong = theMap[ aFiles.Item( i ) ];

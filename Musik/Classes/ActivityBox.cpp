@@ -67,10 +67,10 @@ CActivityListBox::CActivityListBox( CActivityBox *parent,  wxWindowID id )
 {
 	m_Related = 0;
 	m_pParent = parent;
-	this->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ) );
+	SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ) );
 
-	this->InsertColumn( 0, wxT(""), wxLIST_FORMAT_LEFT, 0 );
-	this->InsertColumn( 1, wxT(""), wxLIST_FORMAT_LEFT, 0 );
+	InsertColumn( 0, wxT(""), wxLIST_FORMAT_LEFT, 0 );
+	InsertColumn( 1, wxT(""), wxLIST_FORMAT_LEFT, 0 );
 }
 BEGIN_EVENT_TABLE(CActivityListBox, wxListCtrl)
 	EVT_CHAR	( CActivityListBox::OnChar )

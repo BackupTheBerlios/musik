@@ -186,6 +186,8 @@ void PlaylistDropTarget::HighlightSel( wxPoint pPos )
 CPlaylistCtrl::CPlaylistCtrl( wxWindow *parent, const wxWindowID id, const wxPoint& pos, const wxSize& size )
 	:	wxListCtrl		( parent, id, pos, size, wxLC_REPORT | wxLC_VIRTUAL | wxSIMPLE_BORDER | wxCLIP_CHILDREN & ~wxHSCROLL )
 {
+	SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ) );
+
 	//--- setup headers ---//
 	m_ColSaveNeeded = false;
 	ResetColumns();

@@ -163,6 +163,8 @@ END_EVENT_TABLE()
 CSourcesListBox::CSourcesListBox( wxPanel* parent )
 	: wxListCtrl( parent, MUSIK_SOURCES, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxLC_ALIGN_LEFT | wxLC_REPORT | wxLC_VIRTUAL | wxLC_EDIT_LABELS | wxLC_SINGLE_SEL | wxNO_BORDER & ~wxHSCROLL )
 {
+	SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ) );
+
 	//--- initialize variables ---//
 	m_CurSel = 0;
 	m_DragIndex	= -1;
