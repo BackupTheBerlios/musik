@@ -103,13 +103,14 @@ public:
 	// band state
 	void SetBandState( int band_state );
 	int GetBandState(){ return m_BandState; }
+	void LayoutNewState();
 
 	// channel lock
 	void SetChannelsLocked( bool locked );
 	bool IsChannelsLocked(){ return m_ChannelsLocked; }
 
-	// band layout
-	void LayoutBands();
+	// actions
+	void OnNewSong();
 
 	// message maps
 	afx_msg void OnPaint();
