@@ -248,15 +248,24 @@ int CMainFrameWorker::svc()
 	sleep.set( 1.0f );
 
 	bool is_frame_focused = false;
+	int fade_dur = 20;	// 1 second
+	int unfocused_per = 25;
+	int trans = 0;
 
 	CString sCaption;
 	while ( !m_Stop )
 	{
 		if ( !is_frame_focused && GetForegroundWindow() == m_Parent->GetSafeHwnd() )
 		{
-			for ( int i = 1; i < 10; i++ )
+			for ( int i = 1; i < fade_dur; i++ )
 			{
-				m_Parent->SetTransparency( i * 25 );
+				trans = i * (int)( 255.0f / (float)fade_dur );
+				if ( trans > 255 )
+					trans = 255;
+				else if ( trans < unfocused_per )
+					trans = unfocused_per;
+
+				m_Parent->SetTransparency( trans );
 				ACE_OS::sleep( suspend );
 			}
 
@@ -265,13 +274,17 @@ int CMainFrameWorker::svc()
 		}
 		else if ( is_frame_focused && GetForegroundWindow() != m_Parent->GetSafeHwnd() )
 		{
-			for ( int i = 1; i < 10; i++ )
+			for ( int i = 1; i < fade_dur; i++ )
 			{
-				m_Parent->SetTransparency( 255 - ( i * 25 ) );
+				trans = 255 - (int)( (float)i * ( 255.0f / (float)fade_dur ) );
+				if ( trans < unfocused_per )
+					trans = unfocused_per;
+
+				m_Parent->SetTransparency( trans );
 				ACE_OS::sleep( suspend );
 			}
 
-			m_Parent->SetTransparency( 25 );
+			m_Parent->SetTransparency( unfocused_per );
 			is_frame_focused = false;
 		}
 		
