@@ -99,9 +99,8 @@ public:
 	//--- writing tags ---//
 	//--------------------//
 	bool RenameFile			( CMusikSong* song, bool bClearCheck = false );
-
-	bool RetagFile			( CMusikSong* OldSong );
-
+	bool RetagFile			( CMusikSong* song );
+	bool ReplaceMask		( wxString *sSrc, wxString sMask, wxString sTarget, bool bReplaceAll = true  );
 	void WriteMP3Tag		( const wxString & filename, bool ClearAll );
 	bool WriteOGGTag		( const wxString & filename, bool ClearAll );
 	void ClearDirtyTags		( bool bInform );
@@ -110,9 +109,9 @@ public:
 	//--- removing ---//
 	//----------------//
 	void CheckAndPurge	( const wxString & sFilename	);
-	void DeleteItem		( const wxString &  filename	);
-	void RemoveSongDir	( const wxString &  sDir		);
-	void RemoveSong		( const wxString &  sSong		);
+	void DeleteItem		( const wxString & filename		);
+	void RemoveSongDir	( const wxString & sDir			);
+	void RemoveSong		( const wxString & sSong		);
 	void RemoveAll		( );
 	
 	//---------------------//

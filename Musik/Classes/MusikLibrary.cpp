@@ -1100,6 +1100,21 @@ void CMusikLibrary::RemoveAll()
 	sqlite_exec_printf( m_pDB, "delete from songs;", NULL, NULL, NULL );		
 }
 
+bool CMusikLibrary::ReplaceMask( wxString *sSrc, wxString sMask, wxString sTarget, bool bReplaceAll )
+{
+	wxString sCheck( *sSrc ); 
+	sCheck.Replace( wxT( " " ), wxT( "" ), true );
+
+	if ( !sCheck.IsEmpty() && sCheck != _( "<unknown>" ) )
+	{
+		sSrc->Replace( sMask, sTarget, bReplaceAll );
+		return true;
+	}
+
+	return false;
+
+}
+
 bool CMusikLibrary::RenameFile( CMusikSong* song, bool bClearCheck )
 {
 	//wxMutexLocker lock( LibMutex );
@@ -1112,6 +1127,8 @@ bool CMusikLibrary::RenameFile( CMusikSong* song, bool bClearCheck )
 	wxString sFile		= g_Prefs.sAutoRename;
 	wxString sExt		= wxT(".") + filename.GetExt();
 
+	wxString sCheck;
+
 	//---------------------------------------------//
 	//--- the song's root directory. this will	---//
 	//--- only affect us if there is directory	---//
@@ -1123,7 +1140,7 @@ bool CMusikLibrary::RenameFile( CMusikSong* song, bool bClearCheck )
 		if ( g_Paths.GetCount() == 0 )
 			return false;
 
-		wxString sCheck = song->Filename;
+		sCheck = song->Filename;
 		for ( size_t i = 0; i < g_Paths.GetCount(); i++ )
 		{
 			if ( sCheck.Find( g_Paths.Item( i ) ) > -1 )
@@ -1147,29 +1164,41 @@ bool CMusikLibrary::RenameFile( CMusikSong* song, bool bClearCheck )
 	else
 		sTrackNum.sprintf( wxT("0%d"), song->TrackNum );	
 
-	if ( sFile.Replace( wxT("%1"), song->Title, true ) > 0 && ( song->Title == wxT("") || song->Title == _("<unknown>") ) )
+	//----------------------------------------------//
+	//--- replace masked values					 ---//
+	//----------------------------------------------//
+	if ( !ReplaceMask( &sFile, wxT( "%1" ), song->Title ) )
 		return false;
-	if ( sFile.Replace( wxT("%2"), song->Artist, true ) > 0 && ( song->Artist == wxT("") || song->Artist == _("<unknown>") ) )
+	if ( !ReplaceMask( &sFile, wxT( "%2" ), song->Artist ) )
 		return false;
-	if ( sFile.Replace( wxT("%3"), song->Album, true ) > 0 && ( song->Album == wxT("") || song->Album == _("<unknown>") ) ) 
+	if ( !ReplaceMask( &sFile, wxT( "%3" ), song->Album ) )
 		return false;
-	if ( sFile.Replace( wxT("%4"), song->Genre, true ) > 0 && ( song->Genre == wxT("") || song->Genre == _("<unknown>") ) ) 
+	if ( !ReplaceMask( &sFile, wxT( "%4" ), song->Genre ) )
 		return false;
-	if ( sFile.Replace( wxT("%5"), song->Year, true ) > 0 && ( song->Year == wxT("") || song->Year == _("<unknown>") ) )
+	if ( !ReplaceMask( &sFile, wxT( "%5" ), song->Year ) )
 		return false;
-	sFile.Replace( wxT("%6"), sTrackNum, true );
+	if ( !ReplaceMask( &sFile, wxT( "%6" ), sTrackNum ) )
+		return false;
 
 	//--- if we're in windows, we can't have certain characters, so blank them out ---//
 	#ifdef __WXMSW__
-	sFile.Replace( wxT("/"), wxT(""), true );
-	sFile.Replace( wxT(":"), wxT(""), true );
-	sFile.Replace( wxT("*"), wxT(""), true );
-	sFile.Replace( wxT("?"), wxT(""), true );
-	sFile.Replace( wxT("<"), wxT(""), true );
-	sFile.Replace( wxT(">"), wxT(""), true );
-	sFile.Replace( wxT("|"), wxT(""), true );
-	sFile.Replace( wxT( "\"" ), wxT( "" ), true );
+		sFile.Replace( wxT("/"), wxT(""), true );
+		sFile.Replace( wxT(":"), wxT(""), true );
+		sFile.Replace( wxT("*"), wxT(""), true );
+		sFile.Replace( wxT("?"), wxT(""), true );
+		sFile.Replace( wxT("<"), wxT(""), true );
+		sFile.Replace( wxT(">"), wxT(""), true );
+		sFile.Replace( wxT("|"), wxT(""), true );
+		sFile.Replace( wxT( "\"" ), wxT( "" ), true );
 	#endif
+
+	//-------------------------------------------------//
+	//--- get just the filename of the current song	---//
+	//--- c:\music\test\whatever\whatever.mp3 to...	---//
+	//--- whatever.mp3								---//
+	//-------------------------------------------------//
+	wxString sJustFilename = GetJustFilename( sFile );
+	sJustFilename.Trim( false ); sJustFilename.Trim( true );
 
 	//-----------------------------------------//
 	//--- create needed directories and do	---//
@@ -1178,6 +1207,7 @@ bool CMusikLibrary::RenameFile( CMusikSong* song, bool bClearCheck )
 	//-----------------------------------------//
 	wxArrayString aPaths = DelimitStr( sFile, wxString( MUSIK_PATH_SEPARATOR ), false );
 	wxString sFinalPath = sRootPath;
+
 	for ( size_t i = 0; i < aPaths.GetCount() - 1; i++ )
 	{
 		wxString sCur = aPaths.Item( i );
@@ -1199,12 +1229,10 @@ bool CMusikLibrary::RenameFile( CMusikSong* song, bool bClearCheck )
 				wxMkdir( sFinalPath );
 		}
 	}
-	sFile = aPaths.Item( aPaths.GetCount() - 1 );
-	sFile.Trim( false ); sFile.Trim( true );
 
 	//--- final name ---//
 	wxString oldfilename = song->Filename;
-	wxString newfilename = sFinalPath + sFile + sExt;
+	wxString newfilename = sFinalPath + sJustFilename + sExt;
 
 	//-----------------------------------------//
 	//--- filename already the same? return ---//

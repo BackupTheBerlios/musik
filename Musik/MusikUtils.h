@@ -45,6 +45,8 @@ wxColour		StringToColour		( const wxString& string );
 wxArrayString	GetMusicDirs	( wxArrayString *aDirs );
 wxArrayString	GetMusicDir		( wxString* sDir );
 
+wxString		GetJustFilename	( const wxString & filename );
+
 wxString		GetFramePlacement	( wxFrame* frame );
 bool			SetFramePlacement	( wxFrame* frame, wxString place );
 

@@ -157,6 +157,9 @@ wxArrayString DelimitStr( wxString sStr, wxString sDel, bool bRemoveDelimiter )
 			aReturn.Add( toke.GetNextToken() + sDel );
 	}
 
+	//--- strip last delimiter ---//
+	aReturn.Item( aReturn.GetCount()-1 ).Replace( sDel, wxT( "" ), true );
+
 	return aReturn;
 }
 
@@ -219,6 +222,12 @@ wxString MStoStr( int timems )
 		result.sprintf( wxT("%d:%02d"), minutes, seconds );
 	
 	return result;
+}
+
+wxString GetJustFilename( const wxString & filename )
+{
+	wxArrayString paths = DelimitStr( filename, wxString( MUSIK_PATH_SEPARATOR ), false );
+	return paths.Item( paths.GetCount() - 1 );	
 }
 
 wxArrayString GetPlaylistDir()
