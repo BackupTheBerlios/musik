@@ -78,6 +78,9 @@ void CMusikPrefs::LoadPrefs()
 	config->Read( wxT( "Webserverport" ),							&nWebServerPort,		6395					);
 	config->Read( wxT( "FramePlacement" ),							&sFramePlacement,		wxT("")					);
 
+	g_FX.LoadBands( config );
+
+
 	//-------------------------------------------------//
 	//--- if we're in windows there is a problem	---//
 	//--- writing a backslash "\" character to		---//
@@ -159,6 +162,9 @@ void CMusikPrefs::SavePrefs()
 	config->Write( wxT( "EnableWebserver" ),						nWebServerEnable		);
 	config->Write( wxT( "WebserverPort" ),							nWebServerPort			);
 	config->Write( wxT( "FramePlacement" ),							sFramePlacement			);
+
+	g_FX.SaveBands( config );
+
 	delete config;
 
 	#ifdef __WXMSW__

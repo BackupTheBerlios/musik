@@ -27,18 +27,11 @@
 #include <wx/arrimpl.cpp>
 WX_DEFINE_OBJARRAY( CMusikStreamArray );
 
+
 void *dspcallback(void *originalbuffer, void *newbuffer, int length, int param)
 {
-    int                count;
-    signed short      *stereo16bitbuffer = (signed short *)newbuffer;
-
-    for (count=0; count<length; count++)        // >>2 = 16bit stereo (4 bytes per sample)
-    {
-        *stereo16bitbuffer = 0;
-        *(stereo16bitbuffer+1) = 0;
-        
-        stereo16bitbuffer+=2;
-    }
+	// 2 channels (stereo), 16 bit sound
+	g_FX.ProcessSamples( newbuffer, length, 2, 16 );
 
     return newbuffer;
 }
@@ -86,12 +79,19 @@ CMusikPlayer::~CMusikPlayer()
 void CMusikPlayer::Shutdown()
 {
 	FSOUND_Close();
+
+	g_FX.EndEQ();
 }
 
 int CMusikPlayer::InitializeFMOD( int nFunction, int nSndOutput, int nSndDevice, int nSndRate )
 {
 	if ( ( nFunction == FMOD_INIT_RESTART ) || ( nFunction == FMOD_INIT_STOP ) )
+	{
 		FSOUND_Close();
+		g_FX.EndEQ();
+	}
+
+	g_FX.InitEQ();
 
 	//---------------------//
 	//--- setup driver	---//

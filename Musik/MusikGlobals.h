@@ -241,6 +241,7 @@ extern MusikLibraryFrame *g_MusikLibraryFrame;
 #include "Threads/MusikThreads.h"
 #include <wx/image.h>
 #include <wx/imaglist.h>
+#include "Classes/MusikFX.h"
 
 extern CMusikLibrary		g_Library;
 extern CMusikPlayer			g_Player;			
@@ -260,6 +261,7 @@ extern MusikFaderThread*	g_FaderThread;
 extern wxImageList*			g_SourcesImages; 
 extern wxImageList*			g_NullImageList;
 extern wxImageList*			g_RatingImages;
+extern CMusikFX				g_FX;
 
 //----------------//
 //--- controls ---//

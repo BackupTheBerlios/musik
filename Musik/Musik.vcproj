@@ -403,6 +403,29 @@
 					RelativePath=".\Classes\MusikPrefs.h">
 				</File>
 			</Filter>
+			<Filter
+				Name="MusikFX"
+				Filter="">
+				<File
+					RelativePath=".\Classes\MusikFX.cpp">
+				</File>
+				<File
+					RelativePath=".\Classes\MusikFX.h">
+				</File>
+				<Filter
+					Name="Shibatch"
+					Filter="">
+					<File
+						RelativePath=".\shibatch\Equ.cpp">
+					</File>
+					<File
+						RelativePath=".\shibatch\Fftsg_fl.cpp">
+					</File>
+					<File
+						RelativePath=".\shibatch\paramlist.hpp">
+					</File>
+				</Filter>
+			</Filter>
 		</Filter>
 		<File
 			RelativePath=".\Musik.rc">
