@@ -126,12 +126,6 @@
 			Name="Main Frame"
 			Filter="">
 			<File
-				RelativePath=".\ChildView.cpp">
-			</File>
-			<File
-				RelativePath=".\ChildView.h">
-			</File>
-			<File
 				RelativePath=".\MainFrm.cpp">
 			</File>
 			<File
@@ -191,7 +185,7 @@
 			</Filter>
 		</Filter>
 		<Filter
-			Name="DockBars"
+			Name="Dock Bars and Views"
 			Filter="">
 			<Filter
 				Name="MusikSourcesBar"
@@ -204,14 +198,8 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="MusikPlaylistBar"
+				Name="MusikPlaylistView"
 				Filter="">
-				<File
-					RelativePath=".\MusikPlaylistBar.cpp">
-				</File>
-				<File
-					RelativePath=".\MusikPlaylistBar.h">
-				</File>
 			</Filter>
 			<Filter
 				Name="MusikSelectionBar"
@@ -233,6 +221,9 @@
 			</File>
 			<File
 				RelativePath=".\Musik.h">
+			</File>
+			<File
+				RelativePath=".\MusikPlaylistView.h">
 			</File>
 			<File
 				RelativePath=".\Resource.h">
@@ -280,6 +271,9 @@
 		</Filter>
 		<File
 			RelativePath=".\res\Musik.manifest">
+		</File>
+		<File
+			RelativePath=".\MusikPlaylistView.cpp">
 		</File>
 	</Files>
 	<Globals>

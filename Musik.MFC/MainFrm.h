@@ -1,11 +1,10 @@
 #pragma once
 
-#include "ChildView.h"
 #include "MusikSourcesCtrl.h"
 #include "MusikPlaylistCtrl.h"
 
 #include "MusikSourcesBar.h"
-#include "MusikPlaylistBar.h"
+#include "MusikPlaylistView.h"
 #include "MusikSelectionBar.h"
 
 class CMainFrame : public CFrameWnd
@@ -33,7 +32,7 @@ public:
 private:
 
 protected:
-	CChildView m_wndView;
+	CMusikPlaylistView m_wndView;
 	CMusikSourcesBar m_wndSourcesBar;
 	CMusikSelectionBar m_wndSelectionBars[4];
 
