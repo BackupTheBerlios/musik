@@ -46,6 +46,7 @@ ADD_EXECUTABLE(Musik
         ${Musik_SOURCE_DIR}/Classes/SourcesBox
         ${Musik_SOURCE_DIR}/Classes/WebServer
         ${Musik_SOURCE_DIR}/Classes/MusikFX
+        ${Musik_SOURCE_DIR}/Classes/MusikFXGauge
 
         ${Musik_SOURCE_DIR}/Classes/Library/CFrameHeader
         ${Musik_SOURCE_DIR}/Classes/Library/CMP3Info

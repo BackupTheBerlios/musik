@@ -103,7 +103,8 @@ module.include.files=\
 	Threads/PlaylistCtrlThreads.h\
 	shibatch/paramlist.hpp\
 	Classes/MusikFX.h\
-	Frames/MusikFXFrame.h
+	Frames/MusikFXFrame.h\
+	Classes/MusikFXGauge.h
 
 module.source.name=.
 module.source.type=
@@ -143,7 +144,8 @@ module.source.files=\
 	shibatch/Fftsg_fl.cpp\
 	shibatch/Equ.cpp\
 	Frames/MusikFXFrame.cpp\
-	Classes/MusikFX.cpp
+	Classes/MusikFX.cpp\
+	Classes/MusikFXGauge.cpp
 
 module.pixmap.name=.
 module.pixmap.type=

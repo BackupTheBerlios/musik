@@ -54,5 +54,4 @@ private:
 	float m_Value;
 };
 
-
 #endif
