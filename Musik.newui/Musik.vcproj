@@ -213,6 +213,16 @@
 					RelativePath=".\src\MusikSimpleQueryCtrl.h">
 				</File>
 			</Filter>
+			<Filter
+				Name="MusikNowPlayingCtrl"
+				Filter="">
+				<File
+					RelativePath=".\src\MusikNowPlayingCtrl.cpp">
+				</File>
+				<File
+					RelativePath=".\src\MusikNowPlayingCtrl.h">
+				</File>
+			</Filter>
 		</Filter>
 		<File
 			RelativePath=".\Musik.rc">

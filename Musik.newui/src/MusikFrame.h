@@ -8,12 +8,18 @@
 #include "MusikSelectionAreaCtrl.h"
 #include "MusikPlaylistCtrl.h"
 #include "MusikSimpleQueryCtrl.h"
+#include "MusikNowPlayingCtrl.h"
 
 class CMusikFrame : public wxFrame
 {
 public:
 	CMusikFrame();
 	~CMusikFrame();
+
+	//-------------------------------------------------//
+	//--- virtual overrides							---//
+	//-------------------------------------------------//
+	virtual bool Show( bool show = true );
 
 private:
 	void CreateSashes();
@@ -35,6 +41,7 @@ private:
 	CMusikSelectionAreaCtrl *m_SelectionCtrl;
 	CMusikPlaylistCtrl		*m_PlaylistCtrl;
 	CMusikSimpleQueryCtrl	*m_SimpleQueryCtrl;
+	CMusikNowPlayingCtrl	*m_NowPlayingCtrl;
 };
 
 #endif

@@ -2,7 +2,7 @@
 #include "MusikSelectionAreaCtrl.h"
 
 CMusikSelectionAreaCtrl::CMusikSelectionAreaCtrl( wxWindow *parent, wxWindowID id )
-	: wxPanel( parent, id, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxNO_BORDER | wxTRANSPARENT_WINDOW | wxCLIP_CHILDREN )
+	: wxPanel( parent, id, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxNO_BORDER /*| wxTRANSPARENT_WINDOW | wxCLIP_CHILDREN*/ )
 {
 	//-----------------------------------------------------//
 	//--- intialize all of the needed variables			---//
@@ -14,7 +14,8 @@ CMusikSelectionAreaCtrl::CMusikSelectionAreaCtrl( wxWindow *parent, wxWindowID i
 	//-----------------------------------------------------//
 	//--- create the controls and set the sizer.		---//
 	//-----------------------------------------------------//
-	Create();
+	CreateSashes();
+	CreateControls();
 
 	SetSizer( m_SelectionSizer );
 }
@@ -24,8 +25,14 @@ CMusikSelectionAreaCtrl::~CMusikSelectionAreaCtrl()
 
 }
 
-void CMusikSelectionAreaCtrl::Create()
+void CMusikSelectionAreaCtrl::CreateSashes()
 {
+
+}
+
+void CMusikSelectionAreaCtrl::CreateControls()
+{
+	/*
 	if ( HORIZONTAL )
 		m_SelectionSizer = new wxBoxSizer( wxHORIZONTAL );
 	else
@@ -37,10 +44,11 @@ void CMusikSelectionAreaCtrl::Create()
 		if ( i < ( MAX_SELECTION_CTRLS - 1 ) )
 			m_SelectionSizer->Add( m_SelectionCtrls[i], 1, wxRIGHT | wxEXPAND, 4 );
 		else
-			m_SelectionSizer->Add( m_SelectionCtrls[i], 1, wxEXPAND );
+			m_SelectionSizer->Add( m_SelectionCtrls[i], 1, wxRIGHT | wxEXPAND, 2 );
 	}
 
 	Layout();
+	*/
 }
 
 void CMusikSelectionAreaCtrl::Delete()
@@ -64,7 +72,7 @@ void CMusikSelectionAreaCtrl::Delete()
 void CMusikSelectionAreaCtrl::Reset()
 {
 	Delete();
-	Create();
+	CreateControls();
 }
 
 CMusikSelectionCtrl* CMusikSelectionAreaCtrl::GetControl( size_t nCtrlID )

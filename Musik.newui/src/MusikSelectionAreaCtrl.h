@@ -2,6 +2,8 @@
 #define C_SELECTION_AREA_CTRL_H
 
 #include "wx/wxprec.h"
+#include "wx/laywin.h"
+
 #include "MusikSelectionCtrl.h"
 
 #define MAX_SELECTION_CTRLS 2
@@ -17,11 +19,14 @@ public:
 	void Reset();
 
 private:
-	void Create();
+	void CreateSashes();
+	void CreateControls();
 	void Delete();
 
 	wxBoxSizer *m_SelectionSizer;
 	CMusikSelectionCtrl *m_SelectionCtrls[MAX_SELECTION_CTRLS];
+	wxSashLayoutWindow	*m_SelectionSashes[MAX_SELECTION_CTRLS];
+
 };
 
 #endif
