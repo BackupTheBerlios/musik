@@ -68,6 +68,8 @@ public:
 	// get the playlist control
 	CmusikPlaylistCtrl* GetCtrl(){ return m_Playlist; }
 
+	void UpdatePlaylistInfo();
+
 	// mfc message maps
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
@@ -83,8 +85,9 @@ protected:
 	// playlist info
 	void InitPlaylistInfo();
 	void CleanPlaylistInfo();
+	
 	CmusikPlaylistInfoCtrl* m_PlaylistInfo;
-
+	
 	// drop target for the playlist
 	CmusikPlaylistDropTarget* m_DropTarget;
 

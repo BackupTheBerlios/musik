@@ -62,6 +62,7 @@ class CmusikPrefs;
 class CmusikPlaylist;
 class CmusikDynDspInfo;
 class CmusikDir;
+class CmusikPlaylistInfoCtrl;
 
 ///////////////////////////////////////////////////
 
@@ -107,6 +108,8 @@ public:
 	// event..
 	bool PlayItem( int n = -1 );
 
+	void SetInfoCtrl( CmusikPlaylistInfoCtrl *ctrl );
+
 protected:
 
 	// is dnd active
@@ -127,6 +130,9 @@ protected:
 
 	// pointer to main window
 	CFrameWnd* m_Parent;
+
+	// pointer to info ctrl
+	CmusikPlaylistInfoCtrl* m_InfoCtrl;
 
 	// core stuff
 	CmusikLibrary* m_Library;

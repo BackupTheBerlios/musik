@@ -865,7 +865,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 void CMainFrame::SetPlaylist( bool update, bool hide_sort_arrow, bool select_none )
 {
 	m_wndView->GetCtrl()->SetPlaylist( m_Playlist );
-
+	
 	if ( update )
 		m_wndView->GetCtrl()->UpdateV( true, select_none );
 

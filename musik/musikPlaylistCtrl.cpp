@@ -48,6 +48,7 @@
 #include "musik.h"
 #include "musikPrefs.h"
 
+#include "musikPlaylistView.h"
 #include "musikPlaylistCtrl.h"
 #include "musikSourcesCtrl.h"
 #include "musikFileDrop.h"
@@ -134,6 +135,9 @@ CmusikPlaylistCtrl::CmusikPlaylistCtrl( CFrameWnd* mainwnd, CmusikLibrary* libra
 
 	// main window
 	m_Parent = mainwnd;
+
+	// info ctrl
+	m_InfoCtrl = NULL;
 
 	// misc
 	m_DropArrange = false;
@@ -749,6 +753,16 @@ void CmusikPlaylistCtrl::SetPlaylist( CmusikPlaylist* playlist )
 
 	if ( m_SongInfoCache )
 		m_SongInfoCache->SetPlaylist( playlist );
+
+	if ( m_InfoCtrl )
+		m_InfoCtrl->UpdateInfo();	
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::SetInfoCtrl( CmusikPlaylistInfoCtrl *ctrl )
+{
+	m_InfoCtrl = ctrl;
 }
 
 ///////////////////////////////////////////////////
@@ -1243,6 +1257,9 @@ void CmusikPlaylistCtrl::DeleteItems( const CIntArray& items, bool update )
 
 		SetScrollPos( SB_VERT, nScrollPos );
 	}
+
+	if ( m_InfoCtrl )
+		m_InfoCtrl->UpdateInfo();	
 }
 
 ///////////////////////////////////////////////////
@@ -1280,6 +1297,9 @@ void CmusikPlaylistCtrl::InsertItems( const CIntArray& items, int firstsel, int 
 
 		SetScrollPos( SB_VERT, nScrollPos );
 	}
+
+	if ( m_InfoCtrl )
+		m_InfoCtrl->UpdateInfo();	
 }
 
 ///////////////////////////////////////////////////

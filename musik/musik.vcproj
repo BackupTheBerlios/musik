@@ -721,6 +721,9 @@
 				</File>
 			</Filter>
 		</Filter>
+		<File
+			RelativePath=".\changelog.txt">
+		</File>
 	</Files>
 	<Globals>
 		<Global

@@ -106,6 +106,9 @@ int CmusikPlaylistView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_DropTarget->Register( this );
 
+	if ( m_Prefs->PlaylistInfoVisible() )
+		InitPlaylistInfo();
+
 	// child
 	long dwStyle = WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_OWNERDATA | WS_VSCROLL | WS_HSCROLL | LVS_SHOWSELALWAYS;
 	long dwStyleEx = LVS_EX_FULLROWSELECT /*| LVS_EX_HEADERDRAGDROP*/;
@@ -115,8 +118,7 @@ int CmusikPlaylistView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_Playlist->SubclassHeader();
 
-	if ( m_Prefs->PlaylistInfoVisible() )
-		InitPlaylistInfo();
+	
 
 	return 0;
 }
@@ -234,6 +236,7 @@ void CmusikPlaylistView::InitPlaylistInfo()
 	{
 		m_PlaylistInfo = new CmusikPlaylistInfoCtrl( GetCtrl(), m_Library, m_Player, m_Prefs );
 		m_PlaylistInfo->Create( NULL, NULL, WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0 ), this, 123 );
+		m_Playlist->SetInfoCtrl( m_PlaylistInfo );
 	}
 }
 
@@ -243,9 +246,21 @@ void CmusikPlaylistView::CleanPlaylistInfo()
 {
 	if ( m_PlaylistInfo )
 	{	
+		//m_Playlist->SetInfoCtrl( NULL );
 		delete m_PlaylistInfo;
 		m_PlaylistInfo = NULL;
 	}	
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistView::UpdatePlaylistInfo()
+{
+	if ( m_PlaylistInfo )
+	{
+		m_PlaylistInfo->UpdateInfo();
+	}
+
 }
 
 ///////////////////////////////////////////////////
