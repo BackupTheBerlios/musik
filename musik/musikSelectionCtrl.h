@@ -56,6 +56,7 @@ public:
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg void OnLvnMarqueeBegin(NMHDR *pNMHDR, LRESULT *pResult);
 
 	// custom message maps
 	afx_msg LRESULT OnMouseLeave( WPARAM wParam, LPARAM lParam );

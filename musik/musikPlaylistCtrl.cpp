@@ -18,6 +18,7 @@
 #include "../musikCore/include/musikBatchAdd.h"
 
 #include "MEMDC.H"
+#include ".\musikplaylistctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -42,11 +43,12 @@ BEGIN_MESSAGE_MAP(CmusikPlaylistCtrl, CmusikListCtrl)
 	ON_NOTIFY_REFLECT(NM_CLICK, OnNMClick)
 	ON_NOTIFY_REFLECT(LVN_ITEMACTIVATE, OnLvnItemActivate)
 	ON_NOTIFY_REFLECT(LVN_BEGINDRAG, OnLvnBegindrag)
-	
+	ON_WM_KEYDOWN()
+
 	// custom messages
 	ON_REGISTERED_MESSAGE( WM_BATCHADD_PROGRESS_PLAYLIST, OnBatchAddProgress )
 	ON_REGISTERED_MESSAGE( WM_BATCHADD_END_PLAYLIST, OnBatchAddEnd )
-	ON_WM_KEYDOWN()
+	ON_NOTIFY_REFLECT(LVN_MARQUEEBEGIN, OnLvnMarqueeBegin)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -728,25 +730,49 @@ void CmusikPlaylistCtrl::OnLvnBegindrag(NMHDR *pNMHDR, LRESULT *pResult)
 	*pResult = 0;
 }
 
+///////////////////////////////////////////////////
+
 void CmusikPlaylistCtrl::OnDropFiles( HDROP hDropInfo )
 {
+	// if the drag originated from ourself, then
+	// we want to rearrange items, and nothing more.
 	if ( m_DropArrange )
 	{
 		CPoint ptCursor;
 		::GetCursorPos( &ptCursor );
 		ScreenToClient( &ptCursor );
+		
 		int nPos = HitTest( ptCursor );
 
+		// get first selected item.. if we can't
+		// find one, return.
+		int nFirstSel = GetFirstSelected();
+		if ( nFirstSel == -1 )
+			return;
+
+		// item dragged onto itself
+		if ( nPos == nFirstSel )
+			return;
+
+		// save the items that are selected
 		CIntArray sel, selids;
 		GetSelectedItems( &sel );
 		GetItemIDs( sel, &selids );
-		DeleteItems( sel );
-		InsertItems( selids, nPos );
+
+		// remove selected items from their
+		// current position
+		DeleteItems( sel, false );
+
+		// insert the items back to their new
+		// position...
+		InsertItems( selids, nFirstSel, nPos );
 
 		m_DropArrange = false;
 		return;
 	}
 
+	// if we get here, the drag originated from 
+	// somewhere else, such as explorer...
 	size_t nNumFiles;
 	TCHAR szNextFile [MAX_PATH];
 	SHFILEINFO  rFileInfo;
@@ -856,6 +882,16 @@ void CmusikPlaylistCtrl::GetSelectedItems( CIntArray* items )
 
 ///////////////////////////////////////////////////
 
+int CmusikPlaylistCtrl::GetFirstSelected()
+{
+    POSITION pos = GetFirstSelectedItemPosition();
+	int nRet = GetNextSelectedItem ( pos );
+    
+	return nRet;
+}
+
+///////////////////////////////////////////////////
+
 void CmusikPlaylistCtrl::GetItemIDs( const CIntArray& items, CIntArray* target )
 {
 	target->clear();
@@ -883,17 +919,37 @@ void CmusikPlaylistCtrl::DeleteItems( const CIntArray& items, bool update )
 	{
 		UpdateV();
 		SetScrollPos( SB_VERT, nScrollPos );
+
+		// deselect all, then select first...
+		SetItemState( -1, 0, LVIS_SELECTED );
+		if ( GetItemCount() > 0 )
+		{
+			if ( items.at( 0 ) > GetItemCount() )
+				SetItemState( 0, LVIS_SELECTED, LVIS_SELECTED );
+			else
+				SetItemState( items.at( 0 ), LVIS_SELECTED, LVIS_SELECTED );
+		}
 	}
 }
 
 ///////////////////////////////////////////////////
 
-void CmusikPlaylistCtrl::InsertItems( const CIntArray& items, int at, bool update )
+void CmusikPlaylistCtrl::InsertItems( const CIntArray& items, int firstsel, int at, bool update )
 {
 	if ( items.size() <= 0 )
 		return;
 
 	int nScrollPos = GetScrollPos( SB_VERT );
+
+	// see if we need to insert items above
+	// or below the target... depends if we
+	// are dragging up or down.
+	if ( firstsel < at )
+	{
+		at -= items.size();
+		if ( at < -1 )
+			at = -1;
+	}
 
 	m_Playlist->InsertAt( items, at );
 
@@ -901,6 +957,14 @@ void CmusikPlaylistCtrl::InsertItems( const CIntArray& items, int at, bool updat
 	{
 		UpdateV();
 		SetScrollPos( SB_VERT, nScrollPos );
+
+		// deselect all, then select the items that
+		// were just rearranged...
+		SetItemState( -1, 0, LVIS_SELECTED );
+		if ( at == -1 )
+			at = GetItemCount() - items.size();
+		for ( size_t i = at; i < at + items.size(); i++ )
+			SetItemState( i, LVIS_SELECTED, LVIS_SELECTED );
 	}
 }
 
@@ -912,11 +976,22 @@ void CmusikPlaylistCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	{
 		CIntArray sel;
 		GetSelectedItems( &sel );
-		DeleteItems( sel );
+		DeleteItems( sel, -1 );
 		return;
 	}
 
 	CmusikListCtrl::OnKeyDown( nChar, nRepCnt, nFlags );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::OnLvnMarqueeBegin(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
+
+	// returning non-zero ignores the message,
+	// and marquee never appears.
+	*pResult = 1;
 }
 
 ///////////////////////////////////////////////////

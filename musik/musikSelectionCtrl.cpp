@@ -8,6 +8,7 @@
 #include "MEMDC.H"
 
 #include "../musikCore/include/musikLibrary.h"
+#include ".\musikselectionctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -52,6 +53,7 @@ BEGIN_MESSAGE_MAP(CmusikSelectionCtrl, CmusikListCtrl)
 	ON_WM_PAINT()
 	ON_WM_MOUSEMOVE()
 	ON_MESSAGE(WM_MOUSELEAVE, OnMouseLeave)
+	ON_NOTIFY_REFLECT(LVN_MARQUEEBEGIN, OnLvnMarqueeBegin)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -64,8 +66,7 @@ int CmusikSelectionCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CString sTitle = (CString)m_Library->GetSongField( m_Type );
 	sTitle += _T( "s" );
 
-	InsertColumn( 0, "", LVCFMT_LEFT, 0 );
-	InsertColumn( 1, sTitle );
+	InsertColumn( 0, sTitle );
 
 	GetParent()->SetWindowText( sTitle );
 
@@ -86,8 +87,7 @@ void CmusikSelectionCtrl::RescaleColumn()
 	CRect client_size;
 	GetClientRect( &client_size );
 
-	SetColumnWidth( 0, 0 );
-	SetColumnWidth( 1, client_size.Width() );
+	SetColumnWidth( 0, client_size.Width() );
 }
 
 ///////////////////////////////////////////////////
@@ -153,12 +153,6 @@ void CmusikSelectionCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 		switch( pItem->iSubItem )
 		{
 		case 0:
-
-			// first column is empty, this will disable
-			// bounding box selection and make DND easier.
-			break;
-
-		case 1:
 
 			// a safeguard... just make sure the item we're
 			// getting passed has a respective value in the
@@ -551,6 +545,17 @@ void CmusikSelectionCtrl::OnMouseMove(UINT nFlags, CPoint point)
 			break;
 		}		
 	}
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionCtrl::OnLvnMarqueeBegin(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
+
+	// returning non-zero ignores the message,
+	// and marquee never appears.
+	*pResult = 1;
 }
 
 ///////////////////////////////////////////////////

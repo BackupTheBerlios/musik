@@ -92,7 +92,8 @@ protected:
 	void GetSelectedItems( CIntArray* items );
 	void GetItemIDs( const CIntArray& items, CIntArray* target );
 	void DeleteItems( const CIntArray& items, bool update = true );
-	void InsertItems( const CIntArray& items, int at, bool update = true );
+	void InsertItems( const CIntArray& items, int first_sel, int at, bool update = true );
+	int GetFirstSelected();
 
 	// misc
 	bool m_Changed;
@@ -110,6 +111,7 @@ protected:
 	afx_msg void OnLvnItemActivate(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnLvnBegindrag(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg void OnLvnMarqueeBegin(NMHDR *pNMHDR, LRESULT *pResult);
 
 	// CmusikPlaylistDropTarget calls
 	// this function once files have
