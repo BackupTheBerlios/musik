@@ -15,6 +15,8 @@ static int sqlite_AddSongToPlaylist(void *args, int numCols, char **results, cha
 	
 	p->push_back( *pLibItem );
 
+	delete pLibItem;
+
     return 0;
 }
 
