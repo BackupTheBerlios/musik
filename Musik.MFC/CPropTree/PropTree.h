@@ -29,7 +29,6 @@
 #define IDC_FPOINT		1001
 
 #include "PropTreeList.h"
-#include "PropTreeInfo.h"
 #include "PropTreeItem.h"
 
 class CPropTree;
@@ -133,14 +132,8 @@ protected:
 	// Actual tree control
 	CPropTreeList	m_List;
 
-	// Descriptive control
-	CPropTreeInfo	m_Info;
-
 	// TRUE to show info control
 	BOOL			m_bShowInfo;
-
-	// Height of the info control
-	LONG			m_nInfoHeight;
 
 	// Root level tree item
 	CPropTreeItem	m_Root;

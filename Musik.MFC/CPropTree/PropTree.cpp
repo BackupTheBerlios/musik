@@ -53,7 +53,6 @@ CPropTreeItem* CPropTree::s_pFound;
 
 CPropTree::CPropTree() :
 	m_bShowInfo(TRUE),
-	m_nInfoHeight(50),
 	m_pVisbleList(NULL),
 	m_Origin(100,0),
 	m_nLastUID(1),
@@ -133,18 +132,7 @@ int CPropTree::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_List.SetPropOwner(this);
 
-	// create CPropTreeInfo
-	//
-
 	dwStyle &= ~WS_VSCROLL;
-
-	if (!m_Info.Create(_T(""), dwStyle, rc, this))
-	{
-		TRACE0("Failed to create CPropTreeInfo\n");
-		return -1;
-	}
-
-	m_Info.SetPropOwner(this);
 
 	return 0;
 }
@@ -165,19 +153,8 @@ void CPropTree::OnSize(UINT nType, int cx, int cy)
 
 void CPropTree::ResizeChildWindows(int cx, int cy)
 {
-	if (m_bShowInfo)
-	{
-		if (IsWindow(m_List.m_hWnd))
-			m_List.MoveWindow(0, 0, cx, cy - m_nInfoHeight);
-
-		if (IsWindow(m_Info.m_hWnd))
-			m_Info.MoveWindow(0, cy - m_nInfoHeight, cx, m_nInfoHeight);
-	}
-	else
-	{
-		if (IsWindow(m_List.m_hWnd))
-			m_List.MoveWindow(0, 0, cx, cy);
-	}
+	if (IsWindow(m_List.m_hWnd))
+		m_List.MoveWindow(0, 0, cx, cy);
 }
 
 
