@@ -189,7 +189,7 @@
 			</Filter>
 		</Filter>
 		<Filter
-			Name="Bars"
+			Name="DockBars"
 			Filter="">
 			<Filter
 				Name="MusikSourcesBar"

@@ -3,10 +3,10 @@
 #include "ChildView.h"
 #include "MusikSourcesCtrl.h"
 #include "MusikPlaylistCtrl.h"
-#include "MusikSourcesView.h"
-#include "MusikPlaylistView.h"
 
-
+#include "MusikSourcesBar.h"
+#include "MusikPlaylistBar.h"
+#include "MusikSelectionBar.h"
 
 class CMainFrame : public CFrameWnd
 {
@@ -33,7 +33,9 @@ public:
 private:
 
 protected:
+	CChildView m_wndView;
 	CMusikSourcesBar m_wndSourcesBar;
+	CMusikSelectionBar m_wndSelectionBars[4];
 
 //-------------------------------------------------//
 //--- operations								---//

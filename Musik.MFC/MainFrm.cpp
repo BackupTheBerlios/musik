@@ -35,14 +35,36 @@ CMainFrame::~CMainFrame()
 
 int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CFrameWnd::OnCreate(lpCreateStruct) == -1)
+	if ( CFrameWnd::OnCreate(lpCreateStruct) == -1 )
 		return -1;
 
-	m_wndSourcesBar.Create( _T( "MusikSources" ), this, 123 );
-	m_wndSourcesBar.EnableDocking( CBRS_ALIGN_LEFT | CBRS_ALIGN_RIGHT );
-
+	//-------------------------------------------------//
+	//--- create a background window				---//
+	//-------------------------------------------------//
+	m_wndView.Create( NULL, NULL, AFX_WS_DEFAULT_VIEW,	CRect(0, 0, 0, 0), this, AFX_IDW_PANE_FIRST, NULL );
 	EnableDocking(CBRS_ALIGN_ANY);
-	DockControlBar(&m_wndSourcesBar, AFX_IDW_DOCKBAR_LEFT);
+
+	//-------------------------------------------------//
+	//--- sources control							---//
+	//-------------------------------------------------//
+	m_wndSourcesBar.Create( _T( "Musik Sources" ), this, 123 );
+	m_wndSourcesBar.EnableDocking( CBRS_ALIGN_LEFT | CBRS_ALIGN_RIGHT );
+    m_wndSourcesBar.SetBarStyle( m_wndSourcesBar.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC );
+	DockControlBar( &m_wndSourcesBar, AFX_IDW_DOCKBAR_LEFT );
+
+	//-------------------------------------------------//
+	//--- selection controls						---//
+	//-------------------------------------------------//
+	/*
+	for ( size_t i = 0; i < 4; i++ )
+	{
+		m_wndSelectionBars[i].Create( _T( "" ), this, 123 );
+		m_wndSelectionBars[i].EnableDocking( CBRS_ALIGN_TOP | CBRS_ALIGN_BOTTOM );
+		DockControlBar( &m_wndSelectionBars[i], AFX_IDW_DOCKBAR_TOP + i  );
+	}
+	*/
+
+
 
 	return 0;
 }
