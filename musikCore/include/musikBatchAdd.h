@@ -48,7 +48,7 @@
 class CmusikLibrary;
 class CmusikPlaylist;
 class CmusikFunctor;
-
+class CmusikPlayer;
 class CmusikBatchAdd;
 
 ///////////////////////////////////////////////////
@@ -63,9 +63,9 @@ public:
 
 	// construct / destruct
 	CmusikBatchAdd();
-	CmusikBatchAdd( CStdStringArray* pFiles, CmusikPlaylist* pPlaylist, 
-		CmusikLibrary* pLibrary, CmusikFunctor* pFunctor, bool bUpdatePlaylist = false, 
-		bool bDeleteFilelist = true );
+	CmusikBatchAdd( CStdStringArray* pFiles, CmusikPlaylist* pPlaylist, CmusikLibrary* pLibrary, CmusikPlayer* pPlayer, 
+		CmusikFunctor* pFunctor, bool bUpdatePlaylist = false, bool bAddToPlayer = false, bool bDeleteFilelist = true );
+
 	~CmusikBatchAdd();
 
 	// thread execution
@@ -79,10 +79,11 @@ public:
 	CStdStringArray* m_Files;
 	CmusikPlaylist* m_Playlist;
 	CmusikLibrary* m_Library;
+	CmusikPlayer* m_Player;
 	CmusikFunctor* m_Functor;
 	bool m_UpdatePlaylist;
 	bool m_DeleteFilelist;
-
+	bool m_AddToPlayer;				// negates UpdatePlaylist() and m_Playlist()... will add files to player's playlist
 	bool m_Kill;
 
 	// user shouldn't call these, they should

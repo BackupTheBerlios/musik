@@ -46,6 +46,7 @@
 #include "../include/musikBatchAdd.h"
 
 #include "../include/musikLibrary.h"
+#include "../include/musikPlayer.h"
 #include "../include/musikFunctor.h"
 #include "../include/musikThread.h"
 
@@ -55,6 +56,8 @@ static void musikBatchAddWorker( CmusikBatchAdd* params )
 {
 	size_t curr_prog = 0;
 	size_t last_prog = 0;
+
+	CmusikSong song;
 
 	params->m_Library->BeginTransaction();
 	for( size_t i = 0; i < params->m_Files->size(); i++ )
@@ -68,9 +71,25 @@ static void musikBatchAddWorker( CmusikBatchAdd* params )
 		// add the song
 		params->m_Library->AddSong( params->m_Files->at( i ) );
 
-		if ( params->m_UpdatePlaylist && params->m_Playlist )
+		if ( params->m_AddToPlayer && params->m_Player && params->m_Player->GetPlaylist() )
 		{
-			
+			params->m_Library->GetSongFromFilename( params->m_Files->at( i ), song );
+			params->m_Player->GetPlaylist()->Add( song );
+		}
+
+		else if ( params->m_UpdatePlaylist && params->m_Playlist )
+		{
+			if ( params->m_Functor->VerifyPlaylist( (void*)params->m_Playlist ) )
+			{
+				params->m_Library->GetSongFromFilename( params->m_Files->at( i ), song );
+				params->m_Playlist->Add( song );
+			}
+			else
+			{
+				CStdString s;
+				s.Format( "Failed to add song to playlist at address %d becuase it couldn't be verified", params->m_Playlist );
+				TRACE0( s.c_str() );
+			}
 		}
 
 		// post progress to the functor
@@ -94,32 +113,33 @@ static void musikBatchAddWorker( CmusikBatchAdd* params )
 
 CmusikBatchAdd::CmusikBatchAdd()
 {
-	m_Files = NULL;
-	m_Playlist = NULL;
-	m_Functor = NULL;
-	m_UpdatePlaylist = false;
-	m_DeleteFilelist = true;
-	m_Library = NULL;
-
-	m_pThread = NULL;
-	m_Kill = false;
+	m_Files				= NULL;
+	m_Playlist			= NULL;
+	m_Functor			= NULL;
+	m_UpdatePlaylist	= false;
+	m_DeleteFilelist	= true;
+	m_AddToPlayer		= false;
+	m_Library			= NULL;
+	m_Player			= NULL;
+	m_pThread			= NULL;
+	m_Kill				= false;
 }
 
 ///////////////////////////////////////////////////
 
-CmusikBatchAdd::CmusikBatchAdd( CStdStringArray* pFiles, CmusikPlaylist* pPlaylist, 
-	CmusikLibrary* pLibrary, CmusikFunctor* pFunctor, bool bUpdatePlaylist, 
-	bool bDeleteFilelist )
+CmusikBatchAdd::CmusikBatchAdd( CStdStringArray* pFiles, CmusikPlaylist* pPlaylist, CmusikLibrary* pLibrary, CmusikPlayer* pPlayer, 
+		CmusikFunctor* pFunctor, bool bUpdatePlaylist, bool bAddToPlayer, bool bDeleteFilelist )
 {
-	m_Files = pFiles;
-	m_Playlist = pPlaylist;
-	m_Functor = pFunctor;
-	m_Library = pLibrary;
-	m_UpdatePlaylist = bUpdatePlaylist;
-	m_DeleteFilelist = bDeleteFilelist;
-
-	m_pThread = NULL;
-	m_Kill = false;
+	m_Files				= pFiles;
+	m_Playlist			= pPlaylist;
+	m_Functor			= pFunctor;
+	m_Library			= pLibrary;
+	m_UpdatePlaylist	= bUpdatePlaylist;
+	m_DeleteFilelist	= bDeleteFilelist;
+	m_Player			= pPlayer;
+	m_pThread			= NULL;
+	m_Kill				= false;
+	m_AddToPlayer		= bAddToPlayer;
 }
 
 ///////////////////////////////////////////////////

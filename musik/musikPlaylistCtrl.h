@@ -139,6 +139,7 @@ protected:
 	// custom message maps
 	afx_msg LRESULT OnBatchAddProgress( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnBatchAddEnd( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnBatchAddVerifyPlaylist( WPARAM wParam, LPARAM lParam );
 
 	// macros
 	DECLARE_DYNAMIC(CmusikPlaylistCtrl)

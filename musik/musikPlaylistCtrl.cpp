@@ -30,6 +30,7 @@ IMPLEMENT_DYNAMIC(CmusikPlaylistCtrl, CmusikListCtrl)
 
 int WM_BATCHADD_PROGRESS_PLAYLIST	= RegisterWindowMessage( "BATCHADD_PROGRESS" );
 int WM_BATCHADD_END_PLAYLIST		= RegisterWindowMessage( "BATCHADD_END" );
+int WM_BATCHADD_VERIFY_PLAYLIST		= RegisterWindowMessage( "BATCHADD_VERIFY_PLAYLIST" );
 
 ///////////////////////////////////////////////////
 
@@ -46,11 +47,12 @@ BEGIN_MESSAGE_MAP(CmusikPlaylistCtrl, CmusikListCtrl)
 	ON_NOTIFY_REFLECT(LVN_ITEMACTIVATE, OnLvnItemActivate)
 	ON_NOTIFY_REFLECT(LVN_BEGINDRAG, OnLvnBegindrag)
 	ON_WM_KEYDOWN()
+	ON_NOTIFY_REFLECT(LVN_MARQUEEBEGIN, OnLvnMarqueeBegin)
 
 	// custom messages
 	ON_REGISTERED_MESSAGE( WM_BATCHADD_PROGRESS_PLAYLIST, OnBatchAddProgress )
 	ON_REGISTERED_MESSAGE( WM_BATCHADD_END_PLAYLIST, OnBatchAddEnd )
-	ON_NOTIFY_REFLECT(LVN_MARQUEEBEGIN, OnLvnMarqueeBegin)
+	ON_REGISTERED_MESSAGE( WM_BATCHADD_VERIFY_PLAYLIST, OnBatchAddVerifyPlaylist)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -829,6 +831,15 @@ void CmusikPlaylistCtrl::OnDropFiles( HDROP hDropInfo )
 		return;
 	}
 
+	// see if we need to prompt the user for
+	// which playlist to insert files to...
+	CmusikFileDrop* pDlg = new CmusikFileDrop( this );
+	int nRet = pDlg->DoModal();
+	delete pDlg;
+
+	if ( nRet == MUSIK_FILEDROP_CANCEL )
+		return;
+
 	// if we get here, the drag originated from 
 	// somewhere else, such as explorer...
 	size_t nNumFiles;
@@ -838,22 +849,7 @@ void CmusikPlaylistCtrl::OnDropFiles( HDROP hDropInfo )
 	nNumFiles = DragQueryFile ( hDropInfo, -1, NULL, 0 );
 	CStdStringArray* files = NULL;
 
-	// if the thread exists, pause it
-	if ( m_BatchAddThr )
-	{
-		m_BatchAddThr->Pause();
-		files = m_BatchAddThr->m_Files;
-	}
-
-	// otherwise create a new list of files
-	else
-		files = new CStdStringArray();
-
-	// see if we need to prompt the user for
-	// which playlist to insert files to...
-	CmusikFileDrop* pDlg = new CmusikFileDrop( this );
-	pDlg->DoModal();
-	delete pDlg;
+	files = new CStdStringArray();
 
 	CStdString sTemp;
 	for ( size_t i = 0; i < nNumFiles; i++ )
@@ -883,24 +879,21 @@ void CmusikPlaylistCtrl::OnDropFiles( HDROP hDropInfo )
 		}
 	}
 
-	// if thread exists, resume it.
-	if ( m_BatchAddThr )
-		m_BatchAddThr->Resume();
-	else
+	if ( files->size() > 0 )
 	{
-		if ( files->size() > 0 )
-		{
-			if ( m_BatchAddFnct )
-			{
-				TRACE0( "Last thread ended but functor still active? This is a bug...\n" );
-				delete m_BatchAddFnct;
-				m_BatchAddFnct = NULL;
-			}	
+		m_BatchAddFnct = new CmusikBatchAddFunctor( this );
 
-			m_BatchAddFnct = new CmusikBatchAddFunctor( this );
-			m_BatchAddThr = new CmusikBatchAdd( files, m_Player->GetPlaylist(), m_Library, m_BatchAddFnct );
-			m_BatchAddThr->Run();
-		}
+		if ( nRet == MUSIK_FILEDROP_ADDNOWPLAYING )
+			m_BatchAddThr = new CmusikBatchAdd( files, m_Player->GetPlaylist(), m_Library, m_Player, m_BatchAddFnct, 0, 1, 1 );
+
+		else if ( nRet == MUSIK_FILEDROP_ADDPLAYLIST )
+			m_BatchAddThr = new CmusikBatchAdd( files, m_Playlist, m_Library, NULL, m_BatchAddFnct, 1, 0, 1 );
+
+		else if ( nRet == MUSIK_FILEDROP_ADDLIBRARY )
+			m_BatchAddThr = new CmusikBatchAdd( files, m_Player->GetPlaylist(), m_Library, NULL, m_BatchAddFnct );
+
+		
+		m_BatchAddThr->Run();
 	}
 }
 
@@ -915,20 +908,32 @@ LRESULT CmusikPlaylistCtrl::OnBatchAddProgress( WPARAM wParam, LPARAM lParam )
 
 LRESULT CmusikPlaylistCtrl::OnBatchAddEnd( WPARAM wParam, LPARAM lParam )
 {
-	if ( m_BatchAddThr )
-	{
-		delete m_BatchAddThr;
-		m_BatchAddThr = NULL;
-	}
+	bool update = false;
 
-	if ( m_BatchAddFnct )
+	if ( wParam )
 	{
-		delete m_BatchAddFnct;
-		m_BatchAddFnct = NULL;
+		CmusikBatchAdd* pBatch = (CmusikBatchAdd*)wParam;
+		CmusikBatchAddFunctor* pFunctor = (CmusikBatchAddFunctor*)pBatch->m_Functor;
+
+		if ( pBatch->m_AddToPlayer || pBatch->m_UpdatePlaylist )
+			update = true;
+
+		if ( pFunctor )
+			delete pFunctor;
+
+        delete pBatch;
+	}
+	else
+	{
+		TRACE0( "Oh shit, we couldn't find a CmusikPlaylistCtrl's CmusikBatchAdd thread to delete!\n" );
+		ASSERT( -1 );
 	}
 
 	int WM_SELBOXRESET = RegisterWindowMessage( "SELBOXRESET" );
 	m_MainWnd->PostMessage( WM_SELBOXRESET );
+
+	if ( update )
+		UpdateV();
 
 	return 0L;
 }
@@ -1087,6 +1092,18 @@ void CmusikPlaylistCtrl::OnDragColumn( int source, int dest )
 	m_Arranging = false;
 
     ResetColumns();
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CmusikPlaylistCtrl::OnBatchAddVerifyPlaylist( WPARAM wParam, LPARAM lParam )
+{
+	CmusikPlaylist* playlist = (CmusikPlaylist*)wParam;
+
+	if ( playlist && playlist == m_Playlist )
+		return 1L;
+
+	return 0L;
 }
 
 ///////////////////////////////////////////////////

@@ -30,9 +30,11 @@
 #define IDC_BTNYES                      1018
 #define IDC_REMEMBER                    1019
 #define IDC_RADIO1                      1020
+#define IDC_RADIO_ADD_PLAYLIST          1020
 #define IDC_RADIO2                      1021
+#define IDC_RADIO_ADD_NOW_PLAYING       1021
 #define IDC_RADIO3                      1022
-#define IDC_BUTTON3                     1023
+#define IDC_RADIO_ADD_LIBRARY           1022
 #define ID_FILE_PREFERENCES             32771
 #define ID_FILE_SEP                     32772
 #define ID_OPEN_FILES                   32774

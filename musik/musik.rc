@@ -227,12 +227,15 @@ BEGIN
                     WS_TABSTOP,6,86,87,10
     LTEXT           "Files from another application have been dropped onto the musik:Cube interface. Which of the following actions would you like to perform? ",
                     IDC_STATIC,6,6,210,24
-    CONTROL         "Add these files to the playlist they were dropped on",
-                    IDC_RADIO1,"Button",BS_AUTORADIOBUTTON,6,40,210,10
+    CONTROL         "Add these files to the currently active playlist",
+                    IDC_RADIO_ADD_PLAYLIST,"Button",BS_AUTORADIOBUTTON,6,50,
+                    210,10
     CONTROL         "Add these files to the ""Now Playing"" playlist",
-                    IDC_RADIO2,"Button",BS_AUTORADIOBUTTON,6,51,210,10
-    CONTROL         "Add these files to the library only",IDC_RADIO3,"Button",
-                    BS_AUTORADIOBUTTON,6,62,210,10
+                    IDC_RADIO_ADD_NOW_PLAYING,"Button",BS_AUTORADIOBUTTON,6,
+                    38,210,10
+    CONTROL         "Add these files to the library only",
+                    IDC_RADIO_ADD_LIBRARY,"Button",BS_AUTORADIOBUTTON,6,62,
+                    210,10
 END
 
 

@@ -952,7 +952,7 @@ void CMainFrame::OnOpenFiles()
 				}	
 
 				m_BatchAddFnct = new CmusikBatchAddFunctor( this );
-				m_BatchAddThr = new CmusikBatchAdd( files, m_Player->GetPlaylist(), m_Library, m_BatchAddFnct );
+				m_BatchAddThr = new CmusikBatchAdd( files, m_Player->GetPlaylist(), m_Library, NULL, m_BatchAddFnct );
 				m_BatchAddThr->Run();
 			}
 			else
@@ -1047,7 +1047,7 @@ void CMainFrame::OnOpenDirectory()
 				}	
 
 				m_BatchAddFnct = new CmusikBatchAddFunctor( this );
-				m_BatchAddThr = new CmusikBatchAdd( files, m_Player->GetPlaylist(), m_Library, m_BatchAddFnct );
+				m_BatchAddThr = new CmusikBatchAdd( files, m_Player->GetPlaylist(), m_Library, NULL, m_BatchAddFnct );
 				m_BatchAddThr->Run();
 			}
 			else 
