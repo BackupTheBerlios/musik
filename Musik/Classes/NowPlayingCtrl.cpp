@@ -51,10 +51,10 @@ BEGIN_EVENT_TABLE(CNowPlayingCtrl, wxPanel)
 	EVT_CHECKBOX(MUSIK_CHK_CROSSFADE,					CNowPlayingCtrl::OnCheckCrossfade)
 	EVT_LEFT_DOWN(CNowPlayingCtrl::OnClickTimeDisplay)
 #ifdef wxUSE_HOTKEY
-	EVT_HOTKEY(MUSIK_HOTKEYID_STOP, CNowPlayingCtrl::PlayerStop)
-	EVT_HOTKEY(MUSIK_HOTKEYID_PLAYPAUSE, CNowPlayingCtrl::PlayerPlayPause)
-	EVT_HOTKEY(MUSIK_HOTKEYID_PREV, CNowPlayingCtrl::PlayerPrev)
-	EVT_HOTKEY(MUSIK_HOTKEYID_NEXT, CNowPlayingCtrl::PlayerNext)
+	EVT_HOTKEY(MUSIK_HOTKEYID_STOP, CNowPlayingCtrl::PlayerStopHK)
+	EVT_HOTKEY(MUSIK_HOTKEYID_PLAYPAUSE, CNowPlayingCtrl::PlayerPlayPauseHK)
+	EVT_HOTKEY(MUSIK_HOTKEYID_PREV, CNowPlayingCtrl::PlayerPrevHK)
+	EVT_HOTKEY(MUSIK_HOTKEYID_NEXT, CNowPlayingCtrl::PlayerNextHK)
 
 #endif
 END_EVENT_TABLE()

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wxMusik-0.3.1.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-06-20 15:14+0200\n"
+"POT-Creation-Date: 2004-06-30 14:53+0200\n"
 "PO-Revision-Date: 2004-05-30 19:46+0100\n"
 "Last-Translator:Gunnar Roth <gunnar.roth@gmx.de>\n"
 "Language-Team: wxMusik Team <gunnar.roth@gmx.de>\n"
@@ -77,7 +77,7 @@ msgstr ""
 "Quellenliste ,sowie die Bibliothek zurückgesetzt werden. Wir entschuldigen "
 "uns für die entstandenen Unannehmlichkeiten."
 
-#: ../Classes/MusikPrefs.h:321
+#: ../Classes/MusikPrefs.h:331
 msgid " is not running"
 msgstr " läuft momentan nicht"
 
@@ -136,22 +136,22 @@ msgstr ""
 "%6 - Titelnummer\n"
 "\n"
 
-#: ../MusikUtils.cpp:580
+#: ../MusikUtils.cpp:560
 #, c-format
 msgid "%d.%02d GB"
 msgstr "%d.%02d GB"
 
-#: ../MusikUtils.cpp:586
+#: ../MusikUtils.cpp:566
 #, c-format
 msgid "%d.%02d KB"
 msgstr "%d.%02d KB"
 
-#: ../MusikUtils.cpp:583
+#: ../MusikUtils.cpp:563
 #, c-format
 msgid "%d.%02d MB"
 msgstr "%d.%02d MB"
 
-#: ../MusikUtils.cpp:577
+#: ../MusikUtils.cpp:557
 #, c-format
 msgid "%d.%02d TB"
 msgstr "%d.%02d TB"
@@ -185,7 +185,7 @@ msgstr ""
 "Leerzeichen in der Maske verwendet werden um auf '_' zu passen. \n"
 "\n"
 
-#: ../Frames/MusikFrame.cpp:322
+#: ../Frames/MusikFrame.cpp:350
 msgid "&About"
 msgstr "&Über"
 
@@ -205,7 +205,7 @@ msgstr "&Lösche Liste"
 msgid "&Create New"
 msgstr "&Erzeuge"
 
-#: ../Frames/MusikFrame.cpp:318
+#: ../Frames/MusikFrame.cpp:346
 msgid "&Custom Query"
 msgstr "&Abfrage ausführen"
 
@@ -225,48 +225,48 @@ msgstr "&Ändere Abfrage"
 msgid "&Edit URL"
 msgstr "&Ändere URL"
 
-#: ../Frames/MusikFrame.cpp:328
+#: ../Frames/MusikFrame.cpp:356
 msgid "&File"
 msgstr "&Datei"
 
-#: ../Frames/MusikFrame.cpp:331
+#: ../Frames/MusikFrame.cpp:359
 msgid "&Help"
 msgstr "&Hilfe"
 
-#: ../Frames/MusikFrame.cpp:139
+#: ../Frames/MusikFrame.cpp:159
 msgid "&Hide wxMusik"
 msgstr "&Verstecke wxMusik"
 
-#: ../Frames/MusikFrame.cpp:330 ../Frames/MusikLibraryFrame.cpp:127
+#: ../Frames/MusikFrame.cpp:358 ../Frames/MusikLibraryFrame.cpp:127
 msgid "&Library"
 msgstr "&Bibliothek"
 
-#: ../Frames/MusikFrame.cpp:149
+#: ../Frames/MusikFrame.cpp:169
 msgid "&Next"
 msgstr "&Nächster"
 
-#: ../Frames/MusikFrame.cpp:143
+#: ../Frames/MusikFrame.cpp:163
 msgid "&Pause"
 msgstr "&Pause"
 
-#: ../Frames/MusikFrame.cpp:320
+#: ../Frames/MusikFrame.cpp:348
 msgid "&Pending Tags"
 msgstr "&Unfertige Tags"
 
 #: ../Classes/ActivityBox.cpp:822 ../Classes/PlaylistCtrl.cpp:375
-#: ../Frames/MusikFrame.cpp:147
+#: ../Frames/MusikFrame.cpp:167
 msgid "&Play"
 msgstr "&Abspielen"
 
-#: ../Frames/MusikFrame.cpp:290
+#: ../Frames/MusikFrame.cpp:318
 msgid "&Preferences\tCtrl-P"
 msgstr "&Voreinstellungen\tCtrl-V"
 
-#: ../Frames/MusikFrame.cpp:148
+#: ../Frames/MusikFrame.cpp:168
 msgid "&Previous"
 msgstr "&Voriger"
 
-#: ../Classes/PlaylistCtrl.cpp:398
+#: ../Classes/PlaylistCtrl.cpp:398 ../Frames/MusikFrame.cpp:179
 msgid "&Rating"
 msgstr "&Bewertung"
 
@@ -286,15 +286,15 @@ msgstr "&Umbennen"
 msgid "&Rename\t F2"
 msgstr "&Umbennen\t F2"
 
-#: ../Frames/MusikFrame.cpp:137
+#: ../Frames/MusikFrame.cpp:157
 msgid "&Restore wxMusik"
 msgstr "wxMusik &Wiederherstellen"
 
-#: ../Frames/MusikFrame.cpp:145
+#: ../Frames/MusikFrame.cpp:165
 msgid "&Resume"
 msgstr "&Weiter"
 
-#: ../Frames/MusikFrame.cpp:315
+#: ../Frames/MusikFrame.cpp:343
 msgid "&Setup Library\tCtrl-L"
 msgstr "&Bibliothek einrichten\tCtrl-B"
 
@@ -306,7 +306,7 @@ msgstr "&Zeige Bildchen"
 msgid "&Show in Library"
 msgstr "&Zeige in der Bibliothek"
 
-#: ../Frames/MusikFrame.cpp:151
+#: ../Frames/MusikFrame.cpp:171
 msgid "&Stop"
 msgstr "&Stopp"
 
@@ -314,7 +314,7 @@ msgstr "&Stopp"
 msgid "&Update Library"
 msgstr "Bibliothek &aktualisieren"
 
-#: ../Frames/MusikFrame.cpp:329
+#: ../Frames/MusikFrame.cpp:357
 msgid "&View"
 msgstr "&Ansicht"
 
@@ -402,7 +402,7 @@ msgstr "Album"
 msgid "Albums"
 msgstr "Alben"
 
-#: ../Frames/MusikFrame.cpp:303
+#: ../Frames/MusikFrame.cpp:331
 msgid "Always On Top\tCtrl-T"
 msgstr "Immer im Vordergrund\tCtrl-I"
 
@@ -410,7 +410,7 @@ msgstr "Immer im Vordergrund\tCtrl-I"
 msgid "An error occured when setting the Auto DJ Filter"
 msgstr "Beim Versuch die den Auto DJ Filter zu setzen, trat ein Fehler auf!"
 
-#: ../Classes/MusikLibrary.cpp:1182
+#: ../Classes/MusikLibrary.cpp:1189
 msgid "An error occurred when attempting to update the database"
 msgstr "Beim Versuch die Datenbank zu aktualisieren, trat ein Fehler auf!"
 
@@ -431,7 +431,7 @@ msgstr "Künstler"
 msgid "Artists"
 msgstr "Künstler"
 
-#: ../Classes/NowPlayingCtrl.cpp:157 ../Frames/MusikPrefsFrame.cpp:75
+#: ../Classes/NowPlayingCtrl.cpp:168 ../Frames/MusikPrefsFrame.cpp:75
 #: ../Frames/MusikPrefsFrame.cpp:385
 msgid "Auto DJ"
 msgstr "Auto DJ"
@@ -526,7 +526,7 @@ msgstr "Konvertiere '_' in ein Leerzeichen"
 msgid "Copy files to directory"
 msgstr "Kopiere Dateien in ein Verzeichnis"
 
-#: ../Classes/NowPlayingCtrl.cpp:163
+#: ../Classes/NowPlayingCtrl.cpp:174
 msgid "Crossfade"
 msgstr "Überblenden"
 
@@ -586,7 +586,7 @@ msgstr "Dynamische Liedliste"
 msgid "Dynamic playlist \""
 msgstr "Dynamische Liedliste\""
 
-#: ../Frames/MusikFrame.cpp:154 ../Frames/MusikFrame.cpp:292
+#: ../Frames/MusikFrame.cpp:182 ../Frames/MusikFrame.cpp:320
 msgid "E&xit"
 msgstr "&Beenden"
 
@@ -626,7 +626,7 @@ msgstr "Ändere Titelnummer\tF3"
 msgid "Edit Year\tF7"
 msgstr "Ändere Jahr\tF7"
 
-#: ../MusikUtils.cpp:588
+#: ../MusikUtils.cpp:568
 msgid "Empty"
 msgstr "Leer"
 
@@ -676,7 +676,7 @@ msgstr "Adresse(URL) des Netzradios eingeben:"
 msgid "Examples:\n"
 msgstr "Beispiele:\n"
 
-#: ../Frames/MusikFrame.cpp:300
+#: ../Frames/MusikFrame.cpp:328
 msgid "FX\tCtrl-F"
 msgstr "Effekte\tCtrl-E"
 
@@ -720,7 +720,7 @@ msgstr "Dateiname:"
 msgid "Filesize"
 msgstr "Dateigröße"
 
-#: ../Frames/MusikFrame.cpp:311
+#: ../Frames/MusikFrame.cpp:339
 msgid "Finalize for Database &Only"
 msgstr "&Tags in der Datenbank, als bereinigt kennzeichnen"
 
@@ -760,6 +760,11 @@ msgstr "Verstecke Fenster beim Minimieren"
 #: ../Frames/MusikPrefsFrame.cpp:211
 msgid "Highlight"
 msgstr "Hervorheben"
+
+#: ../Classes/NowPlayingCtrl.cpp:270
+#, c-format
+msgid "Hotkey %s cannot be registered."
+msgstr "Hotkey %s kann nicht registriert werden."
 
 #: ../MusikApp.cpp:161
 msgid "Initialization of FMOD sound system failed."
@@ -834,7 +839,7 @@ msgstr "Keine horizontale Laufleiste"
 msgid "None"
 msgstr "Keine"
 
-#: ../Classes/NowPlayingCtrl.cpp:157
+#: ../Classes/NowPlayingCtrl.cpp:168
 msgid "Normal"
 msgstr "Normal"
 
@@ -898,7 +903,7 @@ msgstr "Wiedergabe"
 msgid "Playback Rate (hz):"
 msgstr "Rate der Wiedergabe (hz):"
 
-#: ../Classes/NowPlayingCtrl.cpp:305 ../Classes/NowPlayingCtrl.cpp:306
+#: ../Classes/NowPlayingCtrl.cpp:406 ../Classes/NowPlayingCtrl.cpp:407
 msgid "Playback Stopped"
 msgstr "Wiedergabe angehalten"
 
@@ -998,11 +1003,17 @@ msgstr "Dateien umbenennen"
 msgid "Rename:"
 msgstr "Umbenennen:"
 
-#: ../Classes/NowPlayingCtrl.cpp:157
+#: ../Threads/ActivityBoxThreads.cpp:106 ../Threads/MusikTagThreads.cpp:73
+#: ../Threads/PlaylistCtrlThreads.cpp:66
+#, c-format
+msgid "Renaming of file %s failed."
+msgstr "Das Umbennenen der Datei %s ist fehlgeschlagen."
+
+#: ../Classes/NowPlayingCtrl.cpp:168
 msgid "Repeat List"
 msgstr "Wiederhole Liste"
 
-#: ../Classes/NowPlayingCtrl.cpp:157
+#: ../Classes/NowPlayingCtrl.cpp:168
 msgid "Repeat Song"
 msgstr "Wiederhole Lied"
 
@@ -1031,7 +1042,7 @@ msgstr "Rechter Kanal: %d hz"
 msgid "Run a program"
 msgstr "Starte ein Programm"
 
-#: ../Frames/MusikFrame.cpp:317
+#: ../Frames/MusikFrame.cpp:345
 msgid "S&imple Query"
 msgstr "&Einfache Suche"
 
@@ -1101,15 +1112,15 @@ msgstr "Zeige \"Streifen\" in Auswahlkästen"
 msgid "Show \"stripes\" in sources box"
 msgstr "Zeige \"Streifen\" in Quellenauswahl"
 
-#: ../Frames/MusikFrame.cpp:298
+#: ../Frames/MusikFrame.cpp:326
 msgid "Show Playlist Info\tCtrl-3"
 msgstr "Zeige Liedlisteninformation\tCtrl-3"
 
-#: ../Frames/MusikFrame.cpp:297
+#: ../Frames/MusikFrame.cpp:325
 msgid "Show Selections\tCtrl-2"
 msgstr "Zeige Auswahlkästen\tCtrl-2"
 
-#: ../Frames/MusikFrame.cpp:296
+#: ../Frames/MusikFrame.cpp:324
 msgid "Show Sources\tCtrl-1"
 msgstr "Zeige Quellenauswahl\tCtrl-1"
 
@@ -1117,7 +1128,7 @@ msgstr "Zeige Quellenauswahl\tCtrl-1"
 msgid "Show all "
 msgstr "Zeige alle "
 
-#: ../Classes/NowPlayingCtrl.cpp:157 ../Frames/MusikPrefsFrame.cpp:75
+#: ../Classes/NowPlayingCtrl.cpp:168 ../Frames/MusikPrefsFrame.cpp:75
 #: ../Frames/MusikPrefsFrame.cpp:392
 msgid "Shuffle"
 msgstr "Mischen"
@@ -1299,15 +1310,15 @@ msgstr "Tunage"
 msgid "URL:"
 msgstr "URL:"
 
-#: ../Classes/NowPlayingCtrl.cpp:325
+#: ../Classes/NowPlayingCtrl.cpp:426
 msgid "Unknown Artist"
 msgstr "Unbekannter Künstler"
 
-#: ../Classes/NowPlayingCtrl.cpp:327
+#: ../Classes/NowPlayingCtrl.cpp:428
 msgid "Unknown Song"
 msgstr "Unbekannter Liedtitel"
 
-#: ../Classes/PlaylistCtrl.cpp:324
+#: ../Classes/PlaylistCtrl.cpp:324 ../Frames/MusikFrame.cpp:177
 msgid "Unrated"
 msgstr "Unbewertet"
 
@@ -1335,11 +1346,11 @@ msgstr "Benutze Proxyserver"
 msgid "Use this filter to select songs:"
 msgstr "Benutze diesen Filter um Lieder auszuwählen:"
 
-#: ../Frames/MusikFrame.cpp:308
+#: ../Frames/MusikFrame.cpp:336
 msgid "Vie&w"
 msgstr "&Ansehen"
 
-#: ../Frames/MusikFrame.cpp:310
+#: ../Frames/MusikFrame.cpp:338
 msgid "Write Changes to &File"
 msgstr "&Schreibe unfertige Tags in Datei."
 
@@ -1355,7 +1366,16 @@ msgstr "Schreibe Tags in Datei    "
 msgid "Write to file"
 msgstr "In Datei schreiben"
 
-#: ../Classes/MusikLibrary.cpp:564
+#: ../Classes/MusikLibrary.cpp:551
+#, c-format
+msgid ""
+"Writing tags to file %s failed,because the file does not exist.\n"
+"Please purge the database."
+msgstr ""
+"Das Schreiben der Tags schlug fehl, weil die Datei nicht existiert.\n"
+"Bitte reinigen Sie die Datenbank."
+
+#: ../Classes/MusikLibrary.cpp:571
 #, c-format
 msgid "Writing tags to file %s failed."
 msgstr "Das Schreiben des Tags in Datei %s schlug fehl."
@@ -1376,7 +1396,7 @@ msgstr "Jahre"
 msgid "[No Devices]"
 msgstr "[Keine Geräte]"
 
-#: ../MusikUtils.cpp:267
+#: ../MusikUtils.cpp:261
 msgid "bitch"
 msgstr "bitch"
 
@@ -1393,23 +1413,23 @@ msgstr "verbinde ..."
 msgid "copying %s"
 msgstr "kopiere %s"
 
-#: ../MusikUtils.cpp:271
+#: ../MusikUtils.cpp:265
 msgid "cunt"
 msgstr "cunt"
 
-#: ../MusikUtils.cpp:266
+#: ../MusikUtils.cpp:260
 msgid "dick"
 msgstr "dick"
 
-#: ../MusikUtils.cpp:273
+#: ../MusikUtils.cpp:267
 msgid "dildo"
 msgstr "dildo"
 
-#: ../MusikUtils.cpp:263
+#: ../MusikUtils.cpp:257
 msgid "fuck"
 msgstr "fuck"
 
-#: ../MusikUtils.cpp:272
+#: ../MusikUtils.cpp:266
 msgid "manchester"
 msgstr "manchester"
 
@@ -1421,11 +1441,11 @@ msgstr "Netzfehler"
 msgid "not connected"
 msgstr "Nicht verbunden"
 
-#: ../MusikUtils.cpp:264
+#: ../MusikUtils.cpp:258
 msgid "shit"
 msgstr "shit"
 
-#: ../MusikUtils.cpp:269
+#: ../MusikUtils.cpp:263
 msgid "slut"
 msgstr "slut"
 
@@ -1433,14 +1453,14 @@ msgstr "slut"
 msgid "streaming"
 msgstr "Daten fliessen"
 
-#: ../MusikUtils.cpp:265
+#: ../MusikUtils.cpp:259
 msgid "tits"
 msgstr "tits"
 
-#: ../MusikUtils.cpp:270
+#: ../MusikUtils.cpp:264
 msgid "wank"
 msgstr "wank"
 
-#: ../MusikUtils.cpp:268
+#: ../MusikUtils.cpp:262
 msgid "whore"
 msgstr "whore"

@@ -60,4 +60,4 @@ FORCE:
 
 .PHONY: allpo allmo force-update percentage FORCE
 
-# $Id: Makefile,v 1.8 2004/06/30 13:55:09 gunnar67 Exp $
+# $Id: Makefile,v 1.9 2004/06/30 14:49:39 gunnar67 Exp $

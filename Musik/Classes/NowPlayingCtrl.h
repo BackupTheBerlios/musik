@@ -52,10 +52,10 @@ public:
 	void PlayerPlayPause	( wxCommandEvent&	WXUNUSED(event) );	
 	void PlayerNext			( wxCommandEvent&	WXUNUSED(event) );
 	void PlayerPrev			( wxCommandEvent&	WXUNUSED(event) );	
-	void PlayerStop			( wxKeyEvent&	WXUNUSED(event) ){ wxCommandEvent dummy; PlayerStop(dummy);}
-	void PlayerPlayPause	( wxKeyEvent&		WXUNUSED(event) ){ wxCommandEvent dummy; PlayerPlayPause(dummy);}
-	void PlayerNext			( wxKeyEvent&	WXUNUSED(event) ){ wxCommandEvent dummy; PlayerNext(dummy);}
-	void PlayerPrev			( wxKeyEvent&	WXUNUSED(event) ){ wxCommandEvent dummy; PlayerPrev(dummy);}	
+	void PlayerStopHK			( wxKeyEvent&	WXUNUSED(event) ){ wxCommandEvent dummy; PlayerStop(dummy);}
+	void PlayerPlayPauseHK	( wxKeyEvent&		WXUNUSED(event) ){ wxCommandEvent dummy; PlayerPlayPause(dummy);}
+	void PlayerNextHK			( wxKeyEvent&	WXUNUSED(event) ){ wxCommandEvent dummy; PlayerNext(dummy);}
+	void PlayerPrevHK			( wxKeyEvent&	WXUNUSED(event) ){ wxCommandEvent dummy; PlayerPrev(dummy);}	
 
 	void PlayerVolume		( wxCommandEvent&	WXUNUSED(event) );	
 	void OnTimer			( wxTimerEvent&		WXUNUSED(event) );
