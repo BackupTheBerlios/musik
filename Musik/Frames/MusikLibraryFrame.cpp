@@ -99,8 +99,11 @@ MusikLibraryFrame::MusikLibraryFrame( wxFrame* pParent, const wxPoint &pos, cons
 	//---------------------------//
 	//--- kill first run pref ---//
 	//---------------------------//
-	g_Prefs.nFirstRun = 0;
-	g_Prefs.SavePrefs();
+	if ( g_Prefs.nFirstRun )
+	{
+		g_Prefs.nFirstRun = 0;
+		g_Prefs.SavePrefs();
+	}
 
 	//--------------------//
 	//--- "Songs" menu ---//

@@ -77,6 +77,16 @@ void CMusikPrefs::LoadPrefs()
 	config->Read( wxT( "Webserverport" ),							&nWebServerPort,		6395					);
 	config->Read( wxT( "FramePlacement" ),							&sFramePlacement,		wxT("")					);
 
+	//-------------------------------------------------//
+	//--- if we're in windows there is a problem	---//
+	//--- writing a backslash "\" character to		---//
+	//--- file, then later reading it. so it is		---//
+	//--- stored as a forward slash "/"				---//
+	//-------------------------------------------------//
+	#ifdef __WXMSW__
+		sAutoRename.Replace( wxT( "/" ), wxT( "\\" ), true );
+	#endif
+
 	//--- apply unweildy defaults ---//
 	if ( sPLStripeColour.IsEmpty() ) sPLStripeColour = ColourToString( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNFACE ) );
 	if ( sActStripeColour.IsEmpty() ) sActStripeColour = ColourToString( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNFACE ) );
@@ -87,6 +97,16 @@ void CMusikPrefs::LoadPrefs()
 
 void CMusikPrefs::SavePrefs()
 {
+	//-------------------------------------------------//
+	//--- if we're in windows there is a problem	---//
+	//--- writing a backslash "\" character to		---//
+	//--- file, then later reading it. so it is		---//
+	//--- stored as a forward slash "/"				---//
+	//-------------------------------------------------//
+	#ifdef __WXMSW__
+		sAutoRename.Replace( wxT( "\\" ), wxT( "/" ), true );
+	#endif
+
 	wxFileConfig *config;
 	config = new wxFileConfig( CONFIG_NAME );
 	config->Write( wxT( "ShowUnselected" ),							nShowUnsel				);
@@ -135,6 +155,10 @@ void CMusikPrefs::SavePrefs()
 	config->Write( wxT( "WebserverPort" ),							nWebServerPort			);
 	config->Write( wxT( "FramePlacement" ),							sFramePlacement			);
 	delete config;
+
+	#ifdef __WXMSW__
+		sAutoRename.Replace( wxT( "/" ), wxT( "\\" ), true );
+	#endif
 }
 
 void CMusikPaths::Load()
