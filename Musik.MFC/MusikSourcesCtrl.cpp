@@ -577,20 +577,51 @@ void CMusikSourcesCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			{
 				int nID = pItem->GetPlaylistID();
 				int nPos = -1;
+				int nNextPos = -1;
 				
+				// find the position...
 				for ( size_t i = 0; i < m_StdPlaylists.size(); i++ )
 				{
 					if ( m_StdPlaylists.at( i ) == pItem )
 					{
 						nPos = i;
+
+						if ( nPos == m_StdPlaylists.size() - 1 )
+							nNextPos = nPos - 1;
+						else
+							nNextPos = nPos;
+
 						break;
 					}
 				}
 
+				// if the position is valid, then delete it
+				// and reload the playlists...
 				if ( nPos != -1 )
 				{
 					m_Library->DeleteStdPlaylist( nID );
 					LoadStdPlaylists();
+
+					// now select the next entry in the
+					// list... if -1 select the library...
+					KillFocus( false );
+					if ( nNextPos == -1 )
+					{
+						m_Libraries.at( 0 )->Select( TRUE );
+						SetFocusedItem( m_Libraries.at( 0 ) );
+						int WM_SOURCESLIBRARY = RegisterWindowMessage( "SOURCESLIBRARY" );
+						m_Parent->SendMessage( WM_SOURCESLIBRARY, NULL );
+					}
+					else
+					{
+						m_StdPlaylists.at( nNextPos )->Select( TRUE );
+						SetFocusedItem( m_StdPlaylists.at( nNextPos  ) );
+						int WM_SOURCESSTDPLAYLIST = RegisterWindowMessage( "SOURCESSTDPLAYLIST" );
+						m_Parent->SendMessage( WM_SOURCESSTDPLAYLIST, NULL );
+					}
+
+					Invalidate();
+	
 				}
 			}		
 		}
