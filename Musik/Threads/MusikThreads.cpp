@@ -256,10 +256,11 @@ void *MusikCrossfaderThread::Entry()
 	for ( size_t i = 0; i < nFadeOutStreams; i++ )
 	{
 		nGetVol = FSOUND_GetVolume( g_ActiveChannels.Item( i ) ) / nFadeCount;
+		nGetVol /= nFadeCount;
 		if ( nGetVol < 1 )
 			nGetVol = 1;
 
-		aSecSteps.Add( nGetVol / nFadeCount );
+		aSecSteps.Add( nGetVol );
 	}
 
 	//-------------------------------------------------//
