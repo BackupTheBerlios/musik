@@ -2,29 +2,18 @@
 #define C_MUSIK_SONG_INFO_CACHE
 
 #include "MusikArrays.h"
+#include "MusikLibrary.h"
 
 class CMusikSongInfoCache
 {
 public:
 
-	CMusikSongInfoCache( int from, int to, CMusikSongArray* songs )
-	{ 
-		m_From = from;
-		m_To = to;
-		//m_Songs = songs;
+	CMusikSongInfoCache( CMusikPlaylist* songs, CMusikLibrary* library)
+	{
+		m_Songs = songs;
+		m_Library = library;
 	}
-
-	~CMusikSongInfoCache();
-
-	int GetFrom()
-	{ 
-		return m_From; 
-	}
-
-	int GetTo()
-	{ 
-		return m_To; 
-	}
+	~CMusikSongInfoCache(){}
 
 	void Set( int from, int to )
 	{ 
@@ -35,13 +24,17 @@ public:
 		m_To = to;
 	}
 
-	CMusikSongInfoArray* items(){ return &m_Items; }
+	CMusikSongInfoArray* items()
+	{ 
+		return &m_Items; 
+	}
 
 private:
 	int m_From;
 	int m_To;
 	CMusikSongInfoArray m_Items;
-	CMusikSongArray* m_Songs;
+	CMusikPlaylist* m_Songs;
+	CMusikLibrary* m_Library;
 };
 
 #endif
