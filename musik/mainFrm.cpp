@@ -1246,10 +1246,16 @@ CmusikString CMainFrame::GetSelQuery( CmusikSelectionCtrl* target )
 			sParent += _T( "( SELECT %T FROM songs WHERE " );
 			sParent += pParent->GetSelQuery();
 			sParent += _T( ")" );
+
+			sChildQuery.Trim();
 		}
 	}
-	else
-		sChildQuery.Trim();
+	else if ( sParent.IsEmpty() )
+	{
+		sParent += _T( "WHERE (" );
+		sParent += pParent->GetSelQuery();
+		sParent += _T( ")" );
+	}
 	
 	// combined portion
 	CmusikString sQuery = sParent + sChildQuery;
@@ -1618,10 +1624,7 @@ LRESULT CMainFrame::OnThreadEnd( WPARAM wParam, LPARAM lParam )
 
 	if ( type != -2 )
 	{
-		if ( type == MUSIK_THREAD_TYPE_REMOVEOLD )
-			RequerySelBoxes( NULL, false );
-		else
-			RequerySelBoxes();
+		RequerySelBoxes( NULL, false );
 		
 		if ( type == MUSIK_THREAD_TYPE_BATCHADD )
 		{

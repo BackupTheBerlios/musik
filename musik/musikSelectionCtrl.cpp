@@ -324,8 +324,7 @@ void CmusikSelectionBar::OnDeleteFromlibrary()
 
 void CmusikSelectionBar::OnDeleteFromcomputer()
 {
-	if ( MessageBox( _T( "Are you sure you want to PERMANETLY delete these files from your computer?" ), MUSIK_VERSION_STR, MB_ICONWARNING | MB_YESNO ) == IDYES )
-		GetCtrl()->DelSel( true );
+	GetCtrl()->DelSel( true );
 }
 
 ///////////////////////////////////////////////////
@@ -731,6 +730,11 @@ CmusikString CmusikSelectionCtrl::GetSelQuery()
 			if ( i < selected_items.size() - 1 )
 				sQuery += _T( " or " );
 		}
+	}
+	else
+	{
+		sQuery += m_Library->GetSongFieldDB( m_Type );
+		sQuery += _T( " like '%' " );	
 	}
 	
 	return sQuery;

@@ -1724,6 +1724,13 @@ void CmusikPlaylistCtrl::DeleteSelectedItems( bool from_library, bool from_compu
 	{
 		CmusikPlaylist sel_songs;
 		GetSelectedSongs( sel_songs );
+
+		if ( from_computer )
+		{
+			if ( MessageBox( _T( "Are you sure you want to permanently delete these files from your computer?" ), MUSIK_VERSION_STR, MB_ICONWARNING | MB_YESNO ) == IDNO )
+				return;	
+		}
+
 		m_Library->DeleteSongs( sel_songs, from_computer );
 	}
 

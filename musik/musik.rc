@@ -135,7 +135,7 @@ BEGIN
 
             MENUITEM "Intro",                       ID_PLAYBACKMODE_INTRO
             MENUITEM SEPARATOR
-            MENUITEM "Shuffle Now Playing\tCtrl+Alt+S", 
+            MENUITEM "Shuffle Now Playing\tCtrl+Alt+A", 
                                                     ID_PLAYBACKMODE_SHUFFLECURRENTPLAYLIST
 
         END
@@ -204,7 +204,7 @@ IDR_SOURCES_MENU MENU
 BEGIN
     POPUP "Sources"
     BEGIN
-        MENUITEM "Shuffle Now Playing\tCtrl+Alt+S", 
+        MENUITEM "Shuffle Now Playing\tCtrl+Alt+A", 
                                                 ID_SOURCES_SHUFFLEPLAYLIST
         MENUITEM SEPARATOR
         MENUITEM "Rename\tF2",                  ID_SOURCES_RENAME
@@ -311,6 +311,8 @@ BEGIN
     "M",            ID_FILE_SYNCHRONIZEDDIRECTORIES, VIRTKEY, CONTROL, 
                                                     NOINVERT
     VK_F6,          ID_NEXT_PANE,           VIRTKEY, NOINVERT
+    "A",            ID_PLAYBACKMODE_SHUFFLECURRENTPLAYLIST, VIRTKEY, CONTROL, 
+                                                    ALT, NOINVERT
     VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
     "Z",            ID_VIEW_CROSSFADER,     VIRTKEY, SHIFT, CONTROL, 
                                                     NOINVERT
@@ -324,7 +326,7 @@ BEGIN
                                                     NOINVERT
     "A",            ID_VIEW_SOURCES,        VIRTKEY, SHIFT, CONTROL, 
                                                     NOINVERT
-    "S",            ID_PLAYBACKMODE_SHUFFLECURRENTPLAYLIST, VIRTKEY, CONTROL, 
+    "S",            ID_LIBRARY_SYNCHRONIZEDIRECTORIESNOW, VIRTKEY, CONTROL, 
                                                     ALT, NOINVERT
 END
 
