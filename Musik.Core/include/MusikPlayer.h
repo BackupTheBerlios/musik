@@ -1,4 +1,50 @@
 ///////////////////////////////////////////////////
+// 
+// Info:
+//
+//   Musik is a a cross platform, open source
+//   multimedia library. More information at:
+//
+//     http://musik.berlios.de
+//     http://musik.sourceforge.net
+//
+// Copyright and Credits:
+//
+//   Copyright      : Casey Langen, 2003
+//   Casey Langen   : Lead Developer, Project Manager. E-Mail: casey@bak.rr.com
+//   Dustin Carter  : Developer, pain in the ass
+//   Simon Windmill : Developer, the most helpful person thats immediately available ;)
+//
+// License:
+//
+//   See license.txt included with this distribution
+//
+///////////////////////////////////////////////////
+//
+// Class(s): 
+//
+//   CMusikPlayer
+//
+// Filename(s): 
+//
+//   MusikPlayer.h, MusikPlayer.cpp
+//
+// Information:
+//
+//   CMusikPlayer is a front end to FMOD for playing
+//   files from a CMusikPlaylist, querying information
+//   from it's CMusikLibrary
+// 
+// Example: 
+//
+//   A UI can use this class to control song playback easily
+//
+// Usage: 
+//
+//   Create the class and using the basic playback controls,
+//   such as CMusikPlayer::Play(), CMusikPlayer::Next(), etc.
+//
+///////////////////////////////////////////////////
 
 #ifndef C_MUSIK_PLAYER_H
 #define C_MUSIK_PLAYER_H

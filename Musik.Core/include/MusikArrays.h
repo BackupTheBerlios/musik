@@ -20,6 +20,7 @@
 //   See license.txt included with this distribution
 //
 ///////////////////////////////////////////////////
+//
 // Class(s): 
 //
 //   CStdStringArray,

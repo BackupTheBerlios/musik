@@ -1,40 +1,42 @@
 ///////////////////////////////////////////////////
+// 
+// Info:
 //
-// Class(s): 
+//   Musik is a a cross platform, open source
+//   multimedia library. More information at:
 //
-//   CMusikEqualizer 
-//
-// Filename(s): 
-//
-//   MusikEqualizer.h,
-//   MusikEqualizer.cpp
-//
-// Information:
-//
-//   Musik's 18 band, dual channel equalizer based on
-//   Shibatch.
-//
-// Example: 
-//
-//   The user shouldn't have to use this directly, it should
-//   only be called within CMusikPlayer as a private member
-//   object. It just contains DSP callbacks to modify the streams
-//
-// Usage: 
-//
-//   Void.
+//     http://musik.berlios.de
+//     http://musik.sourceforge.net
 //
 // Copyright and Credits:
 //
 //   Copyright      : Casey Langen, 2003
-//
-//   Casey Langen   : Lead Developer, Project Manager
+//   Casey Langen   : Lead Developer, Project Manager. E-Mail: casey@bak.rr.com
 //   Dustin Carter  : Developer, pain in the ass
 //   Simon Windmill : Developer, the most helpful person thats immediately available ;)
-// 
+//
 // License:
 //
 //   See license.txt included with this distribution
+//
+///////////////////////////////////////////////////
+//
+// Class(s): 
+//
+//   CMusikEqualizer
+//
+// Filename(s): 
+//
+//   MusikEqualizer.h, MusikEqualizer.cpp
+//
+// Information:
+//
+//   CMusikEqualizer is a front end to the shibatch equalizer
+//   tools. 
+// 
+// Usage: 
+//
+//   CMusikEqualizer should not be used, except by CMusikPlayer
 //
 ///////////////////////////////////////////////////
 
