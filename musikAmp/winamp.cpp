@@ -28,7 +28,7 @@
 
 // mutex
 #include "afxmt.h"
-CCriticalSection protect;
+CMutex protect;
 
 ///////////////////////////////////////////////////
 
@@ -259,7 +259,7 @@ void CALLBACK vis_time_event(UINT uId, UINT uMsg, DWORD dwUser, DWORD dw1, DWORD
 	
 	if ( Vis_Enable_Rendering && gs_vWinAmpProps[vis_index].hDll != NULL )
 	{
-		//protect.Lock();
+		protect.Lock();
 
 		// the next pcmblock (iBufferOffset + 1) is the one that is audible.
 		offset = (iBufferOffset + 1) * FSOUND_DSP_GetBufferLength();
@@ -275,11 +275,9 @@ void CALLBACK vis_time_event(UINT uId, UINT uMsg, DWORD dwUser, DWORD dw1, DWORD
 		Cnv16to8(&pcmBuffer[offset]+1,(signed char*) &gs_vWinAmpProps[vis_index].pModule->getModule(module)->waveformData[1][0], vis_Plugin_Samples);
 	
 		// render the data
-		WaitForSingleObject( GetVisHwnd(), INFINITE );
-		WaitForSingleObject( gs_vWinAmpProps[vis_index].pModule->getModule( module ), INFINITE );
-		rendered = gs_vWinAmpProps[vis_index].pModule->getModule(module)->Render(gs_vWinAmpProps[vis_index].pModule->getModule(module));
+ 		rendered = gs_vWinAmpProps[vis_index].pModule->getModule(module)->Render(gs_vWinAmpProps[vis_index].pModule->getModule(module));
 		
-		//protect.Unlock();
+		protect.Unlock();
 	}
 }
 
@@ -321,6 +319,8 @@ DWORD WINAPI Vis_New_Thread(LPVOID lpParam)
 		Create_Winamp_Window();
 
 		// Second : determine vis mode
+		protect.Lock();
+
 		if ( gs_vWinAmpProps[vis_index].pModule->getModule(module)->waveformNch > 0 )
 			VisMode = OSCILLOSCOPE;
 		else if ( gs_vWinAmpProps[vis_index].pModule->getModule(module)->spectrumNch > 0 )
@@ -329,7 +329,6 @@ DWORD WINAPI Vis_New_Thread(LPVOID lpParam)
 		gs_vWinAmpProps[vis_index].pModule->getModule(module)->hwndParent = vis_Window_Emu;
 		gs_vWinAmpProps[vis_index].pModule->getModule(module)->Init(gs_vWinAmpProps[vis_index].pModule->getModule(module));
 
-		//OK OK Vis_Enable_Rendering = 1;
 		delay_ms = gs_vWinAmpProps[vis_index].pModule->getModule(module)->delayMs;
 	
 		// set clip delay: it seems that setting minimum 
@@ -344,10 +343,11 @@ DWORD WINAPI Vis_New_Thread(LPVOID lpParam)
 		
 		if ( !vis_timer)
 			MessageBox(mainhwnd, "Failed to create necessary visualization timer.", "Emulation", MB_ICONWARNING);
+
+		protect.Unlock();
 	
 
-  		// as long as we don't have the WM_QUIT and WM_CLOSE messages, we continue else
-		// we close the plugin by sending the WM_CLOSE message to the thread
+		// unlock the mutex and loop the thread
 		do
 		{
 			msg_return_value = GetMessage(&message, NULL, 0, 0);
@@ -355,26 +355,19 @@ DWORD WINAPI Vis_New_Thread(LPVOID lpParam)
     		TranslateMessage( &message );
       		DispatchMessage( &message );
   		}	
-		while (msg_return_value > 0);
+		while ( msg_return_value > 0 && GetVisHwnd() );
 
 		// kill the timer
 		timeKillEvent(vis_timer);
 		timeEndPeriod(250);
 
-		// WM_QUIT only gets called when we manually stop
-		// the vis... WM_CLOSE gets called by pressing
-		// escape or closing the window by clicking the "X"
-		// button. if this happens, the plugin cleans itself 
-		// up...
-		if ( message.message == WM_QUIT )
-		{
-			//protect.Lock();
-			Vis_Enable_Rendering = 0;
-			if ( gs_vWinAmpProps[vis_index].hDll )
-				gs_vWinAmpProps[vis_index].pModule->getModule(module)->Quit(gs_vWinAmpProps[vis_index].pModule->getModule(module));
-			//protect.Unlock();
-		}
+		Vis_Enable_Rendering = 0;
 
+		// lock down for the cleanup
+		protect.Lock();
+		if ( gs_vWinAmpProps[vis_index].hDll )
+			gs_vWinAmpProps[vis_index].pModule->getModule(module)->Quit(gs_vWinAmpProps[vis_index].pModule->getModule(module));
+	
 		// deactivate dsp
 		FSOUND_DSP_SetActive( DSP, FALSE );
 		DSP = 0;
@@ -391,6 +384,8 @@ DWORD WINAPI Vis_New_Thread(LPVOID lpParam)
 		// and free memory used 
 		FreeVisInfo();
 		FreeVis(vis_index);
+
+		protect.Unlock();
 	}
 				
 	return 0;
@@ -435,9 +430,9 @@ void WINEXPORT SetLength(int length)
 
 void WINEXPORT IsPlaying(int playing)
 {
-	//protect.Lock();
+	protect.Lock();
 	Vis_Enable_Rendering = playing;
-	//protect.Unlock();
+	protect.Unlock();
 }
 
 void WINEXPORT SetVisModule(int the_module)
@@ -449,26 +444,32 @@ LPSTR WINEXPORT GetVisInfo(int i )
 {	
 	LPSTR strRet;
 
+	protect.Lock();
 	if ( gs_vWinAmpProps[i].pModule->getModule(0)->description != NULL )
-	{
 		strRet = gs_vWinAmpProps[i].pModule->description;
-	}
+	protect.Unlock();
+
 	return strRet;
 }
 
 UINT WINEXPORT GetVisCount()
 {
-int i = 0;
+	int i = 0;
+	protect.Lock();
 	while  (gs_vWinAmpProps[i].pModule)
 		i++; 
+	protect.Unlock();
 
 	return i;
 }
 
 UINT WINEXPORT GetVisModuleCount(int i)
 {
+	protect.Lock();
+	int ret = gs_vWinAmpProps[i].NumberOfModules;
+	protect.Unlock();
 
-	return gs_vWinAmpProps[i].NumberOfModules;
+	return ret;
 
 }
 
@@ -476,7 +477,9 @@ LPSTR WINEXPORT GetVisModuleInfo(int plugin, int the_module)
 {
 	LPTSTR ModuleInfo;
 	
+	protect.Lock();
 	ModuleInfo = gs_vWinAmpProps[plugin].pModule->getModule(the_module)->description;
+	protect.Unlock();
 
 	return ModuleInfo;
 
@@ -485,7 +488,11 @@ LPSTR WINEXPORT GetVisModuleInfo(int plugin, int the_module)
 void WINEXPORT Config_Vis(int i, int module_index)
 {
 	LoadVis(i);
+
+	protect.Lock();
 	gs_vWinAmpProps[i].pModule->getModule(module_index)->Config(gs_vWinAmpProps[i].pModule->getModule(module_index));	
+	protect.Unlock();
+	
 	FreeVis(i);
 }
 
@@ -503,6 +510,8 @@ void WINEXPORT Start_Vis( int i )
 	LoadVis( vis_index );
 
 	// prepare samples and buffer
+	protect.Lock();
+
 	vis_Plugin_Samples	= SINGLE_BUFFER_SIZE >> 1;
 
 	if ( vis_Plugin_Samples > 1152) 
@@ -514,6 +523,8 @@ void WINEXPORT Start_Vis( int i )
 	DSP = FSOUND_DSP_Create(&dsp_vis_callback, FSOUND_DSP_DEFAULTPRIORITY_USER, (int)pcmBuffer );
 	if (!FSOUND_DSP_GetActive(DSP) )
 		FSOUND_DSP_SetActive(DSP, TRUE);
+
+	protect.Unlock();
 	
 	// startup the new thread
 	theThread = Vis_New_Thread_Init();
@@ -537,15 +548,16 @@ Free all plugins
 ----------------------------------------------------------------------------------*/
 void Release_Vis_Plugin(int cnt)
 {
+	protect.Lock();
 	if ( gs_vWinAmpProps[cnt].pModule->getModule(0)->hDllInstance != 0 )
-	{
-	FreeLibrary(gs_vWinAmpProps[cnt].pModule->getModule(0)->hDllInstance);
-	}
-
+		FreeLibrary(gs_vWinAmpProps[cnt].pModule->getModule(0)->hDllInstance);
+	protect.Unlock();
 }
 
 bool WINEXPORT LoadVisPlugins(LPCTSTR path)
 {
+	protect.Lock();
+
 	static int				currplug=0;
 	WIN32_FIND_DATA			sFF = {0};
 	HANDLE					hFind = NULL;
@@ -602,6 +614,8 @@ bool WINEXPORT LoadVisPlugins(LPCTSTR path)
 
 	FindClose( hFind );
 
+	protect.Unlock();
+
 	return TRUE;
 }
 
@@ -609,13 +623,17 @@ bool WINEXPORT LoadVisPlugins(LPCTSTR path)
 
 void WINEXPORT FreeVisInfo()
 {
+	protect.Lock();
 	for ( int cnt=0; cnt < (int)GetVisCount(); cnt++ )
 		FreeLibrary( gs_vWinAmpProps[cnt].hDll );
+	protect.Unlock();
 }
 
 void WINEXPORT FreeVis(int i)
 {
+	protect.Lock();
 	FreeLibrary(gs_vWinAmpProps[i].hDll);
+	protect.Unlock();
 }
 
 void WINEXPORT LoadVis(int i)
@@ -625,35 +643,41 @@ void WINEXPORT LoadVis(int i)
 
 void  LoadWinampPlugin(LPCSTR path, int currplug)
 {
-winampVisModule		*pVis;
-WINAMPPLUGINPROPVIS	tmpPropVis;	
-int					cnt;
+	protect.Lock();
 
-		cnt = 0;
-		pVis = NULL;
-		tmpPropVis.hDll = LoadLibrary(path);
-			if (tmpPropVis.hDll)
-				{
-				WINAMPGETVISMODULE pGetMod = (WINAMPGETVISMODULE)
-					GetProcAddress(	tmpPropVis.hDll,
-									"winampVisGetHeader" );
-					
-					tmpPropVis.pModule  = pGetMod();
-					// set the file name
-					tmpPropVis.strFileName = path;
-					pVis = tmpPropVis.pModule->getModule(0);
-					pVis->hDllInstance = tmpPropVis.hDll;					
-					pVis->hwndParent  = mainhwnd;								
-					pVis->sRate = 44100;
-					pVis->nCh = 2;
-					//pVis->Init(pVis);
+	winampVisModule		*pVis;
+	WINAMPPLUGINPROPVIS	tmpPropVis;	
+	int					cnt;
 
-					while ( tmpPropVis.pModule->getModule(cnt) > 0 )
-						cnt++;
+	cnt = 0;
+	pVis = NULL;
+	tmpPropVis.hDll = LoadLibrary( path );
 
-					gs_vWinAmpProps[currplug] = tmpPropVis;
-					gs_vWinAmpProps[currplug].NumberOfModules = cnt;
-			}
+		if ( tmpPropVis.hDll )
+		{
+			WINAMPGETVISMODULE pGetMod = ( WINAMPGETVISMODULE )
+				GetProcAddress(	tmpPropVis.hDll,
+								"winampVisGetHeader" );
+				
+			tmpPropVis.pModule  = pGetMod();
+
+			// set the file name
+			tmpPropVis.strFileName = path;
+			pVis = tmpPropVis.pModule->getModule(0);
+			pVis->hDllInstance = tmpPropVis.hDll;					
+			pVis->hwndParent  = mainhwnd;								
+			pVis->sRate = 44100;
+			pVis->nCh = 2;
+
+
+			while ( tmpPropVis.pModule->getModule(cnt) > 0 )
+				cnt++;
+
+			gs_vWinAmpProps[currplug] = tmpPropVis;
+			gs_vWinAmpProps[currplug].NumberOfModules = cnt;
+		}
+
+	protect.Unlock();
 
 }
 
