@@ -230,6 +230,7 @@ CPlaylistCtrl::CPlaylistCtrl( wxWindow *parent, const wxWindowID id, const wxPoi
 
 	//--- not dragging, no selections ---//
 	g_DragInProg = false;
+	m_ColsChanged = false;
 	nCurSel = -1;
 
 	SetActiveThread( NULL );
@@ -242,7 +243,6 @@ CPlaylistCtrl::~CPlaylistCtrl()
 
 void CPlaylistCtrl::SaveColumns()
 {
-	/*
 	//---------------------------------------------------------//
 	//--- get the total width of all the columns in pixels.	---//
 	//--- this value will be used to calculate dynamic		---//
@@ -261,7 +261,9 @@ void CPlaylistCtrl::SaveColumns()
 		//--- if this column is a static type	---//
 		//-----------------------------------------//
 		if ( g_Prefs.nPlaylistColumnDynamic[nCurrCol] == 0 )
+		{
 			g_Prefs.nPlaylistColumnSize[nCurrCol] = GetColumnWidth( i );
+		}
 
 		//-----------------------------------------//
 		//--- if this column is a dynamic type	---//
@@ -270,13 +272,15 @@ void CPlaylistCtrl::SaveColumns()
 		{
 			f_Pos = (float)GetColumnWidth( i ) / (float)client_size.GetWidth() * 100.0f;
 			n_Pos = (int)f_Pos;
+
 			if ( n_Pos < 1 )
 				n_Pos = 1;
 
 			g_Prefs.nPlaylistColumnSize[nCurrCol] = n_Pos;
 		}
 	}
-	*/
+
+	m_ColsChanged = false;
 }
 
 //--------------//
@@ -352,7 +356,7 @@ void CPlaylistCtrl::EndDragCol( wxListEvent& event )
 	if ( event.GetColumn() == 0 )
 		event.Veto();
 
-	SaveColumns();
+	m_ColsChanged = true;
 }
 
 void CPlaylistCtrl::PlaySel( wxListEvent& WXUNUSED(event) )
@@ -762,6 +766,9 @@ void CPlaylistCtrl::RescaleColumns()
 {
 	if ( g_DisablePlacement )
 		return;
+
+	if ( m_ColsChanged )
+		SaveColumns();
 
 	//-------------------------------------------------//
 	//--- this will rescale any "dynamic" columns	---//

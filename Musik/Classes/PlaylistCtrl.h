@@ -178,6 +178,7 @@ private:
 	//--- column order ---//
 	//--------------------//
 	wxArrayInt m_ColumnOrder;
+	bool m_ColsChanged;
 
 	//--------------//
 	//--- thread ---//
