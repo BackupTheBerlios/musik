@@ -1184,6 +1184,8 @@ int CmusikLibrary::RewriteStdPlaylist( CmusikPlaylist* playlist )
 
 	if ( playlist->m_ID >= 0 )
 	{
+		// remove all the old values in the playlist 
+		// songs table
 		m_ProtectingLibrary.acquire();
 			nRet = sqlite_exec_printf( m_pDB, "DELETE FROM %Q WHERE std_playlist_id = %d;",
 			NULL, NULL, NULL, 
@@ -1193,10 +1195,11 @@ int CmusikLibrary::RewriteStdPlaylist( CmusikPlaylist* playlist )
 
 		BeginTransaction();
 		
+		// add all the songs in the new order
 		for ( size_t i = 0; i < playlist->GetCount(); i++ )
 		{
 			m_ProtectingLibrary.acquire();
-				nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %d, %d );",
+				nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %d, %Q );",
 				NULL, NULL, NULL, 
 				STD_PLAYLIST_SONGS,
 				NULL,
