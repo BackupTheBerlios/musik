@@ -961,7 +961,7 @@ LRESULT CMainFrame::OnSelBoxEditCommit( WPARAM wParam, LPARAM lParam )
 LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 {
 	size_t selbox_count = m_Prefs->GetSelBoxCount();
-	if ( selbox_count < 2 )
+	if ( selbox_count < 1 )
 		return 0L;
 
 	CmusikSelectionCtrl* pSender	= NULL;

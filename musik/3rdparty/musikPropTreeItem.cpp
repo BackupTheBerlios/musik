@@ -525,13 +525,6 @@ LONG CmusikPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 		{
 			HGDIOBJ oPen = pDC->SelectObject(GetStockObject(NULL_PEN));
 
-			CRect dr;
-			dr = drc;
-
-			dr.left = 8;
-			
-			pDC->Rectangle(&dr);
-			
 			pDC->SelectObject(oPen);
 
 			if ( !IsRootLevel() )

@@ -482,7 +482,18 @@ void CmusikSelectionCtrl::UpdateV()
 	int nPos = GetScrollPos( SB_VERT );
 
 	// get new items
-	m_Library->GetAllDistinct( m_Type, m_Items );
+	if ( m_Type == MUSIK_LIBRARY_TYPE_RATING )
+	{
+		m_Items.clear();
+		m_Items.push_back( _T( "0" ) );
+		m_Items.push_back( _T( "5" ) );
+		m_Items.push_back( _T( "4" ) );
+		m_Items.push_back( _T( "3" ) );
+		m_Items.push_back( _T( "2" ) );
+		m_Items.push_back( _T( "1" ) );
+	}
+	else
+		m_Library->GetAllDistinct( m_Type, m_Items );
 
 	// get Select by...
 	CmusikString top;
@@ -580,23 +591,28 @@ void CmusikSelectionCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 
 					case MUSIK_LIBRARY_TYPE_RATING:
 						{
-							if ( sCurrItem == _T( "0" ) )
-								pStr = _T( "Unrated" );
+							if ( pItem->iItem > 0 )
+							{
+								if ( sCurrItem == _T( "0" ) )
+									pStr = _T( "Unrated" );
 
-							else if ( sCurrItem == _T( "1" ) )
-								pStr = _T( "-,,,," );
+								else if ( sCurrItem == _T( "1" ) )
+									pStr = _T( "-,,,," );
 
-							else if ( sCurrItem == _T( "2" ) )
-								pStr = _T( "--,,," );
+								else if ( sCurrItem == _T( "2" ) )
+									pStr = _T( "--,,," );
 
-							else if ( sCurrItem == _T( "3" ) )
-								pStr = _T( "---,," );
+								else if ( sCurrItem == _T( "3" ) )
+									pStr = _T( "---,," );
 
-							else if ( sCurrItem == _T( "4" ) )
-								pStr = _T( "----," );
+								else if ( sCurrItem == _T( "4" ) )
+									pStr = _T( "----," );
 
-							else if ( sCurrItem == _T( "5" ) )
-								pStr = _T( "-----" );
+								else if ( sCurrItem == _T( "5" ) )
+									pStr = _T( "-----" );
+							}
+							else
+								pStr = (char*)sCurrItem.c_str();
 						}
 
 						break;
@@ -817,10 +833,17 @@ void CmusikSelectionCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 
 		if ( pLVCD->nmcd.dwItemSpec == 0 )
 			pDC->SelectObject( m_Bold );
-		else if ( m_Type == MUSIK_LIBRARY_TYPE_RATING && item_str != _T( "0" )  )
-			pDC->SelectObject( m_StarFont );
 		else
-			pDC->SelectObject( m_Regular );
+		{
+			if ( m_Type == MUSIK_LIBRARY_TYPE_RATING )
+			{
+				if ( item_str != _T( "0" ) && item_str != ( "Unrated" ) )
+					pDC->SelectObject( m_StarFont );				
+			}
+			else
+				pDC->SelectObject( m_Regular );
+				
+		}
 
 		if ( IsParent() )
 			pLVCD->clrTextBk = m_Prefs->MUSIK_COLOR_LISTCTRL;

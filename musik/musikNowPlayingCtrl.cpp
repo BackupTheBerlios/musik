@@ -55,7 +55,6 @@
 #include "3rdparty/BtnST.h"
 
 #include "../musikCore/include/musikPlayer.h"
-#include ".\musiknowplayingctrl.h"
 
 ///////////////////////////////////////////////////
 

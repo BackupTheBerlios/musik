@@ -1035,9 +1035,17 @@ void CmusikPlaylistCtrl::OnDropFiles( HDROP hDropInfo )
 		// current position
 		DeleteItems( sel, false );
 
+		// get the id of the currently playing
+		// song, we'll find it once the drag is done
+		// to assure the correct song is bold.
+		int songid = m_Player->GetCurrPlaying()->GetID();
+
 		// insert the items back to their new
 		// position...
 		InsertItems( selids, nFirstSel, nPos );
+
+		// grab the new index..
+		m_Player->FindNewIndex( songid );
 
 		m_DropArrange = false;
 		return;
