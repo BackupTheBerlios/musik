@@ -184,6 +184,7 @@ void CMusikSourcesCtrl::LoadDynPlaylists()
 
 void CMusikSourcesCtrl::OnDropFiles(HDROP hDropInfo)
 {
+
 	// set cursor back to hour glass
 	SetCursor( LoadCursor( NULL, IDC_WAIT ) );
 
@@ -194,6 +195,10 @@ void CMusikSourcesCtrl::OnDropFiles(HDROP hDropInfo)
 	ScreenToClient( &pos );
 
 	CMusikPropTreeItem* pItem = FindItem( pos );
+
+	// make sure the item isn't root
+	if ( pItem->IsRootLevel() )
+		return;
 
 	if ( pItem )
 	{
@@ -244,10 +249,6 @@ void CMusikSourcesCtrl::OnDropFiles(HDROP hDropInfo)
 	// did we actually hit an item?
 	if ( pItem )
 	{
-		// make sure the item isn't root
-		if ( pItem->IsRootLevel() )
-			return;
-
 		// standard playlist
 		if ( pItem->GetPlaylistType() == MUSIK_PLAYLIST_TYPE_STANDARD )
 			m_Library->AppendStdPlaylist( pItem->GetPlaylistID(), files );
