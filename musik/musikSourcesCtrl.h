@@ -37,6 +37,8 @@ class CmusikSourcesCtrl;
 
 // CmusikSourcesBar
 
+///////////////////////////////////////////////////
+
 class CmusikSourcesBar : public baseCmusikSourcesBar
 {
 public:
@@ -67,6 +69,8 @@ protected:
 ///////////////////////////////////////////////////
 
 // CmusikSourcesCtrl
+
+///////////////////////////////////////////////////
 
 class CmusikSourcesCtrl : public CmusikPropTree
 {

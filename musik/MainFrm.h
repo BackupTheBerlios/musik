@@ -40,12 +40,12 @@
 ///////////////////////////////////////////////////
 
 #include "musikSourcesCtrl.h"
+#include "musikNowPlayingCtrl.h"
 #include "musikPlaylistCtrl.h"
 #include "musikPrefs.h"
 
 #include "musikPlaylistView.h"
 #include "musikSelectionBar.h"
-#include "musikNowPlayingBar.h"
 
 ///////////////////////////////////////////////////
 

@@ -213,12 +213,6 @@
 					Name="musikNowPlayingCtrl"
 					Filter="">
 					<File
-						RelativePath=".\musikNowPlayingBar.cpp">
-					</File>
-					<File
-						RelativePath=".\musikNowPlayingBar.h">
-					</File>
-					<File
 						RelativePath=".\musikNowPlayingCtrl.cpp">
 					</File>
 					<File

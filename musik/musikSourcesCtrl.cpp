@@ -14,6 +14,8 @@
 
 // CmusikSourcesBar
 
+///////////////////////////////////////////////////
+
 CmusikSourcesBar::CmusikSourcesBar( CFrameWnd* parent, CmusikLibrary* library, CmusikPlayer* player, CmusikPrefs* prefs, UINT dropid )
 	: CmusikDockBar( prefs )
 {
@@ -121,6 +123,8 @@ void CmusikSourcesBar::OnItemChanged( NMHDR* pNotifyStruct, LRESULT* plResult )
 ///////////////////////////////////////////////////
 
 // CmusikSourcesCtrl
+
+///////////////////////////////////////////////////
 
 IMPLEMENT_DYNAMIC( CmusikSourcesCtrl, CmusikPropTree )
 
