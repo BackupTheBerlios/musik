@@ -44,8 +44,9 @@ CMusikPlaylistView::CMusikPlaylistView( CFrameWnd* mainwnd, CMusikLibrary* libra
 
 CMusikPlaylistView::~CMusikPlaylistView()
 {
-	delete m_Playlist;
+	m_DropTarget->Revoke();
 	delete m_DropTarget;
+	delete m_Playlist;
 }
 
 ///////////////////////////////////////////////////

@@ -56,6 +56,10 @@ CMusikPlaylistCtrl::CMusikPlaylistCtrl( CFrameWnd* mainwnd, CMusikLibrary* libra
 	m_Prefs		= prefs;
 	m_Player	= player;
 
+	// startup with a blank
+	// playlist...
+	m_Playlist	= new CMusikPlaylist();
+
 	// dnd drop id
 	m_DropID = dropid;
 
@@ -77,6 +81,8 @@ CMusikPlaylistCtrl::CMusikPlaylistCtrl( CFrameWnd* mainwnd, CMusikLibrary* libra
 	// fonts and colors
 	InitFonts();
 	InitColors();
+
+	GivePlaylistToPlayer();
 }
 
 ///////////////////////////////////////////////////
@@ -506,39 +512,43 @@ void CMusikPlaylistCtrl::OnLvnItemActivate(NMHDR *pNMHDR, LRESULT *pResult)
 	LPNMITEMACTIVATE pNMIA = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
 	
 	if ( m_Changed )
-	{
-		// clear out the old CMusikPlayer's
-		// now playing...
-		CleanNowPlaying();
-
-		// set the CMusikPlayer as the new owner for
-		// the playlist
-		m_Player->SetPlaylist( m_Playlist );
-
-		// the player now owns the old playlist,
-		// so just create a new blank one here,
-		// so it's owner can delete it
-		m_Playlist = new CMusikPlaylist();
-
-		// send a message to the main frame with
-		// the new address of the new playlist
-		int MW_NEWPLAYLISTOWNER = RegisterWindowMessage( "NEWPLAYLISTOWNER" );
-		m_MainWnd->SendMessage( MW_NEWPLAYLISTOWNER, (WPARAM)m_Playlist );
-
-		// becuase the new playlist we created is
-		// blank, it doesn't contain the info we
-		// want. so we set the current playlist
-		// to the playlist inside the CMusikPlayer
-		SetPlaylist( m_Player->GetPlaylist() );
-
-		// playlist is now updated, so flag
-		// it as unchanged
-		m_Changed = false;
-	}			
+		GivePlaylistToPlayer();		
 
 	m_Player->Play( pNMIA->iItem, MUSIK_CROSSFADER_NEW_SONG );
 
 	*pResult = 0;
+}
+
+void CMusikPlaylistCtrl::GivePlaylistToPlayer()
+{
+	// clear out the old CMusikPlayer's
+	// now playing... this will physically
+	// delete the old playlist
+	CleanNowPlaying();
+
+	// set the CMusikPlayer as the new owner for
+	// the playlist
+	m_Player->SetPlaylist( m_Playlist );
+
+	// the player now owns the old playlist,
+	// so just create a new blank one here,
+	// so it's owner can delete it
+	m_Playlist = new CMusikPlaylist();
+
+	// send a message to the main frame with
+	// the new address of the new playlist
+	int MW_NEWPLAYLISTOWNER = RegisterWindowMessage( "NEWPLAYLISTOWNER" );
+	m_MainWnd->SendMessage( MW_NEWPLAYLISTOWNER, (WPARAM)m_Playlist );
+
+	// becuase the new playlist we created is
+	// blank, it doesn't contain the info we
+	// want. so we set the current playlist
+	// to the playlist inside the CMusikPlayer
+	SetPlaylist( m_Player->GetPlaylist() );
+
+	// playlist is now updated, so flag
+	// it as unchanged
+	m_Changed = false;
 }
 
 ///////////////////////////////////////////////////

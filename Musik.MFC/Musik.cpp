@@ -40,7 +40,6 @@ BOOL CMusikApp::InitInstance()
 	if ( !CWinAppEx::InitInstance( _T( "{340277AE-C62B-41de-89DF-90191D8950CF}" ) ) )
 		return FALSE;
 
-	AfxEnableControlContainer();
 	AfxOleInit();
 
 	// InitCommonControls() is required on Windows XP if an application

@@ -370,7 +370,7 @@ bool CMainFrame::PlayCmd( const CStdString& fn )
 
 
 		// get playlist's internal player
-		CMusikPlaylist* pPlaylist = m_wndView->GetCtrl()->GetPlaylist();
+		CMusikPlaylist* pPlaylist = m_Player->GetPlaylist();
 		if ( pPlaylist )
 		{
 			// get the song we just added...
