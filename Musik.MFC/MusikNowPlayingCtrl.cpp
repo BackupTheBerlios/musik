@@ -37,6 +37,7 @@ BEGIN_MESSAGE_MAP(CMusikNowPlayingCtrl, CWnd)
 	ON_WM_PAINT()
 	ON_WM_CREATE()
 	ON_WM_SIZE()
+	ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -89,3 +90,14 @@ void CMusikNowPlayingCtrl::OnSize(UINT nType, int cx, int cy)
 	m_Info->MoveWindow( 0, 0, cx, cy );
 	m_Info->Layout();
 }
+
+///////////////////////////////////////////////////
+
+void CMusikNowPlayingCtrl::OnDestroy()
+{
+	CWnd::OnDestroy();
+
+	delete m_Info;
+}
+
+///////////////////////////////////////////////////
