@@ -145,10 +145,25 @@ void CMusikSourcesCtrl::OnDropFiles(HDROP hDropInfo)
 
 	DragFinish( hDropInfo );
 
-	// insert into library
-	CStdString playlist_str;
-	playlist_str.Format( _T( "New Playlist %d" ), m_StdPlaylists.size() );
-	m_Library->CreateStdPlaylist( playlist_str.c_str(), files );
+	CPoint pos;
+	::GetCursorPos( &pos );
+	ScreenToClient( &pos );
+
+	// see if the drag landed on an existing
+	// playlist, if it did, we'll append
+	CPropTreeItem* pItem = HitTestEx( pos );
+
+	// hit an item, append playlist
+	if ( pItem )
+		m_Library->AppendStdPlaylist( pItem->GetPlaylistID(), files );
+
+	// else make a new playlist
+	else
+	{
+		CStdString playlist_str;
+		playlist_str.Format( _T( "New Playlist %d" ), m_StdPlaylists.size() );
+		m_Library->CreateStdPlaylist( playlist_str.c_str(), files );
+	}
 
 	// show
 	LoadStdPlaylists();
