@@ -41,7 +41,7 @@
 
 // main dialog constructor
 MusikFrame::MusikFrame() 
-	: wxFrame( (wxFrame*)NULL, -1, MUSIK_VERSION, wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE | wxTAB_TRAVERSAL | wxCLIP_CHILDREN | wxNO_FULL_REPAINT_ON_RESIZE )
+	: wxFrame( (wxFrame*)NULL, -1, MUSIK_VERSION, wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE | wxTAB_TRAVERSAL | wxCLIP_CHILDREN )
 {
 	//--- no selection in progress / no dragging yet ---//
 	g_DragInProg		= false;

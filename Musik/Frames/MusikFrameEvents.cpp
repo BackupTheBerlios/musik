@@ -98,7 +98,7 @@ void MusikFrame::OnSize	( wxCommandEvent& WXUNUSED(event) )
 
 	g_PlaylistCtrl->RescaleColumns();
 	g_SourcesCtrl->RescaleColumns();
-	g_ActivityAreaCtrl->RescaleColumns();	
+	g_ActivityAreaCtrl->RescaleColumns();
 }
 
 void MusikFrame::OnCloseEvt( wxCommandEvent& WXUNUSED(event) )
