@@ -25,18 +25,18 @@ public:
 
 private:
 
-	//---------------------------------//
-	//--- playback control buttons	---//
-	//---------------------------------//
+	//-----------------------------------------------------//
+	//--- playback control buttons						---//
+	//-----------------------------------------------------//
 	wxBitmapButton	*m_btnPlayPause;
 	wxBitmapButton	*m_btnNext;
 	wxBitmapButton	*m_btnPrev;
 	wxBitmapButton	*m_btnStop;
 	wxBitmapButton	*m_btnVolume;
 
-	//---------------------------------//
-	//--- playback control icons	---//
-	//---------------------------------//
+	//-----------------------------------------------------//
+	//--- playback control icons						---//
+	//-----------------------------------------------------//
 	wxBitmap	m_bmPrev,	m_bmPrevDown;
 	wxBitmap	m_bmNext,	m_bmNextDown;
 	wxBitmap	m_bmPlay,	m_bmPlayDown;
@@ -44,28 +44,28 @@ private:
 	wxBitmap	m_bmStop,	m_bmStopDown;
 	wxBitmap	m_bmVolume,	m_bmVolumeDown;
 
-	//---------------------------------//
-	//--- now playing text objects	---//
-	//---------------------------------//
+	//-----------------------------------------------------//
+	//--- now playing text objects						---//
+	//-----------------------------------------------------//
 	wxStaticText *m_stSong;
 	wxStaticText *m_stArtist;
 	wxStaticText *m_stCurtime;
 
-	//---------------------------------//
-	//--- seek bar					---//
-	//---------------------------------//
+	//-----------------------------------------------------//
+	//--- seek bar										---//
+	//-----------------------------------------------------//
 	CMusikSeekCtrl	* m_Seek;
 	
-	//---------------------------------//
-	//--- fonts						---//
-	//---------------------------------//
+	//-----------------------------------------------------//
+	//--- fonts											---//
+	//-----------------------------------------------------//
 	wxFont	m_fntSong;
 	wxFont	m_fntArtist;
 	wxFont	m_fntTime;
 
-	//---------------------------------//
-	//--- sizers					---//
-	//---------------------------------//
+	//-----------------------------------------------------//
+	//--- sizers										---//
+	//-----------------------------------------------------//
 	wxBoxSizer* m_ArtistSizer;
 	wxBoxSizer* m_ButtonSizer;
 	wxBoxSizer* m_TopSizer;

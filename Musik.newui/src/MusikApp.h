@@ -4,7 +4,8 @@
 #include "wx/wxprec.h"
 
 #define MUSIK_HOME_DIR wxFileName::GetHomeDir() + wxFileName::GetPathSeparator() + wxT( ".Musik" ) + wxFileName::GetPathSeparator()
-#define MUSIK_DB_FILENAME wxFileName::GetHomeDir() + wxFileName::GetPathSeparator() + wxT( ".Musik" ) + wxFileName::GetPathSeparator() + wxT( "musiklib.db" )
+#define MUSIK_DB_FILENAME MUSIK_HOME_DIR + wxT( "musiklib.db" )
+#define MUSIK_SOURCES_FILENAME MUSIK_HOME_DIR + wxT( "musiksources.dat" )
 
 class CMusikApp : public wxApp
 {

@@ -22,7 +22,7 @@ enum E_MUSIK_SOURCES_TYPE
 class CMusikSourcesCtrl : public CMusikListCtrl
 {
 public:
-	CMusikSourcesCtrl( wxWindow* parent, wxWindowID id );
+	CMusikSourcesCtrl( wxWindow* parent, wxWindowID id, const wxString& filename );
 	~CMusikSourcesCtrl( );
 
 protected:
@@ -34,6 +34,7 @@ protected:
 
 private:
 
+	wxString m_Filename;
 };
 
 #endif

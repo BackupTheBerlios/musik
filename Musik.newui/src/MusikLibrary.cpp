@@ -96,9 +96,9 @@ void CMusikLibrary::InitFields()
 
 bool CMusikLibrary::Start()
 {
-	//-------------------------------------------------//
-	//--- construct the table						---//
-	//-------------------------------------------------//
+	//-----------------------------------------------------//
+	//--- construct the table							---//
+	//-----------------------------------------------------//
 	static const char *szCreateDBQuery  = 
 		"CREATE TABLE songs ( "	
 		"songid INTEGER PRIMARY KEY, "
@@ -122,9 +122,9 @@ bool CMusikLibrary::Start()
 		"dirty number(10) "		
 		" );";
 
-	//-------------------------------------------------//
-	//--- construct the index						---//
-	//-------------------------------------------------//
+	//-----------------------------------------------------//
+	//--- construct the index							---//
+	//-----------------------------------------------------//
 	const char* szCreateIdxQuery =
 		"CREATE INDEX songs_title_idx on songs (title);"
 		"CREATE UNIQUE INDEX songs_filename_idx on songs (filename);"
@@ -133,9 +133,9 @@ bool CMusikLibrary::Start()
 		"CREATE INDEX songs_genre_idx on songs (genre);"
 		"CREATE INDEX songs_artist_album_tracknum_idx on songs (artist,album,tracknum);";
 
-	//-------------------------------------------------//
-	//--- lock database access, open it up			---//
-	//-------------------------------------------------//
+	//-----------------------------------------------------//
+	//--- lock database access, open it up				---//
+	//-----------------------------------------------------//
 	wxCriticalSectionLocker lock( m_csDBAccess );
 	char *pErr = NULL;
 	m_pDB = sqlite_open( wxStringToMB( m_Filename ), 0666, &pErr );
@@ -154,9 +154,9 @@ bool CMusikLibrary::Start()
 
 void CMusikLibrary::Shutdown()
 {
-	//-------------------------------------------------//
-	//--- lock it up and close it down.				---//
-	//-------------------------------------------------//
+	//-----------------------------------------------------//
+	//--- lock it up and close it down.					---//
+	//-----------------------------------------------------//
 	wxCriticalSectionLocker lock( m_csDBAccess );
 	if ( m_pDB )
 	{
@@ -187,10 +187,10 @@ void CMusikLibrary::GetSongs( int source_type, const wxArrayString& source_items
 	sQuery += wxT( " in(" );
 	sQuery.Alloc( sQuery.Len() + 30 + source_items.GetCount() * 30 );
 
-	//-------------------------------------------------//
-	//--- we need to setup the query for each item	---//
-	//--- in sources_items							---//
-	//-------------------------------------------------//
+	//-----------------------------------------------------//
+	//--- we need to setup the query for each item		---//
+	//--- in sources_items								---//
+	//-----------------------------------------------------//
 	for ( size_t i = 0; i < source_items.GetCount(); i++ )
 	{	
     	source_items.Item( i ).Replace( wxT( "'" ), wxT( "''" ), true );
@@ -280,9 +280,9 @@ void CMusikLibrary::QuerySongs( const wxString& query, CMusikPlaylist& target )
 	const wxCharBuffer pQuery = wxStringToMB(query);
 	target.Alloc( GetSongCount() );
 	{
-		//-------------------------------------------------//
-		//--- lock as short as possible by using {}		---//
-		//-------------------------------------------------//
+		//-----------------------------------------------------//
+		//--- lock as short as possible by using {}			---//
+		//-----------------------------------------------------//
 		wxCriticalSectionLocker lock( m_csDBAccess );
 		sqlite_exec( m_pDB, pQuery, &sqlite_AddSongToPlaylist, &target, NULL );
 	}

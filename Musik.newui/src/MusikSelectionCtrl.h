@@ -5,10 +5,10 @@
 #include "MusikListCtrl.h"
 #include "MusikLibrary.h"
 
-//---------------------------------------------------------//
-//--- these are the types of activity boxes that are	---//
-//--- allowed.											---//
-//---------------------------------------------------------//
+//-----------------------------------------------------//
+//--- these are the types of activity boxes that	---//
+//--- are allowed.									---//
+//-----------------------------------------------------//
 enum
 {
 	MUSIK_SELECTION_ARTISTS = MUSIK_LIBRARY_TYPE_ARTIST,
@@ -23,34 +23,35 @@ public:
 	CMusikSelectionCtrl( wxWindow* parent, CMusikLibrary* library, wxWindowID id );
 	~CMusikSelectionCtrl();
 
-	//---------------------------------------------------------//
-	//--- functions having to do with getting and setting	---//
-	//--- selectionctrl type.								---//
-	//---------------------------------------------------------//
+	//-----------------------------------------------------//
+	//--- functions having to do with getting and		---//
+	//--- setting selectionctrl type.					---//
+	//-----------------------------------------------------//
 	wxString GetDBName		( )	{ return m_MusikLibrary->GetSongFieldDB( m_Type ); }
 	wxString GetColumnName	( )	{ return m_MusikLibrary->GetSongField( m_Type ); }
 	int  GetType			( )	{ return m_Type; }
 	void SetType			( int type, bool reset = true );
 
-	//---------------------------------------------------------//
-	//--- functions not having to do with getting or		---//
-	//--- setting anything...								---//
-	//---------------------------------------------------------//
+	//-----------------------------------------------------//
+	//--- functions not having to do with getting or	---//
+	//--- setting anything...							---//
+	//-----------------------------------------------------//
 	void ResetContents( bool refresh = true );
 
-	//---------------------------------------------------------//
-	//--- wxListCtrl virtual overrides. stuff like updating ---//
-	//--- the virtual list control and adding stripes, etc.	---//
-	//---------------------------------------------------------//
+	//-----------------------------------------------------//
+	//--- wxListCtrl virtual overrides. stuff like		---//
+	//--- updating the virtual list control and adding	---//
+	//--- stripes, etc.									---//
+	//-----------------------------------------------------//
 	virtual wxString OnGetItemText( long item, long column ) const;
 	virtual wxListItemAttr* OnGetItemAttr( long item ) const;
 
 protected:
 
-	//---------------------------------------------------------//
-	//--- CMusikListCtrl virtual overrides. these include	---//
-	//--- event handling and stuff. neato.					---//
-	//---------------------------------------------------------//
+	//-----------------------------------------------------//
+	//--- CMusikListCtrl virtual overrides. these		---//
+	//--- include event handling and stuff.				---//
+	//-----------------------------------------------------//
 	virtual void OnResize			( wxSizeEvent& event );
 	virtual void OnColBeginDrag		( wxListEvent& event );
 	virtual void OnKeyDown			( wxListEvent& event );
@@ -60,9 +61,9 @@ protected:
 
 private:
 
-	//---------------------------------------------------------//
-	//--- styles used in the virtual list control			---//
-	//---------------------------------------------------------//
+	//-----------------------------------------------------//
+	//--- styles used in the virtual list control		---//
+	//-----------------------------------------------------//
 	wxListItemAttr m_LightAttr;
 	void ResetStyles();
 

@@ -32,11 +32,11 @@ public:
 	~CMusikListCtrl();
 
 protected:
-	//---------------------------------------------------------//
-	//--- this class will remain strictly virtual. here		---//
-	//--- are the classes that every inherited class can	---//
-	//--- or should override. includes events.				---//
-	//---------------------------------------------------------//
+	//-----------------------------------------------------//
+	//--- this class will remain strictly virtual. here	---//
+	//--- are the classes that every inherited class 	---//
+	//--- can or should override. includes events.		---//
+	//-----------------------------------------------------//
 	virtual void OnItemSelect		( wxListEvent& event )		{}
 	virtual void OnItemActivate		( wxListEvent& event )		{}
 	virtual void OnItemBeginDrag	( wxListEvent& event )		{}

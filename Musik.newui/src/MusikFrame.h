@@ -33,9 +33,9 @@ public:
 	CMusikFrame();
 	~CMusikFrame();
 
-	//-------------------------------------------------//
-	//--- virtual overrides							---//
-	//-------------------------------------------------//
+	//-----------------------------------------------------//
+	//--- virtual overrides								---//
+	//-----------------------------------------------------//
 	virtual bool Show( bool show = true );
 
 private:
@@ -45,35 +45,35 @@ private:
 	void CreateControls();
 	void CreateMenu();
 
-	//-------------------------------------------------//
-	//--- sashes that are of interest				---//
-	//-------------------------------------------------//
+	//-----------------------------------------------------//
+	//--- sashes that are of interest					---//
+	//-----------------------------------------------------//
 	wxSashLayoutWindow*	m_NowPlayingSash;
 	wxSashLayoutWindow*	m_SourcesSash;
 	wxSashLayoutWindow*	m_SelectionAreaSash;
 	wxSashLayoutWindow*	m_PlaylistSash;	
 	wxSashLayoutWindow*	m_SimpleQuerySash;
 
-	//-------------------------------------------------//
-	//--- main controls								---//
-	//-------------------------------------------------//
+	//-----------------------------------------------------//
+	//--- main controls									---//
+	//-----------------------------------------------------//
 	CMusikSourcesCtrl		*m_SourcesCtrl;
 	CMusikSelectionAreaCtrl *m_SelectionCtrl;
 	CMusikPlaylistCtrl		*m_PlaylistCtrl;
 	CMusikSimpleQueryCtrl	*m_SimpleQueryCtrl;
 	CMusikNowPlayingCtrl	*m_NowPlayingCtrl;
 
-	//-------------------------------------------------//
-	//--- menus										---//
-	//-------------------------------------------------//
+	//-----------------------------------------------------//
+	//--- menus											---//
+	//-----------------------------------------------------//
 	wxMenuBar*	main_menu;
 	wxMenu*		file_menu;
 	wxMenu*		view_menu;
 	wxMenu*		help_menu;
 
-	//-------------------------------------------------//
-	//--- the core stuff. library / player / etc	---//
-	//-------------------------------------------------//
+	//-----------------------------------------------------//
+	//--- the core stuff. library / player / etc		---//
+	//-----------------------------------------------------//
 	CMusikLibrary* m_MusikLibrary;
 };
 

@@ -64,14 +64,6 @@ void CMusikSelectionCtrl::Reset( bool rescale, bool refresh )
 {
 	ClearAll();
 
-	//---------------------------------------------------------//
-	//--- we don't want the user to do a bounding box		---//
-	//--- selection in windows, becuase it causes an		---//
-	//--- event to get triggered for every item selected.	---//
-	//--- bounding box selections are only available in the	---//
-	//--- first column (0), so make an empty column and		---//
-	//--- hide it.											---//
-	//---------------------------------------------------------//
 	InsertColumn( 0, wxT( "" ) );
 	InsertColumn( 1, m_MusikLibrary->GetSongField( m_Type ) );
 	ResetContents( false );

@@ -25,15 +25,15 @@ CMusikNowPlayingCtrl::CMusikNowPlayingCtrl( wxWindow *parent, wxWindowID id )
 {
 	SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_3DFACE ) );
 
-	//-----------------------------------------//
-	//--- initialize aesthetics				---//
-	//-----------------------------------------//
+	//-----------------------------------------------------//
+	//--- initialize aesthetics							---//
+	//-----------------------------------------------------//
 	SetupFonts();
 	SetupIcons();
 
-	//-----------------------------------------//
-	//--- controls							---//
-	//-----------------------------------------//
+	//-----------------------------------------------------//
+	//--- controls										---//
+	//-----------------------------------------------------//
 	m_stSong		= new wxStaticText( this, -1, _( "" ),	wxPoint( 0, 0 ), wxSize( 0, 0 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
 	m_stArtist		= new wxStaticText( this, -1, _( "" ),	wxPoint( 0, 0 ), wxSize( 0, 0 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
 	m_stCurtime		= new wxStaticText( this, -1, _( "" ),	wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );	
@@ -48,23 +48,23 @@ CMusikNowPlayingCtrl::CMusikNowPlayingCtrl( wxWindow *parent, wxWindowID id )
 
 	ResetInfo( false );
 
-	//-----------------------------------------//
-	//--- set fonts							---//
-	//-----------------------------------------//
+	//-----------------------------------------------------//
+	//--- set fonts										---//
+	//-----------------------------------------------------//
 	m_stSong->SetFont		( m_fntSong );
 	m_stArtist->SetFont		( m_fntArtist );
 	m_stCurtime->SetFont	( m_fntTime );
 
-	//-----------------------------------------//
-	//--- sizer for artist and time			---//
-	//-----------------------------------------//
+	//-----------------------------------------------------//
+	//--- sizer for artist and time						---//
+	//-----------------------------------------------------//
 	m_ArtistSizer = new wxBoxSizer( wxHORIZONTAL );
 	m_ArtistSizer->Add( m_stArtist, 0, wxADJUST_MINSIZE | wxALIGN_CENTRE_VERTICAL );
 	m_ArtistSizer->Add( m_stCurtime, 0, wxADJUST_MINSIZE | wxALIGN_CENTRE_VERTICAL );
 
-	//-----------------------------------------//
-	//--- sizer for buttons and gauge		---//
-	//-----------------------------------------//
+	//-----------------------------------------------------//
+	//--- sizer for buttons and gauge					---//
+	//-----------------------------------------------------//
 	m_ButtonSizer = new wxBoxSizer( wxHORIZONTAL );
 	m_ButtonSizer->Add( m_btnPrev );
 	m_ButtonSizer->Add( m_btnPlayPause );
@@ -72,25 +72,25 @@ CMusikNowPlayingCtrl::CMusikNowPlayingCtrl( wxWindow *parent, wxWindowID id )
 	m_ButtonSizer->Add( m_btnNext );
 	m_ButtonSizer->Add( m_btnVolume );
 
-	//-----------------------------------------//
-	//--- sizer for top						---//
-	//-----------------------------------------//
+	//-----------------------------------------------------//
+	//--- sizer for top									---//
+	//-----------------------------------------------------//
 	m_TopSizer = new wxBoxSizer( wxHORIZONTAL );
 	m_TopSizer->Add( m_stSong, 0, wxADJUST_MINSIZE | wxALIGN_CENTER_VERTICAL );
 	m_TopSizer->Add( 0, 0,	1, wxEXPAND);
 	m_TopSizer->Add( m_ButtonSizer, 0, wxALIGN_CENTER_VERTICAL );
 
-	//-----------------------------------------//
-	//--- sizer for bottom					---//
-	//-----------------------------------------//
+	//-----------------------------------------------------//
+	//--- sizer for bottom								---//
+	//-----------------------------------------------------//
 	m_BottomSizer = new wxBoxSizer( wxHORIZONTAL );
 	m_BottomSizer->Add( m_ArtistSizer, 0, wxADJUST_MINSIZE | wxALIGN_CENTER_VERTICAL );
 	m_BottomSizer->Add( 0, 0,	1, wxEXPAND);
 	m_BottomSizer->Add( m_Seek, 0 );
 
-	//-----------------------------------------//
-    //--- main sizer						---//
-	//-----------------------------------------//
+	//-----------------------------------------------------//
+    //--- main sizer									---//
+	//-----------------------------------------------------//
 	m_MainSizer = new wxBoxSizer( wxVERTICAL );
 	m_MainSizer->Add( m_TopSizer,		0, wxEXPAND | wxALL, 2	);
 	m_MainSizer->Add( 0, 0,				1, wxEXPAND);

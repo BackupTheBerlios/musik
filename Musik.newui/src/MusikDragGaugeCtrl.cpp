@@ -69,18 +69,18 @@ void CMusikDragGaugeCtrl::SetPosFromMouse()
 	float nSize;
 	float nPos;
 
-	//-----------------------------------------//
-	//--- if the gauge is horizontal...		---//
-	//-----------------------------------------//
+	//-----------------------------------------------------//
+	//--- if the gauge is horizontal...					---//
+	//-----------------------------------------------------//
 	if ( m_Style == wxGA_HORIZONTAL )
 	{
 		nPos	= (float)m_MousePos.x;
 		nSize	= (float)m_WndSize.GetWidth();
 	}
 
-	//-----------------------------------------//
-	//--- if the gauge is vertical...		---//
-	//-----------------------------------------//
+	//-----------------------------------------------------//
+	//--- if the gauge is vertical...					---//
+	//-----------------------------------------------------//
 	else
 	{
 		nPos	= (float)m_MousePos.y;

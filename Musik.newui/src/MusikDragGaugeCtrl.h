@@ -15,12 +15,12 @@ protected:
 	void OnMotion			( wxMouseEvent& event );
 	void OnSize				( wxSizeEvent& event );
 
-	//---------------------------------------------------------//
-	//--- these two functions will be called during the		---//
-	//--- process... both on left up and motion. they are	---//
-	//--- here so inherited classes can override them to do	---//
-	//--- custom stuff.										---//
-	//---------------------------------------------------------//
+	//-----------------------------------------------------//
+	//--- these two functions will be called during the	---//
+	//--- process... both on left up and motion. they	---//
+	//--- are here so inherited classes can override 	---//
+	//--- them to do custom stuff.						---//
+	//-----------------------------------------------------//
 	virtual void OnLeftUpV	(){}		
 	virtual void OnMotionV	(){}
 
