@@ -156,7 +156,7 @@ unsigned CIniFile::AddKeyName( string const keyname)
 {
   names.resize( names.size() + 1, keyname);
   keys.resize( keys.size() + 1);
-  return names.size() - 1;
+  return (unsigned)names.size() - 1;
 }
 
 string CIniFile::KeyName( unsigned const keyID) const
@@ -170,7 +170,7 @@ string CIniFile::KeyName( unsigned const keyID) const
 unsigned CIniFile::NumValues( unsigned const keyID)
 {
   if ( keyID < keys.size())
-    return keys[keyID].names.size();
+    return (unsigned)keys[keyID].names.size();
   return 0;
 }
 
@@ -179,7 +179,7 @@ unsigned CIniFile::NumValues( string const keyname)
   long keyID = FindKey( keyname);
   if ( keyID == noID)
     return 0;
-  return keys[keyID].names.size();
+  return (unsigned)keys[keyID].names.size();
 }
 
 string CIniFile::ValueName( unsigned const keyID, unsigned const valueID) const
@@ -397,8 +397,8 @@ bool CIniFile::DeleteHeaderComment( unsigned commentID)
 unsigned CIniFile::NumKeyComments( unsigned const keyID) const
 {
   if ( keyID < keys.size())
-    return keys[keyID].comments.size();
-  return 0;
+    return (unsigned)keys[keyID].comments.size();
+  return (unsigned) 0;
 }
 
 unsigned CIniFile::NumKeyComments( string const keyname) const
@@ -406,7 +406,7 @@ unsigned CIniFile::NumKeyComments( string const keyname) const
   long keyID = FindKey( keyname);
   if ( keyID == noID)
     return 0;
-  return keys[keyID].comments.size();
+  return (unsigned)keys[keyID].comments.size();
 }
 
 bool CIniFile::KeyComment( unsigned const keyID, string const comment)

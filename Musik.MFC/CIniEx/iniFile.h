@@ -78,7 +78,7 @@ public:
   long FindValue( unsigned const keyID, string const valuename) const;
 
   // Returns number of keys currently in the ini.
-  unsigned NumKeys() const                       {return names.size();}
+  unsigned NumKeys() const                       {return (unsigned)names.size();}
   unsigned GetNumKeys() const                    {return NumKeys();}
 
   // Add a key name.
@@ -111,7 +111,9 @@ public:
   string GetValue(string const keyname, string const valuename, string const defValue = "") const; 
   int    GetValueI(string const keyname, string const valuename, int const defValue = 0) const;
   bool   GetValueB(string const keyname, string const valuename, bool const defValue = false) const {
-    return bool( GetValueI( keyname, valuename, int( defValue)));
+	  int nDefValue = defValue == true ? 1 : 0;
+	  bool nRet = GetValueI( keyname, valuename, nDefValue ) == 1 ? true : false;
+	  return nRet;
   }
   double   GetValueF(string const keyname, string const valuename, double const defValue = 0.0) const;
   // This is a variable length formatted GetValue routine. All these voids
@@ -148,7 +150,7 @@ public:
   // Header comments are those comments before the first key.
   //
   // Number of header comments.
-  unsigned NumHeaderComments()                  {return comments.size();}
+  unsigned NumHeaderComments()                  {return (unsigned)comments.size();}
   // Add a header comment.
   void     HeaderComment( string const comment);
   // Return a header comment.

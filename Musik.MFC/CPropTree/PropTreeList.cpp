@@ -227,7 +227,6 @@ void CPropTreeList::OnLButtonDown(UINT, CPoint point)
 
 	CPropTreeItem* pItem;
 	CRect rc;
-	CDC* pDC;
 
 	switch (nHit)
 	{

@@ -176,7 +176,7 @@ void CMusikPrefs::SavePrefs()
 	//-----------------------------------------------------//
 	//--- selection area								---//
 	//-----------------------------------------------------//
-	config->SetValue( "Selection Area", "Count", IntToString( m_SelectionBox_Count ) );
+	config->SetValue( "Selection Area", "Count", IntToString( (int)m_SelectionBox_Count ) );
 
 	//-----------------------------------------------------//
 	//--- playlist										---//
