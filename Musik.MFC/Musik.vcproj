@@ -177,28 +177,38 @@
 				Name="MusikNowPlayingCtrl"
 				Filter="">
 			</Filter>
-		</Filter>
-		<Filter
-			Name="Views"
-			Filter="">
 			<Filter
-				Name="MusikSourcesView"
+				Name="MusikSelectionCtrl"
 				Filter="">
 				<File
-					RelativePath=".\MusikSourcesView.cpp">
+					RelativePath=".\MusikSelectionCtrl.cpp">
 				</File>
 				<File
-					RelativePath=".\MusikSourcesView.h">
+					RelativePath=".\MusikSelectionCtrl.h">
+				</File>
+			</Filter>
+		</Filter>
+		<Filter
+			Name="Bars"
+			Filter="">
+			<Filter
+				Name="MusikSourcesBar"
+				Filter="">
+				<File
+					RelativePath=".\MusikSourcesBar.cpp">
+				</File>
+				<File
+					RelativePath=".\MusikSourcesBar.h">
 				</File>
 			</Filter>
 			<Filter
-				Name="MusikPlaylistView"
+				Name="MusikPlaylistBar"
 				Filter="">
 				<File
-					RelativePath=".\MusikPlaylistView.cpp">
+					RelativePath=".\MusikPlaylistBar.cpp">
 				</File>
 				<File
-					RelativePath=".\MusikPlaylistView.h">
+					RelativePath=".\MusikPlaylistBar.h">
 				</File>
 			</Filter>
 		</Filter>

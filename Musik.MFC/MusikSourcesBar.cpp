@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Musik.h"
-#include "MusikSourcesView.h"
+#include "MusikSourcesBar.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
