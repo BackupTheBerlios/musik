@@ -26,6 +26,8 @@
 #define IDR_TRAY_MENU                   146
 #define IDD_PROPPAGE_MEDIUM             146
 #define IDD_PROPPAGE_SOUND_CROSSFADER   146
+#define IDD_PROPPAGE_MEDIUM1            147
+#define IDD_PROPPAGE_INTERFACE_TRANPARENCY 147
 #define IDB_DOWN                        151
 #define IDB_BITMAP1                     153
 #define IDB_UP                          153

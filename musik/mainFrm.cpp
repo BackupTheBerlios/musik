@@ -312,27 +312,26 @@ CMainFrameFader::open( void* parent )
 
 CMainFrameFader::svc()
 {
+	// we are a friend CMainFrame
+	CmusikPrefs* m_Prefs = m_Parent->m_Prefs;
+
 	// sleep if we go idle
 	ACE_Time_Value suspend, sleep;
-	sleep.set( 1.0f );
+	sleep.set( 0.25f );
 
 	m_Stop = false;
 	m_Active = true;
 	m_Finished = false;
 
-	int fade_dur = 5;	// half second ( = seconds * 10 )
-	int unfocused_per = 100;
-	int focused_per = 230;
-	bool adaptive = false;
 	int fade_steps = 10;
 
 	bool is_frame_focused = false;
-	int trans = unfocused_per;
 
+	int trans = m_Prefs->GetTransUnFocus();
 	while ( !m_Stop )
 	{
 		// transparency effects.
-		if ( m_Parent->IsTransEnb() )
+		if ( m_Prefs->IsTransEnabled() && m_Parent->IsTransEnb() )
 		{
 			// fade in
 			if ( !is_frame_focused && GetForegroundWindow() == m_Parent->GetSafeHwnd() )
@@ -340,23 +339,20 @@ CMainFrameFader::svc()
 				if ( trans < 1 )
 					trans = 1;
 
-				if ( unfocused_per < 1 )
-					unfocused_per = 1;
-
 				// adaptive filtering is only recommended
 				// if the user has a good video card.
-				if ( adaptive )
+				if ( m_Prefs->IsTransAdaptive() )
 				{
-					suspend.set( (float)( fade_dur / 10 ) / (float)( 1 + ( focused_per - unfocused_per ) ) );
-					for ( int i = trans; i < focused_per; i++ )
+					suspend.set( m_Prefs->GetTransDur() / (float)( 1 + ( m_Prefs->GetTransFocus() - m_Prefs->GetTransUnFocus() ) ) );
+					for ( int i = trans; i < m_Prefs->GetTransFocus(); i++ )
 					{
 						if ( m_Stop ) 
 							break;
 
 						trans++;
 
-						if ( trans > focused_per )
-							trans = focused_per;
+						if ( trans > m_Prefs->GetTransFocus() )
+							trans = m_Prefs->GetTransFocus();
 
 						m_Parent->SetTransparency( trans );
 						ACE_OS::sleep( suspend );
@@ -364,8 +360,8 @@ CMainFrameFader::svc()
 				}
 				else	// non adaptive
 				{
-					int interval = ( focused_per - unfocused_per ) / fade_steps;
-					suspend.set( (float)( fade_dur / 10 ) / (float)( fade_steps ) );
+					int interval = ( m_Prefs->GetTransFocus() - m_Prefs->GetTransUnFocus() ) / fade_steps;
+					suspend.set( m_Prefs->GetTransDur() / (float)( fade_steps ) );
 
 					for ( int i = 0; i < fade_steps; i++ )
 					{
@@ -374,15 +370,15 @@ CMainFrameFader::svc()
 
 						trans += interval;
 
-						if ( trans > focused_per )
-							trans = focused_per;
+						if ( trans > m_Prefs->GetTransFocus() )
+							trans = m_Prefs->GetTransFocus();
 
 						m_Parent->SetTransparency( trans );
 						ACE_OS::sleep( suspend );
 					}
 				}
 
-				trans = focused_per;
+				trans = m_Prefs->GetTransFocus();
 				m_Parent->SetTransparency( trans );
 				is_frame_focused = true;
 			}
@@ -393,21 +389,18 @@ CMainFrameFader::svc()
 				if ( trans < 1 )
 					trans = 1;
 
-				if ( unfocused_per < 1 )
-					unfocused_per = 1;
-
-				if ( adaptive )
+				if ( m_Prefs->IsTransAdaptive() )
 				{
-					suspend.set( fade_dur / 10 / ( 1 + ( focused_per - unfocused_per ) ) );
-					for ( int i = 1; i < focused_per - unfocused_per; i++ )
+					suspend.set( m_Prefs->GetTransDur() / ( 1 + ( m_Prefs->GetTransFocus() - m_Prefs->GetTransUnFocus() ) ) );
+					for ( int i = 1; i < m_Prefs->GetTransFocus() - m_Prefs->GetTransUnFocus(); i++ )
 					{
 						if ( m_Stop )
 							break;
 
 						trans--;
 
-						if ( trans < unfocused_per )
-							trans = unfocused_per;
+						if ( trans < m_Prefs->GetTransUnFocus() )
+							trans = m_Prefs->GetTransUnFocus();
 
 						m_Parent->SetTransparency( trans );
 						ACE_OS::sleep( suspend );
@@ -415,8 +408,8 @@ CMainFrameFader::svc()
 				}
 				else	// non adaptive
 				{
-					int interval = ( focused_per - unfocused_per ) / fade_steps;
-					suspend.set( (float)( fade_dur / 10 ) / (float)( fade_steps ) );
+					int interval = ( m_Prefs->GetTransFocus() - m_Prefs->GetTransUnFocus() ) / fade_steps;
+					suspend.set( m_Prefs->GetTransDur() / (float)( fade_steps ) );
 
 					for ( int i = 0; i < fade_steps; i++ )
 					{
@@ -425,15 +418,15 @@ CMainFrameFader::svc()
 
 						trans -= interval;
 
-						if ( trans < unfocused_per )
-							trans = unfocused_per;
+						if ( trans < m_Prefs->GetTransUnFocus() )
+							trans = m_Prefs->GetTransUnFocus();
 
 						m_Parent->SetTransparency( trans );
 						ACE_OS::sleep( suspend );
 					}
 				}
 
-				trans = unfocused_per;
+				trans = m_Prefs->GetTransUnFocus();
 				m_Parent->SetTransparency( trans );
 				is_frame_focused = false;
 			}
@@ -845,6 +838,9 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		SynchronizeDirs();
 
 	m_TransEnb = InitTrans();
+
+	if ( m_TransEnb && !m_Prefs->IsTransEnabled() )
+		SetTransparency( 255 );
 
 	// fire off the fader task
 	m_ProtectingTasks.acquire();
@@ -1733,11 +1729,14 @@ void CMainFrame::OnFilePreferences()
 {
 	// initialize the property pages
 	CmusikPrefsInterfaceWorkflow wndPageInterfaceWorkflow( m_Prefs, m_Library, m_Player );
+	CmusikPrefsInterfaceTrans wndPageInterfaceTrans(  m_Prefs, m_Library, m_Player );
 	CmusikPrefsSoundCrossfader wndPageSoundCrossfader( m_Prefs, m_Library, m_Player );
 	CmusikPrefsSoundDriver wndPageSoundDriver( m_Prefs, m_Library, m_Player );
 
+
 	// remove help icon from gripper
 	wndPageInterfaceWorkflow.m_psp.dwFlags&=	~PSP_HASHELP;
+	wndPageInterfaceTrans.m_psp.dwFlags&=		~PSP_HASHELP;
 	wndPageSoundCrossfader.m_psp.dwFlags&=		~PSP_HASHELP;
 	wndPageSoundDriver.m_psp.dwFlags&=			~PSP_HASHELP;
 
@@ -1748,6 +1747,7 @@ void CMainFrame::OnFilePreferences()
 
 	// physically add the preference sheets
 	PrefSheet.AddPage( &wndPageInterfaceWorkflow );
+	PrefSheet.AddPage( &wndPageInterfaceTrans );
 	PrefSheet.AddPage( &wndPageSoundCrossfader );
 	PrefSheet.AddPage( &wndPageSoundDriver );
 

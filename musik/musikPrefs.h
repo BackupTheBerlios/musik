@@ -136,7 +136,22 @@ public:
 	
 	void SetPlaylistOrder( CIntArray n ){ m_Playlist_Order = n; }	
 	void SetPlaylistSizes( CIntArray n ){ m_Playlist_Sizes = n; }
-	
+
+	//
+	// transparency
+	//
+	bool IsTransEnabled(){ return m_TransEnabled; }
+	bool IsTransAdaptive(){ return m_TransAdaptive; }
+	float GetTransDur(){ return m_TransDur; }
+	int GetTransFocus(){ return m_TransFocus; }
+	int GetTransUnFocus(){ return m_TransUnfocus; }
+
+	void SetTransEnabled( bool enabled ){ m_TransEnabled = enabled; }
+	void SetTransAdaptive( bool adaptive ){ m_TransAdaptive = adaptive; }
+	void SetTransDur( float secs ){ m_TransDur = secs; }
+	void SetTransFocus( int trans ){ m_TransFocus = trans; }
+	void SetTransUnFocus( int trans ){ m_TransUnfocus = trans; }
+
 	//
 	// now playing
 	//
@@ -226,6 +241,13 @@ private:
 	bool	m_Dlg_LibraryShowsAllSongs;
 	bool	m_Dlg_MinimizeToTray;
 	bool	m_Dlg_AddEntireToNP;
+
+	// transparency
+	bool m_TransEnabled;
+	bool m_TransAdaptive;
+	float m_TransDur;
+	int m_TransFocus;
+	int m_TransUnfocus;
 
 	// selection area
 	CIntArray m_SelectionBox_Types;
@@ -323,6 +345,18 @@ inline CString FloatToCString( float f )
 {
 	ostringstream aStream;
 	aStream << f << "\0";
+
+	CString str = aStream.str().c_str();
+
+	return str;
+}
+
+///////////////////////////////////////////////////
+
+inline CString IntToCString( int n )
+{
+	ostringstream aStream;
+	aStream << n << "\0";
 
 	CString str = aStream.str().c_str();
 

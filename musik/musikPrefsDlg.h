@@ -210,3 +210,45 @@ protected:
 };
 
 ///////////////////////////////////////////////////
+
+// Interface::Transparency
+
+///////////////////////////////////////////////////
+
+class CmusikPrefsInterfaceTrans : public CmusikPropertyPage
+{
+
+public:
+
+	// construct and destruct
+	CmusikPrefsInterfaceTrans( CmusikPrefs* prefs, CmusikLibrary* library, CmusikPlayer* player );
+	virtual ~CmusikPrefsInterfaceTrans();
+
+	// from CmusikPropertyPage
+	virtual void CommitChanges();
+	virtual void LoadPrefs();
+
+	// objects
+	CButton m_TransEnabled;
+	CButton m_TransAdaptive;
+	CEdit m_TransFocused;
+	CEdit m_TransUnfocused;
+
+protected:
+
+	// misc
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	enum { IDD = IDD_PROPPAGE_INTERFACE_TRANPARENCY };
+
+	// macros
+	DECLARE_DYNAMIC(CmusikPrefsInterfaceTrans)
+	DECLARE_MESSAGE_MAP()
+public:
+	CEdit m_TransFadeDuration;
+	virtual BOOL OnInitDialog();
+protected:
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+};
+
+
+///////////////////////////////////////////////////

@@ -98,6 +98,13 @@ void CmusikPrefs::LoadPrefs()
 	m_Dlg_MinimizeToTray		= StringToBool( config->GetValue( "Dialog", "Minimize to Notification Tray", "0" ) );
 	m_Dlg_AddEntireToNP			= StringToBool( config->GetValue( "Dialog", "Add Entire Library Playlist to Now Playing", "1" ) );
 
+	// transparency
+	m_TransEnabled				= StringToBool( config->GetValue( "Transparency", "Enabled", "0" ) );
+	m_TransAdaptive				= StringToBool( config->GetValue( "Transparency", "Adaptive", "0" ) );
+	m_TransDur					= StringToFloat( config->GetValue( "Transparency", "Duration", "0.5" ) );
+	m_TransFocus				= StringToInt( config->GetValue( "Transparency", "Focused", "225" ) );
+	m_TransUnfocus				= StringToInt( config->GetValue( "Transparency", "Unfocused", "100" ) );
+
 	// selection area
 	m_SelectionBox_Types = StringToCIntArray( config->GetValue( "Selection Area", "Types", "1,2" ) );
 
@@ -163,6 +170,13 @@ void CmusikPrefs::SavePrefs()
 	config->SetValue( "Dialog", "Library Shows All Songs", BoolToString( m_Dlg_LibraryShowsAllSongs ) );
 	config->SetValue( "Dialog", "Minimize to Notification Tray", BoolToString( m_Dlg_MinimizeToTray ) );
 	config->SetValue( "Dialog", "Add Entire Library Playlist to Now Playing", BoolToString( m_Dlg_AddEntireToNP ) );
+
+	// transparency
+	config->SetValue( "Transparency", "Enabled", BoolToString( m_TransEnabled ) );
+	config->SetValue( "Transparency", "Adaptive", BoolToString( m_TransAdaptive ) );
+	config->SetValue( "Transparency", "Duration", FloatToString( m_TransDur ) );
+	config->SetValue( "Transparency", "Focused", IntToString( m_TransFocus ) );
+	config->SetValue( "Transparency", "Unfocused", IntToString( m_TransUnfocus ) );
 
 	// selection area
 	config->SetValue( "Selection Area", "Types", CIntArrayToString( m_SelectionBox_Types ) );

@@ -695,6 +695,7 @@ void CmusikPrefsSoundCrossfader::OnLbnSelchangePresetbox()
 }
 
 ///////////////////////////////////////////////////
+
 BOOL CmusikPrefsSoundCrossfader::PreTranslateMessage(MSG* pMsg)
 {
 	if ( pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_DELETE && GetFocus() == &m_PresetBox )
@@ -705,3 +706,124 @@ BOOL CmusikPrefsSoundCrossfader::PreTranslateMessage(MSG* pMsg)
 
 	return CmusikPropertyPage::PreTranslateMessage(pMsg);
 }
+
+///////////////////////////////////////////////////
+
+// Interface::Transparency
+
+///////////////////////////////////////////////////
+
+IMPLEMENT_DYNAMIC(CmusikPrefsInterfaceTrans, CmusikPropertyPage)
+
+///////////////////////////////////////////////////
+
+CmusikPrefsInterfaceTrans::CmusikPrefsInterfaceTrans( CmusikPrefs* prefs, CmusikLibrary* library, CmusikPlayer* player )
+	: CmusikPropertyPage( CmusikPrefsInterfaceTrans::IDD, prefs, library, player )
+{
+}
+
+///////////////////////////////////////////////////
+
+CmusikPrefsInterfaceTrans::~CmusikPrefsInterfaceTrans()
+{
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPrefsInterfaceTrans::DoDataExchange(CDataExchange* pDX)
+{
+	CPropertyPage::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_CHECK1, m_TransEnabled);
+	DDX_Control(pDX, IDC_CHECK2, m_TransAdaptive);
+	DDX_Control(pDX, IDC_EDIT1, m_TransFocused);
+	DDX_Control(pDX, IDC_EDIT2, m_TransUnfocused);
+	DDX_Control(pDX, IDC_EDIT5, m_TransFadeDuration);
+}
+
+///////////////////////////////////////////////////
+
+
+BEGIN_MESSAGE_MAP(CmusikPrefsInterfaceTrans, CPropertyPage)
+END_MESSAGE_MAP()
+
+///////////////////////////////////////////////////
+
+void CmusikPrefsInterfaceTrans::LoadPrefs()
+{
+	if ( m_Prefs->IsTransEnabled() )
+		m_TransEnabled.SetCheck( TRUE );
+
+	if ( m_Prefs->IsTransAdaptive() )
+		m_TransAdaptive.SetCheck( TRUE );
+
+	m_TransFocused.SetWindowText( IntToCString( m_Prefs->GetTransFocus() ) );
+	m_TransUnfocused.SetWindowText( IntToCString( m_Prefs->GetTransUnFocus() ) );
+	m_TransFadeDuration.SetWindowText( FloatToCString( m_Prefs->GetTransDur() ) );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPrefsInterfaceTrans::CommitChanges()
+{
+	// toggles
+	m_Prefs->SetTransEnabled( (bool)m_TransEnabled.GetCheck() );
+	m_Prefs->SetTransAdaptive( (bool)m_TransAdaptive.GetCheck() );
+
+	CString temp;
+	int focus_per, unfocus_per;
+	float duration;
+
+	// focused
+	m_TransFocused.GetWindowText( temp );
+	focus_per = StringToInt( temp.GetBuffer() );
+
+	if ( focus_per > 255 )
+		focus_per = 255;
+	if ( focus_per < 0 )
+		focus_per = 0;
+	m_Prefs->SetTransFocus( focus_per );
+
+	// unfocused
+	m_TransUnfocused.GetWindowText( temp );
+	unfocus_per = StringToInt( temp.GetBuffer() );
+
+	if ( unfocus_per > 255 )
+		unfocus_per = 255;
+	if ( unfocus_per < 0 )
+		unfocus_per = 0;
+
+	m_Prefs->SetTransUnFocus( unfocus_per );
+
+	// duration
+	m_TransFadeDuration.GetWindowText( temp );
+	duration = StringToFloat( temp.GetBuffer() );
+
+	m_Prefs->SetTransDur( duration );
+
+	// reload
+	LoadPrefs();
+
+	SetModified( FALSE );
+	m_Modified = false;
+}
+
+///////////////////////////////////////////////////
+
+BOOL CmusikPrefsInterfaceTrans::OnInitDialog()
+{
+	CmusikPropertyPage::OnInitDialog();
+	LoadPrefs();
+	return TRUE;
+}
+
+///////////////////////////////////////////////////
+
+BOOL CmusikPrefsInterfaceTrans::OnCommand(WPARAM wParam, LPARAM lParam)
+{
+	SetModified( TRUE );
+	m_Modified = true;
+
+	return CmusikPropertyPage::OnCommand(wParam, lParam);
+}
+
+///////////////////////////////////////////////////

@@ -152,7 +152,10 @@ private:
 class CMainFrame : public CFrameWnd
 {
 
+	// the threads and certain drag and drop operations
+	// are allowed access to our private members.
 	friend void CmusikSourcesCtrl::DoDrag( CmusikPropTreeItem* pItem );
+	friend class CMainFrameFader;
 
 public:
 
