@@ -39,9 +39,8 @@ END_MESSAGE_MAP()
 
 void CMusikSelectionCtrl::OnSize(UINT nType, int cx, int cy)
 {
-	CMusikListCtrl::OnSize(nType, cx, cy);
-
 	SetColumnWidth( 0, cx );
+	CMusikListCtrl::OnSize(nType, cx, cy);
 }
 
 int CMusikSelectionCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -56,20 +55,38 @@ int CMusikSelectionCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	SetColumnWidth( 0, client_size.Width() );
 
-	UpdateV();
+	UpdateV( true );
 
 	return 0;
 }
 
-void CMusikSelectionCtrl::UpdateV()
+void CMusikSelectionCtrl::UpdateV( bool update_count )
 {
+	CStdString top;
+	if ( !update_count )
+		top = m_Items.at( 0 );
+
 	m_Library->GetAllDistinct( m_Type, m_Items );
+
+	if ( update_count )
+		top.Format( _T( "All %ss ( %d )" ), GetTypeStr(), m_Items.size() );
+
+	m_Items.insert( m_Items.begin(), top );
 	SetItemCountEx( m_Items.size(), LVSICF_NOINVALIDATEALL | LVSICF_NOSCROLL );
 }
 
-void CMusikSelectionCtrl::UpdateV( CStdString query )
+void CMusikSelectionCtrl::UpdateV( CStdString query, bool update_count )
 {
+	CStdString top;
+	if ( !update_count )
+		top = m_Items.at( 0 );
+
 	m_Library->GetRelatedItems( query, m_Type, m_Items );
+
+	if ( update_count )
+		top.Format( _T( "All %ss ( %d )" ), GetTypeStr(), m_Items.size() );
+
+	m_Items.insert( m_Items.begin(), top );
 	SetItemCountEx( m_Items.size(), LVSICF_NOINVALIDATEALL | LVSICF_NOSCROLL );
 
 	CRect rcClient;
@@ -122,6 +139,12 @@ CString CMusikSelectionCtrl::GetTypeDB()
 {
 	return m_Library->GetSongFieldDB( m_Type );
 }
+
+CString CMusikSelectionCtrl::GetTypeStr()
+{
+	return m_Library->GetSongField( m_Type );
+}
+
 
 void CMusikSelectionCtrl::GetSelItems( CStdStringArray& items, bool format_query )
 {

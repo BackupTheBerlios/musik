@@ -262,6 +262,9 @@
 				RelativePath=".\res\Musik.ico">
 			</File>
 			<File
+				RelativePath=".\res\Musik.manifest">
+			</File>
+			<File
 				RelativePath=".\Musik.rc">
 			</File>
 			<File
@@ -345,9 +348,6 @@
 				</File>
 			</Filter>
 		</Filter>
-		<File
-			RelativePath=".\res\Musik.manifest">
-		</File>
 	</Files>
 	<Globals>
 		<Global
