@@ -28,6 +28,7 @@
 #include "PropTree.h"
 #include "Resource.h"
 #include "PropTreeList.h"
+#include ".\proptreelist.h"
 
 ///////////////////////////////////////////////////
 
@@ -49,8 +50,11 @@ extern HINSTANCE ghInst;
 
 CPropTreeList::CPropTreeList() :
 	m_pProp(NULL),
-	m_BackBufferSize(0,0)
+	m_BackBufferSize(0,0),
+	m_bMouseTrack(false)
 {
+	m_HoverLast = NULL;
+	m_HoverCurrent = NULL;
 }
 
 ///////////////////////////////////////////////////
@@ -73,6 +77,7 @@ BEGIN_MESSAGE_MAP(CPropTreeList, CWnd)
 	ON_WM_KEYDOWN()
 	ON_WM_GETDLGCODE()
 	ON_WM_VSCROLL()
+	ON_MESSAGE(WM_MOUSELEAVE, OnMouseLeave)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -353,7 +358,59 @@ void CPropTreeList::OnLButtonDblClk(UINT, CPoint point)
 
 void CPropTreeList::OnMouseMove(UINT, CPoint point)
 {
-	// nothing needed at this point
+	if ( !m_bMouseTrack )
+	{
+		TRACKMOUSEEVENT tme;
+		tme.cbSize = sizeof(tme);
+		tme.dwFlags = TME_LEAVE;
+		tme.hwndTrack = m_hWnd;
+		tme.dwHoverTime = HOVER_DEFAULT;
+		::_TrackMouseEvent(&tme);
+
+		m_bMouseTrack = true; 	
+	}
+
+	if ( m_HoverCurrent != m_pProp->HitTestEx( point ) )
+	{
+		m_HoverCurrent = m_pProp->HitTestEx( point );
+		if ( m_HoverCurrent )
+		{
+			// mouse is over a new item
+			if ( m_HoverCurrent != m_HoverLast )
+			{
+				if ( m_HoverLast )
+					m_HoverLast->SetMouseOver( FALSE );
+
+				m_HoverCurrent->SetMouseOver( TRUE );
+				m_pProp->SetFocusedItem( m_HoverCurrent );
+			}		
+
+			m_HoverLast = m_HoverCurrent;
+		}
+	}
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CPropTreeList::OnMouseLeave(WPARAM wParam, LPARAM lParam)
+{
+	m_bMouseTrack = false;
+
+	if ( m_HoverCurrent )
+	{
+		m_HoverCurrent->SetMouseOver( FALSE );
+		m_HoverCurrent = NULL;
+	}
+
+	if ( m_HoverLast )
+	{
+		m_HoverLast->SetMouseOver( FALSE );
+		m_HoverLast = NULL;
+	}
+
+	m_pProp->SetFocusedItem( NULL );
+
+	return 0L;
 }
 
 ///////////////////////////////////////////////////

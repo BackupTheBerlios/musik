@@ -80,7 +80,6 @@ typedef struct _NMPROPTREE
 
 class CPropTree : public CWnd
 {
-
 public:
 	// construct / destruct
 	CPropTree();

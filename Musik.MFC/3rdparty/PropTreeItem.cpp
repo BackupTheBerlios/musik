@@ -89,6 +89,7 @@ CPropTreeItem::CPropTreeItem() :
 	m_dwState(0),
 	m_bActivated(FALSE),
 	m_bCommitOnce(FALSE),
+	m_bMouseOver(FALSE),
 	m_rcExpand(0,0,0,0),
 	m_pParent(NULL),
 	m_pSibling(NULL),
@@ -152,6 +153,20 @@ BOOL CPropTreeItem::IsSelected()
 BOOL CPropTreeItem::IsReadOnly()
 {
 	return (m_dwState & TreeItemReadOnly) ? TRUE : FALSE;
+}
+
+///////////////////////////////////////////////////
+
+BOOL CPropTreeItem::IsMouseOver()
+{
+	return m_bMouseOver;
+}
+
+///////////////////////////////////////////////////
+
+void CPropTreeItem::SetMouseOver( BOOL bMouseOver )
+{
+	m_bMouseOver = bMouseOver;
 }
 
 ///////////////////////////////////////////////////
@@ -476,6 +491,11 @@ LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 		if ( IsSelected() )
 		{
 			hOld = pDC->SelectObject( GetSysColorBrush(COLOR_ACTIVECAPTION) );
+			pDC->PatBlt( rc.left, drc.top, 8, drc.Height(), PATCOPY);
+		}
+		else if ( IsMouseOver() )
+		{
+			hOld = pDC->SelectObject( GetSysColorBrush(COLOR_INACTIVECAPTION) );
 			pDC->PatBlt( rc.left, drc.top, 8, drc.Height(), PATCOPY);
 		}
 		else

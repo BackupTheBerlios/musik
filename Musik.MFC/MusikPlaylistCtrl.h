@@ -21,7 +21,7 @@ class CMusikPlaylistCtrl : public CListCtrl
 public:
 
 	// construct and destruct
-	CMusikPlaylistCtrl( CMusikLibrary* library, CMusikPlayer* player, CMusikPrefs* prefs, CMusikPlaylist* playlist );
+	CMusikPlaylistCtrl( CFrameWnd* mainwnd, CMusikLibrary* library, CMusikPlayer* player, CMusikPrefs* prefs, CMusikPlaylist* playlist );
 	virtual ~CMusikPlaylistCtrl();
 
 	// update the virtual list control
@@ -35,6 +35,9 @@ public:
 	void SetPlaylist( CMusikPlaylist* playlist );
 
 protected:
+
+	// pointer to main window
+	CFrameWnd* m_MainWnd;
 
 	// core stuff
 	CMusikLibrary* m_Library;

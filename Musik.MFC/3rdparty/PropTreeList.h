@@ -28,6 +28,7 @@
 ///////////////////////////////////////////////////
 
 class CPropTree;
+class CPropTreeItem;
 
 ///////////////////////////////////////////////////
 
@@ -50,6 +51,14 @@ public:
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 
 protected:
+
+	// mouse tracking
+	bool m_bMouseTrack;
+
+	// nifty mouse hover
+	CPropTreeItem* m_HoverLast;
+	CPropTreeItem* m_HoverCurrent;
+
 	// CPropTree class that this class belongs
 	CPropTree*		m_pProp;
 
@@ -74,6 +83,7 @@ protected:
 	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg UINT OnGetDlgCode();
+	afx_msg LRESULT OnMouseLeave(WPARAM wParam, LPARAM lParam);
 
 	// macros
 	DECLARE_MESSAGE_MAP()

@@ -56,6 +56,7 @@ public:
 	void Select(BOOL bSelect = TRUE);
 	void Expand(BOOL bExpand = TRUE);
 	void ReadOnly(BOOL bReadOnly = TRUE);
+	void SetMouseOver( BOOL bMouseOver = TRUE );
 
 	// returns TRUE if the point is on the expand button
 	BOOL HitExpand(const POINT& pt);
@@ -63,6 +64,9 @@ public:
 	// returns TRUE if the item is on the root level. 
 	// root level items don't have attribute areas
 	BOOL IsRootLevel();
+
+	// returns TRUE if the mouse is over the item
+	BOOL IsMouseOver();
 
 	// returns the total height of the item and 
 	// all its children
@@ -182,6 +186,9 @@ private:
 
 	// TreeItem state
 	DWORD				m_dwState;
+
+	// TRUE if the mouse is over the item
+	BOOL				m_bMouseOver;
 
 	// TRUE if item is activated
 	BOOL				m_bActivated;

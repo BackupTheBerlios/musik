@@ -22,13 +22,16 @@ IMPLEMENT_DYNAMIC(CMusikPlaylistCtrl, CListCtrl)
 
 ///////////////////////////////////////////////////
 
-CMusikPlaylistCtrl::CMusikPlaylistCtrl( CMusikLibrary* library, CMusikPlayer* player, CMusikPrefs* prefs, CMusikPlaylist* playlist )
+CMusikPlaylistCtrl::CMusikPlaylistCtrl( CFrameWnd* mainwnd, CMusikLibrary* library, CMusikPlayer* player, CMusikPrefs* prefs, CMusikPlaylist* playlist )
 {
 	// core
 	m_Library	= library;
 	m_Prefs		= prefs;
 	m_Playlist	= playlist;
 	m_Player	= player;
+
+	// main window
+	m_MainWnd = mainwnd;
 
 	// misc
 	m_RatingWidth = -1;
@@ -569,8 +572,18 @@ void CMusikPlaylistCtrl::OnLvnBegindrag(NMHDR *pNMHDR, LRESULT *pResult)
     etc.cfFormat = m_ClipboardFormat;
     datasrc.CacheGlobalData ( m_ClipboardFormat, hgBool, &etc );
 
+	// post a message to the main frame, letting
+	// it know that drag and drop has started
+	int WM_DRAGSTART = RegisterWindowMessage( "DRAGSTART" );
+	m_MainWnd->SendMessage( WM_DRAGSTART, NULL );
+
     // Start the drag 'n' drop!
 	DROPEFFECT dwEffect = datasrc.DoDragDrop ( DROPEFFECT_COPY | DROPEFFECT_MOVE );
+
+	// post a message to the main frame, letting
+	// it know that drag and drop has completed
+	int WM_DRAGEND = RegisterWindowMessage( "DRAGEND" );
+	m_MainWnd->SendMessage( WM_DRAGEND, NULL );
 
     // If the DnD completed OK, we remove all of the dragged items from our
     // list.

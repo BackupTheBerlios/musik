@@ -62,6 +62,9 @@ int WM_SELBOXUPDATE = RegisterWindowMessage( "SELBOXUPDATE" );
 int WM_SONGCHANGE = RegisterWindowMessage( "SONGCHANGE" );
 int WM_SONGSTOP = RegisterWindowMessage( "SONGSTOP" );
 
+int WM_DRAGSTART = RegisterWindowMessage( "DRAGSTART" );
+int WM_DRAGEND = RegisterWindowMessage( "DRAGEND" );
+
 int WM_SOURCESLIBRARY = RegisterWindowMessage( "SOURCESLIBRARY" );
 int WM_SOURCESSTDPLAYLIST = RegisterWindowMessage( "SOURCESSTDPLAYLIST" );
 int WM_SOURCESDYNPLAYLIST = RegisterWindowMessage( "SOURCESDYNDPLAYLIST" );
@@ -79,6 +82,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_SOURCESLIBRARY, OnSourcesLibrary )
 	ON_REGISTERED_MESSAGE( WM_SOURCESSTDPLAYLIST, OnSourcesStdPlaylist )
 	ON_REGISTERED_MESSAGE( WM_SOURCESDYNPLAYLIST, OnSourcesDynPlaylist )
+	ON_REGISTERED_MESSAGE( WM_DRAGSTART, OnDragStart )
+	ON_REGISTERED_MESSAGE( WM_DRAGEND, OnDragEnd )
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -274,7 +279,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	SetIcon( m_hIcon16, false );
 
 	// create the background window, which is the playlist
-	m_wndView = new CMusikPlaylistView( m_Library, m_Player, m_Prefs, m_LibPlaylist );
+	m_wndView = new CMusikPlaylistView( this, m_Library, m_Player, m_Prefs, m_LibPlaylist );
 	m_wndView->Create( NULL, NULL, AFX_WS_DEFAULT_VIEW, CRect(0, 0, 0, 0), this, AFX_IDW_PANE_FIRST, NULL );
 	m_wndView->ModifyStyleEx( WS_EX_STATICEDGE, NULL );
 	m_wndView->ModifyStyle( WS_BORDER, 0 );
@@ -623,6 +628,24 @@ LRESULT CMainFrame::OnSourcesStdPlaylist( WPARAM wParam, LPARAM lParam )
 LRESULT CMainFrame::OnSourcesDynPlaylist( WPARAM wParam, LPARAM lParam )
 {
 	TRACE0( "A dynamic playlist was clicked\n" );
+
+	return 0L;
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CMainFrame::OnDragStart( WPARAM wParam, LPARAM lParam )
+{
+	TRACE0( "DND Started.\n" );
+
+	return 0L;
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CMainFrame::OnDragEnd( WPARAM wParam, LPARAM lParam )
+{
+	TRACE0( "DND Ended.\n" );
 
 	return 0L;
 }
