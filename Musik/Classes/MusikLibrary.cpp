@@ -1335,6 +1335,7 @@ bool CMusikLibrary::RetagFile( CMusikSong* song )
 		}
 
 	g_Library.UpdateItem( song->Filename, *NewSong, true );
+	
 	return true;
 }
 

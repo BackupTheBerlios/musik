@@ -290,7 +290,7 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	hsRename->Add ( stRename, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 2 );
 	hsRename->Add ( tcAutoRename, 1, wxEXPAND, 0 );
 	//--- tag options and sizer ---//
-	wxStaticText *stTag		= new wxStaticText	( this, -1, _("Get Tag:"), wxPoint( 0, 0 ), wxSize( 50, -1 ), wxALIGN_LEFT );
+	wxStaticText *stTag		= new wxStaticText	( this, -1, _("AutoTag:"), wxPoint( 0, 0 ), wxSize( 50, -1 ), wxALIGN_LEFT );
 	tcAutoTag				= new wxTextCtrl	( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ) );
 	wxBoxSizer *hsTag	= new wxBoxSizer		( wxHORIZONTAL );
 	hsTag->Add ( stTag, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 2 );
@@ -305,7 +305,7 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 		wxString( _("%4 - Genre\n")					) +
 		wxString( _("%5 - Year\n")						) +
 		wxString( _("%6 - Track Number\n\n")			) +
-		wxString( _("Musik will not delete empty directories!" ) );
+		wxString( _("Musik will not delete empty directories!\nPaths are not currently parsed by auto tag." ) );
 	wxStaticText *stInfo = new wxStaticText( this, -1, sInfo, wxPoint( 0, 0 ), wxSize( -1, -1), wxALIGN_LEFT );
 
 	//---------------------------------//
