@@ -618,8 +618,10 @@ void MusikFrame::SetSongInfoText(const CMusikSong& song)
 	if(	m_pTaskBarIcon )
 	{
 		m_pTaskBarIcon->SetIcon(wxIcon(tray_xpm), sTitle + wxT("\n") + sInfo );
+#ifdef __WXMSW__
 		if(wxGetApp().Prefs.bEnableBallonSongInfo)
 			m_pTaskBarIcon->ShowBalloonInfo(sTitle,sInfo);
+#endif
 	}
 #endif
 }

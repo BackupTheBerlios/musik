@@ -11,6 +11,8 @@
 #ifdef _MSC_VER
 #define strncasecmp strnicmp
 #define strcasecmp	stricmp 
+#else
+#include <strings.h>
 #endif
 
 #ifndef _MAX_PATH
