@@ -19,6 +19,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/D ID3LIB_LINKOPTION=1"
 				Optimization="0"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;ACE_AS_STATIC_LIBS"
 				MinimalRebuild="TRUE"
@@ -163,12 +164,16 @@
 			<File
 				RelativePath=".\include\MusikOggInfo.h">
 			</File>
-			<File
-				RelativePath=".\src\vcedit.c">
-			</File>
-			<File
-				RelativePath=".\include\vcedit.h">
-			</File>
+			<Filter
+				Name="Helpers"
+				Filter="">
+				<File
+					RelativePath=".\src\vcedit.c">
+				</File>
+				<File
+					RelativePath=".\include\vcedit.h">
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="MusikFilename"
@@ -179,6 +184,20 @@
 			<File
 				RelativePath=".\include\MusikFilename.h">
 			</File>
+		</Filter>
+		<Filter
+			Name="MusikMP3Info"
+			Filter="">
+			<File
+				RelativePath=".\src\MusikMp3Info.cpp">
+			</File>
+			<File
+				RelativePath=".\include\MusikMP3Info.h">
+			</File>
+			<Filter
+				Name="Helpers"
+				Filter="">
+			</Filter>
 		</Filter>
 		<File
 			RelativePath=".\include\MusikArrays.h">

@@ -1,0 +1,32 @@
+///////////////////////////////////////////////////
+
+#ifndef C_MUSIK_MP3_INFO_H
+#define C_MUSIK_MP3_INFO_H
+
+///////////////////////////////////////////////////
+
+#include "MusikPlaylist.h"
+
+///////////////////////////////////////////////////
+
+class CMusikMp3Info
+{
+public:
+
+	CMusikMp3Info();
+	~CMusikMp3Info();
+
+	bool LoadInfo( const CStdString& fn );
+	CStdString GetField( int field );
+
+private:
+
+	CStdString GetGenre( CStdString genre );
+	CMusikSongInfo m_Info;
+};
+
+///////////////////////////////////////////////////
+
+#endif
+
+///////////////////////////////////////////////////
