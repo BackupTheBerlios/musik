@@ -45,6 +45,7 @@ IMPLEMENT_DYNAMIC(CSizingControlBarG, baseCSizingControlBarG);
 CSizingControlBarG::CSizingControlBarG()
 {
 	ShowGripper( true );
+	ShowBorder( true );
 }
 
 CSizingControlBarG::~CSizingControlBarG()
@@ -116,6 +117,11 @@ void CSizingControlBarG::ShowGripper( bool show )
 		m_cyGripper = 12;
 	else
 		m_cyGripper = NULL;
+}
+
+void CSizingControlBarG::ShowBorder( bool show )
+{
+	m_ShowBorder = show;
 }
 
 void CSizingControlBarG::NcPaintGripper(CDC* pDC, CRect rcClient)

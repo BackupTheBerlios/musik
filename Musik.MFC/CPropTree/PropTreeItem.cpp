@@ -38,10 +38,11 @@
 //
 
 // draw a dotted horizontal line
-static void HLine(HDC hdc, LONG x, LONG y, LONG w)
+static void HLine(HDC hdc, LONG x, LONG y, LONG w, COLORREF color)
 {
 	for (; w>0; w--, x++)
-		SetPixel(hdc, x, y, GetSysColor(COLOR_BTNSHADOW));
+		SetPixel(hdc, x, y, color);
+	
 }
 
 
@@ -378,17 +379,23 @@ LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 	// draws the label the whole size
 	drc.SetRect(pt.x + PROPTREEITEM_EXPANDCOLUMN, pt.y, rc.right, pt.y + nTotal);
 
-	// root level items have a darker background
+	// root level items have a dark, color'd background
 	if (IsRootLevel())
 	{
-		HGDIOBJ hOld = pDC->SelectObject(GetSysColorBrush(COLOR_BTNFACE));
+		HGDIOBJ hOld = pDC->SelectObject(GetSysColorBrush(COLOR_ACTIVECAPTION));
 		pDC->PatBlt(rc.left, drc.top, rc.right - rc.left + 1, drc.Height(), PATCOPY);
 		pDC->SelectObject(hOld);
 	}
+
+	// children have a light colored with a border
 	else
 	{
 		HGDIOBJ hOld = pDC->SelectObject( GetSysColorBrush(COLOR_BTNHILIGHT) );
 		pDC->PatBlt(rc.left + 14, drc.top, rc.right - rc.left + 1, drc.Height(), PATCOPY);
+		
+		hOld = pDC->SelectObject( GetSysColorBrush(COLOR_BTNFACE) );
+		pDC->PatBlt( 0, drc.top, 14, drc.Height(), PATCOPY);
+
 		pDC->SelectObject(hOld);
 	}
 
@@ -402,7 +409,7 @@ LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 
 		ir = m_rcExpand;
 		ir.OffsetRect(0, -m_pProp->GetOrigin().y);
-		_DrawExpand(pDC->m_hDC, ir.left, ir.top, IsExpanded(), !IsRootLevel());
+		_DrawExpand( pDC->m_hDC, ir.left, ir.top, IsExpanded(), true );
 	}
 	else
 		m_rcExpand.SetRectEmpty();
@@ -417,11 +424,17 @@ LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 	if (!m_sLabel.IsEmpty())
 	{
 		if (IsRootLevel())
+		{
 			pDC->SelectObject(CPropTree::GetBoldFont());
+			pDC->SetTextColor(GetSysColor(COLOR_BTNHILIGHT));
+		}
 		else
+		{
 			pDC->SelectObject(CPropTree::GetNormalFont());
+			pDC->SetTextColor(GetSysColor(COLOR_BTNTEXT));
+		}
 
-		pDC->SetTextColor(GetSysColor(COLOR_BTNTEXT));
+		
 		pDC->SetBkMode(TRANSPARENT);
 		pDC->DrawText(m_sLabel, &ir, DT_SINGLELINE|DT_VCENTER|DT_CALCRECT);
 
@@ -458,8 +471,10 @@ LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 	}
 
 	// draw horzontal sep
-	
-	HLine(pDC->m_hDC, PROPTREEITEM_EXPANDCOLUMN, pt.y + nTotal - 1, rc.right - PROPTREEITEM_EXPANDCOLUMN + 1);
+	if ( IsRootLevel() )
+		HLine( pDC->m_hDC, 0, pt.y + nTotal - 1, rc.right, GetSysColor(COLOR_BTNFACE) );
+	else
+		HLine( pDC->m_hDC, PROPTREEITEM_EXPANDCOLUMN, pt.y + nTotal - 1, rc.right - PROPTREEITEM_EXPANDCOLUMN + 1, GetSysColor(COLOR_BTNFACE) );
 
 	// draw children
 	if (GetChild() && IsExpanded())

@@ -510,6 +510,7 @@ void CSizingControlBar::NcCalcClient(LPRECT pRc, UINT nDockBarID)
 
 void CSizingControlBar::OnNcPaint()
 {
+
     // get window DC that is clipped to the non-client area
     CWindowDC dc(this);
 
@@ -527,29 +528,17 @@ void CSizingControlBar::OnNcPaint()
     bm.CreateCompatibleBitmap(&dc, rcBar.Width(), rcBar.Height());
     CBitmap* pOldBm = mdc.SelectObject(&bm);
 
-    // draw borders in non-client area
-    CRect rcDraw = rcBar;
-    DrawBorders(&mdc, rcDraw);
-
     // erase the NC background
-    mdc.FillRect(rcDraw, CBrush::FromHandle(
+    mdc.FillRect(rcBar, CBrush::FromHandle(
         (HBRUSH) GetClassLong(m_hWnd, GCL_HBRBACKGROUND)));
-
-    if (m_dwSCBStyle & SCBS_SHOWEDGES)
-    {
-        CRect rcEdge; // paint the sizing edges
-        for (int i = 0; i < 4; i++)
-            if (GetEdgeRect(rcBar, GetEdgeHTCode(i), rcEdge))
-                mdc.Draw3dRect(rcEdge, ::GetSysColor(COLOR_BTNHIGHLIGHT),
-                    ::GetSysColor(COLOR_BTNSHADOW));
-    }
 
     NcPaintGripper(&mdc, rcClient);
 
-    // client area is not our bussiness :)
+	// exclude the client area and let it redraw itself without
+	// our help
     dc.IntersectClipRect(rcBar);
     dc.ExcludeClipRect(rcClient);
-
+	
     dc.BitBlt(0, 0, rcBar.Width(), rcBar.Height(), &mdc, 0, 0, SRCCOPY);
 
     ReleaseDC(&dc);
@@ -557,6 +546,7 @@ void CSizingControlBar::OnNcPaint()
     mdc.SelectObject(pOldBm);
     bm.DeleteObject();
     mdc.DeleteDC();
+
 }
 
 void CSizingControlBar::NcPaintGripper(CDC* pDC, CRect rcClient)

@@ -88,6 +88,8 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndNowPlaying.SetBarStyle( m_wndNowPlaying.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC );
 	m_wndNowPlaying.EnableDocking( CBRS_ALIGN_BOTTOM );
 	DockControlBar( &m_wndNowPlaying, AFX_IDW_DOCKBAR_BOTTOM );
+	m_wndNowPlaying.ShowGripper( false );
+	m_wndNowPlaying.ShowBorder( false );
 
 	//-------------------------------------------------//
 	//--- selection controls						---//
@@ -102,6 +104,8 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 			DockControlBar( m_wndSelectionBars[i] );
 		else
 			DockBarLeftOf( m_wndSelectionBars[i], m_wndSelectionBars[i-1] );
+		m_wndSelectionBars[i]->ShowGripper( false );
+		m_wndSelectionBars[i]->ShowBorder( false );
 	}
 
 	//-------------------------------------------------//
@@ -111,6 +115,8 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndSourcesBar.EnableDocking( CBRS_ALIGN_LEFT | CBRS_ALIGN_RIGHT );
     m_wndSourcesBar.SetBarStyle( m_wndSourcesBar.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC );
 	DockControlBar( &m_wndSourcesBar, AFX_IDW_DOCKBAR_LEFT );
+	m_wndSourcesBar.ShowGripper( false );
+	m_wndSourcesBar.ShowBorder( false );
 
 	return 0;
 }

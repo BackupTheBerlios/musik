@@ -71,6 +71,7 @@ public:
 public:
     virtual BOOL HasGripper() const;
 	void ShowGripper( bool show = true );
+	void ShowBorder( bool show = true );
 
 // Operations
 public:
@@ -96,6 +97,7 @@ protected:
 protected:
     int     m_cyGripper;
 	bool	m_ShowGripper;
+	bool	m_ShowBorder;
 
     CSCBButton m_biHide;
 
