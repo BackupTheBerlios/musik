@@ -4,6 +4,17 @@
 #include "wx/wxprec.h"
 #include "wx/listctrl.h"
 
+class CMusikEditInPlaceCtrl : public wxTextCtrl
+{
+public:
+	CMusikEditInPlaceCtrl( wxWindow *parent, wxWindowID id );
+	~CMusikEditInPlaceCtrl();
+
+	void OnChar( wxKeyEvent& event );
+
+	DECLARE_EVENT_TABLE()
+};
+
 class CMusikListCtrl : public wxListCtrl
 {
 public:
@@ -30,10 +41,13 @@ public:
 	virtual void Reset				( bool rescale = true, bool refresh = false ){};
 	virtual void Update				( bool refresh = false ){};
 
+	virtual void StartEditInPlace();
+	virtual wxString EndEditInPlace();
+
 	DECLARE_EVENT_TABLE();
 
 private:
-
+	CMusikEditInPlaceCtrl* m_EditInPlace;
 	wxWindow* m_Parent;
 };
 
