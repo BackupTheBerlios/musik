@@ -85,8 +85,8 @@ bool CMusikOggInfo::LoadInfo( const CStdString& fn )
 		m_Info.SetBitrate( temp );
 
 		// duration
-		int duration = (int)( ov_time_total ( &vorbisfile, -1 ) );
-		temp.Format( "%d",  duration * 1000.0 );
+		float duration = ov_time_total ( &vorbisfile, -1 );
+		temp.Format( "%d",  (int)( duration * 1000.0f ) );
 		m_Info.SetDuration( temp );
 
 		// cleanup, ov_clear closes audio file
