@@ -823,6 +823,9 @@ void CPlaylistCtrl::RescaleColumns()
 			if ( g_Prefs.nPlaylistColumnDynamic[nCurrItem] == 1 )
 				nTotalPercent += g_Prefs.nPlaylistColumnSize[nCurrItem];
 		}
+
+		if ( nTotalPercent == 0 )
+			nTotalPercent = 1;
 	}
 
 	//-------------------------------------------------//
