@@ -41,9 +41,11 @@ END_MESSAGE_MAP()
 CMusikPlaylistView::CMusikPlaylistView( CFrameWnd* mainwnd, CMusikLibrary* library, CMusikPlayer* player, CMusikPrefs* prefs )
 {
 	m_Playlist = new CMusikPlaylistCtrl( mainwnd, library, player, prefs );
+
 	m_Library = library;
 	m_Player = player;
 	m_Parent = mainwnd;
+	m_Prefs = prefs;
 
 	// batch add thread
 	m_BatchAddThr = NULL;
@@ -108,7 +110,7 @@ void CMusikPlaylistView::OnNcPaint()
 	CMemDC pDC( &dc );
 
     // erase the NC background
-	pDC.FillSolidRect( rcWindow, GetSysColor( COLOR_BTNFACE ) );
+	pDC.FillSolidRect( rcWindow, m_Prefs->MUSIK_COLOR_BTNFACE );
 
 	// draw a simple border
 	CRect rcBorder = rcWindow;
@@ -116,14 +118,14 @@ void CMusikPlaylistView::OnNcPaint()
 	rcBorder.top += 3;
 	rcBorder.right -= 3;
 	rcBorder.bottom -= 5;
-	pDC.Draw3dRect( rcBorder, GetSysColor( COLOR_BTNSHADOW ), GetSysColor( COLOR_BTNHILIGHT ) );
+	pDC.Draw3dRect( rcBorder, m_Prefs->MUSIK_COLOR_BTNSHADOW, m_Prefs->MUSIK_COLOR_BTNHILIGHT );
 
 	CRect rcBottom;
 	rcBottom.left = 0;
 	rcBottom.right = rcClient.Width();
 	rcBottom.top = rcClient.Height() - 2;
 	rcBottom.bottom = rcClient.Height();
-	pDC.Draw3dRect( rcBottom, GetSysColor( COLOR_BTNSHADOW ), GetSysColor( COLOR_BTNHILIGHT ) );
+	pDC.Draw3dRect( rcBottom, m_Prefs->MUSIK_COLOR_BTNSHADOW, m_Prefs->MUSIK_COLOR_BTNHILIGHT );
 
     // client area is not our bussiness
 	GetWindowRect( rcWindow );

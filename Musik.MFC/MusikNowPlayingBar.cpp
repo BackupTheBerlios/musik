@@ -19,6 +19,7 @@ static char THIS_FILE[] = __FILE__;
 ///////////////////////////////////////////////////
 
 CMusikNowPlayingBar::CMusikNowPlayingBar( CMusikPlayer* player, CMusikPrefs* prefs )
+	: CMusikDockBar( prefs )
 {
 	m_wndChild = new CMusikNowPlayingCtrl( player, prefs );
 }

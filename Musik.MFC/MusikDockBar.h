@@ -24,6 +24,10 @@ public:
     CMusikDockBar( CMusikPrefs* prefs = NULL, CMenu* menu = NULL  );
 	~CMusikDockBar();
 
+	// override default create method
+    virtual BOOL Create( LPCTSTR lpszWindowName, CWnd* pParentWnd,
+        UINT nID, DWORD dwStyle = WS_CHILD | WS_VISIBLE | CBRS_TOP );
+
 	// show / hide gripper
     virtual BOOL HasGripper() const;
 	void ShowGripper( bool show = true );

@@ -40,13 +40,13 @@ protected:
 	// so we can use it in file dropped operations
 	CMusikLibrary* m_Library;
 	CMusikPlayer* m_Player;
+	CMusikPrefs* m_Prefs;
 
 	// pointer to main window so we can
 	// messages to it, such as updating the UI
 	// after files have been dropped
 	CWnd* m_Parent;
 	
-
 	// mfc message maps
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);

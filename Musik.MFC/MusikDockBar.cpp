@@ -22,6 +22,8 @@ END_MESSAGE_MAP()
 
 CMusikDockBar::CMusikDockBar( CMusikPrefs* prefs, CMenu* menu )
 {
+	m_bActive = false;
+
 	m_Prefs = prefs;
 	m_Menu = menu;
 
@@ -92,6 +94,41 @@ void CMusikDockBar::NcCalcClient( LPRECT pRc, UINT nDockBarID )
 
 ///////////////////////////////////////////////////
 
+BOOL CMusikDockBar::Create(LPCTSTR lpszWindowName, CWnd* pParentWnd, UINT nID, DWORD dwStyle)
+{
+    // must have a parent
+    ASSERT_VALID(pParentWnd);
+
+    // cannot be both fixed and dynamic
+    // (CBRS_SIZE_DYNAMIC is used for resizng when floating)
+    ASSERT ( !( ( dwStyle & CBRS_SIZE_FIXED ) &&
+              ( dwStyle & CBRS_SIZE_DYNAMIC ) ) );
+
+	// save the control bar styles
+    m_dwStyle = dwStyle & CBRS_ALL; 
+
+    // register and create the window - skip CControlBar::Create()
+	HBRUSH back = CreateSolidBrush( (COLORREF)m_Prefs->MUSIK_COLOR_BTNFACE );
+    CString wndclass = ::AfxRegisterWndClass( CS_DBLCLKS,
+        ::LoadCursor( NULL, IDC_ARROW ), 
+		back, 0 );
+
+
+
+	// keep only the generic window styles, as 
+	// well as WS_CLIPCHILDREN to prevent flashing
+    dwStyle &= ~CBRS_ALL;
+    dwStyle |= WS_CLIPCHILDREN;
+
+	// create it
+    if ( !CWnd::Create( wndclass, lpszWindowName, dwStyle, CRect( 0, 0, 0, 0 ), pParentWnd, nID ) )
+        return FALSE;
+
+    return TRUE;
+}
+
+///////////////////////////////////////////////////
+
 void CMusikDockBar::NcPaintGripper( CDC* pDC, CRect rcClient )
 {
 	if ( !HasGripper() || !m_ShowGripper )
@@ -102,6 +139,7 @@ void CMusikDockBar::NcPaintGripper( CDC* pDC, CRect rcClient )
     CRect rcBtn = m_biOptions->GetRect();
 
 	// gripper at top
+	rcGrip.left += 1;
     rcGrip.top -= m_cyGripper + 1;
     rcGrip.bottom = rcGrip.top + 11;
     rcGrip.right = rcBtn.left - 3;
@@ -112,21 +150,23 @@ void CMusikDockBar::NcPaintGripper( CDC* pDC, CRect rcClient )
     pDC->FillSolidRect( &rcGrip, clrCptn );
 
     // select a font for the caption text
-	// (8.5 points at 96 ppi)
+	// (7.5 points at 96 ppi)
     CFont font;
     int ppi = pDC->GetDeviceCaps( LOGPIXELSX );
-    int pointsize = MulDiv( 85, 96, ppi );
+    int pointsize = MulDiv( 75, 96, ppi );
     BOOL bFont = font.CreatePointFont( pointsize, m_sFontFace );
 
 	// draw it
-    if (bFont)
+    if ( bFont )
     {
         // get the text color
-        COLORREF clrCptnText = m_bActive ?
-            m_Prefs->MUSIK_COLOR_CAPTIONTEXT:
-            m_Prefs->MUSIK_COLOR_INACTIVECAPTIONTEXT;
+		COLORREF clrCptnText;
+		if ( m_bActive )
+			clrCptnText = m_Prefs->MUSIK_COLOR_CAPTIONTEXT;
+		else
+			clrCptnText = m_Prefs->MUSIK_COLOR_INACTIVECAPTIONTEXT;
 
-        int nOldBkMode = pDC->SetBkMode( TRANSPARENT );
+		int nOldBkMode = pDC->SetBkMode( TRANSPARENT );
         COLORREF clrOldText = pDC->SetTextColor( clrCptnText );
 
         CFont* pOldFont = pDC->SelectObject( &font );
@@ -185,7 +225,9 @@ void CMusikDockBar::OnUpdateCmdUI( CFrameWnd* pTarget, BOOL bDisableIfNoHndler )
     if ( !HasGripper() )
         return;
 
-    BOOL bNeedPaint = FALSE;
+	BOOL active_change = m_bActive;
+	CWnd* pFocus = GetFocus();
+	m_bActive = ( pFocus->GetSafeHwnd() && IsChild( pFocus ) );
 
     CPoint pt;
     ::GetCursorPos(&pt);
@@ -207,10 +249,14 @@ void CMusikDockBar::OnUpdateCmdUI( CFrameWnd* pTarget, BOOL bDisableIfNoHndler )
     m_biOptions->bRaised	= bOptionsHit && !bLButtonDown;
 
 	// do we need to paint?
+	BOOL bNeedPaint;
     bNeedPaint |= (m_biHide->bPushed ^ bWasHidePushed) ||
                   (m_biHide->bRaised ^ bWasHideRaised) ||
 				  (m_biOptions->bPushed ^ bWasOptionsPushed) ||
 				  (m_biOptions->bRaised ^ bWasOptionsRaised) ;
+
+	if ( m_bActive != active_change )
+		bNeedPaint = true;
 
     if ( bNeedPaint )
         SendMessage( WM_NCPAINT );
