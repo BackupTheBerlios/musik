@@ -1,4 +1,5 @@
 0.2.1 to 0.2.2
+ - bug: should compile on linux with wxGTK 2.4.2 again
  - fixed bug: if you want to rename a playlist but then click somewhere else, the name was set to empty (gunnar)
  + random play now skips songs which are not available ( because they are on a network drive or cdrom or deleted etc.) (gunnar) 
  - fixed bug with en/disabling selections when libray is not selected (gunnar) 

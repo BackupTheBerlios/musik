@@ -205,7 +205,7 @@ void CMusikLibrary::remprefixFunc(sqlite_func *context, int argc, const char **a
 	for(i=0; i<sizeof(pPrefixArray)/sizeof(pPrefixArray[0]); i++)
 	{
 		int prefixlen = strlen(pPrefixArray[i]);
-		if(strnicmp(pPrefixArray[i],argv[0],prefixlen) == 0)
+		if(strncasecmp(pPrefixArray[i],argv[0],prefixlen) == 0)
 		{
 			if(argvlen >= prefixlen)
 			{

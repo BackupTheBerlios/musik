@@ -32,7 +32,7 @@
 CPlaylistBox::CPlaylistBox( wxWindow *parent )
 	: wxPanel( parent, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ),  wxCLIP_CHILDREN|wxSUNKEN_BORDER )
 {
-	SetBackgroundColour( wxTheColourDatabase->Find(wxT("LIGHT STEEL BLUE")));
+	SetBackgroundColour( *wxTheColourDatabase->FindColour(wxT("LIGHT STEEL BLUE")));
 
 	//--- CSourcesListBox ---//
 	m_pPlaylistCtrl	= new CPlaylistCtrl( this, MUSIK_PLAYLIST, wxPoint( -1, -1 ), wxSize( -1, -1 ) );

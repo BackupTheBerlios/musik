@@ -341,6 +341,8 @@ extern wxFont g_fntBold;
 extern wxFont g_fntListBold;
 extern wxFont g_fntInfo;
 
-
+#ifdef _MSC_VER
+#define strncasecmp strnicmp
+#endif
 
 #endif

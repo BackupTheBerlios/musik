@@ -368,7 +368,7 @@ void CSourcesListBox::UpdateSel( size_t index )
 	if(	bInFunction )
 		return;
 	bInFunction = true;
-	if(index == -2)
+	if(index == (size_t)-2)
 	{	// protect playlists from being accidently changed
 		wxListCtrlSelNone( this );
         m_CurSel = FindInSources(wxT( "Musik Library" ),MUSIK_SOURCES_LIBRARY);
@@ -465,7 +465,11 @@ void CSourcesListBox::BeginEditLabel( wxListEvent& pEvent )
 
 void CSourcesListBox::EndEditLabel( wxListEvent& pEvent )
 {
+#if wxMINOR_VERSION > 4
 	if(pEvent.IsEditCancelled())
+#else
+	if(pEvent.Cancelled())
+#endif
 		return;
 	int nType = GetType( m_SourcesEditIndex );
 

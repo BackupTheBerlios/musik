@@ -27,7 +27,7 @@ CPlaylistInfoCtrl::CPlaylistInfoCtrl( wxWindow *parent ,IPlaylistInfo *pIPlaylis
 {
 
 //	SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_3DFACE ) );
-	SetBackgroundColour( wxTheColourDatabase->Find(wxT("LIGHT STEEL BLUE")));
+	SetBackgroundColour( *wxTheColourDatabase->FindColour(wxT("LIGHT STEEL BLUE")));
 
  	//--- static text objects ---/
 	stTotal			= new wxStaticText( this, -1, _( "Total Songs: " ),			wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );

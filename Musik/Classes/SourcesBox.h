@@ -160,7 +160,7 @@ public:
 	void RescanPlaylistDir		( ) { pListBox->RescanPlaylistDir();	}
 	void Update					( ) { pListBox->Update();				}
 	void UpdateCurrent			( ) { pListBox->UpdateSel(pListBox->GetIndex()); }
-	void SelectLibrary			( ) { pListBox->UpdateSel(-2); }
+	void SelectLibrary			( ) { pListBox->UpdateSel((size_t) -2); }
 	void OnSashDragged	(wxSashEvent & ev);
 
 	wxString PromptDynamicPlaylist( wxString sQuery )	{ return pListBox->PromptDynamicPlaylist( sQuery ); }
