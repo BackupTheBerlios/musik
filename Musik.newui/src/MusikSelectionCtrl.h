@@ -4,6 +4,31 @@
 #include "wx/wxprec.h"
 #include "MusikListCtrl.h"
 
+enum E_MUSIK_SELECTION_TYPE
+{
+	MUSIK_SELECTION_ARTISTS = 0,
+	MUSIK_SELECTION_ALBUMS,
+	MUSIK_SELECTION_GENRES,
+	MUSIK_SELECTION_YEARS,
+	NSELECTIONCOUNT
+};
+
+const wxString E_MUSIK_SELECTION_COLUMN_LABELS[NSELECTIONCOUNT] = 
+{
+	wxT( "Artists" ),
+	wxT( "Albums" ),
+	wxT( "Genres" ),
+	wxT( "Years" )
+};
+
+const wxString E_MUSIK_SELECTION_DB_NAMES[NSELECTIONCOUNT] =
+{
+	wxT( "artists" ),
+	wxT( "albums" ),
+	wxT( "genres" ),
+	wxT( "years" )
+};
+
 class CMusikSelectionCtrl : public CMusikListCtrl
 {
 public:

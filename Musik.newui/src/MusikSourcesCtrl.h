@@ -4,6 +4,17 @@
 #include "wx/wxprec.h"
 #include "MusikListCtrl.h"
 
+enum E_MUSIK_SOURCES_TYPE
+{
+	MUSIK_SOURCES_LIBRARY = 0,
+    MUSIK_SOURCES_PLAYLIST_STANDARD,
+	MUSIK_SOURCES_PLAYLIST_DYNAMIC,
+	MUSIK_SOURCES_CDROM_DRIVE,
+	MUSIK_SOURCES_ALARM,
+	MUSIK_SOURCES_NOW_PLAYING,
+	MUSIK_SOURCES_NONE
+};
+
 class CMusikSourcesCtrl : public CMusikListCtrl
 {
 public:
