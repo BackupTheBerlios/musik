@@ -196,6 +196,9 @@ public:
 	void SetSafeShutdown(){ m_ShutDown = true; }
 	CmusikPlaylist* GetPlaylist(){ return m_Playlist; }
 
+	// getting the current channel
+	int GetCurrChannel();
+
 private:
 
 	// index of the current song
@@ -239,7 +242,6 @@ private:
 	int m_MaxChannels;
 	int m_CurrChannel;
 	void PushNewChannel();
-	int GetCurrChannel();
 
 	// a pointer to the currently playing stream
 	FSOUND_STREAM* GetCurrStream();

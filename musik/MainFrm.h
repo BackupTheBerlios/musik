@@ -112,8 +112,6 @@ protected:
 	void InitDragTypes();
 	void Cleanmusik();
 
-	void ResetPlaylist();
-
 	// resetting controls
 	void LoadDlgSize();
 
@@ -128,9 +126,8 @@ protected:
 
 	// current playlist, only a pointer
 	CmusikPlaylist* m_LibPlaylist;
-	CmusikPlaylist* m_StdPlaylist;
-	CmusikPlaylist* m_DynPlaylist;
 	CmusikPlaylist* m_NowPlaylist;
+	CmusikPlaylist* m_StdPlaylist;
 
 	// library, player, and prefs
 	CmusikLibrary* m_Library;

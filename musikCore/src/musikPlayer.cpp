@@ -82,6 +82,11 @@ static void musikPlayerWorker( CmusikPlayer* player )
 					bool started = false;
 					while ( !started )
 					{
+						// when its time for the next song
+						// to fade in, send the player the signal
+						// and exit the tighter loop. go along our
+						// mary way until the it sends the begin 
+						// crossfade flag back.
 						if ( player->GetTimeRemain( MUSIK_TIME_MS ) <= 10 )
 						{
 							player->Next();
@@ -94,7 +99,7 @@ static void musikPlayerWorker( CmusikPlayer* player )
 			}
 
 			// we have a crossfader, see if it should
-			// be queued up... we'll need to enter a tighter
+			// be queued up... we'll again need to enter a tighter
 			// loop to be more accurate, so if its around 2
 			// seconds until the fade, start the tighter loop
 			else if ( player->GetTimeRemain( MUSIK_TIME_MS ) <= ( player->GetCrossfader()->GetDuration( player->GetFadeType() ) * 1000 ) )
@@ -242,10 +247,13 @@ void* F_CALLBACKAPI CmusikPlayer::musikEQCallback( void* originalbuffer, void *n
 	// the param value is really the address
 	// to the CmusikEqualizer that is gonna
 	// be used to process the sample
-	CmusikEqualizer* ptrEQ = (CmusikEqualizer*)param;
+	if ( param )
+	{	
+		CmusikEqualizer* ptrEQ = (CmusikEqualizer*)param;
 
-	// two channel ( stereo ), 16 bit sound
-	ptrEQ->ProcessDSP( newbuffer, length, 2, 16 );
+		// two channel ( stereo ), 16 bit sound
+		ptrEQ->ProcessDSP( newbuffer, length, 2, 16 );
+	}
 	return newbuffer;
 }
 
@@ -256,7 +264,7 @@ CmusikPlayer::CmusikPlayer( CmusikFunctor* functor, CmusikLibrary* library )
 	m_Functor			= functor;
 	m_Library			= library;
 
-	m_Playlist			= NULL;
+	m_Playlist			= new CmusikPlaylist();
 
 	m_IsPlaying			= false;
 	m_IsPaused			= false;
@@ -353,6 +361,7 @@ void CmusikPlayer::CleanCrossfader()
 void CmusikPlayer::InitEqualizer()
 {
 	CleanEqualizer();
+
 	m_EQ = new CmusikEqualizer( m_Library );
 }
 
@@ -809,7 +818,7 @@ int CmusikPlayer::GetTimeRemain( int mode )
 
 void CmusikPlayer::FinishCrossfade()
 {
-	if ( IsEqualizerActive() && m_FadeType != MUSIK_CROSSFADER_EXIT )
+	if ( IsEqualizerActive() && m_FadeType != MUSIK_CROSSFADER_EXIT && m_EQ )
 		m_EQ->GetSongEq( m_Playlist->GetSongID( m_Index ) );
 	
 	SetVolume( m_Volume, true );

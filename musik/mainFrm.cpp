@@ -180,7 +180,6 @@ void CMainFrame::Initmusik()
 	m_NewSong		= new CmusikFrameFunctor( this );
 	m_LibPlaylist	= NULL;	
 	m_StdPlaylist	= NULL;
-	m_DynPlaylist	= NULL;
 	m_NowPlaylist	= NULL;
 	m_BatchAddThr	= NULL;
 	m_BatchAddFnct	= NULL;
@@ -242,8 +241,6 @@ void CMainFrame::Cleanmusik()
 		delete m_LibPlaylist;
 		m_LibPlaylist = NULL;
 	}
-
-	ResetPlaylist();
 }
 
 ///////////////////////////////////////////////////
@@ -681,34 +678,15 @@ LRESULT CMainFrame::OnSongStop( WPARAM wParam, LPARAM lParam )
 
 ///////////////////////////////////////////////////
 
-void CMainFrame::ResetPlaylist()
-{
-	// if the last playlist was not from the
-	// library (sel boxes) or now playing, then
-	// delete it becuase its no longer needed...
-	if ( m_StdPlaylist )
-	{
-		delete m_StdPlaylist;
-		m_StdPlaylist = NULL;
-	}
-
-	if ( m_DynPlaylist )
-	{
-		delete m_DynPlaylist;
-		m_DynPlaylist = NULL;
-	}
-}
-
-///////////////////////////////////////////////////
-
 LRESULT CMainFrame::OnSourcesLibrary( WPARAM wParam, LPARAM lParam )
 {
 	TRACE0( "A musik Library was clicked\n" );
 
-	ResetPlaylist();
-
 	if ( !m_LibPlaylist )
+	{
 		m_LibPlaylist = new CmusikPlaylist();
+		TRACE0( "You should only see this once.\n" );
+	}
 
 	m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, MUSIK_SOURCES_TYPE_LIBRARY );
 	m_wndView->GetCtrl()->UpdateV();
@@ -722,18 +700,10 @@ LRESULT CMainFrame::OnSourcesNowPlaying( WPARAM wParam, LPARAM lParam )
 {
 	TRACE0( "'Now Playing' was clicked\n" );
 
-	ResetPlaylist();
-
-	// now playing list doesn't exist,
-	// so create it and send it to
-	// the player so the user can see
-	// that the list is empty... don't worry,
-	// when the player gets a new playlist
-	// it will delete this one...
 	if ( !m_Player->GetPlaylist() )
 	{
-		m_NowPlaylist = new CmusikPlaylist();
-		m_Player->SetPlaylist( m_NowPlaylist );
+		TRACE0( "Something strange happened, m_Player doesn't have a playlist...\n" );
+		ASSERT( 1 );
 	}
 
 	m_wndView->GetCtrl()->SetPlaylist( m_Player->GetPlaylist(), MUSIK_SOURCES_TYPE_NOWPLAYING );
@@ -749,15 +719,19 @@ LRESULT CMainFrame::OnSourcesStdPlaylist( WPARAM wParam, LPARAM lParam )
 {
 	TRACE0( "A standard playlist was clicked\n" );
 
-	ResetPlaylist();
+	if ( m_StdPlaylist )
+		ASSERT( 1 );
 
-	m_StdPlaylist = new CmusikPlaylist();
 	int nID = m_wndSources->GetCtrl()->GetFocusedItem()->GetPlaylistID();
+	m_StdPlaylist = new CmusikPlaylist();
 
 	m_Library->GetStdPlaylist( nID, *m_StdPlaylist, true );
 
 	m_wndView->GetCtrl()->SetPlaylist( m_StdPlaylist, MUSIK_PLAYLIST_TYPE_STANDARD );
+
 	m_wndView->GetCtrl()->UpdateV();
+
+	m_StdPlaylist = NULL;
 
 	return 0L;
 }
@@ -768,7 +742,7 @@ LRESULT CMainFrame::OnSourcesDynPlaylist( WPARAM wParam, LPARAM lParam )
 {
 	TRACE0( "A dynamic playlist was clicked\n" );
 
-	ResetPlaylist();
+	//ResetPlaylist();
 	
 	//m_CurPlaylist = m_DynPlaylist;
 	// MUSIK_PLAYLIST_TYPE_DYNAMIC
@@ -809,16 +783,6 @@ LRESULT CMainFrame::OnPlayerNewPlaylist( WPARAM wParam, LPARAM lParam )
 	{
 		m_LibPlaylist = new CmusikPlaylist();
 		*m_LibPlaylist = *m_Player->GetPlaylist();
-	}
-
-	// if it was not a library: as long as the
-	// last item was not "now playing", the
-	// old std playlists now belong to the player
-	// so their values can be NULL'd...
-	else if ( (int)wParam != MUSIK_SOURCES_TYPE_NOWPLAYING )
-	{
-		m_StdPlaylist = NULL;
-		m_DynPlaylist = NULL;
 	}
 
 	m_wndSources->GetCtrl()->FocusNowPlaying();

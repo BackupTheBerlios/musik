@@ -139,19 +139,6 @@ void CmusikPlaylistCtrl::SaveColumns()
 
 ///////////////////////////////////////////////////
 
-void CmusikPlaylistCtrl::SetPlaylist( CmusikPlaylist* playlist, int m_Type )
-{
-	if ( m_SongInfoCache )
-		m_SongInfoCache->SetPlaylist( playlist );
-    
-	m_Playlist = playlist;
-	m_PlaylistType = m_Type;
-	
-	m_Changed = true;
-}
-
-///////////////////////////////////////////////////
-
 void CmusikPlaylistCtrl::UpdateV()
 {
 	if ( m_Playlist )
@@ -500,6 +487,19 @@ void CmusikPlaylistCtrl::OnNMClick(NMHDR *pNMHDR, LRESULT *pResult)
 
 ///////////////////////////////////////////////////
 
+void CmusikPlaylistCtrl::SetPlaylist( CmusikPlaylist* playlist, int m_Type )
+{
+	if ( m_SongInfoCache )
+		m_SongInfoCache->SetPlaylist( playlist );
+    
+	m_Playlist = playlist;
+	m_PlaylistType = m_Type;
+	
+	m_Changed = true;
+}
+
+///////////////////////////////////////////////////
+
 void CmusikPlaylistCtrl::OnLvnItemActivate(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMITEMACTIVATE pNMIA = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
@@ -507,10 +507,23 @@ void CmusikPlaylistCtrl::OnLvnItemActivate(NMHDR *pNMHDR, LRESULT *pResult)
 	// give the current playlist to the player,
 	// unless the player already owns it.
 	if ( m_Changed )
-		GivePlaylistToPlayer();		
+	{
+		// give the current playlist to the player,
+		// if it does not belong to the player. otherwise,
+		// it will delete itself, then try to copy itself.
+		// confused yet? i am...
+		if ( m_PlaylistType != MUSIK_SOURCES_TYPE_NOWPLAYING )
+			GivePlaylistToPlayer();		
+
+		// the current playlist always becomes the
+		// now playing after an item is activated,
+		// so our type is now "now playing" and our
+		// playlist points to the player
+		m_PlaylistType = MUSIK_SOURCES_TYPE_NOWPLAYING;
+		m_Playlist = m_Player->GetPlaylist();
+	}
 
 	m_Player->Play( pNMIA->iItem, MUSIK_CROSSFADER_NEW_SONG );
-	m_PlaylistType = MUSIK_SOURCES_TYPE_NOWPLAYING;
 
 	*pResult = 0;
 }
@@ -525,7 +538,8 @@ void CmusikPlaylistCtrl::GivePlaylistToPlayer()
 	// the player's internal playlist -- which 
 	// itself, not an object. 
 	m_Player->SetPlaylist( m_Playlist );
-	
+	m_Playlist = NULL;
+
 	int WM_PLAYERNEWPLAYLIST = RegisterWindowMessage( "PLAYERNEWPLAYLIST" );
 	m_MainWnd->SendMessage( WM_PLAYERNEWPLAYLIST, (WPARAM)m_PlaylistType );
 

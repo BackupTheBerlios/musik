@@ -121,15 +121,18 @@ void CmusikEqualizer::ProcessDSP( void* buffer, int length, int channels, int bi
 
 void CmusikEqualizer::GetSongEq( int songid )
 {
-	int nID = m_Library->GetEqualizerIDFromSongID( songid );
-
-	if ( nID > -1 )
+	if ( m_Library )
 	{
-		CmusikEQSettings eq;
-		m_Library->GetEqualizer( nID, &eq );
+		int nID = m_Library->GetEqualizerIDFromSongID( songid );
 
-		m_EQ.Set( MUSIK_EQ_SETTINGS_LEFT_BAND, eq.m_Left );
-		m_EQ.Set( MUSIK_EQ_SETTINGS_RIGHT_BAND, eq.m_Right );
+		if ( nID > -1 )
+		{
+			CmusikEQSettings eq;
+			m_Library->GetEqualizer( nID, &eq );
+
+			m_EQ.Set( MUSIK_EQ_SETTINGS_LEFT_BAND, eq.m_Left );
+			m_EQ.Set( MUSIK_EQ_SETTINGS_RIGHT_BAND, eq.m_Right );
+		}
 	}
 }
 
