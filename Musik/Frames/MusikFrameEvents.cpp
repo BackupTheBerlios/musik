@@ -33,7 +33,7 @@
 
 BEGIN_EVENT_TABLE(MusikFrame, wxFrame)
 	EVT_MENU					(MUSIK_MENU_PREFERENCES,			MusikFrame::OnPreferences			)	// File->Preferences
-	EVT_MENU					(MUSIK_MENU_EXIT,					MusikFrame::OnCloseEvt				)	// File->Exit
+	EVT_MENU					(MUSIK_MENU_EXIT,					MusikFrame::OnClose					)	// File->Exit
 	EVT_MENU					(MUSIK_MENU_SOURCES_STATE,			MusikFrame::OnSourcesState			)	// View->Show Sources
 	EVT_MENU					(MUSIK_MENU_ACTIVITIES_STATE,		MusikFrame::OnActivitiesState		)	// View->Show Selections
 	EVT_MENU					(MUSIK_MENU_PLAYLISTINFO_STATE,		MusikFrame::OnPlaylistInfoState		)	// View->Show Playlist Info
@@ -64,7 +64,7 @@ BEGIN_EVENT_TABLE(MusikFrame, wxFrame)
     EVT_MENU					( MUSIK_FRAME_THREAD_START,		MusikFrame::OnStartProgress			) 
 	EVT_MENU					( MUSIK_FRAME_THREAD_END,		MusikFrame::OnEndProgress			) 
 	EVT_MENU					( MUSIK_FRAME_THREAD_PROG,		MusikFrame::OnUpdateProgress		)
-	EVT_MENU					( MUSIK_FRAME_EXIT_FADE_DONE,	MusikFrame::OnCloseEvt				)
+	EVT_MENU					( MUSIK_FRAME_EXIT_FADE_DONE,	MusikFrame::OnClose					)
 END_EVENT_TABLE()
 
 
@@ -101,19 +101,6 @@ void MusikFrame::OnSize	( wxCommandEvent& WXUNUSED(event) )
 	g_PlaylistCtrl->RescaleColumns();
 	g_SourcesCtrl->RescaleColumns();
 	g_ActivityAreaCtrl->RescaleColumns();
-}
-
-void MusikFrame::OnCloseEvt( wxCommandEvent& WXUNUSED(event) )
-{
-	//-------------------------------------------------//
-	//--- use Close() in GTK and you get a segfault	---//
-	//--- use Destroy() in MSW you get mem leaks	---//
-	//-------------------------------------------------//
-	#ifdef __WXMSW__
-		Close();
-	#elif defined __WXGTK__
-		Destroy();
-	#endif
 }
 
 void MusikFrame::OnClose( wxCloseEvent& WXUNUSED(event) )

@@ -32,6 +32,7 @@
 //---------------------------------------------------------//
 MusikFaderThread::MusikFaderThread()
 {
+	pCrossfader = NULL;
 	m_CrossfaderActive = false;
 	m_CrossfadersActive = 0;
 }
