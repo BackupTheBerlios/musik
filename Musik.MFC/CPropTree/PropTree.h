@@ -19,7 +19,6 @@
 //  Modified by Casey Langen for Musik MFC port...
 //  Rather than linking to a dll or external lib, it compiles in.
 
-
 #pragma once
 
 #define IDS_TRUE		100
@@ -44,7 +43,6 @@ typedef BOOL (CALLBACK* ENUMPROPITEMPROC)(CPropTree*, CPropTreeItem*, LPARAM);
 #define HTPROPFIRST					50
 
 #define HTLABEL						(HTPROPFIRST + 0)
-#define HTCOLUMN					(HTPROPFIRST + 1)
 #define HTEXPAND					(HTPROPFIRST + 2)
 #define HTATTRIBUTE					(HTPROPFIRST + 3)
 

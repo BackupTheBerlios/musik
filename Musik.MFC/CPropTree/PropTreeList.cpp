@@ -214,27 +214,6 @@ void CPropTreeList::OnPaint()
 
 BOOL CPropTreeList::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message) 
 {
-	if (nHitTest==HTCLIENT)
-	{
-		CPoint pt;
-
-		ASSERT(m_pProp!=NULL);
-
-		GetCursorPos(&pt);
-		ScreenToClient(&pt);
-
-		switch (m_pProp->HitTest(pt))
-		{
-			case HTCOLUMN:
-				SetCursor(LoadCursor(ghInst, MAKEINTRESOURCE(IDC_SPLITTER)));
-				return TRUE;
-
-			case HTEXPAND:
-				SetCursor(LoadCursor(ghInst, MAKEINTRESOURCE(IDC_FPOINT)));
-				return TRUE;
-		}
-	}
-
 	return CWnd::OnSetCursor(pWnd, nHitTest, message);
 }
 
@@ -261,22 +240,6 @@ void CPropTreeList::OnLButtonDown(UINT, CPoint point)
 
 	switch (nHit)
 	{
-		case HTCOLUMN:
-			if (m_pProp->SendNotify(PTN_COLUMNCLICK))
-				break;
-
-			m_bColDrag = TRUE;
-			SetCapture();
-
-			m_nPrevCol = m_pProp->GetOrigin().x;
-
-			// paint drag line
-			pDC = GetDC();
-			GetClientRect(rc);
-			pDC->PatBlt(m_nPrevCol - PROPTREEITEM_COLRNG/2, 0, PROPTREEITEM_COLRNG, rc.bottom, PATINVERT);
-			ReleaseDC(pDC);
-			break;
-
 		case HTEXPAND:
 			if ((pItem = m_pProp->FindItem(point))!=NULL)
 			{
@@ -359,9 +322,6 @@ void CPropTreeList::OnLButtonDblClk(UINT, CPoint point)
 	{
 		switch (m_pProp->HitTest(point))
 		{
-			case HTCOLUMN:
-				break;
-
 			case HTATTRIBUTE:
 				if (!pItem->IsRootLevel())
 					break;
