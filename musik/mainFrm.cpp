@@ -148,6 +148,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_BATCHADD_PROGRESS, OnBatchAddProgress )
 	ON_REGISTERED_MESSAGE( WM_BATCHADD_END, OnBatchAddEnd )
 	ON_REGISTERED_MESSAGE( WM_PLAYER_PLAYSEL, OnPlayerPlaySel )
+	ON_COMMAND(ID_AUDIO_EQUALIZER_ENABLED, OnAudioEqualizerEnabled)
+	ON_UPDATE_COMMAND_UI(ID_AUDIO_EQUALIZER_ENABLED, OnUpdateAudioEqualizerEnabled)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -225,13 +227,17 @@ void CMainFrame::Initmusik()
 	// care of loading equalizer settings itself...
 	if ( m_Prefs->IsCrossfaderEnabled() )
 	{
+		CmusikCrossfader fade;
+		bool gotfader = true;
+        
 		int nFader = m_Prefs->GetCrossfader();
 
-		if ( nFader == -1 )
+		if ( nFader == -1 || !gotfader )
 		{
-			CmusikCrossfader fade;
+			
 			fade.Set( 2.0f, 0.5f, 0.2f, 1.0f, 3.0f );
 
+			m_Player->EnableCrossfader();
 			m_Player->SetCrossfader( fade );
 		}
 	}
@@ -239,7 +245,7 @@ void CMainFrame::Initmusik()
 	m_Player->InitSound( m_Prefs->GetPlayerDevice(), m_Prefs->GetPlayerDriver(), m_Prefs->GetPlayerRate(), m_Prefs->GetPlayerMaxChannels() );
 
 	if ( m_Prefs->IsEqualizerEnabled() )
-		m_Player->EnableEQ( true );
+		m_Player->EnableEqualizer( true );
 }
 
 ///////////////////////////////////////////////////
@@ -1276,6 +1282,30 @@ void CMainFrame::OnViewNowplaying()
 void CMainFrame::OnUpdateViewNowplaying(CCmdUI *pCmdUI)
 {
 	pCmdUI->SetCheck( m_wndNowPlaying->IsVisible() );
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnAudioEqualizerEnabled()
+{
+	if ( m_Prefs->IsEqualizerEnabled() )
+	{
+		m_Prefs->SetEqualizerEnabled( false );
+		m_Player->EnableEqualizer( false );
+		return;
+	}
+	else
+	{
+		m_Prefs->SetEqualizerEnabled( true );
+		m_Player->EnableEqualizer( true );
+	}
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnUpdateAudioEqualizerEnabled(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck( m_Prefs->IsEqualizerEnabled() );
 }
 
 ///////////////////////////////////////////////////

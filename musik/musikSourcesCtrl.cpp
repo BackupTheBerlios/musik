@@ -228,11 +228,7 @@ void CmusikSourcesCtrl::OnDropFiles(HDROP hDropInfo)
 		return;
 	}
 
-	// make sure the item isn't null
-	if ( pItem == NULL )
-		return;
-
-	if ( !pItem->IsRootLevel() )
+	if ( pItem && !pItem->IsRootLevel() )
 	{
 		KillFocus();
 		pItem->Select( TRUE );

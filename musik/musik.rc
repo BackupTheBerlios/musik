@@ -111,8 +111,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Crossfader Enabled",          ID_AUDIO_CROSSFADERENABLED32798
 
-        MENUITEM "Equalizer Enabled",           ID_AUDIO_EQUALIZERENABLED32799
-
+        MENUITEM "Equalizer Enabled",           ID_AUDIO_EQUALIZER_ENABLED
     END
     POPUP "&Help"
     BEGIN

@@ -200,6 +200,9 @@ protected:
 	// macros
 	DECLARE_DYNAMIC(CMainFrame)
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnAudioEqualizerEnabled();
+	afx_msg void OnUpdateAudioEqualizerEnabled(CCmdUI *pCmdUI);
 };
 
 ///////////////////////////////////////////////////
