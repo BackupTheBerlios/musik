@@ -51,7 +51,7 @@ bool MusikApp::OnInit()
 	g_Paths.Load();
 
 	//--- initialize fmod ---//
-	if ( g_Player.InitializeFMOD( FMOD_INIT_START, g_Prefs.nSndOutput, g_Prefs.nSndDevice, g_Prefs.nSndRate ) != FMOD_INIT_SUCCESS )
+	if ( g_Player.InitializeFMOD( FMOD_INIT_START ) != FMOD_INIT_SUCCESS )
 		wxMessageBox( _("Initialization of FMOD sound system failed."), MUSIK_VERSION, wxOK | wxICON_ERROR );
 
 	//------------------//

@@ -90,7 +90,7 @@ void CMusikPlayer::Shutdown( bool bClose )
 	FSOUND_Close();
 }
 
-int CMusikPlayer::InitializeFMOD( int nFunction, int nSndOutput, int nSndDevice, int nSndRate )
+int CMusikPlayer::InitializeFMOD( int nFunction )
 {
 	if ( ( nFunction == FMOD_INIT_RESTART ) || ( nFunction == FMOD_INIT_STOP ) )
 		Shutdown( false );
@@ -107,17 +107,17 @@ int CMusikPlayer::InitializeFMOD( int nFunction, int nSndOutput, int nSndDevice,
 		//--- windows	---//
 		//-----------------//
 		#if defined(__WXMSW__)
-			if ( nSndOutput == 0 )
+			if ( g_Prefs.nSndOutput == 0 )
 			{
 				if( FSOUND_SetOutput( FSOUND_OUTPUT_DSOUND ) == FALSE )
 					return FMOD_INIT_ERROR_DSOUND;
 			}
-			else if ( nSndOutput == 1 )
+			else if ( g_Prefs.nSndOutput == 1 )
 			{
 				if ( FSOUND_SetOutput( FSOUND_OUTPUT_WINMM ) == FALSE )
 					return FMOD_INIT_ERROR_WINDOWS_WAVEFORM;
 			}
-			else if ( nSndOutput == 2 )
+			else if ( g_Prefs.nSndOutput == 2 )
 			{
 				if ( FSOUND_SetOutput( FSOUND_OUTPUT_ASIO ) == FALSE )
 					return FMOD_INIT_ERROR_ASIO;
@@ -126,17 +126,17 @@ int CMusikPlayer::InitializeFMOD( int nFunction, int nSndOutput, int nSndDevice,
 		//--- linux		---//
 		//-----------------//
 		#elif defined (__WXGTK__)
-			if ( nSndOutput == 0 )
+			if ( g_Prefs.nSndOutput == 0 )
 			{
 				if( FSOUND_SetOutput( FSOUND_OUTPUT_OSS ) == FALSE )
 					return FMOD_INIT_ERROR_OSS;
 			}
-			else if ( nSndOutput == 1 )
+			else if ( g_Prefs.nSndOutput == 1 )
 			{
 				if ( FSOUND_SetOutput( FSOUND_OUTPUT_ESD ) == FALSE )
 					return FMOD_INIT_ERROR_ESD;
 			}
-			else if ( nSndOutput == 2 )
+			else if ( g_Prefs.nSndOutput == 2 )
 			{
 				if ( FSOUND_SetOutput( FSOUND_OUTPUT_ALSA ) == FALSE )
 					return FMOD_INIT_ERROR_ALSA;
@@ -146,14 +146,14 @@ int CMusikPlayer::InitializeFMOD( int nFunction, int nSndOutput, int nSndDevice,
 		//---------------------//
 		//--- setup device	---//
 		//---------------------//
-		if ( FSOUND_SetDriver( nSndDevice ) == FALSE )
+		if ( FSOUND_SetDriver( g_Prefs.nSndDevice ) == FALSE )
 			return FMOD_INIT_ERROR_DEVICE_NOT_READY;
 
 		//-------------------------//
 		//--- initialize system	---//
 		//-------------------------//
 		FSOUND_SetBufferSize( 100 );
-		if ( FSOUND_Init( nSndRate , MAXCHANNELS, 0 ) == FALSE )
+		if ( FSOUND_Init( g_Prefs.nSndRate , g_Prefs.nSndMaxChan, 0 ) == FALSE )
 			return FMOD_INIT_ERROR_INIT;
 	}
 
@@ -717,7 +717,7 @@ void CMusikPlayer::SetFadeStart()
 
 void CMusikPlayer::IncNextChannel()
 {
-	if ( ( m_Channels + 1 ) == MAXCHANNELS )
+	if ( ( m_Channels + 1 ) == g_Prefs.nSndMaxChan )
 		m_Channels = 0;
 	else
 		m_Channels++;

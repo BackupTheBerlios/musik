@@ -76,16 +76,16 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	nPlaylistID		=	tcPreferencesTree->AppendItem	( nOptionsRootID,	_( "Playlist" )		);
 	nGeneralTagID	=	tcPreferencesTree->AppendItem	( nTagRootID,		_( "General" )		);
 	nAutoTagID		=	tcPreferencesTree->AppendItem	( nTagRootID,		_( "Auto Tag" )		);
-	nPlaybackID		=	tcPreferencesTree->AppendItem	( nSoundRootID,		_( "Playback" )		);
 	nDriverID		=	tcPreferencesTree->AppendItem	( nSoundRootID,		_( "Driver" )		);
+	nPlaybackID		=	tcPreferencesTree->AppendItem	( nSoundRootID,		_( "Crossfader" )	);
 	//--- expand all the root nodes ---//
 	tcPreferencesTree->Expand( nOptionsRootID );
 	tcPreferencesTree->Expand( nTagRootID );
 	tcPreferencesTree->Expand( nSoundRootID );
 
-	//-------------------------//
-	//--- Sound -> Playback ---//
-	//-------------------------//
+	//--------------------------//
+	//--- Sound -> Crossfader ---//
+	//---------------------------//
 	//--- shuffle, repeat, and crossfade checkboxes ---//
 	chkRepeat				= new wxCheckBox( this, -1, _("Repeat"), 									wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 	chkShuffle				= new wxCheckBox( this, -1, _("Shuffle"), 									wxPoint( -1, -1 ), wxSize( -1, -1 ) );
@@ -112,23 +112,20 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	fsCrossfader->Add( chkCrossfadeExit			);
 	fsCrossfader->Add( tcExitDuration			);
 
-	//-------------------------------//
-	//--- Sound -> Playback Sizer ---//
-	//-------------------------------//
-	vsSound_Playback = new wxBoxSizer( wxVERTICAL );
-	vsSound_Playback->Add( chkRepeat,		0, wxALL, 4  );
-	vsSound_Playback->Add( chkShuffle,		0, wxALL, 4  );
-	vsSound_Playback->Add( fsCrossfader,	0, wxALL, 4  );
+	//---------------------------------//
+	//--- Sound -> Crossfader Sizer ---//
+	//---------------------------------//
+	vsSound_Crossfader = new wxBoxSizer( wxVERTICAL );
+	vsSound_Crossfader->Add( chkRepeat,		0, wxALL, 4  );
+	vsSound_Crossfader->Add( chkShuffle,		0, wxALL, 4  );
+	vsSound_Crossfader->Add( fsCrossfader,	0, wxALL, 4  );
 
 	//-----------------------//
 	//--- Sound -> Driver ---//
 	//-----------------------//
 	//--- output driver ---//
-	wxStaticText *stOutputDrv		= new wxStaticText	( this, -1, _("Ouput Driver:"), wxPoint( 0, 0 ), wxSize( -1, -1 ), wxALIGN_LEFT );
-	cmbOutputDrv	= new wxComboBox	( this, MUSIK_PREFERENCES_OUTPUT_DRV, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
-	vsOutputDrv = new wxBoxSizer( wxVERTICAL );
-	vsOutputDrv->Add( stOutputDrv,	0, wxEXPAND | wxBOTTOM, 4 );
-	vsOutputDrv->Add( cmbOutputDrv, 1, wxEXPAND | wxBOTTOM, 8 );
+	wxStaticText *stOutputDrv = new wxStaticText	( this, -1, _("Ouput Driver:"), wxPoint( 0, 0 ), wxSize( -1, -1 ), wxALIGN_LEFT );
+	cmbOutputDrv = new wxComboBox ( this, MUSIK_PREFERENCES_OUTPUT_DRV, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
 	#if defined (__WXMSW__)
 		cmbOutputDrv->Append ( wxT("Direct Sound") );
 		cmbOutputDrv->Append ( wxT("Windows Multimedia") );
@@ -141,11 +138,8 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 		cmbOutputDrv->Append ( wxT("ALSA 0.9") );
 	#endif
 	//--- sound device ---//
-	wxStaticText *stSndDevice		= new wxStaticText	( this, -1, _("Sound Device:"), wxPoint( 0, 0 ), wxSize( -1, -1 ), wxALIGN_LEFT );
-	cmbSndDevice	= new wxComboBox	( this, MUSIK_PREFERENCES_SND_DEVICE, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );	
-	vsSndDevice = new wxBoxSizer( wxVERTICAL );
-	vsSndDevice->Add( stSndDevice,	0, wxEXPAND | wxBOTTOM, 4 );
-	vsSndDevice->Add( cmbSndDevice, 1, wxEXPAND | wxBOTTOM, 8 );
+	wxStaticText *stSndDevice = new wxStaticText	( this, -1, _("Sound Device:"), wxPoint( 0, 0 ), wxSize( -1, -1 ), wxALIGN_LEFT );
+	cmbSndDevice	= new wxComboBox ( this, MUSIK_PREFERENCES_SND_DEVICE, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );	
 	//--- playrate ---//
 	wxStaticText *stPlayRate = new wxStaticText( this, -1, _("Playback Rate (hz):"), wxPoint( 0, 0 ), wxSize( -1, -1 ), wxALIGN_LEFT );
 	cmbPlayRate  = new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
@@ -154,24 +148,27 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	cmbPlayRate->Append ( wxT("22050") );
 	cmbPlayRate->Append ( wxT("11025") );
 	cmbPlayRate->Append ( wxT("8000") );
-	vsPlayRate = new wxBoxSizer( wxVERTICAL );
-	vsPlayRate->Add( stPlayRate,0, wxEXPAND | wxBOTTOM, 4 );
-	vsPlayRate->Add( cmbPlayRate, 1, wxEXPAND | wxBOTTOM, 12 );	
 	//--- buffer length ---//
-	tcBufferLength = new wxTextCtrl		( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( 32, -1 ) );
+	tcBufferLength = new wxTextCtrl	( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( 32, -1 ) );
 	wxStaticText *stBufferLength = new wxStaticText	( this, -1, _(" second buffer length"), wxPoint( 0, 0 ), wxSize( -1, -1 ) );
-	hsBufferLength = new wxBoxSizer( wxHORIZONTAL );
-	hsBufferLength->Add( tcBufferLength, 0, wxALIGN_CENTER | wxRIGHT, 4 );
-	hsBufferLength->Add( stBufferLength, 0, wxALIGN_CENTER, 0 );
-
+	//--- max channels ---//
+	tcMaxChannels = new wxTextCtrl	( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( 32, -1 ) );
+	wxStaticText *stMaxChannels = new wxStaticText( this, -1, _("Maximum sound channels:"), wxPoint( 0, 0 ), wxSize( -1, -1 ), wxALIGN_LEFT );
+	
 	//-----------------------------//
 	//--- Sound -> Driver Sizer ---//
 	//-----------------------------//
-	vsSound_Driver = new wxBoxSizer ( wxVERTICAL );
-	vsSound_Driver->Add( vsOutputDrv,		0, wxALL, 4 );
-	vsSound_Driver->Add( vsSndDevice,		0, wxALL, 4  );
-	vsSound_Driver->Add( vsPlayRate,		0, wxALL, 4  );
-	vsSound_Driver->Add( hsBufferLength,	0, wxALL, 4  );
+	vsSound_Driver = new wxFlexGridSizer ( 6, 2, 2, 2 );
+	vsSound_Driver->Add( stOutputDrv, 0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
+	vsSound_Driver->Add( cmbOutputDrv, 1, wxCENTER, 0 );
+	vsSound_Driver->Add( stSndDevice, 0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
+	vsSound_Driver->Add( cmbSndDevice, 1, wxCENTER, 0 );
+	vsSound_Driver->Add( stPlayRate, 0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
+	vsSound_Driver->Add( cmbPlayRate, 1, wxCENTER, 0 );	
+	vsSound_Driver->Add( stBufferLength, 0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
+	vsSound_Driver->Add( tcBufferLength, 1, wxCENTER, 0 );
+	vsSound_Driver->Add( stMaxChannels, 0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
+	vsSound_Driver->Add( tcMaxChannels, 1, wxCENTER, 0 );
 
 	//----------------------------//
 	//--- Options -> Selection ---//
@@ -449,7 +446,7 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	hsSplitter->Add( vsOptions_Selections,	5 );
 	hsSplitter->Add( vsOptions_Interface,	5 );
 	hsSplitter->Add( vsOptions_Playlist,	5 );
-	hsSplitter->Add( vsSound_Playback,		5 );
+	hsSplitter->Add( vsSound_Crossfader,	5 );
 	hsSplitter->Add( vsSound_Driver,		5 );
 	hsSplitter->Add( vsTagging_General,		5 );
 	hsSplitter->Add( vsTagging_Auto,		5 );
@@ -574,9 +571,9 @@ void MusikPrefsFrame::LoadPrefs()
 	tcAutoRename->SetValue			( g_Prefs.sAutoRename	);
 	tcAutoTag->SetValue				( g_Prefs.sAutoTag		);
 
-	//-------------------------//
-	//--- sound -> playback ---//
-	//-------------------------//
+	//---------------------------//
+	//--- sound -> crossfader ---//
+	//---------------------------//
 	chkRepeat->SetValue					( g_Prefs.nRepeat );
 	chkShuffle->SetValue				( g_Prefs.nShuffle );
 	
@@ -621,6 +618,7 @@ void MusikPrefsFrame::LoadPrefs()
 	sLength.sprintf					( wxT("%.1f"), fLength );
 	tcBufferLength->SetValue		( sLength );
 	cmbPlayRate->SetSelection		( cmbPlayRate->FindString ( sSndRate ) );
+	tcMaxChannels->SetValue			( IntTowxString( g_Prefs.nSndMaxChan ) );
 }
 
 void MusikPrefsFrame::FindDevices()
@@ -638,7 +636,7 @@ void MusikPrefsFrame::HidePanels()
 	hsSplitter->Show( vsOptions_Selections,	false );
 	hsSplitter->Show( vsOptions_Interface,	false );
 	hsSplitter->Show( vsOptions_Playlist,	false );
-	hsSplitter->Show( vsSound_Playback,		false );
+	hsSplitter->Show( vsSound_Crossfader,		false );
 	hsSplitter->Show( vsSound_Driver,		false );
 	hsSplitter->Show( vsTagging_General,	false );
 	hsSplitter->Show( vsTagging_Auto,		false );
@@ -649,7 +647,7 @@ void MusikPrefsFrame::UpdatePrefsPanel()
 	if( tcPreferencesTree->GetSelection() == nPlaybackID )
 	{
 		HidePanels();
-		hsSplitter->Show( vsSound_Playback, true );
+		hsSplitter->Show( vsSound_Crossfader, true );
 	}
 	else if( tcPreferencesTree->GetSelection() == nDriverID )
 	{
@@ -924,9 +922,9 @@ void MusikPrefsFrame::SavePrefs()
 	g_Prefs.sAutoRename = tcAutoRename->GetValue();
 	g_Prefs.sAutoTag	= tcAutoTag->GetValue();
 
-	//-------------------------//
-	//--- sound -> playback ---//
-	//-------------------------//
+	//---------------------------//
+	//--- sound -> crossfader ---//
+	//---------------------------//
 	if ( chkRepeat->GetValue() != g_Prefs.nRepeat )
 	{
 		g_Prefs.nRepeat = chkRepeat->GetValue();
@@ -987,18 +985,21 @@ void MusikPrefsFrame::SavePrefs()
 		g_Prefs.nSndRate = nRate;
 		bRestartFMOD = true;
 	}
+	if ( wxStringToInt( tcMaxChannels->GetValue() ) != g_Prefs.nSndMaxChan )
 	{
-		double fLength = StringToDouble( tcBufferLength->GetValue() );
-		int nLength = ( int )( fLength * 1000 );
-		g_Prefs.nSndBuffer = nLength;
+		g_Prefs.nSndMaxChan = wxStringToInt( tcMaxChannels->GetValue() );
+		bRestartFMOD = true;
 	}
+	double fLength = StringToDouble( tcBufferLength->GetValue() );
+	int nLength = ( int )( fLength * 1000 );
+	g_Prefs.nSndBuffer = nLength;
 
 	//--- save ---//
 	g_Prefs.SavePrefs();
 
 	//--- if we need to restart fmod ---//
 	if ( bRestartFMOD )
-		g_Player.InitializeFMOD( FMOD_INIT_RESTART, g_Prefs.nSndOutput, g_Prefs.nSndDevice, g_Prefs.nSndRate );
+		g_Player.InitializeFMOD( FMOD_INIT_RESTART );
 
 	//--- if playmode ( repeat / etc ) ---//
 	if ( bPlaymodeChange )

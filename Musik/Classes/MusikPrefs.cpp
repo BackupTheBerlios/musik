@@ -36,6 +36,7 @@ void CMusikPrefs::LoadPrefs()
 	config->Read( wxT( "OutputDriver" ),						&nSndOutput,				0						);
 	config->Read( wxT( "SoundDevice" ),							&nSndDevice,				0						);
 	config->Read( wxT( "PlaybackRate" ),						&nSndRate,					44100					);
+	config->Read( wxT( "MaximumChannels" ),						&nSndMaxChan,				4						);
 	config->Read( wxT( "SoundVolume" ),							&nSndVolume,				200						);
 	config->Read( wxT( "UseEQ" ),								&nUseEQ,					0						);
 	config->Read( wxT( "SoundBufferMilliseconds" ),				&nSndBuffer,				1000					);
@@ -244,6 +245,7 @@ void CMusikPrefs::SavePrefs()
 	config->Write( wxT( "OutputDriver" ),					nSndOutput					);
 	config->Write( wxT( "SoundDevice" ),					nSndDevice					);
 	config->Write( wxT( "PlaybackRate" ),					nSndRate					);
+	config->Write( wxT( "MaximumChannels" ),				nSndMaxChan					);
 	config->Write( wxT( "SoundVolume" ),					nSndVolume					);
 	config->Write( wxT( "UseEQ" ),							nUseEQ						);
 	config->Write( wxT( "SoundBufferMilliseconds" ),		nSndBuffer					);

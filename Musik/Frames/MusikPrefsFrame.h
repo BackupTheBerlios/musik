@@ -100,7 +100,6 @@ public:
 	//-----------------------------//
 	//--- options -> playlist	---//
 	//-----------------------------//
-
 	wxCheckBox* chkRatingEnable;
 	wxCheckBox* chkTrackEnable;
 	wxCheckBox* chkTitleEnable;
@@ -166,12 +165,13 @@ public:
 	wxComboBox	*cmbSndDevice;
 	wxComboBox	*cmbPlayRate;
 	wxTextCtrl	*tcBufferLength;
+	wxTextCtrl	*tcMaxChannels;
 
 	//--------------//
 	//--- sizers ---//
 	//--------------//
-	wxBoxSizer		*vsSound_Driver;
-	wxBoxSizer		*vsSound_Playback;
+	wxFlexGridSizer	*vsSound_Driver;
+	wxBoxSizer		*vsSound_Crossfader;
 	wxFlexGridSizer	*vsOptions_Selections;
 	wxFlexGridSizer	*vsOptions_Playlist;
 	wxBoxSizer		*vsOptions_Interface;
@@ -180,11 +180,7 @@ public:
 	wxBoxSizer		*vsTagging_Auto;
 	wxBoxSizer		*hsSplitter;
 	wxBoxSizer		*hsSelectionStyle;
-	wxBoxSizer		*hsBufferLength;
 	wxFlexGridSizer	*fsCrossfader;
-	wxBoxSizer		*vsOutputDrv;	
-	wxBoxSizer		*vsSndDevice;
-	wxBoxSizer		*vsPlayRate;
 	wxBoxSizer		*hsSysButtons;
 	wxBoxSizer		*vsTopSizer;
 

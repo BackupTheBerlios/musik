@@ -42,6 +42,7 @@ public:
 	int nSndDevice;
 	int nSndRate;
 	int nSndBuffer;
+	int nSndMaxChan;
 
 	int nSndVolume;
 	int nUseEQ;

@@ -43,8 +43,6 @@ enum EMUSIK_CROSSFADER_TYPE
 //--- CMusikStreamArray declaration ---//
 WX_DECLARE_OBJARRAY( FSOUND_STREAM*, CMusikStreamArray );
 
-#define MAXCHANNELS 32
-
 enum EMUSIK_PLAYMODE
 {
 	MUSIK_PLAYMODE_NORMAL = 0,
@@ -84,7 +82,7 @@ public:
 	//--------------------//
 	//--- sound system ---//
 	//--------------------//
-	int	 InitializeFMOD		( int nFunction, int nSndOutput, int nSndDevice, int nSndRate );
+	int	 InitializeFMOD		( int nFunction );
 	void Shutdown			( bool bClose = true );
 	void ClearOldStreams	( bool bClearAll = false );
 	void SetFrequency		( );
