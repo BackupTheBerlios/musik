@@ -16,12 +16,17 @@ public:
 	CMusikMp3Info();
 	~CMusikMp3Info();
 
+	// reading and writing tag
 	bool LoadInfo( const CStdString& fn );
+	bool WriteInfo( CMusikSongInfo info, bool clear_old = true );
+
+	// gets
 	CStdString GetField( int field );
+	CStdString GetGenre( CStdString genre );
+	int GetGenreID( CStdString genre );
 
 private:
 
-	CStdString GetGenre( CStdString genre );
 	CMusikSongInfo m_Info;
 };
 

@@ -28,6 +28,10 @@ bool CMusikMp3Info::LoadInfo( const CStdString& fn )
 	ID3_Tag	id3Tag;
 	id3Tag.Link( fn.c_str(), ID3TT_ALL );	
 
+	// make sure the file was loaded
+	if ( !id3Tag.GetFileSize() )
+		return false;
+
 	// tag
 	m_Info.SetArtist	( ID3_GetArtist	( &id3Tag ) );
 	m_Info.SetAlbum		( ID3_GetAlbum	( &id3Tag ) );
@@ -58,6 +62,66 @@ bool CMusikMp3Info::LoadInfo( const CStdString& fn )
 		CMusikFilename MFN( fn );
 		m_Info.SetTitle( MFN.GetJustFilename() );
 	}
+
+	return true;
+}
+
+///////////////////////////////////////////////////
+
+bool CMusikMp3Info::WriteInfo( CMusikSongInfo info, bool clear_old )
+{
+
+	ID3_Tag	id3Tag;
+	id3Tag.Link( info.GetFilename().c_str(), ID3TT_ALL );
+
+	// make sure file was loaded
+	if ( !id3Tag.GetFileSize() )
+		return false;
+
+	// itterate through all old values and
+	// clear them...
+	if ( clear_old )
+	{
+		ID3_Tag::Iterator* iter = id3Tag.CreateIterator();
+		ID3_Frame* frame = NULL;
+		while ( ( frame = iter->GetNext() )!= NULL )
+		{
+			frame = id3Tag.RemoveFrame( frame );
+			delete frame;
+		}
+	}
+
+	// ... or just clear the fields that
+	// musik really cares about
+	else
+	{
+		ID3_RemoveArtists	( &id3Tag );
+		ID3_RemoveAlbums	( &id3Tag );
+		ID3_RemoveTitles	( &id3Tag ); 
+		ID3_RemoveGenres	( &id3Tag );
+		ID3_RemoveYears		( &id3Tag );
+		ID3_RemoveTracks	( &id3Tag );
+	}
+
+	// add the string info
+	ID3_AddArtist	( &id3Tag, info.GetArtist().c_str(),	true );
+	ID3_AddAlbum	( &id3Tag, info.GetAlbum().c_str(),		true );
+	ID3_AddTitle	( &id3Tag, info.GetTitle().c_str(),		true ); 
+	ID3_AddYear		( &id3Tag, info.GetYear().c_str(), 		true );
+	
+	// track
+	int nTrackNum = atoi( info.GetTrackNum().c_str() );
+	ID3_AddTrack	( &id3Tag, nTrackNum, true );
+	
+	// genre
+	int nGenreID = GetGenreID( info.GetGenre() );
+	if( nGenreID == -1 )
+		ID3_AddGenre( &id3Tag, info.GetGenre(), true );
+	else
+		ID3_AddGenre( &id3Tag, nGenreID, true );
+
+	// write to file
+	id3Tag.Update();
 
 	return true;
 }
@@ -102,3 +166,17 @@ CStdString CMusikMp3Info::GetGenre( CStdString genre )
 }
 
 ///////////////////////////////////////////////////
+
+int CMusikMp3Info::GetGenreID( CStdString genre )
+{
+	for ( int i = 0; i < ID3_NR_OF_V1_GENRES; i++ )
+	{
+		if ( genre.CompareNoCase( ID3_v1_genre_description[i] ) == 0 )
+			return i;
+	}
+
+	return -1;
+}
+
+///////////////////////////////////////////////////
+
