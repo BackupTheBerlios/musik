@@ -91,8 +91,9 @@ void *MusikFaderThread::Entry()
 				//--- it exists still)							---//
 				//-------------------------------------------------//
 				if ( IsCrossfaderActive() )
+				{
 					CrossfaderAbort();
-
+				}
 				else
 				{
 					//-------------------------------------------------//

@@ -235,6 +235,7 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 		FSOUND_SetVolume( GetCurrChannel(), 0 );
 		FSOUND_Stream_SetTime( pNewStream, nStartPos * 1000 );
 
+		g_FaderThread->CrossfaderAbort();
 		//---------------------------------------------//
 		//--- update the global arrays containing	---//
 		//--- active channels and streams			---//
