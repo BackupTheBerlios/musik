@@ -593,7 +593,7 @@ void CSourcesListBox::Update()
 	Freeze();
 	SetItemCount( g_SourcesList.GetCount() );
 	Thaw();
-	Refresh( FALSE );
+	Refresh( false );
 	RescaleColumns();
 }
 

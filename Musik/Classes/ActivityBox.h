@@ -31,7 +31,6 @@
 //--- for CMusikSongArray ---//
 #include "MusikLibrary.h"
 
-
 enum EMUSIK_ACTIVITY_TYPE
 {
 	MUSIK_LBTYPE_NULL = 0,

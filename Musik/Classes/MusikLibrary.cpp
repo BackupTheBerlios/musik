@@ -353,9 +353,9 @@ bool CMusikLibrary::WriteOGGTag( const CMusikSong & song, bool ClearAll )
 
 	//--- file objects, etc ---//
 	wxFFile in, out;
-    	vcedit_state *state;
-    	vorbis_comment *vc;
-    	state = vcedit_new_state();
+    vcedit_state *state;
+    vorbis_comment *vc;
+    state = vcedit_new_state();
 
     	//--- if file couldn't be loaded, return ---//
 	wxString read_state = wxT( "r+b" );

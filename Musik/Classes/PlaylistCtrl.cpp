@@ -885,7 +885,7 @@ void CPlaylistCtrl::Update( bool bSelFirst, bool  bRescaleColumns)
 	if ( bSelFirst )
 		SetItemState( 0, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );	
 	Thaw();
-	Refresh();
+	Refresh( false );
 	if( bRescaleColumns )
 		RescaleColumns();
 	if ( g_Prefs.nShowPLInfo == 1 )

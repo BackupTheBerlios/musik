@@ -113,7 +113,7 @@ void CActivityListBox::Update( bool selnone )
 	if ( selnone )
 		wxListCtrlSelNone( this );
 	Thaw();
-	Refresh( FALSE );
+	Refresh( false );
 	RescaleColumns();
 }
 
