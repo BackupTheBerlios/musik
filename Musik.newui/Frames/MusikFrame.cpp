@@ -36,6 +36,12 @@ MusikFrame::MusikFrame()
 {
 	SetIcon( wxICON( musicbox ) );
 	SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNFACE ) );
+
+	wxBoxSizer *p = new wxBoxSizer( wxHORIZONTAL );
+	m_SourcesCtrl = new CMusikSourcesCtrl( this, -1 );
+	p->Add( m_SourcesCtrl, 1, wxEXPAND );
+	SetSizer( p );
+	Layout();
 }
 
 MusikFrame::~MusikFrame()

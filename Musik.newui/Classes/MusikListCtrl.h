@@ -23,6 +23,7 @@ public:
 	virtual void OnColClick			( wxListEvent& event );
 	virtual void OnKeyDown			( wxListEvent& event );
 	virtual void OnContextMenu		( wxCommandEvent& event );
+	virtual void OnResize			( wxSizeEvent& event );
 
 	virtual void RescaleColumns		( bool refresh = false ){};
 	virtual void Reset				( bool rescale = true, bool refresh = false ){};

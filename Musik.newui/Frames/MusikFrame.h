@@ -22,7 +22,7 @@ public:
 	MusikFrame();
 	~MusikFrame();
 
-	CMusikListCtrl *m_SourcesCtrl;
+	CMusikSourcesCtrl *m_SourcesCtrl;
 	
 };
 

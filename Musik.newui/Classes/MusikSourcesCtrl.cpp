@@ -3,7 +3,7 @@
 CMusikSourcesCtrl::CMusikSourcesCtrl( wxWindow* parent, wxWindowID id )
 	: CMusikListCtrl( parent, id )
 {
-	Reset( false, false );
+	Reset( true, true );
 }
 
 CMusikSourcesCtrl::~CMusikSourcesCtrl()
@@ -29,4 +29,9 @@ void CMusikSourcesCtrl::Update( bool refresh )
 {
 	if ( refresh )
 		Refresh( false );
+}
+
+void CMusikSourcesCtrl::OnResize( wxSizeEvent& event )
+{
+	RescaleColumns();
 }
