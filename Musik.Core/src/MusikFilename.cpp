@@ -1,0 +1,61 @@
+///////////////////////////////////////////////////
+
+#include "MusikFilename.h"
+
+///////////////////////////////////////////////////
+
+CMusikFilename::CMusikFilename()
+{
+}
+
+///////////////////////////////////////////////////
+
+CMusikFilename::CMusikFilename( const CStdString& fn )
+{
+	m_Filename = fn;
+}
+
+///////////////////////////////////////////////////
+
+CMusikFilename::~CMusikFilename()
+{
+}
+
+///////////////////////////////////////////////////
+
+void CMusikFilename::SetFilename( const CStdString& fn )
+{
+	m_Filename = fn;
+}
+
+///////////////////////////////////////////////////
+
+CStdString CMusikFilename::GetPathSeparator()
+{
+	return (CStdString)MUSIK_PATH_SEPARATOR;
+}
+
+///////////////////////////////////////////////////
+
+CStdString CMusikFilename::GetJustFilename()
+{
+	int nPos = m_Filename.ReverseFind( MUSIK_PATH_SEPARATOR );
+	return m_Filename.Right( m_Filename.GetLength() - nPos );
+}
+
+///////////////////////////////////////////////////
+
+CStdString CMusikFilename::GetFullFilename()
+{
+	return m_Filename;
+}
+
+///////////////////////////////////////////////////
+
+CStdString CMusikFilename::GetPath()
+{
+	int nPos = m_Filename.ReverseFind( MUSIK_PATH_SEPARATOR );
+	return m_Filename.Left( nPos );
+}
+
+///////////////////////////////////////////////////

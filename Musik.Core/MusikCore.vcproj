@@ -155,7 +155,7 @@
 			</Filter>
 		</Filter>
 		<Filter
-			Name="COggInfo"
+			Name="MusikOggInfo"
 			Filter="">
 			<File
 				RelativePath=".\src\MusikOggInfo.cpp">
@@ -168,6 +168,16 @@
 			</File>
 			<File
 				RelativePath=".\include\vcedit.h">
+			</File>
+		</Filter>
+		<Filter
+			Name="MusikFilename"
+			Filter="">
+			<File
+				RelativePath=".\src\MusikFilename.cpp">
+			</File>
+			<File
+				RelativePath=".\include\MusikFilename.h">
 			</File>
 		</Filter>
 		<File
