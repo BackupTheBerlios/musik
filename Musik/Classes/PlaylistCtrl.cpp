@@ -648,7 +648,10 @@ wxListItemAttr* CPlaylistCtrl::OnGetItemAttr(long item) const
 {
 	const CMusikSong & song = g_Playlist.Item ( item );
 	if ( song.Filename == g_Player.GetCurrentFile() )
+	{
+		g_Player.SetCurSel(item);
 		return item % 2 ? (wxListItemAttr *)&m_SelectedDarkAttr : (wxListItemAttr *)&m_SelectedLightAttr;		
+	}
 	else
 	{
 		if ( g_Prefs.nPLStripes == 1 )

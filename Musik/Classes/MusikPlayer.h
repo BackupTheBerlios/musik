@@ -160,6 +160,7 @@ public:
 	void SetPlaylist		( CMusikSongArray playlist ) { m_Playlist = playlist; }
 	void SetStartingNext	( bool bStart = true ){ m_StartingNext = bStart; }
 	void SetCrossfadeType	( int nType ){ m_CrossfadeType = nType; }
+	void SetCurSel			( size_t index ){ m_SongIndex = index; }
 
 	//------------//
 	//--- misc ---//

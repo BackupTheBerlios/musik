@@ -317,9 +317,7 @@ void CMusikPlayer::UpdateUI()
 	//--- playlist appears to be the same. a better	---//
 	//--- check is not necessary.					---//
 	//-------------------------------------------------//
-	if ( m_Playlist.GetCount() == g_Playlist.GetCount() )
-		g_PlaylistCtrl->ResynchItem	( m_SongIndex, m_LastSong );
-	
+	g_PlaylistCtrl->ResynchItem		( m_SongIndex, m_LastSong );
 	g_Library.UpdateItemLastPlayed	( m_CurrentFile );
 	g_NowPlayingCtrl->UpdateInfo	( m_CurrentFile );
 }
@@ -367,11 +365,8 @@ void CMusikPlayer::Pause( bool bCheckFade )
 	//--- will get posted back to actually pause	---//
 	//--- once the fade is complete.				---//
 	//-------------------------------------------------//
-	if ( bCheckFade )
-	{
-		if ( g_Prefs.nFadePauseResumeEnable == 1 )
-			SetFadeStart();
-	}
+	if ( bCheckFade && g_Prefs.nFadePauseResumeEnable )
+		SetFadeStart();
 	else
 		FinalizePause();
 }
@@ -400,11 +395,8 @@ void CMusikPlayer::Resume( bool bCheckFade )
 	//--- setup crossfader and return, if	the prefs	---//
 	//--- say so.										---//
 	//-----------------------------------------------------//
-	if ( bCheckFade )
-	{
-		if ( g_Prefs.nFadePauseResumeEnable == 1 )
-			SetFadeStart();
-	}
+	if ( bCheckFade && g_Prefs.nFadePauseResumeEnable )
+		SetFadeStart();
 	else
 		FinalizeResume();
 }
@@ -438,12 +430,12 @@ void CMusikPlayer::Stop( bool bCheckFade, bool bExit )
 	//--- setup crossfader and return, if the prefs	---//
 	//--- say so.									---//
 	//-------------------------------------------------//
-	if ( bCheckFade )
+	if ( bCheckFade && g_Prefs.nFadeExitEnable == 1 )
 	{
 		//--- use exit duration ---//
 		if ( bExit )
 		{
-			if ( g_Prefs.nFadeExitEnable == 1 && IsPlaying() )
+			if ( IsPlaying() )
 			{
 				SetFadeStart();
 				return;
@@ -453,7 +445,7 @@ void CMusikPlayer::Stop( bool bCheckFade, bool bExit )
 		//--- use stop duration ---//
 		else
 		{
-			if ( g_Prefs.nFadeStopEnable == 1 && IsPlaying() )
+			if ( IsPlaying() )
 			{
 				SetFadeStart();
 				return;
@@ -486,9 +478,6 @@ void CMusikPlayer::FinalizeStop()
 	//--- free up the DSP object. FX stuff.	---//
 	//-----------------------------------------//
 	FreeDSP();
-
-	m_SongIndex	= 0;
-	m_LastSong	= 0;
 }
 
 size_t CMusikPlayer::GetRandomSong()
