@@ -28,8 +28,6 @@ CMusikPlaylistCtrl::CMusikPlaylistCtrl( CMusikLibrary* library, CMusikPrefs* pre
 
 CMusikPlaylistCtrl::~CMusikPlaylistCtrl()
 {
-	delete m_Bullets;
-	delete m_Items;
 }
 
 ///////////////////////////////////////////////////
@@ -171,12 +169,22 @@ void CMusikPlaylistCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	NMLVDISPINFO *pDispInfo = reinterpret_cast<NMLVDISPINFO*>(pNMHDR);
 
-	// dummy function, its just here to relay messages to the
-	// NM_CUSTOMDRAW function, which will draw the actual items
+	LV_ITEM* pItem = &(pDispInfo->item );
+	int nItem = pItem->iItem;
+	int nSub  = pItem->iSubItem;
+	int nType = m_Prefs->GetPlaylistCol( nSub );
 
-	//CRect rcItem;
-	//GetItemRect( pDispInfo->item.iItem, &rcItem, LVIR_BOUNDS );
-	//DrawItem( GetDC(), pDispInfo->item.iItem, rcItem );
+	CString sValue;
+	
+	if ( m_Prefs->GetPlaylistCol( nSub ) == MUSIK_LIBRARY_TYPE_RATING )
+		sValue = GetRating( nItem );
+	else
+		sValue = m_Playlist->GetField( nItem, nType );
+
+	char* pStr = sValue.GetBuffer();
+
+	pItem->cchTextMax = sizeof( *pStr );
+	lstrcpy( pItem->pszText, pStr );
 
 	*pResult = 0;
 }
@@ -222,37 +230,29 @@ void CMusikPlaylistCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
     // First thing - check the draw stage. If it's the control's prepaint
     // stage, then tell Windows we want messages for every item.
     if ( CDDS_PREPAINT == pLVCD->nmcd.dwDrawStage )
-        *pResult = CDRF_NOTIFYITEMDRAW;
+        *pResult = ( CDRF_NOTIFYITEMDRAW | CDRF_NOTIFYSUBITEMDRAW );
 	
-	else if ( CDDS_ITEMPREPAINT == pLVCD->nmcd.dwDrawStage )
+	// we got a paint item event, ignore it, we want to draw the 
+	// sub items one by one.
+	else if ( pLVCD->nmcd.dwDrawStage == CDDS_ITEMPREPAINT  )
+		*pResult = CDRF_NOTIFYSUBITEMDRAW;
+
+	// draw the sub items
+	else if ( pLVCD->nmcd.dwDrawStage == ( CDDS_ITEMPREPAINT | CDDS_SUBITEM ) )
 	{
-        int iRow = (int)pLVCD->nmcd.dwItemSpec;
-		
-		CDC* pDC = CDC::FromHandle(pLVCD->nmcd.hdc);
-		CRect item_rect;
-		GetItemRect( iRow, &item_rect, LVIR_BOUNDS ); 
+		CDC *pDC = CDC::FromHandle(pLVCD->nmcd.hdc);
+		int nSubType = m_Prefs->GetPlaylistCol( pLVCD->iSubItem );
 
-		DrawItem( pDC, iRow, item_rect );
-
-		*pResult = CDRF_SKIPDEFAULT;
+		if ( nSubType == MUSIK_LIBRARY_TYPE_RATING )
+		{
+			pDC->SelectObject( m_Bullets );
+			pDC->SetTextColor( GetSysColor( COLOR_BTNFACE ) );
+		}
+		else
+			pDC->SelectObject( m_Items );
+			
+		*pResult = CDRF_NEWFONT;
 	}
-
-	else if( pLVCD->nmcd.dwDrawStage == CDDS_ITEMPOSTPAINT )
-      *pResult = CDRF_DODEFAULT;
-}
-
-///////////////////////////////////////////////////
-
-void CMusikPlaylistCtrl::EnableHighlighting( int row, bool bHighlight )
-{
-	ListView_SetItemState( m_hWnd, row, bHighlight? 0xff: 0, LVIS_SELECTED );
-}
-
-///////////////////////////////////////////////////
-
-bool CMusikPlaylistCtrl::IsRowSelected( int row )
-{
-	return ListView_GetItemState( m_hWnd, row, LVIS_SELECTED ) != 0;
 }
 
 ///////////////////////////////////////////////////
@@ -289,64 +289,8 @@ CString CMusikPlaylistCtrl::GetRating( int item )
 
 ///////////////////////////////////////////////////
 
-void CMusikPlaylistCtrl::DrawItem( CDC* pDC, int item, const CRect& rect )
-{
-	CMemDC dc( pDC, &rect );
-
-	// setup the font and highlight colors
-	COLORREF bg;
-	COLORREF text;
-	if ( IsRowSelected( item ) )
-	{
-		bg = GetSysColor( COLOR_HIGHLIGHT );
-		text = GetSysColor( COLOR_HIGHLIGHTTEXT );
-	}
-	else
-	{
-		if ( item % 2 == 0 )
-		{
-			bg = m_Prefs->GetPlaylistStripeColor();
-			text = GetSysColor( COLOR_WINDOWTEXT );
-		}
-		else
-		{
-			bg = GetSysColor( COLOR_BTNHILIGHT );
-			text = GetSysColor( COLOR_WINDOWTEXT );
-		}
-	}
-
-	// draw the text
-	CRect rcSubItem;
-	CString sSubItem;
-	dc.SetTextColor( text );
-	for ( size_t i = 0; i < m_Prefs->GetPlaylistColCount(); i++ )
-	{
-		GetSubItemRect( item, i, LVIR_BOUNDS, rcSubItem );
-		if ( m_Prefs->GetPlaylistCol( i ) == MUSIK_LIBRARY_TYPE_RATING )
-		{
-			sSubItem = GetRating( item );
-			dc.FillSolidRect( &rcSubItem, bg );
-			dc.SelectObject( m_Bullets );
-			dc.TextOut( rcSubItem.left + 6, rcSubItem.top, sSubItem );
-		}
-		
-		else
-		{
-			sSubItem = m_Playlist->items()->at( item ).GetField( m_Prefs->GetPlaylistCol ( i ) );
-			dc.FillSolidRect( &rcSubItem, bg );
-			dc.SelectObject( m_Items );
-			dc.TextOut( rcSubItem.left + 6, rcSubItem.top, sSubItem );
-		}
-	}
-}
-
-///////////////////////////////////////////////////
-
 void CMusikPlaylistCtrl::InitFonts()
 {
-	m_Items = new CFont();
-	m_Items->CreateStockObject( DEFAULT_GUI_FONT );
-
-    m_Bullets = new CFont();
-	m_Bullets->CreatePointFont( 96, "Marlett" );
+	m_Items.CreateStockObject( DEFAULT_GUI_FONT );
+	m_Bullets.CreatePointFont( 100, "Marlett" );
 }

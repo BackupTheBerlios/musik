@@ -29,19 +29,16 @@ protected:
 	CMusikLibrary* m_Library;
 	CMusikPrefs* m_Prefs;
 	CMusikPlaylist* m_Playlist;
-	CFont *m_Bullets;
-	CFont *m_Items;
+	CFont m_Bullets;
+	CFont m_Items;
 
 //-------------------------------------------------//
 //--- operations								---//
 //-------------------------------------------------//
 private:
-	void EnableHighlighting( int row, bool bHighlight );
-	bool IsRowSelected( int row );
 	void ResetColumns();
 	void SaveColumns();
 	CString GetRating( int item );
-	void DrawItem( CDC* pDC, int item, const CRect& rect );
 	void InitFonts();
 	
 //-------------------------------------------------//
