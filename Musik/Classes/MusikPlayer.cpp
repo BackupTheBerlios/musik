@@ -27,7 +27,7 @@
 #include <wx/arrimpl.cpp>
 WX_DEFINE_OBJARRAY( CMusikStreamArray );
 
-#define MUSIK_FMOD_VERSION 0x0363 //0x0370
+#define MUSIK_FMOD_VERSION 0x0363 //--- 0x0363 or 0x0370 ---//
 
 void * F_CALLBACKAPI dspcallback(void *originalbuffer, void *newbuffer, int length, int param)
 {
@@ -69,6 +69,7 @@ CMusikPlayer::CMusikPlayer()
 	//--- initialize random playback ---//
 	long RandomSeed = wxGetLocalTime();
 	SeedRandom( RandomSeed );
+
 	//--- clear history ---//
 	m_History[0] = m_History[1] = m_History[2] = m_History[3] = m_History[4] = ~0;
 }
@@ -225,11 +226,11 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 		//--- bottom of the g_ActiveStreams array	---//
 		//---------------------------------------------//
 		FSOUND_Stream_SetBufferSize( g_Prefs.nSndBuffer );
-#if (MUSIK_FMOD_VERSION >= 0x0370)
-		FSOUND_STREAM* pNewStream = FSOUND_Stream_Open( ( const char* )ConvFNToFieldMB( m_CurrentFile ), FSOUND_2D, 0, 0 );
-#else
-		FSOUND_STREAM* pNewStream = FSOUND_Stream_OpenFile( ( const char* )ConvFNToFieldMB( m_CurrentFile ), FSOUND_2D, 0);
-#endif
+		#if ( MUSIK_FMOD_VERSION >= 0x0370 )
+			FSOUND_STREAM* pNewStream = FSOUND_Stream_Open( ( const char* )ConvFNToFieldMB( m_CurrentFile ), FSOUND_2D, 0, 0 );
+		#else
+			FSOUND_STREAM* pNewStream = FSOUND_Stream_OpenFile( ( const char* )ConvFNToFieldMB( m_CurrentFile ), FSOUND_2D, 0);
+		#endif
 		InitDSP();
 		
 		//---------------------------------------------//
@@ -604,11 +605,11 @@ void CMusikPlayer::PrevSong()
 int CMusikPlayer::GetFilesize( wxString sFilename )
 {
 	int filesize = -1;
-#if (MUSIK_FMOD_VERSION >= 0x0370)
-	FSOUND_STREAM *pStream = FSOUND_Stream_Open( ( const char* )ConvFNToFieldMB( sFilename ), FSOUND_2D, 0, 0 );
-#else
-	FSOUND_STREAM* pStream = FSOUND_Stream_OpenFile( ( const char* )ConvFNToFieldMB( sFilename ), FSOUND_2D, 0);
-#endif
+	#if ( MUSIK_FMOD_VERSION >= 0x0370 )
+		FSOUND_STREAM *pStream = FSOUND_Stream_Open( ( const char* )ConvFNToFieldMB( sFilename ), FSOUND_2D, 0, 0 );
+	#else
+		FSOUND_STREAM* pStream = FSOUND_Stream_OpenFile( ( const char* )ConvFNToFieldMB( sFilename ), FSOUND_2D, 0);
+	#endif
 
 	if ( pStream )
 	{
@@ -696,11 +697,11 @@ int CMusikPlayer::GetFileDuration( wxString sFilename, int nType )
 	//--- this should be FSOUND_MPEGACCURATE to get	---//
 	//--- an accurate length, but it's way slower..	---//
 	//-------------------------------------------------//
-#if (MUSIK_FMOD_VERSION >= 0x0370)
-	FSOUND_STREAM *pStream = FSOUND_Stream_Open( ( const char* )ConvFNToFieldMB( sFilename ), FSOUND_2D, 0, 0 );
-#else
-	FSOUND_STREAM* pStream = FSOUND_Stream_OpenFile( ( const char* )ConvFNToFieldMB( sFilename ), FSOUND_2D, 0);
-#endif
+	#if (MUSIK_FMOD_VERSION >= 0x0370)
+		FSOUND_STREAM *pStream = FSOUND_Stream_Open( ( const char* )ConvFNToFieldMB( sFilename ), FSOUND_2D, 0, 0 );
+	#else
+		FSOUND_STREAM* pStream = FSOUND_Stream_OpenFile( ( const char* )ConvFNToFieldMB( sFilename ), FSOUND_2D, 0);
+	#endif
 
 	if ( pStream )
 	{

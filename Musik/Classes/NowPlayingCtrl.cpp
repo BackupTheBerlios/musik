@@ -360,8 +360,11 @@ void CNowPlayingCtrl::PlayerPrev( wxCommandEvent& WXUNUSED(event) )
 void CNowPlayingCtrl::PlayerVolume( wxCommandEvent& WXUNUSED(event) )	
 {	
 	wxPoint pos = wxGetMousePosition();
-	pos.x -= 14;
-	pos.y -= 80;
 	wxFrame *pDlg = new MusikVolumeFrame( ( wxFrame* )g_MusikFrame, pos );
+
+	wxSize DlgSize = pDlg->GetSize();
+	pos.x -= DlgSize.GetWidth();
+	pos.y -= DlgSize.GetWidth();	
+	pDlg->SetPosition( pos );
 	pDlg->Show();
 }
