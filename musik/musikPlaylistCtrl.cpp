@@ -1493,6 +1493,9 @@ void CmusikPlaylistCtrl::ShowContextMenu()
 		popup_menu->EnableMenuItem( ID_PLAYLISTCONTEXTMENU_PROPERTIES, MF_DISABLED | MF_GRAYED );
 	}
 
+	if ( m_Playlist != m_Player->GetPlaylist() )
+		popup_menu->EnableMenuItem( ID_PLAYLISTCONTEXTMENU_SHUFFLENOWPLAYING, MF_DISABLED | MF_GRAYED );
+
 	if ( !m_Player->GetPlaylist()->GetCount() )
 		popup_menu->EnableMenuItem( ID_PLAYLISTCONTEXTMENU_SHUFFLENOWPLAYING, MF_DISABLED | MF_GRAYED );
 

@@ -130,11 +130,14 @@ protected:
 	afx_msg void OnItemChanged( NMHDR* pNotifyStruct, LRESULT* plResult );
 	afx_msg void OnSourcesRename();
 	afx_msg void OnSourcesDelete();
+	afx_msg void OnSourcesShuffleplaylist();
+	afx_msg void OnShowSublibraries();
+	afx_msg void OnShowPlaylists();
+	afx_msg void OnShowSearch();
 
 	// macros
 	DECLARE_MESSAGE_MAP()
-public:
-	afx_msg void OnSourcesShuffleplaylist();
+
 };
 
 ///////////////////////////////////////////////////
@@ -167,7 +170,7 @@ public:
 	void DeleteSel();
 	void QuickSearch();
 
-	void Reset(){ CleanItems(); InitItems(); }
+	void Reset(){ DeinitItems(); InitItems(); }
 
 	// overrides
 	void DoDrag( CmusikPropTreeItem* pItem );
@@ -199,7 +202,7 @@ protected:
 
 	// create default headers
 	void InitItems();
-	void CleanItems();
+	void DeinitItems();
 	CmusikPropTreeItem* m_LibRoot;
 	CmusikPropTreeItem* m_SrcRoot;
 	CmusikPropTreeItem* m_SubLibRoot;

@@ -26,7 +26,6 @@
 #define IDR_TRAY_MENU                   146
 #define IDD_PROPPAGE_MEDIUM             146
 #define IDD_PROPPAGE_SOUND_CROSSFADER   146
-#define IDD_PROPPAGE_MEDIUM1            147
 #define IDD_PROPPAGE_INTERFACE_TRANPARENCY 147
 #define IDB_DOWN                        151
 #define IDB_BITMAP1                     153
@@ -41,6 +40,7 @@
 #define IDB_SONG_PLAYING                159
 #define IDB_BITMAP3                     160
 #define IDB_SONG_NOTPLAYING             160
+#define IDD_TAG_PROPERTIES              161
 #define IDC_CHECK_STARTUPSCAN           1007
 #define IDC_CHECK_STARTUPSCAN2          1008
 #define IDC_CHECK_PL_STRIPES            1009
@@ -64,6 +64,7 @@
 #define IDC_STOP                        1015
 #define IDC_CHECK2                      1016
 #define IDC_ENABLE_QUERY2               1016
+#define IDC_EDIT7                       1016
 #define IDC_BTNNO                       1017
 #define IDC_FIELDVARIABLE2              1017
 #define IDC_CHECK3                      1017
@@ -248,13 +249,17 @@
 #define ID_PLAYLISTCONTEXTMENU_SHUFFLENOWPLAYING 32923
 #define ID_HELP_VERSION                 32924
 #define ID_HELP_CORE                    32925
+#define ID_SOURCES_SHOW                 32926
+#define ID_SHOW_SUBLIBRARIES            32927
+#define ID_SHOW_PLAYLISTS               32928
+#define ID_SHOW_SEARCH                  32931
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        161
-#define _APS_NEXT_COMMAND_VALUE         32926
+#define _APS_NEXT_RESOURCE_VALUE        162
+#define _APS_NEXT_COMMAND_VALUE         32932
 #define _APS_NEXT_CONTROL_VALUE         1056
 #define _APS_NEXT_SYMED_VALUE           104
 #endif

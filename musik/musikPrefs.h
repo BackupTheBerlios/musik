@@ -123,6 +123,17 @@ public:
 	void SetSelBoxType( int index, int type ){ m_SelectionBox_Types.at( index ) = type; }
 	void SetNewSelBoxType( int type ){ m_SelectionBox_Types.push_back( type ); }
 	void SetSelBoxTypes( const CIntArray& types ){ m_SelectionBox_Types = types; }
+
+	//
+	// sources
+	//
+	bool IsSubLibsVisible(){ return m_Sources_SubLibsVisible; }
+	bool IsPlaylistsVisible(){ return m_Sources_PlaylistsVisible; }
+	bool IsQuickSearchVisible(){ return m_Sources_QuickSearchVisible; }
+
+	void SetSubLibsVisible( bool visible ){ m_Sources_SubLibsVisible = visible; }
+	void SetPlaylistsVisible( bool visible ){ m_Sources_PlaylistsVisible = visible; }
+	void SetQuickSearchVisible( bool visible ){ m_Sources_QuickSearchVisible = visible; }	
 	
 	//
 	// playlist 
@@ -241,6 +252,11 @@ private:
 	bool	m_Dlg_LibraryShowsAllSongs;
 	bool	m_Dlg_MinimizeToTray;
 	bool	m_Dlg_AddEntireToNP;
+
+	// sources
+	bool	m_Sources_SubLibsVisible;
+	bool	m_Sources_PlaylistsVisible;
+	bool	m_Sources_QuickSearchVisible;
 
 	// transparency
 	bool m_TransEnabled;

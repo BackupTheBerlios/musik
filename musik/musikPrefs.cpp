@@ -108,6 +108,11 @@ void CmusikPrefs::LoadPrefs()
 	// selection area
 	m_SelectionBox_Types = StringToCIntArray( config->GetValue( "Selection Area", "Types", "1,2" ) );
 
+	// sources
+	m_Sources_SubLibsVisible		= StringToBool( config->GetValue( "Sources", "Show SubLibs", "0" ) );
+	m_Sources_PlaylistsVisible		= StringToBool( config->GetValue( "Sources", "Show Playlists", "1" ) );
+	m_Sources_QuickSearchVisible	= StringToBool( config->GetValue( "Sources", "Show Quick Search", "1" ) );
+
 	// playlist
 	m_Playlist_Order		= StringToCIntArray( config->GetValue( "Playlist", "Column Order", GetDefPlaylistOrder() ) );
 	m_Playlist_Sizes		= StringToCIntArray( config->GetValue( "Playlist", "Column Sizes", GetDefPlaylistSizes() ) );
@@ -180,6 +185,11 @@ void CmusikPrefs::SavePrefs()
 
 	// selection area
 	config->SetValue( "Selection Area", "Types", CIntArrayToString( m_SelectionBox_Types ) );
+
+	// sources
+	config->SetValue( "Sources", "Show SubLibs", BoolToString( m_Sources_SubLibsVisible ) );
+	config->SetValue( "Sources", "Show Playlists", BoolToString( m_Sources_PlaylistsVisible ) );
+	config->SetValue( "Sources", "Show Quick Search", BoolToString( m_Sources_QuickSearchVisible ) );
 
 	// playlist
 	config->SetValue( "Playlist", "Column Order", CIntArrayToString( m_Playlist_Order ) );

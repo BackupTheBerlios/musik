@@ -51,6 +51,7 @@
 #include "musik.h"
 #include "musikSourcesCtrl.h"
 #include "musikSourcesDropTarget.h"
+#include ".\musiksourcesctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -87,6 +88,9 @@ BEGIN_MESSAGE_MAP(CmusikSourcesBar, baseCmusikSourcesBar)
 	ON_COMMAND(ID_SOURCES_RENAME, OnSourcesRename)
 	ON_COMMAND(ID_SOURCES_DELETE, OnSourcesDelete)
 	ON_COMMAND(ID_SOURCES_SHUFFLEPLAYLIST, OnSourcesShuffleplaylist)
+	ON_COMMAND(ID_SHOW_SUBLIBRARIES, OnShowSublibraries)
+	ON_COMMAND(ID_SHOW_PLAYLISTS, OnShowPlaylists)
+	ON_COMMAND(ID_SHOW_SEARCH, OnShowSearch)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -211,37 +215,82 @@ void CmusikSourcesBar::ShowMenu( bool force_show )
 		GetCtrl()->m_EditInPlace.Cancel();
 
 	CmusikPropTreeItem* pItem = GetCtrl()->GetFocusedItem();
+	int type = MUSIK_PLAYLIST_TYPE_UNKNOWN;
 
 	if ( pItem )
+		type = pItem->GetPlaylistType();
+
+	CPoint pos;
+	::GetCursorPos( &pos );
+
+	CMenu main_menu;
+	CMenu* popup_menu;
+
+	main_menu.LoadMenu( IDR_SOURCES_MENU );
+	popup_menu = main_menu.GetSubMenu( 0 );
+
+	if ( type != MUSIK_PLAYLIST_TYPE_NOWPLAYING )
+		popup_menu->EnableMenuItem( ID_SOURCES_SHUFFLEPLAYLIST, MF_GRAYED | MF_DISABLED );
+
+	// update ui doesn't work...
+	if ( type == MUSIK_PLAYLIST_TYPE_STANDARD || type == MUSIK_PLAYLIST_TYPE_SUBLIBRARY )
 	{
-		CPoint pos;
-		::GetCursorPos( &pos );
-
-		CMenu main_menu;
-		CMenu* popup_menu;
-
-		main_menu.LoadMenu( IDR_SOURCES_MENU );
-		popup_menu = main_menu.GetSubMenu( 0 );
-
-		// update ui doesn't work...
-		int type = pItem->GetPlaylistType();
-
-		if ( type == MUSIK_PLAYLIST_TYPE_STANDARD || type == MUSIK_PLAYLIST_TYPE_SUBLIBRARY )
-		{
-			popup_menu->EnableMenuItem( ID_SOURCES_RENAME, MF_ENABLED );
-			popup_menu->EnableMenuItem( ID_SOURCES_DELETE, MF_ENABLED );
-		}
-		else
-		{
-			popup_menu->EnableMenuItem( ID_SOURCES_RENAME, MF_GRAYED | MF_DISABLED );
-			popup_menu->EnableMenuItem( ID_SOURCES_DELETE, MF_GRAYED | MF_DISABLED );
-		}
-
-		if ( !GetCtrl()->m_Player->GetPlaylist()->GetCount() )
-			popup_menu->EnableMenuItem( ID_SOURCES_SHUFFLEPLAYLIST, MF_GRAYED | MF_DISABLED );
-
-		popup_menu->TrackPopupMenu( 0, pos.x, pos.y, this );
+		popup_menu->EnableMenuItem( ID_SOURCES_RENAME, MF_ENABLED );
+		popup_menu->EnableMenuItem( ID_SOURCES_DELETE, MF_ENABLED );
 	}
+	else
+	{
+		popup_menu->EnableMenuItem( ID_SOURCES_RENAME, MF_GRAYED | MF_DISABLED );
+		popup_menu->EnableMenuItem( ID_SOURCES_DELETE, MF_GRAYED | MF_DISABLED );
+	}
+	
+	popup_menu->CheckMenuItem( ID_SHOW_SUBLIBRARIES, m_Prefs->IsSubLibsVisible() ? MF_CHECKED : MF_UNCHECKED );
+	popup_menu->CheckMenuItem( ID_SHOW_PLAYLISTS, m_Prefs->IsPlaylistsVisible() ? MF_CHECKED : MF_UNCHECKED );
+	popup_menu->CheckMenuItem( ID_SHOW_SEARCH, m_Prefs->IsQuickSearchVisible() ? MF_CHECKED : MF_UNCHECKED );
+
+	if ( !GetCtrl()->m_Player->GetPlaylist()->GetCount() )
+		popup_menu->EnableMenuItem( ID_SOURCES_SHUFFLEPLAYLIST, MF_GRAYED | MF_DISABLED );
+
+	popup_menu->TrackPopupMenu( 0, pos.x, pos.y, this );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSourcesBar::OnShowSublibraries()
+{
+	if ( m_Prefs->IsSubLibsVisible() )
+		m_Prefs->SetSubLibsVisible( false );
+	else
+		m_Prefs->SetSubLibsVisible( true );
+
+	GetCtrl()->DeinitItems();
+	GetCtrl()->InitItems();
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSourcesBar::OnShowPlaylists()
+{
+	if ( m_Prefs->IsPlaylistsVisible() )
+		m_Prefs->SetPlaylistsVisible( false );
+	else
+		m_Prefs->SetPlaylistsVisible( true );
+
+	GetCtrl()->DeinitItems();
+	GetCtrl()->InitItems();
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSourcesBar::OnShowSearch()
+{
+	if ( m_Prefs->IsQuickSearchVisible() )
+		m_Prefs->SetQuickSearchVisible( false );
+	else
+		m_Prefs->SetQuickSearchVisible( true );
+
+	GetCtrl()->DeinitItems();
+	GetCtrl()->InitItems();
 }
 
 ///////////////////////////////////////////////////
@@ -349,33 +398,42 @@ void CmusikSourcesCtrl::InitItems()
 	LibLoad();
 	
 	// sub libraries
-	info.Set( "Sub Libraries", -1, -1 );
-	m_SubLibRoot = InsertItem( new CmusikPropTreeItem() );
-	m_SubLibRoot->SetPlaylistInfo( info );
-	m_SubLibRoot->Expand( true );
+	if ( m_Prefs->IsSubLibsVisible() )
+	{
+		info.Set( "Sub Libraries", -1, -1 );
+		m_SubLibRoot = InsertItem( new CmusikPropTreeItem() );
+		m_SubLibRoot->SetPlaylistInfo( info );
+		m_SubLibRoot->Expand( true );
 
-	StdPlaylistsLoad( MUSIK_PLAYLIST_TYPE_SUBLIBRARY );
+		StdPlaylistsLoad( MUSIK_PLAYLIST_TYPE_SUBLIBRARY );
+	}
 
 	// standard playlists
-	info.Set( "Playlists", -1, -1 );
-	m_StdPlaylistRoot = InsertItem( new CmusikPropTreeItem() );
-	m_StdPlaylistRoot->SetPlaylistInfo( info );
-	m_StdPlaylistRoot->Expand( true );
+	if ( m_Prefs->IsPlaylistsVisible() )
+	{
+		info.Set( "Playlists", -1, -1 );
+		m_StdPlaylistRoot = InsertItem( new CmusikPropTreeItem() );
+		m_StdPlaylistRoot->SetPlaylistInfo( info );
+		m_StdPlaylistRoot->Expand( true );
 
-	StdPlaylistsLoad( MUSIK_PLAYLIST_TYPE_STANDARD );
+		StdPlaylistsLoad( MUSIK_PLAYLIST_TYPE_STANDARD );
+	}
 
 	// "Search"
-	info.Set( "Search All", -1, -1 );
-	m_SrcRoot = InsertItem( new CmusikPropTreeItem() );
-	m_SrcRoot->SetPlaylistInfo( info );
-	m_SrcRoot->Expand( 1 );
+	if ( m_Prefs->IsQuickSearchVisible() )
+	{
+		info.Set( "Search All", -1, -1 );
+		m_SrcRoot = InsertItem( new CmusikPropTreeItem() );
+		m_SrcRoot->SetPlaylistInfo( info );
+		m_SrcRoot->Expand( 1 );
 
-	SrcLoad();
+		SrcLoad();
+	}
 }
 
 ///////////////////////////////////////////////////
 
-void CmusikSourcesCtrl::CleanItems()
+void CmusikSourcesCtrl::DeinitItems()
 {
 	ClearVisibleList();
 	DeleteAllItems();
