@@ -154,7 +154,7 @@ CNowPlayingCtrl::CNowPlayingCtrl( wxWindow *parent )
 	vsPlayModeCol->Add( hsButtons, 1,wxEXPAND|wxALL,2 );
 
 //	vsPlayModeCol->Add( new wxStaticText	( this, -1, _( "Play mode" ) ), 1 );
-	const wxString playmode_choices[] ={_("Normal"),_("Loop Song"),_("Loop List"),_("Shuffle"),_("Auto DJ")};
+	const wxString playmode_choices[] ={_("Normal"),_("Repeat Song"),_("Repeat List"),_("Shuffle"),_("Auto DJ")};
 	
 	wxChoice *choicePlaymode = new wxChoice(this,MUSIK_NOWPLAYINGCTRL_PLAYMODE,wxDefaultPosition,wxDefaultSize,WXSIZEOF(playmode_choices),playmode_choices);
 	int playmode = wxGetApp().Prefs.ePlaymode.val;

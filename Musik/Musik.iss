@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=wxMusik
-AppVerName=wxMusik 0.3.1
+AppVerName=wxMusik 0.3.1.1
 AppPublisherURL=http://musik.berlios.de
 AppSupportURL=http://musik.berlios.de
 AppUpdatesURL=http://musik.berlios.de
@@ -12,8 +12,8 @@ DefaultGroupName=wxMusik
 AllowNoIcons=true
 LicenseFile=license.txt
 
-OutputBaseFilename=wxMusik_v0.3.1.0_Setup
-VersionInfoVersion=0.3.1.0
+OutputBaseFilename=wxMusik_v0.3.1.1_Setup
+VersionInfoVersion=0.3.1.1
 VersionInfoDescription=A music player and library application
 Compression=lzma/ultra
 ShowLanguageDialog=yes
@@ -27,11 +27,10 @@ FlatComponentsList=false
 ShowTasksTreeLines=true
 ChangesAssociations=true
 PrivilegesRequired=poweruser
+AppMutex=wxMusik
 [Tasks]
-; NOTE: The following entry contains English phrases ("Create a desktop icon" and "Additional icons"). You are free to translate them into another language if required.
-Name: desktopicon; Description: Create a &desktop icon; GroupDescription: Additional icons:
-; NOTE: The following entry contains English phrases ("Create a Quick Launch icon" and "Additional icons"). You are free to translate them into another language if required.
-Name: quicklaunchicon; Description: Create a &Quick Launch icon; GroupDescription: Additional icons:; Flags: unchecked
+Name: desktopicon; Description: {cm:Create_a_Destop_Icon}; GroupDescription: {cm:Additional_icons}
+Name: quicklaunchicon; Description: {cm:Create_a_Quick_Launch_Icon}; GroupDescription: {cm:Additional_icons}; Flags: unchecked
 
 [Files]
 Source: _release\wxMusik.exe; DestDir: {app}; Flags: promptifolder; MinVersion: 4.1.1998,0; OnlyBelowVersion: 0,4.0.1381
@@ -48,31 +47,56 @@ Source: contrib\playlists\*.mpu; DestDir: {userappdata}\..\.Musik\playlists; Fla
 Source: contrib\playlists\*.mpu; DestDir: {app}\..\.Musik\playlists; Flags: overwritereadonly; Components: Radio_Channels_win9x
 Source: contrib\playlists\*.mpd; DestDir: {app}\..\.Musik\playlists; Flags: overwritereadonly; Components: Dynamic_Playlist_Examples_win9x
 Source: Release Unicode\wxMusik.exe; DestDir: {app}; MinVersion: 0,4.0.1381sp6; Flags: promptifolder
+Source: locale\de\*.mo; DestDir: {app}\locale\de; Flags: overwritereadonly; Languages: de
 [Icons]
-Name: {group}\wxMusik; Filename: {app}\wxMusik.exe
-; NOTE: The following entry contains an English phrase ("Uninstall"). You are free to translate it into another language if required.
-Name: {group}\Uninstall wxMusik; Filename: {uninstallexe}
-Name: {userdesktop}\wxMusik; Filename: {app}\wxMusik.exe; Tasks: desktopicon
-Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\wxMusik; Filename: {app}\wxMusik.exe; Tasks: quicklaunchicon
+Name: {group}\wxMusik; Filename: {app}\wxMusik.exe; WorkingDir: {app}; IconIndex: 0
+Name: {group}\{cm:UninstallProgram,{cm:MyAppName}}; Filename: {uninstallexe}
+Name: {userdesktop}\wxMusik; Filename: {app}\wxMusik.exe; Tasks: desktopicon; WorkingDir: {app}; IconIndex: 0
+Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\wxMusik; Filename: {app}\wxMusik.exe; Tasks: quicklaunchicon; WorkingDir: {app}; IconIndex: 0
 
 [Run]
-; NOTE: The following entry contains an English phrase ("Launch"). You are free to translate it into another language if required.
-Filename: {app}\wxMusik.exe; Description: Launch Musik; Flags: nowait postinstall skipifsilent
+Filename: {app}\wxMusik.exe; Description: {cm:Launch,{cm:MyAppName}}; Flags: nowait postinstall skipifsilent
 [Components]
-Name: Dynamic_Playlist_Examples; Description: Examples of Dynamic Playlists; Types: custom full; MinVersion: 0,4.0.1381
-Name: Radio_Channels; Description: Examples of Net Radio Channels; Types: custom full; MinVersion: 0,4.0.1381
-Name: Radio_Channels_win9x; Description: Examples of Net Radio Channels; Types: custom full; MinVersion: 4.0.950,0; OnlyBelowVersion: 0,4.0.1381
-Name: Dynamic_Playlist_Examples_win9x; Description: Examples of Dynamic Playlists; Types: custom full; MinVersion: 4.0.950,0; OnlyBelowVersion: 0,4.0.1381
+Name: Dynamic_Playlist_Examples; Description: {cm:Examples_of_Dynamic_Playlists}; Types: custom full; MinVersion: 0,4.0.1381
+Name: Radio_Channels; Description: {cm:Examples_of_Net_Radio_Channels}; Types: custom full; MinVersion: 0,4.0.1381
+Name: Radio_Channels_win9x; Description: {cm:Examples_of_Net_Radio_Channels}; Types: custom full; MinVersion: 4.0.950,0; OnlyBelowVersion: 0,4.0.1381
+Name: Dynamic_Playlist_Examples_win9x; Description: {cm:Examples_of_Dynamic_Playlists}; Types: custom full; MinVersion: 4.0.950,0; OnlyBelowVersion: 0,4.0.1381
 [InstallDelete]
 Name: {app}\Musik.exe; Type: files
 [UninstallDelete]
 Name: {userappdata}\..\.Musik; Type: filesandordirs; MinVersion: 0,4.0.1381
 [Registry]
-Root: HKCR; SubKey: .mp3; ValueType: string; ValueData: Mp3 File; Flags: uninsdeletekey
-Root: HKCR; SubKey: Mp3 File; ValueType: string; ValueData: Mp3 File; Flags: uninsdeletekey
+Root: HKCR; SubKey: .mp3; ValueType: string; ValueData: Mp3 File; Flags: uninsdeletekey; Languages: en
+Root: HKCR; SubKey: Mp3 File; ValueType: string; ValueData: Mp3 File; Flags: uninsdeletekey; Languages: en
 Root: HKCR; SubKey: Mp3 File\Shell\Open\Command; ValueType: string; ValueData: """{app}\wxMusik.exe"" ""%1"""; Flags: uninsdeletevalue
 Root: HKCR; Subkey: Mp3 File\DefaultIcon; ValueType: string; ValueData: {app}\wxMusik.exe,0; Flags: uninsdeletevalue
-Root: HKCR; SubKey: .ogg; ValueType: string; ValueData: Ogg File; Flags: uninsdeletekey
-Root: HKCR; SubKey: Ogg File; ValueType: string; ValueData: Ogg File; Flags: uninsdeletekey
+Root: HKCR; SubKey: .ogg; ValueType: string; ValueData: Ogg File; Flags: uninsdeletekey; Languages: en
+Root: HKCR; SubKey: Ogg File; ValueType: string; ValueData: Ogg File; Flags: uninsdeletekey; Languages: en
 Root: HKCR; SubKey: Ogg File\Shell\Open\Command; ValueType: string; ValueData: """{app}\wxMusik.exe"" ""%1"""; Flags: uninsdeletevalue
 Root: HKCR; Subkey: Ogg File\DefaultIcon; ValueType: string; ValueData: {app}\wxMusik.exe,0; Flags: uninsdeletevalue
+Root: HKCR; SubKey: Mp3 File; ValueType: string; ValueData: Mp3 Datei; Flags: uninsdeletekey; Languages: de
+Root: HKCR; SubKey: .mp3; ValueType: string; ValueData: Mp3 Datei; Flags: uninsdeletekey; Languages: de
+Root: HKCR; SubKey: Ogg File; ValueType: string; ValueData: Ogg Datei; Flags: uninsdeletekey; Languages: de
+Root: HKCR; SubKey: .ogg; ValueType: string; ValueData: Ogg Datei; Flags: uninsdeletekey; Languages: de
+[Languages]
+Name: en; MessagesFile: compiler:Default.isl
+Name: de; MessagesFile: compiler:Languages\German.isl
+[Messages]
+en.BeveledLabel=English
+de.BeveledLabel=Deutsch
+
+[CustomMessages]
+en.Launch=Launch %1
+en.MyAppName=wxMusik
+en.Examples_of_Dynamic_Playlists=Examples of Dynamic Playlists
+en.Examples_of_Net_Radio_Channels=Examples of Net Radio Channels
+en.Create_a_Destop_Icon =Create a &desktop icon
+en.Additional_icons=Additional icons
+en.Create_a_Quick_Launch_Icon=Create a &Quick Launch icon
+de.Launch=Starte %1
+de.MyAppName=wxMusik
+de.Examples_of_Dynamic_Playlists=Beispiele für dynamische Liedlisten
+de.Examples_of_Net_Radio_Channels=Beispiele für Netzradios
+de.Create_a_Destop_Icon =Erzeuge ein &Desktop Icon
+de.Additional_icons=Zusätzliche Icons
+de.Create_a_Quick_Launch_Icon=Erzeuge ein Icon in der &Schnellstartleiste

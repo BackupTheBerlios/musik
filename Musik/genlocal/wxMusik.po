@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-05-31 23:30+0200\n"
+"POT-Creation-Date: 2004-06-01 11:06+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -89,7 +89,7 @@ msgid " will not delete empty directories!"
 msgstr ""
 
 #: ../Classes/SourcesBox.cpp:979 ../Classes/SourcesBox.cpp:1053
-#: ../Classes/SourcesBox.cpp:1158
+#: ../Classes/SourcesBox.cpp:1159
 msgid ""
 "\" already exists, but does not appear to be visible in the panel.\n"
 "\n"
@@ -286,6 +286,22 @@ msgstr ""
 msgid "&View"
 msgstr ""
 
+#: ../Classes/SourcesBox.cpp:1131
+msgid "(all low quality, non-VBR)\n"
+msgstr ""
+
+#: ../Classes/SourcesBox.cpp:1135
+msgid "(all songs played this month)"
+msgstr ""
+
+#: ../Classes/SourcesBox.cpp:1129
+msgid "(all titles containing funky)\n"
+msgstr ""
+
+#: ../Classes/SourcesBox.cpp:1133
+msgid "(your popular tracks)\n"
+msgstr ""
+
 #: ../Frames/MusikAutoTaggerFrame.cpp:130
 msgid "+"
 msgstr ""
@@ -298,15 +314,15 @@ msgstr ""
 msgid ": Aborting process, please wait..."
 msgstr ""
 
-#: ../Frames/MusikFrameEvents.cpp:434
+#: ../Frames/MusikFrameEvents.cpp:435
 msgid ": Renaming selected playlist items (ESC to abort)"
 msgstr ""
 
-#: ../Frames/MusikFrameEvents.cpp:430
+#: ../Frames/MusikFrameEvents.cpp:431
 msgid ": Updating tags from selection box (ESC to abort)"
 msgstr ""
 
-#: ../Frames/MusikFrameEvents.cpp:438
+#: ../Frames/MusikFrameEvents.cpp:439
 msgid ": Writing dirty tags to file (ESC to abort)"
 msgstr ""
 
@@ -604,8 +620,12 @@ msgstr ""
 msgid "Enter name of the net stream:"
 msgstr ""
 
-#: ../Classes/SourcesBox.cpp:1184
+#: ../Classes/SourcesBox.cpp:1185
 msgid "Enter net stream address(URL):"
+msgstr ""
+
+#: ../Classes/SourcesBox.cpp:1127
+msgid "Examples:\n"
 msgstr ""
 
 #: ../Frames/MusikFrame.cpp:300
@@ -718,14 +738,6 @@ msgstr ""
 msgid "Lock channels"
 msgstr ""
 
-#: ../Classes/NowPlayingCtrl.cpp:157
-msgid "Loop List"
-msgstr ""
-
-#: ../Classes/NowPlayingCtrl.cpp:157
-msgid "Loop Song"
-msgstr ""
-
 #: ../Frames/MusikPrefsFrame.cpp:156
 msgid "Maximum sound channels:"
 msgstr ""
@@ -738,11 +750,11 @@ msgstr ""
 msgid "Musik Library"
 msgstr ""
 
-#: ../Classes/SourcesBox.cpp:314 ../Classes/SourcesBox.cpp:1298
+#: ../Classes/SourcesBox.cpp:314 ../Classes/SourcesBox.cpp:1299
 msgid "Net Stream"
 msgstr ""
 
-#: ../Classes/SourcesBox.cpp:1158
+#: ../Classes/SourcesBox.cpp:1159
 msgid "Net Stream \""
 msgstr ""
 
@@ -926,6 +938,14 @@ msgstr ""
 msgid "Rename:"
 msgstr ""
 
+#: ../Classes/NowPlayingCtrl.cpp:157
+msgid "Repeat List"
+msgstr ""
+
+#: ../Classes/NowPlayingCtrl.cpp:157
+msgid "Repeat Song"
+msgstr ""
+
 #: ../Classes/PlaylistCtrl.cpp:373
 msgid "Replace current playlist with all"
 msgstr ""
@@ -1036,7 +1056,8 @@ msgstr ""
 msgid "Show all "
 msgstr ""
 
-#: ../Classes/NowPlayingCtrl.cpp:157 ../Frames/MusikPrefsFrame.cpp:390
+#: ../Classes/NowPlayingCtrl.cpp:157 ../Frames/MusikPrefsFrame.cpp:75
+#: ../Frames/MusikPrefsFrame.cpp:390
 msgid "Shuffle"
 msgstr ""
 

@@ -1123,16 +1123,15 @@ wxString CSourcesListBox::PromptDynamicPlaylist( wxString sQuery )
 
 	}
 	sInfo += wxT("\n\n");
-	sInfo += wxGetTranslation( 
-		_T("Examples:\ntitle like '%funky%'\n")    
-		_T("(all titles containing funky)\n")
-		_T("bitrate < 128, vbr = 0\n")    
-		_T("(all low quality, non-VBR)\n")
-		_T("timesplayed > 10 order by artist\n")    
-		_T("(your popular tracks)\n") 
-		_T("lastplayed !='' and lastplayed >= julianday('now','start of month')\n")   
-		_T("(all songs played this month)")
-		);
+	sInfo += wxString(_("Examples:\n")) +
+		_T("title like '%funky%'\n")		 +
+		_("(all titles containing funky)\n") +
+		_T("bitrate < 128, vbr = 0\n")		 +
+		_("(all low quality, non-VBR)\n")	 +
+		_T("timesplayed > 10 order by artist\n") +   
+		_("(your popular tracks)\n")			 +
+		_T("lastplayed !='' and lastplayed >= julianday('now','start of month')\n")   +
+		_("(all songs played this month)");
 	wxTextEntryDialog dlg( this,sInfo , MUSIKAPPNAME_VERSION, sQuery );
 
 	if ( dlg.ShowModal() == wxID_OK )

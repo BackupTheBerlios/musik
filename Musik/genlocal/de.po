@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wxMusik-0.3.1.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-05-31 23:30+0200\n"
+"POT-Creation-Date: 2004-06-01 11:06+0200\n"
 "PO-Revision-Date: 2004-05-30 19:46+0100\n"
 "Last-Translator:Gunnar Roth <gunnar.roth@gmx.de>\n"
 "Language-Team: wxMusik Team <gunnar.roth@gmx.de>\n"
@@ -97,7 +97,7 @@ msgid " will not delete empty directories!"
 msgstr " löscht keine leeren Verzeichnisse!"
 
 #: ../Classes/SourcesBox.cpp:979 ../Classes/SourcesBox.cpp:1053
-#: ../Classes/SourcesBox.cpp:1158
+#: ../Classes/SourcesBox.cpp:1159
 msgid ""
 "\" already exists, but does not appear to be visible in the panel.\n"
 "\n"
@@ -310,6 +310,22 @@ msgstr "Bibliothek &aktualisieren"
 msgid "&View"
 msgstr "&Ansicht"
 
+#: ../Classes/SourcesBox.cpp:1131
+msgid "(all low quality, non-VBR)\n"
+msgstr "(Alle Lieder von niedriger Qualität, die nicht VBR sind)\n"
+
+#: ../Classes/SourcesBox.cpp:1135
+msgid "(all songs played this month)"
+msgstr "(Alle Lieder, die diesen Monat gespielt wurden)"
+
+#: ../Classes/SourcesBox.cpp:1129
+msgid "(all titles containing funky)\n"
+msgstr "(Alle Lieder die im Titel funky enthalten)\n"
+
+#: ../Classes/SourcesBox.cpp:1133
+msgid "(your popular tracks)\n"
+msgstr "(Häufig gespielte Lieder ,nach Künstler sortiert)\n"
+
 #: ../Frames/MusikAutoTaggerFrame.cpp:130
 msgid "+"
 msgstr "+"
@@ -322,16 +338,16 @@ msgstr "-"
 msgid ": Aborting process, please wait..."
 msgstr ": Prozess wird abgebrochen, bitte warten..."
 
-#: ../Frames/MusikFrameEvents.cpp:434
+#: ../Frames/MusikFrameEvents.cpp:435
 msgid ": Renaming selected playlist items (ESC to abort)"
 msgstr ""
 ": Ausgewählte Elemente der Liedliste werden umbenannt (Mit ESC abbrechen)"
 
-#: ../Frames/MusikFrameEvents.cpp:430
+#: ../Frames/MusikFrameEvents.cpp:431
 msgid ": Updating tags from selection box (ESC to abort)"
 msgstr ": Die Tags werden von der Auswahlbox aufgefrischt (Mit ESC abbrechen)"
 
-#: ../Frames/MusikFrameEvents.cpp:438
+#: ../Frames/MusikFrameEvents.cpp:439
 msgid ": Writing dirty tags to file (ESC to abort)"
 msgstr ": Schreibe unfertige Tags in Datei (Mit ESC abbrechen)"
 
@@ -634,9 +650,13 @@ msgstr "Namen für neue Liedliste eingeben:"
 msgid "Enter name of the net stream:"
 msgstr "Namen des Netzradios eingeben:"
 
-#: ../Classes/SourcesBox.cpp:1184
+#: ../Classes/SourcesBox.cpp:1185
 msgid "Enter net stream address(URL):"
 msgstr "Adresse(URL) des Netzradios eingeben:"
+
+#: ../Classes/SourcesBox.cpp:1127
+msgid "Examples:\n"
+msgstr "Beispiele:\n"
 
 #: ../Frames/MusikFrame.cpp:300
 msgid "FX\tCtrl-F"
@@ -752,14 +772,6 @@ msgstr "Diese Zeile schreiben:"
 msgid "Lock channels"
 msgstr "Kanäle zusammen verändern"
 
-#: ../Classes/NowPlayingCtrl.cpp:157
-msgid "Loop List"
-msgstr "Wiederhole Liste"
-
-#: ../Classes/NowPlayingCtrl.cpp:157
-msgid "Loop Song"
-msgstr "Wiederhole Lied"
-
 #: ../Frames/MusikPrefsFrame.cpp:156
 msgid "Maximum sound channels:"
 msgstr "Maximale Anzahl Soundkanäle:"
@@ -772,11 +784,11 @@ msgstr "Verschiedenes"
 msgid "Musik Library"
 msgstr "Musikbibliothek"
 
-#: ../Classes/SourcesBox.cpp:314 ../Classes/SourcesBox.cpp:1298
+#: ../Classes/SourcesBox.cpp:314 ../Classes/SourcesBox.cpp:1299
 msgid "Net Stream"
 msgstr "Netzradio"
 
-#: ../Classes/SourcesBox.cpp:1158
+#: ../Classes/SourcesBox.cpp:1159
 msgid "Net Stream \""
 msgstr "Netzradio \""
 
@@ -963,6 +975,14 @@ msgstr "Dateien umbenennen"
 msgid "Rename:"
 msgstr "Umbenennen:"
 
+#: ../Classes/NowPlayingCtrl.cpp:157
+msgid "Repeat List"
+msgstr "Wiederhole Liste"
+
+#: ../Classes/NowPlayingCtrl.cpp:157
+msgid "Repeat Song"
+msgstr "Wiederhole Lied"
+
 #: ../Classes/PlaylistCtrl.cpp:373
 msgid "Replace current playlist with all"
 msgstr "Ersetze aktuelle Abspielliste insgesamt"
@@ -1074,7 +1094,8 @@ msgstr "Zeige Quellenauswahl\tCtrl-1"
 msgid "Show all "
 msgstr "Zeige alle "
 
-#: ../Classes/NowPlayingCtrl.cpp:157 ../Frames/MusikPrefsFrame.cpp:390
+#: ../Classes/NowPlayingCtrl.cpp:157 ../Frames/MusikPrefsFrame.cpp:75
+#: ../Frames/MusikPrefsFrame.cpp:390
 msgid "Shuffle"
 msgstr "Mischen"
 
@@ -1365,16 +1386,3 @@ msgstr "wank"
 #: ../MusikUtils.cpp:263
 msgid "whore"
 msgstr "whore"
-
-#~ msgid ""
-#~ "Examples:\n"
-#~ "title like '%funky%'    (all titles containing funky)\n"
-#~ "bitrate < 128, vbr = 0    (all low quality, non-VBR)\n"
-#~ "timesplayed > 10 order by artist    (your popular tracks)"
-#~ msgstr ""
-#~ "Beispiele:\n"
-#~ "title like '%funky%'    (Alle Lieder die im Titel funky enthalten)\n"
-#~ "bitrate < 128, vbr = 0    (Alle Lieder von niedriger Qualität, die nicht "
-#~ "VBR sind)\n"
-#~ "timesplayed > 10 order by artist    (Häufig gespielte Lieder ,nach "
-#~ "Künstler sortiert)"

@@ -911,11 +911,11 @@ void CMusikPlayer::NextSong()
 			Play( m_SongIndex );
 		break;
 
-	case MUSIK_PLAYMODE_LOOPSONG:
+	case MUSIK_PLAYMODE_REPEATSONG:
 		Play( m_SongIndex );
 		break;
 
-	case MUSIK_PLAYMODE_LOOPLIST:
+	case MUSIK_PLAYMODE_REPEATLIST:
 		if ( m_SongIndex == ( m_Playlist.GetCount()-1 ) )
 			m_SongIndex = 0;
 		else m_SongIndex++;
@@ -948,11 +948,11 @@ void CMusikPlayer::PrevSong()
 			Play( m_SongIndex );
 			break;
 	
-		case MUSIK_PLAYMODE_LOOPSONG:
+		case MUSIK_PLAYMODE_REPEATSONG:
 			Play( m_SongIndex );
 			break;
 	
-		case MUSIK_PLAYMODE_LOOPLIST:
+		case MUSIK_PLAYMODE_REPEATLIST:
 			if ( m_SongIndex <= 0 )
 				m_SongIndex = ( m_Playlist.GetCount() - 1 );
 			else m_SongIndex--;

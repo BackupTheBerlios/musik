@@ -323,7 +323,7 @@ void MusikFrame::LibraryCustomQuery()
 	if ( !sQuery.IsEmpty() )
 	{
 		m_customQuery = sQuery;
-
+		g_SourcesCtrl->SelectLibrary(false);  // only change selection, not the view( to protect playlist from being changed. ok that is a hack, but else i would have to much of the structure. this will be done sometime later)
 		wxGetApp().Library.QuerySongsWhere( m_customQuery, g_Playlist );
 		g_PlaylistBox->Update( );
 	}
@@ -344,6 +344,7 @@ void MusikFrame::LibrarySimpleQueryDlg()
 	if ( dlg.ShowModal() == wxID_OK )
 	{
 		wxString sQuery = dlg.GetValue();
+		g_SourcesCtrl->SelectLibrary(false);  // only change selection, not the view( to protect playlist from being changed. ok that is a hack, but else i would have to much of the structure. this will be done sometime later)
 		LibrarySimpleQuery( sQuery );
 	}
 }
