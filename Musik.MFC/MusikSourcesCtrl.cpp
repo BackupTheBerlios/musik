@@ -191,7 +191,7 @@ void CMusikSourcesCtrl::OnDropFiles(HDROP hDropInfo)
 			// recurse it and add all the supported 
 			// media files...
 			SHGetFileInfo( szNextFile, 0, &rFileInfo, sizeof( rFileInfo ), SHGFI_ATTRIBUTES );
-			if ( rFileInfo.dwAttributes & FILE_ATTRIBUTE_DIRECTORY )
+			if ( rFileInfo.dwAttributes & SFGAO_FOLDER )
 			{
 				sTemp = szNextFile;
 				sTemp += "\\*.*";
@@ -229,7 +229,7 @@ void CMusikSourcesCtrl::OnDropFiles(HDROP hDropInfo)
 
 		// standard playlist
 		if ( pItem->GetPlaylistType() == MUSIK_PLAYLIST_TYPE_STANDARD )
-			m_Library->AppendStdPlaylist( pItem->GetPlaylistID(), files, true );
+			m_Library->AppendStdPlaylist( pItem->GetPlaylistID(), files );
 
 		// hit now playing?
 		else if ( pItem->GetPlaylistType() == MUSIK_SOURCES_TYPE_NOWPLAYING )
@@ -238,8 +238,8 @@ void CMusikSourcesCtrl::OnDropFiles(HDROP hDropInfo)
 			CMusikSong song;
 			for ( size_t i = 0; i < files.size(); i++ )
 			{
-				if ( !m_Library->IsSongInLibrary( files.at( i ) ) )
-					m_Library->AddSong( files.at( i ) );
+				// add song (if necessary)
+				m_Library->AddSong( files.at( i ) );
 
 				m_Library->GetSongFromFilename( files.at( i ), song );
 				m_Player->GetPlaylist()->Add( song );
@@ -253,7 +253,7 @@ void CMusikSourcesCtrl::OnDropFiles(HDROP hDropInfo)
 	{
 		CStdString playlist_str;
 		playlist_str.Format( _T( "New Playlist %d" ), m_StdPlaylists.size() );
-		m_Library->CreateStdPlaylist( playlist_str.c_str(), files, true );
+		m_Library->CreateStdPlaylist( playlist_str.c_str(), files );
 	}
 
 	// show

@@ -740,7 +740,7 @@ void CMusikPlaylistCtrl::OnDropFiles(HDROP hDropInfo)
 			// recurse it and add all the supported 
 			// media files...
 			SHGetFileInfo( szNextFile, 0, &rFileInfo, sizeof( rFileInfo ), SHGFI_ATTRIBUTES );
-			if ( rFileInfo.dwAttributes & FILE_ATTRIBUTE_DIRECTORY )
+			if ( rFileInfo.dwAttributes & SFGAO_FOLDER )
 			{
 				sTemp = szNextFile;
 				sTemp += "\\*.*";

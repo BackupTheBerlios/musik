@@ -406,9 +406,7 @@ bool CMainFrame::PlayCmd( const CStdString& fn )
 	if ( m_Library )
 	{
 		// add song to library, if necessary
-		if ( !m_Library->IsSongInLibrary( fn ) )
-			m_Library->AddSong( fn );
-
+		m_Library->AddSong( fn );
 
 		// get player's playlist
 		CMusikPlaylist* pPlaylist = m_Player->GetPlaylist();
