@@ -49,15 +49,15 @@ public:
 	~CActivityListBox();
 
 	//--- gets ---//
-	wxString  GetFirstSel	();
-	void	GetSelected	( wxArrayString & aReturn );
+	wxString				GetFirstSel	();
+	void					GetSelected	( wxArrayString & aReturn );
+	const wxArrayString&	GetList		() const { return m_Items; }
 
 	//--- sets ---//
-	void			SetList		(const  wxArrayString & );
-	const wxArrayString &	GetList		() const { return m_Items; }
-	void			SetSel		( const  wxArrayString & aList );
-	void			SetSel		( const wxString & sel, bool bDeselectAllFirst = true);
-	void			SetRelated	( int n ){ m_Related = n; }
+	void SetList		(const  wxArrayString & );
+	void SetSel			( const  wxArrayString & aList );
+	void SetSel			( const wxString & sel, bool bDeselectAllFirst = true);
+	void SetRelated		( int n ){ m_Related = n; }
 
 	//--- others ---//
 	void DeselectAll	();
@@ -70,10 +70,11 @@ private:
     virtual	wxString		OnGetItemText	(long item, long column) const;
     virtual	wxListItemAttr*	OnGetItemAttr	(long item) const;
 	virtual	int				OnGetItemImage	(long item) const { return 0; }
-	inline bool HasShowAllRow() const; 
 
-	long GetRowCount() const { return HasShowAllRow()?( long )m_Items.GetCount()+ 1: ( long )m_Items.GetCount(); }
-	inline wxString GetRowText( long row ) const ;
+	inline bool		HasShowAllRow	() const; 
+	long			GetRowCount		() const { return HasShowAllRow()?( long )m_Items.GetCount()+ 1: ( long )m_Items.GetCount(); }
+	inline wxString GetRowText		( long row ) const ;
+
 	//--- stripe colors ---//
 	wxListItemAttr m_LightAttr;
 	wxListItemAttr m_DarkAttr;
@@ -128,19 +129,19 @@ public:
 	void OnRenameThreadProg		( wxCommandEvent& WXUNUSED(event) );
 
 	//--- gets / sets ---//
-	void			SetCaption				( wxString sCaption )				{ pHeader->SetCaption( sCaption );						}
-	enum EMUSIK_ACTIVITY_TYPE	GetActivityType			()						{ return m_ActivityType;								}
-	wxString		GetActivityTypeStr		();
-	void			SetActivityType			( enum EMUSIK_ACTIVITY_TYPE  nType ){ m_ActivityType = nType;								}
-	void			DeselectAll				()									{ pListBox->DeselectAll();								}
-	void			SetSel					( const wxString & sel, bool bDeselectAllFirst = true )					{ pListBox->SetSel( sel , bDeselectAllFirst );								}
-	void			SetSel					(const  wxArrayString & aList )			{ pListBox->SetSel( aList );							}	
-	bool			IsSelected				( int n )							{ return pListBox->IsSelected( n );						}
-	wxString		GetFirstSel				()									{ return pListBox->GetFirstSel( ); 						}
-	void			GetSelected				( wxArrayString & aReturn )			{ pListBox->GetSelected( aReturn );return; 				}
-	int				GetSelectedItemCount	()									{ return pListBox->GetSelectedItemCount();				}
-	void			GetRelatedList			( CActivityBox *pDst, wxArrayString & aReturn );
-	void			SetDropTarget			(wxDropTarget* target)				{ pListBox->SetDropTarget( target );					}
+	void		SetCaption				( wxString sCaption )										{ pHeader->SetCaption( sCaption );						}
+	void		SetActivityType			( enum EMUSIK_ACTIVITY_TYPE  nType )						{ m_ActivityType = nType;								}
+	void		DeselectAll				()															{ pListBox->DeselectAll();								}
+	void		SetSel					( const wxString & sel, bool bDeselectAllFirst = true )		{ pListBox->SetSel( sel , bDeselectAllFirst );			}
+	void		SetSel					(const  wxArrayString & aList )								{ pListBox->SetSel( aList );							}	
+	bool		IsSelected				( int n )													{ return pListBox->IsSelected( n );						}
+	wxString	GetFirstSel				()															{ return pListBox->GetFirstSel( ); 						}
+	void		GetSelected				( wxArrayString & aReturn )									{ pListBox->GetSelected( aReturn );return; 				}
+	int			GetSelectedItemCount	()															{ return pListBox->GetSelectedItemCount();				}
+	void		SetDropTarget			(wxDropTarget* target)										{ pListBox->SetDropTarget( target );					}
+	enum EMUSIK_ACTIVITY_TYPE	GetActivityType()													{ return m_ActivityType;								}
+	void		GetRelatedList			( CActivityBox *pDst, wxArrayString & aReturn );
+	wxString	GetActivityTypeStr		();
 
 	//--- right click editing ---//
 	void EditBegin			();
