@@ -34,9 +34,9 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="fmodvc.lib vorbis_static_d.lib vorbisfile_static_d.lib ogg_static_d.lib id3libD.lib"
+				AdditionalDependencies="fmodvc.lib vorbis_static_d.lib vorbisfile_static_d.lib ogg_static_d.lib id3libD.lib OpenThreadsD.lib"
 				OutputFile="$(OutDir)/$(ProjectName)D.lib"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="../_lib/"
 				IgnoreAllDefaultLibraries="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -78,7 +78,8 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="fmodvc.lib vorbis_static.lib vorbisfile_static.lib ogg_static.lib id3lib.lib"
+				AdditionalDependencies="fmodvc.lib vorbis_static.lib vorbisfile_static.lib ogg_static.lib id3lib.lib OpenThreads.lib"
+				AdditionalLibraryDirectories="../_lib/"
 				IgnoreAllDefaultLibraries="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"/>
