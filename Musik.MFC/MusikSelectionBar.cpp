@@ -31,7 +31,7 @@ int CMusikSelectionBar::OnCreate( LPCREATESTRUCT lpCreateStruct )
 	SetSCBStyle( GetSCBStyle() | SCBS_SIZECHILD );
 
 	long dwStyle = WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_OWNERDATA | LVS_SHOWSELALWAYS;
-	long dwStyleEx =  LVS_EX_FULLROWSELECT | LVS_EX_HEADERDRAGDROP;
+	long dwStyleEx =  LVS_EX_FULLROWSELECT;
 
 	if ( !m_wndChild->Create( dwStyle, CRect( 0, 0, 0, 0), this, 123 ) )
 		return -1;
