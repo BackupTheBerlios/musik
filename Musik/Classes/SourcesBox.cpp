@@ -152,11 +152,11 @@ BEGIN_EVENT_TABLE(CSourcesListBox, wxListCtrl)
 	EVT_MENU					(MUSIK_SOURCE_CONTEXT_SHOW_ICONS,				CSourcesListBox::ToggleIconsEvt			)	// Sources Context -> Show Icons
 	EVT_MENU					(MUSIK_SOURCE_CONTEXT_COPY_FILES,				CSourcesListBox::CopyFiles				)	// Sources Context -> Copy files
 	EVT_LIST_BEGIN_DRAG			(MUSIK_SOURCES,									CSourcesListBox::BeginDrag				)	// user drags files from sources
-	EVT_LIST_ITEM_SELECTED		(MUSIK_SOURCES,									CSourcesListBox::UpdateSel				)	// sources list sel
+	EVT_LIST_ITEM_SELECTED		(MUSIK_SOURCES,									CSourcesListBox::OnUpdateSel			)	// sources list sel
 	EVT_LIST_BEGIN_LABEL_EDIT	(MUSIK_SOURCES,									CSourcesListBox::BeginEditLabel			)   // user edits a playlist filename
 	EVT_LIST_END_LABEL_EDIT		(MUSIK_SOURCES,									CSourcesListBox::EndEditLabel			)   // user edits a playlist filename
 	EVT_LIST_KEY_DOWN			(MUSIK_SOURCES,									CSourcesListBox::TranslateKeys			)	// user presses a key in the sources list
-	EVT_LIST_ITEM_ACTIVATED		(MUSIK_SOURCES,									CSourcesListBox::UpdateSel				)	// user wants to redisplay playlist
+	EVT_LIST_ITEM_ACTIVATED		(MUSIK_SOURCES,									CSourcesListBox::OnUpdateSel			)	// user wants to redisplay playlist
 END_EVENT_TABLE()
 
 CSourcesListBox::CSourcesListBox( wxPanel* parent, wxWindowID id )
@@ -188,6 +188,8 @@ CSourcesListBox::CSourcesListBox( wxPanel* parent, wxWindowID id )
 	InsertColumn( 0, _( "Sources" ), wxLIST_FORMAT_CENTER );
 	SetDropTarget( new SourcesDropTarget( this ) );
 	SetItemState( 0, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
+
+	m_Deleting = false;
 
 	ShowIcons();
 
@@ -332,67 +334,73 @@ void CSourcesListBox::BeginDrag( wxListEvent &event )
 	}
 }
 
-void CSourcesListBox::UpdateSel( wxListEvent& pEvent )
+void CSourcesListBox::OnUpdateSel( wxListEvent& pEvent )
 {
-	if ( !g_DragInProg && !g_FirstRun )
+	if ( !g_DragInProg && !g_FirstRun && !m_Deleting )
+        UpdateSel( pEvent.GetIndex() );	
+}
+
+void CSourcesListBox::UpdateSel( size_t index )
+{
+	//--- save std playlist. if deleting, no need to worry ---//
+	int nLastSel = m_CurSel;
+	if ( !m_Deleting )
 	{
-		//--- save std playlist ---//
-		int nLastSel = m_CurSel;
 		if ( GetType( nLastSel ) == MUSIK_SOURCES_PLAYLIST_STANDARD )
 			RewriteStdPlaylist();
-		
-		m_CurSel = pEvent.GetIndex();
-		int nSelType = GetSelType();
-
-		if ( m_CurSel == -1 )
-		{
-			wxListCtrlSelNone( this );
-			SetItemState( nLastSel, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
-			m_CurSel = nLastSel;
-		}
-
-		//--- library selected ---//
-		else if ( nSelType == MUSIK_SOURCES_LIBRARY )
-		{
-			//--- show old songs ---//
-			if ( g_Prefs.nShowAllSongs == 0 )
-				g_Playlist = g_LibPlaylist;
-
-			//--- show all songs ---//
-			else if ( g_Prefs.nShowAllSongs == 1 && !g_FirstRun )
-				g_Playlist = g_Library.GetAllSongs();
-
-			g_LibPlaylist.Clear();
-			g_PlaylistCtrl->Update();
-			g_MusikFrame->ShowActivityArea( true );
-		}
-
-		else 
-		{
-			//--- backup playlist so we can revert later ---//
-			g_LibPlaylist = g_Playlist;
-
-			//--- standard playlist selected ---//
-			if ( m_CurSel != 0 && m_CurSel != -1 && nSelType == MUSIK_SOURCES_PLAYLIST_STANDARD )
-			{
-				wxArrayString aFilelist = LoadStdPlaylist( GetItemText( m_CurSel ) );
-				g_Playlist = g_Library.GetStdPlaylistSongs( &aFilelist );
-			}
-
-			//--- dynamic playlist selected ---//
-			else if ( m_CurSel != 0 && m_CurSel != -1 && nSelType == MUSIK_SOURCES_PLAYLIST_DYNAMIC )
-			{
-				wxString sQuery = LoadDynPlaylist( GetItemText( m_CurSel ) );
-				g_Playlist = g_Library.QuerySongs( sQuery );
-			}
-
-			//--- update ui with new list ---//
-			g_MusikFrame->ShowActivityArea( false );
-			g_PlaylistCtrl->Update();
-		}
-
-		g_PlaylistChanged = true; 
 	}
+	
+	m_CurSel = index;
+	int nSelType = GetSelType();
+
+	if ( m_CurSel == -1 )
+	{
+		wxListCtrlSelNone( this );
+		SetItemState( nLastSel, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
+		m_CurSel = nLastSel;
+	}
+
+	//--- library selected ---//
+	else if ( nSelType == MUSIK_SOURCES_LIBRARY )
+	{
+		//--- show old songs ---//
+		if ( g_Prefs.nShowAllSongs == 0 )
+			g_Playlist = g_LibPlaylist;
+
+		//--- show all songs ---//
+		else if ( g_Prefs.nShowAllSongs == 1 && !g_FirstRun )
+			g_Playlist = g_Library.GetAllSongs();
+
+		g_LibPlaylist.Clear();
+		g_MusikFrame->ShowActivityArea( true );
+		g_PlaylistCtrl->Update();
+	}
+
+	else 
+	{
+		//--- backup playlist so we can revert later ---//
+		g_LibPlaylist = g_Playlist;
+
+		//--- standard playlist selected ---//
+		if ( m_CurSel != 0 && m_CurSel != -1 && nSelType == MUSIK_SOURCES_PLAYLIST_STANDARD )
+		{
+			wxArrayString aFilelist = LoadStdPlaylist( GetItemText( m_CurSel ) );
+			g_Playlist = g_Library.GetStdPlaylistSongs( &aFilelist );
+		}
+
+		//--- dynamic playlist selected ---//
+		else if ( m_CurSel != 0 && m_CurSel != -1 && nSelType == MUSIK_SOURCES_PLAYLIST_DYNAMIC )
+		{
+			wxString sQuery = LoadDynPlaylist( GetItemText( m_CurSel ) );
+			g_Playlist = g_Library.QuerySongs( sQuery );
+		}
+
+		//--- update ui with new list ---//
+		g_MusikFrame->ShowActivityArea( false );
+		g_PlaylistCtrl->Update();
+	}
+
+	g_PlaylistChanged = true; 
 }
 
 void CSourcesListBox::BeginEditLabel( wxListEvent& pEvent )
@@ -580,6 +588,13 @@ void CSourcesListBox::Update()
 
 void CSourcesListBox::DelSel()
 {
+	//-----------------------------------------------------//
+	//--- the EVT_LIST_ITEM_SELECTED will check this	---//
+	//--- as there is no need to update the sel until	---//
+	//--- we're done									---//
+	//-----------------------------------------------------//
+	m_Deleting = true;
+
 	//--- where are we selected? ---//
 	int nIndex = - 1;
 	nIndex = GetNextItem( nIndex, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
@@ -606,7 +621,15 @@ void CSourcesListBox::DelSel()
 
 	//--- reselect item ---//
 	wxListCtrlSelNone( this );
-	SetItemState( nIndex - 1, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
+
+	int nNextSel = nIndex;
+	if ( nNextSel != 0 )
+		nNextSel -= 1;
+
+	SetItemState( nNextSel, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
+	UpdateSel( nNextSel );
+
+	m_Deleting = false;
 }
 
 void CSourcesListBox::RenameSel()

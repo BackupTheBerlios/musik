@@ -57,7 +57,7 @@ public:
 	void ToggleIconsEvt			( wxCommandEvent& WXUNUSED(event) );
 	void CopyFiles				( wxCommandEvent& WXUNUSED(event) );
 	void BeginDrag				( wxListEvent& event );
-	void UpdateSel				( wxListEvent& pEvent );
+	void OnUpdateSel			( wxListEvent& pEvent );
 	void BeginEditLabel			( wxListEvent& pEvent );
 	void EndEditLabel			( wxListEvent& pEvent );
 	void TranslateKeys			( wxListEvent& pEvent );
@@ -86,6 +86,7 @@ public:
 	void RescanPlaylistDir		( );
 	void ShowIcons				( );
 	void ToggleIcons			( );
+	void UpdateSel				( size_t index );
 
 	//-------------------------//
 	//--- playlist routines ---//
@@ -127,6 +128,9 @@ private:
 	//--- popup menus ---//
 	wxMenu	*sources_context_menu;
 	wxMenu	*sources_context_menu_new;
+
+	//--- if deleting, make sure events don't go through ---//
+	bool m_Deleting;
 
 	//--- some of these may go ---//
 	wxString	m_SourcesEditStr;
