@@ -597,46 +597,62 @@ void CMusikLibrary::DeleteCrossfader( CMusikCrossfader* fader )
 
 void CMusikLibrary::CreateStdPlaylist( const CStdString& name, const CStdStringArray& songids )
 {
-	CStdString sQuery;
 	int nID;
 
 	// lock it up
 	m_ProtectingLibrary->acquire();
 
-	// create query to make new entry to 
-	// std_playlist table
-	sQuery.Format( "INSERT INTO %s VALUES ( %d,'%s' ); ",
-		STD_PLAYLIST_TABLE_NAME,
-		0,
-		name.c_str() );
-
 	// insert the new playlist name
-	sqlite_exec( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
+	sqlite_exec_printf( m_pDB, "INSERT INTO %q VALUES ( %Q, %Q );", 
+		NULL, NULL, NULL, 
+		STD_PLAYLIST_TABLE_NAME,
+		NULL,
+		name.c_str() );
 
 	// get the ID of the newly created entry
-	sQuery.Format( "SELECT %s FROM %s WHERE %s = '%s';", 
-		"std_playlist_id", 
-		STD_PLAYLIST_TABLE_NAME, 
-		"std_playlist_name",
+	sqlite_exec_printf( m_pDB, "SELECT std_playlist_id FROM %q WHERE std_playlist_name = %Q;", 
+		&sqlite_GetPlaylistID, &nID, NULL,
+		STD_PLAYLIST_TABLE_NAME,
 		name.c_str() );
-
-	sqlite_exec( m_pDB, sQuery.c_str(), &sqlite_GetPlaylistID, &nID, NULL );
 	
 	// insert songs into playlist
 	if ( nID >= 0 )
 	{
 		for ( size_t i = 0; i < songids.size(); i++ )
 		{
-			sQuery.Format( "INSERT INTO %s VALUES ( %d, %d ); ",
+			sqlite_exec_printf( m_pDB, "INSERT INTO %q VALUES ( %Q, %d, %d );",
+				NULL, NULL, NULL, 
 				STD_PLAYLIST_SONGS,
+				NULL,
 				nID,
-				this->GetIDFromFilename( songids.at( i ) ) );
-
-			sqlite_exec_printf( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
+				GetIDFromFilename( songids.at( i ) ) );
 		}
 	}	
 
 	// release the mutex lock
+	m_ProtectingLibrary->release();
+}
+
+///////////////////////////////////////////////////
+
+void CMusikLibrary::GetStdPlaylist( int id, CMusikPlaylist* target, bool clear_target )
+{
+	if ( clear_target )
+		target->Clear();
+
+	// do it
+	m_ProtectingLibrary->acquire();
+
+	sqlite_exec_printf( m_pDB, "SELECT songid FROM %q WHERE std_playlist_id = %d;", 
+		&sqlite_AddSongToPlaylist, &target, NULL,
+		STD_PLAYLIST_SONGS,
+		id );
+	/*
+	CMusikSong song;
+	song.SetID( 2 );
+	target->Add( song );
+	*/
+
 	m_ProtectingLibrary->release();
 }
 
@@ -887,9 +903,7 @@ void CMusikLibrary::QuerySongs( const CStdString& query, CMusikPlaylist& target 
 
 	// lock it up and query it
 	m_ProtectingLibrary->acquire();
-
 	sqlite_exec( m_pDB, queryWhere.c_str(), &sqlite_AddSongToPlaylist, &target, NULL );
-
 	m_ProtectingLibrary->release();
 }
 

@@ -94,6 +94,11 @@ public:
 	{	
 	}
 
+	void SetPlaylist( CMusikPlaylist* playlist )
+	{
+		m_Songs = playlist;
+	}
+
 	void Set( int from, int to )
 	{ 
 		// set the current item range

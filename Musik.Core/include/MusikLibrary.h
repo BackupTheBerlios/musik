@@ -149,7 +149,6 @@ public:
 
 	// querying songs
 	void GetAllSongs		( CMusikPlaylist & target );
-	void GetSongs			( int source_type, const CStdStringArray & source_items, CMusikPlaylist & target );
 	void GetRelatedItems	( int source_type, const CStdStringArray & source_items, int target_type, CStdStringArray & target );
 	void GetRelatedItems	( CStdString sub_query, int order_by, CStdStringArray& target );
 	void GetRelatedSongs	( CStdString sub_query, int order_by, CMusikPlaylist& target );
@@ -166,10 +165,11 @@ public:
 	bool SetLastPlayedToNow	( int songid );
 	bool SetSongRating		( int songid, int rating );
 
-	// querying playlists [complete]
+	// querying playlists
 	void GetAllStdPlaylists ( CMusikPlaylistInfoArray* target, bool clear_target = true );
 	void GetAllDynPlaylists	( CMusikPlaylistInfoArray* target, bool clear_target = true );
-	void CreateStdPlaylist	( const CStdString& name, const CStdStringArray& songids );
+	void GetStdPlaylist		( int id, CMusikPlaylist* target, bool clear_target = true );
+	void CreateStdPlaylist	( const CStdString& name, const CStdStringArray& files );
 	void CreateDynPlaylist	( const CStdString& name, const CStdString& query );
 	void DeleteStdPlaylist	( const CStdString& name );
 	void DeleteStdPlaylist	( int id );
@@ -177,7 +177,7 @@ public:
 	void DeleteDynPlaylist	( int id );
 
 	// querying crossfaders
-	void GetCrossfader		( const CStdString& name, CMusikCrossfader* fader );
+	//void GetCrossfader		( const CStdString& name, CMusikCrossfader* fader );
 	void GetAllCrossfaders	( CStdStringArray* target, bool clear_target = true );
 	void CreateCrossfader	( CMusikCrossfader* fader );
 	void DeleteCrossfader	( CMusikCrossfader* fader );
@@ -186,7 +186,7 @@ public:
 	// misc stuff
 	static int GetFilesize( const CStdString& fn );
 
-	// adding and removing files
+	// adding and removing files [complete]
 	bool AddSong	( const CStdString& fn );
 	bool AddOGG		( const CStdString& fn );
 	bool AddMP3		( const CStdString& fn );
@@ -214,13 +214,13 @@ private:
 	bool InitLibTable();
 	bool InitStdTables();
 	bool InitDynTable();
-	bool InitEqTable();
+	//bool InitEqTable();
 	bool InitCrossfaderTable();
 
 	// only needs to be initialized once
 	CStdString m_TimeAdded;
 
-	// internal song query functions
+	// internal song query functions [complete]
 	void		QuerySongs		( const CStdString & query, CMusikPlaylist & target );	
 	CStdString	GetOrder		( int type, bool terminate = true );
 	int			QueryCount		( const char* pQueryResult );

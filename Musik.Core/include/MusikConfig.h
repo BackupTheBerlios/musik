@@ -53,7 +53,7 @@
 	#endif
 
 	#ifndef TRACE0
-		#define TRACE0(x) printf(x)
+		#define TRACE0(x) cout << x
 	#endif
 
 	#ifndef Sleep
@@ -63,7 +63,7 @@
 
 ///////////////////////////////////////////////////
 
-static char *ItoA( char *buff, unsigned int i )
+inline static char *ItoA( char *buff, unsigned int i )
 {
 	if ( i > 9 ) 
 		buff = ItoA( buff, i / 10 );
@@ -74,7 +74,7 @@ static char *ItoA( char *buff, unsigned int i )
 
 ///////////////////////////////////////////////////
 
-char *itoa( char *buff, int i )
+inline char *int2str( char *buff, int i )
 {
 	if ( i < 0 )
 	{

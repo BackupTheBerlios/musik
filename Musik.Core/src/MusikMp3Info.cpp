@@ -100,9 +100,9 @@ bool CMusikMp3Info::LoadInfo( const CStdString& fn )
 	{
 		char buffer[32];
 
-		m_Info.SetDuration( itoa( buffer, mp3header->time * 1000 ) );
+		m_Info.SetDuration( int2str( buffer, mp3header->time * 1000 ) );
 		m_Info.SetVBR( mp3header->vbr_bitrate ? "1" : "0" );
-		m_Info.SetBitrate( itoa( buffer, mp3header->bitrate / 1000 ) );
+		m_Info.SetBitrate( int2str( buffer, mp3header->bitrate / 1000 ) );
 	}
 
 	// if the title is empty, then use the
