@@ -81,7 +81,7 @@ int CmusikNowPlayingCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_Volume = new CmusikTrackCtrl( m_Prefs );
 	
-	if ( !m_Volume->Create( 0x00000010L | TBS_VERT | TBS_NOTICKS | WS_CHILD | WS_VISIBLE, CRect( 50, 50, 100, 200 ), this, 123 ) )
+	if ( !m_Volume->Create( TBS_HORZ | TBS_NOTICKS | WS_CHILD | WS_VISIBLE, CRect( 50, 50, 100, 200 ), this, 123 ) )
 		return -1;
 
 	m_Volume->SetRange( 0, 255 );
@@ -131,7 +131,7 @@ void CmusikNowPlayingCtrl::RescaleInfo()
 	m_Info2->MoveWindow( lpRect );
 	m_Info2->Layout();
 
-	m_Volume->MoveWindow( CRect( 50, 50, 66, 100 ) );
+	m_Volume->MoveWindow( CRect( 50, 50, 100, 66 ) );
 }
 
 ///////////////////////////////////////////////////

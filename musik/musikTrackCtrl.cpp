@@ -17,8 +17,12 @@ IMPLEMENT_DYNAMIC(CmusikTrackCtrl, CSliderCtrl)
 
 CmusikTrackCtrl::CmusikTrackCtrl( CmusikPrefs* prefs )
 {
-	m_Channel = -1;
 	m_Prefs = prefs;
+	m_LeftDown = false;
+	m_IsCapturing = false;
+	m_LastPos = -1;
+	m_Cursor.x = -1;
+	m_Cursor.y = -1;
 }
 
 ///////////////////////////////////////////////////
@@ -34,6 +38,9 @@ BEGIN_MESSAGE_MAP(CmusikTrackCtrl, CSliderCtrl)
 	ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, OnNMCustomdraw)
 	ON_WM_CREATE()
 	ON_WM_SETFOCUS()
+	ON_WM_MOUSEMOVE()
+	ON_WM_LBUTTONDOWN()
+	ON_WM_LBUTTONUP()
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -76,7 +83,7 @@ void CmusikTrackCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 		}
 
 		// drawing the thumb
-		else if ( lpcd->dwItemSpec ==  TBCD_THUMB )
+		else if ( lpcd->dwItemSpec == TBCD_THUMB )
 		{
 			CRect rcThumbDraw;
 			if ( rect.Height() > rect.Width() )
@@ -110,7 +117,9 @@ void CmusikTrackCtrl::DrawChannel( CDC* pDC, const CRect& rect, BOOL bHoriz )
 
 	if ( bHoriz )
 	{
-		rcChannel.InflateRect( 0, 2, 0, 2 );
+		rcChannel.top += 1;
+		rcChannel.bottom += 1;
+		rcChannel.InflateRect( 0, 1, 0, 1 );
 	}
 	else
 	{
@@ -121,13 +130,25 @@ void CmusikTrackCtrl::DrawChannel( CDC* pDC, const CRect& rect, BOOL bHoriz )
 
 	CMemDC pMemDC( pDC, &rcChannel );
 
-	pMemDC.FillSolidRect( rcChannel, m_Prefs->MUSIK_COLOR_BTNFACE );
+	pMemDC.FillSolidRect( rcChannel, m_Prefs->MUSIK_COLOR_BTNHILIGHT );
 	pMemDC.Draw3dRect( rcChannel, m_Prefs->MUSIK_COLOR_BTNSHADOW, m_Prefs->MUSIK_COLOR_BTNHILIGHT );
 
+	int nMax = GetRangeMax();
+	int nPos = GetPos();
+	float fPercent = (float)GetPos() / (float)GetRangeMax();
+
 	if ( bHoriz )
-		m_Channel = rcChannel.Height();
+	{
+		float fWidth = (float)rcChannel.Width() * fPercent;
+		pMemDC->FillSolidRect( CRect( rcChannel.left + 1, rcChannel.top + 1, rcChannel.left + (int)fWidth, rcChannel.bottom - 1 ), m_Prefs->MUSIK_COLOR_ACTIVECAPTION );
+	}
 	else
-		m_Channel = rcChannel.Width();
+	{
+		float fHeight = (float)rcChannel.Height() * fPercent;
+		pMemDC->FillSolidRect( CRect( rcChannel.left + 1, rcChannel.top + (int)fHeight, rcChannel.right - 1, rcChannel.bottom - 1 ), m_Prefs->MUSIK_COLOR_ACTIVECAPTION );
+	}
+
+	Invalidate( false );
 }
 
 ///////////////////////////////////////////////////
@@ -136,10 +157,7 @@ void CmusikTrackCtrl::DrawHorizontalThumb( CDC* pDC, const CRect& rect )
 {
 	CMemDC pMemDC( pDC, &rect );
 
-	CString s;
-	s.Format( "%d, %d, %d, %d\n", rect.top, rect.left, rect.bottom, rect.right );
-	TRACE0( s );
-
+	pMemDC.FillSolidRect( rect, m_Prefs->MUSIK_COLOR_BTNFACE );
 	pMemDC.Draw3dRect( rect, m_Prefs->MUSIK_COLOR_BTNSHADOW, m_Prefs->MUSIK_COLOR_BTNSHADOW );
 }
 
@@ -148,10 +166,6 @@ void CmusikTrackCtrl::DrawHorizontalThumb( CDC* pDC, const CRect& rect )
 void CmusikTrackCtrl::DrawVerticalThumb( CDC* pDC, const CRect& rect )
 {
 	CMemDC pMemDC( pDC, &rect );
-
-	CString s;
-	s.Format( "%d, %d, %d, %d\n", rect.top, rect.left, rect.bottom, rect.right );
-	TRACE0( s );
 
 	pMemDC.FillSolidRect( rect, m_Prefs->MUSIK_COLOR_BTNFACE );
 	pMemDC.Draw3dRect( rect, m_Prefs->MUSIK_COLOR_BTNSHADOW, m_Prefs->MUSIK_COLOR_BTNSHADOW );
@@ -179,3 +193,161 @@ void CmusikTrackCtrl::OnSetFocus(CWnd* pOldWnd)
 	if ( GetParent() )
 		GetParent()->SetFocus();
 }
+
+///////////////////////////////////////////////////
+
+void CmusikTrackCtrl::OnMouseMove(UINT nFlags, CPoint point)
+{
+    if ( nFlags & MK_LBUTTON )
+	{
+		if ( !m_IsCapturing )
+		{
+			m_LeftDown = true;
+			SetCapture();
+			SetCursor( NULL );
+
+			m_IsCapturing = true;
+		}
+
+		SetPosFromMouse();
+	}
+}
+
+///////////////////////////////////////////////////
+
+void CmusikTrackCtrl::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	GetCursorPos( &m_Cursor );
+	SetPosFromMouse();
+}
+
+///////////////////////////////////////////////////
+
+void CmusikTrackCtrl::OnLButtonUp(UINT nFlags, CPoint point)
+{
+	if ( m_LeftDown )
+	{
+        CPoint posCurr;
+		GetCursorPos( &posCurr );
+		ScreenToClient( &posCurr );
+
+		CRect rcClient;
+		GetClientRect( &rcClient );
+
+		// vertical
+		if ( GetStyle() & TBS_VERT )
+		{
+			if ( posCurr.y >= rcClient.Height() )
+			{
+				ClientToScreen( &rcClient );
+				m_Cursor.y = rcClient.bottom;
+				SetCursorPos( m_Cursor.x, m_Cursor.y );
+			}
+			else if ( posCurr.y <= 0 )
+			{
+				ClientToScreen( &rcClient );
+				m_Cursor.y = rcClient.top;	
+				SetCursorPos( m_Cursor.x, m_Cursor.y );
+			}
+			else
+			{
+				ClientToScreen( &posCurr );
+				SetCursorPos( m_Cursor.x, posCurr.y );
+			}
+		}
+
+		// horizontal
+		else
+		{
+			if ( posCurr.x >= rcClient.Width() )
+			{
+				ClientToScreen( &rcClient );
+				m_Cursor.x = rcClient.right;
+				SetCursorPos( m_Cursor.x, m_Cursor.y );
+			}
+			else if ( posCurr.x <= 0 )
+			{
+				ClientToScreen( &rcClient );
+				m_Cursor.x = rcClient.left;	
+				SetCursorPos( m_Cursor.x, m_Cursor.y );
+			}
+			else
+			{
+				ClientToScreen( &posCurr );
+				SetCursorPos( posCurr.x, m_Cursor.y );
+			}
+		}
+
+		ReleaseCapture();
+		SetCursor( LoadCursor( NULL, IDC_ARROW ) );
+	}
+
+	m_LeftDown = false;
+	m_IsCapturing = false;
+}
+
+///////////////////////////////////////////////////
+
+void CmusikTrackCtrl::SetPosFromMouse()
+{
+	CPoint pos;
+	GetCursorPos( &pos );
+	ScreenToClient( &pos );
+
+	CRect rcClient;
+	GetClientRect( &rcClient );
+
+	// vertical
+	if ( GetStyle() & TBS_VERT )
+	{
+		if ( pos.y >= rcClient.bottom && GetPos() != GetRangeMax() )
+		{
+			SetPos( GetRangeMax() );
+			return;
+		}
+
+		else if ( pos.y <= rcClient.top && GetPos() != GetRangeMin() )
+		{
+			SetPos( GetRangeMin() );
+			return;
+		}
+		
+		else
+		{
+			int nLoc = rcClient.Height() - pos.y;
+			float fRatio = (float)nLoc / rcClient.Height();
+			float nPos = (float)fRatio * (float)GetRangeMax();
+
+			SetPos( GetRangeMax() - (int)nPos );
+			return;
+		}
+	}
+
+	// horizontal
+	else
+	{
+		if ( pos.x >= rcClient.right && GetPos() != GetRangeMax() )
+		{
+			SetPos( GetRangeMax() );
+			return;
+		}
+
+		else if ( pos.x <= rcClient.left && GetPos() != GetRangeMin() )
+		{
+			SetPos( GetRangeMin() );
+			return;
+		}
+
+		else
+		{
+			int nLoc = rcClient.Width() - pos.x;
+			float fRatio = (float)nLoc / rcClient.Width();
+			float nPos = (float)fRatio * (float)GetRangeMax();
+
+			SetPos( GetRangeMax() - (int)nPos );
+			return;
+		}
+	}
+}
+
+///////////////////////////////////////////////////
