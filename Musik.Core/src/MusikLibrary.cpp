@@ -989,9 +989,11 @@ void CMusikLibrary::GetAllCrossfaders( CStdStringArray* target, bool clear_targe
 
 ///////////////////////////////////////////////////
 
-int CMusikLibrary::GetIDFromFilename( const CStdString& fn )
+int CMusikLibrary::GetIDFromFilename( CStdString fn )
 {
 	int target;
+
+	fn.Replace( "'", "''" );
 
 	CStdString sQuery;
 	sQuery.Format( "SELECT songid FROM " SONG_TABLE_NAME " WHERE filename = '%s';", fn.c_str() );
@@ -1005,7 +1007,7 @@ int CMusikLibrary::GetIDFromFilename( const CStdString& fn )
 
 ///////////////////////////////////////////////////
 
-void CMusikLibrary::GetSongFromFilename( const CStdString& fn, CMusikSong& song )
+void CMusikLibrary::GetSongFromFilename( CStdString fn, CMusikSong& song )
 {
 	song.SetID( GetIDFromFilename( fn ) );	
 }
@@ -1160,9 +1162,11 @@ bool CMusikLibrary::AddMP3( const CStdString& fn )
 
 ///////////////////////////////////////////////////
 
-bool CMusikLibrary::IsSongInLibrary( const CStdString & fn )
+bool CMusikLibrary::IsSongInLibrary( CStdString fn )
 {
 	bool result = false;
+
+	fn.Replace( "'", "''" );
 
 	char *query = sqlite_mprintf( "SELECT filename FROM %Q WHERE filename = %Q;", 
 		SONG_TABLE_NAME,

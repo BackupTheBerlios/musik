@@ -2,7 +2,7 @@
 
 #include "stdafx.h"
 
-#include "MusikFilename.h"
+#include "../include/MusikFilename.h"
 
 ///////////////////////////////////////////////////
 

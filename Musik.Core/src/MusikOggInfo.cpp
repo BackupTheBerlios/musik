@@ -2,10 +2,10 @@
 
 #include "stdafx.h"
 
-#include "MusikOggInfo.h"
-#include "MusikFilename.h"
+#include "../include/MusikOggInfo.h"
+#include "../include/MusikFilename.h"
 
-#include "vcedit.h"
+#include "../include/vcedit.h"
 #include <vorbis/codec.h>
 #include <vorbis/vorbisfile.h>
 
@@ -41,11 +41,17 @@ bool CMusikOggInfo::LoadInfo( const CStdString& fn )
 		m_Info.SetYear		( vorbis_comment_query( pComment, "date",			0 ) );
 		m_Info.SetTrackNum	( vorbis_comment_query( pComment, "tracknumber",	0 ) );
 
+		CStdString temp;
+
 		// bitrate
-		vorbis_info *pInfo = ov_info( &vorbisfile,-1 );
-		CStdString bitrate;
-		bitrate.Format( "%d", pInfo->bitrate_nominal / 1000 );
-		m_Info.SetBitrate	( bitrate );
+		vorbis_info *pInfo = ov_info( &vorbisfile, -1 );
+		temp.Format( "%d", pInfo->bitrate_nominal / 1000 );
+		m_Info.SetBitrate( temp );
+
+		// duration
+		int duration = ov_time_total ( &vorbisfile, -1 );
+		temp.Format( "%d",  duration * 1000 );
+		m_Info.SetDuration( temp );
 
 		// cleanup, ov_clear closes audio file
 		vorbis_comment_clear( pComment );

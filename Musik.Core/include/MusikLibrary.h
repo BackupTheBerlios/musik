@@ -99,9 +99,9 @@ public:
 	int	 GetSongCount		();
 	void GetFieldFromID		( int id, int field, CStdString& string );
 	void GetSongInfoFromID	( int id, CMusikSongInfo* info );
-	int  GetIDFromFilename	( const CStdString& fn );
-	void GetSongFromFilename( const CStdString& fn, CMusikSong& song );
-	bool IsSongInLibrary	( const CStdString& fn );
+	int  GetIDFromFilename	( CStdString fn );
+	void GetSongFromFilename( CStdString fn, CMusikSong& song );
+	bool IsSongInLibrary	( CStdString fn );
 
 	// updating songs
 	bool SetSongInfo		( int songid, CMusikSongInfo* info );

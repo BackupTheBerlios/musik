@@ -2,8 +2,8 @@
 
 #include "stdafx.h"
 
-#include "MusikMp3Info.h"
-#include "MusikFilename.h"
+#include "../include/MusikMp3Info.h"
+#include "../include/MusikFilename.h"
 
 #include <id3.h>
 #include <id3/tag.h>
