@@ -31,7 +31,7 @@ ADD_EXECUTABLE(wxMusik
         MusikApp
         MusikGlobals
         MusikUtils
-
+		MusikAboutDlg
         ${wxMusik_SOURCE_DIR}/Classes/ActivityBox
         ${wxMusik_SOURCE_DIR}/Classes/ActivityAreaCtrl
         ${wxMusik_SOURCE_DIR}/Classes/BtnDown

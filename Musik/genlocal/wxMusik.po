@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-06-13 16:00+0200\n"
+"POT-Creation-Date: 2004-06-19 12:33+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -122,22 +122,22 @@ msgid ""
 "\n"
 msgstr ""
 
-#: ../MusikUtils.cpp:575
+#: ../MusikUtils.cpp:580
 #, c-format
 msgid "%d.%02d GB"
 msgstr ""
 
-#: ../MusikUtils.cpp:581
+#: ../MusikUtils.cpp:586
 #, c-format
 msgid "%d.%02d KB"
 msgstr ""
 
-#: ../MusikUtils.cpp:578
+#: ../MusikUtils.cpp:583
 #, c-format
 msgid "%d.%02d MB"
 msgstr ""
 
-#: ../MusikUtils.cpp:572
+#: ../MusikUtils.cpp:577
 #, c-format
 msgid "%d.%02d TB"
 msgstr ""
@@ -356,7 +356,7 @@ msgstr ""
 msgid "A&uto Retag..."
 msgstr ""
 
-#: ../MusikAboutDlg.cpp:99
+#: ../MusikAboutDlg.cpp:98
 msgid "About"
 msgstr ""
 
@@ -365,7 +365,7 @@ msgid "Added on"
 msgstr ""
 
 #: ../Frames/MusikPrefsFrame.cpp:193 ../Frames/MusikPrefsFrame.cpp:349
-#: ../Frames/MusikTagFrame.cpp:117 ../MusikGlobals.cpp:53
+#: ../Frames/MusikTagFrame.cpp:123 ../MusikGlobals.cpp:53
 msgid "Album"
 msgstr ""
 
@@ -377,7 +377,7 @@ msgstr ""
 msgid "Always On Top\tCtrl-T"
 msgstr ""
 
-#: ../Frames/MusikPrefsFrame.cpp:988
+#: ../Frames/MusikPrefsFrame.cpp:993
 msgid "An error occured when setting the Auto DJ Filter"
 msgstr ""
 
@@ -389,12 +389,12 @@ msgstr ""
 msgid "Append to file"
 msgstr ""
 
-#: ../Frames/MusikPrefsFrame.cpp:518 ../Frames/MusikTagFrame.cpp:142
+#: ../Frames/MusikPrefsFrame.cpp:518 ../Frames/MusikTagFrame.cpp:148
 msgid "Apply"
 msgstr ""
 
 #: ../Frames/MusikPrefsFrame.cpp:192 ../Frames/MusikPrefsFrame.cpp:348
-#: ../Frames/MusikTagFrame.cpp:113 ../MusikGlobals.cpp:52
+#: ../Frames/MusikTagFrame.cpp:119 ../MusikGlobals.cpp:52
 msgid "Artist"
 msgstr ""
 
@@ -440,7 +440,7 @@ msgid "Buffer Size (bytes):"
 msgstr ""
 
 #: ../Frames/MusikAutoTaggerFrame.cpp:156 ../Frames/MusikLibraryFrame.cpp:202
-#: ../Frames/MusikPrefsFrame.cpp:517 ../Frames/MusikTagFrame.cpp:141
+#: ../Frames/MusikPrefsFrame.cpp:517 ../Frames/MusikTagFrame.cpp:147
 msgid "Cancel"
 msgstr ""
 
@@ -478,7 +478,7 @@ msgstr ""
 msgid "Clear old tag information before writing?"
 msgstr ""
 
-#: ../Frames/MusikTagFrame.cpp:134
+#: ../Frames/MusikTagFrame.cpp:140
 msgid "Clear old tags    "
 msgstr ""
 
@@ -594,7 +594,7 @@ msgstr ""
 msgid "Edit Year\tF7"
 msgstr ""
 
-#: ../MusikUtils.cpp:583
+#: ../MusikUtils.cpp:588
 msgid "Empty"
 msgstr ""
 
@@ -660,7 +660,7 @@ msgid ""
 " "
 msgstr ""
 
-#: ../Frames/MusikTagFrame.cpp:102
+#: ../Frames/MusikTagFrame.cpp:108
 msgid "File"
 msgstr ""
 
@@ -708,7 +708,7 @@ msgstr ""
 msgid "General"
 msgstr ""
 
-#: ../Frames/MusikPrefsFrame.cpp:194 ../Frames/MusikTagFrame.cpp:121
+#: ../Frames/MusikPrefsFrame.cpp:194 ../Frames/MusikTagFrame.cpp:127
 #: ../MusikGlobals.cpp:55
 msgid "Genre"
 msgstr ""
@@ -770,7 +770,7 @@ msgstr ""
 msgid "Musik Library"
 msgstr ""
 
-#: ../Classes/SourcesBox.cpp:314 ../Classes/SourcesBox.cpp:1277
+#: ../Classes/SourcesBox.cpp:314 ../Classes/SourcesBox.cpp:1278
 msgid "Net Stream"
 msgstr ""
 
@@ -806,7 +806,7 @@ msgstr ""
 msgid "Notes"
 msgstr ""
 
-#: ../Frames/MusikTagFrame.cpp:129
+#: ../Frames/MusikTagFrame.cpp:135
 msgid "Notes "
 msgstr ""
 
@@ -823,8 +823,8 @@ msgid "Number of songs to choose in advance:"
 msgstr ""
 
 #: ../Frames/MusikAutoTaggerFrame.cpp:152 ../Frames/MusikLibraryFrame.cpp:203
-#: ../Frames/MusikPrefsFrame.cpp:519 ../Frames/MusikTagFrame.cpp:143
-#: ../MusikAboutDlg.cpp:116
+#: ../Frames/MusikPrefsFrame.cpp:519 ../Frames/MusikTagFrame.cpp:149
+#: ../MusikAboutDlg.cpp:115
 msgid "OK"
 msgstr ""
 
@@ -951,7 +951,7 @@ msgstr ""
 msgid "Remove All Directories"
 msgstr ""
 
-#: ../Frames/MusikTagFrame.cpp:135
+#: ../Frames/MusikTagFrame.cpp:141
 msgid "Rename files"
 msgstr ""
 
@@ -1006,7 +1006,7 @@ msgstr ""
 msgid "Scanning for and adding new files: %d / %d (ESC to abort)"
 msgstr ""
 
-#: ../Frames/MusikTagFrame.cpp:553
+#: ../Frames/MusikTagFrame.cpp:564
 msgid "Scanning for changed attributes"
 msgstr ""
 
@@ -1130,11 +1130,11 @@ msgstr ""
 msgid "Streaming"
 msgstr ""
 
-#: ../Frames/MusikTagFrame.cpp:286
+#: ../Frames/MusikTagFrame.cpp:297
 msgid "Tag information editing (batch)"
 msgstr ""
 
-#: ../Frames/MusikTagFrame.cpp:284
+#: ../Frames/MusikTagFrame.cpp:295
 msgid "Tag information editing (single)"
 msgstr ""
 
@@ -1199,7 +1199,7 @@ msgstr ""
 msgid "Times played"
 msgstr ""
 
-#: ../Frames/MusikPrefsFrame.cpp:350 ../Frames/MusikTagFrame.cpp:105
+#: ../Frames/MusikPrefsFrame.cpp:350 ../Frames/MusikTagFrame.cpp:111
 #: ../MusikGlobals.cpp:51
 msgid "Title"
 msgstr ""
@@ -1216,7 +1216,7 @@ msgstr ""
 msgid "Track"
 msgstr ""
 
-#: ../Frames/MusikTagFrame.cpp:109
+#: ../Frames/MusikTagFrame.cpp:115
 msgid "Track #  "
 msgstr ""
 
@@ -1248,7 +1248,7 @@ msgstr ""
 msgid "Update when application stops"
 msgstr ""
 
-#: ../Frames/MusikTagFrame.cpp:655
+#: ../Frames/MusikTagFrame.cpp:666
 msgid "Updating tags - (ESC to abort)"
 msgstr ""
 
@@ -1280,7 +1280,7 @@ msgstr ""
 msgid "Write tag to file"
 msgstr ""
 
-#: ../Frames/MusikTagFrame.cpp:133
+#: ../Frames/MusikTagFrame.cpp:139
 msgid "Write tags to file    "
 msgstr ""
 
@@ -1297,7 +1297,7 @@ msgstr ""
 msgid "Year"
 msgstr ""
 
-#: ../Frames/MusikTagFrame.cpp:125
+#: ../Frames/MusikTagFrame.cpp:131
 msgid "Year  "
 msgstr ""
 
@@ -1309,7 +1309,7 @@ msgstr ""
 msgid "[No Devices]"
 msgstr ""
 
-#: ../MusikUtils.cpp:262
+#: ../MusikUtils.cpp:267
 msgid "bitch"
 msgstr ""
 
@@ -1326,23 +1326,23 @@ msgstr ""
 msgid "copying %s"
 msgstr ""
 
-#: ../MusikUtils.cpp:266
+#: ../MusikUtils.cpp:271
 msgid "cunt"
 msgstr ""
 
-#: ../MusikUtils.cpp:261
+#: ../MusikUtils.cpp:266
 msgid "dick"
 msgstr ""
 
-#: ../MusikUtils.cpp:268
+#: ../MusikUtils.cpp:273
 msgid "dildo"
 msgstr ""
 
-#: ../MusikUtils.cpp:258
+#: ../MusikUtils.cpp:263
 msgid "fuck"
 msgstr ""
 
-#: ../MusikUtils.cpp:267
+#: ../MusikUtils.cpp:272
 msgid "manchester"
 msgstr ""
 
@@ -1354,11 +1354,11 @@ msgstr ""
 msgid "not connected"
 msgstr ""
 
-#: ../MusikUtils.cpp:259
+#: ../MusikUtils.cpp:264
 msgid "shit"
 msgstr ""
 
-#: ../MusikUtils.cpp:264
+#: ../MusikUtils.cpp:269
 msgid "slut"
 msgstr ""
 
@@ -1366,14 +1366,14 @@ msgstr ""
 msgid "streaming"
 msgstr ""
 
-#: ../MusikUtils.cpp:260
+#: ../MusikUtils.cpp:265
 msgid "tits"
 msgstr ""
 
-#: ../MusikUtils.cpp:265
+#: ../MusikUtils.cpp:270
 msgid "wank"
 msgstr ""
 
-#: ../MusikUtils.cpp:263
+#: ../MusikUtils.cpp:268
 msgid "whore"
 msgstr ""

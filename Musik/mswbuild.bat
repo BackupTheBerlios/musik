@@ -1,4 +1,4 @@
-call "%VCINSTALLDIR%\vc7\bin\vcvars32.bat"
+call "%VS71COMNTOOLS%\..\..\vc7\bin\vcvars32.bat"
 
 set BUILDARG=%1
 

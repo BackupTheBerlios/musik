@@ -980,6 +980,11 @@ void MusikPrefsFrame::SavePrefs()
 	//-----------------------//
 	//--- tagging -> auto ---//
 	//-----------------------//
+	wxGetApp().Prefs.sAutoRename = tcAutoRename->GetValue( 	);
+	
+	//-------------------------//
+	//--- options -> Auto DJ ---//
+	//-------------------------//
 	if ( tcAutoDjFilter->GetValue()  != wxGetApp().Prefs.sAutoDjFilter )
 	{
 		wxGetApp().Prefs.sAutoDjFilter = tcAutoDjFilter->GetValue(); 

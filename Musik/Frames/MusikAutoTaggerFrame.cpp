@@ -1,12 +1,12 @@
 /////////////////////////////////////////////////////////////////////////////
 // Name:        MusikAutoTaggerFrame.cpp
-// Purpose:     
-// Author:      
+// Purpose:     Selecting auto tag mask
+// Author:      Gunnar Roth
 // Modified by: 
 // Created:     12/28/03 16:11:36
 // RCS-ID:      
-// Copyright:   
-// Licence:     
+// Copyright:  Gunnar Roth 2004 
+// Licence:  See the file "license.txt" for information on usage and redistribution  
 /////////////////////////////////////////////////////////////////////////////
 
 #ifdef __GNUG__
@@ -225,7 +225,7 @@ void CMusikAutoTaggerFrame::OnOk( wxCommandEvent& event )
 	if(m_CBTagMask->GetCount() == 0)
 		wxGetApp().Prefs.sAutoTag += wxT("%a-%b-%n%t|");
 	int sel = m_CBTagMask->GetSelection();
-	sel = (wxNOT_FOUND == sel) ? 0 : sel;
+	sel = (wxNOT_FOUND == sel) ? m_CBTagMask->GetCount()-1 : sel;
 	wxGetApp().Prefs.sAutoTag += IntTowxString(sel);
 	wxDialog::OnOK(event);
 	// Insert custom code here
