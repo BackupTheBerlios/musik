@@ -1988,7 +1988,7 @@ int CmusikLibrary::GetRelatedItems( int source_type, const CmusikStringArray& so
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetRelatedItems( CmusikString sub_query, int dst_type, CmusikStringArray& target )
+int CmusikLibrary::GetRelatedItems( CmusikString partial_query, int dst_type, CmusikStringArray& target, bool sub_query )
 {
 	target.clear();
 
@@ -1998,13 +1998,27 @@ int CmusikLibrary::GetRelatedItems( CmusikString sub_query, int dst_type, Cmusik
 	int nRet;
 	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
-		nRet = sqlite_exec_printf(m_pDB, "SELECT DISTINCT %q, UPPER( %q ) AS UP FROM %Q WHERE %s order by %q;", 
-			&sqlite_AddSongToStringArray, &target, NULL,
-			sOutType.c_str(), 
-			sOutType.c_str(), 
-			SONG_TABLE_NAME,
-			sub_query.c_str(),
-			sOutType.c_str() );
+		if ( !sub_query )
+		{
+			nRet = sqlite_exec_printf(m_pDB, "SELECT DISTINCT %q, UPPER( %q ) AS UP FROM %Q %s order by %q;", 
+				&sqlite_AddSongToStringArray, &target, NULL,
+				sOutType.c_str(), 
+				sOutType.c_str(), 
+				SONG_TABLE_NAME,
+				partial_query.c_str(),
+				sOutType.c_str() );
+		}
+		else
+		{
+			partial_query.Replace( "%T", "songid,tracknum,artist,album,genre,title,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize,filename,equalizer" );
+
+			nRet = sqlite_exec_printf(m_pDB, "SELECT DISTINCT %q, UPPER( %q ) AS UP FROM %s order by %q;", 
+				&sqlite_AddSongToStringArray, &target, NULL,
+				sOutType.c_str(), 
+				sOutType.c_str(), 
+				partial_query.c_str(),
+				sOutType.c_str() );
+		}
 	}
 
 	// if target is years, verify only years
@@ -2017,7 +2031,7 @@ int CmusikLibrary::GetRelatedItems( CmusikString sub_query, int dst_type, Cmusik
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetRelatedSongs( CmusikString sub_query, int source_type, CmusikPlaylist& target )
+int CmusikLibrary::GetRelatedSongs( CmusikString partial_query, int source_type, CmusikPlaylist& target, bool sub_query )
 {
 	if ( !m_DatabaseOpen )
 		return -1;
@@ -2028,11 +2042,23 @@ int CmusikLibrary::GetRelatedSongs( CmusikString sub_query, int source_type, Cmu
 	int nRet;
 	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
-		nRet = sqlite_exec_printf(m_pDB, "SELECT DISTINCT songid FROM %Q WHERE %s %q;", 
-			&sqlite_AddSongToPlaylist, &target, NULL,
-			SONG_TABLE_NAME,
-			sub_query.c_str(),
-			GetOrder( source_type ).c_str() );
+		if ( !sub_query )
+		{
+			nRet = sqlite_exec_printf(m_pDB, "SELECT DISTINCT songid FROM %Q %s %q;", 
+				&sqlite_AddSongToPlaylist, &target, NULL,
+				SONG_TABLE_NAME,
+				partial_query.c_str(),
+				GetOrder( source_type ).c_str() );
+		}
+		else
+		{
+			partial_query.Replace( "%T", "songid,tracknum,artist,album,genre,title,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize,filename,equalizer" );
+
+			nRet = sqlite_exec_printf(m_pDB, "SELECT DISTINCT songid FROM %s %q;", 
+				&sqlite_AddSongToPlaylist, &target, NULL,
+				partial_query.c_str(),
+				GetOrder( source_type ).c_str() );		
+		}
 	}
 
 	return nRet;

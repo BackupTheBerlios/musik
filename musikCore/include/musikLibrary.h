@@ -178,8 +178,8 @@ public:
 	// querying songs
 	int  GetAllSongs				( CmusikPlaylist & target );
 	int  GetRelatedItems			( int source_type, const CmusikStringArray & source_items, int target_type, CmusikStringArray & target );
-	int  GetRelatedItems			( CmusikString sub_query, int order_by, CmusikStringArray& target );
-	int  GetRelatedSongs			( CmusikString sub_query, int order_by, CmusikPlaylist& target );
+	int  GetRelatedItems			( CmusikString partial_query, int order_by, CmusikStringArray& target, bool sub_query = false );
+	int  GetRelatedSongs			( CmusikString partial_query, int order_by, CmusikPlaylist& target, bool sub_query = false );
 	int  GetAllDistinct				( int source_type, CmusikStringArray& target, bool clear_target = true );
 	int	 GetSongCount				();
 	int  GetFieldFromID				( int id, int field, CmusikString& string );
