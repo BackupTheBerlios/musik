@@ -9,7 +9,6 @@
 #include "musik.h"
 #include "musikSourcesCtrl.h"
 #include "musikSourcesDropTarget.h"
-#include ".\musiksourcesctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -69,6 +68,7 @@ int CmusikSourcesBar::OnCreate( LPCREATESTRUCT lpCreateStruct )
 	m_wndChild->SetFont( &m_Font );
 
 	ShowGripper( false );
+	m_ForceDrawBorder = false;
 
 	return 0;
 }

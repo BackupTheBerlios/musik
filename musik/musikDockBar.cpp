@@ -135,7 +135,7 @@ void CmusikDockBar::NcCalcClient( LPRECT pRc, UINT nDockBarID )
 			m_biOptions->Move( ptOptBtn - rcBar.TopLeft() );
 	}
 	else
-		rc.DeflateRect( 0, -1, 0, 0 );
+		rc.DeflateRect( 0, -2, 0, 0 );
 
     *pRc = rc;
 }
@@ -158,12 +158,13 @@ void CmusikDockBar::OnNcPaint()
     
     // erase the NC background
 	CRect rcDraw = rcBar;
+	rcDraw.InflateRect( 1, 1, 1, 1 );
 	mdc.FillSolidRect( rcDraw, m_Prefs->MUSIK_COLOR_BTNFACE );
-    NcPaintGripper( &mdc, rcClient );
 
-	// draw border...
+	// draw border and gripper...
 	if ( ( m_ShowGripper || m_ForceDrawBorder ) && !IsFloating() )
 	{
+		NcPaintGripper( &mdc, rcClient );
 		rcClient.InflateRect( 1, 1, 1, 1 );
 		mdc.Draw3dRect( rcClient, m_Prefs->MUSIK_COLOR_BTNSHADOW, m_Prefs->MUSIK_COLOR_BTNHILIGHT );
 		rcClient.DeflateRect( 1, 1, 1, 1 );

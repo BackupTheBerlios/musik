@@ -1128,7 +1128,6 @@ void CMainFrame::RequerySelBoxes( CmusikSelectionCtrl* sender )
 				}
 			}
 		}
-
 	}
 
 	CmusikSelectionCtrl::SetUpdating( false );
