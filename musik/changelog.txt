@@ -40,12 +40,13 @@ don't expect another build for a few weeks. please
 stress test this build if at all possible. see if you
 can confuse it into crashing. 
 
+-------------------------------------------------------------------------
+
 stuff that isn't implemented / doesn't work yet: 
 
   - playlist information area 
   - dynamic playlist creation
   - dialog to view tag properties
-  - crossfader preset dialog
 
 -------------------------------------------------------------------------
 

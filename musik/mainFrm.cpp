@@ -2125,7 +2125,12 @@ void CMainFrame::OnSysCommand(UINT nID, LPARAM lParam)
 		ShowWindow( SW_RESTORE );
 
 		CRect rcNormal = CRect( m_Prefs->GetDlgPos(), m_Prefs->GetDlgSize() );
-		MoveWindow( rcNormal );
+
+		WINDOWPLACEMENT max;
+		GetWindowPlacement( &max );
+
+		if ( max.showCmd &~ SW_MAXIMIZE )
+			MoveWindow( rcNormal );
 
 		if ( m_Prefs->MinimizeToTray() )
 			HideTrayIcon();
