@@ -40,17 +40,19 @@ void CGaugeSeekEvt::OnLeftDown( wxMouseEvent& event )
 	//--- we're using the seek bar AND music is playing ---//
 	//--- OR we're adjusting volume                     ---//
 	//-----------------------------------------------------//
-	m_Dragging = true;
-	pParent->CaptureMouse();
+	if ( event.LeftDown() )
+	{
+		m_Dragging = true;
+		pParent->CaptureMouse();
 
-	if ( lType == wxGA_HORIZONTAL )
-		g_TimeSeeking = true;
+		if ( lType == wxGA_HORIZONTAL )
+			g_TimeSeeking = true;
 
-	if ( ( lType == wxGA_HORIZONTAL && g_Player.IsPlaying() ) || lType == wxGA_VERTICAL )
-		SetFromMousePos( event );
+		if ( ( lType == wxGA_HORIZONTAL && g_Player.IsPlaying() ) || lType == wxGA_VERTICAL )
+			SetFromMousePos( event );
+	}
 
 	event.Skip();
-
 }
 
 void CGaugeSeekEvt::OnMouseMove( wxMouseEvent& event )
