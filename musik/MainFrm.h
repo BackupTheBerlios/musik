@@ -223,6 +223,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnUnsynchronizedtagsView();
+	afx_msg void OnUnsynchronizedtagsWritetofile();
+	afx_msg void OnUnsynchronizedtagsFinalizefordatabaseonly();
 };
 
 ///////////////////////////////////////////////////

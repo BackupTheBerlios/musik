@@ -176,6 +176,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_PLAYER_PLAYSEL, OnPlayerPlaySel )
 	ON_REGISTERED_MESSAGE( WM_BATCHADD_VERIFY_PLAYLIST, OnVerifyPlaylist )
 	ON_COMMAND(ID_UNSYNCHRONIZEDTAGS_VIEW, OnUnsynchronizedtagsView)
+	ON_COMMAND(ID_UNSYNCHRONIZEDTAGS_WRITETOFILE, OnUnsynchronizedtagsWritetofile)
+	ON_COMMAND(ID_UNSYNCHRONIZEDTAGS_FINALIZEFORDATABASEONLY, OnUnsynchronizedtagsFinalizefordatabaseonly)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -1669,6 +1671,43 @@ void CMainFrame::OnUnsynchronizedtagsView()
 	// update the windows
 	m_wndView->GetCtrl()->UpdateV();
 	m_wndSources->GetCtrl()->FocusLibrary();
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnUnsynchronizedtagsWritetofile()
+{
+	// get dirty items into a new playlist
+	CmusikPlaylist* playlist = new CmusikPlaylist();
+	m_Library->GetDirtySongs( playlist, false );
+
+	// create a new CmusikSongInfoArray and update
+	// all the respective values...
+	if ( playlist->GetCount() )
+	{
+		CmusikSongInfoArray* pSongInfoArray = new CmusikSongInfoArray();
+	
+		m_Library->GetInfoArrayFromPlaylist( playlist, pSongInfoArray );
+
+		delete playlist;
+
+		CmusikBatchRetag* params = new CmusikBatchRetag( m_Library, m_RemoveOldFnct, pSongInfoArray );
+		params->m_WriteToFile = true;
+		CmusikThread* thread = new CmusikThread();
+
+		m_Threads.push_back( thread );
+
+		thread->Start( (ACE_THR_FUNC)musikBatchRetagWorker, params );
+	}
+	else
+		delete playlist;
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnUnsynchronizedtagsFinalizefordatabaseonly()
+{
+	MessageBox( "I don't do anything yet", MUSIK_VERSION_STR, MB_ICONINFORMATION );
 }
 
 ///////////////////////////////////////////////////
