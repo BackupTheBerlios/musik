@@ -5,6 +5,7 @@
 class CMusikLibrary;
 class CMusikPrefs;
 class CMusikPlaylist;
+class CMusikSongInfo;
 
 class CMusikPlaylistCtrl : public CListCtrl
 {
@@ -31,6 +32,8 @@ protected:
 	CMusikPlaylist* m_Playlist;
 	CFont m_Bullets;
 	CFont m_Items;
+
+	CMusikSongInfo *m_SongInfo;
 
 //-------------------------------------------------//
 //--- operations								---//

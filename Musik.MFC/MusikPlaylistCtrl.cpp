@@ -7,6 +7,7 @@
 
 #include "MusikPlaylistCtrl.h"
 
+#include "../Musik.Core/include/MusikPlaylist.h"
 #include "../Musik.Core/include/MusikArrays.h"
 #include "../Musik.Core/include/MusikLibrary.h"
 
@@ -18,9 +19,11 @@
 IMPLEMENT_DYNAMIC(CMusikPlaylistCtrl, CListCtrl)
 CMusikPlaylistCtrl::CMusikPlaylistCtrl( CMusikLibrary* library, CMusikPrefs* prefs, CMusikPlaylist* playlist )
 {
-	m_Library = library;
-	m_Prefs = prefs;
-	m_Playlist = playlist;
+	m_Library	= library;
+	m_Prefs		= prefs;
+	m_Playlist	= playlist;
+	m_SongInfo	= NULL;
+
 	InitFonts();
 }
 
@@ -218,7 +221,6 @@ void CMusikPlaylistCtrl::OnPaint()
 BOOL CMusikPlaylistCtrl::OnEraseBkgnd(CDC* pDC)
 {
 	return false;
-	//return CListCtrl::OnEraseBkgnd(pDC);
 }
 
 ///////////////////////////////////////////////////
