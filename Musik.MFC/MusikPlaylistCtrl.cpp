@@ -89,14 +89,6 @@ CMusikPlaylistCtrl::CMusikPlaylistCtrl( CFrameWnd* mainwnd, CMusikLibrary* libra
 CMusikPlaylistCtrl::~CMusikPlaylistCtrl()
 {
 	delete m_SongInfoCache;
-
-	// if the current playlist is not the
-	// library or the now playing playlist
-	// then we need to delete it...
-	if ( m_PlaylistType != MUSIK_SOURCES_TYPE_LIBRARY && m_PlaylistType != MUSIK_SOURCES_TYPE_NOWPLAYING )
-		delete m_Playlist;
-
-	CleanNowPlaying();
 }
 
 ///////////////////////////////////////////////////
@@ -151,12 +143,6 @@ void CMusikPlaylistCtrl::SetPlaylist( CMusikPlaylist* playlist, int m_Type )
 	if ( m_SongInfoCache )
 		m_SongInfoCache->SetPlaylist( playlist );
     
-	// if the current playlist is not the
-	// library or the now playing playlist
-	// then we need to delete it...
-	if ( m_PlaylistType != MUSIK_SOURCES_TYPE_LIBRARY && m_PlaylistType != MUSIK_SOURCES_TYPE_NOWPLAYING )
-		delete m_Playlist;
-
 	m_Playlist = playlist;
 	m_PlaylistType = m_Type;
 	
@@ -509,16 +495,6 @@ void CMusikPlaylistCtrl::OnNMClick(NMHDR *pNMHDR, LRESULT *pResult)
 	*pResult = 0;
 }
 
-void CMusikPlaylistCtrl::CleanNowPlaying()
-{
-	CMusikPlaylist* playlist = m_Player->GetPlaylist();
-	if ( playlist )
-	{
-		delete playlist;
-		playlist = NULL;
-	}
-}
-
 ///////////////////////////////////////////////////
 
 void CMusikPlaylistCtrl::OnLvnItemActivate(NMHDR *pNMHDR, LRESULT *pResult)
@@ -540,24 +516,12 @@ void CMusikPlaylistCtrl::GivePlaylistToPlayer()
 	// clear out the old CMusikPlayer's
 	// now playing... this will physically
 	// delete the old playlist
-	CleanNowPlaying();
+	m_Player->CleanPlaylist();
 
-	// now, if the playlist belonged to the
-	// library (selection boxes), the player
-	// owns it's old playlist, so make a copy
-	// of the original so we can toggle back...
-	if ( m_PlaylistType == MUSIK_SOURCES_TYPE_LIBRARY )
-	{
-		m_Player->SetPlaylist( new CMusikPlaylist() );
-		*m_Player->GetPlaylist() = *m_Playlist;
-	}
-
-	// if the last type was a standard
-	// playlist or a dynamic playlist,
-	// we really don't care... just pass
-	// it a pointer to the playlist
-	else
-		m_Player->SetPlaylist( m_Playlist );
+	// send the player a copy of the new
+	// playlist...
+	m_Player->SetPlaylist( new CMusikPlaylist() );
+	*m_Player->GetPlaylist() = *m_Playlist;
 
 	// playlist is now updated, so flag
 	// it as unchanged

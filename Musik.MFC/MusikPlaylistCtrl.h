@@ -56,7 +56,6 @@ protected:
 	CMusikPrefs* m_Prefs;
 
 	// playlist stuff
-	void CleanNowPlaying();
 	CMusikPlaylist* m_NowPlaying;
 	CMusikDynDspInfo* m_SongInfoCache;
 

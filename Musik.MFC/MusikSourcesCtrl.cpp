@@ -199,6 +199,10 @@ void CMusikSourcesCtrl::OnDropFiles(HDROP hDropInfo)
 	// did we actually hit an item?
 	if ( pItem )
 	{
+		// make sure the item isn't root
+		if ( pItem->IsRootLevel() )
+			return;
+
 		// standard playlist
 		if ( pItem->GetPlaylistType() == MUSIK_PLAYLIST_TYPE_STANDARD )
 			m_Library->AppendStdPlaylist( pItem->GetPlaylistID(), files, true );
@@ -442,6 +446,19 @@ CMusikPropTreeItem* CMusikSourcesCtrl::FindItem( const POINT& pt )
 		if ( p.y >= ipt.y && p.y < ipt.y + m_DynPlaylists.at( i )->GetHeight() )
 			return m_DynPlaylists.at( i );
 	}
+
+	// fall back to root items...
+	ipt = m_LibrariesRoot->GetLocation();
+	if ( p.y >= ipt.y && p.y < ipt.y + m_LibrariesRoot->GetHeight() )
+		return m_LibrariesRoot;
+	
+	ipt = m_StdPlaylistRoot->GetLocation();
+	if ( p.y >= ipt.y && p.y < ipt.y + m_StdPlaylistRoot->GetHeight() )
+		return m_StdPlaylistRoot;
+
+	ipt = m_DynPlaylistRoot->GetLocation();
+	if ( p.y >= ipt.y && p.y < ipt.y + m_DynPlaylistRoot->GetHeight() )
+		return m_DynPlaylistRoot;
 
 	// item couldn't be found
 	return NULL;
