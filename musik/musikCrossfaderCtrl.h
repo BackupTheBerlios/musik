@@ -78,6 +78,9 @@ protected:
 	CmusikPlayer* m_Player;
 	CmusikPrefs* m_Prefs;
 
+	// controls
+	CComboBox* m_AllCrossfaders;
+
 	// macros
 	DECLARE_DYNAMIC(CmusikCrossfaderCtrl)
 	DECLARE_MESSAGE_MAP()

@@ -66,10 +66,6 @@ bool CmusikMp3Info::LoadInfo( const CStdString& fn )
 	ID3_Tag	id3Tag;
 	id3Tag.Link( fn.c_str(), ID3TT_ALL );	
 
-	// make sure the file was loaded
-	if ( !id3Tag.GetFileSize() )
-		return false;
-
 	// get the info...
 	char* pArtist	= ID3_GetArtist	( &id3Tag );
 	char* pAlbum	= ID3_GetAlbum	( &id3Tag );
@@ -122,10 +118,6 @@ bool CmusikMp3Info::WriteInfo( CmusikSongInfo info, bool clear_old )
 {
 	ID3_Tag	id3Tag;
 	id3Tag.Link( info.GetFilename().c_str(), ID3TT_ALL );
-
-	// make sure file was loaded
-	if ( !id3Tag.GetFileSize() )
-		return false;
 
 	// itterate through all old values and
 	// clear them...

@@ -85,6 +85,7 @@ class CmusikPlayer;
 class CmusikFrameFunctor;
 class CmusikBatchAddFunctor;
 class CmusikRemoveOldFunctor;
+class ACE_Thread_Mutex;
 
 ///////////////////////////////////////////////////
 
@@ -128,6 +129,10 @@ public:
 
 	// current window text
 	CString m_Caption;
+
+	// mutex
+	ACE_Thread_Mutex* m_ProtectingThreads;
+	int m_ThreadCount;
 
 protected: 
 
@@ -239,6 +244,7 @@ protected:
 	// macros
 	DECLARE_DYNAMIC(CMainFrame)
 	DECLARE_MESSAGE_MAP()
+
 public:
 	afx_msg void OnUnsynchronizedtagsView();
 	afx_msg void OnUnsynchronizedtagsWritetofile();

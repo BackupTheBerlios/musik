@@ -169,8 +169,6 @@ static void musikPlayerWorker( CmusikThread* thread )
 			{
 				TRACE0( "Crossfade started... " );
 
-				player->m_ProtectingStreams->acquire();
-
 				player->UnflagCrossfade();
 
 				bool fade_success = true;
@@ -180,26 +178,6 @@ static void musikPlayerWorker( CmusikThread* thread )
 				// the fade becuase something will fuck up
 				if ( player->GetDuration( MUSIK_TIME_MS ) > ( player->GetCrossfader()->GetDuration( player->GetFadeType() ) * 1000 ) )
 				{
-					int temp				= 0;
-					int nFadeType			= player->GetFadeType();
-					int nCurrHandle			= player->GetHandle();
-					int nMainStream			= -1;
-					size_t nChildCount		= 0;
-
-					// if the fade type is pause, stop
-					// or exit, we need ALL the streams as
-					// children. children always fade out
-					if ( ( nFadeType == MUSIK_CROSSFADER_PAUSE_RESUME && player->IsPlaying() && !player->IsPaused() ) || nFadeType == MUSIK_CROSSFADER_STOP || nFadeType == MUSIK_CROSSFADER_EXIT )
-						nChildCount = player->GetStreamCount();
-    
-					// otherwise its a regular fade, so find the
-					// main and child streams
-					else
-					{
-						nChildCount = player->GetStreamCount() - 1;	
-						nMainStream = nChildCount;
-					}	
-
 					// fade duration in seconds, not milliseconds 
 					int nDuration = (int)( 1000.0f * player->GetCrossfader()->GetDuration( player->GetFadeType() ) );
 
@@ -211,38 +189,84 @@ static void musikPlayerWorker( CmusikThread* thread )
 
 					if ( nFadeCount < 1 ) nFadeCount = 1;
 
-					// the amount of volume to be changed
-					// in the primary stream, which ranges from
-					// 0 - 255. minimum of 1 per step.
-					int nFadeStep = player->GetMaxVolume() / nFadeCount;
+					// variables
+					int temp = 0;
 
-					if ( nFadeStep < 1 ) 
-						nFadeStep = 1;
+					int nFadeType = player->GetFadeType();
+					int nCurrHandle	= player->GetHandle();
+					int nMainStream	= -1;
 
-					// an array containing the volume steps for
-					// all the secondary streams
+					size_t nChildCount		= 0;
 					CIntArray aChildSteps;
-					for ( size_t i = 0; i < nChildCount; i++ )
-					{
-						temp = player->GetVolume( player->GetChannelID( i ) ) / nFadeCount;
-						if ( temp < 1 )	temp = 1;
-						aChildSteps.push_back( temp );
-					}
 
-					// current volume trackers
-					int nMainVol	= 0;
-					int nChildVol	= 0;
-					int nChildChan	= -1;
+					int nFadeStep = 0;
+
+					int nMainVol = 0;
+					int nChildVol = 0;
+					int nChildChan = -1;
+
+					bool recalc_steps = true;
 
 					// start the main loop
 					for ( int i = 0; i < nFadeCount; i++ )
 					{
+						// if the fade type is pause, stop
+						// or exit, we need ALL the streams as
+						// children. children always fade out
+						if ( ( nFadeType == MUSIK_CROSSFADER_PAUSE_RESUME && player->IsPlaying() && !player->IsPaused() ) || nFadeType == MUSIK_CROSSFADER_STOP || nFadeType == MUSIK_CROSSFADER_EXIT )
+						{	
+							if ( player->GetStreamCount() != nChildCount )
+							{
+								nChildCount = player->GetStreamCount();
+								recalc_steps = true;
+							}
+						}
+	    
+						// otherwise its a regular fade, so find the
+						// main and child streams
+						else
+						{
+							if ( nChildCount != player->GetStreamCount() - 1 )
+							{
+								nChildCount = player->GetStreamCount() - 1;	
+								recalc_steps = true;
+							}
+
+							if ( nMainStream != nChildCount )
+							{
+								nMainStream = nChildCount;
+								recalc_steps = true;
+							}
+						}	
+
+						if ( recalc_steps )
+						{
+							// an array containing the volume steps for
+							// all the secondary streams
+							aChildSteps.clear();
+							for ( size_t i = 0; i < nChildCount; i++ )
+							{
+								temp = player->GetVolume( player->GetChannelID( i ) ) / nFadeCount;
+								if ( temp < 1 )	temp = 1;
+								aChildSteps.push_back( temp );
+							}
+
+							// the amount of volume to be changed
+							// in the primary stream, which ranges from
+							// 0 - 255. minimum of 1 per step.
+							nFadeStep = player->GetMaxVolume() / nFadeCount;
+
+							if ( nFadeStep < 1 ) 
+								nFadeStep = 1;
+
+							recalc_steps = false;
+						}
+
 						// see if we should abort. 
 						if ( player->GetHandle() != nCurrHandle )
 						{
 							TRACE0( "Crossfade aborted\n" );
 
-							player->m_ProtectingStreams->release();
 							fade_success = false;
 							break;
 						}
@@ -294,14 +318,11 @@ static void musikPlayerWorker( CmusikThread* thread )
 
 							// set the kill switch
 							m_Exit = true;
-							player->m_ProtectingStreams->release();
 							continue;
 						}
 
 						else if ( player->GetFadeType() == MUSIK_CROSSFADER_NEW_SONG  )
 							player->FinalizeNewSong();
-
-						player->m_ProtectingStreams->release();
 
 						TRACE0( "Crossfade finished successfully\n" );
 					}					
@@ -929,10 +950,16 @@ int CmusikPlayer::GetCurrChannel()
 
 FSOUND_STREAM* CmusikPlayer::GetCurrStream()
 {
-	if ( m_ActiveStreams->size() )
-		return m_ActiveStreams->at( m_ActiveStreams->size() - 1 );
+	FSOUND_STREAM* pStream = NULL;
 
-	return NULL;
+	m_ProtectingStreams->acquire();
+
+	if ( m_ActiveStreams->size() )
+		pStream = m_ActiveStreams->at( m_ActiveStreams->size() - 1 );
+
+	m_ProtectingStreams->release();
+
+	return pStream;
 }
 
 ///////////////////////////////////////////////////
@@ -990,9 +1017,9 @@ void CmusikPlayer::CleanEQ_DSP()
 
 void CmusikPlayer::CleanOldStreams( bool kill_primary )
 {
-	ASSERT( m_ActiveStreams->size() == m_ActiveChannels->size() );
-
 	m_ProtectingStreams->acquire();
+
+	ASSERT( m_ActiveStreams->size() == m_ActiveChannels->size() );
 
 	if ( !m_ActiveStreams->size() )
 		return;
@@ -1128,7 +1155,13 @@ void CmusikPlayer::FinalizeNewSong()
 
 size_t CmusikPlayer::GetStreamCount()
 {
-	return m_ActiveStreams->size();
+	size_t count = 0;
+
+	m_ProtectingStreams->acquire();
+	count = m_ActiveStreams->size();
+	m_ProtectingStreams->release();
+
+	return count;
 }
 
 ///////////////////////////////////////////////////
@@ -1142,7 +1175,16 @@ int CmusikPlayer::GetVolume( int channel_id )
 
 int CmusikPlayer::GetChannelID( int n )
 {
-	return m_ActiveChannels->at( n );
+	int channel_id = 0;
+
+	m_ProtectingStreams->acquire();
+
+	if ( n < (int)m_ActiveChannels->size() )
+		channel_id = m_ActiveChannels->at( n );
+
+	m_ProtectingStreams->release();
+
+	return channel_id;
 }
 
 ///////////////////////////////////////////////////

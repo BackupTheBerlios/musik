@@ -217,7 +217,7 @@ static void MainFrameWorker( CmusikThread* thread )
 		if ( thread->m_Abort )
 			break;
 
-		if ( parent->m_Threads.size() )
+		if ( parent->m_ThreadCount )
 		{
 			switch ( pos )
 			{
@@ -239,12 +239,18 @@ static void MainFrameWorker( CmusikThread* thread )
 				break;			
 			}
 
+			parent->m_ProtectingThreads->acquire();
+		
 			sCaption = parent->m_Caption;
 			for ( size_t i = 0; i < parent->m_Threads.size(); i++ )
 			{
 				sCaption += _T( "  " );
 				sCaption += turn;
 			}
+
+			parent->m_ProtectingThreads->release();
+
+			parent->SetWindowText( sCaption );
 
 			// update ui every 3 seconds
 			++cnt;
@@ -255,6 +261,7 @@ static void MainFrameWorker( CmusikThread* thread )
 				cnt = 0;
 			}
 		}
+
 		ACE_OS::sleep( sleep );
 
 	}
@@ -266,6 +273,8 @@ static void MainFrameWorker( CmusikThread* thread )
 
 CMainFrame::CMainFrame()
 {
+	m_ProtectingThreads = new ACE_Thread_Mutex();
+
 	InitPaths();
 	Initmusik();
 	InitDragTypes();
@@ -294,6 +303,8 @@ CMainFrame::~CMainFrame()
 		delete m_wndNowPlaying;
 
 	Cleanmusik();
+
+	delete m_ProtectingThreads;
 }
 
 ///////////////////////////////////////////////////
@@ -327,6 +338,7 @@ void CMainFrame::Initmusik()
 	m_NewSong		= new CmusikFrameFunctor( this );
 	m_LibPlaylist	= NULL;	
 	m_StdPlaylist	= NULL;
+	m_ThreadCount	= 0;
 	m_Caption		= MUSIK_VERSION_STR;
 	m_BatchAddFnct	= new CmusikBatchAddFunctor( this );
 	m_RemoveOldFnct	= new CmusikRemoveOldFunctor( this );
@@ -383,6 +395,7 @@ void CMainFrame::Cleanmusik()
         delete m_Updater;
 	}
 
+	m_ProtectingThreads->acquire();
 	for ( size_t i = 0; i < m_Threads.size(); i++ )
 	{
 		m_Threads.at( i )->Suspend( true );
@@ -394,6 +407,7 @@ void CMainFrame::Cleanmusik()
 
 		delete m_Threads.at( i );
 	}
+	m_ProtectingThreads->release();
 
 	if ( m_Library )	
 	{
@@ -694,7 +708,10 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		CmusikRemoveOld* params = new CmusikRemoveOld( m_Library, m_RemoveOldFnct );
 		CmusikThread* thread = new CmusikThread();
 
+		m_ProtectingThreads->acquire();
 		m_Threads.push_back( thread );
+		m_ThreadCount++;
+		m_ProtectingThreads->release();
 
 		thread->Start( (ACE_THR_FUNC)musikRemoveOldWorker, params );
 	}
@@ -901,7 +918,10 @@ LRESULT CMainFrame::OnSelBoxEditCommit( WPARAM wParam, LPARAM lParam )
 		params->m_WriteToFile = m_Prefs->WriteTagsToFile();
 		CmusikThread* thread = new CmusikThread();
 
+		m_ProtectingThreads->acquire();
 		m_Threads.push_back( thread );
+		m_ThreadCount++;
+		m_ProtectingThreads->release();
 
 		thread->Start( (ACE_THR_FUNC)musikBatchRetagWorker, params );
 		
@@ -1303,7 +1323,10 @@ void CMainFrame::OnAddFiles()
 			CmusikBatchAdd* params = new CmusikBatchAdd( files, NULL, m_Library, NULL, m_BatchAddFnct, 0, 0, 1 );
 			CmusikThread* thread = new CmusikThread();
 
+			m_ProtectingThreads->acquire();
 			m_Threads.push_back( thread );
+			m_ThreadCount++;
+			m_ProtectingThreads->release();
 
 			thread->Start( (ACE_THR_FUNC)musikBatchAddWorker, (void*)params );
 		}
@@ -1324,7 +1347,10 @@ LRESULT CMainFrame::OnBatchAddNew( WPARAM wParam, LPARAM lParam )
 
 		CmusikThread* thread = new CmusikThread();
 
+		m_ProtectingThreads->acquire();
 		m_Threads.push_back( thread );
+		m_ThreadCount++;
+		m_ProtectingThreads->release();
 
 		thread->Start( (ACE_THR_FUNC)musikBatchAddWorker, (void*)params );
 	}
@@ -1353,7 +1379,8 @@ LRESULT CMainFrame::OnThreadEnd( WPARAM wParam, LPARAM lParam )
 		ResetSelBoxes();
 		m_wndView->GetCtrl()->UpdateV( true );
 	}
-	if ( m_Threads.size() == 0 )
+
+	if ( !m_ThreadCount )
 		SetWindowText( m_Caption );
 
 	return 0L;
@@ -1370,6 +1397,9 @@ LRESULT CMainFrame::OnRemoveOldProgress( WPARAM wParam, LPARAM lParam )
 
 bool CMainFrame::FreeThread( CmusikThread* pThread )
 {
+	bool erased = false;
+
+	m_ProtectingThreads->acquire();
 	for ( size_t i = 0; i < m_Threads.size(); i++ )
 	{
 		if ( pThread == m_Threads.at( i ) )
@@ -1383,11 +1413,17 @@ bool CMainFrame::FreeThread( CmusikThread* pThread )
 
 			// erase from array
 			m_Threads.erase( m_Threads.begin() + i );
-			return true;
+			erased = true;
+
+			break;
 		}
 	}
+	m_ProtectingThreads->release();
 
-	return false;
+	if ( erased )
+		m_ThreadCount--;
+
+	return erased;
 }
 
 ///////////////////////////////////////////////////
@@ -1427,7 +1463,10 @@ void CMainFrame::OnAddDirectory()
 			CmusikBatchAdd* params = new CmusikBatchAdd( files, NULL, m_Library, NULL, m_BatchAddFnct, 0, 0, 1 );
 			CmusikThread* thread = new CmusikThread();
 
+			m_ProtectingThreads->acquire();
 			m_Threads.push_back( thread );
+			m_ThreadCount++;
+			m_ProtectingThreads->release();
 
 			thread->Start( (ACE_THR_FUNC)musikBatchAddWorker, (void*)params );
 		}
@@ -1771,7 +1810,10 @@ void CMainFrame::OnUnsynchronizedtagsWritetofile()
 		params->m_WriteToFile = true;
 		CmusikThread* thread = new CmusikThread();
 
+		m_ProtectingThreads->acquire();
 		m_Threads.push_back( thread );
+		m_ThreadCount++;
+		m_ProtectingThreads->release();
 
 		thread->Start( (ACE_THR_FUNC)musikBatchRetagWorker, params );
 	}
