@@ -25,6 +25,8 @@ public:
 
 	DECLARE_EVENT_TABLE()
 private:
+
+	void SetPosFromMouse();
 	
 	wxWindow*	m_Parent;
 	float		m_Val;

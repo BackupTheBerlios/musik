@@ -30,6 +30,7 @@ void CMusikDragGaugeCtrl::OnLeftDown( wxMouseEvent& event )
 		{
 			m_Dragging = true;
 			CaptureMouse();
+			SetPosFromMouse();
 		}
 	}
 
@@ -55,46 +56,52 @@ void CMusikDragGaugeCtrl::OnMotion( wxMouseEvent& event )
 	{
 		if ( event.LeftIsDown() )
 		{
-			m_MousePos = ScreenToClient( wxGetMousePosition() );
-
-			float nSize;
-			float nPos;
-
-			//-----------------------------------------//
-			//--- if the gauge is horizontal...		---//
-			//-----------------------------------------//
-			if ( m_Style == wxGA_HORIZONTAL )
-			{
-				nSize	= (float)m_MousePos.x;
-				nPos	= (float)m_WndSize.GetWidth();
-			}
-
-			//-----------------------------------------//
-			//--- if the gauge is vertical...		---//
-			//-----------------------------------------//
-			else
-			{
-				nSize	= (float)m_MousePos.y;
-				nPos	= (float)m_WndSize.GetHeight();
-			}
-
-			m_Val = 100.0f * ( nPos / nSize );
-
-			if		( m_Val < 0.0f )	m_Val = 0.0f;
-			else if ( m_Val > 100.0f )	m_Val = 100.0f;
-
-			if ( (int)m_Val != m_LastPos )
-			{
-				SetValue( (int)m_Val );
-				m_LastPos = (int)m_Val;
-			}
-
+			SetPosFromMouse();
 			OnMotionV();
 		}
 	}
 }
 
+void CMusikDragGaugeCtrl::SetPosFromMouse()
+{
+	m_MousePos = ScreenToClient( wxGetMousePosition() );
+
+	float nSize;
+	float nPos;
+
+	//-----------------------------------------//
+	//--- if the gauge is horizontal...		---//
+	//-----------------------------------------//
+	if ( m_Style == wxGA_HORIZONTAL )
+	{
+		nPos	= (float)m_MousePos.x;
+		nSize	= (float)m_WndSize.GetWidth();
+	}
+
+	//-----------------------------------------//
+	//--- if the gauge is vertical...		---//
+	//-----------------------------------------//
+	else
+	{
+		nPos	= (float)m_MousePos.y;
+		nSize	= (float)m_WndSize.GetHeight();
+	}
+
+	m_Val = 100.0f * ( nPos / nSize );
+
+	if		( m_Val < 0.0f )	m_Val = 0.0f;
+	else if ( m_Val > 100.0f )	m_Val = 100.0f;
+
+	if ( (int)m_Val != m_LastPos )
+	{
+		SetValue( (int)m_Val );
+		m_LastPos = (int)m_Val;
+	}	
+
+
+}
+
 void CMusikDragGaugeCtrl::OnSize( wxSizeEvent& event )
 {
-	m_WndSize = event.GetSize();
+	m_WndSize = GetSize();
 }
