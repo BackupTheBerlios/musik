@@ -44,6 +44,41 @@ MusikTagFrame *g_MusikTagFrame;
 //------------------------------------//
 MusikLibraryFrame *g_MusikLibraryFrame;
 
+//-----------------------------//
+//--- playlist column stuff ---//
+//-----------------------------//
+const int g_PlaylistColumnAlign[NPLAYLISTCOLUMNS] =
+{
+	wxLIST_FORMAT_CENTER,
+	wxLIST_FORMAT_RIGHT,
+	wxLIST_FORMAT_LEFT,
+	wxLIST_FORMAT_LEFT,
+	wxLIST_FORMAT_LEFT,
+	wxLIST_FORMAT_CENTER,
+	wxLIST_FORMAT_LEFT,
+	wxLIST_FORMAT_RIGHT,
+	wxLIST_FORMAT_RIGHT,
+	wxLIST_FORMAT_RIGHT,
+	wxLIST_FORMAT_RIGHT,
+	wxLIST_FORMAT_LEFT	
+};
+
+extern const wxString g_PlaylistColumnLabels[NPLAYLISTCOLUMNS] =
+{
+	wxT( "Rating"		),
+	wxT( "Track"		),
+	wxT( "Title"		),
+	wxT( "Artist"		),
+	wxT( "Album"		),
+	wxT( "Year"			),
+	wxT( "Genre"		),
+	wxT( "Times Played" ),
+	wxT( "Last Played"	),
+	wxT( "Time"			),
+	wxT( "Bitrate"		),
+	wxT( "Filename"		)
+};
+
 //------------------------//
 //--- internal objects ---//
 //------------------------//

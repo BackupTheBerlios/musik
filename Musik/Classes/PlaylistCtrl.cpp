@@ -775,11 +775,49 @@ void CPlaylistCtrl::RescaleColumns()
 
 void CPlaylistCtrl::ResetColumns( bool update )
 {
+	//-------------------------//
+	//--- clear all columns ---//
+	//-------------------------//
+	int nColumnCount = GetColumnCount();
+	for ( size_t i = 0; i < nColumnCount; i++ )
+		DeleteColumn( 0 );
+
+	//-------------------------------------------------//
+	//--- construct all columns, and set any static	---//
+	//--- values. RescaleColumns() will be called	---//
+	//--- afterwords to setup any dynamic columns.	---//
+	//-------------------------------------------------//
+	bool bRescaleColumns = false;
+	nColumnCount = 0;
+	for ( int i = 0; i < NPLAYLISTCOLUMNS; i++ )
+	{
+		//---------------------------------------------//
+		//--- if this column is enabled				---//
+		//---------------------------------------------//
+		if ( g_Prefs.nPlaylistColumnEnable[i] == 1 )
+		{
+			InsertColumn( nColumnCount, g_PlaylistColumnLabels[i], g_PlaylistColumnAlign[i], g_Prefs.nPlaylistColumnSize[i] );
+
+			//---------------------------------------------//
+			//--- see if we will need to dynamically	---//
+			//--- rescale columns after they are		---//
+			//--- created.								---//
+			//---------------------------------------------//
+			if ( !bRescaleColumns )
+			{
+				if ( g_Prefs.nPlaylistColumnDynamic[i] == 1 )
+					bRescaleColumns = true;
+			}
+
+			++nColumnCount;
+		}
+	}
+	
 /*
-	int cntColumns = GetColumnCount();
+	
 	bool bUpdateNeeded = false;
 
-	if( cntColumns == 0 )	//--Rating -> TrackNum -> Title -> Artist -> Album -> Year -> Genre -> Times Played -> Last Played -> Bitrate -> Time -> Filename
+	if( cntColumns == 0 )
 	{
 		InsertColumn( PLAYLISTCOLUMN_RATING,	_( "Rating" ),		wxLIST_FORMAT_CENTER,	g_Prefs.nPlaylistColumnSize[PLAYLISTCOLUMN_RATING]	);
 		InsertColumn( PLAYLISTCOLUMN_TITLE,		_( "Title" ),		wxLIST_FORMAT_LEFT,		g_Prefs.nPlaylistColumnSize[PLAYLISTCOLUMN_TITLE]	);

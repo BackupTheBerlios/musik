@@ -82,7 +82,7 @@
 //-------------------------//
 //--- enumerated values ---//
 //-------------------------//
-enum EPLAYLISTCOLUMS
+enum EPLAYLISTCOLUMNS
 {
 	PLAYLISTCOLUMN_RATING = 0,
 	PLAYLISTCOLUMN_TRACK,
@@ -98,6 +98,9 @@ enum EPLAYLISTCOLUMS
 	PLAYLISTCOLUMN_FILENAME,
 	NPLAYLISTCOLUMNS			//--- this is ALWAYS the last entry ---//
 };
+
+extern const int g_PlaylistColumnAlign[NPLAYLISTCOLUMNS];
+extern const wxString g_PlaylistColumnLabels[NPLAYLISTCOLUMNS];
 
 enum EMUSIK_ACTIVITY_TYPE
 {
