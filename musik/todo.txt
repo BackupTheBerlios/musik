@@ -4,6 +4,7 @@ musik Todo list:
 2.  Edit Tag Dialog [dcarter]
 3.  Dynamic Playlist Dialog [dcarter]
 4.  Jukebox playlist type [dcarter/avatar]
+5.  Maybe optimize equalizer layout functions? [avatar]
 
 Stuff Added 
 

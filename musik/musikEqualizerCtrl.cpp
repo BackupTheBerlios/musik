@@ -301,11 +301,47 @@ void CmusikEqualizerCtrl::OnSize(UINT nType, int cx, int cy)
 		}
 		else if ( GetBandState() == MUSIK_EQUALIZER_CTRL_8BANDS )
 		{
+			if ( i % 2 == 0 )
+			{
+				curr.top = 0;
+				curr.bottom = IsChannelsLocked() ? cy : cy / 2;
+				curr.left = ( ( i / 2 ) * 16 ) + ( ( ( i / 2 ) + 1 ) * width_remaining );
+				curr.right = curr.left + 16;
 
+				m_LeftBands[i].MoveWindow( curr );
+
+				// if the channels are locked, these bands
+				// will be hidden...
+				if ( !IsChannelsLocked() )
+				{
+					curr.top = curr.bottom;
+					curr.bottom = cy;
+
+					m_RightBands[i].MoveWindow( curr );
+				}
+			}
 		}
 		else if ( GetBandState() == MUSIK_EQUALIZER_CTRL_4BANDS )
 		{
+			if ( i % 4 == 0 )
+			{
+				curr.top = 0;
+				curr.bottom = IsChannelsLocked() ? cy : cy / 2;
+				curr.left = ( ( i / 4 ) * 16 ) + ( ( ( i / 4 ) + 1 ) * width_remaining );
+				curr.right = curr.left + 16;
 
+				m_LeftBands[i].MoveWindow( curr );
+
+				// if the channels are locked, these bands
+				// will be hidden...
+				if ( !IsChannelsLocked() )
+				{
+					curr.top = curr.bottom;
+					curr.bottom = cy;
+
+					m_RightBands[i].MoveWindow( curr );
+				}
+			}
 		}
 	}
 }
@@ -318,13 +354,84 @@ void CmusikEqualizerCtrl::LayoutNewState()
 	// of the right channel bands...
 	if ( IsChannelsLocked() )
 	{
-		for ( size_t i = 0; i < 16; i++ )
-			m_RightBands[i].ShowWindow( SW_HIDE );
+		if ( GetBandState() == MUSIK_EQUALIZER_CTRL_16BANDS )
+		{
+			for ( size_t i = 0; i < 16; i++ )
+			{
+				m_LeftBands[i].ShowWindow( SW_SHOW );
+				m_RightBands[i].ShowWindow( SW_HIDE );
+			}
+		}
+		else if ( GetBandState() == MUSIK_EQUALIZER_CTRL_8BANDS )
+		{
+			for ( size_t i = 0; i < 16; i++ )
+			{
+				if ( i % 2 == 0 ) // hide every other band
+					m_LeftBands[i].ShowWindow( SW_SHOW );
+				else
+					m_LeftBands[i].ShowWindow( SW_HIDE );
+
+				m_RightBands[i].ShowWindow( SW_HIDE );
+			}
+		}
+		else if ( GetBandState() == MUSIK_EQUALIZER_CTRL_4BANDS )
+		{
+			for ( size_t i = 0; i < 16; i++ )
+			{
+				if ( i % 4 == 0 ) // hide every other band
+					m_LeftBands[i].ShowWindow( SW_SHOW );
+				else
+					m_LeftBands[i].ShowWindow( SW_HIDE );
+
+				m_RightBands[i].ShowWindow( SW_HIDE );
+			}
+		}
 	}
+
+	// channels are unlocked, both bands
+	// are visible...
 	else
 	{
-		for ( size_t i = 0; i < 16; i++ )
-			m_RightBands[i].ShowWindow( SW_SHOW );
+		if ( GetBandState() == MUSIK_EQUALIZER_CTRL_16BANDS )
+		{
+			for ( size_t i = 0; i < 16; i++ )
+			{
+				m_LeftBands[i].ShowWindow( SW_SHOW );
+				m_RightBands[i].ShowWindow( SW_SHOW );
+			}
+		}
+		else if ( GetBandState() == MUSIK_EQUALIZER_CTRL_8BANDS )
+		{
+			for ( size_t i = 0; i < 16; i++ )
+			{
+				if ( i % 2 == 0 )
+				{
+					m_LeftBands[i].ShowWindow( SW_SHOW );
+					m_RightBands[i].ShowWindow( SW_SHOW );
+				}
+				else
+				{
+					m_LeftBands[i].ShowWindow( SW_HIDE );
+					m_RightBands[i].ShowWindow( SW_HIDE );
+				}
+			}
+		}
+		else if ( GetBandState() == MUSIK_EQUALIZER_CTRL_4BANDS )
+		{
+			for ( size_t i = 0; i < 16; i++ )
+			{
+				if ( i % 4 == 0 )
+				{
+					m_LeftBands[i].ShowWindow( SW_SHOW );
+					m_RightBands[i].ShowWindow( SW_SHOW );
+				}
+				else
+				{
+					m_LeftBands[i].ShowWindow( SW_HIDE );
+					m_RightBands[i].ShowWindow( SW_HIDE );
+				}
+			}
+		}
 	}
 
 	CRect rcClient;
