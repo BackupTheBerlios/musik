@@ -248,6 +248,9 @@ IDR_PLAYLIST_CONTEXT_MENU MENU
 BEGIN
     POPUP "Playlist Context Menu"
     BEGIN
+        MENUITEM "Shuffle Now Playing\tCtrl+Alt+A", 
+                                                ID_PLAYLISTCONTEXTMENU_SHUFFLENOWPLAYING
+
         POPUP "Delete"
         BEGIN
             MENUITEM "From Playlist\tDel",          ID_PLC_DELETE_FROMPLAYLIST

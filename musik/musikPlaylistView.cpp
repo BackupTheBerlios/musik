@@ -263,4 +263,3 @@ void CmusikPlaylistView::OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/)
 }
 
 ///////////////////////////////////////////////////
-

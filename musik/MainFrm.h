@@ -310,6 +310,7 @@ protected:
 	afx_msg void OnFileClearlibrary();
 	afx_msg void OnLibrarySynchronizedirectoriesnow();
 	afx_msg void OnPlaybackmodeShufflecurrentplaylist();
+	afx_msg void OnUpdatePlaybackmodeShufflecurrentplaylist(CCmdUI *pCmdUI);
 
 	// list of all taskss running
 	int FreeTask( CmusikTask* pTask );

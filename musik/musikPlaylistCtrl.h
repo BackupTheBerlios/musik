@@ -217,6 +217,7 @@ protected:
 	afx_msg void OnPlcDeleteFromplaylist();
 	afx_msg void OnPlcDeleteFromlibrary();
 	afx_msg void OnPlcDeleteFromcomputer();
+	afx_msg void OnPlaylistcontextmenuShufflenowplaying();
 
 	// CmusikPlaylistDropTarget calls
 	// this function once files have

@@ -62,6 +62,7 @@
 
 #include <io.h>
 #include <Direct.h>
+#include ".\mainfrm.h"
 
 ///////////////////////////////////////////////////
 
@@ -190,6 +191,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_UPDATE_COMMAND_UI(ID_NOTIFICATIONTRAY_NEXT, OnUpdateNotificationtrayNext)
 	ON_UPDATE_COMMAND_UI(ID_NOTIFICATIONTRAY_PREV, OnUpdateNotificationtrayPrev)
 	ON_UPDATE_COMMAND_UI(ID_NOTIFICATIONTRAY_STOP, OnUpdateNotificationtrayStop)
+	ON_UPDATE_COMMAND_UI(ID_PLAYBACKMODE_SHUFFLECURRENTPLAYLIST, OnUpdatePlaybackmodeShufflecurrentplaylist)
 
 	// custom message maps
 	ON_REGISTERED_MESSAGE( WM_SELBOXUPDATE, OnUpdateSel )
@@ -219,7 +221,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_UPDATEPLAYLIST, OnUpdateCurrPlaylist )
 	ON_REGISTERED_MESSAGE( WM_RESTARTSOUNDSYSTEM, OnRestartSoundSystem )
 	ON_REGISTERED_MESSAGE( WM_EQUALIZERCHANGE, OnEqualizerChange )
-
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -1307,7 +1308,7 @@ LRESULT CMainFrame::OnSongChange( WPARAM wParam, LPARAM lParam )
 	// to do our own updating
 	if ( m_Player->IsPlaying() )
 	{
-		s.Format( _T( "[ %s - %s ] %s" ), 
+		s.Format( _T( "[%s - %s] %s" ), 
 			m_Player->GetCurrPlaying()->GetTitle().c_str(), 
 			m_Player->GetCurrPlaying()->GetArtist().c_str(),
 			MUSIK_VERSION_STR );
@@ -2689,9 +2690,7 @@ LRESULT CMainFrame::OnRestartSoundSystem( WPARAM wParam, LPARAM lParam )
 
 void CMainFrame::OnPlaybackmodeShufflecurrentplaylist()
 {
-	int songid = m_Player->GetCurrPlaying()->GetID();
-	std::random_shuffle( m_Player->GetPlaylist()->m_Songs.begin(), m_Player->GetPlaylist()->m_Songs.end() );
-	m_Player->FindNewIndex( songid );
+	m_Player->Shuffle();
 
 	if ( m_wndView->GetCtrl()->GetPlaylist() == m_Player->GetPlaylist() )
 	{
@@ -2731,6 +2730,13 @@ LRESULT CMainFrame::OnSelBoxDelSel( WPARAM wParam, LPARAM lParam )
 	m_wndView->GetCtrl()->UpdateV();
 
 	return 0L;
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnUpdatePlaybackmodeShufflecurrentplaylist(CCmdUI *pCmdUI)
+{
+	pCmdUI->Enable( m_Player->GetPlaylist()->GetCount() );
 }
 
 ///////////////////////////////////////////////////

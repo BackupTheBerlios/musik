@@ -2,6 +2,9 @@
 
 a2:
   
+  - added "Shuffle Now Playing" to playlist context menu
+  - "Shuffle Now Playing" menu options disabled if now playing
+    playlist is empty.
   - changed "Standard Playlists" to "Playlists" in the
     sources panel
   - fixes a bug where parenting a box, selecting nothing,

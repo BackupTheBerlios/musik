@@ -109,6 +109,7 @@ BEGIN_MESSAGE_MAP(CmusikPlaylistCtrl, CmusikListCtrl)
 	ON_COMMAND(ID_PLC_DELETE_FROMPLAYLIST, OnPlcDeleteFromplaylist)
 	ON_COMMAND(ID_PLC_DELETE_FROMLIBRARY, OnPlcDeleteFromlibrary)
 	ON_COMMAND(ID_PLC_DELETE_FROMCOMPUTER, OnPlcDeleteFromcomputer)
+	ON_COMMAND(ID_PLAYLISTCONTEXTMENU_SHUFFLENOWPLAYING, OnPlaylistcontextmenuShufflenowplaying)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -1445,7 +1446,10 @@ void CmusikPlaylistCtrl::ShowContextMenu()
 		popup_menu->EnableMenuItem( ID_PLC_DELETE_FROMCOMPUTER, MF_DISABLED | MF_GRAYED );
 		popup_menu->EnableMenuItem( ID_PLAYLISTCONTEXTMENU_PROPERTIES, MF_DISABLED | MF_GRAYED );
 	}
-		
+
+	if ( !m_Player->GetPlaylist()->GetCount() )
+		popup_menu->EnableMenuItem( ID_PLAYLISTCONTEXTMENU_SHUFFLENOWPLAYING, MF_DISABLED | MF_GRAYED );
+
 	popup_menu->TrackPopupMenu( 0, pos.x, pos.y, this );
 }
 
@@ -1807,6 +1811,19 @@ void CmusikPlaylistCtrl::OnPlcDeleteFromlibrary()
 void CmusikPlaylistCtrl::OnPlcDeleteFromcomputer()
 {
 	DeleteSelectedItems( true, true );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::OnPlaylistcontextmenuShufflenowplaying()
+{
+	m_Player->Shuffle();
+
+	if ( GetPlaylist() == m_Player->GetPlaylist() )
+	{
+		UpdateV();
+		ScrollToCurr();
+	}
 }
 
 ///////////////////////////////////////////////////
