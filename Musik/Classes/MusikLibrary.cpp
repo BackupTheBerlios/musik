@@ -1242,44 +1242,43 @@ bool CMusikLibrary::RenameFile( CMusikSong* song, bool bClearCheck )
 	return false;
 }
 
-bool CMusikLibrary::RetagFile( CMusikSong* song )
+bool CMusikLibrary::RetagFile( CMusikSong* OldSong )
 {
 	CMusikSong* NewSong		= new CMusikSong;
-	NewSong = song;
-	wxFileName	filename	( song->Filename );
+	NewSong					= OldSong;
+
+	wxFileName	filename	( NewSong->Filename );
 
 	wxString	sMask		= g_Prefs.sAutoTag;
-	wxString	sPath		= filename.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR );
-	wxString	sFile		= filename.GetName();
+	wxString	sFile		= NewSong->Filename;
 	wxString	sExt		= wxT(".") + filename.GetExt();
+
+	sFile = sFile.Left( sFile.Length() - 4 );
 
 	size_t		nValidStart	= 1;
 	size_t		nValidEnd	= 6;
 
 	wxArrayString aMaskOrder;
-	wxArrayString aMaskTokens	= DelimitStr( sMask, wxT("%"), true );
+
+	wxArrayString aMaskDelimiters	= DelimitStr( sMask, wxT("%"), true );
+	aMaskDelimiters.Remove(0, 1);
+
 	wxArrayString aFileTokens;
 
-	aMaskTokens.Remove(0, 1);
-
-	wxString sTemp;
-	bool bSuccess = false;
-
 // Get mask order and delimiter order.
-	for( size_t i = 0; i < aMaskTokens.GetCount(); i++ )
-	{
-		bSuccess = false;
-		for( size_t j = nValidStart; j <= nValidEnd; j++ )
-		{
-			if( aMaskTokens.Item( i ).StartsWith( IntTowxString(j) ) )
-			{	
-				aMaskOrder.Insert( IntTowxString( j ), i );
-				aMaskTokens.Item( i ) = aMaskTokens.Item( i ).Right( aMaskTokens.Item( i ).Length() - 1 );
-				bSuccess = true;
-				break;
-			}
+	bool bSuccess;
+	wxString sTemp;
 
+	for( size_t i = 0; i < aMaskDelimiters.GetCount(); i++ )
+	{
+		sTemp = aMaskDelimiters.Item( i ).Left( 1 );
+		if( sTemp.IsNumber() )
+		{
+			aMaskOrder.Insert( sTemp, i );
+			aMaskDelimiters.Item( i ) = aMaskDelimiters.Item( i ).Right( aMaskDelimiters.Item( i ).Length() - 1 );
+			bSuccess = true;
 		}
+
 		if( !bSuccess )
 		{
 			wxMessageBox( wxT( "Invalid Mask." ) );
@@ -1287,15 +1286,36 @@ bool CMusikLibrary::RetagFile( CMusikSong* song )
 		}
 	}
 
-	for( size_t i = 0; i < aMaskTokens.GetCount(); i++ )
+//Sorts delimiters in order of length
+	size_t k = 0;
+	while( k < aMaskDelimiters.GetCount() - 1 )
 	{
-		if( !aMaskTokens.Item( i ).IsEmpty() )
+		if( aMaskDelimiters.Item( k ).Length() >= aMaskDelimiters.Item( k + 1 ).Length() )
+			k++;
+		else
 		{
-			if( sFile.Replace( aMaskTokens.Item( i ), wxT( "\n" ), false ) != 1 )
-				return false;
+			sTemp = aMaskDelimiters.Item( k );
+			aMaskDelimiters.Item( k ) = aMaskDelimiters.Item( k + 1 );
+			aMaskDelimiters.Item( k + 1 ) = sTemp;
+			k = 0;
 		}
 	}
+
+//Convert delimiters to \n chars (for replacement purposes) NEEDS WORK
+	size_t nReplacementCount = 0;
+
+	nReplacementCount = sFile.Replace( wxString( MUSIK_PATH_SEPARATOR ), wxT( "\n" ), true );
+
+	for( size_t i = 0; i < aMaskDelimiters.GetCount() - 1; i++ )
+	{
+		nReplacementCount = nReplacementCount + sFile.Replace( aMaskDelimiters.Item( i ), wxT( "\n" ), true );
+	}
+
+	if( nReplacementCount < aMaskDelimiters.GetCount() )
+		return false;
+
 	aFileTokens = DelimitStr( sFile, wxT( "\n" ), true );
+
 	for( size_t i = 0; i < aFileTokens.GetCount(); i++ )
 	{
 		aFileTokens.Item( i ).Trim( true );
@@ -1303,30 +1323,36 @@ bool CMusikLibrary::RetagFile( CMusikSong* song )
 	}
 
 // put in proper order.
-	if( aMaskOrder.GetCount() != aFileTokens.GetCount() )
-		return false;
+	size_t nTokenIndex	= aFileTokens.GetCount() - 1;
+	size_t nMaskIndex	= aMaskOrder.GetCount() - 1;
 
 	for( size_t i = 0; i < aMaskOrder.GetCount(); i++ )
 		{
-			switch ( wxStringToInt( aMaskOrder.Item( i ) ) )
+			switch ( wxStringToInt( aMaskOrder.Item( nMaskIndex - i ) ) )
 			{
 			case 1:
-				NewSong->Title = aFileTokens.Item( i );
+				NewSong->Title = aFileTokens.Item( nTokenIndex - i );
+				wxMessageBox( wxT( "..." ) + NewSong->Title + wxT( "..." ) );
 				break;
 			case 2:
-				NewSong->Artist = aFileTokens.Item( i );
+				NewSong->Artist = aFileTokens.Item( nTokenIndex - i );
+				wxMessageBox( wxT( "..." ) + NewSong->Artist + wxT( "..." ) );
 				break;
 			case 3:
-				NewSong->Album = aFileTokens.Item( i );
+				NewSong->Album = aFileTokens.Item( nTokenIndex - i );
+				wxMessageBox( wxT( "..." ) + NewSong->Album + wxT( "..." ) );
 				break;
 			case 4:
-				NewSong->Genre = aFileTokens.Item( i );
+				NewSong->Genre = aFileTokens.Item( nTokenIndex - i );
+				wxMessageBox( wxT( "..." ) + NewSong->Genre + wxT( "..." ) );
 				break;
 			case 5:
-				NewSong->Year = aFileTokens.Item( i );
+				NewSong->Year = aFileTokens.Item( nTokenIndex - i );
+				wxMessageBox( wxT( "..." ) + NewSong->Year + wxT( "..." ) );
 				break;
 			case 6:
-				NewSong->TrackNum = wxStringToInt( aFileTokens.Item( i ) );
+				NewSong->TrackNum = wxStringToInt( aFileTokens.Item( nTokenIndex - i ) );
+				wxMessageBox( wxT( "..." ) + IntTowxString(NewSong->TrackNum) + wxT( "..." ) );
 				break;
 			default:
 				wxMessageBox( wxT("Fuckup.") );
@@ -1334,8 +1360,7 @@ bool CMusikLibrary::RetagFile( CMusikSong* song )
 			}
 		}
 
-	g_Library.UpdateItem( song->Filename, *NewSong, true );
-	
+	g_Library.UpdateItem( NewSong->Filename, *NewSong, true );
 	return true;
 }
 

@@ -85,6 +85,7 @@ void CMusikPrefs::LoadPrefs()
 	//-------------------------------------------------//
 	#ifdef __WXMSW__
 		sAutoRename.Replace( wxT( "/" ), wxT( "\\" ), true );
+		sAutoTag.Replace( wxT( "/" ), wxT( "\\" ), true );
 	#endif
 
 	//--- apply unweildy defaults ---//
@@ -106,6 +107,7 @@ void CMusikPrefs::SavePrefs()
 	//-------------------------------------------------//
 	#ifdef __WXMSW__
 		sAutoRename.Replace( wxT( "\\" ), wxT( "/" ), true );
+		sAutoTag.Replace( wxT( "\\" ), wxT( "/" ), true );
 	#endif
 
 	wxFileConfig *config;
@@ -159,6 +161,7 @@ void CMusikPrefs::SavePrefs()
 
 	#ifdef __WXMSW__
 		sAutoRename.Replace( wxT( "/" ), wxT( "\\" ), true );
+		sAutoTag.Replace( wxT( "/" ), wxT( "\\" ), true );
 	#endif
 }
 
