@@ -73,7 +73,7 @@ void *MusikFaderThread::Entry()
 				//----------------------------------------------//
 				//--- let the player know we got the message ---//
 				//----------------------------------------------//
-				g_Player.CaughtBeginFade();
+ 				g_Player.CaughtBeginFade();
 
 				//--------------------------------//
 				//--- fire up a new crossfader ---//

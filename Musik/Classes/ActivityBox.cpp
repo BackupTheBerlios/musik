@@ -566,7 +566,7 @@ void CActivityBox::SetPlaylist()
 void CActivityBox::SetContents( wxArrayString *pList )
 {
 	if ( g_Prefs.nSelStyle == 0 || g_Prefs.nSelStyle == 1 )
-		pList->Insert( _("All / Reset"), 0 );
+		pList->Insert( _("Show all ") + GetActivityTypeStr() + wxT( "s" ), 0 );
 
 	pListBox->SetList( pList );
 	pListBox->Update( true );
