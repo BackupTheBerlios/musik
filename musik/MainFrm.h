@@ -111,7 +111,7 @@ class CMainFrame : public CFrameWnd
 public:
 
 	// construct and destruct
-	CMainFrame();
+	CMainFrame( bool autostart = false );
 	virtual ~CMainFrame();
 
 	// ui related functions
@@ -123,6 +123,7 @@ public:
 	virtual BOOL OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
 	virtual BOOL OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* pContext );
 	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
 	// debug stuffs
 	#ifdef _DEBUG
@@ -133,12 +134,15 @@ public:
 	// misc
 	bool PlayCmd( const CString& fn );
 	void SynchronizeDirs();
-	void PurgeObseleteFiles();
 	void RestoreFromTray();
 	void SaveWindowState();
 	void RequeryPlaylist( CmusikString query = "", CmusikSelectionCtrl* sender = NULL, bool focus_library = true );
 	void RequerySelBoxes( CmusikString query = "", CmusikSelectionCtrl* parent = NULL, CmusikSelectionCtrl* sender = NULL );
 	CmusikString GetSelQuery( CmusikSelectionCtrl* sender = NULL, CmusikSelectionCtrl* parent = NULL, bool query_sender = true );
+
+	// tray icon
+	void ShowTrayIcon();
+	void HideTrayIcon();
 
 	// to save window state
 	virtual BOOL DestroyWindow();
@@ -280,7 +284,6 @@ protected:
 	afx_msg void OnUpdateNotificationtrayStop(CCmdUI *pCmdUI);
 	afx_msg void OnNotificationtrayStop();
 	afx_msg void OnFileClearlibrary();
-	afx_msg void OnLibraryScanformissingfilesnow();
 	afx_msg void OnLibrarySynchronizedirectoriesnow();
 
 	// list of all threads running
@@ -308,10 +311,9 @@ protected:
 	NOTIFYICONDATA m_TrayIcon;
 	bool m_TrayIconVisible;
 	void InitTrayIcon();
-	void ShowTrayIcon();
-	void HideTrayIcon();
-public:
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
+
+	// autostart 
+	bool m_AutoStart;
 };
 
 ///////////////////////////////////////////////////

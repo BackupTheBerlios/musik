@@ -24,7 +24,6 @@
 #define IDR_SOURCES_MENU                144
 #define IDD_NAME_ENTRY                  145
 #define IDR_TRAY_MENU                   146
-#define IDD_PROPPAGE_INTERFACE_SYNCHRONIZE 146
 #define IDB_DOWN                        151
 #define IDB_BITMAP1                     153
 #define IDB_UP                          153
@@ -100,6 +99,7 @@
 #define IDC_IPADDRESS1                  1048
 #define IDC_EDIT                        1049
 #define IDC_CHECK_ENABLETRAYICON        1051
+#define IDC_CHECK4                      1052
 #define ID_FILE_PREFERENCES             32771
 #define ID_FILE_SEP                     32772
 #define ID_ADD_FILES                    32774
@@ -195,7 +195,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        154
 #define _APS_NEXT_COMMAND_VALUE         32890
-#define _APS_NEXT_CONTROL_VALUE         1052
+#define _APS_NEXT_CONTROL_VALUE         1053
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

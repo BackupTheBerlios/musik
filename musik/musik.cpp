@@ -89,11 +89,28 @@ BOOL CmusikApp::InitInstance()
 
 	SetRegistryKey(_T("musikCube"));
 
+	// see if we opened a file
+	CString sCmdLine = m_lpCmdLine;
+	bool autostart = false;
+	bool play_song = false;
+	if ( !sCmdLine.IsEmpty() )
+	{
+		if ( sCmdLine.Left( 1 ) == "\"" )
+		{
+			sCmdLine.Delete( 0 );
+			sCmdLine.Delete( sCmdLine.GetLength() - 1 );
+			play_song = true;
+		}
+
+		else if ( sCmdLine.Find( "--autostart" ) > -1 )
+			autostart = true;
+	}
+
 	// such as the name of your company or organization
 	// To create the main window, this code creates a new frame window
 	// object and then sets it as the application's main window object
-	CMainFrame* pFrame = new CMainFrame;
-	if (!pFrame)
+	CMainFrame* pFrame = new CMainFrame( autostart );
+	if ( !pFrame )
 		return FALSE;
 
 	m_pMainWnd = pFrame;
@@ -105,17 +122,21 @@ BOOL CmusikApp::InitInstance()
 
 	// The one and only window has been initialized, so show and update it
 	pFrame->SetWindowText( MUSIK_VERSION_STR );
-	pFrame->ShowWindow(SW_SHOW);
-	pFrame->UpdateWindow();
 
-	// see if we opened a file
-	CString sCmdLine = m_lpCmdLine;
-	if ( !sCmdLine.IsEmpty() )
+	if ( !autostart )
 	{
-		sCmdLine.Delete( 0 );
-		sCmdLine.Delete( sCmdLine.GetLength() - 1 );
-		Play( sCmdLine );
+		pFrame->ShowWindow( SW_SHOW );
+		pFrame->UpdateWindow();
 	}
+	else
+	{
+		pFrame->ShowWindow( SW_MINIMIZE );
+		pFrame->ShowWindow( SW_HIDE );
+		pFrame->ShowTrayIcon();
+	}
+
+	if ( play_song )
+		Play( sCmdLine );
 
 	// call DragAcceptFiles only if there's a suffix
 	//  In an SDI app, this should occur after ProcessShellCommand

@@ -312,6 +312,9 @@ BEGIN
                     BS_AUTOCHECKBOX | WS_TABSTOP,6,42,129,10
     CONTROL         "Prompt when dropping files onto playlist",IDC_CHECK2,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,53,143,10
+    CONTROL         "Automatically synchronize directories on startup",
+                    IDC_CHECK4,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,72,
+                    169,10
 END
 
 IDD_PROPPAGE_INTERFACE_COLORS DIALOGEX 0, 0, 210, 154
@@ -472,19 +475,6 @@ BEGIN
     LTEXT           "Please enter a new name:",IDC_STATIC,7,5,84,8
 END
 
-IDD_PROPPAGE_INTERFACE_SYNCHRONIZE DIALOGEX 0, 0, 210, 154
-STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
-CAPTION "Interface::Synchronize"
-FONT 8, "MS Shell Dlg", 0, 0, 0x0
-BEGIN
-    CONTROL         "Automatically scan for new songs on startup",
-                    IDC_CHECK_STARTUPSCAN,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,5,11,158,10
-    CONTROL         "Automatically purge missing files from database",
-                    IDC_CHECK_STARTUPSCAN2,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,5,24,167,10
-END
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -549,9 +539,6 @@ BEGIN
         VERTGUIDE, 15
         TOPMARGIN, 7
         BOTTOMMARGIN, 147
-        HORZGUIDE, 15
-        HORZGUIDE, 27
-        HORZGUIDE, 37
     END
 
     IDD_PROPPAGE_INTERFACE_COLORS, DIALOG
@@ -625,16 +612,6 @@ BEGIN
         RIGHTMARGIN, 195
         TOPMARGIN, 7
         BOTTOMMARGIN, 51
-    END
-
-    IDD_PROPPAGE_INTERFACE_SYNCHRONIZE, DIALOG
-    BEGIN
-        LEFTMARGIN, 5
-        RIGHTMARGIN, 203
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 147
-        HORZGUIDE, 15
-        HORZGUIDE, 30
     END
 END
 #endif    // APSTUDIO_INVOKED

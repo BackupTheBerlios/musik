@@ -164,7 +164,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_COMMAND(ID_NOTIFICATIONTRAY_NEXT, OnNotificationtrayNext)
 	ON_COMMAND(ID_NOTIFICATIONTRAY_PREV, OnNotificationtrayPrev)
 	ON_COMMAND(ID_FILE_CLEARLIBRARY, OnFileClearlibrary)
-	ON_COMMAND(ID_LIBRARY_SCANFORMISSINGFILESNOW, OnLibraryScanformissingfilesnow)
 	ON_COMMAND(ID_LIBRARY_SYNCHRONIZEDIRECTORIESNOW, OnLibrarySynchronizedirectoriesnow)
 
 	// update ui
@@ -296,8 +295,10 @@ static void MainFrameWorker( CmusikThread* thread )
 
 ///////////////////////////////////////////////////
 
-CMainFrame::CMainFrame()
+CMainFrame::CMainFrame( bool autostart )
 {
+	m_AutoStart = autostart;
+
 	m_hIcon16 = ( HICON )LoadImage( AfxGetApp()->m_hInstance, MAKEINTRESOURCE( IDI_MUSIK_16 ), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR );
 	m_hIcon32 = ( HICON )LoadImage( AfxGetApp()->m_hInstance, MAKEINTRESOURCE( IDI_MUSIK_32 ), IMAGE_ICON, 32, 32, LR_DEFAULTCOLOR );
 
@@ -698,34 +699,14 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		m_Updater->Start( (ACE_THR_FUNC)MainFrameWorker, this );
 	}
 
-	// start all necessary synchronization threads
-	SynchronizeDirs();
-
-	// startup a thread in the background
-	// to remove old files...
-	if ( m_Prefs->PurgeOnStartup() )
-		PurgeObseleteFiles();
-
 	// tray icon stuff
 	InitTrayIcon();
 
+	// start all necessary synchronization threads
+	if ( !m_AutoStart && m_Prefs->SynchronizeOnStartup() )
+		SynchronizeDirs();
+
 	return 0;
-}
-
-///////////////////////////////////////////////////
-
-void CMainFrame::PurgeObseleteFiles()
-{
-	CmusikRemoveOld* params = new CmusikRemoveOld( m_Library, m_RemoveOldFnct );
-	CmusikThread* thread = new CmusikThread();
-
-	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingThreads );
-	{
-		m_Threads.push_back( thread );
-		m_ThreadCount++;
-	}
-
-	thread->Start( (ACE_THR_FUNC)musikRemoveOldWorker, params );
 }
 
 ///////////////////////////////////////////////////
@@ -1458,13 +1439,11 @@ void CMainFrame::OnFilePreferences()
 	// initialize the property pages
 	CmusikPrefsInterfaceGeneral wndPageInterfaceGeneral( m_Prefs );
 	CmusikPropertyPage wndPageInterfaceColors		( IDD_PROPPAGE_INTERFACE_COLORS, m_Prefs );
-	CmusikPropertyPage wndPageInterfaceSynchronize	( IDD_PROPPAGE_INTERFACE_SYNCHRONIZE, m_Prefs );
 	CmusikPropertyPage wndPageSoundDriver			( IDD_PROPPAGE_SOUND_DRIVER, m_Prefs );
 
 	// remove help icon from gripper
 	wndPageInterfaceGeneral.m_psp.dwFlags&=		~PSP_HASHELP;
 	wndPageInterfaceColors.m_psp.dwFlags&=		~PSP_HASHELP;
-	wndPageInterfaceSynchronize.m_psp.dwFlags&=	~PSP_HASHELP;
 	wndPageSoundDriver.m_psp.dwFlags&=			~PSP_HASHELP;
 
 	// initialize the CTreePropSheet class 
@@ -1475,7 +1454,6 @@ void CMainFrame::OnFilePreferences()
 	// physically add the preference sheets
 	PrefSheet.AddPage(&wndPageInterfaceGeneral);
 	PrefSheet.AddPage(&wndPageInterfaceColors);
-	PrefSheet.AddPage(&wndPageInterfaceSynchronize);
 	PrefSheet.AddPage(&wndPageSoundDriver);
 
 	PrefSheet.SetEmptyPageText(_T("Please select a child item of '%s'."));
@@ -2239,21 +2217,46 @@ void CMainFrame::RestoreFromTray()
 	SetForegroundWindow();
 	SetFocus();
 	HideTrayIcon();	
+
+	if ( m_AutoStart )
+	{
+		if ( m_Prefs->SynchronizeOnStartup() )
+			SynchronizeDirs();
+
+		m_AutoStart = false;
+	}
 }
 
 ///////////////////////////////////////////////////
 
 void CMainFrame::SynchronizeDirs()
 {
-	CmusikStringArray synchs;
-	m_Library->GetAllPaths( &synchs, false );
-	for ( size_t i = 0; i < synchs.size(); i++ )
+	// threads to add new files
 	{
-		CmusikStringArray* files = new CmusikStringArray();
-		CmusikDir scan( synchs.at( i ) + _T( "\\*.*" ), files, NULL );
-		scan.Run();
+		CmusikStringArray synchs;
+		m_Library->GetAllPaths( &synchs, false );
+		for ( size_t i = 0; i < synchs.size(); i++ )
+		{
+			CmusikStringArray* files = new CmusikStringArray();
+			CmusikDir scan( synchs.at( i ) + _T( "\\*.*" ), files, NULL );
+			scan.Run();
 
-		CmusikBatchAdd* params = new CmusikBatchAdd( files, NULL, m_Library, NULL, m_BatchAddFnct, 0, 0, 1 );
+			CmusikBatchAdd* params = new CmusikBatchAdd( files, NULL, m_Library, NULL, m_BatchAddFnct, 0, 0, 1 );
+			CmusikThread* thread = new CmusikThread();
+
+			ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingThreads );
+			{
+				m_Threads.push_back( thread );
+				m_ThreadCount++;
+			}
+
+			thread->Start( (ACE_THR_FUNC)musikBatchAddWorker, (void*)params );	
+		}	
+	}
+
+	// thread to remove obselete entries
+	{
+		CmusikRemoveOld* params = new CmusikRemoveOld( m_Library, m_RemoveOldFnct );
 		CmusikThread* thread = new CmusikThread();
 
 		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingThreads );
@@ -2262,9 +2265,8 @@ void CMainFrame::SynchronizeDirs()
 			m_ThreadCount++;
 		}
 
-		thread->Start( (ACE_THR_FUNC)musikBatchAddWorker, (void*)params );	
-	}	
-
+		thread->Start( (ACE_THR_FUNC)musikRemoveOldWorker, params );
+	}
 }
 
 ///////////////////////////////////////////////////
@@ -2543,13 +2545,6 @@ void CMainFrame::OnFileClearlibrary()
 			m_Updater->Start( (ACE_THR_FUNC)MainFrameWorker, this );
 		}
 	}
-}
-
-///////////////////////////////////////////////////
-
-void CMainFrame::OnLibraryScanformissingfilesnow()
-{
-	PurgeObseleteFiles();
 }
 
 ///////////////////////////////////////////////////

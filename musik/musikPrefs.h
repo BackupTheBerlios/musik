@@ -88,7 +88,7 @@ public:
 	int	GetStdPlaylistPrompt(){ return m_Dlg_StdPlaylist_Prompt; }
 	int GetFileDropPrompt(){ return m_Dlg_FileDrop_Prompt; }
 	bool PlaylistInfoVisible(){ return m_Dlg_PlaylistInfoVisible; }
-	bool PurgeOnStartup(){ return m_Dlg_PurgeOnStartup; }
+	bool SynchronizeOnStartup(){ return m_Dlg_SynchronizeOnStartup; }
 	bool WriteTagsToFile(){ return m_Dlg_WriteTagsToFile; }
 	bool LibraryShowsAllSongs(){ return m_Dlg_LibraryShowsAllSongs; }
 	bool MinimizeToTray(){ return m_Dlg_MinimizeToTray; }
@@ -100,7 +100,7 @@ public:
 	void SetStdPlaylistPrompt( int prompt ){ m_Dlg_StdPlaylist_Prompt = prompt; }
 	void SetFileDropPrompt( int prompt ){ m_Dlg_FileDrop_Prompt = prompt; }
 	void SetPlaylistInfoVisible( bool visible )	{ m_Dlg_PlaylistInfoVisible = visible; }
-	void SetPurgeOnStartup( bool purge ){ m_Dlg_PurgeOnStartup = purge; }
+	void SetSynchronizeOnStartup( bool synchronize ){ m_Dlg_SynchronizeOnStartup = synchronize; }
 	void SetWriteTagsToFile( bool write ){ m_Dlg_WriteTagsToFile = write; }
 	void SetLibraryShowsAllSongs( bool showall ){ m_Dlg_LibraryShowsAllSongs = showall; }
 	void SetMinimizeToTray( bool tray ){ m_Dlg_MinimizeToTray = tray; }
@@ -213,7 +213,7 @@ private:
 	int		m_Dlg_StdPlaylist_Prompt;
 	int		m_Dlg_FileDrop_Prompt;
 	bool	m_Dlg_PlaylistInfoVisible;
-	bool	m_Dlg_PurgeOnStartup;
+	bool	m_Dlg_SynchronizeOnStartup;
 	bool	m_Dlg_WriteTagsToFile;
 	bool	m_Dlg_LibraryShowsAllSongs;
 	bool	m_Dlg_MinimizeToTray;
