@@ -51,8 +51,8 @@ void CMusikPrefs::LoadPrefs()
 	config->Read( wxT( "CrossfaderStopEnabled" ),				&nFadeStopEnable,			1						);
 	config->Read( wxT( "CrossfaderExitEnabled" ),				&nFadeExitEnable,			1						);
 	config->Read( wxT( "CrossfaderDuration" ),					&nFadeDuration,				2000					);
-	config->Read( wxT( "CrossfaderSeekDuration" ),				&nFadeSeekDuration,			200						);
-	config->Read( wxT( "CrossfaderPauseResumeDuration" ),		&nFadePauseResumeDuration,	100						);
+	config->Read( wxT( "CrossfaderSeekDuration" ),				&nFadeSeekDuration,			500						);
+	config->Read( wxT( "CrossfaderPauseResumeDuration" ),		&nFadePauseResumeDuration,	500						);
 	config->Read( wxT( "CrossfaderStopDuration" ),				&nFadeStopDuration,			1000					);
 	config->Read( wxT( "CrossfaderExitDuration" ),				&nFadeExitDuration,			2000					);
 	config->Read( wxT( "ShowPlaylistInfo" ),					&nShowPLInfo,				1						);

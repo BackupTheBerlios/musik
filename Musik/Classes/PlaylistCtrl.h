@@ -163,7 +163,8 @@ private:
 	//-------------------------------//
     wxListItemAttr m_LightAttr;
 	wxListItemAttr m_DarkAttr;
-	wxListItemAttr m_SelectedAttr;
+	wxListItemAttr m_SelectedLightAttr;
+	wxListItemAttr m_SelectedDarkAttr;
 
 	//--------------------//
 	//--- menu objects ---//

@@ -539,7 +539,7 @@ wxListItemAttr* CPlaylistCtrl::OnGetItemAttr(long item) const
 {
 	const CMusikSong & song = g_Playlist.Item ( item );
 	if ( song.Filename == g_Player.GetCurrentFile() )
-		return (wxListItemAttr*)&m_SelectedAttr;		
+		return item % 2 ? (wxListItemAttr *)&m_SelectedDarkAttr : (wxListItemAttr *)&m_SelectedLightAttr;		
 	else
 	{
 		if ( g_Prefs.nPLStripes == 1 )
@@ -744,10 +744,11 @@ void CPlaylistCtrl::Update( bool bSelFirst )
 	//----------------------------------------------------------------------------------//
 	Freeze();
 
-	//--- setup listbox colours from prefs ---//
-	m_LightAttr		= wxListItemAttr( *wxBLACK, wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ), wxNullFont );
-	m_SelectedAttr	= wxListItemAttr( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ), wxSystemSettings::GetColour( wxSYS_COLOUR_BTNSHADOW ), wxNullFont );
-	m_DarkAttr		= wxListItemAttr( *wxBLACK, StringToColour( g_Prefs.sPLStripeColour ), wxNullFont );
+	//--- setup listbox colours from prefs	---//
+	m_LightAttr			= wxListItemAttr( *wxBLACK, wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ), wxNullFont );
+	m_SelectedLightAttr	= wxListItemAttr( *wxBLACK, wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ), g_fntBold );
+	m_DarkAttr			= wxListItemAttr( *wxBLACK, StringToColour( g_Prefs.sPLStripeColour ), wxNullFont );
+	m_SelectedDarkAttr	= wxListItemAttr( *wxBLACK, StringToColour( g_Prefs.sPLStripeColour ), g_fntBold );
 
 	//--- SetItemCount() kinda tells the virtual list control to udpate ---//
 	SetItemCount( ( long )g_Playlist.GetCount() );
