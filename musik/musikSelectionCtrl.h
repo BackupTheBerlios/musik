@@ -84,7 +84,7 @@ public:
 	CString GetTypeStr();
 	int	GetType(){ return m_Type; }
 	void GetSelItems( CStdStringArray& items, bool format_query = true );
-	CStdString GetSelQuery();
+	CStdString GetSelQuery( CStdString other_sel_query = _T( "" ) );
 	CStdString GetEditCommitStr();
 
 	// sets

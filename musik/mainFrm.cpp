@@ -257,7 +257,7 @@ static void MainFrameWorker( CmusikThread* thread )
 			++cnt;
 			if ( cnt == 6 )
 			{
-				parent->ResetSelBoxes();
+				parent->ResetSelBoxes( true, true );
 				parent->m_wndView->GetCtrl()->UpdateV();
 				cnt = 0;
 			}
@@ -1020,19 +1020,19 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 	// construct first part of query... this is basically
 	// a list of all the selected items from the control
 	// that triggered the event
-	CStdString sSender = pSender->GetSelQuery();
+	CStdString sel_query = pSender->GetSelQuery();
+	CStdString sSender;
 	if ( pSender != pParent )
 	{
 		for ( size_t i = 0; i < selbox_count; i++ )
 		{
 			pCurr = m_wndSelectionBars[i]->GetCtrl();
 			if ( pCurr != pSender && pCurr->GetSelectedCount() )
-			{
-				sSender += _T( " and " );
-				sSender += pCurr->GetSelQuery();
-			}
+				sSender += pCurr->GetSelQuery( sel_query );
 		}
 	}
+	else
+		sSender = sel_query;
 
 	// go through each box that isn't the sender and
 	// update based on the new information we got
@@ -1040,11 +1040,13 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 	for( size_t i = 0; i < selbox_count; i++ )
 	{
 		pCurr = m_wndSelectionBars[i]->GetCtrl();
-
-		if ( pCurr != pSender && pCurr != pParent )
-			pCurr->UpdateV( sSender );
-		else
-			pCurr->UpdateV( true );
+		if ( pCurr != pSender )
+		{
+			if ( pCurr != pParent )
+				pCurr->UpdateV( sSender );
+			else
+				pCurr->UpdateV( true );
+		}
 	}
 	CmusikSelectionCtrl::SetUpdating( false );
 
@@ -1264,7 +1266,7 @@ LRESULT CMainFrame::OnPlayerNewPlaylist( WPARAM wParam, LPARAM lParam )
 
 LRESULT CMainFrame::OnSelBoxesReset( WPARAM wParam, LPARAM lParam )
 {
-	ResetSelBoxes();
+	ResetSelBoxes( true );
 	return 0L;
 }
 
@@ -1406,7 +1408,7 @@ LRESULT CMainFrame::OnThreadEnd( WPARAM wParam, LPARAM lParam )
 	
 	if ( FreeThread( ptr_thr ) )
 	{
-		ResetSelBoxes();
+		ResetSelBoxes( true );
 		m_wndView->GetCtrl()->UpdateV( true );
 	}
 

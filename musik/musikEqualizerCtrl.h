@@ -111,6 +111,7 @@ public:
 	void LoadCurrSong();
 	void LoadDefault();
 	void SetAsDefault();
+	void DisplayChanged();
 
 	// message maps
 	afx_msg void OnPaint();

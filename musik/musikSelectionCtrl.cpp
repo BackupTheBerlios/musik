@@ -376,7 +376,7 @@ void CmusikSelectionCtrl::GetSelItems( CStdStringArray& items, bool format_query
 
 ///////////////////////////////////////////////////
 
-CStdString CmusikSelectionCtrl::GetSelQuery()
+CStdString CmusikSelectionCtrl::GetSelQuery( CStdString other_sel_query )
 {
 	CStdStringArray selected_items;
 	GetSelItems( selected_items );
@@ -391,13 +391,24 @@ CStdString CmusikSelectionCtrl::GetSelQuery()
 			sQuery += _T( "'" );
 			sQuery += selected_items.at( i );
 			sQuery += _T( "' " );
+			if ( !other_sel_query.IsEmpty() )
+			{
+				sQuery += _T( " and " );
+				sQuery += other_sel_query;
+			}
 		}
 
 		else
 		{
 			sQuery += _T( "'" );
 			sQuery += selected_items.at( i );
-			sQuery += _T( "' or " );
+			sQuery += _T( "'" );
+			if ( !other_sel_query.IsEmpty() )
+			{
+				sQuery += _T( " and " );
+				sQuery += other_sel_query;
+			}
+			sQuery += _T( " or " );
 			sQuery += GetTypeDB();
 			sQuery += _T( " like " );
 		}

@@ -172,6 +172,7 @@ void CmusikEqualizerBar::OnEqualizerState18band()
 {
 	GetCtrl()->SetBandState( MUSIK_EQUALIZER_CTRL_18BANDS );
 	GetCtrl()->LayoutNewState();
+	GetCtrl()->DisplayChanged();
 }
 
 ///////////////////////////////////////////////////
@@ -180,6 +181,7 @@ void CmusikEqualizerBar::OnEqualizerState6band()
 {
 	GetCtrl()->SetBandState( MUSIK_EQUALIZER_CTRL_6BANDS );
 	GetCtrl()->LayoutNewState();
+	GetCtrl()->DisplayChanged();
 }
 
 ///////////////////////////////////////////////////
@@ -429,9 +431,10 @@ void CmusikEqualizerCtrl::LoadCurrSong()
 
 void CmusikEqualizerCtrl::LoadDefault()
 {
-	CmusikEQSettings def_eq;
-	m_Library->GetDefaultEqualizer( &def_eq );
-	BandsFromEQSettings( def_eq );
+	if ( m_Player->IsEqualizerActive() )
+		m_Library->GetDefaultEqualizer( &m_Player->GetEqualizer()->m_EQ_Values );
+
+	BandsFromEQSettings( m_Player->GetEqualizer()->m_EQ_Values );
 }
 
 ///////////////////////////////////////////////////
@@ -442,8 +445,14 @@ void CmusikEqualizerCtrl::BandsFromEQSettings( const CmusikEQSettings& settings 
 
 	for ( size_t i = 0; i < 18; i++ )
 	{
-		m_LeftBands[i].SetPos( 100 - (int)( settings.m_Left[i] * 50.0f ) );
-		m_RightBands[i].SetPos( 100 - (int)( settings.m_Left[i] * 50.0f ) );
+		if ( IsChannelsLocked() )
+		{
+			m_LeftBands[i].SetPos( 100 - (int)( settings.m_Left[i] * 50.0f ) );
+			m_RightBands[i].SetPos( 100 - (int)( settings.m_Left[i] * 50.0f ) );
+		}
+		else
+			m_LeftBands[i].SetPos( 100 - (int)( settings.m_Left[i] * 50.0f ) );
+			m_RightBands[i].SetPos( 100 - (int)( settings.m_Right[i] * 50.0f ) );
 	}
 
 	SetRedraw( TRUE );
@@ -554,7 +563,7 @@ void CmusikEqualizerCtrl::EQSettingsFromBands( CmusikEQSettings* settings )
 
 LRESULT CmusikEqualizerCtrl::OnBandChange( WPARAM wParam, LPARAM lParam )
 {
-	if ( m_Player->IsPlaying() && m_Player->IsEqualizerActive() )
+	if ( m_Player->IsEqualizerActive() )
 	{
 		EQSettingsFromBands( &m_Player->GetEqualizer()->m_EQ_Values );
 		m_Player->GetEqualizer()->UpdateTable();
@@ -571,6 +580,14 @@ void CmusikEqualizerCtrl::SetAsDefault()
 	CmusikEQSettings curr_eq;
 	EQSettingsFromBands( &curr_eq );
 	m_Library->UpdateDefaultEqualizer( curr_eq );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikEqualizerCtrl::DisplayChanged()
+{
+	if ( m_Player->IsEqualizerActive() )
+		BandsFromEQSettings( m_Player->GetEqualizer()->m_EQ_Values );
 }
 
 ///////////////////////////////////////////////////
