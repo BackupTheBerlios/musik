@@ -451,9 +451,8 @@ void CmusikEqualizerCtrl::LoadDefault()
 	{
 		m_Library->GetDefaultEqualizer( &m_Player->GetEqualizer()->m_EQ_Values );
 		m_Player->GetEqualizer()->UpdateTable();
+		BandsFromEQSettings( m_Player->GetEqualizer()->m_EQ_Values );
 	}
-
-	BandsFromEQSettings( m_Player->GetEqualizer()->m_EQ_Values );
 }
 
 ///////////////////////////////////////////////////
