@@ -385,6 +385,12 @@ LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 		pDC->PatBlt(rc.left, drc.top, rc.right - rc.left + 1, drc.Height(), PATCOPY);
 		pDC->SelectObject(hOld);
 	}
+	else
+	{
+		HGDIOBJ hOld = pDC->SelectObject( GetSysColorBrush(COLOR_BTNHILIGHT) );
+		pDC->PatBlt(rc.left + 14, drc.top, rc.right - rc.left + 1, drc.Height(), PATCOPY);
+		pDC->SelectObject(hOld);
+	}
 
 	// draw the show / expand (+/-) box
 	if (GetChild())

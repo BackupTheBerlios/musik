@@ -169,16 +169,11 @@ void CPropTreeList::OnPaint()
 
 	// draw control background
 	memdc.SelectObject(GetSysColorBrush(COLOR_BTNFACE));
-	memdc.PatBlt(rc.left, rc.top, rc.Width(), rc.Height(), PATCOPY);
-
-	// draw control inside fill color
-	rc.DeflateRect(2,2);
-	memdc.PatBlt(rc.left, rc.top, rc.Width(), rc.Height(), m_pProp->IsWindowEnabled() ? WHITENESS : PATCOPY);
-	rc.InflateRect(2,2);
+	memdc.PatBlt(rc.left, rc.top, rc.Width(), rc.Height(), PATCOPY );
 
 	// draw expand column
-	memdc.SelectObject(GetSysColorBrush(COLOR_BTNFACE));
-	memdc.PatBlt(0, 0, PROPTREEITEM_EXPANDCOLUMN, rc.Height(), PATCOPY);
+	memdc.SelectObject( GetSysColorBrush(COLOR_BTNFACE) );
+	memdc.PatBlt(0, 0, PROPTREEITEM_EXPANDCOLUMN, rc.Height(), PATCOPY );
 
 	// draw edge
 	memdc.DrawEdge(&rc, BDR_SUNKENOUTER, BF_RECT);
