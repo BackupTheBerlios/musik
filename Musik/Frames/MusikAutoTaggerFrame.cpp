@@ -65,7 +65,8 @@ CMusikAutoTaggerFrame::CMusikAutoTaggerFrame( wxWindow* parent, wxWindowID id, c
 {
     Create(parent, id, caption, pos, size, style);
 
-	wxArrayString aMasks =DelimitStr(g_Prefs.sAutoTag,wxT("|"));
+	wxArrayString aMasks;
+	DelimitStr(g_Prefs.sAutoTag,wxT("|"),aMasks);
 	size_t i = 0;
 	for(; i < aMasks.Count()-1;i++)
         m_CBTagMask->Append(aMasks[i]);
