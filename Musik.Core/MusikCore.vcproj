@@ -112,6 +112,16 @@
 				RelativePath=".\src\MusikPlaylist.h">
 			</File>
 		</Filter>
+		<Filter
+			Name="MusikPlayer"
+			Filter="">
+			<File
+				RelativePath=".\src\MusikPlayer.cpp">
+			</File>
+			<File
+				RelativePath=".\src\MusikPlayer.h">
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\src\StdString.h">
 		</File>
