@@ -116,6 +116,7 @@ static void musikBatchAddWorker( CmusikThread* thread )
 	bool verify_failed = false;
 
 	params->m_Library->BeginTransaction();
+	params->m_Library->InitTimeAdded();
 	for( size_t i = 0; i < params->m_Files->size(); i++ )
 	{
 		if ( thread->IsSuspended() )

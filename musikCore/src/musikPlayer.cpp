@@ -766,6 +766,9 @@ bool CmusikPlayer::Play( int index, int fade_type, int start_pos )
 	// set the new index
 	m_Index = index;
 
+	// increment times played
+	m_Library->IncLastPlayed( m_Playlist->GetSongID( m_Index ) );
+
 	// and, we're done.
 	TRACE0( "New song started...\n" );
 	return true;

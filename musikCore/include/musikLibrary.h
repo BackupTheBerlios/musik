@@ -139,6 +139,8 @@ class CmusikBatchAdd;
 
 class CmusikLibrary
 {
+	friend class CmusikPlayer;
+
 public:
 
 	// construct and destruct
@@ -279,6 +281,9 @@ private:
 	bool InitEqTable();
 	bool InitPathTable();
 	bool InitCrossfaderTable();
+
+	// player will call this
+	int  IncLastPlayed( int songid );
 
 	// only needs to be initialized once
 	CStdString m_TimeAdded;

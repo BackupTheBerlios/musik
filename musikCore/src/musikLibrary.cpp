@@ -758,6 +758,7 @@ bool CmusikLibrary::Startup()
 		InitDynTable();
 		InitEqTable();
 		InitPathTable();
+		InitTimeAdded();
    }
    else
 	   error = true;
@@ -2669,3 +2670,24 @@ void CmusikLibrary::ClearLibrary( bool clear_all_tables )
 		}
 	}
 }
+
+///////////////////////////////////////////////////
+
+int CmusikLibrary::IncLastPlayed( int songid )
+{
+	InitTimeAdded();
+
+	int nRet;
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
+	{
+		nRet = sqlite_exec_printf( m_pDB, "UPDATE %Q SET timesplayed = (timesplayed + 1), lastplayed = %Q where songid = %d;",
+			NULL, NULL, NULL,
+			SONG_TABLE_NAME,
+			m_TimeAdded.c_str(),
+			songid );
+	}
+
+	return nRet;
+}
+
+///////////////////////////////////////////////////
