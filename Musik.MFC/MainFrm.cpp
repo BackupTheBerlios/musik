@@ -58,6 +58,7 @@
 ///////////////////////////////////////////////////
 
 int WM_SELBOXUPDATE			= RegisterWindowMessage( "SELBOXUPDATE" );
+int WM_SELBOXRESET			= RegisterWindowMessage( "SELBOXRESET" );
 
 int MW_NEWPLAYLISTOWNER		= RegisterWindowMessage( "NEWPLAYLISTOWNER" );
 
@@ -90,6 +91,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_DRAGSTART, OnDragStart )
 	ON_REGISTERED_MESSAGE( WM_DRAGEND, OnDragEnd )
 	ON_REGISTERED_MESSAGE( MW_NEWPLAYLISTOWNER, OnNewPlaylistOwner )
+	ON_REGISTERED_MESSAGE( WM_SELBOXRESET, OnSelBoxesReset )
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -206,6 +208,14 @@ void CMainFrame::ResetUI()
 	size.cy = 160;
 	for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
 		m_wndSelectionBars[i]->SetSize( size );
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::ResetSelBoxes()
+{
+	for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
+		m_wndSelectionBars[i]->GetCtrl()->UpdateV( true );
 }
 
 ///////////////////////////////////////////////////
@@ -376,9 +386,7 @@ bool CMainFrame::PlayCmd( const CStdString& fn )
 						m_Player->Play( pPlaylist->GetCount() - 1, MUSIK_CROSSFADER_NEW_SONG );
 				}
 
-				// reset the selection boxes
-				for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
-					m_wndSelectionBars[i]->GetCtrl()->UpdateV( true );
+				ResetSelBoxes();
 
 				return true;
 			}
@@ -638,8 +646,6 @@ LRESULT CMainFrame::OnSourcesStdPlaylist( WPARAM wParam, LPARAM lParam )
 	m_wndView->GetCtrl()->SetPlaylist( m_StdPlaylist );
 	m_wndView->GetCtrl()->UpdateV();
 
-
-
 	return 0L;
 }
 
@@ -707,6 +713,14 @@ void CMainFrame::CleanPlaylists()
 		delete m_DynPlaylist;
 		m_DynPlaylist = NULL;
 	}
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CMainFrame::OnSelBoxesReset( WPARAM wParam, LPARAM lParam )
+{
+	ResetSelBoxes();
+	return 0L;
 }
 
 ///////////////////////////////////////////////////

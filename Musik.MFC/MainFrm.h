@@ -80,6 +80,7 @@ public:
 
 	// ui related functions
 	void ResetUI();
+	void ResetSelBoxes();
 
 	// overrides
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
@@ -162,6 +163,7 @@ protected:
 	afx_msg LRESULT OnDragStart(  WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnDragEnd(  WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnNewPlaylistOwner( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnSelBoxesReset( WPARAM wParam, LPARAM lParam );
 
 	// macros
 	DECLARE_DYNAMIC(CMainFrame)

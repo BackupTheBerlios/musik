@@ -43,6 +43,7 @@ CMusikPlaylistView::CMusikPlaylistView( CFrameWnd* mainwnd, CMusikLibrary* libra
 	m_Playlist = new CMusikPlaylistCtrl( mainwnd, library, player, prefs );
 	m_Library = library;
 	m_Player = player;
+	m_Parent = mainwnd;
 
 	// batch add thread
 	m_BatchAddThr = NULL;
@@ -152,11 +153,12 @@ void CMusikPlaylistView::OnDropFiles(HDROP hDropInfo)
 	TCHAR szNextFile [MAX_PATH];
 	
 	nNumFiles = DragQueryFile ( hDropInfo, -1, NULL, 0 );
-	CStdStringArray* files = new CStdStringArray();
 
 	// if the thread exists, pause it
 	if ( m_BatchAddThr )
 		m_BatchAddThr->Pause();
+	else
+		CStdStringArray* files = new CStdStringArray();
 
 	for ( size_t i = 0; i < nNumFiles; i++ )
 	{
@@ -205,6 +207,9 @@ LRESULT CMusikPlaylistView::OnBatchAddEnd( WPARAM wParam, LPARAM lParam )
 		delete m_BatchAddFnct;
 		m_BatchAddFnct = NULL;
 	}
+
+	int WM_SELBOXRESET = RegisterWindowMessage( "SELBOXRESET" );
+	m_Parent->PostMessage( WM_SELBOXRESET );
 
 	return 0L;
 }

@@ -41,6 +41,12 @@ protected:
 	CMusikLibrary* m_Library;
 	CMusikPlayer* m_Player;
 
+	// pointer to main window so we can
+	// messages to it, such as updating the UI
+	// after files have been dropped
+	CWnd* m_Parent;
+	
+
 	// mfc message maps
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
@@ -82,6 +88,9 @@ public:
 	virtual void OnThreadEnd()
 	{
 		TRACE0( "CMusikBatchAdd thread complete...\n" );
+
+		int WM_BATCHADD_END = RegisterWindowMessage( "BATCHADD_END" );
+		m_Parent->PostMessage( WM_BATCHADD_END );		
 	}
 
 	virtual void OnThreadProgress( size_t progress )
