@@ -1003,19 +1003,18 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 
 		CmusikSelectionCtrl::SetUpdating( false );
 
-		// show all the songs, if we're supposed to
+		// update playlsit
+		if ( !m_LibPlaylist )
+			m_LibPlaylist = new CmusikPlaylist();
+
 		if ( m_Prefs->LibraryShowsAllSongs() )
-		{
-			if ( !m_LibPlaylist )
-				m_LibPlaylist = new CmusikPlaylist();
+			m_Library->GetAllSongs( *m_LibPlaylist );
+		else
+			m_LibPlaylist->Clear();
 
-			if ( m_Prefs->LibraryShowsAllSongs() )
-				m_Library->GetAllSongs( *m_LibPlaylist );
-
-			m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, MUSIK_SOURCES_TYPE_LIBRARY );
-			m_wndView->GetCtrl()->UpdateV();
-			m_wndView->GetCtrl()->HideSortArrow();
-		}
+		m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, MUSIK_SOURCES_TYPE_LIBRARY );
+		m_wndView->GetCtrl()->UpdateV();
+		m_wndView->GetCtrl()->HideSortArrow();
 
 		m_wndSources->GetCtrl()->FocusLibrary();
 

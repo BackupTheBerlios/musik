@@ -43,6 +43,7 @@ void CmusikEditInPlace::Commit()
 {
 	GetWindowText( m_Str );
 	ShowWindow( SW_HIDE );
+	m_IsVisible = false;
 
 	if ( GetParent() )
 		GetParent()->SendMessage( WM_MUSIKEDITCOMMIT, (WPARAM)this, (LPARAM)m_Args );
@@ -54,6 +55,7 @@ void CmusikEditInPlace::Cancel()
 {
 	GetWindowText( m_Str );
 	ShowWindow( SW_HIDE );
+	m_IsVisible = false;
 
 	if ( GetParent() )
 		GetParent()->SendMessage( WM_MUSIKEDITCANCEL, (WPARAM)this, (LPARAM)m_Args );
@@ -95,6 +97,7 @@ void CmusikEditInPlace::OnShowWindow(BOOL bShow, UINT nStatus)
 	{
 		SetWindowText( m_Str );
 		SetSel( 0, m_Str.GetLength() );
+		m_IsVisible = true;
 	}
 }
 
@@ -104,6 +107,13 @@ void CmusikEditInPlace::OnEnChange()
 {
 	if ( GetParent() )
 		GetParent()->SendMessage( WM_MUSIKEDITCHANGE, (WPARAM)this, (LPARAM)m_Args );
+}
+
+///////////////////////////////////////////////////
+
+bool CmusikEditInPlace::IsVisible()
+{
+	return m_IsVisible;
 }
 
 ///////////////////////////////////////////////////

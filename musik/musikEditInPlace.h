@@ -20,6 +20,10 @@ public:
 	// attributes
 	bool IsVisible();
 
+	// what happened?
+	void Commit();
+	void Cancel();
+
 	// overrides
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
@@ -38,10 +42,6 @@ protected:
 
 	// visible?
 	bool m_IsVisible;
-
-	// what happened?
-	void Commit();
-	void Cancel();
 
 	// macros
 	DECLARE_DYNAMIC(CmusikEditInPlace)

@@ -9,7 +9,6 @@
 #include "musik.h"
 #include "musikSourcesCtrl.h"
 #include "musikSourcesDropTarget.h"
-#include ".\musiksourcesctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -159,6 +158,8 @@ void CmusikSourcesBar::OnOptions()
 
 void CmusikSourcesBar::ShowMenu( bool force_show )
 {
+	if ( GetCtrl()->m_EditInPlace.IsVisible() )
+		GetCtrl()->m_EditInPlace.Cancel();
 	CmusikPropTreeItem* pItem = GetCtrl()->GetFocusedItem();
 
 	if ( pItem || ( !pItem && force_show ) )
