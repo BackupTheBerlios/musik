@@ -306,6 +306,9 @@ int CMusikLibrary::GetSongFieldDBID( CStdString field )
 
 bool CMusikLibrary::InitStdTables()
 {
+	if ( !m_pDB )
+		return false;
+
 	bool error = false;
 
 	// construct the table that contains a list of
@@ -330,11 +333,8 @@ bool CMusikLibrary::InitStdTables()
 
 	char *pErr = NULL;
 
-	if ( m_pDB )
-	{
-		sqlite_exec( m_pDB, szCreateDBQuery1, NULL, NULL, NULL );
-		sqlite_exec( m_pDB, szCreateDBQuery2, NULL, NULL, NULL );
-	}
+	sqlite_exec( m_pDB, szCreateDBQuery1, NULL, NULL, NULL );
+	sqlite_exec( m_pDB, szCreateDBQuery2, NULL, NULL, NULL );
 
 	if ( pErr )
 	{
@@ -351,6 +351,9 @@ bool CMusikLibrary::InitStdTables()
 
 bool CMusikLibrary::InitDynTable()
 {
+	if ( !m_pDB )
+		return false;
+
 	bool error = false;
 
 	// construct the table that contains a list of
@@ -367,8 +370,7 @@ bool CMusikLibrary::InitDynTable()
 
 	char *pErr = NULL;
 
-	if ( m_pDB )
-		sqlite_exec( m_pDB, szCreateDBQuery, NULL, NULL, NULL );
+	sqlite_exec( m_pDB, szCreateDBQuery, NULL, NULL, NULL );
 
 	if ( pErr )
 	{
@@ -385,6 +387,9 @@ bool CMusikLibrary::InitDynTable()
 
 bool CMusikLibrary::InitCrossfaderTable()
 {
+	if ( !m_pDB )
+		return false;
+
 	bool error = false;
 
 	// construct the table that contains a list of
@@ -403,8 +408,7 @@ bool CMusikLibrary::InitCrossfaderTable()
 
 	char *pErr = NULL;
 
-	if ( m_pDB )
-		sqlite_exec( m_pDB, szCreateDBQuery, NULL, NULL, NULL );
+	sqlite_exec( m_pDB, szCreateDBQuery, NULL, NULL, NULL );
 
 	if ( pErr )
 	{
@@ -421,6 +425,9 @@ bool CMusikLibrary::InitCrossfaderTable()
 
 bool CMusikLibrary::InitLibTable()
 {
+	if ( !m_pDB )
+		return false;
+
 	bool error = false;
 
 	// construct the table
@@ -464,11 +471,8 @@ bool CMusikLibrary::InitLibTable()
 
 	char *pErr = NULL;
 
-	if ( m_pDB )
-	{
-		sqlite_exec( m_pDB, szCreateDBQuery, NULL, NULL, NULL );
-		sqlite_exec( m_pDB, szCreateIdxQuery, NULL, NULL, NULL );
-	}
+	sqlite_exec( m_pDB, szCreateDBQuery, NULL, NULL, NULL );
+	sqlite_exec( m_pDB, szCreateIdxQuery, NULL, NULL, NULL );
 
 	if ( pErr )
 	{
@@ -531,6 +535,9 @@ void CMusikLibrary::Shutdown()
 
 void CMusikLibrary::BeginTransaction()
 {
+	if ( !m_pDB )
+		return;
+
 	m_ProtectingLibrary->acquire();
 	sqlite_exec_printf( m_pDB, "begin transaction;", NULL, NULL, NULL );
 	m_ProtectingLibrary->release();
@@ -540,6 +547,9 @@ void CMusikLibrary::BeginTransaction()
 
 void CMusikLibrary::EndTransaction()
 {
+	if ( !m_pDB )
+		return;
+
 	m_ProtectingLibrary->acquire();
 	sqlite_exec_printf( m_pDB, "end transaction;", NULL, NULL, NULL );
 	m_ProtectingLibrary->release();
@@ -549,6 +559,9 @@ void CMusikLibrary::EndTransaction()
 
 void CMusikLibrary::CreateCrossfader( CMusikCrossfader* fader )
 {
+	if ( !m_pDB )
+		return;
+
 	CStdString sQuery;
 
 	sQuery.Format( "INSERT INTO %s VALUES ( %f,%f,%f,%f ); ",
@@ -567,6 +580,9 @@ void CMusikLibrary::CreateCrossfader( CMusikCrossfader* fader )
 
 void CMusikLibrary::DeleteCrossfader( const CStdString& name )
 {
+	if ( !m_pDB )
+		return;
+
 	CStdString sQuery;
 
 	sQuery.Format( "DELETE FROM %s WHERE crossfader_name = %s",
@@ -582,6 +598,9 @@ void CMusikLibrary::DeleteCrossfader( const CStdString& name )
 
 void CMusikLibrary::DeleteCrossfader( CMusikCrossfader* fader )
 {
+	if ( !m_pDB )
+		return;
+
 	CStdString sQuery;
 
 	sQuery.Format( "DELETE FROM %s WHERE crossfader_name = %s",
@@ -597,6 +616,9 @@ void CMusikLibrary::DeleteCrossfader( CMusikCrossfader* fader )
 
 void CMusikLibrary::CreateStdPlaylist( const CStdString& name, const CStdStringArray& songids )
 {
+	if ( !m_pDB )
+		return;
+
 	int nID;
 
 	// lock it up
@@ -637,6 +659,9 @@ void CMusikLibrary::CreateStdPlaylist( const CStdString& name, const CStdStringA
 
 void CMusikLibrary::AppendStdPlaylist( int id, const CStdStringArray& files )
 {
+	if ( !m_pDB ) 
+		return;
+
 	if ( id >= 0 )
 	{
 		m_ProtectingLibrary->acquire();
@@ -659,6 +684,9 @@ void CMusikLibrary::AppendStdPlaylist( int id, const CStdStringArray& files )
 
 void CMusikLibrary::GetStdPlaylist( int id, CMusikPlaylist& target, bool clear_target )
 {
+	if ( !m_pDB )
+		return;
+
 	if ( clear_target )
 		target.Clear();
 
@@ -675,6 +703,9 @@ void CMusikLibrary::GetStdPlaylist( int id, CMusikPlaylist& target, bool clear_t
 
 void CMusikLibrary::CreateDynPlaylist( const CStdString& name, const CStdString& query )
 {
+	if ( !m_pDB )
+		return;
+
 	CStdString sQuery;
 
 	// create query to make new entry to 
@@ -695,6 +726,9 @@ void CMusikLibrary::CreateDynPlaylist( const CStdString& name, const CStdString&
 
 void CMusikLibrary::DeleteStdPlaylist( const CStdString& name )
 {
+	if ( !m_pDB )
+		return;
+
 	CStdString sQuery;
 	int nID;
 
@@ -743,7 +777,8 @@ void CMusikLibrary::DeleteStdPlaylist( int id )
 
 	// do it
 	m_ProtectingLibrary->acquire();
-	sqlite_exec_printf( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
+	if ( !m_pDB )
+		sqlite_exec_printf( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
 	m_ProtectingLibrary->release();
 }
 
@@ -751,6 +786,9 @@ void CMusikLibrary::DeleteStdPlaylist( int id )
 
 void CMusikLibrary::DeleteDynPlaylist( const CStdString& name )
 {
+	if ( !m_pDB )
+		return;
+
 	CStdString sQuery;
 
 	// remove entry from table containing
@@ -769,6 +807,9 @@ void CMusikLibrary::DeleteDynPlaylist( const CStdString& name )
 
 void CMusikLibrary::DeleteDynPlaylist( int id )
 {
+	if ( !m_pDB )
+		return;
+
 	CStdString sQuery;
 
 	// remove entry from table containing
@@ -860,6 +901,9 @@ CStdString CMusikLibrary::GetOrder( int type, bool terminate )
 
 int CMusikLibrary::QueryCount( const char* pQueryResult )
 {
+	if ( !m_pDB )
+		return -1;
+
 	const char *pTail;
 	sqlite_vm *pVM;
 
@@ -910,6 +954,9 @@ void CMusikLibrary::GetAllSongs( CMusikPlaylist& target )
 
 void CMusikLibrary::QuerySongs( const CStdString& query, CMusikPlaylist& target )
 {
+	if ( !m_pDB )
+		return;
+
 	target.Clear();
 
 	CStdString queryWhere( "SELECT songid FROM " SONG_TABLE_NAME " where " );
@@ -1296,6 +1343,9 @@ bool CMusikLibrary::AddSong( const CStdString& fn )
 
 bool CMusikLibrary::AddOGG( const CStdString& fn )
 {
+	if ( !m_pDB )
+		return false;
+
 	CMusikOggInfo info;
 	if ( info.LoadInfo( fn ) )
 	{
@@ -1336,6 +1386,9 @@ bool CMusikLibrary::AddOGG( const CStdString& fn )
 
 bool CMusikLibrary::AddMP3( const CStdString& fn )
 {
+	if ( !m_pDB )
+		return false;
+
 	CMusikMp3Info info;
 	if ( info.LoadInfo( fn ) )
 	{

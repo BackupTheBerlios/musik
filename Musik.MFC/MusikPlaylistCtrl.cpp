@@ -22,6 +22,23 @@ IMPLEMENT_DYNAMIC(CMusikPlaylistCtrl, CListCtrl)
 
 ///////////////////////////////////////////////////
 
+
+BEGIN_MESSAGE_MAP(CMusikPlaylistCtrl, CListCtrl)
+	// mfc message maps
+	ON_WM_CREATE()
+	ON_WM_DESTROY()
+	ON_NOTIFY_REFLECT(LVN_GETDISPINFO, OnLvnGetdispinfo)
+	ON_WM_ERASEBKGND()
+	ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, OnNMCustomdraw)
+	ON_NOTIFY_REFLECT(LVN_ODCACHEHINT, OnLvnOdcachehint)
+	ON_WM_PAINT()
+	ON_NOTIFY_REFLECT(NM_CLICK, OnNMClick)
+	ON_NOTIFY_REFLECT(LVN_ITEMACTIVATE, OnLvnItemActivate)
+	ON_NOTIFY_REFLECT(LVN_BEGINDRAG, OnLvnBegindrag)
+END_MESSAGE_MAP()
+
+///////////////////////////////////////////////////
+
 CMusikPlaylistCtrl::CMusikPlaylistCtrl( CFrameWnd* mainwnd, CMusikLibrary* library, CMusikPlayer* player, CMusikPrefs* prefs )
 {
 	// core
@@ -54,21 +71,6 @@ CMusikPlaylistCtrl::~CMusikPlaylistCtrl()
 	delete m_SongInfoCache;
 	CleanNowPlaying();
 }
-
-///////////////////////////////////////////////////
-
-BEGIN_MESSAGE_MAP(CMusikPlaylistCtrl, CListCtrl)
-	ON_WM_CREATE()
-	ON_WM_DESTROY()
-	ON_NOTIFY_REFLECT(LVN_GETDISPINFO, OnLvnGetdispinfo)
-	ON_WM_ERASEBKGND()
-	ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, OnNMCustomdraw)
-	ON_NOTIFY_REFLECT(LVN_ODCACHEHINT, OnLvnOdcachehint)
-	ON_WM_PAINT()
-	ON_NOTIFY_REFLECT(NM_CLICK, OnNMClick)
-	ON_NOTIFY_REFLECT(LVN_ITEMACTIVATE, OnLvnItemActivate)
-	ON_NOTIFY_REFLECT(LVN_BEGINDRAG, OnLvnBegindrag)
-END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
 
@@ -698,5 +700,3 @@ void CMusikPlaylistCtrl::OnLvnBegindrag(NMHDR *pNMHDR, LRESULT *pResult)
 
 	*pResult = 0;
 }
-
-///////////////////////////////////////////////////

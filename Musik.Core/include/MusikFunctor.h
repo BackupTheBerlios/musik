@@ -79,12 +79,12 @@ public:
 		// pure virtual
 	}
 
-	virtual void OnThreadProgress()
+	virtual void OnThreadProgress( size_t progress )
 	{
 		// pure virtual
 	}
 
-	virtual void OnThreadNewFile()
+	virtual void OnThreadNewFile( size_t currfile, size_t allfiles )
 	{
 		// pure virtual
 	}

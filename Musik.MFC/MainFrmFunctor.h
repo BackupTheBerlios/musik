@@ -17,14 +17,9 @@ class CMainFrame;
 class CMusikFrameFunctor : public CMusikFunctor
 {
 public:
-	CMusikFrameFunctor( CMainFrame* parent)
+	CMusikFrameFunctor( CWnd* parent)
 	{ 
 		m_Parent = parent; 
-	}
-
-	~CMusikFrameFunctor()
-	{
-		
 	}
 
 	virtual void OnNewSong()
@@ -40,7 +35,7 @@ public:
 	}
 
 private:
-	CMainFrame* m_Parent;
+	CWnd* m_Parent;
 };
 
 ///////////////////////////////////////////////////

@@ -211,6 +211,16 @@
 				RelativePath=".\include\MusikThread.h">
 			</File>
 		</Filter>
+		<Filter
+			Name="MusikBatchAdd"
+			Filter="">
+			<File
+				RelativePath=".\src\MusikBatchAdd.cpp">
+			</File>
+			<File
+				RelativePath=".\include\MusikBatchAdd.h">
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\include\MusikArrays.h">
 		</File>

@@ -63,7 +63,7 @@ protected:
 	bool m_Changed;
 	int m_RatingWidth;
 
-	// message maps
+	// mfc message maps
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
 	afx_msg void OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult);
@@ -92,4 +92,4 @@ private:
 	size_t m_ClipboardFormat;
 };
 
-
+///////////////////////////////////////////////////

@@ -148,8 +148,11 @@ protected:
 	void DockBarLeftOf( CSizingControlBar* Bar, CSizingControlBar* LeftOf );
 	bool RecurseMkDir( char* pszDir );
 
-	// mesage maps
+	// mfc mesage maps
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnDestroy();
+
+	// custom message maps
 	afx_msg LRESULT OnUpdateSel( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSongChange( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSongStop( WPARAM wParam, LPARAM lParam );
@@ -159,7 +162,6 @@ protected:
 	afx_msg LRESULT OnDragStart(  WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnDragEnd(  WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnNewPlaylistOwner( WPARAM wParam, LPARAM lParam );
-	afx_msg void OnDestroy();
 
 	// macros
 	DECLARE_DYNAMIC(CMainFrame)

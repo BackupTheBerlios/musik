@@ -6,12 +6,17 @@
 
 #include "MusikPlaylistCtrl.h"
 
+#include "../Musik.Core/include/MusikFunctor.h"
+
 ///////////////////////////////////////////////////
 
 class CMusikLibrary;
 class CMusikPlayer;
 class CMusikPrefs;
 class CMusikPlaylist;
+class CMusikBatchAdd;
+
+class CMusikBatchAddFunctor;
 
 ///////////////////////////////////////////////////
 
@@ -31,23 +36,63 @@ protected:
 	// playlist GUI object
 	CMusikPlaylistCtrl* m_Playlist;
 
-	// a pointer to the library, so we can
-	// use it in file dropped operations
+	// a pointer to the library and player,
+	// so we can use it in file dropped operations
 	CMusikLibrary* m_Library;
+	CMusikPlayer* m_Player;
 
-	// message maps
+	// mfc message maps
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnNcPaint();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	afx_msg void OnDropFiles(HDROP hDropInfo);
+
+	// custom message maps
+	afx_msg LRESULT OnBatchAddProgress( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnBatchAddEnd( WPARAM wParam, LPARAM lParam );
 
 	// macros
 	DECLARE_DYNAMIC(CMusikPlaylistView)
 	DECLARE_MESSAGE_MAP()
-public:
-	afx_msg void OnDropFiles(HDROP hDropInfo);
+
+private:
+
+	// batch add files thread
+	CMusikBatchAdd* m_BatchAddThr;
+	CMusikBatchAddFunctor* m_BatchAddFnct;
 };
 
 ///////////////////////////////////////////////////
 
+class CMusikBatchAddFunctor : public CMusikFunctor
+{
+public:
 
+	CMusikBatchAddFunctor( CWnd* parent)
+	{ 
+		m_Parent = parent; 
+	}
+
+	virtual void OnThreadStart()
+	{
+		TRACE0( "CMusikBatchAdd thread started...\n" );
+	}
+
+	virtual void OnThreadEnd()
+	{
+		TRACE0( "CMusikBatchAdd thread complete...\n" );
+	}
+
+	virtual void OnThreadProgress( size_t progress )
+	{
+		CStdString s;
+		s.Format( "CMusikBatchAdd %d%% complete.\n", progress );
+		TRACE0( s.c_str() );
+	}
+
+private:
+	CWnd* m_Parent;
+};
+
+///////////////////////////////////////////////////

@@ -57,27 +57,30 @@
 
 ///////////////////////////////////////////////////
 
-int WM_SELBOXUPDATE = RegisterWindowMessage( "SELBOXUPDATE" );
+int WM_SELBOXUPDATE			= RegisterWindowMessage( "SELBOXUPDATE" );
 
-int MW_NEWPLAYLISTOWNER = RegisterWindowMessage( "NEWPLAYLISTOWNER" );
+int MW_NEWPLAYLISTOWNER		= RegisterWindowMessage( "NEWPLAYLISTOWNER" );
 
-int WM_SONGCHANGE = RegisterWindowMessage( "SONGCHANGE" );
-int WM_SONGSTOP = RegisterWindowMessage( "SONGSTOP" );
+int WM_SONGCHANGE			= RegisterWindowMessage( "SONGCHANGE" );
+int WM_SONGSTOP				= RegisterWindowMessage( "SONGSTOP" );
 
-int WM_DRAGSTART = RegisterWindowMessage( "DRAGSTART" );
-int WM_DRAGEND = RegisterWindowMessage( "DRAGEND" );
+int WM_DRAGSTART			= RegisterWindowMessage( "DRAGSTART" );
+int WM_DRAGEND				= RegisterWindowMessage( "DRAGEND" );
 
-int WM_SOURCESLIBRARY = RegisterWindowMessage( "SOURCESLIBRARY" );
-int WM_SOURCESSTDPLAYLIST = RegisterWindowMessage( "SOURCESSTDPLAYLIST" );
-int WM_SOURCESDYNPLAYLIST = RegisterWindowMessage( "SOURCESDYNDPLAYLIST" );
+int WM_SOURCESLIBRARY		= RegisterWindowMessage( "SOURCESLIBRARY" );
+int WM_SOURCESSTDPLAYLIST	= RegisterWindowMessage( "SOURCESSTDPLAYLIST" );
+int WM_SOURCESDYNPLAYLIST	= RegisterWindowMessage( "SOURCESDYNDPLAYLIST" );
 
 ///////////////////////////////////////////////////
 
 IMPLEMENT_DYNAMIC(CMainFrame, CFrameWnd)
 
 BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
+	// mfc message maps
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
+
+	// custom message maps
 	ON_REGISTERED_MESSAGE( WM_SELBOXUPDATE, OnUpdateSel )
 	ON_REGISTERED_MESSAGE( WM_SONGCHANGE, OnSongChange )
 	ON_REGISTERED_MESSAGE( WM_SONGSTOP, OnSongStop )

@@ -9,16 +9,44 @@
 #include "../Musik.Core/include/MusikLibrary.h"
 #include "../Musik.Core/include/MusikArrays.h"
 #include "../Musik.Core/include/MusikPlayer.h"
+#include "../Musik.Core/include/MusikBatchAdd.h"
 
 #include "MEMDC.H"
 
 ///////////////////////////////////////////////////
 
 IMPLEMENT_DYNAMIC(CMusikPlaylistView, CWnd)
+
+///////////////////////////////////////////////////
+
+int WM_BATCHADD_PROGRESS	= RegisterWindowMessage( "BATCHADD_PROGRESS" );
+int WM_BATCHADD_END			= RegisterWindowMessage( "BATCHADD_END" );
+
+///////////////////////////////////////////////////
+
+BEGIN_MESSAGE_MAP(CMusikPlaylistView, CWnd)
+	// mfc message maps
+	ON_WM_CREATE()
+	ON_WM_SIZE()
+	ON_WM_NCPAINT()
+	ON_WM_ERASEBKGND()
+	ON_WM_DROPFILES()
+
+	// custom messages
+	ON_REGISTERED_MESSAGE( WM_BATCHADD_PROGRESS, OnBatchAddProgress )
+	ON_REGISTERED_MESSAGE( WM_BATCHADD_END, OnBatchAddEnd )
+END_MESSAGE_MAP()
+
+///////////////////////////////////////////////////
 CMusikPlaylistView::CMusikPlaylistView( CFrameWnd* mainwnd, CMusikLibrary* library, CMusikPlayer* player, CMusikPrefs* prefs )
 {
 	m_Playlist = new CMusikPlaylistCtrl( mainwnd, library, player, prefs );
 	m_Library = library;
+	m_Player = player;
+
+	// batch add thread
+	m_BatchAddThr = NULL;
+	m_BatchAddFnct = NULL;
 }
 
 ///////////////////////////////////////////////////
@@ -27,16 +55,6 @@ CMusikPlaylistView::~CMusikPlaylistView()
 {
 	delete m_Playlist;
 }
-
-///////////////////////////////////////////////////
-
-BEGIN_MESSAGE_MAP(CMusikPlaylistView, CWnd)
-	ON_WM_CREATE()
-	ON_WM_SIZE()
-	ON_WM_NCPAINT()
-	ON_WM_ERASEBKGND()
-	ON_WM_DROPFILES()
-END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
 
@@ -130,33 +148,66 @@ BOOL CMusikPlaylistView::OnEraseBkgnd(CDC* pDC)
 
 void CMusikPlaylistView::OnDropFiles(HDROP hDropInfo)
 {
-	CIntArray existing_files;
-	CStdStringArray new_files;
-
-	size_t nCount = DragQueryFile ( hDropInfo, -1, NULL, 0 );
+	size_t nNumFiles;
 	TCHAR szNextFile [MAX_PATH];
+	
+	nNumFiles = DragQueryFile ( hDropInfo, -1, NULL, 0 );
+	CStdStringArray* files = new CStdStringArray();
 
-	int nCurrID;
-	for ( size_t i = 0; i < nCount; i++ )
+	// if the thread exists, pause it
+	if ( m_BatchAddThr )
+		m_BatchAddThr->Pause();
+
+	for ( size_t i = 0; i < nNumFiles; i++ )
 	{
-		if ( DragQueryFile ( hDropInfo, i, szNextFile, MAX_PATH ) > 0 )
+		if ( DragQueryFile( hDropInfo, i, szNextFile, MAX_PATH ) > 0 )
 		{
-			nCurrID = m_Library->GetIDFromFilename( szNextFile );
-
-			// file is in library, just display it...
-			if ( nCurrID > 0 )
-				existing_files.push_back( nCurrID );
-
-			// file is not in library, we must add it...
+			if ( m_BatchAddThr )
+				m_BatchAddThr->m_Files->push_back( szNextFile );
 			else
-				new_files.push_back( szNextFile );
+				files->push_back( szNextFile );
 		}
 	}
 
-	// Free up memory.
-	DragFinish ( hDropInfo );
+	DragFinish( hDropInfo );
 
-
+	// if thread exists, resume it.
+	if ( m_BatchAddThr )
+		m_BatchAddThr->Resume();
+	else
+	{
+		m_BatchAddFnct = new CMusikBatchAddFunctor( this );
+		m_BatchAddThr = new CMusikBatchAdd( files, m_Player->GetPlaylist(), m_Library, m_BatchAddFnct );
+		m_BatchAddThr->Run();
+	}
 }
 
 ///////////////////////////////////////////////////
+
+LRESULT CMusikPlaylistView::OnBatchAddProgress( WPARAM wParam, LPARAM lParam )
+{
+
+	return 0L;
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CMusikPlaylistView::OnBatchAddEnd( WPARAM wParam, LPARAM lParam )
+{
+	if ( m_BatchAddThr )
+	{
+		delete m_BatchAddThr;
+		m_BatchAddThr = NULL;
+	}
+
+	if ( m_BatchAddFnct )
+	{
+		delete m_BatchAddFnct;
+		m_BatchAddFnct = NULL;
+	}
+
+	return 0L;
+}
+
+///////////////////////////////////////////////////
+

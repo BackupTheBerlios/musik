@@ -231,36 +231,6 @@ private:
 
 ///////////////////////////////////////////////////
 
-class CMusikBatchAdd
-{
-public: 
-	CMusikBatchAdd()
-	{
-		m_Files = NULL;
-		m_Playlist = NULL;
-		m_UpdatePlaylist = false;
-		m_DeleteFilelist = true;
-		m_Library = NULL;
-	}
-
-	CMusikBatchAdd( CStdStringArray* pFiles, CMusikPlaylist* pPlaylist, CMusikLibrary* pLibrary, bool bUpdatePlaylist = false, bool bDeleteFilelist = true )
-	{
-		m_Files = pFiles;
-		m_Playlist = pPlaylist;
-		m_UpdatePlaylist = bUpdatePlaylist;
-		m_DeleteFilelist = bDeleteFilelist;
-	}
-
-	CStdStringArray* m_Files;
-	CMusikPlaylist* m_Playlist;
-	CMusikLibrary* m_Library;
-	bool m_UpdatePlaylist;
-	bool m_DeleteFilelist;
-	
-};
-
-///////////////////////////////////////////////////
-
 #endif
 
 ///////////////////////////////////////////////////
