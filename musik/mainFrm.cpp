@@ -529,7 +529,7 @@ void CMainFrame::ResetSelBoxes()
 	for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
 	{
 		m_wndSelectionBars.at( i )->GetCtrl()->SetParent( false );
-		m_wndSelectionBars.at( i )->GetCtrl()->UpdateV( true );
+		m_wndSelectionBars.at( i )->GetCtrl()->UpdateV();
 	}
 	CmusikSelectionCtrl::SetUpdating( false );
 }
@@ -993,7 +993,7 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 		{
 			pCurr = m_wndSelectionBars.at( i )->GetCtrl();
 			pCurr->SetItemState( -1, 0, LVIS_SELECTED );
-			pCurr->UpdateV( true );
+			pCurr->UpdateV();
 		}
 
 		CmusikSelectionCtrl::SetUpdating( false );
@@ -1060,7 +1060,7 @@ void CMainFrame::RequerySelBoxes( CmusikSelectionCtrl* sender )
 		for ( size_t i = 0; i < m_wndSelectionBars.size(); i++ )
 		{
 			pCurr = m_wndSelectionBars.at( i )->GetCtrl();
-			pCurr->UpdateV( true );
+			pCurr->UpdateV();
 		}
 	}
 
@@ -1097,7 +1097,7 @@ void CMainFrame::RequerySelBoxes( CmusikSelectionCtrl* sender )
 				if ( pCurr != pParent )
 				{
 					CmusikString query = GetSelQuery( NULL );
-					pCurr->UpdateV( query, true );
+					pCurr->UpdateV( query );
 				}
 			}
 		}
@@ -1115,7 +1115,7 @@ void CMainFrame::RequerySelBoxes( CmusikSelectionCtrl* sender )
 				if ( pCurr->GetChildOrder() > sender->GetChildOrder() || pCurr->GetChildOrder() == -1 )
 				{
 					CmusikString query = GetSelQuery( pCurr );
-					pCurr->UpdateV( query, true );
+					pCurr->UpdateV( query );
 				}
 			}
 		}
@@ -1171,7 +1171,7 @@ LRESULT CMainFrame::OnSelBoxRequestUpdate( WPARAM wParam, LPARAM lParam )
 	CmusikString query = GetSelQuery( pSender );
 	query += _T( "'%'" );
 
-	pSender->UpdateV( query, true );
+	pSender->UpdateV( query );
 
 	return 0L;
 }

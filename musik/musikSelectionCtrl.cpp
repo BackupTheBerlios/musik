@@ -357,7 +357,7 @@ int CmusikSelectionCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
     // set initial state
 	RescaleColumn();
-	UpdateV( true );
+	UpdateV();
 
 	return 0;
 }
@@ -374,73 +374,74 @@ void CmusikSelectionCtrl::RescaleColumn()
 
 ///////////////////////////////////////////////////
 
-void CmusikSelectionCtrl::UpdateV( bool update_count )
+void CmusikSelectionCtrl::UpdateV()
 {
 	int nPos = GetScrollPos( SB_VERT );
 
-	CmusikString top;
-	if ( !update_count )
-		top = m_Items.at( 0 );
-
-	m_Library->GetAllDistinct( m_Type, m_Items );
-
-	if ( update_count )
 	{
-		CString type = GetTypeStr();
-		type.MakeLower();
-
-		switch ( m_Type )
+		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingItems );
 		{
-		case MUSIK_LIBRARY_TYPE_TIMEADDED:
-		case MUSIK_LIBRARY_TYPE_LASTPLAYED:
-		case MUSIK_LIBRARY_TYPE_TIMESPLAYED:
-			top.Format( _T( "Select by %s (%d)" ), type, m_Items.size() );
-			break;
-		default:
-			top.Format( _T( "Select by %ss (%d)" ), type, m_Items.size() );
-			break;
+			// get new items
+			m_Library->GetAllDistinct( m_Type, m_Items );
+
+			// get Select by...
+			CmusikString top;
+			int item_count = (int)m_Items.size();
+			CString type = GetTypeStr();
+			type.MakeLower();
+
+			switch ( m_Type )
+			{
+			case MUSIK_LIBRARY_TYPE_TIMEADDED:
+			case MUSIK_LIBRARY_TYPE_LASTPLAYED:
+			case MUSIK_LIBRARY_TYPE_TIMESPLAYED:
+				top.Format( _T( "Select by %s (%d)" ), type, item_count );
+				break;
+			default:
+				top.Format( _T( "Select by %ss (%d)" ), type, item_count );
+				break;
+			}
+	
+			// update
+			m_Items.insert( m_Items.begin(), top );
+			SetItemCountEx( m_Items.size(), LVSICF_NOINVALIDATEALL | LVSICF_NOSCROLL );
 		}
 	}
 
-	m_Items.insert( m_Items.begin(), top );
-	SetItemCountEx( m_Items.size(), LVSICF_NOINVALIDATEALL | LVSICF_NOSCROLL );
-
-		SetScrollPos( SB_VERT, nPos, 0 );
-
+	SetScrollPos( SB_VERT, nPos, 0 );
 	RedrawWindow();
 }
 
 ///////////////////////////////////////////////////
 
-void CmusikSelectionCtrl::UpdateV( CmusikString query, bool update_count )
+void CmusikSelectionCtrl::UpdateV( CmusikString query )
 {
 	int nPos = GetScrollPos( SB_VERT );
 
-	CmusikString top;
-	if ( !update_count )
 	{
-		if ( m_Items.size() )
-			top = m_Items.at( 0 );
+		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingItems );
+		{
+			// run query to get related items
+			bool sub_query = true;
+			if ( query.Left( 1 ) == "W" )
+				sub_query = false;
+
+			m_Library->GetRelatedItems( query, m_Type, m_Items, sub_query );
+
+			// format "Select by..."
+			CmusikString top;
+			CString type = GetTypeStr();
+			int item_count = (int)m_Items.size();
+			type.MakeLower();
+			top.Format( _T( "Select by %ss (%d)" ), type, item_count );
+
+			// update
+			m_Items.insert( m_Items.begin(), top );
+			SetItemCountEx( m_Items.size(), LVSICF_NOINVALIDATEALL | LVSICF_NOSCROLL );
+		}
 	}
-
-	bool sub_query = true;
-	if ( query.Left( 1 ) == "W" )
-		sub_query = false;
-
-	m_Library->GetRelatedItems( query, m_Type, m_Items, sub_query );
-
-	if ( update_count )
-	{
-		CString type = GetTypeStr();
-		type.MakeLower();
-		top.Format( _T( "Select by %ss (%d)" ), type, m_Items.size() );
-	}
-
-	m_Items.insert( m_Items.begin(), top );
-	SetItemCountEx( m_Items.size(), LVSICF_NOINVALIDATEALL | LVSICF_NOSCROLL );
 
 	SetScrollPos( SB_VERT, nPos, 0 );
-
 	RedrawWindow();
 }
 
@@ -456,53 +457,59 @@ void CmusikSelectionCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 	if ( pItem->mask & LVIF_TEXT )
 	{
 		char* pStr = NULL;
-
+		CmusikString sCurrItem;
 		switch( pItem->iSubItem )
 		{
 		case 0:
-			if ( pItem->iItem > 0 )
+			if ( pItem->iItem >= 0 )
 			{
-				// a safeguard... just make sure the item we're
-				// getting passed has a respective value in the
-				// array of items.
-				if ( pItem->iItem >= (int)m_Items.size() )
+				// get current item
+
+				bool caching = false;
 				{
-					CString sNull = _T( "[musik.caching]" );
-					pStr = sNull.GetBuffer();
+					ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingItems );
+					{
+						if ( pItem->iItem >= (int)m_Items.size() )
+						{
+							pStr = _T( "[musik.caching]" );
+							caching = true;
+						}
+						else
+							sCurrItem = m_Items.at( pItem->iItem );
+					}
 				}
 
+
 				// got a valid item, so go ahead and add it.
-				else
+				if ( !caching )
 				{
 					switch ( m_Type )
 					{
 					case MUSIK_LIBRARY_TYPE_FORMAT:
-						if ( m_Items.at( pItem->iItem ) == _T( "0" ) )
+						if ( sCurrItem == _T( "0" ) )
 							pStr = _T( "mp3" );
-						else if ( m_Items.at( pItem->iItem ) == _T( "1" ) )
+						else if ( sCurrItem == _T( "1" ) )
 							pStr = _T( "ogg" );
 						break;
 
 					case MUSIK_LIBRARY_TYPE_RATING:
 						{
-							const CmusikString& rating = m_Items.at( pItem->iItem );
-
-							if ( rating == _T( "0" ) )
+							if ( sCurrItem == _T( "0" ) )
 								pStr = _T( "Unrated" );
 
-							else if ( rating == _T( "1" ) )
+							else if ( sCurrItem == _T( "1" ) )
 								pStr = _T( "-,,,," );
 
-							else if ( rating == _T( "2" ) )
+							else if ( sCurrItem == _T( "2" ) )
 								pStr = _T( "--,,," );
 
-							else if ( rating == _T( "3" ) )
+							else if ( sCurrItem == _T( "3" ) )
 								pStr = _T( "---,," );
 
-							else if ( rating == _T( "4" ) )
+							else if ( sCurrItem == _T( "4" ) )
 								pStr = _T( "----," );
 
-							else if ( rating == _T( "5" ) )
+							else if ( sCurrItem == _T( "5" ) )
 								pStr = _T( "-----" );
 						}
 
@@ -511,7 +518,7 @@ void CmusikSelectionCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 					case MUSIK_LIBRARY_TYPE_LASTPLAYED:
 					case MUSIK_LIBRARY_TYPE_TIMESPLAYED:
 
-						if ( m_Items.at( pItem->iItem ).IsEmpty() || m_Items.at( pItem->iItem ) == _T( "0" ) )
+						if ( sCurrItem.IsEmpty() || sCurrItem == _T( "0" ) )
 						{
 							pStr = _T( "(never)" );
 							break;
@@ -519,7 +526,7 @@ void CmusikSelectionCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 
 					case MUSIK_LIBRARY_TYPE_BITRATE:
 
-						if ( m_Items.at( pItem->iItem ) == _T( "0" ) )
+						if ( sCurrItem == _T( "0" ) )
 						{
 							pStr = _T( "(unknown)" );
 							break;
@@ -527,25 +534,23 @@ void CmusikSelectionCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 
 					case MUSIK_LIBRARY_TYPE_TRACKNUM:
 
-						if ( m_Items.at( pItem->iItem ) == _T( "0" ) )
+						if ( sCurrItem == _T( "0" ) )
 						{
 							pStr = _T( "(unknown)" );
 							break;
 						}
 
 					default:
-						pStr = (char*)m_Items.at( pItem->iItem ).c_str();
+						pStr = (char*)sCurrItem.c_str();
 						break;
 					}
 				}
-			}
-			else
-				pStr = (char*)m_Items.at( pItem->iItem ).c_str();
 
-			if ( pStr )
-			{
-				pItem->cchTextMax = sizeof( *pStr );
-				lstrcpy( pItem->pszText, pStr );
+				if ( pStr )
+				{
+					pItem->cchTextMax = sizeof( *pStr );
+					lstrcpy( pItem->pszText, pStr );
+				}
 			}
 
 			break;
@@ -609,39 +614,46 @@ void CmusikSelectionCtrl::GetSelItems( CmusikStringArray& items, bool format_que
 	int item;
 	int count = 0;
 
-	CString item_str;
+	CmusikString item_str;
 
-	for ( int i = -1 ; ; )
 	{
-		item = GetNextItem( i, LVNI_SELECTED );
-
-		if ( item == -1 )
-			break;
-
-		else
+		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingItems );
 		{
-			switch( m_Type )
+			for ( int i = -1 ; ; )
 			{
-			case MUSIK_LIBRARY_TYPE_FORMAT:
-				item_str = GetItemText( item, 0 );
-				if ( item_str == "mp3" )
-					items.push_back( "0" );
-				else if ( item_str == "ogg" )
-					items.push_back( "1" );
+				item = GetNextItem( i, LVNI_SELECTED );
 
-				break;
+				if ( item == -1 )
+					break;
 
-			default:
-				items.push_back( m_Items.at( item ) );
-				if ( format_query )
-					items.at( count ).Replace( _T( "'" ), _T( "''" ) );
+				else
+				{
+					item_str = m_Items.at( item );
 
-				break;
+					switch( m_Type )
+					{
+					case MUSIK_LIBRARY_TYPE_FORMAT:
+						if ( item_str == "mp3" )
+							items.push_back( "0" );
+						else if ( item_str == "ogg" )
+							items.push_back( "1" );
+
+						break;
+
+					default:
+
+						items.push_back( item_str );
+						if ( format_query )
+							items.at( count ).Replace( _T( "'" ), _T( "''" ) );
+
+						break;
+					}
+				}
+
+				i = item;
+				count++;
 			}
 		}
-
-		i = item;
-		count++;
 	}
 
 }
@@ -715,9 +727,18 @@ void CmusikSelectionCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 	{
 		CDC *pDC = CDC::FromHandle( pLVCD->nmcd.hdc );
 
+		CmusikString item_str;
+		{
+			ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingItems );
+			{
+				if ( pLVCD->nmcd.dwItemSpec < m_Items.size() )
+					item_str = m_Items.at( pLVCD->nmcd.dwItemSpec );
+			}
+		}
+
 		if ( pLVCD->nmcd.dwItemSpec == 0 )
 			pDC->SelectObject( m_Bold );
-		else if ( m_Type == MUSIK_LIBRARY_TYPE_RATING && m_Items.at( pLVCD->nmcd.dwItemSpec ) != _T( "0" )  )
+		else if ( m_Type == MUSIK_LIBRARY_TYPE_RATING && item_str != _T( "0" )  )
 			pDC->SelectObject( m_StarFont );
 		else
 			pDC->SelectObject( m_Regular );
@@ -1049,10 +1070,19 @@ void CmusikSelectionCtrl::RenameSel()
 		rcItem.bottom = height + 2;
 	}
 
+	CmusikString item_str;
+	{
+		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingItems );
+		{
+			if ( GetSelectionMark() < (int)m_Items.size() )
+				item_str = m_Items.at( GetSelectionMark() );
+		}
+	}
+
 	m_EditInPlace.EnableWindow( TRUE );
 	m_EditInPlace.MoveWindow( rcItem );
 	m_EditInPlace.SetFocus();
-	m_EditInPlace.SetString( m_Items.at( GetSelectionMark() ).c_str() );
+	m_EditInPlace.SetString( item_str.c_str() );
 	m_EditInPlace.ShowWindow( SW_SHOWDEFAULT );		
 }
 
@@ -1113,7 +1143,16 @@ LRESULT CmusikSelectionCtrl::OnEditCommit( WPARAM wParam, LPARAM lParam )
 
 	if ( GetSelectedCount() == 1 )
 	{
-		if ( m_Items.at( GetSelectionMark() ) == m_CommitStr )
+		CmusikString item_str;
+		{
+			ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingItems );
+			{
+				if ( GetSelectionMark() < (int)m_Items.size() )
+					item_str = m_Items.at( GetSelectionMark() );
+			}
+		}
+
+		if ( item_str == m_CommitStr )
 			failed = true;
 	}
 

@@ -121,8 +121,8 @@ public:
 
 	// misc
 	void RescaleColumn();
-	void UpdateV( bool update_count = false );
-	void UpdateV( CmusikString query, bool update_count = false );
+	void UpdateV();
+	void UpdateV( CmusikString query );
 	void RenameSel();
 
 	// queries
