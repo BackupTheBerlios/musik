@@ -51,7 +51,6 @@
 #include <math.h>
 
 #include "../include/musikConfig.h"
-#include "../include/musikArrays.h"
 #include "../include/musikPlayer.h"
 #include "../include/musikLibrary.h"
 #include "../include/musikFunctor.h"
@@ -437,8 +436,6 @@ CmusikPlayer::CmusikPlayer( CmusikFunctor* functor, CmusikLibrary* library )
 
 	m_EQ				= NULL;
 	m_Crossfader		= NULL;
-	m_ActiveStreams		= NULL;	
-	m_ActiveChannels	= NULL;
 	m_EQ_DSP			= NULL;
 
 	m_Handle			= 0;
@@ -542,9 +539,6 @@ int CmusikPlayer::InitSound( int device, int driver, int rate, int channels, int
 		}
 	}
 
-	m_ActiveStreams = new CmusikStreamPtrArray();
-	m_ActiveChannels = new CIntArray();
-
 	m_MaxChannels = channels;
 
 	TRACE0( "FMOD initialized successfully.\n" );
@@ -557,18 +551,6 @@ void CmusikPlayer::CleanSound()
 {
 	CleanOldStreams( true );
 	StopSound();
-
-	if ( m_ActiveStreams ) 
-	{
-		delete m_ActiveStreams;
-		m_ActiveStreams = NULL;
-	}
-
-	if ( m_ActiveChannels ) 
-	{
-		delete m_ActiveChannels;
-		m_ActiveChannels = NULL;
-	}
 
 	m_State = MUSIK_PLAYER_INIT_UNINITIALIZED;
 }
@@ -714,8 +696,8 @@ bool CmusikPlayer::Play( int index, int fade_type, int start_pos )
 
 	// add the new channel and stream, and
 	// call the OnNewSong
-	m_ActiveStreams->push_back( pNewStream );
-	m_ActiveChannels->push_back( curr_chan );
+	m_ActiveStreams.push_back( pNewStream );
+	m_ActiveChannels.push_back( curr_chan );
 	m_Functor->OnNewSong();
 
 	// play it: set volume
@@ -820,8 +802,8 @@ void CmusikPlayer::EnquePaused( int index )
 	PushNewChannel();
 
 	// add the new channel and stream
-	m_ActiveStreams->push_back( pNewStream );
-	m_ActiveChannels->push_back( GetCurrChannel() );
+	m_ActiveStreams.push_back( pNewStream );
+	m_ActiveChannels.push_back( GetCurrChannel() );
 
 	// setup playback, then pause
 	FSOUND_Stream_Play( GetCurrChannel(), pNewStream );
@@ -996,8 +978,8 @@ FSOUND_STREAM* CmusikPlayer::GetCurrStream()
 {
 	FSOUND_STREAM* pStream = NULL;
 
-	if ( m_ActiveStreams->size() )
-		pStream = m_ActiveStreams->at( m_ActiveStreams->size() - 1 );
+	if ( m_ActiveStreams.size() )
+		pStream = m_ActiveStreams.at( m_ActiveStreams.size() - 1 );
 
 	return pStream;
 }
@@ -1057,12 +1039,12 @@ void CmusikPlayer::CleanEQ_DSP()
 
 void CmusikPlayer::CleanOldStreams( bool kill_primary )
 {
-	ASSERT( m_ActiveStreams->size() == m_ActiveChannels->size() );
+	ASSERT( m_ActiveStreams.size() == m_ActiveChannels.size() );
 
-	if ( !m_ActiveStreams->size() )
+	if ( !m_ActiveStreams.size() )
 		return;
 
-	size_t nStreamCount = m_ActiveStreams->size();
+	size_t nStreamCount = m_ActiveStreams.size();
 
 	if ( nStreamCount <= 0 )
 		return;
@@ -1071,11 +1053,11 @@ void CmusikPlayer::CleanOldStreams( bool kill_primary )
 
 	for ( size_t i = 0; i < nStreamCount; i++ )
 	{
-		FSOUND_Stream_Stop	( m_ActiveStreams->at( 0 ) );
-		FSOUND_Stream_Close	( m_ActiveStreams->at( 0 ) );
+		FSOUND_Stream_Stop	( m_ActiveStreams.at( 0 ) );
+		FSOUND_Stream_Close	( m_ActiveStreams.at( 0 ) );
 		
-		m_ActiveStreams->erase( m_ActiveStreams->begin() );
-		m_ActiveChannels->erase( m_ActiveChannels->begin() );
+		m_ActiveStreams.erase( m_ActiveStreams.begin() );
+		m_ActiveChannels.erase( m_ActiveChannels.begin() );
 	}	
 }
 
@@ -1193,7 +1175,7 @@ size_t CmusikPlayer::GetStreamCount()
 {
 	size_t count = 0;
 
-	count = m_ActiveStreams->size();
+	count = m_ActiveStreams.size();
 
 	return count;
 }
@@ -1211,8 +1193,8 @@ int CmusikPlayer::GetChannelID( int n )
 {
 	int channel_id = 0;
 
-	if ( n < (int)m_ActiveChannels->size() )
-		channel_id = m_ActiveChannels->at( n );
+	if ( n < (int)m_ActiveChannels.size() )
+		channel_id = m_ActiveChannels.at( n );
 
 	return channel_id;
 }

@@ -59,7 +59,7 @@
 ///////////////////////////////////////////////////
 
 #include "musikPlaylist.h"
-
+#include "musikArrays.h"
 #include "musikTask.h"
 #include "musikCrossfader.h"
 
@@ -295,8 +295,8 @@ private:
 
 	// active streams and channels
 	void CleanOldStreams( bool kill_primary = false );
-	CmusikStreamPtrArray* m_ActiveStreams;
-	CIntArray* m_ActiveChannels;
+	CmusikStreamPtrArray m_ActiveStreams;
+	CIntArray m_ActiveChannels;
 
 	// equalizer DSP unit
 	FSOUND_DSPUNIT *m_EQ_DSP;
