@@ -32,7 +32,6 @@ BEGIN_EVENT_TABLE(CPlaylistCtrl, wxListCtrl)
 	EVT_LIST_ITEM_ACTIVATED		( MUSIK_PLAYLIST,											CPlaylistCtrl::PlaySel			)	
 	EVT_LIST_BEGIN_DRAG			( MUSIK_PLAYLIST,											CPlaylistCtrl::BeginDrag		)
 	EVT_LIST_ITEM_SELECTED		( MUSIK_PLAYLIST,											CPlaylistCtrl::UpdateSel		)
-	EVT_LIST_COL_BEGIN_DRAG		( MUSIK_PLAYLIST,											CPlaylistCtrl::BeginDragCol		)
 	EVT_LIST_COL_END_DRAG		( MUSIK_PLAYLIST,											CPlaylistCtrl::EndDragCol		)
 	EVT_MENU					( MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FROM_PLAYLIST,		CPlaylistCtrl::OnDelSel			)
 	EVT_MENU					( MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FILES,				CPlaylistCtrl::OnDelFiles		)
@@ -356,17 +355,8 @@ void CPlaylistCtrl::BeginDrag( wxEvent& WXUNUSED(event) )
 	g_DragInProg = false;
 }
 
-void CPlaylistCtrl::BeginDragCol( wxListEvent& event )
-{
-	if ( event.GetColumn() == 0 )
-		event.Veto();
-}
-
 void CPlaylistCtrl::EndDragCol( wxListEvent& event )
 {
-	if ( event.GetColumn() == 0 )
-		event.Veto();
-
 	m_ColsChanged = true;
 	Refresh();
 }
