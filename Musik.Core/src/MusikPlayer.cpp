@@ -260,17 +260,25 @@ CMusikPlayer::~CMusikPlayer()
 
 void CMusikPlayer::InitThread()
 {
+	// create the thread
 	m_Mutex	= new ACE_Thread_Mutex();
 	m_ThreadID = new ACE_thread_t();
 	m_ThreadHND = new ACE_hthread_t();
 
+	// spawn the thread
 	ACE_Thread::spawn( (ACE_THR_FUNC)MusikPlayerWorker,
 		this,
 		THR_JOINABLE | THR_NEW_LWP,
 		m_ThreadID,
 		m_ThreadHND );
 
-	ACE_Thread::join( 0, m_ThreadHND, 0 );
+	// join it to the main thread
+	#ifdef WIN32
+		ACE_Thread::join( m_ThreadHND );
+	#else
+		ACE_Thread::join( 0, m_ThreadHND, 0 );
+	#endif
+
 }
 
 ///////////////////////////////////////////////////
@@ -577,6 +585,7 @@ void CMusikPlayer::Stop()
 		CleanOldStreams( true );
 	else
 	{
+		m_Handle++;
 		m_FadeType = MUSIK_CROSSFADER_STOP;
 		FlagCrossfade();
 	}
@@ -593,6 +602,7 @@ void CMusikPlayer::Exit()
 	}
 	else
 	{
+		m_Handle++;
 		m_FadeType = MUSIK_CROSSFADER_EXIT;
 		FlagCrossfade();
 	}
