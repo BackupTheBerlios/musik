@@ -1308,14 +1308,24 @@ void CMusikPropTree::OnMouseMove(UINT nFlags, CPoint point)
 		m_MouseTrack = true;
 	}
 
+	// see if a mouse is over a new item...
+	int nItemPos = FindNewItemPos( point );
+	if ( nItemPos > -1 )
+		OnNewHoveredItem( nItemPos );
+
+	m_LockHover = false;
+}
+
+int CMusikPropTree::FindNewItemPos( const CPoint& point )
+{
 	const int nTotal = PROPTREEITEM_DEFHEIGHT * ( m_Count );
 	int nItemPos = -1;
 
-	// see if a mouse is over a new item...
 	if ( ( point.y > m_LastPos.m_Top && point.y <= nTotal )		|| 
 		( point.y < m_LastPos.m_Top && point.y >= 0 )			|| 
 		( m_LastPos.m_Bottom == -1 && m_LastPos.m_Top == -1 ) )
 	{
+
 		CMusikTrack curr;
 		for( int i = 0; i < m_Count; i++ )
 		{
@@ -1333,10 +1343,7 @@ void CMusikPropTree::OnMouseMove(UINT nFlags, CPoint point)
 		}
 	}
 
-	if ( nItemPos > -1 )
-		OnNewHoveredItem( nItemPos );
-
-	m_LockHover = false;
+	return nItemPos;
 }
 
 ///////////////////////////////////////////////////

@@ -146,6 +146,7 @@ public:
 	void EnsureVisible(CMusikPropTreeItem* pItem);
 	virtual CMusikPropTreeItem* FindItem(const POINT& pt);
 	CMusikPropTreeItem* FindItem(UINT nCtrlID);
+	int FindNewItemPos( const CPoint& point );
 
 	// item checks
 	BOOL IsItemVisible(CMusikPropTreeItem* pItem);

@@ -46,6 +46,7 @@ BEGIN_MESSAGE_MAP( CMusikSourcesCtrl, CMusikPropTree )
 	ON_WM_CREATE()
 	ON_WM_SHOWWINDOW()
 	ON_WM_KEYDOWN()
+	ON_WM_MOUSEMOVE()
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -658,3 +659,27 @@ CMusikPropTreeItem* CMusikSourcesCtrl::FindItemAtIndex( int nIndex )
 }
 
 ///////////////////////////////////////////////////
+void CMusikSourcesCtrl::OnMouseMove(UINT nFlags, CPoint point)
+{
+	if ( !m_MouseTrack )
+	{
+		TRACKMOUSEEVENT tme;
+		tme.cbSize = sizeof(tme);
+		tme.dwFlags = TME_LEAVE;
+		tme.hwndTrack = m_hWnd;
+		tme.dwHoverTime = HOVER_DEFAULT;
+		::_TrackMouseEvent(&tme);
+
+		m_MouseTrack = true; 	
+	}
+
+	if ( m_MouseTrack && ( nFlags & MK_LBUTTON ) )
+	{
+		CMusikPropTreeItem* pItem = FindItem( point );
+		if ( pItem && pItem->GetPlaylistType() != -1 )
+		{
+			DoDrag( pItem );
+			return;
+		}
+	}
+}
