@@ -70,10 +70,16 @@ void CmusikEditInPlace::OnEnKillfocus()
 BOOL CmusikEditInPlace::PreTranslateMessage(MSG* pMsg)
 {
 	if ( pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN )
+	{
 		Commit();
+		return TRUE;
+	}
 
 	else if ( pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_ESCAPE )
+	{
 		Cancel();
+		return TRUE;
+	}
 
 	return CEdit::PreTranslateMessage(pMsg);
 }

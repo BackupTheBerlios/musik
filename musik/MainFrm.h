@@ -289,6 +289,7 @@ protected:
 	// mutex to synchronize thread array
 	ACE_Thread_Mutex m_ProtectingThreads;
 	int m_ThreadCount;
+	void KillThreads( bool updater = true, bool childthreads = true, bool setwindowtext = true );
 
 	// batch functors threads will use
 	CmusikBatchAddFunctor* m_BatchAddFnct;
@@ -308,6 +309,8 @@ protected:
 	void InitTrayIcon();
 	void ShowTrayIcon();
 	void HideTrayIcon();
+public:
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 };
 
 ///////////////////////////////////////////////////

@@ -1110,9 +1110,19 @@ void CmusikPlaylistCtrl::OnDragColumn( int source, int dest )
 
 	m_Arranging = true;
 
+
+	/*
+
+	LV_COLUMN col;
+	GetColumn( source, &col );
+
+	InsertColumn( source, &col );
+*/
+	InsertColumn( source, "test" );
+
 	m_Arranging = false;
 
-    ResetColumns();
+   // ResetColumns();
 }
 
 ///////////////////////////////////////////////////

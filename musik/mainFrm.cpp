@@ -62,6 +62,7 @@
 #include <Direct.h>
 
 #include "3rdparty/TreePropSheet.h"
+#include ".\mainfrm.h"
 
 ///////////////////////////////////////////////////
 
@@ -359,7 +360,7 @@ void CMainFrame::Initmusik()
 	m_LibPlaylist	= NULL;	
 	m_StdPlaylist	= NULL;
 	m_ThreadCount	= 0;
-	m_Caption		= MUSIK_VERSION_STR;
+	m_Caption		= CString( MUSIK_VERSION_STR ) + " ";
 	m_BatchAddFnct	= new CmusikBatchAddFunctor( this );
 	m_RemoveOldFnct	= new CmusikRemoveOldFunctor( this );
 	m_Library		= new CmusikLibrary( ( CmusikString )m_Database );
@@ -828,39 +829,7 @@ BOOL CMainFrame::DestroyWindow()
 {
 	// make sure all the threads are finished
 	// before destroying the window...
-	{
-		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingThreads );
-		{
-			if ( m_Updater )
-			{
-				m_Updater->Suspend( true );
-				m_Updater->Abort();
-				m_Updater->Resume();
-
-				while ( !m_Updater->m_Finished )
-					Sleep( 50 );
-
-				delete m_Updater;
-			}
-		}
-	}
-
-	{
-		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingThreads );
-		{
-			for ( size_t i = 0; i < m_Threads.size(); i++ )
-			{
-				m_Threads.at( i )->Suspend( true );
-				m_Threads.at( i )->Abort();
-				m_Threads.at( i )->Resume();
-
-				while ( !m_Threads.at( i )->m_Finished )
-					Sleep( 50 );
-
-				delete m_Threads.at( i );
-			}
-		}
-	}
+	KillThreads( true, true, false );
 
 	CString sProfile = _T( "musikProfile" );
 	CSizingControlBar::GlobalSaveState( this, sProfile );
@@ -1640,10 +1609,10 @@ bool CMainFrame::FreeThread( CmusikThread* pThread )
 				break;
 			}
 		}
-	}
 
-	if ( erased )
-		m_ThreadCount--;
+		if ( erased )
+			m_ThreadCount--;
+	}
 
 	return erased;
 }
@@ -2473,6 +2442,56 @@ LRESULT CMainFrame::OnSelBoxAddRemove( WPARAM wParam, LPARAM lParam )
 
 ///////////////////////////////////////////////////
 
+void CMainFrame::KillThreads( bool updater, bool helpers, bool setwindowtext )
+{
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingThreads );
+	{
+		if ( updater )
+		{
+			TRACE0( "KILL UPDATER\n" );
+			ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingThreads );
+			{
+				if ( m_Updater )
+				{
+					m_Updater->Suspend( true );
+					m_Updater->Abort();
+					m_Updater->Resume();
+
+					while ( !m_Updater->m_Finished )
+						Sleep( 50 );
+
+					delete m_Updater;
+					m_Updater = NULL;
+				}
+			}
+		}
+
+		if ( helpers )
+		{
+			for ( size_t i = 0; i < m_Threads.size(); i++ )
+			{
+				TRACE0( "KILL HELPER\n" );
+
+				m_Threads.at( i )->Suspend( true );
+				m_Threads.at( i )->Abort();
+				m_Threads.at( i )->Resume();
+
+					while ( !m_Threads.at( i )->m_Finished )
+						Sleep( 50 );
+
+				delete m_Threads.at( i );
+			}
+
+			m_Threads.clear();
+		}
+
+		if ( setwindowtext )
+			SetWindowText( m_Caption );
+	}
+}
+
+///////////////////////////////////////////////////
+
 void CMainFrame::OnFileClearlibrary()
 {
 	int prompt = MessageBox( "Would you like to also clear synchronized directories, playlists, equalizer, and crossfade settings?", MUSIK_VERSION_STR, MB_ICONWARNING | MB_YESNOCANCEL );
@@ -2493,41 +2512,7 @@ void CMainFrame::OnFileClearlibrary()
 
 	// kill all threads that may be
 	// accessing the database
-	{
-		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingThreads );
-		{
-			if ( m_Updater )
-			{
-				m_Updater->Suspend( true );
-				m_Updater->Abort();
-				m_Updater->Resume();
-
-				while ( !m_Updater->m_Finished )
-					Sleep( 50 );
-
-				delete m_Updater;
-			}
-		}
-	}
-
-	{
-		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingThreads );
-		{
-			for ( size_t i = 0; i < m_Threads.size(); i++ )
-			{
-				m_Threads.at( i )->Suspend( true );
-				m_Threads.at( i )->Abort();
-				m_Threads.at( i )->Resume();
-
-					while ( !m_Threads.at( i )->m_Finished )
-						Sleep( 50 );
-
-				delete m_Threads.at( i );
-			}
-
-			m_Threads.clear();
-		}
-	}
+	KillThreads( false, true, true );
 
 	// stop player
 	m_Player->Stop();
@@ -2575,3 +2560,14 @@ void CMainFrame::OnLibrarySynchronizedirectoriesnow()
 
 ///////////////////////////////////////////////////
 
+
+BOOL CMainFrame::PreTranslateMessage(MSG* pMsg)
+{
+	if ( pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_ESCAPE && GetThreadCount() )
+	{
+		KillThreads( false, true, true );
+		return true;
+	}
+
+	return CFrameWnd::PreTranslateMessage(pMsg);
+}

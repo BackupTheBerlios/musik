@@ -224,7 +224,7 @@ BOOL CmusikDirSync::PreTranslateMessage(MSG* pMsg)
 	if ( pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_ESCAPE )
 	{
 		OnClose();
-		return true;
+		return TRUE;
 	}
 
 	return CDialog::PreTranslateMessage(pMsg);
