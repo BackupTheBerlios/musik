@@ -877,8 +877,11 @@ void CPlaylistCtrl::Update( bool bSelFirst, bool  bRescaleColumns)
 		g_PlaylistInfoCtrl->Update();
 }
 
-void CPlaylistCtrl::RescaleColumns()
+void CPlaylistCtrl::RescaleColumns( bool bFreeze )
 {
+	if ( bFreeze )
+		Freeze();
+
 	if ( g_DisablePlacement )
 		return;
 
@@ -990,7 +993,10 @@ void CPlaylistCtrl::RescaleColumns()
 	//-------------------------------------------------//
 	//--- make sure window is properly refreshed.	---//
 	//-------------------------------------------------//
-	Refresh();
+	if ( bFreeze )
+		Thaw();
+
+	Refresh( false );
 }
 
 void CPlaylistCtrl::ResetColumns( bool update, bool rescale )

@@ -103,7 +103,7 @@ public:
 	//--------------//
 	void ResynchItem		( int item, int lastitem = -1, bool refreshonly = true );
 	void Update				( bool bSelFirstItem = true,bool  bRescaleColumns = true );
-	void RescaleColumns		( );
+	void RescaleColumns		( bool bFreeze = true );
 	void ResetColumns		( bool update = false, bool rescale = false );
 	void RateSel			( int nVal );
 	void EditTag			( int i );
