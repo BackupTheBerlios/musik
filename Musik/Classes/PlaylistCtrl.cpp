@@ -221,12 +221,12 @@ CPlaylistCtrl::CPlaylistCtrl( wxWindow *parent, const wxWindowID id, const wxPoi
 
 	//--- tag edit menu ---//
 	playlist_context_edit_tag_menu = new wxMenu;
-	playlist_context_edit_tag_menu->Append( MUSIK_PLAYLIST_CONTEXT_TAG_TITLE,		_( "Title\tF2" ) );
-	playlist_context_edit_tag_menu->Append( MUSIK_PLAYLIST_CONTEXT_TAG_TRACKNUM,	_( "Track Number\tF3" ) );
-	playlist_context_edit_tag_menu->Append( MUSIK_PLAYLIST_CONTEXT_TAG_ARTIST,		_( "Artist\tF4" ) );
-	playlist_context_edit_tag_menu->Append( MUSIK_PLAYLIST_CONTEXT_TAG_ALBUM,		_( "Album\tF5" ) );
-	playlist_context_edit_tag_menu->Append( MUSIK_PLAYLIST_CONTEXT_TAG_GENRE,		_( "Genre\tF6" ) );
-	playlist_context_edit_tag_menu->Append( MUSIK_PLAYLIST_CONTEXT_TAG_YEAR,		_( "Year\tF7" ) );
+	playlist_context_edit_tag_menu->Append( MUSIK_PLAYLIST_CONTEXT_TAG_TITLE,		_( "Edit Title\tF2" ) );
+	playlist_context_edit_tag_menu->Append( MUSIK_PLAYLIST_CONTEXT_TAG_TRACKNUM,	_( "Edit Track Number\tF3" ) );
+	playlist_context_edit_tag_menu->Append( MUSIK_PLAYLIST_CONTEXT_TAG_ARTIST,		_( "Edit Artist\tF4" ) );
+	playlist_context_edit_tag_menu->Append( MUSIK_PLAYLIST_CONTEXT_TAG_ALBUM,		_( "Edit Album\tF5" ) );
+	playlist_context_edit_tag_menu->Append( MUSIK_PLAYLIST_CONTEXT_TAG_GENRE,		_( "Edit Genre\tF6" ) );
+	playlist_context_edit_tag_menu->Append( MUSIK_PLAYLIST_CONTEXT_TAG_YEAR,		_( "Edit Year\tF7" ) );
 	playlist_context_edit_tag_menu->AppendSeparator();
 	playlist_context_edit_tag_menu->Append( MUSIK_PLAYLIST_CONTEXT_RENAME_FILES,	_( "&Auto Rename" ) );
 	playlist_context_edit_tag_menu->Append( MUSIK_PLAYLIST_CONTEXT_RETAG_FILES,		_( "A&uto Retag" ) );
@@ -239,21 +239,21 @@ CPlaylistCtrl::CPlaylistCtrl( wxWindow *parent, const wxWindowID id, const wxPoi
 
 	//--- columns context menu ---//
 	playlist_context_display_menu = new wxMenu;
-	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_RATING,		_( "Rating" ),			wxT( "" ), wxITEM_CHECK );
-	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_TRACK,		_( "Track" ),			wxT( "" ), wxITEM_CHECK );
-	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_TITLE,		_( "Title" ),			wxT( "" ), wxITEM_CHECK );
-	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_ARTIST,		_( "Artist" ),			wxT( "" ), wxITEM_CHECK );
-	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_ALBUM,		_( "Album" ),			wxT( "" ), wxITEM_CHECK );
-	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_YEAR,			_( "Year" ),			wxT( "" ), wxITEM_CHECK );
-	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_GENRE,		_( "Genre" ),			wxT( "" ), wxITEM_CHECK );
-	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_TIMES_PLAYED,	_( "Times Played" ),	wxT( "" ), wxITEM_CHECK );
-	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_LAST_PLAYED,	_( "Last Played" ),		wxT( "" ), wxITEM_CHECK );
-	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_TIME,			_( "Time" ),			wxT( "" ), wxITEM_CHECK );
-	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_BITRATE,		_( "Bitrate" ),			wxT( "" ), wxITEM_CHECK );
-	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_FILENAME,		_( "Filename" ),		wxT( "" ), wxITEM_CHECK );
+	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_RATING,		_( "Rating" ) );
+	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_TRACK,		_( "Track" ) );
+	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_TITLE,		_( "Title" ) );
+	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_ARTIST,		_( "Artist" ));
+	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_ALBUM,		_( "Album" ) );
+	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_YEAR,			_( "Year" ) );
+	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_GENRE,		_( "Genre" ) );
+	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_TIMES_PLAYED,	_( "Times Played" ) );
+	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_LAST_PLAYED,	_( "Last Played" ));
+	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_TIME,			_( "Time" ) );
+	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_BITRATE,		_( "Bitrate" ) );
+	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_FILENAME,		_( "Filename" ) );
 	playlist_context_display_menu->AppendSeparator();
-	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_FIT,			_( "Fit Columns" ),		wxT( "" ), wxITEM_CHECK );
-	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_SMART,		_( "No Horizontal Scroll" ),	wxT( "" ), wxITEM_CHECK );
+	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_FIT,			_( "Fit Columns" ) );
+	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_SMART,		_( "No Horizontal Scroll" ) );
 
 	//--- main context menu ---//
 	playlist_context_menu = new wxMenu;
@@ -408,50 +408,52 @@ void CPlaylistCtrl::ShowMenu( wxCommandEvent& WXUNUSED(event) )
 
 void CPlaylistCtrl::OnDisplayMenu( wxCommandEvent& event )
 {
-	if ( event.GetId() != MUSIK_PLAYLIST_DISPLAY_FIT )
-		playlist_context_display_menu->Check( event.GetId(), !event.IsChecked() );
-
+  int nColumn = -1;
 	switch ( event.GetId() )
 	{
 	case MUSIK_PLAYLIST_DISPLAY_FIT:
 		RescaleColumns( true, false, true );
 		break;
 	case MUSIK_PLAYLIST_DISPLAY_RATING:
-		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_RATING] = !event.IsChecked();
+		nColumn = PLAYLISTCOLUMN_RATING;
 		break;
 	case MUSIK_PLAYLIST_DISPLAY_TRACK:
-		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TRACK] = !event.IsChecked();
+		nColumn = PLAYLISTCOLUMN_TRACK;
 		break;
 	case MUSIK_PLAYLIST_DISPLAY_TITLE:
-		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TITLE] = !event.IsChecked();
+		nColumn = PLAYLISTCOLUMN_TITLE;
 		break;
 	case MUSIK_PLAYLIST_DISPLAY_ARTIST:
-		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_ARTIST] = !event.IsChecked();
+		nColumn = PLAYLISTCOLUMN_ARTIST;
 		break;
 	case MUSIK_PLAYLIST_DISPLAY_ALBUM:
-		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_ALBUM] = !event.IsChecked();
+		nColumn = PLAYLISTCOLUMN_ALBUM;
 		break;
 	case MUSIK_PLAYLIST_DISPLAY_YEAR:
-		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_YEAR] = !event.IsChecked();
+		nColumn = PLAYLISTCOLUMN_YEAR;
 		break;
 	case MUSIK_PLAYLIST_DISPLAY_GENRE:
-		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_GENRE] = !event.IsChecked();
+		nColumn = PLAYLISTCOLUMN_GENRE;
 		break;
 	case MUSIK_PLAYLIST_DISPLAY_TIMES_PLAYED:
-		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TIMES_PLAYED] = !event.IsChecked();
+		nColumn = PLAYLISTCOLUMN_TIMES_PLAYED;
 		break;
 	case MUSIK_PLAYLIST_DISPLAY_LAST_PLAYED:
-		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_LAST_PLAYED] = !event.IsChecked();
+		nColumn = PLAYLISTCOLUMN_LAST_PLAYED;
 		break;
 	case MUSIK_PLAYLIST_DISPLAY_TIME:
-		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TIME] = !event.IsChecked();
+		nColumn = PLAYLISTCOLUMN_TIME;
 		break;
 	case MUSIK_PLAYLIST_DISPLAY_BITRATE:
-		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_BITRATE] = !event.IsChecked();
+		nColumn = PLAYLISTCOLUMN_BITRATE;
 		break;
 	case MUSIK_PLAYLIST_DISPLAY_FILENAME:
-		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_FILENAME] = !event.IsChecked();
+		nColumn = PLAYLISTCOLUMN_FILENAME;
 		break;
+	}
+	if( nColumn > -1)
+	{
+		g_Prefs.nPlaylistColumnEnable[nColumn] = !g_Prefs.nPlaylistColumnEnable[nColumn];
 	}
 	ResetColumns( false, true );
 }
