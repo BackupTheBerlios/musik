@@ -182,6 +182,16 @@
 						RelativePath=".\src\MusikSourcesCtrl.h">
 					</File>
 				</Filter>
+				<Filter
+					Name="PlaylistCtrl"
+					Filter="">
+					<File
+						RelativePath=".\src\MusikPlaylistCtrl.cpp">
+					</File>
+					<File
+						RelativePath=".\src\MusikPlaylistCtrl.h">
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="SelectionAreaCtrl"
