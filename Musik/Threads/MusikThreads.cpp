@@ -42,15 +42,17 @@ MusikFaderThread::MusikFaderThread()
 
 void MusikFaderThread::CrossfaderAbort()
 {
-	wxCriticalSectionLocker locker( m_critCrossfader) ;
-	if ( pCrossfader )
 	{
-		//---------------------------------------------------------//
-		//--- Abort() tells fader NOT to clean up old streams	---//
-		//---------------------------------------------------------//
-		pCrossfader->Abort();		
-		CrossfaderStop();
+		wxCriticalSectionLocker locker( m_critCrossfader) ;
+		if ( pCrossfader )
+		{
+			//---------------------------------------------------------//
+			//--- Abort() tells fader NOT to clean up old streams	---//
+			//---------------------------------------------------------//
+			pCrossfader->Abort();		
+		}
 	}
+	CrossfaderStop();
 }
 
 void MusikFaderThread::CrossfaderStop()

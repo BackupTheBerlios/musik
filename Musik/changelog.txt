@@ -1,3 +1,13 @@
+0.3.0.1 to 0.3.0.2
+- fix bug with TaskBArIcon on linux. the way i did implement worked only
+  okay on windows. the new way works on both linux and windows( taskbaricon
+  no longer stays alive if app is closed)
+- workaround for bug (??) in wxGTK. wxCriticalSection is implemented there
+  as a non-recursive mutex, this lead to an unusable linux build(0.3.0.1), because
+  the app got locked up as soon as you tried to play something
+- workaorund for a bug in the datetime functions of wxwidgets, so date
+  queries do now work on linux too. (see some example playlist in contrib
+  dir of src distribution)
 0.3.0 to 0.3.0.1
 - fixed installation of prepacked radio channels and dynamic playlists on win9x
 + sorting order is now kept if selection in the selection boxes are made.

@@ -22,6 +22,33 @@
 #include "../Threads/MusikThreads.h"
 
 #include <wx/socket.h>
+#ifdef wxHAS_TASK_BAR_ICON
+#include "wx/taskbar.h"
+
+class MusikTaskBarIcon: public wxTaskBarIcon
+{
+public:
+	MusikTaskBarIcon(wxFrame * frame) {m_pFrame = frame;};
+
+	void RestoreFrame();
+    void OnRButtonUp(wxEvent&);
+    void OnLButtonDClick(wxEvent&);
+    void OnMenuRestore(wxCommandEvent&);
+    void OnMenuHide(wxCommandEvent&);
+    void OnMenuPlayPause(wxCommandEvent&);
+    void OnMenuPrev(wxCommandEvent&);
+    void OnMenuNext(wxCommandEvent&);
+    void OnMenuStop(wxCommandEvent&);
+    void OnMenuExit(wxCommandEvent&);
+    void OnMenuSetNewIcon(wxCommandEvent&);
+
+DECLARE_EVENT_TABLE()
+
+private:
+	wxFrame *m_pFrame;
+};
+
+#endif
 
 class MusikFrame : public wxFrame
 {
@@ -157,7 +184,9 @@ protected:
     	long MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam);
 #endif
 private:
-	
+#ifdef wxHAS_TASK_BAR_ICON
+	MusikTaskBarIcon* m_pTaskBarIcon;
+#endif
 	//--- threads and thread related ---//
 	int m_Progress;
 	int m_ProgressType;

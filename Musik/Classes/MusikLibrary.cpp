@@ -171,7 +171,7 @@ void CMusikLibrary::CreateDBFuncs()
 	{ "count",  1, SQLITE_NUMERIC, countStep,    countFinalize  },
 	};
 	*/
-	int i;
+	size_t i;
 
 	for(i=0; i<sizeof(aFuncs)/sizeof(aFuncs[0]); i++)
 	{
@@ -191,7 +191,6 @@ void CMusikLibrary::CreateDBFuncs()
 }
 void CMusikLibrary::remprefixFunc(sqlite_func *context, int argc, const char **argv)
 {
-	int i;
 	if( argc<1 || argv[0]==0 ) return;
 //	char * pPrefixArray[] = sqlite_user_data(context);
 	static const char * pPrefixArray[] =
@@ -202,7 +201,7 @@ void CMusikLibrary::remprefixFunc(sqlite_func *context, int argc, const char **a
 						"Das ",
 					};
 	int argvlen = strlen(argv[0]);
-	for(i=0; i<sizeof(pPrefixArray)/sizeof(pPrefixArray[0]); i++)
+	for(size_t i=0; i<sizeof(pPrefixArray)/sizeof(pPrefixArray[0]); i++)
 	{
 		int prefixlen = strlen(pPrefixArray[i]);
 		if(strncasecmp(pPrefixArray[i],argv[0],prefixlen) == 0)
@@ -219,11 +218,20 @@ void CMusikLibrary::remprefixFunc(sqlite_func *context, int argc, const char **a
 void CMusikLibrary::wxjuliandayFunc(sqlite_func *context, int argc, const char **argv)
 {
   if( argc<1 || argv[0]==0 ) return;
+#ifdef __WXMSW__
   wxDateTime x;
   if( x.ParseFormat(ConvA2W(argv[0])))
   {
     sqlite_set_result_double(context, x.GetJulianDayNumber());
   }
+#else
+  struct tm tm;
+  const char *result = strptime(argv[0], "%c", &tm);
+  if ( !result )
+        return;
+  wxDateTime x(tm);
+  sqlite_set_result_double(context, x.GetJulianDayNumber());
+#endif
 }
 //---  if true, compares the full path, if false, just looks for the filename itself   ---//
 //--- obviously the filename you pass will either be full or just filename accordingly ---//
@@ -958,7 +966,7 @@ double CMusikLibrary::GetTotalPlaylistSize()
 	
 	sQuery = wxT("select sum(filesize) from songs where filename in (");
 
-	int count = g_Playlist.GetCount();
+	size_t count = g_Playlist.GetCount();
 	if ( count < 1 )
 		return 0.0;
 

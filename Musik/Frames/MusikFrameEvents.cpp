@@ -95,7 +95,7 @@ void MusikFrame::OnIconize( wxIconizeEvent& event )
 	if(event.Iconized())
 	{
 		Show(FALSE);
-		wxGetApp().TaskBarIcon.SetIcon(wxIcon(tray_xpm), GetTitle());
+//		m_pTaskBarIcon->SetIcon(wxIcon(tray_xpm), GetTitle());
 	}
 	event.Skip(FALSE);
 #endif

@@ -27,107 +27,7 @@ IMPLEMENT_APP( MusikApp )
 #include "MusikGlobals.h"
 #include "MusikUtils.h"
 
-#ifdef wxHAS_TASK_BAR_ICON
-enum {
-    PU_RESTORE = 11101,
-    PU_HIDE ,
-    PU_PLAYPAUSE,
-	PU_PREV,
-	PU_NEXT,
-	PU_STOP,
-    PU_EXIT,
-};
 
-
-BEGIN_EVENT_TABLE(MusikTaskBarIcon, wxTaskBarIcon)
-    EVT_MENU(PU_RESTORE,	MusikTaskBarIcon::OnMenuRestore)
-    EVT_MENU(PU_HIDE,		MusikTaskBarIcon::OnMenuHide)
-    EVT_MENU(PU_PLAYPAUSE,	MusikTaskBarIcon::OnMenuPlayPause)
-    EVT_MENU(PU_PREV,	MusikTaskBarIcon::OnMenuPrev)
-    EVT_MENU(PU_NEXT,	MusikTaskBarIcon::OnMenuNext)
-    EVT_MENU(PU_STOP,	MusikTaskBarIcon::OnMenuStop)
-
-    EVT_MENU(PU_EXIT,		MusikTaskBarIcon::OnMenuExit)
-    EVT_TASKBAR_RIGHT_UP     (MusikTaskBarIcon::OnRButtonUp)
-    EVT_TASKBAR_LEFT_DCLICK  (MusikTaskBarIcon::OnLButtonDClick)
-END_EVENT_TABLE()
-
-void MusikTaskBarIcon::RestoreFrame()
-{
-	m_pFrame->Show(TRUE);
-	//RemoveIcon();
-}
-void MusikTaskBarIcon::OnMenuRestore(wxCommandEvent& )
-{
-	RestoreFrame(); 
-}
-void MusikTaskBarIcon::OnMenuHide(wxCommandEvent& )
-{
-	m_pFrame->Show(FALSE);
-}
-void MusikTaskBarIcon::OnMenuPlayPause(wxCommandEvent& )
-{
-	g_Player.PlayPause();
-}
-void MusikTaskBarIcon::OnMenuPrev(wxCommandEvent& )
-{
-	g_Player.PrevSong();
-}
-void MusikTaskBarIcon::OnMenuNext(wxCommandEvent& )
-{
-	g_Player.NextSong();
-}
-void MusikTaskBarIcon::OnMenuStop(wxCommandEvent& )
-{
-	g_Player.Stop();
-}
-
-void MusikTaskBarIcon::OnMenuExit(wxCommandEvent& )
-{
-    m_pFrame->Close(TRUE);
-
-    // Nudge wxWindows into destroying the dialog, since
-    // with a hidden window no messages will get sent to put
-    // it into idle processing.
-    wxTheApp->ProcessIdle();
-}
-
-
-
-// Overridables
-void MusikTaskBarIcon::OnRButtonUp(wxEvent&)
-{
-    wxMenu      menu;
-
-	if(!m_pFrame->IsShown())
-	    menu.Append(PU_RESTORE, _("&Restore wxMusik"));
-	else
-		menu.Append(PU_HIDE, _("&Hide wxMusik"));
-	menu.AppendSeparator();
-
-	if ( g_Player.IsPlaying() && !g_Player.IsPaused() )
-		menu.Append(PU_PLAYPAUSE, _("&Pause"));
-	else if ( g_Player.IsPlaying() && g_Player.IsPaused() )
-		menu.Append(PU_PLAYPAUSE, _("&Resume"));
-	else if ( !g_Player.IsPlaying() )
-		menu.Append(PU_PLAYPAUSE, _("&Play"));
-	menu.Append(PU_PREV, _("&Previous"));
-	menu.Append(PU_NEXT, _("&Next"));
-	if ( g_Player.IsPlaying() )
-		menu.Append(PU_STOP, _("&Stop"));
-	menu.AppendSeparator();
-
-    menu.Append(PU_EXIT,    _("E&xit"));
-
-    PopupMenu(&menu);
-}
-
-void MusikTaskBarIcon::OnLButtonDClick(wxEvent&)
-{
-    RestoreFrame();
-}
-
-#endif //#ifdef wxHAS_TASK_BAR_ICON
 bool MusikApp::OnInit()
 {
 	g_FirstRun = true;
@@ -227,14 +127,13 @@ bool MusikApp::OnInit()
 		pMain->SetSize( Size );
 		pMain->Center();
 	}
-#ifdef wxHAS_TASK_BAR_ICON
-	TaskBarIcon.SetFrame(pMain);
-#endif
+
 	pMain->SetTitle( MUSIKAPPNAME_VERSION );
 	pMain->SetMenuBar( menu_bar );
 	pMain->Show(TRUE);
 
 	SetTopWindow( pMain );
+
 
 	//--- start webserver if necessary ---//
 	if ( g_Prefs.nWebServerEnable )

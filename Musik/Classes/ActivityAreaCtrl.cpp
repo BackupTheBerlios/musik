@@ -519,3 +519,4 @@ void CActivityAreaCtrl::OnSize( wxSizeEvent& event )
 	m_pPanel->Layout();
 	
 }
+
