@@ -174,6 +174,7 @@ void MusikCrossfaderThread::SetStopPlayer()
 void *MusikCrossfaderThread::Entry()
 {
 	m_Parent->SetCrossfaderActive();
+	wxMutexLocker locker( protectingStreamArrays );
 
 	//-------------------------------------------------//
 	//--- if the fade duration * 2 (fade in and		---//

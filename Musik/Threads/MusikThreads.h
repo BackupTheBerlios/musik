@@ -72,6 +72,7 @@ public:
 	virtual void *Entry();
 	virtual void OnExit();
 private:
+	wxMutex protectingStreamArrays;
 	MusikFaderThread *m_Parent;
 	bool m_StopPlayer;
 	bool m_Aborted;
