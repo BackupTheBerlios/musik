@@ -43,8 +43,8 @@ int CMusikSourcesCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	pMusikiPod->SetLabelText( _T( "iPod" ) );
 
 	CPropTreeItem* pMusikZen;
-	pMusikiPod = InsertItem( new CPropTreeItem(), pSourcesRoot );
-	pMusikiPod->SetLabelText( _T( "Zen" ) );
+	pMusikZen = InsertItem( new CPropTreeItem(), pSourcesRoot );
+	pMusikZen->SetLabelText( _T( "Zen" ) );
 
 	CPropTreeItem* pStandardRoot;
 	pStandardRoot = InsertItem( new CPropTreeItem() );
