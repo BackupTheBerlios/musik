@@ -504,7 +504,7 @@ void CMusikPlaylistCtrl::OnLvnItemActivate(NMHDR *pNMHDR, LRESULT *pResult)
 	
 	// give the current playlist to the player,
 	// unless the player already owns it.
-	if ( m_Changed && m_PlaylistType != MUSIK_SOURCES_TYPE_NOWPLAYING )
+	if ( m_Changed )
 		GivePlaylistToPlayer();		
 
 	m_Player->Play( pNMIA->iItem, MUSIK_CROSSFADER_NEW_SONG );
@@ -512,17 +512,19 @@ void CMusikPlaylistCtrl::OnLvnItemActivate(NMHDR *pNMHDR, LRESULT *pResult)
 	*pResult = 0;
 }
 
+///////////////////////////////////////////////////
+
 void CMusikPlaylistCtrl::GivePlaylistToPlayer()
 {
-	// clear out the old CMusikPlayer's
-	// now playing... this will physically
-	// delete the old playlist
-	m_Player->CleanPlaylist();
-
-	// send the player a copy of the new
-	// playlist...
-	m_Player->SetPlaylist( new CMusikPlaylist() );
-	*m_Player->GetPlaylist() = *m_Playlist;
+	// if the type was now playing, then we don't
+	// need to post any messages to clean up
+	// the playlist... as its just a pointer to
+	// the player's internal playlist -- which 
+	// itself, not an object. 
+	m_Player->SetPlaylist( m_Playlist );
+	
+	int WM_PLAYERNEWPLAYLIST = RegisterWindowMessage( "PLAYERNEWPLAYLIST" );
+	m_MainWnd->SendMessage( WM_PLAYERNEWPLAYLIST, (WPARAM)m_PlaylistType );
 
 	// playlist is now updated, so flag
 	// it as unchanged

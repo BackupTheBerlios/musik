@@ -74,6 +74,11 @@ private:
 	// its created here...
 	CMusikDir m_Dir;
 
+	// startup bool, if true on startup
+	// the library will be selected by
+	// default...
+	bool m_Startup;
+
 	// stuff relating to the core
 	CMusikPlayer* m_Player;
 
@@ -81,6 +86,8 @@ private:
 	CMusikSourcesItemPtrArray m_Libraries;
 	CMusikSourcesItemPtrArray m_StdPlaylists;
 	CMusikSourcesItemPtrArray m_DynPlaylists;
+public:
+	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 };
 
 ///////////////////////////////////////////////////

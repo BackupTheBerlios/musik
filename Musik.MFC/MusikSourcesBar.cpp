@@ -115,6 +115,8 @@ void CMusikSourcesBar::OnItemChanged( NMHDR* pNotifyStruct, LRESULT* plResult )
 			m_Parent->SendMessage( WM_SOURCESDYNPLAYLIST, NULL );
 		}
 	}
+	else
+		GetCtrl()->FocusLibrary();
 
 	*plResult = 0;
 }

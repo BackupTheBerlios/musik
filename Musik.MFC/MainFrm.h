@@ -124,7 +124,9 @@ protected:
 
 	// current playlist, only a pointer
 	CMusikPlaylist* m_LibPlaylist;
-	CMusikPlaylist* m_CurPlaylist;
+	CMusikPlaylist* m_StdPlaylist;
+	CMusikPlaylist* m_DynPlaylist;
+	CMusikPlaylist* m_NowPlaylist;
 
 	// library, player, and prefs
 	CMusikLibrary* m_Library;
@@ -160,8 +162,8 @@ protected:
 	afx_msg LRESULT OnSourcesDynPlaylist( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnDragStart(  WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnDragEnd(  WPARAM wParam, LPARAM lParam );
-	afx_msg LRESULT OnNewPlaylistOwner( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSelBoxesReset( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnPlayerNewPlaylist( WPARAM wParam, LPARAM lParam );
 
 	// mfc message maps
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);

@@ -490,8 +490,6 @@ void CMusikPropTree::EnsureVisible(CMusikPropTreeItem* pItem)
 		UpdateWindow();
 	}
 
-	ASSERT(IsItemVisible(pItem));
-
 	CRect rc;
 
 	GetClientRect(rc);
