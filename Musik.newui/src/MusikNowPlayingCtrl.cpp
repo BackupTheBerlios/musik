@@ -34,20 +34,20 @@ CMusikNowPlayingCtrl::CMusikNowPlayingCtrl( wxWindow *parent, wxWindowID id )
 	//-----------------------------------------//
 	//--- controls							---//
 	//-----------------------------------------//
-	pLeftPanel		= new wxPanel( this );
-	pRightPanel		= new wxPanel( this );
+	m_LeftPanel		= new wxPanel( this );
+	m_RightPanel	= new wxPanel( this );
 
-	m_stSong		= new wxStaticText( pLeftPanel, -1, _( "" ),	wxPoint( 0, 0 ), wxSize( 0, 0 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
-	m_stArtist		= new wxStaticText( pLeftPanel, -1, _( "" ),	wxPoint( 0, 0 ), wxSize( 0, 0 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
-	m_stCurtime		= new wxStaticText( pLeftPanel, -1, _( "" ),	wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );	
+	m_stSong		= new wxStaticText( m_LeftPanel, -1, _( "" ),	wxPoint( 0, 0 ), wxSize( 0, 0 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
+	m_stArtist		= new wxStaticText( m_LeftPanel, -1, _( "" ),	wxPoint( 0, 0 ), wxSize( 0, 0 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
+	m_stCurtime		= new wxStaticText( m_LeftPanel, -1, _( "" ),	wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );	
 
-	m_btnPrev		= new wxBitmapButton( pRightPanel, MUSIK_NOWPLAYINGCTRL_PREV,		m_bmPrev,	wxPoint( -1, -1 ), wxSize( 40, 20 ), 0 );
-	m_btnNext		= new wxBitmapButton( pRightPanel, MUSIK_NOWPLAYINGCTRL_NEXT,		m_bmNext,	wxPoint( -1, -1 ), wxSize( 40, 20 ), 0 );
-	m_btnPlayPause	= new wxBitmapButton( pRightPanel, MUSIK_NOWPLAYINGCTRL_PLAYPAUSE,	m_bmPlay,	wxPoint( -1, -1 ), wxSize( 40, 20 ), 0 );	
-	m_btnStop		= new wxBitmapButton( pRightPanel, MUSIK_NOWPLAYINGCTRL_STOP,		m_bmStop,	wxPoint( -1, -1 ), wxSize( 40, 20 ), 0 );
-	m_btnVolume		= new wxBitmapButton( pRightPanel, MUSIK_NOWPLAYINGCTRL_VOLUME,		m_bmVolume,	wxPoint( -1, -1 ), wxSize( 40, 20 ), 0 );
+	m_btnPrev		= new wxBitmapButton( m_RightPanel, MUSIK_NOWPLAYINGCTRL_PREV,			m_bmPrev,	wxPoint( -1, -1 ), wxSize( 40, 20 ), 0 );
+	m_btnNext		= new wxBitmapButton( m_RightPanel, MUSIK_NOWPLAYINGCTRL_NEXT,			m_bmNext,	wxPoint( -1, -1 ), wxSize( 40, 20 ), 0 );
+	m_btnPlayPause	= new wxBitmapButton( m_RightPanel, MUSIK_NOWPLAYINGCTRL_PLAYPAUSE,		m_bmPlay,	wxPoint( -1, -1 ), wxSize( 40, 20 ), 0 );	
+	m_btnStop		= new wxBitmapButton( m_RightPanel, MUSIK_NOWPLAYINGCTRL_STOP,			m_bmStop,	wxPoint( -1, -1 ), wxSize( 40, 20 ), 0 );
+	m_btnVolume		= new wxBitmapButton( m_RightPanel, MUSIK_NOWPLAYINGCTRL_VOLUME,		m_bmVolume,	wxPoint( -1, -1 ), wxSize( 40, 20 ), 0 );
 
-	m_Seek			= new wxGauge( pRightPanel, -1, 100, wxPoint( 0, 0 ), wxSize( 200, wxSystemSettings::GetMetric( wxSYS_HSCROLL_Y ) ), wxGA_SMOOTH | wxGA_HORIZONTAL | wxCLIP_CHILDREN );
+	m_Seek			= new wxGauge( m_RightPanel, -1, 100, wxPoint( 0, 0 ), wxSize( 200, wxSystemSettings::GetMetric( wxSYS_HSCROLL_Y ) ), wxGA_SMOOTH | wxGA_HORIZONTAL | wxCLIP_CHILDREN );
 
 	//-----------------------------------------//
 	//--- set fonts							---//
@@ -56,40 +56,50 @@ CMusikNowPlayingCtrl::CMusikNowPlayingCtrl( wxWindow *parent, wxWindowID id )
 	m_stArtist->SetFont		( m_fntArtist );
 	m_stCurtime->SetFont	( m_fntTime );
 
-	//---------------------------------//
-	//--- sizer for artist and time ---//
-	//---------------------------------//
-	hsArtistTime = new wxBoxSizer( wxHORIZONTAL );
-	hsArtistTime->Add( m_stArtist, 0, wxADJUST_MINSIZE | wxALIGN_CENTRE_VERTICAL );
-	hsArtistTime->Add( m_stCurtime, 0, wxADJUST_MINSIZE | wxALIGN_CENTRE_VERTICAL );
+	//-----------------------------------------//
+	//--- sizer for artist and time			---//
+	//-----------------------------------------//
+	m_ArtistSizer = new wxBoxSizer( wxHORIZONTAL );
+	m_ArtistSizer->Add( m_stArtist, 0, wxADJUST_MINSIZE | wxALIGN_CENTRE_VERTICAL );
+	m_ArtistSizer->Add( m_stCurtime, 0, wxADJUST_MINSIZE | wxALIGN_CENTRE_VERTICAL );
 
-	//--- song title, artist and time ---//
-	vsLeftCol = new wxBoxSizer( wxVERTICAL );
-	vsLeftCol->Add( m_stSong, 0, wxADJUST_MINSIZE | wxBOTTOM, 4 );
-	vsLeftCol->Add( hsArtistTime, 0, wxEXPAND );
+	//-----------------------------------------//
+	//--- sizer for buttons and gauge		---//
+	//-----------------------------------------//
+	m_ButtonSizer = new wxBoxSizer( wxHORIZONTAL );
+	m_ButtonSizer->Add( m_btnPrev );
+	m_ButtonSizer->Add( m_btnPlayPause );
+	m_ButtonSizer->Add( m_btnStop );
+	m_ButtonSizer->Add( m_btnNext );
+	m_ButtonSizer->Add( m_btnVolume );
 
-	pLeftPanel->SetSizerAndFit( vsLeftCol );
+	//-----------------------------------------//
+	//--- sizer for left side				---//
+	//-----------------------------------------//
+	m_LeftSizer = new wxBoxSizer( wxVERTICAL );
+	m_LeftSizer->Add( m_stSong, 0, wxADJUST_MINSIZE | wxBOTTOM, 4 );
+	m_LeftSizer->Add( m_ArtistSizer, 0, wxEXPAND );
 
-	//--- buttons, seek bar panel ---//
-	hsButtons = new wxBoxSizer( wxHORIZONTAL );
-	hsButtons->Add( m_btnPrev );
-	hsButtons->Add( m_btnPlayPause );
-	hsButtons->Add( m_btnStop );
-	hsButtons->Add( m_btnNext );
-	hsButtons->Add( m_btnVolume );
+	m_LeftPanel->SetSizerAndFit( m_LeftSizer );
 
-	vsRightCol = new wxBoxSizer( wxVERTICAL );
-	vsRightCol->Add( hsButtons, 0 );
-	vsRightCol->Add( m_Seek, 0, wxTOP, 2 ); //-- small top border --//
+	//-----------------------------------------//
+	//--- sizer for right side				---//
+	//-----------------------------------------//
+	m_RightSizer = new wxBoxSizer( wxVERTICAL );
+	m_RightSizer->Add( m_ButtonSizer, 0, wxBOTTOM, 4 );
+	m_RightSizer->Add( m_Seek, 0 );
 
-	pRightPanel->SetSizerAndFit( vsRightCol );
+	m_RightPanel->SetSizerAndFit( m_RightSizer );
 
-	hsCols = new wxBoxSizer( wxHORIZONTAL );
-	hsCols->Add( pLeftPanel,	0, wxADJUST_MINSIZE | wxALL, 2	);
-	hsCols->Add( 0, 0,			1, wxEXPAND);
-	hsCols->Add( pRightPanel,	0, wxEXPAND | wxALL, 2	);
+	//-----------------------------------------//
+    //--- main sizer						---//
+	//-----------------------------------------//
+	m_MainSizer = new wxBoxSizer( wxHORIZONTAL );
+	m_MainSizer->Add( m_LeftPanel,	0, wxADJUST_MINSIZE | wxALL, 2	);
+	m_MainSizer->Add( 0, 0,			1, wxEXPAND);
+	m_MainSizer->Add( m_RightPanel,	0, wxEXPAND | wxALL, 2	);
 
-	SetSizerAndFit( hsCols );
+	SetSizerAndFit( m_MainSizer );
 
 	ResetInfo();
 }

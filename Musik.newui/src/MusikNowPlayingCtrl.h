@@ -20,24 +20,14 @@ public:
 
 	void ResetInfo();
 
-
-	//--- left and right panels ---//
-	wxPanel* pLeftPanel;
-	wxPanel* pRightPanel;
-
-	//--- sizers ---//
-	wxBoxSizer	*m_TopSizer;
-	wxBoxSizer	*m_BottomSizer;
-	wxBoxSizer	*m_MainSizer;
-
-	wxBoxSizer *hsArtistTime;
-	wxBoxSizer *vsLeftCol;
-	wxBoxSizer *hsButtons;
-	wxBoxSizer *vsRightCol;
-	wxBoxSizer *hsCols;
-
 	DECLARE_EVENT_TABLE()
 private:
+
+	//---------------------------------//
+	//--- panels					---//
+	//---------------------------------//
+	wxPanel* m_LeftPanel;
+	wxPanel* m_RightPanel;
 
 	//---------------------------------//
 	//--- playback control buttons	---//
@@ -76,6 +66,15 @@ private:
 	wxFont	m_fntSong;
 	wxFont	m_fntArtist;
 	wxFont	m_fntTime;
+
+	//---------------------------------//
+	//--- sizers					---//
+	//---------------------------------//
+	wxBoxSizer* m_ArtistSizer;
+	wxBoxSizer* m_ButtonSizer;
+	wxBoxSizer* m_LeftSizer;
+	wxBoxSizer* m_RightSizer;
+	wxBoxSizer*	m_MainSizer;
 
 	void SetupFonts();
 	void SetupIcons();
