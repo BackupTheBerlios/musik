@@ -46,6 +46,10 @@ protected:
 	// pointer to main frame
 	CFrameWnd* m_Parent;
 
+	// item hover fun
+	virtual void OnNewHoveredItem( int nIndex );
+	CMusikPropTreeItem* FindItemAtIndex( int nIndex );
+
    	// mfc message maps
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);

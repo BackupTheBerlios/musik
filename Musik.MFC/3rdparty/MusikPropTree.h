@@ -96,6 +96,16 @@ typedef struct _NMPROPTREE
 #define PTN_SELCHANGE				(PTN_FIRST-6)
 #define PTN_ITEMEXPANDING			(PTN_FIRST-7)
 #define PTN_PROPCLICK				(PTN_FIRST-8)
+#define PTN_MOUSEOVERNEW			(PTN_FIRST-9)
+
+///////////////////////////////////////////////////
+
+class CMusikTrack
+{
+public:
+	int m_Top;
+	int m_Bottom;
+};
 
 ///////////////////////////////////////////////////
 
@@ -105,6 +115,9 @@ class CMusikPropTree : public CWnd
 	friend class CMusikPropTreeItem;
 
 public:
+
+	// item counter...
+	int m_Count;
 
 	// construct / destruct
 	CMusikPropTree( CMusikPrefs* prefs, CMusikLibrary* library, UINT dropid );
@@ -151,6 +164,12 @@ public:
 	CMusikPropTreeItem* GetVisibleList();
 	const int& GetOrigin();
 	void UpdateResize();
+
+	// mouse tracking
+	bool m_MouseTrack;
+	CMusikTrack m_LastPos;
+	virtual void OnNewHoveredItem( int nIndex );
+	bool m_LockHover;
 
 	// item focus controls
 	CMusikPropTreeItem *FocusFirst();
@@ -241,6 +260,7 @@ protected:
 	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg UINT OnGetDlgCode();
+	afx_msg LRESULT OnMouseLeave(WPARAM wParam, LPARAM lParam);
 
 	// macros
 	DECLARE_MESSAGE_MAP()
@@ -252,6 +272,8 @@ private:
 	static BOOL CALLBACK EnumSelectAll(CMusikPropTree*, CMusikPropTreeItem* pItem, LPARAM lParam);
 	static BOOL CALLBACK EnumMoveAll(CMusikPropTree*, CMusikPropTreeItem* pItem, LPARAM);
 	static BOOL CALLBACK EnumRefreshAll(CMusikPropTree*, CMusikPropTreeItem* pItem, LPARAM);
+public:
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 };
 
 ///////////////////////////////////////////////////

@@ -20,16 +20,12 @@ IMPLEMENT_DYNAMIC( CMusikSourcesCtrl, CMusikPropTree )
 CMusikSourcesCtrl::CMusikSourcesCtrl( CFrameWnd* parent, CMusikLibrary* library, CMusikPlayer* player, CMusikPrefs* prefs, UINT dropid )
 	: CMusikPropTree( prefs, library, dropid )
 {
-	m_DropTarget = new CMusikSourcesDropTarget( this, dropid );
-
+	m_DropTarget		= new CMusikSourcesDropTarget( this, dropid );
 	m_Parent			= parent;
-
 	m_LibrariesRoot		= NULL;
 	m_StdPlaylistRoot	= NULL;
 	m_DynPlaylistRoot	= NULL;
-
 	m_Startup			= true;
-
 	m_Player			= player;
 }
 
@@ -563,8 +559,12 @@ void CMusikSourcesCtrl::OnShowWindow(BOOL bShow, UINT nStatus)
 	}
 }
 
+///////////////////////////////////////////////////
+
 void CMusikSourcesCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
+	m_LockHover = true;
+
 	// user requested playlist deletion
 	if ( nChar == VK_DELETE )
 	{
@@ -594,4 +594,71 @@ void CMusikSourcesCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			}		
 		}
 	}
+
+	m_LockHover = false;
 }
+
+///////////////////////////////////////////////////
+
+// something here breaks if deleting
+// items while moving the mouse... not
+// exactly sure why.
+
+void CMusikSourcesCtrl::OnNewHoveredItem( int nIndex )
+{
+	/*
+	// hover is still locked from OnMouseMove()
+	// its waiting for the function to return 
+	// to unlock...
+	CMusikPropTreeItem* pItem = FindItemAtIndex( nIndex );
+	if ( pItem )
+	{
+		CMusikPropTreeItem* pOldItem = GetHoveredItem();
+		if ( pOldItem )
+			pOldItem->Hover( FALSE );
+
+		pItem->Hover( TRUE );
+		SetHoveredItem( pItem );
+		Invalidate();
+	}
+	*/
+}
+
+///////////////////////////////////////////////////
+
+// something here breaks if deleting
+// items while moving the mouse... not
+// exactly sure why.
+
+CMusikPropTreeItem* CMusikSourcesCtrl::FindItemAtIndex( int nIndex )
+{
+	CMusikPropTreeItem* pItem = NULL;
+
+	// inside library array?
+    for ( size_t i = 0; i < m_Libraries.size(); i++ )
+	{
+		if ( nIndex == ( i + 1 ) )
+			pItem = m_Libraries.at( i );
+	}
+
+	// inside std array?
+    for ( size_t i = 0; i < m_StdPlaylists.size(); i++ )
+	{
+		if ( nIndex == ( i + m_Libraries.size() + 2 ) )
+			pItem = m_StdPlaylists.at( i );
+	}
+
+	// inside dyn array?
+    for ( size_t i = 0; i < m_DynPlaylists.size(); i++ )
+	{
+		if ( nIndex ==  ( i + m_Libraries.size() + m_StdPlaylists.size() + 3 ) )
+			pItem = m_DynPlaylists.at( i );
+	}
+
+	m_LockHover = false;
+
+	return pItem;
+
+}
+
+///////////////////////////////////////////////////

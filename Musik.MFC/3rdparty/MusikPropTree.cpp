@@ -36,6 +36,7 @@
 #include "../MusikPrefs.h"
 
 #include "../MEMDC.H"
+#include ".\musikproptree.h"
 
 ///////////////////////////////////////////////////
 
@@ -95,6 +96,8 @@ BEGIN_MESSAGE_MAP(CMusikPropTree, CWnd)
 	ON_WM_KEYDOWN()
 	ON_WM_GETDLGCODE()
 	ON_WM_VSCROLL()
+	ON_WM_MOUSEMOVE()
+	ON_MESSAGE(WM_MOUSELEAVE, OnMouseLeave)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -112,6 +115,13 @@ CMusikPropTree::CMusikPropTree( CMusikPrefs* prefs, CMusikLibrary* library, UINT
 	// prefs
 	m_Prefs = prefs;
 	m_Library = library;
+
+	// mouse track
+	m_MouseTrack = false;
+	m_LockHover	= false;
+	m_Count = 0;
+	m_LastPos.m_Top = -1;
+	m_LastPos.m_Bottom = -1;
 
 	// dropid
 	m_DropID = dropid;
@@ -362,6 +372,7 @@ void CMusikPropTree::DeleteAllItems()
 	Delete(NULL);
 	UpdatedItems();
 	m_nLastUID = 1; // reset uid counter
+	m_Count = 0;
 }
 
 ///////////////////////////////////////////////////
@@ -381,7 +392,12 @@ void CMusikPropTree::Delete(CMusikPropTreeItem* pItem)
 
 	// passing in a NULL item is the same as calling DeleteAllItems
 	if (!pItem)
+	{
 		pItem = &m_Root;
+		m_Count = 0;
+	}
+	else 
+		m_Count--;
 
 	// delete children
 
@@ -539,10 +555,11 @@ CMusikPropTreeItem* CMusikPropTree::InsertItem(CMusikPropTreeItem* pItem, CMusik
 	pItem->SetCtrlID(m_nLastUID++);
 
 	SendNotify(PTN_INSERTITEM, pItem);
-
 	UpdatedItems();
+	m_Count++;
 
 	return pItem;
+
 }
 
 ///////////////////////////////////////////////////
@@ -1272,5 +1289,84 @@ void CMusikPropTree::CheckVisibleFocus()
 
 ///////////////////////////////////////////////////
 
+void CMusikPropTree::OnMouseMove(UINT nFlags, CPoint point)
+{
+	if ( m_LockHover )
+		return;
 
+	m_LockHover = true;
 
+	if ( !m_MouseTrack )
+	{
+		TRACKMOUSEEVENT tme;
+		tme.cbSize = sizeof( tme );
+		tme.dwFlags = TME_LEAVE;
+		tme.hwndTrack = m_hWnd;
+		tme.dwHoverTime = HOVER_DEFAULT;
+		::_TrackMouseEvent( &tme );
+
+		m_MouseTrack = true;
+	}
+
+	const int nTotal = PROPTREEITEM_DEFHEIGHT * ( m_Count );
+	int nItemPos = -1;
+
+	// see if a mouse is over a new item...
+	if ( ( point.y > m_LastPos.m_Top && point.y <= nTotal )		|| 
+		( point.y < m_LastPos.m_Top && point.y >= 0 )			|| 
+		( m_LastPos.m_Bottom == -1 && m_LastPos.m_Top == -1 ) )
+	{
+		CMusikTrack curr;
+		for( int i = 0; i < m_Count; i++ )
+		{
+			curr.m_Top = PROPTREEITEM_DEFHEIGHT * i;
+			curr.m_Bottom = PROPTREEITEM_DEFHEIGHT * ( i + 1 );
+
+			if ( point.y > curr.m_Top && point.y <= curr.m_Bottom  )
+			{
+				if ( m_LastPos.m_Bottom != curr.m_Bottom && m_LastPos.m_Top != curr.m_Top )
+				{
+					nItemPos = i;
+					m_LastPos = curr;
+				}
+			}
+		}
+	}
+
+	if ( nItemPos > -1 )
+		OnNewHoveredItem( nItemPos );
+
+	m_LockHover = false;
+}
+
+///////////////////////////////////////////////////
+
+void CMusikPropTree::OnNewHoveredItem( int nIndex )
+{
+	CStdString s;
+	s.Format( "new item hovered at %d\n", nIndex );
+	TRACE0( s.c_str() );
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CMusikPropTree::OnMouseLeave(WPARAM wParam, LPARAM lParam)
+{
+	m_MouseTrack = false;
+
+	m_LastPos.m_Bottom = -1;
+	m_LastPos.m_Top = -1;
+
+	if ( m_pHovered )
+	{
+		m_pHovered->Hover( FALSE );
+		SetHoveredItem( NULL );
+		m_pHovered = NULL;
+	}
+
+    SetHoveredItem( NULL );
+
+	return 0L;
+}
+
+///////////////////////////////////////////////////
