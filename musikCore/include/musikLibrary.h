@@ -167,6 +167,7 @@ public:
 	int  GetIDFromFilename			( CStdString fn );
 	int  GetSongFromFilename		( CStdString fn, CmusikSong& song );
 	bool IsSongInLibrary			( CStdString fn );
+	int  GetSongFormatFromID		( int id, int* target );
 
 	// updating songs
 	bool SetSongInfo				( int songid, CmusikSongInfo* info );

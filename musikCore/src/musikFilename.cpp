@@ -138,7 +138,7 @@ CStdString CmusikFilename::GetTempFilename( CStdString fn, bool check_exists )
 	if ( check_exists )
 	{
 		while ( CmusikFilename::FileExists( sName ) )
-			sName.Format( "%s%d", sPath, rand() );
+			sName.Format( "%s%d.tmp", sPath, rand() );
 	}
 
 	return sName;

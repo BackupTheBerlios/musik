@@ -140,7 +140,6 @@ void CmusikSelectionCtrl::UpdateV( CStdString query, bool update_count )
 	if ( !update_count )
 		top = m_Items.at( 0 );
 
-
 	m_Library->GetRelatedItems( query, m_Type, m_Items );
 
 	if ( update_count )

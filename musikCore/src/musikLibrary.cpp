@@ -2166,3 +2166,21 @@ int CmusikLibrary::GetEqualizer( int eq_id, CmusikEQSettings* target )
 
 ///////////////////////////////////////////////////
 
+int CmusikLibrary::GetSongFormatFromID( int id, int* target )
+{
+	if ( !m_pDB )
+		return -1;
+
+	m_ProtectingLibrary->acquire();
+
+	int nRet = sqlite_exec_printf( m_pDB, "SELECT format FROM %Q WHERE songid = %d;", 
+		&sqlite_GetIDFromFilename, target, NULL,
+		SONG_TABLE_NAME,
+		id );
+
+	m_ProtectingLibrary->release();
+
+	return nRet;
+}
+
+///////////////////////////////////////////////////

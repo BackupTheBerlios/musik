@@ -122,7 +122,12 @@ bool CmusikOggInfo::WriteInfo( CmusikSongInfo info )
 	FILE* pOut;
 
 	CStdString sFilename = info.GetFilename();
-	CStdString sTempFilename = CmusikFilename::GetTempFilename( info.GetFilename(), true );
+
+	// create two unique temporary filenames
+	CStdString sTempFilename1 = CmusikFilename::GetTempFilename( sFilename, true );
+	CStdString sTempFilename2 = CmusikFilename::GetTempFilename( sFilename, true );
+	while ( sTempFilename2 == sTempFilename1 )
+		sTempFilename2 = CmusikFilename::GetTempFilename( sFilename, true );
 
 	// make sure we can open the file in
 	// write mode..
@@ -138,7 +143,7 @@ bool CmusikOggInfo::WriteInfo( CmusikSongInfo info )
 
 	// open up the temp ogg file; this will
 	// be where the new tag gets written
-	pOut = fopen( sTempFilename.c_str(), "wb" );
+	pOut = fopen( sTempFilename1.c_str(), "wb" );
 	if ( !pOut )
 		return false;
 
@@ -175,23 +180,30 @@ bool CmusikOggInfo::WriteInfo( CmusikSongInfo info )
 	fclose( pIn );
 	fclose( pOut );
 
-
 	// attempt to rename the original file to 
 	// a new temporary filename
-	CStdString sTempFilename2 = CmusikFilename::GetTempFilename( sFilename, true );
-	if ( !rename( sFilename.c_str(), sTempFilename2.c_str() ) ) 
+	if ( rename( sFilename.c_str(), sTempFilename2.c_str() ) != NULL ) 
+	{
+		// rename failed, so remove the temporary
+		// file that was just created...
+		remove( sTempFilename1.c_str() );
 		return false;
+	}
 
 	// now rename the new file with the new
 	// comments the original filename
-	if ( !rename( sTempFilename.c_str(), sFilename.c_str() ) )
+	if ( rename( sTempFilename1.c_str(), sFilename.c_str() ) != NULL )
 	{
-		rename( sTempFilename2.c_str(), sFilename.c_str() );
+		// if rename from new -> old filename fails,
+		// rename old -> original filename
+		// remove the new file...
+		rename( sTempFilename1.c_str(), sFilename.c_str() );
+		remove( sTempFilename2.c_str() );
 		return false;
 	}
 
 	// if we get this far, remove the old file
-	if ( !remove( sTempFilename2.c_str() ) )
+	if ( remove( sTempFilename2.c_str() ) != NULL )
 		return false;
 
 	return true;

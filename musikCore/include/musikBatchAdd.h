@@ -177,18 +177,13 @@ static void musikBatchAddWorker( CmusikThread* thread )
 	params->m_Library->EndTransaction();
 
 	// clean up
-	CmusikFunctor* fnct = params->m_Functor;
-	bool call_functor = false;
-	if ( params->m_Functor && ( ( thread->m_Abort && params->m_CallFunctorOnAbort ) || !thread->m_Abort ) )
-		call_functor = true;
-
 	if ( params->m_DeleteFilelist )
 		delete params->m_Files;
 
-	delete params;
+	if ( params->m_Functor && ( ( thread->m_Abort && params->m_CallFunctorOnAbort ) || !thread->m_Abort ) )
+		params->m_Functor->OnThreadEnd( (void*)thread );
 
-	if ( call_functor )
-		fnct->OnThreadEnd( (void*)thread );
+	delete params;
 
 	// flag thread operation as complete
 	thread->m_Finished = true;

@@ -100,6 +100,7 @@ static void musikBatchRetagWorker( CmusikThread* thread )
 	sleep.set( 0.1f );
 
 	params->m_Library->BeginTransaction();
+	int nFormat;
 	for( size_t i = 0; i < params->m_UpdatedTags->size(); i++ )
 	{
 		// sleep if we're told
@@ -120,10 +121,12 @@ static void musikBatchRetagWorker( CmusikThread* thread )
 			break;
 		}
 
-		//
-		//
-		//
-
+		params->m_Library->GetSongFormatFromID( params->m_UpdatedTags->at( i ).GetID(), &nFormat );
+		if ( nFormat == MUSIK_LIBRARY_FORMAT_MP3 )
+			CmusikMp3Info::WriteInfo( params->m_UpdatedTags->at( i ) );
+		else if ( nFormat == MUSIK_LIBRARY_FORMAT_OGG )
+			CmusikOggInfo::WriteInfo( params->m_UpdatedTags->at( i ) );
+	
 		// post progress to the functor
 		curr_prog = ( 100 * i ) / params->m_UpdatedTags->size();
 		if ( curr_prog != last_prog )
@@ -138,18 +141,13 @@ static void musikBatchRetagWorker( CmusikThread* thread )
 	params->m_Library->EndTransaction();
 
 	// clean up
-	CmusikFunctor* fnct = params->m_Functor;
-	bool call_functor = false;
-	if ( params->m_Functor && ( !thread->m_Abort || ( thread->m_Abort && params->m_CallFunctorOnAbort ) ) )
-		call_functor = true;
-
 	if ( params->m_DeleteUpdatedTags )
 		delete params->m_UpdatedTags;
 
-	delete params;
+	if ( params->m_Functor && ( !thread->m_Abort || ( thread->m_Abort && params->m_CallFunctorOnAbort ) ) )
+		params->m_Functor->OnThreadEnd( (void*)thread );
 
-	if ( call_functor )		
-		fnct->OnThreadEnd( (void*)thread );
+	delete params;
 
 	// flag as finished
 	thread->m_Finished = true;

@@ -212,6 +212,7 @@ protected:
 	// list of all threads running
 	bool FreeThread( CmusikThread* pThread );
 	CmusikThreadPtrArray m_Threads;
+	int m_ThreadCount;
 
 	// batch functors threads will use
 	CmusikBatchAddFunctor* m_BatchAddFnct;

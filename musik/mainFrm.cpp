@@ -207,7 +207,7 @@ static void MainFrameWorker( CmusikThread* thread )
 		if ( thread->m_Abort )
 			break;
 
-		if ( parent->m_Threads.size() )
+		if ( parent->m_ThreadCount )
 		{
 			switch ( pos )
 			{
@@ -249,6 +249,8 @@ static void MainFrameWorker( CmusikThread* thread )
 
 CMainFrame::CMainFrame()
 {
+	m_ThreadCount = 0;
+
 	InitPaths();
 	Initmusik();
 	InitDragTypes();
@@ -345,7 +347,9 @@ void CMainFrame::Initmusik()
 		CmusikThread* thread = new CmusikThread();
 		m_Threads.push_back( thread );
 
+		m_ThreadCount++;
 		thread->Start( (ACE_THR_FUNC)musikRemoveOldWorker, params );
+		
 	}
 }
 
@@ -482,8 +486,13 @@ void CMainFrame::ResetUI()
 
 void CMainFrame::ResetSelBoxes()
 {
+	CmusikSelectionCtrl::SetUpdating( true );
 	for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
+	{
+		m_wndSelectionBars[i]->GetCtrl()->SetParent( false );
 		m_wndSelectionBars[i]->GetCtrl()->UpdateV( true );
+	}
+	CmusikSelectionCtrl::SetUpdating( false );
 }
 
 ///////////////////////////////////////////////////
@@ -618,6 +627,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 
 	m_Updater = new CmusikThread();
+	m_ThreadCount++;
 	m_Updater->Start( (ACE_THR_FUNC)MainFrameWorker, this );
 
 	return 0;
@@ -829,6 +839,7 @@ LRESULT CMainFrame::OnSelBoxEditCommit( WPARAM wParam, LPARAM lParam )
 		CmusikThread* thread = new CmusikThread();
 		m_Threads.push_back( thread );
 
+		m_ThreadCount++;
 		thread->Start( (ACE_THR_FUNC)musikBatchRetagWorker, params );
 		
 		return 1L;
@@ -1210,6 +1221,7 @@ void CMainFrame::OnOpenFiles()
 			CmusikThread* thread = new CmusikThread();
 			m_Threads.push_back( thread );
 
+			m_ThreadCount++;
 			thread->Start( (ACE_THR_FUNC)musikBatchAddWorker, (void*)params );
 		}
 		else
@@ -1230,6 +1242,7 @@ LRESULT CMainFrame::OnBatchAddNew( WPARAM wParam, LPARAM lParam )
 		CmusikThread* thread = new CmusikThread();
 		m_Threads.push_back( thread );
 
+		m_ThreadCount++;
 		thread->Start( (ACE_THR_FUNC)musikBatchAddWorker, (void*)params );
 	}
 
@@ -1254,10 +1267,12 @@ LRESULT CMainFrame::OnThreadEnd( WPARAM wParam, LPARAM lParam )
 	
 	if ( FreeThread( ptr_thr ) )
 	{
+		--m_ThreadCount;
 		ResetSelBoxes();
 		m_wndView->GetCtrl()->UpdateV( true );
 	}
-	if ( !m_Threads.size() )
+
+	if ( m_ThreadCount == 0 )
 		SetWindowText( m_Caption );
 
 	return 0L;
@@ -1278,6 +1293,10 @@ bool CMainFrame::FreeThread( CmusikThread* pThread )
 	{
 		if ( pThread == m_Threads.at( i ) )
 		{
+			// wait for the finish flag to be set...
+			while ( !m_Threads.at( i )->m_Finished )
+				Sleep( 100 );
+
 			// delete the completed thread
 			delete m_Threads.at( i );
 
@@ -1328,6 +1347,7 @@ void CMainFrame::OnOpenDirectory()
 			CmusikThread* thread = new CmusikThread();
 			m_Threads.push_back( thread );
 
+			m_ThreadCount++;
 			thread->Start( (ACE_THR_FUNC)musikBatchAddWorker, (void*)params );
 		}
 		else 
