@@ -22,7 +22,6 @@ public:
 	//--- events ---//
 	//--------------//
 	void OnClose			( wxCommandEvent& WXUNUSED(event) );
-	void OnSlider			(wxScrollEvent& event);
 	void OnSlidePitch		( wxScrollEvent& event );
 	void OnClickReset		( wxCommandEvent& WXUNUSED(event) );
 	void OnRightClick		( wxCommandEvent& event );
