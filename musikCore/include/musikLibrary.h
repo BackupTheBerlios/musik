@@ -115,12 +115,18 @@ enum
 ///////////////////////////////////////////////////
 
 #define SONG_TABLE_NAME "songs"
+
 #define STD_PLAYLIST_TABLE_NAME "std_playlist"
 #define STD_PLAYLIST_SONGS "std_playlist_song"
+
 #define DYN_PLAYLIST_TABLE_NAME "dyn_playlist"
+#define DYN_PLAYLIST_QUERY "dyn_playlist_query"
+
 #define CROSSFADER_PRESET "crossfader_preset"
+
 #define EQUALIZER_PRESET "equalizer_preset"
 #define EQUALIZER_DEFAULT "equalizer_default"
+
 #define MANAGED_PATH "managed_path"
 
 ///////////////////////////////////////////////////
@@ -188,21 +194,27 @@ public:
 	bool SetSongRating				( int songid, int rating );
 	bool SetSongEqualizer			( int songid, int eq_id );
 
-	// querying playlist
-	int  GetAllStdPlaylists			( CmusikPlaylistInfoArray* target, bool clear_target = true );
-	int  GetAllDynPlaylists			( CmusikPlaylistInfoArray* target, bool clear_target = true );
-	int  GetStdPlaylist				( int id, CmusikPlaylist& target, bool clear_target = true );
-	bool GetStdPlaylistFns			( int id, CStdStringArray& target, bool clear_target = true );
-	bool GetStdPlaylistFns			( CmusikPlaylist& playlist, CStdStringArray& target, bool clear_target = true );
+	// standard playlist
 	int  CreateStdPlaylist			( const CStdString& name, const CStdStringArray& files );
 	int  AppendStdPlaylist			( int id, const CStdStringArray& files );
 	int  RenameStdPlaylist			( int id, const CStdString& str );
-	int  CreateDynPlaylist			( const CStdString& name, const CStdString& query );
 	int  DeleteStdPlaylist			( const CStdString& name );
 	int  RewriteStdPlaylist			( int id, CmusikPlaylist* playlist );
 	int  DeleteStdPlaylist			( int id );
+
+	int  GetAllStdPlaylists			( CmusikPlaylistInfoArray* target, bool clear_target = true );
+	int  GetStdPlaylist				( int id, CmusikPlaylist& target, bool clear_target = true );
+	bool GetStdPlaylistFns			( int id, CStdStringArray& target, bool clear_target = true );
+	bool GetStdPlaylistFns			( CmusikPlaylist& playlist, CStdStringArray& target, bool clear_target = true );
+
+	// dynamic playlist
+	int  CreateDynPlaylist			( const CStdString& name, const CStdStringArray& query );
+	int  RewriteDynPlaylist			( int id, const CStdStringArray& query );
 	int  DeleteDynPlaylist			( const CStdString& name );
 	int  DeleteDynPlaylist			( int id );
+
+	int  GetAllDynPlaylists			( CmusikPlaylistInfoArray* target, bool clear_target = true );
+	int  GetDynPlaylist				( int id, CmusikPlaylist& target, bool clear_target = true );
 
 	// querying crossfaders
 	int  CreateCrossfader			( CmusikCrossfader* fader );

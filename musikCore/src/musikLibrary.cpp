@@ -583,25 +583,40 @@ bool CmusikLibrary::InitDynTable()
 
 	// construct the table that contains a list of
 	// all the standard playlist names
-	static const char *szCreateDBQuery  = 
+	static const char *szCreateDBQuery1  = 
 		"CREATE TABLE " DYN_PLAYLIST_TABLE_NAME " ( "	
 		"dyn_playlist_id INTEGER AUTO_INCREMENT PRIMARY KEY, "
-		"dyn_playlist_name varchar(255), "
-		"dyn_playlist_query varchar(1024) "
+		"dyn_playlist_name varchar(255) "
+		" );";
+
+	// construct the table that will store all the
+	// songs that pertain to all the playlists
+	static const char *szCreateDBQuery2  = 
+		"CREATE TABLE " DYN_PLAYLIST_QUERY " ( "	
+		"dyn_playlist_id INTEGER AUTO_INCREMENT PRIMARY KEY, "
+		"dyn_playlist_queryid INTEGER, "
+		"dyn_query_str varchar(1024) INTEGER"
 		" );";
 
 	// put a lock on the library and open it up
-	char *pErr = NULL;
+	char *pErr1 = NULL;
+	char *pErr2 = NULL;
 
 	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
-		sqlite_exec( m_pDB, szCreateDBQuery, NULL, NULL, &pErr );
+		sqlite_exec( m_pDB, szCreateDBQuery1, NULL, NULL, &pErr1 );
+		sqlite_exec( m_pDB, szCreateDBQuery2, NULL, NULL, &pErr2 );
 	}
 
-	if ( pErr )
+	if ( pErr1 )
 	{
 		error = true;
-		sqlite_freemem( pErr );
+		sqlite_freemem( pErr1 );
+	}
+	if ( pErr2 )
+	{
+		error = true;
+		sqlite_freemem( pErr2 );
 	}
 
 	return error;
@@ -961,6 +976,59 @@ int CmusikLibrary::AppendStdPlaylist( int id, const CStdStringArray& files )
 
 ///////////////////////////////////////////////////
 
+int CmusikLibrary::RewriteDynPlaylist( int id, const CStdStringArray& query )
+{
+	if ( !m_DatabaseOpen )
+		return -1;
+
+	int nRet;
+
+	if ( id >= 0 )
+	{
+		// remove old queries
+		{
+			ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
+			{
+				nRet = sqlite_exec_printf( m_pDB, "DELETE FROM %Q WHERE std_playlist_id = %d;",
+				NULL, NULL, NULL, 
+				DYN_PLAYLIST_QUERY,
+				id );
+			}
+		}
+
+		BeginTransaction();
+		
+		for ( size_t i = 0; i < query.size(); i++ )
+		{
+			{
+				ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
+				{
+					nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %d, %s );",
+					NULL, NULL, NULL, 
+					DYN_PLAYLIST_QUERY,
+					NULL,
+					id,
+					query.at( i ).c_str() );
+				}
+			}
+
+			if ( nRet != SQLITE_OK )
+			{
+				EndTransaction();
+				return nRet;
+			}
+		}
+
+		EndTransaction();
+	}
+	else
+		return SQLITE_ERROR;
+
+	return nRet;
+}
+
+///////////////////////////////////////////////////
+
 int CmusikLibrary::RewriteStdPlaylist( int id, CmusikPlaylist* playlist )
 {
 	if ( !m_DatabaseOpen )
@@ -1103,22 +1171,72 @@ bool CmusikLibrary::GetStdPlaylistFns( CmusikPlaylist& playlist, CStdStringArray
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::CreateDynPlaylist( const CStdString& name, const CStdString& query )
+int CmusikLibrary::CreateDynPlaylist( const CStdString& name, const CStdStringArray& query )
 {
 	if ( !m_DatabaseOpen )
 		return -1;
 
-	// do it
-	int nRet;
-	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
+	int nID, nRet;
+
+	// lock it up
 	{
-		nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %q, %q ); ", 
-			NULL, NULL, NULL,
-			DYN_PLAYLIST_TABLE_NAME,
-			NULL,
-			name.c_str(),
-			query.c_str() );
+		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
+		{
+			// insert the new playlist name
+			nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %Q );", 
+				NULL, NULL, NULL, 
+				DYN_PLAYLIST_TABLE_NAME,
+				NULL,
+				name.c_str() );
+		}
 	}
+
+	if ( nRet != SQLITE_OK )
+		return nRet;
+
+	// get the ID of the newly created entry
+	{
+		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
+		{
+			nRet = sqlite_exec_printf( m_pDB, "SELECT dyn_playlist_id FROM %Q WHERE dyn_playlist_name = %Q;", 
+				&sqlite_GetIntFromRow, &nID, NULL,
+				DYN_PLAYLIST_TABLE_NAME,
+				name.c_str() );
+		}
+	}
+
+	if ( nRet != SQLITE_OK )
+		return nRet;
+
+	// insert songs into playlist
+	if ( nID >= 0 )
+	{
+		BeginTransaction();
+
+		for ( size_t i = 0; i < query.size(); i++ )
+		{
+			if ( !query.at( i ).IsEmpty() )
+			{
+				ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
+				{
+					nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %d, %Q );",
+						NULL, NULL, NULL, 
+						DYN_PLAYLIST_QUERY,
+						NULL,
+						nID,
+						query.at( i ) );
+				}
+
+				if ( nRet != SQLITE_OK )
+				{
+					EndTransaction();
+					return nRet;
+				}
+			}
+		}
+
+		EndTransaction();
+	}	
 
 	return nRet;
 }
