@@ -555,7 +555,7 @@ void CActivityBox::SetPlaylist()
 	g_PlaylistChanged = true;
 }
 
-void CActivityBox::SetContents( wxArrayString & aList )
+void CActivityBox::SetContents( const wxArrayString & aList )
 {
 
 	pListBox->SetList( aList );

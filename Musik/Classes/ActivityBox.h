@@ -158,7 +158,7 @@ public:
 	void			RescaleColumns		()									{ pListBox->RescaleColumns();			}
 	void			ResetCaption		();
 	void			ResetContents		();
-	void			SetContents			( wxArrayString &list ); // &list is not const, because a ("Show all XXXs") entry will be added sometimes
+	void			SetContents			( const wxArrayString &list ); 
 	void			GetFullList			( wxArrayString & aReturn );
 	void			SetPlaylist			();
 	void			EnableProgress		( bool enable = true );
