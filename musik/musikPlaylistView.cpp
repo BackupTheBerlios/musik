@@ -132,7 +132,7 @@ void CmusikPlaylistView::OnSize(UINT nType, int cx, int cy)
 		if ( !m_PlaylistInfo )
 			InitPlaylistInfo();
 
-		m_PlaylistInfo->MoveWindow( 3, 3, cx - 6, 15 );
+		m_PlaylistInfo->MoveWindow( 1, 1, cx - 2, 20 );
 		m_Playlist->MoveWindow( 3, 24, cx - 6, cy - 27 );
 
 		return;
@@ -189,10 +189,13 @@ void CmusikPlaylistView::OnNcPaint()
 		rcBorder.bottom -= 4;
 		pDC.Draw3dRect( rcBorder, m_Prefs->MUSIK_COLOR_BTNSHADOW, m_Prefs->MUSIK_COLOR_BTNHILIGHT );
 
-		rcInfo = rcBorder;
-		rcInfo.top = 2;
-		rcInfo.bottom = 19;
-		pDC.Draw3dRect( rcInfo, m_Prefs->MUSIK_COLOR_BTNSHADOW, m_Prefs->MUSIK_COLOR_BTNHILIGHT );
+		// don't draw over the playist info ctrl
+		rcInfo = rcWindow;
+		rcInfo.top = 1;
+		rcInfo.left = 1;
+		rcInfo.bottom = 21;
+		rcInfo.right -= 1;
+		dc.ExcludeClipRect( rcInfo );
 	}
 
 	// line at bottom
@@ -229,7 +232,7 @@ void CmusikPlaylistView::InitPlaylistInfo()
 {
 	if ( !m_PlaylistInfo )
 	{
-		m_PlaylistInfo = new CWnd();
+		m_PlaylistInfo = new CmusikPlaylistInfoCtrl( GetCtrl(), m_Library, m_Player, m_Prefs );
 		m_PlaylistInfo->Create( NULL, NULL, WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0 ), this, 123 );
 	}
 }

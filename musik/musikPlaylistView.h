@@ -44,6 +44,7 @@
 ///////////////////////////////////////////////////
 
 #include "musikPlaylistCtrl.h"
+#include "musikPlaylistInfoCtrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -82,7 +83,7 @@ protected:
 	// playlist info
 	void InitPlaylistInfo();
 	void CleanPlaylistInfo();
-	CWnd* m_PlaylistInfo;
+	CmusikPlaylistInfoCtrl* m_PlaylistInfo;
 
 	// drop target for the playlist
 	CmusikPlaylistDropTarget* m_DropTarget;
