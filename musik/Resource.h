@@ -28,6 +28,8 @@
 #define IDB_BITMAP1                     153
 #define IDB_UP                          153
 #define IDR_SELECTION_BOX_CONTEXT_MENU  154
+#define IDR_MENU1                       155
+#define IDR_PLAYLIST_CONTEXT_MENU       155
 #define IDC_CHECK_STARTUPSCAN           1007
 #define IDC_CHECK_STARTUPSCAN2          1008
 #define IDC_CHECK_PL_STRIPES            1009
@@ -196,13 +198,20 @@
 #define ID_SELECTIONBOXCONTEXT_RENAME   32892
 #define ID_SOURCES_SHUFFLEPLAYLIST      32893
 #define ID_Menu32894                    32894
+#define ID_SELECTIONBOXCONTEXT_DELETE   32897
+#define ID_DELETE_FROMLIBRARY           32898
+#define ID_DELETE_FROMCOMPUTER          32899
+#define ID_PLAYLISTCONTEXTMENU_DELETE   32900
+#define ID_DELETE_FROMLIBRARY32901      32901
+#define ID_DELETE_FROMCOMPUTER32902     32902
+#define ID_PLAYLISTCONTEXTMENU_PROPERTIES 32903
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        155
-#define _APS_NEXT_COMMAND_VALUE         32895
+#define _APS_NEXT_RESOURCE_VALUE        156
+#define _APS_NEXT_COMMAND_VALUE         32904
 #define _APS_NEXT_CONTROL_VALUE         1053
 #define _APS_NEXT_SYMED_VALUE           104
 #endif

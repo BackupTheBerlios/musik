@@ -157,10 +157,34 @@ void CmusikPlaylistCtrl::ResetColumns()
 
 	while ( DeleteColumn( 0 ) );
 
-	for ( size_t i = 0; i < m_Prefs->GetPlaylistColCount(); i++ )
+	CIntArray cols = m_Prefs->GetPlaylistOrder();
+	CIntArray sizes = m_Prefs->GetPlaylistSizes();
+	bool rewrite = false;
+
+	size_t times = cols.size();
+	for ( size_t i = 0; i < times; i++ )
 	{
-		InsertColumn( (int)i, m_Library->GetSongField( m_Prefs->GetPlaylistCol( i ) ) );
-		SetColumnWidth( (int)i, m_Prefs->GetPlaylistColWidth( i ) );
+		if ( cols.at( i ) > -1 )
+		{
+			InsertColumn( (int)i, m_Library->GetSongField( cols.at( i ) ) );
+			SetColumnWidth( (int)i, sizes.at( i ) );
+		}
+		else
+		{
+			cols.erase( cols.begin() + i );
+			sizes.erase( sizes.begin() + i );
+			
+			i--;
+			times--;
+
+			rewrite = true;
+		}
+	}
+
+	if ( rewrite )
+	{
+		m_Prefs->SetPlaylistOrder( cols );
+		m_Prefs->SetPlaylistSizes( sizes );
 	}
 
 	SetRedraw( TRUE );
