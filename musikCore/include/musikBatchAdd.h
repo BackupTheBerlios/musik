@@ -139,7 +139,7 @@ public:
 		{
 			if ( m_Stop )
 			{
-				TRACE0( "CmusikBatchAdd worker function aborted, but ended gracefully...\n" );
+				TRACE0( "CmusikBatchAdd worker function aborted, but ended gracefully\n" );
 				break;
 			}
 

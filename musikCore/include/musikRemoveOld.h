@@ -119,7 +119,7 @@ public:
 			// check abort flag
 			if ( m_Stop )
 			{
-				TRACE0( "musikRemoveOldWorker worker function aborted...\n" );
+				TRACE0( "musikRemoveOldWorker worker function aborted\n" );
 				break;
 			}
 

@@ -99,7 +99,7 @@ public:
 
 				if ( timeout == ( timeout_secs * 2 ) )
 				{
-					TRACE0( "CmusikRemoveOldTask: I appear to be deadlocked. Terminating...\n" );
+					TRACE0( "CmusikRemoveOldTask: I appear to be deadlocked. Terminating\n" );
 					m_Finished = true;
 				}
 			}

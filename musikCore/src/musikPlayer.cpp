@@ -112,7 +112,7 @@ int CmusikPlayerWorker::svc()
 	m_Finished = false;
 	m_Stop = false;
 
-	TRACE0( "Player worker function started...\n" );
+	TRACE0( "Player worker function started\n" );
 
 	ACE_Time_Value sleep_regular, sleep_tight;
 	sleep_regular.set( 0.1 );
@@ -202,7 +202,7 @@ int CmusikPlayerWorker::svc()
 			// crossfader flag
 			if ( m_Player->IsCrossfaderReady() )
 			{
-				TRACE0( "Crossfade started...\n" );
+				TRACE0( "Crossfade started\n" );
 
 				m_Player->UnflagCrossfade();
 
@@ -392,7 +392,7 @@ int CmusikPlayerWorker::svc()
 		ACE_OS::sleep( sleep_regular );
 	}
 
-	TRACE0( "Player worker function finished...\n" );
+	TRACE0( "Player worker function finished\n" );
 	m_Finished = true;
 
 	return 0;
@@ -521,7 +521,7 @@ void CmusikPlayer::CleanEqualizer()
 
 int CmusikPlayer::InitSound( int device, int driver, int rate, int channels, int mode )
 {
-	TRACE0( "Attempting to initialize FMOD...\n" );
+	TRACE0( "Attempting to initialize FMOD\n" );
 
 	if ( mode == MUSIK_PLAYER_INIT_RESTART || mode == MUSIK_PLAYER_INIT_STOP )
 		StopSound();
@@ -756,7 +756,7 @@ bool CmusikPlayer::Play( int index, int fade_type, int start_pos )
 	// playing, so lock it up and set the new index
 	{
 		// and, we're done.
-		TRACE0( "New song started...\n" );
+		TRACE0( "New song started\n" );
 
 		// set the new index
 		m_Index = index;

@@ -146,12 +146,12 @@ void CmusikEqualizer::SetNewSong( int songid )
 
 		if ( nEqualizerID > -1 )
 		{
-			TRACE0 ( "Current song's equalizer loaded...\n" );
+			TRACE0 ( "Current song's equalizer loaded\n" );
 			m_Library->GetEqualizer( nEqualizerID, &m_EQ_Values );
 		}
 		else
 		{
-			TRACE0 ( "Default equalizer loaded...\n" );
+			TRACE0 ( "Default equalizer loaded\n" );
 			m_Library->GetDefaultEqualizer( &m_EQ_Values );
 			m_EQ_Values.m_ID = -1;
 		}

@@ -127,7 +127,7 @@ public:
 			// check abort flag
 			if ( m_Stop )
 			{
-				TRACE0( "musikBatchRetagWorker worker function aborted...\n" );
+				TRACE0( "musikBatchRetagWorker worker function aborted\n" );
 				break;
 			}
 
