@@ -6,22 +6,60 @@
 #include "../include/MusikLibrary.h"
 #include "../include/MusikFunctor.h"
 
-#include "ace/Thread.h"
-#include "ace/Synch.h"
-
 ///////////////////////////////////////////////////
 
 CMusikPlayer::CMusikPlayer( CMusikFunctor* functor )
 {
 	m_IsPlaying = false;
 	m_IsPaused	= false;
-	m_Functor	= functor; 
+	m_Functor	= functor;
+
+	m_ActiveStreams = NULL;
+	m_ActiveChannels = NULL;
+	m_Mutex = NULL;
+	m_ThreadID = NULL;
+	m_ThreadHND = NULL;
+
+	InitThread();
 }
 
 ///////////////////////////////////////////////////
 
 CMusikPlayer::~CMusikPlayer()
 {
+	CleanThread();
+	CleanSound();
+}
+
+///////////////////////////////////////////////////
+
+void CMusikPlayer::InitThread()
+{
+	m_Mutex	= new ACE_Thread_Mutex();
+	m_ThreadID = new ACE_thread_t();
+	m_ThreadHND = new ACE_hthread_t();
+
+	ACE_Thread::spawn( (ACE_THR_FUNC)CMusikPlayer::PlayerThread,
+		NULL,
+		THR_JOINABLE,
+		m_ThreadID,
+		m_ThreadHND );
+}
+
+///////////////////////////////////////////////////
+
+void CMusikPlayer::PlayerThread()
+{
+	MessageBox( NULL, "AHAHAHA", NULL, NULL );
+}
+
+///////////////////////////////////////////////////
+
+void CMusikPlayer::CleanThread()
+{
+	if ( m_Mutex ) delete m_Mutex;
+	if ( m_ThreadID ) delete m_ThreadID;	
+	if ( m_ThreadHND ) delete m_ThreadHND;
 }
 
 ///////////////////////////////////////////////////
@@ -34,7 +72,20 @@ int CMusikPlayer::InitSound( int device, int driver, int rate, int channels, int
 	if ( mode == MUSIK_PLAYER_INIT_START || mode == MUSIK_PLAYER_INIT_RESTART )
 		return StartSound( device, driver, rate, channels );
 
+	m_ActiveStreams = new CMusikStreamPtrArray();
+	m_ActiveChannels = new CIntArray();
+
 	return MUSIK_PLAYER_INIT_SUCCESS;
+}
+
+///////////////////////////////////////////////////
+
+void CMusikPlayer::CleanSound()
+{
+	StopSound();
+
+	if ( m_ActiveStreams ) delete m_ActiveStreams;
+	if ( m_ActiveChannels ) delete m_ActiveChannels;
 }
 
 ///////////////////////////////////////////////////

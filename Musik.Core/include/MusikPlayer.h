@@ -10,6 +10,9 @@
 #include "../Musik.Core/include/MusikCrossfader.h"
 #include "../Musik.Core/include/MusikEqualizer.h"
 
+#include "ace/Thread.h"
+#include "ace/Synch.h"
+
 #include "fmod.h"
 
 ///////////////////////////////////////////////////
@@ -42,9 +45,6 @@ class CMusikLibrary;
 class CMusikPlaylist;
 class CMusikFunctor;
 
-class ACE_Thread_Mutex;
-class ACE_Thread;
-
 ///////////////////////////////////////////////////
 
 class CMusikPlayer	
@@ -54,6 +54,7 @@ public:
 	~CMusikPlayer();
 
 	int  InitSound( int device, int driver, int rate, int channels, int mode = MUSIK_PLAYER_INIT_START );
+	void CleanSound();
 
 	void SetPlaylist( CMusikPlaylist* playlist );
 	
@@ -85,8 +86,13 @@ private:
 	CIntArray* m_ActiveChannels;
 
 	// main thread and mutex
-	ACE_Thread_Mutex* main_mutex;
-	ACE_Thread* main_thread;
+	ACE_Thread_Mutex* m_Mutex;
+	ACE_thread_t* m_ThreadID;
+	ACE_hthread_t* m_ThreadHND;
+
+	void InitThread();
+	void CleanThread();
+	static void PlayerThread();
 
 	// pointer to library and playlist
 	CMusikLibrary* m_Library;
