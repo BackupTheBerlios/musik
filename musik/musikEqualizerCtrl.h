@@ -70,6 +70,8 @@ protected:
 	afx_msg void OnEqualizerState6band();
 	afx_msg void OnEqualizerSetAsDefault();
 	afx_msg void OnEqualizerResetdefault();
+	afx_msg void OnEqualizerAutomaticallySave();
+	afx_msg void OnEqualizerEnabled();
 
 	// custom message maps
 	afx_msg LRESULT OnClosePresets( WPARAM wParam, LPARAM lParam );

@@ -62,6 +62,7 @@
 #include <Direct.h>
 
 #include "3rdparty/TreePropSheet.h"
+#include ".\mainfrm.h"
 
 ///////////////////////////////////////////////////
 
@@ -993,7 +994,7 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 	CmusikSelectionCtrl* pParent	= NULL;
 
 	int nSender = (int)wParam;
-	bool force_all_updatev = ( lParam == NULL ) ? true : false;
+	bool force_all_updatev = ( lParam == NULL ) ? false : true;
 
 	// find the sender and parent
 	for ( size_t i = 0; i < selbox_count; i++ )

@@ -14,6 +14,7 @@
 #include "../musikCore/include/musikLibrary.h"
 
 #include "MEMDC.H"
+#include ".\musikequalizerctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -61,6 +62,8 @@ BEGIN_MESSAGE_MAP(CmusikEqualizerBar, baseCmusikEqualizerBar)
 	ON_COMMAND(ID_EQUALIZER_STATE_6BAND, OnEqualizerState6band)
 	ON_COMMAND(ID_EQUALIZER_SET_AS_DEFAULT, OnEqualizerSetAsDefault)
 	ON_COMMAND(ID_EQUALIZER_RESETDEFAULT, OnEqualizerResetdefault)
+	ON_COMMAND(ID_EQUALIZER_AUTOMATICALLYSAVE, OnEqualizerAutomaticallySave)
+	ON_COMMAND(ID_EQUALIZER_ENABLED2, OnEqualizerEnabled)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -105,7 +108,9 @@ void CmusikEqualizerBar::OnOptions()
 	// updates the menu items...
 	popup_menu->CheckMenuItem( ID_EQUALIZER_LOCKCHANNELS, GetCtrl()->IsChannelsLocked() ? MF_CHECKED : MF_UNCHECKED );
 	popup_menu->EnableMenuItem( ID_EQUALIZER_PRESETS, ( m_Presets == 0 ) ? MF_ENABLED : MF_GRAYED | MF_DISABLED );
-	
+	popup_menu->CheckMenuItem( ID_EQUALIZER_AUTOMATICALLYSAVE, ( m_Prefs->IsEqualizerAutoManaged() == true ) ? MF_CHECKED : MF_UNCHECKED );
+	popup_menu->CheckMenuItem( ID_EQUALIZER_ENABLED2, ( m_Prefs->IsEqualizerEnabled() == true ) ? MF_CHECKED : MF_UNCHECKED );
+
 	int band_state = GetCtrl()->GetBandState();
 	if ( band_state == MUSIK_EQUALIZER_CTRL_18BANDS )
 		popup_menu->CheckMenuItem( ID_EQUALIZER_STATE_18BAND, MF_CHECKED );
@@ -115,7 +120,7 @@ void CmusikEqualizerBar::OnOptions()
 		ASSERT( 0 );
 
 	popup_menu->TrackPopupMenu( 0, pos.x, pos.y, this );
-}
+} 
 
 ///////////////////////////////////////////////////
 
@@ -207,6 +212,23 @@ void CmusikEqualizerBar::OnEqualizerResetdefault()
 {
 	CmusikEQSettings settings;
 	GetCtrl()->ResetDefault();
+}
+
+///////////////////////////////////////////////////
+
+void CmusikEqualizerBar::OnEqualizerAutomaticallySave()
+{
+	if ( m_Prefs->IsEqualizerAutoManaged() )
+		m_Prefs->SetEqualizerAutoManaged( false );
+	else
+		m_Prefs->SetEqualizerAutoManaged( true );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikEqualizerBar::OnEqualizerEnabled()
+{
+	GetParent()->SendMessage( WM_COMMAND, ID_AUDIO_EQUALIZER_ENABLED );
 }
 
 ///////////////////////////////////////////////////
@@ -475,7 +497,7 @@ void CmusikEqualizerCtrl::SetBandState( int state )
 
 void CmusikEqualizerCtrl::LoadCurrSong()
 {
-	if ( m_Player->IsPlaying() && m_Player->IsEqualizerActive() )
+	if ( m_Player->IsPlaying() && m_Player->IsEqualizerActive() && m_Prefs->IsEqualizerAutoManaged() )
 		SetBandsFrom( m_Player->GetEqualizer()->m_EQ_Values );
 }
 
@@ -563,14 +585,14 @@ void CmusikEqualizerCtrl::BandsToEQSettings( CmusikEQSettings* settings )
 			chan_set_r[0] = (float)( ( 100.0f - (float)m_RightBands[0].GetPos() ) / 50.0f );
 			chan_set_l[1] = (float)( ( 100.0f - (float)m_LeftBands[3].GetPos() ) / 50.0f );
 			chan_set_r[1] = (float)( ( 100.0f - (float)m_RightBands[3].GetPos() ) / 50.0f );
-			chan_set_l[2] = (float)( ( 100.0f - (float)m_LeftBands[6].GetPos() ) / 50.0f );
-			chan_set_r[2] = (float)( ( 100.0f - (float)m_RightBands[6].GetPos() ) / 50.0f );
-			chan_set_l[3] = (float)( ( 100.0f - (float)m_LeftBands[9].GetPos() ) / 50.0f );
-			chan_set_r[3] = (float)( ( 100.0f - (float)m_RightBands[9].GetPos() ) / 50.0f );
-			chan_set_l[4] = (float)( ( 100.0f - (float)m_LeftBands[12].GetPos() ) / 50.0f );
-			chan_set_r[4] = (float)( ( 100.0f - (float)m_RightBands[12].GetPos() ) / 50.0f );
-			chan_set_l[5] = (float)( ( 100.0f - (float)m_LeftBands[15].GetPos() ) / 50.0f );
-			chan_set_r[5] = (float)( ( 100.0f - (float)m_RightBands[15].GetPos() ) / 50.0f );
+			chan_set_l[2] = (float)( ( 100.0f - (float)m_LeftBands[7].GetPos() ) / 50.0f );
+			chan_set_r[2] = (float)( ( 100.0f - (float)m_RightBands[7].GetPos() ) / 50.0f );
+			chan_set_l[3] = (float)( ( 100.0f - (float)m_LeftBands[10].GetPos() ) / 50.0f );
+			chan_set_r[3] = (float)( ( 100.0f - (float)m_RightBands[10].GetPos() ) / 50.0f );
+			chan_set_l[4] = (float)( ( 100.0f - (float)m_LeftBands[14].GetPos() ) / 50.0f );
+			chan_set_r[4] = (float)( ( 100.0f - (float)m_RightBands[14].GetPos() ) / 50.0f );
+			chan_set_l[5] = (float)( ( 100.0f - (float)m_LeftBands[17].GetPos() ) / 50.0f );
+			chan_set_r[5] = (float)( ( 100.0f - (float)m_RightBands[17].GetPos() ) / 50.0f );
 		}
 
 		// interpolate the 12 missing bands

@@ -105,6 +105,9 @@ BEGIN
     END
     POPUP "&View"
     BEGIN
+        MENUITEM "Reset to Default",            ID_VIEW_RESETINTERFACETODEFAULT
+
+        MENUITEM SEPARATOR
         MENUITEM "&Sources\tCtrl+Shift+A",      ID_VIEW_SOURCES
         MENUITEM "Selection &Boxes\tCtrl+Shift+S", ID_VIEW_SELECTIONBOXES
         MENUITEM "&Now Playing\tCtrl+Shift+D",  ID_VIEW_NOWPLAYING
@@ -113,9 +116,6 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Crossfader\tCtrl+Shift+Z",    ID_VIEW_CROSSFADER
         MENUITEM "Equalizer\tCtrl+Shift+X",     ID_VIEW_EQUALIZER
-        MENUITEM SEPARATOR
-        MENUITEM "Reset Interface to Default",  ID_VIEW_RESETINTERFACETODEFAULT
-
     END
     POPUP "&Audio"
     BEGIN
@@ -151,6 +151,10 @@ BEGIN
             MENUITEM "6 Band",                      ID_EQUALIZER_STATE_6BAND
         END
         MENUITEM "Lock Channels",               ID_EQUALIZER_LOCKCHANNELS
+        MENUITEM SEPARATOR
+        MENUITEM "Enabled",                     ID_EQUALIZER_ENABLED2
+        MENUITEM "Automatically Manage",        ID_EQUALIZER_AUTOMATICALLYSAVE
+
         MENUITEM SEPARATOR
         MENUITEM "Reset Default",               ID_EQUALIZER_RESETDEFAULT
         MENUITEM "Set as Default",              ID_EQUALIZER_SET_AS_DEFAULT

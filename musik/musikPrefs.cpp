@@ -296,6 +296,7 @@ void CmusikPrefs::LoadPrefs()
 	m_Equalizer_Current		= StringToInt( config->GetValue( "Equalizer", "Set Name", "-1" ) );
 	m_Equalizer_Band_State	= StringToInt( config->GetValue( "Equalizer", "Band State", "6" ) );
 	m_Equalizer_Locked		= StringToBool( config->GetValue( "Equalizer", "Channels Locked", "1" ) );
+	m_Equalizer_AutoManaged	= StringToBool( config->GetValue( "Equalizer", "Automatically Managed", "1" ) );
 
 	// dialog colors
 	MUSIK_COLOR_ACTIVECAPTION		= StringToCOLORREF( config->GetValue( "Dialog Colors", "Active Caption", "255,0,255" ) );
@@ -360,6 +361,7 @@ void CmusikPrefs::SavePrefs()
 	config->SetValue( "Equalizer", "Set Name", IntToString( m_Equalizer_Current ) );
 	config->SetValue( "Equalizer", "Band State", IntToString( m_Equalizer_Band_State ) );
 	config->SetValue( "Equalizer", "Channels Locked", BoolToString( m_Equalizer_Locked ) );
+	config->SetValue( "Equalizer", "Automatically Managed", BoolToString( m_Equalizer_AutoManaged ) );
 
 	// dialog colors
 	config->SetValue( "Dialog Colors", "Active Caption", COLORREFToString( MUSIK_COLOR_ACTIVECAPTION ) );

@@ -127,11 +127,13 @@ public:
 	bool IsEqualizerEnabled(){ return m_Equalizer_Enabled; }
 	int GetEqualizerBandState(){ return m_Equalizer_Band_State; }
 	bool IsEqualizerChannelsLocked(){ return m_Equalizer_Locked; }
+	bool IsEqualizerAutoManaged(){ return m_Equalizer_AutoManaged; }
 
 	void SetEqualizer( int n ){ m_Equalizer_Current = n; }
 	void SetEqualizerEnabled( bool b ){ m_Equalizer_Enabled = b; }
 	void SetEqualizerBandState( int n ){ m_Equalizer_Band_State = n; }
 	void SetEqualizerChannelsLocked( bool b ){ m_Equalizer_Locked = b; }
+	void SetEqualizerAutoManaged( bool b ){ m_Equalizer_AutoManaged = b; }
 
 	//
 	// theme
@@ -198,6 +200,7 @@ private:
 	bool m_Equalizer_Enabled;
 	int m_Equalizer_Band_State;
 	bool m_Equalizer_Locked;
+	bool m_Equalizer_AutoManaged;
 
 	// theme aware stuff
 	bool m_ActiveCaptionDef;
