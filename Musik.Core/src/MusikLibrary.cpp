@@ -11,7 +11,7 @@ static int sqlite_AddSongToPlaylist(void *args, int numCols, char **results, cha
 	CMusikPlaylist* p = (CMusikPlaylist*)args;
 
 	CMusikSong *pLibItem = new CMusikSong();
-	pLibItem->SetID( atoi( results[0] ) );
+	pLibItem->SetID( atoi( results[0] ) ); 
 	
 	p->push_back( *pLibItem );
 
@@ -544,7 +544,7 @@ bool CMusikLibrary::SetSongInfo( int songid, CMusikSongInfo* info )
 	int result = 0;
 
 	CStdString query;
-	query.Format( _T( "update songs set format=%d, vbr=%d, filename='%s', artist='%s', title='%s', album='%s', tracknum=%d, year='%s', genre='%s', rating=%d, bitrate=%d, lastplayed='%s', notes='%s', timesplayed=%d, duration=%d, timeadded='%s', filesize=%d, dirty=%d where songid = %d;" ),
+	query.Format( _T( "update songs set format=%d, vbr=%d, filename='%s', artist='%s', title='%s', album='%s', tracknum=%d, year='%s', genre='%s', rating=%d," ),
 			info->GetFormat(),
 			info->GetVBR(),
 			info->GetFilename().c_str(),
@@ -554,7 +554,9 @@ bool CMusikLibrary::SetSongInfo( int songid, CMusikSongInfo* info )
 			info->GetTrackNum(),
 			info->GetYear().c_str(),
 			info->GetGenre().c_str(),
-			info->GetRating(),
+			info->GetRating() );
+		
+	query.Format( _T( "%s bitrate=%d, lastplayed='%s', notes='%s', timesplayed=%d, duration=%d, timeadded='%s', filesize=%d, dirty=%d where songid = %d;" ),
 			info->GetBitrate(),
 			info->GetLastPlayed().c_str(),
 			info->GetNotes().c_str(),
