@@ -32,46 +32,46 @@ ADD_EXECUTABLE(wxMusik
         MusikGlobals
         MusikUtils
 
-        ${Musik_SOURCE_DIR}/Classes/ActivityBox
-        ${Musik_SOURCE_DIR}/Classes/ActivityAreaCtrl
-        ${Musik_SOURCE_DIR}/Classes/BtnDown
-        ${Musik_SOURCE_DIR}/Classes/GaugeSeek
-        ${Musik_SOURCE_DIR}/Classes/MusikLibrary
-        ${Musik_SOURCE_DIR}/Classes/MusikPlayer
-        ${Musik_SOURCE_DIR}/Classes/MusikPrefs
-        ${Musik_SOURCE_DIR}/Classes/NowPlayingCtrl
-        ${Musik_SOURCE_DIR}/Classes/MusikListCtrl
-        ${Musik_SOURCE_DIR}/Classes/PlaylistCtrl
-		${Musik_SOURCE_DIR}/Classes/PlaylistInfoCtrl
-        ${Musik_SOURCE_DIR}/Classes/SourcesBox
-        ${Musik_SOURCE_DIR}/Classes/WebServer
-        ${Musik_SOURCE_DIR}/Classes/MusikFX
-        ${Musik_SOURCE_DIR}/Classes/MusikEQCtrl
-        ${Musik_SOURCE_DIR}/Classes/MusikEQGauge
-        ${Musik_SOURCE_DIR}/Classes/Tunage
+        ${wxwxMusik_SOURCE_DIR}/Classes/ActivityBox
+        ${wxwxMusik_SOURCE_DIR}/Classes/ActivityAreaCtrl
+        ${wxMusik_SOURCE_DIR}/Classes/BtnDown
+        ${wxMusik_SOURCE_DIR}/Classes/GaugeSeek
+        ${wxMusik_SOURCE_DIR}/Classes/MusikLibrary
+        ${wxMusik_SOURCE_DIR}/Classes/MusikPlayer
+        ${wxMusik_SOURCE_DIR}/Classes/MusikPrefs
+        ${wxMusik_SOURCE_DIR}/Classes/NowPlayingCtrl
+        ${wxMusik_SOURCE_DIR}/Classes/MusikListCtrl
+        ${wxMusik_SOURCE_DIR}/Classes/PlaylistCtrl
+		${wxMusik_SOURCE_DIR}/Classes/PlaylistInfoCtrl
+        ${wxMusik_SOURCE_DIR}/Classes/SourcesBox
+        ${wxMusik_SOURCE_DIR}/Classes/WebServer
+        ${wxMusik_SOURCE_DIR}/Classes/MusikFX
+        ${wxMusik_SOURCE_DIR}/Classes/MusikEQCtrl
+        ${wxMusik_SOURCE_DIR}/Classes/MusikEQGauge
+        ${wxMusik_SOURCE_DIR}/Classes/Tunage
 
-        ${Musik_SOURCE_DIR}/Classes/Library/CFrameHeader
-        ${Musik_SOURCE_DIR}/Classes/Library/CMP3Info
-        ${Musik_SOURCE_DIR}/Classes/Library/COggInfo
-        ${Musik_SOURCE_DIR}/Classes/Library/CVBitRate
-        ${Musik_SOURCE_DIR}/Classes/Library/vcedit
+        ${wxMusik_SOURCE_DIR}/Classes/Library/CFrameHeader
+        ${wxMusik_SOURCE_DIR}/Classes/Library/CMP3Info
+        ${wxMusik_SOURCE_DIR}/Classes/Library/COggInfo
+        ${wxMusik_SOURCE_DIR}/Classes/Library/CVBitRate
+        ${wxMusik_SOURCE_DIR}/Classes/Library/vcedit
 
-        ${Musik_SOURCE_DIR}/Frames/MusikFrame
-        ${Musik_SOURCE_DIR}/Frames/MusikFrameEvents
-        ${Musik_SOURCE_DIR}/Frames/MusikLibraryFrame
-        ${Musik_SOURCE_DIR}/Frames/MusikPrefsFrame
-        ${Musik_SOURCE_DIR}/Frames/MusikTagFrame
-        ${Musik_SOURCE_DIR}/Frames/MusikVolumeFrame
-        ${Musik_SOURCE_DIR}/Frames/MusikFXFrame
-		${Musik_SOURCE_DIR}/Frames/MusikAutoTaggerFrame
- 		${Musik_SOURCE_DIR}/Threads/ActivityBoxThreads
-        ${Musik_SOURCE_DIR}/Threads/PlaylistCtrlThreads
-        ${Musik_SOURCE_DIR}/Threads/MusikLibraryThreads
-        ${Musik_SOURCE_DIR}/Threads/MusikTagThreads
-        ${Musik_SOURCE_DIR}/Threads/MusikThreads
+        ${wxMusik_SOURCE_DIR}/Frames/MusikFrame
+        ${wxMusik_SOURCE_DIR}/Frames/MusikFrameEvents
+        ${wxMusik_SOURCE_DIR}/Frames/MusikLibraryFrame
+        ${wxMusik_SOURCE_DIR}/Frames/MusikPrefsFrame
+        ${wxMusik_SOURCE_DIR}/Frames/MusikTagFrame
+        ${wxMusik_SOURCE_DIR}/Frames/MusikVolumeFrame
+        ${wxMusik_SOURCE_DIR}/Frames/MusikFXFrame
+		${wxMusik_SOURCE_DIR}/Frames/MusikAutoTaggerFrame
+ 		${wxMusik_SOURCE_DIR}/Threads/ActivityBoxThreads
+        ${wxMusik_SOURCE_DIR}/Threads/PlaylistCtrlThreads
+        ${wxMusik_SOURCE_DIR}/Threads/MusikLibraryThreads
+        ${wxMusik_SOURCE_DIR}/Threads/MusikTagThreads
+        ${wxMusik_SOURCE_DIR}/Threads/MusikThreads
 
-        ${Musik_SOURCE_DIR}/shibatch/Equ.cpp
-        ${Musik_SOURCE_DIR}/shibatch/Fftsg_fl.cpp
+        ${wxMusik_SOURCE_DIR}/shibatch/Equ.cpp
+        ${wxMusik_SOURCE_DIR}/shibatch/Fftsg_fl.cpp
     )
 
 TARGET_LINK_LIBRARIES(wxMusik 
