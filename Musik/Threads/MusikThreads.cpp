@@ -9,9 +9,13 @@
 //--- MusikStreamArray here ---//
 #include "../Classes/MusikPlayer.h"
 
-//----------------------------//
-//--- MusikCrossfadeThread ---//
-//----------------------------//
+//--- MusikFrame here ---//
+#include "../Frames/MusikFrame.h"
+
+//---------------------------------------------------------//
+//---- always running thread. it figures out when and 	---//
+//---- how to que up the next song. also triggers fades	---//
+//---------------------------------------------------------//
 MusikFaderThread::MusikFaderThread()
 {
 	m_CrossfaderActive = false;
@@ -108,6 +112,10 @@ void MusikFaderThread::OnExit()
 		pCrossfader->Delete();
 }
 
+//---------------------------------------------------------//
+//---- this will fade in the new channel on top of the	---//
+//---- the array, while fading *all* the others out		---//
+//---------------------------------------------------------//
 MusikCrossfaderThread::MusikCrossfaderThread( MusikFaderThread *pParent )
 {
 	m_Parent = pParent;
@@ -195,4 +203,76 @@ void MusikCrossfaderThread::OnExit()
 	}
 
 	m_Parent->SetCrossfaderActive( false );
+}
+
+//---------------------------------------------------------//
+//--- this thread will write all dirty tags to file...	---//
+//--- its placed here for lack of a better place		---//
+//---------------------------------------------------------//
+MusikWriteDirtyThread::MusikWriteDirtyThread( bool bClear )
+{
+	m_Clear = bClear;
+}
+
+void *MusikWriteDirtyThread::Entry()
+{
+	//--- setup ---//
+	g_MusikFrame->SetProgress		( 0 );
+	g_MusikFrame->SetProgressType	( MUSIK_WRITE_DIRTY_THREAD );
+	g_MusikFrame->SetActiveThread	( this );
+
+	//--- events we'll post as we go along ---//
+	wxCommandEvent WriteTagStartEvt	( wxEVT_COMMAND_MENU_SELECTED, MUSIK_FRAME_THREAD_START );
+	wxCommandEvent WriteTagProgEvt	( wxEVT_COMMAND_MENU_SELECTED, MUSIK_FRAME_THREAD_PROG );	
+
+	wxPostEvent( g_MusikFrame, WriteTagStartEvt );
+
+	CMusikSongArray aDirty = g_Library.QuerySongs( wxT("dirty = 1") );
+
+	if ( aDirty.GetCount() > 0 )
+	{
+		int nLastProg = 0;
+		int nCurrProg = 0;
+		float fPos = 0;
+		size_t nCount = aDirty.GetCount();
+
+		for ( size_t i = 0; i < nCount; i++ )
+		{
+			//--- check abort signal ---//
+			if ( TestDestroy() )
+				break;
+
+			//--- update progressbar ---//
+			fPos = ( i * 100 ) / nCount;
+			nCurrProg = (int)fPos;
+			if ( nCurrProg > nLastProg )
+			{
+				g_MusikFrame->SetProgress( nCurrProg );
+				wxPostEvent( g_MusikFrame, WriteTagProgEvt );
+			}
+			nLastProg = nCurrProg;
+
+			//-----------------------------//
+			//--- write the tag to file	---//
+			//-----------------------------//
+			if ( aDirty.Item( i ).Format == MUSIK_FORMAT_MP3 )
+				g_Library.WriteMP3Tag( aDirty.Item( i ).Filename, m_Clear );
+			else if ( aDirty.Item( i ).Format == MUSIK_FORMAT_OGG )
+				g_Library.WriteOGGTag( aDirty.Item( i ).Filename, m_Clear );
+
+			//-----------------------------//
+			//--- flag item as clean	---//
+			//-----------------------------//
+			g_Library.UpdateItem( aDirty.Item( i ).Filename, aDirty.Item( i ), false );
+		}
+
+	}
+
+	return NULL;
+}
+
+void MusikWriteDirtyThread::OnExit()
+{
+	wxCommandEvent WriteDirtyEndEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_FRAME_THREAD_END );	
+	wxPostEvent( g_MusikFrame, WriteDirtyEndEvt );
 }

@@ -21,8 +21,6 @@
 //--- crossfader, other threads ---//
 #include "../Threads/MusikThreads.h"
 
-
-
 #include <wx/socket.h>
 
 class MusikFrame : public wxFrame
@@ -156,12 +154,14 @@ protected:
     	long MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam);
 #endif
 private:
+	//--- threads and thread related ---//
 	int m_Progress;
 	int m_ProgressType;
 	wxThread* m_ActiveThread;
+	MusikWriteDirtyThread* pWriteDirtyThread;
 
-	wxString		m_customQuery;
 
+	wxString m_customQuery;
 	bool m_DisablePlacement;
 };
 

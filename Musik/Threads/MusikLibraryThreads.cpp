@@ -76,7 +76,7 @@ void *MusikUpdateLibThread::Entry()
 			{
 				sProgress.sprintf( wxT( "%d / %d" ), i, nCount );
 				g_MusikLibraryFrame->SetProgressStr( sProgress );
-				g_MusikLibraryFrame->SetProgress( (int)fPos );
+				g_MusikLibraryFrame->SetProgress( nCurrProg );
 				wxPostEvent( g_MusikLibraryFrame, UpdateProgEvt );
 				Yield();
 			}
@@ -229,6 +229,6 @@ void *MusikPurgeLibThread::Entry()
 
 void MusikPurgeLibThread::OnExit()
 {
-	wxCommandEvent PurgeEndEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_LIBRARY_THREAD_END );	
+	wxCommandEvent PurgeEndEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_FRAME_THREAD_END );	
 	wxPostEvent( g_MusikLibraryFrame, PurgeEndEvt );
 }

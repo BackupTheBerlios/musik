@@ -151,7 +151,6 @@ void MusikFrame::OnClose( wxCloseEvent& WXUNUSED(event) )
 
 void MusikFrame::OnSetupPaths( wxCommandEvent& WXUNUSED(event) )
 {
-	//--- TODO: checking to make sure the window is destroyed
 	g_MusikLibraryFrame = new MusikLibraryFrame( ( wxFrame* )this, wxPoint( 0, 0 ), wxSize( 480, 240 ) );
 	this->Enable( FALSE );	
 	g_MusikLibraryFrame->Show();
@@ -243,58 +242,30 @@ void MusikFrame::OnTranslateKeys( wxKeyEvent& event )
 	{
 		if ( GetActiveThread() != NULL )
 		{
-			SetTitle( wxString( MUSIK_VERSION ) + _( " - Aborting process, please wait..." ) );
+			SetTitle( wxString( MUSIK_VERSION ) + _( ": Aborting process, please wait..." ) );
 			GetActiveThread()->Delete();
 		}
 	}
 }
 
-//-----------------------//
-//--- TODO: THREAD ME ---//
-//-----------------------//
 void MusikFrame::WriteTags()
 {
-	bool bClear = false;
-	if ( wxMessageBox( _("Clear old tag information before writing?"), MUSIK_VERSION, wxYES_NO|wxICON_QUESTION  ) == wxYES )
-		bClear = true;
+	if ( g_MusikFrame->GetActiveThread() == NULL )
+        {
+			//--- ask user if he wants to clear tags first ---//
+			bool bClear = false;
+			if ( wxMessageBox( _( "Clear old tag information before writing?" ), MUSIK_VERSION, wxYES_NO | wxICON_QUESTION  ) == wxYES )
+				bClear = true;
+			else
+				bClear = false;		
+
+			//--- fire up the thread ---//
+			pWriteDirtyThread = new MusikWriteDirtyThread( bClear );
+			pWriteDirtyThread->Create();
+			pWriteDirtyThread->Run();
+        }
 	else
-		bClear = false;
-
-	CMusikSongArray aDirty = g_Library.QuerySongs( wxT("dirty = 1") );
-	if ( aDirty.GetCount() > 0 )
-	{
-		//--- setup progress ---//
-	//	m_AbortProg = false;
-		EnableProgress();
-
-		float fPos = 0;
-		wxString sTitle;
-					
-		//--- process messages ---//
-		wxYield();
-		for ( size_t i = 0; i < aDirty.GetCount(); i++ )
-		{
-			//--- check abort signal ---//
-	//		if ( m_AbortProg )
-	//			break;
-
-			//--- update progressbar ---//
-			sTitle.sprintf( wxT("Writing tag... %d of %d"), i+1, aDirty.GetCount() );
-			SetTitle( sTitle );
-			fPos = ( i * 100 ) / aDirty.GetCount();
-			g_Progress->SetValue( ( int )fPos );
-
-			//--- save it ---//
-			if ( aDirty.Item( i ).Format == MUSIK_FORMAT_MP3 )
-				g_Library.WriteMP3Tag( aDirty.Item( i ).Filename, bClear );
-			else if ( aDirty.Item( i ).Format == MUSIK_FORMAT_OGG )
-				g_Library.WriteOGGTag( aDirty.Item( i ).Filename, bClear );
-
-			g_Library.UpdateItem( aDirty.Item( i ).Filename, aDirty.Item( i ), false );
-		}
-		SetTitle( MUSIK_VERSION );
-		EnableProgress( false );
-	}
+		wxMessageBox( _( "An internal error has occured.\nPrevious thread not terminated correctly.\n\nPlease contact the Musik development team with this error." ), MUSIK_VERSION, wxICON_STOP );
 }
 
 //------------------------//
@@ -383,11 +354,15 @@ void MusikFrame::OnStartProgress( wxCommandEvent& WXUNUSED(event) )
 
 	if ( GetProgressType() == MUSIK_ACTIVITY_RENAME_THREAD )
 	{
-		SetTitle( _( "Updating tags from selection box (ESC to abort)" ) );
+		SetTitle( wxString( MUSIK_VERSION ) + _( ": Updating tags from selection box (ESC to abort)" ) );
 	}
 	else if ( GetProgressType() == MUSIK_PLAYLIST_RENAME_THREAD )
 	{
-		SetTitle( _( "Renaming selected playlist items (ESC to abort)" ) );
+		SetTitle( wxString( MUSIK_VERSION ) + _( ": Renaming selected playlist items (ESC to abort)" ) );
+	}
+	else if ( GetProgressType() == MUSIK_WRITE_DIRTY_THREAD )
+	{
+		SetTitle( wxString( MUSIK_VERSION ) + _( ": Writing dirty tags to file (ESC to abort)" ) );
 	}
 }
 

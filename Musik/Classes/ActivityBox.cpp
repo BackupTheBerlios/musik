@@ -11,7 +11,8 @@
  *  See the file "license.txt" for information on usage and redistribution
  *  of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 */
-// For compilers that support precompilation, includes "wx/wx.h".
+
+//--- For compilers that support precompilation, includes "wx/wx.h". ---//
 #include "wx/wxprec.h"
 #include "ActivityBox.h"
 
@@ -668,12 +669,11 @@ wxString CActivityBox::DNDGetList()
 //-----------------------------//
 void CActivityBox::StartRenameThread( int mode, wxArrayString sel, wxString newvalue )
 {
-
 	if ( g_MusikFrame->GetActiveThread() == NULL )
         {
-		pRenameThread = new MusikActivityRenameThread( this, mode, sel, newvalue );
-		pRenameThread->Create();
-		pRenameThread->Run();
+			pRenameThread = new MusikActivityRenameThread( this, mode, sel, newvalue );
+			pRenameThread->Create();
+			pRenameThread->Run();
         }
 	else
 		wxMessageBox( _( "An internal error has occured.\nPrevious thread not terminated correctly.\n\nPlease contact the Musik development team with this error." ), MUSIK_VERSION, wxICON_STOP );
@@ -698,18 +698,18 @@ void CActivityBox::OnRenameThreadStart( wxCommandEvent& WXUNUSED(event) )
 	//--- post the event. we're up and running now! ---//
 	wxCommandEvent MusikStartProgEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_FRAME_THREAD_START );
 	wxPostEvent( g_MusikFrame, MusikStartProgEvt );
-	}
+}
 	
 void CActivityBox::OnRenameThreadProg( wxCommandEvent& WXUNUSED(event) )
-			{
+{
 	//--- relay thread progress message to g_MusikFrame ---//
 	g_MusikFrame->SetProgress( GetProgress() );
 	wxCommandEvent MusikEndProgEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_FRAME_THREAD_PROG );
 	wxPostEvent( g_MusikFrame, MusikEndProgEvt );
-				}
+}
 
 void CActivityBox::OnRenameThreadEnd( wxCommandEvent& WXUNUSED(event) )
-				{
+{
 	if ( g_Prefs.nShowUnsel == 1 || g_ActivityAreaCtrl->GetParentBox() == this )
 		ResetContents();
 			else

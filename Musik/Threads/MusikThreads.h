@@ -9,6 +9,12 @@
 //--- fmod ---//
 #include "fmod.h"
 
+class MusikFrame;
+
+//---------------------------------------------------------//
+//---- always running thread. it figures out when and 	---//
+//---- how to que up the next song. also triggers fades	---//
+//---------------------------------------------------------//
 class MusikCrossfaderThread;
 
 class MusikFaderThread : public wxThread
@@ -48,6 +54,21 @@ public:
 private:
 	MusikFaderThread *m_Parent;
 	bool m_Aborted;
+};
+
+//---------------------------------------------------------//
+//--- this thread will write all dirty tags to file...	---//
+//--- its placed here for lack of a better place		---//
+//---------------------------------------------------------//
+class MusikWriteDirtyThread : public wxThread
+{
+public:
+	MusikWriteDirtyThread( bool bClear );
+
+	virtual void *Entry();
+	virtual void OnExit();
+private:
+	bool m_Clear;
 };
 
 #endif
