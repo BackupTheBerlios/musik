@@ -120,6 +120,9 @@ public:
 	void DeleteCrossfader	( CMusikCrossfader* fader );
 	void DeleteCrossfader	( const CStdString& name );
 
+	// misc stuff
+	static int GetFilesize( const CStdString& fn );
+
 	// adding files
 	bool AddOGG		( const CStdString& fn );
 	bool AddMP3		( const CStdString& fn );

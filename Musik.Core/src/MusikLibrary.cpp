@@ -7,6 +7,8 @@
 #include "../include/MusikConfig.h"
 #include "../include/MusikCrossfader.h"
 #include "../include/MusikLibrary.h"
+#include "../include/MusikMp3Info.h"
+#include "../include/MusikOggInfo.h"
 
 #include "ace/Thread.h"
 #include "ace/Synch.h"
@@ -1003,11 +1005,52 @@ int CMusikLibrary::GetIDFromFilename( const CStdString& fn )
 
 ///////////////////////////////////////////////////
 
+int CMusikLibrary::GetFilesize( const CStdString& fn )
+{
+	FILE* pFile = fopen( fn.c_str(), "rb" );
+	if ( pFile )
+	{
+		int fs = fseek( pFile, 0, SEEK_END );
+		fclose( pFile );
+		return fs;
+	}
+
+	return 0;
+}
+
+///////////////////////////////////////////////////
+
 bool CMusikLibrary::AddOGG( const CStdString& fn )
 {
-	CMusikFilename MFN( fn );
+	CMusikOggInfo m_Info;
+	if ( m_Info.LoadInfo( fn ) )
+	{
 
-	return true;
+		sqlite_exec_printf( m_pDB, "insert into songs values ( %Q, %d, %d, %Q, %Q, %Q, %Q, %d, %Q, %Q, %d, %d, %Q, %Q, %d, %d, %Q, %d, %d );", NULL, NULL, NULL, 
+			NULL,											// id
+			MUSIK_LIBRARY_FORMAT_OGG,						// format
+			1,												// vbr
+			fn.c_str(),										// filename
+			m_Info.Get()->GetArtist().c_str(),				// artist 
+			m_Info.Get()->GetTitle().c_str(),				// title
+			m_Info.Get()->GetAlbum().c_str(),				// album
+			atoi( m_Info.Get()->GetTrackNum().c_str() ),	// tracknum
+			m_Info.Get()->GetYear().c_str(),				// year
+			m_Info.Get()->GetGenre().c_str(),				// genre
+			0,												// rating
+			atoi( m_Info.Get()->GetBitrate() ),				// bitrate
+			"",												// last played
+			"",												// notes
+			0,												// times played
+			atoi( m_Info.Get()->GetDuration() ),			// duration
+			m_TimeAdded.c_str(),							// time added
+			GetFilesize( fn ),								// file size
+			0 );											// dirty
+
+		return true;
+	}
+
+	return false;
 }
 
 ///////////////////////////////////////////////////

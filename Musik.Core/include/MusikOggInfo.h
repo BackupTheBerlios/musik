@@ -19,6 +19,8 @@ public:
 	bool LoadInfo( const CStdString& fn );
 	CStdString GetField( int field );
 
+	CMusikSongInfo* Get(){ return &m_Info; }
+
 private:
 	CMusikSongInfo m_Info;
 };

@@ -31,6 +31,7 @@ public:
 	CStdString GetJustFilename();
 	CStdString GetPath();
 	CStdString GetFullFilename();
+	CStdString GetExtension( bool make_lower = true );
 
 	// sets
 	void SetFilename( const CStdString& fn );

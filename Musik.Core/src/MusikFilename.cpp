@@ -54,6 +54,19 @@ CStdString CMusikFilename::GetFullFilename()
 
 ///////////////////////////////////////////////////
 
+CStdString CMusikFilename::GetExtension( bool make_lower )
+{
+	int nPos = m_Filename.ReverseFind( "." );
+	CStdString ret = m_Filename.Right( m_Filename.GetLength() - nPos - 1 );
+
+	if ( make_lower )
+		ret.MakeLower();
+
+	return ret;
+}
+
+///////////////////////////////////////////////////
+
 CStdString CMusikFilename::GetPath()
 {
 	int nPos = m_Filename.ReverseFind( MUSIK_PATH_SEPARATOR );
