@@ -3298,6 +3298,9 @@ void CMainFrame::OnWinampvisualizationsEnabled()
 		{
 			visSetVisModule( m_Prefs->GetWinampVisModule() );
 			visStartVis( m_Prefs->GetWinampVis() );
+
+			if ( m_Player->IsPlaying() )
+				visSetVisPlaying( TRUE );
 		}	
 		else
 			MessageBox( "Invalid Winamp visualization configuration.", MUSIK_VERSION_STR, MB_ICONINFORMATION );
