@@ -1242,23 +1242,41 @@ bool CMusikLibrary::RenameFile( CMusikSong* song, bool bClearCheck )
 	return false;
 }
 
-bool CMusikLibrary::RetagFile( CMusikSong* song, bool bClearCheck )
+bool CMusikLibrary::CheckTokenForInt( wxArrayString aTokens, size_t nStart, size_t nEnd )
 {
-	CMusikSong* NewSong = new CMusikSong;
+	for( size_t i = 0; i < aTokens.GetCount(); i++ )
+	{
+		
+	}
+	return false;
+}
+
+bool CMusikLibrary::RetagFile( CMusikSong* song )
+{
+	CMusikSong* NewSong		= new CMusikSong;
+	wxFileName	filename	( song->Filename );
 
 	wxString	sMask		= g_Prefs.sAutoTag;
-	wxFileName	filename	( song->Filename );
+	size_t		nValidStart	= 1;
+	size_t		nValidEnd	= 6;
+
 	wxString	sPath		= filename.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR );
 	wxString	sFile		= filename.GetName();
 	wxString	sExt		= wxT(".") + filename.GetExt();
 
+	wxArrayString aMaskToken	= DelimitStr( sMask, wxT("%"), true );
+	if( !CheckTokenForInt( aMaskToken, nValidStart, nValidEnd ) )
+	{
+		wxMessageBox( wxT("Not a valid mask.") );
+	}
+/*
 	sMask.Replace( wxT("%"), wxT(""), 1 );
 	sMask.Replace( wxT(" "), wxT(""), 1 );
 
 	size_t nMaskDel		= GetDelimitCount( sMask, wxT("-") );
 	size_t nFilenameDel = GetDelimitCount( sFile, wxT("-") );
 
-	wxArrayString aMask		= DelimitStr( sMask, wxT("-"), true );
+	wxArrayString aMask		= DelimitStr( sMask, wxT("%"), true );
 	wxArrayString aTagInfo	= DelimitStr( sFile, wxT("-"), true );	
 
 /*	1 - song title
@@ -1268,7 +1286,7 @@ bool CMusikLibrary::RetagFile( CMusikSong* song, bool bClearCheck )
 	5 - year
 	6 - track number
 */
-	if( nMaskDel == nFilenameDel )
+/*	if( nMaskDel == nFilenameDel )
 	{
 		for( size_t i = 0; i < nMaskDel; i++ )
 		{
@@ -1307,7 +1325,7 @@ bool CMusikLibrary::RetagFile( CMusikSong* song, bool bClearCheck )
 		wxMessageBox( NewSong->Year );
 		wxMessageBox( IntTowxString( NewSong->TrackNum ) );
 	}
-
+*/
 	return true;
 }
 
