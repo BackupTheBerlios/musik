@@ -1136,11 +1136,11 @@ void CPlaylistCtrl::DelSelSongs(bool bDeleteFromDB, bool bDeleteFromComputer)
 		// correct nIndex, substract the number of entry,
 		// which have been already deleted from the array
 		// because GetNextItem() still returns the old index values
-  		nIndex -= i; 
+  		
 	   //--- if its valid, delete ---//
 		if( bDeleteFromDB )
 		{
-	    	sFile = g_Playlist.Item( nIndex ).Filename; // get the filename before song is deleted from the array
+	    	sFile = g_Playlist.Item( nIndex - i).Filename; // get the filename before song is deleted from the array
 			if( bDeleteFromComputer )
 			{
 				if ( !wxRemoveFile( sFile ) )
@@ -1148,7 +1148,7 @@ void CPlaylistCtrl::DelSelSongs(bool bDeleteFromDB, bool bDeleteFromComputer)
 			}
 			g_Library.RemoveSong( sFile );
 		}
-		g_Playlist.RemoveAt( nIndex, 1 );
+		g_Playlist.RemoveAt( nIndex - i, 1 );
 	}
 
 	//--- if certain files couldn't be deleted ---//
