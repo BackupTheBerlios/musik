@@ -143,11 +143,10 @@ public:
 	bool			m_WriteTag;
 	int				nIndex;
 	int				nFrame;
-	int				nType;
 
 	DECLARE_EVENT_TABLE()
 private:
-	int m_FrameType;
+	int m_EditType;
 
 	//--- thread related stuff ---//
 	MusikTagApplyThread	*pApplyThread;

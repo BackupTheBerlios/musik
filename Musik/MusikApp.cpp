@@ -188,15 +188,18 @@ void MusikApp::WriteVersion()
 	else
 	{
 		ver.Create( MUSIK_VERSION_FILENAME );
-		ver.Open( MUSIK_VERSION_FILENAME );
 	}
-    
+
 	if ( ver.IsOpened() )
 	{
-		ver.Clear();
+    ver.RemoveLine(0);
 		ver.AddLine( MUSIK_VERSION );
 		ver.Write();
 		ver.Close();
 	}
+  else
+  {
+    wxASSERT(0)
+  }
 }
 

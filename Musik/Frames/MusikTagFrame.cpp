@@ -78,8 +78,7 @@ MusikTagFrame::MusikTagFrame( wxFrame* pParent, CMusikSongArray aSongs, int nCur
 	m_Songs		= aSongs;
 	nFrame		= nCurFrame;
 	nIndex		= 0;
-	nType		= nEditType;
-	m_FrameType	= nType;
+	m_EditType	= nEditType;
 	m_ActiveThread =  NULL;
 
 	//-----------------//
@@ -90,7 +89,7 @@ MusikTagFrame::MusikTagFrame( wxFrame* pParent, CMusikSongArray aSongs, int nCur
 	//-------------------------------------------------//
 	//--- setup right index, if in single edit mode ---//
 	//-------------------------------------------------//
-	if ( m_FrameType == MUSIK_TAG_SINGLE )
+	if ( m_EditType == MUSIK_TAG_SINGLE )
 	{
 		if ( m_Songs.GetCount() < 2 )
 			nIndex = 0;
@@ -259,9 +258,9 @@ MusikTagFrame::MusikTagFrame( wxFrame* pParent, CMusikSongArray aSongs, int nCur
 
 void MusikTagFrame::SetCaption()
 {
-	if ( m_FrameType == MUSIK_TAG_SINGLE )
+	if ( m_EditType == MUSIK_TAG_SINGLE )
 		SetTitle( _("Tag information editing (single)") );
-	else if ( m_FrameType == MUSIK_TAG_MULTIPLE )
+	else if ( m_EditType == MUSIK_TAG_MULTIPLE )
 		SetTitle( _("Tag information editing (batch)") );	
 }
 
@@ -271,7 +270,7 @@ bool MusikTagFrame::Show( bool show )
 	
 	if ( show )
 	{
-		if( ( nType == MUSIK_TAG_MULTIPLE ) || ( m_Songs.GetCount() < 2 ) )
+		if( ( m_EditType == MUSIK_TAG_MULTIPLE ) || ( m_Songs.GetCount() < 2 ) )
 		{
 			hsNav->Show( btnPrev, false );
 			hsNav->Show( btnNext, false );
@@ -281,7 +280,7 @@ bool MusikTagFrame::Show( bool show )
 		chkClear->SetValue		( g_Prefs.nTagDlgClear	);
 		chkRename->SetValue		( g_Prefs.nTagDlgRename	);
 
-		SetChecks( nType );
+		SetChecks( m_EditType );
 		PopulateTagDlg();
 	}
 	
@@ -582,11 +581,11 @@ void MusikTagFrame::Apply( bool close )
 	{
 		SetTitle( _( "Scanning for changed attributes" ) );
 
-		if ( nType == MUSIK_TAG_SINGLE )
+		if ( m_EditType == MUSIK_TAG_SINGLE )
 		{
 			SaveCurSong();	
 		}
-		else if ( nType == MUSIK_TAG_MULTIPLE )
+		else if ( m_EditType == MUSIK_TAG_MULTIPLE )
 			CheckChangesBatch();
 		if(m_bDirty)
 		{
@@ -666,12 +665,12 @@ void MusikTagFrame::OnTranslateKeys( wxKeyEvent& event )
 	{
 		if ( GetActiveThread() == NULL )
 		{
-			if ( m_FrameType == MUSIK_TAG_SINGLE )
+			if ( m_EditType == MUSIK_TAG_SINGLE )
 		{
 			if ( nIndex + 1 < (int)m_Songs.GetCount() )
 				Next();
 		}
-			else if ( m_FrameType ==  MUSIK_TAG_MULTIPLE )
+			else if ( m_EditType ==  MUSIK_TAG_MULTIPLE )
 			{
 				Apply( true );
 			}
@@ -679,7 +678,7 @@ void MusikTagFrame::OnTranslateKeys( wxKeyEvent& event )
 	}
 
 	//--- shift-enter, go back ---//
-	if ( event.GetKeyCode() == WXK_RETURN && event.ShiftDown() && m_FrameType == MUSIK_TAG_SINGLE )
+	if ( event.GetKeyCode() == WXK_RETURN && event.ShiftDown() && m_EditType == MUSIK_TAG_SINGLE )
 	{
 		if ( GetActiveThread() == NULL )
 		{
@@ -710,7 +709,7 @@ void MusikTagFrame::OnTagThreadEnd( wxCommandEvent& WXUNUSED(event) )
 	//------------------------------------------//
 	//--- if the frame is a single edit mode ---//
 	//------------------------------------------//
-	if ( m_FrameType == MUSIK_TAG_SINGLE )
+	if ( m_EditType == MUSIK_TAG_SINGLE )
 	{
 		g_Playlist = m_Songs;
 		g_PlaylistCtrl->Update();
@@ -720,7 +719,7 @@ void MusikTagFrame::OnTagThreadEnd( wxCommandEvent& WXUNUSED(event) )
 	//-----------------------------------------//
 	//--- if the frame is a batch edit mode ---//
 	//-----------------------------------------//
-	else if ( m_FrameType == MUSIK_TAG_MULTIPLE )
+	else if ( m_EditType == MUSIK_TAG_MULTIPLE )
 	{
 	//--- give the playlist back ---//
 	wxArrayInt sel = g_PlaylistCtrl->GetSelItems();

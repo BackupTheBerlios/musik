@@ -1356,7 +1356,7 @@ void CPlaylistCtrl::OnThreadEnd( wxCommandEvent& WXUNUSED(event) )
 	if( GetProgressType() == MUSIK_PLAYLIST_RETAG_THREAD )
 		g_ActivityAreaCtrl->ResetAllContents();
 
-	g_PlaylistCtrl->Update();
+	Update();
 
 	//--- update locally ---//
 	SetActiveThread	( NULL );
