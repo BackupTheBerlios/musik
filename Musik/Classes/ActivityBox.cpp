@@ -61,7 +61,7 @@ void CActivityEditEvt::TranslateKeys( wxKeyEvent& event )
 //--- CActivityListBox ---//
 //------------------------//
 CActivityListBox::CActivityListBox( CActivityBox *parent,  wxWindowID id )
-	: wxListCtrl( parent, id, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxLC_NO_HEADER | wxLC_REPORT | wxLC_VIRTUAL | wxNO_BORDER & ~wxHSCROLL & ~wxLC_SINGLE_SEL )
+	: wxListCtrl( parent, id, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxLC_REPORT | wxLC_VIRTUAL | wxNO_BORDER & ~wxHSCROLL & ~wxLC_SINGLE_SEL )
 {
 	m_Related = 0;
 	m_pParent = parent;
@@ -316,8 +316,7 @@ void ActivityDropTarget::HighlightSel( wxPoint pPos )
 CActivityBox::CActivityBox( wxWindow *parent, wxWindowID id, EMUSIK_ACTIVITY_TYPE nType )
 	:  wxPanel( parent, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxSIMPLE_BORDER | wxCLIP_CHILDREN )
 {
-	//--- CListHeader and CActivityListBox ---//
-	pHeader		= new CListHeader		( this, wxT("") );
+	//--- CActivityListBox ---//
 	pListBox	= new CActivityListBox	( this, id );
 	
 	//--- drag and drop handler ---//
@@ -336,7 +335,6 @@ CActivityBox::CActivityBox( wxWindow *parent, wxWindowID id, EMUSIK_ACTIVITY_TYP
 
 	//--- top sizer ---//
 	pSizer = new wxBoxSizer( wxVERTICAL );
-	pSizer->Add( pHeader, 0, wxEXPAND | wxBOTTOM, 0 );
 	pSizer->Add( pListBox, 1, wxEXPAND, 0 );
 	pSizer->Add( pEdit, 0, wxEXPAND, 0 );
 	pSizer->Show( pEdit, FALSE );
@@ -359,11 +357,19 @@ CActivityBox::CActivityBox( wxWindow *parent, wxWindowID id, EMUSIK_ACTIVITY_TYP
 
 CActivityBox::~CActivityBox()
 {
-	delete pHeader;
 	delete pListBox;
 	delete pEdit;
 	delete pActivityBoxEvt;
 	delete pActivityEditEvt;
+}
+
+void CActivityBox::SetCaption( const wxString & sCaption )
+{
+	wxListItem item;
+	item.SetId( 1 );
+	item.SetMask( wxLIST_MASK_TEXT );
+	item.SetText( sCaption );
+	pListBox->SetColumn( 1, item );
 }
 
 wxString CActivityBox::GetActivityTypeStr()

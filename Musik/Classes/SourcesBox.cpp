@@ -160,7 +160,7 @@ BEGIN_EVENT_TABLE(CSourcesListBox, wxListCtrl)
 END_EVENT_TABLE()
 
 CSourcesListBox::CSourcesListBox( wxPanel* parent, wxWindowID id )
-	: wxListCtrl( parent, id, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxLC_NO_HEADER | wxLC_ALIGN_LEFT | wxLC_REPORT | wxLC_VIRTUAL | wxLC_EDIT_LABELS | wxLC_SINGLE_SEL | wxNO_BORDER & ~wxHSCROLL )
+	: wxListCtrl( parent, id, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxLC_ALIGN_LEFT | wxLC_REPORT | wxLC_VIRTUAL | wxLC_EDIT_LABELS | wxLC_SINGLE_SEL | wxNO_BORDER & ~wxHSCROLL )
 {
 	//--- initialize variables ---//
 	m_CurSel = 0;
@@ -1092,12 +1092,10 @@ CSourcesBox::CSourcesBox( wxWindow *parent, wxWindowID id )
 	: wxPanel( parent, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxSIMPLE_BORDER | wxCLIP_CHILDREN )
 {
 	//--- CListHeader / CSourcesListBox ---//
-	pHeader		= new CListHeader( this, _( "Sources" ) );
 	pListBox	= new CSourcesListBox( this, id );
 	
 	//--- top sizer ---//
 	pSizer = new wxBoxSizer( wxVERTICAL );
-	pSizer->Add( pHeader, 0, wxEXPAND | wxBOTTOM, 0 );
 	pSizer->Add( pListBox, 1, wxEXPAND | wxTOP, 0 );
 	SetSizerAndFit( pSizer );
 
@@ -1106,6 +1104,5 @@ CSourcesBox::CSourcesBox( wxWindow *parent, wxWindowID id )
 
 CSourcesBox::~CSourcesBox()
 {
-	delete pHeader;
 	delete pListBox;
 }

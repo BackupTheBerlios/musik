@@ -169,11 +169,13 @@ void MusikFrame::OnSetupPaths( wxCommandEvent& WXUNUSED(event) )
 
 void MusikFrame::OnPreferences( wxCommandEvent &event )
 {
+	
 	#ifdef __WXMSW__
 		wxSize prefs_size( 460, 370 );
 	#elif __WXGTK__
 		wxSize prefs_size( 520, 370 );
 	#endif
+	
 
 	wxFrame *pDlg = new MusikPrefsFrame( ( wxFrame* )this, _("Musik Preferences"), wxPoint( 0, 0 ), prefs_size );
 	this->Enable( FALSE );

@@ -452,7 +452,7 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	vsTopSizer = new wxBoxSizer( wxVERTICAL );
 	vsTopSizer->Add( hsSplitter,	1, wxEXPAND | wxALL, 2 );
 	vsTopSizer->Add( hsSysButtons,	0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 2 );
-	SetSizer( vsTopSizer );
+	SetSizerAndFit( vsTopSizer );
 
 	//--------------//
 	//--- Layout ---//

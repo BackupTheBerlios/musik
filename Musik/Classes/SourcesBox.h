@@ -22,8 +22,6 @@
 
 #include "ActivityBox.h"
 
-#include "ListHeader.h"
-
 #include <wx/dnd.h>
 
 enum EMUSIK_LIBRARY_TYPE
@@ -158,7 +156,6 @@ public:
 	wxString PromptDynamicPlaylist( wxString sQuery )	{ return pListBox->PromptDynamicPlaylist( sQuery ); }
 
 private:
-	CListHeader		*pHeader;
 	CSourcesListBox *pListBox;
 	wxBoxSizer		*pSizer;
 };

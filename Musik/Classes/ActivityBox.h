@@ -24,8 +24,6 @@
 #include "wx/thread.h"
 #include "wx/dnd.h"
 
-#include "ListHeader.h"
-
 #define MUSIK_ACT_TEXT 9998
 
 //--- for CMusikSongArray ---//
@@ -131,7 +129,7 @@ public:
 	void OnRenameThreadProg		( wxCommandEvent& WXUNUSED(event) );
 
 	//--- sets ---//
-	void SetCaption				( wxString sCaption )										{ pHeader->SetCaption( sCaption );						}
+	void SetCaption				( const wxString & sCaption );
 	void SetActivityType		( EMUSIK_ACTIVITY_TYPE  nType )								{ m_ActivityType = nType;								}
 	void DeselectAll			()															{ pListBox->DeselectAll();								}
 	void SetSel					( const wxString & sel, bool bDeselectAllFirst = true )		{ pListBox->SetSel( sel , bDeselectAllFirst );			}
@@ -193,7 +191,6 @@ private:
 	wxBoxSizer			*pSizer;
 	wxTextCtrl			*pEdit;
 	wxGauge				*pProgress;
-	CListHeader			*pHeader;
 	CActivityListBox	*pListBox;
 	CActivityBoxEvt		*pActivityBoxEvt;
 	CActivityEditEvt	*pActivityEditEvt;
