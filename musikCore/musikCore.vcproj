@@ -228,6 +228,9 @@
 			RelativePath=".\include\musikBatchAdd.h">
 		</File>
 		<File
+			RelativePath=".\include\musikBatchRetag.h">
+		</File>
+		<File
 			RelativePath=".\include\musikConfig.h">
 		</File>
 		<File

@@ -1,6 +1,6 @@
 ##################################
 #
-# project name
+# set project name
 # 
 ##################################
 
@@ -8,7 +8,7 @@ PROJECT(musikCore)
 
 ##################################
 #
-# build flags
+# set build flags
 #
 ##################################
 
@@ -31,7 +31,7 @@ FIND_LIBRARY(OGG_LIBRARY NAMES ogg PATHS /usr/lib /usr/local/lib)
 
 ##################################
 #
-# musik.Core source files
+# set musikCore source files
 #
 ##################################
 
@@ -66,7 +66,7 @@ TARGET_LINK_LIBRARIES(musikCore
 
 ##################################
 #
-# Set build variables
+# set build variables
 #
 ##################################
 
