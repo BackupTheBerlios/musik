@@ -322,7 +322,15 @@ CActivityBox::CActivityBox( wxWindow *parent, wxWindowID id, enum EMUSIK_ACTIVIT
 	pListBox	= new CActivityListBox	( this, id );
 	
 	//--- drag and drop handler ---//
-	pListBox->SetDropTarget( new ActivityDropTarget( this ) );
+	// what is the drag and drop handler for in this case? it just disturbs dragging
+	// from playlist to sources box, if you cross the listbox area. after the dragging the playlist display changes to 
+	// according to the selected entry in one of the activity boxes. bad!
+	// and i see no use in dragging with the activity boxes. 
+	// its not very handy in renaming files and it is not intuitive too.
+	// furthermore it crashes very often, because both threads access the db.
+	// the renaming thread  because he renames, and the main thread because he an entry of the activity box was
+	// selected and therefore refreshes the playlist.
+	//pListBox->SetDropTarget( new ActivityDropTarget( this ) );
 
 	//--- text control to change val ---//
 	pEdit		= new wxTextCtrl( this, MUSIK_ACT_TEXT, wxT(""), wxPoint( -1, -1 ), wxSize( -1, -1 ), wxSIMPLE_BORDER | wxTE_PROCESS_ENTER );
@@ -551,7 +559,7 @@ void CActivityBox::SetPlaylist()
 		}
 	}
 
-	g_PlaylistCtrl->Update(true,true);	//--- needs to rescale columns ---//
+	g_PlaylistCtrl->Update(true,false);
 	g_PlaylistChanged = true;
 }
 

@@ -1,4 +1,5 @@
 0.1.3 to 0.1.4
++ Optimized db querys (gunnar)
  - Fixed Bug: having lots of crossfades at the same time is no longer dangerous.
  + Optimized many function that returned an wxArrayString object to functions that use a reference parameter for the array
    Lots of memory copying are saved (gunnar)

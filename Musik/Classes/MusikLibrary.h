@@ -174,7 +174,7 @@ private:
 	void GetSongs		( const wxArrayString & aInfo, int nInType, CMusikSongArray & aReturn );
 	sqlite		  *m_pDB;
 	void CreateDB();
-
+	int QueryCount(const char * szQuery );
 	
 	void AddMP3				( const wxString & filename );
 	void AddMod				( const wxString & filename );

@@ -406,7 +406,7 @@ void CSourcesListBox::UpdateSel( size_t index )
 
 		//--- update ui with new list ---//
 		g_MusikFrame->ShowActivityArea( false );
-		g_PlaylistCtrl->Update();
+		g_PlaylistCtrl->Update(true,false);
 	}
 
 	g_PlaylistChanged = true; 
@@ -489,6 +489,9 @@ void CSourcesListBox::Load()
 
 void CSourcesListBox::Save()
 {
+	if ( GetType( m_CurSel ) == MUSIK_SOURCES_PLAYLIST_STANDARD )
+			RewriteStdPlaylist();
+
 	if ( wxFileExists( MUSIK_SOURCES_FILENAME ) )
 		wxRemoveFile( MUSIK_SOURCES_FILENAME );
 	

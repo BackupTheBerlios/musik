@@ -521,7 +521,13 @@ void CMusikLibrary::VerifyYearList( const wxArrayString & aList,wxArrayString & 
 	}
 	return;
 }
+static int sqlite_callbackAddToStringArray(void *args, int numCols, char **results, char **columnNames)
+{
 
+	wxArrayString * p = (wxArrayString*)args;
+	p->Add( ConvDBFieldToWX( results[0] )); 
+    return 0;
+}
 void CMusikLibrary::GetInfo( const wxArrayString & aList, int nInType, int nOutType ,wxArrayString & aReturn )
 {
 	aReturn.Clear();
@@ -615,25 +621,8 @@ void CMusikLibrary::GetInfo( const wxArrayString & aList, int nInType, int nOutT
 	query += wxT(";");
 
 	//--- run query ---//
-	const char *pTail;
-	sqlite_vm *pVM;
-	
-	
-	sqlite_compile( m_pDB, ConvQueryToMB( query ), &pTail, &pVM, NULL );
-	char *errmsg;
-	int numcols = 0;
-	const char **coldata;
-	const char **coltypes;
+	sqlite_exec(m_pDB, ConvQueryToMB( query ), &sqlite_callbackAddToStringArray, &aReturn, NULL);
 
-	//--- at each row of the result ---//
-	while ( sqlite_step( pVM, &numcols, &coldata, &coltypes ) == SQLITE_ROW )
-	{
-		wxString sItem = ConvDBFieldToWX( coldata[0] );
-		aReturn.Add( sItem );
-	}
-
-	//--- close up ---//
-	sqlite_finalize( pVM, &errmsg );
 	if ( nOutType == MUSIK_LIB_YEAR )
 	{
 		wxArrayString aVerifiedList;
@@ -642,7 +631,35 @@ void CMusikLibrary::GetInfo( const wxArrayString & aList, int nInType, int nOutT
 	}
 	
 }
+static int sqlite_callbackAddToSongArray(void *args, int numCols, char **results, char **columnNames)
+{
 
+	CMusikSongArray * p = (CMusikSongArray*)args;
+
+	CMusikSong *pLibItem = new CMusikSong();
+	
+	pLibItem->Filename		= wxConvertMB2WX	( results[0]);
+	pLibItem->Title			= ConvDBFieldToWX	( results[1] );
+	pLibItem->TrackNum		= StringToInt		( results[2] );
+	pLibItem->Artist		= ConvDBFieldToWX	( results[3] );
+	pLibItem->Album			= ConvDBFieldToWX	( results[4] );
+	pLibItem->Genre			= ConvDBFieldToWX	( results[5] );
+	pLibItem->Duration		= StringToInt		( results[6] );
+	pLibItem->Format		= StringToInt		( results[7] );
+	pLibItem->VBR			= StringToInt		( results[8] );
+	pLibItem->Year			= ConvDBFieldToWX	( results[9] );
+	pLibItem->Rating		= StringToInt		( results[10] );
+	pLibItem->Bitrate		= StringToInt		( results[11] );
+	pLibItem->LastPlayed	= ConvDBFieldToWX	( results[12] );
+	pLibItem->Notes			= ConvDBFieldToWX	( results[13] );
+	pLibItem->TimesPlayed	= StringToInt		( results[14] );
+	pLibItem->TimeAdded		= ConvDBFieldToWX	( results[15] );
+	pLibItem->Filesize		= StringToInt		( results[16] );
+	
+	p->Add( pLibItem );
+
+    return 0;
+}
 void CMusikLibrary::GetSongs( const wxArrayString & aList, int nInType, CMusikSongArray & aReturn )
 {
 	aReturn.Clear();
@@ -684,40 +701,8 @@ void CMusikLibrary::GetSongs( const wxArrayString & aList, int nInType, CMusikSo
 		sQuery += wxT( "order by year,artist,album,tracknum;");
 
 	//--- run query ---//
-	const char *pTail;
-	sqlite_vm *pVM;
-		
-	sqlite_compile( m_pDB, ConvQueryToMB( sQuery ), &pTail, &pVM, NULL );
-	char *errmsg;
-	int numcols = 0;
-	const char **coldata;
-	const char **coltypes;
-	//--- look at each row ---//
-	while ( sqlite_step( pVM, &numcols, &coldata, &coltypes ) == SQLITE_ROW )
-	{
-		CMusikSong *pLibItem = new CMusikSong();// adding pointer to objects saves the calling of copy constructor, in contrast to adding object
-		
-		pLibItem->Filename		= ConvFNToFieldWX	( coldata[0]);
-		pLibItem->Title			= ConvDBFieldToWX	( coldata[1] );
-		pLibItem->TrackNum		= StringToInt		( coldata[2] );
-		pLibItem->Artist		= ConvDBFieldToWX	( coldata[3] );
-		pLibItem->Album			= ConvDBFieldToWX	( coldata[4] );
-		pLibItem->Genre			= ConvDBFieldToWX	( coldata[5] );
-		pLibItem->Duration		= StringToInt		( coldata[6] );
-		pLibItem->Format		= StringToInt		( coldata[7] );
-		pLibItem->VBR			= StringToInt		( coldata[8] );
-		pLibItem->Year			= ConvDBFieldToWX	( coldata[9] );
-		pLibItem->Rating		= StringToInt		( coldata[10] );
-		pLibItem->Bitrate		= StringToInt		( coldata[11] );
-		pLibItem->LastPlayed	= ConvDBFieldToWX	( coldata[12] );
-		pLibItem->Notes			= ConvDBFieldToWX	( coldata[13] );
-		pLibItem->TimesPlayed	= StringToInt		( coldata[14] );
-		pLibItem->TimeAdded		= ConvDBFieldToWX	( coldata[15] );
-		pLibItem->Filesize		= StringToInt		( coldata[16] );
-		aReturn.Add( pLibItem );// array takes ownerhip of object
-	}
-	//--- close up ---//
-	sqlite_finalize( pVM, &errmsg );
+	sqlite_exec(m_pDB, ConvQueryToMB( sQuery ), &sqlite_callbackAddToSongArray, &aReturn, NULL);
+
 	aReturn.Shrink();
 	return;
 }
@@ -729,29 +714,45 @@ void CMusikLibrary::Query( const wxString & query, wxArrayString & aReturn )
 	aReturn.Clear();
 	wxString sInfo;
 
+	aReturn.Alloc( GetSongCount() );
 	//--- run the query ---//
-	const char *pTail;
-	sqlite_vm *pVM;
-	sqlite_compile( m_pDB, ConvQueryToMB( query ), &pTail, &pVM, NULL );
-	char *errmsg;
-	int numcols = 0;
-	const char **coldata;
-	const char **coltypes;
-	if(pVM)
-	{
-		aReturn.Alloc( GetSongCount() );
-		//--- look at each row of the result ---//
-		while ( sqlite_step( pVM, &numcols, &coldata, &coltypes ) == SQLITE_ROW )
-		{
-			
-			aReturn.Add( wxConvertMB2WX( coldata[0]) );
-		}
+	sqlite_exec(m_pDB, ConvQueryToMB( query ), &sqlite_callbackAddToStringArray, &aReturn, NULL);
 
-		//--- close up ---//
-		sqlite_finalize( pVM, &errmsg );
-		//aReturn.Shrink(); wxArrayString::Shrink() is buggy at least until now 8/30/03. DO NOT USE IT!
-	}
 	return;
+}
+static int sqlite_callbackAddToSongMap(void *args, int numCols, char **results, char **columnNames)
+{
+	//-------------------------------------------------------------------------//
+	//--- maps filename to CMusingSong objects ptrs, ptrs because this		---//
+	//--- way an additional call to a copy constructer is saved when adding	---//
+	//--- the objects to the map											---//
+	//-------------------------------------------------------------------------//
+
+	myStringToMusikSongPtrMap * p = (myStringToMusikSongPtrMap*)args;
+
+	CMusikSong *pLibItem = new CMusikSong();
+	
+	pLibItem->Filename		= wxConvertMB2WX	( results[0]);
+	pLibItem->Title			= ConvDBFieldToWX	( results[1] );
+	pLibItem->TrackNum		= StringToInt		( results[2] );
+	pLibItem->Artist		= ConvDBFieldToWX	( results[3] );
+	pLibItem->Album			= ConvDBFieldToWX	( results[4] );
+	pLibItem->Genre			= ConvDBFieldToWX	( results[5] );
+	pLibItem->Duration		= StringToInt		( results[6] );
+	pLibItem->Format		= StringToInt		( results[7] );
+	pLibItem->VBR			= StringToInt		( results[8] );
+	pLibItem->Year			= ConvDBFieldToWX	( results[9] );
+	pLibItem->Rating		= StringToInt		( results[10] );
+	pLibItem->Bitrate		= StringToInt		( results[11] );
+	pLibItem->LastPlayed	= ConvDBFieldToWX	( results[12] );
+	pLibItem->Notes			= ConvDBFieldToWX	( results[13] );
+	pLibItem->TimesPlayed	= StringToInt		( results[14] );
+	pLibItem->TimeAdded		= ConvDBFieldToWX	( results[15] );
+	pLibItem->Filesize		= StringToInt		( results[16] );
+	
+	(*p)[pLibItem->Filename]= pLibItem;
+
+    return 0;
 }
 void CMusikLibrary::GetStdPlaylistSongs( const wxArrayString & aFiles, CMusikSongArray & aReturn )
 {
@@ -775,85 +776,38 @@ void CMusikLibrary::GetStdPlaylistSongs( const wxArrayString & aFiles, CMusikSon
 		else
 			sQuery += wxT("' );");
 	}
-
+	myStringToMusikSongPtrMap theMap;
 	//--- run query ---//
-	const char *pTail;
-	sqlite_vm *pVM;
-	char *errmsg;
-	sqlite_compile( m_pDB, ConvQueryToMB( sQuery ), &pTail, &pVM, &errmsg );
+	//---------------------------------------------------------------------//
+	//--- we fill the map and afterwards a array from the map because	---//
+	//--- we can have multiple filenames in the same list				---//
+	//---------------------------------------------------------------------//
+	sqlite_exec(m_pDB, ConvQueryToMB( sQuery ), &sqlite_callbackAddToSongMap, &theMap, NULL);
 
-	int numcols = 0;
-	const char **coldata;
-	const char **coltypes;
-
-	
-
-	//--- pVM will be null if the query was invalid ---//
-	if ( pVM )
+	aReturn.Alloc(aFiles.GetCount());
+	for ( size_t i = 0; i < aFiles.GetCount(); i++ )
 	{
-		//-------------------------------------------------------------------------//
-		//--- maps filename to CMusingSong objects ptrs, ptrs because this		---//
-		//--- way an additional call to a copy constructer is saved when adding	---//
-		//--- the objects to the map											---//
-		//-------------------------------------------------------------------------//
-		myStringToMusikSongPtrMap theMap;
-	
-		//--- look at each row of the result ---//
-		while ( sqlite_step( pVM, &numcols, &coldata, &coltypes ) == SQLITE_ROW )
-		{
-			//wxString sCurrFile = wxString( coldata[0],wxConvFile ); the wxString constructor has a bug, the resulting string prtetnds to be 1 lobger than it really is.!!!!
-			wxString sCurrFile = wxConvertMB2WX( coldata[0]);
-			CMusikSong *pSong = new CMusikSong();
-			//---------------------------------------------------------------------//
-			//--- we fill the map and afterwards a array from the map because	---//
-			//--- we can have multiple filenames in the same list				---//
-			//---------------------------------------------------------------------//
-			pSong->Filename		= 	sCurrFile;
-			pSong->Title		= ConvDBFieldToWX	( coldata[1] );
-			pSong->TrackNum		= StringToInt		( coldata[2] );
-			pSong->Artist		= ConvDBFieldToWX	( coldata[3] );
-			pSong->Album		= ConvDBFieldToWX	( coldata[4] );
-			pSong->Genre		= ConvDBFieldToWX	( coldata[5] );
-			pSong->Duration		= StringToInt		( coldata[6] );
-			pSong->Format		= StringToInt		( coldata[7] );
-			pSong->VBR			= StringToInt		( coldata[8] );
-			pSong->Year			= ConvDBFieldToWX	( coldata[9] );
-			pSong->Rating		= StringToInt		( coldata[10] );
-			pSong->Bitrate		= StringToInt		( coldata[11] );
-			pSong->LastPlayed	= ConvDBFieldToWX	( coldata[12] );
-			pSong->Notes		= ConvDBFieldToWX	( coldata[13] );
-			pSong->TimesPlayed	= StringToInt		( coldata[14] );
-			pSong->TimeAdded	= ConvDBFieldToWX	( coldata[15] );
-			pSong->Filesize		= StringToInt		( coldata[16] );
-            
-			theMap[sCurrFile]	= pSong;            
-		}
+		CMusikSong *pSong = theMap[ aFiles.Item( i ) ];
+		wxASSERT_MSG( pSong, wxString(aFiles.Item( i ) + wxT( " is not on the map!" ) ) );
 
-		//--- close up ---//
-		sqlite_finalize( pVM, &errmsg );
-		aReturn.Alloc(aFiles.GetCount());
-		for ( size_t i = 0; i < aFiles.GetCount(); i++ )
-		{
-			CMusikSong *pSong = theMap[ aFiles.Item( i ) ];
-			wxASSERT_MSG( pSong, wxString(aFiles.Item( i ) + wxT( " is not on the map!" ) ) );
-
-			//---------------------------------------------------------------------//
-			//--- add the object(of the map) by value, to create duplicate		---// 
-			//--- entries if needed.											---//
-			//---------------------------------------------------------------------//
-			if( pSong )
-				aReturn.Add( *pSong ); 
-		}
-
-		//-------------------------------------------------------------------------//
-		//--- delete all map objects( this is done explicitly, because the map	---//
-		//--- contains pointers to objects)										---//
-		//-------------------------------------------------------------------------//
-		WX_CLEAR_HASH_MAP(myStringToMusikSongPtrMap, theMap); 
+		//---------------------------------------------------------------------//
+		//--- add the object(of the map) by value, to create duplicate		---// 
+		//--- entries if needed.											---//
+		//---------------------------------------------------------------------//
+		if( pSong )
+			aReturn.Add( *pSong ); 
 	}
+
+	//-------------------------------------------------------------------------//
+	//--- delete all map objects( this is done explicitly, because the map	---//
+	//--- contains pointers to objects)										---//
+	//-------------------------------------------------------------------------//
+	WX_CLEAR_HASH_MAP(myStringToMusikSongPtrMap, theMap); 
+
 	return;
 
 }
+
 
 void CMusikLibrary::QuerySongs( const wxString & queryWhere, CMusikSongArray & aReturn )
 {
@@ -863,52 +817,14 @@ void CMusikLibrary::QuerySongs( const wxString & queryWhere, CMusikSongArray & a
 	wxString sInfo;
 
 	//--- run query ---//
-	const char *pTail;
-	sqlite_vm *pVM;
-	char *errmsg;
 
 	wxString query(wxT("select filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize from songs where "));
 	query += queryWhere + wxT(";");
 	const wxCharBuffer pQuery = ConvQueryToMB(query);
-	sqlite_compile( m_pDB, pQuery, &pTail, &pVM, &errmsg );
-	
+	aReturn.Alloc(GetSongCount());
 
-	int numcols = 0;
-	const char **coldata;
-	const char **coltypes;
+	sqlite_exec(m_pDB, pQuery, &sqlite_callbackAddToSongArray, &aReturn, NULL);
 
-	//--- pVM will be null if the query was invalid ---//
-	if ( pVM )
-	{
-		aReturn.Alloc(GetSongCount());
-		//--- look at each row of the result ---//
-		while ( sqlite_step( pVM, &numcols, &coldata, &coltypes ) == SQLITE_ROW )
-		{
-			CMusikSong *pLibItem = new CMusikSong();;
-			
-			pLibItem->Filename		= wxConvertMB2WX	( coldata[0]);
-			pLibItem->Title			= ConvDBFieldToWX	( coldata[1] );
-			pLibItem->TrackNum		= StringToInt		( coldata[2] );
-			pLibItem->Artist		= ConvDBFieldToWX	( coldata[3] );
-			pLibItem->Album			= ConvDBFieldToWX	( coldata[4] );
-			pLibItem->Genre			= ConvDBFieldToWX	( coldata[5] );
-			pLibItem->Duration		= StringToInt		( coldata[6] );
-			pLibItem->Format		= StringToInt		( coldata[7] );
-			pLibItem->VBR			= StringToInt		( coldata[8] );
-			pLibItem->Year			= ConvDBFieldToWX	( coldata[9] );
-			pLibItem->Rating		= StringToInt		( coldata[10] );
-			pLibItem->Bitrate		= StringToInt		( coldata[11] );
-			pLibItem->LastPlayed	= ConvDBFieldToWX	( coldata[12] );
-			pLibItem->Notes			= ConvDBFieldToWX	( coldata[13] );
-			pLibItem->TimesPlayed	= StringToInt		( coldata[14] );
-			pLibItem->TimeAdded		= ConvDBFieldToWX	( coldata[15] );
-			pLibItem->Filesize		= StringToInt		( coldata[16] );
-			
-			aReturn.Add( pLibItem );
-		}
-		//--- close up ---//
-		sqlite_finalize( pVM, &errmsg );
-	}
 	aReturn.Shrink();
 	return;
 }
@@ -929,56 +845,16 @@ void CMusikLibrary::UpdateItemLastPlayed( const wxString & filename )
 
 int CMusikLibrary::GetTimesPlayed( const wxString & filename )
 {
-	int result = 0;
-
-	char *query;
-	query = sqlite_mprintf( "select timesplayed from songs where filename = %Q;", ( const char* )ConvFNToFieldMB( filename ) );
-
-	//--- run query ---//
-	const char *pTail;
-	sqlite_vm *pVM;
-	
-	sqlite_compile( m_pDB, query, &pTail, &pVM, NULL );
-	char *errmsg;
-	int numcols = 0;
-	const char **coldata;
-	const char **coltypes;
-
-	//--- look and see if there's one row ---//
-	if ( sqlite_step( pVM, &numcols, &coldata, &coltypes ) == SQLITE_ROW )
-		result = StringToInt( coldata[0] );
-
-	//--- close up ---//
-	sqlite_finalize( pVM, &errmsg );
+	char *query = sqlite_mprintf( "select timesplayed from songs where filename = %Q;", ( const char* )ConvFNToFieldMB( filename ) );
+	int result = QueryCount(query);
 	sqlite_freemem( query );
 	return result;
 }
 
 int CMusikLibrary::GetSongCount()
 {
-	int result = 0;
-
-	char *query;
-	query = sqlite_mprintf( "select count(*) from songs;" );
-	
-	//--- run query ---//
-	const char *pTail;
-	sqlite_vm *pVM;
-	
-	sqlite_compile( m_pDB, query, &pTail, &pVM, NULL );
-	char *errmsg;
-	int numcols = 0;
-	const char **coldata;
-	const char **coltypes;
-	if(pVM)
-	{
-		//--- look and see if there's one row ---//
-		if ( sqlite_step( pVM, &numcols, &coldata, &coltypes ) == SQLITE_ROW )
-			result = StringToInt ( coldata[0] );
-
-		//--- close up ---//
-		sqlite_finalize( pVM, &errmsg );
-	}
+	char *query = sqlite_mprintf( "select count(*) from songs;" );
+	int result = QueryCount(query);
 	sqlite_freemem( query );
 	return result;
 }
@@ -1081,16 +957,20 @@ int CMusikLibrary::GetSongDirCount( wxString sDir )
 {
 	//wxMutexLocker lock( LibMutex );
 
-	int result = 0;
-
-	char *query;
-	query = sqlite_mprintf( "select count(*) from songs where filename like '%q%%';", ( const char* )ConvFNToFieldMB(sDir) );
 	
+	char *query = sqlite_mprintf( "select count(*) from songs where filename like '%q%%';", ( const char* )ConvFNToFieldMB(sDir) );
+	int result = QueryCount(query);
+	sqlite_freemem( query );
+	return result;
+}
+int CMusikLibrary::QueryCount(const char * szQuery )
+{
+	int result = 0;
 	//--- run query ---//
 	const char *pTail;
 	sqlite_vm *pVM;
 	
-	sqlite_compile( m_pDB, query, &pTail, &pVM, NULL );
+	sqlite_compile( m_pDB, szQuery, &pTail, &pVM, NULL );
 	char *errmsg;
 	int numcols = 0;
 	const char **coldata;
@@ -1098,11 +978,10 @@ int CMusikLibrary::GetSongDirCount( wxString sDir )
 
 	//--- look and see if there's one row ---//
 	if ( sqlite_step( pVM, &numcols, &coldata, &coltypes ) == SQLITE_ROW )
-		result = StringToInt( coldata[0] );
+		result = atoi( coldata[0] );
 
 	//--- close up ---//
 	sqlite_finalize( pVM, &errmsg );
-	sqlite_freemem( query );
 	return result;
 }
 
