@@ -23,7 +23,10 @@
 
 enum EMUSIK_VOL_OBJECTS
 {
-	MUSIK_SL_VOLUME = 0
+	MUSIK_SL_VOLUME = 0,
+	MUSIK_CHK_REPEAT,
+	MUSIK_CHK_SHUFFLE,
+	MUSIK_CHK_CROSSFADE
 };
 
 class MusikVolumeFrame : public wxFrame
@@ -32,18 +35,22 @@ public:
 	MusikVolumeFrame( wxFrame* pParent, wxPoint pos );
 	~MusikVolumeFrame() { gSeek->PopEventHandler( true ); }
 
+	wxCheckBox*		pRepeat;
+	wxCheckBox*		pShuffle;
+	wxCheckBox*		pCrossfade;
 	wxGauge*		gSeek;		
 	CGaugeSeekEvt*	pSeekEvt;
+
+	wxBoxSizer*		pChecks;
+	wxBoxSizer*		pMain;
 
 	void Close();
 
 	DECLARE_EVENT_TABLE()
 private:
 	void OnActivate				( wxActivateEvent&	WXUNUSED(event)	);
-	void OnMouseLeave			( wxMouseEvent&		WXUNUSED(event)	)	{ Close(); }
 	void OnClose				( wxCommandEvent&	WXUNUSED(event)	)	{ Close(); }
 	void OnChar					( wxKeyEvent&		event	);
-	void OnLooseFocus			( wxFocusEvent&		WXUNUSED(event)	)	{ Close();	}
 
 	wxFrame *parent;
 	int nFirstRun;

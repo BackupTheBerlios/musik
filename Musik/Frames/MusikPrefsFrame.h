@@ -145,8 +145,6 @@ public:
 	//-------------------------//
 	//--- sound -> playback ---//
 	//-------------------------//
-	wxCheckBox	*chkRepeat;
-	wxCheckBox	*chkShuffle;
 	wxCheckBox	*chkCrossfade;
 	wxTextCtrl	*tcDuration;
 	wxCheckBox	*chkCrossfadeSeek;

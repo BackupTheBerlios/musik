@@ -86,9 +86,6 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//--------------------------//
 	//--- Sound -> Crossfader ---//
 	//---------------------------//
-	//--- shuffle, repeat, and crossfade checkboxes ---//
-	chkRepeat				= new wxCheckBox( this, -1, _("Repeat"), 									wxPoint( -1, -1 ), wxSize( -1, -1 ) );
-	chkShuffle				= new wxCheckBox( this, -1, _("Shuffle"), 									wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 	chkCrossfade			= new wxCheckBox( this, -1, _("Crossfade on new song (seconds)"), 			wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 	chkCrossfadeSeek		= new wxCheckBox( this, -1, _("Crossfade on track seek (seconds)"), 		wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 	chkCrossfadePauseResume	= new wxCheckBox( this, -1, _("Crossfade on pause or resume (seconds)"),	wxPoint( -1, -1 ), wxSize( -1, -1 ) );
@@ -116,8 +113,6 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//--- Sound -> Crossfader Sizer ---//
 	//---------------------------------//
 	vsSound_Crossfader = new wxBoxSizer( wxVERTICAL );
-	vsSound_Crossfader->Add( chkRepeat,		0, wxALL, 4  );
-	vsSound_Crossfader->Add( chkShuffle,		0, wxALL, 4  );
 	vsSound_Crossfader->Add( fsCrossfader,	0, wxALL, 4  );
 
 	//-----------------------//
@@ -574,9 +569,7 @@ void MusikPrefsFrame::LoadPrefs()
 	//---------------------------//
 	//--- sound -> crossfader ---//
 	//---------------------------//
-	chkRepeat->SetValue					( g_Prefs.nRepeat );
-	chkShuffle->SetValue				( g_Prefs.nShuffle );
-	
+
 	float		fDuration;
 	wxString	sDuration;
 
@@ -925,18 +918,6 @@ void MusikPrefsFrame::SavePrefs()
 	//---------------------------//
 	//--- sound -> crossfader ---//
 	//---------------------------//
-	if ( chkRepeat->GetValue() != g_Prefs.nRepeat )
-	{
-		g_Prefs.nRepeat = chkRepeat->GetValue();
-		bPlaymodeChange = true;
-	}
-	
-	if ( chkShuffle->GetValue() != g_Prefs.nShuffle )
-	{
-		g_Prefs.nShuffle = chkShuffle->GetValue();
-		bPlaymodeChange = true;
-	}
-
 	g_Prefs.nFadeEnable = chkCrossfade->GetValue();
 	g_Prefs.nFadeSeekEnable = chkCrossfadeSeek->GetValue();
 	g_Prefs.nFadePauseResumeEnable = chkCrossfadePauseResume->GetValue();

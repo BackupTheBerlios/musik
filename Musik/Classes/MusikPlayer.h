@@ -180,7 +180,7 @@ private:
 	bool			m_Fading;			//--- currently (cross)fading?						---//
 	bool			m_StartingNext;		//--- in the middle of starting up a next song?		---//
 	bool			m_Stopping;			//--- is the player currently stopping?				---//
-	wxString		m_CurrentFile;		//--- filename of current song						---//
+	wxString		m_CurrentFile;		//--- filename of current song						---//0
 	int				m_CrossfadeType;	
 
 	int				m_RandomSeed;		//--- random seed for consistent results			---//
