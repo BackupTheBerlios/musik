@@ -299,17 +299,7 @@ void CPlaylistCtrl::SaveColumns()
 		//-----------------------------------------//
 		if ( g_Prefs.nPlaylistColumnDynamic[nCurrCol] == 0 )
 		{
-			//-------------------------------------------------//
-			//--- overflow pixels get placed in the first	---//
-			//--- column. remove them when we save.			---//
-			//-------------------------------------------------//
-			if ( i == 0 )
-			{
-				g_Prefs.nPlaylistColumnSize[nCurrCol] = GetColumnWidth( i ) - m_Overflow;
-				 m_Overflow = 0;
-			}
-			else
-				g_Prefs.nPlaylistColumnSize[nCurrCol] = GetColumnWidth( i );
+			g_Prefs.nPlaylistColumnSize[nCurrCol] = GetColumnWidth( i );
 		}
 
 		//-----------------------------------------//
@@ -476,17 +466,14 @@ void CPlaylistCtrl::BeginDrag( wxEvent& WXUNUSED(event) )
 
 void CPlaylistCtrl::EndDragCol( wxListEvent& event )
 {
-//	wxMessageBox( wxT( "sux0r" ) );
-	 
-//	RescaleColumns();
-//	event.Skip();
-	Refresh();
+	//SaveColumns();
+
+	//if ( g_Prefs.nPlaylistSmartColumns )
+		//RescaleColumns();
 }
 
 void CPlaylistCtrl::PlaySel( wxListEvent& WXUNUSED(event) )
 {
-	// need to update to clear some repainting issues
-	// Refresh( false );
 	g_Player.PlayCurSel();
 }
 
@@ -886,9 +873,11 @@ void CPlaylistCtrl::Update( bool bSelFirst, bool  bRescaleColumns)
 		SetItemState( 0, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );	
 	Thaw();
 	Refresh( false );
+
 	if( bRescaleColumns )
 		RescaleColumns();
-	if ( g_Prefs.nShowPLInfo == 1 )
+
+	if ( g_Prefs.nShowPLInfo )
 		g_PlaylistInfoCtrl->Update();
 }
 
@@ -896,10 +885,11 @@ void CPlaylistCtrl::RescaleColumns( bool bFreeze )
 {
 	if ( g_DisablePlacement )
 		return;
-	if ( bFreeze )
-		Freeze();
 
 	SaveColumns();
+
+	if ( bFreeze )
+		Freeze();
 
 	//-------------------------------------------------//
 	//--- size of the client area.					---//
