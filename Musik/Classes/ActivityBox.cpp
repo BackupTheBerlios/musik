@@ -172,10 +172,7 @@ wxString CActivityListBox::OnGetItemText(long item, long column) const
 	}
 	return wxT("");
 }
-inline bool CActivityListBox::HasShowAllRow() const 
-{ 
-	return (g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_STANDARD || g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_SLOPPY);
-}
+
 wxString CActivityListBox::GetRowText( long row, bool bPure ) const
 {
 		if( row == 0 && HasShowAllRow())

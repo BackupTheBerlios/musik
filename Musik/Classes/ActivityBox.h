@@ -98,6 +98,11 @@ private:
 	CActivityBox *m_pParent;
 };
 
+inline bool CActivityListBox::HasShowAllRow() const 
+{ 
+	return (g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_STANDARD || g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_SLOPPY);
+}
+
 class CActivityBoxEvt : public wxEvtHandler
 {
 public:
