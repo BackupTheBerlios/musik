@@ -2191,7 +2191,12 @@ void CMainFrame::OnAudioCrossfaderEnabled()
 void CMainFrame::OnViewPlaylistinformation()
 {
 	if ( m_Prefs->PlaylistInfoVisible() )
+	{
 		m_Prefs->SetPlaylistInfoVisible( false );
+	
+		if ( !m_Prefs->GetPlaylistInfoVizStyle() )
+			m_wndView->DeinitPlaylistInfo();
+	}
 	else
 		m_Prefs->SetPlaylistInfoVisible( true );
 
@@ -2973,7 +2978,9 @@ void CMainFrame::OnViewVisualization()
 	if ( m_Prefs->GetPlaylistInfoVizStyle() )
 	{
 		m_Prefs->SetPlaylistInfoVizStyle( NULL );
-		m_wndView->DeinitPlaylistInfo();
+
+		if ( !m_Prefs->PlaylistInfoVisible() )
+			m_wndView->DeinitPlaylistInfo();
 	}
 	else
 	{
