@@ -1,14 +1,14 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// CSizingControlBar            Version 2.44
+// CSizingControlBar            Version 2.43
 //
-// Created: Jan 24, 1998        Last Modified: March 31, 2002
+// Created: Jan 24, 1998        Last Modified: August 03, 2000
 //
 // See the official site at www.datamekanix.com for documentation and
 // the latest news.
 //
 /////////////////////////////////////////////////////////////////////////
-// Copyright (C) 1998-2002 by Cristi Posea. All rights reserved.
+// Copyright (C) 1998-2000 by Cristi Posea. All rights reserved.
 //
 // This code is free for personal and commercial use, providing this 
 // notice remains intact in the source files and all eventual changes are
@@ -30,7 +30,7 @@
 // the version to be sure you get the latest one ;)
 //
 // Hint: These classes are intended to be used as base classes. Do not
-// simply add your code to these files - instead create a new class
+// simply add your code to these file - instead create a new class
 // derived from one of CSizingControlBarXX classes and put there what
 // you need. See CMyBar classes in the demo projects for examples.
 // Modify this file only to fix bugs, and don't forget to send me a copy.
@@ -46,8 +46,7 @@
 //      dialgonal resizing is based.
 //  o   Thanks to the following people for various bug fixes and/or
 //      enhancements: Chris Maunder, Jakawan Ratiwanich, Udo Schaefer,
-//      Anatoly Ivasyuk, Peter Hauptmann, DJ(?), Pat Kusbel, Aleksey
-//      Malyshev.
+//      Anatoly Ivasyuk, Peter Hauptmann.
 //  o   And, of course, many thanks to all of you who used this code,
 //      for the invaluable feedback I received.
 /////////////////////////////////////////////////////////////////////////
@@ -197,6 +196,7 @@ int CSizingControlBar::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 LRESULT CSizingControlBar::OnSetText(WPARAM wParam, LPARAM lParam)
 {
+
     UNUSED_ALWAYS(wParam);
 
     LRESULT lResult = CWnd::Default();
@@ -512,7 +512,7 @@ void CSizingControlBar::NcCalcClient(LPRECT pRc, UINT nDockBarID)
 void CSizingControlBar::OnNcPaint()
 {
     // get window DC that is clipped to the non-client area
-    CWindowDC dc(this); // the HDC will be released by the destructor
+    CWindowDC dc(this);
 
     CRect rcClient, rcBar;
     GetClientRect(rcClient);
@@ -552,6 +552,8 @@ void CSizingControlBar::OnNcPaint()
     dc.ExcludeClipRect(rcClient);
 
     dc.BitBlt(0, 0, rcBar.Width(), rcBar.Height(), &mdc, 0, 0, SRCCOPY);
+
+    ReleaseDC(&dc);
 
     mdc.SelectObject(pOldBm);
     bm.DeleteObject();
@@ -1359,9 +1361,7 @@ void CSCBMiniDockFrameWnd::OnSize(UINT nType, int cx, int cy)
 {
     CSizingControlBar* pBar = GetSizingControlBar();
     if ((pBar != NULL) && (GetStyle() & MFS_4THICKFRAME) == 0
-        && pBar->IsVisible() &&
-        cx + 4 >= pBar->m_szMinFloat.cx &&
-        cy + 4 >= pBar->m_szMinFloat.cy)
+        && pBar->IsVisible())
         pBar->m_szFloat = CSize(cx + 4, cy + 4);
 
     baseCSCBMiniDockFrameWnd::OnSize(nType, cx, cy);
@@ -1395,15 +1395,12 @@ void CSCBMiniDockFrameWnd::OnWindowPosChanging(WINDOWPOS FAR* lpwndpos)
             lpwndpos->flags |= SWP_NOSIZE; // don't size this time
             // prevents flicker
             pBar->m_pDockBar->ModifyStyle(0, WS_CLIPCHILDREN);
-
             // enable diagonal resizing
-            DWORD dwStyleRemove = MFS_4THICKFRAME;
+            ModifyStyle(MFS_4THICKFRAME, 0);
 #ifndef _SCB_MINIFRAME_CAPTION
             // remove caption
-            dwStyleRemove |= WS_SYSMENU|WS_CAPTION;
+            ModifyStyle(WS_SYSMENU|WS_CAPTION, 0);
 #endif
-            ModifyStyle(dwStyleRemove, 0);
-
             DelayRecalcLayout();
             pBar->PostMessage(WM_NCPAINT);
         }

@@ -1,14 +1,14 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// CSizingControlBarG           Version 2.44
+// CSizingControlBarG           Version 2.43
 // 
-// Created: Jan 24, 1998        Last Modified: March 31, 2002
+// Created: Jan 24, 1998        Last Modified: August 03, 2000
 //
 // See the official site at www.datamekanix.com for documentation and
 // the latest news.
 //
 /////////////////////////////////////////////////////////////////////////
-// Copyright (C) 1998-2002 by Cristi Posea. All rights reserved.
+// Copyright (C) 1998-2000 by Cristi Posea. All rights reserved.
 //
 // This code is free for personal and commercial use, providing this 
 // notice remains intact in the source files and all eventual changes are
@@ -44,6 +44,7 @@ IMPLEMENT_DYNAMIC(CSizingControlBarG, baseCSizingControlBarG);
 
 CSizingControlBarG::CSizingControlBarG()
 {
+	ShowGripper( true );
     m_cyGripper = 12;
 }
 
@@ -66,6 +67,11 @@ END_MESSAGE_MAP()
 // Mouse Handling
 //
 
+void CSizingControlBarG::ShowGripper( bool show )
+{
+	m_ShowGripper = show;
+}
+
 void CSizingControlBarG::OnNcLButtonUp(UINT nHitTest, CPoint point)
 {
     if (nHitTest == HTCLOSE)
@@ -81,25 +87,15 @@ void CSizingControlBarG::NcCalcClient(LPRECT pRc, UINT nDockBarID)
     // subtract edges
     baseCSizingControlBarG::NcCalcClient(pRc, nDockBarID);
 
-    if (!HasGripper())
+    if (!HasGripper() || !m_ShowGripper )
         return;
 
     CRect rc(pRc); // the client rect as calculated by the base class
 
-    BOOL bHorz = (nDockBarID == AFX_IDW_DOCKBAR_TOP) ||
-                 (nDockBarID == AFX_IDW_DOCKBAR_BOTTOM);
-
-    if (bHorz)
-        rc.DeflateRect(m_cyGripper, 0, 0, 0);
-    else
-        rc.DeflateRect(0, m_cyGripper, 0, 0);
+    rc.DeflateRect(0, m_cyGripper, 0, 0);
 
     // set position for the "x" (hide bar) button
-    CPoint ptOrgBtn;
-    if (bHorz)
-        ptOrgBtn = CPoint(rc.left - 13, rc.top);
-    else
-        ptOrgBtn = CPoint(rc.right - 12, rc.top - 13);
+    CPoint ptOrgBtn = CPoint(rc.right - 12, rc.top - 13);
 
     m_biHide.Move(ptOrgBtn - rcBar.TopLeft());
 
@@ -108,41 +104,21 @@ void CSizingControlBarG::NcCalcClient(LPRECT pRc, UINT nDockBarID)
 
 void CSizingControlBarG::NcPaintGripper(CDC* pDC, CRect rcClient)
 {
-    if (!HasGripper())
+    if (!HasGripper() || !m_ShowGripper )
         return;
 
-    // paints a simple "two raised lines" gripper
-    // override this if you want a more sophisticated gripper
     CRect gripper = rcClient;
     CRect rcbtn = m_biHide.GetRect();
-    BOOL bHorz = IsHorzDocked();
 
     gripper.DeflateRect(1, 1);
-    if (bHorz)
-    {   // gripper at left
-        gripper.left -= m_cyGripper - 2 ;
-        gripper.right = gripper.left + 3;
-        gripper.top = rcbtn.bottom + 3;
-    }
-    else
-    {   // gripper at top
-        gripper.top -= m_cyGripper - 2;
-        gripper.bottom = gripper.top + 3;
-        gripper.right = rcbtn.left - 3;
-    }
-
-	/*
+	gripper.top -= m_cyGripper - 2;
+	gripper.bottom = gripper.top + 3;
+	gripper.right = rcbtn.left - 3;
 
     pDC->Draw3dRect(gripper, ::GetSysColor(COLOR_BTNHIGHLIGHT),
         ::GetSysColor(COLOR_BTNSHADOW));
 
-    gripper.OffsetRect(bHorz ? 3 : 0, bHorz ? 0 : 3);
-	*/
-    pDC->Draw3dRect(gripper, ::GetSysColor(COLOR_BTNHIGHLIGHT),
-        ::GetSysColor(COLOR_BTNSHADOW));
-
-
-    m_biHide.Paint(pDC);
+	m_biHide.Paint(pDC);
 }
 
 UINT CSizingControlBarG::OnNcHitTest(CPoint point)
