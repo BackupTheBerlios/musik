@@ -77,6 +77,9 @@ protected:
 	// macros
 	DECLARE_DYNAMIC(CmusikSelectionBar)
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnDeleteFromlibrary();
+	afx_msg void OnDeleteFromcomputer();
 };
 
 ///////////////////////////////////////////////////
@@ -123,6 +126,7 @@ public:
 	void UpdateV();
 	void UpdateV( CmusikString query );
 	void RenameSel();
+	void DelSel( bool from_file = false );
 
 	// queries
 	bool IsItemSelected( int item );
@@ -138,12 +142,10 @@ public:
 	afx_msg void OnPaint();
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnLvnMarqueeBegin(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
 	afx_msg void OnLvnBegindrag(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnLvnBeginrdrag(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnLvnKeydown(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
 	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
@@ -170,7 +172,6 @@ protected:
 	UINT m_DropID_R;
 	void BeginDrag( bool right_button );
 
-	bool m_ShiftDown;
 	bool m_IsFocused;
 	bool m_Updated;
 

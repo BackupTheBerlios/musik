@@ -236,8 +236,8 @@ BEGIN
     BEGIN
         POPUP "Delete"
         BEGIN
-            MENUITEM "From Library\tDel",           ID_DELETE_FROMLIBRARY
-            MENUITEM "From Computer\tShift+Del",    ID_DELETE_FROMCOMPUTER
+            MENUITEM "From Library\tAlt+Del",       ID_DELETE_FROMLIBRARY
+            MENUITEM "From Computer\tCtrl+Del",     ID_DELETE_FROMCOMPUTER
         END
         MENUITEM "Rename\tF2",                  ID_SELECTIONBOXCONTEXT_RENAME
 

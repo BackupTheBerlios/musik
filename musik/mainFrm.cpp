@@ -75,6 +75,7 @@ int WM_SELBOXUPDATE			= RegisterWindowMessage( "SELBOXUPDATE" );
 int WM_SELBOXEDITCOMMIT		= RegisterWindowMessage( "SELBOXEDITCOMMIT" );
 int WM_SELBOXADDREMOVE		= RegisterWindowMessage( "SELBOXADDREMOVE" );
 int WM_SELBOXREQUESTUPDATE	= RegisterWindowMessage( "SELBOXREQUESTUPDATE" );
+int WM_SELBOXDELSEL			= RegisterWindowMessage( "SELBOXDELSEL" );
 
 int WM_PLAYERNEWPLAYLIST	= RegisterWindowMessage( "PLAYERNEWPLAYLIST" );
 
@@ -168,6 +169,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_COMMAND(ID_NOTIFICATIONTRAY_PREV, OnNotificationtrayPrev)
 	ON_COMMAND(ID_FILE_CLEARLIBRARY, OnFileClearlibrary)
 	ON_COMMAND(ID_LIBRARY_SYNCHRONIZEDIRECTORIESNOW, OnLibrarySynchronizedirectoriesnow)
+	ON_COMMAND(ID_PLAYBACKMODE_SHUFFLECURRENTPLAYLIST, OnPlaybackmodeShufflecurrentplaylist)
 
 	// update ui
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SOURCES, OnUpdateViewSources)
@@ -203,6 +205,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_DRAGEND, OnDragEnd )
 	ON_REGISTERED_MESSAGE( WM_PLAYERNEWPLAYLIST, OnPlayerNewPlaylist )
 	ON_REGISTERED_MESSAGE( WM_SELBOXEDITCOMMIT, OnSelBoxEditCommit )
+	ON_REGISTERED_MESSAGE( WM_SELBOXDELSEL, OnSelBoxDelSel )
 	ON_REGISTERED_MESSAGE( WM_BATCHADD_NEW, OnBatchAddNew )
 	ON_REGISTERED_MESSAGE( WM_BATCHADD_PROGRESS, OnBatchAddProgress )
 	ON_REGISTERED_MESSAGE( WM_BATCHADD_END, OnThreadEnd )
@@ -216,7 +219,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_UPDATEPLAYLIST, OnUpdateCurrPlaylist )
 	ON_REGISTERED_MESSAGE( WM_RESTARTSOUNDSYSTEM, OnRestartSoundSystem )
 	ON_REGISTERED_MESSAGE( WM_EQUALIZERCHANGE, OnEqualizerChange )
-	ON_COMMAND(ID_PLAYBACKMODE_SHUFFLECURRENTPLAYLIST, OnPlaybackmodeShufflecurrentplaylist)
+
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -2685,6 +2688,39 @@ void CMainFrame::OnPlaybackmodeShufflecurrentplaylist()
 		m_wndView->GetCtrl()->UpdateV();
 		m_wndView->GetCtrl()->ScrollToCurr();
 	}
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CMainFrame::OnSelBoxDelSel( WPARAM wParam, LPARAM lParam )
+{
+	// setup vars
+	CmusikSelectionCtrl* pSel = (CmusikSelectionCtrl*)wParam;
+	BOOL from_computer = (BOOL)lParam;
+
+	// get selected items into a new
+	// playlist
+	CmusikPlaylist* playlist = new CmusikPlaylist();
+	
+	//CmusikString sub_query = pSel->GetSelQuery();
+	CmusikString partial_query = GetSelQuery( pSel );
+	bool sub_query = true;
+	if ( partial_query.Left( 1 ) == _T( "W" ) )
+		sub_query = false;
+
+	m_Library->GetRelatedSongs( partial_query, pSel->GetType(), *playlist, sub_query );
+
+	// send delete command to library and wait
+	m_Library->DeleteSongs( *playlist, from_computer );	
+
+	delete playlist;
+
+	RequerySelBoxes();
+
+	m_wndView->GetCtrl()->GetPlaylist()->Clear();
+	m_wndView->GetCtrl()->UpdateV();
+
+	return 0L;
 }
 
 ///////////////////////////////////////////////////

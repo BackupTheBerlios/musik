@@ -234,6 +234,7 @@ protected:
 	afx_msg LRESULT OnSelBoxRequestUpdate( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnUpdateCurrPlaylist( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnRestartSoundSystem( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnSelBoxDelSel( WPARAM wParam, LPARAM lParam );
 
 	// mfc message maps
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);

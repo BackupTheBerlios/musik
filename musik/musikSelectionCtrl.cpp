@@ -8,7 +8,6 @@
 #include "MEMDC.H"
 
 #include "../musikCore/include/musikLibrary.h"
-#include ".\musikselectionctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -52,6 +51,8 @@ BEGIN_MESSAGE_MAP(CmusikSelectionBar, baseCmusikSelectionBar)
 	ON_COMMAND(ID_CHANGETYPE_RATING, OnChangetypeRating)
 	ON_COMMAND(ID_CHANGETYPE_TIMESPLAYED, OnChangetypeTimesplayed)
 	ON_COMMAND(ID_CHANGETYPE_BITRATE, OnChangetypeBitrate)
+	ON_COMMAND(ID_DELETE_FROMLIBRARY, OnDeleteFromlibrary)
+	ON_COMMAND(ID_DELETE_FROMCOMPUTER, OnDeleteFromcomputer)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -310,6 +311,21 @@ void CmusikSelectionBar::ReqSelBoxUpdate()
 
 ///////////////////////////////////////////////////
 
+void CmusikSelectionBar::OnDeleteFromlibrary()
+{
+	GetCtrl()->DelSel();
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionBar::OnDeleteFromcomputer()
+{
+	if ( MessageBox( _T( "Are you sure you want to PERMANETLY delete these files from your computer?" ), MUSIK_VERSION_STR, MB_ICONWARNING | MB_YESNO ) == IDYES )
+		GetCtrl()->DelSel( true );
+}
+
+///////////////////////////////////////////////////
+
 // CmusikSelectionCtrl
 
 ///////////////////////////////////////////////////
@@ -340,7 +356,6 @@ CmusikSelectionCtrl::CmusikSelectionCtrl( CFrameWnd* parent, CmusikLibrary* libr
 	m_DropID_R = dropid_r;
 	m_ParentBox = false;
 	m_ChildOrder = -1;
-	m_ShiftDown = false;
 	m_IsFocused = false;
 
 	m_IsWinNT = ( 0 == ( GetVersion() & 0x80000000 ) );
@@ -368,12 +383,10 @@ BEGIN_MESSAGE_MAP(CmusikSelectionCtrl, CmusikListCtrl)
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_NOTIFY_REFLECT(LVN_MARQUEEBEGIN, OnLvnMarqueeBegin)
-	ON_WM_KEYDOWN()
 	ON_NOTIFY_REFLECT(LVN_BEGINDRAG, OnLvnBegindrag)
 	ON_NOTIFY_REFLECT(LVN_BEGINRDRAG, OnLvnBeginrdrag)
 	ON_WM_CONTEXTMENU()
 	ON_NOTIFY_REFLECT(LVN_KEYDOWN, OnLvnKeydown)
-	ON_WM_KEYUP()
 	ON_WM_KILLFOCUS()
 	ON_WM_CHAR()
 	ON_WM_LBUTTONDOWN()
@@ -875,16 +888,6 @@ void CmusikSelectionCtrl::OnLvnMarqueeBegin(NMHDR *pNMHDR, LRESULT *pResult)
 
 ///////////////////////////////////////////////////
 
-void CmusikSelectionCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
-{
-	if ( nChar == VK_SHIFT )
-		m_ShiftDown = true;
-
-	CmusikListCtrl::OnKeyDown(nChar, nRepCnt, nFlags);
-}
-
-///////////////////////////////////////////////////
-
 void CmusikSelectionCtrl::RenameSel()
 {
 	CmusikStringArray items;
@@ -1218,13 +1221,33 @@ void CmusikSelectionCtrl::OnLvnKeydown(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMLVKEYDOWN pLVKeyDow = reinterpret_cast<LPNMLVKEYDOWN>(pNMHDR);
 
-	if ( pLVKeyDow->wVKey == VK_F2 )
-		RenameSel();
-
-	else if ( ( pLVKeyDow->wVKey == VK_END || pLVKeyDow->wVKey == VK_HOME || pLVKeyDow->wVKey == VK_DOWN || pLVKeyDow->wVKey == VK_UP || pLVKeyDow->wVKey == VK_PRIOR || pLVKeyDow->wVKey == VK_NEXT ) && m_ShiftDown )
+	if ( GetKeyState( VK_SHIFT ) < 0 )
 	{
-		int WM_SELBOXUPDATE = RegisterWindowMessage( "SELBOXUPDATE" );
-		m_Parent->PostMessage( WM_SELBOXUPDATE, GetCtrlID() );
+		if ( pLVKeyDow->wVKey == VK_END || pLVKeyDow->wVKey == VK_HOME || pLVKeyDow->wVKey == VK_DOWN || pLVKeyDow->wVKey == VK_UP || pLVKeyDow->wVKey == VK_PRIOR || pLVKeyDow->wVKey == VK_NEXT )
+		{
+			int WM_SELBOXUPDATE = RegisterWindowMessage( "SELBOXUPDATE" );
+			m_Parent->PostMessage( WM_SELBOXUPDATE, GetCtrlID() );
+		}
+	}
+	else if ( GetKeyState( VK_MENU ) < 0 )
+	{
+		if ( pLVKeyDow->wVKey == VK_DELETE )
+		{
+			DelSel();
+		}
+	}
+	else if ( GetKeyState( VK_CONTROL ) < 0 )
+	{
+		if ( pLVKeyDow->wVKey == VK_DELETE )
+		{
+			if ( MessageBox( _T( "Are you sure you want to PERMANETLY delete these files from your computer?" ), MUSIK_VERSION_STR, MB_ICONWARNING | MB_YESNO ) == IDYES )
+				DelSel( true );
+		}
+	}
+	else
+	{
+		if ( pLVKeyDow->wVKey == VK_F2 )
+			RenameSel();
 	}
 
 	*pResult = 0;
@@ -1232,21 +1255,9 @@ void CmusikSelectionCtrl::OnLvnKeydown(NMHDR *pNMHDR, LRESULT *pResult)
 
 ///////////////////////////////////////////////////
 
-void CmusikSelectionCtrl::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
-{
-	if ( nChar == VK_SHIFT )
-		m_ShiftDown = false;
-
-	CmusikListCtrl::OnKeyUp(nChar, nRepCnt, nFlags);
-}
-
-///////////////////////////////////////////////////
-
 void CmusikSelectionCtrl::OnKillFocus(CWnd* pNewWnd)
 {
 	CmusikListCtrl::OnKillFocus(pNewWnd);
-
-	m_ShiftDown = false;
 	m_IsFocused = false;
 }
 
@@ -1273,7 +1284,6 @@ void CmusikSelectionCtrl::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 }
 
 ///////////////////////////////////////////////////
-
 
 void CmusikSelectionCtrl::OnLButtonDown(UINT nFlags, CPoint point)
 {
@@ -1308,3 +1318,12 @@ void CmusikSelectionCtrl::OnSetFocus(CWnd* pOldWnd)
 }
 
 ///////////////////////////////////////////////////
+
+void CmusikSelectionCtrl::DelSel( bool from_file )
+{
+	int WM_SELBOXDELSEL = RegisterWindowMessage( "SELBOXDELSEL" );
+	m_Parent->SendMessage( WM_SELBOXDELSEL, (WPARAM)this, (LPARAM)from_file );
+}
+
+///////////////////////////////////////////////////
+
