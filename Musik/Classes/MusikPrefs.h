@@ -93,6 +93,7 @@ public:
 
 	wxString sAutoRename;
 	wxString sAutoTag;
+	wxString sMusikVersion;
 
 	int nPlaylistColumnSize[NPLAYLISTCOLUMNS];
 };

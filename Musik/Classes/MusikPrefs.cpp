@@ -77,6 +77,7 @@ void CMusikPrefs::LoadPrefs()
 	config->Read( wxT( "EnableWebserver" ),							&nWebServerEnable,		0						);
 	config->Read( wxT( "Webserverport" ),							&nWebServerPort,		6395					);
 	config->Read( wxT( "FramePlacement" ),							&sFramePlacement,		wxT("0,0,800,600,0,0")	);
+	config->Read( wxT( "MusikVersion" ),							&sMusikVersion,			wxT("Musik 0.1.2")		);
 
 	//--- playlist columns ---//
 	for( int i = 0;i < NPLAYLISTCOLUMNS; i++ )
@@ -165,6 +166,7 @@ void CMusikPrefs::SavePrefs()
 	config->Write( wxT( "EnableWebserver" ),						nWebServerEnable		);
 	config->Write( wxT( "WebserverPort" ),							nWebServerPort			);
 	config->Write( wxT( "FramePlacement" ),							sFramePlacement			);
+	config->Write( wxT( "MusikVersion" ),							sMusikVersion			);
 
 	//--- playlist columns ---//
 	for( int i = 0; i < NPLAYLISTCOLUMNS; i++ )

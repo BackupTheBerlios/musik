@@ -27,6 +27,15 @@ IMPLEMENT_APP( MusikApp )
 bool MusikApp::OnInit()
 {
 	g_FirstRun = true;
+
+	//-----------------------------------------//
+	//--- check to see if a new version has	---//
+	//--- been installed. if it has, see	---//
+	//--- if any core changes need to be	---//
+	//--- made.								---//
+	//-----------------------------------------//
+	g_Prefs.LoadPrefs();
+	CheckVersion();
 	
 	//--- setup our home dir ---//
 	if ( !wxDirExists( MUSIK_HOME_DIR ) )
@@ -36,8 +45,7 @@ bool MusikApp::OnInit()
 	if ( !wxDirExists( MUSIK_PLAYLIST_DIR ) )
 		wxMkdir( MUSIK_PLAYLIST_DIR );
 
-	//--- load preferences and library ---//
-	g_Prefs.LoadPrefs();
+	//--- load library and paths ---//
 	g_Library.Load();
 	g_Paths.Load();
 
@@ -122,4 +130,36 @@ bool MusikApp::OnInit()
 		g_WebServer.Start();
 
 	return TRUE;
+}
+
+void MusikApp::CheckVersion()
+{
+	bool bSavePrefs = false;
+
+	//--------------------------------//
+	//--- if we have a new version ---//
+	//--------------------------------//
+	if ( g_Prefs.sMusikVersion != wxString( MUSIK_VERSION ) )
+	{
+		//------------------------------------//
+		//--- if the old version was 0.1.2 ---//
+		//------------------------------------//
+		if ( g_Prefs.sMusikVersion == wxT( "Musik 0.1.2" ) )
+		{
+			if ( wxFileExists( MUSIK_SOURCES_FILENAME ) || wxFileExists( MUSIK_DB_FILENAME ) )
+			{
+				wxMessageBox( wxT( "Musik has detected version 0.1.2 or earlier was previously installed.\n\nDue to the changes from 0.1.2 to the current version, your Sources list and Library must be reset. We apologize for any inconvenience this may cause." ), MUSIK_VERSION, wxICON_INFORMATION );
+		
+				if ( wxFileExists( MUSIK_SOURCES_FILENAME ) )
+					wxRemoveFile( MUSIK_SOURCES_FILENAME );
+				if ( wxFileExists( MUSIK_DB_FILENAME ) )
+					wxRemoveFile( MUSIK_DB_FILENAME );
+			}
+			g_Prefs.sMusikVersion = MUSIK_VERSION;
+			bSavePrefs = true;
+		}
+	}
+
+	if ( bSavePrefs )
+		g_Prefs.SavePrefs();
 }

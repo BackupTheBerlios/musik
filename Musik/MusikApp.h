@@ -22,6 +22,8 @@ class MusikApp : public wxApp
 {
 public:
 	virtual bool OnInit();
+private:
+	void CheckVersion();
 };
 
 DECLARE_APP(MusikApp)
