@@ -6,10 +6,11 @@
 #include "../include/MusikPlayer.h"
 #include "../include/MusikLibrary.h"
 #include "../include/MusikFunctor.h"
+#include "../include/MusikEqualizer.h"
 
 ///////////////////////////////////////////////////
 
-static void PlayerWorker( CMusikPlayer* player )
+static void MusikPlayerWorker( CMusikPlayer* player )
 {
 	TRACE0( "Player thread initialized\n" );
 
@@ -31,12 +32,25 @@ static void PlayerWorker( CMusikPlayer* player )
 
 ///////////////////////////////////////////////////
 
-CMusikPlayer::CMusikPlayer( CMusikFunctor* functor )
+void* F_CALLBACKAPI CMusikPlayer::MusikEQCallback( void* originalbuffer, void *newbuffer, int length, int param )
 {
+	// two channel ( stereo ), 16 bit sound
+	m_EQ->ProcessDSP( newbuffer, length, 2, 16 );
+	return newbuffer;
+}
+
+///////////////////////////////////////////////////
+
+CMusikPlayer::CMusikPlayer( CMusikFunctor* functor, CMusikLibrary* library, CMusikPlaylist* playlist )
+{
+	m_Functor			= functor;
+	m_Library			= library;
+	m_Playlist			= playlist;
+
 	m_IsPlaying			= false;
 	m_IsPaused			= false;
 	m_ShutDown			= false;
-	m_Functor			= functor;
+	m_EQ				= NULL;
 	m_ActiveStreams		= NULL;	
 	m_ActiveChannels	= NULL;
 	m_Mutex				= NULL;
@@ -60,11 +74,12 @@ CMusikPlayer::~CMusikPlayer()
 
 void CMusikPlayer::InitThread()
 {
+	m_EQ = new CMusikEqualizer( m_Library );
 	m_Mutex	= new ACE_Thread_Mutex();
 	m_ThreadID = new ACE_thread_t();
 	m_ThreadHND = new ACE_hthread_t();
 
-	ACE_Thread::spawn( (ACE_THR_FUNC)PlayerWorker,
+	ACE_Thread::spawn( (ACE_THR_FUNC)MusikPlayerWorker,
 		this,
 		THR_JOINABLE | THR_NEW_LWP,
 		m_ThreadID,
@@ -77,6 +92,7 @@ void CMusikPlayer::InitThread()
 
 void CMusikPlayer::CleanThread()
 {
+	if ( m_EQ ) delete m_EQ;
 	if ( m_Mutex ) 	delete m_Mutex;
 	if ( m_ThreadID ) delete m_ThreadID;	
 	if ( m_ThreadHND ) delete m_ThreadHND;

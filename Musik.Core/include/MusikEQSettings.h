@@ -101,9 +101,8 @@ public:
 		}
 	}
 
-private:
-
-	float m_Left[MUSIK_EQ_SETTINGS_NUM_BANDS], m_Right[MUSIK_EQ_SETTINGS_NUM_BANDS];
+	float m_Left[MUSIK_EQ_SETTINGS_NUM_BANDS];
+	float m_Right[MUSIK_EQ_SETTINGS_NUM_BANDS];
 };
 
 ///////////////////////////////////////////////////

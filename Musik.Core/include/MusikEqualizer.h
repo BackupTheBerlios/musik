@@ -60,12 +60,14 @@ public:
 	void Set( int songid );
 	void SetLibrary( CMusikLibrary* library );
 
+	void InitEqualizer();
+	void CleanEqualizer();
+	void ProcessDSP( void* buffer, int length, int channels, int bitspersample );
+
 private:
 
 	CMusikEQSettings m_EQ;
 	CMusikLibrary* m_Library;
-
-	float m_Left[MUSIK_EQ_SETTINGS_NUM_BANDS], m_Right[MUSIK_EQ_SETTINGS_NUM_BANDS];
 };
 
 ///////////////////////////////////////////////////

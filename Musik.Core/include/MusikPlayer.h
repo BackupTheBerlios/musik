@@ -7,8 +7,7 @@
 
 #include "MusikPlaylist.h"
 
-#include "../Musik.Core/include/MusikCrossfader.h"
-#include "../Musik.Core/include/MusikEqualizer.h"
+#include "MusikCrossfader.h"
 
 #include "ace/Thread.h"
 #include "ace/Synch.h"
@@ -47,23 +46,27 @@ class CMusikPlaylist;
 class CMusikFunctor;
 class CMusikPlayer;
 class CMusikSongInfo;
+class CMusikEqualizer;
 
 ///////////////////////////////////////////////////
 
-static void PlayerWorker( CMusikPlayer* player );
+static void MusikPlayerWorker( CMusikPlayer* player );
 
 ///////////////////////////////////////////////////
 
 class CMusikPlayer	
 {
+	void* F_CALLBACKAPI MusikEQCallback( void* originalbuffer, void *newbuffer, int length, int param );
+
 public: 	
-	CMusikPlayer( CMusikFunctor* functor );
+	CMusikPlayer( CMusikFunctor* functor, CMusikLibrary* library, CMusikPlaylist* playlist );
 	~CMusikPlayer();
 
 	int  InitSound( int device, int driver, int rate, int channels, int mode = MUSIK_PLAYER_INIT_START );
 	void CleanSound();
 
 	void SetPlaylist( CMusikPlaylist* playlist );
+	void SetLibrary( CMusikLibrary* library );
 	
 	bool Play( int index = 0, int play_type = 0, int start_pos = 0 );
 	bool Next();
@@ -76,10 +79,14 @@ public:
 	bool IsShuttingDown()	{ return m_ShutDown; }
 
 private:
+
 	// start and stop sound. InitSound() will
 	// relay to these helper functions
 	void StopSound();
 	int  StartSound( int device, int driver, int rate, int channels );
+
+	// equalizer
+	CMusikEqualizer* m_EQ;
 
 	// status flags
 	bool m_IsPlaying;
@@ -92,7 +99,6 @@ private:
 	// a pointer to a functor that will be
 	// used to post a next song event
 	CMusikFunctor* m_Functor;
-
 
 	// maximum number of open channels, and
 	// little functions to help us manage
