@@ -16,6 +16,8 @@ a3:
   ****                                                               ****
   ***********************************************************************
 
+  - Fixed a weird bug that may have allowed playlists to get saved
+    incorrectly.
   - Prefs -> Interface -> General is now Prefs -> Interface -> Workflow
   - Currently playing item in "Now Playing" is no longer bold. The
     little playback icon is enough.

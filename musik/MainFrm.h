@@ -154,7 +154,7 @@ public:
 	void SynchronizeDirs();
 	void RestoreFromTray();
 	void SaveWindowState();
-	void RequeryPlaylist( CmusikSelectionCtrl* sender = NULL );
+	void RequeryPlaylist( CmusikSelectionCtrl* sender = NULL, bool prompt_save = true );
 	void RequerySelBoxes( CmusikSelectionCtrl* sender = NULL, bool deselect_items = true, bool only_if_parent_exists = false );
 	CmusikString GetSelQuery( CmusikSelectionCtrl* target = NULL );
 	bool UseTempTable();
@@ -257,6 +257,7 @@ protected:
 	afx_msg LRESULT OnUpdateCurrPlaylist( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnRestartSoundSystem( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSelBoxDelSel( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnSourcesItemClicked( WPARAM wParam, LPARAM lParam );
 
 	// mfc message maps
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);

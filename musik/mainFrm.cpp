@@ -85,6 +85,7 @@ int WM_SOURCESNOWPLAYING	= RegisterWindowMessage( "SOURCESNOWPLAYING" );
 int WM_SOURCESSTDPLAYLIST	= RegisterWindowMessage( "SOURCESSTDPLAYLIST" );
 int WM_SOURCESSUBLIBRARY	= RegisterWindowMessage( "SOURCESSUBLIBRARY" );
 int WM_SOURCESQUICKSEARCH	= RegisterWindowMessage( "SOURCESQUICKSEARCH" );
+int WM_SOURCESITEMCLICKED	= RegisterWindowMessage( "SOURCESITEMCLICKED" );
 
 int WM_CLOSEDIRSYNC			= RegisterWindowMessage( "CLOSEDIRSYNC" );
 
@@ -216,6 +217,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_UPDATEPLAYLIST, OnUpdateCurrPlaylist )
 	ON_REGISTERED_MESSAGE( WM_RESTARTSOUNDSYSTEM, OnRestartSoundSystem )
 	ON_REGISTERED_MESSAGE( WM_EQUALIZERCHANGE, OnEqualizerChange )
+	ON_REGISTERED_MESSAGE( WM_SOURCESITEMCLICKED, OnSourcesItemClicked )
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -1025,7 +1027,10 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 
 		CmusikSelectionCtrl::SetUpdating( false );
 
-		// update playlsit
+		// prompt to save old playlist...
+		m_wndView->GetCtrl()->SavePlaylist();
+
+		// update playlist
 		if ( m_Prefs->LibraryShowsAllSongs() )
 			m_Library->GetAllSongs( *m_Playlist, UseTempTable() );
 		else
@@ -1054,7 +1059,7 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 	// update all the selection controls and
 	// the playlist
 	RequerySelBoxes( pSender );
-	RequeryPlaylist( pSender );
+	RequeryPlaylist( pSender, false );
 
 	return 0L;
 }
@@ -1176,13 +1181,17 @@ void CMainFrame::RequerySelBoxes( CmusikSelectionCtrl* sender, bool deselect_ite
 
 ///////////////////////////////////////////////////
 
-void CMainFrame::RequeryPlaylist( CmusikSelectionCtrl* sender )
+void CMainFrame::RequeryPlaylist( CmusikSelectionCtrl* sender, bool prompt_save )
 {
 	// if there is a sender then requery based on the
 	// sender's information. otherwise just call
 	// UpdateV() again to update the view.
 	if ( sender )
 	{
+		// prompt to save old playlist...
+		if ( prompt_save )
+			m_wndView->GetCtrl()->SavePlaylist();
+
 		// see what the order should be by...
 		int order_by = -1;
 		if ( sender )
@@ -1378,6 +1387,14 @@ LRESULT CMainFrame::OnSongResume( WPARAM wParam, LPARAM lParam )
 
 ///////////////////////////////////////////////////
 
+LRESULT CMainFrame::OnSourcesItemClicked( WPARAM wParam, LPARAM lParam )
+{
+	m_wndView->GetCtrl()->SavePlaylist();
+	return 0L;	
+}
+
+///////////////////////////////////////////////////
+
 LRESULT CMainFrame::OnSourcesLibrary( WPARAM wParam, LPARAM lParam )
 {
 	TRACE0( "A musik Library was clicked\n" );
@@ -1469,7 +1486,6 @@ LRESULT CMainFrame::OnSourcesStdPlaylist( WPARAM wParam, LPARAM lParam )
 	m_Library->GetStdPlaylist( nID, *m_Playlist, true );
 
 	m_Library->PopulateTempSongTable( *m_Playlist );
-	ResetSelBoxes();
 	ShowSelectionBoxes( false );
 		
 	SetPlaylist();
@@ -2024,6 +2040,7 @@ void CMainFrame::OnPlaybackmodeIntro()
 
 void CMainFrame::OnUnsynchronizedtagsView()
 {
+	m_wndView->GetCtrl()->SavePlaylist();
 	m_Library->GetDirtySongs( m_Playlist, true );
 	SetPlaylist();
 }

@@ -143,6 +143,11 @@ void CmusikSourcesBar::OnItemChanged( NMHDR* pNotifyStruct, LRESULT* plResult )
 
 		int playlist_type = pNMPropTree->pItem->GetPlaylistType();
 
+		// send the main frame a notification first, this
+		// allows the pre-playlist-switch routine to be called
+		int WM_SOURCESITEMCLICKED = RegisterWindowMessage( "SOURCESITEMCLICKED" );
+		m_Parent->SendMessage( WM_SOURCESITEMCLICKED, NULL );
+
 		// library selected
 		if ( playlist_type == MUSIK_PLAYLIST_TYPE_LIBRARY )
 		{

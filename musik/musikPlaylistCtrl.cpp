@@ -739,10 +739,6 @@ void CmusikPlaylistCtrl::SetPlaylist( CmusikPlaylist* playlist )
 
 	SetItemState( -1, 0, LVIS_SELECTED );
 
-	// if the last item was a standard playlist,
-	// we may need to save it. so check...
-	SavePlaylist();
-
 	// delete any old playlist that is not a now
 	// playing type...
 	if ( m_Playlist && m_Playlist->m_Type != MUSIK_PLAYLIST_TYPE_NOWPLAYING )
