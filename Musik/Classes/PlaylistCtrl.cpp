@@ -728,7 +728,7 @@ wxString CPlaylistCtrl::OnGetItemText(long item, long column) const
 
 wxString CPlaylistCtrl::GetItemText(long item, EPLAYLISTCOLUMNS eColumnType) const
 {
-	if(item > g_Playlist.GetCount() - 1)
+	if(item >= (long)g_Playlist.GetCount())
 		return wxT( "" );
 	const CMusikSong & song = g_Playlist.Item ( item );
 	switch ( eColumnType )
@@ -814,8 +814,14 @@ wxString CPlaylistCtrl::GetItemText(long item, EPLAYLISTCOLUMNS eColumnType) con
 	case PLAYLISTCOLUMN_NOTES:
 		return ConvFromUTF8(song.MetaData.Notes);
 	case PLAYLISTCOLUMN_TIMEADDED:
-		wxDateTime dt(song.TimeAdded);
-		return dt.Format(wxT("%x %X"));
+		{
+			wxDateTime dt(song.TimeAdded);
+			return dt.Format(wxT("%x %X"));
+		}
+		break;
+	
+	default:
+		wxASSERT(false);
 		break;
 	}
 
@@ -843,7 +849,7 @@ int CPlaylistCtrl::OnGetItemImage(long item) const
 
 wxListItemAttr* CPlaylistCtrl::OnGetItemAttr(long item) const
 {
-	if(item > g_Playlist.GetCount() - 1)
+	if(item >= (long)g_Playlist.GetCount())
 		return (wxListItemAttr *)&m_LightAttr;
 	const CMusikSong & song = g_Playlist.Item ( item );
 	if(wxGetApp().Player.IsPlaying() && (g_SourcesCtrl->GetSelType() == MUSIK_SOURCES_NOW_PLAYING) 

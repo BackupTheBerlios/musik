@@ -158,8 +158,12 @@ public:
 inline wxString FilenameAsUrl(const wxFileName &fn)
 {
 	wxString url = fn.GetFullPath(wxPATH_NATIVE);
-  	url.Replace(wxT("\\"), wxT("/"));
+#ifdef __WXMSW__
+	url.Replace(wxT("\\"), wxT("/"));
 	url.Replace(wxT("//http/"),wxT("http://"));
+#else
+	url.Replace(wxT("http:/"),wxT("http://"));
+#endif
 	return url;
 }
 //------------------------------------------------------------------//

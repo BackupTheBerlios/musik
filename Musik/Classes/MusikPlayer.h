@@ -217,7 +217,7 @@ private:
 	FSOUND_STREAM * m_p_NETSTREAM_Connecting;
 	CMusikSong m_MetaDataSong;
 	wxCriticalSection m_critMetadata;
-	wxCriticalSection m_critInternalData;
+	//wxCriticalSection m_critInternalData;
 	wxStopWatch m_StreamIsWorkingStopWatch;
 	bool m_bStreamIsWorkingStopWatchIsRunning;
 	int m_nLastSongTime;

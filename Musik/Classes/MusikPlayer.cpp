@@ -356,7 +356,7 @@ void CMusikPlayer::_UpdateNetstreamMetadata(wxCommandEvent& WXUNUSED(event))
 				cursong.MetaData.Title = m_MetaDataSong.MetaData.Title;
 				cursong.MetaData.Album = m_MetaDataSong.MetaData.Album;
 			}
-			wxCriticalSectionLocker locker( m_critInternalData );
+			//wxCriticalSectionLocker locker( m_critInternalData );
 			m_CurrentSong = m_Playlist.Item( m_SongIndex );
 		}
 		UpdateUI();
@@ -1167,7 +1167,7 @@ int CMusikPlayer::GetTime( int nType )
 
 int CMusikPlayer::GetTimeLeft( int nType )
 {
-	wxCriticalSectionLocker locker( m_critInternalData); // lock because this method is called from fader thread , protect m_Playlist
+	//wxCriticalSectionLocker locker( m_critInternalData); // lock because this method is called from fader thread , protect m_Playlist
 	if(_CurrentSongIsNetStream())
 	{
 		return 10000000;
@@ -1239,8 +1239,8 @@ bool CMusikPlayer::_CurrentSongNeedsMPEGACCURATE()
 {
 	return (wxGetApp().Prefs.bUse_MPEGACCURATE_ForMP3VBRFiles
 			&&(m_SongIndex <  m_Playlist.GetCount())
-			&& m_CurrentSong.MetaData.bVBR 
-			&& (m_CurrentSong.MetaData.eFormat == MUSIK_FORMAT_MP3) ); 
+			&& m_CurrentSong.MetaData.bVBR
+			&& (m_CurrentSong.MetaData.eFormat == MUSIK_FORMAT_MP3) );
 	//  mp3 vbr files needs FSOUND_MPEGACCURATE flag, but takes much too long for other filetypes
 }
 bool CMusikPlayer::_CurrentSongIsNetStream()
@@ -1298,7 +1298,7 @@ void CMusikPlayer::SetFadeComplete()
 void CMusikPlayer::SetFadeStart()
 {
 	m_BeginFade = true;
-	m_Fading = true; 
+	m_Fading = true;
 }
 
 
@@ -1313,7 +1313,7 @@ void CMusikPlayer::AddToPlaylist( CMusikSongArray & songstoadd ,bool bPlayFirstA
 	size_t size = songstoadd.GetCount();
 	if(size)
 	{
-		wxCriticalSectionLocker locker( m_critInternalData);
+		//wxCriticalSectionLocker locker( m_critInternalData);
 		int plsize = m_Playlist.GetCount();
 		for(size_t i = 0; i < size ; i++)
 		{
@@ -1335,7 +1335,7 @@ void CMusikPlayer::AddToPlaylist( CMusikSongArray & songstoadd ,bool bPlayFirstA
 }
 void CMusikPlayer::InsertToPlaylist( CMusikSongArray & songstoadd ,bool bPlayFirstInserted)
 {
-	wxCriticalSectionLocker locker( m_critInternalData);
+	//wxCriticalSectionLocker locker( m_critInternalData);
 	size_t size = songstoadd.GetCount();
 	size_t plsize = m_Playlist.GetCount();
 	if(plsize == 0 || !IsPlaying())
@@ -1369,7 +1369,7 @@ void CMusikPlayer::InsertToPlaylist( CMusikSongArray & songstoadd ,bool bPlayFir
 }
 void CMusikPlayer::RemovePlaylistEntry( size_t index )
 {
-	wxCriticalSectionLocker locker( m_critInternalData);
+	//wxCriticalSectionLocker locker( m_critInternalData);
 	wxASSERT(index < m_Playlist.GetCount()); 
 	
 	if(index < m_SongIndex)
@@ -1388,7 +1388,7 @@ void CMusikPlayer::RemovePlaylistEntry( size_t index )
 
 void  CMusikPlayer::MovePlaylistEntrys(size_t nMoveTo ,const wxArrayInt &arrToMove)
 {
-	wxCriticalSectionLocker locker( m_critInternalData);
+	//wxCriticalSectionLocker locker( m_critInternalData);
 	wxASSERT(nMoveTo >= 0 && nMoveTo <= m_Playlist.GetCount()); 
 	int i = arrToMove.GetCount() - 1;
 	// first move all entrys which are behind nMoveTo;

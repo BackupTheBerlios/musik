@@ -419,8 +419,8 @@ void CSourcesListBox::CopyFiles( wxCommandEvent& WXUNUSED(event) )
 		destname.SetPath(destdir);
 		if(!wxCopyFile( sourcename.GetFullPath(), destname.GetFullPath()))
 		{
-			
-			wxString errmsg = wxString::Format(_("Failed to copy file %s. Continue?"),sourcename.GetFullPath());
+
+			wxString errmsg = wxString::Format(_("Failed to copy file %s."),(const wxChar *)sourcename.GetFullPath());
 			if(wxMessageBox(errmsg,	_("File copy error"),wxYES|wxNO|wxCENTER|wxICON_ERROR ) == wxNO)
 				break;
 		}
