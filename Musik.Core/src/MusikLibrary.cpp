@@ -3,6 +3,7 @@
 #include "stdafx.h"
 #include "time.h"
 
+#include "../include/MusikCrossfader.h"
 #include "../include/MusikLibrary.h"
 
 #include "ace/Thread.h"
@@ -111,7 +112,7 @@ static int sqlite_GetIDFromFilename( void *args, int numCols, char **results, ch
 
 ///////////////////////////////////////////////////
 
-static int sqlite_AddPlaylistToStringArray( void *args, int numCols, char **results, char ** columnNames )
+static int sqlite_AddRowToStringArray( void *args, int numCols, char **results, char ** columnNames )
 {
 	// this is a callback for sqlite to use when 
 	// adding playlist names to a CStdStringArray	
@@ -126,10 +127,14 @@ static int sqlite_AddPlaylistToStringArray( void *args, int numCols, char **resu
 
 CMusikLibrary::CMusikLibrary( const CStdString& filename )
 {
+	m_pDB = NULL;
+
 	m_ProtectingLibrary = new ACE_Thread_Mutex();
 	CMusikSong::SetLibrary( this );
 	m_Filename = filename;
+
 	InitFields();
+
 	Startup();
 }
 
@@ -219,6 +224,8 @@ int CMusikLibrary::GetSongFieldDBID( CStdString field )
 
 bool CMusikLibrary::InitStdTables()
 {
+	bool error = false;
+
 	// construct the table that contains a list of
 	// all the standard playlist names
 	static const char *szCreateDBQuery1  = 
@@ -240,7 +247,6 @@ bool CMusikLibrary::InitStdTables()
 	m_ProtectingLibrary->acquire();
 
 	char *pErr = NULL;
-	m_pDB = sqlite_open( m_Filename.c_str(), 0666, &pErr );
 
 	if ( m_pDB )
 	{
@@ -249,17 +255,58 @@ bool CMusikLibrary::InitStdTables()
 	}
 
 	if ( pErr )
+	{
+		error = true;
 		sqlite_freemem( pErr );
+	}
 
 	m_ProtectingLibrary->release();
 
-	return ( m_pDB != NULL );
+	return error;
+}
+
+///////////////////////////////////////////////////
+
+bool CMusikLibrary::InitCrossfaderTable()
+{
+	bool error = false;
+
+	// construct the table that contains a list of
+	// all the crossfader presets
+	static const char *szCreateDBQuery  = 
+		"CREATE TABLE " CROSSFADER_PRESETS " ( "	
+		"crossfader_name VARCHAR(255) PRIMARY KEY, "
+		"newsong FLOAT, "
+		"pause_resume FLOAT, "
+		"stop FLOAT, "
+		"exit FLOAT "
+		" );";
+
+	// put a lock on the library and open it up
+	m_ProtectingLibrary->acquire();
+
+	char *pErr = NULL;
+
+	if ( m_pDB )
+		sqlite_exec( m_pDB, szCreateDBQuery, NULL, NULL, NULL );
+
+	if ( pErr )
+	{
+		error = true;
+		sqlite_freemem( pErr );
+	}
+
+	m_ProtectingLibrary->release();
+
+	return error;
 }
 
 ///////////////////////////////////////////////////
 
 bool CMusikLibrary::InitLibTable()
 {
+	bool error = false;
+
 	// construct the table
 	static const char *szCreateDBQuery  = 
 		"CREATE TABLE " 
@@ -300,7 +347,6 @@ bool CMusikLibrary::InitLibTable()
 	m_ProtectingLibrary->acquire();
 
 	char *pErr = NULL;
-	m_pDB = sqlite_open( m_Filename.c_str(), 0666, &pErr );
 
 	if ( m_pDB )
 	{
@@ -309,26 +355,43 @@ bool CMusikLibrary::InitLibTable()
 	}
 
 	if ( pErr )
+	{
+		error = true;
 		sqlite_freemem( pErr );
+	}
 
 	m_ProtectingLibrary->release();
 
-	return ( m_pDB != NULL );
+	return error;
 }
 
 ///////////////////////////////////////////////////
 
 bool CMusikLibrary::Startup()
 {
-   bool bFailed = false;
+   bool error = false;
 
-   if ( !InitLibTable() )
-	   bFailed = true;
+   if ( m_pDB )
+	   Shutdown();
 
-   if ( !InitStdTables() )
-	   bFailed = true;   
+   char* pErr = NULL;
+   m_pDB = sqlite_open( m_Filename.c_str(), 0666, &pErr );
 
-   return bFailed;
+   if ( m_pDB && !pErr )
+   {
+		if ( !InitLibTable() )
+			error = true;
+
+		if ( !InitStdTables() )
+			error = true;  
+   }
+   else
+	   error = true;
+
+   if ( pErr )
+	   sqlite_freemem( pErr );
+
+   return error;
 }
 
 ///////////////////////////////////////////////////
@@ -350,7 +413,7 @@ void CMusikLibrary::Shutdown()
 void CMusikLibrary::BeginTransaction()
 {
 	m_ProtectingLibrary->acquire();
-	sqlite_exec_printf( m_pDB, "begin transaction;", NULL, NULL, NULL );
+	sqlite_exec_printf( m_pDB, _T( "begin transaction;" ), NULL, NULL, NULL );
 	m_ProtectingLibrary->release();
 }
 
@@ -359,7 +422,55 @@ void CMusikLibrary::BeginTransaction()
 void CMusikLibrary::EndTransaction()
 {
 	m_ProtectingLibrary->acquire();
-	sqlite_exec_printf( m_pDB, "end transaction;", NULL, NULL, NULL );
+	sqlite_exec_printf( m_pDB, _T( "end transaction;" ), NULL, NULL, NULL );
+	m_ProtectingLibrary->release();
+}
+
+///////////////////////////////////////////////////
+
+void CMusikLibrary::CreateCrossfader( CMusikCrossfader* fader )
+{
+	CStdString sQuery;
+
+	sQuery.Format( _T( "INSERT INTO %s VALUES ( %f,%f,%f,%f ); " ),
+		CROSSFADER_PRESETS,
+		fader->GetDuration( MUSIK_CROSSFADER_NEW_SONG ),
+		fader->GetDuration( MUSIK_CROSSFADER_PAUSE_RESUME ),
+		fader->GetDuration( MUSIK_CROSSFADER_STOP ),
+		fader->GetDuration( MUSIK_CROSSFADER_EXIT ) );
+
+	m_ProtectingLibrary->acquire();
+	sqlite_exec( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
+	m_ProtectingLibrary->release();
+}
+
+///////////////////////////////////////////////////
+
+void CMusikLibrary::DeleteCrossfader( const CStdString& name )
+{
+	CStdString sQuery;
+
+	sQuery.Format( _T( "DELETE FROM %s WHERE crossfader_name = %s" ),
+		CROSSFADER_PRESETS,
+		name.c_str() );
+
+	m_ProtectingLibrary->acquire();
+	sqlite_exec_printf( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
+	m_ProtectingLibrary->release();
+}
+
+///////////////////////////////////////////////////
+
+void CMusikLibrary::DeleteCrossfader( CMusikCrossfader* fader )
+{
+	CStdString sQuery;
+
+	sQuery.Format( _T( "DELETE FROM %s WHERE crossfader_name = %s" ),
+		CROSSFADER_PRESETS,
+		fader->GetName().c_str() );
+
+	m_ProtectingLibrary->acquire();
+	sqlite_exec_printf( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
 	m_ProtectingLibrary->release();
 }
 
@@ -857,7 +968,21 @@ void CMusikLibrary::GetAllStdPlaylists( CStdStringArray* target, bool clear_targ
 	CStdString sQuery( _T( "SELECT std_playlist_name  FROM " ) STD_PLAYLIST_TABLE_NAME _T( " WHERE std_playlist_name <> ''" ) );
 
 	m_ProtectingLibrary->acquire();
-	sqlite_exec( m_pDB, sQuery.c_str(), &sqlite_AddPlaylistToStringArray, target, NULL );
+	sqlite_exec( m_pDB, sQuery.c_str(), &sqlite_AddRowToStringArray, target, NULL );
+	m_ProtectingLibrary->release();
+}
+
+///////////////////////////////////////////////////
+
+void CMusikLibrary::GetAllCrossfaders( CStdStringArray* target, bool clear_target )
+{
+	if ( clear_target )
+		target->clear();
+
+	CStdString sQuery( _T( "SELECT crossfader_name  FROM " ) CROSSFADER_PRESETS _T( " WHERE crossfader_name <> ''" ) );
+
+	m_ProtectingLibrary->acquire();
+	sqlite_exec( m_pDB, sQuery.c_str(), &sqlite_AddRowToStringArray, target, NULL );
 	m_ProtectingLibrary->release();
 }
 

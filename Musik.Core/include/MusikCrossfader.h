@@ -46,6 +46,10 @@
 
 ///////////////////////////////////////////////////
 
+#include "StdString.h"
+
+///////////////////////////////////////////////////
+
 enum 
 {
 	MUSIK_CROSSFADER_NONE = -1,
@@ -124,12 +128,24 @@ public:
 		return 0.0f;
 	}
 
+	void SetName( const CStdString& name )
+	{
+		m_Name = name;
+	}
+
+	CStdString GetName()
+	{
+			return m_Name;
+	}
+
 private:
 
 	float m_NewSong;
 	float m_PauseResume;
 	float m_Stop;
 	float m_Exit;
+
+	CStdString m_Name;
 };
 
 ///////////////////////////////////////////////////
