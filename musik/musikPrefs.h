@@ -118,6 +118,17 @@ public:
 	void RemovePlaylistColSize( int at ){ m_Playlist_Sizes.erase( m_Playlist_Sizes.begin() + at ); }
 
 	//
+	// visualizations
+	//
+	string GetWinampVisName(){ return m_WinampVis_Name; }
+	int GetWinampVisModule(){ return m_WinampVis_Module; }
+	int GetWinampVis(){ return m_WinampVis_Lib; }
+
+	void SetWinampVisName( string& name ){ m_WinampVis_Name = name; }
+	void SetWinampVisModule( int module ){ m_WinampVis_Module = module; }
+	void SetWinampVis( int vis ){ m_WinampVis_Lib = vis; }
+
+	//
 	// selection box
 	//
 
@@ -266,6 +277,11 @@ private:
 	bool	m_Dlg_MinimizeToTray;
 	bool	m_Dlg_AddEntireToNP;
 	bool	m_Dlg_AlwaysOnTop;
+
+	// visualizations
+	string m_WinampVis_Name;
+	int m_WinampVis_Module;
+	int m_WinampVis_Lib;
 
 	// sources
 	bool	m_Sources_SubLibsVisible;

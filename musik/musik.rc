@@ -118,13 +118,20 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "&Sources\tCtrl+Shift+A",      ID_VIEW_SOURCES
         MENUITEM "&Now Playing\tCtrl+Shift+S",  ID_VIEW_NOWPLAYING
-        MENUITEM "Playlist &Information\tCtrl+Shift+D", 
-                                                ID_VIEW_PLAYLISTINFORMATION
-        MENUITEM "Visualization\tCtrl+Shift+G", ID_VIEW_VISUALIZATION
+        MENUITEM "Playlist &Info\tCtrl+Shift+D", ID_VIEW_PLAYLISTINFORMATION
+        MENUITEM "Playlist Info Vis\tCtrl+Shift+G", ID_VIEW_VISUALIZATION
         MENUITEM "E&qualizer\tCtrl+Shift+F",    ID_VIEW_EQUALIZER
         MENUITEM SEPARATOR
         MENUITEM "Always on Top",               ID_VIEW_ALWAYSONTOP
         MENUITEM "Full Screen\tAlt+Enter",      ID_VIEW_FULLSCREEN
+        MENUITEM SEPARATOR
+        POPUP "Winamp Visualizations"
+        BEGIN
+            MENUITEM "Enabled",                     ID_WINAMPVISUALIZATIONS_ENABLED
+
+            MENUITEM "Configure",                   ID_WINAMPVISUALIZATIONS_CONFIGURE
+
+        END
     END
     POPUP "&Audio"
     BEGIN
@@ -613,6 +620,23 @@ BEGIN
     EDITTEXT        IDC_EDIT5,150,60,40,14,ES_AUTOHSCROLL
 END
 
+IDD_WINAMP_VIS DIALOGEX 0, 0, 238, 119
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "musikCube Winamp Visualization"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "Select the winamp visualization you would like to emulate:",
+                    IDC_STATIC,6,6,185,8
+    COMBOBOX        IDC_COMBO1,6,75,228,78,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    PUSHBUTTON      "ok",IDC_OK,185,100,50,14
+    PUSHBUTTON      "cancel",IDC_CANCEL,131,100,50,14
+    PUSHBUTTON      "settings",IDC_SETTINGS,6,100,50,14
+    LISTBOX         IDC_LIST1,6,18,228,54,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | 
+                    WS_TABSTOP
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -765,6 +789,14 @@ BEGIN
         RIGHTMARGIN, 262
         TOPMARGIN, 7
         BOTTOMMARGIN, 107
+    END
+
+    IDD_WINAMP_VIS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 231
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 112
     END
 END
 #endif    // APSTUDIO_INVOKED

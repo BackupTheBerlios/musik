@@ -41,6 +41,7 @@
 #define IDB_BITMAP3                     160
 #define IDB_SONG_NOTPLAYING             160
 #define IDD_TAG_PROPERTIES              161
+#define IDD_WINAMP_VIS                  162
 #define IDC_CHECK_STARTUPSCAN           1007
 #define IDC_CHECK_STARTUPSCAN2          1008
 #define IDC_CHECK_PL_STRIPES            1009
@@ -76,6 +77,7 @@
 #define IDC_CLOSE                       1018
 #define IDC_SAVE_ACTIVE_AS_SELECTED     1018
 #define IDC_CHECK6                      1018
+#define IDC_CANCEL                      1018
 #define IDC_REMEMBER                    1019
 #define IDC_ENABLE_QUERY3               1019
 #define IDC_BUTTON4                     1019
@@ -132,6 +134,9 @@
 #define IDC_SEEK                        1053
 #define IDC_DELETE                      1054
 #define IDC_CHECK5                      1055
+#define IDC_REFRESH                     1056
+#define IDC_OK                          1057
+#define IDC_SETTINGS                    1058
 #define ID_FILE_PREFERENCES             32771
 #define ID_FILE_SEP                     32772
 #define ID_ADD_FILES                    32774
@@ -256,14 +261,17 @@
 #define ID_VIEW_VISUALIZATION           32932
 #define ID_VIEW_ALWAYSONTOP             32935
 #define ID_VIEW_FULLSCREEN              32936
+#define ID_VIEW_WINAMPVISUALIZATIONS    32939
+#define ID_WINAMPVISUALIZATIONS_CONFIGURE 32940
+#define ID_WINAMPVISUALIZATIONS_ENABLED 32941
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        162
-#define _APS_NEXT_COMMAND_VALUE         32938
-#define _APS_NEXT_CONTROL_VALUE         1056
+#define _APS_NEXT_RESOURCE_VALUE        163
+#define _APS_NEXT_COMMAND_VALUE         32942
+#define _APS_NEXT_CONTROL_VALUE         1059
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif

@@ -446,6 +446,16 @@
 						RelativePath=".\musikFileDialog.h">
 					</File>
 				</Filter>
+				<Filter
+					Name="musikWinampVisDlg"
+					Filter="">
+					<File
+						RelativePath=".\musikWinampVisDlg.cpp">
+					</File>
+					<File
+						RelativePath=".\musikWinampVisDlg.h">
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="Functors"

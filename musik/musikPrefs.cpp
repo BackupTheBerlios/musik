@@ -100,6 +100,10 @@ void CmusikPrefs::LoadPrefs()
 	m_Dlg_AddEntireToNP			= StringToBool( config->GetValue( "Dialog", "Add Entire Library Playlist to Now Playing", "1" ) );
 	m_Dlg_AlwaysOnTop			= StringToBool( config->GetValue( "Dialog", "Always on Top", "0" ) );
 
+	// winamp vis
+	m_WinampVis_Name			= config->GetValue( "Winamp Visualizations", "Default", "" );
+	m_WinampVis_Module			= StringToInt( config->GetValue( "Winamp Visualizations", "Module", "-1" ) );
+
 	// transparency
 	m_TransEnabled				= StringToBool( config->GetValue( "Transparency", "Enabled", "0" ) );
 	m_TransAdaptive				= StringToBool( config->GetValue( "Transparency", "Adaptive", "0" ) );
@@ -185,6 +189,10 @@ void CmusikPrefs::SavePrefs()
 	config->SetValue( "Dialog", "Add Entire Library Playlist to Now Playing", BoolToString( m_Dlg_AddEntireToNP ) );
 	config->SetValue( "Dialog", "Always on Top", BoolToString( m_Dlg_AlwaysOnTop ) );
 
+	// winamp vis
+	config->SetValue( "Winamp Visualizations", "Default", m_WinampVis_Name );
+	config->SetValue( "Winamp Visualizations", "Module", IntToString( m_WinampVis_Module ) );
+	
 	// transparency
 	config->SetValue( "Transparency", "Enabled", BoolToString( m_TransEnabled ) );
 	config->SetValue( "Transparency", "Adaptive", BoolToString( m_TransAdaptive ) );

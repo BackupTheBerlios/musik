@@ -49,6 +49,7 @@
 #include "musikPrefsDlg.h"
 #include "musikPropertyPage.h"
 #include "musikTunage.h"
+#include "musikWinampVisDlg.h"
 
 #include "../musikCore/include/StdString.h"
 #include "../musikCore/include/musikLibrary.h"
@@ -83,6 +84,7 @@ int WM_SELBOXDELSEL			= RegisterWindowMessage( "SELBOXDELSEL" );
 int WM_DRAGSTART			= RegisterWindowMessage( "DRAGSTART" );
 int WM_DRAGEND				= RegisterWindowMessage( "DRAGEND" );
 
+// sources updating selection
 int WM_SOURCESLIBRARY		= RegisterWindowMessage( "SOURCESLIBRARY" );
 int WM_SOURCESNOWPLAYING	= RegisterWindowMessage( "SOURCESNOWPLAYING" );
 int WM_SOURCESSTDPLAYLIST	= RegisterWindowMessage( "SOURCESSTDPLAYLIST" );
@@ -133,6 +135,11 @@ int WM_REMOVEOLD_END			= RegisterWindowMessage( "REMOVEOLD_END" );
 int WM_INITTRANS	= RegisterWindowMessage( "INITTRANS" );
 int WM_DEINITTRANS	= RegisterWindowMessage( "DEINITTRANS" );
 
+// relating to winamp vis plugins
+int WM_CLOSEWINAMPVISCONFIG = RegisterWindowMessage( "CLOSEWINAMPVISCONFIG" );
+int WM_GETWINAMPVISMODULES = RegisterWindowMessage( "GETWINAMPVISMODULES" );
+int WM_CONFIGWINAMPVIS = RegisterWindowMessage( "CONFIGWINAMPVIS" );
+
 ///////////////////////////////////////////////////
 
 IMPLEMENT_DYNAMIC(CMainFrame, CFrameWnd)
@@ -181,6 +188,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_COMMAND(ID_VIEW_VISUALIZATION, OnViewVisualization)
 	ON_COMMAND(ID_VIEW_ALWAYSONTOP, OnViewAlwaysontop)
 	ON_COMMAND(ID_VIEW_FULLSCREEN, OnViewFullscreen)
+	ON_COMMAND(ID_WINAMPVISUALIZATIONS_CONFIGURE, OnWinampvisualizationsConfigure)
+	ON_COMMAND(ID_WINAMPVISUALIZATIONS_ENABLED, OnWinampvisualizationsEnabled)
 
 	// update ui
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SOURCES, OnUpdateViewSources)
@@ -204,6 +213,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_ALWAYSONTOP, OnUpdateViewAlwaysontop)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_VISUALIZATION, OnUpdateViewVisualization)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_FULLSCREEN, OnUpdateViewFullscreen)
+	ON_UPDATE_COMMAND_UI(ID_WINAMPVISUALIZATIONS_CONFIGURE, OnUpdateWinampvisualizationsConfigure)
+	ON_UPDATE_COMMAND_UI(ID_WINAMPVISUALIZATIONS_ENABLED, OnUpdateWinampvisualizationsEnabled)
 
 	// custom message maps
 	ON_REGISTERED_MESSAGE( WM_SELBOXUPDATE, OnUpdateSel )
@@ -236,6 +247,9 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_SOURCESITEMCLICKED, OnSourcesItemClicked )
 	ON_REGISTERED_MESSAGE( WM_INITTRANS, OnInitTrans )
 	ON_REGISTERED_MESSAGE( WM_DEINITTRANS, OnDeinitTrans )
+	ON_REGISTERED_MESSAGE( WM_CLOSEWINAMPVISCONFIG, OnCloseWinampVisConfig )
+	ON_REGISTERED_MESSAGE( WM_GETWINAMPVISMODULES, OnGetWinampVisModules )
+	ON_REGISTERED_MESSAGE( WM_CONFIGWINAMPVIS, OnConfigWinampVis )
 
 END_MESSAGE_MAP()
 
@@ -458,7 +472,8 @@ CMainFrame::CMainFrame( bool autostart )
 	m_TransEnb			= false;
 	m_FullScreen		= false;
 	m_GoingFullScreen	= false;
-
+	m_WinampVis			= NULL;
+	m_VisDlg			= NULL;
 	m_hIcon16 = ( HICON )LoadImage( AfxGetApp()->m_hInstance, MAKEINTRESOURCE( IDI_MUSIK_16 ), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR );
 	m_hIcon32 = ( HICON )LoadImage( AfxGetApp()->m_hInstance, MAKEINTRESOURCE( IDI_MUSIK_32 ), IMAGE_ICON, 32, 32, LR_DEFAULTCOLOR );
 
@@ -471,6 +486,8 @@ CMainFrame::CMainFrame( bool autostart )
 
 CMainFrame::~CMainFrame()
 {
+	DeinitWinamp();
+
 	CIntArray sel_modes;
 	for ( size_t i = 0; i < m_wndSelectionBars.size(); i++ )
 	{
@@ -487,6 +504,9 @@ CMainFrame::~CMainFrame()
 
 	if ( m_wndNowPlaying )
 		delete m_wndNowPlaying;
+
+	if ( m_VisDlg )
+		delete m_VisDlg;
 
 	Cleanmusik();
 }
@@ -557,6 +577,9 @@ void CMainFrame::Initmusik()
 	// enable the equalizer...
 	if ( m_Prefs->IsEqualizerEnabled() )
 		m_Player->EnableEqualizer( true );
+
+	// make sure no vis is on by default...
+	m_Prefs->SetWinampVis( -1 );
 }
 
 ///////////////////////////////////////////////////
@@ -856,6 +879,10 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	ImportTrans();
 	if ( m_Prefs->IsTransEnabled() )
 		InitTrans();
+
+	// winamp vis support
+	ImportWinamp();
+	GetVisList();
 
 	// always on top?
 	if ( m_Prefs->IsAlwaysOnTop() )
@@ -1285,6 +1312,7 @@ void CMainFrame::ImportTrans()
 						(lpfnSetLayeredWindowAttributes)GetProcAddress(hUser32, 
 						"SetLayeredWindowAttributes");
 }
+
 
 ///////////////////////////////////////////////////
 
@@ -3189,6 +3217,156 @@ void CMainFrame::OnUpdateViewFullscreen(CCmdUI *pCmdUI)
 		pCmdUI->SetCheck( TRUE );
 	else
 		pCmdUI->SetCheck( FALSE );
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnWinampvisualizationsConfigure()
+{
+	if ( m_VisDlg )
+	{
+		OnCloseWinampVisConfig( NULL, NULL );
+		return;
+	}
+
+	m_VisDlg = new CmusikWinampVisDlg( this, &m_VisList, m_Prefs );
+	m_VisDlg->Create( IDD_WINAMP_VIS, this );
+	m_VisDlg->ShowWindow( SW_SHOW );
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CMainFrame::OnCloseWinampVisConfig( WPARAM wParam, LPARAM lParam )
+{
+	if ( m_VisDlg )
+	{
+		m_VisDlg->DestroyWindow();
+		delete m_VisDlg;
+		m_VisDlg = NULL;
+	}
+
+	return 0L;
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnUpdateWinampvisualizationsConfigure(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck( (bool)m_VisDlg );
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CMainFrame::OnGetWinampVisModules( WPARAM wParam, LPARAM lParam )
+{
+	int vis_id = (int)wParam;
+	CmusikStringArray* ptrList = (CmusikStringArray*)lParam;
+
+	visLoadVis( vis_id );
+
+	for ( size_t i = 0; i < visGetVisModuleCount( vis_id ); i++ )
+		ptrList->push_back( visGetVisModuleInfo( vis_id, i ) );
+
+	visFreeVis( vis_id );
+
+	return 0L;
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnWinampvisualizationsEnabled()
+{
+	if ( !(BOOL)visGetVisHwnd() )
+	{
+		if ( m_Prefs->GetWinampVisModule() != -1 && m_Prefs->GetWinampVis() != -1 )
+		{
+			visSetVisModule( m_Prefs->GetWinampVisModule() );
+			visStartVis( m_Prefs->GetWinampVis() );
+		}	
+		else
+			MessageBox( "Invalid Winamp visualization configuration.", MUSIK_VERSION_STR, MB_ICONINFORMATION );
+
+		return;
+	}
+	else
+		visStopVis( m_Prefs->GetWinampVis() );	
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::ImportWinamp()
+{
+	if ( m_WinampVis )
+		DeinitWinamp();
+
+	m_WinampVis = LoadLibrary( _T( "d:\\source\\_dll\\winamp.dll" ) );
+
+	visLoadVisPlugins = ( lpfnLoadVisPlugins )GetProcAddress( m_WinampVis, _T( "_LoadVisPlugins@4" ) );
+	visGetVisInfo = ( lpfnGetVisInfo )GetProcAddress( m_WinampVis, _T( "_GetVisInfo@4" ) );
+	visGetVisCount = ( lpfnGetVisCount )GetProcAddress( m_WinampVis, _T( "_GetVisCount@0" ) );
+	visFreeVisInfo = ( lpfnFreeVisInfo )GetProcAddress( m_WinampVis, _T( "_FreeVisInfo@0" ) );
+	visLoadVis = ( lpfnLoadVis )GetProcAddress( m_WinampVis, _T( "_LoadVis@4" ) );
+	visFreeVis = ( lpfnFreeVis )GetProcAddress( m_WinampVis, _T( "_FreeVis@4" ) );
+	visStartVis = ( lpfnStartVis )GetProcAddress( m_WinampVis, _T( "_Start_Vis@4" ) );
+	visConfigVis = ( lpfnConfigVis )GetProcAddress( m_WinampVis, _T( "_Config_Vis@8" ) );
+	visStopVis = ( lpfnStopVis )GetProcAddress( m_WinampVis, _T( "_Stop_Vis@4" ) );
+	visGetVisHwnd = ( lpfnGetVisHwnd )GetProcAddress( m_WinampVis, _T( "_GetVisHwnd@0" ) );
+	visSetVisModule = ( lpfnSetVisModule )GetProcAddress( m_WinampVis, _T( "_SetVisModule@4" ) );
+	visGetVisModuleCount = ( lpfnGetVisModuleCount )GetProcAddress( m_WinampVis, _T( "_GetVisModuleCount@4" ) );
+	visGetVisModuleInfo = ( lpfnGetVisModuleInfo )GetProcAddress( m_WinampVis, _T( "_GetVisModuleInfo@8" ) );
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::GetVisList()
+{
+	if ( m_WinampVis )
+	{
+		m_VisList.clear();
+		visLoadVisPlugins( ( LPCTSTR )_T( "c:\\program files\\winamp\\plugins\\" ) );
+
+		for ( size_t i = 0; i < visGetVisCount(); i++ )
+		{
+			m_VisList.push_back( visGetVisInfo( i ) );
+		
+			if ( m_VisList.at( i ) == m_Prefs->GetWinampVisName() )
+				m_Prefs->SetWinampVis( i );
+		}
+
+		visFreeVisInfo();
+	}
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::DeinitWinamp()
+{
+	if ( m_WinampVis )
+	{
+		visStopVis( m_Prefs->GetWinampVis() );
+		FreeLibrary( m_WinampVis );
+		m_WinampVis = NULL;
+	}
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnUpdateWinampvisualizationsEnabled(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck( (BOOL)visGetVisHwnd() );
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CMainFrame::OnConfigWinampVis( WPARAM wParam, LPARAM lParam )
+{
+	int vis_id = (int)wParam;
+	int vis_mod = (int)lParam;
+
+	if ( vis_id != -1 && vis_mod != -1 )
+		visConfigVis( vis_id, vis_mod );
+
+	return 0L;
 }
 
 ///////////////////////////////////////////////////

@@ -97,6 +97,7 @@ class CmusikPlayer;
 class CmusikFrameFunctor;
 class CmusikBatchAddFunctor;
 class CmusikRemoveOldFunctor;
+class CmusikWinampVisDlg;
 class CmusikDirSync;
 class CMainFrame;
 class ACE_Mutex;
@@ -111,8 +112,33 @@ class ACE_Mutex;
 	#define LWA_ALPHA               0x00000002
 #endif
 
+///////////////////////////////////////////////////
+
+// these are our library imports
+
+///////////////////////////////////////////////////
+
+// transparency
+
 typedef BOOL (WINAPI *lpfnSetLayeredWindowAttributes)(HWND hWnd, 
 								COLORREF crKey, BYTE bAlpha, DWORD dwFlags);
+
+// winamp vis
+
+typedef bool	( WINAPI* lpfnLoadVisPlugins )( LPCTSTR path );
+typedef LPSTR	( WINAPI* lpfnGetVisInfo )( int );
+typedef UINT	( WINAPI* lpfnGetVisCount )();
+typedef void	( WINAPI* lpfnFreeVisInfo )();
+typedef void	( WINAPI* lpfnLoadVis )( int );
+typedef void	( WINAPI* lpfnFreeVis )( int );
+typedef void	( WINAPI* lpfnStopVis )( int );
+typedef void	( WINAPI* lpfnStartVis )( int );
+typedef void	( WINAPI* lpfnSetVisModule )( int );
+typedef UINT	( WINAPI* lpfnGetVisModuleCount )( int );
+typedef LPSTR	( WINAPI* lpfnGetVisModuleInfo )( int, int );
+typedef HWND	( WINAPI* lpfnGetVisHwnd )();
+typedef void	( WINAPI* lpfnConfigVis )( int, int );
+
 ///////////////////////////////////////////////////
 
 typedef std::vector<CmusikSelectionBar*> CmusikSelBarArray;
@@ -300,6 +326,9 @@ protected:
 	afx_msg LRESULT OnSourcesItemClicked( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnInitTrans( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnDeinitTrans( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnCloseWinampVisConfig( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnGetWinampVisModules( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnConfigWinampVis( WPARAM wParam, LPARAM lParam );
 
 	// mfc message maps
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -360,6 +389,10 @@ protected:
 	afx_msg void OnUpdateViewAlwaysontop(CCmdUI *pCmdUI);
 	afx_msg void OnViewFullscreen();
 	afx_msg void OnUpdateViewFullscreen(CCmdUI *pCmdUI);
+	afx_msg void OnWinampvisualizationsConfigure();
+	afx_msg void OnUpdateWinampvisualizationsConfigure(CCmdUI *pCmdUI);
+	afx_msg void OnWinampvisualizationsEnabled();
+	afx_msg void OnUpdateWinampvisualizationsEnabled(CCmdUI *pCmdUI);
 
 	// list of all taskss running
 	int FreeTask( CmusikTask* pTask );
@@ -401,6 +434,30 @@ protected:
 	bool m_TransEnb;
 	int m_Trans;
 	void ImportTrans();
+
+	// winamp vis emulation
+	bool m_WinampVisActive;
+	void ImportWinamp();
+	void DeinitWinamp();
+	void GetVisList();
+	HMODULE m_WinampVis;
+
+	CmusikStringArray m_VisList;
+	lpfnLoadVisPlugins visLoadVisPlugins;
+	lpfnGetVisInfo visGetVisInfo;
+	lpfnGetVisCount visGetVisCount;
+	lpfnFreeVisInfo visFreeVisInfo;
+	lpfnStartVis visStartVis;
+	lpfnSetVisModule visSetVisModule;
+	lpfnGetVisModuleCount visGetVisModuleCount;
+	lpfnGetVisModuleInfo visGetVisModuleInfo;
+	lpfnLoadVis visLoadVis;
+	lpfnFreeVis visFreeVis;
+	lpfnStopVis visStopVis;
+	lpfnGetVisHwnd visGetVisHwnd;
+	lpfnConfigVis visConfigVis;
+
+	CmusikWinampVisDlg* m_VisDlg;
 
 };
 
