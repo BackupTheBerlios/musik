@@ -237,7 +237,7 @@ void CMusikPlaylistCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 void CMusikPlaylistCtrl::InitFonts()
 {
 	m_Items.CreateStockObject( DEFAULT_GUI_FONT );
-	m_Bullets.CreatePointFont( 120, "Musik" );
+	m_Bullets.CreatePointFont( 100, "Musik" );
 }
 
 ///////////////////////////////////////////////////

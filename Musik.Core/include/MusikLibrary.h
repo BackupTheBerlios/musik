@@ -1,15 +1,20 @@
+///////////////////////////////////////////////////
+
 #ifndef C_MUSIK_LIBRARY_H
 #define C_MUSIK_LIBRARY_H
+
+///////////////////////////////////////////////////
 
 #include <iostream>
 #include "sqlite.h"
 #include "StdString.h"
 #include "MusikArrays.h"
-
-#include "boost/thread/mutex.hpp"
-#include "boost/thread/thread.hpp"
-
 #include "MusikPlaylist.h"
+
+#include "ace/Thread.h"
+#include "ace/Synch.h"
+
+///////////////////////////////////////////////////
 
 enum
 {
@@ -32,6 +37,8 @@ enum
 	MUSIK_LIBRARY_FIELD_COUNT
 };
 
+///////////////////////////////////////////////////
+
 enum
 {
 	MUSIK_LIBRARY_FORMAT_MP3 = 0,
@@ -41,6 +48,8 @@ enum
 	MUSIK_LIBRARY_FORMAT_WMA,
 	MUSIK_LIBRARY_FORMAT_AIFF
 };
+
+///////////////////////////////////////////////////
 
 
 class CMusikLibrary
@@ -120,7 +129,7 @@ private:
 	//--- the mutex that will be used to protect the	---//
 	//--- library within any given scope.				---//
 	//-----------------------------------------------------//
-	boost::mutex m_ProtectingLibrary;
+	ACE_Thread_Mutex m_ProtectingLibrary;
 	
 
 	//-----------------------------------------------------//
@@ -150,4 +159,8 @@ private:
 	void		VerifyYearList	( CStdStringArray & list );
 };
 
+///////////////////////////////////////////////////
+
 #endif
+
+///////////////////////////////////////////////////

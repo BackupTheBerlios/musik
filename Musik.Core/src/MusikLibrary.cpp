@@ -209,7 +209,7 @@ bool CMusikLibrary::Startup()
 
 
 	// put a lock on the library and open it up
-	boost::mutex::scoped_lock scoped_lock( m_ProtectingLibrary );
+	boost::mutex::scoped_lock scoped_lock( m_ProtectingLibrary  );
 	char *pErr = NULL;
 	m_pDB = sqlite_open( m_Filename.c_str(), 0666, &pErr );
 
