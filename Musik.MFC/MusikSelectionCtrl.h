@@ -18,6 +18,11 @@ public:
 	int GetCtrlID(){ return m_ID; }
 	void SetUpdating( bool updating = true ){ m_Updating = updating; }
 	CString GetTypeDB();
+	void GetSelItems( CStdStringArray& items, bool format_query = true );
+	CStdString GetSelQuery();
+
+	void UpdateV();
+	void UpdateV( CStdString query );
 
 protected:
 	CFrameWnd* m_Parent;

@@ -57,10 +57,21 @@ int CMusikSelectionCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	SetColumnWidth( 0, client_size.Width() );
 
-	m_Library->GetAllDistinct( m_Type, m_Items );
-	SetItemCountEx( m_Items.size(), LVSICF_NOINVALIDATEALL | LVSICF_NOSCROLL );
+	UpdateV();
 
 	return 0;
+}
+
+void CMusikSelectionCtrl::UpdateV()
+{
+	m_Library->GetAllDistinct( m_Type, m_Items );
+	SetItemCountEx( m_Items.size(), LVSICF_NOINVALIDATEALL | LVSICF_NOSCROLL );
+}
+
+void CMusikSelectionCtrl::UpdateV( CStdString query )
+{
+	m_Library->GetRelatedItems( query, m_Type, m_Items );
+	SetItemCountEx( m_Items.size(), LVSICF_NOINVALIDATEALL | LVSICF_NOSCROLL );
 }
 
 void CMusikSelectionCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
@@ -105,4 +116,56 @@ void CMusikSelectionCtrl::OnLvnItemchanged(NMHDR *pNMHDR, LRESULT *pResult)
 CString CMusikSelectionCtrl::GetTypeDB()
 {
 	return m_Library->GetSongFieldDB( m_Type );
+}
+
+void CMusikSelectionCtrl::GetSelItems( CStdStringArray& items, bool format_query )
+{
+	items.clear();
+	
+	int item;
+	int count = 0;
+	for ( int i = -1 ; ; )
+	{
+		item = GetNextItem( i, LVNI_SELECTED );
+		if ( item == -1 )
+			break;
+		else
+		{
+			items.push_back( ( CStdString)GetItemText( item, 0 ) );
+			if ( format_query )
+				items.at( count ).Replace( _T( "'" ), _T( "''" ) );
+			count++;
+		}
+
+		i = item;
+	}
+}
+
+CStdString CMusikSelectionCtrl::GetSelQuery()
+{
+	CStdStringArray selected_items;
+	GetSelItems( selected_items );
+
+	CStdString sQuery;
+	sQuery += GetTypeDB();
+	sQuery += _T( " like " );
+	for ( size_t i = 0; i < selected_items.size(); i++ )
+	{
+		if ( i == selected_items.size() - 1 )
+		{
+			sQuery += _T( "'" );
+			sQuery += selected_items.at( i );
+			sQuery += _T( "' " );
+		}
+		else
+		{
+			sQuery += _T( "'" );
+			sQuery += selected_items.at( i );
+			sQuery += _T( "' or " );
+			sQuery += GetTypeDB();
+			sQuery += _T( " like " );
+		}
+	}
+	
+	return sQuery;
 }

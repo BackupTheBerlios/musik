@@ -271,13 +271,40 @@ void CMainFrame::OnDestroy()
 
 LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 {
-	CMusikSelectionCtrl* pSelCtrl;
-	CMusikSelectionCtrl* pTemp;
+	size_t selbox_count = m_Prefs->GetSelBoxCount();
+	if ( selbox_count < 2 )
+		return 0L;
 
-	int sender = wParam;
-	CStdString query_str;
+	CMusikSelectionCtrl* pSender = NULL;
+	CMusikSelectionCtrl* pCurr = NULL;
+
+	int nSender = wParam;
+
+	// find the sender
+	for ( size_t i = 0; i < selbox_count; i++ )
+	{
+		pCurr = m_wndSelectionBars[i]->GetCtrl();
+		if ( pCurr->GetCtrlID() == nSender )
+			pSender = pCurr;
+	}
+
+	// sender not found
+	if ( !pSender )
+		return 0L;
+
+	// get a list of the sender's selected items
+	CStdStringArray sender_sel;
+	pSender->GetSelItems( sender_sel );
+
+	// construct first part of query... this is basically
+	// a list of all the selected items from the control
+	// that triggered the event
+	CStdString sSender = pSender->GetSelQuery();
+
 	CStdString curr_type;
-	for( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
+
+	/*
+	for( size_t i = 0; i < selbox_count; i++ )
 	{
 		pSelCtrl = m_wndSelectionBars[i]->GetCtrl();
 		if ( pSelCtrl->GetCtrlID() != sender )
@@ -289,7 +316,7 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 			pSelCtrl->SetUpdating( false );
 		}
 	}
-
+	*/
 
 	return 0L;
 }
