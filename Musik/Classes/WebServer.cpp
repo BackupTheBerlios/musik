@@ -193,7 +193,5 @@ int CMusikWebServer::ReadLine(wxString& outstr)
 // writes a line of output to the socket
 void CMusikWebServer::WriteLine( wxString str )
 {
-	char *ansistr = StringToANSI( str );
-    pSocket->Write( ansistr, str.Length() );
-	free( ansistr );
+    pSocket->Write( ( const char* )ConvFNToFieldMB( str ), str.Length() );
 }

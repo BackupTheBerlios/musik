@@ -46,10 +46,8 @@ using namespace std;
 int CMP3Info::loadInfo( wxString srcMP3 ) {
     
     // open input-file stream to the specified file, name
-	char* pSrcMP3 = StringToANSI( srcMP3 );
-    ifstream* ifile = new ifstream( pSrcMP3, ios::in | ios::binary /*| ios::nocreate*/);
-	free( pSrcMP3 );
-    
+    ifstream* ifile = new ifstream( ( const char* )ConvFNToFieldMB( srcMP3 ), ios::in | ios::binary /*| ios::nocreate*/);
+
     if (ifile) { // if the file was opened correctly
 
         // get file size, by setting the pointer in the end and tell the position

@@ -206,10 +206,10 @@ void CMusikLibrary::AddMP3( const wxString & filename )
 	int format		= MUSIK_FORMAT_MP3;
 	char * szTitle	= NULL;
 	char * szArtist	= NULL;
-	char * szAlbum = NULL;
-	char * szGenre = NULL;
-	char * szYear = NULL;
-	char * szTrack = NULL;
+	char * szAlbum	= NULL;
+	char * szGenre	= NULL;
+	char * szYear	= NULL;
+	char * szTrack	= NULL;
 	int rating		= 0;
 	int bitrate		= 0;
 	int tracknum	= 0;

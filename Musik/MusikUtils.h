@@ -51,45 +51,42 @@ bool			SetFramePlacement	( wxFrame* frame, wxString place );
 void			SeedRandom			( unsigned long s );
 long			GetRandomNumber		();
 
-#if 0
-
 //-------------------------//
 //--- unicode functions ---//
 //-------------------------//
-int StringToInt( wxString str );
-int StringToInt( const char* pChar );
-wxString IntTowxString( int n);
-double StringToDouble( wxString str );
-#endif
+int StringToInt			( wxString str );
+int StringToInt			( const char* pChar );
+wxString IntTowxString	( int n );
+double StringToDouble	( wxString str );
 
 //-------------------------//
 //--- Unicode functions ---//
 //-------------------------//
-inline wxString ConvA2W(const char *pChar)
+inline wxString ConvA2W( const char *pChar )
 {
-	wxString s(wxConvLocal.cMB2WX( pChar));
+	wxString s(wxConvLocal.cMB2WX( pChar ) );
 	return s;
 }
-inline wxCharBuffer ConvQueryToMB(const wxString &s)
+inline wxCharBuffer ConvQueryToMB( const wxString &s )
 {
-	return wxConvLocal.cWX2MB(s);
+	return wxConvLocal.cWX2MB( s );
 }
 
-inline wxCharBuffer ConvDBFieldToMB(const wxString &s)
+inline wxCharBuffer ConvDBFieldToMB( const wxString &s )
 {
-	return wxConvLocal.cWX2MB(s);
+	return wxConvLocal.cWX2MB( s );
 }
-inline wxCharBuffer ConvFNToFieldMB(const wxString &s)
+inline wxCharBuffer ConvFNToFieldMB( const wxString &s )
 {
-	return wxConvLocal.cWX2MB(s);
+	return wxConvLocal.cWX2MB( s );
 }
-inline wxString ConvFNToFieldWX(const char *pchar)
+inline wxString ConvFNToFieldWX( const char *pchar )
 {
-	return wxConvLocal.cMB2WX(pchar);
+	return wxConvLocal.cMB2WX( pchar );
 }
-inline wxString ConvDBFieldToWX(const char *pchar)
+inline wxString ConvDBFieldToWX( const char *pchar )
 {
-	return wxConvLocal.cMB2WX(pchar);
+	return wxConvLocal.cMB2WX( pchar );
 }
 inline int StringToInt( const wxString &str )
 {
@@ -100,10 +97,10 @@ inline int StringToInt( const wxString &str )
 
 inline int StringToInt( const char* pChar )
 {
-	return atoi(pChar);
+	return atoi( pChar );
 }
 
-inline wxString IntTowxString( int n)
+inline wxString IntTowxString( int n )
 {
 	wxString ret;
 	ret << n;
@@ -115,7 +112,5 @@ inline double StringToDouble( wxString str )
 	str.ToDouble( &ret );
 	return ret;
 }
-
-#define StringToANSI( str )	( strdup( (str).mb_str(wxConvLocal) ) ) //--- gunnar roth ---//
 
 #endif
