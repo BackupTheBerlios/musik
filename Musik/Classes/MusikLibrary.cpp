@@ -821,20 +821,21 @@ void CMusikLibrary::GetStdPlaylistSongs( const wxArrayString & aFiles, CMusikSon
 
 void CMusikLibrary::QuerySongs( const wxString & queryWhere, CMusikSongArray & aReturn )
 {
-
 	aReturn.Clear();
 	wxString sInfo;
 
 	//--- run query ---//
-
 	wxString query(wxT("select filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize from songs where "));
 	query += queryWhere + wxT(";");
+
 	const wxCharBuffer pQuery = ConvQueryToMB(query);
 	aReturn.Alloc(GetSongCount());
-	{// keep lock as short as possible by using {} scope
+	{
+		// keep lock as short as possible by using {} scope
 		wxCriticalSectionLocker lock( m_csDBAccess );
 		sqlite_exec(m_pDB, pQuery, &sqlite_callbackAddToSongArray, &aReturn, NULL);
 	}
+
 	aReturn.Shrink();
 	return;
 }
