@@ -303,7 +303,7 @@ void CMainFrame::InitPaths()
 	char buffer[2000];
 	GetEnvironmentVariable( _T( "USERPROFILE" ), buffer, sizeof( buffer ) );
 	m_UserDir = buffer;
-	m_UserDir += _T( "\\.musik\\" );
+	m_UserDir += _T( "\\.musikCube\\" );
 
 	RecurseMkDir( m_UserDir.GetBuffer() );
 
@@ -333,8 +333,15 @@ void CMainFrame::Initmusik()
 	m_Library		= new CmusikLibrary( ( CStdString )m_Database );
 	m_Prefs			= new CmusikPrefs( m_PrefsIni );
 
+	// show all songs, if we are supposed to
+	if ( m_Prefs->LibraryShowsAllSongs() )
+	{
+		m_LibPlaylist = new CmusikPlaylist();
+		m_Library->GetAllSongs( *m_LibPlaylist );
+	}
+
 	// setup the player...
-	m_Player		= new CmusikPlayer( m_NewSong, m_Library );
+	m_Player = new CmusikPlayer( m_NewSong, m_Library );
 	m_Player->SetMaxVolume( m_Prefs->GetPlayerVolume() );
 	m_Player->InitSound( m_Prefs->GetPlayerDevice(), m_Prefs->GetPlayerDriver(), m_Prefs->GetPlayerRate(), m_Prefs->GetPlayerMaxChannels() );
 	m_Player->SetPlaymode( m_Prefs->GetPlayerPlaymode() );
@@ -587,7 +594,12 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// create the background window, which is the playlist
 	m_wndView = new CmusikPlaylistView( this, m_Library, m_Player, m_Prefs, m_uPlaylistDrop );
 	m_wndView->Create( NULL, NULL, AFX_WS_DEFAULT_VIEW, CRect(0, 0, 0, 0), this, AFX_IDW_PANE_FIRST, NULL );
-	m_wndView->GetCtrl()->UpdateV();
+
+	if ( m_Prefs->LibraryShowsAllSongs() )
+	{
+		m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, MUSIK_SOURCES_TYPE_LIBRARY );
+		m_wndView->GetCtrl()->UpdateV();
+	}
 
 	// now playing control
 	m_wndNowPlaying = new CmusikNowPlayingBar( this, m_Player, m_Prefs );
@@ -915,6 +927,17 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 
 		CmusikSelectionCtrl::SetUpdating( false );
 
+		// show all the songs, if we're supposed to
+		if ( m_Prefs->LibraryShowsAllSongs() )
+		{
+			if ( !m_LibPlaylist )
+				m_LibPlaylist = new CmusikPlaylist();
+
+			m_Library->GetAllSongs( *m_LibPlaylist );
+			m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, MUSIK_SOURCES_TYPE_LIBRARY );
+			m_wndView->GetCtrl()->UpdateV();
+		}
+
 		return 0L;
 	}	
 
@@ -1035,7 +1058,12 @@ LRESULT CMainFrame::OnSourcesLibrary( WPARAM wParam, LPARAM lParam )
 	TRACE0( "A musik Library was clicked\n" );
 
 	if ( !m_LibPlaylist )
+	{
 		m_LibPlaylist = new CmusikPlaylist();
+
+		if( m_Prefs->LibraryShowsAllSongs() )
+			m_Library->GetAllSongs( *m_LibPlaylist );
+	}
 
 	m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, MUSIK_SOURCES_TYPE_LIBRARY );
 	m_wndView->GetCtrl()->UpdateV();
@@ -1127,7 +1155,11 @@ LRESULT CMainFrame::OnPlayerNewPlaylist( WPARAM wParam, LPARAM lParam )
 	if ( (int)wParam == MUSIK_SOURCES_TYPE_LIBRARY )
 	{
 		m_LibPlaylist = new CmusikPlaylist();
-		*m_LibPlaylist = *m_Player->GetPlaylist();
+
+		if ( m_Prefs->LibraryShowsAllSongs() )
+			m_Library->GetAllSongs( *m_LibPlaylist );
+		else
+			*m_LibPlaylist = *m_Player->GetPlaylist();
 	}
 
 	// player just took ownership of us! thats ok,

@@ -229,6 +229,9 @@ void CmusikTimeCtrl::OnNewSong()
 	}
 	else
 	{
+		CString sTimeStr = m_Player->GetTimeStr( m_Player->GetDuration( MUSIK_TIME_MS ) );
+		m_TotalTime->SetDynText( sTimeStr, false, false );
+
 		m_TotalTime->SetDynText( _T( "0:00" ), false, false );
 		m_CurTime->SetDynText( _T( "0:00" ), false, false );
 		m_TimeCtrl->SetPos( 0 );

@@ -10,6 +10,7 @@
 #define IDR_MAINFRAME                   128
 #define IDR_musikTYPE                   129
 #define IDD_DIALOG2                     131
+#define IDD_DYNPLAYLISTEDITOR           131
 #define IDI_MUSIK_16                    133
 #define IDI_MUSIK_32                    134
 #define IDI_ICON1                       135
@@ -24,18 +25,40 @@
 #define IDC_COMBO3                      1012
 #define IDC_EDIT1                       1013
 #define IDC_EDIT2                       1014
+#define IDC_FIELDTYPE2                  1014
 #define IDC_CHECK1                      1015
 #define IDC_CHECK2                      1016
+#define IDC_ENABLE_QUERY2               1016
 #define IDC_BTNNO                       1017
+#define IDC_FIELDVARIABLE2              1017
 #define IDC_BUTTON2                     1018
 #define IDC_BTNYES                      1018
+#define IDC_FIELDSTRING2                1018
 #define IDC_REMEMBER                    1019
+#define IDC_ENABLE_QUERY3               1019
 #define IDC_RADIO1                      1020
 #define IDC_RADIO_ADD_PLAYLIST          1020
+#define IDC_FIELDTYPE3                  1020
 #define IDC_RADIO2                      1021
 #define IDC_RADIO_ADD_NOW_PLAYING       1021
+#define IDC_FIELDVARIABLE3              1021
 #define IDC_RADIO3                      1022
 #define IDC_RADIO_ADD_LIBRARY           1022
+#define IDC_FIELDSTRING3                1022
+#define IDC_ENABLE_QUERY4               1023
+#define IDC_FIELDTYPE4                  1024
+#define IDC_FIELDVARIABLE4              1025
+#define IDC_FIELDSTRING4                1026
+#define IDC_ENABLE_QUERY5               1027
+#define IDC_FIELDTYPE5                  1028
+#define IDC_FIELDVARIABLE5              1029
+#define IDC_EDIT6                       1030
+#define IDC_FIELDSTRING5                1030
+#define IDC_ANYALL                      1032
+#define IDC_ENABLE_QUERY1               1033
+#define IDC_FIELDTYPE1                  1034
+#define IDC_FIELDVARIABLE1              1035
+#define IDC_FIELDSTRING1                1036
 #define ID_FILE_PREFERENCES             32771
 #define ID_FILE_SEP                     32772
 #define ID_OPEN_FILES                   32774
@@ -78,9 +101,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        139
+#define _APS_NEXT_RESOURCE_VALUE        140
 #define _APS_NEXT_COMMAND_VALUE         32823
-#define _APS_NEXT_CONTROL_VALUE         1024
+#define _APS_NEXT_CONTROL_VALUE         1037
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

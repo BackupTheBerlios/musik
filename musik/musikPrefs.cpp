@@ -266,6 +266,8 @@ void CmusikPrefs::LoadPrefs()
 	m_Dlg_PlaylistInfoVisible	= StringToBool( config->GetValue( "Dialog", "Playlist Info Visible", "1" ) );
 	m_Dlg_PurgeOnStartup		= StringToBool( config->GetValue( "Dialog", "Purge Old Files on Startup", "1" ) );
 	m_Dlg_WriteTagsToFile		= StringToBool( config->GetValue( "Dialog", "Write Tags to File", "0" ) );
+	m_Dlg_LibraryShowsAllSongs	= StringToBool( config->GetValue( "Dialog", "Library Shows All Songs", "1" ) );
+	
 
 	// selection area
 	m_SelectionBox_Count = StringToInt( config->GetValue( "Selection Area", "Count", "2" ) );
@@ -326,6 +328,7 @@ void CmusikPrefs::SavePrefs()
 	config->SetValue( "Dialog", "Playlist Info Visible", BoolToString( m_Dlg_PlaylistInfoVisible ) );
 	config->SetValue( "Dialog", "Purge Old Files on Startup", BoolToString( m_Dlg_PurgeOnStartup ) );
 	config->SetValue( "Dialog", "Write Tags to File", BoolToString( m_Dlg_WriteTagsToFile ) );
+	config->SetValue( "Dialog", "Library Shows All Files", BoolToString( m_Dlg_LibraryShowsAllSongs ) );
 
 	// selection area
 	config->SetValue( "Selection Area", "Count", IntToString( (int)m_SelectionBox_Count ) );

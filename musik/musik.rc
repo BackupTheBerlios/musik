@@ -174,29 +174,29 @@ END
 // Dialog
 //
 
-IDD_ABOUTBOX DIALOGEX 0, 0, 246, 253
+IDD_ABOUTBOX DIALOGEX 0, 0, 246, 263
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
     WS_SYSMENU
 CAPTION "About musik:Cube"
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,114,12,20,20
-    DEFPUSHBUTTON   "OK",IDOK,190,232,50,16,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,190,242,50,16,WS_GROUP
     CTEXT           "Casey Langen: Lead developer, project manager",
                     IDC_STATIC,12,66,222,8
     CTEXT           "Dustin Carter: Developer, webmaster",IDC_STATIC,12,78,
                     222,8
-    CTEXT           "The  musik team would like to thank the following people:\n\n-Simon Windmill for his bottomless well of patience\n-Colby Langen for his valuable advice\n-Jared Dickinson for his hours of rigerous testing",
+    CTEXT           "The  musik team would like to thank the following people:\n\n-Simon Windmill for his bottomless well of patience\n-Colby Langen for his valuable advice\n-Jared Dickinson for his hours of rigerous testing\n-Robert Mitchell for the musik project logo",
                     IDC_STATIC,12,96,222,48
     CTEXT           "If you enjoy using musik, donations are much appreciated. Project musik will always be free, although food isn't -- and we programmers have to eat too.  Visit the website below to contribute!",
                     IDC_STATIC,12,36,222,24
     CTEXT           "website: http://www.musikcube.com\ne-mail: casey@bak.rr.com",
-                    IDC_STATIC,12,168,222,18
+                    IDC_STATIC,12,174,222,18
     CTEXT           "musik:Cube 0.3.0 CVS\nmusik:Core 0.3.0 CVS",IDC_STATIC,
-                    12,144,222,18
+                    12,150,222,18
     CTEXT           "Project musik, including musik:Core and musik:Cube is copyright (C) Casey Langen 2003.  Project musik is open source under the BSD license. See license.txt for more information",
-                    IDC_STATIC,12,192,222,30
-    GROUPBOX        "",IDC_STATIC,6,2,234,226
+                    IDC_STATIC,12,198,222,30
+    GROUPBOX        "",IDC_STATIC,6,2,234,232
 END
 
 IDD_PROPPAGE_INTERFACE_GENERAL DIALOGEX 0, 0, 210, 154
@@ -284,6 +284,55 @@ BEGIN
                     210,10
 END
 
+IDD_DYNPLAYLISTEDITOR DIALOGEX 0, 0, 262, 149
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "musik:Cube Dynamic Playlist Editor"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "Save",IDOK,208,131,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,154,131,50,14
+    LTEXT           "Match",IDC_STATIC,6,9,20,8
+    COMBOBOX        IDC_ANYALL,30,6,36,30,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "of the following conditions:",IDC_STATIC,72,9,87,8
+    CONTROL         "",IDC_ENABLE_QUERY1,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,6,33,12,8
+    COMBOBOX        IDC_FIELDTYPE1,24,30,66,30,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_FIELDVARIABLE1,96,30,90,30,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_FIELDSTRING1,192,30,66,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_ENABLE_QUERY2,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,6,51,12,8
+    COMBOBOX        IDC_FIELDTYPE2,24,48,66,30,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_FIELDVARIABLE2,96,48,90,30,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_FIELDSTRING2,192,48,66,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_ENABLE_QUERY3,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,6,69,12,8
+    COMBOBOX        IDC_FIELDTYPE3,24,66,66,30,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_FIELDVARIABLE3,96,66,90,30,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_FIELDSTRING3,192,66,66,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_ENABLE_QUERY4,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,6,87,12,8
+    COMBOBOX        IDC_FIELDTYPE4,24,84,66,30,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_FIELDVARIABLE4,96,84,90,30,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_FIELDSTRING4,192,84,66,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_ENABLE_QUERY5,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,6,105,12,8
+    COMBOBOX        IDC_FIELDTYPE5,24,103,66,30,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_FIELDVARIABLE5,96,103,90,30,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_FIELDSTRING5,192,102,66,14,ES_AUTOHSCROLL
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -338,7 +387,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 239
         TOPMARGIN, 7
-        BOTTOMMARGIN, 246
+        BOTTOMMARGIN, 256
     END
 
     IDD_PROPPAGE_INTERFACE_GENERAL, DIALOG
@@ -396,6 +445,14 @@ BEGIN
         RIGHTMARGIN, 213
         TOPMARGIN, 7
         BOTTOMMARGIN, 94
+    END
+
+    IDD_DYNPLAYLISTEDITOR, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 255
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 142
     END
 END
 #endif    // APSTUDIO_INVOKED

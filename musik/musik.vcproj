@@ -429,6 +429,9 @@
 				RelativePath=".\musik.h">
 			</File>
 			<File
+				RelativePath=".\musikDynamicPlaylistEditor.h">
+			</File>
+			<File
 				RelativePath=".\Resource.h">
 			</File>
 			<File
@@ -635,6 +638,9 @@
 				</File>
 			</Filter>
 		</Filter>
+		<File
+			RelativePath=".\musikDynamicPlaylistEditor.cpp">
+		</File>
 	</Files>
 	<Globals>
 		<Global
