@@ -889,12 +889,15 @@ wxString SecToStr( int nSec )
 
 // MusikLogWindow
 // -----------
+BEGIN_EVENT_TABLE(MusikLogWindow, wxEvtHandler)
+  EVT_MENU			( MUSIK_LOGWINDOW_SHOW,		MusikLogWindow::OnShow		)
+END_EVENT_TABLE()
 
 MusikLogWindow::MusikLogWindow(wxFrame *pParent,
 						 const wxChar *szTitle,
 						 long style)
-						 :m_Style(style)
-						 ,wxLogWindow(pParent,szTitle,(style & MUSIK_LW_ShowInitial) != 0,(style & MUSIK_LW_DoPass) != 0)
+						 :wxLogWindow(pParent,szTitle,(style & MUSIK_LW_ShowInitial) != 0,(style & MUSIK_LW_DoPass) != 0)
+						 ,m_Style(style)
 {
 }
 
@@ -904,15 +907,23 @@ void MusikLogWindow::DoLogString(const wxChar *szString, time_t t)
 {
 
 	wxLogWindow::DoLogString(szString,t);
-//#ifndef __WXGTK__  // on linux the Show from another thread( if wxLogWarning is issued from a thread) lead to a xlib fault and crash
+	wxCommandEvent Evt	( wxEVT_COMMAND_MENU_SELECTED, MUSIK_LOGWINDOW_SHOW );
+	wxPostEvent( this,Evt );
+/*
+#ifndef __WXGTK__  // on linux the Show from another thread( if wxLogWarning is issued from a thread) lead to a xlib fault and crash
 #ifndef __WXMAC__
 	if(m_Style & MUSIK_LW_ShowOnLog)
 		Show(TRUE);
 #endif
-//#endif
+#endif
+*/
 }
 
-
+void MusikLogWindow::OnShow(wxCommandEvent &)
+{
+	if(m_Style & MUSIK_LW_ShowOnLog)
+		Show(TRUE);
+}
 bool MusikLogWindow::OnFrameClose(wxFrame * frame)
 {
 	if(m_Style & MUSIK_LW_ClearContentOnClose)

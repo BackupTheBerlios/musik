@@ -17,7 +17,7 @@
 #include <wx/progdlg.h>
 #include "MusikApp.h"
 
-#if defined(__WXGTK__) || defined(__WXMOTIF__) || defined(__WXX11__)
+#if defined(__xxxWXGTK__) || defined(__WXMOTIF__) || defined(__WXX11__)
 IMPLEMENT_APP_NO_MAIN(MusikApp)
 #include <X11/Xlib.h>
 int main(int argc, char *argv[]) {

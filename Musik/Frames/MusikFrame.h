@@ -33,8 +33,8 @@ public:
 	MusikTaskBarIcon(wxFrame * frame) {m_pFrame = frame;};
 
 	void RestoreFrame();
-    void OnRButtonUp(wxEvent&);
-    void OnLButtonDClick(wxEvent&);
+    void OnRButtonUp(wxTaskBarIconEvent&);
+    void OnLButtonDClick(wxTaskBarIconEvent&);
     void OnMenuRestore(wxCommandEvent&);
     void OnMenuHide(wxCommandEvent&);
     void OnMenuPlayPause(wxCommandEvent&);

@@ -466,7 +466,7 @@ public:
 #define	 MUSIK_LW_ShowOnLog			  0x00000008
 
 
-class  MusikLogWindow : public wxLogWindow
+class  MusikLogWindow : public wxLogWindow,public wxEvtHandler
 {
 public:
 	MusikLogWindow(wxFrame *pParent,         // the parent frame (can be NULL)
@@ -474,7 +474,8 @@ public:
 		long style);  //see above  (MUSIK_LW_XXX)
 
 	virtual bool OnFrameClose(wxFrame *frame);
-
+	void OnShow(wxCommandEvent &);
+	DECLARE_EVENT_TABLE()
 protected:
 	virtual void DoLogString(const wxChar *szString, time_t t);
 

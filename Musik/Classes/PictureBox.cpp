@@ -37,10 +37,13 @@ CPictureBox::CPictureBox( wxWindow *parent )
 	SetBackgroundColour(WXSYSTEMCOLOUR(wxT("LIGHT STEEL BLUE")));
 	Show(false);
 }
-void CPictureBox::OnIdle(wxIdleEvent & WXUNUSED(event))
+void CPictureBox::OnIdle(wxIdleEvent & event)
 {
 	if(IsShown() == false || (GetParent() && (GetParent()->IsShown() == false)))
+	{
+		event.Skip();
 		return;
+	}
 	int nSel = g_PlaylistBox->PlaylistCtrl().GetNextItem( -1, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED|wxLIST_STATE_FOCUSED );
 	if(g_Playlist.GetCount())
 	{// 
@@ -70,8 +73,10 @@ void CPictureBox::OnIdle(wxIdleEvent & WXUNUSED(event))
 		{
 			m_image	= m_DefImage;
 			Refresh();
+			return;
 		}
 	}
+	event.Skip();
 }
 void CPictureBox::OnLeftDown(wxMouseEvent & event)
 {
@@ -135,7 +140,7 @@ void CPictureBox::TryToLoadImage(const CSongPath &sSongPath)
 	for(m_curr_img_file = 0; m_curr_img_file < m_img_files.GetCount();m_curr_img_file++)
 	{
 		wxString s(m_img_files[m_curr_img_file]);
-		if(s.MakeLower().Contains(wxT("front")))
+		if(s.Lower().Contains(wxT("front")))
 		{
 			if(m_image.LoadFile(s))
 			{
@@ -183,17 +188,17 @@ void CPictureBox::OnPaint(wxPaintEvent &)
 	int bmpwidth = 0,bmpheight = 0;
 	if(width > height)
 	{
-		bmpwidth = ((double)m_image.GetWidth() * height)/((double)m_image.GetHeight());
+		bmpwidth = (int)(((double)m_image.GetWidth() * height)/((double)m_image.GetHeight()) + 0.5);
 		bmpheight = height;
 		if(bmpwidth > width)
 		{
-			bmpheight = ((double)m_image.GetHeight() * width)/((double)m_image.GetWidth());
+			bmpheight = (int)(((double)m_image.GetHeight() * width)/((double)m_image.GetWidth()) + 0.5);
 			bmpwidth = width;
 		}
 	}
 	else
 	{
-		bmpheight = ((double)m_image.GetHeight() * width)/((double)m_image.GetWidth());
+		bmpheight = (int)(((double)m_image.GetHeight() * width)/((double)m_image.GetWidth()) + 0.5);
 		bmpwidth = width;
 	}
 	wxBitmap bmp = wxBitmap(m_image.Scale(bmpwidth, bmpheight));

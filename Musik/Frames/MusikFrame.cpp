@@ -149,7 +149,7 @@ void MusikTaskBarIcon::OnMenuExit(wxCommandEvent& )
 
 
 // Overridables
-void MusikTaskBarIcon::OnRButtonUp(wxEvent&)
+void MusikTaskBarIcon::OnRButtonUp(wxTaskBarIconEvent&)
 {
     wxMenu      menu;
 
@@ -184,7 +184,7 @@ void MusikTaskBarIcon::OnRButtonUp(wxEvent&)
     PopupMenu(&menu);
 }
 
-void MusikTaskBarIcon::OnLButtonDClick(wxEvent&)
+void MusikTaskBarIcon::OnLButtonDClick(wxTaskBarIconEvent&)
 {
     RestoreFrame();
 }
