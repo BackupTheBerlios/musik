@@ -347,8 +347,22 @@ void CMusikPlayer::Pause( bool bCheckFade )
 void CMusikPlayer::Resume( bool bCheckFade )
 {
 	m_Paused = false;
+	
 	FSOUND_SetPaused( FSOUND_ALL, FALSE );
-
+	
+	if ( bCheckFade )
+	{
+		if ( g_Prefs.nFadePauseResumeEnable == 1 )
+		{
+			SetCrossfadeType( CROSSFADE_RESUME );
+			SetFadeStart();
+			return;
+		}
+	}
+	
+	else
+		SetVolume();
+	
 	g_NowPlayingCtrl->PlayBtnToPauseBtn();
 }
 
