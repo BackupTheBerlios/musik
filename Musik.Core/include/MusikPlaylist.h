@@ -68,12 +68,6 @@ private:
 
 class CMusikSongInfo
 {
-	//-----------------------------------------------------//
-	//--- this function, found in CMusikLibrary, is		---//
-	//--- allowed to set the protected items			---//
-	//-----------------------------------------------------//
-	friend static int sqlite_GetSongInfoFromID( void *args, int numCols, char **results, char ** columnNames );
-
 public:
 	CMusikSongInfo();
 	~CMusikSongInfo();
@@ -81,7 +75,8 @@ public:
 	void SetID( int id ){ m_ID = id; }
 	void Update();
 	
-	int			GetID()				{ return m_ID; }
+	int			GetID()	
+	{ return m_ID; }
 	CStdString	GetFilename()		{ return m_Filename; }
 	CStdString	GetTitle()			{ return m_Title; }
 	CStdString	GetTrackNum()		{ return m_TrackNum; }
@@ -100,8 +95,27 @@ public:
 	CStdString	GetTimeAdded()		{ return m_TimeAdded; }
 	CStdString	GetFilesize()		{ return m_Filesize; }
 	CStdString	GetDirtyFlag()		{ return m_Dirty; }
-
+	
 	CStdString	GetField( int field );
+	
+	void	SetFilename( CStdString s )		{ m_Filename = s; }
+	void	SetTitle( CStdString s )		{ m_Title = s; }
+	void	SetTrackNum( CStdString s )		{ m_TrackNum = s; }
+	void	SetArtist( CStdString s )		{ m_Artist = s; }
+	void	SetAlbum( CStdString s )		{ m_Album = s; }
+	void	SetGenre( CStdString s )		{ m_Genre = s; }
+	void	SetDuration( CStdString s )		{ m_Duration = s; }
+	void	SetFormat( CStdString s )		{ m_Format = s; }
+	void	SetVBR( CStdString s )			{ m_VBR = s; }
+	void	SetYear( CStdString s )			{ m_Year = s; }
+	void	SetRating( CStdString s )		{ m_Rating = s; }
+	void	SetBitrate( CStdString s )		{ m_Bitrate = s; }
+	void	SetLastPlayed( CStdString s )	{ m_LastPlayed = s; }
+	void	SetNotes( CStdString s )		{ m_Notes = s; }
+	void	SetTimesPlayed( CStdString s )	{ m_TimesPlayed = s; }
+	void	SetTimeAdded( CStdString s )	{ m_TimeAdded = s; }
+	void	SetFilesize( CStdString s )		{ m_Filesize = s; }
+	void	SetDirtyFlag( CStdString s )	{ m_Dirty = s; }
 
 protected:
 	int m_ID;
@@ -112,6 +126,5 @@ protected:
 				m_TimeAdded, m_Notes;
 
 };
-
 
 #endif

@@ -105,8 +105,6 @@ public:
 
 	float GetDuration( int type )
 	{
-		float nRet = 0;
-
 		switch( type )
 		{
 		case MUSIK_CROSSFADER_NONE:

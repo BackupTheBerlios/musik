@@ -52,7 +52,7 @@ public:
 		// pure virtual
 	};
 
-	~CMusikFunctor()
+	virtual ~CMusikFunctor()
 	{
 		// pure virtual
 	}

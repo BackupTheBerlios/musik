@@ -1352,7 +1352,7 @@ inline void ssupr(CT* pT, size_t nLen)
     #else
 
         nCount;
-        return vswprintf(pW, pFmtW, vl);
+        return vswprintf(pW, nCount, pFmtW, vl);
 
     #endif
 

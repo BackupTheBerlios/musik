@@ -3,6 +3,7 @@
 #include "stdafx.h"
 #include "time.h"
 
+#include "../include/MusikConfig.h"
 #include "../include/MusikCrossfader.h"
 #include "../include/MusikLibrary.h"
 
@@ -63,23 +64,23 @@ static int sqlite_GetSongInfoFromID( void *args, int numCols, char **results, ch
 
 	CMusikSongInfo* p = (CMusikSongInfo*)args;
 
-	p->m_TrackNum		= CStdString	( results[0] );
-	p->m_Artist			= CStdString	( results[1] );
-	p->m_Album			= CStdString	( results[2] );
-	p->m_Genre			= CStdString	( results[3] );
-	p->m_Title			= CStdString	( results[4] );
-	p->m_Duration		= CStdString	( results[5] );
-	p->m_Format			= CStdString	( results[6] );
-	p->m_VBR			= CStdString	( results[7] );
-	p->m_Year			= CStdString	( results[8] );
-	p->m_Rating			= CStdString	( results[9] );
-	p->m_Bitrate		= CStdString	( results[10] );
-	p->m_LastPlayed		= CStdString	( results[11] );
-	p->m_Notes			= CStdString	( results[12] );
-	p->m_TimesPlayed	= CStdString	( results[13] );
-	p->m_TimeAdded		= CStdString	( results[14] );
-	p->m_Filesize		= CStdString	( results[15] );
-	p->m_Filename		= CStdString	( results[16] );
+	p->SetTrackNum		( results[0] );
+	p->SetArtist		( results[1] );
+	p->SetAlbum			( results[2] );
+	p->SetGenre			( results[3] );
+	p->SetTitle			( results[4] );
+	p->SetDuration		( results[5] );
+	p->SetFormat		( results[6] );
+	p->SetVBR			( results[7] );
+	p->SetYear			( results[8] );
+	p->SetRating		( results[9] );
+	p->SetBitrate		( results[10] );
+	p->SetLastPlayed	( results[11] );
+	p->SetNotes			( results[12] );
+	p->SetTimesPlayed	( results[13] );
+	p->SetTimeAdded		( results[14] );
+	p->SetFilesize		( results[15] );
+	p->SetFilename		( results[16] );
 
     return 0;
 }
@@ -163,37 +164,37 @@ void CMusikLibrary::InitTimeAdded()
 
 void CMusikLibrary::InitFields()
 {
-	m_Fields.push_back( _T( "Artist" ) );
-	m_Fields.push_back( _T( "Album" ) );
-	m_Fields.push_back( _T( "Year" ) );
-	m_Fields.push_back( _T( "Genre" ) );
-	m_Fields.push_back( _T( "Title" ) );
-	m_Fields.push_back( _T( "Track" ) );
-	m_Fields.push_back( _T( "Time Added" ) );
-	m_Fields.push_back( _T( "Last Played" ) );
-	m_Fields.push_back( _T( "Filesize" ) );
-	m_Fields.push_back( _T( "Format" ) );
-	m_Fields.push_back( _T( "Time" ) );
-	m_Fields.push_back( _T( "Rating" ) );
-	m_Fields.push_back( _T( "Times Played" ) );
-	m_Fields.push_back( _T( "Bitrate" ) );
-	m_Fields.push_back( _T( "Filename" ) );
+	m_Fields.push_back( "Artist" );
+	m_Fields.push_back( "Album" );
+	m_Fields.push_back( "Year" );
+	m_Fields.push_back( "Genre" );
+	m_Fields.push_back( "Title" );
+	m_Fields.push_back( "Track" );
+	m_Fields.push_back( "Time Added" );
+	m_Fields.push_back( "Last Played" );
+	m_Fields.push_back( "Filesize" );
+	m_Fields.push_back( "Format" );
+	m_Fields.push_back( "Time" );
+	m_Fields.push_back( "Rating" );
+	m_Fields.push_back( "Times Played" );
+	m_Fields.push_back( "Bitrate" );
+	m_Fields.push_back( "Filename" );
 
-	m_FieldsDB.push_back( _T( "artist" ) );
-	m_FieldsDB.push_back( _T( "album" ) );
-	m_FieldsDB.push_back( _T( "year" ) );
-	m_FieldsDB.push_back( _T( "genre" ) );
-	m_FieldsDB.push_back( _T( "title" ) );
-	m_FieldsDB.push_back( _T( "tracknum" ) );
-	m_FieldsDB.push_back( _T( "timeadded" ) );
-	m_FieldsDB.push_back( _T( "lastplayed" ) );
-	m_FieldsDB.push_back( _T( "filesize" ) );
-	m_FieldsDB.push_back( _T( "format" ) );
-	m_FieldsDB.push_back( _T( "duration" ) );
-	m_FieldsDB.push_back( _T( "rating" ) );
-	m_FieldsDB.push_back( _T( "timesplayed" ) );
-	m_FieldsDB.push_back( _T( "bitrate" ) );
-	m_FieldsDB.push_back( _T( "filename" ) );
+	m_FieldsDB.push_back( "artist" );
+	m_FieldsDB.push_back( "album" );
+	m_FieldsDB.push_back( "year" );
+	m_FieldsDB.push_back( "genre" );
+	m_FieldsDB.push_back( "title" );
+	m_FieldsDB.push_back( "tracknum" );
+	m_FieldsDB.push_back( "timeadded" );
+	m_FieldsDB.push_back( "lastplayed" );
+	m_FieldsDB.push_back( "filesize" );
+	m_FieldsDB.push_back( "format" );
+	m_FieldsDB.push_back( "duration" );
+	m_FieldsDB.push_back( "rating" );
+	m_FieldsDB.push_back( "timesplayed" );
+	m_FieldsDB.push_back( "bitrate" );
+	m_FieldsDB.push_back( "filename" );
 }
 
 ///////////////////////////////////////////////////
@@ -413,7 +414,7 @@ void CMusikLibrary::Shutdown()
 void CMusikLibrary::BeginTransaction()
 {
 	m_ProtectingLibrary->acquire();
-	sqlite_exec_printf( m_pDB, _T( "begin transaction;" ), NULL, NULL, NULL );
+	sqlite_exec_printf( m_pDB, "begin transaction;", NULL, NULL, NULL );
 	m_ProtectingLibrary->release();
 }
 
@@ -422,7 +423,7 @@ void CMusikLibrary::BeginTransaction()
 void CMusikLibrary::EndTransaction()
 {
 	m_ProtectingLibrary->acquire();
-	sqlite_exec_printf( m_pDB, _T( "end transaction;" ), NULL, NULL, NULL );
+	sqlite_exec_printf( m_pDB, "end transaction;", NULL, NULL, NULL );
 	m_ProtectingLibrary->release();
 }
 
@@ -432,7 +433,7 @@ void CMusikLibrary::CreateCrossfader( CMusikCrossfader* fader )
 {
 	CStdString sQuery;
 
-	sQuery.Format( _T( "INSERT INTO %s VALUES ( %f,%f,%f,%f ); " ),
+	sQuery.Format( "INSERT INTO %s VALUES ( %f,%f,%f,%f ); ",
 		CROSSFADER_PRESETS,
 		fader->GetDuration( MUSIK_CROSSFADER_NEW_SONG ),
 		fader->GetDuration( MUSIK_CROSSFADER_PAUSE_RESUME ),
@@ -450,7 +451,7 @@ void CMusikLibrary::DeleteCrossfader( const CStdString& name )
 {
 	CStdString sQuery;
 
-	sQuery.Format( _T( "DELETE FROM %s WHERE crossfader_name = %s" ),
+	sQuery.Format( "DELETE FROM %s WHERE crossfader_name = %s",
 		CROSSFADER_PRESETS,
 		name.c_str() );
 
@@ -465,7 +466,7 @@ void CMusikLibrary::DeleteCrossfader( CMusikCrossfader* fader )
 {
 	CStdString sQuery;
 
-	sQuery.Format( _T( "DELETE FROM %s WHERE crossfader_name = %s" ),
+	sQuery.Format( "DELETE FROM %s WHERE crossfader_name = %s",
 		CROSSFADER_PRESETS,
 		fader->GetName().c_str() );
 
@@ -486,7 +487,7 @@ void CMusikLibrary::CreateStdPlaylist( const CStdString& name, const CIntArray& 
 
 	// create query to make new entry to 
 	// std_playlist table
-	sQuery.Format( _T( "INSERT INTO %s VALUES ( '%s' ); " ),
+	sQuery.Format( "INSERT INTO %s VALUES ( '%s' ); ",
 		STD_PLAYLIST_TABLE_NAME,
 		name.c_str() );
 
@@ -494,7 +495,7 @@ void CMusikLibrary::CreateStdPlaylist( const CStdString& name, const CIntArray& 
 	sqlite_exec_printf( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
 
 	// get the ID of the newly created entry
-	sQuery.Format( _T( "SELECT %s FROM %s WHERE %s = '%s';" ), 
+	sQuery.Format( "SELECT %s FROM %s WHERE %s = '%s';", 
 		"std_playlist_id", 
 		STD_PLAYLIST_TABLE_NAME, 
 		"std_playlist_name",
@@ -505,7 +506,7 @@ void CMusikLibrary::CreateStdPlaylist( const CStdString& name, const CIntArray& 
 	// insert songs into playlist
 	for ( size_t i = 0; i < songids.size(); i++ )
 	{
-		sQuery.Format( _T( "INSERT INTO %s VALUES ( %n, %n ); " ),
+		sQuery.Format( "INSERT INTO %s VALUES ( %n, %n ); ",
 			STD_PLAYLIST_SONGS,
 			nID,
 			songids.at( i ) );
@@ -528,7 +529,7 @@ void CMusikLibrary::DeleteStdPlaylist( const CStdString& name )
 	m_ProtectingLibrary->acquire();
 
 	// get ID of the currently named playlist
-	sQuery.Format( _T( "SELECT %s FROM %s WHERE std_playlist_name = '%s';" ), 
+	sQuery.Format( "SELECT %s FROM %s WHERE std_playlist_name = '%s';", 
 		"std_playlist_id", 
 		STD_PLAYLIST_TABLE_NAME, 
 		name.c_str() );
@@ -537,7 +538,7 @@ void CMusikLibrary::DeleteStdPlaylist( const CStdString& name )
 
 	// remove entry from table containing
 	// the list of standard playlists
-	sQuery.Format( _T( "DELETE FROM %s WHERE std_playlist_name = '%s';" ),
+	sQuery.Format( "DELETE FROM %s WHERE std_playlist_name = '%s';",
 		STD_PLAYLIST_TABLE_NAME,
 		name.c_str() );
 
@@ -545,7 +546,7 @@ void CMusikLibrary::DeleteStdPlaylist( const CStdString& name )
 
 	// delete corresponding songs from the
 	// other table
-	sQuery.Format( _T( "DELETE FROM %s WHERE std_playlist_id = %d" ),
+	sQuery.Format( "DELETE FROM %s WHERE std_playlist_id = %d",
 		STD_PLAYLIST_SONGS,
 		nID );
 
@@ -579,66 +580,66 @@ void CMusikLibrary::DeleteDynPlaylist( CStdString name )
 
 CStdString CMusikLibrary::GetOrder( int type, bool terminate )
 {
-	CStdString sTerminate = _T( "" );
+	CStdString sTerminate = "";
 	if ( terminate )
-		sTerminate = _T( ";" );
+		sTerminate = ";";
 
 	switch( type )
 	{
 	case MUSIK_LIBRARY_TYPE_ARTIST:
-		sTerminate.Format( _T( "ORDER BY artist,album,tracknum,title%s" ), sTerminate.c_str() );
+		sTerminate.Format( "ORDER BY artist,album,tracknum,title%s", sTerminate.c_str() );
 		return sTerminate;
 		break;
 	case MUSIK_LIBRARY_TYPE_ALBUM:
-		sTerminate.Format( _T( "ORDER BY album,tracknum,artist,title%s" ), sTerminate.c_str() );
+		sTerminate.Format( "ORDER BY album,tracknum,artist,title%s", sTerminate.c_str() );
 		return sTerminate;
 		break;
 	case MUSIK_LIBRARY_TYPE_YEAR:
-		sTerminate.Format( _T( "ORDER BY year,artist,album,tracknum,title%s" ), sTerminate.c_str() );
+		sTerminate.Format( "ORDER BY year,artist,album,tracknum,title%s", sTerminate.c_str() );
 		return sTerminate;
 		break;
 	case MUSIK_LIBRARY_TYPE_GENRE:
-		sTerminate.Format( _T( "ORDER BY genre,artist,album,tracknum,title%s" ), sTerminate.c_str() );
+		sTerminate.Format( "ORDER BY genre,artist,album,tracknum,title%s", sTerminate.c_str() );
 		return sTerminate;
 		break;
 	case MUSIK_LIBRARY_TYPE_TITLE:
-		sTerminate.Format( _T( "ORDER BY title,artist,album,tracknum%s" ), sTerminate.c_str() );
+		sTerminate.Format( "ORDER BY title,artist,album,tracknum%s", sTerminate.c_str() );
 		return sTerminate;
 		break;
 	case MUSIK_LIBRARY_TYPE_TRACKNUM:
-		sTerminate.Format( _T( "ORDER BY tracknum,artist,album,title%s" ), sTerminate.c_str() );
+		sTerminate.Format( "ORDER BY tracknum,artist,album,title%s", sTerminate.c_str() );
 		return sTerminate;
 		break;
 	case MUSIK_LIBRARY_TYPE_TIMEADDED:
-		sTerminate.Format( _T( "ORDER BY timeadded,artist,album,tracknum,title%s" ), sTerminate.c_str() );
+		sTerminate.Format( "ORDER BY timeadded,artist,album,tracknum,title%s", sTerminate.c_str() );
 		return sTerminate;
 		break;
 	case MUSIK_LIBRARY_TYPE_LASTPLAYED:
-		sTerminate.Format( _T( "ORDER BY lastplayed,artist,album,tracknum,title%s" ), sTerminate.c_str() );
+		sTerminate.Format( "ORDER BY lastplayed,artist,album,tracknum,title%s", sTerminate.c_str() );
 		return sTerminate;
 		break;
 	case MUSIK_LIBRARY_TYPE_FILESIZE:
-		sTerminate.Format( _T( "ORDER BY filesize,artist,album,tracknum,title%s" ), sTerminate.c_str() );
+		sTerminate.Format( "ORDER BY filesize,artist,album,tracknum,title%s", sTerminate.c_str() );
 		return sTerminate;
 		break;
 	case MUSIK_LIBRARY_TYPE_FORMAT:
-		sTerminate.Format( _T( "ORDER BY format,artist,album,tracknum,title%s" ), sTerminate.c_str() );
+		sTerminate.Format( "ORDER BY format,artist,album,tracknum,title%s", sTerminate.c_str() );
 		return sTerminate;
 		break;
 	case MUSIK_LIBRARY_TYPE_DURATION:
-		sTerminate.Format( _T( "ORDER BY duration,artist,album,tracknum,title%s" ), sTerminate.c_str() );
+		sTerminate.Format( "ORDER BY duration,artist,album,tracknum,title%s", sTerminate.c_str() );
 		return sTerminate;
 		break;
 	case MUSIK_LIBRARY_TYPE_RATING:
-		sTerminate.Format( _T( "ORDER BY rating,artist,album,tracknum,title%s" ), sTerminate.c_str() );
+		sTerminate.Format( "ORDER BY rating,artist,album,tracknum,title%s", sTerminate.c_str() );
 		return sTerminate;
 		break;
 	case MUSIK_LIBRARY_TYPE_TIMESPLAYED:
-		sTerminate.Format( _T( "ORDER BY timesplayed,artist,album,tracknum,title%s" ), sTerminate.c_str() );
+		sTerminate.Format( "ORDER BY timesplayed,artist,album,tracknum,title%s", sTerminate.c_str() );
 		return sTerminate;
 		break;
 	case MUSIK_LIBRARY_TYPE_BITRATE:
-		sTerminate.Format( _T( "ORDER BY bitrate,artist,album,tracknum,title%s" ), sTerminate.c_str() );
+		sTerminate.Format( "ORDER BY bitrate,artist,album,tracknum,title%s", sTerminate.c_str() );
 		return sTerminate;
 		break;
 	case MUSIK_LIBRARY_TYPE_FILENAME:
@@ -695,7 +696,7 @@ void CMusikLibrary::VerifyYearList( CStdStringArray & list )
 
 void CMusikLibrary::GetAllSongs( CMusikPlaylist& target )
 {
-	QuerySongs( _T( "filename <> ''" ), target );
+	QuerySongs( "filename <> ''", target );
 }
 
 ///////////////////////////////////////////////////
@@ -704,9 +705,9 @@ void CMusikLibrary::QuerySongs( const CStdString& query, CMusikPlaylist& target 
 {
 	target.Clear();
 
-	CStdString queryWhere( _T( "SELECT songid FROM " ) SONG_TABLE_NAME _T( " where " ) );
+	CStdString queryWhere( "SELECT songid FROM " SONG_TABLE_NAME " where " );
 	queryWhere += query;
-	queryWhere += _T( ";" );
+	queryWhere += ";";
 
 	// lock it up and query it
 	m_ProtectingLibrary->acquire();
@@ -730,7 +731,7 @@ void CMusikLibrary::GetRelatedItems( int source_type, const CStdStringArray& sou
 
 	// construct the query
 	CStdString query;
-	query.Format( _T( "SELECT DISTINCT %s,UPPER(%s) AS UP FROM %s where " ), 
+	query.Format( "SELECT DISTINCT %s,UPPER(%s) AS UP FROM %s where ", 
 		sOutType.c_str(), 
 		sOutType.c_str(), 
 		SONG_TABLE_NAME );
@@ -739,12 +740,12 @@ void CMusikLibrary::GetRelatedItems( int source_type, const CStdStringArray& sou
 	for ( size_t i = 0; i < source_items.size(); i++ )
 	{
 		sCurrentItem = source_items.at( i );
-		sCurrentItem.Replace( _T("'"), _T("''") );
+		sCurrentItem.Replace( "'", "''" );
 
 		if ( i > 0 )
-			query += _T("or ");
+			query += "or ";
 
-        query.Format( _T( "%s%s = '%s' " ), query.c_str(), sInType.c_str(), sCurrentItem.c_str() );
+        query.Format( "%s%s = '%s' ", query.c_str(), sInType.c_str(), sCurrentItem.c_str() );
 	}
 
 	// get sorting order
@@ -771,7 +772,7 @@ void CMusikLibrary::GetRelatedItems( CStdString sub_query, int dst_type, CStdStr
 	CStdString sOutType = GetSongFieldDB( dst_type );
 
 	CStdString query;
-	query.Format( _T( "SELECT DISTINCT %s, UPPER( %s ) AS UP FROM %s WHERE %s order by %s;" ), 
+	query.Format( "SELECT DISTINCT %s, UPPER( %s ) AS UP FROM %s WHERE %s order by %s;", 
 		sOutType.c_str(), 
 		sOutType.c_str(), 
 		SONG_TABLE_NAME,
@@ -800,7 +801,7 @@ void CMusikLibrary::GetRelatedSongs( CStdString sub_query, int source_type, CMus
 	CStdString order_by = GetOrder( source_type );
 
 	CStdString query;
-	query.Format( _T( "SELECT DISTINCT songid FROM %s WHERE %s %s" ),
+	query.Format( "SELECT DISTINCT songid FROM %s WHERE %s %s",
 		SONG_TABLE_NAME,
 		sub_query.c_str(),
 		order_by.c_str() );
@@ -822,7 +823,7 @@ void CMusikLibrary::GetAllDistinct( int source_type, CStdStringArray& target, bo
 
 	CStdString query;
 	CStdString sField = GetSongFieldDB( source_type );
-	query.Format( _T( "SELECT DISTINCT %s, UPPER( %s ) AS UP FROM %s ORDER BY UP;" ), 
+	query.Format( "SELECT DISTINCT %s, UPPER( %s ) AS UP FROM %s ORDER BY UP;", 
 		sField.c_str(), 
 		sField.c_str(),
 		SONG_TABLE_NAME );
@@ -852,7 +853,7 @@ void CMusikLibrary::GetFieldFromID( int id, int field, CStdString& string )
 	CStdString query;
 	CStdString type = GetSongFieldDB( field );
 
-	query.Format( _T( "SELECT %s FROM %s WHERE songid = %d;" ), 
+	query.Format( "SELECT %s FROM %s WHERE songid = %d;", 
 		type.c_str(), 
 		SONG_TABLE_NAME, 
 		id );
@@ -871,7 +872,7 @@ void CMusikLibrary::GetSongInfoFromID( int id, CMusikSongInfo* info )
 {
 	CStdString query;
 
-	query.Format( _T( "SELECT tracknum,artist,album,genre,title,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize,filename FROM %s WHERE songid = %d;" ), 
+	query.Format( "SELECT tracknum,artist,album,genre,title,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize,filename FROM %s WHERE songid = %d;", 
 		SONG_TABLE_NAME,
 		id );
 	
@@ -879,9 +880,7 @@ void CMusikLibrary::GetSongInfoFromID( int id, CMusikSongInfo* info )
 
 	// lock it up and run the query
 	m_ProtectingLibrary->acquire();
-
-	int result = sqlite_exec( m_pDB, query.c_str(), &sqlite_GetSongInfoFromID, info, NULL );
-
+	sqlite_exec( m_pDB, query.c_str(), &sqlite_GetSongInfoFromID, info, NULL );
 	m_ProtectingLibrary->release();
 }
 
@@ -892,7 +891,7 @@ bool CMusikLibrary::SetSongInfo( int songid, CMusikSongInfo* info )
 	int result = 0;
 
 	CStdString query;
-	query.Format( _T( "UPDATE %s SET format=%d, vbr=%d, filename='%s', artist='%s', title='%s', album='%s', tracknum=%d, year='%s', genre='%s', rating=%d," ),
+	query.Format( "UPDATE %s SET format=%d, vbr=%d, filename='%s', artist='%s', title='%s', album='%s', tracknum=%d, year='%s', genre='%s', rating=%d,",
 			SONG_TABLE_NAME,
 			info->GetFormat(),
 			info->GetVBR(),
@@ -905,7 +904,7 @@ bool CMusikLibrary::SetSongInfo( int songid, CMusikSongInfo* info )
 			info->GetGenre().c_str(),
 			info->GetRating() );
 		
-	query.Format( _T( "%s bitrate=%d, lastplayed='%s', notes='%s', timesplayed=%d, duration=%d, timeadded='%s', filesize=%d, dirty=%d WHERE songid = %d;" ),
+	query.Format( "%s bitrate=%d, lastplayed='%s', notes='%s', timesplayed=%d, duration=%d, timeadded='%s', filesize=%d, dirty=%d WHERE songid = %d;",
 			query.c_str(),	
 			info->GetBitrate(),
 			info->GetLastPlayed().c_str(),
@@ -917,15 +916,10 @@ bool CMusikLibrary::SetSongInfo( int songid, CMusikSongInfo* info )
 			info->GetDirtyFlag(),
 			songid );
 
-	MessageBox( NULL, query.c_str(), NULL, NULL );
-
 	// lock it up and run the query
 	m_ProtectingLibrary->acquire();
-
 	result = sqlite_exec( m_pDB, query.c_str(), NULL, NULL, NULL );
-
 	m_ProtectingLibrary->release();
-
 
 	if ( result != SQLITE_OK )
 		return false;
@@ -940,7 +934,7 @@ bool CMusikLibrary::SetSongRating( int songid, int rating )
 	int result = 0;
 
 	CStdString query;
-	query.Format( _T( "UPDATE %s SET rating=%d WHERE songid=%d" ), 
+	query.Format( "UPDATE %s SET rating=%d WHERE songid=%d", 
 		SONG_TABLE_NAME,
 		rating, 
 		songid );
@@ -965,7 +959,7 @@ void CMusikLibrary::GetAllStdPlaylists( CStdStringArray* target, bool clear_targ
 	if ( clear_target )
 		target->clear();
 
-	CStdString sQuery( _T( "SELECT std_playlist_name  FROM " ) STD_PLAYLIST_TABLE_NAME _T( " WHERE std_playlist_name <> ''" ) );
+	CStdString sQuery( "SELECT std_playlist_name  FROM " STD_PLAYLIST_TABLE_NAME " WHERE std_playlist_name <> ''" );
 
 	m_ProtectingLibrary->acquire();
 	sqlite_exec( m_pDB, sQuery.c_str(), &sqlite_AddRowToStringArray, target, NULL );
@@ -979,7 +973,7 @@ void CMusikLibrary::GetAllCrossfaders( CStdStringArray* target, bool clear_targe
 	if ( clear_target )
 		target->clear();
 
-	CStdString sQuery( _T( "SELECT crossfader_name  FROM " ) CROSSFADER_PRESETS _T( " WHERE crossfader_name <> ''" ) );
+	CStdString sQuery( "SELECT crossfader_name  FROM " CROSSFADER_PRESETS " WHERE crossfader_name <> ''" );
 
 	m_ProtectingLibrary->acquire();
 	sqlite_exec( m_pDB, sQuery.c_str(), &sqlite_AddRowToStringArray, target, NULL );
@@ -993,7 +987,7 @@ int CMusikLibrary::GetIDFromFilename( const CStdString& fn )
 	int target;
 
 	CStdString sQuery;
-	sQuery.Format( ( _T( "SELECT songid  FROM " ) SONG_TABLE_NAME _T( " WHERE filename = '%s'" ) ), fn.c_str() );
+	sQuery.Format( "SELECT songid  FROM " SONG_TABLE_NAME " WHERE filename = '%s'", fn.c_str() );
 
 	m_ProtectingLibrary->acquire();
 	sqlite_exec( m_pDB, sQuery.c_str(), &sqlite_GetIDFromFilename, &target, NULL );

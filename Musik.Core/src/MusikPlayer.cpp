@@ -2,6 +2,7 @@
 
 #include "stdafx.h"
 
+#include "../include/MusikConfig.h"
 #include "../include/MusikArrays.h"
 #include "../include/MusikPlayer.h"
 #include "../include/MusikLibrary.h"
@@ -221,7 +222,7 @@ CMusikPlayer::CMusikPlayer( CMusikFunctor* functor, CMusikLibrary* library, CMus
 	m_ThreadHND			= NULL;
 	m_EQ_DSP			= NULL;
 
-	m_Handle			= NULL;
+	m_Handle			= 0;
 
 	m_MaxChannels		= -1;
 	m_CurrChannel		= -1;
@@ -266,7 +267,8 @@ void CMusikPlayer::InitThread()
 		m_ThreadID,
 		m_ThreadHND );
 
-	ACE_Thread::join( m_ThreadHND );
+	// i don't think this is necessary
+	//ACE_Thread::join( m_ThreadHND );
 }
 
 ///////////////////////////////////////////////////
@@ -522,7 +524,7 @@ bool CMusikPlayer::Next()
 {
 	if ( GetPlaymode() == MUSIK_PLAYER_PLAYMODE_LOOP || GetPlaymode() == MUSIK_PLAYER_PLAYMODE_NORMAL )
 	{
-		if ( m_Index + 1 == m_Playlist->GetCount() )
+		if ( m_Index + 1 == (int)m_Playlist->GetCount() )
 		{
 			if ( GetPlaymode() == MUSIK_PLAYER_PLAYMODE_LOOP )	
 				m_Index = 0;
@@ -550,7 +552,7 @@ bool CMusikPlayer::Prev()
 			if ( m_Index - 1 < 0 )
 			{
 				if ( GetPlaymode() == MUSIK_PLAYER_PLAYMODE_LOOP )	
-					m_Index = m_Playlist->GetCount() - 1;
+					m_Index = (int)m_Playlist->GetCount() - 1;
 				else
 					return false;
 			}			

@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <assert.h>
-#include "paramlist.hpp"
+#include "../include/paramlist.hpp"
 
 typedef float REAL;
 void rfft(int n,int isign,REAL x[]);
