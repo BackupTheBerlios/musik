@@ -521,7 +521,13 @@ LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 	}	
 
 	// draw horzontal sep
-	if ( IsRootLevel() || IsSelected() )
+	// top and bottom
+	if ( IsSelected() )
+	{
+		HLine( pDC->m_hDC, 10, pt.y, rc.right, GetSysColor(COLOR_BTNFACE) );
+		HLine( pDC->m_hDC, 10, pt.y + nTotal - 1, rc.right, GetSysColor(COLOR_BTNFACE) );
+	}
+	else if ( IsRootLevel() )
 		HLine( pDC->m_hDC, 0, pt.y + nTotal - 1, rc.right, GetSysColor(COLOR_BTNFACE) );
 
 	// draw children
