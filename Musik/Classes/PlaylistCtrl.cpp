@@ -646,7 +646,7 @@ void CPlaylistCtrl::FindColumnOrder()
 		if ( g_Prefs.nPlaylistColumnEnable[i] == 1 )
 		{
 			m_ColumnOrder.Add( i );
-			m_aColumnSorting.Add( -1 );
+			m_aColumnSorting.Add( -1 );			
 		}
 	}
 }

@@ -46,6 +46,7 @@ public:
 
 	int nSndVolume;
 	int nUseEQ;
+	int nUsePitch;
 
 	EMUSIK_ACTIVITY_TYPE nActBox1;
 	EMUSIK_ACTIVITY_TYPE nActBox2;

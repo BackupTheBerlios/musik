@@ -38,6 +38,7 @@ BEGIN_EVENT_TABLE(MusikFXFrame, wxFrame)
 	EVT_CLOSE				(					MusikFXFrame::OnClose			)
 	EVT_CONTEXT_MENU		(					MusikFXFrame::OnRightClick		)
 	EVT_COMMAND_SCROLL		( SLD_PITCH,		MusikFXFrame::OnSlidePitch		)
+	EVT_CHECKBOX			( CHK_PITCHENABLE,	MusikFXFrame::OnTogglePitchEnable )
 END_EVENT_TABLE()
 
 #ifndef wxCLOSE_BOX
@@ -64,6 +65,7 @@ MusikFXFrame::MusikFXFrame( wxFrame *pParent, const wxString &sTitle, const wxPo
 	//--- init sizers ---//
 	//-------------------//
 	vsMain = new wxBoxSizer( wxVERTICAL );
+	hsPitch = new wxBoxSizer( wxHORIZONTAL );
 
 	//------------------//
 	//--- equalizers ---//
@@ -73,19 +75,18 @@ MusikFXFrame::MusikFXFrame( wxFrame *pParent, const wxString &sTitle, const wxPo
 	//-------------//
 	//--- pitch ---//
 	//-------------//
-	//-------------------------------------------------//
-	//--- Simon: not working right. commented out	---//
-	//--- for 0.1.3 release.						---//
-	//--- See Also: MusikPlayer::SetFrequency()		---//
-	//-------------------------------------------------//
 	
 	slPitch = new wxSlider( this, SLD_PITCH, 50, 0, 100, wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 	slPitch->SetToolTip( _("Pitch control, right-click to reset") );
-	
+
+	chkPitchEnable = new wxCheckBox( this, CHK_PITCHENABLE, _("Enable Pitch control") );
+	chkPitchEnable->SetValue( g_Prefs.nUsePitch );
+	hsPitch->Add( chkPitchEnable, 1, wxALIGN_CENTER | wxALIGN_CENTER_VERTICAL );
+	hsPitch->Add( slPitch, 0, wxALL, 4 );
 
 	vsMain->Add( pEQ, 0, wxALL, 4 );
 	
-	vsMain->Add( slPitch, 0, wxALL, 4 );
+	vsMain->Add( hsPitch, 0, wxALL, 4 );
 	
 
 	SetSizerAndFit( vsMain );
@@ -122,4 +123,9 @@ void MusikFXFrame::OnRightClick( wxCommandEvent& event )
 		slPitch->SetValue( 50 );
 		g_FX.SetFrequency( 44100 );
 	}
+}
+
+void MusikFXFrame::OnTogglePitchEnable( wxCommandEvent& WXUNUSED(event) )
+{
+	g_Prefs.nUsePitch = chkPitchEnable->IsChecked();
 }

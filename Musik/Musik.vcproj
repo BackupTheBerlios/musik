@@ -36,6 +36,7 @@
 				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib zlibd.lib regexd.lib pngd.lib jpegd.lib tiffd.lib wxmswud.lib id3libd.lib fmodvc.lib sqlite.lib vorbisfile_static_d.lib ogg_static_d.lib vorbis_static_d.lib MMShellHook.lib"
 				OutputFile="$(OutDir)/Musik.exe"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/Musik.pdb"
 				SubSystem="2"
@@ -319,6 +320,9 @@
 				Name="Playlist"
 				Filter="">
 				<File
+					RelativePath=".\Classes\MusikListCtrl.cpp">
+				</File>
+				<File
 					RelativePath=".\Classes\PlaylistCtrl.cpp">
 				</File>
 				<File
@@ -457,6 +461,9 @@
 				</File>
 			</Filter>
 		</Filter>
+		<File
+			RelativePath=".\changelog.txt">
+		</File>
 		<File
 			RelativePath=".\Musik.rc">
 		</File>

@@ -27,7 +27,7 @@
 #include <wx/arrimpl.cpp>
 WX_DEFINE_OBJARRAY( CMusikStreamArray );
 
-#define MUSIK_FMOD_VERSION 0x0363 //--- 0x0363 or 0x0370 ---//
+#define MUSIK_FMOD_VERSION 0x0370 //--- 0x0363 or 0x0370 ---//
 
 void * F_CALLBACKAPI dspcallback(void *WXUNUSED(originalbuffer), void *newbuffer, int length, int WXUNUSED(param))
 {
@@ -326,8 +326,8 @@ void CMusikPlayer::SetFrequency()
 	//--- commented this out for the release.		---//
 	//--- See Also: MusikFXFrame::MusikFXFrame()	---//
 	//-------------------------------------------------//
-	
-	FSOUND_SetFrequency( FSOUND_ALL, (int)g_FX.GetFrequency() );
+	if ( g_Prefs.nUsePitch )
+		FSOUND_SetFrequency( FSOUND_ALL, (int)g_FX.GetFrequency() );
 	
 }
 

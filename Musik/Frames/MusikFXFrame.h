@@ -27,6 +27,7 @@
 
 enum EMUSIK_FX_OBJECT_ID
 {
+	CHK_PITCHENABLE = wxID_HIGHEST
 };
 
 class MusikFXFrame : public wxFrame
@@ -40,6 +41,7 @@ public:
 	void OnClose			( wxCommandEvent& WXUNUSED(event) );
 	void OnSlidePitch		( wxScrollEvent& event );
 	void OnRightClick		( wxCommandEvent& event );
+	void OnTogglePitchEnable	( wxCommandEvent& WXUNUSED(event) );
 
 	
 	//-------------------------//
@@ -52,11 +54,13 @@ public:
 	//----------------//
 	CMusikEQCtrl			*pEQ;
 	wxSlider				*slPitch;
+	wxCheckBox				*chkPitchEnable;
 	
 	//--------------//
 	//--- sizers ---//
 	//--------------//
 	wxBoxSizer				*vsMain;
+	wxBoxSizer				*hsPitch;
 	
 	DECLARE_EVENT_TABLE()
 

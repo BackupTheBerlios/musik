@@ -25,7 +25,7 @@
 #include "MusikTagFrame.h"
 
 #ifdef __WXMSW__
-	#include "MMShellHook.h"
+	#include "../MMShellHook/MMShellHook.h"
 #endif
 
 //--- images ---//

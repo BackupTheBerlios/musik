@@ -25,7 +25,7 @@
 #include "../MusikUtils.h"
 
 #ifdef __WXMSW__
-	#include "MMShellHook.h"
+	#include "../MMShellHook/MMShellHook.h"
 #endif
 
 //--- wx stuff we need ---//
