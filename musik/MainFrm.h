@@ -97,7 +97,7 @@ class CmusikBatchAddFunctor;
 class CmusikRemoveOldFunctor;
 class CmusikDirSync;
 class CMainFrame;
-class ACE_Thread_Mutex;
+class ACE_Mutex;
 
 ///////////////////////////////////////////////////
 
@@ -314,7 +314,7 @@ protected:
 	CmusikTaskPtrArray m_Tasks;
 
 	// mutex to synchronize task array
-	ACE_Thread_Mutex m_ProtectingTasks;
+	ACE_Mutex m_ProtectingTasks;
 	int m_TaskCount;
 	void KillTasks( bool updater = true, bool childtasks = true, bool setwindowtext = true );
 

@@ -1001,14 +1001,12 @@ int CmusikLibrary::CreateStdPlaylist( const CmusikString& name, CmusikPlaylist& 
 		return -1;
 
 	// get the ID of the newly created entry
-	{
-		m_ProtectingLibrary.acquire();
-			nRet = sqlite_exec_printf( m_pDB, "SELECT std_playlist_id FROM %Q WHERE std_playlist_name = %Q;", 
-				&sqlite_GetIntFromRow, &nID, NULL,
-				STD_PLAYLIST_TABLE_NAME,
-				name.c_str() );
-		m_ProtectingLibrary.release();
-	}
+	m_ProtectingLibrary.acquire();
+		nRet = sqlite_exec_printf( m_pDB, "SELECT std_playlist_id FROM %Q WHERE std_playlist_name = %Q;", 
+			&sqlite_GetIntFromRow, &nID, NULL,
+			STD_PLAYLIST_TABLE_NAME,
+			name.c_str() );
+	m_ProtectingLibrary.release();
 
 	if ( nRet != MUSIK_LIBRARY_OK )
 		return -1;
@@ -1131,29 +1129,25 @@ int CmusikLibrary::RewriteDynPlaylist( int id, const CmusikStringArray& query )
 	if ( id >= 0 )
 	{
 		// remove old queries
-		{
-			m_ProtectingLibrary.acquire();
-				nRet = sqlite_exec_printf( m_pDB, "DELETE FROM %Q WHERE dyn_playlist_id = %d;",
-				NULL, NULL, NULL, 
-				DYN_PLAYLIST_QUERY,
-				id );
-			m_ProtectingLibrary.release();
-		}
+		m_ProtectingLibrary.acquire();
+			nRet = sqlite_exec_printf( m_pDB, "DELETE FROM %Q WHERE dyn_playlist_id = %d;",
+			NULL, NULL, NULL, 
+			DYN_PLAYLIST_QUERY,
+			id );
+		m_ProtectingLibrary.release();
 
 		BeginTransaction();
 		
 		for ( size_t i = 0; i < query.size(); i++ )
 		{
-			{
-				m_ProtectingLibrary.acquire();
-					nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %d, %Q );",
-					NULL, NULL, NULL, 
-					DYN_PLAYLIST_QUERY,
-					NULL,
-					id,
-					query.at( i ).c_str() );
-				m_ProtectingLibrary.release();
-			}
+			m_ProtectingLibrary.acquire();
+				nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %d, %Q );",
+				NULL, NULL, NULL, 
+				DYN_PLAYLIST_QUERY,
+				NULL,
+				id,
+				query.at( i ).c_str() );
+			m_ProtectingLibrary.release();
 
 			if ( nRet != MUSIK_LIBRARY_OK )
 			{
@@ -1344,14 +1338,12 @@ int CmusikLibrary::CreateDynPlaylist( const CmusikString& name, const CmusikStri
 		return nRet;
 
 	// get the ID of the newly created entry
-	{
-		m_ProtectingLibrary.acquire();
-			nRet = sqlite_exec_printf( m_pDB, "SELECT dyn_playlist_id FROM %Q WHERE dyn_playlist_name = %Q;", 
-				&sqlite_GetIntFromRow, &nID, NULL,
-				DYN_PLAYLIST_TABLE_NAME,
-				name.c_str() );
-		m_ProtectingLibrary.release();
-	}
+	m_ProtectingLibrary.acquire();
+		nRet = sqlite_exec_printf( m_pDB, "SELECT dyn_playlist_id FROM %Q WHERE dyn_playlist_name = %Q;", 
+			&sqlite_GetIntFromRow, &nID, NULL,
+			DYN_PLAYLIST_TABLE_NAME,
+			name.c_str() );
+	m_ProtectingLibrary.release();
 
 	if ( nRet != MUSIK_LIBRARY_OK )
 		return nRet;

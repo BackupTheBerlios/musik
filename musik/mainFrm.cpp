@@ -2545,10 +2545,10 @@ void CMainFrame::KillTasks( bool updater, bool helpers, bool setwindowtext )
 			m_Tasks.clear();
 		}
 
+	m_ProtectingTasks.release();
+
 		if ( setwindowtext )
 			SetWindowText( m_Caption );
-
-	m_ProtectingTasks.release();
 
 	TRACE0( "All tasks killed." );
 }

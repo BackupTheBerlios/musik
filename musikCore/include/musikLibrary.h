@@ -145,7 +145,7 @@ enum
 
 ///////////////////////////////////////////////////
 
-class ACE_Thread_Mutex;
+class ACE_Mutex;
 class CmusikCrossfader;
 class CmusikBatchAdd;
 
@@ -297,7 +297,7 @@ private:
 
 	// the mutex that will be used to protect the
 	// library within any given scope.
-	ACE_Thread_Mutex m_ProtectingLibrary;
+	ACE_Mutex m_ProtectingLibrary;
 	
 	// fields... artist/title/album/etc
 	void InitFields();

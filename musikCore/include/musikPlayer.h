@@ -109,7 +109,7 @@ class CmusikPlayer;
 class CmusikSongInfo;
 class CmusikEqualizer;
 class CmusikCrossfader;
-class ACE_Thread_Mutex;
+class ACE_Mutex;
 class CmusikPlayer;
 
 ///////////////////////////////////////////////////
@@ -325,8 +325,8 @@ private:
 	CmusikPlayerWorker* m_PlayerWorker;
 
 	// mutex objects
-	ACE_Thread_Mutex m_ProtectingStreams;
-	ACE_Thread_Mutex m_ProtectingIndex;
+	ACE_Mutex m_ProtectingStreams;
+	ACE_Mutex m_ProtectingIndex;
 	
 	// pointer to library and playlist
 	CmusikLibrary* m_Library;

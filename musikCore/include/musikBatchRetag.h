@@ -100,7 +100,14 @@ public:
 	CmusikBatchRetagTask()
 		: CmusikTask()
 	{
+		m_Params = NULL;
 		m_Type = MUSIK_TASK_TYPE_BATCHRETAG;
+	}
+
+	~CmusikBatchRetagTask()
+	{
+		if ( m_Params )
+			delete m_Params;
 	}
 
 	int open( void* params )
@@ -109,6 +116,19 @@ public:
 		int ret_code = activate( THR_NEW_LWP | THR_JOINABLE | THR_USE_AFX );
 
 		return ret_code;
+	}
+
+	int close( u_long flags )
+	{
+		if ( m_Params->m_DeleteUpdatedTags )
+			delete m_Params->m_UpdatedTags;
+
+		m_Finished = true;
+
+		if ( m_Params->m_Functor && ( !m_Stop || ( m_Stop && m_Params->m_CallFunctorOnAbort ) ) )
+			m_Params->m_Functor->OnTaskEnd( this );
+
+		return 0;
 	}
 
 	int svc()
@@ -163,19 +183,6 @@ public:
 
 		}
 		m_Params->m_Library->EndTransaction();
-
-		// clean up
-		if ( m_Params->m_DeleteUpdatedTags )
-			delete m_Params->m_UpdatedTags;
-
-		CmusikFunctor* functor = m_Params->m_Functor;
-		bool call_functor_abort = m_Params->m_CallFunctorOnAbort;
-
-		delete m_Params;
-		m_Finished = true;
-
-		if ( functor && ( !m_Stop || ( m_Stop && call_functor_abort ) ) )
-			functor->OnTaskEnd( this );
 
 		return 0;
 	}
