@@ -42,6 +42,19 @@ static int sqlite_GetSongFieldFromID( void *args, int numCols, char **results, c
 
 ///////////////////////////////////////////////////
 
+static int sqlite_GetPlaylistID( void *args, int numCols, char **results, char ** columnNames )
+{
+	// this is a callback for sqlite to use when
+	// finding a playlist's internal ID
+
+	int* n = (int*)args;
+	*n = atoi( results[0] ); 
+
+    return 0;
+}
+
+///////////////////////////////////////////////////
+
 static int sqlite_GetSongInfoFromID( void *args, int numCols, char **results, char ** columnNames )
 {
 	// this is a callback for sqlite to use when
@@ -178,11 +191,54 @@ int CMusikLibrary::GetSongFieldDBID( CStdString field )
 
 ///////////////////////////////////////////////////
 
-bool CMusikLibrary::Startup()
+bool CMusikLibrary::InitStdTables()
+{
+	// construct the table that contains a list of
+	// all the standard playlist names
+	static const char *szCreateDBQuery1  = 
+		"CREATE TABLE " STD_PLAYLIST_TABLE_NAME " ( "	
+		"std_playlist_id INTEGER PRIMARY KEY, "
+		"std_playlist_name varchar(255) "
+		" );";
+
+	// construct the table that will store all the
+	// songs that pertain to all the playlists
+	static const char *szCreateDBQuery2  = 
+		"CREATE TABLE " STD_PLAYLIST_SONGS " ( "	
+		"std_playlist_songid INTEGER PRIMARY KEY, "
+		"std_playlist_id INTEGER, "
+		"songid INTEGER"
+		" );";
+
+	// put a lock on the library and open it up
+	m_ProtectingLibrary->acquire();
+
+	char *pErr = NULL;
+	m_pDB = sqlite_open( m_Filename.c_str(), 0666, &pErr );
+
+	if ( m_pDB )
+	{
+		sqlite_exec( m_pDB, szCreateDBQuery1, NULL, NULL, NULL );
+		sqlite_exec( m_pDB, szCreateDBQuery2, NULL, NULL, NULL );
+	}
+
+	if ( pErr )
+		sqlite_freemem( pErr );
+
+	m_ProtectingLibrary->release();
+
+	return ( m_pDB != NULL );
+}
+
+///////////////////////////////////////////////////
+
+bool CMusikLibrary::InitLibTable()
 {
 	// construct the table
 	static const char *szCreateDBQuery  = 
-		"CREATE TABLE songs ( "	
+		"CREATE TABLE " 
+		SONG_TABLE_NAME 
+		" ( "	
 		"songid INTEGER PRIMARY KEY, "
 		"format number(1), "		
 		"vbr number(1), "			
@@ -206,12 +262,12 @@ bool CMusikLibrary::Startup()
 
 	// construct the index
 	const char* szCreateIdxQuery =
-		"CREATE INDEX songs_title_idx on songs (title);"
-		"CREATE UNIQUE INDEX songs_filename_idx on songs (filename);"
-		"CREATE INDEX songs_artist_idx on songs (artist);"
-		"CREATE INDEX songs_album_idx on songs (album);"
-		"CREATE INDEX songs_genre_idx on songs (genre);"
-		"CREATE INDEX songs_artist_album_tracknum_idx on songs (artist,album,tracknum);";
+		"CREATE INDEX songs_title_idx on " SONG_TABLE_NAME " (title);"
+		"CREATE UNIQUE INDEX songs_filename_idx on " SONG_TABLE_NAME " (filename);"
+		"CREATE INDEX songs_artist_idx on " SONG_TABLE_NAME " (artist);"
+		"CREATE INDEX songs_album_idx on " SONG_TABLE_NAME " (album);"
+		"CREATE INDEX songs_genre_idx on " SONG_TABLE_NAME " (genre);"
+		"CREATE INDEX songs_artist_album_tracknum_idx on " SONG_TABLE_NAME " (artist,album,tracknum);";
 
 
 	// put a lock on the library and open it up
@@ -231,7 +287,22 @@ bool CMusikLibrary::Startup()
 
 	m_ProtectingLibrary->release();
 
-	return ( m_pDB != NULL );   
+	return ( m_pDB != NULL );
+}
+
+///////////////////////////////////////////////////
+
+bool CMusikLibrary::Startup()
+{
+   bool bFailed = false;
+
+   if ( !InitLibTable() )
+	   bFailed = true;
+
+   if ( !InitStdTables() )
+	   bFailed = true;   
+
+   return bFailed;
 }
 
 ///////////////////////////////////////////////////
@@ -268,11 +339,85 @@ void CMusikLibrary::EndTransaction()
 
 ///////////////////////////////////////////////////
 
-void CMusikLibrary::CreateStdPlaylist( CStdString name, CIntArray songids )
+void CMusikLibrary::CreateStdPlaylist( const CStdString& name, const CIntArray& songids )
 {
+	CStdString sQuery;
+	int nID;
+
 	// lock it up
 	m_ProtectingLibrary->acquire();
 
+	// create query to make new entry to 
+	// std_playlist table
+	sQuery.Format( _T( "INSERT INTO %s VALUES ( %s ); " ),
+		STD_PLAYLIST_TABLE_NAME,
+		name.c_str() );
+
+	// insert the new playlist name
+	sqlite_exec_printf( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
+
+	// get the ID of the newly created entry
+	sQuery.Format( _T( "SELECT %s FROM %s WHERE %s = %s;" ), 
+		"std_playlist_id", 
+		STD_PLAYLIST_TABLE_NAME, 
+		"std_playlist_name",
+		name.c_str() );
+
+	sqlite_exec( m_pDB, sQuery.c_str(), &sqlite_GetPlaylistID, &nID, NULL );
+	
+	// insert songs into playlist
+	for ( size_t i = 0; i < songids.size(); i++ )
+	{
+		sQuery.Format( _T( "INSERT INTO %s VALUES ( %n, %n ); " ),
+			STD_PLAYLIST_SONGS,
+			nID,
+			songids.at( i ) );
+
+		sqlite_exec_printf( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
+	}
+
+	// release the mutex lock
+	m_ProtectingLibrary->release();
+}
+
+///////////////////////////////////////////////////
+
+void CMusikLibrary::DeleteStdPlaylist( const CStdString& name )
+{
+	CStdString sQuery;
+	int nID;
+
+	// lock it up	
+	m_ProtectingLibrary->acquire();
+
+	// get ID of the currently named playlist
+	sQuery.Format( _T( "SELECT %s FROM %s WHERE %s = %s;" ), 
+		"std_playlist_id", 
+		STD_PLAYLIST_TABLE_NAME, 
+		"std_playlist_name",
+		name.c_str() );
+
+	sqlite_exec( m_pDB, sQuery.c_str(), &sqlite_GetPlaylistID, &nID, NULL );
+
+	// remove entry from table containing
+	// the list of standard playlists
+	sQuery.Format( _T( "DELETE FROM %s WHERE %s = %s" ),
+		STD_PLAYLIST_TABLE_NAME,
+		"std_playlist_name",
+		name.c_str() );
+
+	sqlite_exec_printf( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
+
+	// delete corresponding songs from the
+	// other table
+	sQuery.Format( _T( "DELETE FROM %s WHERE %s = %d" ),
+		STD_PLAYLIST_SONGS,
+		"std_playlist_id",
+		nID );
+
+	sqlite_exec_printf( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
+
+	// release mutex lock
 	m_ProtectingLibrary->release();
 }
 
@@ -281,16 +426,6 @@ void CMusikLibrary::CreateStdPlaylist( CStdString name, CIntArray songids )
 void CMusikLibrary::CreateDynPlaylist( CStdString name, CStdString query )
 {
 	// lock it up
-	m_ProtectingLibrary->acquire();
-
-	m_ProtectingLibrary->release();
-}
-
-///////////////////////////////////////////////////
-
-void CMusikLibrary::DeleteStdPlaylist( CStdString name )
-{
-	// lock it up	
 	m_ProtectingLibrary->acquire();
 
 	m_ProtectingLibrary->release();
@@ -435,7 +570,7 @@ void CMusikLibrary::QuerySongs( const CStdString& query, CMusikPlaylist& target 
 {
 	target.clear();
 
-	CStdString queryWhere( _T( "select songid from songs where " ) );
+	CStdString queryWhere( _T( "select songid from " ) SONG_TABLE_NAME _T( " where " ) );
 	queryWhere += query;
 	queryWhere += _T( ";" );
 
@@ -461,7 +596,7 @@ void CMusikLibrary::GetRelatedItems( int source_type, const CStdStringArray& sou
 
 	// construct the query
 	CStdString query;
-	query.Format( _T( "select distinct %s,UPPER(%s) as UP from songs where " ), sOutType.c_str(), sOutType.c_str() );
+	query.Format( _T( "select distinct %s,UPPER(%s) as UP from %s where " ), sOutType.c_str(), sOutType.c_str(), SONG_TABLE_NAME );
 
 	CStdString sCurrentItem;
 	for ( size_t i = 0; i < source_items.size(); i++ )
@@ -499,9 +634,10 @@ void CMusikLibrary::GetRelatedItems( CStdString sub_query, int dst_type, CStdStr
 	CStdString sOutType = GetSongFieldDB( dst_type );
 
 	CStdString query;
-	query.Format( _T( "select distinct %s,UPPER(%s) as UP from songs where %s order by %s;" ), 
+	query.Format( _T( "select distinct %s,UPPER(%s) as UP from %s where %s order by %s;" ), 
 		sOutType.c_str(), 
 		sOutType.c_str(), 
+		SONG_TABLE_NAME,
 		sub_query.c_str(),
 		sOutType.c_str() );
 
@@ -527,7 +663,8 @@ void CMusikLibrary::GetRelatedSongs( CStdString sub_query, int source_type, CMus
 	CStdString order_by = GetOrder( source_type );
 
 	CStdString query;
-	query.Format( _T( "select distinct songid from songs where %s %s" ),
+	query.Format( _T( "select distinct songid from %s where %s %s" ),
+		SONG_TABLE_NAME,
 		sub_query.c_str(),
 		order_by.c_str() );
 
@@ -548,7 +685,10 @@ void CMusikLibrary::GetAllDistinct( int source_type, CStdStringArray& target, bo
 
 	CStdString query;
 	CStdString sField = GetSongFieldDB( source_type );
-	query.Format( _T( "select distinct %s,UPPER(%s) as UP from songs order by UP;" ), sField.c_str(), sField.c_str() );
+	query.Format( _T( "select distinct %s,UPPER(%s) as UP from %s order by UP;" ), 
+		sField.c_str(), 
+		sField.c_str(),
+		SONG_TABLE_NAME );
 
 	// lock it up and run the query
 	m_ProtectingLibrary->acquire();
@@ -562,7 +702,7 @@ void CMusikLibrary::GetAllDistinct( int source_type, CStdStringArray& target, bo
 
 int CMusikLibrary::GetSongCount()
 {
-	char *query = sqlite_mprintf( "select count(*) from songs;" );
+	char *query = sqlite_mprintf( "select count(*) from " SONG_TABLE_NAME " ;" );
 	int result = QueryCount(query);
 	sqlite_freemem( query );
 	return result;
@@ -575,7 +715,10 @@ void CMusikLibrary::GetFieldFromID( int id, int field, CStdString& string )
 	CStdString query;
 	CStdString type = GetSongFieldDB( field );
 
-	query.Format( _T( "select %s from songs where songid = %d;" ), type.c_str(), id );
+	query.Format( _T( "select %s from %s where songid = %d;" ), 
+		type.c_str(), 
+		SONG_TABLE_NAME, 
+		id );
 
 	// lock it up and run the query
 	m_ProtectingLibrary->acquire();
@@ -591,7 +734,10 @@ void CMusikLibrary::GetSongInfoFromID( int id, CMusikSongInfo* info )
 {
 	CStdString query;
 
-	query.Format( _T( "select tracknum,artist,album,genre,title,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize,filename from songs where songid = %d;" ), id );
+	query.Format( _T( "select tracknum,artist,album,genre,title,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize,filename from %s where songid = %d;" ), 
+		SONG_TABLE_NAME,
+		id );
+	
 	info->SetID( id );
 
 	// lock it up and run the query
@@ -609,7 +755,8 @@ bool CMusikLibrary::SetSongInfo( int songid, CMusikSongInfo* info )
 	int result = 0;
 
 	CStdString query;
-	query.Format( _T( "update songs set format=%d, vbr=%d, filename='%s', artist='%s', title='%s', album='%s', tracknum=%d, year='%s', genre='%s', rating=%d," ),
+	query.Format( _T( "update %s set format=%d, vbr=%d, filename='%s', artist='%s', title='%s', album='%s', tracknum=%d, year='%s', genre='%s', rating=%d," ),
+			SONG_TABLE_NAME,
 			info->GetFormat(),
 			info->GetVBR(),
 			info->GetFilename().c_str(),
@@ -655,7 +802,10 @@ bool CMusikLibrary::SetSongRating( int songid, int rating )
 	int result = 0;
 
 	CStdString query;
-	query.Format( _T( "update songs set rating=%d where songid=%d" ), rating, songid );
+	query.Format( _T( "update %s set rating=%d where songid=%d" ), 
+		SONG_TABLE_NAME,
+		rating, 
+		songid );
 
 	// lock it up and run the query
 	m_ProtectingLibrary->acquire();

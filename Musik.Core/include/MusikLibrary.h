@@ -15,23 +15,23 @@
 
 enum
 {
-	MUSIK_LIBRARY_TYPE_NONE = -1,
-	MUSIK_LIBRARY_TYPE_ARTIST,
-	MUSIK_LIBRARY_TYPE_ALBUM,
-    MUSIK_LIBRARY_TYPE_YEAR,
-	MUSIK_LIBRARY_TYPE_GENRE,
-	MUSIK_LIBRARY_TYPE_TITLE,
-	MUSIK_LIBRARY_TYPE_TRACKNUM,
-	MUSIK_LIBRARY_TYPE_TIMEADDED,
-	MUSIK_LIBRARY_TYPE_LASTPLAYED,
-	MUSIK_LIBRARY_TYPE_FILESIZE,
-	MUSIK_LIBRARY_TYPE_FORMAT,
-	MUSIK_LIBRARY_TYPE_DURATION,
-	MUSIK_LIBRARY_TYPE_RATING,
-	MUSIK_LIBRARY_TYPE_TIMESPLAYED,
-	MUSIK_LIBRARY_TYPE_BITRATE,
-	MUSIK_LIBRARY_TYPE_FILENAME,
-	MUSIK_LIBRARY_FIELD_COUNT
+	MUSIK_LIBRARY_TYPE_NONE = -1,		// -1
+	MUSIK_LIBRARY_TYPE_ARTIST,			// 0
+	MUSIK_LIBRARY_TYPE_ALBUM,			// 1
+    MUSIK_LIBRARY_TYPE_YEAR,			// 2
+	MUSIK_LIBRARY_TYPE_GENRE,			// 3
+	MUSIK_LIBRARY_TYPE_TITLE,			// 4
+	MUSIK_LIBRARY_TYPE_TRACKNUM,		// 5
+	MUSIK_LIBRARY_TYPE_TIMEADDED,		// 6
+	MUSIK_LIBRARY_TYPE_LASTPLAYED,		// 7
+	MUSIK_LIBRARY_TYPE_FILESIZE,		// 8
+	MUSIK_LIBRARY_TYPE_FORMAT,			// 9
+	MUSIK_LIBRARY_TYPE_DURATION,		// 10
+	MUSIK_LIBRARY_TYPE_RATING,			// 11
+	MUSIK_LIBRARY_TYPE_TIMESPLAYED,		// 12
+	MUSIK_LIBRARY_TYPE_BITRATE,			// 13
+	MUSIK_LIBRARY_TYPE_FILENAME,		// 14
+	MUSIK_LIBRARY_FIELD_COUNT = MUSIK_LIBRARY_TYPE_FILENAME + 1
 };
 
 ///////////////////////////////////////////////////
@@ -45,6 +45,12 @@ enum
 	MUSIK_LIBRARY_FORMAT_WMA,
 	MUSIK_LIBRARY_FORMAT_AIFF
 };
+
+///////////////////////////////////////////////////
+
+#define SONG_TABLE_NAME "songs"
+#define STD_PLAYLIST_TABLE_NAME "std_playlist"
+#define STD_PLAYLIST_SONGS "std_playlist_song"
 
 ///////////////////////////////////////////////////
 
@@ -93,9 +99,9 @@ public:
 	//-----------------------------------------------------//
 	//--- for creating and retrieving playlists			---//
 	//-----------------------------------------------------//
-	void CreateStdPlaylist	( CStdString name, CIntArray songids );
+	void CreateStdPlaylist	( const CStdString& name, const CIntArray& songids );
+	void DeleteStdPlaylist	( const CStdString& name );
 	void CreateDynPlaylist	( CStdString name, CStdString query );
-	void DeleteStdPlaylist	( CStdString name );
 	void DeleteDynPlaylist	( CStdString name );
 
 	//-----------------------------------------------------//
@@ -141,6 +147,15 @@ private:
 	//-----------------------------------------------------//
 	bool Startup();
 	void Shutdown();
+
+	//-----------------------------------------------------//
+	//--- creating the various tables					---//
+	//-----------------------------------------------------//
+	bool InitLibTable();
+	bool InitStdTables();
+	bool InitDynTable();
+	bool InitEqTable();
+	bool InitCrossfaderTable();
 
 	//-----------------------------------------------------//
 	//--- field that will get shown up as "Time Added"	---//
