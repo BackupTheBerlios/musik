@@ -6,6 +6,8 @@
 #include "MusikNowPlayingCtrl.h"
 #include ".\musiknowplayingctrl.h"
 
+#include "Memdc.h"
+
 
 // CMusikNowPlayingCtrl
 
@@ -30,11 +32,14 @@ END_MESSAGE_MAP()
 
 void CMusikNowPlayingCtrl::OnPaint()
 {
-	CPaintDC dc(this); 
+	CPaintDC dc(this);
+	CRect rect;
+	GetClientRect(&rect);
+	CMemDC memDC(&dc, &rect);
+	
+	CRect clip;
+	memDC.GetClipBox(&clip);
+	memDC.FillSolidRect( clip, GetSysColor( COLOR_BTNFACE ) );
 
-	CRect rc;
-	GetClientRect(rc);
-
-	dc.SelectObject(GetSysColorBrush(COLOR_BTNFACE));
-	dc.PatBlt(0, 0, rc.Width(), rc.Height(), PATCOPY );
+	DefWindowProc(WM_PAINT, (WPARAM)memDC->m_hDC, (LPARAM)0);
 }

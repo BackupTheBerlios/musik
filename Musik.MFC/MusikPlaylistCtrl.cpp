@@ -214,7 +214,7 @@ void CMusikPlaylistCtrl::OnPaint()
 	CPaintDC dc(this);
 	CRect rect;
 	GetClientRect(&rect);
-	CMemDC memDC(&dc, rect);
+	CMemDC memDC(&dc, &rect);
 	
 	CRect headerRect;
 	GetDlgItem(0)->GetWindowRect(&headerRect);
@@ -225,7 +225,7 @@ void CMusikPlaylistCtrl::OnPaint()
 	memDC.GetClipBox(&clip);
 	memDC.FillSolidRect( clip, GetSysColor( COLOR_BTNHILIGHT ) );
 
-	this->SetTextBkColor( GetSysColor( COLOR_BTNHILIGHT ) );
+	SetTextBkColor( GetSysColor( COLOR_BTNHILIGHT ) );
 	   
 	DefWindowProc(WM_PAINT, (WPARAM)memDC->m_hDC, (LPARAM)0);
 }
