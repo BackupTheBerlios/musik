@@ -308,6 +308,7 @@ static int sqlite_GetEqualizerIDFromID( void *args, int numCols, char **results,
 CmusikLibrary::CmusikLibrary( const CStdString& filename )
 {
 	m_pDB = NULL;
+	m_Transactions = NULL;
 
 	m_ProtectingLibrary = new ACE_Thread_Mutex();
 	CmusikSong::SetLibrary( this );
@@ -768,7 +769,11 @@ void CmusikLibrary::BeginTransaction()
 		return;
 
 	m_ProtectingLibrary->acquire();
-	sqlite_exec_printf( m_pDB, "begin transaction;", NULL, NULL, NULL );
+
+	if ( m_Transactions == NULL )
+		sqlite_exec_printf( m_pDB, "begin transaction;", NULL, NULL, NULL );
+	++m_Transactions;
+	
 	m_ProtectingLibrary->release();
 }
 
@@ -780,7 +785,11 @@ void CmusikLibrary::EndTransaction()
 		return;
 
 	m_ProtectingLibrary->acquire();
-	sqlite_exec_printf( m_pDB, "end transaction;", NULL, NULL, NULL );
+
+	--m_Transactions;
+	if ( m_Transactions == NULL )
+		sqlite_exec_printf( m_pDB, "end transaction;", NULL, NULL, NULL );
+
 	m_ProtectingLibrary->release();
 }
 

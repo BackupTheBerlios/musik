@@ -144,6 +144,7 @@ public:
 	void InitTimeAdded();
 	void BeginTransaction();
 	void EndTransaction();
+	int  GetOpenTransactions();
 
 	// querying library fields
 	CStdStringArray*	GetSongFields	( )					{ return &m_Fields; }
@@ -222,6 +223,10 @@ private:
 
 	// currently opened database
 	sqlite	*m_pDB;
+
+	// number of functions that have called
+	// begin transaction 
+	int m_Transactions;
 
 	// the mutex that will be used to protect the
 	//library within any given scope.
