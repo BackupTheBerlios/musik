@@ -215,7 +215,7 @@ string CMusikPrefs::GetDefPlaylistOrder()
 string CMusikPrefs::GetDefPlaylistSizes()
 {
 	CString CRet;
-	CRet.Format( _T( "100,100,100,100,100,100,100" ) );
+	CRet.Format( _T( "50,50,50,50,50,50,50" ) );
 	
 	string sRet = CRet.GetBuffer();
 	return sRet;
