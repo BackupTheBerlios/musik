@@ -1,7 +1,27 @@
--------------------------------------------------------------------------
+----------------------------------------------------------------------------
 
 a3:
+ 
+  ***********************************************************************
+  ****   READ THIS * READ THIS * READ THIS * READ THIS * READ THIS   ****
+  ***********************************************************************
+  ****                                                               ****
+  **** IF YOU HAD A PREVIOUS ALPHA OR TESTING BUILD OF MUSIKCUBE,    ****
+  **** YOUR MUSIKCUBE LIBRARY, LOCATED:                              ****		
+  ****                                                               **** 
+  **** c:\documents and settings\[username]\.musikCube\musiklib.db   ****
+  ****                                                               ****
+  **** IF YOU DO NOT DELETE THIS FILE, MUSIKCUBE WILL NOT FUNCTION   ****
+  **** PROPERLY                                                      ****
+  ****                                                               ****
+  ***********************************************************************
 
+  - playlists are now treated like separate libraries. this makes
+    organizing a LOT easier.
+  - optimized memory management of playlists owned by the main
+    frame.
+  - fixed a couple instances of the playlist and/or selection
+    boxes being updated twice. the ui should be faster now.
   - fixed some unnecessary and potentially dangerous pointer
     dereferencing in CmusikPlayer
   - fixed a memory leak and potential crash relating to clearing
@@ -11,7 +31,7 @@ a3:
   - fixed a bug where dropping from sources without a playlist
     would not start playback
 
--------------------------------------------------------------------------
+----------------------------------------------------------------------------
 
 a2:
  
@@ -56,7 +76,7 @@ a2:
   - fixed the problem with the rating selection boxes
   - dustin's bug with shuffling then drag and dropping
 
--------------------------------------------------------------------------
+----------------------------------------------------------------------------
 
 a1: January 25, 2004, 2:15 AM
 
@@ -64,7 +84,7 @@ don't expect another build for a few weeks. please
 stress test this build if at all possible. see if you
 can confuse it into crashing. 
 
--------------------------------------------------------------------------
+----------------------------------------------------------------------------
 
 stuff that isn't implemented / doesn't work yet: 
 
@@ -72,7 +92,7 @@ stuff that isn't implemented / doesn't work yet:
   - dynamic playlist creation
   - dialog to view tag properties
 
--------------------------------------------------------------------------
+----------------------------------------------------------------------------
 
 known bugs:
  
@@ -80,7 +100,7 @@ known bugs:
     to reproduce on command, and simon and i have each
     seen it only once.
 
--------------------------------------------------------------------------
+----------------------------------------------------------------------------
 
    what we've been up to since 0.2.1 CVS: a quick ramble
 
@@ -156,5 +176,5 @@ known bugs:
 
            - havn't even started it yet.
 
--------------------------------------------------------------------------
+----------------------------------------------------------------------------
 

@@ -364,8 +364,6 @@ void CMainFrame::InitDragTypes()
 void CMainFrame::Initmusik()
 {
 	m_NewSong		= new CmusikFrameFunctor( this );
-	m_LibPlaylist	= NULL;	
-	m_StdPlaylist	= NULL;
 	m_TaskCount		= 0;
 	m_Caption		= CString( MUSIK_VERSION_STR ) + " ";
 	m_BatchAddFnct	= new CmusikBatchAddFunctor( this );
@@ -374,12 +372,12 @@ void CMainFrame::Initmusik()
 	m_Prefs			= new CmusikPrefs( m_PrefsIni );
 	m_DirSyncDlg	= NULL;
 	m_PlaylistSel	= false;
-	
+
 	// show all songs, if we are supposed to
 	m_LibPlaylist = new CmusikPlaylist();
 	
 	if ( m_Prefs->LibraryShowsAllSongs() )
-		m_Library->GetAllSongs( *m_LibPlaylist );
+		m_Library->GetAllSongs( *m_LibPlaylist, false );
 
 	// setup the player...
 	m_Player = new CmusikPlayer( m_NewSong, m_Library );
@@ -418,12 +416,6 @@ void CMainFrame::Cleanmusik()
 	{
 		delete m_Prefs;
 		m_Prefs = NULL;
-	}
-
-	if ( m_StdPlaylist && m_StdPlaylist != m_Player->GetPlaylist() )
-	{
-		delete m_StdPlaylist;
-		m_StdPlaylist = NULL;
 	}
 
 	if ( m_Player )
@@ -528,6 +520,7 @@ void CMainFrame::ResetSelBoxes()
 	{
 		m_wndSelectionBars.at( i )->GetCtrl()->SetParent( false );
 		m_wndSelectionBars.at( i )->GetCtrl()->UpdateV();
+		m_wndSelectionBars.at( i )->GetCtrl()->SetItemState( -1, 0, LVIS_SELECTED );		
 	}
 	CmusikSelectionCtrl::SetUpdating( false );
 }
@@ -683,7 +676,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 			LoadBarState( sProfile );
 		}
 
-		ShowSelectionBoxes( TRUE );
+		ShowSelectionBoxes( true );
 	}
 
 	// fire the updater task off
@@ -739,7 +732,7 @@ bool CMainFrame::PlayCmd( const CString& fn )
 					m_wndSources->GetCtrl()->FocusNowPlaying();
 				}
 
-				ResetSelBoxes();
+				RequerySelBoxes();
 
 				return true;
 			}
@@ -906,7 +899,7 @@ LRESULT CMainFrame::OnSelBoxEditCommit( WPARAM wParam, LPARAM lParam )
 	if ( partial_query.Left( 1 ) == _T( "W" ) )
 		sub_query = false;
 
-	m_Library->GetRelatedSongs( partial_query, pSel->GetType(), *playlist, sub_query );
+	m_Library->GetRelatedSongs( partial_query, pSel->GetType(), *playlist, sub_query, UseTempTable() );
 
 	// create a new CmusikSongInfoArray and update
 	// all the respective values...
@@ -1005,19 +998,15 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 		CmusikSelectionCtrl::SetUpdating( false );
 
 		// update playlsit
-		if ( !m_LibPlaylist )
-			m_LibPlaylist = new CmusikPlaylist();
-
 		if ( m_Prefs->LibraryShowsAllSongs() )
-			m_Library->GetAllSongs( *m_LibPlaylist );
+			m_Library->GetAllSongs( *m_LibPlaylist, UseTempTable() );
 		else
 			m_LibPlaylist->Clear();
 
-		m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, MUSIK_SOURCES_TYPE_LIBRARY );
+		m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, GetSelPlaylistType() );
+
 		m_wndView->GetCtrl()->UpdateV();
 		m_wndView->GetCtrl()->HideSortArrow();
-
-		m_wndSources->GetCtrl()->FocusLibrary();
 
 		if ( !unsel_parent )
 			return 0L;
@@ -1031,14 +1020,31 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 		pParent->RedrawWindow();
 	}
 	
-	// update all the selection controls
+	// update all the selection controls and
+	// the playlist
 	RequerySelBoxes( pSender );
-
-	// update playlist control
-	CmusikString sQuery = GetSelQuery( pSender );
 	RequeryPlaylist( pSender );
 
 	return 0L;
+}
+
+///////////////////////////////////////////////////
+
+bool CMainFrame::UseTempTable()
+{
+	return m_PlaylistSel;
+}
+
+///////////////////////////////////////////////////
+
+int CMainFrame::GetSelPlaylistType()
+{
+	CmusikPropTreeItem* pItem = m_wndSources->GetCtrl()->GetFocusedItem();
+
+	if ( pItem )
+		return pItem->GetPlaylistType();
+	
+	return -1;
 }
 
 ///////////////////////////////////////////////////
@@ -1139,23 +1145,15 @@ void CMainFrame::RequerySelBoxes( CmusikSelectionCtrl* sender, bool deselect_ite
 
 ///////////////////////////////////////////////////
 
-void CMainFrame::RequeryPlaylist( CmusikSelectionCtrl* sender, bool focus_library )
+void CMainFrame::RequeryPlaylist( CmusikSelectionCtrl* sender )
 {
-	// make sure the playlist window has the right
-	// CmusikPlaylist...
+	// if there is a sender then requery based on the
+	// sender's information. otherwise just call
+	// UpdateV() again to update the view.
 	if ( sender )
 	{
-		if ( !m_LibPlaylist )
-			m_LibPlaylist = new CmusikPlaylist();
-		else
-			m_LibPlaylist->Clear();
-
-		if ( m_wndView->GetCtrl()->GetPlaylist() != m_LibPlaylist )
-			m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, MUSIK_SOURCES_TYPE_LIBRARY );
-
 		// see what the order should be by...
 		int order_by = -1;
-
 		if ( sender )
 			order_by = sender->GetType();
 
@@ -1165,17 +1163,13 @@ void CMainFrame::RequeryPlaylist( CmusikSelectionCtrl* sender, bool focus_librar
 		if ( sQuery.Left( 1 ) == _T( "W" ) )
 			sub_query = false;
 
-		m_Library->GetRelatedSongs( sQuery, order_by, *m_LibPlaylist, sub_query );
+		// get the related songs...
+		m_Library->GetRelatedSongs( sQuery, order_by, *m_LibPlaylist, sub_query, UseTempTable() );
 	} 
 
 	// do it
 	m_wndView->GetCtrl()->UpdateV( true, true );
 	m_wndView->GetCtrl()->HideSortArrow();
-
-	// set focus to library in sources
-	if ( focus_library )
-		m_wndSources->GetCtrl()->FocusLibrary();
-
 }
 
 ///////////////////////////////////////////////////
@@ -1353,15 +1347,11 @@ LRESULT CMainFrame::OnSourcesLibrary( WPARAM wParam, LPARAM lParam )
 
 	m_PlaylistSel = false;
 
-	if ( !m_LibPlaylist )
-	{
-		m_LibPlaylist = new CmusikPlaylist();
+	if( m_Prefs->LibraryShowsAllSongs() )
+		m_Library->GetAllSongs( *m_LibPlaylist, false );
 
-		if( m_Prefs->LibraryShowsAllSongs() )
-			m_Library->GetAllSongs( *m_LibPlaylist );
-	}
-
-	ShowSelectionBoxes( TRUE );
+	ResetSelBoxes();
+	ShowSelectionBoxes( true );
 	
 	m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, MUSIK_SOURCES_TYPE_LIBRARY );
 	m_wndView->GetCtrl()->UpdateV();
@@ -1399,14 +1389,7 @@ LRESULT CMainFrame::OnSourcesNowPlaying( WPARAM wParam, LPARAM lParam )
 	TRACE0( "'Now Playing' was clicked\n" );
 
 	m_PlaylistSel = false;
-
-	if ( !m_Player->GetPlaylist() )
-	{
-		TRACE0( "Something strange happened, m_Player doesn't have a playlist\n" );
-		ASSERT( 1 );
-	}
-
-	ShowSelectionBoxes( FALSE );
+	ShowSelectionBoxes( false );
 
 	m_wndView->GetCtrl()->SetPlaylist( m_Player->GetPlaylist(), MUSIK_SOURCES_TYPE_NOWPLAYING );
 	m_wndView->GetCtrl()->UpdateV();
@@ -1416,7 +1399,6 @@ LRESULT CMainFrame::OnSourcesNowPlaying( WPARAM wParam, LPARAM lParam )
 	return 0L;
 }
 
-
 ///////////////////////////////////////////////////
 
 LRESULT CMainFrame::OnSourcesStdPlaylist( WPARAM wParam, LPARAM lParam )
@@ -1425,17 +1407,15 @@ LRESULT CMainFrame::OnSourcesStdPlaylist( WPARAM wParam, LPARAM lParam )
 
 	m_PlaylistSel = true;
 
-	if ( !m_StdPlaylist )
-		m_StdPlaylist = new CmusikPlaylist();
-
 	int nID = m_wndSources->GetCtrl()->GetFocusedItem()->GetPlaylistID();
-	m_Library->GetStdPlaylist( nID, *m_StdPlaylist, true );
-	m_StdPlaylist->SetPlaylistID( nID );
+	m_Library->GetStdPlaylist( nID, *m_LibPlaylist, true );
+	m_LibPlaylist->SetPlaylistID( nID );
 
-	m_Library->PopulateTempSongTable( *m_StdPlaylist );
-	ShowSelectionBoxes( FALSE );
-	
-	m_wndView->GetCtrl()->SetPlaylist( m_StdPlaylist, MUSIK_PLAYLIST_TYPE_STANDARD );
+	m_Library->PopulateTempSongTable( *m_LibPlaylist );
+	ResetSelBoxes();
+	ShowSelectionBoxes( true );
+		
+	m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, MUSIK_PLAYLIST_TYPE_STANDARD );
 	m_wndView->GetCtrl()->UpdateV();
 	m_wndView->GetCtrl()->HideSortArrow();
 
@@ -1468,38 +1448,6 @@ LRESULT CMainFrame::OnDragEnd( WPARAM wParam, LPARAM lParam )
 {
 	TRACE0( "DND Ended.\n" );
 
-	return 0L;
-}
-
-///////////////////////////////////////////////////
-
-// wParam here is whether the last known
-// item was a library; 
-
-LRESULT CMainFrame::OnPlayerNewPlaylist( WPARAM wParam, LPARAM lParam )
-{
-	// if its the library: player took control
-	// of the playlist. get a copy of it back
-	// so when user clicks "Library" again, he
-	// is displayed his last known results...
-	if ( (int)wParam == MUSIK_SOURCES_TYPE_LIBRARY )
-	{
-		m_LibPlaylist = new CmusikPlaylist();
-
-		if ( m_Prefs->LibraryShowsAllSongs() )
-			m_Library->GetAllSongs( *m_LibPlaylist );
-		else
-			*m_LibPlaylist = *m_Player->GetPlaylist();
-	}
-
-	// player just took ownership of us! thats ok,
-	// we were only temporary, anyway.
-	if ( (int)wParam == MUSIK_PLAYLIST_TYPE_STANDARD )
-		m_StdPlaylist = new CmusikPlaylist();
-
-	m_wndSources->GetCtrl()->FocusNowPlaying();
-	ShowSelectionBoxes( FALSE );
-	
 	return 0L;
 }
 
@@ -1827,8 +1775,11 @@ void CMainFrame::OnUpdateViewSources(CCmdUI *pCmdUI)
 
 ///////////////////////////////////////////////////
 
-void CMainFrame::ShowSelectionBoxes( BOOL show )
+void CMainFrame::ShowSelectionBoxes( bool show )
 {
+	if ( m_SelBoxesVisible == show )
+		return;
+
 	if ( show && !m_SelBoxesVisible )
 		CSizingControlBar::GlobalLoadState( this, _T( "musikProfile" ) );
 	else
@@ -2029,20 +1980,12 @@ void CMainFrame::OnPlaybackmodeIntro()
 
 void CMainFrame::OnUnsynchronizedtagsView()
 {
-	// get the songs
-	if ( !m_LibPlaylist )
-		m_LibPlaylist = new CmusikPlaylist();
-
 	m_Library->GetDirtySongs( m_LibPlaylist, true );
-
-	// make sure the correct playlist is set
-	if ( m_wndView->GetCtrl()->GetPlaylist() != m_LibPlaylist )
-		m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, MUSIK_SOURCES_TYPE_LIBRARY );
+	m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, MUSIK_PLAYLIST_TYPE_STANDARD );
 
 	// update the windows
 	m_wndView->GetCtrl()->UpdateV();
 	m_wndView->GetCtrl()->HideSortArrow();
-	m_wndSources->GetCtrl()->FocusLibrary();
 }
 
 ///////////////////////////////////////////////////
@@ -2593,12 +2536,11 @@ void CMainFrame::OnFileClearlibrary()
 
 	// send an event that the library
 	// was selected...
-	if ( m_LibPlaylist )
-		delete m_LibPlaylist;
+	m_LibPlaylist->Clear();
 
 	m_wndSources->GetCtrl()->Reset();
 	m_wndSources->GetCtrl()->FocusLibrary();
-	m_LibPlaylist = new CmusikPlaylist();
+	m_LibPlaylist->Clear();
 	OnSourcesLibrary( NULL, NULL );
 	ResetSelBoxes();
 
@@ -2684,7 +2626,7 @@ LRESULT CMainFrame::OnSelBoxDelSel( WPARAM wParam, LPARAM lParam )
 	if ( partial_query.Left( 1 ) == _T( "W" ) )
 		sub_query = false;
 
-	m_Library->GetRelatedSongs( partial_query, pSel->GetType(), *playlist, sub_query );
+	m_Library->GetRelatedSongs( partial_query, pSel->GetType(), *playlist, sub_query, UseTempTable() );
 
 	// send delete command to library and wait
 	m_Library->DeleteSongs( *playlist, from_computer );	

@@ -381,8 +381,6 @@ BEGIN
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,112,125,10
     CTEXT           "All users should consider setting up the following options:",
                     IDC_STATIC,12,11,186,13
-    CONTROL         "Treat playlists as separate libraries",IDC_CHECK5,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,129,127,10
 END
 
 IDD_PROPPAGE_SOUND_DRIVER DIALOGEX 0, 0, 210, 154

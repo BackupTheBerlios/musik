@@ -494,7 +494,7 @@ void CmusikSelectionCtrl::UpdateV()
 		m_Items.push_back( _T( "1" ) );
 	}
 	else
-		m_Library->GetAllDistinct( m_Type, m_Items );
+		m_Library->GetAllDistinct( m_Type, m_Items, true, UseTempTable() );
 
 	// get Select by...
 	CmusikString top;
@@ -524,10 +524,10 @@ void CmusikSelectionCtrl::UpdateV()
 
 ///////////////////////////////////////////////////
 
-bool CmusikSelectionCtrl::IsPlaylistSel()
+bool CmusikSelectionCtrl::UseTempTable()
 {
 	CMainFrame* ptrMain = (CMainFrame*)AfxGetApp()->m_pMainWnd;
-	return ptrMain->IsPlaylistSel();
+	return ptrMain->UseTempTable();
 }
 
 ///////////////////////////////////////////////////
@@ -541,7 +541,7 @@ void CmusikSelectionCtrl::UpdateV( CmusikString query )
 	if ( query.Left( 1 ) == "W" )
 		sub_query = false;
 
-	m_Library->GetRelatedItems( query, m_Type, m_Items, sub_query );
+	m_Library->GetRelatedItems( query, m_Type, m_Items, sub_query, UseTempTable() );
 
 	// format "Select all..."
 	CmusikString top;
@@ -1150,7 +1150,7 @@ void CmusikSelectionCtrl::BeginDrag( bool right_button )
 	CmusikStringArray files;
 	CmusikStringArray sel;
 	GetSelItems( sel );
-	m_Library->GetRelatedItems( GetType(), sel, MUSIK_LIBRARY_TYPE_FILENAME, files );
+	m_Library->GetRelatedItems( GetType(), sel, MUSIK_LIBRARY_TYPE_FILENAME, files, UseTempTable() );
 
 	if ( !files.size() )
 		return;

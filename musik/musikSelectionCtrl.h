@@ -204,7 +204,7 @@ protected:
 	// misc
 	void InitFonts();
 	void SetWindowCap();
-	bool IsPlaylistSel();
+	bool UseTempTable();
 
 	// drag / drop id
 	bool m_IsWinNT;

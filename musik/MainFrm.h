@@ -154,10 +154,11 @@ public:
 	void SynchronizeDirs();
 	void RestoreFromTray();
 	void SaveWindowState();
-	void RequeryPlaylist( CmusikSelectionCtrl* sender = NULL, bool focus_library = true );
+	void RequeryPlaylist( CmusikSelectionCtrl* sender = NULL );
 	void RequerySelBoxes( CmusikSelectionCtrl* sender = NULL, bool deselect_items = true, bool only_if_parent_exists = false );
 	CmusikString GetSelQuery( CmusikSelectionCtrl* target = NULL );
-	bool IsPlaylistSel(){ return m_PlaylistSel; }
+	bool UseTempTable();
+	int  GetSelPlaylistType();
 
 	// tray icon
 	void ShowTrayIcon();
@@ -202,7 +203,6 @@ protected:
 
 	// current playlist, only a pointer
 	CmusikPlaylist* m_LibPlaylist;
-	CmusikPlaylist* m_StdPlaylist;
 
 	// library, player, and prefs
 	CmusikLibrary* m_Library;
@@ -221,7 +221,7 @@ protected:
 	CmusikSelBarArray		m_wndSelectionBars;
 	CmusikEqualizerBar*		m_wndEqualizer;
 
-	void ShowSelectionBoxes( BOOL show = TRUE );
+	void ShowSelectionBoxes( bool show = true );
 
 	// utility functions
 	void DockBarLeftOf( CSizingControlBar* Bar, CSizingControlBar* LeftOf );
@@ -242,7 +242,6 @@ protected:
 	afx_msg LRESULT OnDragStart( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnDragEnd( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSelBoxEditCommit( WPARAM wParam, LPARAM lParam );
-	afx_msg LRESULT OnPlayerNewPlaylist( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnBatchAddProgress( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnRemoveOldProgress( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnTaskEnd( WPARAM wParam, LPARAM lParam );
