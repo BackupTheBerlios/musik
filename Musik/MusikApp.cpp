@@ -137,7 +137,7 @@ void MusikApp::CheckVersion()
 	{
 		sVersion = ReadVersion();
 
-		if ( sVersion == wxT( "Musik 0.1.3" ) )
+		if ( sVersion == wxT( "Musik 0.1.3" ) || sVersion == wxT( "Musik 0.1.3 CVS" ) )
 		{
 			wxMessageBox( wxT( "Musik has detected 0.1.3 was previously installed. Due to the changes in the playlist display preferences, your columns will be reset. We apologize for any inconvenience this may cause." ), MUSIK_VERSION, wxICON_INFORMATION );
 			g_Prefs.ResetColumns();
