@@ -18,7 +18,7 @@
 #ifndef WX_PRECOMP
 	#include "wx/wx.h"
 #endif
-
+#include "../ThreadController.h"
 
 
 class MusikFrame;
@@ -41,17 +41,14 @@ public:
 
 	void CrossfaderAbort		();
 	void CrossfaderStop			();
-	void WorkerInc				(){ m_Worker++; };
-	void WorkerDec				(){ m_Worker--; };
-	int  GetWorkerCount			(){ return m_Worker; }
-
-	bool IsCrossfaderActive		(){ return pCrossfader != NULL; }
+	
+	bool IsCrossfaderActive		(){ return m_CrossfaderController.IsAlive(); }
 
 private:
 
 	int m_Worker;
 
-	MusikCrossfaderThread *pCrossfader;
+	CThreadController 	 m_CrossfaderController;
 	wxCriticalSection m_critCrossfader;
 
 };

@@ -666,7 +666,7 @@ void CMusikPlayer::ClearOldStreams( bool bClearAll )
 {
 	if (!bClearAll && g_FaderThread )
 	{
-		if ( g_FaderThread->GetWorkerCount() )
+		if ( g_FaderThread->IsCrossfaderActive() )
 			return;
 	}
 	if(g_FaderThread)
@@ -1239,8 +1239,8 @@ bool CMusikPlayer::_CurrentSongNeedsMPEGACCURATE()
 {
 	return (wxGetApp().Prefs.bUse_MPEGACCURATE_ForMP3VBRFiles
 			&&(m_SongIndex <  m_Playlist.GetCount())
-			&& m_CurrentSong.MetaData.bVBR
-			&& (m_CurrentSong.MetaData.eFormat == MUSIK_FORMAT_MP3) );
+			&& m_CurrentSong.MetaData.bVBR 
+			&& (m_CurrentSong.MetaData.eFormat == MUSIK_FORMAT_MP3) ); 
 	//  mp3 vbr files needs FSOUND_MPEGACCURATE flag, but takes much too long for other filetypes
 }
 bool CMusikPlayer::_CurrentSongIsNetStream()
@@ -1289,8 +1289,20 @@ int CMusikPlayer::GetFileDuration( wxString sFilename, int nType )
 		return ( duration / 1000 );	
 }
 
-void CMusikPlayer::SetFadeComplete()
+void CMusikPlayer::OnFadeCompleteEvt( wxCommandEvent& event )
 {
+	long FadeType = event.GetExtraLong();
+	//-------------------------------------------------//
+	//--- finalize whatever type of fade was going	---//
+	//--- on.										---//
+	//-------------------------------------------------//
+	if ( FadeType == CROSSFADE_STOP || FadeType == CROSSFADE_EXIT )
+		FinalizeStop();
+	else if ( FadeType == CROSSFADE_PAUSE )
+		FinalizePause();
+	else if ( FadeType == CROSSFADE_RESUME )
+		FinalizeResume();
+
 	m_Fading = false; 
 	ClearOldStreams();
 }
@@ -1298,7 +1310,7 @@ void CMusikPlayer::SetFadeComplete()
 void CMusikPlayer::SetFadeStart()
 {
 	m_BeginFade = true;
-	m_Fading = true;
+	m_Fading = true; 
 }
 
 
@@ -1321,7 +1333,6 @@ void CMusikPlayer::AddToPlaylist( CMusikSongArray & songstoadd ,bool bPlayFirstA
 		}
 		if(bPlayFirstAdded)
 		{
-			Stop();
 			m_SongIndex = plsize;
 			m_bSuppressAutomaticSongPicking = true;
 			Play(m_SongIndex);
@@ -1344,7 +1355,6 @@ void CMusikPlayer::InsertToPlaylist( CMusikSongArray & songstoadd ,bool bPlayFir
 			m_Playlist.Add(songstoadd.Detach(0));
 		if(bPlayFirstInserted)
 		{
-			Stop();
 			m_SongIndex = plsize;
 			m_bSuppressAutomaticSongPicking = true;
 			Play(m_SongIndex);
@@ -1361,7 +1371,6 @@ void CMusikPlayer::InsertToPlaylist( CMusikSongArray & songstoadd ,bool bPlayFir
 	}
 	if(bPlayFirstInserted)
 	{
-		Stop();
 		m_SongIndex++;
 		m_bSuppressAutomaticSongPicking = true;
 		Play(m_SongIndex);
@@ -1381,7 +1390,7 @@ void CMusikPlayer::RemovePlaylistEntry( size_t index )
 		if(IsPlaying() && !IsPaused() && (m_SongIndex < m_Playlist.GetCount() - 1))
 			_PostPlayRestart();
 		else
-		Stop();
+			Stop();
 	}
 	m_Playlist.RemoveAt(index);
 }

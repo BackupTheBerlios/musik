@@ -651,22 +651,28 @@ void CActivityBox::GetSelectedSongs( CMusikSongArray& array )
 			//--- corresponding entries are selected in the	---//
 			//--- other box?								---//
 			//-------------------------------------------------//
-			sParent = sParentType + wxT(" = "); 
-			for ( size_t i = 0; i < aParentSel.GetCount(); i++ )
+			if(aParentSel.GetCount() > 0)
 			{
-				aParentSel.Item( i ).Replace( wxT( "'" ), wxT( "''" ), true );
-				sParent += wxT("'");
-				sParent += aParentSel.Item( i );
-				sParent += wxT("' and " );
-				sParent += sThis;
-				if ( i != ( aParentSel.GetCount() - 1 ) )
-				//--- not last item, so format string for another ---//
+				sParent = sParentType + wxT(" = "); 
+				for ( size_t i = 0; i < aParentSel.GetCount(); i++ )
 				{
-					sParent += wxT(" or ");
-					sParent += sParentType;
-					sParent += wxT(" = ");
+					aParentSel.Item( i ).Replace( wxT( "'" ), wxT( "''" ), true );
+					sParent += wxT("'");
+					sParent += aParentSel.Item( i );
+					sParent += wxT("' and " );
+					sParent += sThis;
+					if ( i != ( aParentSel.GetCount() - 1 ) )
+					//--- not last item, so format string for another ---//
+					{
+						sParent += wxT(" or ");
+						sParent += sParentType;
+						sParent += wxT(" = ");
+					}
 				}
 			}
+			else
+			  sParent = sThis;
+
 			wxGetApp().Library.QuerySongsWhere( sParent, array ,true);
 			return;
 		}

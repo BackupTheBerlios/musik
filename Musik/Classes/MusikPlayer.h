@@ -93,7 +93,7 @@ public:
 	//--- events threads may use ---//
 	//------------------------------//
 	void OnNextSongEvt		( wxCommandEvent& WXUNUSED(event) ){ NextSong(); SetStartingNext( false );	}
-	void OnFadeCompleteEvt	( wxCommandEvent& WXUNUSED(event) ){ SetFadeComplete();						}
+	void OnFadeCompleteEvt	( wxCommandEvent& event );
 	void OnPlayerStop		( wxCommandEvent& WXUNUSED(event) ){ FinalizeStop();						}
 	void OnPlayRestart		( wxCommandEvent& event );	
 	void OnPlayerResume		( wxCommandEvent& WXUNUSED(event) ){ FinalizeResume();						}
@@ -154,7 +154,6 @@ public:
 	//------------//
 	//--- sets ---//
 	//------------//
-	void SetFadeComplete	( );
 	void SetFadeBegin		( ){ m_Fading = true; }
 	void SetFadeStart		( );
 	void SetPlaymode		( EMUSIK_PLAYMODE pm );

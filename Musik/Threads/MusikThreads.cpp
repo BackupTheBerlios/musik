@@ -35,7 +35,6 @@
 MusikFaderThread::MusikFaderThread()
  :wxThread(wxTHREAD_JOINABLE)
 {
-	pCrossfader = NULL;
 	m_Worker = 0;
 }
 
@@ -43,27 +42,24 @@ MusikFaderThread::MusikFaderThread()
 void MusikFaderThread::CrossfaderAbort()
 {
 	{
-	wxCriticalSectionLocker locker( m_critCrossfader) ;
-	if ( pCrossfader )
-	{
-		//---------------------------------------------------------//
-		//--- Abort() tells fader NOT to clean up old streams	---//
-		//---------------------------------------------------------//
-		pCrossfader->Abort();		
+		wxCriticalSectionLocker locker( m_critCrossfader) ;
+		if ( m_CrossfaderController.IsAlive() )
+		{
+			//---------------------------------------------------------//
+			//--- Abort() tells fader NOT to clean up old streams	---//
+			//---------------------------------------------------------//
+			((MusikCrossfaderThread *)m_CrossfaderController.Thread())->Abort();		
+		}
 	}
-}
 	CrossfaderStop();
 }
 
 void MusikFaderThread::CrossfaderStop()
 {
 	wxCriticalSectionLocker locker( m_critCrossfader);
-	if ( pCrossfader )
+	if ( m_CrossfaderController.IsAlive() )
 	{
-		pCrossfader->Delete();
-		pCrossfader->Wait();
-		delete pCrossfader;
-		pCrossfader = NULL;
+		m_CrossfaderController.Cancel();
 	}
 }
 
@@ -73,10 +69,8 @@ void MusikFaderThread::StartNew()
 	//--------------------------------//
 	//--- fire up a new crossfader ---//
 	//--------------------------------//
-	wxASSERT(pCrossfader == NULL);
-	pCrossfader = new MusikCrossfaderThread( this );
-	pCrossfader->Create();
-	pCrossfader->Run();
+	wxASSERT( m_CrossfaderController.IsAlive() == false);
+	m_CrossfaderController.AttachAndRun( new MusikCrossfaderThread( this ));
 }
 
 void *MusikFaderThread::Entry()
@@ -171,7 +165,6 @@ MusikCrossfaderThread::MusikCrossfaderThread( MusikFaderThread *pParent )
 	m_Parent		= pParent;
 	m_StopPlayer	= false;
 	m_Aborted		= false;
-	m_Parent->WorkerInc();
 }
 
 void MusikCrossfaderThread::Abort()
@@ -332,7 +325,6 @@ void *MusikCrossfaderThread::Entry()
 void MusikCrossfaderThread::OnExit()
 {
 	
-	m_Parent->WorkerDec();
 	//-------------------------------------------------//
 	//--- if we ended naturally, that means no		---//
 	//--- other crossfader spawned. tell the player	---//
@@ -341,25 +333,9 @@ void MusikCrossfaderThread::OnExit()
 	//-------------------------------------------------//
 	if ( !m_Aborted )
 	{
-		//-------------------------------------------------//
-		//--- finalize whatever type of fade was going	---//
-		//--- on.										---//
-		//-------------------------------------------------//
-		if ( m_FadeType == CROSSFADE_STOP || m_FadeType == CROSSFADE_EXIT )
-			wxGetApp().Player.FinalizeStop();
-		else if ( m_FadeType == CROSSFADE_PAUSE )
-			wxGetApp().Player.FinalizePause();
-		else if ( m_FadeType == CROSSFADE_RESUME )
-			wxGetApp().Player.FinalizeResume();
-
-		Yield();
-		if(m_FadeType != CROSSFADE_EXIT)// if we would send the FadeCompleteEvt on exit we get in trouble with the CMusikPlayer::ClearOldStreams() which tries to stop the fader thread( while it waits the ExitCompleteEvt is dispatched by wx and g_FaderThread is deleted, if CrossfaderStop returns from wait it will crash)
-		{
-			wxCommandEvent FadeCompleteEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYER_FADE_COMPLETE );	
-			wxPostEvent( &wxGetApp().Player, FadeCompleteEvt );
-		}
-		Yield();
-
+		wxCommandEvent FadeCompleteEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYER_FADE_COMPLETE );	
+		FadeCompleteEvt.SetExtraLong(m_FadeType);
+		wxPostEvent( &wxGetApp().Player, FadeCompleteEvt );
 	}
 	//-------------------------------------------------//
 	//--- if the fade type was an OnExit type, then	---//

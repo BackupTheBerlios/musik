@@ -39,6 +39,7 @@ public:
 	{
 		Empty();
 	}
+	wxThread * Thread() { return m_pThread;}
 	wxThread::ExitCode Join()
 	{
 		wxASSERT(m_pThread);
