@@ -4,12 +4,12 @@
 
 ///////////////////////////////////////////////////
 
-#include "3rdparty/PropTree.h"
+#include "3rdparty/MusikPropTree.h"
 #include <vector>
 
 ///////////////////////////////////////////////////
 
-typedef std::vector<CPropTreeItem*> CMusikSourcesItemPtrArray;
+typedef std::vector<CMusikPropTreeItem*> CMusikSourcesItemPtrArray;
 
 ///////////////////////////////////////////////////
 
@@ -18,7 +18,7 @@ class CMusikSourcesDropTarget;
 
 ///////////////////////////////////////////////////
 
-class CMusikSourcesCtrl : public CPropTree
+class CMusikSourcesCtrl : public CMusikPropTree
 {
 public:
 
@@ -28,7 +28,6 @@ public:
 
 	// actions
 	void KillFocus( bool redraw = true );
-
 	void FocusLibrary();
 	void FocusNowPlaying();
 
@@ -45,9 +44,9 @@ protected:
 
 	// create default headers
 	void InitItems();
-	CPropTreeItem* m_LibrariesRoot;
-	CPropTreeItem* m_StdPlaylistRoot;
-	CPropTreeItem* m_DynPlaylistRoot;
+	CMusikPropTreeItem* m_LibrariesRoot;
+	CMusikPropTreeItem* m_StdPlaylistRoot;
+	CMusikPropTreeItem* m_DynPlaylistRoot;
 
 	// loading the items
 	void LoadLibraries();

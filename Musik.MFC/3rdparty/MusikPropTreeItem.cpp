@@ -26,9 +26,10 @@
 #include "stdafx.h"
 
 #include "../../Musik.Core/include/MusikPlaylist.h"
+#include "../MusikPrefs.h"
 
-#include "PropTree.h"
-#include "PropTreeItem.h"
+#include "MusikPropTree.h"
+#include "MusikPropTreeItem.h"
 
 ///////////////////////////////////////////////////
 
@@ -78,10 +79,9 @@ static void _DrawExpand(HDC hdc, LONG x, LONG y, BOOL bExpand, BOOL bFill)
 
 ///////////////////////////////////////////////////
 
-CPropTreeItem::CPropTreeItem() :
+CMusikPropTreeItem::CMusikPropTreeItem() :
 	m_pProp(NULL),
 	m_sLabel(_T("")),
-	m_sInfo(_T("")),
 	m_loc(0,0),
 	m_rc(0,0,0,0),
 	m_lParam(0),
@@ -101,7 +101,7 @@ CPropTreeItem::CPropTreeItem() :
 
 ///////////////////////////////////////////////////
 
-CPropTreeItem::~CPropTreeItem()
+CMusikPropTreeItem::~CMusikPropTreeItem()
 {
 	if ( m_PlaylistInfo )
 		delete m_PlaylistInfo;
@@ -109,76 +109,68 @@ CPropTreeItem::~CPropTreeItem()
 
 ///////////////////////////////////////////////////
 
-void CPropTreeItem::SetPlaylistInfo( const CMusikPlaylistInfo info )
+void CMusikPropTreeItem::SetPlaylistInfo( const CMusikPlaylistInfo info )
 {
 	if ( m_PlaylistInfo )
 	{
 		*m_PlaylistInfo = info;
 
 		SetLabelText( m_PlaylistInfo->GetName() );
-		SetInfoText( _T( "" ) );
 	}
 }
 
 ///////////////////////////////////////////////////
 
-int CPropTreeItem::GetPlaylistType()
+int CMusikPropTreeItem::GetPlaylistType()
 {
 	return m_PlaylistInfo->GetType();
 }
 
 ///////////////////////////////////////////////////
 
-int CPropTreeItem::GetPlaylistID()
+int CMusikPropTreeItem::GetPlaylistID()
 {
 	return m_PlaylistInfo->GetID();
 }
 
 ///////////////////////////////////////////////////
 
-BOOL CPropTreeItem::IsExpanded()
+BOOL CMusikPropTreeItem::IsExpanded()
 {
 	return (m_dwState & TreeItemExpanded) ? TRUE : FALSE;
 }
 
 ///////////////////////////////////////////////////
 
-BOOL CPropTreeItem::IsSelected()
+BOOL CMusikPropTreeItem::IsSelected()
 {
 	return (m_dwState & TreeItemSelected) ? TRUE : FALSE;
 }
 
 ///////////////////////////////////////////////////
 
-BOOL CPropTreeItem::IsReadOnly()
-{
-	return (m_dwState & TreeItemReadOnly) ? TRUE : FALSE;
-}
-
-///////////////////////////////////////////////////
-
-BOOL CPropTreeItem::IsMouseOver()
+BOOL CMusikPropTreeItem::IsMouseOver()
 {
 	return m_bMouseOver;
 }
 
 ///////////////////////////////////////////////////
 
-void CPropTreeItem::SetMouseOver( BOOL bMouseOver )
+void CMusikPropTreeItem::SetMouseOver( BOOL bMouseOver )
 {
 	m_bMouseOver = bMouseOver;
 }
 
 ///////////////////////////////////////////////////
 
-BOOL CPropTreeItem::IsActivated()
+BOOL CMusikPropTreeItem::IsActivated()
 {
 	return (m_dwState & TreeItemActivated) ? TRUE : FALSE;
 }
 
 ///////////////////////////////////////////////////
 
-void CPropTreeItem::Select(BOOL bSelect)
+void CMusikPropTreeItem::Select(BOOL bSelect)
 {
 	if (bSelect)
 		m_dwState |= TreeItemSelected;
@@ -188,7 +180,7 @@ void CPropTreeItem::Select(BOOL bSelect)
 
 ///////////////////////////////////////////////////
 
-void CPropTreeItem::Expand(BOOL bExpand)
+void CMusikPropTreeItem::Expand(BOOL bExpand)
 {
 	if (bExpand)
 		m_dwState |= TreeItemExpanded;
@@ -198,24 +190,14 @@ void CPropTreeItem::Expand(BOOL bExpand)
 
 ///////////////////////////////////////////////////
 
-void CPropTreeItem::ReadOnly(BOOL bReadOnly)
-{
-	if (bReadOnly)
-		m_dwState |= TreeItemReadOnly;
-	else
-		m_dwState &= ~TreeItemReadOnly;
-}
-
-///////////////////////////////////////////////////
-
-BOOL CPropTreeItem::HitExpand(const POINT& pt)
+BOOL CMusikPropTreeItem::HitExpand(const POINT& pt)
 {
 	return m_rcExpand.PtInRect(pt);
 }
 
 ///////////////////////////////////////////////////
 
-BOOL CPropTreeItem::IsRootLevel()
+BOOL CMusikPropTreeItem::IsRootLevel()
 {
 	ASSERT(m_pProp!=NULL);
 	return GetParent() == m_pProp->GetRootItem();
@@ -223,9 +205,9 @@ BOOL CPropTreeItem::IsRootLevel()
 
 ///////////////////////////////////////////////////
 
-LONG CPropTreeItem::GetTotalHeight()
+LONG CMusikPropTreeItem::GetTotalHeight()
 {
-	CPropTreeItem* pItem;
+	CMusikPropTreeItem* pItem;
 	LONG nHeight;
 
 	nHeight = GetHeight();
@@ -241,56 +223,42 @@ LONG CPropTreeItem::GetTotalHeight()
 
 ///////////////////////////////////////////////////
 
-void CPropTreeItem::SetLabelText(LPCTSTR sLabel)
+void CMusikPropTreeItem::SetLabelText(LPCTSTR sLabel)
 {
 	m_sLabel = sLabel;
 }
 
 ///////////////////////////////////////////////////
 
-LPCTSTR CPropTreeItem::GetLabelText()
+LPCTSTR CMusikPropTreeItem::GetLabelText()
 {
 	return m_sLabel;
 }
 
 ///////////////////////////////////////////////////
 
-void CPropTreeItem::SetInfoText(LPCTSTR sInfo)
-{
-	m_sInfo = sInfo;
-}
-
-///////////////////////////////////////////////////
-
-LPCTSTR CPropTreeItem::GetInfoText()
-{
-	return m_sInfo;
-}
-
-///////////////////////////////////////////////////
-
-void CPropTreeItem::SetCtrlID(UINT nCtrlID)
+void CMusikPropTreeItem::SetCtrlID(UINT nCtrlID)
 {
 	m_nCtrlID = nCtrlID;
 }
 
 ///////////////////////////////////////////////////
 
-UINT CPropTreeItem::GetCtrlID()
+UINT CMusikPropTreeItem::GetCtrlID()
 {
 	return m_nCtrlID;
 }
 
 ///////////////////////////////////////////////////
 
-LONG CPropTreeItem::GetHeight()
+LONG CMusikPropTreeItem::GetHeight()
 {
 	return PROPTREEITEM_DEFHEIGHT;
 }
 
 ///////////////////////////////////////////////////
 
-LPARAM CPropTreeItem::GetItemValue()
+LPARAM CMusikPropTreeItem::GetItemValue()
 {
 	// no items are assocatied with this type
 	return 0L;
@@ -298,35 +266,35 @@ LPARAM CPropTreeItem::GetItemValue()
 
 ///////////////////////////////////////////////////
 
-void CPropTreeItem::SetItemValue(LPARAM)
+void CMusikPropTreeItem::SetItemValue(LPARAM)
 {
 	// no items are assocatied with this type
 }
 
 ///////////////////////////////////////////////////
 
-void CPropTreeItem::OnMove()
+void CMusikPropTreeItem::OnMove()
 {
 	// no attributes, do nothing
 }
 
 ///////////////////////////////////////////////////
 
-void CPropTreeItem::OnRefresh()
+void CMusikPropTreeItem::OnRefresh()
 {
 	// no attributes, do nothing
 }
 
 ///////////////////////////////////////////////////
 
-void CPropTreeItem::OnCommit()
+void CMusikPropTreeItem::OnCommit()
 {
 	// no attributes, do nothing
 }
 
 ///////////////////////////////////////////////////
 
-void CPropTreeItem::Activate()
+void CMusikPropTreeItem::Activate()
 {
 	m_bActivated = TRUE;
 	m_bCommitOnce = FALSE;
@@ -336,14 +304,14 @@ void CPropTreeItem::Activate()
 
 ///////////////////////////////////////////////////
 
-void CPropTreeItem::Deactivate()
+void CMusikPropTreeItem::Deactivate()
 {
 	CommitChanges();
 }
 
 ///////////////////////////////////////////////////
 
-void CPropTreeItem::CommitChanges()
+void CMusikPropTreeItem::CommitChanges()
 {
 	m_bActivated = FALSE;
 
@@ -362,63 +330,63 @@ void CPropTreeItem::CommitChanges()
 
 ///////////////////////////////////////////////////
 
-void CPropTreeItem::OnActivate()
+void CMusikPropTreeItem::OnActivate()
 {
 	// no attributes, do nothing
 }
 
 ///////////////////////////////////////////////////
 
-void CPropTreeItem::SetPropOwner(CPropTree* pProp)
+void CMusikPropTreeItem::SetPropOwner(CMusikPropTree* pProp)
 {
 	m_pProp = pProp;
 }
 
 ///////////////////////////////////////////////////
 
-const POINT& CPropTreeItem::GetLocation()
+const POINT& CMusikPropTreeItem::GetLocation()
 {
 	return m_loc;
 }
 
 ///////////////////////////////////////////////////
 
-CPropTreeItem* CPropTreeItem::GetParent()
+CMusikPropTreeItem* CMusikPropTreeItem::GetParent()
 {
 	return m_pParent;
 }
 
 ///////////////////////////////////////////////////
 
-CPropTreeItem* CPropTreeItem::GetSibling()
+CMusikPropTreeItem* CMusikPropTreeItem::GetSibling()
 {
 	return m_pSibling;
 }
 
 ///////////////////////////////////////////////////
 
-CPropTreeItem* CPropTreeItem::GetChild()
+CMusikPropTreeItem* CMusikPropTreeItem::GetChild()
 {
 	return m_pChild;
 }
 
 ///////////////////////////////////////////////////
 
-CPropTreeItem* CPropTreeItem::GetNextVisible()
+CMusikPropTreeItem* CMusikPropTreeItem::GetNextVisible()
 {
 	return m_pVis;
 }
 
 ///////////////////////////////////////////////////
 
-void CPropTreeItem::SetParent(CPropTreeItem* pParent)
+void CMusikPropTreeItem::SetParent(CMusikPropTreeItem* pParent)
 {
 	m_pParent = pParent;
 }
 
 ///////////////////////////////////////////////////
 
-void CPropTreeItem::SetSibling(CPropTreeItem* pSibling)
+void CMusikPropTreeItem::SetSibling(CMusikPropTreeItem* pSibling)
 {
 	m_pSibling = pSibling;
 }
@@ -426,21 +394,21 @@ void CPropTreeItem::SetSibling(CPropTreeItem* pSibling)
 ///////////////////////////////////////////////////
 
 
-void CPropTreeItem::SetChild(CPropTreeItem* pChild)
+void CMusikPropTreeItem::SetChild(CMusikPropTreeItem* pChild)
 {
 	m_pChild = pChild;
 }
 
 ///////////////////////////////////////////////////
 
-void CPropTreeItem::SetNextVisible(CPropTreeItem* pVis)
+void CMusikPropTreeItem::SetNextVisible(CMusikPropTreeItem* pVis)
 {
 	m_pVis = pVis;
 }
 
 ///////////////////////////////////////////////////
 
-LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
+LONG CMusikPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 {
 	CPoint pt;
 	LONG nTotal, nCol, ey;
@@ -455,8 +423,8 @@ LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 	m_loc = CPoint(x, y);
 
 	// store the items rectangle position
-	m_rc.SetRect(m_pProp->GetOrigin().x + PROPTREEITEM_SPACE, m_loc.y, rc.right, m_loc.y + GetHeight()-1);
-	m_rc.OffsetRect(0, -m_pProp->GetOrigin().y);
+	m_rc.SetRect(PROPTREEITEM_SPACE, m_loc.y, rc.right, m_loc.y + GetHeight()-1);
+	m_rc.OffsetRect(0, -m_pProp->GetOrigin());
 
 	// init temp drawing variables
 	nTotal = GetHeight();
@@ -464,8 +432,8 @@ LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 
 	// convert item coordinates to screen coordinates
 	pt = m_loc;
-	pt.y -= m_pProp->GetOrigin().y;
-	nCol = m_pProp->GetOrigin().x;
+	pt.y -= m_pProp->GetOrigin();
+	nCol = 0;
 
 	// draws the label the whole size
 	drc.SetRect(pt.x + PROPTREEITEM_EXPANDCOLUMN, pt.y, rc.right, pt.y + nTotal);
@@ -516,7 +484,7 @@ LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 		m_rcExpand.bottom = m_rcExpand.top + PROPTREEITEM_EXPANDBOX - 1;
 
 		ir = m_rcExpand;
-		ir.OffsetRect(0, -m_pProp->GetOrigin().y);
+		ir.OffsetRect(0, -m_pProp->GetOrigin());
 		_DrawExpand( pDC->m_hDC, ir.left, ir.top, IsExpanded(), true );
 	}
 	else
@@ -533,7 +501,7 @@ LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 	{
 		if (IsRootLevel() || IsSelected())
 		{
-			pDC->SelectObject( CPropTree::GetBoldFont() );
+			pDC->SelectObject( CMusikPropTree::GetBoldFont() );
 			if ( IsRootLevel() )
 				pDC->SetTextColor( m_pProp->m_Prefs->MUSIK_COLOR_CAPTIONTEXT );
 			else
@@ -541,7 +509,7 @@ LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 		}
 		else
 		{
-			pDC->SelectObject( CPropTree::GetNormalFont() );
+			pDC->SelectObject( CMusikPropTree::GetNormalFont() );
 			pDC->SetTextColor( m_pProp->m_Prefs->MUSIK_COLOR_LISTCTRLTEXT );
 		}
 
@@ -595,7 +563,7 @@ LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 	{
 		y += nTotal;
 
-		CPropTreeItem* pNext;
+		CMusikPropTreeItem* pNext;
 
 		for (pNext = GetChild(); pNext; pNext = pNext->GetSibling())
 		{
@@ -610,7 +578,7 @@ LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 
 ///////////////////////////////////////////////////
 
-void CPropTreeItem::DrawAttribute(CDC*, const RECT&)
+void CMusikPropTreeItem::DrawAttribute(CDC*, const RECT&)
 {
 	// no attributes are assocatied with this type
 }

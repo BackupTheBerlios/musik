@@ -171,25 +171,19 @@
 						RelativePath=".\MusikSourcesDropTarget.h">
 					</File>
 					<Filter
-						Name="CPropTree"
+						Name="CMusikPropTree"
 						Filter="">
 						<File
-							RelativePath=".\3rdparty\PropTree.cpp">
+							RelativePath=".\3rdparty\MusikPropTree.cpp">
 						</File>
 						<File
-							RelativePath=".\3rdparty\PropTree.h">
+							RelativePath=".\3rdparty\MusikPropTree.h">
 						</File>
 						<File
-							RelativePath=".\3rdparty\PropTreeItem.cpp">
+							RelativePath=".\3rdparty\MusikPropTreeItem.cpp">
 						</File>
 						<File
-							RelativePath=".\3rdparty\PropTreeItem.h">
-						</File>
-						<File
-							RelativePath=".\3rdparty\PropTreeList.cpp">
-						</File>
-						<File
-							RelativePath=".\3rdparty\PropTreeList.h">
+							RelativePath=".\3rdparty\MusikPropTreeItem.h">
 						</File>
 					</Filter>
 				</Filter>

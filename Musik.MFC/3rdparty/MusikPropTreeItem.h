@@ -27,20 +27,21 @@
 
 ///////////////////////////////////////////////////
 
-class CPropTree;
+class CMusikPropTree;
 class CMusikPlaylistInfo;
 
 ///////////////////////////////////////////////////
 
-class CPropTreeItem
+class CMusikPropTreeItem
 {
 public:
 
 	// construct / destruct
-	CPropTreeItem();
-	virtual ~CPropTreeItem();
+	CMusikPropTreeItem();
+	virtual ~CMusikPropTreeItem();
 
-	// MUSIK SPECIFIC: get the playlist info...
+	// each item has playlist info, including
+	// id and type...
 	void SetPlaylistInfo( const CMusikPlaylistInfo info );
 	CMusikPlaylistInfo* GetPlaylistInfo() { return m_PlaylistInfo; }
 	int GetPlaylistType();
@@ -49,13 +50,11 @@ public:
 	// treeItem states
 	BOOL IsExpanded();
 	BOOL IsSelected();
-	BOOL IsReadOnly();
 	BOOL IsActivated();
 
 	// set states
 	void Select(BOOL bSelect = TRUE);
 	void Expand(BOOL bExpand = TRUE);
-	void ReadOnly(BOOL bReadOnly = TRUE);
 	void SetMouseOver( BOOL bMouseOver = TRUE );
 
 	// returns TRUE if the point is on the expand button
@@ -77,12 +76,6 @@ public:
 
 	// Return the items label text
 	LPCTSTR GetLabelText();
-
-	// Set the items info (description) text
-	void SetInfoText(LPCTSTR sInfo);
-
-	// Get the items info (description) text
-	LPCTSTR GetInfoText();
 
 	// Set the item's ID
 	void SetCtrlID(UINT nCtrlID);
@@ -129,36 +122,33 @@ public:
 	virtual void OnActivate();
 
 	//
-	// Usually only CPropTree should calls these
+	// Usually only CMusikPropTree should calls these
 	//
 
-	void SetPropOwner(CPropTree* pProp);
+	void SetPropOwner(CMusikPropTree* pProp);
 
 	// Return the location of the PropItem
 	const POINT& GetLocation();
 
 	// TreeItem link pointer access
-	CPropTreeItem* GetParent();
-	CPropTreeItem* GetSibling();
-	CPropTreeItem* GetChild();
-	CPropTreeItem* GetNextVisible();
+	CMusikPropTreeItem* GetParent();
+	CMusikPropTreeItem* GetSibling();
+	CMusikPropTreeItem* GetChild();
+	CMusikPropTreeItem* GetNextVisible();
 
 	// misc
-	void SetParent(CPropTreeItem* pParent);
-	void SetSibling(CPropTreeItem* pSibling);
-	void SetChild(CPropTreeItem* pChild);
-	void SetNextVisible(CPropTreeItem* pVis);
+	void SetParent(CMusikPropTreeItem* pParent);
+	void SetSibling(CMusikPropTreeItem* pSibling);
+	void SetChild(CMusikPropTreeItem* pChild);
+	void SetNextVisible(CMusikPropTreeItem* pVis);
 
 protected:
 
-	// CPropTree class that this class belongs
-	CPropTree*			m_pProp;
+	// CMusikPropTree class that this class belongs
+	CMusikPropTree*			m_pProp;
 
 	// TreeItem label name
 	CString				m_sLabel;
-
-	// Descriptive info text
-	CString				m_sInfo;
 
 	// TreeItem location
 	CPoint				m_loc;
@@ -180,8 +170,7 @@ private:
 	{
 		TreeItemSelected =		0x00000001,
 		TreeItemExpanded =		0x00000002,
-		TreeItemActivated =		0x00000010,
-		TreeItemReadOnly =		0x00000020,
+		TreeItemActivated =		0x00000010 // 0x00000020 = next
 	};
 
 	// TreeItem state
@@ -200,10 +189,10 @@ private:
 	CRect				m_rcExpand;
 
 	// link pointers
-	CPropTreeItem*		m_pParent;
-	CPropTreeItem*		m_pSibling;
-	CPropTreeItem*		m_pChild;
-	CPropTreeItem*		m_pVis;
+	CMusikPropTreeItem*		m_pParent;
+	CMusikPropTreeItem*		m_pSibling;
+	CMusikPropTreeItem*		m_pChild;
+	CMusikPropTreeItem*		m_pVis;
 };
 
 ///////////////////////////////////////////////////

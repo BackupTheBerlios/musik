@@ -10,12 +10,12 @@
 
 ///////////////////////////////////////////////////
 
-IMPLEMENT_DYNAMIC( CMusikSourcesCtrl, CPropTree )
+IMPLEMENT_DYNAMIC( CMusikSourcesCtrl, CMusikPropTree )
 
 ///////////////////////////////////////////////////
 
 CMusikSourcesCtrl::CMusikSourcesCtrl( CMusikLibrary* library, CMusikPlayer* player, CMusikPrefs* prefs, UINT dropid )
-	: CPropTree( prefs, library, dropid )
+	: CMusikPropTree( prefs, library, dropid )
 {
 	m_DropTarget = new CMusikSourcesDropTarget( this, dropid );
 
@@ -39,7 +39,7 @@ CMusikSourcesCtrl::~CMusikSourcesCtrl()
 
 ///////////////////////////////////////////////////
 
-BEGIN_MESSAGE_MAP( CMusikSourcesCtrl, CPropTree )
+BEGIN_MESSAGE_MAP( CMusikSourcesCtrl, CMusikPropTree )
 	ON_WM_CREATE()
 	ON_WM_MOUSEMOVE()
 END_MESSAGE_MAP()
@@ -58,7 +58,7 @@ void CMusikSourcesCtrl::InitItems()
 	CMusikPlaylistInfo info;
 
 	info.Set( "Music", -1, -1 );
-	m_LibrariesRoot = InsertItem( new CPropTreeItem() );
+	m_LibrariesRoot = InsertItem( new CMusikPropTreeItem() );
 	m_LibrariesRoot->SetPlaylistInfo( info );
 	m_LibrariesRoot->Expand( true );
 	
@@ -72,7 +72,7 @@ void CMusikSourcesCtrl::InitItems()
 	}
 
 	info.Set( "Standard Playlists", -1, -1 );
-	m_StdPlaylistRoot = InsertItem( new CPropTreeItem() );
+	m_StdPlaylistRoot = InsertItem( new CMusikPropTreeItem() );
 	m_StdPlaylistRoot->SetPlaylistInfo( info );
 	m_StdPlaylistRoot->Expand( true );
 	LoadStdPlaylists();
@@ -85,7 +85,7 @@ void CMusikSourcesCtrl::InitItems()
 	}
 
 	info.Set( "Dynamic Playlists", -1, -1 );
-	m_DynPlaylistRoot = InsertItem( new CPropTreeItem() );
+	m_DynPlaylistRoot = InsertItem( new CMusikPropTreeItem() );
 	m_DynPlaylistRoot->SetPlaylistInfo( info );
 	m_DynPlaylistRoot->Expand( true );
 }
@@ -111,7 +111,7 @@ void CMusikSourcesCtrl::FocusNowPlaying()
 
 int CMusikSourcesCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if ( CPropTree::OnCreate(lpCreateStruct) == -1 )
+	if ( CMusikPropTree::OnCreate(lpCreateStruct) == -1 )
 		return -1;
 
 	if ( m_DropTarget )
@@ -127,17 +127,17 @@ int CMusikSourcesCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 void CMusikSourcesCtrl::LoadLibraries()
 {
 	CMusikPlaylistInfo info;
-	CPropTreeItem* temp;
+	CMusikPropTreeItem* temp;
 
 	// library
 	info.Set( "Library", MUSIK_SOURCES_TYPE_LIBRARY, NULL );
-	temp = InsertItem( new CPropTreeItem(), m_LibrariesRoot );
+	temp = InsertItem( new CMusikPropTreeItem(), m_LibrariesRoot );
 	temp->SetPlaylistInfo( info );
 	m_Libraries.push_back( temp );
 
 	// now playing
 	info.Set( "Now Playing", MUSIK_SOURCES_TYPE_NOWPLAYING, NULL );
-	temp = InsertItem( new CPropTreeItem(), m_LibrariesRoot );
+	temp = InsertItem( new CMusikPropTreeItem(), m_LibrariesRoot );
 	temp->SetPlaylistInfo( info );
 	m_Libraries.push_back( temp );
 }
@@ -154,10 +154,10 @@ void CMusikSourcesCtrl::LoadStdPlaylists()
 	CMusikPlaylistInfoArray items;
 	m_Library->GetAllStdPlaylists( &items );
 
-	CPropTreeItem* temp;
+	CMusikPropTreeItem* temp;
 	for ( size_t i = 0; i < items.size(); i++ )
 	{
-		temp = InsertItem( new CPropTreeItem(), m_StdPlaylistRoot );
+		temp = InsertItem( new CMusikPropTreeItem(), m_StdPlaylistRoot );
 		temp->SetPlaylistInfo( items.at( i ) );
 
 		m_StdPlaylists.push_back( temp );
@@ -195,7 +195,7 @@ void CMusikSourcesCtrl::OnDropFiles(HDROP hDropInfo)
 
 	// see if the drag landed on an existing
 	// playlist, if it did, we'll append
-	CPropTreeItem* pItem = HitTestEx( pos );
+	CMusikPropTreeItem* pItem = HitTestEx( pos );
 
 	// did we actually hit an item?
 	if ( pItem )
@@ -237,7 +237,7 @@ void CMusikSourcesCtrl::OnDropFiles(HDROP hDropInfo)
 
 void CMusikSourcesCtrl::KillFocus( bool redraw )
 {
-	CPropTreeItem* pItem = GetFocusedItem();
+	CMusikPropTreeItem* pItem = GetFocusedItem();
 	if ( pItem )
 	{
 		pItem->Select( FALSE );
@@ -254,5 +254,5 @@ void CMusikSourcesCtrl::OnMouseMove(UINT nFlags, CPoint point)
 {
 	// TODO: Add your message handler code here and/or call default
 
-	CPropTree::OnMouseMove(nFlags, point);
+	CMusikPropTree::OnMouseMove(nFlags, point);
 }
