@@ -133,7 +133,8 @@ enum
 
 #define MUSIK_LIBRARY_OK SQLITE_OK
 #define MUSIK_LIBRARY_ID_EXISTS -2
-#define MUSIK_LIBRARY_NOT_OPEN -3
+#define MUSIK_LIBRARY_NO_ID_EXISTS -3
+#define MUSIK_LIBRARY_NOT_OPEN -4
 
 ///////////////////////////////////////////////////
 
@@ -172,6 +173,11 @@ public:
 	void BeginTransaction();
 	void EndTransaction();
 	int  GetOpenTransactions();
+
+	// functions specifically dealing with the
+	// the temporary song table.
+	void ClearTempSongTable();
+	int  PopulateTempSongTable( CmusikPlaylist& source, bool clear = true ); 
 
 	// querying library fields
 	CmusikStringArray*	GetSongFields	( )					{ return &m_Fields; }
@@ -306,12 +312,13 @@ private:
 	// only needs to be initialized once
 	CmusikString m_TimeAdded;
 
-	// internal song query functions
+	// internal song functions
 	int				QuerySongs		( const CmusikString & query, CmusikPlaylist & target, bool use_temp_table = false );
 	int				RawQuerySongs	( const CmusikString & query, CmusikPlaylist & target );
 	CmusikString	GetOrder		( int type, bool terminate = true, bool by_upper = false, bool descend = false );
 	int				QueryCount		( const char* pQueryResult );
 	void			VerifyYearList	( CmusikStringArray & list );
+	int             InsertTempSong	( int songid );
 };
 
 ///////////////////////////////////////////////////

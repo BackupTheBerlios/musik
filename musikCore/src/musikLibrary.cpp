@@ -187,6 +187,7 @@ static int sqlite_GetSongInfoFromID( void *args, int numCols, char **results, ch
 	p->SetFilesize		( results[15] );
 	p->SetFilename		( results[16] );
 	p->SetEqualizer		( results[17] );
+	p->SetDirtyFlag		( results[18] );
 
     return 0;
 }
@@ -2213,7 +2214,7 @@ int CmusikLibrary::GetSongInfoFromID( int id, CmusikSongInfo* info )
 	int nRet;
 	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
-		nRet = sqlite_exec_printf( m_pDB, "SELECT tracknum,artist,album,genre,title,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize,filename,equalizer FROM %Q WHERE songid = %d;", 
+		nRet = sqlite_exec_printf( m_pDB, "SELECT tracknum,artist,album,genre,title,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize,filename,equalizer,dirty FROM %Q WHERE songid = %d;", 
 			&sqlite_GetSongInfoFromID, info, NULL,
 			SONG_TABLE_NAME,
 			id );
@@ -2528,6 +2529,87 @@ bool CmusikLibrary::AddSong( const CmusikString& fn )
 	}
 
 	return result;
+}
+
+///////////////////////////////////////////////////
+
+void CmusikLibrary::ClearTempSongTable()
+{
+	if ( !m_DatabaseOpen )
+		return;
+
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
+	{
+		sqlite_exec( m_pDB, "delete from temp_songs;", NULL, NULL, NULL );
+	}
+}
+
+///////////////////////////////////////////////////
+
+int CmusikLibrary::PopulateTempSongTable( CmusikPlaylist& source, bool clear )
+{
+	if ( !m_DatabaseOpen )
+		return MUSIK_LIBRARY_NOT_OPEN;
+
+	int ret = MUSIK_LIBRARY_OK;
+
+	if ( clear )
+		ClearTempSongTable();
+
+	BeginTransaction();
+	for ( size_t i = 0; i < source.GetCount(); i++ )
+	{
+		ret = InsertTempSong( source.GetSongID( i ) );
+
+		if ( ret != MUSIK_LIBRARY_OK )
+			return ret;
+	}
+	EndTransaction();
+
+	return ret;
+}
+
+///////////////////////////////////////////////////
+
+int CmusikLibrary::InsertTempSong( int songid )
+{
+	if ( !m_DatabaseOpen )
+		return MUSIK_LIBRARY_NOT_OPEN;
+
+	if ( songid == -1 )
+		return MUSIK_LIBRARY_NO_ID_EXISTS;
+
+	CmusikSongInfo info;
+	GetSongInfoFromID( songid, &info );
+
+	int nRet;
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
+	{
+		nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %d, %d, %d, %Q, %Q, %Q, %Q, %d, %d, %Q, %d, %d, %Q, %Q, %d, %d, %Q, %d, %d, %d );", NULL, NULL, NULL, 
+			TEMP_SONG_TABLE_NAME, 		
+			info.GetID(),
+			atoi( info.GetFormat() ),
+			atoi( info.GetVBR() ),
+			info.GetFilename().c_str(),
+			info.GetArtist().c_str(),
+			info.GetTitle().c_str(),
+			info.GetAlbum().c_str(),
+			atoi( info.GetTrackNum() ),
+			atoi( info.GetYear() ),
+			info.GetGenre().c_str(),
+			atoi( info.GetRating() ),
+			atoi( info.GetBitrate() ),
+			info.GetLastPlayed().c_str(),							
+			info.GetNotes().c_str(),								
+			atoi( info.GetDuration().c_str() ),							
+			atoi( info.GetDuration().c_str() ),						
+			info.GetTimeAdded().c_str(),							
+			info.GetFilesize().c_str(),								
+			atoi( info.GetDirtyFlag().c_str() ),				
+			atoi( info.GetEqualizer().c_str() ) );
+	}
+
+	return nRet;
 }
 
 ///////////////////////////////////////////////////

@@ -128,6 +128,7 @@ public:
 				m_Params->m_Library->RemoveSong( all_files.at ( i ) );
 
 			// post progress to the functor
+		
 			curr_prog = ( 100 * i ) / all_files.size();
 			if ( curr_prog != last_prog )
 			{
