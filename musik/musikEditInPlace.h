@@ -16,6 +16,9 @@ public:
 	void SetString( CString str ){ m_Str = str; }
 	CString GetString(){ return m_Str; }
 
+	// attributes
+	bool IsVisible();
+
 	// overrides
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
@@ -23,9 +26,14 @@ protected:
 
 	// mfc message maps
 	afx_msg void OnEnKillfocus();
+	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
+	afx_msg void OnEnChange();
 
 	// last know string
 	CString m_Str;
+
+	// visible?
+	bool m_IsVisible;
 
 	// what happened?
 	void Commit();
@@ -34,8 +42,6 @@ protected:
 	// macros
 	DECLARE_DYNAMIC(CmusikEditInPlace)
 	DECLARE_MESSAGE_MAP()
-public:
-	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 };
 
 ///////////////////////////////////////////////////

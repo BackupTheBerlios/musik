@@ -57,7 +57,8 @@ class CmusikPrefs;
 enum 
 {
 	MUSIK_SOURCES_TYPE_NOWPLAYING = MUSIK_PLAYLIST_TYPE_COUNT,
-	MUSIK_SOURCES_TYPE_LIBRARY
+	MUSIK_SOURCES_TYPE_LIBRARY,
+	MUSIK_SOURCES_TYPE_QUICKSEARCH
 };
 
 ///////////////////////////////////////////////////

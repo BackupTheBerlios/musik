@@ -96,6 +96,13 @@ void CmusikSourcesBar::OnItemChanged( NMHDR* pNotifyStruct, LRESULT* plResult )
 			m_Parent->SendMessage( WM_SOURCESLIBRARY, NULL );
 		}
 
+		// quick search
+		if ( pNMPropTree->pItem->GetPlaylistType() == MUSIK_SOURCES_TYPE_QUICKSEARCH )
+		{
+			CmusikSourcesCtrl* pCtrl = (CmusikSourcesCtrl*)GetCtrl();
+			pCtrl->QuickSearch();
+		}
+
 		// now playing selected
 		else if ( pNMPropTree->pItem->GetPlaylistType() == MUSIK_SOURCES_TYPE_NOWPLAYING )
 		{
@@ -146,6 +153,21 @@ void CmusikSourcesBar::ShowMenu()
 	popup_menu->TrackPopupMenu( 0, pos.x, pos.y, this );
 }
 
+
+///////////////////////////////////////////////////
+
+void CmusikSourcesBar::OnSourcesRename()
+{
+	GetCtrl()->RenameSel();
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSourcesBar::OnSourcesDelete()
+{
+	GetCtrl()->DeleteSel();
+}
+
 ///////////////////////////////////////////////////
 
 // CmusikSourcesCtrl
@@ -158,7 +180,7 @@ IMPLEMENT_DYNAMIC( CmusikSourcesCtrl, CmusikPropTree )
 
 int WM_SOURCES_EDIT_COMMIT = RegisterWindowMessage( "MUSIKEDITCOMMIT" );
 int WM_SOURCES_EDIT_CANCEL = RegisterWindowMessage( "MUSIKEDITCANCEL" );
-
+int WM_SOURCES_EDIT_CHANGE = RegisterWindowMessage( "MUSIKEDITCHANGE" );
 ///////////////////////////////////////////////////
 
 CmusikSourcesCtrl::CmusikSourcesCtrl( CFrameWnd* parent, CmusikLibrary* library, CmusikPlayer* player, CmusikPrefs* prefs, UINT dropid )
@@ -169,6 +191,7 @@ CmusikSourcesCtrl::CmusikSourcesCtrl( CFrameWnd* parent, CmusikLibrary* library,
 	m_LibrariesRoot		= NULL;
 	m_StdPlaylistRoot	= NULL;
 	m_DynPlaylistRoot	= NULL;
+	m_QuickSearch		= NULL;
 	m_DropArrange		= false;
 	m_Startup			= true;
 	m_Player			= player;
@@ -193,11 +216,12 @@ BEGIN_MESSAGE_MAP( CmusikSourcesCtrl, CmusikPropTree )
 	ON_WM_SHOWWINDOW()
 	ON_WM_KEYDOWN()
 	ON_WM_MOUSEMOVE()
+	ON_WM_CONTEXTMENU()
 
 	// custom message maps
 	ON_REGISTERED_MESSAGE(WM_SOURCES_EDIT_COMMIT, OnEditCommit)
 	ON_REGISTERED_MESSAGE(WM_SOURCES_EDIT_CANCEL, OnEditCancel)
-	ON_WM_CONTEXTMENU()
+	ON_REGISTERED_MESSAGE(WM_SOURCES_EDIT_CHANGE, OnEditChange)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -219,6 +243,22 @@ void CmusikSourcesCtrl::InitItems()
 	m_LibrariesRoot->Expand( true );
 	
 	LoadLibraries();
+
+	// quick search
+	if ( m_QuickSearch )
+	{
+		DeleteItem( m_QuickSearch );
+		delete m_QuickSearch;
+	}
+
+	info.Set( "Quick Search", -1, -1 );
+	m_QuickSearchRoot = InsertItem( new CmusikPropTreeItem() );
+	m_QuickSearchRoot->SetPlaylistInfo( info );
+	m_QuickSearchRoot->Expand( 1 );
+
+	info.Set( "Search...", MUSIK_SOURCES_TYPE_QUICKSEARCH, -1 ); 
+	m_QuickSearch = InsertItem( new CmusikPropTreeItem(), m_QuickSearchRoot );
+	m_QuickSearch->SetPlaylistInfo( info );
 
 	// standard playlists
 	if ( m_StdPlaylistRoot )
@@ -258,6 +298,16 @@ void CmusikSourcesCtrl::FocusLibrary()
 
 ///////////////////////////////////////////////////
 
+void CmusikSourcesCtrl::FocusQuickSearch()
+{
+	KillFocus( false );
+
+	m_QuickSearch->Select( TRUE );
+	SetFocusedItem( m_QuickSearch );
+}
+
+///////////////////////////////////////////////////
+
 void CmusikSourcesCtrl::FocusNowPlaying()
 {
 	KillFocus( false );
@@ -276,6 +326,9 @@ int CmusikSourcesCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if ( m_DropTarget )
 		m_DropTarget->Register( this );
 
+	// quick search
+	m_QuickSearchCtrl.Create( WS_CHILD | WS_CLIPCHILDREN, CRect( 0, 0, 0, 0 ), this, IDC_QUICKSEARCH );
+	m_QuickSearchCtrl.EnableWindow( FALSE );
 
 	// edit in place
 	m_EditInPlace.Create( WS_CHILD | WS_CLIPCHILDREN, CRect( 0, 0, 0, 0 ), this, 123 );
@@ -283,7 +336,9 @@ int CmusikSourcesCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	CFont font;
 	font.CreateStockObject( DEFAULT_GUI_FONT );
+
 	m_EditInPlace.SetFont( &font );
+	m_QuickSearchCtrl.SetFont( &font );
 
 	InitItems();
 
@@ -724,6 +779,11 @@ CmusikPropTreeItem* CmusikSourcesCtrl::FindItem( const POINT& pt )
 			return m_Libraries.at( i );
 	}
 
+	// quick search
+	ipt = m_QuickSearch->GetLocation();
+	if ( p.y >= ipt.y && p.y < ipt.y + m_QuickSearch->GetHeight() )
+		return m_QuickSearch;
+
 	// standard playlists...
 	for ( size_t i = 0; i < m_StdPlaylists.size(); i++ )
 	{
@@ -753,6 +813,10 @@ CmusikPropTreeItem* CmusikSourcesCtrl::FindItem( const POINT& pt )
 	if ( p.y >= ipt.y && p.y < ipt.y + m_DynPlaylistRoot->GetHeight() )
 		return m_DynPlaylistRoot;
 
+	ipt = m_QuickSearchRoot->GetLocation();
+	if ( p.y >= ipt.y && p.y < ipt.y + m_DynPlaylistRoot->GetHeight() )
+		return m_QuickSearchRoot;
+
 	// item couldn't be found
 	return NULL;
 }
@@ -780,9 +844,9 @@ void CmusikSourcesCtrl::RenameSel()
 	if ( pItem->IsRootLevel() )
 		return;
 
-	// not renaming the library or the
-	// now playing...
-	if ( pItem == m_Libraries.at( 0 ) || pItem == m_Libraries.at( 1 ) )
+	// not renaming the library, now playing,
+	// or quick search
+	if ( pItem == m_Libraries.at( 0 ) || pItem == m_Libraries.at( 1 ) || pItem == m_QuickSearch )
 		return;
 
 	if ( pItem )
@@ -792,7 +856,7 @@ void CmusikSourcesCtrl::RenameSel()
 		CRect rcClient;
 		GetClientRect( rcClient );
 		
-		CRect rect( 20, nPos.y + 1, rcClient.Width(), nPos.y + PROPTREEITEM_DEFHEIGHT - 2 );
+		CRect rect( 20, nPos.y + 3, rcClient.Width(), nPos.y + PROPTREEITEM_DEFHEIGHT - 2 );
 
 		m_EditInPlace.EnableWindow( TRUE );
 		m_EditInPlace.MoveWindow( rect );
@@ -984,7 +1048,16 @@ LRESULT CmusikSourcesCtrl::OnEditCancel( WPARAM wParam, LPARAM lParam )
 {
 	SetFocus();
 
-	m_EditInPlace.EnableWindow( FALSE );
+	CmusikEditInPlace* sender = (CmusikEditInPlace*)wParam;
+
+	if ( sender == &m_EditInPlace )
+		m_EditInPlace.EnableWindow( FALSE );
+	else
+	{
+		FinishQuickSearch();
+		m_QuickSearch->SetLabelText( "Search..." );
+		m_QuickSearchCtrl.EnableWindow( FALSE );
+	}
 
 	return 0L;
 }
@@ -993,20 +1066,33 @@ LRESULT CmusikSourcesCtrl::OnEditCancel( WPARAM wParam, LPARAM lParam )
 
 LRESULT CmusikSourcesCtrl::OnEditCommit( WPARAM wParam, LPARAM lParam )
 {
-	CString sName = m_EditInPlace.GetString();
-	
-    CmusikPropTreeItem* pItem = GetFocusedItem();
-	if ( GetFocusedItem() )
+	CmusikEditInPlace* sender = (CmusikEditInPlace*)wParam;
+	CmusikPropTreeItem* pItem = GetFocusedItem();
+
+	if ( sender == &m_EditInPlace )
 	{
-		if ( pItem->GetPlaylistType() == MUSIK_PLAYLIST_TYPE_STANDARD )
+		CString sName = sender->GetString();
+		
+		if ( pItem )
 		{
-			m_Library->RenameStdPlaylist( pItem->GetPlaylistID(), (CStdString)sName );
-			pItem->SetLabelText( sName );
-			Invalidate();
+			if ( pItem->GetPlaylistType() == MUSIK_PLAYLIST_TYPE_STANDARD )
+			{
+				m_Library->RenameStdPlaylist( pItem->GetPlaylistID(), (CStdString)sName );
+				pItem->SetLabelText( sName );
+				Invalidate();
+			}
+		}
+
+		m_EditInPlace.EnableWindow( FALSE );
+	}
+	else if ( sender == &m_QuickSearchCtrl )
+	{
+		if ( pItem )
+		{
+			pItem->SetLabelText( "Search..." );
+			FinishQuickSearch();
 		}
 	}
-
-	m_EditInPlace.EnableWindow( FALSE );
 
 	SetFocus();
 	return 0L;
@@ -1022,16 +1108,56 @@ void CmusikSourcesCtrl::OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/)
 
 ///////////////////////////////////////////////////
 
-void CmusikSourcesBar::OnSourcesRename()
+void CmusikSourcesCtrl::QuickSearch()
 {
-	GetCtrl()->RenameSel();
+	if ( m_QuickSearch )
+	{
+		m_QuickSearch->SetLabelText( "" );
+		
+		CPoint nPos = m_QuickSearch->GetLocation();		
+
+		CRect rcClient;
+		GetClientRect( rcClient );
+		
+		CRect rect( 20, nPos.y + 3, rcClient.Width(), nPos.y + PROPTREEITEM_DEFHEIGHT - 2 );
+
+		m_QuickSearchCtrl.EnableWindow( TRUE );
+		m_QuickSearchCtrl.MoveWindow( rect );
+		m_QuickSearchCtrl.SetFocus();
+		m_QuickSearchCtrl.SetString( m_QuickSearchCtrl.GetString() );
+		m_QuickSearchCtrl.ShowWindow( SW_SHOWDEFAULT );
+	}
 }
 
 ///////////////////////////////////////////////////
 
-void CmusikSourcesBar::OnSourcesDelete()
+LRESULT CmusikSourcesCtrl::OnEditChange( WPARAM wParam, LPARAM lParam )
 {
-	GetCtrl()->DeleteSel();
+	CmusikEditInPlace* sender = (CmusikEditInPlace*)wParam;
+
+	if ( sender == &m_QuickSearchCtrl )
+	{
+		CString curr_query;
+		m_QuickSearchCtrl.GetWindowText( curr_query );
+
+		TRACE0( curr_query.GetBuffer() );
+		TRACE0( "\n" );
+	}
+
+	return 0L;
 }
 
 ///////////////////////////////////////////////////
+
+void CmusikSourcesCtrl::FinishQuickSearch()
+{
+	CmusikSourcesBar* parent = (CmusikSourcesBar*)GetParent();
+
+	FocusLibrary();
+
+	int WM_SOURCESLIBRARY = RegisterWindowMessage( "SOURCESLIBRARY" );
+	parent->GetParent()->SendMessage( WM_SOURCESLIBRARY, NULL );
+}
+
+///////////////////////////////////////////////////
+

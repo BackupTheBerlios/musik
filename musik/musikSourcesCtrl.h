@@ -41,6 +41,8 @@ class CmusikSourcesCtrl;
 
 class CmusikSourcesBar : public baseCmusikSourcesBar
 {
+	friend class CmusikSourcesCtrl;
+
 public:
 
 	// construct / destruct
@@ -65,17 +67,20 @@ protected:
 	afx_msg int OnCreate( LPCREATESTRUCT lpCreateStruct );
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnItemChanged( NMHDR* pNotifyStruct, LRESULT* plResult );
+	afx_msg void OnSourcesRename();
+	afx_msg void OnSourcesDelete();
 
 	// macros
 	DECLARE_MESSAGE_MAP()
-public:
-	afx_msg void OnSourcesRename();
-	afx_msg void OnSourcesDelete();
 };
 
 ///////////////////////////////////////////////////
 
 // CmusikSourcesCtrl
+
+///////////////////////////////////////////////////
+
+#define IDC_QUICKSEARCH 1538
 
 ///////////////////////////////////////////////////
 
@@ -94,8 +99,10 @@ public:
 	void KillFocus( bool redraw = true );
 	void FocusLibrary();
 	void FocusNowPlaying();
+	void FocusQuickSearch();
 	void RenameSel();
 	void DeleteSel();
+	void QuickSearch();
 
 	// overrides
 	void DoDrag( CmusikPropTreeItem* pItem );
@@ -118,10 +125,12 @@ protected:
 	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
 
 	// custom message maps
 	LRESULT OnEditCommit( WPARAM wParam, LPARAM lParam );
 	LRESULT OnEditCancel( WPARAM wParam, LPARAM lParam );
+	LRESULT OnEditChange( WPARAM wParam, LPARAM lParam );
 
 	// drop target for the playlist
 	CmusikSourcesDropTarget* m_DropTarget;
@@ -130,6 +139,7 @@ protected:
 	// create default headers
 	void InitItems();
 	CmusikPropTreeItem* m_LibrariesRoot;
+	CmusikPropTreeItem* m_QuickSearchRoot;
 	CmusikPropTreeItem* m_StdPlaylistRoot;
 	CmusikPropTreeItem* m_DynPlaylistRoot;
 
@@ -158,6 +168,10 @@ private:
 	// F2...
 	CmusikEditInPlace m_EditInPlace;
 
+	// quick search
+	void FinishQuickSearch();
+	CmusikEditInPlace m_QuickSearchCtrl;
+
 	// startup bool, if true on startup
 	// the library will be selected by
 	// default...
@@ -168,10 +182,9 @@ private:
 
 	// items that will show up in the list
 	CmusikSourcesItemPtrArray m_Libraries;
+	CmusikPropTreeItem* m_QuickSearch;
 	CmusikSourcesItemPtrArray m_StdPlaylists;
 	CmusikSourcesItemPtrArray m_DynPlaylists;
-public:
-	afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
 };
 
 ///////////////////////////////////////////////////

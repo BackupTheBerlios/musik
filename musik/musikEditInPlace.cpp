@@ -13,11 +13,13 @@ IMPLEMENT_DYNAMIC(CmusikEditInPlace, CEdit)
 
 int WM_MUSIKEDITCOMMIT = RegisterWindowMessage( "MUSIKEDITCOMMIT" );
 int WM_MUSIKEDITCANCEL = RegisterWindowMessage( "MUSIKEDITCANCEL" );
+int WM_MUSIKEDITCHANGE = RegisterWindowMessage( "MUSIKEDITCHANGE" );
 
 ///////////////////////////////////////////////////
 
 CmusikEditInPlace::CmusikEditInPlace()
 {
+	m_IsVisible = false;
 }
 
 ///////////////////////////////////////////////////
@@ -31,6 +33,7 @@ CmusikEditInPlace::~CmusikEditInPlace()
 BEGIN_MESSAGE_MAP(CmusikEditInPlace, CEdit)
 	ON_CONTROL_REFLECT(EN_KILLFOCUS, OnEnKillfocus)
 	ON_WM_SHOWWINDOW()
+	ON_CONTROL_REFLECT(EN_CHANGE, OnEnChange)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -41,10 +44,7 @@ void CmusikEditInPlace::Commit()
 	ShowWindow( SW_HIDE );
 
 	if ( GetParent() )
-	{
-		int WM_MUSIKEDITCOMMIT = RegisterWindowMessage( "MUSIKEDITCOMMIT" );
-		GetParent()->SendMessage( WM_MUSIKEDITCOMMIT );
-	}
+		GetParent()->SendMessage( WM_MUSIKEDITCOMMIT, (WPARAM)this );
 }
 
 ///////////////////////////////////////////////////
@@ -55,10 +55,7 @@ void CmusikEditInPlace::Cancel()
 	ShowWindow( SW_HIDE );
 
 	if ( GetParent() )
-	{
-		int WM_MUSIKEDITCANCEL = RegisterWindowMessage( "MUSIKEDITCANCEL" );
-		GetParent()->SendMessage( WM_MUSIKEDITCANCEL );
-	}
+		GetParent()->SendMessage( WM_MUSIKEDITCANCEL, (WPARAM)this );
 }
 
 ///////////////////////////////////////////////////
@@ -87,8 +84,19 @@ void CmusikEditInPlace::OnShowWindow(BOOL bShow, UINT nStatus)
 {
 	CEdit::OnShowWindow(bShow, nStatus);
 
-	SetWindowText( m_Str );
-	SetSel( 0, m_Str.GetLength() );
+	if ( bShow )
+	{
+		SetWindowText( m_Str );
+		SetSel( 0, m_Str.GetLength() );
+	}
+}
+
+///////////////////////////////////////////////////
+
+void CmusikEditInPlace::OnEnChange()
+{
+	if ( GetParent() )
+		GetParent()->SendMessage( WM_MUSIKEDITCHANGE, (WPARAM)this );
 }
 
 ///////////////////////////////////////////////////
