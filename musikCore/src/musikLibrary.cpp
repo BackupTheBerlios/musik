@@ -63,30 +63,6 @@
 
 ///////////////////////////////////////////////////
 
-int freqs[] = 
-{
-	55,
-	77,
-	110,
-	156,
-	220,
-	311,
-	440,
-	622,
-	880,
-	1244,
-	1760,
-	2489,
-	3520,
-	4978,
-	7040,
-	9956,
-	14080,
-	19912
-};
-
-///////////////////////////////////////////////////
-
 static int sqlite_AddSongToPlaylist(void *args, int numCols, char **results, char ** columnNames )
 {
 	// this is a callback for sqlite to use when
@@ -402,24 +378,44 @@ bool CmusikLibrary::InitEqTable()
 	static const char *szCreateDBQuery  = 
 		"CREATE TABLE " EQUALIZER_PRESET " ( "	
 		"equalizer_id INTEGER AUTO_INCREMENT PRIMARY KEY, "
-		"hz55 INTEGER, "
-		"hz77 INTEGER, "
-		"hz110 INTEGER, "
-		"hz156 INTEGER, "
-		"hz220 INTEGER, "
-		"hz311 INTEGER, "
-		"hz440 INTEGER, "
-		"hz622 INTEGER, "
-		"hz880 INTEGER, "
-		"hz1244 INTEGER, "
-		"hz1760 INTEGER, "
-		"hz2489 INTEGER, "
-		"hz3520 INTEGER, "
-		"hz4978 INTEGER, "
-		"hz7040 INTEGER, "
-		"hz9956 INTEGER, "
-		"hz14080 INTEGER, "
-		"hz19912 INTEGER ); ";
+		"equalizer_name VARCHAR(255), "
+		"hz55_left INTEGER, "
+		"hz77_left INTEGER, "
+		"hz110_left INTEGER, "
+		"hz156_left INTEGER, "
+		"hz220_left INTEGER, "
+		"hz311_left INTEGER, "
+		"hz440_left INTEGER, "
+		"hz622_left INTEGER, "
+		"hz880_left INTEGER, "
+		"hz1244_left INTEGER, "
+		"hz1760_left INTEGER, "
+		"hz2489_left INTEGER, "
+		"hz3520_left INTEGER, "
+		"hz4978_left INTEGER, "
+		"hz7040_left INTEGER, "
+		"hz9956_left INTEGER, "
+		"hz14080_left INTEGER, "
+		"hz19912_left INTEGER, "
+		"hz55_right INTEGER, "
+		"hz77_right INTEGER, "
+		"hz110_right INTEGER, "
+		"hz156_right INTEGER, "
+		"hz220_right INTEGER, "
+		"hz311_right INTEGER, "
+		"hz440_right INTEGER, "
+		"hz622_right INTEGER, "
+		"hz880_right INTEGER, "
+		"hz1244_right INTEGER, "
+		"hz1760_right INTEGER, "
+		"hz2489_right INTEGER, "
+		"hz3520_right INTEGER, "
+		"hz4978_right INTEGER, "
+		"hz7040_right INTEGER, "
+		"hz9956_right INTEGER, "
+		"hz14080_right INTEGER, "
+		"hz19912_right INTEGER, "
+		" ); ";
 
 	// put a lock on the library and open it up
 	m_ProtectingLibrary->acquire();
