@@ -437,6 +437,10 @@ void CMusikPlayer::FinalizeStop()
 	m_Playing = false;
 	m_Stopping = false;
 
+	//-----------------------------------------//
+	//--- stop and close all streams that	---//
+	//--- are not the main stream.			---//
+	//-----------------------------------------//
 	int nStreamCount = g_ActiveStreams.GetCount();
 	for ( int i = 0; i < nStreamCount; i++ )
 	{
@@ -446,6 +450,9 @@ void CMusikPlayer::FinalizeStop()
 	g_ActiveStreams.Clear();
 	g_ActiveChannels.Clear();
 
+	//-----------------------------------------//
+	//--- free up the DSP object. FX stuff.	---//
+	//-----------------------------------------//
 	if ( m_DSP )
 	{
 		FSOUND_DSP_Free( m_DSP );
@@ -676,16 +683,6 @@ int CMusikPlayer::GetFileDuration( wxString sFilename, int nType )
 void CMusikPlayer::SetFadeComplete()
 {
 	m_Fading = false; 
-	
-	/*
-	if ( GetCrossfadeType() == CROSSFADE_PAUSE )
-		FinalizePause();
-	else if ( GetCrossfadeType() == CROSSFADE_RESUME )
-		FinalizeResume();
-	else if ( GetCrossfadeType() == CROSSFADE_STOP || GetCrossfadeType() == CROSSFADE_EXIT )
-		FinalizeStop();
-		*/
-	
 	ClearOldStreams();
 }
 

@@ -171,37 +171,47 @@ void MusikCrossfaderThread::SetStopPlayer()
 
 void *MusikCrossfaderThread::Entry()
 {
-	//---------------------------------------------//
-	//--- if the fade duration * 2				---//
-	//--- (fade in + fade out) is shorter		---//
-	//--- than that stream duration, no fading	---//
-	//---------------------------------------------//
+	//-------------------------------------------------//
+	//--- if the fade duration * 2 (fade in and		---//
+	//--- fade out) is shorter than the stream 		---//
+	//--- duration, no fading. return.				---//
+	//-------------------------------------------------//
 	if ( g_Player.GetDuration( FMOD_MSEC ) < ( g_Prefs.nFadeDuration * 2 ) )
 	{
 		FSOUND_SetVolume( g_ActiveChannels.Item( g_ActiveChannels.GetCount() - 1 ), g_Prefs.nSndVolume );
 		return NULL;
 	}
 	
-	//---------------------------------------------//
-	//--- how many channels to fade out			---//
-	//---------------------------------------------//
+	//-------------------------------------------------//
+	//--- how many and which channels will be faded	---//
+	//--- in and/or out.							---//
+	//-------------------------------------------------//
 	m_FadeType = g_Player.GetCrossfadeType();
-	int nFadeInStreamID	= -1;
-	size_t nFadeOutStreams = 0;
+	int nFadeInStreamID		= -1;
+	size_t nFadeOutStreams	= 0;
 	
-	if ( m_FadeType == CROSSFADE_PAUSE || m_FadeType == CROSSFADE_STOP || m_FadeType == CROSSFADE_EXIT )	//--- if pause or stop or exit, fade all out	---//
+	//--- pause / stop / exit: all streams out		---//
+	if ( m_FadeType == CROSSFADE_PAUSE || m_FadeType == CROSSFADE_STOP || m_FadeType == CROSSFADE_EXIT )
 		nFadeOutStreams = g_ActiveStreams.GetCount();
-	else if ( m_FadeType == CROSSFADE_RESUME )																//--- if resume, fade none out, 0 in			---//
+
+	//--- resume, only primary stream in.			---//
+	else if ( m_FadeType == CROSSFADE_RESUME )																
 	{
 		nFadeOutStreams = 0;
 		nFadeInStreamID	= 0;
 	}
+
+	//--- regular fade, secondary out, primary in	---//
 	else
 	{
-		nFadeOutStreams = g_ActiveStreams.GetCount() - 1;													//--- else, fade ( all - 1 ) out, 	last in		---//
+		nFadeOutStreams = g_ActiveStreams.GetCount() - 1;	
 		nFadeInStreamID = g_ActiveStreams.GetCount() - 1;
 	}
 
+	//-------------------------------------------------//
+	//--- the duration of time the fade will be 	---//
+	//--- active for. this depends on the type.		---//
+	//-------------------------------------------------//
 	int nFadeDuration = 0; 
 	if ( m_FadeType == CROSSFADE_NORMAL )
 		nFadeDuration = g_Prefs.nFadeDuration;
@@ -214,73 +224,85 @@ void *MusikCrossfaderThread::Entry()
 	else if ( m_FadeType == CROSSFADE_EXIT )
 		nFadeDuration = g_Prefs.nFadeExitDuration;
 
-	float fFadeSecs 	= (float)nFadeDuration / 1000.0f;				//--- number of seconds	---//
-	
-	float fFadeCount;
-	int nSleepTime;
-	if ( fFadeSecs < 1.0f )
-	{
-		fFadeCount = 20.0f * fFadeSecs;									//--- 20 fades per sec if fade less than 1 sec	---//
-		nSleepTime = 50;
-	}
-	else
-	{
-		fFadeCount 	= 10.0f * fFadeSecs;								//--- 10 fades per sec if fade greater than 1 sec ---//
-		nSleepTime = 100;
-	}
-	
-	int nFadeCount = (int)fFadeCount;									//--- total number of fades	---//
-	
+	//-------------------------------------------------//
+    //--- the total number of seconds the fade will	---//
+	//--- be active for.							---//
+	//-------------------------------------------------//
+	float fFadeSecs = (float)nFadeDuration / 1000.0f;
+
+	//-------------------------------------------------//
+	//--- the total number of fades. there will be	---//
+	//--- 10 fades every second, smoooth.			---//
+	//-------------------------------------------------//
+	float fFadeCount = 10.0f * fFadeSecs;
+	int nFadeCount = fFadeCount;
 	if ( nFadeCount < 1 )
 		nFadeCount = 1;
 
-	int nFadeStep = g_Prefs.nSndVolume / nFadeCount;					//--- volume steps	----//
+	//-------------------------------------------------//
+	//--- the volume step for the primary stream.	---//
+	//--- this is the channel that will fade IN		---//
+	//-------------------------------------------------//
+	int nFadeStep = g_Prefs.nSndVolume / nFadeCount;
+	if ( nFadeStep < 1 )
+		nFadeStep = 1;
 	
-	//-----------------------------------------//
-	//--- array of steps for the secondary	---//
-	//--- audio streams.					---//
-	//-----------------------------------------//
-	wxArrayInt aSecSteps;
+	//-------------------------------------------------//
+	//--- array of steps for the secondary streams.	---//
+	//--- these channels will be faded OUT			---//
+	//-------------------------------------------------//
 	int nGetVol;
+	wxArrayInt aSecSteps;
 	for ( size_t i = 0; i < nFadeOutStreams; i++ )
 	{
-		nGetVol = FSOUND_GetVolume( g_ActiveChannels.Item( i ) );
+		nGetVol = FSOUND_GetVolume( g_ActiveChannels.Item( i ) ) / nFadeCount;
+		if ( nGetVol < 1 )
+			nGetVol = 1;
+
 		aSecSteps.Add( nGetVol / nFadeCount );
 	}
 
-	//---------------------------------------------//
-	//--- generate an array of fade out steps	---//
-	//---------------------------------------------//
-	int nCurrVol = 0;
-	int nLastVol = 0;
+	//-------------------------------------------------//
+	//--- generate an array of fade out steps		---//
+	//-------------------------------------------------//
+	int nCurrPriVol = 0;
+	int nLastSecVol	= 0;
+	int nCurrSecChan = -1;
 
-	//---------------------------------//
-	//--- step through the fades	---//
-	//---------------------------------//
+	//-------------------------------------------------//
+	//--- the loop that fades.						---//
+	//-------------------------------------------------//
     for ( int i = 0; i < nFadeCount; i++ )
 	{
-		//--- check abort signal ---//
 		if ( TestDestroy() )
 			return NULL;
 
-		//--- fade down ---//
+		//-----------------------------------------//
+		//--- fade all the secondy streams out.	---//
+		//-----------------------------------------//
 		for ( size_t j = 0; j < nFadeOutStreams; j++ )
 		{
-			nLastVol = FSOUND_GetVolume( g_ActiveChannels.Item( j ) ) - aSecSteps.Item( j );
-			FSOUND_SetVolume( g_ActiveChannels.Item( j ), nLastVol );
+			nCurrSecChan	= g_ActiveChannels.Item( j );
+			nLastSecVol		= FSOUND_GetVolume( nCurrSecChan ) - aSecSteps.Item( j );
+			if ( nLastSecVol < 0 )
+				nLastSecVol = 0;
+
+			FSOUND_SetVolume( nCurrSecChan, nLastSecVol );
 		}
 
-		//--- fade up ---//
+		//-----------------------------------------//
+		//--- fade the primary stream in.		---//
+		//-----------------------------------------//
 		if ( nFadeInStreamID > -1 )
 		{
-			nCurrVol += nFadeStep;
-			if ( nCurrVol > g_Prefs.nSndVolume )
-				nCurrVol = g_Prefs.nSndVolume;
+			nCurrPriVol += nFadeStep;
+			if ( nCurrPriVol > g_Prefs.nSndVolume )
+				nCurrPriVol = g_Prefs.nSndVolume;
 	
-			FSOUND_SetVolume( g_ActiveChannels.Item( nFadeInStreamID ), nCurrVol );
+			FSOUND_SetVolume( g_ActiveChannels.Item( nFadeInStreamID ), nCurrPriVol );
 		}
 
-		Sleep( nSleepTime );
+		Sleep( 100 );
 	}
 	return NULL;
 }
@@ -297,10 +319,6 @@ void MusikCrossfaderThread::OnExit()
 	//-------------------------------------------------//
 	if ( !m_Aborted )
 	{
-		wxCommandEvent FadeCompleteEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYER_FADE_COMPLETE );	
-		wxPostEvent( &g_Player, FadeCompleteEvt );
-		Yield();
-
 		//-------------------------------------------------//
 		//--- finalize whatever type of fade was going	---//
 		//--- on.										---//
@@ -311,6 +329,11 @@ void MusikCrossfaderThread::OnExit()
 			g_Player.FinalizePause();
 		else if ( m_FadeType == CROSSFADE_RESUME )
 			g_Player.FinalizeResume();
+
+		Yield();
+
+		wxCommandEvent FadeCompleteEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYER_FADE_COMPLETE );	
+		wxPostEvent( &g_Player, FadeCompleteEvt );
 		Yield();
 	}
 
@@ -319,7 +342,7 @@ void MusikCrossfaderThread::OnExit()
 	//--- signal. the thread was just killed, so	---//
 	//--- start a new one up.						---//
 	//-------------------------------------------------//
-	else if ( m_Aborted )
+	if ( m_Aborted )
 		m_Parent->StartNew();
 }
 
