@@ -442,7 +442,7 @@ protected:
 
 	// winamp vis emulation
 	bool m_WinampVisActive;
-	void ImportWinamp();
+	bool ImportWinamp();
 	void DeinitWinamp();
 	void GetVisList();
 	HMODULE m_WinampVis;

@@ -2,7 +2,8 @@
 a4:
 
   - added tunage.  The following tags can be used:
-    $ARTIST, $ALBUM, $TITLE, $NAME, $FILENAME, $FILESIZE, $BITRATE, $TIMESPLAYED, $TRACKNUM
+    $ARTIST, $ALBUM, $TITLE, $NAME, $FILENAME, $FILESIZE, $BITRATE, 
+    $TIMESPLAYED, $TRACKNUM
   - right click sources playlist -> delete -> from computer now prompts
   - optimized threading routines. 
   - the caption bar now tells the user how many worker threads are active.
@@ -118,7 +119,6 @@ can confuse it into crashing.
 
 stuff that isn't implemented / doesn't work yet: 
 
-  - playlist information area 
   - dynamic playlist creation
   - dialog to view tag properties
 

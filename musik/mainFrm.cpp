@@ -886,8 +886,8 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// winamp vis support
 	if ( m_Prefs->IsWinampVisActive() )
 	{
-		ImportWinamp();
-		GetVisList();
+		if ( ImportWinamp() )
+			GetVisList();
 	}
 
 	// always on top?
@@ -3334,32 +3334,45 @@ void CMainFrame::OnWinampvisualizationsEnabled()
 
 ///////////////////////////////////////////////////
 
-void CMainFrame::ImportWinamp()
+bool CMainFrame::ImportWinamp()
 {
 	if ( m_WinampVis )
 		DeinitWinamp();
 
+	if ( !CmusikFilename::FileExists( _T( "./winamp.dll" ) ) )
+	{
+		MessageBox( _T( "winamp.dll not found. This dll must be in the same directory as musik.exe for winamp visualization support to work." ), MUSIK_VERSION_STR, MB_ICONWARNING );
+		return false;
+	}
+	
 	m_WinampVis = LoadLibrary( _T( "winamp.dll" ) );
 
-	visLoadVisPlugins = ( lpfnLoadVisPlugins )GetProcAddress( m_WinampVis, _T( "_LoadVisPlugins@4" ) );
-	visGetVisInfo = ( lpfnGetVisInfo )GetProcAddress( m_WinampVis, _T( "_GetVisInfo@4" ) );
-	visGetVisCount = ( lpfnGetVisCount )GetProcAddress( m_WinampVis, _T( "_GetVisCount@0" ) );
-	visFreeVisInfo = ( lpfnFreeVisInfo )GetProcAddress( m_WinampVis, _T( "_FreeVisInfo@0" ) );
-	visLoadVis = ( lpfnLoadVis )GetProcAddress( m_WinampVis, _T( "_LoadVis@4" ) );
-	visFreeVis = ( lpfnFreeVis )GetProcAddress( m_WinampVis, _T( "_FreeVis@4" ) );
-	visStartVis = ( lpfnStartVis )GetProcAddress( m_WinampVis, _T( "_Start_Vis@4" ) );
-	visConfigVis = ( lpfnConfigVis )GetProcAddress( m_WinampVis, _T( "_Config_Vis@8" ) );
-	visStopVis = ( lpfnStopVis )GetProcAddress( m_WinampVis, _T( "_Stop_Vis@4" ) );
-	visGetVisHwnd = ( lpfnGetVisHwnd )GetProcAddress( m_WinampVis, _T( "_GetVisHwnd@0" ) );
-	visSetVisHwnd = ( lpfnSetVisHwnd )GetProcAddress( m_WinampVis, _T( "_SetHwnd@4" ) );
-	visSetVisModule = ( lpfnSetVisModule )GetProcAddress( m_WinampVis, _T( "_SetVisModule@4" ) );
-	visGetVisModuleCount = ( lpfnGetVisModuleCount )GetProcAddress( m_WinampVis, _T( "_GetVisModuleCount@4" ) );
-	visGetVisModuleInfo = ( lpfnGetVisModuleInfo )GetProcAddress( m_WinampVis, _T( "_GetVisModuleInfo@8" ) );
-	visSetVisPlaying = ( lpfnSetVisPlaying )GetProcAddress( m_WinampVis, _T( "_IsPlaying@4" ) );
-	visSetSongTitle = ( lpfnVisSetSongTitle )GetProcAddress( m_WinampVis, _T( "_SetSongTitle@4" ) );
+	if ( m_WinampVis )
+	{
+		visLoadVisPlugins = ( lpfnLoadVisPlugins )GetProcAddress( m_WinampVis, _T( "_LoadVisPlugins@4" ) );
+		visGetVisInfo = ( lpfnGetVisInfo )GetProcAddress( m_WinampVis, _T( "_GetVisInfo@4" ) );
+		visGetVisCount = ( lpfnGetVisCount )GetProcAddress( m_WinampVis, _T( "_GetVisCount@0" ) );
+		visFreeVisInfo = ( lpfnFreeVisInfo )GetProcAddress( m_WinampVis, _T( "_FreeVisInfo@0" ) );
+		visLoadVis = ( lpfnLoadVis )GetProcAddress( m_WinampVis, _T( "_LoadVis@4" ) );
+		visFreeVis = ( lpfnFreeVis )GetProcAddress( m_WinampVis, _T( "_FreeVis@4" ) );
+		visStartVis = ( lpfnStartVis )GetProcAddress( m_WinampVis, _T( "_Start_Vis@4" ) );
+		visConfigVis = ( lpfnConfigVis )GetProcAddress( m_WinampVis, _T( "_Config_Vis@8" ) );
+		visStopVis = ( lpfnStopVis )GetProcAddress( m_WinampVis, _T( "_Stop_Vis@4" ) );
+		visGetVisHwnd = ( lpfnGetVisHwnd )GetProcAddress( m_WinampVis, _T( "_GetVisHwnd@0" ) );
+		visSetVisHwnd = ( lpfnSetVisHwnd )GetProcAddress( m_WinampVis, _T( "_SetHwnd@4" ) );
+		visSetVisModule = ( lpfnSetVisModule )GetProcAddress( m_WinampVis, _T( "_SetVisModule@4" ) );
+		visGetVisModuleCount = ( lpfnGetVisModuleCount )GetProcAddress( m_WinampVis, _T( "_GetVisModuleCount@4" ) );
+		visGetVisModuleInfo = ( lpfnGetVisModuleInfo )GetProcAddress( m_WinampVis, _T( "_GetVisModuleInfo@8" ) );
+		visSetVisPlaying = ( lpfnSetVisPlaying )GetProcAddress( m_WinampVis, _T( "_IsPlaying@4" ) );
+		visSetSongTitle = ( lpfnVisSetSongTitle )GetProcAddress( m_WinampVis, _T( "_SetSongTitle@4" ) );
 
-	// make sure the DLL has our HWND
-	visSetVisHwnd( GetSafeHwnd() );
+		// make sure the DLL has our HWND
+		visSetVisHwnd( GetSafeHwnd() );
+
+		return true;
+	}
+
+	return false;
 }
 
 ///////////////////////////////////////////////////
@@ -3441,10 +3454,11 @@ void CMainFrame::OnWinampvisualizationsActivate()
 			MUSIK_VERSION_STR,
 			MB_ICONINFORMATION | MB_YESNO ) == IDYES )
 		{
-			ImportWinamp();
-			GetVisList();
-
-			m_Prefs->SetWinampVisActive( true );
+			if ( ImportWinamp() )
+			{
+				GetVisList();
+				m_Prefs->SetWinampVisActive( true );
+			}
 		}
 	}
 	else
