@@ -70,10 +70,9 @@
 enum
 {
 	// playmodes
-	MUSIK_PLAYER_PLAYMODE_NORMAL = 0,
-	MUSIK_PLAYER_PLAYMODE_RANDOM,
-	MUSIK_PLAYER_PLAYMODE_SMART,
-	MUSIK_PLAYER_PLAYMODE_LOOP
+	MUSIK_PLAYER_PLAYMODE_REPEAT_SINGLE = 1,
+	MUSIK_PLAYER_PLAYMODE_REPEAT_PLAYLIST = 2,
+	MUSIK_PLAYER_PLAYMODE_INTRO = 4,
 };
 
 ///////////////////////////////////////////////////
@@ -170,7 +169,7 @@ public:
 
 	// play controls
 	bool Play( int index = 0, int fade_type = -1, int start_pos = 0 );
-	bool Next();
+	bool Next( bool expired = false );
 	bool Prev();
 	bool Pause();
 	bool Resume();
@@ -201,21 +200,24 @@ public:
 	void FlagCrossfade()		{ m_IsCrossfaderReady = true; }
 	void UnflagCrossfade()		{ m_IsCrossfaderReady = false; }
 
-	// misc
+	// getting streams, channels, and handles
 	size_t GetStreamCount();
 	int GetChannelID( int n );
 	int GetHandle(){ return m_Handle; }
-	int GetPlaymode(){ return m_PlayMode; }
-	void SetPlaymode( int mode ){ m_PlayMode = mode; }
+	int GetCurrChannel();
+
+	// play mode
+	unsigned long GetPlaymode(){ return m_Playmode; }
+	void SetPlaymode( unsigned long mode ){ m_Playmode = mode; }
+	unsigned long m_Playmode;
+
+	// misc
 	void SetSafeShutdown(){ m_ShutDown = true; }
 	CmusikPlaylist* GetPlaylist(){ return m_Playlist; }
 	CStdString GetTimeStr( int time_ms );
 	void SetTimeNowPer( int percent );
 	CStdString GetTimePerStr( int percent );
 	int GetTimePer ( int percent );
-
-	// getting the current channel
-	int GetCurrChannel();
 
 private:
 
@@ -246,9 +248,6 @@ private:
 	bool m_ShutDown;
 	bool m_IsEQActive;
 	bool m_IsCrossfaderReady;
-
-	// play mode (repeat, random, etc)
-	int m_PlayMode;
 
 	// info on currently playing song
 	CmusikSongInfo m_CurrSong;

@@ -78,14 +78,20 @@ static void musikPlayerWorker( CmusikThread* thread )
 	sleep_tight.set( 0.1 );
 
 	bool m_Exit = false;
+	int nTimeRemain;
+	int nTimeElapsed;
+
 	while ( !thread->m_Abort && !m_Exit )
 	{
 		// suspended? go to sleep until the flag
+		// tells is its ok to resume...
 		if ( thread->IsSuspended() )
 		{
 			thread->m_Asleep = true;
+
 			while ( thread->IsSuspended() )
 				ACE_OS::sleep( sleep_regular );
+
 			thread->m_Asleep = false;
 		}
 
@@ -98,33 +104,68 @@ static void musikPlayerWorker( CmusikThread* thread )
 			// two seconds remaining on the song...
 			if ( !player->IsCrossfaderEnabled() )
 			{
-				if ( player->GetTimeRemain( MUSIK_TIME_MS ) <= 2000 )
+				// intro play mode means we only play 
+				// the first 10 seconds of every song...
+				if ( player->GetPlaymode() & MUSIK_PLAYER_PLAYMODE_INTRO )
 				{
-					bool started = false;
-					while ( !started )
+					nTimeElapsed = player->GetTimeNow( MUSIK_TIME_MS );
+
+					if ( nTimeElapsed >= 10000 )
+						player->Next( true );
+				}
+
+				// not intro mode, so check to see if its
+				// time to que up the next song...
+				else
+				{
+					nTimeRemain = player->GetTimeRemain( MUSIK_TIME_MS );
+
+					if ( nTimeRemain <= 2000 )
 					{
-						// when its time for the next song
-						// to fade in, send the player the signal
-						// and exit the tighter loop. go along our
-						// mary way until the it sends the begin 
-						// crossfade flag back.
-						if ( player->GetTimeRemain( MUSIK_TIME_MS ) <= 10 )
+						bool started = false;
+						while ( !started )
 						{
-							player->Next();
-							started = true;
+							// when its time for the next song
+							// to fade in, send the player the signal
+							// and exit the tighter loop. go along our
+							// mary way until the it sends the begin 
+							// crossfade flag back.
+							if ( player->GetTimeRemain( MUSIK_TIME_MS ) <= 10 )
+							{
+								player->Next( true );
+								started = true;
+							}
+							else
+								ACE_OS::sleep( sleep_tight );
 						}
-						else
-							ACE_OS::sleep( sleep_tight );
 					}
 				}
 			}
 
-			// we have a crossfader, see if it should
-			// be queued up... we'll again need to enter a tighter
-			// loop to be more accurate, so if its around 2
-			// seconds until the fade, start the tighter loop
-			else if ( player->GetTimeRemain( MUSIK_TIME_MS ) <= ( player->GetCrossfader()->GetDuration( player->GetFadeType() ) * 1000 ) )
-				player->Next();
+			// we have a crossfader, and its ready
+			// to begin. send the next song message...
+			else
+			{
+				// intro play mode means we only play 
+				// the first 10 seconds of every song...
+				if ( player->GetPlaymode() & MUSIK_PLAYER_PLAYMODE_INTRO )
+				{
+					nTimeElapsed = player->GetTimeNow( MUSIK_TIME_MS );
+
+					if ( nTimeElapsed >= 10000 )
+						player->Next( true );
+				}
+
+				// see if its time to crossfade in the
+				// next song
+				else
+				{
+					nTimeRemain = player->GetTimeRemain( MUSIK_TIME_MS );
+
+					if ( nTimeRemain <= ( player->GetCrossfader()->GetDuration( player->GetFadeType() ) * 1000 ) )
+						player->Next( true );
+				}
+			}
 
 			// othwerwise just monitor for the
 			// crossfader flag
@@ -325,7 +366,8 @@ CmusikPlayer::CmusikPlayer( CmusikFunctor* functor, CmusikLibrary* library )
 
 	m_Volume			= 128;
 
-	m_PlayMode			= MUSIK_PLAYER_PLAYMODE_NORMAL;
+	m_Playmode			= 0L;
+
 	m_State				= MUSIK_PLAYER_INIT_UNINITIALIZED;
 
 	InitThread();
@@ -405,7 +447,10 @@ void CmusikPlayer::InitCrossfader()
 void CmusikPlayer::CleanCrossfader()
 {
 	if ( m_Crossfader ) 
+	{
 		delete m_Crossfader;
+		m_Crossfader = NULL;
+	}
 }
 
 ///////////////////////////////////////////////////
@@ -707,21 +752,38 @@ void CmusikPlayer::EnquePaused( int index )
 
 ///////////////////////////////////////////////////
 
-bool CmusikPlayer::Next()
+bool CmusikPlayer::Next( bool expired )
 {
 	if ( !m_Playlist )
 		return false;
 
-	if ( GetPlaymode() == MUSIK_PLAYER_PLAYMODE_LOOP || GetPlaymode() == MUSIK_PLAYER_PLAYMODE_NORMAL )
+	// if repeat single is enabled, and the
+	// stream naturally expired (a "next" button
+	// was not clicked, for example), we want to
+	// start the song over...
+	if ( expired && m_Playmode & MUSIK_PLAYER_PLAYMODE_REPEAT_SINGLE )
+	{
+		// m_Index = m_index;
+	}
+
+	// if we are repeating a playlist, check to see
+	// if the next song is beyond the last song. if
+	// it is, start it over from the beginning
+	else if ( m_Playmode & MUSIK_PLAYER_PLAYMODE_REPEAT_PLAYLIST )
 	{
 		if ( m_Index + 1 > (int)m_Playlist->GetCount() )
-		{
-			if ( GetPlaymode() == MUSIK_PLAYER_PLAYMODE_LOOP )	
-				m_Index = 0;
-			else
-				return false;
-		}
-		else 
+			m_Index = 0;
+		else
+			m_Index++;
+	}
+
+	// else nothing special, we're just playing straight
+	// through the playlist...
+	else
+	{
+		if ( m_Index + 1 > (int)m_Playlist->GetCount() )
+			return false;
+		else
 			m_Index++;
 	}
 
@@ -745,18 +807,18 @@ bool CmusikPlayer::Prev()
 	// to the previous track
 	if ( GetTimeNow( MUSIK_TIME_MS ) < 2000 || !IsPlaying() )
 	{
-		if ( GetPlaymode() == MUSIK_PLAYER_PLAYMODE_NORMAL )
+		if ( m_Playmode & MUSIK_PLAYER_PLAYMODE_REPEAT_PLAYLIST )
+		{
+			if ( m_Index -1 < 0 )
+				m_Index = (int)m_Playlist->GetCount() - 1;	
+		}
+
+		else
 		{
 			if ( m_Index - 1 < 0 )
 				m_Index = 0;
 			else
 				m_Index--;
-		}
-
-		else if ( GetPlaymode() == MUSIK_PLAYER_PLAYMODE_LOOP )
-		{
-			if ( m_Index -1 < 0 )
-				m_Index = (int)m_Playlist->GetCount() - 1;				
 		}
 	}
 
