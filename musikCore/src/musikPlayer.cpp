@@ -644,7 +644,7 @@ bool CmusikPlayer::Play( int index, int fade_type, int start_pos )
 void CmusikPlayer::EnquePaused( int index )
 {
 	// should only get here if we're paused
-	if ( !IsPaused() )
+	if ( !IsPaused() || !IsPlaying() )
 		return;
 
 	// if we're missing a playlist, or the next
@@ -938,6 +938,9 @@ int CmusikPlayer::GetDuration( int mode )
 
 int CmusikPlayer::GetTimeNow( int mode )
 {
+	if ( !IsPlaying() )
+		return 0;
+
 	int nCurr = FSOUND_Stream_GetTime( GetCurrStream() );
 
 	if ( mode == MUSIK_TIME_SECONDS )
