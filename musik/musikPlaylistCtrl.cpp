@@ -494,21 +494,18 @@ void CmusikPlaylistCtrl::OnNMClick(NMHDR *pNMHDR, LRESULT *pResult)
 
 ///////////////////////////////////////////////////
 
-void CmusikPlaylistCtrl::SetPlaylist( CmusikPlaylist* playlist, int m_Type )
+void CmusikPlaylistCtrl::SavePlaylist( bool check_prompt )
 {
-	if ( playlist == NULL )
+	// if the user wants to be prompted...
+	if ( m_PlaylistNeedsSave )
 	{
-		TRACE0( "Well, something messed up, our playlist is now NULL...\n" );
-	}
+		if ( m_Playlist->GetPlaylistID() == -1 )
+			return;
 
-	// if the last item was a standard playlist,
-	// we may need to save it. so check...
-	if ( m_PlaylistType == MUSIK_PLAYLIST_TYPE_STANDARD )
-	{
-		// if the user wants to be prompted...
-		if ( m_PlaylistNeedsSave )
+		// user needs to be prompted
+		if ( check_prompt )
 		{
-			// user wants to be prompted
+			
 			if ( m_Prefs->GetStdPlaylistPrompt() == -1 )
 			{
 				CmusikSaveStdPlaylist* pDlg;
@@ -528,7 +525,29 @@ void CmusikPlaylistCtrl::SetPlaylist( CmusikPlaylist* playlist, int m_Type )
 
 			m_PlaylistNeedsSave = false;
 		}
+
+		// save silently
+		else
+		{
+			m_Library->RewriteStdPlaylist( m_Playlist->GetPlaylistID(), m_Playlist );
+			m_PlaylistNeedsSave = false;
+		}
 	}
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::SetPlaylist( CmusikPlaylist* playlist, int m_Type )
+{
+	if ( playlist == NULL )
+	{
+		TRACE0( "Well, something messed up, our playlist is now NULL...\n" );
+	}
+
+	// if the last item was a standard playlist,
+	// we may need to save it. so check...
+	if ( m_PlaylistType == MUSIK_PLAYLIST_TYPE_STANDARD )
+		SavePlaylist();
 
 	if ( playlist != m_Playlist )
 	{
@@ -559,6 +578,10 @@ bool CmusikPlaylistCtrl::PlayItem( int n )
 	// unless the player already owns it.
 	if ( m_Changed )
 	{
+		// (prompt to) save the current playlist...
+		if ( m_PlaylistType == MUSIK_PLAYLIST_TYPE_STANDARD )
+			SavePlaylist();
+
 		// give the current playlist to the player,
 		// if it does not belong to the player. otherwise,
 		// it will delete itself, then try to copy itself.
@@ -1034,23 +1057,6 @@ void CmusikPlaylistCtrl::OnLvnMarqueeBegin(NMHDR *pNMHDR, LRESULT *pResult)
 	// returning non-zero ignores the message,
 	// and marquee never appears.
 	*pResult = 1;
-}
-
-///////////////////////////////////////////////////
-
-bool CmusikPlaylistCtrl::SavePlaylist()
-{
-	// if this is a standard playlist, it
-	// will have an ID. all other playlists
-	// will have an id as -1.
-	if ( m_Playlist->GetPlaylistID() != -1 )
-	{
-		m_Library->RewriteStdPlaylist( m_Playlist->GetPlaylistID(), m_Playlist );
-		m_PlaylistNeedsSave = false;
-		return true;
-	}
-
-	return false;
 }
 
 ///////////////////////////////////////////////////

@@ -1100,7 +1100,9 @@ void CMainFrame::RequerySelBoxes( CStdString query, CmusikSelectionCtrl* parent 
 		return;
 
 	// get query...
+	CmusikSelectionCtrl::SetUpdating( true );
 	parent->UpdateV( true );
+	CmusikSelectionCtrl::SetUpdating( false );
 
 	if ( query.IsEmpty() )
 		query = GetSelQuery( NULL, parent );
@@ -1713,7 +1715,7 @@ void CMainFrame::GetCrossfader( CmusikCrossfader* fader )
 void CMainFrame::OnFileSaveplaylist()
 {
 	if ( m_wndView->GetCtrl()->PlaylistNeedsSave() )
-		m_wndView->GetCtrl()->SavePlaylist();
+		m_wndView->GetCtrl()->SavePlaylist( false );
 }
 
 ///////////////////////////////////////////////////
@@ -2058,10 +2060,12 @@ void CMainFrame::OnSysCommand(UINT nID, LPARAM lParam)
 		SaveWindowState();
 
 		ShowWindow( SW_MINIMIZE );
-		ShowWindow( SW_HIDE );
 
 		if ( m_Prefs->MinimizeToTray() )
+		{
+			ShowWindow( SW_HIDE );
 			ShowTrayIcon();
+		}
 
 		return;
 	}

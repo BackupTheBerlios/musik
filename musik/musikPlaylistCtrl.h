@@ -50,7 +50,7 @@ public:
 	// save the current playlist back to the library..
 	// this will only work on standard playlists. will
 	// return false if non standard playlist
-	bool SavePlaylist();
+	void SavePlaylist( bool check_prompt = true );
 
 	// used by the main UI to trigger an "item activate"
 	// event..

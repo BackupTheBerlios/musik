@@ -354,7 +354,7 @@ CAPTION "musikCube"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     PUSHBUTTON      "no",IDC_BTNNO,209,35,50,14
-    PUSHBUTTON      "yes",IDC_BTNYES,155,35,50,14
+    DEFPUSHBUTTON   "yes",IDC_BTNYES,155,35,50,14
     CONTROL         "Remember my answer",IDC_REMEMBER,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,6,37,87,10
     LTEXT           "Save changes to modified playlist?",IDC_STATIC,6,5,252,
