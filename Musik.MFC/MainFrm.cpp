@@ -83,7 +83,6 @@ bool CMainFrame::RecurseMkDir( char* pszDir )
         *pszLastSlash = cTmp;
     }
 
-
     if ( _mkdir( pszDir ) == -1 )
 		return false;
 
@@ -123,7 +122,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	//-------------------------------------------------//
 	//--- create a background window				---//
 	//-------------------------------------------------//
-	m_wndView = new CMusikPlaylistView( m_Library );
+	m_wndView = new CMusikPlaylistView( m_Library, m_Prefs );
 	m_wndView->Create( NULL, NULL, AFX_WS_DEFAULT_VIEW, CRect(0, 0, 0, 0), this, AFX_IDW_PANE_FIRST, NULL );
 	m_wndView->ModifyStyleEx( WS_EX_STATICEDGE, NULL );
 	m_wndView->ModifyStyle( WS_BORDER, 0 );

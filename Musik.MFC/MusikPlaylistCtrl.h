@@ -3,17 +3,20 @@
 
 // CMusikPlaylistCtrl
 class CMusikLibrary;
+class CMusikPrefs;
 
 class CMusikPlaylistCtrl : public CListCtrl
 {
 	DECLARE_DYNAMIC(CMusikPlaylistCtrl)
 
 public:
-	CMusikPlaylistCtrl( CMusikLibrary* library );
+	CMusikPlaylistCtrl( CMusikLibrary* library, CMusikPrefs* prefs );
 	virtual ~CMusikPlaylistCtrl();
 
 protected:
 	CMusikLibrary* m_Library;
+	CMusikPrefs* m_Prefs;
+
 	DECLARE_MESSAGE_MAP()
 
 public:

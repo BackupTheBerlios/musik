@@ -6,13 +6,15 @@
 #include "MusikPlaylistCtrl.h"
 
 #include "../Musik.Core/include/MusikLibrary.h"
+#include "MusikPrefs.h"
 
 // CMusikPlaylistCtrl
 
 IMPLEMENT_DYNAMIC(CMusikPlaylistCtrl, CListCtrl)
-CMusikPlaylistCtrl::CMusikPlaylistCtrl( CMusikLibrary* library )
+CMusikPlaylistCtrl::CMusikPlaylistCtrl( CMusikLibrary* library, CMusikPrefs* prefs )
 {
 	m_Library = library;
+	m_Prefs = prefs;
 }
 
 CMusikPlaylistCtrl::~CMusikPlaylistCtrl()

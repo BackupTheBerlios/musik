@@ -5,13 +5,14 @@
 #include "MusikPlaylistCtrl.h"
 
 class CMusikLibrary;
+class CMusikPrefs;
 
 class CMusikPlaylistView : public CWnd
 {
 	DECLARE_DYNAMIC(CMusikPlaylistView)
 
 public:
-	CMusikPlaylistView( CMusikLibrary* library );
+	CMusikPlaylistView( CMusikLibrary* library, CMusikPrefs* prefs );
 	virtual ~CMusikPlaylistView();
 
 protected:

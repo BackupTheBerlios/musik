@@ -6,13 +6,14 @@
 #include "MusikPlaylistView.h"
 
 #include "../Musik.Core/include/MusikLibrary.h"
+#include "MusikPrefs.h"
 
 // CMusikPlaylistView
 
 IMPLEMENT_DYNAMIC(CMusikPlaylistView, CWnd)
-CMusikPlaylistView::CMusikPlaylistView( CMusikLibrary* library )
+CMusikPlaylistView::CMusikPlaylistView( CMusikLibrary* library, CMusikPrefs* prefs )
 {
-	m_Playlist = new CMusikPlaylistCtrl( library );
+	m_Playlist = new CMusikPlaylistCtrl( library, prefs );
 }
 
 CMusikPlaylistView::~CMusikPlaylistView()
