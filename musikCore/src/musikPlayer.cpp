@@ -1402,7 +1402,12 @@ void CmusikPlayer::ModifyPlaymode( unsigned long add, unsigned long remove, bool
 void CmusikPlayer::UpdateEqualizer()
 {
 	if ( IsEqualizerActive() && IsEqualizerEnabled() && m_Playlist && m_Index > -1 )
-		GetEqualizer()->SetNewSong( m_Playlist->GetSongID( m_Index ) );
+	{	
+		if ( m_Index < (int)m_Playlist->GetCount() )
+			GetEqualizer()->SetNewSong( m_Playlist->GetSongID( m_Index ) );
+		else
+			GetEqualizer()->SetNewSong( -1 );
+	}
 }
 
 ///////////////////////////////////////////////////

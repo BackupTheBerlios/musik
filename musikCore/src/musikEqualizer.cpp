@@ -140,7 +140,7 @@ void CmusikEqualizer::SetNewSong( int songid )
 	m_SongID = songid;
 
 	// load the current equalizer
-	if ( m_Library )
+	if ( m_Library && m_SongID != -1 )
 	{
 		int nEqualizerID = m_Library->GetEqualizerIDFromSongID( m_SongID );
 
