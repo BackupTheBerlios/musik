@@ -253,6 +253,18 @@ protected:
 	afx_msg void OnFileSynchronizeddirectories();
 	afx_msg void OnUpdateFileSynchronizeddirectories(CCmdUI *pCmdUI);
 	afx_msg void OnViewResetinterfacetodefault();
+	afx_msg void OnNotificationtrayExit();
+	afx_msg void OnNotificationtrayRestore();
+	afx_msg void OnUpdateNotificationtrayPlay(CCmdUI *pCmdUI);
+	afx_msg void OnNotificationtrayPlay();
+	afx_msg void OnUpdateNotificationtrayPause(CCmdUI *pCmdUI);
+	afx_msg void OnNotificationtrayPause();
+	afx_msg void OnUpdateNotificationtrayNext(CCmdUI *pCmdUI);
+	afx_msg void OnNotificationtrayNext();
+	afx_msg void OnUpdateNotificationtrayPrev(CCmdUI *pCmdUI);
+	afx_msg void OnNotificationtrayPrev();
+	afx_msg void OnUpdateNotificationtrayStop(CCmdUI *pCmdUI);
+	afx_msg void OnNotificationtrayStop();
 	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
 
 	// list of all threads running
@@ -281,19 +293,6 @@ protected:
 	void InitTrayIcon();
 	void ShowTrayIcon();
 	void HideTrayIcon();
-public:
-	afx_msg void OnNotificationtrayExit();
-	afx_msg void OnNotificationtrayRestore();
-	afx_msg void OnUpdateNotificationtrayPlay(CCmdUI *pCmdUI);
-	afx_msg void OnNotificationtrayPlay();
-	afx_msg void OnUpdateNotificationtrayPause(CCmdUI *pCmdUI);
-	afx_msg void OnNotificationtrayPause();
-	afx_msg void OnUpdateNotificationtrayNext(CCmdUI *pCmdUI);
-	afx_msg void OnNotificationtrayNext();
-	afx_msg void OnUpdateNotificationtrayPrev(CCmdUI *pCmdUI);
-	afx_msg void OnNotificationtrayPrev();
-	afx_msg void OnUpdateNotificationtrayStop(CCmdUI *pCmdUI);
-	afx_msg void OnNotificationtrayStop();
 };
 
 ///////////////////////////////////////////////////
