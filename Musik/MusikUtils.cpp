@@ -174,7 +174,7 @@ wxString GetGenre ( wxString sGenre )
 
 			int nGenreID = wxStringToInt( sGenre );
 
-			if ( nGenreID <= ID3_NR_OF_V1_GENRES )
+			if ( nGenreID < ID3_NR_OF_V1_GENRES )
 				sGenre = ConvA2W( ID3_v1_genre_description[nGenreID] );
 			else
 				sGenre = wxT( "<unknown>" );
