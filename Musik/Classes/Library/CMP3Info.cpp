@@ -22,7 +22,7 @@ bool CMP3Info::ReadMetaData(CSongMetaData & MetaData) const
 #else
 	// ifstream::ifstream(FILE *f) seems to be only available on windows
 	ifstream stream;
-	stream.open(ConvFn2A(MetaData.Filename.GetFullPath(),ios_base::in|ios_base::binary);
+	stream.open(ConvFn2A(MetaData.Filename.GetFullPath()),ios::in|ios::binary);
 	if(!stream)
 		return false;
 #endif
