@@ -58,25 +58,24 @@ void CMusikFrame::CreateSashes()
 	wxWindow* pLeft = pSash;
 
 	//---------------------------------//
+	//--- simple query				---//
+	//---------------------------------//
+	pSash = new wxSashLayoutWindow( pLeft, -1, wxDefaultPosition, wxDefaultSize, wxNO_BORDER );
+	pSash->SetAlignment( wxLAYOUT_BOTTOM );
+	pSash->SetDefaultSize( wxSize( -1, 26 ) );
+	pSash->SetOrientation( wxLAYOUT_HORIZONTAL );
+	pSash->SetBackgroundColour( wxColour( 0, 255, 255 ) );
+	m_SimpleQuerySash = pSash;
+
+	//---------------------------------//
 	//--- sources					---//
 	//---------------------------------//
 	pSash = new wxSashLayoutWindow( pLeft, -1, wxDefaultPosition, wxDefaultSize, wxNO_BORDER );
 	pSash->SetAlignment( wxLAYOUT_TOP );
+	pSash->SetDefaultSize( wxSize( -1, -1 ) );
 	pSash->SetOrientation( wxLAYOUT_HORIZONTAL );
 	pSash->SetBackgroundColour( wxColour( 0, 0, 255 ) );
 	m_SourcesSash = pSash;
-
-	//---------------------------------//
-	//--- simple query				---//
-	//---------------------------------//
-	/*
-	pSash = new wxSashLayoutWindow( pLeft, -1, wxDefaultPosition, wxDefaultSize, wxNO_BORDER );
-	pSash->SetAlignment( wxLAYOUT_BOTTOM );
-	pSash->SetDefaultSize( wxSize( 20, 20 ) );
-	pSash->SetOrientation( wxLAYOUT_HORIZONTAL );
-	pSash->SetBackgroundColour( wxColour( 0, 255, 255 ) );
-	m_SimpleQuerySash = pSash;
-	*/
 
 	//---------------------------------//
 	//--- right side				---//
