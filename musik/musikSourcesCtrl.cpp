@@ -614,7 +614,7 @@ void CmusikSourcesCtrl::OnDropFiles( HDROP hDropInfo, bool right_button )
 	DragFinish( hDropInfo );
 
 	// did we actually hit an item?
-	if ( pItem && pItem != m_SubLibRoot )
+	if ( pItem && pItem != m_SubLibRoot && pItem != m_StdPlaylistRoot )
 	{
 		// standard playlist
 		if ( pItem->GetPlaylistType() == MUSIK_PLAYLIST_TYPE_STANDARD ||
@@ -650,12 +650,13 @@ void CmusikSourcesCtrl::OnDropFiles( HDROP hDropInfo, bool right_button )
 			}
 		}
 
-		// hit create?
+		// hit a create
 		else if ( pItem->GetPlaylistType() == MUSIK_SOURCES_TYPE_NEWSUBLIBRARY )
 		{
 			CreateNewStdPlaylist( MUSIK_PLAYLIST_TYPE_SUBLIBRARY, &files );
 			return;
 		}
+
 	}
 
 	// didn't hit an item, a new 
@@ -664,6 +665,11 @@ void CmusikSourcesCtrl::OnDropFiles( HDROP hDropInfo, bool right_button )
 	if ( !pItem || pItem == m_SubLibRoot )
 	{
 		CreateNewStdPlaylist( MUSIK_PLAYLIST_TYPE_SUBLIBRARY, &files );
+		return;
+	}
+	else if ( pItem == m_StdPlaylistRoot )
+	{
+		CreateNewStdPlaylist( MUSIK_PLAYLIST_TYPE_STANDARD, &files );
 		return;
 	}
 
