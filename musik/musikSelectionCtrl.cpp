@@ -43,6 +43,7 @@
 #include "musik.h"
 #include "musikSelectionCtrl.h"
 #include "musikPrefs.h"
+#include "MainFrm.h"
 
 #include "MEMDC.H"
 
@@ -519,6 +520,14 @@ void CmusikSelectionCtrl::UpdateV()
 
 	SetScrollPos( SB_VERT, nPos, 0 );
 	RedrawWindow();
+}
+
+///////////////////////////////////////////////////
+
+bool CmusikSelectionCtrl::IsPlaylistSel()
+{
+	CMainFrame* ptrMain = (CMainFrame*)AfxGetApp()->m_pMainWnd;
+	return ptrMain->IsPlaylistSel();
 }
 
 ///////////////////////////////////////////////////

@@ -373,6 +373,7 @@ void CMainFrame::Initmusik()
 	m_Library		= new CmusikLibrary( ( CmusikString )m_Database );
 	m_Prefs			= new CmusikPrefs( m_PrefsIni );
 	m_DirSyncDlg	= NULL;
+	m_PlaylistSel	= false;
 	
 	// show all songs, if we are supposed to
 	m_LibPlaylist = new CmusikPlaylist();
@@ -1350,6 +1351,8 @@ LRESULT CMainFrame::OnSourcesLibrary( WPARAM wParam, LPARAM lParam )
 {
 	TRACE0( "A musik Library was clicked\n" );
 
+	m_PlaylistSel = false;
+
 	if ( !m_LibPlaylist )
 	{
 		m_LibPlaylist = new CmusikPlaylist();
@@ -1371,6 +1374,8 @@ LRESULT CMainFrame::OnSourcesLibrary( WPARAM wParam, LPARAM lParam )
 
 LRESULT CMainFrame::OnSourcesQuickSearch( WPARAM wParam, LPARAM lParam )
 {
+	m_PlaylistSel = false;
+
 	if ( !m_LibPlaylist )
 		m_LibPlaylist = new CmusikPlaylist();
 
@@ -1392,6 +1397,8 @@ LRESULT CMainFrame::OnSourcesQuickSearch( WPARAM wParam, LPARAM lParam )
 LRESULT CMainFrame::OnSourcesNowPlaying( WPARAM wParam, LPARAM lParam )
 {
 	TRACE0( "'Now Playing' was clicked\n" );
+
+	m_PlaylistSel = false;
 
 	if ( !m_Player->GetPlaylist() )
 	{
@@ -1416,6 +1423,8 @@ LRESULT CMainFrame::OnSourcesStdPlaylist( WPARAM wParam, LPARAM lParam )
 {
 	TRACE0( "A standard playlist was clicked\n" );
 
+	m_PlaylistSel = true;
+
 	if ( !m_StdPlaylist )
 		m_StdPlaylist = new CmusikPlaylist();
 
@@ -1439,10 +1448,7 @@ LRESULT CMainFrame::OnSourcesDynPlaylist( WPARAM wParam, LPARAM lParam )
 {
 	TRACE0( "A dynamic playlist was clicked\n" );
 
-	//ResetPlaylist();
-	
-	//m_CurPlaylist = m_DynPlaylist;
-	// MUSIK_PLAYLIST_TYPE_DYNAMIC
+	//m_PlaylistSel = true;
 
 	return 0L;
 }

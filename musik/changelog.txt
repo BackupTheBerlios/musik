@@ -2,6 +2,8 @@
 
 a3:
 
+  - fixed some unnecessary and potentially dangerous pointer
+    dereferencing in CmusikPlayer
   - fixed a memory leak and potential crash relating to clearing
     the library.
   - fixed a bug where adding synchronized paths with spaces

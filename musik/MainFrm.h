@@ -157,6 +157,7 @@ public:
 	void RequeryPlaylist( CmusikSelectionCtrl* sender = NULL, bool focus_library = true );
 	void RequerySelBoxes( CmusikSelectionCtrl* sender = NULL, bool deselect_items = true, bool only_if_parent_exists = false );
 	CmusikString GetSelQuery( CmusikSelectionCtrl* target = NULL );
+	bool IsPlaylistSel(){ return m_PlaylistSel; }
 
 	// tray icon
 	void ShowTrayIcon();
@@ -336,7 +337,8 @@ protected:
 	bool m_SelBoxesVisible;
 	void InitTrayIcon();
 
-	// autostart 
+	// various
+	bool m_PlaylistSel;
 	bool m_AutoStart;
 };
 
