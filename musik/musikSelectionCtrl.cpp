@@ -8,6 +8,7 @@
 #include "MEMDC.H"
 
 #include "../musikCore/include/musikLibrary.h"
+#include ".\musikselectionctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -300,6 +301,7 @@ CmusikSelectionCtrl::CmusikSelectionCtrl( CFrameWnd* parent, CmusikLibrary* libr
 	m_DropID_R = dropid_r;
 	m_ParentBox = false;
 	m_ChildOrder = -1;
+	m_ShiftDown = false;
 
 	m_IsWinNT = ( 0 == ( GetVersion() & 0x80000000 ) );
 	HideScrollBars( LCSB_NCOVERRIDE, SB_HORZ );
@@ -334,6 +336,10 @@ BEGIN_MESSAGE_MAP(CmusikSelectionCtrl, CmusikListCtrl)
 	// custom message maps
 	ON_REGISTERED_MESSAGE(WM_SELECTION_EDIT_COMMIT,OnEditCommit)
 	ON_REGISTERED_MESSAGE(WM_SELECTION_EDIT_CANCEL,OnEditCancel)
+	ON_NOTIFY_REFLECT(LVN_KEYDOWN, OnLvnKeydown)
+	ON_WM_KEYUP()
+	ON_WM_KILLFOCUS()
+	ON_WM_CHAR()
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -830,9 +836,8 @@ void CmusikSelectionCtrl::OnLvnMarqueeBegin(NMHDR *pNMHDR, LRESULT *pResult)
 
 void CmusikSelectionCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	// user pressed f2 to rename an entry
-	if ( nChar == VK_F2 )
-		RenameSel();
+	if ( nChar == VK_SHIFT )
+		m_ShiftDown = true;
 
 	CmusikListCtrl::OnKeyDown(nChar, nRepCnt, nFlags);
 }
@@ -1001,11 +1006,15 @@ void CmusikSelectionCtrl::OnLvnBegindrag(NMHDR *pNMHDR, LRESULT *pResult)
 	*pResult = 0;
 }
 
+///////////////////////////////////////////////////
+
 void CmusikSelectionCtrl::OnLvnBeginrdrag(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	BeginDrag( true );
 	*pResult = 0;
 }
+
+///////////////////////////////////////////////////
 
 void CmusikSelectionCtrl::BeginDrag( bool right_button )
 {
@@ -1161,3 +1170,64 @@ void CmusikSelectionCtrl::BeginDrag( bool right_button )
 	}		
 
 }
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionCtrl::OnLvnKeydown(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMLVKEYDOWN pLVKeyDow = reinterpret_cast<LPNMLVKEYDOWN>(pNMHDR);
+
+	if ( pLVKeyDow->wVKey == VK_F2 )
+		RenameSel();
+
+	else if ( ( pLVKeyDow->wVKey == VK_DOWN || pLVKeyDow->wVKey == VK_UP ) && m_ShiftDown )
+	{
+		int WM_SELBOXUPDATE = RegisterWindowMessage( "SELBOXUPDATE" );
+		m_Parent->PostMessage( WM_SELBOXUPDATE, GetCtrlID() );
+	}
+
+	*pResult = 0;
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionCtrl::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	if ( nChar == VK_SHIFT )
+		m_ShiftDown = false;
+
+	CmusikListCtrl::OnKeyUp(nChar, nRepCnt, nFlags);
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionCtrl::OnKillFocus(CWnd* pNewWnd)
+{
+	CmusikListCtrl::OnKillFocus(pNewWnd);
+
+	m_ShiftDown = false;
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionCtrl::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	char org_key = nChar;
+	CString s_in_key = (CString)org_key;
+	s_in_key.MakeLower();
+
+	CString s_cmp_key;
+	for ( size_t i = 1; i < m_Items.size(); i++ )
+	{
+		s_cmp_key = m_Items.at( i ).Left( 1 );
+		s_cmp_key.MakeLower();
+
+		if ( s_cmp_key == s_in_key )
+		{
+			EnsureVisible( i, FALSE );
+			return;
+		}
+	}
+}
+
+///////////////////////////////////////////////////

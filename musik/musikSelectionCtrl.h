@@ -165,8 +165,9 @@ protected:
 	UINT m_DropID_R;
 	void BeginDrag( bool right_button );
 
-	// tracking mouse
+	// tracking mouse / selection
 	bool m_MouseTrack;
+	bool m_ShiftDown;
 
 	// bg color if child
 	void InitColors();
@@ -195,6 +196,11 @@ protected:
 	// macros
 	DECLARE_DYNAMIC(CmusikSelectionCtrl)
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnLvnKeydown(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg void OnKillFocus(CWnd* pNewWnd);
+	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
 };
 
 ///////////////////////////////////////////////////
