@@ -29,8 +29,6 @@ int CMusikSelectionBar::OnCreate( LPCREATESTRUCT lpCreateStruct )
 	if ( baseCMusikSelectionBar::OnCreate(lpCreateStruct) == -1 )
 		return -1;
 
-	//SetSCBStyle( GetSCBStyle() | SCBS_SIZECHILD );
-
 	long dwStyle = WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_OWNERDATA | LVS_SHOWSELALWAYS;
 	long dwStyleEx =  LVS_EX_FULLROWSELECT;
 

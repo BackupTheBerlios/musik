@@ -21,6 +21,7 @@ CMusikNowPlayingBar::~CMusikNowPlayingBar()
 BEGIN_MESSAGE_MAP(CMusikNowPlayingBar, baseCMusikNowPlayingBar)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
+	ON_WM_SIZING()
 END_MESSAGE_MAP()
 
 
@@ -28,8 +29,6 @@ int CMusikNowPlayingBar::OnCreate( LPCREATESTRUCT lpCreateStruct )
 {
 	if ( baseCMusikNowPlayingBar::OnCreate(lpCreateStruct) == -1 )
 		return -1;
-
-	SetSCBStyle( GetSCBStyle() | SCBS_SIZECHILD );
 
 	if ( !m_wndChild.Create( NULL, NULL, WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0), this, 123) )
 		return -1;
@@ -40,4 +39,14 @@ int CMusikNowPlayingBar::OnCreate( LPCREATESTRUCT lpCreateStruct )
 	m_wndChild.SetFont( &m_Font );
 	
 	return 0;
+}
+
+void CMusikNowPlayingBar::OnSizing(UINT fwSide, LPRECT pRect)
+{
+	CSizingControlBarG::OnSizing(fwSide, pRect);
+
+	CRect rcClient;
+	GetClientRect( &rcClient );
+
+	m_wndChild.MoveWindow( &rcClient );
 }
