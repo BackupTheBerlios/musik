@@ -2,6 +2,8 @@
 
 a2:
  
+  - fixed a bug where maximizing, minimizing, then restoring
+    would not restore to maximized.
   - crossfader presets and settings are now available to
     the user. see file -> preferences -> sound -> crossfader
   - duplicate equalizer and crossfader preset names are
