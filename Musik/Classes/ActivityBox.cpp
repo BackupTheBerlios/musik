@@ -382,9 +382,9 @@ wxString CActivityBox::GetActivityTypeStr()
 	case MUSIK_LBTYPE_YEARS:
 		return wxT( "year" );
 		break;
-  case MUSIK_LBTYPE_NULL:
-    wxASSERT(0);
-    break;  
+  	case MUSIK_LBTYPE_NULL:
+  	 	 wxASSERT(0);
+   		 break;  
 	}
 	return wxT( "" );
 }
@@ -400,9 +400,9 @@ EMUSIK_LIB_TYPE CActivityBox::ACTIVITY_TYPE2LIB_TYPE( EMUSIK_ACTIVITY_TYPE lbtyp
 		return MUSIK_LIB_GENRE;
 	case MUSIK_LBTYPE_YEARS:
 		return MUSIK_LIB_YEAR;
-    case MUSIK_LBTYPE_NULL:
-    default:    
-	    return MUSIK_LIB_INVALID;
+  	case MUSIK_LBTYPE_NULL:
+  	default:    
+		return MUSIK_LIB_INVALID;
 	}
 }
 
@@ -440,20 +440,20 @@ void CActivityBox::GetFullList( wxArrayString & aReturn )
 	{
 	case MUSIK_LBTYPE_ARTISTS:
 		g_Library.GetAllArtists( aReturn );
-    break;
+  		break;
 	case MUSIK_LBTYPE_ALBUMS:
 		g_Library.GetAllAlbums( aReturn );
-    break;
+    		break;
 	case MUSIK_LBTYPE_GENRES:
 		g_Library.GetAllGenres( aReturn );
-    break;
+    		break;
 	case MUSIK_LBTYPE_YEARS:
 		g_Library.GetAllYears( aReturn );
-    break;
-  case MUSIK_LBTYPE_NULL:
-    wxASSERT(0);
-    break;
-  }
+		break;
+  	case MUSIK_LBTYPE_NULL:
+    		wxASSERT(0);
+    		break;
+  	}
 }
 
 void CActivityBox::GetSelectedSongs( CMusikSongArray& array )
@@ -572,7 +572,7 @@ void CActivityBox::GetSelectedSongs( CMusikSongArray& array )
 					sParent += wxT(" or ");
 					sParent += sParentType;
 					sParent += wxT(" like ");
-			    }
+			    	}
 			}
 
 			g_Library.QuerySongs( sParent, array );

@@ -899,7 +899,6 @@ void CPlaylistCtrl::RescaleColumns( bool bFreeze )
 	if ( bFreeze )
 		Freeze();
 
-
 	SaveColumns();
 
 	//-------------------------------------------------//
