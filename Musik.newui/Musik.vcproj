@@ -149,6 +149,16 @@
 					RelativePath=".\src\MusikFrame.h">
 				</File>
 			</Filter>
+			<Filter
+				Name="LibrarySetup"
+				Filter="">
+				<File
+					RelativePath=".\src\MusikLibrarySetupFrame.cpp">
+				</File>
+				<File
+					RelativePath=".\src\MusikLibrarySetupFrame.h">
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Controls"
