@@ -8,7 +8,7 @@
 * Redistribution is appreciated.
 *
 * $Workfile:$
-* $Revision: 1.2 $
+* $Revision: 1.3 $
 * $Modtime:$
 * $Author: avatar5d $
 *
@@ -371,6 +371,18 @@ void CTreePropSheet::RefillPageTree()
 				m_pwndPageTree->SetItemImage(hItem, nImage, nImage);
 			}
 		}
+	}
+
+	// expands all items in a tree control
+	HTREEITEM hRootItem = m_pwndPageTree->GetRootItem();
+	HTREEITEM hItem = hRootItem;
+
+	while ( hItem )
+	{
+		if ( m_pwndPageTree->ItemHasChildren( hItem ) )
+			m_pwndPageTree->Expand( hItem, TVE_EXPAND );
+
+		hItem = m_pwndPageTree->GetNextItem( hItem, TVGN_NEXT );
 	}
 }
 

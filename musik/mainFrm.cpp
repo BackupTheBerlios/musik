@@ -1682,7 +1682,7 @@ void CMainFrame::OnAddDirectory()
 		// in the directory we just found...
 		CmusikString sPath = path;
 		sPath += "\\*.*";
-		CmusikDir dir( sPath, files, NULL );
+		CmusikDir dir( sPath, files );
 		dir.Run();
 
         // now fire the thread up...
@@ -2297,7 +2297,7 @@ void CMainFrame::SynchronizeDirs()
 		for ( size_t i = 0; i < synchs.size(); i++ )
 		{
 			CmusikStringArray* files = new CmusikStringArray();
-			CmusikDir scan( synchs.at( i ) + _T( "\\*.*" ), files, NULL );
+			CmusikDir scan( synchs.at( i ) + _T( "\\*.*" ), files );
 			scan.Run();
 
 			CmusikBatchAdd* params = new CmusikBatchAdd( files, NULL, m_Library, NULL, m_BatchAddFnct, 0, 0, 1 );
