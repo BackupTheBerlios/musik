@@ -70,6 +70,7 @@ public:
 // Attributes
 public:
     virtual BOOL HasGripper() const;
+	void ShowGripper( bool show = true );
 
 // Operations
 public:
@@ -94,6 +95,7 @@ protected:
 
 protected:
     int     m_cyGripper;
+	bool	m_ShowGripper;
 
     CSCBButton m_biHide;
 

@@ -31,7 +31,7 @@ CMainFrame::~CMainFrame()
 {
 }
 
-void CMainFrame::DockBarLeftOf( CSizingControlBarG* Bar, CSizingControlBarG* LeftOf )
+void CMainFrame::DockBarLeftOf( CSizingControlBar* Bar, CSizingControlBar* LeftOf )
 {
 	CRect rect;
 	DWORD dw;

@@ -604,7 +604,7 @@ void CSizingControlBar::OnSize(UINT nType, int cx, int cy)
         CWnd* pWnd = GetWindow(GW_CHILD);
         if (pWnd != NULL)
         {
-            pWnd->MoveWindow(0, 0, cx, cy);
+            pWnd->MoveWindow( 0, 0, cx + 2, cy - 2 );
             ASSERT(pWnd->GetWindow(GW_HWNDNEXT) == NULL);
         }
     }

@@ -44,7 +44,7 @@ IMPLEMENT_DYNAMIC(CSizingControlBarG, baseCSizingControlBarG);
 
 CSizingControlBarG::CSizingControlBarG()
 {
-    m_cyGripper = 12;
+	ShowGripper( true );
 }
 
 CSizingControlBarG::~CSizingControlBarG()
@@ -95,15 +95,27 @@ void CSizingControlBarG::NcCalcClient(LPRECT pRc, UINT nDockBarID)
         rc.DeflateRect(0, m_cyGripper, 0, 0);
 
     // set position for the "x" (hide bar) button
-    CPoint ptOrgBtn;
-    if (bHorz)
-        ptOrgBtn = CPoint(rc.left - 13, rc.top);
-    else
-        ptOrgBtn = CPoint(rc.right - 12, rc.top - 13);
+	if ( m_ShowGripper )
+	{
+		CPoint ptOrgBtn;
+		if (bHorz)
+			ptOrgBtn = CPoint(rc.left - 13, rc.top);
+		else
+			ptOrgBtn = CPoint(rc.right - 12, rc.top - 13);
 
-    m_biHide.Move(ptOrgBtn - rcBar.TopLeft());
+		m_biHide.Move(ptOrgBtn - rcBar.TopLeft());
+	}
 
     *pRc = rc;
+}
+
+void CSizingControlBarG::ShowGripper( bool show )
+{
+	m_ShowGripper = show;
+	if ( show )
+		m_cyGripper = 12;
+	else
+		m_cyGripper = NULL;
 }
 
 void CSizingControlBarG::NcPaintGripper(CDC* pDC, CRect rcClient)
@@ -117,29 +129,25 @@ void CSizingControlBarG::NcPaintGripper(CDC* pDC, CRect rcClient)
     CRect rcbtn = m_biHide.GetRect();
     BOOL bHorz = IsHorzDocked();
 
-    gripper.DeflateRect(1, 1);
-    if (bHorz)
-    {   // gripper at left
-        gripper.left = ( gripper.left - m_cyGripper ) - 2;
-        gripper.right = gripper.left + 10;
-        gripper.top = rcbtn.bottom + 3;
-    }
-    else
-    {   // gripper at top
-        gripper.top = ( gripper.top - m_cyGripper ) - 2;
-        gripper.bottom = gripper.top + 10;
-        gripper.right = rcbtn.left - 3;
-    }
+	if ( m_ShowGripper )
+	{
+		gripper.DeflateRect(1, 1);
+		if (bHorz)
+		{   // gripper at left
+			gripper.left = ( gripper.left - m_cyGripper ) - 2;
+			gripper.right = gripper.left + 10;
+			gripper.top = rcbtn.bottom + 3;
+		}
+		else
+		{   // gripper at top
+			gripper.top = ( gripper.top - m_cyGripper ) - 2;
+			gripper.bottom = gripper.top + 10;
+			gripper.right = rcbtn.left - 3;
+		}
+	}
 
-	///*
-
-    pDC->Draw3dRect(gripper, ::GetSysColor( COLOR_BTNSHADOW ), ::GetSysColor( COLOR_BTNSHADOW ) );
-
-    //gripper.OffsetRect(bHorz ? 3 : 0, bHorz ? 0 : 3);
-
-    //pDC->Draw3dRect(gripper, ::GetSysColor(COLOR_BTNSHADOW),
-    //   ::GetSysColor(COLOR_BTNSHADOW));
-	//*/
+	if ( m_ShowGripper )
+		pDC->Draw3dRect(gripper, ::GetSysColor( COLOR_BTNSHADOW ), ::GetSysColor( COLOR_BTNSHADOW ) );
 
     m_biHide.Paint(pDC);
 }
@@ -209,7 +217,7 @@ void CSCBButton::Paint(CDC* pDC)
     if (bPushed)
         pDC->Draw3dRect(rc, ::GetSysColor(COLOR_BTNSHADOW),
             ::GetSysColor(COLOR_BTNHIGHLIGHT));
-    else
+	else
         if (bRaised)
             pDC->Draw3dRect(rc, ::GetSysColor(COLOR_BTNHIGHLIGHT),
                 ::GetSysColor(COLOR_BTNSHADOW));
