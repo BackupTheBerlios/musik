@@ -175,6 +175,7 @@ protected:
 	afx_msg void OnFilePreferences();
 	afx_msg void OnDestroy();
 	afx_msg void OnOpenFiles();
+	afx_msg void OnOpenDirectory();
 
 	// batch add files thread
 	CMusikBatchAdd* m_BatchAddThr;

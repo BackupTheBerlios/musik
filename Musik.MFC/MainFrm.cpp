@@ -36,6 +36,7 @@
 ///////////////////////////////////////////////////
 
 #include "stdafx.h"
+#include <shlobj.h>   
 
 #include "Musik.h"
 #include "MainFrm.h"
@@ -96,6 +97,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_WM_SYSCOLORCHANGE()
 	ON_COMMAND(ID_FILE_PREFERENCES, OnFilePreferences)
 	ON_COMMAND(ID_OPEN_FILES, OnOpenFiles)
+	ON_COMMAND(ID_OPEN_DIRECTORY, OnOpenDirectory)
 
 	// custom message maps
 	ON_REGISTERED_MESSAGE( WM_SELBOXUPDATE, OnUpdateSel )
@@ -886,41 +888,42 @@ void CMainFrame::OnOpenFiles()
 		"MP3 Files ( *.mp3 )|*.mp3|"
 		"OGG Vorbis Files ( *.ogg )|*.ogg||" );
 
-	CStdStringArray* files;
-
-	if ( m_BatchAddThr )
-	{
-		m_BatchAddThr->Pause();
-		files = m_BatchAddThr->m_Files;
-	}
-	else
-		files = new CStdStringArray();
-
-	POSITION posCurr;
 	if ( opendlg.DoModal() == IDOK )
 	{
-		posCurr = opendlg.GetStartPosition();
+		CStdStringArray* files;
+
+		if ( m_BatchAddThr )
+		{
+			m_BatchAddThr->Pause();
+			files = m_BatchAddThr->m_Files;
+		}
+		else
+			files = new CStdStringArray();
+
+		POSITION posCurr = opendlg.GetStartPosition();
 		while ( posCurr )
 			files->push_back( (CStdString)opendlg.GetNextPathName( posCurr ) );
-	}
 
-	if ( m_BatchAddThr )
-		m_BatchAddThr->Resume();
+		if ( m_BatchAddThr )
+			m_BatchAddThr->Resume();
 
-	else
-	{
-		if ( files->size() > 0 )
+		else if ( m_BatchAddThr )
 		{
-			if ( m_BatchAddFnct )
+			if ( files->size() > 0 )
 			{
-				TRACE0( "Last thread ended but functor still active? This is a bug...\n" );
-				delete m_BatchAddFnct;
-				m_BatchAddFnct = NULL;
-			}	
+				if ( m_BatchAddFnct )
+				{
+					TRACE0( "Last thread ended but functor still active? This is a bug...\n" );
+					delete m_BatchAddFnct;
+					m_BatchAddFnct = NULL;
+				}	
 
-			m_BatchAddFnct = new CMusikBatchAddFunctor( this );
-			m_BatchAddThr = new CMusikBatchAdd( files, m_Player->GetPlaylist(), m_Library, m_BatchAddFnct );
-			m_BatchAddThr->Run();
+				m_BatchAddFnct = new CMusikBatchAddFunctor( this );
+				m_BatchAddThr = new CMusikBatchAdd( files, m_Player->GetPlaylist(), m_Library, m_BatchAddFnct );
+				m_BatchAddThr->Run();
+			}
+			else
+				delete files;
 		}
 	}
 }
@@ -954,3 +957,71 @@ LRESULT CMainFrame::OnBatchAddEnd( WPARAM wParam, LPARAM lParam )
 }
 
 ///////////////////////////////////////////////////
+
+void CMainFrame::OnOpenDirectory()
+{
+	TCHAR path[MAX_PATH];
+	BROWSEINFO bi = { 0 };
+	bi.lpszTitle = _T( "Please select a directory containing music." );
+	LPITEMIDLIST pidl = SHBrowseForFolder ( &bi );
+
+    if ( pidl != 0 )
+    {
+		// get the name of the folder and put it in path
+		SHGetPathFromIDList ( pidl, path );
+
+        // free memory used
+		IMalloc * imalloc = 0;
+		if ( SUCCEEDED( SHGetMalloc ( &imalloc )) )
+		{
+			imalloc->Free ( pidl );
+			imalloc->Release ( );
+		}
+
+		// files... if there is a thread already
+		// running then pause it and add the relevant
+		// data to it's file list, otherwise make
+		// a new list...
+		CStdStringArray* files;
+		if ( m_BatchAddThr )
+		{
+			m_BatchAddThr->Pause();
+			files = m_BatchAddThr->m_Files;
+		}
+		else
+			files = new CStdStringArray();
+
+        // get all the musik related files
+		// in the directory we just found...
+		CStdString sPath = path;
+		sPath += "\\*.*";
+		CMusikDir dir( sPath, files, NULL, false, false );
+		dir.Run();
+
+        // now fire the thread up...
+		if ( m_BatchAddThr )
+			m_BatchAddThr->Resume();
+
+		else if ( !m_BatchAddThr )
+		{
+			if ( files->size() > 0 )
+			{
+				if ( m_BatchAddFnct )
+				{
+					TRACE0( "Last thread ended but functor still active? This is a bug...\n" );
+					delete m_BatchAddFnct;
+					m_BatchAddFnct = NULL;
+				}	
+
+				m_BatchAddFnct = new CMusikBatchAddFunctor( this );
+				m_BatchAddThr = new CMusikBatchAdd( files, m_Player->GetPlaylist(), m_Library, m_BatchAddFnct );
+				m_BatchAddThr->Run();
+			}
+			else 
+				delete files;
+		}
+	}
+}
+
+///////////////////////////////////////////////////
+
