@@ -196,7 +196,7 @@ void CMusikSourcesCtrl::OnDropFiles(HDROP hDropInfo)
 	CMusikPropTreeItem* pItem = FindItem( pos );
 
 	// make sure the item isn't root
-	if ( pItem->IsRootLevel() )
+	if ( pItem != NULL && pItem->IsRootLevel() )
 		return;
 
 	if ( pItem )

@@ -206,7 +206,6 @@ BOOL CMusikPropTreeItem::HitExpand(const POINT& pt)
 
 BOOL CMusikPropTreeItem::IsRootLevel()
 {
-	ASSERT(m_pProp!=NULL);
 	return GetParent() == m_pProp->GetRootItem();
 }
 
