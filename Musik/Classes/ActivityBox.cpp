@@ -359,8 +359,7 @@ BEGIN_EVENT_TABLE(CActivityBox, wxPanel)
 #ifdef WXMUSIK_BUGWORKAROUND_LISTCTRL_CONTEXTMENU
 	EVT_LIST_ITEM_RIGHT_CLICK(-1, CActivityBox::ShowMenu)
 #else
-	EVT_CONTEXT_MENU			(												CSourcesListBox::ShowMenu				)
-
+	EVT_CONTEXT_MENU			( CActivityBox::ShowMenu				)
 #endif	
 
 	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_PLAY_INSTANTLY,			CActivityBox::OnPlayInstantly		)
