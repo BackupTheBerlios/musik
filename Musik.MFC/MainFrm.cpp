@@ -19,7 +19,7 @@
 
 int WM_SELBOXUPDATE = RegisterWindowMessage( "SELBOXUPDATE" );
 
-// CMainFrame
+///////////////////////////////////////////////////
 
 IMPLEMENT_DYNAMIC(CMainFrame, CFrameWnd)
 
@@ -29,8 +29,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_SELBOXUPDATE, OnUpdateSel )
 END_MESSAGE_MAP()
 
-
-// CMainFrame construction/destruction
+///////////////////////////////////////////////////
 
 CMainFrame::CMainFrame()
 {
@@ -48,6 +47,8 @@ CMainFrame::CMainFrame()
 	//m_hIcon16 = ( HICON )LoadImage( AfxGetApp()->m_hInstance, MAKEINTRESOURCE( IDI_ICON16 ), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR );
 	//m_hIcon32 = ( HICON )LoadImage( AfxGetApp()->m_hInstance, MAKEINTRESOURCE( IDI_ICON32 ), IMAGE_ICON, 32, 32, LR_DEFAULTCOLOR );
 }
+
+///////////////////////////////////////////////////
 
 CMainFrame::~CMainFrame()
 {
@@ -69,6 +70,8 @@ CMainFrame::~CMainFrame()
 		delete m_StdPlaylist;
 }
 
+///////////////////////////////////////////////////
+
 void CMainFrame::InitPaths()
 {
 	char buffer[2000];
@@ -82,6 +85,8 @@ void CMainFrame::InitPaths()
 	m_PrefsIni = m_UserDir + _T( "musikprefs.ini" );
 }
 
+///////////////////////////////////////////////////
+
 void CMainFrame::ResetDialogRect()
 {
 	CSize dlg_size = m_Prefs->GetDlgSize();
@@ -90,6 +95,8 @@ void CMainFrame::ResetDialogRect()
 	MoveWindow( dlg_pos.x, dlg_pos.y, dlg_size.cx, dlg_size.cy );
 }
 
+///////////////////////////////////////////////////
+
 void CMainFrame::ResetNowPlaying()
 {
 	CRect rc;
@@ -97,6 +104,8 @@ void CMainFrame::ResetNowPlaying()
 	
 	//m_wndNowPlaying.SetWindowPos( this, 0, rc.Height() - m_Prefs->GetNowPlayingHeight(), rc.Width(), m_Prefs->GetNowPlayingHeight(), NULL );
 }
+
+///////////////////////////////////////////////////
 
 bool CMainFrame::RecurseMkDir( char* pszDir )
 {
@@ -122,6 +131,8 @@ bool CMainFrame::RecurseMkDir( char* pszDir )
 
     return true;
 }
+
+///////////////////////////////////////////////////
 
 void CMainFrame::DockBarLeftOf( CSizingControlBar* pBar, CSizingControlBar* pTargetBar )
 {
@@ -160,14 +171,14 @@ void CMainFrame::DockBarLeftOf( CSizingControlBar* pBar, CSizingControlBar* pTar
     pBar->MoveWindow(rBar);
 }
 
+///////////////////////////////////////////////////
+
 int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if ( CFrameWnd::OnCreate(lpCreateStruct) == -1 )
 		return -1;
 
-	//-------------------------------------------------//
-	//--- create a background window				---//
-	//-------------------------------------------------//
+	// create the background window, which is the playlist
 	m_wndView = new CMusikPlaylistView( m_Library, m_Prefs, m_LibPlaylist );
 	m_wndView->Create( NULL, NULL, AFX_WS_DEFAULT_VIEW, CRect(0, 0, 0, 0), this, AFX_IDW_PANE_FIRST, NULL );
 	m_wndView->ModifyStyleEx( WS_EX_STATICEDGE, NULL );
@@ -178,9 +189,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
     EnableDocking( CBRS_ALIGN_RIGHT );
 	EnableDocking( CBRS_ALIGN_TOP );
 
-	//-------------------------------------------------//
-	//--- now playing control						---//
-	//-------------------------------------------------//
+	// now playing control
 	m_wndNowPlaying = new CMusikNowPlayingBar();
 	m_wndNowPlaying->Create( _T( "Musik Now Playing" ), this, ID_NOWPLAYING );
 	m_wndNowPlaying->SetBarStyle( m_wndNowPlaying->GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC & ~SCBS_EDGEALL );
@@ -188,9 +197,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndNowPlaying->ShowGripper( false );
 	DockControlBar( m_wndNowPlaying, AFX_IDW_DOCKBAR_BOTTOM );
 
-	//-------------------------------------------------//
-	//--- selection controls						---//
-	//-------------------------------------------------//
+	// selection controls
 	for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
 	{
 		m_wndSelectionBars[i] = new CMusikSelectionBar( this, m_Library, i, i );
@@ -205,27 +212,23 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 			DockBarLeftOf( m_wndSelectionBars[i], m_wndSelectionBars[i-1] );
 	}
 
-	//-------------------------------------------------//
-	//--- sources control							---//
-	//-------------------------------------------------//
+	// sources control
 	m_wndSources = new CMusikSourcesBar();
 	m_wndSources->Create( _T( "Sources" ), this, ID_SOURCESBOX );
 	m_wndSources->EnableDocking( CBRS_ALIGN_LEFT | CBRS_ALIGN_RIGHT );
     m_wndSources->SetBarStyle( m_wndSources->GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC );
 	DockControlBar( m_wndSources, AFX_IDW_DOCKBAR_LEFT );
 
-	//-------------------------------------------------//
-	//--- rescale dialog based on prefs				---//
-	//-------------------------------------------------//
+	// rescale dialog based on prefs
 	ResetDialogRect();
 
-	//-------------------------------------------------//
-	//--- load dockbar sizes and positions			---//
-	//-------------------------------------------------//
+	//--- load dockbar sizes and positions
 	CSizingControlBar::GlobalLoadState( this, "MusikDockBars" );
 
 	return 0;
 }
+
+///////////////////////////////////////////////////
 
 BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 {
@@ -240,14 +243,15 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 	return TRUE;
 }
 
-
-// CMainFrame diagnostics
+///////////////////////////////////////////////////
 
 #ifdef _DEBUG
 void CMainFrame::AssertValid() const
 {
 	CFrameWnd::AssertValid();
 }
+
+///////////////////////////////////////////////////
 
 void CMainFrame::Dump(CDumpContext& dc) const
 {
@@ -256,8 +260,8 @@ void CMainFrame::Dump(CDumpContext& dc) const
 
 #endif //_DEBUG
 
+///////////////////////////////////////////////////
 
-// CMainFrame message handlers
 BOOL CMainFrame::OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
 {
 	// let the view have first crack at the command
@@ -266,10 +270,14 @@ BOOL CMainFrame::OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO*
 	return CFrameWnd::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
 }
 
+///////////////////////////////////////////////////
+
 BOOL CMainFrame::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* pContext )
 {
 	return TRUE;
 }
+
+///////////////////////////////////////////////////
 
 void CMainFrame::OnDestroy()
 {
@@ -283,6 +291,8 @@ void CMainFrame::OnDestroy()
 
 	CFrameWnd::OnDestroy();
 }
+
+///////////////////////////////////////////////////
 
 LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 {

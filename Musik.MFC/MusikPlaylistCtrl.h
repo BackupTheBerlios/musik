@@ -38,6 +38,7 @@ private:
 	bool IsRowSelected( HWND hWnd, int row );
 	void ResetColumns();
 	void SaveColumns();
+	CString GetRating( int item );
 	
 //-------------------------------------------------//
 //--- message maps								---//

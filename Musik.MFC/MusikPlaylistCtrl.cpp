@@ -23,10 +23,13 @@ CMusikPlaylistCtrl::CMusikPlaylistCtrl( CMusikLibrary* library, CMusikPrefs* pre
 	m_Playlist = playlist;
 }
 
+///////////////////////////////////////////////////
+
 CMusikPlaylistCtrl::~CMusikPlaylistCtrl()
 {
 }
 
+///////////////////////////////////////////////////
 
 BEGIN_MESSAGE_MAP(CMusikPlaylistCtrl, CListCtrl)
 	ON_WM_NCPAINT()
@@ -39,6 +42,8 @@ BEGIN_MESSAGE_MAP(CMusikPlaylistCtrl, CListCtrl)
 	ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, OnNMCustomdraw)
 END_MESSAGE_MAP()
 
+///////////////////////////////////////////////////
+
 void CMusikPlaylistCtrl::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp)
 {
 	lpncsp->rgrc[0].bottom -= 6;
@@ -46,6 +51,8 @@ void CMusikPlaylistCtrl::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* l
 	lpncsp->rgrc[0].right -= 4;
 	lpncsp->rgrc[0].left += 4;
 }
+
+///////////////////////////////////////////////////
 
 void CMusikPlaylistCtrl::OnNcPaint()
 {
@@ -164,50 +171,19 @@ void CMusikPlaylistCtrl::OnDestroy()
 	CListCtrl::OnDestroy();
 }
 
+///////////////////////////////////////////////////
+
 void CMusikPlaylistCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	NMLVDISPINFO *pDispInfo = reinterpret_cast<NMLVDISPINFO*>(pNMHDR);
 
-	LV_ITEM* pItem= &(pDispInfo)->item;
-
-	int index= pItem->iItem;
-
-	if ( pItem->mask & LVIF_TEXT )
-	{
-		if ( m_Prefs->GetPlaylistCol( pItem->iSubItem ) == MUSIK_LIBRARY_TYPE_RATING )
-		{
-			int nRating = atoi( m_Library->GetSongField( MUSIK_LIBRARY_TYPE_RATING ) );
-			CString sRating;
-			switch ( nRating )
-			{
-			case 1:
-				sRating = _T( "hiiii" );
-				break;
-			case 2:
-				sRating = _T( "hhiii" );
-				break;
-			case 3:
-				sRating = _T( "hhhii" );
-				break;
-			case 4:
-				sRating = _T( "hhhhi" );
-				break;
-			case 5:
-                sRating = _T( "hhhhh" );
-				break;
-			case 0:
-			default:
-				sRating = _T( "iiiii" );
-				break;
-			}
-			lstrcpy( pItem->pszText, sRating );
-		}
-		else
-			lstrcpy( pItem->pszText, m_Playlist->GetField( index, m_Prefs->GetPlaylistCol( pItem->iSubItem ) ) );
-	}
+	// dummy function, its just here to relay messages to the
+	// NM_CUSTOMDRAW function, which will draw the actual items
 
 	*pResult = 0;
 }
+
+///////////////////////////////////////////////////
 
 void CMusikPlaylistCtrl::OnPaint()
 {
@@ -230,11 +206,15 @@ void CMusikPlaylistCtrl::OnPaint()
 	DefWindowProc(WM_PAINT, (WPARAM)memDC->m_hDC, (LPARAM)0);
 }
 
+///////////////////////////////////////////////////
+
 BOOL CMusikPlaylistCtrl::OnEraseBkgnd(CDC* pDC)
 {
 	return false;
 	//return CListCtrl::OnEraseBkgnd(pDC);
 }
+
+///////////////////////////////////////////////////
 
 void CMusikPlaylistCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 {
@@ -268,12 +248,48 @@ void CMusikPlaylistCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
       *pResult = CDRF_DODEFAULT;
 }
 
+///////////////////////////////////////////////////
+
 void CMusikPlaylistCtrl::EnableHighlighting( HWND hWnd, int row, bool bHighlight )
 {
 	ListView_SetItemState(hWnd, row, bHighlight? 0xff: 0, LVIS_SELECTED);
 }
 
+///////////////////////////////////////////////////
+
 bool CMusikPlaylistCtrl::IsRowSelected( HWND hWnd, int row )
 {
 	return ListView_GetItemState(hWnd, row, LVIS_SELECTED) != 0;
+}
+
+///////////////////////////////////////////////////
+
+CString CMusikPlaylistCtrl::GetRating( int item )
+{
+	int nRating = atoi( m_Playlist->items()->at( item ).GetField( MUSIK_LIBRARY_TYPE_RATING ) );
+	CString sRating;
+	switch ( nRating )
+	{
+	case 1:
+		sRating = _T( "hiiii" );
+		break;
+	case 2:
+		sRating = _T( "hhiii" );
+		break;
+	case 3:
+		sRating = _T( "hhhii" );
+		break;
+	case 4:
+		sRating = _T( "hhhhi" );
+		break;
+	case 5:
+        sRating = _T( "hhhhh" );
+		break;
+	case 0:
+	default:
+		sRating = _T( "iiiii" );
+		break;
+	}
+
+	return sRating;
 }
