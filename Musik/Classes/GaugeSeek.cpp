@@ -55,10 +55,13 @@ void CGaugeSeekEvt::OnLeftDown( wxMouseEvent& event )
 
 void CGaugeSeekEvt::OnMouseMove( wxMouseEvent& event )
 {
-	if ( event.LeftIsDown() )
+	if ( m_Dragging )
 	{
-		if ( ( lType == wxGA_HORIZONTAL && g_Player.IsPlaying() ) || lType == wxGA_VERTICAL )
-			SetFromMousePos( event );		
+		if ( event.LeftIsDown() )
+		{
+			if ( ( lType == wxGA_HORIZONTAL && g_Player.IsPlaying() ) || lType == wxGA_VERTICAL )
+				SetFromMousePos( event );		
+		}
 	}
 
 	event.Skip();

@@ -90,8 +90,11 @@ void CMusikEQGauge::OnLeftDown( wxMouseEvent& event )
 
 void CMusikEQGauge::OnMouseMove( wxMouseEvent& event )
 {
-	if ( event.LeftIsDown() )
-		SetFromMousePos( event );
+	if ( m_Dragging )
+	{
+		if ( event.LeftIsDown() )
+			SetFromMousePos( event );
+	}
 }
 
 void CMusikEQGauge::OnLeftUp( wxMouseEvent& event )
