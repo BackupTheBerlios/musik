@@ -95,6 +95,23 @@ static int sqlite_GetSongFieldFromID( void *args, int numCols, char **results, c
 
 ///////////////////////////////////////////////////
 
+static int sqlite_GetCrossfader( void *args, int numCols, char **results, char ** columnNames )
+{
+	CMusikCrossfader* p = (CMusikCrossfader*)args;
+
+	double newsong		= atof( results[0] );
+	double pauseresume	= atof( results[1] );
+	double seek			= atof( results[2] );
+	double stop			= atof( results[3] );
+	double exit			= atof( results[4] );
+
+	p->Set( newsong, pauseresume, seek, stop, exit );
+
+    return 0;
+}
+
+///////////////////////////////////////////////////
+
 static int sqlite_GetPlaylistID( void *args, int numCols, char **results, char ** columnNames )
 {
 	// this is a callback for sqlite to use when
@@ -1284,10 +1301,24 @@ void CMusikLibrary::GetAllCrossfaders( CStdStringArray* target, bool clear_targe
 	if ( clear_target )
 		target->clear();
 
-	CStdString sQuery( "SELECT crossfader_name FROM " CROSSFADER_PRESETS " WHERE crossfader_name <> ''" );
+	CStdString sQuery( "SELECT crossfader_name FROM " CROSSFADER_PRESETS " WHERE crossfader_name <> '';" );
 
 	m_ProtectingLibrary->acquire();
 	sqlite_exec( m_pDB, sQuery.c_str(), &sqlite_AddRowToStringArray, target, NULL );
+	m_ProtectingLibrary->release();
+}
+
+///////////////////////////////////////////////////
+
+void CMusikLibrary::GetCrossfader( const CStdString& name, CMusikCrossfader* fader )
+{
+	CStdString sQuery;
+	sQuery.Format( "SELECT newsong, pause_resume, seek, stop, exit FROM %s WHERE crossfader_name is '%s';",
+		CROSSFADER_PRESETS,
+		name.c_str() );
+
+	m_ProtectingLibrary->acquire();
+	sqlite_exec( m_pDB, sQuery.c_str(), &sqlite_GetCrossfader, fader, NULL );
 	m_ProtectingLibrary->release();
 }
 

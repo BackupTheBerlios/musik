@@ -182,7 +182,7 @@ public:
 	void DeleteDynPlaylist	( int id );
 
 	// querying crossfaders
-	//void GetCrossfader		( const CStdString& name, CMusikCrossfader* fader );
+	void GetCrossfader		( const CStdString& name, CMusikCrossfader* fader );
 	void GetAllCrossfaders	( CStdStringArray* target, bool clear_target = true );
 	void CreateCrossfader	( CMusikCrossfader* fader );
 	void DeleteCrossfader	( CMusikCrossfader* fader );
