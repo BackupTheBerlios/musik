@@ -53,6 +53,7 @@
 //   str =		%Q
 //   DISTINCT 	%q
 //   UPPER		%q
+//   UPDATE		%Q
 //
 ///////////////////////////////////////////////////
 
@@ -1588,35 +1589,32 @@ bool CmusikLibrary::SetSongInfo( CmusikSongInfo* info, int songid )
 	if ( songid == -1 )
 		songid = info->GetID();
 
-	CStdString query;
-	query.Format( "UPDATE %s SET format=%d, vbr=%d, filename='%s', artist='%s', title='%s', album='%s', tracknum=%d, year='%s', genre='%s', rating=%d,",
-			SONG_TABLE_NAME,
-			info->GetFormat(),
-			info->GetVBR(),
-			info->GetFilename().c_str(),
-			info->GetArtist().c_str(),
-			info->GetTitle().c_str(),
-			info->GetAlbum().c_str(),
-			info->GetTrackNum(),
-			info->GetYear().c_str(),
-			info->GetGenre().c_str(),
-			info->GetRating() );
-		
-	query.Format( "%s bitrate=%d, lastplayed='%s', notes='%s', timesplayed=%d, duration=%d, timeadded='%s', filesize=%d, dirty=%d WHERE songid = %d;",
-			query.c_str(),	
-			info->GetBitrate(),
-			info->GetLastPlayed().c_str(),
-			info->GetNotes().c_str(),
-			info->GetTimesPlayed(),
-			info->GetDuration(),
-			info->GetTimeAdded().c_str(),
-			info->GetFilesize(),
-			info->GetDirtyFlag(),
-			songid );
-
 	// lock it up and run the query
 	m_ProtectingLibrary->acquire();
-	result = sqlite_exec( m_pDB, query.c_str(), NULL, NULL, NULL );
+
+	result = sqlite_exec_printf( m_pDB, "UPDATE %Q SET format = %d, vbr = %d, filename = %Q, artist = %Q, title = %Q, album = %Q, tracknum = %d, year = %Q, genre = %Q, rating = %d, bitrate = %d, lastplayed = %Q, notes = %Q, timesplayed = %d, duration = %d, timeadded = %Q, filesize = %d, dirty = %d WHERE songid = %d;",
+		NULL, NULL, NULL,
+		SONG_TABLE_NAME,
+		atoi( info->GetFormat().c_str() ),
+		atoi( info->GetVBR().c_str() ),
+		info->GetFilename().c_str(),
+		info->GetArtist().c_str(),
+		info->GetTitle().c_str(),
+		info->GetAlbum().c_str(),
+		atoi( info->GetTrackNum().c_str() ),
+		info->GetYear().c_str(),
+		info->GetGenre().c_str(),
+		atoi( info->GetRating().c_str() ),
+		atoi( info->GetBitrate().c_str() ),
+		info->GetLastPlayed().c_str(),
+		info->GetNotes().c_str(),
+		atoi( info->GetTimesPlayed().c_str() ),
+		atoi( info->GetDuration().c_str() ),
+		info->GetTimeAdded().c_str(),
+		atoi( info->GetFilesize().c_str() ),
+		atoi( info->GetDirtyFlag().c_str() ),
+		songid );
+
 	m_ProtectingLibrary->release();
 
 	if ( result != SQLITE_OK )
@@ -1634,16 +1632,14 @@ bool CmusikLibrary::SetSongRating( int songid, int rating )
 
 	int result = 0;
 
-	CStdString query;
-	query.Format( "UPDATE %s SET rating=%d WHERE songid=%d", 
-		SONG_TABLE_NAME,
-		rating, 
-		songid );
-
 	// lock it up and run the query
 	m_ProtectingLibrary->acquire();
     
-	result = sqlite_exec( m_pDB, query.c_str(), NULL, NULL, NULL );
+	result = sqlite_exec_printf( m_pDB, "UPDATE %Q SET rating = %d WHERE songid = %d", 
+		NULL, NULL, NULL,
+		SONG_TABLE_NAME,
+		rating,
+		songid );
 	
 	m_ProtectingLibrary->release();
 
