@@ -46,6 +46,7 @@ CMusikPlayer::CMusikPlayer()
 	m_BeginFade		= false;
 	m_StartingNext	= false;
 	m_SongIndex		= 0;
+	m_LastSong		= -1;
 	m_Channels		= -1;
 	m_Playmode		= MUSIK_PLAYMODE_NORMAL;
 	m_CrossfadeType	= 0;
@@ -132,7 +133,7 @@ void CMusikPlayer::SetPlaymode( )
 void CMusikPlayer::PlayCurSel()
 {
 	//--- play ---//
-	int nCurSel = g_PlaylistCtrl->GetNextItem( -1, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
+	int nCurSel = g_PlaylistCtrl->GetNextItem( -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED );
 	if ( nCurSel > -1 )
 	{
 		if ( g_PlaylistChanged )
@@ -158,6 +159,7 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 		//-----------------------------//
 		//--- start with the basics ---//
 		//-----------------------------//
+		m_LastSong		= m_SongIndex;
 		m_SongIndex		= nItem;	
 		m_CurrentFile	= m_Playlist.Item( nItem ).Filename;
 
@@ -238,7 +240,7 @@ void CMusikPlayer::UpdateUI()
 	//--- check is not necessary.					---//
 	//-------------------------------------------------//
 	if ( m_Playlist.GetCount() == g_Playlist.GetCount() )
-		g_PlaylistCtrl->ResynchItem	( m_SongIndex, true );
+		g_PlaylistCtrl->ResynchItem	( m_SongIndex, m_LastSong );
 	
 	g_Library.UpdateItemLastPlayed	( m_CurrentFile );
 	g_NowPlayingCtrl->UpdateInfo	( m_CurrentFile );
@@ -291,6 +293,9 @@ void CMusikPlayer::Stop()
 	}
 	g_ActiveStreams.Clear();
 	g_ActiveChannels.Clear();
+
+	m_SongIndex	= 0;
+	m_LastSong	= -1;
 
 	g_NowPlayingCtrl->PauseBtnToPlayBtn();
 }

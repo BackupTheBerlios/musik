@@ -95,8 +95,7 @@ public:
 	//--------------//
 	//--- others ---//
 	//--------------//
-	void Resynch		( );
-	void ResynchItem	( int i, bool freeze = true );
+	void ResynchItem	( int item, int lastitem = -1, bool refreshonly = true );
 	void Update			( bool bSelFirstItem = true );
 	void RescaleColumns	( );
 	void ResetColumns	( bool update = false );

@@ -624,43 +624,18 @@ void CPlaylistCtrl::UpdateSel( wxListEvent& event )
 		nCurSel = event.GetIndex();
 }
 
-void CPlaylistCtrl::Resynch()
+void CPlaylistCtrl::ResynchItem( int item, int lastitem, bool refreshonly )
 {
-	Freeze();
-	for ( size_t i = 0; i < g_Playlist.GetCount(); i++ )
-		ResynchItem( i, false );
-	Thaw();
-}
+	if ( !refreshonly )
+	{
+		wxString sCurrFile = g_Playlist.Item( item ).Filename;
+		g_Library.GetSongFromFilename( sCurrFile, &g_Playlist.Item( item ) );
+	}
 
-void CPlaylistCtrl::ResynchItem( int i, bool freeze )
-{
-	if ( freeze )
-		Freeze();
+	RefreshItem( item );
 
-	CMusikSong currentitem = g_Playlist.Item( i );
-	CMusikSong dbitem;
-	g_Library.GetSongFromFilename( currentitem.Filename, &dbitem );
-
-	currentitem.Album = dbitem.Album;
-	currentitem.Artist = dbitem.Artist;
-	currentitem.Bitrate = dbitem.Bitrate;
-	currentitem.Duration = dbitem.Duration;
-	currentitem.Filename = dbitem.Filename;
-	currentitem.Format = dbitem.Format;
-	currentitem.Genre = dbitem.Genre;
-	currentitem.LastPlayed = dbitem.LastPlayed;
-	currentitem.Notes = dbitem.Notes;
-	currentitem.Rating = dbitem.Rating;
-	currentitem.TimesPlayed = dbitem.TimesPlayed;
-	currentitem.Title = dbitem.Title;
-	currentitem.TrackNum = dbitem.TrackNum;
-	currentitem.VBR = dbitem.VBR;
-	currentitem.Year = dbitem.Year;
-
-	g_Playlist.Item( i ) = currentitem;
-
-	if ( freeze )
-		Thaw();
+	if ( lastitem > -1 )
+		RefreshItem( lastitem );
 }
 
 void CPlaylistCtrl::Update( bool bSelFirst )
@@ -778,7 +753,7 @@ void CPlaylistCtrl::RateSel( int nVal )
 		{
 			//--- set db entry, then resync item(s) ---//
 			g_Library.SetRating( GetFilename( nIndex ), nVal );
-			ResynchItem( nIndex, true );
+			ResynchItem( nIndex, -1, false );
 		}
 	}
 }
