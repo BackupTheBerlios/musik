@@ -131,7 +131,7 @@ protected:
 	int m_BandState;
 
 	// eq -> bands, bands -> eq
-	void BandsFromEQSettings( const CmusikEQSettings& settings );
+	void SetBandsFrom( const CmusikEQSettings& settings );
 	void EQSettingsFromBands( CmusikEQSettings* settings );
 
 	// core

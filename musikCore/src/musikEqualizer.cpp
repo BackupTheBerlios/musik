@@ -134,25 +134,9 @@ void CmusikEqualizer::SetNewSong( int songid )
 {
 	// save the old equalizer if it has been
 	// flagged as modified...
-	if ( m_SongID != -1 )
-	{
-		if ( m_EQ_Values_Modified )
-		{
-			if ( m_EQ_Values.m_ID == -1 )
-			{
-				CStdString fn;
-				m_Library->GetFieldFromID( m_SongID, MUSIK_LIBRARY_TYPE_FILENAME, fn );
-				m_Library->CreateEqualizer( m_EQ_Values, fn );
-			}
-			else
-				m_Library->UpdateEqualizer( m_EQ_Values.m_ID, m_EQ_Values );
-
-			m_Library->SetSongEqualizer( m_SongID, m_EQ_Values.m_ID );
-		}
-	}
+	SaveCurr();
 
 	// set the new one
-	m_EQ_Values_Modified = false;
 	m_SongID = songid;
 
 	// load the current equalizer
@@ -162,16 +146,51 @@ void CmusikEqualizer::SetNewSong( int songid )
 
 		if ( nEqualizerID > -1 )
 		{
+			TRACE0 ( "Current song's equalizer loaded...\n" );
 			m_Library->GetEqualizer( nEqualizerID, &m_EQ_Values );
 		}
 		else
 		{
+			TRACE0 ( "Default equalizer loaded...\n" );
 			m_Library->GetDefaultEqualizer( &m_EQ_Values );
 			m_EQ_Values.m_ID = -1;
 		}
 	}
 
 	UpdateTable();
+}
+
+///////////////////////////////////////////////////
+
+void CmusikEqualizer::SaveCurr()
+{
+	if ( m_SongID != -1  && m_Library )
+	{
+		if ( m_EQ_Values_Modified )
+		{
+			TRACE0 ( "Previous equalizer was modified... " );
+
+			if ( m_EQ_Values.m_ID == -1 )
+			{
+				CStdString fn;
+				m_Library->GetFieldFromID( m_SongID, MUSIK_LIBRARY_TYPE_FILENAME, fn );
+				m_Library->CreateEqualizer( m_EQ_Values, fn );
+				
+				TRACE0 ( "created new.\n" );
+			}
+
+			else
+			{
+				TRACE0 ( "udpated old.\n" );
+				
+				m_Library->UpdateEqualizer( m_EQ_Values.m_ID, m_EQ_Values );
+			}
+
+			m_Library->SetSongEqualizer( m_SongID, m_EQ_Values.m_ID );
+		}
+	}
+
+	m_EQ_Values_Modified = false;
 }
 
 ///////////////////////////////////////////////////

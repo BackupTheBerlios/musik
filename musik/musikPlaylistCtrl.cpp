@@ -218,6 +218,13 @@ void CmusikPlaylistCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 			else if ( m_Prefs->GetPlaylistCol( nSub ) == MUSIK_LIBRARY_TYPE_DURATION )
 				sValue = GetTimeStr( nItem );
 
+			else if ( m_Prefs->GetPlaylistCol( nSub ) == MUSIK_LIBRARY_TYPE_TRACKNUM )
+			{
+				sValue = m_SongInfoCache->GetValue( nItem - m_SongInfoCache->GetFirst(), MUSIK_LIBRARY_TYPE_TRACKNUM );
+				if ( sValue == _T( "0" ) )
+					sValue = _T( "" );
+			}
+
 			// otherwise, just use the value we are supposed to
 			else
 				sValue = m_SongInfoCache->GetValue( nItem - m_SongInfoCache->GetFirst(), nType );

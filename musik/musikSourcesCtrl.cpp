@@ -840,14 +840,25 @@ void CmusikSourcesCtrl::DeleteSel()
 				LoadStdPlaylists();
 
 				// now select the next entry in the
-				// list... if -1 select the library...
+				// list... if -1 select the now playing,
+				// if playing, or library if not
 				KillFocus( false );
 				if ( nNextPos == -1 )
 				{
-					m_Libraries.at( 0 )->Select( TRUE );
-					SetFocusedItem( m_Libraries.at( 0 ) );
-					int WM_SOURCESLIBRARY = RegisterWindowMessage( "SOURCESLIBRARY" );
-					m_Parent->SendMessage( WM_SOURCESLIBRARY, NULL );
+					if ( !m_Player->IsPlaying() )
+					{
+						m_Libraries.at( 0 )->Select( TRUE );
+						SetFocusedItem( m_Libraries.at( 0 ) );
+						int WM_SOURCESLIBRARY = RegisterWindowMessage( "SOURCESLIBRARY" );
+						m_Parent->SendMessage( WM_SOURCESLIBRARY, NULL );
+					}
+					else
+					{
+						m_Libraries.at( 1 )->Select( TRUE );
+						SetFocusedItem( m_Libraries.at( 1 ) );
+						int WM_SOURCESNOWPLAYING = RegisterWindowMessage( "SOURCESNOWPLAYING" );
+						m_Parent->SendMessage( WM_SOURCESNOWPLAYING, NULL );
+					}
 				}
 				else
 				{

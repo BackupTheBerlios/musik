@@ -477,7 +477,7 @@ void CmusikEqualizerCtrl::SetBandState( int state )
 void CmusikEqualizerCtrl::LoadCurrSong()
 {
 	if ( m_Player->IsPlaying() && m_Player->IsEqualizerActive() )
-		BandsFromEQSettings( m_Player->GetEqualizer()->m_EQ_Values );
+		SetBandsFrom( m_Player->GetEqualizer()->m_EQ_Values );
 }
 
 
@@ -490,13 +490,13 @@ void CmusikEqualizerCtrl::LoadDefault()
 		m_Library->GetDefaultEqualizer( &m_Player->GetEqualizer()->m_EQ_Values );
 		m_Player->GetEqualizer()->UpdateTable();
 
-		BandsFromEQSettings( m_Player->GetEqualizer()->m_EQ_Values );
+		SetBandsFrom( m_Player->GetEqualizer()->m_EQ_Values );
 	}
 }
 
 ///////////////////////////////////////////////////
 
-void CmusikEqualizerCtrl::BandsFromEQSettings( const CmusikEQSettings& settings )
+void CmusikEqualizerCtrl::SetBandsFrom( const CmusikEQSettings& settings )
 {
 	int left = 0;
 	int right = 0;
@@ -647,7 +647,7 @@ void CmusikEqualizerCtrl::SetAsDefault()
 void CmusikEqualizerCtrl::DisplayChanged()
 {
 	if ( m_Player->IsEqualizerActive() )
-		BandsFromEQSettings( m_Player->GetEqualizer()->m_EQ_Values );
+		SetBandsFrom( m_Player->GetEqualizer()->m_EQ_Values );
 }
 
 ///////////////////////////////////////////////////
@@ -658,7 +658,7 @@ void CmusikEqualizerCtrl::ResetDefault()
 	{
 		// get default
 		CmusikEQSettings reset;
-		BandsFromEQSettings( reset );
+		SetBandsFrom( reset );
 
 		// send to player
 		m_Player->GetEqualizer()->m_EQ_Values = reset;

@@ -62,6 +62,8 @@ public:
 	CmusikEQSettings m_EQ_Values;
 	bool m_EQ_Values_Modified;
 
+	void SaveCurr();
+		
 	void SetNewSong( int songid );
 	void SetLibrary( CmusikLibrary* library );
 

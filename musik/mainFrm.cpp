@@ -386,33 +386,39 @@ void CMainFrame::Cleanmusik()
 	// player, library, etc, etc... so we need to:
 	// suspend, set abort switch, and then
 	// resume any remaning threads...
-	m_ProtectingThreads->acquire();
-	if ( m_Updater )
 	{
-		m_Updater->Suspend( true );
-		m_Updater->Abort();
-		m_Updater->Resume();
+		ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingThreads );
+		{
+			if ( m_Updater )
+			{
+				m_Updater->Suspend( true );
+				m_Updater->Abort();
+				m_Updater->Resume();
 
-		while ( !m_Updater->m_Finished )
-			Sleep( 50 );
+				while ( !m_Updater->m_Finished )
+					Sleep( 50 );
 
-        delete m_Updater;
+				delete m_Updater;
+			}
+		}
 	}
-	m_ProtectingThreads->release();
 
-	m_ProtectingThreads->acquire();
-	for ( size_t i = 0; i < m_Threads.size(); i++ )
 	{
-		m_Threads.at( i )->Suspend( true );
-		m_Threads.at( i )->Abort();
-		m_Threads.at( i )->Resume();
+		ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingThreads );
+		{
+			for ( size_t i = 0; i < m_Threads.size(); i++ )
+			{
+				m_Threads.at( i )->Suspend( true );
+				m_Threads.at( i )->Abort();
+				m_Threads.at( i )->Resume();
 
-		while ( !m_Threads.at( i )->m_Finished )
-			Sleep( 50 );
+				while ( !m_Threads.at( i )->m_Finished )
+					Sleep( 50 );
 
-		delete m_Threads.at( i );
+				delete m_Threads.at( i );
+			}
+		}
 	}
-	m_ProtectingThreads->release();
 
 	if ( m_DirSyncDlg )
 	{
@@ -707,10 +713,11 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 
 	// fire the updater thread off
-	m_ProtectingThreads->acquire();
-	m_Updater = new CmusikThread();
-	m_Updater->Start( (ACE_THR_FUNC)MainFrameWorker, this );
-	m_ProtectingThreads->release();
+	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingThreads );
+	{
+		m_Updater = new CmusikThread();
+		m_Updater->Start( (ACE_THR_FUNC)MainFrameWorker, this );
+	}
 
 	// start all necessary synchronization threads
 	SynchronizeDirs();
@@ -722,10 +729,11 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		CmusikRemoveOld* params = new CmusikRemoveOld( m_Library, m_RemoveOldFnct );
 		CmusikThread* thread = new CmusikThread();
 
-		m_ProtectingThreads->acquire();
-		m_Threads.push_back( thread );
-		m_ThreadCount++;
-		m_ProtectingThreads->release();
+		ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingThreads );
+		{
+			m_Threads.push_back( thread );
+			m_ThreadCount++;
+		}
 
 		thread->Start( (ACE_THR_FUNC)musikRemoveOldWorker, params );
 	}
@@ -937,10 +945,11 @@ LRESULT CMainFrame::OnSelBoxEditCommit( WPARAM wParam, LPARAM lParam )
 		params->m_WriteToFile = m_Prefs->WriteTagsToFile();
 		CmusikThread* thread = new CmusikThread();
 
-		m_ProtectingThreads->acquire();
-		m_Threads.push_back( thread );
-		m_ThreadCount++;
-		m_ProtectingThreads->release();
+		ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingThreads );
+		{
+			m_Threads.push_back( thread );
+			m_ThreadCount++;
+		}
 
 		thread->Start( (ACE_THR_FUNC)musikBatchRetagWorker, params );
 		
@@ -1359,10 +1368,11 @@ void CMainFrame::OnAddFiles()
 			CmusikBatchAdd* params = new CmusikBatchAdd( files, NULL, m_Library, NULL, m_BatchAddFnct, 0, 0, 1 );
 			CmusikThread* thread = new CmusikThread();
 
-			m_ProtectingThreads->acquire();
-			m_Threads.push_back( thread );
-			m_ThreadCount++;
-			m_ProtectingThreads->release();
+			ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingThreads );
+			{
+				m_Threads.push_back( thread );
+				m_ThreadCount++;
+			}
 
 			thread->Start( (ACE_THR_FUNC)musikBatchAddWorker, (void*)params );
 		}
@@ -1383,10 +1393,11 @@ LRESULT CMainFrame::OnBatchAddNew( WPARAM wParam, LPARAM lParam )
 
 		CmusikThread* thread = new CmusikThread();
 
-		m_ProtectingThreads->acquire();
-		m_Threads.push_back( thread );
-		m_ThreadCount++;
-		m_ProtectingThreads->release();
+		ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingThreads );
+		{
+			m_Threads.push_back( thread );
+			m_ThreadCount++;
+		}
 
 		thread->Start( (ACE_THR_FUNC)musikBatchAddWorker, (void*)params );
 	}
@@ -1435,26 +1446,27 @@ bool CMainFrame::FreeThread( CmusikThread* pThread )
 {
 	bool erased = false;
 
-	m_ProtectingThreads->acquire();
-	for ( size_t i = 0; i < m_Threads.size(); i++ )
+	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingThreads );
 	{
-		if ( pThread == m_Threads.at( i ) )
+		for ( size_t i = 0; i < m_Threads.size(); i++ )
 		{
-			// wait for the finish flag to be set...
-			while ( !m_Threads.at( i )->m_Finished )
-				Sleep( 100 );
+			if ( pThread == m_Threads.at( i ) )
+			{
+				// wait for the finish flag to be set...
+				while ( !m_Threads.at( i )->m_Finished )
+					Sleep( 100 );
 
-			// delete the completed thread
-			delete m_Threads.at( i );
+				// delete the completed thread
+				delete m_Threads.at( i );
 
-			// erase from array
-			m_Threads.erase( m_Threads.begin() + i );
-			erased = true;
+				// erase from array
+				m_Threads.erase( m_Threads.begin() + i );
+				erased = true;
 
-			break;
+				break;
+			}
 		}
 	}
-	m_ProtectingThreads->release();
 
 	if ( erased )
 		m_ThreadCount--;
@@ -1499,10 +1511,11 @@ void CMainFrame::OnAddDirectory()
 			CmusikBatchAdd* params = new CmusikBatchAdd( files, NULL, m_Library, NULL, m_BatchAddFnct, 0, 0, 1 );
 			CmusikThread* thread = new CmusikThread();
 
-			m_ProtectingThreads->acquire();
-			m_Threads.push_back( thread );
-			m_ThreadCount++;
-			m_ProtectingThreads->release();
+			ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingThreads );
+			{
+				m_Threads.push_back( thread );
+				m_ThreadCount++;
+			}
 
 			thread->Start( (ACE_THR_FUNC)musikBatchAddWorker, (void*)params );
 		}
@@ -1847,10 +1860,11 @@ void CMainFrame::OnUnsynchronizedtagsWritetofile()
 		params->m_WriteToFile = true;
 		CmusikThread* thread = new CmusikThread();
 
-		m_ProtectingThreads->acquire();
-		m_Threads.push_back( thread );
-		m_ThreadCount++;
-		m_ProtectingThreads->release();
+		ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingThreads );
+		{
+			m_Threads.push_back( thread );
+			m_ThreadCount++;
+		}
 
 		thread->Start( (ACE_THR_FUNC)musikBatchRetagWorker, params );
 	}
@@ -1935,9 +1949,10 @@ size_t CMainFrame::GetThreadCount()
 {
 	size_t count;
 
-	m_ProtectingThreads->acquire();
-	count = m_Threads.size();
-	m_ProtectingThreads->release();
+	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingThreads );
+	{
+		count = m_Threads.size();
+	}
 
 	return count;
 }
@@ -2057,10 +2072,11 @@ void CMainFrame::SynchronizeDirs()
 		CmusikBatchAdd* params = new CmusikBatchAdd( files, NULL, m_Library, NULL, m_BatchAddFnct, 0, 0, 1 );
 		CmusikThread* thread = new CmusikThread();
 
-		m_ProtectingThreads->acquire();
-		m_Threads.push_back( thread );
-		m_ThreadCount++;
-		m_ProtectingThreads->release();
+		ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingThreads );
+		{
+			m_Threads.push_back( thread );
+			m_ThreadCount++;
+		}
 
 		thread->Start( (ACE_THR_FUNC)musikBatchAddWorker, (void*)params );	
 	}	
