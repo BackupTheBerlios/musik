@@ -83,7 +83,7 @@ int WM_DRAGEND				= RegisterWindowMessage( "DRAGEND" );
 int WM_SOURCESLIBRARY		= RegisterWindowMessage( "SOURCESLIBRARY" );
 int WM_SOURCESNOWPLAYING	= RegisterWindowMessage( "SOURCESNOWPLAYING" );
 int WM_SOURCESSTDPLAYLIST	= RegisterWindowMessage( "SOURCESSTDPLAYLIST" );
-int WM_SOURCESDYNPLAYLIST	= RegisterWindowMessage( "SOURCESDYNDPLAYLIST" );
+int WM_SOURCESSUBLIBRARY	= RegisterWindowMessage( "SOURCESSUBLIBRARY" );
 int WM_SOURCESQUICKSEARCH	= RegisterWindowMessage( "SOURCESQUICKSEARCH" );
 
 int WM_CLOSEDIRSYNC			= RegisterWindowMessage( "CLOSEDIRSYNC" );
@@ -194,8 +194,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_SONGPAUSE, OnSongPauseResume )
 	ON_REGISTERED_MESSAGE( WM_SOURCESLIBRARY, OnSourcesLibrary )
 	ON_REGISTERED_MESSAGE( WM_SOURCESNOWPLAYING, OnSourcesNowPlaying )
+	ON_REGISTERED_MESSAGE( WM_SOURCESSUBLIBRARY, OnSourcesSubLib )
 	ON_REGISTERED_MESSAGE( WM_SOURCESSTDPLAYLIST, OnSourcesStdPlaylist )
-	ON_REGISTERED_MESSAGE( WM_SOURCESDYNPLAYLIST, OnSourcesDynPlaylist )
 	ON_REGISTERED_MESSAGE( WM_SOURCESQUICKSEARCH, OnSourcesQuickSearch )
 	ON_REGISTERED_MESSAGE( WM_DRAGSTART, OnDragStart )
 	ON_REGISTERED_MESSAGE( WM_DRAGEND, OnDragEnd )
@@ -611,16 +611,14 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		m_pFloatingFrameClass = RUNTIME_CLASS(CSCBMiniDockFrameWnd);
 	#endif
 
-	// create the background window, which is the playlist
+	// create the view
 	m_wndView = new CmusikPlaylistView( this, m_Library, m_Player, m_Prefs, m_uPlaylistDrop_L, m_uPlaylistDrop_R, m_uSourcesDrop, m_uSelectionDrop_L, m_uSelectionDrop_R );
 	m_wndView->Create( NULL, NULL, AFX_WS_DEFAULT_VIEW, CRect(0, 0, 0, 0), this, AFX_IDW_PANE_FIRST, NULL );
-	m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, MUSIK_SOURCES_TYPE_LIBRARY );
 
-	if ( m_Prefs->LibraryShowsAllSongs() )
-	{
-		m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, MUSIK_SOURCES_TYPE_LIBRARY );
-		m_wndView->GetCtrl()->UpdateV();
-	}
+	// set default playlist
+	m_LibPlaylist->m_Type = MUSIK_PLAYLIST_TYPE_LIBRARY;
+	m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist );
+	m_wndView->GetCtrl()->UpdateV();
 
 	// now playing control
 	m_wndNowPlaying = new CmusikNowPlayingBar( this, m_Player, m_Prefs );
@@ -726,7 +724,8 @@ bool CMainFrame::PlayCmd( const CString& fn )
 					if ( !m_Player->IsPlaying() )
 						m_Player->Play( pPlaylist->GetCount() - 1, MUSIK_CROSSFADER_NEW_SONG );
 
-					m_wndView->GetCtrl()->SetPlaylist( m_Player->GetPlaylist(), MUSIK_SOURCES_TYPE_NOWPLAYING );
+					m_LibPlaylist->m_Type = MUSIK_PLAYLIST_TYPE_NOWPLAYING;
+					m_wndView->GetCtrl()->SetPlaylist( m_Player->GetPlaylist() );
 					m_wndView->GetCtrl()->UpdateV();
 
 					m_wndSources->GetCtrl()->FocusNowPlaying();
@@ -1005,13 +1004,17 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 
 		// assure the correct playlist is set and
 		// then update the view
-		m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, m_wndView->GetCtrl()->GetPlaylistType() );
+		m_LibPlaylist->m_Type = m_wndView->GetCtrl()->GetPlaylist()->m_Type;
+
+		m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist );
 		m_wndView->GetCtrl()->UpdateV();
 		m_wndView->GetCtrl()->HideSortArrow();
 
 		if ( !unsel_parent )
 			return 0L;
 	}	
+	else 
+		m_wndView->GetCtrl()->SavePlaylist();
 
 	// no parent found, so we have a new parent!
 	if ( !pParent )
@@ -1350,11 +1353,16 @@ LRESULT CMainFrame::OnSourcesLibrary( WPARAM wParam, LPARAM lParam )
 
 	if( m_Prefs->LibraryShowsAllSongs() )
 		m_Library->GetAllSongs( *m_LibPlaylist, false );
+	else
+	{
+		m_LibPlaylist->Clear();
+		m_LibPlaylist->m_Type = MUSIK_PLAYLIST_TYPE_LIBRARY;
+	}
 
 	ResetSelBoxes();
 	ShowSelectionBoxes( true );
 	
-	m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, MUSIK_SOURCES_TYPE_LIBRARY );
+	m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist );
 	m_wndView->GetCtrl()->UpdateV();
 	m_wndView->GetCtrl()->HideSortArrow();
 
@@ -1375,7 +1383,7 @@ LRESULT CMainFrame::OnSourcesQuickSearch( WPARAM wParam, LPARAM lParam )
 	m_Library->QuickQuery( (CmusikString)*sPattern, *m_LibPlaylist );
 
 	if ( m_wndView->GetCtrl()->GetPlaylist() != m_LibPlaylist )
-		m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, MUSIK_SOURCES_TYPE_LIBRARY );
+		m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist );
 
 	m_wndView->GetCtrl()->UpdateV();
 	m_wndView->GetCtrl()->HideSortArrow();
@@ -1392,7 +1400,7 @@ LRESULT CMainFrame::OnSourcesNowPlaying( WPARAM wParam, LPARAM lParam )
 	m_PlaylistSel = false;
 	ShowSelectionBoxes( false );
 
-	m_wndView->GetCtrl()->SetPlaylist( m_Player->GetPlaylist(), MUSIK_SOURCES_TYPE_NOWPLAYING );
+	m_wndView->GetCtrl()->SetPlaylist( m_Player->GetPlaylist() );
 	m_wndView->GetCtrl()->UpdateV();
 	m_wndView->GetCtrl()->ScrollToCurr();
 	m_wndView->GetCtrl()->HideSortArrow();
@@ -1402,21 +1410,23 @@ LRESULT CMainFrame::OnSourcesNowPlaying( WPARAM wParam, LPARAM lParam )
 
 ///////////////////////////////////////////////////
 
-LRESULT CMainFrame::OnSourcesStdPlaylist( WPARAM wParam, LPARAM lParam )
+LRESULT CMainFrame::OnSourcesSubLib( WPARAM wParam, LPARAM lParam )
 {
-	TRACE0( "A standard playlist was clicked\n" );
+	TRACE0( "A sub library was clicked\n" );
 
 	m_PlaylistSel = true;
 
 	int nID = m_wndSources->GetCtrl()->GetFocusedItem()->GetPlaylistID();
 	m_Library->GetStdPlaylist( nID, *m_LibPlaylist, true );
-	m_LibPlaylist->SetPlaylistID( nID );
 
 	m_Library->PopulateTempSongTable( *m_LibPlaylist );
 	ResetSelBoxes();
 	ShowSelectionBoxes( true );
+
+	if ( !m_Prefs->LibraryShowsAllSongs() )
+		m_LibPlaylist->Clear();
 		
-	m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, MUSIK_PLAYLIST_TYPE_STANDARD );
+	m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist );
 	m_wndView->GetCtrl()->UpdateV();
 	m_wndView->GetCtrl()->HideSortArrow();
 
@@ -1425,11 +1435,22 @@ LRESULT CMainFrame::OnSourcesStdPlaylist( WPARAM wParam, LPARAM lParam )
 
 ///////////////////////////////////////////////////
 
-LRESULT CMainFrame::OnSourcesDynPlaylist( WPARAM wParam, LPARAM lParam )
+LRESULT CMainFrame::OnSourcesStdPlaylist( WPARAM wParam, LPARAM lParam )
 {
-	TRACE0( "A dynamic playlist was clicked\n" );
+	TRACE0( "A sub library was clicked\n" );
 
-	//m_PlaylistSel = true;
+	m_PlaylistSel = true;
+
+	int nID = m_wndSources->GetCtrl()->GetFocusedItem()->GetPlaylistID();
+	m_Library->GetStdPlaylist( nID, *m_LibPlaylist, true );
+
+	m_Library->PopulateTempSongTable( *m_LibPlaylist );
+	ResetSelBoxes();
+	ShowSelectionBoxes( false );
+		
+	m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist );
+	m_wndView->GetCtrl()->UpdateV();
+	m_wndView->GetCtrl()->HideSortArrow();
 
 	return 0L;
 }
@@ -1982,7 +2003,7 @@ void CMainFrame::OnPlaybackmodeIntro()
 void CMainFrame::OnUnsynchronizedtagsView()
 {
 	m_Library->GetDirtySongs( m_LibPlaylist, true );
-	m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, MUSIK_PLAYLIST_TYPE_STANDARD );
+	m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist );
 
 	// update the windows
 	m_wndView->GetCtrl()->UpdateV();

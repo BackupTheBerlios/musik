@@ -77,11 +77,21 @@ class CmusikSourcesCtrl;
 
 ///////////////////////////////////////////////////
 
+enum 
+{
+	MUSIK_SOURCES_TYPE_QUICKSEARCH = MUSIK_PLAYLIST_TYPE_COUNT,
+	MUSIK_SOURCES_TYPE_NEWSUBLIBRARY,
+	MUSIK_SOURCES_TYPE_NEWSTDPLAYLIST
+};
+
+///////////////////////////////////////////////////
+
 enum
 {
 	MUSIK_SOURCES_EDITINPLACE_RENAME = 493,
 	MUSIK_SOURCES_EDITINPLACE_QUICKSEARCH,
-	MUSIK_SOURCES_EDITINPLACE_NEWSTDPLAYLIST
+	MUSIK_SOURCES_EDITINPLACE_NEWSTDPLAYLIST,
+	MUSIK_SOURCES_EDITINPLACE_NEWSUBLIBRARYRARY,
 };
 
 ///////////////////////////////////////////////////
@@ -192,14 +202,13 @@ protected:
 	void CleanItems();
 	CmusikPropTreeItem* m_LibRoot;
 	CmusikPropTreeItem* m_SrcRoot;
+	CmusikPropTreeItem* m_SubLibRoot;
 	CmusikPropTreeItem* m_StdPlaylistRoot;
-	CmusikPropTreeItem* m_DynPlaylistRoot;
 
 	// loading and finding the items
 	void LibLoad();
 	void SrcLoad();
-	void StdPlaylistsLoad();
-	void LoadDynPlaylists();
+	void StdPlaylistsLoad( int type );
 
 	// macros
 	DECLARE_DYNAMIC(CmusikSourcesCtrl)
@@ -225,7 +234,7 @@ private:
 	bool m_MouseTrack;
 
 	// Create... new playlist
-	CmusikPropTreeItem* CreateNewStdPlaylist( CmusikStringArray* files = NULL );
+	CmusikPropTreeItem* CreateNewStdPlaylist( int type, CmusikStringArray* files = NULL );
 
 	// startup bool, if true on startup
 	// the library will be selected by
@@ -238,8 +247,8 @@ private:
 	// items that will show up in the list
 	CmusikSourcesItemPtrArray m_Lib;
 	CmusikSourcesItemPtrArray m_Src;
+	CmusikSourcesItemPtrArray m_SubLibs;
 	CmusikSourcesItemPtrArray m_StdPlaylists;
-	CmusikSourcesItemPtrArray m_DynPlaylists;
 };
 
 ///////////////////////////////////////////////////

@@ -100,9 +100,8 @@ public:
 	// need to be saved...
 	bool PlaylistNeedsSave(){ return m_PlaylistNeedsSave; }
 	CmusikPlaylist* GetPlaylist(){ return m_Playlist; }
-	void SetPlaylist( CmusikPlaylist* playlist, int type );
+	void SetPlaylist( CmusikPlaylist* playlist );
 	void SavePlaylist( bool check_prompt = true );
-	int GetPlaylistType(){ return m_PlaylistType; }
 
 	// used by the main UI to trigger an "item activate"
 	// event..
@@ -135,7 +134,6 @@ protected:
 	CmusikDynDspInfo* m_SongInfoCache;
 
 	CmusikPlaylist* m_Playlist;
-	int m_PlaylistType;
 
 	// drag and drop functions
 	virtual void OnDragColumn( int source, int dest );
@@ -166,9 +164,6 @@ protected:
 	void InsertItems( const CIntArray& items, int first_sel, int at, bool update = true );
 	int GetFirstSelected();
 	void DeleteSelectedItems( bool from_library = false, bool from_computer = false );
-
-	// misc
-	bool m_Changed;
 
 	// mfc message maps
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -222,7 +217,7 @@ private:
 	bool UseTempTable();
 
 	// playlist column stuff
-	void ResetColumns();
+	void ResetColumns( bool update = true );
 	void SaveColumns();
 	CString GetRating( int item );
 	CString GetTimeStr( int item );

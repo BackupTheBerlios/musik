@@ -136,6 +136,7 @@ public:
 	void Clear();
 
 	int m_ID;
+	int m_Type;
 	CmusikSongArray m_Songs;
 };
 
@@ -162,7 +163,6 @@ public:
 	void Rename( CmusikString new_name );
 	void SaveToLibrary( CmusikLibrary* library );
 
-private:
 	CmusikString m_Name;
 	int m_Type;
 	int m_ID;

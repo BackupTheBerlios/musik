@@ -117,7 +117,7 @@ END_MESSAGE_MAP()
 CmusikPlaylistCtrl::CmusikPlaylistCtrl( CFrameWnd* mainwnd, CmusikLibrary* library, CmusikPlayer* player, CmusikPrefs* prefs, UINT dropid_l, UINT dropid_r )
 {
 	// core
-	m_Playlist	= NULL;
+	m_Playlist	= new CmusikPlaylist();
 	m_Library	= library;
 	m_Prefs		= prefs;
 	m_Player	= player;
@@ -128,10 +128,6 @@ CmusikPlaylistCtrl::CmusikPlaylistCtrl( CFrameWnd* mainwnd, CmusikLibrary* libra
 	// is a column being rearranged?
 	m_Arranging = false;
 
-	// musik will always start up
-	// with library default selected
-	m_PlaylistType = MUSIK_SOURCES_TYPE_LIBRARY;
-
 	// dnd drop id
 	m_DropID_L = dropid_l;
 	m_DropID_R = dropid_r;
@@ -140,7 +136,6 @@ CmusikPlaylistCtrl::CmusikPlaylistCtrl( CFrameWnd* mainwnd, CmusikLibrary* libra
 	m_Parent = mainwnd;
 
 	// misc
-	m_Changed = true;
 	m_DropArrange = false;
 	m_PlaylistNeedsSave = false;
 	m_SongInfoCache = new CmusikDynDspInfo( NULL, m_Library );
@@ -173,13 +168,14 @@ CmusikPlaylistCtrl::CmusikPlaylistCtrl( CFrameWnd* mainwnd, CmusikLibrary* libra
 
 CmusikPlaylistCtrl::~CmusikPlaylistCtrl()
 {
+	delete m_Playlist;
 	delete m_SongInfoCache;
 	delete m_ImageList;
 }
 
 ///////////////////////////////////////////////////
 
-void CmusikPlaylistCtrl::ResetColumns()
+void CmusikPlaylistCtrl::ResetColumns( bool update )
 {
 	SetRedraw( FALSE );
 	GetHeaderCtrl()->SetRedraw( FALSE );
@@ -226,7 +222,9 @@ void CmusikPlaylistCtrl::ResetColumns()
 	GetHeaderCtrl()->SetRedraw( TRUE );
 
 	m_Playlist = pList;
-	UpdateV();
+
+	if ( update )
+		UpdateV();
 }
 
 ///////////////////////////////////////////////////
@@ -295,7 +293,7 @@ int CmusikPlaylistCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if ( CmusikListCtrl::OnCreate( lpCreateStruct ) == -1 )
 		return -1;
 
-	ResetColumns();
+	ResetColumns( false );
 	SetImageList( m_ImageList, LVSIL_SMALL );
 
 	return 0;
@@ -692,7 +690,8 @@ void CmusikPlaylistCtrl::ResyncItem( size_t songid, int item )
 void CmusikPlaylistCtrl::SavePlaylist( bool check_prompt )
 {
 	// if the user wants to be prompted...
-	if ( m_PlaylistNeedsSave && m_PlaylistType == MUSIK_PLAYLIST_TYPE_STANDARD )
+	if ( m_PlaylistNeedsSave && 
+		( m_Playlist->m_Type == MUSIK_PLAYLIST_TYPE_STANDARD || m_Playlist->m_Type == MUSIK_PLAYLIST_TYPE_SUBLIBRARY ) )
 	{
 		if ( m_Playlist->GetPlaylistID() == -1 )
 			return;
@@ -742,7 +741,7 @@ void CmusikPlaylistCtrl::SavePlaylist( bool check_prompt )
 
 ///////////////////////////////////////////////////
 
-void CmusikPlaylistCtrl::SetPlaylist( CmusikPlaylist* playlist, int type )
+void CmusikPlaylistCtrl::SetPlaylist( CmusikPlaylist* playlist )
 {
 	if ( playlist == NULL )
 	{
@@ -755,16 +754,13 @@ void CmusikPlaylistCtrl::SetPlaylist( CmusikPlaylist* playlist, int type )
 	// if the last item was a standard playlist,
 	// we may need to save it. so check...
 	SavePlaylist();
-	m_PlaylistType = type;
 
-	if ( playlist != m_Playlist )
-	{
-		if ( m_SongInfoCache )
-			m_SongInfoCache->SetPlaylist( playlist );
-	    
-		m_Playlist = playlist;
-		m_Changed = true;
-	}
+	// clear the old playlist and set it again
+	m_Playlist->Clear();
+	*m_Playlist = *playlist;
+
+	if ( m_SongInfoCache )
+		m_SongInfoCache->SetPlaylist( playlist );
 }
 
 ///////////////////////////////////////////////////
@@ -833,13 +829,6 @@ void CmusikPlaylistCtrl::OnLvnItemActivate(NMHDR *pNMHDR, LRESULT *pResult)
 	*pResult = NULL;
 
 	int item = pNMIA->iItem;
-
-	// (prompt to) save the current playlist...
-	if ( m_Changed )
-	{
-		SavePlaylist();
-		m_Changed = false;
-	}
 
 	PlayItem( item );
 }
@@ -1082,6 +1071,9 @@ void CmusikPlaylistCtrl::OnDropFiles( HDROP hDropInfo )
 		// grab the new index..
 		m_Player->FindNewIndex( songid );
 
+		if ( m_Playlist->m_Type == MUSIK_PLAYLIST_TYPE_STANDARD )
+			m_PlaylistNeedsSave = true;
+
 		m_DropArrange = false;
 		return;
 	}
@@ -1210,7 +1202,8 @@ void CmusikPlaylistCtrl::DeleteItems( const CIntArray& items, bool update )
 		m_Playlist->DeleteAt( items.at( i ) - i );
 	}
 
-	if ( m_PlaylistType == MUSIK_PLAYLIST_TYPE_STANDARD )
+	if ( m_Playlist->m_Type == MUSIK_PLAYLIST_TYPE_STANDARD
+		|| m_Playlist->m_Type == MUSIK_PLAYLIST_TYPE_SUBLIBRARY )
 		m_PlaylistNeedsSave = true;
 
 	if ( update )
@@ -1366,7 +1359,7 @@ void CmusikPlaylistCtrl::OnLvnColumnclick(NMHDR *pNMHDR, LRESULT *pResult)
 
 		UpdateV();
 
-		if ( m_PlaylistType == MUSIK_PLAYLIST_TYPE_STANDARD )
+		if ( m_Playlist->m_Type == MUSIK_PLAYLIST_TYPE_STANDARD )
 			m_PlaylistNeedsSave = true;
 	}
 
@@ -1737,7 +1730,7 @@ void CmusikPlaylistCtrl::OnPlaylistcolumnsFilename()
 
 bool CmusikPlaylistCtrl::UseTempTable()
 {
-	if ( m_PlaylistType == MUSIK_PLAYLIST_TYPE_STANDARD || m_PlaylistType == MUSIK_PLAYLIST_TYPE_DYNAMIC )
+	if ( m_Playlist->m_Type == MUSIK_PLAYLIST_TYPE_SUBLIBRARY )
 		return true;
 
 	return false;

@@ -144,7 +144,7 @@ void CmusikSourcesBar::OnItemChanged( NMHDR* pNotifyStruct, LRESULT* plResult )
 		int playlist_type = pNMPropTree->pItem->GetPlaylistType();
 
 		// library selected
-		if ( playlist_type == MUSIK_SOURCES_TYPE_LIBRARY )
+		if ( playlist_type == MUSIK_PLAYLIST_TYPE_LIBRARY )
 		{
 			GetCtrl()->FocusLibrary();
 			return;
@@ -157,15 +157,22 @@ void CmusikSourcesBar::OnItemChanged( NMHDR* pNotifyStruct, LRESULT* plResult )
 			return;
 		}
 
+		// create new sub library
+		else if ( playlist_type == MUSIK_SOURCES_TYPE_NEWSUBLIBRARY )
+		{
+			GetCtrl()->CreateNewStdPlaylist( MUSIK_PLAYLIST_TYPE_SUBLIBRARY );
+			return;
+		}
+
 		// create new std playlist
 		else if ( playlist_type == MUSIK_SOURCES_TYPE_NEWSTDPLAYLIST )
 		{
-			GetCtrl()->CreateNewStdPlaylist();
+			GetCtrl()->CreateNewStdPlaylist( MUSIK_PLAYLIST_TYPE_STANDARD );
 			return;
 		}
 
 		// now playing selected
-		else if ( playlist_type == MUSIK_SOURCES_TYPE_NOWPLAYING )
+		else if ( playlist_type == MUSIK_PLAYLIST_TYPE_NOWPLAYING )
 		{
 			GetCtrl()->FocusNowPlaying();
 			return;
@@ -180,11 +187,11 @@ void CmusikSourcesBar::OnItemChanged( NMHDR* pNotifyStruct, LRESULT* plResult )
 			return;
 		}
 
-		// dynamic playlist selected
-		else if ( playlist_type == MUSIK_PLAYLIST_TYPE_DYNAMIC )
+		// standard playlist selected
+		else if ( playlist_type == MUSIK_PLAYLIST_TYPE_SUBLIBRARY )
 		{
-			int WM_SOURCESDYNPLAYLIST = RegisterWindowMessage( "SOURCESDYNDPLAYLIST" );		
-			m_Parent->SendMessage( WM_SOURCESDYNPLAYLIST, NULL );
+			int WM_SOURCESSUBLIBRARY = RegisterWindowMessage( "SOURCESSUBLIBRARY" );
+			m_Parent->SendMessage( WM_SOURCESSUBLIBRARY, NULL );
 
 			return;
 		}
@@ -214,21 +221,15 @@ void CmusikSourcesBar::ShowMenu( bool force_show )
 		// update ui doesn't work...
 		int type = pItem->GetPlaylistType();
 
-		if ( type == MUSIK_PLAYLIST_TYPE_STANDARD || type == MUSIK_PLAYLIST_TYPE_DYNAMIC )
+		if ( type == MUSIK_PLAYLIST_TYPE_STANDARD || type == MUSIK_PLAYLIST_TYPE_SUBLIBRARY )
 		{
 			popup_menu->EnableMenuItem( ID_SOURCES_RENAME, MF_ENABLED );
 			popup_menu->EnableMenuItem( ID_SOURCES_DELETE, MF_ENABLED );
-
-			if ( type == MUSIK_PLAYLIST_TYPE_DYNAMIC )
-				popup_menu->EnableMenuItem( ID_SOURCES_EDITQUERY, MF_ENABLED );
-			else
-				popup_menu->EnableMenuItem( ID_SOURCES_EDITQUERY, MF_GRAYED | MF_DISABLED );
 		}
 		else
 		{
 			popup_menu->EnableMenuItem( ID_SOURCES_RENAME, MF_GRAYED | MF_DISABLED );
 			popup_menu->EnableMenuItem( ID_SOURCES_DELETE, MF_GRAYED | MF_DISABLED );
-			popup_menu->EnableMenuItem( ID_SOURCES_EDITQUERY, MF_GRAYED | MF_DISABLED );
 		}
 
 		if ( !GetCtrl()->m_Player->GetPlaylist()->GetCount() )
@@ -261,7 +262,7 @@ void CmusikSourcesBar::OnSourcesShuffleplaylist()
 	CmusikPropTreeItem* pItem = GetCtrl()->GetFocusedItem();
 	if ( pItem )
 	{
-		if ( pItem->GetPlaylistType() == MUSIK_SOURCES_TYPE_NOWPLAYING )
+		if ( pItem->GetPlaylistType() == MUSIK_PLAYLIST_TYPE_NOWPLAYING )
 		{
 			int WM_UPDATEPLAYLIST = RegisterWindowMessage( "UPDATEPLAYLIST" );
 			GetCtrl()->m_Parent->SendMessage( WM_UPDATEPLAYLIST );
@@ -292,8 +293,8 @@ CmusikSourcesCtrl::CmusikSourcesCtrl( CFrameWnd* parent, CmusikLibrary* library,
 	m_Parent			= parent;
 	m_LibRoot			= NULL;
 	m_SrcRoot			= NULL;
+	m_SubLibRoot		= NULL;
 	m_StdPlaylistRoot	= NULL;
-	m_DynPlaylistRoot	= NULL;
 	m_DropArrange		= false;
 	m_Startup			= true;
 	m_Player			= player;
@@ -342,13 +343,13 @@ void CmusikSourcesCtrl::InitItems()
 	
 	LibLoad();
 	
-	// "Search"
-	info.Set( "Search", -1, -1 );
-	m_SrcRoot = InsertItem( new CmusikPropTreeItem() );
-	m_SrcRoot->SetPlaylistInfo( info );
-	m_SrcRoot->Expand( 1 );
+	// sub libraries
+	info.Set( "Sub Libraries", -1, -1 );
+	m_SubLibRoot = InsertItem( new CmusikPropTreeItem() );
+	m_SubLibRoot->SetPlaylistInfo( info );
+	m_SubLibRoot->Expand( true );
 
-	SrcLoad();
+	StdPlaylistsLoad( MUSIK_PLAYLIST_TYPE_SUBLIBRARY );
 
 	// standard playlists
 	info.Set( "Playlists", -1, -1 );
@@ -356,13 +357,15 @@ void CmusikSourcesCtrl::InitItems()
 	m_StdPlaylistRoot->SetPlaylistInfo( info );
 	m_StdPlaylistRoot->Expand( true );
 
-	StdPlaylistsLoad();
+	StdPlaylistsLoad( MUSIK_PLAYLIST_TYPE_STANDARD );
 
-	// dynamic playlists
-	info.Set( "Dynamic Playlists", -1, -1 );
-	m_DynPlaylistRoot = InsertItem( new CmusikPropTreeItem() );
-	m_DynPlaylistRoot->SetPlaylistInfo( info );
-	m_DynPlaylistRoot->Expand( true );
+	// "Search"
+	info.Set( "Search All", -1, -1 );
+	m_SrcRoot = InsertItem( new CmusikPropTreeItem() );
+	m_SrcRoot->SetPlaylistInfo( info );
+	m_SrcRoot->Expand( 1 );
+
+	SrcLoad();
 }
 
 ///////////////////////////////////////////////////
@@ -374,13 +377,13 @@ void CmusikSourcesCtrl::CleanItems()
 	
 	m_LibRoot = NULL;
 	m_SrcRoot = NULL;
+	m_SubLibRoot = NULL;
 	m_StdPlaylistRoot = NULL;
-	m_DynPlaylistRoot = NULL;
 
 	m_Lib.clear();
 	m_Src.clear();
+	m_SubLibs.clear();
 	m_StdPlaylists.clear();
-	m_DynPlaylists.clear();
 }
 
 ///////////////////////////////////////////////////
@@ -465,14 +468,14 @@ void CmusikSourcesCtrl::LibLoad()
 	CmusikPropTreeItem *lib, *nowplaying;
 
 	// library
-	info.Set( "Library", MUSIK_SOURCES_TYPE_LIBRARY, NULL );
+	info.Set( "Library", MUSIK_PLAYLIST_TYPE_LIBRARY, NULL );
 	lib = InsertItem( new CmusikPropTreeItem(), m_LibRoot );
 	lib->SetPlaylistInfo( info );
 
 	m_Lib.push_back( lib );
 
 	// now playing
-	info.Set( "Now Playing", MUSIK_SOURCES_TYPE_NOWPLAYING, NULL );
+	info.Set( "Now Playing", MUSIK_PLAYLIST_TYPE_NOWPLAYING, NULL );
 	nowplaying = InsertItem( new CmusikPropTreeItem(), m_LibRoot );
 	nowplaying->SetPlaylistInfo( info );
 
@@ -481,42 +484,52 @@ void CmusikSourcesCtrl::LibLoad()
 
 ///////////////////////////////////////////////////
 
-void CmusikSourcesCtrl::StdPlaylistsLoad()
+void CmusikSourcesCtrl::StdPlaylistsLoad( int type )
 {
-	CmusikPropTreeItem* temp;
+	CmusikSourcesItemPtrArray* ptrItems;
+	CmusikPropTreeItem* ptrRoot;
+	int create_type;
+
+	if ( type == MUSIK_PLAYLIST_TYPE_STANDARD )
+	{
+		ptrItems = &m_StdPlaylists;
+		ptrRoot = m_StdPlaylistRoot;
+		create_type = MUSIK_SOURCES_TYPE_NEWSTDPLAYLIST;
+	}
+	else if ( type == MUSIK_PLAYLIST_TYPE_SUBLIBRARY )
+	{
+		ptrItems = &m_SubLibs;
+		ptrRoot = m_SubLibRoot;
+		create_type = MUSIK_SOURCES_TYPE_NEWSUBLIBRARY;
+	}
+	else
+		return;
 
 	// load the playlists...
-	for ( size_t i = 0; i < m_StdPlaylists.size(); i++ )
-		DeleteItem( m_StdPlaylists.at( i ) );
+	for ( size_t i = 0; i < ptrItems->size(); i++ )
+		DeleteItem( ptrItems->at( i ) );
 
-	m_StdPlaylists.clear();
+	ptrItems->clear();
 
 	CmusikPlaylistInfoArray items;
-	m_Library->GetAllStdPlaylists( &items );
+	m_Library->GetAllStdPlaylists( &items, type );
 
-	CString sTemp;
+	CmusikPropTreeItem* temp;
 	for ( size_t i = 0; i < items.size(); i++ )
 	{
-		temp = InsertItem( new CmusikPropTreeItem(), m_StdPlaylistRoot );
+		temp = InsertItem( new CmusikPropTreeItem(), ptrRoot );
 		temp->SetPlaylistInfo( items.at( i ) );
 
-		m_StdPlaylists.push_back( temp );
+		ptrItems->push_back( temp );
 	}
 
 	// load the "Create..."
 	CmusikPlaylistInfo info;
-	info.Set( "Create...", MUSIK_SOURCES_TYPE_NEWSTDPLAYLIST, -1 ); 
-	temp = InsertItem( new CmusikPropTreeItem(), m_StdPlaylistRoot );
+	info.Set( "Create...", create_type, -1 ); 
+	temp = InsertItem( new CmusikPropTreeItem(), ptrRoot );
 	temp->SetPlaylistInfo( info );
 
-	m_StdPlaylists.push_back( temp );
-}
-
-///////////////////////////////////////////////////
-
-void CmusikSourcesCtrl::LoadDynPlaylists()
-{
-
+	ptrItems->push_back( temp );
 }
 
 ///////////////////////////////////////////////////
@@ -601,14 +614,15 @@ void CmusikSourcesCtrl::OnDropFiles( HDROP hDropInfo, bool right_button )
 	DragFinish( hDropInfo );
 
 	// did we actually hit an item?
-	if ( pItem && pItem != m_StdPlaylistRoot )
+	if ( pItem && pItem != m_SubLibRoot )
 	{
 		// standard playlist
-		if ( pItem->GetPlaylistType() == MUSIK_PLAYLIST_TYPE_STANDARD )
+		if ( pItem->GetPlaylistType() == MUSIK_PLAYLIST_TYPE_STANDARD ||
+			pItem->GetPlaylistType() == MUSIK_PLAYLIST_TYPE_SUBLIBRARY )
 			m_Library->AppendStdPlaylist( pItem->GetPlaylistID(), files );
 
 		// hit now playing?
-		else if ( pItem->GetPlaylistType() == MUSIK_SOURCES_TYPE_NOWPLAYING )
+		else if ( pItem->GetPlaylistType() == MUSIK_PLAYLIST_TYPE_NOWPLAYING )
 		{
 			bool was_nowplaying_empty = m_Player->GetPlaylist()->GetCount() ? false : true;
 			bool begin_trans = false;
@@ -637,9 +651,9 @@ void CmusikSourcesCtrl::OnDropFiles( HDROP hDropInfo, bool right_button )
 		}
 
 		// hit create?
-		else if ( pItem->GetPlaylistType() == MUSIK_SOURCES_TYPE_NEWSTDPLAYLIST )
+		else if ( pItem->GetPlaylistType() == MUSIK_SOURCES_TYPE_NEWSUBLIBRARY )
 		{
-			CreateNewStdPlaylist( &files );
+			CreateNewStdPlaylist( MUSIK_PLAYLIST_TYPE_SUBLIBRARY, &files );
 			return;
 		}
 	}
@@ -647,9 +661,9 @@ void CmusikSourcesCtrl::OnDropFiles( HDROP hDropInfo, bool right_button )
 	// didn't hit an item, a new 
 	// playlist was created, so it
 	// was pushed to the back of the list
-	if ( !pItem || pItem == m_StdPlaylistRoot )
+	if ( !pItem || pItem == m_SubLibRoot )
 	{
-		CreateNewStdPlaylist( &files );
+		CreateNewStdPlaylist( MUSIK_PLAYLIST_TYPE_SUBLIBRARY, &files );
 		return;
 	}
 
@@ -659,8 +673,27 @@ void CmusikSourcesCtrl::OnDropFiles( HDROP hDropInfo, bool right_button )
 
 ///////////////////////////////////////////////////
 
-CmusikPropTreeItem* CmusikSourcesCtrl::CreateNewStdPlaylist( CmusikStringArray* files )
+CmusikPropTreeItem* CmusikSourcesCtrl::CreateNewStdPlaylist( int type, CmusikStringArray* files )
 {
+	CmusikSourcesItemPtrArray* ptrItems;
+	CmusikString playlist_str;
+	int editinplace_type;
+	
+	if ( type == MUSIK_PLAYLIST_TYPE_STANDARD )
+	{
+		ptrItems = &m_StdPlaylists;
+		playlist_str = _T( "Playlist" );
+		editinplace_type = MUSIK_SOURCES_EDITINPLACE_NEWSTDPLAYLIST;
+	}
+	else if ( type == MUSIK_PLAYLIST_TYPE_SUBLIBRARY )
+	{
+		ptrItems = &m_SubLibs;
+		playlist_str = _T( "Sub Library" );
+		editinplace_type = MUSIK_SOURCES_EDITINPLACE_NEWSUBLIBRARYRARY;
+	}
+	else
+		return NULL;	
+
 	bool no_files = false;
 	if ( !files )
 	{
@@ -669,19 +702,18 @@ CmusikPropTreeItem* CmusikSourcesCtrl::CreateNewStdPlaylist( CmusikStringArray* 
 	}
 
 	// create the playlist
-	CmusikString playlist_str = _T( "New Playlist" );	
-	int nID = m_Library->CreateStdPlaylist( playlist_str.c_str(), *files );
+	m_Library->CreateStdPlaylist( playlist_str, *files, type );
 
 	// reload std playlists
-	StdPlaylistsLoad();
+	StdPlaylistsLoad( type );
 	OnPaint();
 
 	// rename new playlist
 	CmusikPropTreeItem* pItem = NULL;
-	if ( m_StdPlaylists.size() > 1 )
+	if ( ptrItems->size() > 1 )
 	{
-		pItem = m_StdPlaylists.at( m_StdPlaylists.size() - 2 );
-		RenameItem( pItem, MUSIK_SOURCES_EDITINPLACE_NEWSTDPLAYLIST );
+		pItem = ptrItems->at( ptrItems->size() - 2 );
+		RenameItem( pItem, editinplace_type );
 	}
 
 	if ( no_files )
@@ -729,11 +761,11 @@ void CmusikSourcesCtrl::DoDrag( CmusikPropTreeItem* pItem )
 	int nMode = pItem->GetPlaylistType();
 	
 	// standard playlist dragged
-	if ( nMode == MUSIK_PLAYLIST_TYPE_STANDARD )
+	if ( nMode == MUSIK_PLAYLIST_TYPE_STANDARD || nMode == MUSIK_PLAYLIST_TYPE_SUBLIBRARY )
 		m_Library->GetStdPlaylistFns( pItem->GetPlaylistID(), files, false );
 	
 	// now playing dragged..
-	else if ( nMode == MUSIK_SOURCES_TYPE_NOWPLAYING )
+	else if ( nMode == MUSIK_PLAYLIST_TYPE_NOWPLAYING )
 	{
 		if ( m_Player->GetPlaylist() )
 		{
@@ -745,7 +777,7 @@ void CmusikSourcesCtrl::DoDrag( CmusikPropTreeItem* pItem )
 	}
 
 	// library playlist dragged
-	else if ( nMode == MUSIK_SOURCES_TYPE_LIBRARY )
+	else if ( nMode == MUSIK_PLAYLIST_TYPE_LIBRARY )
 	{
 		CMainFrame* pMain = (CMainFrame*)m_Parent;
 		if ( pMain->m_LibPlaylist )
@@ -756,10 +788,6 @@ void CmusikSourcesCtrl::DoDrag( CmusikPropTreeItem* pItem )
 			m_Library->EndTransaction();
 		}
 	}
-
-	else if ( nMode == MUSIK_PLAYLIST_TYPE_DYNAMIC )
-		MessageBox( "This operation is not supported yet.", "musik", MB_ICONINFORMATION | MB_OK );
-
 
 	if ( files.size() )
 	{
@@ -951,21 +979,29 @@ void CmusikSourcesCtrl::DeleteSel()
 	CmusikPropTreeItem* pItem = GetFocusedItem();
 	if ( pItem )
 	{
+		int playlist_type = pItem->GetPlaylistType();
 		// type was standard playlist...
-		if ( pItem->GetPlaylistType() == MUSIK_PLAYLIST_TYPE_STANDARD )
+		if ( playlist_type == MUSIK_PLAYLIST_TYPE_STANDARD ||
+			playlist_type == MUSIK_PLAYLIST_TYPE_SUBLIBRARY )
 		{
+			CmusikSourcesItemPtrArray* ptrItems;
+			if ( playlist_type == MUSIK_PLAYLIST_TYPE_SUBLIBRARY )
+				ptrItems = &m_SubLibs;
+			else
+				ptrItems = &m_StdPlaylists;
+
 			int nID = pItem->GetPlaylistID();
 			int nPos = -1;
 			int nNextPos = -1;
 			
 			// find the position...
-			for ( size_t i = 0; i < m_StdPlaylists.size() - 1; i++ )
+			for ( size_t i = 0; i < ptrItems->size() - 1; i++ )
 			{
-				if ( m_StdPlaylists.at( i ) == pItem )
+				if ( ptrItems->at( i ) == pItem )
 				{
 					nPos = i;
 
-					if ( nPos >= (int)m_StdPlaylists.size() - 2 )
+					if ( nPos >= (int)ptrItems->size() - 2 )
 						nNextPos = nPos - 1;
 					else
 						nNextPos = nPos;
@@ -980,29 +1016,36 @@ void CmusikSourcesCtrl::DeleteSel()
 			{
 				m_Library->DeleteStdPlaylist( nID );
 				
-				StdPlaylistsLoad();
+				StdPlaylistsLoad( pItem->GetPlaylistType() );
 				OnPaint();
 
 				// now select the next entry in the
 				// list... if -1 select the now playing,
 				// if playing, or library if not
 				KillFocus( false );
-				if ( nNextPos == -1 || m_StdPlaylists.size() <= 1 )
+				if ( nNextPos == -1 || ptrItems->size() <= 1 )
 				{
 					if ( !m_Player->IsPlaying() )
 						FocusLibrary();
-
 					else
 						FocusNowPlaying();
 				}
 				else
 				{
 					KillFocus( false );
-					m_StdPlaylists.at( nNextPos )->Select( TRUE );
-					SetFocusedItem( m_StdPlaylists.at( nNextPos  ) );
+					ptrItems->at( nNextPos )->Select( TRUE );
+					SetFocusedItem( ptrItems->at( nNextPos  ) );
 
-					int WM_SOURCESSTDPLAYLIST = RegisterWindowMessage( "SOURCESSTDPLAYLIST" );
-					m_Parent->SendMessage( WM_SOURCESSTDPLAYLIST, NULL );
+					if ( playlist_type == MUSIK_PLAYLIST_TYPE_STANDARD )
+					{
+						int WM_SOURCESSTDPLAYLIST = RegisterWindowMessage( "SOURCESSTDPLAYLIST" );
+						m_Parent->SendMessage( WM_SOURCESSTDPLAYLIST, NULL );
+					}
+					else
+					{
+						int WM_SOURCESSUBLIBRARY = RegisterWindowMessage( "SOURCESSUBLIBRARY" );
+						m_Parent->SendMessage( WM_SOURCESSUBLIBRARY, NULL );
+					}
 				}
 
 				Invalidate();
@@ -1034,7 +1077,10 @@ LRESULT CmusikSourcesCtrl::OnEditCancel( WPARAM wParam, LPARAM lParam )
 
 	CmusikEditInPlace* sender = (CmusikEditInPlace*)wParam;
 
-	if ( cmd == MUSIK_SOURCES_EDITINPLACE_NEWSTDPLAYLIST )
+	if ( cmd == MUSIK_SOURCES_EDITINPLACE_NEWSUBLIBRARYRARY )
+		m_SubLibs.at( m_SubLibs.size() - 1 )->SetLabelText( _T( "Create..." ) );
+
+	else if ( cmd == MUSIK_SOURCES_EDITINPLACE_NEWSTDPLAYLIST )
 		m_StdPlaylists.at( m_StdPlaylists.size() - 1 )->SetLabelText( _T( "Create..." ) );
 
 	else if ( cmd == MUSIK_SOURCES_EDITINPLACE_QUICKSEARCH )
@@ -1060,7 +1106,8 @@ LRESULT CmusikSourcesCtrl::OnEditCommit( WPARAM wParam, LPARAM lParam )
 	{
 		if ( pItem )
 		{
-			if ( pItem->GetPlaylistType() == MUSIK_PLAYLIST_TYPE_STANDARD )
+			if ( pItem->GetPlaylistType() == MUSIK_PLAYLIST_TYPE_STANDARD || 
+				pItem->GetPlaylistType() == MUSIK_PLAYLIST_TYPE_SUBLIBRARY )
 			{
 				m_Library->RenameStdPlaylist( pItem->GetPlaylistID(), (CmusikString)sName );
 				pItem->SetLabelText( sName );
@@ -1078,14 +1125,21 @@ LRESULT CmusikSourcesCtrl::OnEditCommit( WPARAM wParam, LPARAM lParam )
 		}
 	}
 
-	else if ( cmd == MUSIK_SOURCES_EDITINPLACE_NEWSTDPLAYLIST )
+	else if ( cmd == MUSIK_SOURCES_EDITINPLACE_NEWSUBLIBRARYRARY || cmd == MUSIK_SOURCES_EDITINPLACE_NEWSTDPLAYLIST )
 	{
-		if ( m_StdPlaylists.size() > 1 )
+		CmusikSourcesItemPtrArray* ptrItems;
+		if ( cmd == MUSIK_SOURCES_EDITINPLACE_NEWSUBLIBRARYRARY )
+			ptrItems = &m_SubLibs;
+		else
+			ptrItems = &m_StdPlaylists;
+
+		if ( ptrItems->size() > 1 )
 		{
-			pItem = m_StdPlaylists.at( m_StdPlaylists.size() - 2 );
+			pItem = ptrItems->at( ptrItems->size() - 2 );
 			if ( pItem )
 			{
-				if ( pItem->GetPlaylistType() == MUSIK_PLAYLIST_TYPE_STANDARD )
+				if ( pItem->GetPlaylistType() == MUSIK_PLAYLIST_TYPE_STANDARD ||
+					pItem->GetPlaylistType() == MUSIK_PLAYLIST_TYPE_SUBLIBRARY )
 				{
 					m_Library->RenameStdPlaylist( pItem->GetPlaylistID(), (CmusikString)sName );
 					pItem->SetLabelText( sName );

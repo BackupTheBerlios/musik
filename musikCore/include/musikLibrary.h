@@ -113,9 +113,12 @@ enum
 
 enum
 {
-	MUSIK_PLAYLIST_TYPE_LIBRARY_OR_DEVICE = 0,
+	MUSIK_PLAYLIST_TYPE_UNKNOWN = -1,
+	MUSIK_PLAYLIST_TYPE_LIBRARY = 0,
+	MUSIK_PLAYLIST_TYPE_SUBLIBRARY,
 	MUSIK_PLAYLIST_TYPE_STANDARD,
 	MUSIK_PLAYLIST_TYPE_DYNAMIC,
+	MUSIK_PLAYLIST_TYPE_NOWPLAYING,
 	MUSIK_PLAYLIST_TYPE_COUNT // must be last
 };
 
@@ -142,6 +145,7 @@ enum
 #define MUSIK_LIBRARY_ID_EXISTS -2
 #define MUSIK_LIBRARY_NO_ID_EXISTS -3
 #define MUSIK_LIBRARY_NOT_OPEN -4
+#define MUSIK_LIBRARY_INVALID_PLAYLIST_TYPE -5
 
 ///////////////////////////////////////////////////
 
@@ -220,8 +224,8 @@ public:
 	bool SetSongEqualizer			( int songid, int eq_id );
 
 	// standard playlist
-	int  CreateStdPlaylist			( const CmusikString& name, const CmusikStringArray& files, bool add_to_library = true );
-	int  CreateStdPlaylist			( const CmusikString& name, CmusikPlaylist& files );
+	int  CreateStdPlaylist			( const CmusikString& name, const CmusikStringArray& files, int type = MUSIK_PLAYLIST_TYPE_STANDARD, bool add_to_library = true );
+	int  CreateStdPlaylist			( const CmusikString& name, CmusikPlaylist& files, int type = MUSIK_PLAYLIST_TYPE_STANDARD );
 	int  AppendStdPlaylist			( int id, const CmusikStringArray& files, bool add_to_library = true );
 	int  AppendStdPlaylist			( int id, CmusikPlaylist& playlist );
 	int  RenameStdPlaylist			( int id, const CmusikString& str );
@@ -229,7 +233,7 @@ public:
 	int  RewriteStdPlaylist			( CmusikPlaylist* playlist );
 	int  DeleteStdPlaylist			( int id );
 
-	int  GetAllStdPlaylists			( CmusikPlaylistInfoArray* target, bool clear_target = true );
+	int  GetAllStdPlaylists			( CmusikPlaylistInfoArray* target, int type = MUSIK_PLAYLIST_TYPE_STANDARD, bool clear_target = true );
 	int  GetStdPlaylist				( int id, CmusikPlaylist& target, bool clear_target = true );
 	bool GetStdPlaylistFns			( int id, CmusikStringArray& target, bool clear_target = true );
 	bool GetStdPlaylistFns			( CmusikPlaylist& playlist, CmusikStringArray& target, bool clear_target = true );

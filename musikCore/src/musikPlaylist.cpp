@@ -239,6 +239,7 @@ void CmusikSongInfo::SetField( int field, const CmusikString& str )
 CmusikPlaylist::CmusikPlaylist()
 {
 	m_ID = -1;
+	m_Type = MUSIK_PLAYLIST_TYPE_UNKNOWN;
 }
 
 ///////////////////////////////////////////////////

@@ -633,6 +633,7 @@ void CmusikPlayer::StopSound()
 void CmusikPlayer::SetPlaylist( CmusikPlaylist* playlist )
 {
 	CleanPlaylist();
+	playlist->m_Type = MUSIK_PLAYLIST_TYPE_NOWPLAYING;
 	m_Playlist = playlist;
 }
 

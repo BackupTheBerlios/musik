@@ -368,7 +368,8 @@ bool CmusikLibrary::InitStdTables()
 	static const char *szCreateDBQuery1  = 
 		"CREATE TABLE " STD_PLAYLIST_TABLE_NAME " ( "	
 		"std_playlist_id INTEGER AUTO_INCREMENT PRIMARY KEY, "
-		"std_playlist_name varchar(255) "
+		"std_playlist_name varchar(255), "
+		"std_playlist_type INTEGER "
 		" );";
 
 	// construct the table that will store all the
@@ -918,20 +919,24 @@ int CmusikLibrary::DeleteCrossfader( int id )
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::CreateStdPlaylist( const CmusikString& name, const CmusikStringArray& songids, bool add_to_library )
+int CmusikLibrary::CreateStdPlaylist( const CmusikString& name, const CmusikStringArray& songids, int type, bool add_to_library )
 {
 	if ( !m_DatabaseOpen )
 		return MUSIK_LIBRARY_NOT_OPEN;
+
+	if ( type != MUSIK_PLAYLIST_TYPE_STANDARD && type != MUSIK_PLAYLIST_TYPE_SUBLIBRARY )
+		return MUSIK_LIBRARY_INVALID_PLAYLIST_TYPE;
 
 	int nID, nRet;
 
 	m_ProtectingLibrary.acquire();
 		// insert the new playlist name
-		nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %Q );", 
+		nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %Q, %d );", 
 			NULL, NULL, NULL, 
 			STD_PLAYLIST_TABLE_NAME,
 			NULL,
-			name.c_str() );
+			name.c_str(),
+			type );
 	m_ProtectingLibrary.release();
 
 	if ( nRet != MUSIK_LIBRARY_OK )
@@ -980,21 +985,25 @@ int CmusikLibrary::CreateStdPlaylist( const CmusikString& name, const CmusikStri
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::CreateStdPlaylist( const CmusikString& name, CmusikPlaylist& playlist )
+int CmusikLibrary::CreateStdPlaylist( const CmusikString& name, CmusikPlaylist& playlist, int type )
 {
 	if ( !m_DatabaseOpen )
 		return MUSIK_LIBRARY_NOT_OPEN;
+
+	if ( type != MUSIK_PLAYLIST_TYPE_STANDARD && type != MUSIK_PLAYLIST_TYPE_SUBLIBRARY )
+		return MUSIK_LIBRARY_INVALID_PLAYLIST_TYPE;
 
 	int nID, nRet;
 
 	// lock it up
 	m_ProtectingLibrary.acquire();
 		// insert the new playlist name
-		nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %Q );", 
+		nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %Q, %d );", 
 			NULL, NULL, NULL, 
 			STD_PLAYLIST_TABLE_NAME,
 			NULL,
-			name.c_str() );
+			name.c_str(),
+			type );
 	m_ProtectingLibrary.release();
 
 	if ( nRet != MUSIK_LIBRARY_OK )
@@ -1246,16 +1255,24 @@ int CmusikLibrary::GetStdPlaylist( int id, CmusikPlaylist& target, bool clear_ta
 		target.Clear();
 	
 	CmusikStringArray* items = new CmusikStringArray;
+	int playlist_type = MUSIK_PLAYLIST_TYPE_UNKNOWN;
 
-	// do it
-	int nRet;
+	int nRet1, nRet2;
 	m_ProtectingLibrary.acquire();
-		nRet = sqlite_exec_printf( m_pDB, "SELECT songfn FROM %Q WHERE std_playlist_id = %d;", 
+		// get the items
+		nRet1 = sqlite_exec_printf( m_pDB, "SELECT songfn FROM %Q WHERE std_playlist_id = %d;", 
 			&sqlite_AddSongToStringArray, items, NULL,
 			STD_PLAYLIST_SONGS,
 			id );
+
+		// get the type
+		nRet2 = sqlite_exec_printf( m_pDB, "SELECT std_playlist_type FROM %Q WHERE std_playlist_id = %d;", 
+			&sqlite_GetIntFromRow, &playlist_type, NULL,
+			STD_PLAYLIST_TABLE_NAME,
+			id );
 	m_ProtectingLibrary.release();	
 
+	// add all the items to the playlist
 	CmusikSong song;
 	for ( size_t i = 0; i < items->size(); i++ )
 	{
@@ -1263,9 +1280,16 @@ int CmusikLibrary::GetStdPlaylist( int id, CmusikPlaylist& target, bool clear_ta
 		target.Add( song );
 	}
 
+	// assure correct type and id are set
+	target.m_Type = playlist_type;
+	target.m_ID = id;
+
 	delete items;
 
-	return nRet;
+	if ( !nRet1 )
+		return nRet2;
+
+	return nRet1;
 }
 
 ///////////////////////////////////////////////////
@@ -1879,7 +1903,17 @@ void CmusikLibrary::VerifyYearList( CmusikStringArray & list )
 
 int CmusikLibrary::GetAllSongs( CmusikPlaylist& target, bool use_temp_table )
 {
-	return QuerySongs( "filename <> ''", target, use_temp_table );
+	int nRet = QuerySongs( "filename <> ''", target, use_temp_table );
+
+	if ( !nRet )
+	{
+		if ( use_temp_table )
+			target.m_Type = MUSIK_PLAYLIST_TYPE_SUBLIBRARY;
+		else
+			target.m_Type = MUSIK_PLAYLIST_TYPE_LIBRARY;
+	}
+
+	return nRet;
 }
 
 ///////////////////////////////////////////////////
@@ -2255,10 +2289,13 @@ bool CmusikLibrary::SetSongEqualizer( int songid, int eq_id )
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetAllStdPlaylists( CmusikPlaylistInfoArray* target, bool clear_target )
+int CmusikLibrary::GetAllStdPlaylists( CmusikPlaylistInfoArray* target, int type, bool clear_target )
 {
 	if ( !m_DatabaseOpen )
 		return MUSIK_LIBRARY_NOT_OPEN;
+
+	if ( type != MUSIK_PLAYLIST_TYPE_STANDARD && type != MUSIK_PLAYLIST_TYPE_SUBLIBRARY )
+		return MUSIK_LIBRARY_INVALID_PLAYLIST_TYPE;
 
 	if ( clear_target )
 		target->clear();
@@ -2266,10 +2303,15 @@ int CmusikLibrary::GetAllStdPlaylists( CmusikPlaylistInfoArray* target, bool cle
 	// do it
 	int nRet;
 	m_ProtectingLibrary.acquire();
-		nRet = sqlite_exec_printf( m_pDB, "SELECT std_playlist_name,std_playlist_id FROM %Q WHERE std_playlist_name <> '';", 
+		nRet = sqlite_exec_printf( m_pDB, "SELECT std_playlist_name,std_playlist_id FROM %Q WHERE std_playlist_type = %d;", 
 			&sqlite_AddStdPlaylistInfoArray, target, NULL,
-			STD_PLAYLIST_TABLE_NAME );
+			STD_PLAYLIST_TABLE_NAME,
+			type );
 	m_ProtectingLibrary.release();
+
+	// make sure the correct type is set
+	for ( size_t i = 0; i < target->size(); i++ )
+		target->at( i ).m_Type = type;
 
 	return nRet;
 }
@@ -2493,7 +2535,7 @@ int CmusikLibrary::PopulateTempSongTable( CmusikPlaylist& source )
 		ret = InsertTempSong( source.GetSongID( i ) );
 
 		if ( ret != MUSIK_LIBRARY_OK )
-			return ret;
+			break;
 	}
 	EndTransaction();
 
@@ -3189,7 +3231,11 @@ int CmusikLibrary::GetDirtySongs( CmusikPlaylist* target, bool clear )
 	if ( clear )
 		target->Clear();
 
-	return QuerySongs( "dirty = 1", *target, false );
+	int nRet = QuerySongs( "dirty = 1", *target, false );
+	if ( !nRet )
+		target->m_Type = MUSIK_PLAYLIST_TYPE_STANDARD;
+
+	return nRet;
 }
 
 ///////////////////////////////////////////////////
