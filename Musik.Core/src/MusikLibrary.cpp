@@ -635,6 +635,28 @@ void CMusikLibrary::CreateStdPlaylist( const CStdString& name, const CStdStringA
 
 ///////////////////////////////////////////////////
 
+void CMusikLibrary::AppendStdPlaylist( int id, const CStdStringArray& files )
+{
+	if ( id >= 0 )
+	{
+		m_ProtectingLibrary->acquire();
+
+		for ( size_t i = 0; i < files.size(); i++ )
+		{
+			sqlite_exec_printf( m_pDB, "INSERT INTO %q VALUES ( %Q, %d, %d );",
+			NULL, NULL, NULL, 
+			STD_PLAYLIST_SONGS,
+			NULL,
+			id,
+			GetIDFromFilename( files.at( i ) ) );
+		}
+
+		m_ProtectingLibrary->release();
+	}
+}
+
+///////////////////////////////////////////////////
+
 void CMusikLibrary::GetStdPlaylist( int id, CMusikPlaylist& target, bool clear_target )
 {
 	if ( clear_target )
