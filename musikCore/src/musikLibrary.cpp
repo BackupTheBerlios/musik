@@ -1753,8 +1753,6 @@ int CmusikLibrary::GetIDFromFilename( CStdString fn )
 
 	int target;
 
-	fn.Replace( "'", "''" );
-
 	// do it
 	m_ProtectingLibrary->acquire();
 
