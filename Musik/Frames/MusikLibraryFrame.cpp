@@ -32,7 +32,6 @@ BEGIN_EVENT_TABLE(MusikLibraryFrame, wxFrame)
 	EVT_MENU			( MUSIK_PATHS_MENU_REMOVESEL,		MusikLibraryFrame::OnClickRemoveSel			)
 	EVT_MENU			( MUSIK_PATHS_MENU_REMOVEALL,		MusikLibraryFrame::OnClickRemoveAll			)
 	EVT_MENU			( MUSIK_PATHS_MENU_CLEAR_LIBRARY,	MusikLibraryFrame::OnClickClearLibrary		)
-	EVT_MENU			( MUSIK_PATHS_MENU_SCAN_NEW,		MusikLibraryFrame::OnClickScan				)
 	EVT_MENU			( MUSIK_PATHS_MENU_UPDATE_LIBRARY,	MusikLibraryFrame::OnRebuildAll				)
 	EVT_MENU			( MUSIK_PATHS_MENU_PURGE_LIBRARY,	MusikLibraryFrame::OnPurgeLibrary			)
 	EVT_BUTTON			( MUSIK_PATHS_OK,					MusikLibraryFrame::OnClickOK				)
@@ -112,8 +111,6 @@ MusikLibraryFrame::MusikLibraryFrame( wxFrame* pParent, const wxPoint &pos, cons
 	//--- "Update" menu ---//
 	//---------------------//	
     paths_update_menu = new wxMenu;
-    paths_update_menu->Append( MUSIK_PATHS_MENU_SCAN_NEW, _("Scan for &New Files") );
-	paths_update_menu->AppendSeparator();
 	paths_update_menu->Append( MUSIK_PATHS_MENU_UPDATE_LIBRARY, _("&Update Library") );
 	paths_update_menu->Append( MUSIK_PATHS_MENU_PURGE_LIBRARY, _("Purge &Missing Songs") );
 	paths_update_menu->AppendSeparator();
@@ -133,8 +130,6 @@ MusikLibraryFrame::MusikLibraryFrame( wxFrame* pParent, const wxPoint &pos, cons
     paths_context_menu->Append( MUSIK_PATHS_MENU_ADD, _("&Add Directory") );
 	paths_context_menu->Append( MUSIK_PATHS_MENU_REMOVESEL, _("&Remove &Selected Directories") );
 	paths_context_menu->Append( MUSIK_PATHS_MENU_REMOVEALL, _("Remove All Directories") );
-	paths_context_menu->AppendSeparator();
-    paths_context_menu->Append( MUSIK_PATHS_MENU_SCAN_NEW, _("Scan for &New Files") );
 	paths_context_menu->AppendSeparator();
 	paths_context_menu->Append( MUSIK_PATHS_MENU_UPDATE_LIBRARY, _("&Update Library") );
 	paths_context_menu->Append( MUSIK_PATHS_MENU_PURGE_LIBRARY, _("Purge &Missing Songs") );
@@ -267,8 +262,7 @@ bool MusikLibraryFrame::Show( bool show )
 	else if ( m_FirstStart )
 	{
 		m_FirstStart = false;
-		if ( g_Prefs.nAutoDelta == 1 )
-			ScanNew();
+		ScanNew();
 	}
 
 	return bRet;
@@ -539,8 +533,7 @@ void MusikLibraryFrame::ClearLibrary()
 		g_Playlist.Clear();
 		g_PlaylistCtrl->Update();
 
-		if ( g_Prefs.nAutoDelta == 1 )
-			ScanNew();
+		ScanNew();
 	}
 }
 

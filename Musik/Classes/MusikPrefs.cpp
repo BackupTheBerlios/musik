@@ -32,17 +32,17 @@ void CMusikPrefs::LoadPrefs()
 {
 	wxFileConfig *config;
 	config = new wxFileConfig( CONFIG_NAME );
-	config->Read( wxT( "SelectionStyle" ),						(int*)&eSelStyle,					0						);
+	config->Read( wxT( "SelectionStyle" ),						(int*)&eSelStyle,			0						);
 	config->Read( wxT( "OutputDriver" ),						&nSndOutput,				0						);
 	config->Read( wxT( "SoundDevice" ),							&nSndDevice,				0						);
 	config->Read( wxT( "PlaybackRate" ),						&nSndRate,					44100					);
 	config->Read( wxT( "SoundVolume" ),							&nSndVolume,				200						);
 	config->Read( wxT( "UseEQ" ),								&nUseEQ,					0						);
 	config->Read( wxT( "SoundBufferMilliseconds" ),				&nSndBuffer,				1000					);
-	config->Read( wxT( "ActivityBox1" ),						(int*)&nActBox1,					1						);
-	config->Read( wxT( "ActivityBox2" ),						(int*)&nActBox2,					2						);
-	config->Read( wxT( "ActivityBox3" ),						(int*)&nActBox3,					0						);
-	config->Read( wxT( "ActivityBox4" ),						(int*)&nActBox4,					0						);
+	config->Read( wxT( "ActivityBox1" ),						(int*)&nActBox1,			1						);
+	config->Read( wxT( "ActivityBox2" ),						(int*)&nActBox2,			2						);
+	config->Read( wxT( "ActivityBox3" ),						(int*)&nActBox3,			0						);
+	config->Read( wxT( "ActivityBox4" ),						(int*)&nActBox4,			0						);
 	config->Read( wxT( "Repeat" ),								&nRepeat,					1						);
 	config->Read( wxT( "Shuffle" ),								&nShuffle,					0						);
 	config->Read( wxT( "CrossfaderEnabled" ),					&nFadeEnable,				1						);
@@ -60,7 +60,6 @@ void CMusikPrefs::LoadPrefs()
 	config->Read( wxT( "ShowSourcesIcons" ),					&nShowSourcesIcons,			1						);
 	config->Read( wxT( "ShowActivities" ),						&nShowActivities,			1						);
 	config->Read( wxT( "StayOnTop" ),							&nStayOnTop,				0						);
-	config->Read( wxT( "AutomaticallyScanDelta" ),				&nAutoDelta,				1						);
 	config->Read( wxT( "ActivityBoxWrite" ),					&nActBoxWrite,				0						);
 	config->Read( wxT( "ActivityBoxClear" ),					&nActBoxClear,				0						);
 	config->Read( wxT( "ActivityBoxRename" ),					&nActBoxRename,				0						);
@@ -204,7 +203,6 @@ void CMusikPrefs::SavePrefs()
 	config->Write( wxT( "ShowSourcesIcons" ),				nShowSourcesIcons			);
 	config->Write( wxT( "ShowActivities" ),					nShowActivities				);
 	config->Write( wxT( "StayOnTop" ),						nStayOnTop					);
-	config->Write( wxT( "AutomaticallyScanDelta" ),			nAutoDelta					);
 	config->Write( wxT( "ActivityBoxWrite" ),				nActBoxWrite				);
 	config->Write( wxT( "ActivityBoxClear" ),				nActBoxClear				);
 	config->Write( wxT( "ActivityBoxRename" ),				nActBoxRename				);

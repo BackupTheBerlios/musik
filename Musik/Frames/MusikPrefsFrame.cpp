@@ -234,7 +234,6 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//--- Options -> General ---//
 	//--------------------------//
 	chkAutoScan				=	new wxCheckBox( this, -1,	_("Automatically scan for new songs on startup"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
-	chkAutoDelta			=	new wxCheckBox( this, -1,	_("Automatically scan for new files in library setup"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 	chkShowAllSongs			=	new wxCheckBox( this, -1,	_("Selecting library shows all songs in playlist"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 	chkBlankSwears			=	new wxCheckBox( this, -1,	_("Censor common swearwords"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 	chkPlaylistStripes		=	new wxCheckBox( this, -1,	_("Show \"stripes\" in playlist"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
@@ -250,7 +249,6 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//--------------------------------//
 	vsOptions_Interface = new wxBoxSizer( wxVERTICAL );
 	vsOptions_Interface->Add( chkAutoScan,				0, wxALL, 4 );
-	vsOptions_Interface->Add( chkAutoDelta,				0, wxALL, 4 );
 	vsOptions_Interface->Add( chkShowAllSongs,			0, wxALL, 4 );
 	vsOptions_Interface->Add( chkBlankSwears,			0, wxALL, 4 );
 	vsOptions_Interface->Add( chkPlaylistStripes,		0, wxALL, 4 );
@@ -507,7 +505,6 @@ void MusikPrefsFrame::LoadPrefs()
 	//--- options -> general ---//
 	//--------------------------//
 	chkAutoScan->SetValue			( g_Prefs.nAutoAdd	);
-	chkAutoDelta->SetValue			( g_Prefs.nAutoDelta );
 	chkShowAllSongs->SetValue		( g_Prefs.nShowAllSongs );
 	chkBlankSwears->SetValue		( g_Prefs.nBlankSwears );
 	chkPlaylistStripes->SetValue	( g_Prefs.nPLStripes );
@@ -698,10 +695,9 @@ void MusikPrefsFrame::SavePrefs()
 	//--------------------------//
 	//--- Options -> general ---//
 	//--------------------------//
-	g_Prefs.nAutoDelta	= chkAutoDelta->GetValue();
-	g_Prefs.nAutoAdd	= chkAutoScan->GetValue();
-	g_Prefs.nShowAllSongs = chkShowAllSongs->GetValue();
-	g_Prefs.nBlankSwears = chkBlankSwears->GetValue();
+	g_Prefs.nAutoAdd		= chkAutoScan->GetValue();
+	g_Prefs.nShowAllSongs	= chkShowAllSongs->GetValue();
+	g_Prefs.nBlankSwears	= chkBlankSwears->GetValue();
 
 	bool bPlaylistUpdate = false;
 	if ( chkPlaylistStripes->GetValue() != g_Prefs.nPLStripes )
