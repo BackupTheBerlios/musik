@@ -39,11 +39,20 @@
 #include "PropTreeList.h"
 #include "PropTreeItem.h"
 
+#include "../../Musik.Core/include/MusikLibrary.h"
 #include "../MusikPrefs.h"
 
 ///////////////////////////////////////////////////
 
 class CPropTree;
+
+///////////////////////////////////////////////////
+
+enum 
+{
+	MUSIK_SOURCES_TYPE_NOWPLAYING = MUSIK_PLAYLIST_TYPE_COUNT,
+	MUSIK_SOURCES_TYPE_LIBRARY
+};
 
 ///////////////////////////////////////////////////
 
@@ -88,13 +97,8 @@ class CPropTree : public CWnd
 
 public:
 	// construct / destruct
-	CPropTree( CMusikPrefs* prefs );
+	CPropTree( CMusikPrefs* prefs, CMusikLibrary* library, UINT dropid );
 	virtual ~CPropTree();
-
-	// musik actions
-	void LockDrop(){ m_LockDrop = TRUE; }
-	void UnlockDrop(){ m_LockDrop = FALSE; }
-	BOOL IsDropLocked(){ return m_LockDrop; }
 
 	// overrides
 	BOOL Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID);
@@ -163,9 +167,14 @@ public:
 
 protected:
 
-	// musik prefs, used for being theme aware
+	// musik prefs for themes
+	// musik library for dnd playlists
 	CMusikPrefs* m_Prefs;
-	BOOL m_LockDrop;
+	CMusikLibrary* m_Library;
+
+	// drop target id and nt check bool
+	UINT m_DropID;
+	bool m_IsWinNT;
 
 	// resize the child windows to fit the exact 
 	// dimensions the CPropTree control

@@ -21,7 +21,7 @@ class CMusikBatchAddFunctor;
 
 ///////////////////////////////////////////////////
 
-class CMusikPlaylistCtrl : public CListCtrl
+class CMusikPlaylistCtrl : public CMusikListCtrl
 {
 
 	friend class CMusikPlaylistDropTarget;
@@ -40,7 +40,7 @@ public:
 	CMusikPlaylist* GetPlaylist(){ return m_Playlist; }
 
 	// set the playlist
-	void SetPlaylist( CMusikPlaylist* playlist );
+	void SetPlaylist( CMusikPlaylist* playlist, int type );
 
 protected:
 
@@ -57,9 +57,11 @@ protected:
 
 	// playlist stuff
 	void CleanNowPlaying();
-	CMusikPlaylist* m_Playlist;
 	CMusikPlaylist* m_NowPlaying;
 	CMusikDynDspInfo* m_SongInfoCache;
+
+	CMusikPlaylist* m_Playlist;
+	int m_PlaylistType;
 
 	// fonts
 	void InitFonts();

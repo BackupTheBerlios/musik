@@ -6,7 +6,6 @@
 #include "MusikSourcesBar.h"
 
 #include "../Musik.Core/include/MusikLibrary.h"
-#include ".\musiksourcesbar.h"
 
 ///////////////////////////////////////////////////
 
@@ -18,10 +17,10 @@ static char THIS_FILE[] = __FILE__;
 
 ///////////////////////////////////////////////////
 
-CMusikSourcesBar::CMusikSourcesBar( CFrameWnd* parent, CMusikLibrary* library, CMusikPrefs* prefs )
+CMusikSourcesBar::CMusikSourcesBar( CFrameWnd* parent, CMusikLibrary* library, CMusikPlayer* player, CMusikPrefs* prefs, UINT dropid )
 	: CMusikDockBar( prefs )
 {
-	m_wndChild = new CMusikSourcesCtrl( library, prefs );
+	m_wndChild = new CMusikSourcesCtrl( library, player, prefs, dropid );
 	m_Parent = parent;
 }
 
@@ -88,22 +87,29 @@ void CMusikSourcesBar::OnItemChanged( NMHDR* pNotifyStruct, LRESULT* plResult )
 		if ( pNMPropTree->pItem->IsRootLevel() || pNMPropTree->pItem->IsActivated() )
 			return;
 
-		// library or device selected
-		if ( pNMPropTree->pItem->GetPlaylistType() == MUSIK_SOURCES_TYPE_NOWPLAYING )
+		// library selected
+		if ( pNMPropTree->pItem->GetPlaylistType() == MUSIK_SOURCES_TYPE_LIBRARY )
+		{
+			int WM_SOURCESLIBRARY = RegisterWindowMessage( "SOURCESLIBRARY" );
+			m_Parent->SendMessage( WM_SOURCESLIBRARY, NULL );
+		}
+
+		// now playing selected
+		else if ( pNMPropTree->pItem->GetPlaylistType() == MUSIK_SOURCES_TYPE_NOWPLAYING )
 		{
 			int WM_SOURCESNOWPLAYING = RegisterWindowMessage( "SOURCESNOWPLAYING" );
 			m_Parent->SendMessage( WM_SOURCESNOWPLAYING, NULL );
 		}
 
 		// standard playlist selected
-		if ( pNMPropTree->pItem->GetPlaylistType() == MUSIK_PLAYLIST_TYPE_STANDARD )
+		else if ( pNMPropTree->pItem->GetPlaylistType() == MUSIK_PLAYLIST_TYPE_STANDARD )
 		{
 			int WM_SOURCESSTDPLAYLIST = RegisterWindowMessage( "SOURCESSTDPLAYLIST" );
 			m_Parent->SendMessage( WM_SOURCESSTDPLAYLIST, NULL );
 		}
 
 		// standard playlist selected
-		if ( pNMPropTree->pItem->GetPlaylistType() == MUSIK_PLAYLIST_TYPE_DYNAMIC )
+		else if ( pNMPropTree->pItem->GetPlaylistType() == MUSIK_PLAYLIST_TYPE_DYNAMIC )
 		{
 			int WM_SOURCESDYNPLAYLIST = RegisterWindowMessage( "SOURCESDYNDPLAYLIST" );		
 			m_Parent->SendMessage( WM_SOURCESDYNPLAYLIST, NULL );

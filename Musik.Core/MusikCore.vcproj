@@ -221,6 +221,16 @@
 				RelativePath=".\include\MusikBatchAdd.h">
 			</File>
 		</Filter>
+		<Filter
+			Name="MusikDspEngine"
+			Filter="">
+			<File
+				RelativePath=".\src\MusikDspEngine.cpp">
+			</File>
+			<File
+				RelativePath=".\include\MusikDspEngine.h">
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\include\MusikArrays.h">
 		</File>

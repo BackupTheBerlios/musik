@@ -23,7 +23,7 @@ class CMusikSelectionCtrl : public CMusikListCtrl
 public:
 
 	// construct / destruct
-	CMusikSelectionCtrl( CFrameWnd* parent, CMusikLibrary* library, CMusikPrefs* prefs, int type, int ctrl_id );
+	CMusikSelectionCtrl( CFrameWnd* parent, CMusikLibrary* library, CMusikPrefs* prefs, int type, int ctrlid, int dropid );
 	virtual ~CMusikSelectionCtrl();
 
 	// gets
@@ -47,7 +47,7 @@ public:
 	void UpdateV( bool update_count = false );
 	void UpdateV( CStdString query, bool update_count = false );
 
-	// message maps
+	// mfc message maps
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult);
@@ -55,11 +55,22 @@ public:
 	afx_msg void OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+
+	// custom message maps
+	afx_msg LRESULT OnMouseLeave( WPARAM wParam, LPARAM lParam );
 
 protected:
 
 	// inits
 	void InitFonts();
+
+	// drag / drop id
+	bool m_IsWinNT;
+	UINT m_DropID;
+
+	// tracking mouse
+	bool m_bMouseTrack;
 
 	// core
 	CFrameWnd* m_Parent;

@@ -102,7 +102,8 @@ enum
 {
 	MUSIK_PLAYLIST_TYPE_LIBRARY_OR_DEVICE = 0,
 	MUSIK_PLAYLIST_TYPE_STANDARD,
-	MUSIK_PLAYLIST_TYPE_DYNAMIC
+	MUSIK_PLAYLIST_TYPE_DYNAMIC,
+	MUSIK_PLAYLIST_TYPE_COUNT // must be last
 };
 
 ///////////////////////////////////////////////////
@@ -170,8 +171,9 @@ public:
 	void GetAllStdPlaylists ( CMusikPlaylistInfoArray* target, bool clear_target = true );
 	void GetAllDynPlaylists	( CMusikPlaylistInfoArray* target, bool clear_target = true );
 	void GetStdPlaylist		( int id, CMusikPlaylist& target, bool clear_target = true );
-	void CreateStdPlaylist	( const CStdString& name, const CStdStringArray& files );
-	void AppendStdPlaylist	( int id, const CStdStringArray& files );
+	void GetStdPlaylistFns	( int id, CStdStringArray& target, bool clear_target = true );
+	void CreateStdPlaylist	( const CStdString& name, const CStdStringArray& files, bool verify = false );
+	void AppendStdPlaylist	( int id, const CStdStringArray& files, bool verify = false );
 	void CreateDynPlaylist	( const CStdString& name, const CStdString& query );
 	void DeleteStdPlaylist	( const CStdString& name );
 	void DeleteStdPlaylist	( int id );

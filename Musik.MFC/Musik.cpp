@@ -65,8 +65,6 @@ BOOL CMusikApp::InitInstance()
 		WS_OVERLAPPEDWINDOW | FWS_ADDTOTITLE, NULL,
 		NULL);
 
-	pFrame->m_uMsgCheckInst = m_uMsgCheckInst;
-
 	// The one and only window has been initialized, so show and update it
 	pFrame->SetWindowText( MUSIK_VERSION_STR );
 	pFrame->ShowWindow(SW_SHOW);

@@ -7,6 +7,7 @@
 #include "MusikPrefs.h"
 
 #include "MusikPlaylistCtrl.h"
+#include "MusikSourcesCtrl.h"
 
 #include "../Musik.Core/include/MusikPlaylist.h"
 #include "../Musik.Core/include/MusikArrays.h"
@@ -19,7 +20,7 @@
 
 ///////////////////////////////////////////////////
 
-IMPLEMENT_DYNAMIC(CMusikPlaylistCtrl, CListCtrl)
+IMPLEMENT_DYNAMIC(CMusikPlaylistCtrl, CMusikListCtrl)
 
 ///////////////////////////////////////////////////
 
@@ -28,7 +29,7 @@ int WM_BATCHADD_END			= RegisterWindowMessage( "BATCHADD_END" );
 
 ///////////////////////////////////////////////////
 
-BEGIN_MESSAGE_MAP(CMusikPlaylistCtrl, CListCtrl)
+BEGIN_MESSAGE_MAP(CMusikPlaylistCtrl, CMusikListCtrl)
 	// mfc message maps
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
@@ -56,9 +57,9 @@ CMusikPlaylistCtrl::CMusikPlaylistCtrl( CFrameWnd* mainwnd, CMusikLibrary* libra
 	m_Prefs		= prefs;
 	m_Player	= player;
 
-	// startup with a blank
-	// playlist...
-	m_Playlist	= new CMusikPlaylist();
+	// musik will always start up
+	// with library default selected
+	m_PlaylistType = MUSIK_SOURCES_TYPE_LIBRARY;
 
 	// dnd drop id
 	m_DropID = dropid;
@@ -81,8 +82,6 @@ CMusikPlaylistCtrl::CMusikPlaylistCtrl( CFrameWnd* mainwnd, CMusikLibrary* libra
 	// fonts and colors
 	InitFonts();
 	InitColors();
-
-	GivePlaylistToPlayer();
 }
 
 ///////////////////////////////////////////////////
@@ -90,6 +89,13 @@ CMusikPlaylistCtrl::CMusikPlaylistCtrl( CFrameWnd* mainwnd, CMusikLibrary* libra
 CMusikPlaylistCtrl::~CMusikPlaylistCtrl()
 {
 	delete m_SongInfoCache;
+
+	// if the current playlist is not the
+	// library or the now playing playlist
+	// then we need to delete it...
+	if ( m_PlaylistType != MUSIK_SOURCES_TYPE_LIBRARY && m_PlaylistType != MUSIK_SOURCES_TYPE_NOWPLAYING )
+		delete m_Playlist;
+
 	CleanNowPlaying();
 }
 
@@ -140,12 +146,20 @@ void CMusikPlaylistCtrl::SaveColumns()
 
 ///////////////////////////////////////////////////
 
-void CMusikPlaylistCtrl::SetPlaylist( CMusikPlaylist* playlist )
+void CMusikPlaylistCtrl::SetPlaylist( CMusikPlaylist* playlist, int m_Type )
 {
 	if ( m_SongInfoCache )
 		m_SongInfoCache->SetPlaylist( playlist );
+    
+	// if the current playlist is not the
+	// library or the now playing playlist
+	// then we need to delete it...
+	if ( m_PlaylistType != MUSIK_SOURCES_TYPE_LIBRARY && m_PlaylistType != MUSIK_SOURCES_TYPE_NOWPLAYING )
+		delete m_Playlist;
 
 	m_Playlist = playlist;
+	m_PlaylistType = m_Type;
+	
 	m_Changed = true;
 }
 
@@ -170,7 +184,7 @@ void CMusikPlaylistCtrl::UpdateV()
 
 int CMusikPlaylistCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if ( CListCtrl::OnCreate( lpCreateStruct ) == -1 )
+	if ( CMusikListCtrl::OnCreate( lpCreateStruct ) == -1 )
 		return -1;
 
 	ResetColumns();
@@ -184,7 +198,7 @@ void CMusikPlaylistCtrl::OnDestroy()
 {
 	SaveColumns();
 
-	CListCtrl::OnDestroy();
+	CMusikListCtrl::OnDestroy();
 }
 
 ///////////////////////////////////////////////////
@@ -511,7 +525,9 @@ void CMusikPlaylistCtrl::OnLvnItemActivate(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMITEMACTIVATE pNMIA = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
 	
-	if ( m_Changed )
+	// give the current playlist to the player,
+	// unless the player already owns it.
+	if ( m_Changed && m_PlaylistType != MUSIK_SOURCES_TYPE_NOWPLAYING )
 		GivePlaylistToPlayer();		
 
 	m_Player->Play( pNMIA->iItem, MUSIK_CROSSFADER_NEW_SONG );
@@ -526,25 +542,22 @@ void CMusikPlaylistCtrl::GivePlaylistToPlayer()
 	// delete the old playlist
 	CleanNowPlaying();
 
-	// set the CMusikPlayer as the new owner for
-	// the playlist
-	m_Player->SetPlaylist( m_Playlist );
+	// now, if the playlist belonged to the
+	// library (selection boxes), the player
+	// owns it's old playlist, so make a copy
+	// of the original so we can toggle back...
+	if ( m_PlaylistType == MUSIK_SOURCES_TYPE_LIBRARY )
+	{
+		m_Player->SetPlaylist( new CMusikPlaylist() );
+		*m_Player->GetPlaylist() = *m_Playlist;
+	}
 
-	// the player now owns the old playlist,
-	// so just create a new blank one here,
-	// so it's owner can delete it
-	m_Playlist = new CMusikPlaylist();
-
-	// send a message to the main frame with
-	// the new address of the new playlist
-	int MW_NEWPLAYLISTOWNER = RegisterWindowMessage( "NEWPLAYLISTOWNER" );
-	m_MainWnd->SendMessage( MW_NEWPLAYLISTOWNER, (WPARAM)m_Playlist );
-
-	// becuase the new playlist we created is
-	// blank, it doesn't contain the info we
-	// want. so we set the current playlist
-	// to the playlist inside the CMusikPlayer
-	SetPlaylist( m_Player->GetPlaylist() );
+	// if the last type was a standard
+	// playlist or a dynamic playlist,
+	// we really don't care... just pass
+	// it a pointer to the playlist
+	else
+		m_Player->SetPlaylist( m_Playlist );
 
 	// playlist is now updated, so flag
 	// it as unchanged
@@ -580,6 +593,9 @@ void CMusikPlaylistCtrl::OnLvnBegindrag(NMHDR *pNMHDR, LRESULT *pResult)
         // Calculate the # of chars required to hold this string.
         uBuffSize += lstrlen ( sFile ) + 1;
     }
+
+	if ( !lsDraggedFiles.GetCount() )
+		return;
 
     // Add 1 extra for the final null char, and the size of the DROPFILES struct.
     uBuffSize = sizeof(DROPFILES) + sizeof(TCHAR) * (uBuffSize + 1);

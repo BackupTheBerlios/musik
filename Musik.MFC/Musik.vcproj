@@ -164,6 +164,12 @@
 					<File
 						RelativePath=".\MusikSourcesCtrl.h">
 					</File>
+					<File
+						RelativePath=".\MusikSourcesDropTarget.cpp">
+					</File>
+					<File
+						RelativePath=".\MusikSourcesDropTarget.h">
+					</File>
 					<Filter
 						Name="CPropTree"
 						Filter="">

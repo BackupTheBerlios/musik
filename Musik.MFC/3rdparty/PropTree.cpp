@@ -71,20 +71,24 @@ CPropTreeItem* CPropTree::s_pFound;
 
 ///////////////////////////////////////////////////
 
-CPropTree::CPropTree( CMusikPrefs* prefs ) :
+CPropTree::CPropTree( CMusikPrefs* prefs, CMusikLibrary* library, UINT dropid ) :
 	m_bShowInfo(TRUE),
 	m_pVisbleList(NULL),
 	m_Origin(100,0),
 	m_nLastUID(1),
 	m_pFocus(NULL),
 	m_pHovered(NULL),
-	m_bDisableInput(FALSE),
-	m_LockDrop(FALSE)
+	m_bDisableInput(FALSE)
 {
 	m_Root.Expand();
 
 	// prefs
 	m_Prefs = prefs;
+	m_Library = library;
+
+	// dropid
+	m_DropID = dropid;
+	m_IsWinNT = ( 0 == ( GetVersion() & 0x80000000 ) );
 
 	// init global resources only once
 	if (!s_nInstanceCount)
@@ -972,3 +976,4 @@ BOOL CPropTree::IsSingleSelection()
 }
 
 ///////////////////////////////////////////////////
+

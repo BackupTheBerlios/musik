@@ -25,7 +25,7 @@ class CMusikSelectionBar : public baseCMusikSelectionBar
 public:
 
 	// construct / destruct
-	CMusikSelectionBar( CFrameWnd* parent, CMusikLibrary* library, CMusikPrefs* prefs, int type, int ctrl_id );
+	CMusikSelectionBar( CFrameWnd* parent, CMusikLibrary* library, CMusikPrefs* prefs, int type, int ctrlid, int dropid );
 	virtual ~CMusikSelectionBar();
 
 	// gets

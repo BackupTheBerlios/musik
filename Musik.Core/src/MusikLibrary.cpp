@@ -614,7 +614,7 @@ void CMusikLibrary::DeleteCrossfader( CMusikCrossfader* fader )
 
 ///////////////////////////////////////////////////
 
-void CMusikLibrary::CreateStdPlaylist( const CStdString& name, const CStdStringArray& songids )
+void CMusikLibrary::CreateStdPlaylist( const CStdString& name, const CStdStringArray& songids, bool verify )
 {
 	if ( !m_pDB )
 		return;
@@ -643,6 +643,12 @@ void CMusikLibrary::CreateStdPlaylist( const CStdString& name, const CStdStringA
 		BeginTransaction();
 		for ( size_t i = 0; i < songids.size(); i++ )
 		{
+			if ( verify )
+			{
+				if ( !IsSongInLibrary( songids.at( i ) ) )
+					AddSong( songids.at( i ) );
+			}
+
 			sqlite_exec_printf( m_pDB, "INSERT INTO %q VALUES ( %Q, %d, %d );",
 				NULL, NULL, NULL, 
 				STD_PLAYLIST_SONGS,
@@ -659,7 +665,7 @@ void CMusikLibrary::CreateStdPlaylist( const CStdString& name, const CStdStringA
 
 ///////////////////////////////////////////////////
 
-void CMusikLibrary::AppendStdPlaylist( int id, const CStdStringArray& files )
+void CMusikLibrary::AppendStdPlaylist( int id, const CStdStringArray& files, bool verify )
 {
 	if ( !m_pDB ) 
 		return;
@@ -671,6 +677,11 @@ void CMusikLibrary::AppendStdPlaylist( int id, const CStdStringArray& files )
 		BeginTransaction();	
 		for ( size_t i = 0; i < files.size(); i++ )
 		{
+			if ( verify )
+			{
+				if ( !IsSongInLibrary( files.at( i ) ) )
+					AddSong( files.at( i ) );
+			}
 
 			sqlite_exec_printf( m_pDB, "INSERT INTO %q VALUES ( %Q, %d, %d );",
 			NULL, NULL, NULL, 
@@ -701,6 +712,27 @@ void CMusikLibrary::GetStdPlaylist( int id, CMusikPlaylist& target, bool clear_t
 		&sqlite_AddSongToPlaylist, &target, NULL,
 		STD_PLAYLIST_SONGS,
 		id );
+	m_ProtectingLibrary->release();
+}
+
+///////////////////////////////////////////////////
+
+void CMusikLibrary::GetStdPlaylistFns( int id, CStdStringArray& target, bool clear_target )
+{
+	CMusikPlaylist ids;
+	GetStdPlaylist( id, ids, false );
+
+	if ( !ids.GetCount() )
+		return;
+
+	// do it
+	m_ProtectingLibrary->acquire();
+	BeginTransaction();
+
+	for ( size_t i = 0; i < ids.GetCount(); i++ )
+		target.push_back( ids.GetField( i, MUSIK_LIBRARY_TYPE_FILENAME ) );
+
+	EndTransaction();
 	m_ProtectingLibrary->release();
 }
 
@@ -997,7 +1029,6 @@ void CMusikLibrary::GetRelatedItems( int source_type, const CStdStringArray& sou
 	for ( size_t i = 0; i < source_items.size(); i++ )
 	{
 		sCurrentItem = source_items.at( i );
-		sCurrentItem.Replace( "'", "''" );
 
 		if ( i > 0 )
 			query += "or ";
@@ -1036,11 +1067,9 @@ void CMusikLibrary::GetRelatedItems( CStdString sub_query, int dst_type, CStdStr
 		sub_query.c_str(),
 		sOutType.c_str() );
 
-	// lock it up and run the query
+	// do it
 	m_ProtectingLibrary->acquire();
-
 	sqlite_exec(m_pDB, query.c_str(), &sqlite_AddSongToStringArray, &target, NULL);
-
 	m_ProtectingLibrary->release();
 
 	// if target is years, verify only years
@@ -1063,11 +1092,9 @@ void CMusikLibrary::GetRelatedSongs( CStdString sub_query, int source_type, CMus
 		sub_query.c_str(),
 		order_by.c_str() );
 
-	// lock it up and run the query
+	// do it
 	m_ProtectingLibrary->acquire();
-
 	sqlite_exec(m_pDB, query.c_str(), &sqlite_AddSongToPlaylist, &target, NULL);
-
 	m_ProtectingLibrary->release();
 }
 
@@ -1085,11 +1112,9 @@ void CMusikLibrary::GetAllDistinct( int source_type, CStdStringArray& target, bo
 		sField.c_str(),
 		SONG_TABLE_NAME );
 
-	// lock it up and run the query
+	// do it
 	m_ProtectingLibrary->acquire();
-
 	sqlite_exec( m_pDB, query.c_str(), &sqlite_AddSongToStringArray, &target, NULL );
-
 	m_ProtectingLibrary->release();
 }
 
@@ -1115,11 +1140,9 @@ void CMusikLibrary::GetFieldFromID( int id, int field, CStdString& string )
 		SONG_TABLE_NAME, 
 		id );
 
-	// lock it up and run the query
+	// do it
 	m_ProtectingLibrary->acquire();
-
 	sqlite_exec( m_pDB, query.c_str(), &sqlite_GetSongFieldFromID, &string, NULL );
-
 	m_ProtectingLibrary->release();
 }
 

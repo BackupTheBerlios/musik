@@ -7,10 +7,10 @@
 #include ".\musikselectionbar.h"
 
 
-CMusikSelectionBar::CMusikSelectionBar( CFrameWnd* parent, CMusikLibrary* library, CMusikPrefs* prefs, int type, int ctrl_id )
+CMusikSelectionBar::CMusikSelectionBar( CFrameWnd* parent, CMusikLibrary* library, CMusikPrefs* prefs, int type, int ctrlid, int dropid )
 	: CMusikDockBar( prefs )
 {
-	m_wndChild = new CMusikSelectionCtrl( parent, library, prefs, type, ctrl_id );
+	m_wndChild = new CMusikSelectionCtrl( parent, library, prefs, type, ctrlid, dropid );
 }
 
 CMusikSelectionBar::~CMusikSelectionBar()

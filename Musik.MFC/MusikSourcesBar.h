@@ -27,7 +27,7 @@ class CMusikSourcesBar : public baseCMusikSourcesBar
 public:
 
 	// construct / destruct
-	CMusikSourcesBar( CFrameWnd* parent, CMusikLibrary* library, CMusikPrefs* prefs );
+	CMusikSourcesBar( CFrameWnd* parent, CMusikLibrary* library, CMusikPlayer* player, CMusikPrefs* prefs, UINT dropid );
 	virtual ~CMusikSourcesBar();
 
 	// gets

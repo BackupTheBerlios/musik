@@ -96,8 +96,9 @@ public:
 	// misc
 	bool PlayCmd( const CStdString& fn );
 
-	UINT m_uMsgCheckInst;
+	UINT m_uSelectionDrop;
 	UINT m_uPlaylistDrop;
+	UINT m_uSourcesDrop;
 
 protected: 
 
@@ -106,9 +107,6 @@ protected:
 	void InitMusik();
 	void InitDragTypes();
 	void CleanMusik();
-
-	// memory management
-	void CleanPlaylists();
 
 	// resetting controls
 	void LoadDlgSize();
@@ -123,13 +121,7 @@ protected:
 	CMusikFrameFunctor* m_NewSong;
 
 	// current playlist, only a pointer
-	CMusikPlaylist* m_CurPlaylist;
-
-	// various playlist objects that the 
-	// sources box will switch around
-	CMusikPlaylist* m_SelPlaylist;
-	CMusikPlaylist* m_DynPlaylist;
-	CMusikPlaylist* m_StdPlaylist;
+	CMusikPlaylist* m_LibPlaylist;
 
 	// library, player, and prefs
 	CMusikLibrary* m_Library;
@@ -159,6 +151,7 @@ protected:
 	afx_msg LRESULT OnUpdateSel( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSongChange( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSongStop( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnSourcesLibrary( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSourcesNowPlaying( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSourcesStdPlaylist( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSourcesDynPlaylist( WPARAM wParam, LPARAM lParam );

@@ -48,7 +48,6 @@
 
 #include <io.h>
 #include <Direct.h>
-#include ".\mainfrm.h"
 
 ///////////////////////////////////////////////////
 
@@ -69,6 +68,7 @@ int WM_SONGSTOP				= RegisterWindowMessage( "SONGSTOP" );
 int WM_DRAGSTART			= RegisterWindowMessage( "DRAGSTART" );
 int WM_DRAGEND				= RegisterWindowMessage( "DRAGEND" );
 
+int WM_SOURCESLIBRARY		= RegisterWindowMessage( "SOURCESLIBRARY" );
 int WM_SOURCESNOWPLAYING	= RegisterWindowMessage( "SOURCESNOWPLAYING" );
 int WM_SOURCESSTDPLAYLIST	= RegisterWindowMessage( "SOURCESSTDPLAYLIST" );
 int WM_SOURCESDYNPLAYLIST	= RegisterWindowMessage( "SOURCESDYNDPLAYLIST" );
@@ -86,6 +86,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_SELBOXUPDATE, OnUpdateSel )
 	ON_REGISTERED_MESSAGE( WM_SONGCHANGE, OnSongChange )
 	ON_REGISTERED_MESSAGE( WM_SONGSTOP, OnSongStop )
+	ON_REGISTERED_MESSAGE( WM_SOURCESLIBRARY, OnSourcesLibrary )
 	ON_REGISTERED_MESSAGE( WM_SOURCESNOWPLAYING, OnSourcesNowPlaying )
 	ON_REGISTERED_MESSAGE( WM_SOURCESSTDPLAYLIST, OnSourcesStdPlaylist )
 	ON_REGISTERED_MESSAGE( WM_SOURCESDYNPLAYLIST, OnSourcesDynPlaylist )
@@ -105,10 +106,6 @@ CMainFrame::CMainFrame()
 	InitPaths();
 	InitMusik();
 	InitDragTypes();
-
-	m_CurPlaylist = NULL;
-	m_DynPlaylist = NULL;
-	m_StdPlaylist = NULL;
 
 	m_hIcon16 = ( HICON )LoadImage( AfxGetApp()->m_hInstance, MAKEINTRESOURCE( IDI_MUSIK_16 ), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR );
 	m_hIcon32 = ( HICON )LoadImage( AfxGetApp()->m_hInstance, MAKEINTRESOURCE( IDI_MUSIK_32 ), IMAGE_ICON, 32, 32, LR_DEFAULTCOLOR );
@@ -146,6 +143,8 @@ void CMainFrame::InitPaths()
 void CMainFrame::InitDragTypes()
 {
 	m_uPlaylistDrop = RegisterClipboardFormat ( _T("MusikPlaylist_3BCFE9D1_6D61_4cb6_9D0B_3BB3F643CA82") );
+	m_uSourcesDrop = RegisterClipboardFormat( _T("MusikSources_3BCFE9D1_6D61_4cb6_9D0B_3BB3F643CA82") );
+	m_uSelectionDrop = RegisterClipboardFormat( _T("MusikSelection_3BCFE9D1_6D61_4cb6_9D0B_3BB3F643CA82") );
 }
 
 ///////////////////////////////////////////////////
@@ -153,7 +152,7 @@ void CMainFrame::InitDragTypes()
 void CMainFrame::InitMusik()
 {
 	m_NewSong		= new CMusikFrameFunctor( this );
-	m_SelPlaylist	= new CMusikPlaylist();	
+	m_LibPlaylist	= new CMusikPlaylist();	
 	m_Library		= new CMusikLibrary( ( CStdString )m_Database );
 	m_Prefs			= new CMusikPrefs( m_PrefsIni );
 	m_Player		= new CMusikPlayer( m_NewSong, m_Library );
@@ -169,9 +168,7 @@ void CMainFrame::CleanMusik()
 {
 	if ( m_Library )		delete m_Library;
 	if ( m_Prefs )			delete m_Prefs;
-	if ( m_SelPlaylist )	delete m_SelPlaylist;
-	if ( m_DynPlaylist )	delete m_DynPlaylist;
-	if ( m_StdPlaylist )	delete m_StdPlaylist;
+	if ( m_LibPlaylist )	delete m_LibPlaylist;
 	if ( m_Player )			delete m_Player;
 	if ( m_NewSong )		delete m_NewSong;
 }
@@ -327,7 +324,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// selection controls
 	for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
 	{
-		m_wndSelectionBars[i] = new CMusikSelectionBar( this, m_Library, m_Prefs, i, i );
+		m_wndSelectionBars[i] = new CMusikSelectionBar( this, m_Library, m_Prefs, i, i, m_uSelectionDrop );
 		m_wndSelectionBars[i]->Create( _T( "Musik Selection Box" ), this, ID_SELECTIONBOX_START + i );
 		if ( i == 0 )
 			DockControlBar( m_wndSelectionBars[i] );
@@ -336,7 +333,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 
 	// sources control
-	m_wndSources = new CMusikSourcesBar( this, m_Library, m_Prefs );
+	m_wndSources = new CMusikSourcesBar( this, m_Library, m_Player, m_Prefs, m_uSourcesDrop );
 	m_wndSources->Create( _T( "Sources" ), this, ID_SOURCESBOX );
 	DockControlBar( m_wndSources, AFX_IDW_DOCKBAR_LEFT );
 
@@ -369,7 +366,7 @@ bool CMainFrame::PlayCmd( const CStdString& fn )
 			m_Library->AddSong( fn );
 
 
-		// get playlist's internal player
+		// get player's playlist
 		CMusikPlaylist* pPlaylist = m_Player->GetPlaylist();
 		if ( pPlaylist )
 		{
@@ -563,27 +560,19 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 	CMusikSelectionCtrl::SetUpdating( false );
 
 	// get the songs
-	m_Library->GetRelatedSongs( sSender, pSender->GetType(), *m_SelPlaylist );
+	m_Library->GetRelatedSongs( sSender, pSender->GetType(), *m_LibPlaylist );
 
 	// make sure the correct playlist is set
-	if ( m_wndView->GetCtrl()->GetPlaylist() != m_SelPlaylist )
+	if ( m_wndView->GetCtrl()->GetPlaylist() != m_LibPlaylist )
 	{
-		// delete any old playlists we don't
-		// need in memory any more
-		CleanPlaylists();
-
-		// make sure our current playlist is
-		// correct, so the playlist can let
-		// us know the new address of it once
-		// the CMusikPlayer takes ownership
-		m_CurPlaylist = m_SelPlaylist;
-		m_wndView->GetCtrl()->SetPlaylist( m_SelPlaylist );
+		m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, MUSIK_SOURCES_TYPE_LIBRARY );
+		m_wndSources->GetCtrl()->FocusLibrary();
 
 		// deselect any sources item
 		m_wndSources->GetCtrl()->KillFocus();
 	}
 
-	// update the window
+	// update the windows
 	m_wndView->GetCtrl()->UpdateV();
 
 	return 0L;
@@ -627,7 +616,7 @@ LRESULT CMainFrame::OnSourcesNowPlaying( WPARAM wParam, LPARAM lParam )
 {
 	TRACE0( "'Now Playing' was clicked\n" );
 
-	m_wndView->GetCtrl()->SetPlaylist( m_Player->GetPlaylist() );
+	m_wndView->GetCtrl()->SetPlaylist( m_Player->GetPlaylist(), MUSIK_SOURCES_TYPE_NOWPLAYING );
 	m_wndView->GetCtrl()->UpdateV();
 
 	return 0L;
@@ -639,19 +628,23 @@ LRESULT CMainFrame::OnSourcesStdPlaylist( WPARAM wParam, LPARAM lParam )
 {
 	TRACE0( "A standard playlist was clicked\n" );
 
-	// make sure our current playlist is
-	// correct, so the playlist can let
-	// us know the new address of it once
-	// the CMusikPlayer takes ownership
-	m_CurPlaylist = m_StdPlaylist;
-
-	CleanPlaylists();
-	m_StdPlaylist = new CMusikPlaylist();
-
+	CMusikPlaylist* pStdPlaylist = new CMusikPlaylist();
 	int nID = m_wndSources->GetCtrl()->GetFocusedItem()->GetPlaylistID();
-	m_Library->GetStdPlaylist( nID, *m_StdPlaylist, true );
+	m_Library->GetStdPlaylist( nID, *pStdPlaylist, true );
 
-	m_wndView->GetCtrl()->SetPlaylist( m_StdPlaylist );
+	m_wndView->GetCtrl()->SetPlaylist( pStdPlaylist, MUSIK_PLAYLIST_TYPE_STANDARD );
+	m_wndView->GetCtrl()->UpdateV();
+
+	return 0L;
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CMainFrame::OnSourcesLibrary( WPARAM wParam, LPARAM lParam )
+{
+	TRACE0( "A Musik Library was clicked\n" );
+	
+	m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, MUSIK_SOURCES_TYPE_LIBRARY );
 	m_wndView->GetCtrl()->UpdateV();
 
 	return 0L;
@@ -665,6 +658,7 @@ LRESULT CMainFrame::OnSourcesDynPlaylist( WPARAM wParam, LPARAM lParam )
 
 	
 	//m_CurPlaylist = m_DynPlaylist;
+	// MUSIK_PLAYLIST_TYPE_DYNAMIC
 
 	return 0L;
 }
@@ -691,36 +685,7 @@ LRESULT CMainFrame::OnDragEnd( WPARAM wParam, LPARAM lParam )
 
 LRESULT CMainFrame::OnNewPlaylistOwner( WPARAM wParam, LPARAM lParam )
 {
-	if ( m_CurPlaylist == m_SelPlaylist )
-		m_SelPlaylist = (CMusikPlaylist*)wParam;
-
-	else if ( m_CurPlaylist == m_DynPlaylist )
-		m_DynPlaylist = (CMusikPlaylist*)wParam;
-
-	else if ( m_CurPlaylist == m_StdPlaylist )
-		m_StdPlaylist = (CMusikPlaylist*)wParam;
-
-	else
-		TRACE0( "No previous playlist found. Musik will crash at some point.\n" );
-
 	return 0L;
-}
-
-///////////////////////////////////////////////////
-
-void CMainFrame::CleanPlaylists()
-{
-	if ( m_StdPlaylist )
-	{
-		delete m_StdPlaylist;
-		m_StdPlaylist = NULL;
-	}
-
-	if ( m_DynPlaylist )
-	{
-		delete m_DynPlaylist;
-		m_DynPlaylist = NULL;
-	}
 }
 
 ///////////////////////////////////////////////////
