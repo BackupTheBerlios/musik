@@ -95,6 +95,24 @@ BEGIN
     BEGIN
         MENUITEM "Playlist Information",        ID_VIEW_PLAYLISTINFORMATION
     END
+    POPUP "Audio"
+    BEGIN
+        POPUP "Playback Mode"
+        BEGIN
+            MENUITEM "Repeat",                      ID_PLAYBACKMODE_REPEAT
+            MENUITEM "Shuffle",                     ID_PLAYBACKMODE_SHUFFLE
+        END
+        POPUP "Crossfader"
+        BEGIN
+            MENUITEM "Enabled",                     ID_CROSSFADER_ENABLED
+            MENUITEM "Setup",                       ID_CROSSFADER_SETUP
+        END
+        POPUP "Equalizer"
+        BEGIN
+            MENUITEM "Enabled",                     ID_EQUALIZER_ENABLED
+            MENUITEM "Setup",                       ID_EQUALIZER_SETUP
+        END
+    END
     POPUP "&Help"
     BEGIN
         MENUITEM "&About musik...",             ID_APP_ABOUT

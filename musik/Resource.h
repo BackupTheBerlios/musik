@@ -43,13 +43,25 @@
 #define ID_FILE_MANAGEDIRECTORIES       32777
 #define ID_FILE_SAVEPLAYLIST            32778
 #define ID_VIEW_PLAYLISTINFORMATION     32779
+#define ID_AUDIO_PLAYBACKMODE           32780
+#define ID_PLAYBACKMODE_NORMAL          32781
+#define ID_PLAYBACKMODE_REPEAT          32782
+#define ID_PLAYBACKMODE_SHUFFLE         32783
+#define ID_AUDIO_CROSSFADERENABLED      32784
+#define ID_AUDIO_EQUALIZERENABLED       32785
+#define ID_AUDIO_CROSSFADER             32786
+#define ID_CROSSFADER_ENABLED           32787
+#define ID_CROSSFADER_SETUP             32788
+#define ID_AUDIO_EQUALIZER              32789
+#define ID_EQUALIZER_ENABLED            32790
+#define ID_EQUALIZER_SETUP              32791
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        139
-#define _APS_NEXT_COMMAND_VALUE         32780
+#define _APS_NEXT_COMMAND_VALUE         32792
 #define _APS_NEXT_CONTROL_VALUE         1023
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
