@@ -1,3 +1,5 @@
+// Michael Dunn -- http://www.codeproject.com/shell/explorerdragdrop.asp?target=drag%7C%2Bdrop -- DND
+
 ///////////////////////////////////////////////////
 
 #include "stdafx.h"
