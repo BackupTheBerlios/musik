@@ -53,6 +53,7 @@ BEGIN_EVENT_TABLE(CPlaylistCtrl, wxListCtrl)
 	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_SMART,								CPlaylistCtrl::OnDisplaySmart	)
 	EVT_CONTEXT_MENU			(															CPlaylistCtrl::ShowMenu			)
 	EVT_CHAR					(															CPlaylistCtrl::TranslateKeys	)
+	EVT_LIST_COL_CLICK			( MUSIK_PLAYLIST,											CPlaylistCtrl::OnColumnClick	)
 
 	//---------------------------------------------------------//
 	//--- column on off stuff.								---//
@@ -280,6 +281,19 @@ CPlaylistCtrl::~CPlaylistCtrl()
 {
 	delete playlist_context_menu;
 }
+
+///////////////////////////////////////////////////////////////////////////////
+
+void CPlaylistCtrl::OnColumnClick( wxListEvent& event )
+{
+	int colid = event.GetColumn();
+	wxListItem col;
+	col.m_mask = wxLIST_MASK_TEXT;
+	GetColumn( colid, col );
+	wxMessageBox( col.m_text, wxT("TESTES TESTES 123") );
+}
+
+///////////////////////////////////////////////////////////////////////////////
 
 void CPlaylistCtrl::SaveColumns()
 {

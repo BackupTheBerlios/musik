@@ -63,6 +63,7 @@ public:
 	//--- columns ---//
 	void OnDisplayMenu	( wxCommandEvent& event				);
 	void OnDisplaySmart	( wxCommandEvent& WXUNUSED(event)	);
+	void OnColumnClick	( wxListEvent& event );
 	//--- other ---//
 	void UpdateSel		( wxListEvent&		event			);
 	void ShowMenu		( wxCommandEvent&	WXUNUSED(event) );
