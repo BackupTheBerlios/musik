@@ -8,6 +8,7 @@
 
 #include "MusikPlaylistCtrl.h"
 #include "MusikSourcesCtrl.h"
+#include "MusikBatchAddFunctor.h"
 
 #include "../Musik.Core/include/MusikPlaylist.h"
 #include "../Musik.Core/include/MusikArrays.h"
@@ -741,7 +742,6 @@ void CMusikPlaylistCtrl::OnDropFiles(HDROP hDropInfo)
 			SHGetFileInfo( szNextFile, 0, &rFileInfo, sizeof( rFileInfo ), SHGFI_ATTRIBUTES );
 			if ( rFileInfo.dwAttributes & FILE_ATTRIBUTE_DIRECTORY )
 			{
-
 				sTemp = szNextFile;
 				sTemp += "\\*.*";
 

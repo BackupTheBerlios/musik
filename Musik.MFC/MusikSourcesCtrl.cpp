@@ -176,14 +176,38 @@ void CMusikSourcesCtrl::OnDropFiles(HDROP hDropInfo)
 {
 	size_t nNumFiles;
 	TCHAR szNextFile [MAX_PATH];
+	SHFILEINFO  rFileInfo;
 	
 	nNumFiles = DragQueryFile ( hDropInfo, -1, NULL, 0 );
 	CStdStringArray files;
 
+	CStdString sTemp;
 	for ( size_t i = 0; i < nNumFiles; i++ )
 	{
 		if ( DragQueryFile( hDropInfo, i, szNextFile, MAX_PATH ) > 0 )
-			files.push_back( szNextFile );
+		{
+			// get the filetype. if its a directory
+			// that was dropped, we'll want to 
+			// recurse it and add all the supported 
+			// media files...
+			SHGetFileInfo( szNextFile, 0, &rFileInfo, sizeof( rFileInfo ), SHGFI_ATTRIBUTES );
+			if ( rFileInfo.dwAttributes & FILE_ATTRIBUTE_DIRECTORY )
+			{
+				sTemp = szNextFile;
+				sTemp += "\\*.*";
+
+				m_Dir.m_Dir = sTemp;
+				m_Dir.m_Threaded = false;
+				m_Dir.m_Target = &files;
+
+				m_Dir.Run();
+			}		
+
+			// otherwise it was just a file... add it...
+			else
+				files.push_back( szNextFile );
+		}
+
 	}
 
 	DragFinish( hDropInfo );
@@ -415,8 +439,6 @@ void CMusikSourcesCtrl::DoDrag( CMusikPropTreeItem* pItem )
 
 CMusikPropTreeItem* CMusikSourcesCtrl::FindItem( const POINT& pt )
 {
-	CMusikPropTreeItem* pItem;
-
 	CPoint p = pt;
 	CPoint ipt;
 

@@ -5,6 +5,9 @@
 ///////////////////////////////////////////////////
 
 #include "3rdparty/MusikPropTree.h"
+
+#include "../Musik.Core/include/MusikDir.h"
+
 #include <vector>
 
 ///////////////////////////////////////////////////
@@ -62,6 +65,14 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
+
+	// for some reason creating a CMusikDir
+	// object during a drop operation causes
+	// it to fail. i can't imagine why, its 
+	// just initializing a few variables to 
+	// NULL in the constructor. at any rate,
+	// its created here...
+	CMusikDir m_Dir;
 
 	// stuff relating to the core
 	CMusikPlayer* m_Player;

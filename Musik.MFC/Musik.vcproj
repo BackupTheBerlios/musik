@@ -146,6 +146,9 @@
 			<File
 				RelativePath=".\MainFrmFunctor.h">
 			</File>
+			<File
+				RelativePath=".\MusikBatchAddFunctor.h">
+			</File>
 			<Filter
 				Name="Controls"
 				Filter="">
