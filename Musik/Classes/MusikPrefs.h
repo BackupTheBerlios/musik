@@ -129,6 +129,8 @@ public:
 	int nStreamingPreBufferPercent;
 	int nStreamingReBufferPercent;
 
+	wxString sDataPath;
+
 };
 
 class CMusikPaths

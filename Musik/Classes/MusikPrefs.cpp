@@ -167,6 +167,12 @@ void CMusikPrefs::LoadPrefs()
 	config->Read( wxT("TunageCmdLine"),			&sTunageCmdLine,		wxT("") );
 	config->Read( wxT("TunageRunOnStop"),		&nTunageRunOnStop,		1 );
 	config->Read( wxT("TunageStoppedText"),		&sTunageStoppedText,	wxString(MUSIKAPPNAME) + _(" is not running") );
+	config->Read( wxT("AlternativeDataPath"),	&sDataPath,	MUSIK_HOME_DIR );
+
+	if(sDataPath.IsEmpty())
+		  sDataPath = MUSIK_HOME_DIR;
+	if(sDataPath.Right(1) != MUSIK_PATH_SEPARATOR)
+		   sDataPath += MUSIK_PATH_SEPARATOR;
 
 
 	g_FX.LoadBands( config );
