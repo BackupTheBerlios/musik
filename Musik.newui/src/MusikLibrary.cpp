@@ -2,6 +2,39 @@
 #include "MusikLibrary.h"
 #include "MusikUTF8.h"
 
+//-------------------------------------------------//
+//--- this is a callback for sqlite to use when ---//
+//--- adding songs to a CMusikPlaylist.			---//
+//-------------------------------------------------//
+static int sqlite_AddSongCallback(void *args, int WXUNUSED(numCols), char **results, char ** WXUNUSED(columnNames))
+{
+	CMusikPlaylist* p = (CMusikPlaylist*)args;
+
+	CMusikSong *pLibItem = new CMusikSong();
+	
+	pLibItem->sFilename		= MBTowxString	( results[0]);
+	pLibItem->sTitle		= MBTowxString	( results[1] );
+	pLibItem->nTrackNum		= StringToInt	( results[2] );
+	pLibItem->sArtist		= MBTowxString	( results[3] );
+	pLibItem->sAlbum		= MBTowxString	( results[4] );
+	pLibItem->sGenre		= MBTowxString	( results[5] );
+	pLibItem->nDuration		= StringToInt	( results[6] );
+	pLibItem->nFormat		= StringToInt	( results[7] );
+	pLibItem->bVBR			= StringToInt	( results[8] );
+	pLibItem->sYear			= MBTowxString	( results[9] );
+	pLibItem->nRating		= StringToInt	( results[10] );
+	pLibItem->nBitrate		= StringToInt	( results[11] );
+	pLibItem->sLastPlayed	= MBTowxString	( results[12] );
+	pLibItem->sNotes		= MBTowxString	( results[13] );
+	pLibItem->nTimesPlayed	= StringToInt	( results[14] );
+	pLibItem->sTimeAdded	= MBTowxString	( results[15] );
+	pLibItem->nFilesize		= StringToInt	( results[16] );
+	
+	p->Add( pLibItem );
+
+    return 0;
+}
+
 CMusikLibrary::CMusikLibrary( const wxString& filename )
 {
 	m_Filename = filename;
@@ -51,8 +84,6 @@ void CMusikLibrary::InitFields()
 
 bool CMusikLibrary::Start()
 {
-
-	
 	//-------------------------------------------------//
 	//--- construct the table						---//
 	//-------------------------------------------------//
@@ -121,3 +152,65 @@ void CMusikLibrary::Shutdown()
 		m_pDB = NULL;
 	}	
 }
+
+void CMusikLibrary::BeginTransaction()
+{
+	wxCriticalSectionLocker lock( m_csDBAccess );
+	sqlite_exec_printf( m_pDB, "begin transaction;", NULL, NULL, NULL );
+}
+
+void CMusikLibrary::EndTransaction()
+{
+	wxCriticalSectionLocker lock( m_csDBAccess );
+	sqlite_exec_printf( m_pDB, "end transaction;", NULL, NULL, NULL );
+}
+
+void CMusikLibrary::QuerySongs( const wxString& query, CMusikPlaylist& target )
+{
+	target.Clear();
+	wxString sInfo;
+
+	wxString queryWhere( wxT( "select filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize from songs where " ) );
+	queryWhere += query + wxT(";");
+
+	const wxCharBuffer pQuery = wxStringToMB(query);
+	target.Alloc( GetSongCount() );
+	{
+		//-------------------------------------------------//
+		//--- lock as short as possible by using {}		---//
+		//-------------------------------------------------//
+		wxCriticalSectionLocker lock( m_csDBAccess );
+		sqlite_exec( m_pDB, pQuery, &sqlite_AddSongCallback, &target, NULL );
+	}
+
+	target.Shrink();
+}
+
+int CMusikLibrary::GetSongCount()
+{
+	char *query = sqlite_mprintf( "select count(*) from songs;" );
+	int result = QueryCount(query);
+	sqlite_freemem( query );
+	return result;
+}
+
+int CMusikLibrary::QueryCount( const char* pQueryResult )
+{
+	const char *pTail;
+	sqlite_vm *pVM;
+
+	wxCriticalSectionLocker lock( m_csDBAccess );
+	sqlite_compile( m_pDB, pQueryResult, &pTail, &pVM, NULL );
+	char *errmsg;
+	int numcols = 0;
+	const char **coldata;
+	const char **coltypes;
+
+	int result = 0;
+	if ( sqlite_step( pVM, &numcols, &coldata, &coltypes ) == SQLITE_ROW )
+		result = atoi( coldata[0] );
+
+	sqlite_finalize( pVM, &errmsg );
+	return result;
+}
+

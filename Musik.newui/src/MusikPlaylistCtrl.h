@@ -86,6 +86,8 @@ protected:
 
 private:
 
+	void CreateColumns();
+
 };
 
 #endif

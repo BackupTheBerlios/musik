@@ -13,4 +13,16 @@ inline wxString MBTowxString( const char* pchar )
 	return wxConvLocal.cMB2WX( pchar );
 }
 
+inline int wxStringToInt( const wxString &str )
+{
+	long lRet;
+	str.ToLong( &lRet );
+	return (int)lRet;
+}
+
+inline int StringToInt( const char* pChar )
+{
+	return atoi( pChar );
+}
+
 #endif
