@@ -1071,7 +1071,7 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 	CmusikString sQuery = GetSelQuery( pSender, pParent );
 
 	// update all the selection controls
-	RequerySelBoxes( sQuery, pParent );
+	RequerySelBoxes( sQuery, pParent, pSender );
 
 	// update playlist control
 	RequeryPlaylist( sQuery, pSender );
@@ -1081,7 +1081,7 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 
 ///////////////////////////////////////////////////
 
-void CMainFrame::RequerySelBoxes( CmusikString query, CmusikSelectionCtrl* parent )
+void CMainFrame::RequerySelBoxes( CmusikString query, CmusikSelectionCtrl* parent, CmusikSelectionCtrl* sender )
 {
 	// first find if a parent exists
 	if ( !parent )
@@ -1113,7 +1113,7 @@ void CMainFrame::RequerySelBoxes( CmusikString query, CmusikSelectionCtrl* paren
 		for ( size_t i = 0; i < m_wndSelectionBars.size(); i++ )
 		{
 			pCurr = m_wndSelectionBars.at( i )->GetCtrl();
-			if ( !pCurr->IsParent() )
+			if ( !pCurr->IsParent() && pCurr != sender )
 				pCurr->UpdateV( query, true );	            
 		}
 	}
@@ -1197,7 +1197,7 @@ LRESULT CMainFrame::OnSelBoxRequestUpdate( WPARAM wParam, LPARAM lParam )
 
 ///////////////////////////////////////////////////
 
-CmusikString CMainFrame::GetSelQuery( CmusikSelectionCtrl* pSender, CmusikSelectionCtrl* pParent )
+CmusikString CMainFrame::GetSelQuery( CmusikSelectionCtrl* pSender, CmusikSelectionCtrl* pParent, bool query_sender )
 {
 	// get parent
 	if ( !pParent )
@@ -1216,7 +1216,7 @@ CmusikString CMainFrame::GetSelQuery( CmusikSelectionCtrl* pSender, CmusikSelect
 	// item... may be parent, may be child.
 	CmusikString sel_query;
 	
-	if ( pSender )
+	if ( pSender && query_sender )
 		sel_query = pSender->GetSelQuery();
 
 	// find full query

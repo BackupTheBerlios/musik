@@ -137,8 +137,8 @@ public:
 	void RestoreFromTray();
 	void SaveWindowState();
 	void RequeryPlaylist( CmusikString query = "", CmusikSelectionCtrl* sender = NULL, bool focus_library = true );
-	void RequerySelBoxes( CmusikString query = "", CmusikSelectionCtrl* parent = NULL );
-	CmusikString GetSelQuery( CmusikSelectionCtrl* sender = NULL, CmusikSelectionCtrl* parent = NULL );
+	void RequerySelBoxes( CmusikString query = "", CmusikSelectionCtrl* parent = NULL, CmusikSelectionCtrl* sender = NULL );
+	CmusikString GetSelQuery( CmusikSelectionCtrl* sender = NULL, CmusikSelectionCtrl* parent = NULL, bool query_sender = true );
 
 	// to save window state
 	virtual BOOL DestroyWindow();
