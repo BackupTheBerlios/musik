@@ -4,13 +4,15 @@
 #include "musik.h"
 
 #include "musikEqualizerCtrl.h"
-
 #include "musikTrackCtrl.h"
 #include "musikPrefs.h"
 #include "musikEqualizerSets.h"
 
+#include "../musikCore/include/musikEqualizer.h"
+#include "../musikCore/include/musikEQSettings.h"
+#include "../musikCore/include/musikPlayer.h"
+
 #include "MEMDC.H"
-#include ".\musikequalizerctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -455,9 +457,30 @@ void CmusikEqualizerCtrl::SetBandState( int state )
 
 ///////////////////////////////////////////////////
 
-void CmusikEqualizerCtrl::OnNewSong()
+void CmusikEqualizerCtrl::LoadCurrSong()
 {
-	
+	if ( m_Player->IsPlaying() && m_Player->IsEqualizerActive() )
+	{
+		CmusikEQSettings& curr_song = m_Player->GetEqualizer()->m_EQ_Values;
+		
+		SetRedraw( FALSE );
+
+		for ( size_t i = 0; i < 16; i++ )
+		{
+			m_LeftBands[i].SetPos( (int)( curr_song.m_Left[i] * 50.0f ) );
+			m_RightBands[i].SetPos( (int)( curr_song.m_Left[i] * 50.0f ) );
+		}
+
+		SetRedraw( TRUE );
+		RedrawWindow();
+	}
+}
+
+///////////////////////////////////////////////////
+
+void CmusikEqualizerCtrl::LoadDefault()
+{
+
 }
 
 ///////////////////////////////////////////////////

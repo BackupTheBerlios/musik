@@ -139,6 +139,8 @@ void CmusikEqualizer::GetSongEq( int songid )
 			else
 				m_Library->UpdateEqualizer( m_EQ_Values.m_ID, m_EQ_Values );
 
+			m_Library->SetSongEqualizer( m_SongID, m_EQ_Values.m_ID );
+
 			m_EQ_Values_Modified = false;
 		}
 	}
@@ -158,7 +160,7 @@ void CmusikEqualizer::GetSongEq( int songid )
 		}
 		else
 		{
-			// TODO: load default equalizer!
+			m_Library->GetDefaultEqualizer( &m_EQ_Values );
 		}
 	}
 

@@ -1078,6 +1078,9 @@ LRESULT CMainFrame::OnSongChange( WPARAM wParam, LPARAM lParam )
 	m_wndNowPlaying->GetCtrl()->GetTimeCtrl()->OnNewSong();
 	m_wndNowPlaying->GetCtrl()->UpdateInfo();
 	m_wndNowPlaying->GetCtrl()->UpdateButtonStates();
+	
+	// update EQ view
+	m_wndEqualizer->GetCtrl()->LoadCurrSong();
 
 	// if the player is playing, then we need
 	// to do our own updating
@@ -1098,11 +1101,13 @@ LRESULT CMainFrame::OnSongChange( WPARAM wParam, LPARAM lParam )
 
 	m_Caption = s;
 
+	// update notification tooltip
 	if ( m_Prefs->MinimizeToTray() )
 	{
 		strncpy ( m_TrayIcon.szTip, m_Caption, sizeof( m_TrayIcon.szTip ) );
 		Shell_NotifyIcon( NIM_MODIFY, &m_TrayIcon );
 	}
+
 	return 0L;
 }	
 

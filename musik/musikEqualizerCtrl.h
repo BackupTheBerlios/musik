@@ -110,7 +110,8 @@ public:
 	bool IsChannelsLocked(){ return m_ChannelsLocked; }
 
 	// actions
-	void OnNewSong();
+	void LoadCurrSong();
+	void LoadDefault();
 
 	// message maps
 	afx_msg void OnPaint();

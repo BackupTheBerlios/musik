@@ -117,6 +117,7 @@ enum
 #define DYN_PLAYLIST_TABLE_NAME "dyn_playlist"
 #define CROSSFADER_PRESET "crossfader_preset"
 #define EQUALIZER_PRESET "equalizer_preset"
+#define EQUALIZER_DEFAULT "equalizer_default"
 #define MANAGED_PATH "managed_path"
 
 ///////////////////////////////////////////////////
@@ -176,6 +177,7 @@ public:
 	bool SetSongInfo				( CmusikSongInfo* info, int songid = -1 );
 	bool SetLastPlayedToNow			( int songid );
 	bool SetSongRating				( int songid, int rating );
+	bool SetSongEqualizer			( int songid, int eq_id );
 
 	// querying playlist
 	int  GetAllStdPlaylists			( CmusikPlaylistInfoArray* target, bool clear_target = true );
@@ -207,6 +209,9 @@ public:
 	int  UpdateEqualizer			( int id, const CmusikEQSettings& eq );
 	int  GetEqualizerIDFromSongID	( int id );
 	int  GetAllEqualizerPresets		( CStdStringArray* target, bool clear_target = true );
+	int  GetDefaultEqualizer		( CmusikEQSettings* eq );
+	int  UpdateDefaultEqualizer		( const CmusikEQSettings& eq );
+	int  InitDefaultEqualizer		( );
 
 	// paths
 	int	 AddPath					( const CStdString& path );
