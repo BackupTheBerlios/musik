@@ -5,9 +5,11 @@
 #include <vector>
 
 class CMusikSong;
+class CMusikSongInfo;
 
 typedef std::vector<CStdString> CStdStringArray;
 typedef std::vector<CMusikSong> CMusikSongArray;
+typedef std::vector<CMusikSong> CMusikSongInfoArray;
 typedef std::vector<int> CIntArray;
 
 #endif

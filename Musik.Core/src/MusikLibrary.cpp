@@ -541,6 +541,10 @@ void CMusikLibrary::GetFieldFromID( int id, int field, CStdString& string )
 
 	// lock it up and run the query
 	boost::mutex::scoped_lock scoped_lock( m_ProtectingLibrary );
+
+	TRACE0( query.c_str() );
+	TRACE0( "\n" );
+
 	sqlite_exec( m_pDB, query.c_str(), &sqlite_GetSongFieldFromID, &string, NULL );
 }
 
