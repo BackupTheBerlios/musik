@@ -89,7 +89,7 @@ public:
 	wxBoxSizer *vsRightCol;
 
 	//--- button down events (win32) ---//
-	#ifdef __WXMSW__
+	#ifndef __WXGTK__
 	CBtnDownEvt *pPrevEvt;
 	CBtnDownEvt *pNextEvt;
 	CBtnDownEvt *pPlayEvt;

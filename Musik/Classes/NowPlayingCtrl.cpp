@@ -187,7 +187,7 @@ CNowPlayingCtrl::~CNowPlayingCtrl()
 	//--- stop timer ---//
 	KillTimer();
 
-	#ifdef __WXMSW__
+	#ifndef __WXGTK__
     btnPrev->PopEventHandler();
 	btnNext->PopEventHandler();
 	btnPlayPause->PopEventHandler();
