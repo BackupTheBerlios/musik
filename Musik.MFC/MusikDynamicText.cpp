@@ -87,6 +87,7 @@ void CMusikDynamicText::UpdateDynSize()
 	// get text
 	CString str;
 	GetWindowText( str );
+	str.Replace( "&&", "&" );
 
 	// get text extent
 	CSize szText;

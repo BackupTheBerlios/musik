@@ -322,6 +322,9 @@ bool CMainFrame::PlayCmd( const CStdString& cmd )
 {
 	CStdString fn = ParseCmd( cmd );
 
+	if ( fn.IsEmpty() )
+		return false;
+
 	if ( m_Library )
 	{
 		// add song to library, if necessary
@@ -337,7 +340,7 @@ bool CMainFrame::PlayCmd( const CStdString& cmd )
 			m_Library->GetSongFromFilename( fn, song );
 
 			// add to the control's playlist
-			if ( song.GetID() > 0 )
+			if ( song.GetID() >= 0 )
 			{
 				pPlaylist->Add( song );
 				m_wndView->GetCtrl()->UpdateV();
@@ -346,7 +349,8 @@ bool CMainFrame::PlayCmd( const CStdString& cmd )
 				if ( m_Player )
 				{
 					m_Player->SetPlaylist( pPlaylist );
-					m_Player->Play( pPlaylist->GetCount() - 1, MUSIK_CROSSFADER_NEW_SONG );
+					if ( !m_Player->IsPlaying() )
+						m_Player->Play( pPlaylist->GetCount() - 1, MUSIK_CROSSFADER_NEW_SONG );
 				}
 
 				return true;
