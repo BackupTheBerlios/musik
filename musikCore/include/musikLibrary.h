@@ -130,6 +130,10 @@ enum
 
 #define MANAGED_PATH "managed_path"
 
+#define MUSIK_LIBRARY_OK SQLITE_OK
+#define MUSIK_LIBRARY_ID_EXISTS -2
+#define MUSIK_LIBRARY_NOT_OPEN -3
+
 ///////////////////////////////////////////////////
 
 class ACE_Thread_Mutex;
@@ -230,18 +234,19 @@ public:
 	int  DeleteCrossfader			( int id );
 	int  GetCrossfader				( int id, CmusikCrossfader* fader );
 	int  GetAllCrossfaderPresets	( CmusikStringArray* target, CIntArray* target_ids = NULL, bool clear_targets = true );
+	int  GetCrossfaderIDFromName	( const CmusikString& name );
 
 	int  GetDefaultCrossfader		( CmusikCrossfader* fader );
 	int  UpdateDefaultCrossfader	( const CmusikCrossfader& fader );
 	int  ResetDefaultCrossfader		( bool clear_old_default = true );
 
 	// equalizers
-	int  CreateEqualizer			( CmusikEQSettings& eq, const CmusikString& name, bool is_preset = false );
+	int  CreateEqualizer			( CmusikEQSettings& eq, bool is_preset = false );
 	int  DeleteEqualizer			( int id );
 	int  GetEqualizer				( int eq_id, CmusikEQSettings* eq );
 	int  UpdateEqualizer			( int id, const CmusikEQSettings& eq );
 	int  GetEqualizerIDFromSongID	( int id );
-	int  GetEqualizerFromName		( const CmusikString& name );
+	int  GetEqualizerIDFromName		( const CmusikString& name );
 	int  GetAllEqualizerPresets		( CmusikStringArray* target, CIntArray* target_ids = NULL, bool clear_targets = true );
 	
 	int  GetDefaultEqualizer		( CmusikEQSettings* eq );

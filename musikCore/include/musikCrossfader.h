@@ -82,6 +82,8 @@ public:
 		m_Seek			= 0.0f;
 		m_Stop			= 0.0f;
 		m_Exit			= 0.0f;
+
+		m_ID = -1;
 	}
 
 	~CmusikCrossfader()
@@ -165,6 +167,8 @@ public:
 	float m_Seek;
 	float m_Stop;
 	float m_Exit;
+
+	int m_ID;
 
 	CmusikString m_Name;
 };

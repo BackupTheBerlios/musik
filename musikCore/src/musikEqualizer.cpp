@@ -174,7 +174,9 @@ void CmusikEqualizer::SaveCurr()
 			{
 				CmusikString fn;
 				m_Library->GetFieldFromID( m_SongID, MUSIK_LIBRARY_TYPE_FILENAME, fn );
-				m_Library->CreateEqualizer( m_EQ_Values, fn );
+
+				m_EQ_Values.m_Name = fn;
+				m_Library->CreateEqualizer( m_EQ_Values );
 				
 				TRACE0 ( "created new.\n" );
 			}
