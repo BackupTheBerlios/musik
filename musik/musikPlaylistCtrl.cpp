@@ -313,7 +313,8 @@ void CmusikPlaylistCtrl::InitFonts()
 	m_ItemFont.GetLogFont( &pBoldFont );
 	pBoldFont.lfWeight = FW_BOLD;
 
-	m_BoldFont.CreateFontIndirect( &pBoldFont );}
+	m_BoldFont.CreateFontIndirect( &pBoldFont );
+}
 
 ///////////////////////////////////////////////////
 

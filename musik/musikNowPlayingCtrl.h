@@ -8,6 +8,7 @@ class CmusikPlayer;
 class CmusikPrefs;
 class CmusikNowPlayingInfo;
 class CmusikVolumeCtrl;
+class CmusikTimeCtrl;
 
 ///////////////////////////////////////////////////
 
@@ -35,6 +36,9 @@ protected:
 
 	// volume slider
 	CmusikVolumeCtrl *m_Volume;
+
+	// seek slider
+	CmusikTimeCtrl* m_Track;
 
 	// our player and prefs
 	CmusikPlayer* m_Player;

@@ -10,6 +10,7 @@
 #include "musikNowPlayingCtrl.h"
 #include "musikNowPlayingInfo.h"
 #include "musikVolumeCtrl.h"
+#include "musikTimeCtrl.h."
 
 #include "../musikCore/include/musikPlayer.h"
 
@@ -30,6 +31,7 @@ CmusikNowPlayingCtrl::CmusikNowPlayingCtrl( CmusikPlayer* player, CmusikPrefs* p
 CmusikNowPlayingCtrl::~CmusikNowPlayingCtrl()
 {
 	delete m_Volume;
+	delete m_Track;
 }
 
 ///////////////////////////////////////////////////
@@ -69,11 +71,10 @@ int CmusikNowPlayingCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	GetClientRect( &rcClient );
 
 	m_Info1 = new CmusikNowPlayingInfo( m_Player, m_Prefs );
-	m_Info2 = new CmusikNowPlayingInfo( m_Player, m_Prefs );
-
 	if ( !m_Info1->Create( NULL, NULL, WS_CHILD | WS_VISIBLE, rcClient, this, 123, NULL ) )
 		return -1;
 
+	m_Info2 = new CmusikNowPlayingInfo( m_Player, m_Prefs );
 	if ( !m_Info2->Create( NULL, NULL, WS_CHILD | WS_VISIBLE, rcClient, this, 123, NULL ) )
 		return -1;
 
@@ -81,8 +82,11 @@ int CmusikNowPlayingCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_Info2->Set( "%c from the album %b16 %a1" );
 
 	m_Volume = new CmusikVolumeCtrl( m_Prefs, m_Player );
-	
-	if ( !m_Volume->Create( TBS_VERT | TBS_NOTICKS | WS_CHILD | WS_VISIBLE, CRect( 50, 50, 100, 200 ), this, 123 ) )
+	if ( !m_Volume->Create( TBS_VERT | TBS_NOTICKS | WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0 ), this, 123 ) )
+		return -1;
+
+	m_Track = new CmusikTimeCtrl( m_Prefs, m_Player );
+	if ( !m_Track->Create( NULL, NULL, WS_CLIPCHILDREN | WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0 ), this, 123 ) )
 		return -1;
 
 	GetDC()->SetBkColor( GetSysColor( COLOR_BTNHILIGHT ) );
@@ -103,7 +107,6 @@ void CmusikNowPlayingCtrl::UpdateInfo( bool refresh )
 
 void CmusikNowPlayingCtrl::OnSize(UINT nType, int cx, int cy)
 {
-	CWnd::OnSize(nType, cx, cy);
 	RescaleInfo();
 }
 
@@ -133,6 +136,9 @@ void CmusikNowPlayingCtrl::RescaleInfo()
 	GetClientRect( &rcClient );
 	lpRect = CRect( CPoint( rcClient.right - 16, rcClient.top ), CSize( 16, rcClient.bottom ) );
 	m_Volume->MoveWindow( lpRect );
+
+	lpRect = CRect( rcClient.right - 28 - 200, rcClient.bottom - 16, rcClient.right - 28, rcClient.bottom );
+	m_Track->MoveWindow( lpRect );
 }
 
 ///////////////////////////////////////////////////

@@ -45,6 +45,7 @@ protected:
     afx_msg UINT OnNcHitTest(CPoint point);
     afx_msg void OnNcLButtonUp(UINT nHitTest, CPoint point);
 	afx_msg void OnNcPaint();
+	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 
 	// custom message maps
     afx_msg LRESULT OnSetText(WPARAM wParam, LPARAM lParam);
@@ -66,8 +67,6 @@ protected:
 	// macros
     DECLARE_DYNAMIC(CmusikDockBar)
 	DECLARE_MESSAGE_MAP()
-public:
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 };
 
 ///////////////////////////////////////////////////

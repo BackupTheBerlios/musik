@@ -253,6 +253,16 @@
 							RelativePath=".\musikVolumeCtrl.h">
 						</File>
 					</Filter>
+					<Filter
+						Name="musikTimeCtrl"
+						Filter="">
+						<File
+							RelativePath=".\musikTimeCtrl.cpp">
+						</File>
+						<File
+							RelativePath=".\musikTimeCtrl.h">
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="musikSelectionCtrl"
@@ -289,6 +299,16 @@
 					<File
 						RelativePath=".\musikDockBar.h">
 					</File>
+					<Filter
+						Name="CSizingControlBar"
+						Filter="">
+						<File
+							RelativePath=".\3rdparty\sizecbar.cpp">
+						</File>
+						<File
+							RelativePath=".\3rdparty\sizecbar.h">
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="musikTreePrefs"
@@ -342,16 +362,6 @@
 						RelativePath=".\musikTrackCtrl.h">
 					</File>
 				</Filter>
-			</Filter>
-			<Filter
-				Name="CSizingControlBar"
-				Filter="">
-				<File
-					RelativePath=".\3rdparty\sizecbar.cpp">
-				</File>
-				<File
-					RelativePath=".\3rdparty\sizecbar.h">
-				</File>
 			</Filter>
 		</Filter>
 		<Filter

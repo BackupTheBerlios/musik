@@ -71,8 +71,6 @@ END_MESSAGE_MAP()
 
 void CmusikDynamicText::SetDynText( const CString& str )
 {
-	ASSERT( pFont != NULL );
-
 	CString sVerify = str;
 	sVerify.Replace( _T( "&" ), _T( "&&" ) );
 	SetWindowText( sVerify );
