@@ -447,10 +447,11 @@ void CMusikLibrary::GetRelatedItems( CStdString sub_query, int dst_type, CStdStr
 	CStdString sOutType = GetSongFieldDB( dst_type );
 
 	CStdString query;
-	query.Format( _T( "select distinct %s,UPPER(%s) as UP from songs where %s;" ), 
+	query.Format( _T( "select distinct %s,UPPER(%s) as UP from songs where %s order by %s;" ), 
 		sOutType.c_str(), 
 		sOutType.c_str(), 
-		sub_query.c_str() );
+		sub_query.c_str(),
+		sOutType.c_str() );
 
 	//-----------------------------------------------------//
 	//--- lock it up and run the query					---//
