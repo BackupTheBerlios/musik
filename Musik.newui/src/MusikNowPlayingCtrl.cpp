@@ -21,7 +21,7 @@ BEGIN_EVENT_TABLE( CMusikNowPlayingCtrl, wxPanel )
 END_EVENT_TABLE()
 
 CMusikNowPlayingCtrl::CMusikNowPlayingCtrl( wxWindow *parent, wxWindowID id )
-	: wxPanel( parent, id, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxTRANSPARENT_WINDOW | wxCLIP_CHILDREN )
+	: wxPanel( parent, id, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxTRANSPARENT_WINDOW )
 {
 	SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_3DFACE ) );
 
@@ -45,6 +45,8 @@ CMusikNowPlayingCtrl::CMusikNowPlayingCtrl( wxWindow *parent, wxWindowID id )
 	m_btnVolume		= new wxBitmapButton( this, MUSIK_NOWPLAYINGCTRL_VOLUME,		m_bmVolume,	wxPoint( -1, -1 ), wxSize( 40, 20 ), 0 );
 
 	m_Seek			= new CMusikSeekCtrl( this, -1 );
+
+	ResetInfo( false );
 
 	//-----------------------------------------//
 	//--- set fonts							---//
@@ -95,9 +97,7 @@ CMusikNowPlayingCtrl::CMusikNowPlayingCtrl( wxWindow *parent, wxWindowID id )
 	m_MainSizer->Add( m_BottomSizer,	0, wxEXPAND | wxALL, 2	);
 
 	SetSizerAndFit( m_MainSizer );
-
 	Layout();
-	ResetInfo();
 }
 
 CMusikNowPlayingCtrl::~CMusikNowPlayingCtrl()
@@ -150,9 +150,8 @@ void CMusikNowPlayingCtrl::SetupIcons()
 	m_bmVolumeDown	= wxBitmap( volume_down_xpm );
 }
 
-void CMusikNowPlayingCtrl::ResetInfo()
+void CMusikNowPlayingCtrl::ResetInfo( bool layout )
 {
-	
 	m_stSong->SetLabel		( _( "Playback Stopped" )	);
 	m_stArtist->SetLabel	( _( "Playback Stopped" )	);
 	m_stCurtime->SetLabel	( _( " - 0:00" )			);
@@ -163,5 +162,6 @@ void CMusikNowPlayingCtrl::ResetInfo()
 		m_Seek->SetValue( 1 );
 	#endif
 
-	Layout();
+	if ( layout )
+		Layout();
 }

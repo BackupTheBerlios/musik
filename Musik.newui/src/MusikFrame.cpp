@@ -135,6 +135,4 @@ void CMusikFrame::CreateControls()
 	m_PlaylistCtrl		= new CMusikPlaylistCtrl		( m_PlaylistSash, -1 );
 	m_SimpleQueryCtrl	= new CMusikSimpleQueryCtrl		( m_SimpleQuerySash, -1 );
 	m_NowPlayingCtrl	= new CMusikNowPlayingCtrl		( m_NowPlayingSash, -1 );
-
-	Layout();
 }

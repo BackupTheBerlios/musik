@@ -19,7 +19,7 @@ public:
 	CMusikNowPlayingCtrl( wxWindow *pParent, wxWindowID id );
 	~CMusikNowPlayingCtrl();
 
-	void ResetInfo();
+	void ResetInfo( bool layout = true );
 
 	DECLARE_EVENT_TABLE()
 

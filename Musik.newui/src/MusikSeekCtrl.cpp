@@ -12,7 +12,7 @@ CMusikSeekCtrl::~CMusikSeekCtrl()
 
 void CMusikSeekCtrl::OnLeftUpV()
 {
-	wxMessageBox( wxT( "The song would jump to this position" ) );
+
 }
 
 void CMusikSeekCtrl::OnMotionV()

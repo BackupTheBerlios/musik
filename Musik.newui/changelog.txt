@@ -1,3 +1,6 @@
+0.2.2 to 0.5.0
+ + Started New Core
+
 0.2.1 to 0.2.2
  + Tunage - a simple system to update a file, URL, or run an app when song changes (SiW)
  - Fixed Bug: Sorting numeric fields now works again (SiW)
