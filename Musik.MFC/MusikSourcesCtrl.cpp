@@ -7,7 +7,7 @@
 
 // CMusikSourcesCtrl
 
-IMPLEMENT_DYNAMIC(CMusikSourcesCtrl, CPropTree)
+IMPLEMENT_DYNAMIC( CMusikSourcesCtrl, CPropTree )
 
 CMusikSourcesCtrl::CMusikSourcesCtrl()
 {
@@ -18,24 +18,31 @@ CMusikSourcesCtrl::~CMusikSourcesCtrl()
 }
 
 
-BEGIN_MESSAGE_MAP(CMusikSourcesCtrl, CPropTree)
+BEGIN_MESSAGE_MAP( CMusikSourcesCtrl, CPropTree )
 	ON_WM_CREATE()
-	ON_WM_SIZE()
 END_MESSAGE_MAP()
-
-
 
 // CMusikSourcesCtrl message handlers
 int CMusikSourcesCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if ( CPropTree::OnCreate(lpCreateStruct) == -1)
+	if ( CPropTree::OnCreate(lpCreateStruct) == -1 )
 		return -1;
 
+	CPropTreeItem* pLibraryRoot;
+	pLibraryRoot = InsertItem( new CPropTreeItem() );
+	pLibraryRoot->SetLabelText( _T( "Libraries" ) );
+	pLibraryRoot->SetInfoText(_T(""));
+	pLibraryRoot->Expand( true );
+
+	CPropTreeItem* pStandardRoot;
+	pStandardRoot = InsertItem( new CPropTreeItem() );
+	pStandardRoot->SetLabelText( _T( "Standard Playlists" ) );
+	pStandardRoot->SetInfoText(_T(""));
+
+	CPropTreeItem* pDynamicRoot;
+	pDynamicRoot = InsertItem( new CPropTreeItem() );
+	pDynamicRoot->SetLabelText( _T( "Dynamic Playlists" ) );
+	pDynamicRoot->SetInfoText(_T(""));
+
 	return 0;
-}
-
-void CMusikSourcesCtrl::OnSize(UINT nType, int cx, int cy)
-{
-	CPropTree::OnSize(nType, cx, cy);
-
 }

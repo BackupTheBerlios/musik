@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Musik.h"
 #include "MusikSourcesBar.h"
+#include ".\musiksourcesbar.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -19,6 +20,7 @@ CMusikSourcesBar::~CMusikSourcesBar()
 
 BEGIN_MESSAGE_MAP(CMusikSourcesBar, baseCMusikSourcesBar)
 	ON_WM_CREATE()
+	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
 
@@ -27,17 +29,27 @@ int CMusikSourcesBar::OnCreate( LPCREATESTRUCT lpCreateStruct )
 	if ( baseCMusikSourcesBar::OnCreate(lpCreateStruct) == -1 )
 		return -1;
 
-	SetSCBStyle( GetSCBStyle() | SCBS_SHOWEDGES | SCBS_SIZECHILD );
+	//SetSCBStyle( GetSCBStyle() | SCBS_SHOWEDGES | SCBS_SIZECHILD );
 
-	if ( !m_wndChild.Create( WS_CHILD|WS_VISIBLE, CRect(0,0,0,0), this, 123) )
+	if ( !m_wndChild.Create( WS_CHILD | WS_VISIBLE | PTS_NOTIFY, CRect( 0, 0, 0, 0 ), this, 123) )
 		return -1;
 
 	m_wndChild.ModifyStyleEx( 0, WS_EX_CLIENTEDGE );
 
-	if ( !m_Font.CreateStockObject(DEFAULT_GUI_FONT) )
+	if ( !m_Font.CreateStockObject( DEFAULT_GUI_FONT ) )
 		return -1;
 
 	m_wndChild.SetFont( &m_Font );
 
 	return 0;
+}
+
+void CMusikSourcesBar::OnSize(UINT nType, int cx, int cy)
+{
+	CSizingControlBarG::OnSize(nType, cx, cy);
+
+	CRect client_size;
+	GetClientRect( &client_size );
+
+	m_wndChild.MoveWindow( 0, 0, client_size.Width(), client_size.Height() );
 }

@@ -71,6 +71,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	//-------------------------------------------------//
 	//--- selection controls						---//
 	//-------------------------------------------------//
+	/*
 	for ( size_t i = 0; i < 4; i++ )
 	{
 		m_wndSelectionBars[i].Create( _T( "Musik Selection Box" ), this, 123 );
@@ -78,6 +79,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		m_wndSelectionBars[i].SetBarStyle( m_wndSelectionBars[i].GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC );
 		DockControlBar( &m_wndSelectionBars[i], AFX_IDW_DOCKBAR_RIGHT  );
 	}
+	*/
 
 	//-------------------------------------------------//
 	//--- sources control							---//
