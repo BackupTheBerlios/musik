@@ -1269,10 +1269,14 @@ int CmusikLibrary::GetStdPlaylist( int id, CmusikPlaylist& target, bool clear_ta
 			STD_PLAYLIST_TABLE_NAME,
 			id );
 
-		// get the items. if its a sublib then we don't care about
-		// multiply defined instances of the same song. they are
-		// retained in case the user wants to convert a sub
-		// library back to a regular playlist
+		// select only distinct songs from a sub library. this
+		// may seem like kludge on the surface, but it is in
+		// fact an optimization. even if multiple entries of
+		// the same song do exist in the same table, sql can
+		// parse it better than a loop with STL. so the user
+		// will never see them, operation will be faster, and
+		// next time the playlist is saved they will be auto-
+		// matically removed.
 		if ( playlist_type == MUSIK_PLAYLIST_TYPE_SUBLIBRARY )
 			nRet1 = sqlite_exec_printf( m_pDB, "SELECT DISTINCT songfn FROM %Q WHERE std_playlist_id = %d;", 
 				&sqlite_AddSongToStringArray, items, NULL,
