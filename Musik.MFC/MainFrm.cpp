@@ -362,11 +362,14 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 	{
 		CMusikSelectionCtrl::SetUpdating( true );
 
-		pSender->SetItemState( 0, 0, LVIS_SELECTED );
+		for( size_t i = 0; i < selbox_count; i++ )
+		{
+			pCurr = m_wndSelectionBars[i]->GetCtrl();
+			pCurr->SetItemState( -1, 0, LVIS_SELECTED );
+		}
+
 		pSender->SetParent( false );
 		pSender->UpdateV();
-
-		ASSERT( pSender );
 
 		CMusikSelectionCtrl::SetUpdating( false );
 
