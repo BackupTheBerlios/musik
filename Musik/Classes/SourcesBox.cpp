@@ -911,7 +911,6 @@ void CSourcesListBox::AddMissing( wxArrayString playlists )
 
 	for ( size_t i = 0; i < playlists.GetCount(); i++ )
 	{
-		
 		sName = playlists.Item( i );
 
 		sExt = sName.Right( 3 );

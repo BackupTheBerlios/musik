@@ -275,10 +275,12 @@ void MusikFrame::WriteTags()
 //------------------------//
 void MusikFrame::LibraryCustomQuery()
 {
-	wxTextEntryDialog dlg( this, _("Examples:\ntitle like '%funky%'    (all titles containing funky)\nbitrate < 128, vbr = 0    (all low quality, non-VBR)\ntimesplayed > 10 order by artist    (your popular tracks)"), MUSIK_VERSION, m_customQuery.c_str() );
-	if ( dlg.ShowModal() == wxID_OK )
+	wxString sQuery = g_SourcesCtrl->PromptDynamicPlaylist( wxT( "" ) );
+
+	if ( !sQuery.IsEmpty() )
 	{
-		m_customQuery = dlg.GetValue();
+		m_customQuery = sQuery;
+
 		g_Playlist = g_Library.QuerySongs( m_customQuery );
 		g_PlaylistCtrl->Update( );
 		g_PlaylistChanged = true;

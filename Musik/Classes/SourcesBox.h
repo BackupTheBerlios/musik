@@ -151,6 +151,8 @@ public:
 	void RescanPlaylistDir		( ) { pListBox->RescanPlaylistDir();	}
 	void Update					( ) { pListBox->Update();				}
 
+	wxString PromptDynamicPlaylist( wxString sQuery )	{ return pListBox->PromptDynamicPlaylist( sQuery ); }
+
 private:
 	CListHeader		*pHeader;
 	CSourcesListBox *pListBox;
