@@ -474,7 +474,13 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	else
 	{
 		LoadDlgSize();
-		CSizingControlBar::GlobalLoadState( this, "musikDockBars" );
+
+		CString sProfile = _T( "musikProfile" );
+		if ( VerifyBarState( sProfile ) )
+		{
+			CSizingControlBar::GlobalLoadState( this, sProfile );
+			LoadBarState( sProfile );
+		}
 	}
 
 	return 0;
@@ -575,6 +581,53 @@ BOOL CMainFrame::OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO*
 BOOL CMainFrame::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* pContext )
 {
 	return TRUE;
+}
+
+///////////////////////////////////////////////////
+
+BOOL CMainFrame::DestroyWindow()
+{
+	CString sProfile = _T( "musikProfile" );
+	CSizingControlBar::GlobalSaveState( this, sProfile );
+	SaveBarState( sProfile );
+
+	return CFrameWnd::DestroyWindow();
+}
+
+///////////////////////////////////////////////////
+
+// This function is Copyright (c) 2000, Cristi Posea.
+// See www.datamekanix.com for more control bars tips&tricks.
+BOOL CMainFrame::VerifyBarState( LPCTSTR lpszProfileName )
+{
+    CDockState state;
+    state.LoadState(lpszProfileName);
+
+    for (int i = 0; i < state.m_arrBarInfo.GetSize(); i++)
+    {
+        CControlBarInfo* pInfo = (CControlBarInfo*)state.m_arrBarInfo[i];
+        ASSERT(pInfo != NULL);
+        int nDockedCount = pInfo->m_arrBarID.GetSize();
+        if (nDockedCount > 0)
+        {
+            // dockbar
+            for (int j = 0; j < nDockedCount; j++)
+            {
+                UINT nID = (UINT) pInfo->m_arrBarID[j];
+                if (nID == 0) continue; // row separator
+                if (nID > 0xFFFF)
+                    nID &= 0xFFFF; // placeholder - get the ID
+                if (GetControlBar(nID) == NULL)
+                    return FALSE;
+            }
+        }
+        
+        if (!pInfo->m_bFloating) // floating dockbars can be created later
+            if (GetControlBar(pInfo->m_nBarID) == NULL)
+                return FALSE; // invalid bar ID
+    }
+
+    return TRUE;
 }
 
 ///////////////////////////////////////////////////

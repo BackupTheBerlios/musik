@@ -100,6 +100,10 @@ public:
 	// misc
 	bool PlayCmd( const CString& fn );
 
+	// to save window state
+	virtual BOOL DestroyWindow();
+	BOOL VerifyBarState( LPCTSTR lpszProfileName );
+
 	UINT m_uSelectionDrop;
 	UINT m_uPlaylistDrop;
 	UINT m_uSourcesDrop;
