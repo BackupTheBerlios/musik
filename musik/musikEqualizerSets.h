@@ -11,6 +11,7 @@
 ///////////////////////////////////////////////////
 
 class CmusikLibrary;
+class CmusikEQSettings;
 
 ///////////////////////////////////////////////////
 
@@ -30,6 +31,12 @@ public:
 	afx_msg void OnBnClickedSaveActiveAsNew();
 	afx_msg void OnClose();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	afx_msg void OnLbnDblclkPresetBox();
+	afx_msg void OnBnClickedRenameSel();
+	afx_msg void OnLbnSelchangePresetBox();
+	afx_msg void OnBnClickedResetDefaults();
+	afx_msg void OnBnClickedSetAsDefault();
+	afx_msg void OnBnClickedDeleteSel();
 
 	// misc
 	enum { IDD = IDD_EQUALIZER_SETS };
@@ -49,7 +56,9 @@ protected:
 	// intialized, and maintained while the
 	// dialog is open
 	CIntArray m_IDs;
-	CStdStringArray m_Items;
+
+	// getting active
+	void GetActiveEqualizer( CmusikEQSettings* settings );
 
     // parent window to post events to
 	CWnd* m_Parent;

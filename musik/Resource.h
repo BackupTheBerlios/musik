@@ -46,6 +46,7 @@
 #define IDC_ENABLE_QUERY3               1019
 #define IDC_BUTTON4                     1019
 #define IDC_LOAD_ACTIVE_FROM_SELECTED   1019
+#define IDC_RESET_DEFAULTS              1019
 #define IDC_RADIO1                      1020
 #define IDC_RADIO_ADD_PLAYLIST          1020
 #define IDC_FIELDTYPE3                  1020
@@ -89,7 +90,6 @@
 #define IDC_CLOSE_DLG                   1047
 #define IDC_IPADDRESS1                  1048
 #define IDC_EDIT                        1049
-#define IDC_TAB1                        1050
 #define ID_FILE_PREFERENCES             32771
 #define ID_FILE_SEP                     32772
 #define ID_ADD_FILES                    32774

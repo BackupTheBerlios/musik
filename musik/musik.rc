@@ -411,24 +411,25 @@ BEGIN
     PUSHBUTTON      "close",IDC_CLOSE,238,108,50,14
 END
 
-IDD_EQUALIZER_SETS DIALOGEX 0, 0, 203, 186
+IDD_EQUALIZER_SETS DIALOGEX 0, 0, 228, 191
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
 CAPTION "musik:Cube Equalizer Sets"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    LISTBOX         IDC_PRESET_BOX,102,8,96,172,LBS_SORT | 
+    LISTBOX         IDC_PRESET_BOX,108,17,114,169,LBS_SORT | 
                     LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "save as selected",IDC_SAVE_ACTIVE_AS_SELECTED,6,36,90,
+    PUSHBUTTON      "save to selected",IDC_SAVE_ACTIVE_AS_SELECTED,6,35,90,
                     14
     CTEXT           "Active Equalizer:",IDC_STATIC,6,6,90,8
-    PUSHBUTTON      "load from selected",IDC_LOAD_ACTIVE_FROM_SELECTED,6,18,
-                    90,14
-    CTEXT           "Selected Equalizer:",IDC_STATIC,6,84,90,8
-    PUSHBUTTON      "save as new preset",IDC_SAVE_ACTIVE_AS_NEW,6,54,90,14
-    PUSHBUTTON      "delete",IDC_DELETE_SEL,6,96,90,14
-    PUSHBUTTON      "set as default",IDC_SET_AS_DEFAULT,6,132,90,14
-    PUSHBUTTON      "rename",IDC_RENAME_SEL,6,114,90,14
-    PUSHBUTTON      "close",IDC_CLOSE_DLG,6,166,90,14
+    PUSHBUTTON      "reset defaults",IDC_RESET_DEFAULTS,6,125,90,14
+    CTEXT           "Selected Equalizer:",IDC_STATIC,6,59,90,8
+    PUSHBUTTON      "save as...",IDC_SAVE_ACTIVE_AS_NEW,6,18,90,14
+    PUSHBUTTON      "delete",IDC_DELETE_SEL,6,72,90,14
+    PUSHBUTTON      "set as default",IDC_SET_AS_DEFAULT,6,144,90,14
+    PUSHBUTTON      "rename",IDC_RENAME_SEL,6,90,90,14
+    PUSHBUTTON      "close",IDC_CLOSE_DLG,6,172,90,14
+    CTEXT           "All Equalizers:",IDC_STATIC,108,6,114,8
+    CTEXT           "Defaults:",IDC_STATIC,6,114,90,8
 END
 
 IDD_NAME_ENTRY DIALOGEX 0, 0, 202, 58
@@ -576,9 +577,9 @@ BEGIN
     IDD_EQUALIZER_SETS, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 196
+        RIGHTMARGIN, 221
         TOPMARGIN, 7
-        BOTTOMMARGIN, 179
+        BOTTOMMARGIN, 184
     END
 
     IDD_NAME_ENTRY, DIALOG
