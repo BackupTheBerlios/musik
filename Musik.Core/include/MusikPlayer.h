@@ -26,7 +26,7 @@ public:
 	~CMusikPlayer();
 
 private:
-	ACE_Thread_Mutex mutex;
+	//ACE_Thread_Mutex mutex;
 
 };
 

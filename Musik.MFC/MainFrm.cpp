@@ -80,7 +80,7 @@ void CMainFrame::InitMusik()
 {
 	m_LibPlaylist	= new CMusikPlaylist();	
 	m_Library		= new CMusikLibrary( ( CStdString )m_Database );
-	//m_Player		= new CMusikPlayer( m_LibPlaylist, m_Library );
+	m_Player		= new CMusikPlayer();
 	m_Prefs			= new CMusikPrefs( m_PrefsIni );
 }
 

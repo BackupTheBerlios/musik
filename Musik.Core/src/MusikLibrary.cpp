@@ -209,7 +209,8 @@ bool CMusikLibrary::Startup()
 
 
 	// put a lock on the library and open it up
-	boost::mutex::scoped_lock scoped_lock( m_ProtectingLibrary  );
+	m_ProtectingLibrary.acquire();
+
 	char *pErr = NULL;
 	m_pDB = sqlite_open( m_Filename.c_str(), 0666, &pErr );
 
@@ -222,6 +223,8 @@ bool CMusikLibrary::Startup()
 	if ( pErr )
 		sqlite_freemem( pErr );
 
+	m_ProtectingLibrary.release();
+
 	return ( m_pDB != NULL );   
 }
 
@@ -230,28 +233,31 @@ bool CMusikLibrary::Startup()
 void CMusikLibrary::Shutdown()
 {
 	// lock it up and close it down.
-	boost::mutex::scoped_lock scoped_lock( m_ProtectingLibrary );
+	m_ProtectingLibrary.acquire();
 	if ( m_pDB )
 	{
 		sqlite_close( m_pDB );
 		m_pDB = NULL;
 	}	
+	m_ProtectingLibrary.release();
 }
 
 ///////////////////////////////////////////////////
 
 void CMusikLibrary::BeginTransaction()
 {
-	boost::mutex::scoped_lock scoped_lock( m_ProtectingLibrary );
+	m_ProtectingLibrary.acquire();
 	sqlite_exec_printf( m_pDB, "begin transaction;", NULL, NULL, NULL );
+	m_ProtectingLibrary.release();
 }
 
 ///////////////////////////////////////////////////
 
 void CMusikLibrary::EndTransaction()
 {
-	boost::mutex::scoped_lock scoped_lock( m_ProtectingLibrary );
+	m_ProtectingLibrary.acquire();
 	sqlite_exec_printf( m_pDB, "end transaction;", NULL, NULL, NULL );
+	m_ProtectingLibrary.release();
 }
 
 ///////////////////////////////////////////////////
@@ -259,7 +265,9 @@ void CMusikLibrary::EndTransaction()
 void CMusikLibrary::CreateStdPlaylist( CStdString name, CIntArray songids )
 {
 	// lock it up
-	boost::mutex::scoped_lock scoped_lock( m_ProtectingLibrary );
+	m_ProtectingLibrary.acquire();
+
+	m_ProtectingLibrary.release();
 }
 
 ///////////////////////////////////////////////////
@@ -267,7 +275,9 @@ void CMusikLibrary::CreateStdPlaylist( CStdString name, CIntArray songids )
 void CMusikLibrary::CreateDynPlaylist( CStdString name, CStdString query )
 {
 	// lock it up
-	boost::mutex::scoped_lock scoped_lock( m_ProtectingLibrary );	
+	m_ProtectingLibrary.acquire();
+
+	m_ProtectingLibrary.release();
 }
 
 ///////////////////////////////////////////////////
@@ -275,7 +285,9 @@ void CMusikLibrary::CreateDynPlaylist( CStdString name, CStdString query )
 void CMusikLibrary::DeleteStdPlaylist( CStdString name )
 {
 	// lock it up	
-	boost::mutex::scoped_lock scoped_lock( m_ProtectingLibrary );
+	m_ProtectingLibrary.acquire();
+
+	m_ProtectingLibrary.release();
 }
 
 ///////////////////////////////////////////////////
@@ -283,7 +295,9 @@ void CMusikLibrary::DeleteStdPlaylist( CStdString name )
 void CMusikLibrary::DeleteDynPlaylist( CStdString name )
 {
 	// lock it up and close it down.
-	boost::mutex::scoped_lock scoped_lock( m_ProtectingLibrary );
+	m_ProtectingLibrary.acquire();
+
+	m_ProtectingLibrary.release();
 }
 
 ///////////////////////////////////////////////////
@@ -366,7 +380,7 @@ int CMusikLibrary::QueryCount( const char* pQueryResult )
 	const char *pTail;
 	sqlite_vm *pVM;
 
-	boost::mutex::scoped_lock scoped_lock( m_ProtectingLibrary );
+	m_ProtectingLibrary.acquire();
 	
 	sqlite_compile( m_pDB, pQueryResult, &pTail, &pVM, NULL );
 	char *errmsg;
@@ -379,6 +393,9 @@ int CMusikLibrary::QueryCount( const char* pQueryResult )
 		result = atoi( coldata[0] );
 
 	sqlite_finalize( pVM, &errmsg );
+
+	m_ProtectingLibrary.release();
+
 	return result;
 }
 
@@ -417,8 +434,11 @@ void CMusikLibrary::QuerySongs( const CStdString& query, CMusikPlaylist& target 
 	queryWhere += _T( ";" );
 
 	// lock it up and query it
-	boost::mutex::scoped_lock scoped_lock( m_ProtectingLibrary );
+	m_ProtectingLibrary.acquire();
+
 	sqlite_exec( m_pDB, queryWhere.c_str(), &sqlite_AddSongToPlaylist, &target, NULL );
+
+	m_ProtectingLibrary.release();
 }
 
 ///////////////////////////////////////////////////
@@ -453,8 +473,11 @@ void CMusikLibrary::GetRelatedItems( int source_type, const CStdStringArray& sou
 	query += GetOrder( target_type );
 
 	// lock it up and run the query
-	boost::mutex::scoped_lock scoped_lock( m_ProtectingLibrary );
+	m_ProtectingLibrary.acquire();
+
 	sqlite_exec(m_pDB, query.c_str(), &sqlite_AddSongToStringArray, &target, NULL);
+
+	m_ProtectingLibrary.release();
 
 	// if target is years, verify only years
 	//get displayed.
@@ -477,8 +500,11 @@ void CMusikLibrary::GetRelatedItems( CStdString sub_query, int dst_type, CStdStr
 		sOutType.c_str() );
 
 	// lock it up and run the query
-	boost::mutex::scoped_lock scoped_lock( m_ProtectingLibrary );
+	m_ProtectingLibrary.acquire();
+
 	sqlite_exec(m_pDB, query.c_str(), &sqlite_AddSongToStringArray, &target, NULL);
+
+	m_ProtectingLibrary.release();
 
 	// if target is years, verify only years
 	// get displayed.
@@ -500,8 +526,11 @@ void CMusikLibrary::GetRelatedSongs( CStdString sub_query, int source_type, CMus
 		order_by.c_str() );
 
 	// lock it up and run the query
-	boost::mutex::scoped_lock scoped_lock( m_ProtectingLibrary );
+	m_ProtectingLibrary.acquire();
+
 	sqlite_exec(m_pDB, query.c_str(), &sqlite_AddSongToPlaylist, &target, NULL);
+
+	m_ProtectingLibrary.release();
 }
 
 ///////////////////////////////////////////////////
@@ -516,8 +545,11 @@ void CMusikLibrary::GetAllDistinct( int source_type, CStdStringArray& target, bo
 	query.Format( _T( "select distinct %s,UPPER(%s) as UP from songs order by UP;" ), sField.c_str(), sField.c_str() );
 
 	// lock it up and run the query
-	boost::mutex::scoped_lock scoped_lock( m_ProtectingLibrary );
+	m_ProtectingLibrary.acquire();
+
 	sqlite_exec( m_pDB, query.c_str(), &sqlite_AddSongToStringArray, &target, NULL );
+
+	m_ProtectingLibrary.release();
 }
 
 ///////////////////////////////////////////////////
@@ -540,12 +572,11 @@ void CMusikLibrary::GetFieldFromID( int id, int field, CStdString& string )
 	query.Format( _T( "select %s from songs where songid = %d;" ), type.c_str(), id );
 
 	// lock it up and run the query
-	boost::mutex::scoped_lock scoped_lock( m_ProtectingLibrary );
-
-	//TRACE0( query.c_str() );
-	//TRACE0( "\n" );
+	m_ProtectingLibrary.acquire();
 
 	sqlite_exec( m_pDB, query.c_str(), &sqlite_GetSongFieldFromID, &string, NULL );
+
+	m_ProtectingLibrary.release();
 }
 
 ///////////////////////////////////////////////////
@@ -558,8 +589,11 @@ void CMusikLibrary::GetSongInfoFromID( int id, CMusikSongInfo* info )
 	info->SetID( id );
 
 	// lock it up and run the query
-	boost::mutex::scoped_lock scoped_lock( m_ProtectingLibrary );
+	m_ProtectingLibrary.acquire();
+
 	int result = sqlite_exec( m_pDB, query.c_str(), &sqlite_GetSongInfoFromID, info, NULL );
+
+	m_ProtectingLibrary.release();
 }
 
 ///////////////////////////////////////////////////
@@ -595,10 +629,12 @@ bool CMusikLibrary::SetSongInfo( int songid, CMusikSongInfo* info )
 	MessageBox( NULL, query.c_str(), NULL, NULL );
 
 	// lock it up and run the query
-	{
-		boost::mutex::scoped_lock scoped_lock( m_ProtectingLibrary );
-		result = sqlite_exec( m_pDB, query.c_str(), NULL, NULL, NULL );
-	}
+	m_ProtectingLibrary.acquire();
+
+	result = sqlite_exec( m_pDB, query.c_str(), NULL, NULL, NULL );
+
+	m_ProtectingLibrary.release();
+
 
 	if ( result != SQLITE_OK )
 		return false;
@@ -616,10 +652,11 @@ bool CMusikLibrary::SetSongRating( int songid, int rating )
 	query.Format( _T( "update songs set rating=%d where songid=%d" ), rating, songid );
 
 	// lock it up and run the query
-	{
-		boost::mutex::scoped_lock scoped_lock( m_ProtectingLibrary );
-		result = sqlite_exec( m_pDB, query.c_str(), NULL, NULL, NULL );
-	}
+	m_ProtectingLibrary.acquire();
+    
+	result = sqlite_exec( m_pDB, query.c_str(), NULL, NULL, NULL );
+	
+	m_ProtectingLibrary.release();
 
 	if ( result != SQLITE_OK )
 		return false;
