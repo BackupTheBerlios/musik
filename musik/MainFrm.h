@@ -432,7 +432,7 @@ protected:
 	void DeinitWinamp();
 	void GetVisList();
 	HMODULE m_WinampVis;
-
+	
 	CmusikStringArray m_VisList;
 	lpfnLoadVisPlugins visLoadVisPlugins;
 	lpfnGetVisInfo visGetVisInfo;

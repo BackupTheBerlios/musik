@@ -52,6 +52,7 @@
 #include "musikSourcesCtrl.h"
 #include "musikFileDrop.h"
 #include "musikSaveStdPlaylist.h"
+#include "musikBatchTagDlg.h"
 
 #include "MEMDC.H"
 
@@ -115,6 +116,7 @@ BEGIN_MESSAGE_MAP(CmusikPlaylistCtrl, CmusikListCtrl)
 	ON_COMMAND(ID_PLAYLISTCOLUMNS_TIMESPLAYED, OnPlaylistcolumnsTimesplayed)
 	ON_COMMAND(ID_PLAYLISTCOLUMNS_BITRATE, OnPlaylistcolumnsBitrate)
 	ON_COMMAND(ID_PLAYLISTCOLUMNS_FILENAME, OnPlaylistcolumnsFilename)
+	ON_COMMAND(ID_PLAYLISTCONTEXTMENU_BATCH, OnPlaylistcontextmenuBatch)
 
 	// custom messages
 	ON_REGISTERED_MESSAGE( WM_TAGPROPERTIESDESTROY, OnTagEditDestroy )
@@ -1533,6 +1535,8 @@ void CmusikPlaylistCtrl::ShowContextMenu()
 		popup_menu->EnableMenuItem( ID_PLC_DELETE_FROMCOMPUTER, MF_DISABLED | MF_GRAYED );
 		popup_menu->EnableMenuItem( ID_PLAYLISTCONTEXTMENU_PROPERTIES, MF_DISABLED | MF_GRAYED );
 	}
+	if ( GetSelectedCount() <= 1 )
+		popup_menu->EnableMenuItem( ID_PLAYLISTCONTEXTMENU_BATCH, MF_DISABLED | MF_GRAYED );
 
 	if ( m_Playlist != m_Player->GetPlaylist() )
 		popup_menu->EnableMenuItem( ID_PLAYLISTCONTEXTMENU_SHUFFLENOWPLAYING, MF_DISABLED | MF_GRAYED );
@@ -2004,4 +2008,12 @@ LRESULT CmusikPlaylistCtrl::OnTagUpdate( WPARAM wParam, LPARAM lParam )
 }
 
 ///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::OnPlaylistcontextmenuBatch()
+{
+	
+}
+
+///////////////////////////////////////////////////
+
 

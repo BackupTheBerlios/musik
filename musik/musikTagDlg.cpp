@@ -213,8 +213,8 @@ void CmusikTagDlg::SaveCurr()
 		ptrCurr->EnableWindow( FALSE );
 
 		// save it
-		m_Song.SetDirtyFlag( _T( "1" ) );
 		m_Library->SetSongInfo( &m_Song );
+		m_Song.SetDirtyFlag( _T( "0" ) );
 
 		// send a message to update the playlist ctrl
 		int WM_TAGUPDATE = RegisterWindowMessage( _T( "TAGUPDATE" ) );
@@ -245,9 +245,9 @@ BEGIN_MESSAGE_MAP(CmusikTagDlg, CDialog)
 	ON_EN_CHANGE(IDC_ALBUM, OnChangeField)
 	ON_EN_CHANGE(IDC_YEAR, OnChangeField)
 	ON_CBN_EDITCHANGE(IDC_GENRE, OnChangeField)
-	ON_CBN_EDITCHANGE(IDC_RATING, OnChangeField)
+	ON_CBN_EDITCHANGE(IDC_RATING, OnChangeRating)
 	ON_CBN_SELCHANGE(IDC_GENRE, OnChangeField)
-	ON_CBN_SELCHANGE(IDC_RATING, OnChangeField)
+	ON_CBN_SELCHANGE(IDC_RATING, OnChangeRating)
 	ON_BN_CLICKED(IDC_APPLY, OnBnClickedApply)
 END_MESSAGE_MAP()
 
@@ -365,6 +365,20 @@ void CmusikTagDlg::PromptSave()
 ///////////////////////////////////////////////////
 
 void CmusikTagDlg::OnChangeField()
+{
+	if ( !m_Updating && !m_Modified )
+	{
+		CWnd* ptrCurr = (CWnd*)GetDlgItem( IDC_APPLY );
+		ptrCurr->EnableWindow( TRUE );
+		m_Song.SetDirtyFlag( _T( "1" ) );
+
+		m_Modified = true;
+	}
+}
+
+///////////////////////////////////////////////////
+
+void CmusikTagDlg::OnChangeRating()
 {
 	if ( !m_Updating && !m_Modified )
 	{

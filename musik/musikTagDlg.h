@@ -73,6 +73,7 @@ public:
 	afx_msg void OnBnClickedNext();
 	afx_msg void OnBnClickedPrev();
 	afx_msg void OnChangeField();
+	afx_msg void OnChangeRating();
 	afx_msg void OnBnClickedApply();
 
 protected:

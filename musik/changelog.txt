@@ -2,9 +2,12 @@
 
 a5:
 
+  - very basic winamp vis plugin support. this feature
+    is experimental and unsupported (use at your own risk)
   - song is no longer bolded unless it is it in the now
     playing playlist.
   - updated default icon
+  - changed preference dialogs
   - tag editing dialog (right click in playlist -> properties)
   - fixed a nasty mutex deadlock in the backend
   - ditched ACE for OpenThreads

@@ -43,6 +43,7 @@
 #define IDD_WINAMP_VIS                  163
 #define IDI_ICON2                       166
 #define IDI_MUSIK_32                    166
+#define IDD_BATCH_TAG                   167
 #define IDC_CHECK_STARTUPSCAN           1007
 #define IDC_CHECK_STARTUPSCAN2          1008
 #define IDC_CHECK_PL_STRIPES            1009
@@ -87,16 +88,22 @@
 #define IDC_BUTTON4                     1019
 #define IDC_LOAD_ACTIVE_FROM_SELECTED   1019
 #define IDC_RESET_DEFAULTS              1019
+#define IDC_ENBALBUM                    1019
 #define IDC_RADIO1                      1020
 #define IDC_RADIO_ADD_PLAYLIST          1020
 #define IDC_FIELDTYPE3                  1020
+#define IDC_ENBTRACKNUM                 1020
+#define IDC_ENBTRACK                    1020
 #define IDC_RADIO2                      1021
 #define IDC_RADIO_ADD_NOW_PLAYING       1021
 #define IDC_FIELDVARIABLE3              1021
+#define IDC_ENBRATING                   1021
 #define IDC_RADIO3                      1022
 #define IDC_RADIO_ADD_LIBRARY           1022
 #define IDC_FIELDSTRING3                1022
+#define IDC_ENBGENRE                    1022
 #define IDC_ENABLE_QUERY4               1023
+#define IDC_ENBYEAR                     1023
 #define IDC_FIELDTYPE4                  1024
 #define IDC_FIELDVARIABLE4              1025
 #define IDC_FIELDSTRING4                1026
@@ -166,6 +173,8 @@
 #define IDC_GENRE                       1068
 #define IDC_YEAR                        1069
 #define IDC_APPLY                       1070
+#define IDC_ENBTITLE                    1071
+#define IDC_ENBARTIST                   1072
 #define ID_FILE_PREFERENCES             32771
 #define ID_FILE_SEP                     32772
 #define ID_ADD_FILES                    32774
@@ -294,14 +303,24 @@
 #define ID_WINAMPVISUALIZATIONS_CONFIGURE 32940
 #define ID_WINAMPVISUALIZATIONS_ENABLED 32941
 #define ID_WINAMPVISUALIZATIONS_ACTIVATE 32942
+#define ID_PLAYLISTCONTEXTMENU_RENAME   32943
+#define ID_RENAME_TITLE                 32944
+#define ID_RENAME_ARTIST                32945
+#define ID_RENAME_ALBUM                 32946
+#define ID_RENAME_TRACKNUMBER           32947
+#define ID_RENAME_GENRE                 32948
+#define ID_RENAME_YEAR                  32949
+#define ID_RENAME_RATING                32950
+#define ID_Menu32951                    32951
+#define ID_PLAYLISTCONTEXTMENU_BATCH    32952
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        167
-#define _APS_NEXT_COMMAND_VALUE         32943
-#define _APS_NEXT_CONTROL_VALUE         1071
+#define _APS_NEXT_RESOURCE_VALUE        168
+#define _APS_NEXT_COMMAND_VALUE         32953
+#define _APS_NEXT_CONTROL_VALUE         1073
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif

@@ -223,6 +223,7 @@ protected:
 	afx_msg LRESULT OnTagPrev( WPARAM wParam = NULL, LPARAM lParam = NULL );
 	afx_msg LRESULT OnTagUpdate( WPARAM wParam = NULL, LPARAM lParam = NULL );
 	afx_msg void OnLvnItemchanged(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnPlaylistcontextmenuBatch();
 
 	// CmusikPlaylistDropTarget calls
 	// this function once files have

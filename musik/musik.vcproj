@@ -466,6 +466,16 @@
 						RelativePath=".\musikTagDlg.h">
 					</File>
 				</Filter>
+				<Filter
+					Name="musikBatchTagDlg"
+					Filter="">
+					<File
+						RelativePath=".\musikBatchTagDlg.cpp">
+					</File>
+					<File
+						RelativePath=".\musikBatchTagDlg.h">
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="Functors"
