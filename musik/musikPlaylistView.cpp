@@ -52,6 +52,7 @@
 #include "musikPlaylistDropTarget.h"
 
 #include "MEMDC.H"
+#include ".\musikplaylistview.h"
 
 ///////////////////////////////////////////////////
 
@@ -65,6 +66,7 @@ BEGIN_MESSAGE_MAP(CmusikPlaylistView, CWnd)
 	ON_WM_SIZE()
 	ON_WM_NCPAINT()
 	ON_WM_ERASEBKGND()
+	ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -244,3 +246,12 @@ void CmusikPlaylistView::CleanPlaylistInfo()
 }
 
 ///////////////////////////////////////////////////
+
+void CmusikPlaylistView::OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/)
+{
+	GetCtrl()->ShowContextMenu();
+}
+
+///////////////////////////////////////////////////
+
+

@@ -1366,3 +1366,29 @@ void CmusikPlaylistCtrl::ScrollToCurr()
 }
 
 ///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::ShowContextMenu()
+{
+	CPoint pos;
+	::GetCursorPos( &pos );
+
+	CMenu main_menu;
+	CMenu* popup_menu;
+
+	main_menu.LoadMenu( IDR_PLAYLIST_CONTEXT_MENU );
+	popup_menu = main_menu.GetSubMenu( 0 );
+
+	// check / enable / disable menu items
+	if ( GetSelectedCount() == 0 )
+	{
+		popup_menu->EnableMenuItem( ID_PLC_DELETE_FROMPLAYLIST, MF_DISABLED | MF_GRAYED );
+		popup_menu->EnableMenuItem( ID_PLC_DELETE_FROMLIBRARY, MF_DISABLED | MF_GRAYED );
+		popup_menu->EnableMenuItem( ID_PLC_DELETE_FROMCOMPUTER, MF_DISABLED | MF_GRAYED );
+		popup_menu->EnableMenuItem( ID_PLAYLISTCONTEXTMENU_PROPERTIES, MF_DISABLED | MF_GRAYED );
+	}
+		
+	popup_menu->TrackPopupMenu( 0, pos.x, pos.y, this );
+}
+
+///////////////////////////////////////////////////
+

@@ -81,6 +81,8 @@ public:
 	void UpdateV( bool redraw = true, bool select_none = false );
 	void ScrollToCurr();
 
+	void ShowContextMenu();
+
 	// call when new playlist is set becuase the
 	// previous playlist's sorting should not apply
 	// to the current one's...
