@@ -1455,12 +1455,12 @@ void CMainFrame::OnSysColorChange()
 void CMainFrame::OnFilePreferences()
 {
 	// initialize the property pages
-	CPropertyPage wndPageInterfaceGeneral(		IDD_PROPPAGE_INTERFACE_GENERAL);
-	CPropertyPage wndPageInterfaceColors(		IDD_PROPPAGE_INTERFACE_COLORS);
-	CPropertyPage wndPageInterfaceSynchronize(	IDD_PROPPAGE_INTERFACE_SYNCHRONIZE);
-	CPropertyPage wndPageSoundDriver(			IDD_PROPPAGE_SOUND_DRIVER);
-	CPropertyPage wndPageSoundEqualizer(		IDD_PROPPAGE_SOUND_EQUALIZER);
-	CPropertyPage wndPageSoundCrossfader(		IDD_PROPPAGE_SOUND_CROSSFADER);
+	CmusikPropertyPage wndPageInterfaceGeneral		( IDD_PROPPAGE_INTERFACE_GENERAL, m_Prefs );
+	CmusikPropertyPage wndPageInterfaceColors		( IDD_PROPPAGE_INTERFACE_COLORS, m_Prefs );
+	CmusikPropertyPage wndPageInterfaceSynchronize	( IDD_PROPPAGE_INTERFACE_SYNCHRONIZE, m_Prefs );
+	CmusikPropertyPage wndPageSoundDriver			( IDD_PROPPAGE_SOUND_DRIVER, m_Prefs );
+	CmusikPropertyPage wndPageSoundEqualizer		( IDD_PROPPAGE_SOUND_EQUALIZER, m_Prefs );
+	CmusikPropertyPage wndPageSoundCrossfader		( IDD_PROPPAGE_SOUND_CROSSFADER, m_Prefs );
 
 	// remove help icon from gripper
 	wndPageInterfaceGeneral.m_psp.dwFlags&=		~PSP_HASHELP;

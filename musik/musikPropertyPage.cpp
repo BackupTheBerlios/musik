@@ -61,9 +61,6 @@ CmusikPropertyPage::CmusikPropertyPage( UINT nIDTemplate, CmusikPrefs* prefs )
 
 ///////////////////////////////////////////////////
 
-
-///////////////////////////////////////////////////
-
 CmusikProptertySheet::CmusikProptertySheet( LPCSTR pszCaption, CWnd* pParentWnd, UINT iSelectPage )
 	: CTreePropSheet( pszCaption, pParentWnd, iSelectPage )
 {
@@ -78,9 +75,7 @@ BOOL CmusikProptertySheet::OnCommand(WPARAM wParam, LPARAM lParam)
 	{
 	case IDCANCEL:
 
-		// cancel
-
-		return true;
+		return CTreePropSheet::OnCommand( wParam, lParam );
 		break;
 
 	case IDOK:
