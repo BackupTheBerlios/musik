@@ -105,6 +105,17 @@ public:
 	int nPlaylistColumnEnable[NPLAYLISTCOLUMNS];
 	int nPlaylistColumnSize[NPLAYLISTCOLUMNS];
 	int nPlaylistColumnDynamic[NPLAYLISTCOLUMNS];
+
+	int nTunageWriteFile;
+	wxString sTunageFilename;
+	wxString sTunageFileLine;
+	int nTunageAppendFile;
+	int nTunagePostURL;
+	wxString sTunageURL;
+	int nTunageRunApp;
+	wxString sTunageCmdLine;
+	int nTunageRunOnStop;
+	wxString sTunageStoppedText;
 };
 
 class CMusikPaths

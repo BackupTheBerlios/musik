@@ -139,6 +139,18 @@ void CMusikPrefs::LoadPrefs()
 	config->Read( wxString::Format( wxT( "PlaylistColumn%dSize"		),	PLAYLISTCOLUMN_FILENAME		),	&nPlaylistColumnSize	[PLAYLISTCOLUMN_FILENAME],		40	);
 	config->Read( wxString::Format( wxT( "PlaylistColumn%dDynamic"	),	PLAYLISTCOLUMN_FILENAME		),	&nPlaylistColumnDynamic	[PLAYLISTCOLUMN_FILENAME],		1	);		
 
+	config->Read( wxT("TunageWriteFile"),		&nTunageWriteFile,		0 );
+	config->Read( wxT("TunageFilename"),		&sTunageFilename,		wxT("") );
+	config->Read( wxT("TunageFileLine"),		&sTunageFileLine,		wxT("") );
+	config->Read( wxT("TunageAppendFile"),		&nTunageAppendFile,		0 );
+	config->Read( wxT("TunagePostURL"),			&nTunagePostURL,		0 );
+	config->Read( wxT("TunageURL"),				&sTunageURL,			wxT("") );
+	config->Read( wxT("TunageRunApp"),			&nTunageRunApp,			0 );
+	config->Read( wxT("TunageCmdLine"),			&sTunageCmdLine,		wxT("") );
+	config->Read( wxT("TunageRunOnStop"),		&nTunageRunOnStop,		1 );
+	config->Read( wxT("TunageStoppedText"),		&sTunageStoppedText,	wxT("Musik is not running") );
+
+
 	g_FX.LoadBands( config );
 
 
@@ -149,8 +161,10 @@ void CMusikPrefs::LoadPrefs()
 	//--- stored as a forward slash "/"				---//
 	//-------------------------------------------------//
 	#ifdef __WXMSW__
-		sAutoRename.Replace( wxT( "/" ), wxT( "\\" ), true );
-		sAutoTag.Replace( wxT( "/" ), wxT( "\\" ), true );
+		sAutoRename.Replace( wxT("/"), wxT("\\"), true );
+		sAutoTag.Replace( wxT("/"), wxT("\\"), true );
+		sTunageFilename.Replace( wxT("/"), wxT("\\"), true );
+		sTunageCmdLine.Replace( wxT("/"), wxT("\\"), true );
 	#endif
 
 	//--- apply unweildy defaults ---//
@@ -238,6 +252,8 @@ void CMusikPrefs::SavePrefs()
 	#ifdef __WXMSW__
 		sAutoRename.Replace( wxT( "\\" ), wxT( "/" ), true );
 		sAutoTag.Replace( wxT( "\\" ), wxT( "/" ), true );
+		sTunageFilename.Replace( wxT("\\"), wxT("/"), true );
+		sTunageCmdLine.Replace( wxT("\\"), wxT("/"), true );
 	#endif
 
 	wxFileConfig *config;
@@ -303,6 +319,17 @@ void CMusikPrefs::SavePrefs()
 		config->Write( wxString::Format( wxT( "PlaylistColumn%dDynamic" ),	i ),	nPlaylistColumnDynamic[i]	);
 	}
 
+	config->Write( wxT("TunageWriteFile"),		nTunageWriteFile );
+	config->Write( wxT("TunageFilename"),		sTunageFilename );
+	config->Write( wxT("TunageFileLine"),		sTunageFileLine );
+	config->Write( wxT("TunageAppendFile"),		nTunageAppendFile );
+	config->Write( wxT("TunagePostURL"),		nTunagePostURL );
+	config->Write( wxT("TunageURL"),			sTunageURL );
+	config->Write( wxT("TunageRunApp"),			nTunageRunApp );
+	config->Write( wxT("TunageCmdLine"),		sTunageCmdLine );
+	config->Write( wxT("TunageRunOnStop"),		nTunageRunOnStop );
+	config->Write( wxT("TunageStoppedText"),	sTunageStoppedText );
+
 	g_FX.SaveBands( config );
 
 	delete config;
@@ -310,6 +337,8 @@ void CMusikPrefs::SavePrefs()
 	#ifdef __WXMSW__
 		sAutoRename.Replace( wxT( "/" ), wxT( "\\" ), true );
 		sAutoTag.Replace( wxT( "/" ), wxT( "\\" ), true );
+		sTunageFilename.Replace( wxT("/"), wxT("\\"), true );
+		sTunageCmdLine.Replace( wxT("/"), wxT("\\"), true );
 	#endif
 }
 
