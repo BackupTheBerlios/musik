@@ -61,7 +61,7 @@ CmusikPropertyPage::CmusikPropertyPage( UINT nIDTemplate, CmusikPrefs* prefs )
 
 ///////////////////////////////////////////////////
 
-CmusikProptertySheet::CmusikProptertySheet( LPCSTR pszCaption, CWnd* pParentWnd, UINT iSelectPage )
+CmusikPropertySheet::CmusikPropertySheet( LPCSTR pszCaption, CWnd* pParentWnd, UINT iSelectPage )
 	: CTreePropSheet( pszCaption, pParentWnd, iSelectPage )
 {
 
@@ -69,31 +69,45 @@ CmusikProptertySheet::CmusikProptertySheet( LPCSTR pszCaption, CWnd* pParentWnd,
 
 ///////////////////////////////////////////////////
 
-BOOL CmusikProptertySheet::OnCommand(WPARAM wParam, LPARAM lParam)
+BOOL CmusikPropertySheet::OnCommand(WPARAM wParam, LPARAM lParam)
 {
 	switch ( wParam )
 	{
 	case IDCANCEL:
 
-		return CTreePropSheet::OnCommand( wParam, lParam );
+		return CTreePropSheet::OnCommand( IDCANCEL, lParam );
 		break;
 
 	case IDOK:
 
-		//ok
+		CommitChanges();
+		return CTreePropSheet::OnCommand( IDCANCEL, lParam );
 
 		return true;
 		break;
 
 	case ID_APPLY_NOW:
 
-		// apply
+		CommitChanges();
 
 		return true;
 		break;
 	}
 	
 	return CTreePropSheet::OnCommand( wParam, lParam );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPropertySheet::CommitChanges()
+{
+	CmusikPropertyPage* ptrPage = NULL;
+	for ( int i = 0; i < GetPageCount(); i++ )
+	{
+		ptrPage = (CmusikPropertyPage*)GetPage( i );
+		ptrPage->CommitChanges();
+		ptrPage->SetModified( FALSE );
+	}
 }
 
 ///////////////////////////////////////////////////

@@ -25,8 +25,15 @@ public:
 	CmusikPrefsInterfaceGeneral( CmusikPrefs* prefs );
 	virtual ~CmusikPrefsInterfaceGeneral();
 
+	// saving
+	virtual void CommitChanges();
+	virtual void LoadPrefs();
+
 	// dialog data
 	enum { IDD = IDD_PROPPAGE_INTERFACE_GENERAL };
+
+	// overrides
+	virtual BOOL OnInitDialog();
 
 protected:
 
@@ -35,10 +42,13 @@ protected:
 
 	// controls
 	CButton m_EnableTrayIcon;
+	CButton m_PromptSavePlaylists;
+	CButton m_PromptDropOnPlaylist;
 
 	// macros
 	DECLARE_DYNAMIC(CmusikPrefsInterfaceGeneral)
 	DECLARE_MESSAGE_MAP()
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 };
 
 ///////////////////////////////////////////////////

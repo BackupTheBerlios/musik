@@ -63,6 +63,9 @@ public:
 	CmusikPropertyPage( UINT nIDTemplate, CmusikPrefs* prefs );
 	virtual ~CmusikPropertyPage(){}
 
+	virtual void CommitChanges(){}
+	virtual void LoadPrefs(){}
+
 protected:
 
 	CmusikPrefs* m_Prefs;
@@ -74,15 +77,16 @@ protected:
 
 ///////////////////////////////////////////////////
 
-class CmusikProptertySheet : public CTreePropSheet
+class CmusikPropertySheet : public CTreePropSheet
 {
 public:
 
-	CmusikProptertySheet( LPCSTR pszCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0 );
-	virtual ~CmusikProptertySheet(){}
+	CmusikPropertySheet( LPCSTR pszCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0 );
+	virtual ~CmusikPropertySheet(){}
 
 protected:
-
+    
+	void CommitChanges();
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 };
 

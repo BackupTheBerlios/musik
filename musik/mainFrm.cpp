@@ -46,6 +46,7 @@
 #include "musikFileDialog.h"
 #include "musikTimeCtrl.h"
 #include "musikDirSync.h"
+#include "musikPrefsDlg.h"
 #include "musikPropertyPage.h"
 
 #include "../musikCore/include/StdString.h"
@@ -1455,24 +1456,20 @@ void CMainFrame::OnSysColorChange()
 void CMainFrame::OnFilePreferences()
 {
 	// initialize the property pages
-	CmusikPropertyPage wndPageInterfaceGeneral		( IDD_PROPPAGE_INTERFACE_GENERAL, m_Prefs );
+	CmusikPrefsInterfaceGeneral wndPageInterfaceGeneral( m_Prefs );
 	CmusikPropertyPage wndPageInterfaceColors		( IDD_PROPPAGE_INTERFACE_COLORS, m_Prefs );
 	CmusikPropertyPage wndPageInterfaceSynchronize	( IDD_PROPPAGE_INTERFACE_SYNCHRONIZE, m_Prefs );
 	CmusikPropertyPage wndPageSoundDriver			( IDD_PROPPAGE_SOUND_DRIVER, m_Prefs );
-	CmusikPropertyPage wndPageSoundEqualizer		( IDD_PROPPAGE_SOUND_EQUALIZER, m_Prefs );
-	CmusikPropertyPage wndPageSoundCrossfader		( IDD_PROPPAGE_SOUND_CROSSFADER, m_Prefs );
 
 	// remove help icon from gripper
 	wndPageInterfaceGeneral.m_psp.dwFlags&=		~PSP_HASHELP;
 	wndPageInterfaceColors.m_psp.dwFlags&=		~PSP_HASHELP;
 	wndPageInterfaceSynchronize.m_psp.dwFlags&=	~PSP_HASHELP;
 	wndPageSoundDriver.m_psp.dwFlags&=			~PSP_HASHELP;
-	wndPageSoundEqualizer.m_psp.dwFlags&=		~PSP_HASHELP;
-	wndPageSoundCrossfader.m_psp.dwFlags&=		~PSP_HASHELP;
 
 	// initialize the CTreePropSheet class 
 	// and remove help icon from gripper
-	CmusikProptertySheet PrefSheet( _T( "musikCube Preferences" ) );
+	CmusikPropertySheet PrefSheet( _T( "musikCube Preferences" ) );
 	PrefSheet.m_psh.dwFlags&= ~PSH_HASHELP;
 
 	// physically add the preference sheets
@@ -1480,8 +1477,6 @@ void CMainFrame::OnFilePreferences()
 	PrefSheet.AddPage(&wndPageInterfaceColors);
 	PrefSheet.AddPage(&wndPageInterfaceSynchronize);
 	PrefSheet.AddPage(&wndPageSoundDriver);
-	PrefSheet.AddPage(&wndPageSoundEqualizer);
-	PrefSheet.AddPage(&wndPageSoundCrossfader);
 
 	PrefSheet.SetEmptyPageText(_T("Please select a child item of '%s'."));
 	

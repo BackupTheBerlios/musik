@@ -6,7 +6,6 @@
 #define IDD_PROPPAGE_INTERFACE_GENERAL  106
 #define IDD_PROPPAGE_INTERFACE_COLORS   107
 #define IDD_PROPPAGE_SOUND_DRIVER       108
-#define IDD_PROPPAGE_SOUND_CROSSFADER   109
 #define IDR_MAINFRAME                   128
 #define IDR_musikTYPE                   129
 #define IDD_DIALOG2                     131
@@ -26,7 +25,6 @@
 #define IDD_NAME_ENTRY                  145
 #define IDR_TRAY_MENU                   146
 #define IDD_PROPPAGE_INTERFACE_SYNCHRONIZE 146
-#define IDD_PROPPAGE_SOUND_EQUALIZER    147
 #define IDB_DOWN                        151
 #define IDB_BITMAP1                     153
 #define IDB_UP                          153
