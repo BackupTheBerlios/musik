@@ -8,7 +8,6 @@
 #include "MEMDC.H"
 
 #include "../musikCore/include/musikLibrary.h"
-#include ".\musikselectionctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -621,13 +620,29 @@ LRESULT CmusikSelectionCtrl::OnEditCancel( WPARAM wParam, LPARAM lParam )
 
 LRESULT CmusikSelectionCtrl::OnEditCommit( WPARAM wParam, LPARAM lParam )
 {
-	// code here
-	// CString sName = m_EditInPlace.GetString();
-
 	m_EditInPlace.EnableWindow( FALSE );
 	SetFocus();
 
-	return 0L;
+	m_CommitStr = m_EditInPlace.GetString();
+
+	if ( GetSelectedCount() == 1 )
+	{
+		if ( m_Items.at( GetSelectionMark() ) == m_CommitStr )
+			return 0L;
+	}
+
+	if ( !m_CommitStr.IsEmpty() )
+	{
+		int WM_SELBOXEDITCOMMIT = RegisterWindowMessage( "SELBOXEDITCOMMIT" );
+		m_Parent->SendMessage( WM_SELBOXEDITCOMMIT, (WPARAM)this, (LPARAM)GetType() );
+	}
+
+	return 1L;
 }
 
 ///////////////////////////////////////////////////
+
+CStdString CmusikSelectionCtrl::GetEditCommitStr()
+{
+	return m_CommitStr;
+}

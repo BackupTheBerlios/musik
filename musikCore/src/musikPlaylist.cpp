@@ -178,6 +178,60 @@ CStdString CmusikSongInfo::GetField( int field )
 
 ///////////////////////////////////////////////////
 
+void CmusikSongInfo::SetField( int field, const CStdString& str )
+{
+	switch( field )
+	{
+	case MUSIK_LIBRARY_TYPE_ARTIST:
+		m_Artist = str;
+		break;
+	case MUSIK_LIBRARY_TYPE_ALBUM:
+		m_Album = str;
+		break;
+	case MUSIK_LIBRARY_TYPE_YEAR:
+		m_Year = str;
+		break;
+	case MUSIK_LIBRARY_TYPE_GENRE:
+		m_Genre = str;
+		break;
+	case MUSIK_LIBRARY_TYPE_TITLE:
+		m_Title = str;
+		break;
+	case MUSIK_LIBRARY_TYPE_TRACKNUM:
+		m_TrackNum = str;
+		break;
+	case MUSIK_LIBRARY_TYPE_TIMEADDED:
+		m_TimeAdded = str;
+		break;
+	case MUSIK_LIBRARY_TYPE_LASTPLAYED:
+		m_LastPlayed = str;
+		break;
+	case MUSIK_LIBRARY_TYPE_FILESIZE:
+		m_Filesize = str;
+		break;
+	case MUSIK_LIBRARY_TYPE_FORMAT:
+		m_Format = str;
+		break;
+	case MUSIK_LIBRARY_TYPE_DURATION:
+		m_Duration = str;
+		break;
+	case MUSIK_LIBRARY_TYPE_RATING:
+		m_Rating = str;
+		break;
+	case MUSIK_LIBRARY_TYPE_TIMESPLAYED:
+		m_LastPlayed = str;
+		break;
+	case MUSIK_LIBRARY_TYPE_BITRATE:
+		m_Bitrate = str;
+		break;
+	case MUSIK_LIBRARY_TYPE_FILENAME:
+		m_Filename = str;
+		break;
+	}
+}
+
+///////////////////////////////////////////////////
+
 // CmusikPlaylist: a playlist object
 
 ///////////////////////////////////////////////////

@@ -34,6 +34,7 @@ public:
 	int	GetType(){ return m_Type; }
 	void GetSelItems( CStdStringArray& items, bool format_query = true );
 	CStdString GetSelQuery();
+	CStdString GetEditCommitStr();
 
 	// queries
 	bool IsItemSelected( int item );
@@ -81,6 +82,7 @@ protected:
 
 	// F2...
 	CmusikEditInPlace m_EditInPlace;
+	CStdString m_CommitStr;
 
 	// core
 	CFrameWnd* m_Parent;

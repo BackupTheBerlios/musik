@@ -775,6 +775,8 @@ void CmusikLibrary::BeginTransaction()
 	++m_Transactions;
 	
 	m_ProtectingLibrary->release();
+
+	TRACE0( "Begin transaction\n" );
 }
 
 ///////////////////////////////////////////////////
@@ -791,6 +793,8 @@ void CmusikLibrary::EndTransaction()
 		sqlite_exec_printf( m_pDB, "end transaction;", NULL, NULL, NULL );
 
 	m_ProtectingLibrary->release();
+
+	TRACE0( "End transaction\n" );
 }
 
 ///////////////////////////////////////////////////

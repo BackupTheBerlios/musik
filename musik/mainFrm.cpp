@@ -71,6 +71,7 @@
 
 int WM_SELBOXUPDATE			= RegisterWindowMessage( "SELBOXUPDATE" );
 int WM_SELBOXRESET			= RegisterWindowMessage( "SELBOXRESET" );
+int WM_SELBOXEDITCOMMIT		= RegisterWindowMessage( "SELBOXEDITCOMMIT" );
 
 int WM_PLAYERNEWPLAYLIST	= RegisterWindowMessage( "PLAYERNEWPLAYLIST" );
 
@@ -165,6 +166,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_DRAGEND, OnDragEnd )
 	ON_REGISTERED_MESSAGE( WM_PLAYERNEWPLAYLIST, OnPlayerNewPlaylist )
 	ON_REGISTERED_MESSAGE( WM_SELBOXRESET, OnSelBoxesReset )
+	ON_REGISTERED_MESSAGE( WM_SELBOXEDITCOMMIT, OnSelBoxEditCommit )
 	ON_REGISTERED_MESSAGE( WM_BATCHADD_NEW, OnBatchAddNew )
 	ON_REGISTERED_MESSAGE( WM_BATCHADD_PROGRESS, OnBatchAddProgress )
 	ON_REGISTERED_MESSAGE( WM_BATCHADD_END, OnThreadEnd )
@@ -791,6 +793,44 @@ void CMainFrame::OnDestroy()
 
 ///////////////////////////////////////////////////
 
+LRESULT CMainFrame::OnSelBoxEditCommit( WPARAM wParam, LPARAM lParam )
+{
+	// setup vars
+	CmusikSelectionCtrl* pSel = (CmusikSelectionCtrl*)wParam;
+	int nLibType = (int)lParam;
+	CStdString sNew = pSel->GetEditCommitStr();
+
+	// get selected items into a new
+	// playlist
+	CmusikPlaylist* playlist = new CmusikPlaylist();
+	CStdString sub_query = pSel->GetSelQuery();
+
+	m_Library->GetRelatedSongs( sub_query, pSel->GetType(), *playlist );
+
+	// create a new CmusikSongInfoArray and update
+	// all the respective values...
+	if ( playlist->GetCount() )
+	{
+		CmusikSongInfoArray* pSongInfoArray = new CmusikSongInfoArray();
+		CmusikSongInfo info;
+
+		m_Library->BeginTransaction();
+		for ( size_t i = 0; i < playlist->GetCount(); i++ )
+		{
+			m_Library->GetSongInfoFromID( playlist->GetSongID( i ), &info );
+			info.SetField( nLibType, sNew );
+			pSongInfoArray->push_back( info );
+		}
+		m_Library->EndTransaction();
+
+		return 1L;
+	}
+
+	return 0L;
+}
+
+///////////////////////////////////////////////////
+
 LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 {
 	size_t selbox_count = m_Prefs->GetSelBoxCount();
@@ -843,10 +883,6 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 
 		return 0L;
 	}	
-
-	// get a list of the sender's selected items
-	CStdStringArray sender_sel;
-	pSender->GetSelItems( sender_sel );
 
 	// construct first part of query... this is basically
 	// a list of all the selected items from the control

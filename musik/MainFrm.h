@@ -170,6 +170,7 @@ protected:
 	afx_msg LRESULT OnDragStart(  WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnDragEnd(  WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSelBoxesReset( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnSelBoxEditCommit( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnPlayerNewPlaylist( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnBatchAddProgress( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnRemoveOldProgress( WPARAM wParam, LPARAM lParam );
