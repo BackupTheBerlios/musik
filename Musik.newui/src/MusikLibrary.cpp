@@ -2,8 +2,9 @@
 #include "MusikLibrary.h"
 #include "MusikUTF8.h"
 
-CMusikLibrary::CMusikLibrary()
+CMusikLibrary::CMusikLibrary( const wxString& filename )
 {
+	m_Filename = filename;
 	InitFields();
 	Start();
 }
@@ -94,7 +95,7 @@ bool CMusikLibrary::Start()
 	//-------------------------------------------------//
 	wxCriticalSectionLocker lock( m_csDBAccess );
 	char *pErr = NULL;
-	m_pDB = sqlite_open( wxStringToMB( MUSIK_DB_FILENAME ), 0666, &pErr );
+	m_pDB = sqlite_open( wxStringToMB( m_Filename ), 0666, &pErr );
 
 	if ( m_pDB )
 	{

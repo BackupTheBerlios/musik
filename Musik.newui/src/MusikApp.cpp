@@ -8,9 +8,17 @@ IMPLEMENT_APP( CMusikApp )
 
 bool CMusikApp::OnInit()
 {
+	CheckPaths();
+
     CMusikFrame *pMain = new CMusikFrame();
 	pMain->Show(TRUE);
 	SetTopWindow( pMain );
 
 	return TRUE;
+}
+
+void CMusikApp::CheckPaths()
+{
+	if ( !wxDirExists( MUSIK_HOME_DIR ) )
+		wxMkDir( MUSIK_HOME_DIR );
 }

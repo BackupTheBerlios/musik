@@ -1,6 +1,8 @@
 #ifndef C_MUSIK_FRAME_H
 #define C_MUSIK_FRAME_H
 
+#include "MusikApp.h"
+
 #include "wx/wxprec.h"
 #include "wx/laywin.h"
 

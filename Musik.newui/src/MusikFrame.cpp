@@ -36,7 +36,7 @@ bool CMusikFrame::Show( bool show )
 
 void CMusikFrame::CreateCore()
 {
-	m_MusikLibrary = new CMusikLibrary();
+	m_MusikLibrary = new CMusikLibrary( MUSIK_DB_FILENAME );
 }
 
 void CMusikFrame::DeleteCore()

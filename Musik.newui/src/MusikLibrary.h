@@ -5,12 +5,12 @@
 #include "wx/filename.h"
 #include "sqlite.h"
 
-#define MUSIK_DB_FILENAME wxFileName::GetHomeDir() + wxFileName::GetPathSeparator() + wxT( ".Musik" ) + wxFileName::GetPathSeparator() + wxT( "musiklib.db" )
+
 
 class CMusikLibrary
 {
 public:
-	CMusikLibrary();
+	CMusikLibrary( const wxString& filename );
 	~CMusikLibrary();
 
 	//-----------------------------------------------------//
@@ -24,6 +24,12 @@ public:
 protected:
 
 private:
+
+	//-----------------------------------------------------//
+	//--- filename for the database						---//
+	//-----------------------------------------------------//
+	wxString m_Filename;
+
 	//-----------------------------------------------------//
 	//--- start / shutdown database.					---//
 	//-----------------------------------------------------//
