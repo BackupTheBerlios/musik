@@ -337,12 +337,7 @@ void MusikFrame::TogglePlaylistInfo()
 void MusikFrame::ShowPlaylistInfo()
 {
 	vsRightSide->Show( g_PlaylistInfoCtrl, ( bool )g_Prefs.nShowPLInfo );
-
 	Layout();
-
-	g_PlaylistCtrl->RescaleColumns();
-	g_SourcesCtrl->RescaleColumns();
-	g_ActivityAreaCtrl->RescaleColumns();
 }
 
 void MusikFrame::ShowSources()
@@ -382,6 +377,7 @@ void MusikFrame::ShowActivityArea( bool bShow )
 {
 	vsRightSide->Show( g_ActivityAreaCtrl, bShow );
 	Layout();
+	g_PlaylistInfoCtrl->Refresh();
 }
 
 void MusikFrame::ToggleActivities()

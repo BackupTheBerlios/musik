@@ -476,7 +476,10 @@ void CPlaylistCtrl::BeginDrag( wxEvent& WXUNUSED(event) )
 
 void CPlaylistCtrl::EndDragCol( wxListEvent& event )
 {
-	SaveColumns();
+//	wxMessageBox( wxT( "sux0r" ) );
+	 
+//	RescaleColumns();
+//	event.Skip();
 	Refresh();
 }
 
@@ -883,7 +886,7 @@ void CPlaylistCtrl::Update( bool bSelFirst, bool  bRescaleColumns)
 		SetItemState( 0, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );	
 	Thaw();
 	Refresh();
-	if(bRescaleColumns)
+	if( bRescaleColumns )
 		RescaleColumns();
 	if ( g_Prefs.nShowPLInfo == 1 )
 		g_PlaylistInfoCtrl->Update();
@@ -896,6 +899,8 @@ void CPlaylistCtrl::RescaleColumns( bool bFreeze )
 
 	if ( g_DisablePlacement )
 		return;
+
+	SaveColumns();
 
 	//-------------------------------------------------//
 	//--- size of the client area.					---//
