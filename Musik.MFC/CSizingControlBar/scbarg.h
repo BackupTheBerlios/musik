@@ -39,7 +39,7 @@
 class CSCBButton
 {
 public:
-    CSCBButton();
+    CSCBButton( char btn = 'r' );
 
     void Move(CPoint ptTo) {ptOrg = ptTo; };
     CRect GetRect() { return CRect(ptOrg, CSize(11, 11)); };
@@ -50,6 +50,7 @@ public:
 
 protected:
     CPoint  ptOrg;
+	char	m_Btn;
 };
 
 /////////////////////////////////////////////////////////////////////////
@@ -80,9 +81,6 @@ public:
 
 // Overrides
 public:
-    // ClassWizard generated virtual function overrides
-    //{{AFX_VIRTUAL(CSizingControlBarG)
-    //}}AFX_VIRTUAL
 
 // Implementation
 public:
@@ -97,17 +95,16 @@ protected:
     int     m_cyGripper;
 	bool	m_ShowGripper;
 
-    CSCBButton m_biHide;
+    CSCBButton* m_biHide;
+	CSCBButton* m_biOptions;
 
 // Generated message map functions
 protected:
-    //{{AFX_MSG(CSizingControlBarG)
     afx_msg UINT OnNcHitTest(CPoint point);
     afx_msg void OnNcLButtonUp(UINT nHitTest, CPoint point);
-    //}}AFX_MSG
 
     DECLARE_MESSAGE_MAP()
 };
 
-#endif // !defined(__SCBARG_H__)
+#endif
 

@@ -41,6 +41,10 @@
     #error "_SCB_MINIFRAME_CAPTION requires _SCB_REPLACE_MINIFRAME"
 #endif
 
+#ifndef HTOPTIONS
+	#define HTOPTIONS 666
+#endif
+
 /////////////////////////////////////////////////////////////////////////
 // CSCBDockBar dummy class for access to protected members
 
@@ -109,12 +113,9 @@ public:
 
 // Overrides
 public:
-    // ClassWizard generated virtual function overrides
-    //{{AFX_VIRTUAL(CSizingControlBar)
     public:
     virtual CSize CalcFixedLayout(BOOL bStretch, BOOL bHorz);
     virtual CSize CalcDynamicLayout(int nLength, DWORD dwMode);
-    //}}AFX_VIRTUAL
 
 // Implementation
 public:
@@ -160,7 +161,6 @@ protected:
 
 // Generated message map functions
 protected:
-    //{{AFX_MSG(CSizingControlBar)
     afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
     afx_msg void OnNcPaint();
     afx_msg void OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS FAR* lpncsp);
@@ -177,14 +177,13 @@ protected:
     afx_msg void OnPaint();
     afx_msg void OnClose();
     afx_msg void OnSize(UINT nType, int cx, int cy);
-    //}}AFX_MSG
     afx_msg LRESULT OnSetText(WPARAM wParam, LPARAM lParam);
 
     DECLARE_MESSAGE_MAP()
 
 #ifdef _SCB_REPLACE_MINIFRAME
     friend class CSCBMiniDockFrameWnd;
-#endif //_SCB_REPLACE_MINIFRAME
+#endif
 };
 
 #ifdef _SCB_REPLACE_MINIFRAME
@@ -213,27 +212,21 @@ public:
 class CSCBMiniDockFrameWnd : public baseCSCBMiniDockFrameWnd
 {
     DECLARE_DYNCREATE(CSCBMiniDockFrameWnd)
-
-// Overrides
-    // ClassWizard generated virtual function overrides
-    //{{AFX_VIRTUAL(CSCBMiniDockFrameWnd)
-    public:
+public:
     virtual BOOL Create(CWnd* pParent, DWORD dwBarStyle);
-    //}}AFX_VIRTUAL
 
 // Implementation
 public:
     CSizingControlBar* GetSizingControlBar();
 
-    //{{AFX_MSG(CSCBMiniDockFrameWnd)
     afx_msg void OnNcLButtonDown(UINT nHitTest, CPoint point);
     afx_msg void OnGetMinMaxInfo(MINMAXINFO FAR* lpMMI);
     afx_msg void OnWindowPosChanging(WINDOWPOS FAR* lpwndpos);
     afx_msg void OnSize(UINT nType, int cx, int cy);
-    //}}AFX_MSG
-    DECLARE_MESSAGE_MAP()
-};
-#endif //_SCB_REPLACE_MINIFRAME
 
-#endif // !defined(__SIZECBAR_H__)
+	DECLARE_MESSAGE_MAP()
+};
+#endif
+
+#endif 
 

@@ -46,10 +46,15 @@ CSizingControlBarG::CSizingControlBarG()
 {
 	ShowGripper( true );
     m_cyGripper = 12;
+
+	m_biHide = new CSCBButton( 'r' );
+	m_biOptions = new CSCBButton( 'u' );
 }
 
 CSizingControlBarG::~CSizingControlBarG()
 {
+	delete m_biHide;
+	delete m_biOptions;
 }
 
 BEGIN_MESSAGE_MAP(CSizingControlBarG, baseCSizingControlBarG)
@@ -96,8 +101,10 @@ void CSizingControlBarG::NcCalcClient(LPRECT pRc, UINT nDockBarID)
 
     // set position for the "x" (hide bar) button
     CPoint ptOrgBtn = CPoint(rc.right - 12, rc.top - 13);
+	CPoint ptOptBtn = CPoint(ptOrgBtn.x - 14, ptOrgBtn.y );
 
-    m_biHide.Move(ptOrgBtn - rcBar.TopLeft());
+    m_biHide->Move(ptOrgBtn - rcBar.TopLeft());
+	m_biOptions->Move( ptOptBtn - rcBar.TopLeft() );
 
     *pRc = rc;
 }
@@ -108,7 +115,7 @@ void CSizingControlBarG::NcPaintGripper(CDC* pDC, CRect rcClient)
         return;
 
     CRect gripper = rcClient;
-    CRect rcbtn = m_biHide.GetRect();
+    CRect rcbtn = m_biOptions->GetRect();
 
     gripper.DeflateRect(1, 1);
 	gripper.top -= m_cyGripper - 2;
@@ -118,7 +125,8 @@ void CSizingControlBarG::NcPaintGripper(CDC* pDC, CRect rcClient)
     pDC->Draw3dRect(gripper, ::GetSysColor(COLOR_BTNHIGHLIGHT),
         ::GetSysColor(COLOR_BTNSHADOW));
 
-	m_biHide.Paint(pDC);
+	m_biHide->Paint(pDC);
+	m_biOptions->Paint(pDC);
 }
 
 UINT CSizingControlBarG::OnNcHitTest(CPoint point)
@@ -130,10 +138,15 @@ UINT CSizingControlBarG::OnNcHitTest(CPoint point)
     if (nRet != HTCLIENT)
         return nRet;
 
-    CRect rc = m_biHide.GetRect();
+    CRect rc = m_biHide->GetRect();
     rc.OffsetRect(rcBar.TopLeft());
     if (rc.PtInRect(point))
         return HTCLOSE;
+
+	rc = m_biOptions->GetRect();
+	rc.OffsetRect(rcBar.TopLeft());
+	if (rc.PtInRect(point))
+		return HTOPTIONS;
 
     return HTCLIENT;
 }
@@ -154,17 +167,25 @@ void CSizingControlBarG::OnUpdateCmdUI(CFrameWnd* pTarget,
 
     CPoint pt;
     ::GetCursorPos(&pt);
-    BOOL bHit = (OnNcHitTest(pt) == HTCLOSE);
+
     BOOL bLButtonDown = (::GetKeyState(VK_LBUTTON) < 0);
+	
+	BOOL bHideHit = (OnNcHitTest(pt) == HTCLOSE);
+    BOOL bWasHidePushed = m_biHide->bPushed;
+    m_biHide->bPushed = bHideHit && bLButtonDown;
+    BOOL bWasHideRaised = m_biHide->bRaised;
+    m_biHide->bRaised = bHideHit && !bLButtonDown;
 
-    BOOL bWasPushed = m_biHide.bPushed;
-    m_biHide.bPushed = bHit && bLButtonDown;
+    BOOL bOptionsHit = (OnNcHitTest(pt) == HTOPTIONS);
+    BOOL bWasOptionsPushed = m_biOptions->bPushed;
+    m_biOptions->bPushed = bOptionsHit && bLButtonDown;
+    BOOL bWasOptionsRaised = m_biOptions->bRaised;
+    m_biOptions->bRaised = bOptionsHit && !bLButtonDown;
 
-    BOOL bWasRaised = m_biHide.bRaised;
-    m_biHide.bRaised = bHit && !bLButtonDown;
-
-    bNeedPaint |= (m_biHide.bPushed ^ bWasPushed) ||
-                  (m_biHide.bRaised ^ bWasRaised);
+    bNeedPaint |= (m_biHide->bPushed ^ bWasHidePushed) ||
+                  (m_biHide->bRaised ^ bWasHideRaised) ||
+				  (m_biOptions->bPushed ^ bWasOptionsPushed) ||
+				  (m_biOptions->bRaised ^ bWasOptionsRaised) ;
 
     if (bNeedPaint)
         SendMessage(WM_NCPAINT);
@@ -173,10 +194,11 @@ void CSizingControlBarG::OnUpdateCmdUI(CFrameWnd* pTarget,
 /////////////////////////////////////////////////////////////////////////
 // CSCBButton
 
-CSCBButton::CSCBButton()
+CSCBButton::CSCBButton( char btn )
 {
     bRaised = FALSE;
     bPushed = FALSE;
+	m_Btn = btn;
 }
 
 void CSCBButton::Paint(CDC* pDC)
@@ -200,7 +222,7 @@ void CSCBButton::Paint(CDC* pDC)
     font.CreatePointFont(pointsize, _T("Marlett"));
     CFont* oldfont = pDC->SelectObject(&font);
 
-    pDC->TextOut(ptOrg.x + 2, ptOrg.y + 2, CString(_T("r"))); // x-like
+    pDC->TextOut(ptOrg.x + 2, ptOrg.y + 2, CString( m_Btn ) ); // x-like
 
     pDC->SelectObject(oldfont);
     pDC->SetBkMode(nPrevBkMode);

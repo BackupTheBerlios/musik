@@ -1320,7 +1320,7 @@ BOOL CSCBMiniDockFrameWnd::Create(CWnd* pParent, DWORD dwBarStyle)
 
 void CSCBMiniDockFrameWnd::OnNcLButtonDown(UINT nHitTest, CPoint point)
 {
-    if (nHitTest == HTCAPTION || nHitTest == HTCLOSE)
+    if (nHitTest == HTCAPTION || nHitTest == HTCLOSE || nHitTest == HTOPTIONS)
     {
         baseCSCBMiniDockFrameWnd::OnNcLButtonDown(nHitTest, point);
         return;

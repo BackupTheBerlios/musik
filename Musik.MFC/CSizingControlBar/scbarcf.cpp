@@ -104,7 +104,7 @@ void CSizingControlBarCF::NcPaintGripper(CDC* pDC, CRect rcClient)
     // compute the caption rectangle
     BOOL bHorz = IsHorzDocked();
     CRect rcGrip = rcClient;
-    CRect rcBtn = m_biHide.GetRect();
+    CRect rcBtn = m_biHide->GetRect();
     if (bHorz)
     {   // right side gripper
         rcGrip.left -= m_cyGripper + 1;
@@ -221,7 +221,7 @@ void CSizingControlBarCF::NcPaintGripper(CDC* pDC, CRect rcClient)
     }
 
     // draw the button
-    m_biHide.Paint(pDC);
+    m_biHide->Paint(pDC);
 }
 
 LRESULT CSizingControlBarCF::OnSetText(WPARAM wParam, LPARAM lParam)
