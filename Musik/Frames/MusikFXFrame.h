@@ -35,10 +35,6 @@ public:
 	void SlidersFromBands();
 	void BandsFromSliders();
 	
-	//----------------------//
-	//--- system buttons ---//
-	//----------------------//
-	
 	//----------------//
 	//--- controls ---//
 	//----------------//
@@ -50,8 +46,8 @@ public:
 	//------------------//
 	//--- eq sliders ---//
 	//------------------//
-	wxSlider	*slLeft[18];
-	wxSlider	*slRight[18];
+	CMusikFXGauge	*slLeft[18];
+	CMusikFXGauge	*slRight[18];
 	
 	//--------------//
 	//--- sizers ---//
@@ -63,11 +59,16 @@ public:
 	wxBoxSizer	*hsEQ;
 	wxBoxSizer	*hsControls;
 	wxBoxSizer	*vsMain;
+
+	//-------------//
+	//--- bands ---//
+	//-------------//
+	float ldata[18];	
+	float rdata[18];
 	
 	DECLARE_EVENT_TABLE()
 private:
 
-	float p;	//--- delete me ---//
 
 };
 

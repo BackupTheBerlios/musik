@@ -14,17 +14,22 @@ enum EMUSIK_FX_CHANNEL
 };
 
 class CMusikFXHandler;
+class MusikFXFrame;
 
 class CMusikFXGauge : public wxGauge
 {
 public:
-	CMusikFXGauge( wxFrame* parent, int nChannel, float *nBandID );
+	CMusikFXGauge( MusikFXFrame* parent, size_t nChannel, size_t nBandID );
 	~CMusikFXGauge();
+
+	void SetEQ();
+	void SetPos( size_t m_Pos );
 
 private:
 	CMusikFXHandler *m_EvtHandler;
-	int m_Channel;
-	float *m_BandID;
+	MusikFXFrame *m_Parent;
+	size_t m_Channel;
+	size_t m_BandID;
 };
 
 class CMusikFXHandler : public wxEvtHandler
@@ -34,6 +39,7 @@ public:
 	~CMusikFXHandler();
 	
 	void OnLeftDown			( wxMouseEvent& event );
+	void OnLeftUp			( wxMouseEvent& event );
 	void OnMouseMove		( wxMouseEvent& event );
 	void SetFromMousePos	( wxMouseEvent& event );
 
