@@ -193,6 +193,83 @@ void CmusikSelectionBar::OnSelectionboxAddnew()
 
 ///////////////////////////////////////////////////
 
+void CmusikSelectionBar::OnChangetypeArtist()
+{
+	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_ARTIST );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionBar::OnChangetypeAlbum()
+{
+	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_ALBUM );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionBar::OnChangetypeYear()
+{
+	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_YEAR );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionBar::OnChangetypeGenre()
+{
+	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_GENRE );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionBar::OnChangetypeTracknumber()
+{
+	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_TRACKNUM );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionBar::OnChangetypeTimeadded()
+{
+	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_TIMEADDED );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionBar::OnChangetypeLastplayed()
+{
+	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_LASTPLAYED );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionBar::OnChangetypeFormat()
+{
+	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_FORMAT );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionBar::OnChangetypeRating()
+{
+	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_RATING );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionBar::OnChangetypeTimesplayed()
+{
+	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_TIMESPLAYED );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionBar::OnChangetypeBitrate()
+{
+	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_BITRATE );
+}
+
+///////////////////////////////////////////////////
+
 // CmusikSelectionCtrl
 
 ///////////////////////////////////////////////////
@@ -1000,7 +1077,9 @@ void CmusikSelectionCtrl::OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/)
 void CmusikSelectionCtrl::SetWindowCap()
 {
 	CString sTitle = (CString)m_Library->GetSongField( m_Type );
-	sTitle += _T( "s" );
+
+	if ( m_Type != MUSIK_LIBRARY_TYPE_TIMEADDED && m_Type != MUSIK_LIBRARY_TYPE_LASTPLAYED && m_Type != MUSIK_LIBRARY_TYPE_TIMESPLAYED )
+		sTitle += _T( "s" );
 
 	LV_COLUMN column;
 	column.mask = LVCF_TEXT;
@@ -1023,83 +1102,6 @@ void CmusikSelectionCtrl::SetType( int type, bool update )
 		UpdateV( true );
 
 	RedrawWindow();
-}
-
-///////////////////////////////////////////////////
-
-void CmusikSelectionBar::OnChangetypeArtist()
-{
-	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_ARTIST );
-}
-
-///////////////////////////////////////////////////
-
-void CmusikSelectionBar::OnChangetypeAlbum()
-{
-	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_ALBUM );
-}
-
-///////////////////////////////////////////////////
-
-void CmusikSelectionBar::OnChangetypeYear()
-{
-	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_YEAR );
-}
-
-///////////////////////////////////////////////////
-
-void CmusikSelectionBar::OnChangetypeGenre()
-{
-	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_GENRE );
-}
-
-///////////////////////////////////////////////////
-
-void CmusikSelectionBar::OnChangetypeTracknumber()
-{
-	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_TRACKNUM );
-}
-
-///////////////////////////////////////////////////
-
-void CmusikSelectionBar::OnChangetypeTimeadded()
-{
-	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_TIMEADDED );
-}
-
-///////////////////////////////////////////////////
-
-void CmusikSelectionBar::OnChangetypeLastplayed()
-{
-	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_LASTPLAYED );
-}
-
-///////////////////////////////////////////////////
-
-void CmusikSelectionBar::OnChangetypeFormat()
-{
-	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_FORMAT );
-}
-
-///////////////////////////////////////////////////
-
-void CmusikSelectionBar::OnChangetypeRating()
-{
-	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_RATING );
-}
-
-///////////////////////////////////////////////////
-
-void CmusikSelectionBar::OnChangetypeTimesplayed()
-{
-	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_TIMESPLAYED );
-}
-
-///////////////////////////////////////////////////
-
-void CmusikSelectionBar::OnChangetypeBitrate()
-{
-	GetCtrl()->SetType( MUSIK_LIBRARY_TYPE_BITRATE );
 }
 
 ///////////////////////////////////////////////////
