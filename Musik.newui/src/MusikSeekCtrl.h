@@ -2,7 +2,7 @@
 #define C_MUSIK_SEEK_CTRL
 
 #include "wx/wxprec.h"
-#include "MusikDragGauge.h"
+#include "MusikDragGaugeCtrl.h"
 
 class CMusikSeekCtrl : public CMusikDragGauge
 {
