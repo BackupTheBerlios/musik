@@ -33,7 +33,6 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="PropTreeD.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
@@ -85,7 +84,6 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="PropTree.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
@@ -200,6 +198,12 @@
 			<Filter
 				Name="MusikPlaylistView"
 				Filter="">
+				<File
+					RelativePath=".\MusikPlaylistView.cpp">
+				</File>
+				<File
+					RelativePath=".\MusikPlaylistView.h">
+				</File>
 			</Filter>
 			<Filter
 				Name="MusikSelectionBar"
@@ -221,9 +225,6 @@
 			</File>
 			<File
 				RelativePath=".\Musik.h">
-			</File>
-			<File
-				RelativePath=".\MusikPlaylistView.h">
 			</File>
 			<File
 				RelativePath=".\Resource.h">
@@ -269,11 +270,36 @@
 				RelativePath=".\CSizingControlBar\sizecbar.h">
 			</File>
 		</Filter>
+		<Filter
+			Name="CPropTree"
+			Filter="">
+			<File
+				RelativePath=".\CPropTree\PropTree.cpp">
+			</File>
+			<File
+				RelativePath=".\CPropTree\PropTree.h">
+			</File>
+			<File
+				RelativePath=".\CPropTree\PropTreeInfo.cpp">
+			</File>
+			<File
+				RelativePath=".\CPropTree\PropTreeInfo.h">
+			</File>
+			<File
+				RelativePath=".\CPropTree\PropTreeItem.cpp">
+			</File>
+			<File
+				RelativePath=".\CPropTree\PropTreeItem.h">
+			</File>
+			<File
+				RelativePath=".\CPropTree\PropTreeList.cpp">
+			</File>
+			<File
+				RelativePath=".\CPropTree\PropTreeList.h">
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\res\Musik.manifest">
-		</File>
-		<File
-			RelativePath=".\MusikPlaylistView.cpp">
 		</File>
 	</Files>
 	<Globals>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "PropTree.h"
+#include "CPropTree/PropTree.h"
 
 // CMusikSourcesCtrl
 

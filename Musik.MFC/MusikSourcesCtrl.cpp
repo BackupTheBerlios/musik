@@ -34,6 +34,10 @@ int CMusikSourcesCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	pLibraryRoot->SetInfoText(_T(""));
 	pLibraryRoot->Expand( true );
 
+	CPropTreeItem* pMusikLibrary;
+	pMusikLibrary = InsertItem( new CPropTreeItem(), pLibraryRoot );
+	pMusikLibrary->SetLabelText( _T( "Musik Library" ) );
+
 	CPropTreeItem* pStandardRoot;
 	pStandardRoot = InsertItem( new CPropTreeItem() );
 	pStandardRoot->SetLabelText( _T( "Standard Playlists" ) );

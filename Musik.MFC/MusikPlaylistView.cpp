@@ -32,7 +32,7 @@ int CMusikPlaylistView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if ( CWnd::OnCreate(lpCreateStruct) == -1 )
 		return -1;
 
-	m_Playlist.Create( WS_CHILD|WS_VISIBLE|LVS_REPORT, CRect( 0, 0, 0, 0 ), this, 123 );
+	m_Playlist.Create( WS_CHILD | WS_VISIBLE | LVS_REPORT, CRect( 0, 0, 0, 0 ), this, 123 );
 
 	return 0;
 }

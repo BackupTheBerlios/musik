@@ -5,7 +5,6 @@
 #include "Musik.h"
 
 #include "MainFrm.h"
-#include ".\mainfrm.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
