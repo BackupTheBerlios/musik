@@ -345,9 +345,11 @@ void MusikCrossfaderThread::OnExit()
 			g_Player.FinalizeResume();
 
 		Yield();
-
+		if(m_FadeType != CROSSFADE_EXIT)// if we would send the FadeCompleteEvt on exit we get in trouble with the CMusikPlayer::ClearOldStreams() which tries to stop the fader thread( while it waits the ExitCompleteEvt is dispatched by wx and g_FaderThread is deleted, if CrossfaderStop returns from wait it will crash)
+		{
 		wxCommandEvent FadeCompleteEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYER_FADE_COMPLETE );	
 		wxPostEvent( &g_Player, FadeCompleteEvt );
+		}
 		Yield();
 
 	}
