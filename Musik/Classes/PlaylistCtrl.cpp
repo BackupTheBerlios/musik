@@ -253,7 +253,7 @@ CPlaylistCtrl::CPlaylistCtrl( wxWindow *parent, const wxWindowID id, const wxPoi
 	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_FILENAME,		_( "Filename" ),		wxT( "" ), wxITEM_CHECK );
 	playlist_context_display_menu->AppendSeparator();
 	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_FIT,			_( "Fit Columns" ),		wxT( "" ), wxITEM_CHECK );
-	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_SMART,		_( "Smart Resizing" ),	wxT( "" ), wxITEM_CHECK );
+	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_SMART,		_( "No Horizontal Scroll" ),	wxT( "" ), wxITEM_CHECK );
 
 	//--- main context menu ---//
 	playlist_context_menu = new wxMenu;
