@@ -144,8 +144,7 @@ public:
 	//--- abastraction, so other controls can use g_SourcesCtrl ---//
 	//--- only place needed functions here to reduce overhead	---//
 	//-------------------------------------------------------------//
-	CSourcesListBox* GetListCtrl( )	{ return pListBox;					}
-	int GetSelType				( )	{ return pListBox->GetSelType();	}
+	int  GetSelType				( )	{ return pListBox->GetSelType();	}
 	void RescaleColumns			( ) { pListBox->RescaleColumns();		}
 	void RescanPlaylistDir		( ) { pListBox->RescanPlaylistDir();	}
 	void Update					( ) { pListBox->Update();				}
