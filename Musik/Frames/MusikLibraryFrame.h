@@ -39,16 +39,16 @@ public:
 	MusikLibraryFrame( wxFrame* pParent );
 	MusikLibraryFrame( wxFrame* pParent, const wxPoint &pos, const wxSize &size );
 
+	//--- functions ---//
 	void CreateControls ();
 	void PathsLoad		();
 	void PathsSave		();
-
 	void ClearLibrary	();
 	void UpdateLibrary	( bool bConfirm );
 	void ScanNew		();
 	void PurgeLibrary	();
-
 	void EnableProgress	( bool );
+	bool ValidatePath	( wxString sPath );
 	
 	//--- regular events ---//
 	void OnClickAdd				( wxCommandEvent  &WXUNUSED(event)	)		{ PathsListAdd();												}

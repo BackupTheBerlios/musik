@@ -107,6 +107,7 @@ public:
 	size_t GetCount(){ return m_Paths.GetCount(); }
 	void Clear(){ m_Paths.Clear(); }
 	void Add( wxString s ){ m_Paths.Add( s ); }
+	void Remove( size_t nIndex ){ m_Paths.Remove( nIndex ); }
 
 	wxArrayString* GetList(){ return &m_Paths; }
 

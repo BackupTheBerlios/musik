@@ -309,18 +309,18 @@ void MusikLibraryFrame::Close( bool bCancel )
 		PathsSave();
 		if ( bRebuild )
 		{
-			//----------------------------------------------------//
+			//-----------------------------------------------------//
 			//--- setting m_Close allows the thread to close	---//
-			//--- the dialog upon completion.						---//
-			//----------------------------------------------------//
+			//--- the dialog upon completion.					---//
+			//-----------------------------------------------------//
 			m_Close = true;
 			UpdateLibrary( true );
 			
-			//----------------------------------------------------//
+			//-----------------------------------------------------//
 			//--- we need to return prematurely, to allow the	---//
 			//--- thread to process. it will handle dialog		---//
-			//--- clean up												---//
-			//----------------------------------------------------//
+			//--- clean up										---//
+			//-----------------------------------------------------//
 			return;
 		}
 	}
@@ -389,6 +389,8 @@ void MusikLibraryFrame::PathsListRemoveSel()
 			i--;
 		}
 	}
+
+	PathsSave();
 	bRebuild = true;
 }
 
@@ -419,27 +421,113 @@ void MusikLibraryFrame::PathsListAdd()
 		wxString sPath = dlgBrowse->GetPath();
 		if ( ( sPath != wxT("") ) && ( sPath != wxT("\\") ) )
 		{	
-		#if defined (__WXMSW__)
-			if ( sPath.Right( 1 ) != wxT("\\") )
-				sPath = sPath + wxT("\\");
-		#else
-			if ( sPath.Right( 1 ) != wxT("/") )
-				sPath = sPath + wxT("/");
-		#endif
-			lcPaths->InsertItem( lcPaths->GetItemCount(), sPath );
-			lcPaths->SetItem( lcPaths->GetItemCount()-1, 1, wxT("-"), -1 );
-			lcPaths->SetItem( lcPaths->GetItemCount()-1, 2, wxT("-"), -1 );
+			#if defined (__WXMSW__)
+				if ( sPath.Right( 1 ) != wxT("\\") )
+					sPath = sPath + wxT("\\");
+			#else
+				if ( sPath.Right( 1 ) != wxT("/") )
+					sPath = sPath + wxT("/");
+			#endif
+
+			if ( ValidatePath( sPath ) )
+			{
+				lcPaths->InsertItem( lcPaths->GetItemCount(), sPath );
+				lcPaths->SetItem( lcPaths->GetItemCount()-1, 1, wxT("-"), -1 );
+				lcPaths->SetItem( lcPaths->GetItemCount()-1, 2, wxT("-"), -1 );
+
+				PathsSave();
+				bRebuild = true;
+			}
 		}
 	}
 	delete dlgBrowse;
-
-	PathsSave();
-	bRebuild = true;
 }
 
 //------------//
 //--- Misc ---//
 //------------//
+bool MusikLibraryFrame::ValidatePath( wxString sPath )
+{
+	if ( g_Paths.GetCount() == 0 )
+		return true;
+
+	//--- loop through other paths, seeing if there is a conflict ---//
+	wxString	sOldPath;
+	wxString	sConflicts;
+	wxArrayInt	aConflicts;
+
+	#ifdef __WXMSW___
+		sPath.MakeLower();
+	#endif
+
+	for ( size_t i = 0; i < g_Paths.GetCount(); i++ )
+	{
+		sOldPath = g_Paths.Item( i );
+
+		#ifdef __WXMSW___
+			sOldPath.MakeLower();
+		#endif
+
+		//---------------------------------------------------------//
+		//--- if the new path equals the old path then return	---//
+		//---------------------------------------------------------//
+		if ( sPath == sOldPath )
+		{
+			wxMessageBox( wxT( "The path entered already exists." ), MUSIK_VERSION, wxICON_INFORMATION );
+			return false;
+		}
+
+		//---------------------------------------------------------//
+		//--- if new path is longer than path we're checking	---//
+		//--- against, it will be a child folder. see if they	---//
+		//--- have the same root								---//
+		//---------------------------------------------------------//
+		if ( sPath.Length() > sOldPath.Length() )
+		{
+			if ( sPath.Find( sOldPath ) > -1 )
+			{
+				wxMessageBox( wxT( "The path entered is already contained within the following path's scope:\n\n" ) + g_Paths.Item( i ), MUSIK_VERSION, wxICON_INFORMATION );
+				return false;
+			}
+		}
+
+		//---------------------------------------------------------//
+		//--- if the old path is longer than the path we're		---//
+		//--- checking against, it may be a path's parent dir	---//
+		//---------------------------------------------------------//
+		else 
+		{
+			if ( sOldPath.Find( sPath ) > -1 )
+			{
+				sConflicts += g_Paths.Item( i ) + wxT( "\n" );
+				aConflicts.Add( i );
+			}
+		}
+
+	}
+
+	//-----------------------------------------------------//
+	//--- display conflicts and ask user what to do		---//
+	//-----------------------------------------------------//
+	if ( sConflicts.Length() > 0 )
+	{
+		if ( wxMessageBox( wxT( "The path entered conflicts with the following paths:\n\n" ) + sConflicts + wxT( "\nWould you like Musik to fix this conflict for you?" ), MUSIK_VERSION, wxICON_INFORMATION | wxYES_NO ) == wxYES )
+		{
+			size_t nCount = g_Paths.GetCount();
+		
+			for ( size_t i = 0; i < nCount; i++ )
+				lcPaths->DeleteItem( aConflicts.Item( i ) - i );
+
+			return true;
+		}
+		else 
+			return false;
+	}
+	
+
+	return true;
+}
+
 void MusikLibraryFrame::ClearLibrary()
 {
 	if ( wxMessageBox( _("This will wipe the library clean. Are you ABSOLUTELY SURE you want to do this?"), MUSIK_VERSION, wxYES_NO|wxICON_QUESTION  ) == wxYES )

@@ -170,12 +170,14 @@ bool CMusikLibrary::FileInLibrary( const wxString & filename, bool fullpath )
 
 void CMusikLibrary::AddItem( const wxString & filename )
 {
+	//-----------------------------------------------------//
+	//--- we don't need to worry about duplicate files	---//
+	//--- becuase the MusikLibraryFrame will take care	---//
+	//--- of any conflicts.								---//
+	//-----------------------------------------------------//
 	//wxMutexLocker lock( LibMutex );
 
 	if ( filename.IsEmpty() )
-		return;
-
-	if ( FileInLibrary( filename, true ) )
 		return;
 
 	//--- get format ---//

@@ -85,7 +85,8 @@ void *MusikUpdateLibThread::Entry()
 			nLastProg = nCurrProg;
 			
 			//--- add the item ---//
-			g_Library.AddItem( aFileList.Item( i ) );
+			if ( !g_Library.FileInLibrary( aFileList.Item( i ), true ) )
+				g_Library.AddItem( aFileList.Item( i ) );
 		}
 
 	}
