@@ -28,7 +28,7 @@ END_EVENT_TABLE()
 
 //--- default constructor ---//
 MusikVolumeFrame::MusikVolumeFrame( wxFrame* pParent, wxPoint pos )
-	: wxFrame( pParent, -1, wxT("Playback Control"), pos, wxSize( 16, 90 ), wxFRAME_FLOAT_ON_PARENT | wxFRAME_NO_TASKBAR | wxSIMPLE_BORDER | wxCLIP_CHILDREN )
+	: wxFrame( pParent, -1, wxT("Playback"), pos, wxSize( 16, 90 ), wxCAPTION | wxFRAME_FLOAT_ON_PARENT | wxFRAME_NO_TASKBAR | wxCLIP_CHILDREN )
 {
 	//------------------------------//
 	//--- initialize needed vars ---//
