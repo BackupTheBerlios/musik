@@ -245,6 +245,8 @@ void CNowPlayingCtrl::UpdateTime()
 {
 	if ( !g_TimeSeeking )
 	{
+		Freeze();
+
 		float fPos = (float)100* ( (float)g_Player.GetTime( FMOD_SEC ) / (float)g_Player.GetDuration( FMOD_SEC ) );
 	
 		//-----------------------------------------------------//
@@ -261,6 +263,8 @@ void CNowPlayingCtrl::UpdateTime()
 
 		//--- time label ---//
 		stCurtime->SetLabel( wxT( " - " ) + g_Player.GetTimeStr() );
+
+		Thaw();
 	}
 }
 
@@ -285,6 +289,8 @@ void CNowPlayingCtrl::ResetInfo()
 
 void CNowPlayingCtrl::UpdateInfo( wxString sFilename )
 {
+	Freeze();
+
 	//--- first things first, verify data in song ---//
 	CMusikSong song;
 	g_Library.GetSongFromFilename( sFilename, &song );
@@ -305,6 +311,8 @@ void CNowPlayingCtrl::UpdateInfo( wxString sFilename )
 	stSong->SetLabel( song.Title );
 	stArtist->SetLabel( song.Artist );
 	stCurtime->SetLabel( wxT( " - 0:00 " ) );
+
+	Thaw();
 
 	Layout();
 }
