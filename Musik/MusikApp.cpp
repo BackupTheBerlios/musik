@@ -133,8 +133,6 @@ bool MusikApp::OnInit()
 
 void MusikApp::CheckVersion()
 {
-	bool bSavePrefs = false;
-
 	wxString sVersion;
 	if ( wxFileExists( MUSIK_VERSION_FILENAME ) )
 	{
@@ -197,3 +195,4 @@ void MusikApp::WriteVersion()
 		ver.Close();
 	}
 }
+

@@ -219,15 +219,15 @@ void MusikFrame::LoadImageLists()
 	g_NullImageList = new wxImageList( 1, 1, true );
 
 	//--- sources image list ---//
-	g_SourcesImages = new wxImageList( 16, 20, true );
+	g_SourcesImages = new wxImageList( 20, 20, true );
 	bmpLibrary	= wxIcon( library_xpm );
 	bmpPlaylist = wxIcon( standard_xpm );
 	bmpDynamic	= wxIcon( dynamic_xpm );
-
+	
 	g_SourcesImages->Add( bmpLibrary );
 	g_SourcesImages->Add( bmpPlaylist );
 	g_SourcesImages->Add( bmpDynamic );
-
+	
 	//--- ratings image list ---//
 	g_RatingImages = new wxImageList( 32, 14, true );
 	bmpRating0 = wxIcon( rating0_xpm );
