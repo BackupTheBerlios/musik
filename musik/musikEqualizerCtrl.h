@@ -40,6 +40,10 @@ public:
 	CmusikEqualizerBar( CmusikLibrary* library, CmusikPlayer* player, CmusikPrefs* prefs );
 	virtual ~CmusikEqualizerBar();
 
+	// getting and setting equalizer
+	void GetActiveEqualizer( CmusikEQSettings* settings );
+	void SetActiveEqualizer( const CmusikEQSettings& settings );
+
 	// virtual
 	virtual void OnOptions();
 
@@ -92,6 +96,7 @@ enum
 class CmusikEqualizerCtrl : public CWnd
 {
 	friend class CmusikEqualizerSets;
+	friend class CmusikEqualizerBar;
 
 public:
 

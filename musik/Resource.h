@@ -23,6 +23,7 @@
 #define IDR_EQUALIZER_MENU              142
 #define IDR_SELECTION_BOX_MENU          143
 #define IDR_SOURCES_MENU                144
+#define IDD_NAME_ENTRY                  145
 #define IDC_CHECK_STARTUPSCAN           1007
 #define IDC_CHECK_PL_STRIPES            1009
 #define IDC_COMBO1                      1010
@@ -75,6 +76,7 @@
 #define IDC_SAVE_ACTIVE_AS_NEW          1039
 #define IDC_LIST2                       1040
 #define IDC_DIRS                        1040
+#define IDC_PRESET_BOX                  1040
 #define IDC_LIST1                       1042
 #define IDC_BUTTON5                     1043
 #define IDC_DELETE_SEL                  1043
@@ -86,6 +88,8 @@
 #define IDC_BUTTON9                     1047
 #define IDC_CLOSE_DLG                   1047
 #define IDC_IPADDRESS1                  1048
+#define IDC_EDIT                        1049
+#define IDC_TAB1                        1050
 #define ID_FILE_PREFERENCES             32771
 #define ID_FILE_SEP                     32772
 #define ID_ADD_FILES                    32774
@@ -161,9 +165,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        145
+#define _APS_NEXT_RESOURCE_VALUE        146
 #define _APS_NEXT_COMMAND_VALUE         32867
-#define _APS_NEXT_CONTROL_VALUE         1049
+#define _APS_NEXT_CONTROL_VALUE         1051
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

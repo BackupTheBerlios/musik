@@ -1089,7 +1089,7 @@ LRESULT CmusikSourcesCtrl::OnEditCommit( WPARAM wParam, LPARAM lParam )
 	{
 		if ( pItem )
 		{
-			pItem->SetLabelText( "Search..." );
+			m_QuickSearch->SetLabelText( "Search..." );
 			FinishQuickSearch();
 		}
 	}

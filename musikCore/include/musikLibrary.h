@@ -210,7 +210,7 @@ public:
 	int  UpdateEqualizer			( int id, const CmusikEQSettings& eq );
 	int  GetEqualizerIDFromSongID	( int id );
 	int  GetEqualizerFromName		( const CStdString& name );
-	int  GetAllEqualizerPresets		( CStdStringArray* target, bool clear_target = true );
+	int  GetAllEqualizerPresets		( CStdStringArray* target, CIntArray* target_ids = NULL, bool clear_targets = true );
 	int  GetDefaultEqualizer		( CmusikEQSettings* eq );
 	int  UpdateDefaultEqualizer		( const CmusikEQSettings& eq );
 	int  InitDefaultEqualizer		( );

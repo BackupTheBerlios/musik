@@ -17,11 +17,13 @@ public:
 	CmusikDirSync( CWnd* pParent = NULL, CmusikLibrary* pLibrary = NULL );
 	virtual ~CmusikDirSync();
 
-	// message maps
+	// message maps and overrides
 	afx_msg void OnBnClickedClose();
 	afx_msg void OnBnClickedRemove();
 	afx_msg void OnBnClickedAdd();
 	virtual BOOL OnInitDialog();
+	afx_msg void OnClose();
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
 	// dialog data
 	enum { IDD = IDD_DIR_SYNC };

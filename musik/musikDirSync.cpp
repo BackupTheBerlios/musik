@@ -41,20 +41,14 @@ BEGIN_MESSAGE_MAP(CmusikDirSync, CDialog)
 	ON_BN_CLICKED(IDC_REMOVE, OnBnClickedRemove)
 	ON_BN_CLICKED(IDC_ADD, OnBnClickedAdd)
 	ON_WM_CHAR()
+	ON_WM_CLOSE()
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
 
 void CmusikDirSync::OnBnClickedClose()
 {
-	if ( m_Changed )
-	{
-		if ( MessageBox( _T( "Your path synchronization configuration has changed. Resynchronize now?" ), MUSIK_VERSION_STR, MB_ICONINFORMATION | MB_YESNO ) == IDNO )
-			m_Changed = false;
-	}
-
-	int WM_CLOSEDIRSYNC	= RegisterWindowMessage( "CLOSEDIRSYNC" );
-	GetParent()->PostMessage( WM_CLOSEDIRSYNC, (WPARAM)m_Changed, NULL );
+	OnClose();
 }
 
 ///////////////////////////////////////////////////
@@ -208,6 +202,33 @@ bool CmusikDirSync::ValidatePath( const CString& path )
 	
 
 	return true;
+}
+
+///////////////////////////////////////////////////
+
+void CmusikDirSync::OnClose()
+{
+	if ( m_Changed )
+	{
+		if ( MessageBox( _T( "Your path synchronization configuration has changed. Resynchronize now?" ), MUSIK_VERSION_STR, MB_ICONINFORMATION | MB_YESNO ) == IDNO )
+			m_Changed = false;
+	}
+
+	int WM_CLOSEDIRSYNC	= RegisterWindowMessage( "CLOSEDIRSYNC" );
+	GetParent()->PostMessage( WM_CLOSEDIRSYNC, (WPARAM)m_Changed, NULL );
+}
+
+///////////////////////////////////////////////////
+
+BOOL CmusikDirSync::PreTranslateMessage(MSG* pMsg)
+{
+	if ( pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_ESCAPE )
+	{
+		OnClose();
+		return true;
+	}
+
+	return CDialog::PreTranslateMessage(pMsg);
 }
 
 ///////////////////////////////////////////////////

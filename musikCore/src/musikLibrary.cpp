@@ -74,9 +74,6 @@
 
 static int sqlite_AddSongToPlaylist(void *args, int numCols, char **results, char ** columnNames )
 {
-	// this is a callback for sqlite to use when
-	// adding songs to a CmusikPlaylist
-
 	CmusikPlaylist* p = (CmusikPlaylist*)args;
 
 	CmusikSong *pLibItem = new CmusikSong();
@@ -93,9 +90,6 @@ static int sqlite_AddSongToPlaylist(void *args, int numCols, char **results, cha
 
 static int sqlite_GetFieldFromID( void *args, int numCols, char **results, char ** columnNames )
 {
-	// this is a callback for sqlite to use when
-	// finding a song's field
-
 	CStdString* p = (CStdString*)args;
 	*p = CStdString( results[0] ); 
 
@@ -173,9 +167,6 @@ static int sqlite_GetEqualizer( void *args, int numCols, char **results, char **
 
 static int sqlite_GetSongInfoFromID( void *args, int numCols, char **results, char ** columnNames )
 {
-	// this is a callback for sqlite to use when
-	// getting CmusikSongInfo info
-
 	CmusikSongInfo* p = (CmusikSongInfo*)args;
 
 	p->SetTrackNum		( results[0] );
@@ -204,9 +195,6 @@ static int sqlite_GetSongInfoFromID( void *args, int numCols, char **results, ch
 
 static int sqlite_AddSongToStringArray( void *args, int numCols, char **results, char ** columnNames )
 {
-	// this is a callback for sqlite to use when 
-	// adding items (fields) to a CStdStringArray	
-
 	CStdStringArray* p = (CStdStringArray*)args;
 	p->push_back( results[0] ); 
 
@@ -217,9 +205,6 @@ static int sqlite_AddSongToStringArray( void *args, int numCols, char **results,
 
 static int sqlite_GetIntFromRow( void *args, int numCols, char **results, char ** columnNames )
 {
-	// this is a callback for sqlite to use when 
-	// finding the song id from a filename	
-
 	int* n = (int*)args;
 	*n = atoi( results[0] ); 
 
@@ -230,9 +215,6 @@ static int sqlite_GetIntFromRow( void *args, int numCols, char **results, char *
 
 static int sqlite_AddRowToStringArray( void *args, int numCols, char **results, char ** columnNames )
 {
-	// this is a callback for sqlite to use when 
-	// adding playlist names to a CStdStringArray	
-
 	CStdStringArray* p = (CStdStringArray*)args;
 	p->push_back( results[0] ); 
 
@@ -243,9 +225,6 @@ static int sqlite_AddRowToStringArray( void *args, int numCols, char **results, 
 
 static int sqlite_AddRowToIntArray( void *args, int numCols, char **results, char ** columnNames )
 {
-	// this is a callback for sqlite to use when 
-	// adding playlist names to a CIntArray	
-
 	CIntArray* p = (CIntArray*)args;
 	p->push_back( atoi( results[0] ) ); 
 
@@ -255,9 +234,6 @@ static int sqlite_AddRowToIntArray( void *args, int numCols, char **results, cha
 
 static int sqlite_AddStdPlaylistInfoArray( void *args, int numCols, char **results, char ** columnNames )
 {
-	// this is a callback for sqlite to use when 
-	// adding std playlist info to an array	
-
 	CmusikPlaylistInfoArray* p = (CmusikPlaylistInfoArray*)args;
 	
 	CmusikPlaylistInfo info ( results[0], MUSIK_PLAYLIST_TYPE_STANDARD, atoi( results[1] ) );
@@ -270,9 +246,6 @@ static int sqlite_AddStdPlaylistInfoArray( void *args, int numCols, char **resul
 
 static int sqlite_AddDynPlaylistInfoArray( void *args, int numCols, char **results, char ** columnNames )
 {
-	// this is a callback for sqlite to use when 
-	// adding std playlist info to an array	
-
 	CmusikPlaylistInfoArray* p = (CmusikPlaylistInfoArray*)args;
 	
 	CmusikPlaylistInfo info ( results[0], MUSIK_PLAYLIST_TYPE_DYNAMIC, atoi( results[1] ) );
@@ -2389,20 +2362,45 @@ int CmusikLibrary::GetEqualizer( int eq_id, CmusikEQSettings* target )
 
 ///////////////////////////////////////////////////
 
-int  CmusikLibrary::GetAllEqualizerPresets( CStdStringArray* target, bool clear_target )
+// this could probably be a bit faster,
+// but i seriously doubt anyone will
+// ever notice unless they have something
+// like 10,000 equalizer presets on a 486 
+
+int  CmusikLibrary::GetAllEqualizerPresets( CStdStringArray* target, CIntArray* target_ids, bool clear_targets )
 {
 	if ( !m_DatabaseOpen )
 		return -1;
 
-	int nRet;
-	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	if ( clear_targets )
 	{
-		nRet = sqlite_exec_printf( m_pDB, "SELECT equalizer_name FROM %Q WHERE equalizer_is_preset = 1;",
-			&sqlite_AddRowToStringArray, target, NULL,
-			EQUALIZER_PRESET );
+		target->clear();
+
+		if ( target_ids )
+			target_ids->clear();
 	}
 
-	return nRet;
+	int nRet1, nRet2 = 0;
+	BeginTransaction();
+	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	{
+		nRet1 = sqlite_exec_printf( m_pDB, "SELECT equalizer_name FROM %Q WHERE equalizer_is_preset = 1 order by equalizer_id;",
+			&sqlite_AddRowToStringArray, target, NULL,
+			EQUALIZER_PRESET );
+
+		if ( target_ids )
+		{
+			nRet2 = sqlite_exec_printf( m_pDB, "SELECT equalizer_id FROM %Q WHERE equalizer_is_preset = 1 order by equalizer_id;",
+				&sqlite_AddRowToIntArray, target_ids, NULL,
+				EQUALIZER_PRESET );	
+		}
+	}
+	EndTransaction();
+
+	if ( nRet1 != 0 )
+		return nRet1;
+
+	return nRet2;
 }
 
 ///////////////////////////////////////////////////

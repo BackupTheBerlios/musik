@@ -124,7 +124,7 @@ void CmusikEqualizerBar::OnEqualizerPresets()
 {
 	if ( !m_Presets )
 	{
-		m_Presets = new CmusikEqualizerSets( this );
+		m_Presets = new CmusikEqualizerSets( this, GetCtrl()->m_Library );
 		m_Presets->Create( IDD_EQUALIZER_SETS, this );
 		m_Presets->ShowWindow( SW_SHOW );
 	}	
