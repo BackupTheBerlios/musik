@@ -158,7 +158,7 @@ CmusikPlaylistCtrl::CmusikPlaylistCtrl( CFrameWnd* mainwnd, CmusikLibrary* libra
 	// icon that appears when a visible song
 	// is playing...
 	m_ImageList = new CImageList();
-	m_ImageList->Create( 0, 16, ILC_COLOR32, 0, 0 );
+	m_ImageList->Create( 1, 16, ILC_COLOR32, 0, 0 );
 }
 
 ///////////////////////////////////////////////////

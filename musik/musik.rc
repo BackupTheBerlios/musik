@@ -850,8 +850,6 @@ END
 
 IDB_DOWN                BITMAP                  "idb_down.bmp"
 IDB_UP                  BITMAP                  "idb_up.bmp"
-IDB_SONG_PLAYING        BITMAP                  "res\\bitmap2.bmp"
-IDB_SONG_NOTPLAYING     BITMAP                  "res\\bitmap3.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //

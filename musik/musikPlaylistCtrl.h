@@ -154,6 +154,7 @@ protected:
 	void InitFonts();
 	CFont m_StarFont;
 	CFont m_ItemFont;
+	CFont m_BoldFont;
 
 	// rating ***** text extent
 	void GetRatingExtent();
