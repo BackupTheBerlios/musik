@@ -57,7 +57,7 @@ CMusikSongInfo::~CMusikSongInfo()
 
 ///////////////////////////////////////////////////
 
-const CStdString& CMusikSongInfo::GetField( int field )
+CStdString CMusikSongInfo::GetField( int field )
 {
 	switch( field )
 	{

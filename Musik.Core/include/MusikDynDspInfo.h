@@ -84,12 +84,22 @@ public:
 	void Set( int from, int to )
 	{ 
 		// set the current item range
-		m_ItemRange.Set( from, to );
+		m_ItemRange.Set( from, to + 1 );
 
 		// same item range as before, just return.
+		/*
 		if ( m_ItemRange.GetFirst() == m_LastItemRange.GetFirst() && 
 			 m_ItemRange.GetLast() == m_LastItemRange.GetLast() )
 			 return;
+			 */
+
+		// we got a 0,0 range, so check to see if there
+		// are any songs in the playlist. if there are
+		// not then that means nothing has been selected,
+		// and this cache hint was sent even though its not
+		// needed. just return.
+		if ( m_ItemRange.GetLast() > m_Songs->size() )
+			return;
 
 		//
 		char buffer[32];
@@ -100,11 +110,13 @@ public:
 		//
 
 		// grab all the new items
-		items()->clear();
+		m_Items.clear();
 		CMusikSongInfo item;
-		for ( int i = m_ItemRange.GetFirst(); i <= m_ItemRange.GetLast(); i++ )
+		int nID;
+		for ( int i = m_ItemRange.GetFirst(); i < m_ItemRange.GetLast(); i++ )
 		{
-			m_Library->GetSongInfoFromID( m_Songs->items()->at( i ).GetID(), &item );
+			nID = m_Songs->items()->at( i ).GetID();
+			m_Library->GetSongInfoFromID( nID, &item );
 			m_Items.push_back( item );
 		}
 		

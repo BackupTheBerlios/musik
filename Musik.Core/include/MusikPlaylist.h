@@ -89,27 +89,27 @@ public:
 	void SetID( int id ){ m_ID = id; }
 	void Update();
 	
-	const int&			GetID()				{ return m_ID; }
-	const CStdString&	GetFilename()		{ return m_Filename; }
-	const CStdString&	GetTitle()			{ return m_Title; }
-	const CStdString&	GetTrackNum()		{ return m_TrackNum; }
-	const CStdString&	GetArtist()			{ return m_Artist; }
-	const CStdString&	GetAlbum()			{ return m_Album; }
-	const CStdString&	GetGenre()			{ return m_Genre; }
-	const CStdString&	GetDuration()		{ return m_Duration; }
-	const CStdString&	GetFormat()			{ return m_Format; }
-	const CStdString&	GetVBR()			{ return m_VBR; }
-	const CStdString&	GetYear()			{ return m_Year; }
-	const CStdString&	GetRating()			{ return m_Rating; }
-	const CStdString&	GetBitrate()		{ return m_Bitrate; }
-	const CStdString&	GetLastPlayed()		{ return m_LastPlayed; }
-	const CStdString&	GetNotes()			{ return m_Notes; }
-	const CStdString&	GetTimesPlayed()	{ return m_TimesPlayed; }
-	const CStdString&	GetTimeAdded()		{ return m_TimeAdded; }
-	const CStdString&	GetFilesize()		{ return m_Filesize; }
-	const CStdString&	GetDirtyFlag()		{ return m_Dirty; }
+	int			GetID()				{ return m_ID; }
+	CStdString	GetFilename()		{ return m_Filename; }
+	CStdString	GetTitle()			{ return m_Title; }
+	CStdString	GetTrackNum()		{ return m_TrackNum; }
+	CStdString	GetArtist()			{ return m_Artist; }
+	CStdString	GetAlbum()			{ return m_Album; }
+	CStdString	GetGenre()			{ return m_Genre; }
+	CStdString	GetDuration()		{ return m_Duration; }
+	CStdString	GetFormat()			{ return m_Format; }
+	CStdString	GetVBR()			{ return m_VBR; }
+	CStdString	GetYear()			{ return m_Year; }
+	CStdString	GetRating()			{ return m_Rating; }
+	CStdString	GetBitrate()		{ return m_Bitrate; }
+	CStdString	GetLastPlayed()		{ return m_LastPlayed; }
+	CStdString	GetNotes()			{ return m_Notes; }
+	CStdString	GetTimesPlayed()	{ return m_TimesPlayed; }
+	CStdString	GetTimeAdded()		{ return m_TimeAdded; }
+	CStdString	GetFilesize()		{ return m_Filesize; }
+	CStdString	GetDirtyFlag()		{ return m_Dirty; }
 
-	const CStdString&	GetField( int field );
+	CStdString	GetField( int field );
 
 protected:
 	int m_ID;
