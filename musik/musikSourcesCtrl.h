@@ -77,15 +77,6 @@ class CmusikSourcesCtrl;
 
 ///////////////////////////////////////////////////
 
-enum 
-{
-	MUSIK_SOURCES_TYPE_QUICKSEARCH = MUSIK_PLAYLIST_TYPE_COUNT,
-	MUSIK_SOURCES_TYPE_NEWSUBLIBRARY,
-	MUSIK_SOURCES_TYPE_NEWSTDPLAYLIST
-};
-
-///////////////////////////////////////////////////
-
 enum
 {
 	MUSIK_SOURCES_EDITINPLACE_RENAME = 493,

@@ -464,13 +464,13 @@ LONG CmusikPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 		{
 			gutterBrush.CreateSolidBrush( m_pProp->m_Prefs->MUSIK_COLOR_ACTIVECAPTION );
 			hOld = pDC->SelectObject( gutterBrush );
-			pDC->PatBlt( rc.left, drc.top, 8, drc.Height(), PATCOPY);
+			pDC->PatBlt( rc.left, drc.top, 6, drc.Height(), PATCOPY);
 		}
 		else
 		{
 			gutterBrush.CreateSolidBrush( m_pProp->m_Prefs->MUSIK_COLOR_BTNFACE );
 			hOld = pDC->SelectObject( gutterBrush );
-			pDC->PatBlt( rc.left, drc.top, 8, drc.Height(), PATCOPY);
+			pDC->PatBlt( rc.left, drc.top, 6, drc.Height(), PATCOPY);
 		}
 
 		pDC->SelectObject(hOld);
@@ -546,15 +546,12 @@ LONG CmusikPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 		DeleteObject(hRgn);
 	}	
 
-	// draw horzontal sep
-	// top and bottom
+	// horizontal separators
 	if ( IsSelected() )
 	{
-		HLine( pDC->m_hDC, 8, pt.y, rc.right, m_pProp->m_Prefs->MUSIK_COLOR_BTNFACE );
-		HLine( pDC->m_hDC, 8, pt.y + nTotal - 1, rc.right, m_pProp->m_Prefs->MUSIK_COLOR_BTNFACE );
+		HLine( pDC->m_hDC, 6, pt.y, rc.right, m_pProp->m_Prefs->MUSIK_COLOR_BTNFACE );
+		HLine( pDC->m_hDC, 6, pt.y + nTotal - 1, rc.right, m_pProp->m_Prefs->MUSIK_COLOR_BTNFACE );
 	}
-	else if ( IsRootLevel() )
-		HLine( pDC->m_hDC, 0, pt.y + nTotal - 1, rc.right, m_pProp->m_Prefs->MUSIK_COLOR_BTNFACE );
 
 	// draw children
 	if (GetChild() && IsExpanded())

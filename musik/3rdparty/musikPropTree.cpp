@@ -993,6 +993,10 @@ void CmusikPropTree::OnLButtonDown(UINT, CPoint point)
 				if ( pItem->IsRootLevel() )
 					return;
 
+				if ( pItem->GetPlaylistType() == MUSIK_SOURCES_TYPE_NEWSUBLIBRARY ||
+					 pItem->GetPlaylistType() ==MUSIK_SOURCES_TYPE_NEWSTDPLAYLIST )
+					 break;
+
 				SelectItems(NULL, FALSE);
 				SetFocusedItem(pItem);
 
@@ -1022,43 +1026,25 @@ void CmusikPropTree::OnLButtonDblClk(UINT, CPoint point)
 	CmusikPropTreeItem* pItem;
 	CmusikPropTreeItem* pOldFocus;
 
-	if ((pItem = FindItem(point))!=NULL && pItem->GetChild())
+	if ( (pItem = FindItem(point))!=NULL )
 	{
-		switch (HitTest(point))
-		{
-			case HTATTRIBUTE:
-				if (!pItem->IsRootLevel())
-					break;
 
-				// pass thru to default
+		CmusikPropTreeItem* pOldFocus = GetFocusedItem();
 
-			default:
-				if ( !pItem->IsRootLevel() )
-				{
-					pOldFocus = GetFocusedItem();
-					SelectItems(NULL, FALSE);
-					SetFocusedItem(pItem);
-					pItem->Select();
+		if ( pItem->IsRootLevel() )
+			return;
 
-					if (pItem!=pOldFocus)
-						SendNotify(PTN_SELCHANGE, pItem);
-				}
+		SelectItems(NULL, FALSE);
+		SetFocusedItem(pItem);
 
-				// pass thru to HTEXPAND
+		pItem->Select();
 
-			case HTEXPAND:
-				if (!SendNotify(PTN_ITEMEXPANDING, pItem))
-				{
-					pItem->Expand(!pItem->IsExpanded());
+		Invalidate();
 
-					UpdateResize();
-					Invalidate();
-					UpdateWindow();
-					CheckVisibleFocus();
-				}
-				break;
-		}
+		if (pItem!=pOldFocus)
+			SendNotify(PTN_SELCHANGE, pItem);
 	}
+
 }
 
 ///////////////////////////////////////////////////
