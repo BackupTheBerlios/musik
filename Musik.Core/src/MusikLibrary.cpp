@@ -441,27 +441,28 @@ void CMusikLibrary::GetRelatedItems( int source_type, const CStdStringArray& sou
 		VerifyYearList( target );
 }
 
-void CMusikLibrary::GetRelatedItems( CStdString sub_query, int order_by, CStdStringArray& target )
+void CMusikLibrary::GetRelatedItems( CStdString sub_query, int dst_type, CStdStringArray& target )
 {
 	target.clear();
-	sub_query += GetOrder( order_by );
-    
-	//-----------------------------------------------------//
-	//--- get sorting order								---//
-	//-----------------------------------------------------//
-	sub_query += GetOrder( order_by );
+	CStdString sOutType = GetSongFieldDB( dst_type );
+
+	CStdString query;
+	query.Format( _T( "select distinct %s,UPPER(%s) as UP from songs where %s;" ), 
+		sOutType.c_str(), 
+		sOutType.c_str(), 
+		sub_query.c_str() );
 
 	//-----------------------------------------------------//
 	//--- lock it up and run the query					---//
 	//-----------------------------------------------------//
 	boost::mutex::scoped_lock scoped_lock( m_ProtectingLibrary );
-	sqlite_exec(m_pDB, sub_query.c_str(), &sqlite_AddSongToStringArray, &target, NULL);
+	sqlite_exec(m_pDB, query.c_str(), &sqlite_AddSongToStringArray, &target, NULL);
 
 	//-----------------------------------------------------//
 	//--- if target is years, verify only years			---//
 	//--- get displayed.								---//
 	//-----------------------------------------------------//
-	if ( order_by == MUSIK_LIBRARY_TYPE_YEAR )
+	if ( dst_type == MUSIK_LIBRARY_TYPE_YEAR )
 		VerifyYearList( target );
 }
 
