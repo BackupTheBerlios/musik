@@ -1,24 +1,37 @@
+///////////////////////////////////////////////////
+
 #ifndef C_MUSIK_PLAYER_H
 #define C_MUSIK_PLAYER_H
 
-#include "boost/thread/mutex.hpp"
-#include "boost/thread/thread.hpp"
+///////////////////////////////////////////////////
+
+#include "ace/Thread.h"
+#include "ace/Synch.h"
 
 #include "MusikPlaylist.h"
 #include "fmod.h"
 
+///////////////////////////////////////////////////
+
 class CMusikLibrary;
+class CMusikPlayerMain;
+class CMusikPlaylist;
 
-int thread_main();
+///////////////////////////////////////////////////
 
-class CMusikPlayer : public boost::thread
+class CMusikPlayer	
 {
-public:
-	CMusikPlayer( CMusikLibrary* library );
+public: 	
+	CMusikPlayer();
 	~CMusikPlayer();
 
 private:
-	CMusikLibrary* m_Library;
+	ACE_Thread_Mutex mutex;
+
 };
 
+///////////////////////////////////////////////////
+
 #endif
+
+///////////////////////////////////////////////////
