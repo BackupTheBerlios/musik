@@ -248,46 +248,58 @@ int CMainFrameWorker::svc()
 	sleep.set( 1.0f );
 
 	bool is_frame_focused = false;
-	int fade_dur = 20;	// 1 second
+	int fade_dur = 5;	// half second ( = seconds * 10 )
 	int unfocused_per = 25;
-	int trans = 0;
+	int trans = unfocused_per;
 
 	CString sCaption;
 	while ( !m_Stop )
 	{
-		if ( !is_frame_focused && GetForegroundWindow() == m_Parent->GetSafeHwnd() )
+		// transparency effects.
+		if ( m_Parent->IsTransEnb() )
 		{
-			for ( int i = 1; i < fade_dur; i++ )
+			if ( !is_frame_focused && GetForegroundWindow() == m_Parent->GetSafeHwnd() )
 			{
-				trans = i * (int)( 255.0f / (float)fade_dur );
-				if ( trans > 255 )
-					trans = 255;
-				else if ( trans < unfocused_per )
-					trans = unfocused_per;
+				if ( trans < 1 )
+					trans = 1;
 
+				if ( unfocused_per < 1 )
+					unfocused_per = 1;
+
+				suspend.set( fade_dur / 10 / ( 1 + ( 255 - unfocused_per ) ) );
+				for ( int i = trans; i < 255 - unfocused_per; i++ )
+				{
+					trans++;
+					m_Parent->SetTransparency( trans );
+					ACE_OS::sleep( suspend );
+				}
+
+				trans = 255;
 				m_Parent->SetTransparency( trans );
-				ACE_OS::sleep( suspend );
+				is_frame_focused = true;
 			}
-
-			m_Parent->SetTransparency( 255 );
-			is_frame_focused = true;
-		}
-		else if ( is_frame_focused && GetForegroundWindow() != m_Parent->GetSafeHwnd() )
-		{
-			for ( int i = 1; i < fade_dur; i++ )
+			else if ( is_frame_focused && GetForegroundWindow() != m_Parent->GetSafeHwnd() )
 			{
-				trans = 255 - (int)( (float)i * ( 255.0f / (float)fade_dur ) );
-				if ( trans < unfocused_per )
-					trans = unfocused_per;
+				if ( trans < 1 )
+					trans = 1;
 
+				if ( unfocused_per < 1 )
+					unfocused_per = 1;
+
+				suspend.set( fade_dur / 10 / ( 1 + ( 255 - unfocused_per ) ) );
+				for ( int i = 1; i < 255 - unfocused_per; i++ )
+				{
+					trans--;
+					m_Parent->SetTransparency( trans );
+					ACE_OS::sleep( suspend );
+				}
+
+				trans = unfocused_per;
 				m_Parent->SetTransparency( trans );
-				ACE_OS::sleep( suspend );
+				is_frame_focused = false;
 			}
-
-			m_Parent->SetTransparency( unfocused_per );
-			is_frame_focused = false;
 		}
-		
+
 		if ( m_Parent->GetTaskCount() )
 		{
 			switch ( pos )
@@ -342,6 +354,7 @@ CMainFrame::CMainFrame( bool autostart )
 {
 	m_AutoStart = autostart;
 	m_SelBoxesVisible = false;
+	m_TransEnb = false;
 
 	m_hIcon16 = ( HICON )LoadImage( AfxGetApp()->m_hInstance, MAKEINTRESOURCE( IDI_MUSIK_16 ), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR );
 	m_hIcon32 = ( HICON )LoadImage( AfxGetApp()->m_hInstance, MAKEINTRESOURCE( IDI_MUSIK_32 ), IMAGE_ICON, 32, 32, LR_DEFAULTCOLOR );
@@ -731,8 +744,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if ( !m_AutoStart && m_Prefs->SynchronizeOnStartup() )
 		SynchronizeDirs();
 
-	InitTrans();
-	//SetTransparency( 255 );
+	m_TransEnb = InitTrans();
 
 	return 0;
 }
@@ -1146,7 +1158,7 @@ void CMainFrame::SetTransparency( int trans )
 
 ///////////////////////////////////////////////////
 
-BOOL CMainFrame::InitTrans()
+bool CMainFrame::InitTrans()
 {
 	// Here we import the function from USER32.DLL
 	HMODULE hUser32 = GetModuleHandle(_T("USER32.DLL"));
@@ -1156,14 +1168,14 @@ BOOL CMainFrame::InitTrans()
 
 	// If the import did not succeed, make sure your app can handle it!
 	if (NULL == m_pSetLayeredWindowAttributes)
-		return FALSE; //Bail out!!!
+		return false; //Bail out!!!
 
 	// Check the current state of the dialog, and then add the 
 		// WS_EX_LAYERED attribute
 	SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) 
 				| WS_EX_LAYERED);
 
-	return TRUE;
+	return true;
 }
 
 ///////////////////////////////////////////////////

@@ -196,7 +196,8 @@ public:
 	// transparency
 	lpfnSetLayeredWindowAttributes m_pSetLayeredWindowAttributes;
 	void SetTransparency( int trans );
-	BOOL InitTrans();
+	bool InitTrans();
+	bool IsTransEnb(){ return m_TransEnb; }
 
 protected: 
 
@@ -360,6 +361,7 @@ protected:
 	// various
 	bool m_PlaylistSel;
 	bool m_AutoStart;
+	bool m_TransEnb;
 };
 
 ///////////////////////////////////////////////////
