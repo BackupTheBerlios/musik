@@ -330,9 +330,14 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 	// to display all the info
 	if ( pSender->IsItemSelected( 0 ) )
 	{
-		pSender->SetItemState( -1, 0, LVIS_SELECTED );
+		CMusikSelectionCtrl::SetUpdating( true );
+
+		pSender->SetItemState( 0, 0, LVIS_SELECTED );
+		pSender->SetParent( false );
 		pSender->UpdateV();
-		pParent->SetParent( false );
+
+		CMusikSelectionCtrl::SetUpdating( false );
+
 		return 0L;
 	}	
 
@@ -359,16 +364,15 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 
 	// go through each box that isn't the sender and
 	// update based on the new information we got
+	CMusikSelectionCtrl::SetUpdating( true );
 	for( size_t i = 0; i < selbox_count; i++ )
 	{
 		pCurr = m_wndSelectionBars[i]->GetCtrl();
+
 		if ( pCurr != pSender && pCurr != pParent )
-		{
-			pCurr->SetUpdating( true );			
 			pCurr->UpdateV( sSender );
-			pCurr->SetUpdating( false );
-		}
 	}
+	CMusikSelectionCtrl::SetUpdating( false );
 
 	m_Library->GetRelatedSongs( sSender, pSender->GetType(), *m_LibPlaylist );
 	m_wndView->GetCtrl()->UpdateV();

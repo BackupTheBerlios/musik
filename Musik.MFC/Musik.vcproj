@@ -70,9 +70,15 @@
 			IntermediateDirectory="Release"
 			ConfigurationType="1"
 			UseOfMFC="2"
-			CharacterSet="2">
+			CharacterSet="2"
+			WholeProgramOptimization="TRUE">
 			<Tool
 				Name="VCCLCompilerTool"
+				Optimization="3"
+				GlobalOptimizations="TRUE"
+				FavorSizeOrSpeed="1"
+				EnableFiberSafeOptimizations="TRUE"
+				OptimizeForWindowsApplication="TRUE"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG"
 				MinimalRebuild="FALSE"
 				RuntimeLibrary="2"
@@ -87,7 +93,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="sqlite.lib boost_thread.lib fmodvc.lib"
 				LinkIncremental="1"
-				GenerateDebugInformation="TRUE"
+				GenerateDebugInformation="FALSE"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"

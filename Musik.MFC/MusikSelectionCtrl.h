@@ -10,6 +10,7 @@ class CMusikLibrary;
 class CMusikSelectionCtrl : public CMusikListCtrl
 {
 	DECLARE_DYNAMIC(CMusikSelectionCtrl)
+	static bool m_Updating;
 
 public:
 	CMusikSelectionCtrl( CFrameWnd* parent, CMusikLibrary* library, int type, int ctrl_id );
@@ -27,11 +28,12 @@ public:
 
 	void			RescaleColumn();
 
-	void SetUpdating( bool updating = true ){ m_Updating = updating; }
 	void SetParent( bool parent = true ){ m_ParentBox = parent; }
 
 	void UpdateV( bool update_count = false );
 	void UpdateV( CStdString query, bool update_count = false );
+
+	static void SetUpdating( bool updating = true ){ m_Updating = updating; }
 
 protected:
 	void InitFonts();
@@ -41,7 +43,6 @@ protected:
 	CStdStringArray m_Items;
 	int m_Type;
 	int m_ID;
-	bool m_Updating;
 	bool m_ParentBox;
 
 	CFont m_Regular;

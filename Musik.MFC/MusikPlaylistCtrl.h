@@ -1,7 +1,7 @@
 #pragma once
 
+#include "MusikListCtrl.h"
 
-// CMusikPlaylistCtrl
 class CMusikLibrary;
 class CMusikPrefs;
 class CMusikPlaylist;

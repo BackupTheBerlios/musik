@@ -8,6 +8,11 @@
 #include ".\musikselectionctrl.h"
 
 ///////////////////////////////////////////////////
+
+bool CMusikSelectionCtrl::m_Updating = false;
+
+///////////////////////////////////////////////////
+
 IMPLEMENT_DYNAMIC(CMusikSelectionCtrl, CMusikListCtrl)
 CMusikSelectionCtrl::CMusikSelectionCtrl( CFrameWnd* parent, CMusikLibrary* library, int type, int ctrl_id )
 {
@@ -15,7 +20,6 @@ CMusikSelectionCtrl::CMusikSelectionCtrl( CFrameWnd* parent, CMusikLibrary* libr
 	m_Type = type;
 	m_Parent = parent;
 	m_ID = ctrl_id;
-	m_Updating = false;
 	m_ParentBox = false;
 	HideScrollBars( LCSB_NCOVERRIDE, SB_HORZ );
 	InitFonts();
@@ -114,10 +118,20 @@ void CMusikSelectionCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 
 	LV_ITEM* pItem = &(pDispInfo)->item;
 
-	const char* pStr = m_Items.at( pItem->iItem ).c_str();
+	// a safeguard... just make sure the item we're
+	// getting passed has a respective value in the
+	// array of items.
+	if ( pItem->iItem > (int)m_Items.size() )
+		lstrcpy( pItem->pszText, "" );
 
-	pItem->cchTextMax = sizeof( *pStr );
-	lstrcpy( pItem->pszText, pStr );
+	// got a valid item, so go ahead and add it.
+	else
+	{
+		const char* pStr = m_Items.at( pItem->iItem ).c_str();
+
+		pItem->cchTextMax = sizeof( *pStr );
+		lstrcpy( pItem->pszText, pStr );
+	}
 
 	*pResult = 0;
 }
