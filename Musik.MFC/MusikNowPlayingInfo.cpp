@@ -3,6 +3,8 @@
 #include "stdafx.h"
 #include "Musik.h"
 
+#include "MEMDC.H"
+
 #include "MusikPrefs.h"
 #include "MusikNowPlayingInfo.h"
 
@@ -105,6 +107,9 @@ int CMusikNowPlayingInfo::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CMusikNowPlayingInfo::Set( CString mask )
 {
+	if ( mask.IsEmpty() )
+		return;
+
 	// clear old items
 	m_Items.clear();
 
@@ -120,8 +125,7 @@ void CMusikNowPlayingInfo::Set( CString mask )
 	};
 
 	// reinitalize the objects
-	if ( !mask.IsEmpty() )
-		InitObjects();
+	InitObjects();
 }
 
 ///////////////////////////////////////////////////
@@ -201,7 +205,7 @@ void CMusikNowPlayingInfo::InitObjects()
 			pTemp->Create( NULL, WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0 ), this );
 
 			pTemp->SetDynFont( m_FontSize, m_FontBold, m_FontItalic );
-			pTemp->SetDynText( "Playback Stopped" );
+			pTemp->SetDynText( "Stopped" );
 			pTemp->SetType( atoi( sCurr.GetBuffer() ) );
 
 			m_Captions.push_back( pTemp );

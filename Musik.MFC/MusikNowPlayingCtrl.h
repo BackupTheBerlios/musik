@@ -20,6 +20,7 @@ public:
 
 	// layout and update
 	void UpdateInfo( bool redraw = true );
+	void RescaleInfo();
 
 protected:
 
@@ -28,7 +29,8 @@ protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 
 	// info object (title/artist/album)
-	CMusikNowPlayingInfo* m_Info;
+	CMusikNowPlayingInfo* m_Info1;
+	CMusikNowPlayingInfo* m_Info2;
 
 	// our player and prefs
 	CMusikPlayer* m_Player;
@@ -40,6 +42,7 @@ protected:
 public:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnDestroy();
+	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 };
 
 ///////////////////////////////////////////////////

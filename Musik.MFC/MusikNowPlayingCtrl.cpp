@@ -11,6 +11,7 @@
 #include "MusikNowPlayingInfo.h"
 
 #include "../Musik.Core/include/MusikPlayer.h"
+#include ".\musiknowplayingctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -37,6 +38,7 @@ BEGIN_MESSAGE_MAP(CMusikNowPlayingCtrl, CWnd)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
 	ON_WM_DESTROY()
+	ON_WM_ERASEBKGND()
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -65,13 +67,18 @@ int CMusikNowPlayingCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CRect rcClient;
 	GetClientRect( &rcClient );
 
-	m_Info = new CMusikNowPlayingInfo( m_Player, m_Prefs );
+	m_Info1 = new CMusikNowPlayingInfo( m_Player, m_Prefs );
+	m_Info2 = new CMusikNowPlayingInfo( m_Player, m_Prefs );
 
-	if ( !m_Info->Create( NULL, NULL, WS_CHILD | WS_VISIBLE, rcClient, this, 123, NULL ) )
+	if ( !m_Info1->Create( NULL, NULL, WS_CHILD | WS_VISIBLE, rcClient, this, 123, NULL ) )
 		return -1;
 
-	m_Info->Set( "%b20 %a4 %c  in the year %a2" );
-	
+	if ( !m_Info2->Create( NULL, NULL, WS_CHILD | WS_VISIBLE, rcClient, this, 123, NULL ) )
+		return -1;
+
+	m_Info1->Set( "%b20 %a4 %c  by %b16 %a0" );
+	m_Info2->Set( "%c from the album %b16 %a1" );
+
 	GetDC()->SetBkColor( GetSysColor( COLOR_BTNHILIGHT ) );
 
 	return 0;
@@ -81,7 +88,9 @@ int CMusikNowPlayingCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CMusikNowPlayingCtrl::UpdateInfo( bool refresh )
 {
-	m_Info->UpdateInfo();
+	m_Info1->UpdateInfo();
+	m_Info2->UpdateInfo();
+	RescaleInfo();
 }
 
 ///////////////////////////////////////////////////
@@ -89,10 +98,7 @@ void CMusikNowPlayingCtrl::UpdateInfo( bool refresh )
 void CMusikNowPlayingCtrl::OnSize(UINT nType, int cx, int cy)
 {
 	CWnd::OnSize(nType, cx, cy);
-
-	CRect lpRect = CRect( CPoint( 0, 0 ), m_Info->GetSize() );
-	m_Info->MoveWindow( lpRect );
-	m_Info->Layout();
+	RescaleInfo();
 }
 
 ///////////////////////////////////////////////////
@@ -101,7 +107,28 @@ void CMusikNowPlayingCtrl::OnDestroy()
 {
 	CWnd::OnDestroy();
 
-	delete m_Info;
+	delete m_Info1;
+	delete m_Info2;
+}
+
+///////////////////////////////////////////////////
+
+void CMusikNowPlayingCtrl::RescaleInfo()
+{
+	CRect lpRect = CRect( CPoint( 0, 0 ), m_Info1->GetSize() );
+	m_Info1->MoveWindow( lpRect );
+	m_Info1->Layout();
+
+	lpRect = CRect( CPoint( 0, m_Info1->GetHeight() ), m_Info2->GetSize() );
+	m_Info2->MoveWindow( lpRect );
+	m_Info2->Layout();
+}
+
+///////////////////////////////////////////////////
+
+BOOL CMusikNowPlayingCtrl::OnEraseBkgnd(CDC* pDC)
+{
+	return false;
 }
 
 ///////////////////////////////////////////////////
