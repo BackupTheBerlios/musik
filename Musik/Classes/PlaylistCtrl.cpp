@@ -404,15 +404,17 @@ void CPlaylistCtrl::TranslateKeys( wxKeyEvent& pEvent )
 //---------------------------------------------------//
 wxString CPlaylistCtrl::OnGetItemText(long item, long column) const
 {
-/*
+	//-----------------------------------------------------//
+	//--- FindColumnOrder() should already have fired	---//
+	//--- so go ahead and add the items.				---//
+	//-----------------------------------------------------//
+
+	size_t nCurrType = m_ColumnOrder.Item( column );
+
     const CMusikSong & song = g_Playlist.Item ( item );
-	switch ( column )
+	switch ( nCurrType )
 	{
 	case PLAYLISTCOLUMN_RATING:
-		break;
-
-	case PLAYLISTCOLUMN_TITLE:
-		return SanitizedString( song.Title );		
 		break;
 
 	case PLAYLISTCOLUMN_TRACK:
@@ -422,8 +424,8 @@ wxString CPlaylistCtrl::OnGetItemText(long item, long column) const
 			return wxT( "-" );
 		break;
 
-	case PLAYLISTCOLUMN_TIME:
-		return MStoStr( song.Duration );
+	case PLAYLISTCOLUMN_TITLE:
+		return SanitizedString( song.Title );		
 		break;
 
 	case PLAYLISTCOLUMN_ARTIST:
@@ -440,13 +442,6 @@ wxString CPlaylistCtrl::OnGetItemText(long item, long column) const
 			return SanitizedString( song.Album );
 		break;
 
-	case PLAYLISTCOLUMN_GENRE:
-		if ( song.Genre == wxT( "<unknown>" ) )
-			return wxT( "-" );
-		else
-			return SanitizedString( song.Genre );
-		break;
-
 	case PLAYLISTCOLUMN_YEAR:
 		if ( song.Year == wxT( "<unknown>" ) )
 			return wxT( "-" );
@@ -454,13 +449,18 @@ wxString CPlaylistCtrl::OnGetItemText(long item, long column) const
 			return song.Year;
 		break;
 
+	case PLAYLISTCOLUMN_GENRE:
+		if ( song.Genre == wxT( "<unknown>" ) )
+			return wxT( "-" );
+		else
+			return SanitizedString( song.Genre );
+		break;
+
 	case PLAYLISTCOLUMN_TIMES_PLAYED:
 		{
 			wxString str;
 			if ( song.TimesPlayed > 0 )
-			{
 				str << song.TimesPlayed;
-			}
 			return str;
 		}
 		break;
@@ -470,9 +470,32 @@ wxString CPlaylistCtrl::OnGetItemText(long item, long column) const
 			return song.LastPlayed;
 		else
 			return wxT( "" );
+		break;
+
+	case PLAYLISTCOLUMN_TIME:
+		return MStoStr( song.Duration );
+		break;
+
+	case PLAYLISTCOLUMN_BITRATE:
+		return IntTowxString( song.Bitrate );
+		break;
+
+	case PLAYLISTCOLUMN_FILENAME:
+		return song.Filename;
+		break;
 	}
-*/
+
 	return wxT( "" );
+}
+
+void CPlaylistCtrl::FindColumnOrder()
+{
+	m_ColumnOrder.Clear();
+	for ( int i = 0; i < NPLAYLISTCOLUMNS; i++ )
+	{
+		if ( g_Prefs.nPlaylistColumnEnable[i] == 1 )
+			m_ColumnOrder.Add( i );
+	}
 }
 
 int CPlaylistCtrl::OnGetItemImage(long item) const
@@ -775,42 +798,28 @@ void CPlaylistCtrl::RescaleColumns()
 
 void CPlaylistCtrl::ResetColumns( bool update )
 {
-	//-------------------------//
-	//--- clear all columns ---//
-	//-------------------------//
+	//-------------------------------------------------//
+	//--- clear all columns							---//
+	//-------------------------------------------------//
 	int nColumnCount = GetColumnCount();
 	for ( size_t i = 0; i < nColumnCount; i++ )
 		DeleteColumn( 0 );
+
+	//-------------------------------------------------//
+	//--- get the order of the enabled columns		---//
+	//-------------------------------------------------//
+	FindColumnOrder();
 
 	//-------------------------------------------------//
 	//--- construct all columns, and set any static	---//
 	//--- values. RescaleColumns() will be called	---//
 	//--- afterwords to setup any dynamic columns.	---//
 	//-------------------------------------------------//
-	bool bRescaleColumns = false;
-	nColumnCount = 0;
-	for ( int i = 0; i < NPLAYLISTCOLUMNS; i++ )
+	size_t nCurrType;
+	for ( size_t i = 0; i < m_ColumnOrder.GetCount(); i++ )
 	{
-		//---------------------------------------------//
-		//--- if this column is enabled				---//
-		//---------------------------------------------//
-		if ( g_Prefs.nPlaylistColumnEnable[i] == 1 )
-		{
-			InsertColumn( nColumnCount, g_PlaylistColumnLabels[i], g_PlaylistColumnAlign[i], g_Prefs.nPlaylistColumnSize[i] );
-
-			//---------------------------------------------//
-			//--- see if we will need to dynamically	---//
-			//--- rescale columns after they are		---//
-			//--- created.								---//
-			//---------------------------------------------//
-			if ( !bRescaleColumns )
-			{
-				if ( g_Prefs.nPlaylistColumnDynamic[i] == 1 )
-					bRescaleColumns = true;
-			}
-
-			++nColumnCount;
-		}
+		nCurrType = m_ColumnOrder.Item( i );
+		InsertColumn( i, g_PlaylistColumnLabels[nCurrType], g_PlaylistColumnAlign[nCurrType], g_Prefs.nPlaylistColumnSize[nCurrType] );
 	}
 	
 /*

@@ -50,7 +50,7 @@ MusikLibraryFrame *g_MusikLibraryFrame;
 const int g_PlaylistColumnAlign[NPLAYLISTCOLUMNS] =
 {
 	wxLIST_FORMAT_CENTER,
-	wxLIST_FORMAT_RIGHT,
+	wxLIST_FORMAT_LEFT,
 	wxLIST_FORMAT_LEFT,
 	wxLIST_FORMAT_LEFT,
 	wxLIST_FORMAT_LEFT,

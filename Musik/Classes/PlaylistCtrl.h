@@ -173,6 +173,12 @@ private:
 	wxMenu *playlist_context_edit_tag_menu;
 	wxMenu *playlist_context_delete_menu;
 
+	//--------------------//
+	//--- column order ---//
+	//--------------------//
+	void FindColumnOrder();
+	wxArrayInt m_ColumnOrder;
+
 	//--------------//
 	//--- thread ---//
 	//--------------//
