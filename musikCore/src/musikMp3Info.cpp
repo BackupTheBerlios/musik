@@ -138,6 +138,7 @@ bool CmusikMp3Info::WriteInfo( CmusikSongInfo info, bool clear_old )
 			frame = id3Tag.RemoveFrame( frame );
 			delete frame;
 		}
+		delete iter;
 	}
 
 	// ... or just clear the fields that
@@ -171,6 +172,7 @@ bool CmusikMp3Info::WriteInfo( CmusikSongInfo info, bool clear_old )
 
 	// write to file
 	id3Tag.Update();
+	
 
 	return true;
 }
