@@ -277,67 +277,56 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	cmbTrackStatic	= new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
 	cmbTrackStatic->Append( _("Static")  );
 	cmbTrackStatic->Append( _("Dynamic") );
-	cmbTrackStatic->SetSelection ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TRACK] );
 
 	//--- title combo box ---//
 	cmbTitleStatic = new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
 	cmbTitleStatic->Append( _("Static")  );
 	cmbTitleStatic->Append( _("Dynamic") );
-	cmbTitleStatic->SetSelection ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TITLE] );
 
 	//--- artist combo box ---//
 	cmbArtistStatic	= new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
 	cmbArtistStatic->Append	( _("Static")  );
 	cmbArtistStatic->Append	( _("Dynamic") );
-	cmbArtistStatic->SetSelection ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_ARTIST] );
 
 	//--- album combo box ---//
 	cmbAlbumStatic = new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
 	cmbAlbumStatic->Append( _("Static")  );
 	cmbAlbumStatic->Append( _("Dynamic") );
-	cmbAlbumStatic->SetSelection ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_ALBUM] );
 
 	//--- year combo box ---//
 	cmbYearStatic = new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
 	cmbYearStatic->Append( _("Static")  );
 	cmbYearStatic->Append( _("Dynamic") );
-	cmbYearStatic->SetSelection ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_YEAR] );
 
 	//--- genre combo box ---//
 	cmbGenreStatic = new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
 	cmbGenreStatic->Append( _("Static")  );
 	cmbGenreStatic->Append( _("Dynamic") );
-	cmbGenreStatic->SetSelection ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_GENRE] );
 
 	//--- times played combo box ---//
 	cmbTimesPlayedStatic = new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
 	cmbTimesPlayedStatic->Append( _("Static")  );
 	cmbTimesPlayedStatic->Append( _("Dynamic") );
-	cmbTimesPlayedStatic->SetSelection ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TIMES_PLAYED] );
 
 	//--- last played combo box ---//
 	cmbLastPlayedStatic	= new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
 	cmbLastPlayedStatic->Append( _("Static")  );
 	cmbLastPlayedStatic->Append( _("Dynamic") );
-	cmbLastPlayedStatic->SetSelection ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_LAST_PLAYED] );
 
 	//--- time combo box ---//
 	cmbTimeStatic = new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
 	cmbTimeStatic->Append( _("Static")  );
 	cmbTimeStatic->Append( _("Dynamic") );
-	cmbTimeStatic->SetSelection ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TIME] );
 
 	//--- bitrate combo box ---//
 	cmbBitrateStatic = new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
 	cmbBitrateStatic->Append( _("Static")  );
 	cmbBitrateStatic->Append( _("Dynamic") );
-	cmbBitrateStatic->SetSelection ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_BITRATE] );
 
 	//--- filename ---//
 	cmbFilenameStatic = new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
 	cmbFilenameStatic->Append( _("Static")  );
 	cmbFilenameStatic->Append( _("Dynamic") );
-	cmbFilenameStatic->SetSelection ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_FILENAME] );
 
 	//---------------------------------//
 	//--- Options -> Playlist Sizer ---//
@@ -533,6 +522,35 @@ void MusikPrefsFrame::LoadPrefs()
 	cmbActivityBox2->SetSelection	( g_Prefs.nActBox2 );
 	cmbActivityBox3->SetSelection	( g_Prefs.nActBox3 );
 	cmbActivityBox4->SetSelection	( g_Prefs.nActBox4 );
+
+	//---------------------------//
+	//--- options -> playlist ---//
+	//---------------------------//
+	chkRatingEnable->SetValue			( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_RATING] );
+	chkTrackEnable->SetValue			( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TRACK] );
+	chkTitleEnable->SetValue			( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TITLE] );
+	chkArtistEnable->SetValue			( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_ARTIST] );
+	chkAlbumEnable->SetValue			( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_ALBUM] );
+	chkYearEnable->SetValue				( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_YEAR] );
+	chkGenreEnable->SetValue			( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_GENRE] );
+	chkTimesPlayedEnable->SetValue		( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TIMES_PLAYED] );
+	chkLastPlayedEnable->SetValue		( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_LAST_PLAYED] );
+	chkTimeEnable->SetValue				( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TIME] );
+	chkBitrateEnable->SetValue			( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_BITRATE] );
+	chkFilenameEnable->SetValue			( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_FILENAME] );		
+
+	cmbTrackStatic->SetSelection		( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TRACK] );
+	cmbTitleStatic->SetSelection		( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TITLE] );
+	cmbArtistStatic->SetSelection		( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_ARTIST] );
+	cmbAlbumStatic->SetSelection		( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_ALBUM] );
+	cmbYearStatic->SetSelection			( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_YEAR] );
+	cmbGenreStatic->SetSelection		( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_GENRE] );
+	cmbTimesPlayedStatic->SetSelection	( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TIMES_PLAYED] );
+	cmbLastPlayedStatic->SetSelection	( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_LAST_PLAYED] );
+	cmbTimeStatic->SetSelection			( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TIME] );
+	cmbBitrateStatic->SetSelection		( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_BITRATE] );
+	cmbFilenameStatic->SetSelection		( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_FILENAME] );
+	
 
 	//--------------------------//
 	//--- tagging -> general ---//
@@ -738,6 +756,34 @@ void MusikPrefsFrame::SavePrefs()
 		g_Prefs.nActBox4 = cmbActivityBox4->GetSelection();
 		bActivityChange = true;
 	}
+
+	//---------------------------//
+	//--- options -> playlist ---//
+	//---------------------------//
+	g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_RATING]		= chkRatingEnable->GetValue();
+	g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TRACK]			= chkTrackEnable->GetValue();
+	g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TITLE]			= chkTitleEnable->GetValue();
+	g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_ARTIST]		= chkArtistEnable->GetValue();
+	g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_ALBUM]			= chkAlbumEnable->GetValue();
+	g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_YEAR]			= chkYearEnable->GetValue();
+	g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_GENRE]			= chkGenreEnable->GetValue();
+	g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TIMES_PLAYED]	= chkTimesPlayedEnable->GetValue();
+	g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_LAST_PLAYED]	= chkLastPlayedEnable->GetValue();	
+	g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TIME]			= chkTimeEnable->GetValue();	
+	g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_BITRATE]		= chkBitrateEnable->GetValue();	
+	g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_FILENAME]		= chkFilenameEnable->GetValue();	
+
+	g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TRACK]		= cmbTrackStatic->GetSelection();
+	g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TITLE]		= cmbTitleStatic->GetSelection();
+	g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_ARTIST]		= cmbArtistStatic->GetSelection();
+	g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_ALBUM]		= cmbAlbumStatic->GetSelection();
+	g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_YEAR]			= cmbYearStatic->GetSelection();
+	g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_GENRE]		= cmbGenreStatic->GetSelection();
+	g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TIMES_PLAYED]	= cmbTimesPlayedStatic->GetSelection();
+	g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_LAST_PLAYED]	= cmbLastPlayedStatic->GetSelection();
+	g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TIME]			= cmbTimeStatic->GetSelection();
+	g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_BITRATE]		= cmbBitrateStatic->GetSelection();
+	g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_FILENAME]		= cmbFilenameStatic->GetSelection();
 
 	//--------------------------//
 	//--- tagging -> general ---//

@@ -163,24 +163,24 @@ public:
 	//--------------//
 	//--- sizers ---//
 	//--------------//
-	wxBoxSizer	*vsSound_Driver;
-	wxBoxSizer	*vsSound_Playback;
+	wxBoxSizer		*vsSound_Driver;
+	wxBoxSizer		*vsSound_Playback;
 	wxFlexGridSizer	*vsOptions_Selections;
 	wxFlexGridSizer	*vsOptions_Playlist;
-	wxBoxSizer	*vsOptions_Interface;
-	wxBoxSizer	*vsOptions_Misc;
-	wxBoxSizer	*vsTagging_General;
-	wxBoxSizer	*vsTagging_Auto;
-	wxBoxSizer	*hsSplitter;
-	wxBoxSizer	*hsSelectionStyle;
-	wxBoxSizer	*hsBufferLength;
-	wxBoxSizer	*hsDuration;
-	wxBoxSizer	*hsSeekDuration;
-	wxBoxSizer	*vsOutputDrv;	
-	wxBoxSizer	*vsSndDevice;
-	wxBoxSizer	*vsPlayRate;
-	wxBoxSizer	*hsSysButtons;
-	wxBoxSizer	*vsTopSizer;
+	wxBoxSizer		*vsOptions_Interface;
+	wxBoxSizer		*vsOptions_Misc;
+	wxBoxSizer		*vsTagging_General;
+	wxBoxSizer		*vsTagging_Auto;
+	wxBoxSizer		*hsSplitter;
+	wxBoxSizer		*hsSelectionStyle;
+	wxBoxSizer		*hsBufferLength;
+	wxBoxSizer		*hsDuration;
+	wxBoxSizer		*hsSeekDuration;
+	wxBoxSizer		*vsOutputDrv;	
+	wxBoxSizer		*vsSndDevice;
+	wxBoxSizer		*vsPlayRate;
+	wxBoxSizer		*hsSysButtons;
+	wxBoxSizer		*vsTopSizer;
 
 	DECLARE_EVENT_TABLE()
 private:
