@@ -21,17 +21,27 @@ public:
 	//--------------//
 	void OnClose			( wxCommandEvent& WXUNUSED(event) );
 	void OnSlider(wxScrollEvent& event);
+	void OnClickReset( wxCommandEvent& WXUNUSED(event) );
+	void OnToggleEQEnable( wxCommandEvent& WXUNUSED(event) );
 	
 	//-------------------------//
 	//--- utility functions ---//
 	//-------------------------//
 	void Close();
+	void SlidersFromBands();
+	void BandsFromSliders();
 	
 	//----------------------//
 	//--- system buttons ---//
 	//----------------------//
 	
-
+	//----------------//
+	//--- controls ---//
+	//----------------//
+	wxCheckBox	*chkLock;
+	wxCheckBox	*chkEQEnable;
+	wxButton	*btnReset;
+	
 	//------------------//
 	//--- eq sliders ---//
 	//------------------//
@@ -41,7 +51,11 @@ public:
 	//--------------//
 	//--- sizers ---//
 	//--------------//
-	wxBoxSizer	*hsSliders;
+	wxBoxSizer	*hsLeftSliders;
+	wxBoxSizer	*hsRightSliders;
+	wxBoxSizer	*vsSliders;
+	wxBoxSizer	*hsControls;
+	wxBoxSizer	*vsMain;
 	
 	DECLARE_EVENT_TABLE()
 private:

@@ -175,7 +175,7 @@ void MusikFrame::OnPreferences( wxCommandEvent &event )
 
 void MusikFrame::OnFX( wxCommandEvent &event )
 {
-	wxSize fx_size( 760, 200 );
+	wxSize fx_size( 400, 450 );
 	
 	wxFrame *pDlg = new MusikFXFrame( ( wxFrame* )this, _("Musik FX"), wxPoint( 0, 0 ), fx_size );
 	//this->Enable( FALSE );

@@ -83,6 +83,7 @@ public:
 	int		InitializeFMOD	( int nFunction, int nSndOutput, int nSndDevice, int nSndRate );
 	void	Shutdown		( );
 	void	ClearOldStreams	( );
+	void	SetFX		( );
 
 	//------------------------------//
 	//--- events threads may use ---//

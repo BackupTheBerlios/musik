@@ -24,6 +24,18 @@ void CMusikFX::SetRightBands( float data[18] )
 		m_RightBands[n] = data[n];
 }
 
+void CMusikFX::GetLeftBands( float *data )
+{
+	for ( int n = 0; n < 18; n++ )
+		data[n] = m_LeftBands[n];
+}
+
+void CMusikFX::GetRightBands( float *data )
+{
+	for ( int n = 0; n < 18; n++ )
+		data[n] = m_RightBands[n];
+}
+
 void CMusikFX::ResetBands()
 {
 	for ( int n = 0; n < 18; n++ )
@@ -31,6 +43,7 @@ void CMusikFX::ResetBands()
 		m_LeftBands[n] = 1.0f;
 		m_RightBands[n] = 1.0f;
 	}
+	MakeTable( 44100 );
 }
 
 void CMusikFX::InitEQ()

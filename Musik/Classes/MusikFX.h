@@ -15,6 +15,8 @@ class CMusikFX
 public:
 	void	SetLeftBands( float data[18] );
 	void	SetRightBands( float data[18] );
+	void	GetLeftBands( float *data );
+	void	GetRightBands( float *data );
 	void	MakeTable( float samplerate );
 	void	ResetBands();
 	void	InitEQ();

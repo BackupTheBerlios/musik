@@ -264,6 +264,11 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 	return true;
 }
 
+void CMusikPlayer::SetFX()
+{
+	FSOUND_DSP_SetActive( m_DSP, g_Prefs.nUseEQ );
+}
+
 void CMusikPlayer::UpdateUI()
 {
 	//-------------------------------------------------//
