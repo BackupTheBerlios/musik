@@ -603,9 +603,9 @@ wxArrayInt CPlaylistCtrl::GetSelItems()
 	return aResult;	
 }
 
-wxArrayString CPlaylistCtrl::GetSelFilesList()
+void CPlaylistCtrl::GetSelFilesList( wxArrayString & aResult )
 {
-	wxArrayString aResult;
+	aResult.Clear();
 	int nIndex = -1;
 	for ( int i = 0; i < GetSelectedItemCount(); i++ )
 	{
@@ -614,26 +614,25 @@ wxArrayString CPlaylistCtrl::GetSelFilesList()
 			aResult.Add( GetFilename( nIndex ) );
 	}
 
-	return aResult;
+	return;
 }
 
-wxArrayString CPlaylistCtrl::GetAllFilesList()
+void CPlaylistCtrl::GetAllFilesList(wxArrayString & aResult )
 {
-	wxArrayString result;
-
+	aResult.Clear();
 	for ( int i = 0; i < GetItemCount(); i++ )
 	{
-		result.Add( GetFilename( i ) );
+		aResult.Add( GetFilename( i ) );
 	}
 
-	return result;
+	return;
 }
 
-CMusikSongArray CPlaylistCtrl::GetSelSongs()
+void CPlaylistCtrl::GetSelSongs(CMusikSongArray & aResult)
 {
-	CMusikSongArray aResult;
+	aResult.Clear();
 	int nIndex = -1;
-	CMusikSong song;
+	
 	if( GetSelectedItemCount() > 0 )
 	{
 		for( int i = 0; i < GetSelectedItemCount(); i++ )
@@ -641,12 +640,13 @@ CMusikSongArray CPlaylistCtrl::GetSelSongs()
 			nIndex = GetNextItem( nIndex, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
 			if ( nIndex > -1 )
 			{
-				g_Library.GetSongFromFilename( GetFilename( nIndex ), &song );
-				aResult.Add( song );
+				CMusikSong *pSong = new CMusikSong();
+				g_Library.GetSongFromFilename( GetFilename( nIndex ), pSong );
+				aResult.Add( pSong ); // array takes ownership of the pointer
 			}
 		}
 	}
-	return aResult;
+	return;
 }
 
 wxString CPlaylistCtrl::GetTotalFilesize()
@@ -735,7 +735,7 @@ void CPlaylistCtrl::ResynchItem( int item, int lastitem, bool refreshonly )
 		RefreshItem( lastitem );
 }
 
-void CPlaylistCtrl::Update( bool bSelFirst )
+void CPlaylistCtrl::Update( bool bSelFirst, bool  bRescaleColumns)
 {
 	//----------------------------------------------------------------------------------//
 	//---         note that the playlist control is now virtual, so we don't         ---//
@@ -759,8 +759,8 @@ void CPlaylistCtrl::Update( bool bSelFirst )
 		SetItemState( 0, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );	
 	Thaw();
 	Refresh();
-
-	RescaleColumns();
+	if(bRescaleColumns)
+		RescaleColumns();
 	if ( g_Prefs.nShowPLInfo == 1 )
 		g_PlaylistInfoCtrl->Update();
 }
@@ -950,7 +950,7 @@ void CPlaylistCtrl::EditTag( int i )
 	//--- more than 1 song, setup for batch edit mode ---//
 	else if ( nSelCount >= 2 )
 	{
-		songs = GetSelSongs();
+		GetSelSongs( songs );
 		nEditType = MUSIK_TAG_MULTIPLE;
 	}
 
@@ -1108,7 +1108,9 @@ void CPlaylistCtrl::RenameSelFiles()
 {
 	if ( GetActiveThread() == 0 )
 	{
-		pRenameThread = new MusikPlaylistRenameThread( GetSelSongs() );
+		CMusikSongArray songs;
+		GetSelSongs( songs );
+		pRenameThread = new MusikPlaylistRenameThread( songs );
 		pRenameThread->Create();
 		pRenameThread->Run();
 	}
@@ -1121,7 +1123,9 @@ void CPlaylistCtrl::RetagSelFiles()
 {
 	if ( GetActiveThread() == 0 )
 	{
-		pRetagThread = new MusikPlaylistRetagThread( GetSelSongs() );
+		CMusikSongArray songs;
+		GetSelSongs( songs );
+		pRetagThread = new MusikPlaylistRetagThread( songs );
 		pRetagThread->Create();
 		pRetagThread->Run();
 	}
@@ -1131,7 +1135,8 @@ void CPlaylistCtrl::RetagSelFiles()
 
 bool CPlaylistCtrl::ViewDirtyTags()
 {
-	CMusikSongArray dirty = g_Library.QuerySongs( wxT( "dirty = 1" ) );
+	CMusikSongArray dirty;
+	g_Library.QuerySongs( wxT( "dirty = 1" ), dirty );
 	if ( dirty.GetCount() > 0 )
 	{
 		g_LibPlaylist = g_Playlist;

@@ -91,7 +91,7 @@ public:
 	//-------------------------//
 	//--- playlist routines ---//
 	//-------------------------//
-	void AddMissing			( wxArrayString playlists );
+	void AddMissing			( const wxArrayString & playlists );
 	void NewPlaylist		( wxString sName, wxString sVal, int nType );
 	bool PlaylistExists		( wxString sName, int type = MUSIK_SOURCES_PLAYLIST_STANDARD );
 	void FilenameToSources	( wxString* sFilename );
@@ -104,7 +104,7 @@ public:
     void AppendStdPlaylist			( wxString sName, wxString sSongs );
 	void RewriteStdPlaylist			();
 	void UpdateDynPlaylist			( int nIndex );
-	wxArrayString LoadStdPlaylist	( wxString sName );
+	void LoadStdPlaylist			( wxString sName, wxArrayString & aReturn );
 	wxString LoadDynPlaylist		( wxString sName );
 	bool PlaylistToFile				( wxString sName, wxString* sItems, int type, bool bDelOld = true );
 	wxString PromptDynamicPlaylist	( wxString sQuery );

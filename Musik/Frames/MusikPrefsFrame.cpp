@@ -521,7 +521,7 @@ void MusikPrefsFrame::LoadPrefs()
 	//-----------------------------//
 	//--- options -> selections ---//
 	//-----------------------------//
-	cmbSelStyle->SetSelection		( g_Prefs.nSelStyle );
+	cmbSelStyle->SetSelection		( g_Prefs.eSelStyle );
 	cmbActivityBox1->SetSelection	( g_Prefs.nActBox1 );
 	cmbActivityBox2->SetSelection	( g_Prefs.nActBox2 );
 	cmbActivityBox3->SetSelection	( g_Prefs.nActBox3 );
@@ -748,33 +748,33 @@ void MusikPrefsFrame::SavePrefs()
 	//-----------------------------//
     //--- Options -> selections ---//
 	//-----------------------------//
-	if ( cmbSelStyle->GetSelection() != g_Prefs.nSelStyle )
+	if ( cmbSelStyle->GetSelection() != g_Prefs.eSelStyle )
 	{
-		g_Prefs.nSelStyle = cmbSelStyle->GetSelection();
+		g_Prefs.eSelStyle = (EMUSIK_ACTIVITY_SELECTION_TYPE)cmbSelStyle->GetSelection();
 		bShowUnselChange = true;
 	}
 
 	if ( cmbActivityBox1->GetSelection() != g_Prefs.nActBox1 )
 	{
-		g_Prefs.nActBox1 = cmbActivityBox1->GetSelection();
+		g_Prefs.nActBox1 = (EMUSIK_ACTIVITY_TYPE)cmbActivityBox1->GetSelection();
 		bActivityChange = true;
 	}
 
 	if ( cmbActivityBox2->GetSelection() != g_Prefs.nActBox2 )
 	{
-		g_Prefs.nActBox2 = cmbActivityBox2->GetSelection();
+		g_Prefs.nActBox2 = (EMUSIK_ACTIVITY_TYPE)cmbActivityBox2->GetSelection();
 		bActivityChange = true;
 	}
 
 	if ( cmbActivityBox3->GetSelection() != g_Prefs.nActBox3 )
 	{
-		g_Prefs.nActBox3 = cmbActivityBox3->GetSelection();
+		g_Prefs.nActBox3 = (EMUSIK_ACTIVITY_TYPE)cmbActivityBox3->GetSelection();
 		bActivityChange = true;
 	}
 
 	if ( cmbActivityBox4->GetSelection() != g_Prefs.nActBox4 )
 	{
-		g_Prefs.nActBox4 = cmbActivityBox4->GetSelection();
+		g_Prefs.nActBox4 = (EMUSIK_ACTIVITY_TYPE)cmbActivityBox4->GetSelection();
 		bActivityChange = true;
 	}
 

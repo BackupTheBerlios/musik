@@ -106,7 +106,7 @@ public:
 	void PathsResize			();
 	void PathsPopupMenu			( wxCommandEvent& event );
 	void Activate				();
-	wxArrayString PathsGetSel	();
+	void PathsGetSel	( wxArrayString &aReturn );
 
 	wxMenu *paths_setup_menu;
 	wxMenu *paths_update_menu;

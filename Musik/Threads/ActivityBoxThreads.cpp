@@ -21,7 +21,7 @@
 
 #include "../Frames/MusikFrame.h"
 
-MusikActivityRenameThread::MusikActivityRenameThread( CActivityBox* parent_box, int mode, wxArrayString sel, wxString newvalue )
+MusikActivityRenameThread::MusikActivityRenameThread( CActivityBox* parent_box, int mode, const wxArrayString &sel, wxString newvalue )
 {
 	m_ParentBox	= parent_box;
 	m_Mode		= mode;
@@ -51,16 +51,16 @@ void* MusikActivityRenameThread::Entry()
 		{
 			m_Selected.Item( i ).Replace( wxT( "'" ), wxT( "''" ), true );
 			if ( i == ( m_Selected.GetCount() - 1 ) )
-				sQuery = sQuery + wxT("'") + m_Selected.Item( i ) + wxT("'");
+				sQuery += wxT("'") + m_Selected.Item( i ) + wxT("'");
 			else
-				sQuery = sQuery + wxT("'") + m_Selected.Item( i ) + wxT("' or ") + m_TypeStr + wxT(" like ");
+				sQuery += wxT("'") + m_Selected.Item( i ) + wxT("' or ") + m_TypeStr + wxT(" like ");
 		}
-		m_Songs = g_Library.QuerySongs( sQuery );
+		g_Library.QuerySongs( sQuery, m_Songs );
 	}
 
 	else if ( m_Mode == ACTIVITY_RENAME_SONGS )
 	{
-		m_Songs = g_PlaylistCtrl->GetSelSongs();
+		g_PlaylistCtrl->GetSelSongs( m_Songs );
 	}
 
 	float fPos = 0;

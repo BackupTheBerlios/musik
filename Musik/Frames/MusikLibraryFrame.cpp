@@ -353,15 +353,15 @@ void MusikLibraryFrame::PathsResize()
 	lcPaths->SetColumnWidth( 2, nDelta );
 }
 
-wxArrayString MusikLibraryFrame::PathsGetSel()
+void MusikLibraryFrame::PathsGetSel( wxArrayString &aReturn )
 {
-	wxArrayString aReturn;
+	aReturn.Clear();
 	for ( int i = 0; i < lcPaths->GetItemCount(); i++ )
 	{
 		if ( lcPaths->GetItemState( i, wxLIST_STATE_SELECTED ) > 2 )
 			aReturn.Add( lcPaths->GetItemText( i ) );
 	}
-	return aReturn;
+	return;
 }
 
 void MusikLibraryFrame::PathsPopupMenu( wxCommandEvent& WXUNUSED(event) )
@@ -655,7 +655,7 @@ void MusikLibraryFrame::OnThreadEnd( wxCommandEvent& WXUNUSED(event) )
 		g_ActivityAreaCtrl->ResetAllContents();
 		if ( g_Prefs.nShowAllSongs == 1 )
 		{
-			g_Playlist = g_Library.GetAllSongs();
+			g_Library.GetAllSongs( g_Playlist );
 			g_PlaylistCtrl->Update();
 		}
 		bRebuild = false;
@@ -666,7 +666,7 @@ void MusikLibraryFrame::OnThreadEnd( wxCommandEvent& WXUNUSED(event) )
 		g_ActivityAreaCtrl->ResetAllContents();
 		if ( g_Prefs.nShowAllSongs == 1 )
 		{
-			g_Playlist = g_Library.GetAllSongs();
+			g_Library.GetAllSongs( g_Playlist );
 			g_PlaylistCtrl->Update();
 		}
 	}

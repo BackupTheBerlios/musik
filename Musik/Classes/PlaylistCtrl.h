@@ -83,9 +83,9 @@ public:
 	wxString		GetAllFiles		();
 	wxString		GetSelFiles		();
 	wxArrayInt		GetSelItems		();
-	wxArrayString	GetSelFilesList	();
-	wxArrayString	GetAllFilesList ();
-	CMusikSongArray GetSelSongs		();
+	void			GetSelFilesList	( wxArrayString & aResult );
+	void			GetAllFilesList ( wxArrayString & aResult );
+	void			GetSelSongs		( CMusikSongArray & aResult );
 	wxString		GetFilename		( int nItem );
 	int				GetTotalPlayingTimeInSeconds();
 	wxString		GetTotalFilesize();
@@ -100,7 +100,7 @@ public:
 	//--- others ---//
 	//--------------//
 	void ResynchItem		( int item, int lastitem = -1, bool refreshonly = true );
-	void Update				( bool bSelFirstItem = true );
+	void Update				( bool bSelFirstItem = true,bool  bRescaleColumns = true );
 	void RescaleColumns		( );
 	void ResetColumns		( bool update = false, bool rescale = false );
 	void RateSel			( int nVal );

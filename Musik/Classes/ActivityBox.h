@@ -45,18 +45,18 @@ class MusikActivityRenameThread;
 class CActivityListBox : public wxListCtrl
 {
 public:
-	CActivityListBox( wxPanel *parent, wxArrayString *items, wxWindowID id );
+	CActivityListBox( CActivityBox *parent, wxWindowID id );
 	~CActivityListBox();
 
 	//--- gets ---//
-	wxString		GetFirstSel	();
-	wxArrayString	GetSelected	();
+	wxString  GetFirstSel	();
+	void	GetSelected	( wxArrayString & aReturn );
 
 	//--- sets ---//
-	void			SetList		( wxArrayString * );
-	wxArrayString*	GetList		(){ return pItems; }
-	void			SetSel		( wxArrayString * );
-	void			SetSel		( wxString sel );
+	void			SetList		(const  wxArrayString & );
+	const wxArrayString &	GetList		() const { return m_Items; }
+	void			SetSel		( const  wxArrayString & aList );
+	void			SetSel		( const wxString & sel, bool bDeselectAllFirst = true);
 	void			SetRelated	( int n ){ m_Related = n; }
 
 	//--- others ---//
@@ -70,7 +70,10 @@ private:
     virtual	wxString		OnGetItemText	(long item, long column) const;
     virtual	wxListItemAttr*	OnGetItemAttr	(long item) const;
 	virtual	int				OnGetItemImage	(long item) const { return 0; }
+	inline bool HasShowAllRow() const; 
 
+	long GetRowCount() const { return HasShowAllRow()?( long )m_Items.GetCount()+ 1: ( long )m_Items.GetCount(); }
+	inline wxString GetRowText( long row ) const ;
 	//--- stripe colors ---//
 	wxListItemAttr m_LightAttr;
 	wxListItemAttr m_DarkAttr;
@@ -79,7 +82,8 @@ private:
 	
 	int m_Related;
 
-	wxArrayString *pItems;
+	wxArrayString m_Items;
+	CActivityBox *m_pParent;
 };
 
 class CActivityBoxEvt : public wxEvtHandler
@@ -114,28 +118,28 @@ private:
 class CActivityBox : public wxPanel
 {
 public:
-	CActivityBox( wxWindow *parent, wxArrayString *items, wxWindowID id, int nType );
+	CActivityBox( wxWindow *parent, wxWindowID id, enum EMUSIK_ACTIVITY_TYPE nType );
 	~CActivityBox();
 	
 	//--- thread event handlers ---//
-	void StartRenameThread		( int mode, wxArrayString sel, wxString newvalue );
+	void StartRenameThread		( int mode, const wxArrayString & sel, wxString newvalue );
 	void OnRenameThreadStart	( wxCommandEvent& WXUNUSED(event) );
 	void OnRenameThreadEnd		( wxCommandEvent& WXUNUSED(event) );
 	void OnRenameThreadProg		( wxCommandEvent& WXUNUSED(event) );
 
 	//--- gets / sets ---//
 	void			SetCaption				( wxString sCaption )				{ pHeader->SetCaption( sCaption );						}
-	int				GetActivityType			()									{ return m_ActivityType;								}
+	enum EMUSIK_ACTIVITY_TYPE	GetActivityType			()						{ return m_ActivityType;								}
 	wxString		GetActivityTypeStr		();
-	void			SetActivityType			( int nType )						{ m_ActivityType = nType;								}
+	void			SetActivityType			( enum EMUSIK_ACTIVITY_TYPE  nType ){ m_ActivityType = nType;								}
 	void			DeselectAll				()									{ pListBox->DeselectAll();								}
-	void			SetSel					( wxString sel )					{ pListBox->SetSel( sel );								}
-	void			SetSel					( wxArrayString *aList )			{ pListBox->SetSel( aList );							}	
+	void			SetSel					( const wxString & sel, bool bDeselectAllFirst = true )					{ pListBox->SetSel( sel , bDeselectAllFirst );								}
+	void			SetSel					(const  wxArrayString & aList )			{ pListBox->SetSel( aList );							}	
 	bool			IsSelected				( int n )							{ return pListBox->IsSelected( n );						}
-	wxString		GetFirstSel				()									{ return pListBox->GetFirstSel();						}
-	wxArrayString	GetSelected				()									{ return pListBox->GetSelected();						}
+	wxString		GetFirstSel				()									{ return pListBox->GetFirstSel( ); 						}
+	void			GetSelected				( wxArrayString & aReturn )			{ pListBox->GetSelected( aReturn );return; 				}
 	int				GetSelectedItemCount	()									{ return pListBox->GetSelectedItemCount();				}
-	wxArrayString	GetRelatedList			( CActivityBox *pDst );
+	void			GetRelatedList			( CActivityBox *pDst, wxArrayString & aReturn );
 	void			SetDropTarget			(wxDropTarget* target)				{ pListBox->SetDropTarget( target );					}
 
 	//--- right click editing ---//
@@ -154,8 +158,8 @@ public:
 	void			RescaleColumns		()									{ pListBox->RescaleColumns();			}
 	void			ResetCaption		();
 	void			ResetContents		();
-	void			SetContents			( wxArrayString *list );
-	wxArrayString	GetFullList			();
+	void			SetContents			( wxArrayString &list ); // &list is not const, because a ("Show all XXXs") entry will be added sometimes
+	void			GetFullList			( wxArrayString & aReturn );
 	void			SetPlaylist			();
 	void			EnableProgress		( bool enable = true );
 	void			SetRelated			( int n ){ pListBox->SetRelated( n ); }
@@ -172,9 +176,11 @@ public:
 	wxThread* GetActiveThread()	{ return m_ActiveThread;	}
 
 	DECLARE_EVENT_TABLE()
+protected:
+	static enum EMUSIK_LIB_TYPE ACTIVITY_TYPE2LIB_TYPE(enum EMUSIK_ACTIVITY_TYPE lbtype);
 private:
 
-	int  m_ActivityType;
+	enum EMUSIK_ACTIVITY_TYPE   m_ActivityType;
 	bool m_EditVisible;
 
 	wxBoxSizer			*pSizer;

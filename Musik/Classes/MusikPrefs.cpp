@@ -32,17 +32,17 @@ void CMusikPrefs::LoadPrefs()
 {
 	wxFileConfig *config;
 	config = new wxFileConfig( CONFIG_NAME );
-	config->Read( wxT( "SelectionStyle" ),						&nSelStyle,					0						);
+	config->Read( wxT( "SelectionStyle" ),						(int*)&eSelStyle,					0						);
 	config->Read( wxT( "OutputDriver" ),						&nSndOutput,				0						);
 	config->Read( wxT( "SoundDevice" ),							&nSndDevice,				0						);
 	config->Read( wxT( "PlaybackRate" ),						&nSndRate,					44100					);
 	config->Read( wxT( "SoundVolume" ),							&nSndVolume,				200						);
 	config->Read( wxT( "UseEQ" ),								&nUseEQ,					0						);
 	config->Read( wxT( "SoundBufferMilliseconds" ),				&nSndBuffer,				1000					);
-	config->Read( wxT( "ActivityBox1" ),						&nActBox1,					1						);
-	config->Read( wxT( "ActivityBox2" ),						&nActBox2,					2						);
-	config->Read( wxT( "ActivityBox3" ),						&nActBox3,					0						);
-	config->Read( wxT( "ActivityBox4" ),						&nActBox4,					0						);
+	config->Read( wxT( "ActivityBox1" ),						(int*)&nActBox1,					1						);
+	config->Read( wxT( "ActivityBox2" ),						(int*)&nActBox2,					2						);
+	config->Read( wxT( "ActivityBox3" ),						(int*)&nActBox3,					0						);
+	config->Read( wxT( "ActivityBox4" ),						(int*)&nActBox4,					0						);
 	config->Read( wxT( "Repeat" ),								&nRepeat,					1						);
 	config->Read( wxT( "Shuffle" ),								&nShuffle,					0						);
 	config->Read( wxT( "CrossfaderEnabled" ),					&nFadeEnable,				1						);
@@ -152,9 +152,7 @@ void CMusikPrefs::LoadPrefs()
 		sAutoTag.Replace( wxT( "/" ), wxT( "\\" ), true );
 	#endif
 
-	//-----------------------------//
-	//--- make sure these exist ---//
-	//-----------------------------//
+	//--- apply unweildy defaults ---//
 	if ( sPLStripeColour.IsEmpty()		) sPLStripeColour		= wxT("244, 244, 244");
 	if ( sActStripeColour.IsEmpty()		) sActStripeColour		= wxT("244, 244, 244");
 	if ( sSourcesStripeColour.IsEmpty()	) sSourcesStripeColour	= wxT("244, 244, 244");
@@ -178,7 +176,7 @@ void CMusikPrefs::SavePrefs()
 
 	wxFileConfig *config;
 	config = new wxFileConfig( CONFIG_NAME );
-	config->Write( wxT( "SelectionStyle" ),					nSelStyle					);
+	config->Write( wxT( "SelectionStyle" ),					eSelStyle					);
 	config->Write( wxT( "OutputDriver" ),					nSndOutput					);
 	config->Write( wxT( "SoundDevice" ),					nSndDevice					);
 	config->Write( wxT( "PlaybackRate" ),					nSndRate					);
@@ -294,3 +292,4 @@ void CMusikPaths::Save()
 
 	return;
 }
+

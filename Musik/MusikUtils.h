@@ -31,20 +31,20 @@ int				GetGenreID			( wxString sGenre );
 wxArrayString	DelimitStr			( wxString sStr, wxString sDel, bool bRemoveDelimiter = true );
 size_t			GetDelimitCount		( wxString sStr, wxString sDel );
 
-wxArrayString	GetPlaylistDir		();
+void			GetPlaylistDir		( wxArrayString & aFiles );
 wxString		MStoStr				( int timems );
 wxArrayString	FileToStringArray	( wxString sFilename );
 int				MusikRound			( float x );
 int				FindStrInArray		( wxArrayString* array, wxString pattern );
-wxString		SanitizedString		( wxString str );
+wxString		SanitizedString		( const wxString & str );
 void			wxListCtrlSelAll	( wxListCtrl* listctrl );
 void			wxListCtrlSelNone	( wxListCtrl* listctrl );
 wxString		GenTempFilename		( wxString filename, int nsize );
 wxString		ColourToString		( const wxColour& color );
 wxColour		StringToColour		( const wxString& string );
 
-wxArrayString	GetMusicDirs		( wxArrayString *aDirs );
-wxArrayString	GetMusicDir			( wxString* sDir );
+void			GetMusicDirs		(  const wxArrayString & aDirs, wxArrayString & aFiles );
+void			GetMusicDir			( const wxString & sDir, wxArrayString & aFiles );
 
 void			SortArrayByLength	( wxArrayString* pArray );
 

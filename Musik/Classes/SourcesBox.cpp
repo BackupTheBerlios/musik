@@ -297,7 +297,8 @@ void CSourcesListBox::CopyFiles( wxCommandEvent& WXUNUSED(event) )
 	//-----------------------------------------------------//
 	//--- now just loop through the files and copy them ---//
 	//-----------------------------------------------------//
-	wxArrayString filenames = g_PlaylistCtrl->GetAllFilesList();
+	wxArrayString filenames;
+	g_PlaylistCtrl->GetAllFilesList( filenames );
 
 	wxString sourcebasename, sourceext;
 	for ( size_t n = 0; n < filenames.GetCount(); n++ )
@@ -376,7 +377,7 @@ void CSourcesListBox::UpdateSel( size_t index )
 
 		//--- show all songs ---//
 		else if ( g_Prefs.nShowAllSongs == 1 && !g_FirstRun )
-			g_Playlist = g_Library.GetAllSongs();
+			g_Library.GetAllSongs( g_Playlist );
 
 		g_LibPlaylist.Clear();
 		g_MusikFrame->ShowActivityArea( true );
@@ -391,15 +392,16 @@ void CSourcesListBox::UpdateSel( size_t index )
 		//--- standard playlist selected ---//
 		if ( m_CurSel != 0 && m_CurSel != -1 && nSelType == MUSIK_SOURCES_PLAYLIST_STANDARD )
 		{
-			wxArrayString aFilelist = LoadStdPlaylist( GetItemText( m_CurSel ) );
-			g_Playlist = g_Library.GetStdPlaylistSongs( &aFilelist );
+			wxArrayString aFilelist;
+			LoadStdPlaylist( GetItemText( m_CurSel ), aFilelist );
+			g_Library.GetStdPlaylistSongs( aFilelist, g_Playlist );
 		}
 
 		//--- dynamic playlist selected ---//
 		else if ( m_CurSel != 0 && m_CurSel != -1 && nSelType == MUSIK_SOURCES_PLAYLIST_DYNAMIC )
 		{
 			wxString sQuery = LoadDynPlaylist( GetItemText( m_CurSel ) );
-			g_Playlist = g_Library.QuerySongs( sQuery );
+			 g_Library.QuerySongs( sQuery, g_Playlist );
 		}
 
 		//--- update ui with new list ---//
@@ -674,7 +676,8 @@ void CSourcesListBox::RescaleColumns()
 
 void CSourcesListBox::RescanPlaylistDir()
 {
-	wxArrayString playlists = GetPlaylistDir();
+	wxArrayString playlists;
+	GetPlaylistDir( playlists );
 
 	if ( playlists.GetCount() > 0 )
 		AddMissing( playlists );
@@ -894,7 +897,7 @@ void CSourcesListBox::UpdateDynPlaylist( int nIndex )
 		g_SourcesList.Item( nIndex ) = wxT( "[d] " ) + sName;
 		PlaylistToFile( sName, &sQuery, MUSIK_SOURCES_PLAYLIST_DYNAMIC );
 
-		g_Playlist = g_Library.QuerySongs( sQuery );
+		g_Library.QuerySongs( sQuery, g_Playlist );
 		g_PlaylistCtrl->Update();
 	}
 }
@@ -933,21 +936,21 @@ void CSourcesListBox::AppendStdPlaylist( wxString sName, wxString sSongs )
 	In.Close();
 }
 
-wxArrayString CSourcesListBox::LoadStdPlaylist( wxString sName )
+void CSourcesListBox::LoadStdPlaylist(wxString sName, wxArrayString & aReturn )
 {
-	wxArrayString aReturn;
-	
+	aReturn.Clear();
+
 	SourcesToFilename( &sName );
 
 	if ( !wxFileExists( sName ) )
-		return aReturn;
-
+	{
+		return ;
+	}
 	wxTextFile In( sName );
 	In.Open();
 	if ( !In.IsOpened() )
 	{
-		wxArrayString aNULL;
-		return aNULL;
+		return;
 	}
 	
 	for ( size_t i = 0; i < In.GetLineCount(); i++ )
@@ -959,7 +962,7 @@ wxArrayString CSourcesListBox::LoadStdPlaylist( wxString sName )
 	}
 	In.Close();
 
-	return aReturn;
+	return;
 }
 
 wxString CSourcesListBox::LoadDynPlaylist( wxString sName )
@@ -981,7 +984,7 @@ wxString CSourcesListBox::LoadDynPlaylist( wxString sName )
 	return sReturn;
 }
 
-void CSourcesListBox::AddMissing( wxArrayString playlists )
+void CSourcesListBox::AddMissing( const wxArrayString & playlists )
 {
 	wxString sExt, sName, sAdd;
 	int nType;

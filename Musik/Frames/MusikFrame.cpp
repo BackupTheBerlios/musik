@@ -201,8 +201,8 @@ bool MusikFrame::Show( bool show )
 			g_ActivityAreaCtrl->ResetAllContents();
 			if ( g_Prefs.nShowAllSongs == 1 )
 			{
-				g_Playlist = g_Library.GetAllSongs();
-				g_PlaylistCtrl->Update();
+				g_Library.GetAllSongs( g_Playlist );
+				g_PlaylistCtrl->Update(true,false);
 			}
 		}
 	}
@@ -438,7 +438,6 @@ void MusikFrame::EnableProgress( bool enable )
 					g_NowPlayingCtrl->PlayerStop( cev );
 				return 1;
 			case APPCOMMAND_MEDIA_PLAY_PAUSE:
-				if( g_Player.IsPaused() )
 					g_NowPlayingCtrl->PlayerPlayPause( cev );
 				return 1;		
 			}

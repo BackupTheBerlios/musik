@@ -31,6 +31,7 @@
 
 enum EMUSIK_LIB_TYPE
 {
+	MUSIK_LIB_INVALID = -1,
     MUSIK_LIB_ARTIST = 0,
 	MUSIK_LIB_ALBUM,
 	MUSIK_LIB_GENRE,
@@ -89,7 +90,8 @@ public:
 	bool Load		();
 	void Shutdown	();
 	void AddItem		( const wxString & filename );
-
+	void BeginTransaction(){ sqlite_exec_printf( m_pDB, "begin transaction;", NULL, NULL, NULL );}
+	void EndTransaction(){ sqlite_exec_printf( m_pDB, "end transaction;", NULL, NULL, NULL );}
 	//----------------//
 	//--- updating ---//
 	//----------------//
@@ -120,7 +122,7 @@ public:
 	//---------------------//
 	//--- getting items ---//
 	//---------------------//
-	CMusikSongArray GetStdPlaylistSongs	( wxArrayString *aFiles );
+	void GetStdPlaylistSongs	( const wxArrayString & aFiles, CMusikSongArray & aReturn );
 	bool 			GetSongFromFilename	( const wxString& filename, CMusikSong *pSong );
 
 	//--------------------//
@@ -138,41 +140,42 @@ public:
 	//------------------------//
 	//--- generic querying ---//
 	//------------------------//
-	wxArrayString	Query				( const wxString & query );
-	CMusikSongArray QuerySongs			( const wxString & query );
+	void Query				( const wxString & query, wxArrayString & aReturn );
+	void QuerySongs			( const wxString & query, CMusikSongArray & aReturn );
 
 	//-----------------------------------//
 	//--- pre-defined queries to make ---//
 	//---   life a little bit easier  ---//
 	//-----------------------------------//
-	CMusikSongArray	GetAllSongs		(							);
-	wxArrayString	GetAllArtists	(							);
-	wxArrayString	GetAllAlbums	(							);
-	wxArrayString	GetAllGenres	(							);
-	wxArrayString	GetAllYears		(							);
-	wxArrayString	GetArtistAlbums	( wxArrayString *aArtists	);
-	wxArrayString	GetArtistGenres	( wxArrayString *aArtists	);
-	wxArrayString	GetArtistYears	( wxArrayString *aArtists	);
-	CMusikSongArray GetArtistSongs	( wxArrayString *aArtists	);
-	wxArrayString	GetAlbumArtists	( wxArrayString *aAlbums	);
-	wxArrayString	GetAlbumGenres	( wxArrayString *aAlbums	);
-	wxArrayString	GetAlbumYears	( wxArrayString *aAlbums	);
-	CMusikSongArray GetAlbumSongs	( wxArrayString *aAlbums	);
-	wxArrayString	GetGenreArtists	( wxArrayString *aGenres	);
-	wxArrayString	GetGenreAlbums	( wxArrayString *aGenres	);
-	wxArrayString	GetGenreYears	( wxArrayString *aGenres	);
-	CMusikSongArray GetGenreSongs	( wxArrayString *aGenres	);
-	wxArrayString	GetYearArtists	( wxArrayString *aYears		);
-	wxArrayString	GetYearAlbums	( wxArrayString *aYears		);
-	wxArrayString	GetYearGenres	( wxArrayString *aYears		);
-	CMusikSongArray GetYearSongs	( wxArrayString *aYears		);
+	void GetAllSongs		( CMusikSongArray & aReturn	);
+	void GetAllArtists	( wxArrayString & aReturn );
+	void GetAllAlbums	( wxArrayString & aReturn );
+	void GetAllGenres	( wxArrayString & aReturn );
+	void GetAllYears		( wxArrayString & aReturn );
+	void GetArtistAlbums	( const wxArrayString & aArtists, wxArrayString & aReturn );
+	void GetArtistGenres	( const wxArrayString & aArtists, wxArrayString & aReturn );
+	void GetArtistYears	( const wxArrayString & aArtists, wxArrayString & aReturn );
+	void GetArtistSongs	( const wxArrayString & aArtists, CMusikSongArray & aReturn );
+	void GetAlbumArtists	( const wxArrayString & aAlbums, wxArrayString & aReturn );
+	void GetAlbumGenres	( const wxArrayString & aAlbums, wxArrayString & aReturn );
+	void GetAlbumYears	( const wxArrayString & aAlbums, wxArrayString & aReturn );
+	void GetAlbumSongs	( const wxArrayString & aAlbums, CMusikSongArray & aReturn );
+	void GetGenreArtists	( const wxArrayString & aGenres, wxArrayString & aReturn );
+	void GetGenreAlbums	( const wxArrayString & aGenres, wxArrayString & aReturn );
+	void GetGenreYears	( const wxArrayString & aGenres, wxArrayString & aReturn );
+	void GetGenreSongs	( const wxArrayString & aGenres, CMusikSongArray & aReturn );
+	void GetYearArtists	( const wxArrayString & aYears, wxArrayString & aReturn );
+	void GetYearAlbums	( const wxArrayString & aYears, wxArrayString & aReturn );
+	void GetYearGenres	( const wxArrayString & aYears, wxArrayString & aReturn );
+	void GetYearSongs	( const wxArrayString & aYears, CMusikSongArray & aReturn );
+	void GetInfo		( const wxArrayString & aInfo, int nInType, int nOutType, wxArrayString & aReturn );
 	
 private:
-	wxArrayString GetInfo			( wxArrayString *aInfo, int nInType, int nOutType );
-	CMusikSongArray GetSongs		( wxArrayString *aInfo, int nInType );
+	void GetSongs		( const wxArrayString & aInfo, int nInType, CMusikSongArray & aReturn );
 	sqlite		  *m_pDB;
 	void CreateDB();
 
+	
 	void AddMP3				( const wxString & filename );
 	void AddMod				( const wxString & filename );
 	void AddOgg				( const wxString & filename );
@@ -182,7 +185,7 @@ private:
 
 	wxString m_TimeAdded;
 
-	wxArrayString VerifyYearList ( wxArrayString *aList );
+	void VerifyYearList ( const wxArrayString & aList,wxArrayString & aVerifiedList );
 
 	wxMutex LibMutex;
 };

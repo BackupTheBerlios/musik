@@ -35,7 +35,7 @@ class CMP3Info {
 
     // function to load a file into this structure
     // the argument passed is the path to a MP3 file
-    int   loadInfo( wxString srcMP3 );
+    int   loadInfo( const wxString &srcMP3 );
 
     // functions used to get information about the "file"
     int   getFileSize() { return fileSize; };

@@ -379,7 +379,8 @@ void *MusikWriteDirtyThread::Entry()
 
 	wxPostEvent( g_MusikFrame, WriteTagStartEvt );
 
-	CMusikSongArray aDirty = g_Library.QuerySongs( wxT("dirty = 1") );
+	CMusikSongArray aDirty;
+	g_Library.QuerySongs( wxT("dirty = 1"), aDirty );
 
 	if ( aDirty.GetCount() > 0 )
 	{

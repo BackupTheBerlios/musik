@@ -34,7 +34,7 @@ public:
 	int nAutoAdd;
 	int nShowAllSongs;
 
-	int nSelStyle;
+	EMUSIK_ACTIVITY_SELECTION_TYPE eSelStyle;
 
 	int nSndOutput;
 	int nSndDevice;
@@ -44,10 +44,10 @@ public:
 	int nSndVolume;
 	int nUseEQ;
 
-	int nActBox1;
-	int nActBox2;
-	int nActBox3;
-	int nActBox4;
+	EMUSIK_ACTIVITY_TYPE nActBox1;
+	EMUSIK_ACTIVITY_TYPE nActBox2;
+	EMUSIK_ACTIVITY_TYPE nActBox3;
+	EMUSIK_ACTIVITY_TYPE nActBox4;
 
 	int nPLStripes;
 	int nActStripes;
@@ -61,7 +61,6 @@ public:
 	int nShowSources;
 	int nShowSourcesIcons;
 	int nShowActivities;
-
 	int nStayOnTop;
 
 	int nActBoxWrite;
@@ -85,7 +84,7 @@ public:
 	int nFadePauseResumeDuration;
 	int nFadeStopDuration;
 	int nFadeExitDuration;
-	
+
 	int nAutoDelta;
 
 	int nBlankSwears;
@@ -124,6 +123,5 @@ public:
 private:
 	wxArrayString m_Paths;
 };
-
 
 #endif

@@ -1,3 +1,10 @@
+0.1.3 to 0.1.4
+ + Optimized many function that returned an wxArrayString object to functions that use a reference parameter for the array
+   Lots of memory copying are saved (gunnar)
+ + changed handling of the Show all entry in activity boxes, to gain some speed by not adding the netry to the front of the list array
+ + Much more speed ( up to 3 times faster) for adding of files to the library by using only one transaction for the database update, instead of the implicit transaction that are used for every single update ( gunnar)
+ + some code cleanup (gunnar)
+ 
 0.1.2 to 0.1.3
  - Fixed Bug: Crash when selecting first item using (new) "Highlight" method, formally "Show unselected..." (avatar)
  - Fixed Bug: Pressing "Stop" resets the caption bar to "Musik" (avatar)

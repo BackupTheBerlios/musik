@@ -11,7 +11,7 @@
  *  See the file "license.txt" for information on usage and redistribution
  *  of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 */
-//--- For compilers that support precompilation, includes "wx/wx.h". ---//
+// For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
 
 #include "ActivityAreaCtrl.h"
@@ -51,6 +51,7 @@ CActivityAreaCtrl::CActivityAreaCtrl( wxWindow *pParent )
 	m_ActivityBox2	= NULL;
 	m_ActivityBox3	= NULL;
 	m_ActivityBox4	= NULL;
+
 	
 	pTopSizer = new wxBoxSizer( wxHORIZONTAL );
 	SetSizerAndFit( pTopSizer );
@@ -70,7 +71,7 @@ bool CActivityAreaCtrl::Create()
 		//--- box1 ---//
 		if ( g_Prefs.nActBox1 > 0 && m_ActivityBox1 == NULL )
 		{
-			m_ActivityBox1 = new CActivityBox( this, &g_Items1, MUSIK_ACTIVITYBOX1, g_Prefs.nActBox1 );
+			m_ActivityBox1 = new CActivityBox( this, MUSIK_ACTIVITYBOX1, g_Prefs.nActBox1 );
 			m_ActivityBox1->ResetCaption();
 
 			pTopSizer->Add( m_ActivityBox1, 1, wxEXPAND | wxALL, 1 );
@@ -79,7 +80,7 @@ bool CActivityAreaCtrl::Create()
 		//--- box2 ---//
 		if ( g_Prefs.nActBox2 > 0 && m_ActivityBox2 == NULL )
 		{
-			m_ActivityBox2 = new CActivityBox( this, &g_Items2, MUSIK_ACTIVITYBOX2, g_Prefs.nActBox2 );
+			m_ActivityBox2 = new CActivityBox( this, MUSIK_ACTIVITYBOX2, g_Prefs.nActBox2 );
 			m_ActivityBox2->ResetCaption();
 
 			pTopSizer->Add( m_ActivityBox2, 1, wxEXPAND | wxALL, 1 );
@@ -88,7 +89,7 @@ bool CActivityAreaCtrl::Create()
 		//--- box3 ---//
 		if ( g_Prefs.nActBox3 > 0 && m_ActivityBox3 == NULL )
 		{
-			m_ActivityBox3 = new CActivityBox( this, &g_Items3, MUSIK_ACTIVITYBOX3, g_Prefs.nActBox3 );
+			m_ActivityBox3 = new CActivityBox( this, MUSIK_ACTIVITYBOX3, g_Prefs.nActBox3 );
 			m_ActivityBox3->ResetCaption();
 
 			pTopSizer->Add( m_ActivityBox3, 1, wxEXPAND | wxALL, 1 );
@@ -97,7 +98,7 @@ bool CActivityAreaCtrl::Create()
 		//--- box4 ---//
 		if ( g_Prefs.nActBox4 > 0 && m_ActivityBox4 == NULL )
 		{
-			m_ActivityBox4 = new CActivityBox( this, &g_Items4, MUSIK_ACTIVITYBOX4, g_Prefs.nActBox4 );
+			m_ActivityBox4 = new CActivityBox( this, MUSIK_ACTIVITYBOX4, g_Prefs.nActBox4 );
 			m_ActivityBox4->ResetCaption();
 
 			pTopSizer->Add( m_ActivityBox4, 1, wxEXPAND | wxALL, 1 );
@@ -205,7 +206,7 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 	//-- avoid updating playlists when dragging over activity area --//
 	if ( g_DragInProg )
 		return;
-	
+
 	if ( !pSel )
 		return;
 
@@ -228,7 +229,7 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 	//--- parent and which are children, if there	---//
 	//--- is no parent already.						---//
 	//-------------------------------------------------//
-	if ( g_Prefs.nSelStyle == 0 )
+	if ( g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_STANDARD )
 	{
 		if ( GetParentId() == 0 )
 			SetParent( pSel->GetListId(), false );
@@ -239,7 +240,7 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 	//--- and reset is clicked or nothing is selected ---//
 	//--- reset all the boxes						  ---//
 	//---------------------------------------------------//
-	if ( ( g_Prefs.nSelStyle == 0 || g_Prefs.nSelStyle == 1 ) && ( pSel->IsSelected( 0 ) || pSel->GetSelectedItemCount() < 1 ) )
+	if ( ( g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_STANDARD || g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_SLOPPY ) && ( pSel->IsSelected( 0 ) || pSel->GetSelectedItemCount() < 1 ) )
 	{
 		SetParent( 0, false );
 		pSel->ResetContents();	
@@ -252,10 +253,9 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 		{
 			if ( !g_FirstRun )
 			{
-				g_Playlist = g_Library.GetAllSongs();
+				g_Library.GetAllSongs( g_Playlist );
 				g_PlaylistCtrl->Update();
 			}
-
 			return;
 		}
 	}
@@ -265,25 +265,25 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 	//--- and a valid item is clicked, update the ---//
 	//--- other controls with the right values    ---//
 	//-----------------------------------------------//
-	else if ( ( g_Prefs.nSelStyle == 0 || g_Prefs.nSelStyle == 1 ) && ( !pSel->IsSelected( 0 ) && pSel->GetSelectedItemCount() > 0 ) )
+	else if ( ( g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_STANDARD || g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_SLOPPY ) && ( !pSel->IsSelected( 0 ) && pSel->GetSelectedItemCount() > 0 ) )
 	{
 		wxArrayString temp_list;
-		if ( ( g_Prefs.nSelStyle == 0 && GetParentId() == pSel->GetListId() ) || g_Prefs.nSelStyle == 1 )
+		if ( ( g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_STANDARD && GetParentId() == pSel->GetListId() ) || g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_SLOPPY )
 		{
 			if ( pBox1 != NULL )
 			{
-				temp_list = pSel->GetRelatedList( pBox1 );
-				pBox1->SetContents( &temp_list );
+				pSel->GetRelatedList( pBox1, temp_list );
+				pBox1->SetContents( temp_list );
 			}
 			if ( pBox2 != NULL )
 			{			
-				temp_list = pSel->GetRelatedList( pBox2 );
-				pBox2->SetContents( &temp_list );
+				pSel->GetRelatedList( pBox2, temp_list );
+				pBox2->SetContents( temp_list );
 			}
 			if ( pBox3 != NULL )
 			{
-				temp_list = pSel->GetRelatedList( pBox3 );
-				pBox3->SetContents( &temp_list );
+				pSel->GetRelatedList( pBox3, temp_list );
+				pBox3->SetContents( temp_list );
 			}
 		}
 	}      
@@ -293,7 +293,7 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 	//--- and no items are selected, unselect ---//
 	//--- all the corresponding items		  ---//
 	//-------------------------------------------//
-	else if ( g_Prefs.nSelStyle == 2 && pSel->GetSelectedItemCount() < 1 )
+	else if ( g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_HIGHLIGHT && pSel->GetSelectedItemCount() < 1 )
 	{
 		pSel->DeselectAll();
 		if ( pBox1 != NULL )	pBox1->DeselectAll();
@@ -304,10 +304,9 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 		{
 			if ( !g_FirstRun )
 			{
-				g_Playlist = g_Library.GetAllSongs();
+				g_Library.GetAllSongs( g_Playlist );
 				g_PlaylistCtrl->Update();
 			}
-
 			return;
 		}		
 	}
@@ -317,7 +316,7 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 	//--- and 1+ items are selected, select   ---//
 	//--- all the corresponding items		  ---//
 	//-------------------------------------------//
-	else if ( g_Prefs.nSelStyle == 2 && pSel->GetSelectedItemCount() > 0 )
+	else if ( g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_HIGHLIGHT && pSel->GetSelectedItemCount() > 0 )
 	{
 		wxArrayString rel;
 		wxArrayString all;
@@ -327,8 +326,8 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 		//--- box1 ---//
 		if ( pBox1 != NULL )
 		{
-			rel = pSel->GetRelatedList( pBox1 );
-			all = pBox1->GetFullList();
+			pSel->GetRelatedList( pBox1, rel );
+			pBox1->GetFullList( all );
 
 			if ( all.GetCount() > 0 )
 			{
@@ -342,7 +341,7 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 					}
 				}
 				pBox1->SetRelated( rel.GetCount() );
-				pBox1->SetContents( &all );
+				pBox1->SetContents( all );
 				pSel->SetRelated( -1 );
 				pSel->Update( false );
 			}
@@ -351,8 +350,8 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 		//--- box2 ---//
 		if ( pBox2 != NULL )
 		{
-			rel = pSel->GetRelatedList( pBox2 );
-			all = pBox2->GetFullList();
+			pSel->GetRelatedList( pBox2, rel );
+			pBox2->GetFullList( all );
 
 			if ( all.GetCount() > 0 )
 			{
@@ -366,7 +365,7 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 					}
 				}
 				pBox2->SetRelated( rel.GetCount() );
-				pBox2->SetContents( &all );
+				pBox2->SetContents( all );
 				pSel->SetRelated( -1 );
 				pSel->Update( false );
 			}
@@ -375,8 +374,8 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 		//--- box3 ---//
 		if ( pBox3 != NULL )
 		{
-			rel = pSel->GetRelatedList( pBox3 );
-			all = pBox2->GetFullList();
+			pSel->GetRelatedList( pBox3, rel );
+			pBox2->GetFullList( all );
 
 			if ( all.GetCount() > 0 )
 			{
@@ -390,7 +389,7 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 					}
 				}
 				pBox3->SetRelated( rel.GetCount() );
-				pBox3->SetContents( &all );
+				pBox3->SetContents( all );
 				pSel->SetRelated( -1 );
 				pSel->Update( false );
 			}
@@ -418,7 +417,7 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 //--- event will be called twice. no good. thats why there are three events that do the same	---//
 //--- thing.																					---//
 //--- to save the #ifdef code on linux and win is the same, would not be						---//
-//--- neccessary but doesnt harm.																---//
+//--- neccessary but doesnt harm.																	---//
 //-------------------------------------------------------------------------------------------------//
 
 void CActivityAreaCtrl::OnActivityBoxFocused( wxListEvent& event )
@@ -441,7 +440,6 @@ void CActivityAreaCtrl::OnActivityBoxSelected( wxListEvent& event )
 		m_bFocused = false;
 		return;
 	}
-
 	wxListEvent ev(wxEVT_COMMAND_LIST_ITEM_ACTIVATED,event.GetId());
 	m_Selected = true;
 	::wxPostEvent( this, ev );
@@ -494,8 +492,8 @@ void CActivityAreaCtrl::OnActivityBoxActivated	( wxListEvent& event)
 			break;
 		default:
 			break;
-		}
-		
+}
+
 		m_Selected = m_bFocused = m_Selecting = false;
 	}
 }

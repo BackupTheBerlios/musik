@@ -112,6 +112,15 @@ enum EMUSIK_ACTIVITY_TYPE
 	MUSIK_LBTYPE_YEARS,
 	MUSIK_LBTYPE_DECADES
 };
+enum EMUSIK_ACTIVITY_SELECTION_TYPE
+{
+	MUSIK_SELECTION_TYPE_STANDARD = 0,
+	MUSIK_SELECTION_TYPE_SLOPPY,
+	MUSIK_SELECTION_TYPE_HIGHLIGHT,
+	NMUSIK_SELECTION_TYPE
+
+
+};
 
 enum EMUSIK_THREAD_EVENTS
 {
@@ -280,10 +289,6 @@ extern CMusikPrefs			g_Prefs;
 extern CMusikPaths			g_Paths;			
 extern CMusikSongArray		g_Playlist;	
 extern CMusikSongArray		g_LibPlaylist;	
-extern wxArrayString		g_Items1;
-extern wxArrayString		g_Items2;
-extern wxArrayString		g_Items3;
-extern wxArrayString		g_Items4;
 extern wxArrayString		g_SourcesList;
 extern CMusikStreamArray	g_ActiveStreams;
 extern wxArrayInt			g_ActiveChannels;

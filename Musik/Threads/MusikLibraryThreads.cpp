@@ -58,7 +58,8 @@ void *MusikUpdateLibThread::Entry()
 	g_Library.InitTimeAdded();
 
 	//--- search / add new songs ---//
-	wxArrayString aFileList = GetMusicDirs( m_Add );
+	wxArrayString aFileList;
+	GetMusicDirs( *m_Add,aFileList);
 
 	float fPos;
 	int nLastProg = 0;
@@ -67,7 +68,7 @@ void *MusikUpdateLibThread::Entry()
 	size_t nTotal = aFileList.GetCount();
 
 	g_MusikLibraryFrame->SetTotal( nTotal );
-
+	g_Library.BeginTransaction();
 	for ( size_t i = 0; i < nTotal; i++ )
 	{
 		if ( TestDestroy() )
@@ -93,7 +94,7 @@ void *MusikUpdateLibThread::Entry()
 		}
 
 	}
-
+	g_Library.EndTransaction();
 	//--- clear del list, add list is part of g_Paths ---//
 	m_Del->Clear();
 
@@ -142,7 +143,8 @@ void *MusikScanNewThread::Entry()
 			sCurrPath = g_Paths.Item( i );
 
 			//--- get directory ---//
-			aFiles = GetMusicDir( &sCurrPath );
+
+			GetMusicDir( sCurrPath, aFiles );
 
 			//--- do math ---//
 			int nTotal		= aFiles.GetCount();
@@ -190,7 +192,8 @@ void *MusikPurgeLibThread::Entry()
 	wxPostEvent( g_MusikLibraryFrame, PurgeStartEvt );
 
 	//--- start the process ---//
-	wxArrayString songs = g_Library.Query( _("select filename from songs;") );
+	wxArrayString songs;
+	g_Library.Query( _("select filename from songs;"), songs );
 
 	float fPos;
 	int nLastProg = 0;
@@ -199,7 +202,7 @@ void *MusikPurgeLibThread::Entry()
 	size_t nTotal = songs.GetCount();
 
 	g_MusikLibraryFrame->SetTotal( nTotal );
-
+	g_Library.BeginTransaction();
 	for ( size_t i = 0; i < nTotal; i++ )
 	{
 		if ( TestDestroy() )
@@ -222,7 +225,7 @@ void *MusikPurgeLibThread::Entry()
 			g_Library.CheckAndPurge( songs.Item( i ) );
 		}
 	}
-
+	g_Library.EndTransaction();
 	return NULL;
 }
 

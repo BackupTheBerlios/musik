@@ -291,7 +291,7 @@ void MusikFrame::LibraryCustomQuery()
 	{
 		m_customQuery = sQuery;
 
-		g_Playlist = g_Library.QuerySongs( m_customQuery );
+		g_Library.QuerySongs( m_customQuery, g_Playlist );
 		g_PlaylistCtrl->Update( );
 		g_PlaylistChanged = true;
 	}
@@ -325,7 +325,7 @@ void MusikFrame::LibrarySimpleQuery( wxString sQueryVal )
 		wxString sString = wxT("'%") + sQueryVal + wxT("%'");
 		wxString sQuery;
 		sQuery.sprintf( _("artist like %s or album like %s or title like %s or filename like %s order by album,tracknum,filename"), sString.c_str(), sString.c_str(), sString.c_str(), sString.c_str() );
-		g_Playlist = g_Library.QuerySongs( sQuery );
+		g_Library.QuerySongs( sQuery, g_Playlist );
 		g_PlaylistCtrl->Update( );
 		g_PlaylistChanged = true;
 }

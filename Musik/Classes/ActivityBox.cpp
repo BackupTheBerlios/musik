@@ -11,10 +11,8 @@
  *  See the file "license.txt" for information on usage and redistribution
  *  of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 */
-
-//--- For compilers that support precompilation, includes "wx/wx.h". ---//
+// For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
-
 #include "ActivityBox.h"
 
 //--- globals ---//
@@ -61,11 +59,11 @@ void CActivityEditEvt::TranslateKeys( wxKeyEvent& event )
 //------------------------//
 //--- CActivityListBox ---//
 //------------------------//
-CActivityListBox::CActivityListBox( wxPanel *parent, wxArrayString *items,  wxWindowID id )
+CActivityListBox::CActivityListBox( CActivityBox *parent,  wxWindowID id )
 	: wxListCtrl( parent, id, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxLC_NO_HEADER | wxLC_REPORT | wxLC_VIRTUAL | wxNO_BORDER & ~wxHSCROLL & ~wxLC_SINGLE_SEL )
 {
 	m_Related = 0;
-	pItems = items;
+	m_pParent = parent;
 	this->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ) );
 
 	this->InsertColumn( 0, wxT(""), wxLIST_FORMAT_LEFT, 0 );
@@ -81,7 +79,7 @@ void CActivityListBox::RescaleColumns()
 	SetColumnWidth	( 0, 0 );
 	
 	#ifdef __WXMSW__
-		SetColumnWidth	( 1, nWidth );
+	SetColumnWidth	( 1, nWidth );
 	#elif defined __WXGTK__
 		SetColumnWidth( 1, nWidth - wxSystemSettings::GetMetric(wxSYS_HSCROLL_Y) - GetColumnWidth( 0 ) - 1 );			
 	#endif 
@@ -90,9 +88,9 @@ void CActivityListBox::RescaleColumns()
 	Refresh();
 }
 
-void CActivityListBox::SetList( wxArrayString* pList )
+void CActivityListBox::SetList( const wxArrayString &  aList )
 {
-	*pItems = *pList;
+	m_Items = aList;
 }
 
 void CActivityListBox::Update( bool selnone )
@@ -110,7 +108,7 @@ void CActivityListBox::Update( bool selnone )
 	m_ActiveAttr	= wxListItemAttr( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHTTEXT ), wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ), wxNullFont );
 	m_AllReset		= wxListItemAttr( *wxBLACK, wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ), g_fntListBold );
 
-	SetItemCount( ( long )pItems->GetCount() );
+	SetItemCount( GetRowCount() );
 	if ( selnone )
 		wxListCtrlSelNone( this );
 	Thaw();
@@ -130,18 +128,29 @@ wxString CActivityListBox::OnGetItemText(long item, long column) const
 		break;
 
 	case 1:
-		return SanitizedString( pItems->Item( item ) );
+		return GetRowText( item );
 		break;
 	}
 	return wxT("");
 }
-
+inline bool CActivityListBox::HasShowAllRow() const 
+{ 
+	return (g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_STANDARD || g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_SLOPPY);
+}
+wxString CActivityListBox::GetRowText( long row ) const
+{
+		if( row == 0 && HasShowAllRow())
+			return _("Show all ") + m_pParent->GetActivityTypeStr() + wxT( "s" );
+		if(HasShowAllRow())
+			row--;
+		return SanitizedString( m_Items.Item( row ) );
+}
 wxListItemAttr* CActivityListBox::OnGetItemAttr(long item) const
 {
-	if ( g_Prefs.nSelStyle == 2 && item < m_Related )
+	if ( g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_HIGHLIGHT && item < m_Related )
 		return ( wxListItemAttr* )&m_AllReset;
 
-	else if ( ( g_Prefs.nSelStyle == 0 || g_Prefs.nSelStyle == 1 ) && item == 0 )
+	else if ( item == 0 && HasShowAllRow())
 		return ( wxListItemAttr* )&m_AllReset;
 
 	if ( g_Prefs.nActStripes == 1 )
@@ -167,41 +176,39 @@ void CActivityListBox::DeselectAll()
 	wxListCtrlSelNone( this );
 }
 
-void CActivityListBox::SetSel( wxArrayString *aSel )
+void CActivityListBox::SetSel( const  wxArrayString & aList )
 {
 	DeselectAll();
 	int nPos = -1;
-	for ( size_t i = 0; i < aSel->GetCount(); i++ )
+	for ( size_t i = 0; i < aList.GetCount(); i++ )
 	{
-		nPos = FindItem( -1, aSel->Item( i ) );
-		if ( nPos > -1 )
-			SetItemState( nPos, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
-
+		SetSel(aList.Item( i ), false);
 	}
 }
 
-void CActivityListBox::SetSel( wxString sel )
+void CActivityListBox::SetSel( const wxString & sel, bool bDeselectAllFirst )
 {
-	DeselectAll();
-	for ( size_t i = 0; i < pItems->GetCount(); i++ )
+	if(bDeselectAllFirst)
+		DeselectAll();
+	for ( size_t i = 0; i < GetRowCount(); i++ )
 	{
-		if ( pItems->Item( i ) == sel )
+		if (GetRowText(i) == sel )
 			SetItemState( i, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
 	}
 }
 
-wxArrayString CActivityListBox::GetSelected()
+void CActivityListBox::GetSelected(wxArrayString & aReturn)
 {
-	wxArrayString aReturn;
+	aReturn.Clear();
 	int nIndex = -1;
 	for( ;; )
 	{
 		nIndex = GetNextItem( nIndex, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
 		if ( nIndex == -1 )
 			break;
-		aReturn.Add( pItems->Item( nIndex ) );
+		aReturn.Add( GetRowText( nIndex ) );
 	}
-	return aReturn;
+	return;
 }
 
 wxString CActivityListBox::GetFirstSel()
@@ -213,22 +220,10 @@ wxString CActivityListBox::GetFirstSel()
 		nIndex = GetNextItem( nIndex, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
 		if ( nIndex > -1 )
 		{
-			wxListItem item;
-			item.SetId( nIndex );
-			item.SetColumn( 1 );
-			item.SetMask( wxLIST_MASK_TEXT );
-			GetItem( item );
-			if ( pItems->Item( nIndex ) != _("<unknown>") )
-				return( pItems->Item( nIndex ) );
-			else
-				bUnknown = true;
-
+			return( GetRowText( nIndex ) );
 		}
 	}
-	if ( bUnknown )
-		return _("<unknown>");
-	else
-		return wxT("");
+	return wxT("");
 }
 
 
@@ -288,7 +283,7 @@ bool ActivityDropTarget::OnDropText( wxCoord x, wxCoord y, const wxString &text 
 			pActivityCtrl->StartRenameThread( 
 				ACTIVITY_RENAME_SONGS,
 				files, 
-				SanitizedString( pList->GetList()->Item( n ) ) );
+				SanitizedString( pList->GetList().Item( n ) ) );
 		}
 	}
 
@@ -319,12 +314,12 @@ void ActivityDropTarget::HighlightSel( wxPoint pPos )
 	nLastHit = n;
 }
 
-CActivityBox::CActivityBox( wxWindow *parent, wxArrayString *items, wxWindowID id, int nType )
+CActivityBox::CActivityBox( wxWindow *parent, wxWindowID id, enum EMUSIK_ACTIVITY_TYPE  nType )
 	:  wxPanel( parent, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxSIMPLE_BORDER | wxCLIP_CHILDREN )
 {
 	//--- CListHeader and CActivityListBox ---//
 	pHeader		= new CListHeader		( this, wxT("") );
-	pListBox	= new CActivityListBox	( this, items, id );
+	pListBox	= new CActivityListBox	( this, id );
 	
 	//--- drag and drop handler ---//
 	pListBox->SetDropTarget( new ActivityDropTarget( this ) );
@@ -383,40 +378,30 @@ wxString CActivityBox::GetActivityTypeStr()
 	}
 	return wxT( "" );
 }
-
-wxArrayString CActivityBox::GetRelatedList( CActivityBox *pDst )
+enum EMUSIK_LIB_TYPE CActivityBox::ACTIVITY_TYPE2LIB_TYPE(enum EMUSIK_ACTIVITY_TYPE lbtype)
 {
-	int nDstType = pDst->GetActivityType();
-	wxArrayString sel = GetSelected();
-	if ( m_ActivityType == MUSIK_LBTYPE_ARTISTS )
+	switch (lbtype)
 	{
-		if		( nDstType == MUSIK_LBTYPE_ALBUMS	)	return	g_Library.GetArtistAlbums	( &sel );
-		else if ( nDstType == MUSIK_LBTYPE_GENRES	)	return	g_Library.GetArtistGenres	( &sel );
-		else if ( nDstType == MUSIK_LBTYPE_YEARS	)	return	g_Library.GetArtistYears	( &sel );
+	case MUSIK_LBTYPE_ARTISTS:
+		return  MUSIK_LIB_ARTIST;
+	case MUSIK_LBTYPE_ALBUMS:
+		return MUSIK_LIB_ALBUM;
+	case MUSIK_LBTYPE_GENRES:
+		return MUSIK_LIB_GENRE;
+	case MUSIK_LBTYPE_YEARS:
+		return MUSIK_LIB_YEAR;
 	}
+	return MUSIK_LIB_INVALID;
+}
 
-	else if ( m_ActivityType == MUSIK_LBTYPE_ALBUMS )
-	{
-		if		( nDstType == MUSIK_LBTYPE_ARTISTS	)	return	g_Library.GetAlbumArtists	( &sel );
-		else if ( nDstType == MUSIK_LBTYPE_GENRES	)	return	g_Library.GetAlbumGenres	( &sel );
-		else if ( nDstType == MUSIK_LBTYPE_YEARS	)	return	g_Library.GetAlbumYears		( &sel );
-	}
-
-	else if ( m_ActivityType == MUSIK_LBTYPE_GENRES )
-	{
-		if		( nDstType == MUSIK_LBTYPE_ARTISTS	)	return	g_Library.GetGenreArtists	( &sel );
-		else if ( nDstType == MUSIK_LBTYPE_ALBUMS	)	return	g_Library.GetGenreAlbums	( &sel );
-		else if ( nDstType == MUSIK_LBTYPE_YEARS	)	return	g_Library.GetGenreYears		( &sel );
-	}
-
-	else if ( m_ActivityType == MUSIK_LBTYPE_YEARS )
-	{
-		if		( nDstType == MUSIK_LBTYPE_ARTISTS	)	return	g_Library.GetYearArtists	( &sel );
-		else if ( nDstType == MUSIK_LBTYPE_ALBUMS	)	return	g_Library.GetYearAlbums		( &sel );
-		else if ( nDstType == MUSIK_LBTYPE_GENRES	)	return	g_Library.GetYearGenres		( &sel );
-	}
-	wxArrayString aNullArray;
-	return aNullArray;
+void CActivityBox::GetRelatedList( CActivityBox *pDst, wxArrayString & aReturn )
+{
+	aReturn.Clear();
+	wxArrayString sel;
+	GetSelected(sel);
+	enum EMUSIK_LIB_TYPE  InType = ACTIVITY_TYPE2LIB_TYPE(m_ActivityType);
+	enum EMUSIK_LIB_TYPE  OutType = ACTIVITY_TYPE2LIB_TYPE(pDst->GetActivityType());
+	g_Library.GetInfo(sel,InType, OutType, aReturn );
 }
 
 void CActivityBox::ResetCaption()
@@ -430,45 +415,49 @@ void CActivityBox::ResetCaption()
 void CActivityBox::ResetContents()
 {
 	wxArrayString list;
-	if			( m_ActivityType == MUSIK_LBTYPE_ARTISTS	)	list = g_Library.GetAllArtists();
-	else if		( m_ActivityType == MUSIK_LBTYPE_ALBUMS		)	list = g_Library.GetAllAlbums();
-	else if		( m_ActivityType == MUSIK_LBTYPE_GENRES		)	list = g_Library.GetAllGenres();
-	else if		( m_ActivityType == MUSIK_LBTYPE_YEARS		)	list = g_Library.GetAllYears();
-	SetContents( &list );
+	if			( m_ActivityType == MUSIK_LBTYPE_ARTISTS	)	g_Library.GetAllArtists( list );
+	else if		( m_ActivityType == MUSIK_LBTYPE_ALBUMS		)	g_Library.GetAllAlbums( list );
+	else if		( m_ActivityType == MUSIK_LBTYPE_GENRES		)	g_Library.GetAllGenres( list );
+	else if		( m_ActivityType == MUSIK_LBTYPE_YEARS		)	g_Library.GetAllYears( list );
+	SetContents( list );
 }
 
-wxArrayString CActivityBox::GetFullList()
+void CActivityBox::GetFullList( wxArrayString & aReturn )
 {
-	if			( m_ActivityType == MUSIK_LBTYPE_ARTISTS	)	return g_Library.GetAllArtists();
-	else if		( m_ActivityType == MUSIK_LBTYPE_ALBUMS		)	return g_Library.GetAllAlbums();
-	else if		( m_ActivityType == MUSIK_LBTYPE_GENRES		)	return g_Library.GetAllGenres();
-	else if		( m_ActivityType == MUSIK_LBTYPE_YEARS		)	return g_Library.GetAllYears();
-	
-	//--- if we fail for some reason, return a blank list ---//
-	wxArrayString blank;
-	return blank;
+	aReturn.Clear();
+	switch	( m_ActivityType)
+	{
+	case MUSIK_LBTYPE_ARTISTS:
+		g_Library.GetAllArtists(aReturn);
+	case MUSIK_LBTYPE_ALBUMS:
+		g_Library.GetAllAlbums(aReturn);
+	case MUSIK_LBTYPE_GENRES:
+		g_Library.GetAllGenres(aReturn);
+	case MUSIK_LBTYPE_YEARS:
+		g_Library.GetAllYears(aReturn);
+	}
 }
 
 void CActivityBox::SetPlaylist()
 {
 	//--- if we show unselected entries ---//
-	if ( g_Prefs.nSelStyle == 1 || g_Prefs.nSelStyle == 2 || ( g_ActivityAreaCtrl->GetParentBox() == this ) )
+	if ( g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_STANDARD || g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_SLOPPY || ( g_ActivityAreaCtrl->GetParentBox() == this ) )
 	{
 	  wxArrayString list;
-	  list = GetSelected();
+	  GetSelected(list);
 	  switch ( m_ActivityType )
 	  {
 	  case MUSIK_LBTYPE_ARTISTS:
-		  g_Playlist = g_Library.GetArtistSongs( &list );
+		  g_Library.GetArtistSongs( list, g_Playlist );
 		  break;
 	  case MUSIK_LBTYPE_ALBUMS:
-		  g_Playlist = g_Library.GetAlbumSongs( &list );
+		  g_Library.GetAlbumSongs( list, g_Playlist );
 		  break;
 	  case MUSIK_LBTYPE_GENRES:
-		  g_Playlist = g_Library.GetGenreSongs( &list );
+		  g_Library.GetGenreSongs( list, g_Playlist );
 		  break;
 	  case MUSIK_LBTYPE_YEARS:
-		  g_Playlist = g_Library.GetYearSongs( &list );
+		  g_Library.GetYearSongs( list, g_Playlist );
 		  break;
 	  }
 	}
@@ -480,7 +469,7 @@ void CActivityBox::SetPlaylist()
 	//--- only the correct, selected artist's album songs	---//
 	//--- get displayed										---//
 	//---------------------------------------------------------//
-	else if ( g_Prefs.nSelStyle == 0 || g_Prefs.nSelStyle == 1 )
+	else if ( g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_STANDARD || g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_SLOPPY )
 	{
 		CActivityBox *pParentBox = g_ActivityAreaCtrl->GetParentBox();
 		if ( pParentBox != NULL )
@@ -489,8 +478,10 @@ void CActivityBox::SetPlaylist()
 			int nThisType				= GetActivityType();
 			wxString sParentType		= wxT( "" );
 			wxString sThisType			= wxT( "" );
-			wxArrayString aParentSel	= pParentBox->GetSelected();
-			wxArrayString aThisSel		= GetSelected();
+			wxArrayString aParentSel;
+			pParentBox->GetSelected( aParentSel );
+			wxArrayString aThisSel;
+			GetSelected( aThisSel );
 
 			if ( nParentType == ACTIVITY_ARTISTS )
 				sParentType = wxT( "artist" );
@@ -525,11 +516,14 @@ void CActivityBox::SetPlaylist()
 
 				//--- last item, so just add apostrophe ' ---//
 				if ( i == ( aThisSel.GetCount() - 1 ) )
-				    sThis + wxT("'");
-
+				      sThis += wxT("'");
 				//--- not last item, so format string for another ---//
 				else
-				    sThis += wxT("' or ") + sThisType + wxT( " like " );
+				{
+				      sThis += wxT("' or ");
+				      sThis += sThisType;
+				      sThis += wxT(" like ");
+				}
 			}
 
 			//--- make parent portion of query ---//
@@ -543,32 +537,28 @@ void CActivityBox::SetPlaylist()
 				sParent += aParentSel.Item( i );
 				sParent += wxT("' and " );
 				sParent += sThis;
-
-				//--- last item, so just add apostrophe ' ---//
-				if ( i == ( aParentSel.GetCount() - 1 ) )
-					sParent += wxT( "'" );
-
+				if ( i != ( aParentSel.GetCount() - 1 ) )
 				//--- not last item, so format string for another ---//
-				else
-					sParent += wxT("' or ") + sParentType + wxT( " like " );
-
+				{
+					sParent += wxT(" or ");
+					sParent += sParentType;
+					sParent += wxT(" like ");
+			    	}
 			}
 
 			//--- compile query ---//
-			g_Playlist = g_Library.QuerySongs( sParent );
+			g_Library.QuerySongs( sParent, g_Playlist );
 		}
 	}
-	
-	g_PlaylistCtrl->Update();
+
+	g_PlaylistCtrl->Update(true,false);
 	g_PlaylistChanged = true;
 }
 
-void CActivityBox::SetContents( wxArrayString *pList )
+void CActivityBox::SetContents( wxArrayString & aList )
 {
-	if ( g_Prefs.nSelStyle == 0 || g_Prefs.nSelStyle == 1 )
-		pList->Insert( _("Show all ") + GetActivityTypeStr() + wxT( "s" ), 0 );
 
-	pListBox->SetList( pList );
+	pListBox->SetList( aList );
 	pListBox->Update( true );
 }
 
@@ -605,7 +595,9 @@ void CActivityBox::EditCommit()
 
 	pEdit->Enable( FALSE );
 
-	StartRenameThread( ACTIVITY_RENAME_ACTIVITY, GetSelected(), pEdit->GetValue() );
+	wxArrayString sel;
+	GetSelected(sel);
+	StartRenameThread( ACTIVITY_RENAME_ACTIVITY, sel, pEdit->GetValue() );
 }
 
 void CActivityBox::EnableProgress( bool enable )
@@ -651,26 +643,27 @@ wxString CActivityBox::DNDGetList()
 	//--- get selected items ---//
 	wxArrayString list;
 	CMusikSongArray songs;
-	list = GetSelected();
+	GetSelected( list );
 	switch ( m_ActivityType )
 	{
 	case MUSIK_LBTYPE_ARTISTS:
-		songs = g_Library.GetArtistSongs( &list );
+		g_Library.GetArtistSongs( list, songs );
 		break;
 	case MUSIK_LBTYPE_ALBUMS:
-		songs = g_Library.GetAlbumSongs( &list );
+		g_Library.GetAlbumSongs( list, songs );
 		break;
 	case MUSIK_LBTYPE_GENRES:
-		songs = g_Library.GetGenreSongs( &list );
+		g_Library.GetGenreSongs( list, songs );
 		break;
 	case MUSIK_LBTYPE_YEARS:
-		songs = g_Library.GetYearSongs( &list );
+		g_Library.GetYearSongs( list, songs );
 		break;
 	}
 	list.Clear();
 
 	//--- add songs to dnd string ---//
-	wxString sRet = wxT("");
+	wxString sRet;
+	sRet.Alloc(255 * songs.GetCount());
 	for ( size_t i = 0; i < songs.GetCount(); i++ )
 	{
 		if	( i == ( songs.GetCount() - 1 ) )
@@ -684,13 +677,14 @@ wxString CActivityBox::DNDGetList()
 //-----------------------------//
 //--- rename thread control ---//
 //-----------------------------//
-void CActivityBox::StartRenameThread( int mode, wxArrayString sel, wxString newvalue )
+void CActivityBox::StartRenameThread( int mode, const wxArrayString &sel, wxString newvalue )
 {
+
 	if ( g_MusikFrame->GetActiveThread() == NULL )
         {
-			pRenameThread = new MusikActivityRenameThread( this, mode, sel, newvalue );
-			pRenameThread->Create();
-			pRenameThread->Run();
+		pRenameThread = new MusikActivityRenameThread( this, mode, sel, newvalue );
+		pRenameThread->Create();
+		pRenameThread->Run();
         }
 	else
 		wxMessageBox( _( "An internal error has occured.\nPrevious thread not terminated correctly.\n\nPlease contact the Musik development team with this error." ), MUSIK_VERSION, wxICON_STOP );
@@ -715,19 +709,19 @@ void CActivityBox::OnRenameThreadStart( wxCommandEvent& WXUNUSED(event) )
 	//--- post the event. we're up and running now! ---//
 	wxCommandEvent MusikStartProgEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_FRAME_THREAD_START );
 	wxPostEvent( g_MusikFrame, MusikStartProgEvt );
-}
+	}
 	
 void CActivityBox::OnRenameThreadProg( wxCommandEvent& WXUNUSED(event) )
-{
+			{
 	//--- relay thread progress message to g_MusikFrame ---//
 	g_MusikFrame->SetProgress( GetProgress() );
 	wxCommandEvent MusikEndProgEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_FRAME_THREAD_PROG );
 	wxPostEvent( g_MusikFrame, MusikEndProgEvt );
-}
+				}
 
 void CActivityBox::OnRenameThreadEnd( wxCommandEvent& WXUNUSED(event) )
-{
-	if ( g_Prefs.nSelStyle == 2 || g_ActivityAreaCtrl->GetParentBox() == this )
+				{
+	if ( g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_HIGHLIGHT || g_ActivityAreaCtrl->GetParentBox() == this )
 		ResetContents();
 	else
 	{

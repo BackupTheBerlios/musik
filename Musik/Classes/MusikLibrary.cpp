@@ -14,10 +14,8 @@
  *  See the file "license.txt" for information on usage and redistribution
  *  of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 */
-
-//--- For compilers that support precompilation, includes "wx/wx.h". ---//
+// For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
-
 #include "MusikLibrary.h"
 
 //--- globals ---//
@@ -35,7 +33,6 @@
 #include <wx/ffile.h>
 #include <wx/filename.h>
 #include <wx/arrimpl.cpp>
-
 WX_DEFINE_OBJARRAY( CMusikSongArray );
 WX_DECLARE_STRING_HASH_MAP( CMusikSong *, myStringToMusikSongPtrMap );
 
@@ -95,13 +92,10 @@ bool CMusikLibrary::Load()
 	//--- look for database.. if need be, create it and create tables ---//
 	char *errmsg = NULL;
 	
-	//--- load the database ---//
-
 	// does file already exist, if nt we create the table
 	wxString query;
 	if ( !wxFileExists( sFilename ) )
 	{
-
 		//--- create the tables ---//
 		query  = wxT( "create table songs ( "			);
 		query += wxT( "songid INTEGER PRIMARY KEY, "	);
@@ -125,7 +119,6 @@ bool CMusikLibrary::Load()
 		query += wxT( "dirty number(10) "				);
 		query += wxT( " );"								);
 	}
-
 	m_pDB = sqlite_open( wxConvertWX2MB(sFilename), 0666, &errmsg );
 
 	if ( !query.IsEmpty() )
@@ -133,10 +126,8 @@ bool CMusikLibrary::Load()
 		const wxCharBuffer pQuery = ConvQueryToMB(query);
 		sqlite_exec( m_pDB, pQuery, NULL, NULL, NULL );
 	}
-	
 	if ( errmsg )
 			free( errmsg );
-			
 	return true;
 }
 
@@ -228,7 +219,6 @@ void CMusikLibrary::AddMP3( const wxString & filename )
 	int duration	= 0;
 	int vbr			= 0;
 	int timesplayed = 0;
-	wxString timeadded = m_TimeAdded;
 	int filesize = 0;
 	int dirty = 0;
 
@@ -242,9 +232,10 @@ void CMusikLibrary::AddMP3( const wxString & filename )
 		filesize	= mp3info.getFileSize();
 		
 		//--- link and load mp3 ---//
+//		char* pFilename = StringToANSI( filename );
 		ID3_Tag		id3Tag;
 		id3Tag.Link( ( const char* )ConvFNToFieldMB( filename ), ID3TT_ALL );
-
+		
 		szArtist 	=  ID3_GetArtist	( &id3Tag );
 		szTitle 	=  ID3_GetTitle		( &id3Tag );
 		szAlbum 	=  ID3_GetAlbum		( &id3Tag );
@@ -255,11 +246,11 @@ void CMusikLibrary::AddMP3( const wxString & filename )
 		{
 			tracknum = atol(szTrack);
 		}
-
+		
 		//--- get correct genre from (X) / (XX) / (XXX) format ---//
 		wxString sGenre = ConvDBFieldToWX( szGenre );
 		sGenre = GetGenre( sGenre );
-		
+
 		//--- run the query ---//
 		sqlite_exec_printf( m_pDB, "insert into songs values ( %Q, %d, %d, %Q, %Q, %Q, %Q, %d, %Q, %Q, %d, %d, %Q, %Q, %d, %d, %Q, %d, %d );", NULL, NULL, NULL, NULL,
 			format,	
@@ -277,7 +268,7 @@ void CMusikLibrary::AddMP3( const wxString & filename )
 			"",//notes 
 			timesplayed, 
 			duration, 
-			( const char* )ConvDBFieldToMB( timeadded ),
+			( const char* )ConvDBFieldToMB( m_TimeAdded ),
 			filesize,
 			dirty );
 
@@ -301,7 +292,7 @@ void CMusikLibrary::WriteMP3Tag( const wxString & filename, bool ClearAll )
 	{
 		ID3_Tag	id3Tag;
 		id3Tag.Link( ( const char* )ConvFNToFieldMB( filename ) , ID3TT_ALL );
-
+	
 		//--- itterate through and delete ALL TAG INFO ---//
 		if ( ClearAll )
 		{
@@ -313,7 +304,7 @@ void CMusikLibrary::WriteMP3Tag( const wxString & filename, bool ClearAll )
 				delete frame;
 			}
 		}
-
+	
 		//--- clear only fields of interest ---//
 		else if ( !ClearAll )
 		{
@@ -356,11 +347,11 @@ bool CMusikLibrary::WriteOGGTag( const wxString & filename, bool ClearAll )
 
 		//--- file objects, etc ---//
 		wxFFile in, out;
-		vcedit_state *state;
-		vorbis_comment *vc;
-		state = vcedit_new_state();
+    		vcedit_state *state;
+    		vorbis_comment *vc;
+    		state = vcedit_new_state();
 
-		//--- if file couldn't be loaded, return ---//
+    		//--- if file couldn't be loaded, return ---//
 		wxString read_state = wxT( "r+b" );
 		if ( !in.Open( sRename.c_str(), read_state.c_str() ) )
 		{
@@ -370,7 +361,7 @@ bool CMusikLibrary::WriteOGGTag( const wxString & filename, bool ClearAll )
 
 		//--- if the file *DID* load, but is *NOT* and ogg, return ---//
 		if( vcedit_open( state, in.fp() ) < 0 )
-		{
+    		{
 			in.Close();
 			wxRenameFile( sRename, filename );
 			return false;
@@ -378,7 +369,7 @@ bool CMusikLibrary::WriteOGGTag( const wxString & filename, bool ClearAll )
 
 		//--- load the comments, and clear them out ---//
 		vc = vcedit_comments( state );
-		vorbis_comment_clear( vc );
+    		vorbis_comment_clear( vc );
 		vorbis_comment_init( vc );
 
 		//--- add comments ---//
@@ -414,7 +405,8 @@ bool CMusikLibrary::WriteOGGTag( const wxString & filename, bool ClearAll )
 
 void CMusikLibrary::ClearDirtyTags( bool bInform )
 {
-	CMusikSongArray aDirty = g_Library.QuerySongs( wxT("dirty = 1") );
+	CMusikSongArray aDirty;
+	g_Library.QuerySongs( wxT("dirty = 1"), aDirty );
 	size_t nCount = aDirty.GetCount();
 	for( size_t i = 0; i < nCount; i++ )
 		UpdateItem( aDirty.Item( i ).Filename, aDirty.Item( i ), false );
@@ -471,8 +463,6 @@ void CMusikLibrary::AddOgg( const wxString & filename )
 		genre		= oggInfo.GetGenre();
 		tracknum	= oggInfo.GetTrackNum();
 
-		wxString timeadded = m_TimeAdded;
-
 		if ( artist.Length() < 0 )
 			artist = justfilename;
 
@@ -499,7 +489,7 @@ void CMusikLibrary::AddOgg( const wxString & filename )
 			( const char* )ConvDBFieldToMB( notes ), 
 			timesplayed, 
 			duration, 
-			( const char* )ConvDBFieldToMB( timeadded ), 
+			( const char* )ConvDBFieldToMB( m_TimeAdded ), 
 			filesize,
 			dirty );
 	
@@ -521,24 +511,28 @@ void CMusikLibrary::AddAIFF( const wxString & filename )
 	//int format = MUSIK_FORMAT_AIFF;
 }
 
-wxArrayString CMusikLibrary::VerifyYearList( wxArrayString *aList )
+void CMusikLibrary::VerifyYearList( const wxArrayString & aList,wxArrayString & aVerifiedList )
 {
-	wxArrayString aVerifiedList;
-	for ( int i = 0; i < (int)aList->GetCount(); i++ )
+	aVerifiedList.Clear();
+	for ( int i = 0; i < (int)aList.GetCount(); i++ )
 	{
-		if ( ( !aList->Item( i ).IsEmpty() ) && ( aList->Item( i ).IsNumber() ) )
-			aVerifiedList.Add( aList->Item( i ) );
+		if ( ( !aList.Item( i ).IsEmpty() ) && ( aList.Item( i ).IsNumber() ) )
+			aVerifiedList.Add( aList.Item( i ) );
 	}
-	return aVerifiedList;
+	return;
 }
 
-wxArrayString CMusikLibrary::GetInfo( wxArrayString *aList, int nInType, int nOutType )
+void CMusikLibrary::GetInfo( const wxArrayString & aList, int nInType, int nOutType ,wxArrayString & aReturn )
 {
-	wxArrayString aReturn;
+	aReturn.Clear();
 	wxString sInfo;
-
+	if(nInType == MUSIK_LIB_INVALID || nOutType == MUSIK_LIB_INVALID)
+	{
+		wxASSERT(0);
+		return;
+	}
 	wxString query;
-
+	query.Alloc(50 * aList.GetCount()+ 40);
 	switch ( nOutType )
 	{
 	case MUSIK_LIB_ARTIST:
@@ -561,9 +555,10 @@ wxArrayString CMusikLibrary::GetInfo( wxArrayString *aList, int nInType, int nOu
 		break;
 	}
 
-	for ( int i = 0; i < (int)aList->GetCount(); i++ )
+	
+	for ( int i = 0; i < (int)aList.GetCount(); i++ )
 	{
-		wxString itemstr = aList->Item( i );
+		wxString itemstr = aList.Item( i );
 		itemstr.Replace( wxT("'"), wxT("''") );
 
 		if ( i > 0 )
@@ -572,24 +567,26 @@ wxArrayString CMusikLibrary::GetInfo( wxArrayString *aList, int nInType, int nOu
 		switch ( nInType )
 		{
 		case MUSIK_LIB_ARTIST:
-			query += wxT("artist = '") + itemstr + wxT("' ");
+			query += wxT("artist = '");
 			break;
 
 		case MUSIK_LIB_ALBUM:
-			query += wxT("album = '") + itemstr + wxT("' ");
+			query += wxT("album = '");
 			break;
 
 		case MUSIK_LIB_GENRE:
-			query += wxT("genre = '") + itemstr + wxT("' ");
+			query += wxT("genre = '");
 			break;
 
 		case MUSIK_LIB_YEAR:
-			query += wxT("year = '") + itemstr + wxT("' ");
+			query += wxT("year = '");
 			break;
 
 		case MUSIK_LIB_DECADE:
 			break;
 		}
+		query += itemstr;
+		query += wxT("' ");
 
 	}
 
@@ -638,44 +635,47 @@ wxArrayString CMusikLibrary::GetInfo( wxArrayString *aList, int nInType, int nOu
 	//--- close up ---//
 	sqlite_finalize( pVM, &errmsg );
 	if ( nOutType == MUSIK_LIB_YEAR )
-		return VerifyYearList( &aReturn );
-	else		
-		return aReturn;
+	{
+		wxArrayString aVerifiedList;
+		VerifyYearList( aReturn , aVerifiedList );
+		aReturn = aVerifiedList;
+	}
+	
 }
 
-CMusikSongArray CMusikLibrary::GetSongs( wxArrayString *aList, int nInType )
+void CMusikLibrary::GetSongs( const wxArrayString & aList, int nInType, CMusikSongArray & aReturn )
 {
-	CMusikSongArray aReturn;
+	aReturn.Clear();
 	wxString sInfo;
 	aReturn.Alloc(GetSongCount()); // optimize item adding performance,
   	wxString sQuery(wxT( "select filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize from songs where "));
-     
+  
+   
   	if ( nInType == MUSIK_LIB_ARTIST )
-		sQuery +=wxT("artist in(");
+    		sQuery +=wxT("artist in(");
 	else if ( nInType == MUSIK_LIB_ALBUM )
 		sQuery += wxT( "album in( ");
 	else if ( nInType == MUSIK_LIB_GENRE )
 		sQuery += wxT( "genre in( ");
 	else if ( nInType == MUSIK_LIB_YEAR )
 		sQuery += wxT( "year in(");
-	sQuery.Alloc(sQuery.Len() + 30 + aList->GetCount() * 30); // optimization ( the 30 is a wild guess)
+	sQuery.Alloc(sQuery.Len() + 30 + aList.GetCount() * 30); // optimization ( the 30 is a wild guess)
 
 	//--- for each item in the input list, we're going to query the database ---//
-	for ( size_t i = 0; i < aList->GetCount(); i++ )
+	for ( size_t i = 0; i < aList.GetCount(); i++ )
 	{	
-		aList->Item( i ).Replace( wxT( "'" ), wxT( "''" ), true );
-		
+    	 	aList.Item( i ).Replace( wxT( "'" ), wxT( "''" ), true );
   	 	sQuery += wxT("'");
-		sQuery += aList->Item( i );
-		//--- not at the end ---//
-		if ( i != aList->GetCount() - 1 )
+		 sQuery += aList.Item( i );
+		 //--- not at the end ---//
+		 if ( i != aList.GetCount() - 1 )
 			sQuery += wxT("', ");
-		//--- at the end ---//
-		else
+		 //--- at the end ---//
+		 else
 			sQuery += wxT("' ) ");
-  	}
+ 	}
 	if ( nInType == MUSIK_LIB_ARTIST )
-		sQuery +=wxT("order by artist,album,tracknum;");
+    		sQuery +=wxT("order by artist,album,tracknum;");
 	else if ( nInType == MUSIK_LIB_ALBUM )
 		sQuery += wxT( "order by album,tracknum,artist;");
 	else if ( nInType == MUSIK_LIB_GENRE )
@@ -716,18 +716,17 @@ CMusikSongArray CMusikLibrary::GetSongs( wxArrayString *aList, int nInType )
 		pLibItem->Filesize		= StringToInt		( coldata[16] );
 		aReturn.Add( pLibItem );// array takes ownerhip of object
 	}
-
 	//--- close up ---//
 	sqlite_finalize( pVM, &errmsg );
 	aReturn.Shrink();
-	return aReturn;
+	return;
 }
 
-wxArrayString CMusikLibrary::Query( const wxString & query )
+void CMusikLibrary::Query( const wxString & query, wxArrayString & aReturn )
 {
 	//wxMutexLocker lock( LibMutex );
 
-	wxArrayString aReturn;
+	aReturn.Clear();
 	wxString sInfo;
 
 	//--- run the query ---//
@@ -750,31 +749,28 @@ wxArrayString CMusikLibrary::Query( const wxString & query )
 
 		//--- close up ---//
 		sqlite_finalize( pVM, &errmsg );
-		aReturn.Shrink();
+		//aReturn.Shrink(); wxArrayString::Shrink() is buggy at least until now 8/30/03. DO NOT USE IT!
 	}
-	return aReturn;
+	return;
 }
-
-CMusikSongArray CMusikLibrary::GetStdPlaylistSongs( wxArrayString *aFiles )
+void CMusikLibrary::GetStdPlaylistSongs( const wxArrayString & aFiles, CMusikSongArray & aReturn )
 {
-	CMusikSongArray aReturn;
+	aReturn.Clear();
 	
 	wxString sQuery = wxT("select filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize from songs where filename in (");
 
-	sQuery.Alloc(sQuery.Len() + aFiles->GetCount() * 30); // optimization ( the 30 is a wild guess)
-	for ( size_t i = 0; i < aFiles->GetCount(); i++ )
+	sQuery.Alloc(sQuery.Len() + aFiles.GetCount() * 30); // optimization ( the 30 is a wild guess)
+	for ( size_t i = 0; i < aFiles.GetCount(); i++ )
 	{
 		//--- if song has a ' ---//	
-		wxString filename( aFiles->Item( i ) );
+		wxString filename( aFiles.Item( i ) );
 		filename.Replace( wxT("'"), wxT("''"), TRUE );
 
 		sQuery += wxT("'");
 		sQuery += filename;
-
 		//--- not at the end ---//
-		if ( i != aFiles->GetCount() - 1 )
+		if ( i != aFiles.GetCount() - 1 )
 			sQuery += wxT("', ");
-
 		//--- at the end ---//
 		else
 			sQuery += wxT("' );");
@@ -790,6 +786,8 @@ CMusikSongArray CMusikLibrary::GetStdPlaylistSongs( wxArrayString *aFiles )
 	const char **coldata;
 	const char **coltypes;
 
+	
+
 	//--- pVM will be null if the query was invalid ---//
 	if ( pVM )
 	{
@@ -803,9 +801,9 @@ CMusikSongArray CMusikLibrary::GetStdPlaylistSongs( wxArrayString *aFiles )
 		//--- look at each row of the result ---//
 		while ( sqlite_step( pVM, &numcols, &coldata, &coltypes ) == SQLITE_ROW )
 		{
+			//wxString sCurrFile = wxString( coldata[0],wxConvFile ); the wxString constructor has a bug, the resulting string prtetnds to be 1 lobger than it really is.!!!!
 			wxString sCurrFile = wxConvertMB2WX( coldata[0]);
 			CMusikSong *pSong = new CMusikSong();
-
 			//---------------------------------------------------------------------//
 			//--- we fill the map and afterwards a array from the map because	---//
 			//--- we can have multiple filenames in the same list				---//
@@ -827,19 +825,17 @@ CMusikSongArray CMusikLibrary::GetStdPlaylistSongs( wxArrayString *aFiles )
 			pSong->TimesPlayed	= StringToInt		( coldata[14] );
 			pSong->TimeAdded	= ConvDBFieldToWX	( coldata[15] );
 			pSong->Filesize		= StringToInt		( coldata[16] );
-
+            
 			theMap[sCurrFile]	= pSong;            
 		}
 
 		//--- close up ---//
 		sqlite_finalize( pVM, &errmsg );
-		aReturn.Alloc(aFiles->GetCount());
-
-
-		for ( size_t i = 0; i < aFiles->GetCount(); i++ )
+		aReturn.Alloc(aFiles.GetCount());
+		for ( size_t i = 0; i < aFiles.GetCount(); i++ )
 		{
-			CMusikSong *pSong = theMap[ aFiles->Item( i ) ];
-			wxASSERT_MSG( pSong, wxString(aFiles->Item( i ) + wxT( " is not on the map!" ) ) );
+			CMusikSong *pSong = theMap[ aFiles.Item( i ) ];
+			wxASSERT_MSG( pSong, wxString(aFiles.Item( i ) + wxT( " is not on the map!" ) ) );
 
 			//---------------------------------------------------------------------//
 			//--- add the object(of the map) by value, to create duplicate		---// 
@@ -855,15 +851,15 @@ CMusikSongArray CMusikLibrary::GetStdPlaylistSongs( wxArrayString *aFiles )
 		//-------------------------------------------------------------------------//
 		WX_CLEAR_HASH_MAP(myStringToMusikSongPtrMap, theMap); 
 	}
-	return aReturn;
+	return;
 
 }
 
-CMusikSongArray CMusikLibrary::QuerySongs( const wxString & queryWhere )
+void CMusikLibrary::QuerySongs( const wxString & queryWhere, CMusikSongArray & aReturn )
 {
 	//wxMutexLocker lock( LibMutex );
 
-	CMusikSongArray aReturn;
+	aReturn.Clear();
 	wxString sInfo;
 
 	//--- run query ---//
@@ -876,6 +872,7 @@ CMusikSongArray CMusikLibrary::QuerySongs( const wxString & queryWhere )
 	const wxCharBuffer pQuery = ConvQueryToMB(query);
 	sqlite_compile( m_pDB, pQuery, &pTail, &pVM, &errmsg );
 	
+
 	int numcols = 0;
 	const char **coldata;
 	const char **coltypes;
@@ -913,7 +910,7 @@ CMusikSongArray CMusikLibrary::QuerySongs( const wxString & queryWhere )
 		sqlite_finalize( pVM, &errmsg );
 	}
 	aReturn.Shrink();
-	return aReturn;
+	return;
 }
 
 
@@ -936,7 +933,7 @@ int CMusikLibrary::GetTimesPlayed( const wxString & filename )
 
 	char *query;
 	query = sqlite_mprintf( "select timesplayed from songs where filename = %Q;", ( const char* )ConvFNToFieldMB( filename ) );
-	
+
 	//--- run query ---//
 	const char *pTail;
 	sqlite_vm *pVM;
@@ -989,7 +986,7 @@ int CMusikLibrary::GetSongCount()
 bool CMusikLibrary::GetSongFromFilename( const wxString& filename, CMusikSong *pSong )
 {
 	char *query = sqlite_mprintf( "select filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize from songs where filename = %Q;", ( const char* )ConvFNToFieldMB( filename ) );
-
+		
 	//--- run query ---//
 	const char *pTail;
 	sqlite_vm *pVM;
@@ -1167,7 +1164,6 @@ bool CMusikLibrary::RenameFile( CMusikSong* song, bool bClearCheck )
 
 	//--------------------------------//
 	//--- new filename information ---//
-	//--------------------------------//
 	wxFileName filename( song->Filename );
 	wxString sPrePath	= filename.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR );
 	wxString sFile		= g_Prefs.sAutoRename;
@@ -1228,14 +1224,14 @@ bool CMusikLibrary::RenameFile( CMusikSong* song, bool bClearCheck )
 
 	//--- if we're in windows, we can't have certain characters, so blank them out ---//
 	#ifdef __WXMSW__
-		sFile.Replace( wxT("/"), wxT(""), true );
-		sFile.Replace( wxT(":"), wxT(""), true );
-		sFile.Replace( wxT("*"), wxT(""), true );
-		sFile.Replace( wxT("?"), wxT(""), true );
-		sFile.Replace( wxT("<"), wxT(""), true );
-		sFile.Replace( wxT(">"), wxT(""), true );
-		sFile.Replace( wxT("|"), wxT(""), true );
-		sFile.Replace( wxT( "\"" ), wxT( "" ), true );
+	sFile.Replace( wxT("/"), wxT(""), true );
+	sFile.Replace( wxT(":"), wxT(""), true );
+	sFile.Replace( wxT("*"), wxT(""), true );
+	sFile.Replace( wxT("?"), wxT(""), true );
+	sFile.Replace( wxT("<"), wxT(""), true );
+	sFile.Replace( wxT(">"), wxT(""), true );
+	sFile.Replace( wxT("|"), wxT(""), true );
+	sFile.Replace( wxT( "\"" ), wxT( "" ), true );
 	#endif
 
 	//-------------------------------------------------//
@@ -1253,7 +1249,6 @@ bool CMusikLibrary::RenameFile( CMusikSong* song, bool bClearCheck )
 	//-----------------------------------------//
 	wxArrayString aPaths = DelimitStr( sFile, wxString( MUSIK_PATH_SEPARATOR ), false );
 	wxString sFinalPath = sRootPath;
-
 	for ( size_t i = 0; i < aPaths.GetCount() - 1; i++ )
 	{
 		wxString sCur = aPaths.Item( i );
@@ -1280,9 +1275,7 @@ bool CMusikLibrary::RenameFile( CMusikSong* song, bool bClearCheck )
 	wxString oldfilename = song->Filename;
 	wxString newfilename = sFinalPath + sJustFilename + sExt;
 
-	//-----------------------------------------//
 	//--- filename already the same? return ---//
-	//-----------------------------------------//
 	if ( oldfilename == newfilename )
 	{
 		song->Filename = newfilename;
@@ -1423,109 +1416,112 @@ bool CMusikLibrary::RetagFile( CMusikSong* Song )
 //--- pre-defined queries to make ---//
 //---   life a little bit easier  ---//
 //-----------------------------------//
-wxArrayString CMusikLibrary::GetAllYears()	
+void CMusikLibrary::GetAllYears(wxArrayString & years)	
 { 
-	wxArrayString years = Query( wxT("select distinct year from songs order by year;") );
-	VerifyYearList( &years );
-	return years;	
+	years.Clear();
+	Query( wxT("select distinct year from songs order by year;"), years );
+	wxArrayString verifiedyears;
+	VerifyYearList( years, verifiedyears );
+	years = verifiedyears;
+	return;	
 }
 
-CMusikSongArray CMusikLibrary::GetAllSongs()	
+void CMusikLibrary::GetAllSongs( CMusikSongArray & aReturn )	
 { 
-	return QuerySongs( wxT("filename <> ''") );												
+	QuerySongs( wxT("filename <> ''"), aReturn );												
 }
 
-wxArrayString CMusikLibrary::GetAllArtists()	
+void CMusikLibrary::GetAllArtists( wxArrayString & aReturn )	
 { 
-	return Query( wxT("select distinct artist from songs order by artist;") );			
+	Query( wxT("select distinct artist from songs order by artist;"), aReturn );			
 }
 
-wxArrayString CMusikLibrary::GetAllAlbums()	
+void CMusikLibrary::GetAllAlbums( wxArrayString & aReturn )	
 { 
-	return Query( wxT("select distinct album from songs order by album;") );					
+	Query( wxT("select distinct album from songs order by album;"), aReturn );					
 }
 
-wxArrayString CMusikLibrary::GetAllGenres()	
+void CMusikLibrary::GetAllGenres( wxArrayString & aReturn )	
 { 
-	return Query( wxT("select distinct genre from songs order by genre;") );					
+	Query( wxT("select distinct genre from songs order by genre;"), aReturn );					
 }
 
-wxArrayString CMusikLibrary::GetArtistAlbums( wxArrayString *aArtists )	
+void CMusikLibrary::GetArtistAlbums( const wxArrayString & aArtists, wxArrayString & aReturn )	
 { 
-	return GetInfo( aArtists, MUSIK_LIB_ARTIST, MUSIK_LIB_ALBUM );				
+	GetInfo( aArtists, MUSIK_LIB_ARTIST, MUSIK_LIB_ALBUM, aReturn );				
 }
 
-wxArrayString CMusikLibrary::GetArtistGenres( wxArrayString *aArtists )
+void CMusikLibrary::GetArtistGenres( const wxArrayString & aArtists, wxArrayString & aReturn )
 { 
-	return GetInfo( aArtists, MUSIK_LIB_ARTIST, MUSIK_LIB_GENRE );					
+	GetInfo( aArtists, MUSIK_LIB_ARTIST, MUSIK_LIB_GENRE, aReturn );					
 }
 
-wxArrayString CMusikLibrary::GetArtistYears( wxArrayString *aArtists )	
+void CMusikLibrary::GetArtistYears( const wxArrayString & aArtists, wxArrayString & aReturn )	
 { 
-	return GetInfo( aArtists, MUSIK_LIB_ARTIST, MUSIK_LIB_YEAR );		
+	GetInfo( aArtists, MUSIK_LIB_ARTIST, MUSIK_LIB_YEAR, aReturn );		
 }
 
-CMusikSongArray CMusikLibrary::GetArtistSongs( wxArrayString *aArtists )
+void CMusikLibrary::GetArtistSongs( const wxArrayString & aArtists, CMusikSongArray & aReturn )
 { 
-	return GetSongs( aArtists, MUSIK_LIB_ARTIST );									
+	GetSongs( aArtists, MUSIK_LIB_ARTIST, aReturn );									
 }
 
-wxArrayString CMusikLibrary::GetAlbumArtists( wxArrayString *aAlbums )	
+void CMusikLibrary::GetAlbumArtists( const wxArrayString & aAlbums, wxArrayString & aReturn )	
 { 
-	return GetInfo( aAlbums, MUSIK_LIB_ALBUM, MUSIK_LIB_ARTIST );			
+	GetInfo( aAlbums, MUSIK_LIB_ALBUM, MUSIK_LIB_ARTIST, aReturn );			
 }
 
-wxArrayString CMusikLibrary::GetAlbumGenres( wxArrayString *aAlbums	)
+void CMusikLibrary::GetAlbumGenres( const wxArrayString & aAlbums, wxArrayString & aReturn )
 { 
-	return GetInfo( aAlbums, MUSIK_LIB_ALBUM, MUSIK_LIB_GENRE );	
+	GetInfo( aAlbums, MUSIK_LIB_ALBUM, MUSIK_LIB_GENRE, aReturn );	
 }
 
-wxArrayString CMusikLibrary::GetAlbumYears( wxArrayString *aAlbums )	
+void CMusikLibrary::GetAlbumYears( const wxArrayString & aAlbums, wxArrayString & aReturn )	
 { 
-	return GetInfo( aAlbums, MUSIK_LIB_ALBUM, MUSIK_LIB_YEAR );		
+	GetInfo( aAlbums, MUSIK_LIB_ALBUM, MUSIK_LIB_YEAR, aReturn );		
 }
 
-CMusikSongArray CMusikLibrary::GetAlbumSongs( wxArrayString *aAlbums )	
+void CMusikLibrary::GetAlbumSongs( const wxArrayString & aAlbums, CMusikSongArray & aReturn )	
 { 
-	return GetSongs( aAlbums, MUSIK_LIB_ALBUM );
+	GetSongs( aAlbums, MUSIK_LIB_ALBUM, aReturn );
 }
 
-wxArrayString CMusikLibrary::GetGenreArtists( wxArrayString *aGenres )	
+void CMusikLibrary::GetGenreArtists( const wxArrayString & aGenres, wxArrayString & aReturn )	
 { 
-	return GetInfo( aGenres, MUSIK_LIB_GENRE, MUSIK_LIB_ARTIST );		
+	GetInfo( aGenres, MUSIK_LIB_GENRE, MUSIK_LIB_ARTIST, aReturn );		
 }
 
-wxArrayString CMusikLibrary::GetGenreAlbums( wxArrayString *aGenres	)	
+void CMusikLibrary::GetGenreAlbums( const wxArrayString & aGenres, wxArrayString & aReturn )	
 { 
-	return GetInfo( aGenres, MUSIK_LIB_GENRE, MUSIK_LIB_ALBUM );	
+	GetInfo( aGenres, MUSIK_LIB_GENRE, MUSIK_LIB_ALBUM, aReturn );	
 }
 
-wxArrayString CMusikLibrary::GetGenreYears( wxArrayString *aGenres )	
+void CMusikLibrary::GetGenreYears( const wxArrayString & aGenres, wxArrayString & aReturn )	
 {
-	return GetInfo( aGenres, MUSIK_LIB_GENRE, MUSIK_LIB_YEAR );	
+	GetInfo( aGenres, MUSIK_LIB_GENRE, MUSIK_LIB_YEAR, aReturn );	
 }
 
-CMusikSongArray CMusikLibrary::GetGenreSongs( wxArrayString *aGenres )	
+void CMusikLibrary::GetGenreSongs( const wxArrayString & aGenres, CMusikSongArray & aReturn )	
 { 
-	return GetSongs( aGenres, MUSIK_LIB_GENRE );
+	GetSongs( aGenres, MUSIK_LIB_GENRE, aReturn );
 }
 
-wxArrayString	CMusikLibrary::GetYearArtists( wxArrayString *aYears )	
+void CMusikLibrary::GetYearArtists( const wxArrayString & aYears, wxArrayString & aReturn )	
 { 
-	return GetInfo( aYears, MUSIK_LIB_YEAR, MUSIK_LIB_ARTIST );				
+	GetInfo( aYears, MUSIK_LIB_YEAR, MUSIK_LIB_ARTIST, aReturn );				
 }
 
-wxArrayString	CMusikLibrary::GetYearAlbums( wxArrayString *aYears )	
+void CMusikLibrary::GetYearAlbums( const wxArrayString & aYears, wxArrayString & aReturn )	
 { 
-	return GetInfo( aYears, MUSIK_LIB_YEAR, MUSIK_LIB_ALBUM );		
+	GetInfo( aYears, MUSIK_LIB_YEAR, MUSIK_LIB_ALBUM, aReturn );		
 }
 
-wxArrayString	CMusikLibrary::GetYearGenres( wxArrayString *aYears	)	
+void CMusikLibrary::GetYearGenres( const wxArrayString & aYears, wxArrayString & aReturn )	
 { 
-	return GetInfo( aYears, MUSIK_LIB_YEAR, MUSIK_LIB_GENRE );			
+	GetInfo( aYears, MUSIK_LIB_YEAR, MUSIK_LIB_GENRE, aReturn );			
 }
 
-CMusikSongArray CMusikLibrary::GetYearSongs( wxArrayString *aYears )	
+void CMusikLibrary::GetYearSongs( const wxArrayString & aYears, CMusikSongArray & aReturn )	
 { 
-	return GetSongs( aYears, MUSIK_LIB_YEAR );		
+	GetSongs( aYears, MUSIK_LIB_YEAR, aReturn );		
 }

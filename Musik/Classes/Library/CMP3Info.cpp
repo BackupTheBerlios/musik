@@ -51,7 +51,7 @@ using namespace std;
 #define ERR_NOMP3FILE   0x0004
 #define ERR_ID3TAG      0x0008
 
-int CMP3Info::loadInfo( wxString srcMP3 ) {
+int CMP3Info::loadInfo( const wxString &srcMP3 ) {
     
     // open input-file stream to the specified file, name
     ifstream* ifile = new ifstream( ( const char* )ConvFNToFieldMB( srcMP3 ), ios::in | ios::binary /*| ios::nocreate*/);
@@ -131,17 +131,6 @@ int CMP3Info::loadInfo( wxString srcMP3 ) {
 
         // turn 12 chars into a CVBitRate class structure
         VBitRate = vbr.loadHeader(vbrchars);        
-
-
-        //---************************************************---//
-        /* get tag from the last 128 bytes in an .mp3-file    */
-        //---************************************************---//
-        
-        char tagchars[128]; // load tag as string
-
-        // get last 128 bytes
-        ifile->seekg ( -128, ios::end );
-        ifile->read ( tagchars, 128 );
 
     }
     else {

@@ -96,16 +96,16 @@ private:
 };
 
 
-wxArrayString GetMusicDirs( wxArrayString *aDirs )
+void GetMusicDirs( const wxArrayString & aDirs, wxArrayString & aFiles )
 {
-	wxArrayString aFiles;
-	for ( int i = 0; i < (int)aDirs->GetCount(); i++ )
+	aFiles.Clear();
+	for ( int i = 0; i < (int)aDirs.GetCount(); i++ )
 	{
-		wxString sPath = aDirs->Item( i );
+		wxString sPath = aDirs.Item( i );
 		sPath.Replace( wxT( " " ), wxT( "" ), true );
 		if ( sPath != wxT( "" ) )
 		{
-			wxDir dir( aDirs->Item( i ) );
+			wxDir dir( aDirs.Item( i ) );
 			if ( dir.IsOpened() )
 			{
 				wxMusicTraverser traverser( aFiles );
@@ -118,15 +118,14 @@ wxArrayString GetMusicDirs( wxArrayString *aDirs )
 			}
 		}
 	}
-	return aFiles;
 }
 
-wxArrayString GetMusicDir( wxString* sDir )
+void GetMusicDir( const wxString & sDir, wxArrayString & aFiles )
 {
-	wxArrayString aFiles;
-	if ( *sDir != wxT( "" ) )
+	aFiles.Clear();
+	if ( sDir != wxT( "" ) )
 	{
-		wxDir dir( *sDir );
+		wxDir dir( sDir );
 		if ( dir.IsOpened() )
 		{
 			wxMusicTraverser traverser( aFiles );
@@ -138,7 +137,6 @@ wxArrayString GetMusicDir( wxString* sDir )
 		//--- scan new events					---//
 		//-----------------------------------------//
 	}
-	return aFiles;
 }
 
 wxArrayString DelimitStr( wxString sStr, wxString sDel, bool bRemoveDelimiter )
@@ -248,9 +246,9 @@ wxString GetJustFilename( const wxString & filename )
 	return paths.Item( paths.GetCount() - 1 );	
 }
 
-wxArrayString GetPlaylistDir()
+void GetPlaylistDir( wxArrayString & aFiles )
 {
-	wxArrayString aFiles;
+	aFiles.Clear();
 
 	wxDir dir( MUSIK_PLAYLIST_DIR );
 	if ( dir.IsOpened() )
@@ -259,7 +257,7 @@ wxArrayString GetPlaylistDir()
 		dir.Traverse( traverser );
 	}
 
-	return aFiles;
+	return;
 }
 
 wxArrayString FileToStringArray( wxString sName )
@@ -325,7 +323,7 @@ void ReplaceNoCase( wxString& str, const wxString& oldstr, const wxString& newst
 	}
 }
 
-wxString SanitizedString( wxString str )
+wxString SanitizedString( const wxString & str )
 {
 	if ( !g_Prefs.nBlankSwears )
 		return str;
