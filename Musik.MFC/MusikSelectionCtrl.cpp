@@ -4,14 +4,16 @@
 #include "stdafx.h"
 #include "Musik.h"
 #include "MusikSelectionCtrl.h"
-#include ".\musikselectionctrl.h"
 
+#include "MusikLibrary.h"
 
 // CMusikSelectionCtrl
 
 IMPLEMENT_DYNAMIC(CMusikSelectionCtrl, CMusikListCtrl)
-CMusikSelectionCtrl::CMusikSelectionCtrl()
+CMusikSelectionCtrl::CMusikSelectionCtrl( CMusikLibrary* library, int type )
 {
+	m_Library = library;
+	m_Type = type;
 	HideScrollBars( LCSB_NCOVERRIDE, SB_HORZ );
 }
 
@@ -42,9 +44,11 @@ int CMusikSelectionCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CMusikListCtrl::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-	InsertColumn( 0, _T( "Artists" ) );
+	InsertColumn( 0, m_Library->GetSongField( m_Type ) );
+
 	CRect client_size;
 	GetClientRect( &client_size );
+
 	SetColumnWidth( 0, client_size.Width() );
 	return 0;
 }

@@ -2,6 +2,8 @@
 
 #include "MusikSelectionCtrl.h"
 
+class CMusikLibrary;
+
 #ifndef baseCMusikSelectionBar
 #define baseCMusikSelectionBar CSizingControlBarG
 #endif
@@ -12,14 +14,14 @@ class CMusikSelectionBar : public baseCMusikSelectionBar
 //--- implementation							---//
 //-------------------------------------------------//
 public:
-	CMusikSelectionBar();
+	CMusikSelectionBar( CMusikLibrary* library, int type );
 	virtual ~CMusikSelectionBar();
 
 //-------------------------------------------------//
 //--- variables									---//
 //-------------------------------------------------//
 protected:
-	CMusikSelectionCtrl m_wndChild;
+	CMusikSelectionCtrl* m_wndChild;
 	CFont m_Font;
 
 //-------------------------------------------------//

@@ -8,6 +8,8 @@
 #include "MusikSelectionBar.h"
 #include "MusikNowPlayingBar.h"
 
+class CMusikLibrary;
+
 class CMainFrame : public CFrameWnd
 {
 //-------------------------------------------------//
@@ -35,10 +37,12 @@ private:
 	HICON m_Icon32;
 
 protected:
+	CMusikLibrary* m_Library;
+
 	CMusikPlaylistView m_wndView;
 	CMusikSourcesBar m_wndSourcesBar;
 	CMusikNowPlayingBar m_wndNowPlaying;
-	CMusikSelectionBar m_wndSelectionBars[4];
+	CMusikSelectionBar* m_wndSelectionBars[4];
 
 //-------------------------------------------------//
 //--- operations								---//

@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="MusikCore"
-	ProjectGUID="{32CF6B61-A6FF-4777-B449-7E2657513CF6}"
+	ProjectGUID="{A43DCC0A-9D52-45E3-83BD-67765130F62A}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="bin/"
-			IntermediateDirectory="bin/"
+			OutputDirectory="bin"
+			IntermediateDirectory="bin"
 			ConfigurationType="4"
 			CharacterSet="2">
 			<Tool
@@ -22,8 +22,8 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
-				UsePrecompiledHeader="3"
+				RuntimeLibrary="1"
+				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="4"/>
@@ -31,7 +31,9 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="fmodvc.lib sqlite.lib boost_threadd.lib"/>
+				AdditionalDependencies="boost_threadd.lib fmodvc.lib sqlite.lib"
+				OutputFile="$(OutDir)/$(ProjectName)D.lib"
+				IgnoreAllDefaultLibraries="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -53,26 +55,24 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="bin/"
-			IntermediateDirectory="bin/"
+			OutputDirectory="bin"
+			IntermediateDirectory="bin"
 			ConfigurationType="4"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				EnableFiberSafeOptimizations="TRUE"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				RuntimeLibrary="0"
-				EnableEnhancedInstructionSet="2"
-				UsePrecompiledHeader="2"
+				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="0"/>
+				DebugInformationFormat="3"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="fmodvc.lib sqlite.lib boost_thread.lib"
-				OutputFile="$(OutDir)/$(ProjectName)D.lib"/>
+				AdditionalDependencies="boost_thread.lib fmodvc.lib sqlite.lib"
+				IgnoreAllDefaultLibraries="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -98,8 +98,8 @@
 	<Files>
 		<Filter
 			Name="MusikLibrary"
-			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
+			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
+			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
 				RelativePath=".\src\MusikLibrary.cpp">
 			</File>
@@ -109,7 +109,8 @@
 		</Filter>
 		<Filter
 			Name="MusikPlaylist"
-			Filter="">
+			Filter="h;hpp;hxx;hm;inl;inc;xsd"
+			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
 				RelativePath=".\src\MusikPlaylist.cpp">
 			</File>
@@ -119,7 +120,8 @@
 		</Filter>
 		<Filter
 			Name="MusikPlayer"
-			Filter="">
+			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
+			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
 			<File
 				RelativePath=".\src\MusikPlayer.cpp">
 			</File>

@@ -4,6 +4,9 @@
 #include "stdafx.h"
 #include "Musik.h"
 
+#include "MusikLibrary.h"
+#include "StdString.h"
+
 #include "MainFrm.h"
 
 #ifdef _DEBUG
@@ -25,6 +28,8 @@ END_MESSAGE_MAP()
 
 CMainFrame::CMainFrame()
 {
+	CStdString db_filename = _T( "c:\\documents and settings\\administrator\\.musik\\musiklib.db" );
+	m_Library = new CMusikLibrary( db_filename );
 	//m_hIcon16 = ( HICON )LoadImage( AfxGetApp()->m_hInstance, MAKEINTRESOURCE( IDI_ICON16 ), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR );
 	//m_hIcon32 = ( HICON )LoadImage( AfxGetApp()->m_hInstance, MAKEINTRESOURCE( IDI_ICON32 ), IMAGE_ICON, 32, 32, LR_DEFAULTCOLOR );
 }
@@ -87,13 +92,14 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	//-------------------------------------------------//
 	for ( size_t i = 0; i < 4; i++ )
 	{
-		m_wndSelectionBars[i].Create( _T( "Musik Selection Box" ), this, 123 );
-		m_wndSelectionBars[i].SetBarStyle( m_wndSelectionBars[i].GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC );
-		m_wndSelectionBars[i].EnableDocking( CBRS_ALIGN_ANY );
+		m_wndSelectionBars[i] = new CMusikSelectionBar( m_Library, i );
+		m_wndSelectionBars[i]->Create( _T( "Musik Selection Box" ), this, 123 );
+		m_wndSelectionBars[i]->SetBarStyle( m_wndSelectionBars[i]->GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC );
+		m_wndSelectionBars[i]->EnableDocking( CBRS_ALIGN_ANY );
 		if ( i == 0 )
-			DockControlBar( &m_wndSelectionBars[i] );
+			DockControlBar( m_wndSelectionBars[i] );
 		else
-			DockBarLeftOf( &m_wndSelectionBars[i], &m_wndSelectionBars[i-1] );
+			DockBarLeftOf( m_wndSelectionBars[i], m_wndSelectionBars[i-1] );
 	}
 
 	//-------------------------------------------------//
