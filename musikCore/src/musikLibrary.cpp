@@ -67,9 +67,6 @@
 #include "../include/musikMp3Info.h"
 #include "../include/musikOggInfo.h"
 
-#include "ace/Thread.h"
-#include "ace/Synch.h"
-
 ///////////////////////////////////////////////////
 
 static int sqlite_AddSongToPlaylist(void *args, int numCols, char **results, char ** columnNames )
@@ -298,7 +295,6 @@ CmusikLibrary::CmusikLibrary( const CStdString& filename )
 	m_pDB = NULL;
 	m_Transactions = NULL;
 
-	m_ProtectingLibrary = new ACE_Thread_Mutex();
 	CmusikSong::SetLibrary( this );
 	m_Filename = filename;
 
@@ -312,7 +308,6 @@ CmusikLibrary::CmusikLibrary( const CStdString& filename )
 CmusikLibrary::~CmusikLibrary()
 {
 	Shutdown();
-	delete m_ProtectingLibrary;
 }
 
 ///////////////////////////////////////////////////
@@ -393,7 +388,7 @@ int CmusikLibrary::GetSongFieldDBID( CStdString field )
 
 ///////////////////////////////////////////////////
 
-bool CmusikLibrary::InitStdTables()
+bool CmusikLibrary::InitStdTables( bool new_transaction )
 {
 	if ( !m_pDB )
 		return false;
@@ -418,7 +413,8 @@ bool CmusikLibrary::InitStdTables()
 		" );";
 
 	// put a lock on the library and open it up
-	m_ProtectingLibrary->acquire();
+	if ( new_transaction )
+		BeginTransaction();
 
 	char *pErr = NULL;
 
@@ -431,14 +427,15 @@ bool CmusikLibrary::InitStdTables()
 		sqlite_freemem( pErr );
 	}
 
-	m_ProtectingLibrary->release();
+	if ( new_transaction )
+		EndTransaction();
 
 	return error;
 }
 
 ///////////////////////////////////////////////////
 
-bool CmusikLibrary::InitEqTable()
+bool CmusikLibrary::InitEqTable( bool new_transaction )
 {
 	if ( !m_pDB )
 		return false;
@@ -490,7 +487,8 @@ bool CmusikLibrary::InitEqTable()
 		" ); ";
 
 	// put a lock on the library and open it up
-	m_ProtectingLibrary->acquire();
+	if ( new_transaction )
+		BeginTransaction();
 
 	char *pErr = NULL;
 
@@ -502,14 +500,15 @@ bool CmusikLibrary::InitEqTable()
 		sqlite_freemem( pErr );
 	}
 
-	m_ProtectingLibrary->release();
+	if ( new_transaction ) 
+		EndTransaction();
 
 	return error;
 }
 
 ///////////////////////////////////////////////////
 
-bool CmusikLibrary::InitPathTable()
+bool CmusikLibrary::InitPathTable( bool new_transaction )
 {
 	if ( !m_pDB )
 		return false;
@@ -524,7 +523,8 @@ bool CmusikLibrary::InitPathTable()
 		"path_name varchar(1024) );";
 
 	// put a lock on the library and open it up
-	m_ProtectingLibrary->acquire();
+	if ( new_transaction )
+		BeginTransaction();
 
 	char *pErr = NULL;
 
@@ -536,14 +536,15 @@ bool CmusikLibrary::InitPathTable()
 		sqlite_freemem( pErr );
 	}
 
-	m_ProtectingLibrary->release();
+	if ( new_transaction )
+		EndTransaction();
 
 	return error;
 }
 
 ///////////////////////////////////////////////////
 
-bool CmusikLibrary::InitDynTable()
+bool CmusikLibrary::InitDynTable( bool new_transaction )
 {
 	if ( !m_pDB )
 		return false;
@@ -560,7 +561,8 @@ bool CmusikLibrary::InitDynTable()
 		" );";
 
 	// put a lock on the library and open it up
-	m_ProtectingLibrary->acquire();
+	if ( new_transaction )
+		BeginTransaction();
 
 	char *pErr = NULL;
 
@@ -572,14 +574,15 @@ bool CmusikLibrary::InitDynTable()
 		sqlite_freemem( pErr );
 	}
 
-	m_ProtectingLibrary->release();
+	if ( new_transaction )
+		EndTransaction();
 
 	return error;
 }
 
 ///////////////////////////////////////////////////
 
-bool CmusikLibrary::InitCrossfaderTable()
+bool CmusikLibrary::InitCrossfaderTable( bool new_transaction )
 {
 	if ( !m_pDB )
 		return false;
@@ -600,7 +603,8 @@ bool CmusikLibrary::InitCrossfaderTable()
 		" );";
 
 	// put a lock on the library and open it up
-	m_ProtectingLibrary->acquire();
+	if ( new_transaction )
+		BeginTransaction();
 
 	char *pErr = NULL;
 
@@ -612,14 +616,15 @@ bool CmusikLibrary::InitCrossfaderTable()
 		sqlite_freemem( pErr );
 	}
 
-	m_ProtectingLibrary->release();
+	if ( new_transaction )
+		EndTransaction();
 
 	return error;
 }
 
 ///////////////////////////////////////////////////
 
-bool CmusikLibrary::InitLibTable()
+bool CmusikLibrary::InitLibTable( bool new_transaction )
 {
 	if ( !m_pDB )
 		return false;
@@ -664,7 +669,8 @@ bool CmusikLibrary::InitLibTable()
 
 
 	// put a lock on the library and open it up
-	m_ProtectingLibrary->acquire();
+	if ( new_transaction )
+		BeginTransaction();
 
 	char *pErr = NULL;
 
@@ -677,7 +683,8 @@ bool CmusikLibrary::InitLibTable()
 		sqlite_freemem( pErr );
 	}
 
-	m_ProtectingLibrary->release();
+	if ( new_transaction )
+		EndTransaction();
 
 	return error;
 }
@@ -740,13 +747,15 @@ bool CmusikLibrary::Startup()
 void CmusikLibrary::Shutdown()
 {
 	// lock it up and close it down.
-	m_ProtectingLibrary->acquire();
+	BeginTransaction();
+
 	if ( m_pDB )
 	{
 		sqlite_close( m_pDB );
 		m_pDB = NULL;
 	}	
-	m_ProtectingLibrary->release();
+
+	EndTransaction();
 }
 
 ///////////////////////////////////////////////////
@@ -756,15 +765,13 @@ void CmusikLibrary::BeginTransaction()
 	if ( !m_pDB )
 		return;
 
-	m_ProtectingLibrary->acquire();
-
 	if ( m_Transactions == NULL )
+	{
 		sqlite_exec_printf( m_pDB, "begin transaction;", NULL, NULL, NULL );
-	++m_Transactions;
-	
-	m_ProtectingLibrary->release();
+		TRACE0( "Begin transaction\n" );
+	}
 
-	TRACE0( "Begin transaction\n" );
+	++m_Transactions;
 }
 
 ///////////////////////////////////////////////////
@@ -774,15 +781,12 @@ void CmusikLibrary::EndTransaction()
 	if ( !m_pDB )
 		return;
 
-	m_ProtectingLibrary->acquire();
-
 	--m_Transactions;
 	if ( m_Transactions == NULL )
+	{
 		sqlite_exec_printf( m_pDB, "end transaction;", NULL, NULL, NULL );
-
-	m_ProtectingLibrary->release();
-
-	TRACE0( "End transaction\n" );
+			TRACE0( "End transaction\n" );
+	}
 }
 
 ///////////////////////////////////////////////////
@@ -792,7 +796,7 @@ int CmusikLibrary::CreateCrossfader( CmusikCrossfader* fader )
 	if ( !m_pDB )
 		return -1;
 
-	m_ProtectingLibrary->acquire();
+	BeginTransaction();
 
 	int nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q,%f,%f,%f,%f );", 
 		NULL, NULL, NULL,
@@ -803,7 +807,7 @@ int CmusikLibrary::CreateCrossfader( CmusikCrossfader* fader )
 		fader->GetDuration( MUSIK_CROSSFADER_STOP ),
 		fader->GetDuration( MUSIK_CROSSFADER_EXIT ) );
 	
-	m_ProtectingLibrary->release();
+	EndTransaction();
 
 	return nRet;
 }
@@ -815,21 +819,21 @@ int CmusikLibrary::DeleteCrossfader( int id )
 	if ( !m_pDB )
 		return -1;
 
-	m_ProtectingLibrary->acquire();
+	BeginTransaction();
 
 	int nRet = sqlite_exec_printf( m_pDB, "DELETE FROM %Q WHERE crossfader_id = %d", 
 		NULL, NULL, NULL,
 		CROSSFADER_PRESET,
 		id );
 
-	m_ProtectingLibrary->release();
+	EndTransaction();
 
 	return nRet;
 }
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::CreateStdPlaylist( const CStdString& name, const CStdStringArray& songids )
+int CmusikLibrary::CreateStdPlaylist( const CStdString& name, const CStdStringArray& songids, bool new_transaction )
 {
 	if ( !m_pDB )
 		return -1;
@@ -837,7 +841,8 @@ int CmusikLibrary::CreateStdPlaylist( const CStdString& name, const CStdStringAr
 	int nID, nRet;
 
 	// lock it up
-	m_ProtectingLibrary->acquire();
+	if ( new_transaction )
+		BeginTransaction();
 
 	// insert the new playlist name
 	nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %Q );", 
@@ -848,7 +853,9 @@ int CmusikLibrary::CreateStdPlaylist( const CStdString& name, const CStdStringAr
 
 	if ( nRet != SQLITE_OK )
 	{
-		m_ProtectingLibrary->release();
+		if ( new_transaction )
+			EndTransaction();
+
 		return nRet;
 	}
 
@@ -860,44 +867,44 @@ int CmusikLibrary::CreateStdPlaylist( const CStdString& name, const CStdStringAr
 	
 	if ( nRet != SQLITE_OK )
 	{
-		m_ProtectingLibrary->release();
+		if ( new_transaction )
+			EndTransaction();
+
 		return nRet;
 	}
 
 	// insert songs into playlist
 	if ( nID >= 0 )
 	{
-		BeginTransaction();
 		for ( size_t i = 0; i < songids.size(); i++ )
 		{
-			AddSong( songids.at( i ) );
+			AddSong( songids.at( i ), false );
 
 			nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %d, %d );",
 				NULL, NULL, NULL, 
 				STD_PLAYLIST_SONGS,
 				NULL,
 				nID,
-				GetIDFromFilename( songids.at( i ) ) );
+				GetIDFromFilename( songids.at( i ), false ) );
 
 			if ( nRet != SQLITE_OK )
 			{
 				EndTransaction();
-				m_ProtectingLibrary->release();
 				return nRet;
 			}
 		}
-		EndTransaction();
 	}	
 
 	// release the mutex lock
-	m_ProtectingLibrary->release();
+	if ( new_transaction )
+		EndTransaction();
 
 	return nRet;
 }
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::AppendStdPlaylist( int id, const CStdStringArray& files )
+int CmusikLibrary::AppendStdPlaylist( int id, const CStdStringArray& files , bool new_transaction )
 {
 	if ( !m_pDB ) 
 		return -1;
@@ -906,30 +913,31 @@ int CmusikLibrary::AppendStdPlaylist( int id, const CStdStringArray& files )
 
 	if ( id >= 0 )
 	{
-		m_ProtectingLibrary->acquire();
+		if ( new_transaction )
+			BeginTransaction();
 
-		BeginTransaction();	
 		for ( size_t i = 0; i < files.size(); i++ )
 		{
-			AddSong( files.at( i ) );
+			AddSong( files.at( i ), false );
 
 			nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %d, %d );",
 			NULL, NULL, NULL, 
 			STD_PLAYLIST_SONGS,
 			NULL,
 			id,
-			GetIDFromFilename( files.at( i ) ) );
+			GetIDFromFilename( files.at( i ), false ) );
 
 			if ( nRet != SQLITE_OK )
 			{
-				EndTransaction();
-				m_ProtectingLibrary->release();
+				if ( new_transaction )
+					EndTransaction();
+
 				return nRet;
 			}
 		}
-		EndTransaction();
 
-		m_ProtectingLibrary->release();
+		if ( new_transaction )
+			EndTransaction();
 	}
 	else
 		return SQLITE_ERROR;
@@ -939,7 +947,7 @@ int CmusikLibrary::AppendStdPlaylist( int id, const CStdStringArray& files )
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::RewriteStdPlaylist( int id, CmusikPlaylist* playlist )
+int CmusikLibrary::RewriteStdPlaylist( int id, CmusikPlaylist* playlist, bool new_transaction )
 {
 	if ( !m_pDB )
 		return -1;
@@ -948,14 +956,13 @@ int CmusikLibrary::RewriteStdPlaylist( int id, CmusikPlaylist* playlist )
 
 	if ( id >= 0 )
 	{
-		m_ProtectingLibrary->acquire();
+		if ( new_transaction )
+			BeginTransaction();
 
 		nRet = sqlite_exec_printf( m_pDB, "DELETE FROM %Q WHERE std_playlist_id = %d;",
 		NULL, NULL, NULL, 
 		STD_PLAYLIST_SONGS,
 		id );
-
-		BeginTransaction();
 		
 		for ( size_t i = 0; i < playlist->GetCount(); i++ )
 		{
@@ -968,15 +975,15 @@ int CmusikLibrary::RewriteStdPlaylist( int id, CmusikPlaylist* playlist )
 
 			if ( nRet != SQLITE_OK )
 			{
-				EndTransaction();
-				m_ProtectingLibrary->release();
+				if ( new_transaction )
+					EndTransaction();
+
 				return nRet;
 			}
 		}
 
-		EndTransaction();
-
-		m_ProtectingLibrary->release();
+		if ( new_transaction )
+			EndTransaction();
 	}
 	else
 		return SQLITE_ERROR;
@@ -986,7 +993,7 @@ int CmusikLibrary::RewriteStdPlaylist( int id, CmusikPlaylist* playlist )
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::RenameStdPlaylist( int id, const CStdString& str )
+int CmusikLibrary::RenameStdPlaylist( int id, const CStdString& str, bool new_transaction )
 {
 	if ( !m_pDB )
 		return -1;
@@ -995,7 +1002,8 @@ int CmusikLibrary::RenameStdPlaylist( int id, const CStdString& str )
 
 	if ( id >= 0 )
 	{
-		m_ProtectingLibrary->acquire();
+		if ( new_transaction )
+			BeginTransaction();
 
 		nRet = sqlite_exec_printf( m_pDB, "UPDATE %Q SET std_playlist_name = %Q WHERE std_playlist_id = %d;",
 		NULL, NULL, NULL, 
@@ -1003,7 +1011,8 @@ int CmusikLibrary::RenameStdPlaylist( int id, const CStdString& str )
 		str.c_str(),
 		id );
 
-		m_ProtectingLibrary->release();
+		if ( new_transaction )
+			EndTransaction();
 	}
 	else
 		return SQLITE_ERROR;
@@ -1013,28 +1022,31 @@ int CmusikLibrary::RenameStdPlaylist( int id, const CStdString& str )
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetStdPlaylist( int id, CmusikPlaylist& target, bool clear_target )
+int CmusikLibrary::GetStdPlaylist( int id, CmusikPlaylist& target, bool new_transaction )
 {
 	if ( !m_pDB )
 		return -1;
 
-	if ( clear_target )
-		target.Clear();
+	target.Clear();
 
 	// do it
-	m_ProtectingLibrary->acquire();
+	if ( new_transaction )
+		BeginTransaction();
+
 	int nRet = sqlite_exec_printf( m_pDB, "SELECT songid FROM %Q WHERE std_playlist_id = %d;", 
 		&sqlite_AddSongToPlaylist, &target, NULL,
 		STD_PLAYLIST_SONGS,
 		id );
-	m_ProtectingLibrary->release();
+
+	if ( new_transaction )
+		EndTransaction();
 
 	return nRet;
 }
 
 ///////////////////////////////////////////////////
 
-bool CmusikLibrary::GetStdPlaylistFns( int id, CStdStringArray& target, bool clear_target )
+bool CmusikLibrary::GetStdPlaylistFns( int id, CStdStringArray& target, bool new_transaction )
 {
 	CmusikPlaylist ids;
 	GetStdPlaylist( id, ids, false );
@@ -1042,54 +1054,53 @@ bool CmusikLibrary::GetStdPlaylistFns( int id, CStdStringArray& target, bool cle
 	if ( !ids.GetCount() )
 		return false;
 
-	if ( clear_target )
-		target.clear();
+	target.clear();
 
 	// do it
-	m_ProtectingLibrary->acquire();
-	BeginTransaction();
+	if ( new_transaction )
+		BeginTransaction();
 
 	for ( size_t i = 0; i < ids.GetCount(); i++ )
 		target.push_back( ids.GetField( i, MUSIK_LIBRARY_TYPE_FILENAME ) );
 
-	EndTransaction();
-	m_ProtectingLibrary->release();
+	if ( new_transaction )
+		EndTransaction();
 
 	return ( target.size() > 0 ? true : false );
 }
 
 ///////////////////////////////////////////////////
 
-bool CmusikLibrary::GetStdPlaylistFns( CmusikPlaylist& playlist, CStdStringArray& target, bool clear_target )
+bool CmusikLibrary::GetStdPlaylistFns( CmusikPlaylist& playlist, CStdStringArray& target, bool new_transaction )
 {
 	if ( !playlist.GetCount() )
 		return false;
 
-	if ( clear_target )
-		target.clear();
+	target.clear();
 
 	// do it
-	m_ProtectingLibrary->acquire();
-	BeginTransaction();
+	if ( new_transaction )
+        BeginTransaction();
 
 	for ( size_t i = 0; i < playlist.GetCount(); i++ )
 		target.push_back( playlist.GetField( i, MUSIK_LIBRARY_TYPE_FILENAME ) );
 
-	EndTransaction();
-	m_ProtectingLibrary->release();
+	if ( new_transaction )
+		EndTransaction();
 
 	return ( target.size() > 0 ? true : false );
 }
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::CreateDynPlaylist( const CStdString& name, const CStdString& query )
+int CmusikLibrary::CreateDynPlaylist( const CStdString& name, const CStdString& query, bool new_transaction )
 {
 	if ( !m_pDB )
 		return -1;
 
 	// do it
-	m_ProtectingLibrary->acquire();
+	if ( new_transaction )
+		BeginTransaction();
 
 	int nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %q, %q ); ", 
 		NULL, NULL, NULL,
@@ -1098,22 +1109,24 @@ int CmusikLibrary::CreateDynPlaylist( const CStdString& name, const CStdString& 
 		name.c_str(),
 		query.c_str() );
 
-	m_ProtectingLibrary->release();
+	if ( new_transaction )
+		EndTransaction();
 
 	return nRet;
 }
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::DeleteStdPlaylist( const CStdString& name )
+int CmusikLibrary::DeleteStdPlaylist( const CStdString& name, bool new_transaction )
 {
 	if ( !m_pDB )
 		return -1;
 
 	int nID, nRet;
 
-	// lock it up	
-	m_ProtectingLibrary->acquire();
+	// lock it up
+	if ( new_transaction )
+		BeginTransaction();
 
 	// get ID of the currently named playlist
 	nRet = sqlite_exec_printf( m_pDB, "SELECT std_playlist_id FROM %Q WHERE std_playlist_name = %Q;", 
@@ -1123,7 +1136,9 @@ int CmusikLibrary::DeleteStdPlaylist( const CStdString& name )
 	
 	if ( nRet != SQLITE_OK )
 	{
-		m_ProtectingLibrary->release();
+		if ( new_transaction )
+			EndTransaction();
+
 		return nRet;
 	}
 
@@ -1136,7 +1151,9 @@ int CmusikLibrary::DeleteStdPlaylist( const CStdString& name )
 
 	if ( nRet != SQLITE_OK )
 	{
-		m_ProtectingLibrary->release();
+		if ( new_transaction )
+			EndTransaction();
+
 		return nRet;
 	}
 
@@ -1148,21 +1165,23 @@ int CmusikLibrary::DeleteStdPlaylist( const CStdString& name )
 		nID );
 
 	// release mutex lock
-	m_ProtectingLibrary->release();
+	if ( new_transaction )
+		EndTransaction();
 
 	return nRet;
 }
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::DeleteStdPlaylist( int id )
+int CmusikLibrary::DeleteStdPlaylist( int id, bool new_transaction )
 {
 	if ( !m_pDB )
 		return -1;
 
 	int nRet;
 
-	m_ProtectingLibrary->acquire();
+	if ( new_transaction )
+		BeginTransaction();
 
 	// remove entry from table containing
 	// the list of standard playlists
@@ -1173,7 +1192,9 @@ int CmusikLibrary::DeleteStdPlaylist( int id )
 
 	if ( nRet != SQLITE_OK )
 	{
-		m_ProtectingLibrary->release();
+		if ( new_transaction )
+			EndTransaction();
+
 		return nRet;
 	}
 
@@ -1184,14 +1205,15 @@ int CmusikLibrary::DeleteStdPlaylist( int id )
 		STD_PLAYLIST_SONGS,
 		id );
 
-	m_ProtectingLibrary->release();
+	if ( new_transaction )
+		EndTransaction();
 
 	return nRet;
 }
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::DeleteDynPlaylist( const CStdString& name )
+int CmusikLibrary::DeleteDynPlaylist( const CStdString& name, bool new_transaction )
 {
 	if ( !m_pDB )
 		return -1;
@@ -1199,34 +1221,38 @@ int CmusikLibrary::DeleteDynPlaylist( const CStdString& name )
 	int nRet;
 
 	// do it
-	m_ProtectingLibrary->acquire();
+	if ( new_transaction )
+		BeginTransaction();
 
 	nRet = sqlite_exec_printf( m_pDB, "DELETE FROM %Q WHERE dyn_playlist_name = %Q;", 
 		NULL, NULL, NULL,
 		DYN_PLAYLIST_TABLE_NAME,
 		name.c_str() );
 
-	m_ProtectingLibrary->release();
+	if ( new_transaction )
+		EndTransaction();
 
 	return nRet;
 }
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::DeleteDynPlaylist( int id )
+int CmusikLibrary::DeleteDynPlaylist( int id, bool new_transaction )
 {
 	if ( !m_pDB )
 		return -1;
 
 	// do it
-	m_ProtectingLibrary->acquire();
+	if ( new_transaction )
+		BeginTransaction();
 
 	int nRet = sqlite_exec_printf( m_pDB, "DELETE FROM %Q WHERE dyn_playlist_id = %d;", 
 		NULL, NULL, NULL,
 		DYN_PLAYLIST_TABLE_NAME,
 		id );
 
-	m_ProtectingLibrary->release();
+	if ( new_transaction )
+		EndTransaction();
 
 	return nRet;
 }
@@ -1306,7 +1332,7 @@ CStdString CmusikLibrary::GetOrder( int type, bool terminate )
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::QueryCount( const char* pQueryResult )
+int CmusikLibrary::QueryCount( const char* pQueryResult, bool new_transaction )
 {
 	if ( !m_pDB )
 		return -1;
@@ -1314,7 +1340,8 @@ int CmusikLibrary::QueryCount( const char* pQueryResult )
 	const char *pTail;
 	sqlite_vm *pVM;
 
-	m_ProtectingLibrary->acquire();
+	if ( new_transaction )
+		BeginTransaction();
 	
 	sqlite_compile( m_pDB, pQueryResult, &pTail, &pVM, NULL );
 	char *errmsg;
@@ -1328,7 +1355,8 @@ int CmusikLibrary::QueryCount( const char* pQueryResult )
 
 	sqlite_finalize( pVM, &errmsg );
 
-	m_ProtectingLibrary->release();
+	if ( new_transaction )
+		EndTransaction();
 
 	return result;
 }
@@ -1352,14 +1380,14 @@ void CmusikLibrary::VerifyYearList( CStdStringArray & list )
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetAllSongs( CmusikPlaylist& target )
+int CmusikLibrary::GetAllSongs( CmusikPlaylist& target, bool new_transaction )
 {
-	return QuerySongs( "filename <> ''", target );
+	return QuerySongs( "filename <> ''", target, new_transaction );
 }
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::QuerySongs( const CStdString& query, CmusikPlaylist& target )
+int CmusikLibrary::QuerySongs( const CStdString& query, CmusikPlaylist& target, bool new_transaction )
 {
 	if ( !m_pDB )
 		return -1;
@@ -1367,21 +1395,23 @@ int CmusikLibrary::QuerySongs( const CStdString& query, CmusikPlaylist& target )
 	target.Clear();
 
 	// lock it up and query it
-	m_ProtectingLibrary->acquire();
+	if ( new_transaction )
+		BeginTransaction();
 
 	int nRet = sqlite_exec_printf( m_pDB, "SELECT songid FROM %Q WHERE %q;", 
 		&sqlite_AddSongToPlaylist, &target, NULL,
 		SONG_TABLE_NAME, 
 		query.c_str() );
 
-	m_ProtectingLibrary->release();
+	if ( new_transaction )
+		EndTransaction();
 
 	return nRet;
 }
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetRelatedItems( int source_type, const CStdStringArray& source_items, int target_type, CStdStringArray& target )
+int CmusikLibrary::GetRelatedItems( int source_type, const CStdStringArray& source_items, int target_type, CStdStringArray& target, bool new_transaction )
 {
 	if ( !m_pDB )
 		return -1;
@@ -1416,9 +1446,14 @@ int CmusikLibrary::GetRelatedItems( int source_type, const CStdStringArray& sour
 	query += GetOrder( target_type );
 
 	// do it
-	m_ProtectingLibrary->acquire();
+
+	if ( new_transaction )
+		BeginTransaction();
+
 	int nRet = sqlite_exec(m_pDB, query.c_str(), &sqlite_AddSongToStringArray, &target, NULL);
-	m_ProtectingLibrary->release();
+	
+	if ( new_transaction )
+		EndTransaction();
 
 	// if target is years, verify only years
 	//get displayed.
@@ -1430,14 +1465,16 @@ int CmusikLibrary::GetRelatedItems( int source_type, const CStdStringArray& sour
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetRelatedItems( CStdString sub_query, int dst_type, CStdStringArray& target )
+int CmusikLibrary::GetRelatedItems( CStdString sub_query, int dst_type, CStdStringArray& target, bool new_transaction )
 {
 	target.clear();
 
 	CStdString sOutType = GetSongFieldDB( dst_type );
 
 	// do it
-	m_ProtectingLibrary->acquire();
+
+	if ( new_transaction )
+        BeginTransaction();
 
 	int nRet = sqlite_exec_printf(m_pDB, "SELECT DISTINCT %q, UPPER( %q ) AS UP FROM %Q WHERE %s order by %q;", 
 		&sqlite_AddSongToStringArray, &target, NULL,
@@ -1447,7 +1484,8 @@ int CmusikLibrary::GetRelatedItems( CStdString sub_query, int dst_type, CStdStri
 		sub_query.c_str(),
 		sOutType.c_str() );
 
-	m_ProtectingLibrary->release();
+	if ( new_transaction )
+		EndTransaction();
 
 	// if target is years, verify only years
 	// get displayed.
@@ -1459,7 +1497,7 @@ int CmusikLibrary::GetRelatedItems( CStdString sub_query, int dst_type, CStdStri
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetRelatedSongs( CStdString sub_query, int source_type, CmusikPlaylist& target )
+int CmusikLibrary::GetRelatedSongs( CStdString sub_query, int source_type, CmusikPlaylist& target, bool new_transaction )
 {
 	if ( !m_pDB )
 		return -1;
@@ -1467,7 +1505,8 @@ int CmusikLibrary::GetRelatedSongs( CStdString sub_query, int source_type, Cmusi
 	target.Clear();
 
 	// do it
-	m_ProtectingLibrary->acquire();
+	if ( new_transaction )
+		BeginTransaction();
 
 	int nRet = sqlite_exec_printf(m_pDB, "SELECT DISTINCT songid FROM %Q WHERE %s %q", 
 		&sqlite_AddSongToPlaylist, &target, NULL,
@@ -1475,25 +1514,26 @@ int CmusikLibrary::GetRelatedSongs( CStdString sub_query, int source_type, Cmusi
 		sub_query.c_str(),
 		GetOrder( source_type ).c_str() );
 
-	m_ProtectingLibrary->release();
+	if ( new_transaction )
+		EndTransaction();
 
 	return nRet;
 }
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetAllDistinct( int source_type, CStdStringArray& target, bool clear_target )
+int CmusikLibrary::GetAllDistinct( int source_type, CStdStringArray& target, bool new_transaction )
 {
 	if ( !m_pDB )
 		return -1;
 
-	if ( clear_target )
-		target.clear();
+	target.clear();
 
 	CStdString sField = GetSongFieldDB( source_type );
 
 	// do it
-	m_ProtectingLibrary->acquire();
+	if ( new_transaction )
+		BeginTransaction();
 
 	int nRet = sqlite_exec_printf( m_pDB, "SELECT DISTINCT %q, UPPER( %q ) AS UP FROM %Q ORDER BY UP;", 
 		&sqlite_AddSongToStringArray, &target, NULL,
@@ -1501,27 +1541,27 @@ int CmusikLibrary::GetAllDistinct( int source_type, CStdStringArray& target, boo
 		sField.c_str(),
 		SONG_TABLE_NAME );
 
-	m_ProtectingLibrary->release();
+	if ( new_transaction )
+		EndTransaction();
 
 	return nRet;
 }
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetSongCount()
+int CmusikLibrary::GetSongCount( bool new_transaction )
 {
 	if ( !m_pDB )
 		return -1;
 
-	char *query = sqlite_mprintf( "SELECT COUNT(*) FROM " SONG_TABLE_NAME " ;" );
-	int result = QueryCount(query);
-	sqlite_freemem( query );
+	int result = QueryCount( "SELECT COUNT(*) FROM " SONG_TABLE_NAME " ;", new_transaction );
+
 	return result;
 }
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetFieldFromID( int id, int field, CStdString& string )
+int CmusikLibrary::GetFieldFromID( int id, int field, CStdString& string, bool new_transaction )
 {
 	if ( !m_pDB )
 		return -1;
@@ -1529,7 +1569,8 @@ int CmusikLibrary::GetFieldFromID( int id, int field, CStdString& string )
 	CStdString type = GetSongFieldDB( field );
 
 	// do it
-	m_ProtectingLibrary->acquire();
+	if ( new_transaction )
+		BeginTransaction();
 
 	int nRet = sqlite_exec_printf( m_pDB, "SELECT %q FROM %Q WHERE songid = %d;", 
 		&sqlite_GetFieldFromID, &string, NULL,
@@ -1537,14 +1578,15 @@ int CmusikLibrary::GetFieldFromID( int id, int field, CStdString& string )
 		SONG_TABLE_NAME, 
 		id );
 
-	m_ProtectingLibrary->release();
+	if ( new_transaction )
+		EndTransaction();
 
 	return nRet;
 }
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetSongInfoFromID( int id, CmusikSongInfo* info )
+int CmusikLibrary::GetSongInfoFromID( int id, CmusikSongInfo* info, bool new_transaction )
 {
 	if ( !m_pDB )
 		return -1;
@@ -1552,21 +1594,23 @@ int CmusikLibrary::GetSongInfoFromID( int id, CmusikSongInfo* info )
 	info->SetID( id );
 
 	// do it
-	m_ProtectingLibrary->acquire();
+	if ( new_transaction )
+		BeginTransaction();
 
 	int nRet = sqlite_exec_printf( m_pDB, "SELECT tracknum,artist,album,genre,title,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize,filename,equalizer FROM %Q WHERE songid = %d;", 
 		&sqlite_GetSongInfoFromID, info, NULL,
 		SONG_TABLE_NAME,
 		id );
 
-	m_ProtectingLibrary->release();
+	if ( new_transaction )
+		EndTransaction();
 
 	return nRet;
 }
 
 ///////////////////////////////////////////////////
 
-bool CmusikLibrary::SetSongInfo( CmusikSongInfo* info, int songid )
+bool CmusikLibrary::SetSongInfo( CmusikSongInfo* info, int songid, bool new_transaction )
 {
 	if ( !m_pDB )
 		return false;
@@ -1577,7 +1621,8 @@ bool CmusikLibrary::SetSongInfo( CmusikSongInfo* info, int songid )
 		songid = info->GetID();
 
 	// lock it up and run the query
-	m_ProtectingLibrary->acquire();
+	if ( new_transaction )
+		BeginTransaction();
 
 	result = sqlite_exec_printf( m_pDB, "UPDATE %Q SET format = %d, vbr = %d, filename = %Q, artist = %Q, title = %Q, album = %Q, tracknum = %d, year = %Q, genre = %Q, rating = %d, bitrate = %d, lastplayed = %Q, notes = %Q, timesplayed = %d, duration = %d, timeadded = %Q, filesize = %d, dirty = %d WHERE songid = %d;",
 		NULL, NULL, NULL,
@@ -1602,7 +1647,8 @@ bool CmusikLibrary::SetSongInfo( CmusikSongInfo* info, int songid )
 		atoi( info->GetDirtyFlag().c_str() ),
 		songid );
 
-	m_ProtectingLibrary->release();
+	if ( new_transaction )
+		EndTransaction();
 
 	if ( result != SQLITE_OK )
 		return false;
@@ -1620,7 +1666,7 @@ bool CmusikLibrary::SetSongRating( int songid, int rating )
 	int result = 0;
 
 	// lock it up and run the query
-	m_ProtectingLibrary->acquire();
+	BeginTransaction();
     
 	result = sqlite_exec_printf( m_pDB, "UPDATE %Q SET rating = %d WHERE songid = %d", 
 		NULL, NULL, NULL,
@@ -1628,7 +1674,7 @@ bool CmusikLibrary::SetSongRating( int songid, int rating )
 		rating,
 		songid );
 	
-	m_ProtectingLibrary->release();
+	EndTransaction();
 
 	if ( result != SQLITE_OK )
 		return false;
@@ -1638,88 +1684,88 @@ bool CmusikLibrary::SetSongRating( int songid, int rating )
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetAllStdPlaylists( CmusikPlaylistInfoArray* target, bool clear_target )
+int CmusikLibrary::GetAllStdPlaylists( CmusikPlaylistInfoArray* target, bool new_transaction )
 {
 	if ( !m_pDB )
 		return -1;
 
-	if ( clear_target )
-		target->clear();
+	target->clear();
 
 	// do it
-	m_ProtectingLibrary->acquire();
+	if ( new_transaction )
+		BeginTransaction();
 
 	int nRet = sqlite_exec_printf( m_pDB, "SELECT std_playlist_name,std_playlist_id FROM %Q WHERE std_playlist_name <> '';", 
 		&sqlite_AddStdPlaylistInfoArray, target, NULL,
 		STD_PLAYLIST_TABLE_NAME );
 
-	m_ProtectingLibrary->release();
+	if ( new_transaction )
+		EndTransaction();
 
 	return nRet;
 }
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetAllDynPlaylists( CmusikPlaylistInfoArray* target, bool clear_target )
+int CmusikLibrary::GetAllDynPlaylists( CmusikPlaylistInfoArray* target, bool new_transaction )
 {
 	if ( !m_pDB )
 		return -1;
 
-	if ( clear_target )
-		target->clear();
+	target->clear();
 
 	// do it
-	m_ProtectingLibrary->acquire();
+	if ( new_transaction )
+		BeginTransaction();
 
 	int nRet = sqlite_exec_printf( m_pDB, "SELECT dyn_playlist_name,dyn_playlist_id FROM %Q WHERE dyn_playlist_name <> '';",
 		&sqlite_AddDynPlaylistInfoArray, target, NULL,
 		DYN_PLAYLIST_TABLE_NAME );
 	
-	m_ProtectingLibrary->release();
+	if ( new_transaction )
+		EndTransaction();
 
 	return nRet;
 }
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetAllCrossfaders( CStdStringArray* target, bool clear_target )
+int CmusikLibrary::GetAllCrossfaders( CStdStringArray* target )
 {
 	if ( !m_pDB )
 		return -1;
 
-	if ( clear_target )
-		target->clear();
+	target->clear();
 
 	// do it
-	m_ProtectingLibrary->acquire();
+	BeginTransaction();
 	
 	int nRet = sqlite_exec_printf( m_pDB, "SELECT crossfader_name FROM %Q WHERE crossfader_name <> '';", 
 		&sqlite_AddRowToStringArray, target, NULL,
 		CROSSFADER_PRESET );
 	
-	m_ProtectingLibrary->release();
+	EndTransaction();
 
 	return nRet;
 }
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetAllCrossfaders( CIntArray* target, bool clear_target )
+int CmusikLibrary::GetAllCrossfaders( CIntArray* target )
 {
 	if ( !m_pDB )
 		return -1;
 
-	if ( clear_target )
-		target->clear();
+	target->clear();
 
 	// do it
-	m_ProtectingLibrary->acquire();
+	BeginTransaction();
 	
 	int nRet = sqlite_exec_printf( m_pDB, "SELECT crossfader_id FROM %Q WHERE crossfader_id > -1;", 
 		&sqlite_GetIntFromRow, target, NULL,
 		CROSSFADER_PRESET );
 
-	m_ProtectingLibrary->release();
+	EndTransaction();
 
 	return nRet;
 }
@@ -1731,21 +1777,21 @@ int CmusikLibrary::GetCrossfader( int id, CmusikCrossfader* fader )
 	if ( !m_pDB )
 		return -1;
 
-	m_ProtectingLibrary->acquire();
+	BeginTransaction();
 
 	int nRet = sqlite_exec_printf( m_pDB, "SELECT crossfader_name, newsong, pause_resume, seek, stop, exit FROM %Q WHERE crossfader_id = %d;", 
 		&sqlite_GetCrossfader, fader, NULL,
 		CROSSFADER_PRESET,
 		id );
 
-	m_ProtectingLibrary->release();
+	EndTransaction();
 
 	return nRet;
 }
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetIDFromFilename( CStdString fn )
+int CmusikLibrary::GetIDFromFilename( CStdString fn, bool new_transaction )
 {
 	if ( !m_pDB )
 		return -1;
@@ -1753,23 +1799,25 @@ int CmusikLibrary::GetIDFromFilename( CStdString fn )
 	int target;
 
 	// do it
-	m_ProtectingLibrary->acquire();
+	if ( new_transaction )
+		BeginTransaction();
 
 	sqlite_exec_printf( m_pDB, "SELECT songid FROM %Q WHERE filename = %Q;", 
 		&sqlite_GetIntFromRow, &target, NULL,
 		SONG_TABLE_NAME,
 		fn.c_str() );
 
-	m_ProtectingLibrary->release();
-
+	if ( new_transaction )
+		EndTransaction();
+	
 	return target;
 }
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetSongFromFilename( CStdString fn, CmusikSong& song )
+int CmusikLibrary::GetSongFromFilename( CStdString fn, CmusikSong& song, bool new_transaction )
 {
-	int nRet = GetIDFromFilename( fn );
+	int nRet = GetIDFromFilename( fn, new_transaction );
 	song.SetID( nRet );
 
 	return nRet;
@@ -1792,18 +1840,20 @@ int CmusikLibrary::GetFilesize( const CStdString& fn )
 
 ///////////////////////////////////////////////////
 
-bool CmusikLibrary::RemoveSong( int songid )
+bool CmusikLibrary::RemoveSong( int songid, bool new_transaction )
 {
 	if ( !m_pDB )
 		return false;
 
-	m_ProtectingLibrary->acquire();
+	if ( new_transaction )
+		BeginTransaction();
 
 	int result = sqlite_exec_printf( m_pDB, "DELETE FROM %Q WHERE songid=%d;", NULL, NULL, NULL,
 		SONG_TABLE_NAME,
 		songid );
 
-	m_ProtectingLibrary->release();
+	if ( new_transaction )
+		EndTransaction();
 
 	if ( result == SQLITE_OK )
 		return true;
@@ -1813,18 +1863,20 @@ bool CmusikLibrary::RemoveSong( int songid )
 
 ///////////////////////////////////////////////////
 
-bool CmusikLibrary::RemoveSong( const CStdString& fn )
+bool CmusikLibrary::RemoveSong( const CStdString& fn, bool new_transaction )
 {
 	if ( !m_pDB )
 		return false;
 
-	m_ProtectingLibrary->acquire();
+	if ( new_transaction )
+		BeginTransaction();
 
 	int result = sqlite_exec_printf( m_pDB, "DELETE FROM %Q WHERE filename = %Q;", NULL, NULL, NULL,
 		SONG_TABLE_NAME,
 		fn.c_str() );
 
-	m_ProtectingLibrary->release();
+	if ( new_transaction )
+		EndTransaction();
 
 	if ( result == SQLITE_OK )
 		return true;
@@ -1834,19 +1886,19 @@ bool CmusikLibrary::RemoveSong( const CStdString& fn )
 
 ///////////////////////////////////////////////////
 
-bool CmusikLibrary::AddSong( const CStdString& fn )
+bool CmusikLibrary::AddSong( const CStdString& fn, bool new_transaction )
 {
 	bool result = true;
 
-	if ( !IsSongInLibrary( fn ) )
+	if ( !IsSongInLibrary( fn, new_transaction ) )
 	{
 		CmusikFilename MFN( fn );
 		CStdString sExt = MFN.GetExtension();
 
 		if ( sExt == "mp3" )
-			result = AddMP3( fn );
+			result = AddMP3( fn, new_transaction );
 		else if ( sExt == "ogg" )
-			result = AddOGG( fn );
+			result = AddOGG( fn, new_transaction );
 	}
 
 	return result;
@@ -1854,7 +1906,7 @@ bool CmusikLibrary::AddSong( const CStdString& fn )
 
 ///////////////////////////////////////////////////
 
-bool CmusikLibrary::AddOGG( const CStdString& fn )
+bool CmusikLibrary::AddOGG( const CStdString& fn, bool new_transaction )
 {
 	if ( !m_pDB )
 		return false;
@@ -1862,7 +1914,8 @@ bool CmusikLibrary::AddOGG( const CStdString& fn )
 	CmusikOggInfo info;
 	if ( info.LoadInfo( fn ) )
 	{
-		m_ProtectingLibrary->acquire();
+		if ( new_transaction )
+			BeginTransaction();
 
 		int result = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %d, %d, %Q, %Q, %Q, %Q, %d, %Q, %Q, %d, %d, %Q, %Q, %d, %d, %Q, %d, %d, %d );", NULL, NULL, NULL, 
 			SONG_TABLE_NAME,								// song table 		
@@ -1887,7 +1940,8 @@ bool CmusikLibrary::AddOGG( const CStdString& fn )
 			0,												// dirty
 			-1 );											// default equalizer
 
-		m_ProtectingLibrary->release();
+		if ( new_transaction )
+			EndTransaction();
 
 		if ( result == SQLITE_OK )
 			return true;
@@ -1898,7 +1952,7 @@ bool CmusikLibrary::AddOGG( const CStdString& fn )
 
 ///////////////////////////////////////////////////
 
-bool CmusikLibrary::AddMP3( const CStdString& fn )
+bool CmusikLibrary::AddMP3( const CStdString& fn, bool new_transaction )
 {
 	if ( !m_pDB )
 		return false;
@@ -1906,7 +1960,8 @@ bool CmusikLibrary::AddMP3( const CStdString& fn )
 	CmusikMp3Info info;
 	if ( info.LoadInfo( fn ) )
 	{
-		m_ProtectingLibrary->acquire();
+		if ( new_transaction )
+			BeginTransaction();
 
 		int result = sqlite_exec_printf( m_pDB, "INSERT INTO %q VALUES ( %Q, %d, %d, %Q, %Q, %Q, %Q, %d, %Q, %Q, %d, %d, %Q, %Q, %d, %d, %Q, %d, %d, %d );", NULL, NULL, NULL, 
 			SONG_TABLE_NAME,								// song table 		
@@ -1931,7 +1986,8 @@ bool CmusikLibrary::AddMP3( const CStdString& fn )
 			0,												// dirty
 			-1 );											// default equalizer
 
-		m_ProtectingLibrary->release();
+		if ( new_transaction )
+			EndTransaction();
 
 		if ( result == SQLITE_OK )
 			return true;
@@ -1942,11 +1998,12 @@ bool CmusikLibrary::AddMP3( const CStdString& fn )
 
 ///////////////////////////////////////////////////
 
-bool CmusikLibrary::IsSongInLibrary( CStdString fn )
+bool CmusikLibrary::IsSongInLibrary( CStdString fn, bool new_transaction )
 {
+	return false;
+
 	if ( !m_pDB )
 		return false;
-
 
 	bool result = false;
 
@@ -1954,7 +2011,8 @@ bool CmusikLibrary::IsSongInLibrary( CStdString fn )
 		SONG_TABLE_NAME,
 		fn.c_str() );
 	
-	m_ProtectingLibrary->acquire();
+	if ( new_transaction )
+		BeginTransaction();
 
 	// run query
 	const char *pTail;
@@ -1975,7 +2033,8 @@ bool CmusikLibrary::IsSongInLibrary( CStdString fn )
 	if ( errmsg )
 		sqlite_freemem( errmsg );
 
-	m_ProtectingLibrary->release();
+	if ( new_transaction )
+		EndTransaction();
 
 	return result;
 }
@@ -1990,14 +2049,14 @@ int CmusikLibrary::GetEqualizerIDFromSongID( int id )
 	int target;
 
 	// do it
-	m_ProtectingLibrary->acquire();
+	BeginTransaction();
 
 	sqlite_exec_printf( m_pDB, "SELECT equalizer FROM %Q WHERE songid = %d;", 
 		&sqlite_GetEqualizerIDFromID, &target, NULL,
 		SONG_TABLE_NAME,
 		id );
 
-	m_ProtectingLibrary->release();
+	EndTransaction();
 
 	return target;
 }
@@ -2009,7 +2068,7 @@ int CmusikLibrary::CreateEqualizer( const CmusikEQSettings& eq, const CStdString
 	if ( !m_pDB )
 		return -1;
 
-	m_ProtectingLibrary->acquire();
+	BeginTransaction();
 
 	int nRes = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %Q, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, );", NULL, NULL, NULL, 
 		CROSSFADER_PRESET,								// song table 		
@@ -2052,7 +2111,7 @@ int CmusikLibrary::CreateEqualizer( const CmusikEQSettings& eq, const CStdString
 		eq.m_Right[16],
 		eq.m_Right[17] );
 
-	m_ProtectingLibrary->release();
+	EndTransaction();
 
 	return nRes;
 }
@@ -2064,14 +2123,14 @@ int CmusikLibrary::DeleteEqualizer( int id )
 	if ( !m_pDB )
 		return -1;
 
-	m_ProtectingLibrary->acquire();
+	BeginTransaction();
 
 	int nRes = sqlite_exec_printf( m_pDB, "DELETE FROM %Q WHERE equalizer_id = %d;",
 		NULL, NULL, NULL, 
 		CROSSFADER_PRESET,	
 		id );
 
-	m_ProtectingLibrary->release();
+	EndTransaction();
 
 	return nRes;
 }
@@ -2083,7 +2142,7 @@ int CmusikLibrary::UpdateEqualizer( int id, const CmusikEQSettings& eq )
 	if ( !m_pDB )
 		return -1;
 
-	m_ProtectingLibrary->acquire();
+	BeginTransaction();
 
 	int nRes = sqlite_exec_printf( m_pDB, "UPDATE %Q set equalizer_name = %Q, hz55_left = %d, hz77_left = %d, hz110_left = %d, hz156_left = %d, hz220_left = %d, hz311_left = %d, hz440_left = %d, hz622_left = %d, hz880_left = %d, hz1244_left = %d, hz1760_left = %d, hz2489_left = %d, hz3520_left = %d, hz4978_left = %d, hz7040_left = %d, hz9956_left = %d, hz14080_left = %d, hz19912_left = %d,"
 						" hz55_right = %d, hz77_right = %d, hz110_right = %d, hz156_right = %d, hz220_right = %d, hz311_right = %d, hz440_right = %d, hz622_right = %d, hz880_right = %d, hz1244_right = %d, hz1760_right = %d, hz2489_right = %d, hz3520_right = %d, hz4978_right = %d, hz7040_right = %d, hz9956_right = %d, hz14080_right = %d, hz19912_right = %d WHERE equalizer_id = %d;",
@@ -2127,7 +2186,7 @@ int CmusikLibrary::UpdateEqualizer( int id, const CmusikEQSettings& eq )
 			eq.m_Right[16],
 			eq.m_Right[17] );
 
-	m_ProtectingLibrary->release();
+	EndTransaction();
 
 	return nRes;
 }
@@ -2139,85 +2198,91 @@ int CmusikLibrary::GetEqualizer( int eq_id, CmusikEQSettings* target )
 	if ( !m_pDB )
 		return -1;
 
-	m_ProtectingLibrary->acquire();
+	BeginTransaction();
 
 	int nRet = sqlite_exec_printf( m_pDB, "SELECT hz55_left, hz77_left, hz110_left, hz156_left, hz220_left, hz311_left, hz440_left, hz622_left, hz880_left, hz1244_left, hz1760_left, hz2489_left, hz3520_left, hz4978_left, hz7040_left, hz9956_left, hz14080_left, hz19912_left,"
 								" hz55_right, hz77_right, hz110_right, hz156_right, hz220_right, hz311_right, hz440_right, hz622_right, hz880_right, hz1244_right, hz1760_right, hz2489_right, hz3520_right, hz4978_right, hz7040_right, hz9956_right, hz14080_right hz19912_right, equalizer_name"
 								" WHERE equalizer_id = %d;", &sqlite_GetEqualizer, &target, NULL, eq_id );
 	
-	m_ProtectingLibrary->release();
+	EndTransaction();
 
 	return nRet;
 }
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetSongFormatFromID( int id, int* target )
+int CmusikLibrary::GetSongFormatFromID( int id, int* target, bool new_transaction )
 {
 	if ( !m_pDB )
 		return -1;
 
-	m_ProtectingLibrary->acquire();
+	if ( new_transaction )
+		BeginTransaction();
 
 	int nRet = sqlite_exec_printf( m_pDB, "SELECT format FROM %Q WHERE songid = %d;", 
 		&sqlite_GetIntFromRow, target, NULL,
 		SONG_TABLE_NAME,
 		id );
 
-	m_ProtectingLibrary->release();
+	if ( new_transaction )
+		EndTransaction();
 
 	return nRet;
 }
 
 ///////////////////////////////////////////////////
 
-void CmusikLibrary::GetInfoArrayFromPlaylist(  CmusikPlaylist* playlist, CmusikSongInfoArray* info, int replace_field_type, CStdString new_field, bool clear )
+void CmusikLibrary::GetInfoArrayFromPlaylist( CmusikPlaylist* playlist, CmusikSongInfoArray* info, int replace_field_type, CStdString new_field, bool new_transaction )
 {
 	if ( !m_pDB )
 		return;
 
-	if ( clear )
-		info->clear();
+	info->clear();
 
 	CmusikSongInfo tmp_info;
 
-	BeginTransaction();
+	if ( new_transaction )
+		BeginTransaction();
+
 	for ( size_t i = 0; i < playlist->GetCount(); i++ )
 	{
-		GetSongInfoFromID( playlist->GetSongID( i ), &tmp_info );
+		GetSongInfoFromID( playlist->GetSongID( i ), &tmp_info, false );
 
 		if ( replace_field_type != -1 )
 			tmp_info.SetField( replace_field_type, new_field );
 
 		info->push_back( tmp_info );
 	}
-	EndTransaction();
+
+	if ( new_transaction )
+		EndTransaction();
 }
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetDirtySongs( CmusikPlaylist* target, bool clear )
+int CmusikLibrary::GetDirtySongs( CmusikPlaylist* target, bool new_transaction )
 {
-	if ( clear )
-		target->Clear();
+	target->Clear();
 
-	return QuerySongs( "dirty = 1", *target );
+	return QuerySongs( "dirty = 1", *target, new_transaction );
 }
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::FinalizeDirtySongs()
+int CmusikLibrary::FinalizeDirtySongs( bool new_transaction )
 {
 	if ( !m_pDB )
 		return -1;
 
-	m_ProtectingLibrary->acquire();
+	if ( new_transaction )
+		BeginTransaction();
 
 	int nRet = sqlite_exec_printf( m_pDB, "UPDATE %Q SET dirty = 0 WHERE dirty = 1",
 		NULL, NULL, NULL,
 		SONG_TABLE_NAME );
 
-	m_ProtectingLibrary->release();
+	if ( new_transaction )
+		EndTransaction();
 
 	return nRet;
 }

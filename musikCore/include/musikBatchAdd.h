@@ -135,12 +135,12 @@ static void musikBatchAddWorker( CmusikThread* thread )
 		}
 
 		// add the song
-		params->m_Library->AddSong( params->m_Files->at( i ) );
+		params->m_Library->AddSong( params->m_Files->at( i ), false );
 
 		// adding to now playing
 		if ( params->m_AddToPlayer && params->m_Player && params->m_Player->GetPlaylist() )
 		{
-			params->m_Library->GetSongFromFilename( params->m_Files->at( i ), song );
+			params->m_Library->GetSongFromFilename( params->m_Files->at( i ), song, false );
 			params->m_Player->GetPlaylist()->Add( song );
 		}
 
@@ -151,7 +151,7 @@ static void musikBatchAddWorker( CmusikThread* thread )
 			{
 				if ( params->m_Functor->VerifyPlaylist( (void*)params->m_Playlist ) )
 				{
-					params->m_Library->GetSongFromFilename( params->m_Files->at( i ), song );
+					params->m_Library->GetSongFromFilename( params->m_Files->at( i ), song, false );
 					params->m_Playlist->Add( song );
 				}
 			}

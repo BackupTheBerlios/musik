@@ -100,11 +100,13 @@ void CmusikPlaylistCtrl::ResetColumns()
 {
 	while ( DeleteColumn( 0 ) );
 
+	m_Library->BeginTransaction();
 	for ( size_t i = 0; i < m_Prefs->GetPlaylistColCount(); i++ )
 	{
-		InsertColumn( (int)i, m_Library->GetSongField( m_Prefs->GetPlaylistCol( i ) ) );
+		InsertColumn( (int)i, m_Library->GetSongField( m_Prefs->GetPlaylistCol( i ) ), false );
 		SetColumnWidth( (int)i, m_Prefs->GetPlaylistColWidth( i ) );
 	}
+	m_Library->EndTransaction();
 }
 
 ///////////////////////////////////////////////////

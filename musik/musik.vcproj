@@ -291,6 +291,16 @@
 							RelativePath=".\musikSelectionCtrl.h">
 						</File>
 					</Filter>
+					<Filter
+						Name="musikCrossfaderCtrl"
+						Filter="">
+						<File
+							RelativePath=".\musikCrossfaderCtrl.cpp">
+						</File>
+						<File
+							RelativePath=".\musikCrossfaderCtrl.h">
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="musikTreePrefs"
@@ -381,6 +391,16 @@
 						RelativePath=".\musikSaveStdPlaylist.h">
 					</File>
 				</Filter>
+				<Filter
+					Name="musikDyanmicPlaylistEditor"
+					Filter="">
+					<File
+						RelativePath=".\musikDynamicPlaylistEditor.cpp">
+					</File>
+					<File
+						RelativePath=".\musikDynamicPlaylistEditor.h">
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 		<Filter
@@ -427,9 +447,6 @@
 			</File>
 			<File
 				RelativePath=".\musik.h">
-			</File>
-			<File
-				RelativePath=".\musikDynamicPlaylistEditor.h">
 			</File>
 			<File
 				RelativePath=".\Resource.h">
@@ -638,9 +655,6 @@
 				</File>
 			</Filter>
 		</Filter>
-		<File
-			RelativePath=".\musikDynamicPlaylistEditor.cpp">
-		</File>
 	</Files>
 	<Globals>
 		<Global

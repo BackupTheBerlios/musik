@@ -121,7 +121,6 @@ enum
 
 ///////////////////////////////////////////////////
 
-class ACE_Thread_Mutex;
 class CmusikCrossfader;
 class CmusikBatchAdd;
 
@@ -156,49 +155,49 @@ public:
 	int					GetSongFieldDBID( CStdString field );
 
 	// querying songs
-	int  GetAllSongs				( CmusikPlaylist & target );
-	int  GetRelatedItems			( int source_type, const CStdStringArray & source_items, int target_type, CStdStringArray & target );
-	int  GetRelatedItems			( CStdString sub_query, int order_by, CStdStringArray& target );
-	int  GetRelatedSongs			( CStdString sub_query, int order_by, CmusikPlaylist& target );
-	int  GetAllDistinct				( int source_type, CStdStringArray& target, bool clear_target = true );
-	int	 GetSongCount				();
-	int  GetFieldFromID				( int id, int field, CStdString& string );
-	int  GetSongInfoFromID			( int id, CmusikSongInfo* info );
-	int  GetIDFromFilename			( CStdString fn );
-	int  GetSongFromFilename		( CStdString fn, CmusikSong& song );
-	bool IsSongInLibrary			( CStdString fn );
-	int  GetSongFormatFromID		( int id, int* target );
-	void GetInfoArrayFromPlaylist	( CmusikPlaylist* playlist, CmusikSongInfoArray* info, int replace_field_type = -1, CStdString new_field = "", bool clear = true );
-	int  GetDirtySongs				( CmusikPlaylist* target, bool clear = true );
-	int  FinalizeDirtySongs			();
+	int  GetAllSongs				( CmusikPlaylist & target, bool new_transaction = true );
+	int  GetRelatedItems			( int source_type, const CStdStringArray & source_items, int target_type, CStdStringArray & target, bool new_transaction = true );
+	int  GetRelatedItems			( CStdString sub_query, int order_by, CStdStringArray& target, bool new_transaction = true );
+	int  GetRelatedSongs			( CStdString sub_query, int order_by, CmusikPlaylist& target, bool new_transaction = true );
+	int  GetAllDistinct				( int source_type, CStdStringArray& target, bool new_transaction = true );
+	int	 GetSongCount				( bool new_transaction = true );
+	int  GetFieldFromID				( int id, int field, CStdString& string, bool new_transaction = true );
+	int  GetSongInfoFromID			( int id, CmusikSongInfo* info, bool new_transaction = true );
+	int  GetIDFromFilename			( CStdString fn, bool new_transaction = true );
+	int  GetSongFromFilename		( CStdString fn, CmusikSong& song, bool new_transaction = true );
+	bool IsSongInLibrary			( CStdString fn, bool new_transaction = true );
+	int  GetSongFormatFromID		( int id, int* target, bool new_transaction = true );
+	void GetInfoArrayFromPlaylist	( CmusikPlaylist* playlist, CmusikSongInfoArray* info, int replace_field_type = -1, CStdString new_field = "", bool new_transaction = true );
+	int  GetDirtySongs				( CmusikPlaylist* target, bool new_transaction = true );
+	int  FinalizeDirtySongs			( bool new_transaction = true );
 
 	// updating songs
-	bool SetSongInfo				( CmusikSongInfo* info, int songid = -1 );
-	bool SetLastPlayedToNow			( int songid );
+	bool SetSongInfo				( CmusikSongInfo* info, int songid = -1, bool new_transaction = true );
+	bool SetLastPlayedToNow			( int songid, bool new_transaction = true );
 	bool SetSongRating				( int songid, int rating );
 
 	// querying playlist
-	int  GetAllStdPlaylists			( CmusikPlaylistInfoArray* target, bool clear_target = true );
-	int  GetAllDynPlaylists			( CmusikPlaylistInfoArray* target, bool clear_target = true );
-	int  GetStdPlaylist				( int id, CmusikPlaylist& target, bool clear_target = true );
-	bool GetStdPlaylistFns			( int id, CStdStringArray& target, bool clear_target = true );
-	bool GetStdPlaylistFns			( CmusikPlaylist& playlist, CStdStringArray& target, bool clear_target = true );
-	int  CreateStdPlaylist			( const CStdString& name, const CStdStringArray& files );
-	int  AppendStdPlaylist			( int id, const CStdStringArray& files );
-	int  RenameStdPlaylist			( int id, const CStdString& str );
-	int  CreateDynPlaylist			( const CStdString& name, const CStdString& query );
-	int  DeleteStdPlaylist			( const CStdString& name );
-	int  RewriteStdPlaylist			( int id, CmusikPlaylist* playlist );
-	int  DeleteStdPlaylist			( int id );
-	int  DeleteDynPlaylist			( const CStdString& name );
-	int  DeleteDynPlaylist			( int id );
+	int  GetAllStdPlaylists			( CmusikPlaylistInfoArray* target, bool new_transaction = true );
+	int  GetAllDynPlaylists			( CmusikPlaylistInfoArray* target, bool new_transaction = true );
+	int  GetStdPlaylist				( int id, CmusikPlaylist& target, bool new_transaction = true );
+	bool GetStdPlaylistFns			( int id, CStdStringArray& target, bool new_transaction = true );
+	bool GetStdPlaylistFns			( CmusikPlaylist& playlist, CStdStringArray& target, bool new_transaction = true );
+	int  CreateStdPlaylist			( const CStdString& name, const CStdStringArray& files, bool new_transaction = true );
+	int  AppendStdPlaylist			( int id, const CStdStringArray& files, bool new_transaction = true );
+	int  RenameStdPlaylist			( int id, const CStdString& str, bool new_transaction = true );
+	int  CreateDynPlaylist			( const CStdString& name, const CStdString& query, bool new_transaction = true );
+	int  DeleteStdPlaylist			( const CStdString& name, bool new_transaction = true );
+	int  RewriteStdPlaylist			( int id, CmusikPlaylist* playlist, bool new_transaction = true );
+	int  DeleteStdPlaylist			( int id, bool new_transaction = true );
+	int  DeleteDynPlaylist			( const CStdString& name, bool new_transaction = true );
+	int  DeleteDynPlaylist			( int id, bool new_transaction = true );
 
 	// querying crossfaders
 	int  CreateCrossfader			( CmusikCrossfader* fader );
 	int  DeleteCrossfader			( int id );
 	int  GetCrossfader				( int id, CmusikCrossfader* fader );
-	int  GetAllCrossfaders			( CStdStringArray* names, bool clear_target = true );
-	int  GetAllCrossfaders			( CIntArray* ids, bool clear_target = true );
+	int  GetAllCrossfaders			( CStdStringArray* names );
+	int  GetAllCrossfaders			( CIntArray* ids );
 
 	// equalizers
 	int  CreateEqualizer			( const CmusikEQSettings& eq, const CStdString& name );
@@ -214,11 +213,11 @@ public:
 	static int GetFilesize( const CStdString& fn );
 
 	// adding and removing files
-	bool AddSong	( const CStdString& fn );
-	bool AddOGG		( const CStdString& fn );
-	bool AddMP3		( const CStdString& fn );
-	bool RemoveSong	( int songid );
-	bool RemoveSong	( const CStdString& fn );
+	bool AddSong	( const CStdString& fn, bool new_transaction = true );
+	bool AddOGG		( const CStdString& fn, bool new_transaction = true );
+	bool AddMP3		( const CStdString& fn, bool new_transaction = true );
+	bool RemoveSong	( int songid, bool new_transaction = true );
+	bool RemoveSong	( const CStdString& fn, bool new_transaction = true );
 
 private:
 
@@ -232,30 +231,26 @@ private:
 	// begin transaction 
 	int m_Transactions;
 
-	// the mutex that will be used to protect the
-	//library within any given scope.
-	ACE_Thread_Mutex* m_ProtectingLibrary;
-	
 	// fields... artist/title/album/etc
 	void InitFields();
 	CStdStringArray m_Fields;
 	CStdStringArray m_FieldsDB;
 
 	// table creation
-	bool InitLibTable();
-	bool InitStdTables();
-	bool InitDynTable();
-	bool InitEqTable();
-	bool InitPathTable();
-	bool InitCrossfaderTable();
+	bool InitLibTable( bool new_transaction = true );
+	bool InitStdTables( bool new_transaction = true );
+	bool InitDynTable( bool new_transaction = true );
+	bool InitEqTable( bool new_transaction = true );
+	bool InitPathTable( bool new_transaction = true );
+	bool InitCrossfaderTable( bool new_transaction = true );
 
 	// only needs to be initialized once
 	CStdString m_TimeAdded;
 
 	// internal song query functions
-	int			QuerySongs		( const CStdString & query, CmusikPlaylist & target );	
+	int			QuerySongs		( const CStdString & query, CmusikPlaylist & target, bool new_transaction = true );	
 	CStdString	GetOrder		( int type, bool terminate = true );
-	int			QueryCount		( const char* pQueryResult );
+	int			QueryCount		( const char* pQueryResult, bool new_transaction = true );
 	void		VerifyYearList	( CStdStringArray & list );
 };
 
