@@ -47,6 +47,13 @@
 #include "../musikCore/include/StdString.h"
 #include "../musikCore/include/musikFunctor.h"
 #include "../musikCore/include/musikDir.h"
+#include "../musikCore/include/musikTask.h"
+
+///////////////////////////////////////////////////
+
+#define VIZ_WIDTH		128
+#define VIZ_HEIGHT		19
+#define MUSIK_VIZ_TIMER	WM_USER + 2
 
 ///////////////////////////////////////////////////
 
@@ -66,11 +73,32 @@ enum PLAYLIST_INFO_VIZ_STYLE
 	PLAYLIST_INFO_VIZ_STYLE_EQ,
 };
 
+///////////////////////////////////////////////////
+
+class CmusikPlaylistInfoCtrl;
+
+///////////////////////////////////////////////////
+
+class CmusikPlaylistInfoWorker : public CmusikTask
+{
+
+public:
+
+	int open( void* parent );
+	int svc();
+
+private:
+
+	CmusikPlaylistInfoCtrl* m_Parent;
+
+};
+
+///////////////////////////////////////////////////
+
 class CmusikPlaylistInfoCtrl : public CWnd
 {
-#define VIZ_WIDTH     128
-#define VIZ_HEIGHT    19
-#define MUSIK_VIZ_TIMER			WM_USER + 2
+	// friend
+	friend class CPlaylistInfoWorker;
 
 public:
 
@@ -97,11 +125,8 @@ protected:
 	COLORREF m_EQColor;
 	COLORREF m_BGColor;
 
-	// timer
-	UINT_PTR m_TimerID;
-
+	// actual string to be printed
 	CmusikString	m_strInfo;
-
 
 	// message maps
 	afx_msg void OnPaint();
@@ -116,6 +141,9 @@ protected:
 	CmusikLibrary* m_Library;
 	CmusikPlayer* m_Player;
 	CmusikPrefs* m_Prefs;
+
+	// worker thread
+	CmusikPlaylistInfoWorker* m_InfoWorker;
 
 	// macros
 	DECLARE_DYNAMIC(CmusikPlaylistInfoCtrl)

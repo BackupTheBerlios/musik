@@ -43,8 +43,10 @@
 
 #include "musik.h"
 #include "musikPlaylistView.h"
+#include "musikPlaylistInfoCtrl.h"
 #include "musikPrefs.h"
 
+#include "../musikCore/include/musikTask.h"
 #include "../musikCore/include/musikLibrary.h"
 #include "../musikCore/include/musikArrays.h"
 #include "../musikCore/include/musikPlayer.h"
@@ -53,8 +55,48 @@
 
 ///////////////////////////////////////////////////
 
-
 IMPLEMENT_DYNAMIC(CmusikPlaylistInfoCtrl, CWnd)
+
+///////////////////////////////////////////////////
+
+int CmusikPlaylistInfoWorker::open( void* parent )
+{
+	m_Parent = (CmusikPlaylistInfoCtrl*)parent;
+	int ret_code = activate( THR_NEW_LWP | THR_JOINABLE | THR_USE_AFX );
+
+	return ret_code;
+}
+
+///////////////////////////////////////////////////
+
+int CmusikPlaylistInfoWorker::svc()
+{
+	// sleep time inside the loop
+	ACE_Time_Value suspend;
+	suspend.set( 1.0 );
+
+	// set flags
+	m_Stop = false;
+	m_Active = true;
+	m_Finished = false;
+
+	// this is the loop.. set it to true from 
+	// anywhere and it will abort. threads run
+	// very passivly, as to not interfere with 
+	// the interface
+	while ( !m_Stop )
+	{
+
+		// HEY SIMON DO WORK HERE
+
+		ACE_OS::sleep( suspend );
+	}
+
+	// be sure to flag as finished
+	m_Finished = true;
+
+	return 0;
+}
 
 ///////////////////////////////////////////////////
 
@@ -65,6 +107,7 @@ CmusikPlaylistInfoCtrl::CmusikPlaylistInfoCtrl( CmusikPlaylistCtrl* parent, Cmus
 	m_Prefs = prefs;
 	m_ListCtrl = parent;
 
+	m_InfoWorker = NULL;
 	m_hBGBitmap = NULL;
 }
 
@@ -77,6 +120,13 @@ CmusikPlaylistInfoCtrl::~CmusikPlaylistInfoCtrl()
 
 	if ( m_ListCtrl )
 		m_ListCtrl->SetInfoCtrl( NULL );
+	
+	if ( m_InfoWorker )
+	{
+		m_InfoWorker->StopWait( 2 );
+		delete m_InfoWorker;
+		m_InfoWorker = NULL;
+	}
 }
 
 ///////////////////////////////////////////////////
@@ -186,7 +236,10 @@ int CmusikPlaylistInfoCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_hBGBitmap = CreateDIBSection ( NULL, &bminfo, DIB_RGB_COLORS, (void **)&m_pBGBitmapBits, NULL, NULL ); 
 
 	FSOUND_DSP_SetActive( FSOUND_DSP_GetFFTUnit(), TRUE );
-	m_TimerID = SetTimer( MUSIK_VIZ_TIMER, m_Prefs->GetPlaylistVizDur(), NULL );
+
+	// startup task
+	m_InfoWorker = new CmusikPlaylistInfoWorker();
+	m_InfoWorker->open( (void*)this );
 
 	return 0;
 }
@@ -241,7 +294,6 @@ void CmusikPlaylistInfoCtrl::DrawEQ( HDC hdc )
 			}
         }
     }
-
 
     CRect rcClient;
 	GetClientRect( &rcClient );

@@ -2,8 +2,8 @@
 a4:
 
   - right click sources playlist -> delete -> from computer now prompts
-  - optimized threading routines. the caption bar now tells the user
-    how many worker threads are active.
+  - optimized threading routines. 
+  - the caption bar now tells the user how many worker threads are active.
   - window start maximized bug came back, so its fixed again
   - fixed stupid selection bar defuault
   - added full screen mode (tested with multiple monitors)...
