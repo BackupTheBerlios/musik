@@ -36,7 +36,6 @@ ADD_EXECUTABLE(Musik
         ${Musik_SOURCE_DIR}/Classes/ActivityAreaCtrl
         ${Musik_SOURCE_DIR}/Classes/BtnDown
         ${Musik_SOURCE_DIR}/Classes/GaugeSeek
-	${Musik_SOURCE_DIR}/Classes/ListHeader
         ${Musik_SOURCE_DIR}/Classes/MusikLibrary
         ${Musik_SOURCE_DIR}/Classes/MusikPlayer
         ${Musik_SOURCE_DIR}/Classes/MusikPrefs
