@@ -452,8 +452,8 @@ void MusikFrame::DeleteImageLists()
 void MusikFrame::GetFonts()
 {
 	wxString sFace;
+	sFace =	wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT).GetFaceName();
 	#if defined __WXMSW__
-		sFace = wxT( "Tahoma" );
 
 		g_fntSong.SetFaceName	( sFace );
 		g_fntSong.SetPointSize	( 14 );
@@ -474,7 +474,6 @@ void MusikFrame::GetFonts()
 		g_fntBold.SetWeight		( wxBOLD );
 
 	#else
-		sFace = wxT( "Sans" );
 	
 		g_fntSong.SetFaceName	( sFace );
 		g_fntSong.SetPointSize	( 14 );
@@ -488,11 +487,11 @@ void MusikFrame::GetFonts()
 		g_fntInfo = g_fntTime;
 
 		g_fntRegular.SetFaceName( sFace );
-		g_fntRegular.SetPointSize( 8 );
+		g_fntRegular.SetPointSize( 9 );
 
 		g_fntBold.SetFaceName	( sFace );
 		g_fntBold.SetWeight		( wxBOLD );
-		g_fntBold.SetPointSize	( 8 );
+		g_fntBold.SetPointSize	( 9 );
 	#endif
 
 }
