@@ -39,6 +39,8 @@
 
 ///////////////////////////////////////////////////
 
+#include "../musikCore/include/musikTask.h"
+
 #include "musikSourcesCtrl.h"
 #include "musikNowPlayingCtrl.h"
 #include "musikSelectionCtrl.h"
@@ -95,6 +97,7 @@ class CmusikFrameFunctor;
 class CmusikBatchAddFunctor;
 class CmusikRemoveOldFunctor;
 class CmusikDirSync;
+class CMainFrame;
 class ACE_Thread_Mutex;
 
 ///////////////////////////////////////////////////
@@ -103,10 +106,26 @@ typedef std::vector<CmusikSelectionBar*> CmusikSelBarArray;
 
 ///////////////////////////////////////////////////
 
+class CMainFrameWorker : public CmusikTask
+{
+
+public:
+
+	int open( void* parent );
+	int svc();
+
+private:
+
+	CMainFrame* m_Parent;
+
+};
+
+///////////////////////////////////////////////////
+
 class CMainFrame : public CFrameWnd
 {
+
 	friend void CmusikSourcesCtrl::DoDrag( CmusikPropTreeItem* pItem );
-	friend static void MainFrameWorker( CmusikThread* thread );
 
 public:
 
@@ -158,8 +177,8 @@ public:
 	// current window text
 	CString m_Caption;
 
-	// thread stuff
-	size_t GetThreadCount();
+	// task stuff
+	size_t GetTaskCount();
 
 protected: 
 
@@ -225,7 +244,7 @@ protected:
 	afx_msg LRESULT OnPlayerNewPlaylist( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnBatchAddProgress( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnRemoveOldProgress( WPARAM wParam, LPARAM lParam );
-	afx_msg LRESULT OnThreadEnd( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnTaskEnd( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnPlayerPlaySel( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnBatchAddNew( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnVerifyPlaylist( WPARAM wParam, LPARAM lParam );
@@ -290,20 +309,21 @@ protected:
 	afx_msg void OnNotificationtrayStop();
 	afx_msg void OnFileClearlibrary();
 	afx_msg void OnLibrarySynchronizedirectoriesnow();
+	afx_msg void OnPlaybackmodeShufflecurrentplaylist();
 
-	// list of all threads running
-	int FreeThread( CmusikThread* pThread );
-	CmusikThreadPtrArray m_Threads;
+	// list of all taskss running
+	int FreeTask( CmusikTask* pTask );
+	CmusikTaskPtrArray m_Tasks;
 
-	// mutex to synchronize thread array
-	ACE_Thread_Mutex m_ProtectingThreads;
-	int m_ThreadCount;
-	void KillThreads( bool updater = true, bool childthreads = true, bool setwindowtext = true );
+	// mutex to synchronize task array
+	ACE_Thread_Mutex m_ProtectingTasks;
+	int m_TaskCount;
+	void KillTasks( bool updater = true, bool childtasks = true, bool setwindowtext = true );
 
-	// batch functors threads will use
+	// batch functors tasks will use
 	CmusikBatchAddFunctor* m_BatchAddFnct;
 	CmusikRemoveOldFunctor* m_RemoveOldFnct;
-	CmusikThread* m_Updater;
+	CMainFrameWorker* m_Updater;
 
 	// dir sync dialog
 	CmusikDirSync* m_DirSyncDlg;
@@ -319,8 +339,6 @@ protected:
 
 	// autostart 
 	bool m_AutoStart;
-public:
-	afx_msg void OnPlaybackmodeShufflecurrentplaylist();
 };
 
 ///////////////////////////////////////////////////

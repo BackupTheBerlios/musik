@@ -44,6 +44,7 @@
 
 #include "../musikCore/include/musikFilename.h"
 
+#include "ace/ACE.h"
 #include "MainFrm.h"
 
 ///////////////////////////////////////////////////
@@ -62,8 +63,14 @@ END_MESSAGE_MAP()
 
 CmusikApp::CmusikApp()
 {
-	// TODO: add construction code here,
-	// Place all significant initialization in InitInstance
+	ACE::init();
+}
+
+///////////////////////////////////////////////////
+
+CmusikApp::~CmusikApp()
+{
+	ACE::fini();
 }
 
 ///////////////////////////////////////////////////
@@ -74,6 +81,8 @@ CmusikApp theApp;
 
 BOOL CmusikApp::InitInstance()
 {
+
+
 	// only allow a single instance to run
 	if ( !CWinAppEx::InitInstance( _T( "{340277AE-C62B-41de-89DF-90191D8950CF}" ) ) )
 		return FALSE;

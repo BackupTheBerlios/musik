@@ -21,6 +21,7 @@ public:
 
 	// construct and destruct
 	CmusikApp();
+	virtual ~CmusikApp();
 
 	// overrides
 	virtual BOOL InitInstance();
