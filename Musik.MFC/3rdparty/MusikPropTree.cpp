@@ -1039,13 +1039,6 @@ void CMusikPropTree::OnLButtonDown(UINT, CPoint point)
 						pItem->Activate();
 				}
 			}
-			else
-			{
-				SelectItems(NULL, FALSE);
-				SetFocusedItem(NULL);
-				SendNotify(PTN_SELCHANGE);
-				Invalidate();
-			}
 			break;
 	}
 }
