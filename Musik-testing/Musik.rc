@@ -1,3 +1,0 @@
-musicbox ICON "musik.ico"
-#include "wx/msw/wx.rc"
-
