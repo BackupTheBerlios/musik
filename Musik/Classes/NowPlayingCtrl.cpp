@@ -436,7 +436,7 @@ void CNowPlayingCtrl::UpdateInfo( const CMusikSong &song )
 	m_LastFile = song.MetaData.Filename;
 
 	//--- caption bar title ---//
-	g_MusikFrame->SetTitle( sArtist + wxT( " - " ) +  sTitle + (!sAlbum.IsEmpty() ? wxT( " - " ) + sAlbum : wxEmptyString) );
+	g_MusikFrame->SetTitle( sArtist + wxT( " - " ) +  sTitle + (!sAlbum.IsEmpty() ? wxString(wxT( " - " )) + sAlbum : wxString()) );
 	g_MusikFrame->SetSongInfoText( song );
 
 	//--- title / artist / time -//

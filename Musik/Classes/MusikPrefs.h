@@ -259,6 +259,7 @@ public:
 		,bShowAllSongs(this,wxT( "SelectingLibraryDisplaysSongs" ),true)
 		,bLogVerbose(this,wxT( "LogVerbose" ),true)
 		,bDisableTrayIcon(this,wxT("DisableTrayIcon"),false)
+		,bEnableBallonSongInfo(this,wxT("EnableBallonSongInfo"),true)
 		,sLocale(this,wxT( "Locale" ),wxT("default"))
 		,bShowLibraryOnStart(this,wxT( "ShowLibraryOnStart" ),false)
 		,bDoubleClickReplacesPlaylist(this,wxT( "DoubleClickReplacesPlaylist" ),false)
@@ -390,6 +391,7 @@ public:
 	CConfigSettingBool bShowAllSongs;
 	CConfigSettingBool bLogVerbose;
 	CConfigSettingBool bDisableTrayIcon;
+	CConfigSettingBool bEnableBallonSongInfo;
 	CConfigSettingString sLocale;
 	CConfigSettingBool bShowLibraryOnStart;
 	CConfigSettingBool bDoubleClickReplacesPlaylist;

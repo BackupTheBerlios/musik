@@ -213,7 +213,7 @@ void CPictureBox::OnPaint(wxPaintEvent &)
 		}
 	}
 	m_image.ConvertAlphaToMask();
-	wxBitmap bmp = wxBitmap(m_image.Scale(bmpwidth, bmpheight),dc);
+	wxBitmap bmp = wxBitmap(m_image.Scale(bmpwidth, bmpheight));
 	wxCoord x = abs(bmpwidth - width)/2 + offset;
 	wxCoord y = abs(bmpheight - height)/2 + offset ;
 	dc.DrawBitmap(bmp,x,y,true);

@@ -845,7 +845,7 @@ wxString CPlaylistCtrl::GetItemText(long item, EPLAYLISTCOLUMNS eColumnType) con
 	case PLAYLISTCOLUMN_TIMES_PLAYED:
 		{
 
-			return (song.TimesPlayed > 0) ? IntToString(song.TimesPlayed) : wxString(wxT("-"));
+			return (song.TimesPlayed > 0) ? wxString(IntToString(song.TimesPlayed)) : wxString(wxT("-"));
 		}
 		break;
 

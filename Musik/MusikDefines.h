@@ -49,8 +49,8 @@
 #define MUSIK_PLAYLIST			3017
 
 #define MUSIKAPPNAME			wxT("wxMusik")
-#define MUSIKAPPNAME_VERSION	MUSIKAPPNAME wxT(" ") MUSIK_FULL_VERSION_STR
-#define MUSIKSERV_VERSION		MUSIKAPPNAME wxT("Serv ") MUSIK_FULL_VERSION_STR
+#define MUSIKAPPNAME_VERSION	MUSIKAPPNAME wxT(" ") MUSIK_TITLE_VERSION_STR
+#define MUSIKSERV_VERSION		MUSIKAPPNAME wxT("Serv ") MUSIK_VERSION_STR
 //----------------------------------//
 //--- path stuff ~/.Musik/ vs ./ ---//
 //----------------------------------//

@@ -5,11 +5,12 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <io.h>
-#include <string.h>
 #include <stdlib.h>
 #include "idtag.h"
 
+#ifdef _WIN32
+#define strnocasecmp _stricmp
+#endif
 
 size_t   unicodeToUtf8 ( const wchar_t* lpWideCharStr, char* lpMultiByteStr, int cwcChars );
 size_t   utf8ToUnicode ( const char* lpMultiByteStr, wchar_t* lpWideCharStr, int cmbChars );
@@ -136,7 +137,7 @@ size_t CSimpleTagReader::CopyTagValue ( char* dest, const char* item, size_t cou
 
     for ( i = 0; i < tagitem_count; i++ ) {
         // Are items case sensitive?
-        if ( _stricmp ( item, tagitems[i].Item ) == 0 ) {
+        if ( strnocasecmp( item, tagitems[i].Item ) == 0 ) {
             if ( count > tagitems[i].ValueSize + 1 ) count = tagitems[i].ValueSize + 1;
             memcpy ( dest, tagitems[i].Value, count );
             return count;
