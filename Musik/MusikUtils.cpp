@@ -426,7 +426,7 @@ bool SetFramePlacement( wxFrame* frame, wxString place )
 {
 	wxStringTokenizer st( place, wxT(",") );
 
-	unsigned long x, y, w, h, maximized, iconized;
+	unsigned long x=0, y=0, w=0, h= 0, maximized, iconized;
 	bool ok;
 	ok = st.GetNextToken().ToULong( &x );
 	ok = ok && st.GetNextToken().ToULong( &y );
