@@ -880,11 +880,6 @@ void CPlaylistCtrl::RescaleColumns()
 		SaveColumns();
 
 	//-------------------------------------------------//
-	//--- this will rescale any "dynamic" columns	---//
-	//-------------------------------------------------//
-	Freeze();
-
-	//-------------------------------------------------//
 	//--- size of the client area.					---//
 	//-------------------------------------------------//
 	wxSize client_size		= GetClientSize();
@@ -940,6 +935,7 @@ void CPlaylistCtrl::RescaleColumns()
 	//-------------------------------------------------//
 	float f_Per;
 	int n_Per;
+	int n_LastDyn = -1;
 	for ( size_t i = 0; i < m_ColumnOrder.GetCount(); i++ )
 	{
 		nCurrItem = m_ColumnOrder.Item( i );
@@ -955,6 +951,8 @@ void CPlaylistCtrl::RescaleColumns()
 		//-------------------------//
 		else
 		{
+			n_LastDyn = i;
+
 			if ( g_Prefs.nPlaylistSmartColumns == 1 )
 			{
 				f_Per = ( (float)g_Prefs.nPlaylistColumnSize[nCurrItem] / (float)nTotalPercent ) * nRemainingWidth;
@@ -979,14 +977,13 @@ void CPlaylistCtrl::RescaleColumns()
 	if ( g_Prefs.nPlaylistSmartColumns == 1 && nTotalPercent && nDynamicWidth )
 	{
 		m_Overflow = client_size.GetWidth() - ( nStaticWidth + nDynamicWidth );
-		size_t nLastSize = GetColumnWidth( 0 ) + m_Overflow;
-		SetColumnWidth( GetColumnCount()-1, nLastSize );
+		size_t nLastSize = GetColumnWidth( n_LastDyn ) + m_Overflow;
+		SetColumnWidth( n_LastDyn, nLastSize );
 	}
 
 	//-------------------------------------------------//
 	//--- make sure window is properly refreshed.	---//
 	//-------------------------------------------------//
-	Thaw();
 	Refresh();
 }
 
