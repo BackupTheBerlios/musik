@@ -30,10 +30,6 @@ enum MUSIK_LIBRARY_THREAD_COMMAND
 	SET_NEW
 };
 class wxMusicTraverser;
-//---------------------------------------------//
-//--- NOTE: use g_MusikLibraryFrame as the	---//
-//--- parent window.						---//
-//---------------------------------------------//
 
 class MusikScanNewThread : public wxThread
 {

@@ -24,12 +24,6 @@
 //----------------------------//
 MusikFrame *g_MusikFrame;
 
-
-//------------------------------------//
-//--- pointer to MusikLibraryFrame ---//
-//------------------------------------//
-MusikLibraryFrame *g_MusikLibraryFrame;
-
 //-----------------------------//
 //--- playlist column stuff ---//
 //-----------------------------//
