@@ -21,10 +21,7 @@ void CMusikEditInPlaceCtrl::OnChar( wxKeyEvent& event )
 	int nKey = event.GetKeyCode();
 
 	if ( nKey == WXK_ESCAPE )
-	{
 		Hide();
-	}
-
 	else if ( nKey == WXK_RETURN )
 	{
 		m_LastValue = GetValue();
@@ -32,8 +29,8 @@ void CMusikEditInPlaceCtrl::OnChar( wxKeyEvent& event )
 		wxCommandEvent commit_done( wxEVT_COMMAND_MENU_SELECTED, MUSIK_EDIT_IN_PLACE_COMMIT );
 		wxPostEvent( m_Parent, commit_done );
 	}
-
-	event.Skip();
+	else
+		event.Skip();
 }
 
 wxString CMusikEditInPlaceCtrl::GetStr()
@@ -92,5 +89,4 @@ void CMusikListCtrl::StartEditInPlace()
 
 void CMusikListCtrl::EndEditInPlace( wxCommandEvent& event )
 {
-	wxMessageBox( GetEditInPlaceCtrl()->GetStr() );
 }

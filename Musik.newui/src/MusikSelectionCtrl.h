@@ -42,6 +42,14 @@ public:
 	virtual void Reset( bool rescale = true, bool refresh = false );
 	virtual void Update( bool refresh = false );
 
+	wxString GetDBName(){ return E_MUSIK_SELECTION_DB_NAMES[(int)m_Type]; }
+	wxString GetColumnName(){ return E_MUSIK_SELECTION_COLUMN_LABELS[(int)m_Type]; }
+	E_MUSIK_SELECTION_TYPE GetType(){ return m_Type; }
+
+private:
+
+	E_MUSIK_SELECTION_TYPE m_Type;
+
 };
 
 #endif
