@@ -112,7 +112,7 @@ bool CActivityAreaCtrl::Create()
 			pTopSizer->Add( m_ActivityBox4, 1, wxEXPAND | wxLEFT|wxBOTTOM, 0 );
 		}
 
-		Layout();
+		m_pPanel->Layout();
 	//	SetSize( pTopSizer->GetMinSize() );
 
 		SetParent( 0, false );
