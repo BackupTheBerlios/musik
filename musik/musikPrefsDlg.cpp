@@ -839,3 +839,110 @@ BOOL CmusikPrefsInterfaceTrans::OnCommand(WPARAM wParam, LPARAM lParam)
 }
 
 ///////////////////////////////////////////////////
+
+///////////////////////////////////////////////////
+
+// Tunage
+
+///////////////////////////////////////////////////
+
+IMPLEMENT_DYNAMIC(CmusikPrefsTunage, CmusikPropertyPage)
+
+///////////////////////////////////////////////////
+
+CmusikPrefsTunage::CmusikPrefsTunage( CmusikPrefs* prefs, CmusikLibrary* library, CmusikPlayer* player )
+	: CmusikPropertyPage( CmusikPrefsTunage::IDD, prefs, library, player )
+{
+}
+
+///////////////////////////////////////////////////
+
+CmusikPrefsTunage::~CmusikPrefsTunage()
+{
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPrefsTunage::DoDataExchange(CDataExchange* pDX)
+{
+	CPropertyPage::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_TUNAGEENABLED, m_Enabled);
+	DDX_Control(pDX, IDC_TUNAGEURLENABLED, m_PostURLEnabled);
+	DDX_Control(pDX, IDC_TUNAGEURL, m_URL);
+	DDX_Control(pDX, IDC_TUNAGEFILEENABLED, m_WriteFileEnabled);
+	DDX_Control(pDX, IDC_TUNAGEFILENAME, m_Filename);
+	DDX_Control(pDX, IDC_TUNAGEFILELINE, m_Fileline);
+	DDX_Control(pDX, IDC_TUNAGEAPPEND, m_Append);
+	DDX_Control(pDX, IDC_TUNAGERUNAPPENABLED, m_RunAppEnabled);
+	DDX_Control(pDX, IDC_TUNAGECOMMANDLINE, m_CommandLine);
+}
+
+///////////////////////////////////////////////////
+
+
+BEGIN_MESSAGE_MAP(CmusikPrefsTunage, CPropertyPage)
+END_MESSAGE_MAP()
+
+///////////////////////////////////////////////////
+
+void CmusikPrefsTunage::LoadPrefs()
+{
+	m_Enabled.SetCheck( m_Prefs->GetTunageEnabled() );
+	m_PostURLEnabled.SetCheck( m_Prefs->GetTunagePostURL() );
+	m_URL.SetWindowText( m_Prefs->GetTunageURL().c_str() );
+	m_WriteFileEnabled.SetCheck( m_Prefs->GetTunageWriteFile() );
+	m_Filename.SetWindowText( m_Prefs->GetTunageFilename().c_str() );
+	m_Fileline.SetWindowText( m_Prefs->GetTunageFileLine().c_str() );
+	m_Append.SetCheck( m_Prefs->GetTunageAppendFile() );
+	m_RunAppEnabled.SetCheck( m_Prefs->GetTunageRunApp() );
+	m_CommandLine.SetWindowText( m_Prefs->GetTunageCmdLine().c_str() );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPrefsTunage::CommitChanges()
+{
+	CString sWnd;
+
+	m_Prefs->SetTunageEnabled( m_Enabled.GetCheck()  );
+	m_Prefs->SetTunagePostURL( m_PostURLEnabled.GetCheck()  );
+	m_URL.GetWindowText( sWnd );
+	m_Prefs->SetTunageURL( (LPCSTR)sWnd );
+	m_Prefs->SetTunageWriteFile( m_WriteFileEnabled.GetCheck()  );
+	m_Filename.GetWindowText( sWnd );
+	m_Prefs->SetTunageFilename( (LPCSTR)sWnd );
+	m_Fileline.GetWindowText( sWnd );
+	m_Prefs->SetTunageFileLine( (LPCSTR)sWnd );
+	m_Prefs->SetTunageAppendFile( m_Append.GetCheck()  );
+	m_Prefs->SetTunageRunApp( m_RunAppEnabled.GetCheck()  );
+	m_CommandLine.GetWindowText( sWnd);
+	m_Prefs->SetTunageCmdLine( (LPCSTR)sWnd  );
+		
+
+	// reload
+	LoadPrefs();
+
+	SetModified( FALSE );
+	m_Modified = false;
+}
+
+///////////////////////////////////////////////////
+
+BOOL CmusikPrefsTunage::OnInitDialog()
+{
+	CmusikPropertyPage::OnInitDialog();
+	LoadPrefs();
+	return TRUE;
+}
+
+///////////////////////////////////////////////////
+
+BOOL CmusikPrefsTunage::OnCommand(WPARAM wParam, LPARAM lParam)
+{
+	SetModified( TRUE );
+	m_Modified = true;
+
+	return CmusikPropertyPage::OnCommand(wParam, lParam);
+}
+
+///////////////////////////////////////////////////

@@ -1831,6 +1831,7 @@ void CMainFrame::OnFilePreferences()
 	CmusikPrefsInterfaceTrans wndPageInterfaceTrans(  m_Prefs, m_Library, m_Player );
 	CmusikPrefsSoundCrossfader wndPageSoundCrossfader( m_Prefs, m_Library, m_Player );
 	CmusikPrefsSoundDriver wndPageSoundDriver( m_Prefs, m_Library, m_Player );
+	CmusikPrefsTunage wndPageTunage( m_Prefs, m_Library, m_Player );
 
 
 	// remove help icon from gripper
@@ -1838,6 +1839,7 @@ void CMainFrame::OnFilePreferences()
 	wndPageInterfaceTrans.m_psp.dwFlags&=		~PSP_HASHELP;
 	wndPageSoundCrossfader.m_psp.dwFlags&=		~PSP_HASHELP;
 	wndPageSoundDriver.m_psp.dwFlags&=			~PSP_HASHELP;
+	wndPageTunage.m_psp.dwFlags&=			~PSP_HASHELP;
 
 	// initialize the CTreePropSheet class 
 	// and remove help icon from gripper
@@ -1849,6 +1851,7 @@ void CMainFrame::OnFilePreferences()
 	PrefSheet.AddPage( &wndPageInterfaceTrans );
 	PrefSheet.AddPage( &wndPageSoundCrossfader );
 	PrefSheet.AddPage( &wndPageSoundDriver );
+	PrefSheet.AddPage( &wndPageTunage );
 
 	PrefSheet.SetEmptyPageText( _T( "Please select a child item of '%s'." ) );
 	

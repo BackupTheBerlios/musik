@@ -620,6 +620,35 @@ BEGIN
     EDITTEXT        IDC_EDIT5,150,60,40,14,ES_AUTOHSCROLL
 END
 
+
+IDD_PROPPAGE_TUNAGE DIALOGEX 0, 0, 210, 154
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Tunage"
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    CONTROL         "Enabled",IDC_TUNAGEENABLED,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,6,26,41,10
+    LTEXT           "URL:",IDC_STATIC,13,52,52,8
+    EDITTEXT        IDC_TUNAGEURL,67,50,137,12,ES_AUTOHSCROLL
+    CTEXT           "These settings allow you to perform an action when the currently-playing song changes",
+                    IDC_STATIC,6,7,192,18
+    CONTROL         "Post URL",IDC_TUNAGEURLENABLED,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,6,41,45,10
+    LTEXT           "Filename:",IDC_STATIC,15,76,49,8
+    EDITTEXT        IDC_TUNAGEFILENAME,67,74,137,12,ES_AUTOHSCROLL
+    CONTROL         "Write file",IDC_TUNAGEFILEENABLED,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,6,65,45,10
+    LTEXT           "Line to write:",IDC_STATIC,15,90,49,8
+    EDITTEXT        IDC_TUNAGEFILELINE,67,88,137,12,ES_AUTOHSCROLL
+    CONTROL         "Append",IDC_TUNAGEAPPEND,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,15,101,41,10
+    LTEXT           "Command line:",IDC_STATIC,15,126,50,8
+    EDITTEXT        IDC_TUNAGECOMMANDLINE,67,123,137,12,ES_AUTOHSCROLL
+    CONTROL         "Run program",IDC_TUNAGERUNAPPENABLED,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,6,115,57,10
+END
+
+
 IDD_WINAMP_VIS DIALOGEX 0, 0, 238, 119
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
     WS_SYSMENU
@@ -636,6 +665,7 @@ BEGIN
     LISTBOX         IDC_LIST1,6,18,228,54,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | 
                     WS_TABSTOP
 END
+
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -791,6 +821,14 @@ BEGIN
         BOTTOMMARGIN, 107
     END
 
+    IDD_PROPPAGE_TUNAGE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 203
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 147
+    END
+
     IDD_WINAMP_VIS, DIALOG
     BEGIN
         LEFTMARGIN, 7
@@ -798,6 +836,7 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 112
     END
+
 END
 #endif    // APSTUDIO_INVOKED
 

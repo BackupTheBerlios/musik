@@ -41,7 +41,8 @@
 #define IDB_BITMAP3                     160
 #define IDB_SONG_NOTPLAYING             160
 #define IDD_TAG_PROPERTIES              161
-#define IDD_WINAMP_VIS                  162
+#define IDD_PROPPAGE_TUNAGE             162
+#define IDD_WINAMP_VIS                  163
 #define IDC_CHECK_STARTUPSCAN           1007
 #define IDC_CHECK_STARTUPSCAN2          1008
 #define IDC_CHECK_PL_STRIPES            1009
@@ -134,6 +135,16 @@
 #define IDC_SEEK                        1053
 #define IDC_DELETE                      1054
 #define IDC_CHECK5                      1055
+#define IDC_TUNAGEENABLED               1056
+#define IDC_TUNAGEURLENABLED            1057
+#define IDC_TUNAGEURL                   1058
+#define IDC_TUNAGEFILENAME              1060
+#define IDC_TUNAGEFILEENABLED           1061
+#define IDC_TUNAGEFILELINE              1062
+#define IDC_TUNAGEAPPEND                1063
+#define IDC_TUNAGECOMMANDLINE           1064
+#define IDC_RUNAPPENABLED               1065
+#define IDC_TUNAGERUNAPPENABLED         1065
 #define IDC_REFRESH                     1056
 #define IDC_OK                          1057
 #define IDC_SETTINGS                    1058
@@ -269,7 +280,8 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        163
+
+#define _APS_NEXT_RESOURCE_VALUE        164
 #define _APS_NEXT_COMMAND_VALUE         32942
 #define _APS_NEXT_CONTROL_VALUE         1059
 #define _APS_NEXT_SYMED_VALUE           104

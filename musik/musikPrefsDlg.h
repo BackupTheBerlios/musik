@@ -253,3 +253,47 @@ protected:
 
 
 ///////////////////////////////////////////////////
+
+class CmusikPrefsTunage : public CmusikPropertyPage
+{
+
+public:
+
+	// construct and destruct
+	CmusikPrefsTunage( CmusikPrefs* prefs, CmusikLibrary* library, CmusikPlayer* player );
+	virtual ~CmusikPrefsTunage();
+
+	// from CmusikPropertyPage
+	virtual void CommitChanges();
+	virtual void LoadPrefs();
+
+	// objects
+	CButton m_Enabled;
+	CButton m_PostURLEnabled;
+	CEdit m_URL;
+	CButton m_WriteFileEnabled;
+	CEdit m_Filename;
+	CEdit m_Fileline;
+	CButton m_Append;
+	CButton m_RunAppEnabled;
+	CEdit m_CommandLine;
+
+
+	// overrides
+	virtual BOOL OnInitDialog();
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+
+protected:
+
+	// misc
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	enum { IDD = IDD_PROPPAGE_TUNAGE };
+
+	// macros
+	DECLARE_DYNAMIC(CmusikPrefsTunage)
+	DECLARE_MESSAGE_MAP()
+
+};
+
+
+///////////////////////////////////////////////////
