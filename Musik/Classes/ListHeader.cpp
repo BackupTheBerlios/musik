@@ -26,6 +26,12 @@ CListHeader::CListHeader( wxPanel *pParent, wxString sCaption )
 {
 	//--- colors we'll use ---//
 	wxColour background = wxSystemSettings::GetColour( wxSYS_COLOUR_BTNSHADOW );
+	
+	#ifdef __WXGTK__
+		if ( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNSHADOW ) == wxSystemSettings::GetColour( wxSYS_COLOUR_GRAYTEXT ) )
+			background.Set( background.Red() - 30, background.Green() - 30, background.Blue() - 30 );
+	#endif
+	
 	wxColour white = wxColour( 255, 255, 255 );
 	wxColour black = wxColour( 0, 0, 0 );
 	int nAvg = ( background.Red() + background.Blue() + background.Green() ) / 3;
