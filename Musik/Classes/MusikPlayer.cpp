@@ -326,6 +326,9 @@ void CMusikPlayer::UpdateUI()
 
 void CMusikPlayer::ClearOldStreams( bool bClearAll )
 {
+	if ( g_FaderThread->IsCrossfaderActive() )
+		return;
+
 	int nStreamCount = g_ActiveStreams.GetCount();
 
 	//-------------------------------------------------//

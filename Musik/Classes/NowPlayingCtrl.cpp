@@ -100,23 +100,23 @@ CNowPlayingCtrl::CNowPlayingCtrl( wxWindow *parent )
 	btnStop->SetBitmapLabel				( bmStop );
 	btnVolume->SetBitmapLabel			( bmVolume );
 	#ifdef __WXGTK__
-	btnPrev->SetBitmapFocus				( bmPrevDown );
-	btnNext->SetBitmapFocus				( bmNextDown );
-	btnPlayPause->SetBitmapFocus		( bmPlayDown );
-	btnStop->SetBitmapFocus				( bmStopDown );
-	btnVolume->SetBitmapFocus			( bmVolumeDown );
+		btnPrev->SetBitmapFocus				( bmPrevDown );
+		btnNext->SetBitmapFocus				( bmNextDown );
+		btnPlayPause->SetBitmapFocus		( bmPlayDown );
+		btnStop->SetBitmapFocus				( bmStopDown );
+		btnVolume->SetBitmapFocus			( bmVolumeDown );
 	#elif defined __WXMSW__
-	pPrevEvt	= new CBtnDownEvt	( btnPrev, &bmPrevDown, &bmPrev );
-	pNextEvt	= new CBtnDownEvt	( btnNext, &bmNextDown, &bmNext );
-	pPlayEvt	= new CBtnDownEvt	( btnPlayPause, &bmPlayDown, &bmPlay );
-	pPauseEvt	= new CBtnDownEvt	( btnPlayPause, &bmPauseDown, &bmPause );
-	pStopEvt	= new CBtnDownEvt	( btnStop, &bmStopDown, &bmStop );
-	pVolumeEvt	= new CBtnDownEvt	( btnVolume, &bmVolumeDown, &bmVolume );
-    btnPrev->PushEventHandler		( pPrevEvt );
-	btnNext->PushEventHandler		( pNextEvt );
-	btnPlayPause->PushEventHandler	( pPlayEvt );
-	btnStop->PushEventHandler		( pStopEvt );
-	btnVolume->PushEventHandler		( pVolumeEvt );
+		pPrevEvt	= new CBtnDownEvt	( btnPrev, &bmPrevDown, &bmPrev );
+		pNextEvt	= new CBtnDownEvt	( btnNext, &bmNextDown, &bmNext );
+		pPlayEvt	= new CBtnDownEvt	( btnPlayPause, &bmPlayDown, &bmPlay );
+		pPauseEvt	= new CBtnDownEvt	( btnPlayPause, &bmPauseDown, &bmPause );
+		pStopEvt	= new CBtnDownEvt	( btnStop, &bmStopDown, &bmStop );
+		pVolumeEvt	= new CBtnDownEvt	( btnVolume, &bmVolumeDown, &bmVolume );
+		btnPrev->PushEventHandler		( pPrevEvt );
+		btnNext->PushEventHandler		( pNextEvt );
+		btnPlayPause->PushEventHandler	( pPlayEvt );
+		btnStop->PushEventHandler		( pStopEvt );
+		btnVolume->PushEventHandler		( pVolumeEvt );
 	#endif
 
 	//----------------//
@@ -174,17 +174,17 @@ CNowPlayingCtrl::~CNowPlayingCtrl()
 	KillTimer();
 
 	#ifdef __WXMSW__
-    btnPrev->PopEventHandler();
-	btnNext->PopEventHandler();
-	btnPlayPause->PopEventHandler();
-	btnStop->PopEventHandler();
-	btnVolume->PopEventHandler();
-	delete pPrevEvt;
-	delete pNextEvt;
-	delete pPlayEvt;
-	delete pPauseEvt;
-	delete pStopEvt;
-	delete pVolumeEvt;
+		btnPrev->PopEventHandler();
+		btnNext->PopEventHandler();
+		btnPlayPause->PopEventHandler();
+		btnStop->PopEventHandler();
+		btnVolume->PopEventHandler();
+		delete pPrevEvt;
+		delete pNextEvt;
+		delete pPlayEvt;
+		delete pPauseEvt;
+		delete pStopEvt;
+		delete pVolumeEvt;
 	#endif
 
 	gSeek->PopEventHandler();
@@ -294,10 +294,6 @@ void CNowPlayingCtrl::ResetInfo()
 
 void CNowPlayingCtrl::UpdateInfo( wxString sFilename )
 {
-	stSong->Freeze();
-	stArtist->Freeze();
-	stCurtime->Freeze();
-
 	//--- first things first, verify data in song ---//
 	CMusikSong song;
 	g_Library.GetSongFromFilename( sFilename, &song );
@@ -315,13 +311,12 @@ void CNowPlayingCtrl::UpdateInfo( wxString sFilename )
 	song.Title.Replace	( wxT( "&" ), wxT( "&&" ), TRUE );
 	song.Artist.Replace	( wxT( "&" ), wxT( "&&" ), TRUE );
 
-	stSong->SetLabel( song.Title );
-	stArtist->SetLabel( song.Artist );
+	if ( song.Title != stSong->GetLabel() )
+		stSong->SetLabel( song.Title );
+	if ( song.Artist != stArtist->GetLabel() )
+		stArtist->SetLabel( song.Artist );
+	
 	stCurtime->SetLabel( wxT( " - 0:00 " ) );
-
-	stSong->Thaw();
-	stArtist->Thaw();
-	stCurtime->Thaw();
 
 	Layout();
 }
@@ -352,7 +347,9 @@ void CNowPlayingCtrl::PlayerPlayPause( wxCommandEvent& WXUNUSED(event) )
 
 void CNowPlayingCtrl::PlayerNext( wxCommandEvent& WXUNUSED(event) )	
 {	
+	Freeze();
 	g_Player.NextSong();
+	Thaw();
 }
 
 void CNowPlayingCtrl::PlayerPrev( wxCommandEvent& WXUNUSED(event) )	

@@ -147,6 +147,9 @@ void MusikFaderThread::OnExit()
 {
 	if ( IsCrossfaderActive() )
 		pCrossfader->Delete();
+
+	while ( IsCrossfaderActive() )
+		Sleep( 10 );
 }
 
 //---------------------------------------------------------//
@@ -313,6 +316,8 @@ void *MusikCrossfaderThread::Entry()
 
 void MusikCrossfaderThread::OnExit()
 {
+	m_Parent->SetCrossfaderActive( false );
+
 	//-------------------------------------------------//
 	//--- if we ended naturally, that means no		---//
 	//--- other crossfader spawned. tell the player	---//
@@ -354,7 +359,7 @@ void MusikCrossfaderThread::OnExit()
 	//--- signal. the thread was just killed, so	---//
 	//--- start a new one up.						---//
 	//-------------------------------------------------//
-	m_Parent->SetCrossfaderActive( false );
+
 }
 
 //---------------------------------------------------------//
