@@ -1248,20 +1248,22 @@ bool CMusikLibrary::RenameFile( CMusikSong* song, bool bClearCheck )
 
 bool CMusikLibrary::RetagFile( CMusikSong* song, bool bClearCheck )
 {
-	wxString	sPattern	= g_Prefs.sAutoTag;
+	CMusikSong* NewSong = new CMusikSong;
+
+	wxString	sMask		= g_Prefs.sAutoTag;
 	wxFileName	filename	( song->Filename );
 	wxString	sPath		= filename.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR );
 	wxString	sFile		= filename.GetName();
 	wxString	sExt		= wxT(".") + filename.GetExt();
 
-	sPattern.Replace( wxT("%"), wxT(""), 1 );
-	sPattern.Replace( wxT(" "), wxT(""), 1 );
+	sMask.Replace( wxT("%"), wxT(""), 1 );
+	sMask.Replace( wxT(" "), wxT(""), 1 );
 
-	size_t nPatternDel	= GetDelimitCount( sPattern, wxT("-") );
+	size_t nMaskDel		= GetDelimitCount( sMask, wxT("-") );
 	size_t nFilenameDel = GetDelimitCount( sFile, wxT("-") );
 
-	wxArrayString aPattern = DelimitStr( sPattern, wxT("-"), true );
-	wxArrayString aTagInfo = DelimitStr( sFile, wxT("-"), true );	
+	wxArrayString aMask		= DelimitStr( sMask, wxT("-"), true );
+	wxArrayString aTagInfo	= DelimitStr( sFile, wxT("-"), true );	
 
 /*	1 - song title
 	2 - artist name
@@ -1270,38 +1272,44 @@ bool CMusikLibrary::RetagFile( CMusikSong* song, bool bClearCheck )
 	5 - year
 	6 - track number
 */
-	if( nPatternDel == nFilenameDel )
+	if( nMaskDel == nFilenameDel )
 	{
-		for( size_t i = 0; i < nPatternDel; i++ )
+		for( size_t i = 0; i < nMaskDel; i++ )
 		{
-			switch ( wxStringToInt( aPattern.Item( i ) ) )
+			switch ( wxStringToInt( aTagInfo.Item( i ) ) )
 			{
 			case 1:
-				//song->Title = aTagInfo.Item( i );
-				wxMessageBox( wxT("Title") );
+				NewSong->Title = aTagInfo.Item( i );
 				break;
 			case 2:
-				//song->Artist = aTagInfo.Item( i );
-				wxMessageBox( wxT("Artist") );
+				NewSong->Artist = aTagInfo.Item( i );
 				break;
 			case 3:
-				//song->Album = aTagInfo.Item( i );
-				wxMessageBox( wxT("Album") );
+				NewSong->Album = aTagInfo.Item( i );
 				break;
 			case 4:
-				//song->Genre = aTagInfo.Item( i );
-				wxMessageBox( wxT("Genre") );
+				NewSong->Genre = aTagInfo.Item( i );
 				break;
 			case 5:
-				//song->Year = aTagInfo.Item( i );
-				wxMessageBox( wxT("Year") );
+				NewSong->Year = aTagInfo.Item( i );
 				break;
 			case 6:
-				//song->TrackNum = aTagInfo.Item( i );
-				wxMessageBox( wxT("Track Number") );
+				NewSong->TrackNum = wxStringToInt( aTagInfo.Item( i ) );
+				break;
+			default:
+				wxMessageBox( wxT("Invalid auto-tag pattern") );
 				break;
 			}
 		}
+
+//		g_Library.UpdateItem( 
+
+		wxMessageBox( NewSong->Title );
+		wxMessageBox( NewSong->Artist );
+		wxMessageBox( NewSong->Album );
+		wxMessageBox( NewSong->Genre );
+		wxMessageBox( NewSong->Year );
+		wxMessageBox( IntTowxString( NewSong->TrackNum ) );
 	}
 
 	return true;
