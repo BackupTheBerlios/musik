@@ -635,24 +635,17 @@ void CMusikLibrary::CreateStdPlaylist( const CStdString& name, const CStdStringA
 
 ///////////////////////////////////////////////////
 
-void CMusikLibrary::GetStdPlaylist( int id, CMusikPlaylist* target, bool clear_target )
+void CMusikLibrary::GetStdPlaylist( int id, CMusikPlaylist& target, bool clear_target )
 {
 	if ( clear_target )
-		target->Clear();
+		target.Clear();
 
 	// do it
 	m_ProtectingLibrary->acquire();
-
 	sqlite_exec_printf( m_pDB, "SELECT songid FROM %q WHERE std_playlist_id = %d;", 
 		&sqlite_AddSongToPlaylist, &target, NULL,
 		STD_PLAYLIST_SONGS,
 		id );
-	/*
-	CMusikSong song;
-	song.SetID( 2 );
-	target->Add( song );
-	*/
-
 	m_ProtectingLibrary->release();
 }
 

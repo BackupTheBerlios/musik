@@ -168,7 +168,7 @@ public:
 	// querying playlists
 	void GetAllStdPlaylists ( CMusikPlaylistInfoArray* target, bool clear_target = true );
 	void GetAllDynPlaylists	( CMusikPlaylistInfoArray* target, bool clear_target = true );
-	void GetStdPlaylist		( int id, CMusikPlaylist* target, bool clear_target = true );
+	void GetStdPlaylist		( int id, CMusikPlaylist& target, bool clear_target = true );
 	void CreateStdPlaylist	( const CStdString& name, const CStdStringArray& files );
 	void CreateDynPlaylist	( const CStdString& name, const CStdString& query );
 	void DeleteStdPlaylist	( const CStdString& name );
