@@ -85,7 +85,11 @@ void CMusikSelectionCtrl::UpdateV( bool update_count )
 	m_Library->GetAllDistinct( m_Type, m_Items );
 
 	if ( update_count )
-		top.Format( _T( "Show all %ss (%d)" ), GetTypeStr(), m_Items.size() );
+	{
+		CString type = GetTypeStr();
+		type.MakeLower();
+		top.Format( _T( "Show all %ss (%d)" ), type, m_Items.size() );
+	}
 
 	m_Items.insert( m_Items.begin(), top );
 	SetItemCountEx( m_Items.size(), LVSICF_NOINVALIDATEALL | LVSICF_NOSCROLL );
@@ -99,10 +103,15 @@ void CMusikSelectionCtrl::UpdateV( CStdString query, bool update_count )
 	if ( !update_count )
 		top = m_Items.at( 0 );
 
+
 	m_Library->GetRelatedItems( query, m_Type, m_Items );
 
 	if ( update_count )
-		top.Format( _T( "Show all %ss ( %d )" ), GetTypeStr(), m_Items.size() );
+	{
+		CString type = GetTypeStr();
+		type.MakeLower();
+		top.Format( _T( "Show all %ss ( %d )" ), type, m_Items.size() );
+	}
 
 	m_Items.insert( m_Items.begin(), top );
 	SetItemCountEx( m_Items.size(), LVSICF_NOINVALIDATEALL | LVSICF_NOSCROLL );

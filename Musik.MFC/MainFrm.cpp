@@ -25,6 +25,10 @@
 int WM_SELBOXUPDATE = RegisterWindowMessage( "SELBOXUPDATE" );
 int WM_SONGCHANGE = RegisterWindowMessage( "SONGCHANGE" );
 
+int WM_SOURCESLIBRARY = RegisterWindowMessage( "SOURCESLIBRARY" );
+int WM_SOURCESSTDPLAYLIST = RegisterWindowMessage( "SOURCESSTDPLAYLIST" );
+int WM_SOURCESDYNPLAYLIST = RegisterWindowMessage( "SOURCESDYNDPLAYLIST" );
+
 ///////////////////////////////////////////////////
 
 IMPLEMENT_DYNAMIC(CMainFrame, CFrameWnd)
@@ -34,8 +38,9 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_WM_DESTROY()
 	ON_REGISTERED_MESSAGE( WM_SELBOXUPDATE, OnUpdateSel )
 	ON_REGISTERED_MESSAGE( WM_SONGCHANGE, OnSongChange )
-	ON_WM_SETFOCUS()
-	ON_WM_KILLFOCUS()
+	ON_REGISTERED_MESSAGE( WM_SOURCESLIBRARY, OnSourcesLibrary )
+	ON_REGISTERED_MESSAGE( WM_SOURCESSTDPLAYLIST, OnSourcesStdPlaylist )
+	ON_REGISTERED_MESSAGE( WM_SOURCESDYNPLAYLIST, OnSourcesDynPlaylist )
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -474,21 +479,26 @@ LRESULT CMainFrame::OnSongChange( WPARAM wParam, LPARAM lParam )
 
 ///////////////////////////////////////////////////
 
-void CMainFrame::OnSetFocus(CWnd* pOldWnd)
+LRESULT CMainFrame::OnSourcesLibrary( WPARAM wParam, LPARAM lParam )
 {
-	CFrameWnd::OnSetFocus(pOldWnd);
 
-	TRACE0( _T( "Main window's focus gained\n" ) );
+	return 0L;
 }
 
 ///////////////////////////////////////////////////
 
-void CMainFrame::OnKillFocus(CWnd* pNewWnd)
+LRESULT CMainFrame::OnSourcesStdPlaylist( WPARAM wParam, LPARAM lParam )
 {
-	CFrameWnd::OnKillFocus(pNewWnd);
 
-	TRACE0( _T( "Main window's focus lost\n" ) );
+	return 0L;
 }
 
 ///////////////////////////////////////////////////
 
+LRESULT CMainFrame::OnSourcesDynPlaylist( WPARAM wParam, LPARAM lParam )
+{
+
+	return 0L;
+}
+
+///////////////////////////////////////////////////
