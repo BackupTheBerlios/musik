@@ -18,7 +18,6 @@ class CMusikDynDspInfo;
 
 class CMusikPlaylistCtrl : public CListCtrl
 {
-
 public:
 
 	// construct and destruct
@@ -64,6 +63,7 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg void OnNMClick(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnLvnItemActivate(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnLvnBegindrag(NMHDR *pNMHDR, LRESULT *pResult);
 
 	// macros
 	DECLARE_DYNAMIC(CMusikPlaylistCtrl)
@@ -77,8 +77,9 @@ private:
 	CString GetRating( int item );
 	CString GetTimeStr( int item );
 
-
+	// dnd stuff
+	bool m_IsWinNT;
+	size_t m_ClipboardFormat;
 };
 
-///////////////////////////////////////////////////
 

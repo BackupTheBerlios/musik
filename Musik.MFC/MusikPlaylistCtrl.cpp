@@ -13,23 +13,29 @@
 #include "../Musik.Core/include/MusikPlayer.h"
 
 #include "MEMDC.H"
+#include ".\musikplaylistctrl.h"
 
 ///////////////////////////////////////////////////
 
 IMPLEMENT_DYNAMIC(CMusikPlaylistCtrl, CListCtrl)
 CMusikPlaylistCtrl::CMusikPlaylistCtrl( CMusikLibrary* library, CMusikPlayer* player, CMusikPrefs* prefs, CMusikPlaylist* playlist )
 {
+	// core
 	m_Library	= library;
 	m_Prefs		= prefs;
 	m_Playlist	= playlist;
 	m_Player	= player;
 
+	// misc
 	m_RatingWidth = -1;
-
 	m_Changed = true;
-
 	m_SongInfoCache = new CMusikDynDspInfo( m_Playlist, m_Library );
 
+	// dnd variables
+	m_IsWinNT = ( 0 == ( GetVersion() & 0x80000000 ) );
+	m_ClipboardFormat = RegisterClipboardFormat ( _T("MusikMFC_3BCFE9D1_6D61_4cb6_9D0B_3BB3F643CA82") );
+
+	// fonts and colors
 	InitFonts();
 	InitColors();
 }
@@ -53,6 +59,7 @@ BEGIN_MESSAGE_MAP(CMusikPlaylistCtrl, CListCtrl)
 	ON_WM_PAINT()
 	ON_NOTIFY_REFLECT(NM_CLICK, OnNMClick)
 	ON_NOTIFY_REFLECT(LVN_ITEMACTIVATE, OnLvnItemActivate)
+	ON_NOTIFY_REFLECT(LVN_BEGINDRAG, OnLvnBegindrag)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -460,6 +467,175 @@ void CMusikPlaylistCtrl::OnLvnItemActivate(NMHDR *pNMHDR, LRESULT *pResult)
 	}			
 
 	m_Player->Play( pNMIA->iItem, MUSIK_CROSSFADER_NEW_SONG );
+
+	*pResult = 0;
+}
+
+///////////////////////////////////////////////////
+
+void CMusikPlaylistCtrl::OnLvnBegindrag(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
+
+	COleDataSource datasrc;
+	HGLOBAL        hgDrop;
+	DROPFILES*     pDrop;
+	CStringList    lsDraggedFiles;
+	POSITION       pos;
+	int            nSelItem;
+	CString        sFile;
+	UINT           uBuffSize = 0;
+	TCHAR*         pszBuff;
+	FORMATETC      etc = { CF_HDROP, NULL, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
+
+    // For every selected item in the list, put the filename into lsDraggedFiles.
+    pos = GetFirstSelectedItemPosition();
+	
+    while ( pos )
+    {
+        nSelItem = GetNextSelectedItem ( pos );
+		sFile = m_Playlist->GetField( nSelItem, MUSIK_LIBRARY_TYPE_FILENAME );
+        
+        lsDraggedFiles.AddTail ( sFile );
+
+        // Calculate the # of chars required to hold this string.
+        uBuffSize += lstrlen ( sFile ) + 1;
+    }
+
+    // Add 1 extra for the final null char, and the size of the DROPFILES struct.
+    uBuffSize = sizeof(DROPFILES) + sizeof(TCHAR) * (uBuffSize + 1);
+
+    // Allocate memory from the heap for the DROPFILES struct.
+    hgDrop = GlobalAlloc ( GHND | GMEM_SHARE, uBuffSize );
+
+    if ( !hgDrop )
+        return;
+
+    pDrop = (DROPFILES*) GlobalLock ( hgDrop );
+
+    if ( !pDrop )
+	{
+		GlobalFree ( hgDrop );
+		return;
+	}
+
+    // Fill in the DROPFILES struct.
+    pDrop->pFiles = sizeof(DROPFILES);
+
+	// If we're compiling for Unicode, set the Unicode flag in the struct to
+	// indicate it contains Unicode strings.
+	#ifdef _UNICODE
+		pDrop->fWide = TRUE;
+	#endif;
+
+    // Copy all the filenames into memory after the end of the DROPFILES struct.
+    pos = lsDraggedFiles.GetHeadPosition();
+    pszBuff = (TCHAR*) (LPBYTE(pDrop) + sizeof(DROPFILES));
+
+    while ( pos )
+	{
+        lstrcpy ( pszBuff, (LPCTSTR) lsDraggedFiles.GetNext ( pos ) );
+        pszBuff = 1 + _tcschr ( pszBuff, '\0' );
+	}
+
+    GlobalUnlock ( hgDrop );
+
+    // Put the data in the data source.
+    datasrc.CacheGlobalData ( CF_HDROP, hgDrop, &etc );
+
+    // Add in our own custom data, so we know that the drag originated from our 
+    // window.  CMyDropTarget::DragEnter() checks for this custom format, and
+    // doesn't allow the drop if it's present.  This is how we prevent the user
+    // from dragging and then dropping in our own window.
+    // The data will just be a dummy bool.
+	HGLOBAL hgBool;
+
+    hgBool = GlobalAlloc ( GHND | GMEM_SHARE, sizeof(bool) );
+
+    if ( NULL == hgBool )
+    {
+        GlobalFree ( hgDrop );
+        return;
+    }
+
+    // Put the data in the data source.
+    etc.cfFormat = m_ClipboardFormat;
+    datasrc.CacheGlobalData ( m_ClipboardFormat, hgBool, &etc );
+
+    // Start the drag 'n' drop!
+	DROPEFFECT dwEffect = datasrc.DoDragDrop ( DROPEFFECT_COPY | DROPEFFECT_MOVE );
+
+    // If the DnD completed OK, we remove all of the dragged items from our
+    // list.
+    switch ( dwEffect )
+    {
+        case DROPEFFECT_COPY:
+        case DROPEFFECT_MOVE:
+        {
+			// the copy completed successfully
+			// do whatever we need to do here
+			TRACE0( "DND from playlist completed successfully. The data has a new owner.\n" );
+        }
+        break;
+
+        case DROPEFFECT_NONE:
+        {
+            // This needs special handling, because on NT, DROPEFFECT_NONE
+            // is returned for move operations, instead of DROPEFFECT_MOVE.
+            // See Q182219 for the details.
+            // So if we're on NT, we check each selected item, and if the
+            // file no longer exists, it was moved successfully and we can
+            // remove it from the list.
+            if ( m_IsWinNT )
+            {
+				// the copy completed successfully
+				// on a windows nt machine.
+				// do whatever we need to do here
+
+                bool bDeletedAnything = false;
+                for ( size_t i = GetNextItem ( -1, LVNI_SELECTED );	i != -1; i = GetNextItem ( i, LVNI_SELECTED ) )
+                {
+                    CString sFilename = GetItemText ( nSelItem, 0 );
+
+                    if ( GetFileAttributes ( sFile ) == 0xFFFFFFFF  &&
+                         GetLastError() == ERROR_FILE_NOT_FOUND )
+                    {
+                        // We couldn't read the file's attributes, and GetLastError()
+                        // says the file doesn't exist, so remove the corresponding 
+                        // item from the list.
+                        DeleteItem ( nSelItem );
+                    
+                        nSelItem--;
+                        bDeletedAnything = true;
+                    }
+                }
+
+                if ( ! bDeletedAnything )
+                {
+                    // The DnD operation wasn't accepted, or was canceled, so we 
+                    // should call GlobalFree() to clean up.
+                    GlobalFree ( hgDrop );
+                    GlobalFree ( hgBool );
+
+					TRACE0( "DND had a problem. We had to manually free the data.\n" );
+				}
+			}
+
+			// not windows NT
+			else
+			{
+				// We're on 9x, and a return of DROPEFFECT_NONE always means
+				// that the DnD operation was aborted.  We need to free the
+				// allocated memory.
+				GlobalFree ( hgDrop );
+				GlobalFree ( hgBool );
+
+				TRACE0( "DND had a problem. We had to manually free the data.\n" );
+			}
+		}
+
+        break;
+	}
 
 	*pResult = 0;
 }
