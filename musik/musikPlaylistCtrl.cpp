@@ -758,11 +758,28 @@ bool CmusikPlaylistCtrl::PlayItem( int n )
 		if ( m_PlaylistType == MUSIK_PLAYLIST_TYPE_STANDARD )
 			SavePlaylist();
 
+
+		// if the player is playing, then just add
+		// it as the next song.
+		if ( m_Player->IsPlaying() )
+		{
+			CmusikSong song;
+			song.SetID( m_Playlist->GetSongID( n ) );
+
+			if ( m_Player->GetIndex() + 1 >= m_Player->GetPlaylist()->GetCount() )
+				m_Player->GetPlaylist()->Add( song );
+            else
+				m_Player->GetPlaylist()->InsertAt( song.GetID(), m_Player->GetIndex() + 1 ); 
+			
+			m_Player->Next();
+			return true;
+		}
+
 		// give the current playlist to the player,
 		// if it does not belong to the player. otherwise,
 		// it will delete itself, then try to copy itself.
 		// confused yet? i am...
-		if ( m_Playlist != m_Player->GetPlaylist() )
+		else if ( m_Playlist != m_Player->GetPlaylist() )
 		{
 			// the player now owns the playlist, we
 			// just continue to point to it. later,

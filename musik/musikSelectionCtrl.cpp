@@ -506,10 +506,10 @@ void CmusikSelectionCtrl::UpdateV()
 	case MUSIK_LIBRARY_TYPE_TIMEADDED:
 	case MUSIK_LIBRARY_TYPE_LASTPLAYED:
 	case MUSIK_LIBRARY_TYPE_TIMESPLAYED:
-		top.Format( _T( "Select by %s (%d)" ), type, item_count );
+		top.Format( _T( "Select all %s (%d)" ), type, item_count );
 		break;
 	default:
-		top.Format( _T( "Select by %ss (%d)" ), type, item_count );
+		top.Format( _T( "Select all %ss (%d)" ), type, item_count );
 		break;
 	}
 
@@ -534,12 +534,12 @@ void CmusikSelectionCtrl::UpdateV( CmusikString query )
 
 	m_Library->GetRelatedItems( query, m_Type, m_Items, sub_query );
 
-	// format "Select by..."
+	// format "Select all..."
 	CmusikString top;
 	CString type = GetTypeStr();
 	int item_count = (int)m_Items.size();
 	type.MakeLower();
-	top.Format( _T( "Select by %ss (%d)" ), type, item_count );
+	top.Format( _T( "Select all %ss (%d)" ), type, item_count );
 
 	// update
 	m_Items.insert( m_Items.begin(), top );

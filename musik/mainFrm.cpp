@@ -981,7 +981,7 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 	if ( pSender->IsItemSelected( 0 ) || ( pParent && !pParent->GetSelectedCount() ) )
 	{
 		bool unsel_parent = false;
-		if ( pParent && !pParent->GetSelectedCount() )
+		if ( pParent && !pParent->GetSelectedCount() && pParent->IsItemSelected( 0 ) )
 			unsel_parent = true;
 
 		CmusikSelectionCtrl::SetUpdating( true );
@@ -1833,12 +1833,12 @@ void CMainFrame::OnViewSelectionboxes()
 	if ( allvisible )
 	{
 		for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
-			ShowControlBar( m_wndSelectionBars.at( i ), FALSE, FALSE );
+			ShowControlBar( m_wndSelectionBars.at( i ), FALSE, TRUE );
 	}
 	else
 	{
 		for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
-			ShowControlBar( m_wndSelectionBars.at( i ), TRUE, FALSE );
+			ShowControlBar( m_wndSelectionBars.at( i ), TRUE, TRUE );
 	}
 }
 
