@@ -148,8 +148,8 @@ void CMusikPlaylistCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 		
 		// if the item we want to access is out of the
 		// cache's range, something bad happened
-		if ( nItem > m_SongInfoCache->GetLast() )
-			sValue = _T( "[musik.error]" );
+		if ( nItem > m_SongInfoCache->GetLast() || nItem < m_SongInfoCache->GetFirst() )
+			sValue = _T( "[musik.uncached]" );
 
 		// if the current subitem type is rating, then
 		// we need to format it correctly... pass the
