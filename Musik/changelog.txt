@@ -1,5 +1,5 @@
 0.2.1 to 0.2.2
-
+ - Fixed Bug: On linux simple query would abort, because of wxString used as params for a (...) function
 0.2.0 to 0.2.1
  - Fixed Bug: seek progress not updated if UI abused (avatar)
  - Fixed Bug: Now compiles with wxGtk 2.4.1 again. (gunnar)
