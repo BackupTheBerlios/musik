@@ -210,6 +210,7 @@ public:
 	unsigned long GetPlaymode(){ return m_Playmode; }
 	void SetPlaymode( unsigned long mode ){ m_Playmode = mode; }
 	unsigned long m_Playmode;
+	void ModifyPlaymode( unsigned long add, unsigned long remove, bool remove_first = true );
 
 	// misc
 	void SetSafeShutdown(){ m_ShutDown = true; }

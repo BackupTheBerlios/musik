@@ -1264,3 +1264,25 @@ void CmusikPlayer::FinalizeResume()
 }
 
 ///////////////////////////////////////////////////
+
+void CmusikPlayer::ModifyPlaymode( unsigned long add, unsigned long remove, bool remove_first )
+{
+	if ( remove_first )
+	{
+		if ( remove )
+			m_Playmode &= ~remove;
+
+		if ( add )
+			m_Playmode |= add;
+
+		return;	
+	}
+
+	if ( add )
+		m_Playmode |= add;
+
+	if ( remove )
+		m_Playmode &= ~remove;
+}
+
+///////////////////////////////////////////////////
