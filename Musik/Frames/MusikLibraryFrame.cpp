@@ -709,7 +709,7 @@ void MusikLibraryFrame::OnThreadProg( wxCommandEvent& event )
 			//----------------------------------------------------------//
 			lcPaths->SetItem( event.GetExtraLong(), 1, IntTowxString( m_Total ), -1 );
 			lcPaths->SetItem( event.GetExtraLong(), 2, IntTowxString( m_New ), -1 );
-			gProgress->SetValue( ( (double)event.GetExtraLong() * 100 ) /  g_Paths.GetCount() );
+			gProgress->SetValue( ( event.GetExtraLong() * 100 ) /  g_Paths.GetCount() );
 		}
 
 	}
@@ -719,7 +719,7 @@ void MusikLibraryFrame::OnThreadProg( wxCommandEvent& event )
 		{
 			m_Title.sprintf( _( "Scanning for and adding new files: %d / %d (ESC to abort)" ), event.GetExtraLong(), GetTotal() );
 			SetTitle( m_Title );
-			gProgress->SetValue( ( (double)event.GetExtraLong() * 100 ) / GetTotal() );
+			gProgress->SetValue( ( event.GetExtraLong() * 100 ) / GetTotal() );
 
 		}
 
@@ -731,7 +731,7 @@ void MusikLibraryFrame::OnThreadProg( wxCommandEvent& event )
 		{
 			m_Title.sprintf( _( "Scanning library for obselete files: %d / %d (ESC to abort)" ), event.GetExtraLong(), GetTotal() );
 			SetTitle( m_Title );
-			gProgress->SetValue( ( (double)event.GetExtraLong() * 100 ) / GetTotal() );
+			gProgress->SetValue( ( event.GetExtraLong() * 100 ) / GetTotal() );
 
 		}
 	}

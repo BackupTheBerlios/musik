@@ -1185,7 +1185,7 @@ bool CMusikLibrary::RenameFile( CMusikSong & song )
 		return false;
 
 	//--- on some platfroms, we can't have certain characters, so blank them out ---//
-	wxString sForbiddenChars = wxFileName::GetForbiddenChars();
+	wxString sForbiddenChars = GetForbiddenChars();
 	for(size_t i = 0; i < sForbiddenChars.Len();i++)
         	sFile.Replace( sForbiddenChars.Mid(i,1), wxT(""), true );
 

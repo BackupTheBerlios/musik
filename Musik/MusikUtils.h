@@ -282,7 +282,7 @@ inline void InternalErrorMessageBox( const wxString &sText)
 
 double CharStringToDouble(const char *z);
 void DoubleToCharString(double r, char *z);
-
+wxString GetForbiddenChars(wxPathFormat format = wxPATH_NATIVE);
 
 class CNiceFilesize
 {

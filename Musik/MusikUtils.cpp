@@ -837,7 +837,7 @@ wxString GetForbiddenChars(wxPathFormat format)
 	// If asserts, wxPathFormat has been changed. In case of a new path format
 	// addition, the following code might have to be updated.
 	wxCOMPILE_TIME_ASSERT(wxPATH_MAX == 5, wxPathFormatChanged);
-	switch ( GetFormat(format) )
+	switch ( wxFileName::GetFormat(format) )
 	{
 	default :
 		wxFAIL_MSG( wxT("Unknown path format") );

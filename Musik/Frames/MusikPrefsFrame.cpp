@@ -848,7 +848,7 @@ void MusikPrefsFrame::SavePrefs()
 		//--- standard / dynamic ---//
 		if ( wxGetApp().Prefs.bPlaylistColumnDynamic[i] != (cmbPLColumnStatic[i]->GetSelection() ? true : false) )
 		{
-			wxGetApp().Prefs.bPlaylistColumnDynamic[i] = cmbPLColumnStatic[i]->GetSelection();
+			wxGetApp().Prefs.bPlaylistColumnDynamic[i] = cmbPLColumnStatic[i]->GetSelection()? true : false;
 			bResetColumns = true;
 		}
 	}

@@ -55,7 +55,7 @@ bool COggInfo::ReadMetaData(CSongMetaData & MetaData) const
 		//--- grab the bitrate ---//
 		vorbis_info *pInfo = ov_info( &vorbisfile,-1 );
 		MetaData.nBitrate = (int)pInfo->bitrate_nominal / 1000;
-		MetaData.nDuration_ms = ov_time_total(&vorbisfile,-1) *1000;
+		MetaData.nDuration_ms = (int)(ov_time_total(&vorbisfile,-1) *1000);
 		// get file size
 		fseek(audiofile,0,SEEK_END);
 		MetaData.nFilesize = ftell(audiofile);

@@ -120,13 +120,14 @@ void MusikUpdateLibThread::OnExit()
 {
 
 }
-
+															
 //---------------------------------//
 //---	scan for new files		---//
 //---------------------------------//
 MusikScanNewThread::MusikScanNewThread(wxEvtHandler *pParent,wxArrayString & refFiles)
-        :wxThread(wxTHREAD_JOINABLE),m_pParent(pParent) 
+        :wxThread(wxTHREAD_JOINABLE)
 		,m_refFiles(refFiles)
+		,m_pParent(pParent)
 {
 }
 
