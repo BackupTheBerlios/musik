@@ -2,6 +2,8 @@
 
 a5:
 
+  This is a major update, please test it hard.
+
   - batch tagging through right click playlist -> batch
   - very basic winamp vis plugin support. this feature
     is experimental and unsupported (use at your own risk)
