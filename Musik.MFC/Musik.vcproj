@@ -187,6 +187,16 @@
 					RelativePath=".\MusikSelectionCtrl.h">
 				</File>
 			</Filter>
+			<Filter
+				Name="MusikListCtrl"
+				Filter="">
+				<File
+					RelativePath=".\MusikListCtrl.cpp">
+				</File>
+				<File
+					RelativePath=".\MusikListCtrl.h">
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Dock Bars and Views"

@@ -1,7 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 8.00
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Musik", "Musik.vcproj", "{99140D9E-2F39-406D-AD74-CA89B8C354CF}"
 	ProjectSection(ProjectDependencies) = postProject
-		{32CF6B61-A6FF-4777-B449-7E2657513CF6} = {32CF6B61-A6FF-4777-B449-7E2657513CF6}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MusikCore", "..\Musik.Core\MusikCore.vcproj", "{32CF6B61-A6FF-4777-B449-7E2657513CF6}"
