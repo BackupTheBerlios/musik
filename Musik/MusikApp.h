@@ -20,6 +20,11 @@
 #include <wx/snglinst.h>
 #include <wx/ipc.h>
 
+#include "Classes/MusikLibrary.h"
+#include "Classes/MusikPlayer.h"
+#include "Classes/MusikPrefs.h"
+#include "Classes/WebServer.h"
+
 class MusikAppServer: public wxServer
 {
 public:
@@ -28,19 +33,30 @@ public:
 class MusikApp : public wxApp
 {
 public:
+	MusikApp()
+		:WebServer(&Player)
+	{
+	}
 	~MusikApp() 
 	{
 		delete m_pSingleInstanceChecker;
 	}
 	virtual bool OnInit();
+	virtual int OnExit();
 	void OnPlayFiles(const wxArrayString &aFilelist);
+	
+public:
+	CMusikPrefs			Prefs;
+	CMusikLibrary		Library;
+	CMusikPlayer		Player;
+	CMusikWebServer		WebServer;
 private:
 	wxString ReadVersion();
 	void WriteVersion();
 	void CheckVersion();
 
 	wxSingleInstanceChecker *m_pSingleInstanceChecker;
-	MusikAppServer m_Server;
+	MusikAppServer *m_pServer;
 };
 
 DECLARE_APP(MusikApp)

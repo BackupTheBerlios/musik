@@ -83,7 +83,7 @@ void CMusikEQGauge::SetPos( size_t m_Pos )
 void CMusikEQGauge::Colourize()
 {
 	/*
-	if ( g_Prefs.nEQColourize != 1 )
+	if ( wxGetApp().Prefs.nEQColourize != 1 )
 		return;
 	*/
 	int nGreen = (int)( 200.0f * (float)GetValue() / 100.0f );

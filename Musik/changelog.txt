@@ -1,7 +1,13 @@
 
 0.3.0.2 to 0.3.1 CVS
-+ callback api adapted to fmod 3.72 api
-+ new started instance delegates its paramters to already rnning instance now.
+
+- vorbis comments are read as utf-8 and the tags which wxMusik does not edit, are preserved now.
+- now playing list is properly updated, if the data of the songs has changed somehow.
++ now you can easily rate the selected song(s) with the keyboard ( simply press a key from 0-5 )
++ all data is stored as UTF-8 in the database.(For now only ogg data is read as unicode)
++ Now full unicode support. wxMusik compiles with unicode suppport 
++ callback api adapted to fmod 3.72 api ( wxMusik now needs fmod 3.72)
++ new started instance delegates its paramters to already running instance now.
 - fixed bug: songs were not played until the end( last n seconds , depending on setting of crossfading duration were missing), if crossfading was disabled.
 + New Context Menu item "Clear List" if your are viewing the NOW Playing playlist.
 + New Playmode Auto DJ. Shuffle only randomizes the current NOW Playing playlist. Auto DJ selects 15 songs randomly from the whole library in advance if active. 

@@ -88,7 +88,7 @@ void CActivityListBox::OnChar( wxKeyEvent& event )
 		m_sSearch.Empty();// 
 	}
 	m_sSearch+=(char)(keycode&0xff);
-  	for ( size_t i = HasShowAllRow() ? 1 : 0; i < GetItemCount(); i++ )
+  	for ( long i = HasShowAllRow() ? 1 : 0; i < GetItemCount(); i++ )
 	{
 	  if (GetRowText(i,false).Left(m_sSearch.Len()).IsSameAs(m_sSearch,false))
       { // make this item the top item
@@ -144,7 +144,7 @@ void CActivityListBox::Update( bool selnone )
 
 	//--- update colors from prefs ---//
 	m_LightAttr		= wxListItemAttr( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT), wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ), wxNullFont );
-	m_DarkAttr		= wxListItemAttr( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT), StringToColour( g_Prefs.sActStripeColour ), wxNullFont );
+	m_DarkAttr		= wxListItemAttr( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT), StringToColour( wxGetApp().Prefs.sActStripeColour ), wxNullFont );
 	m_ActiveAttr	= wxListItemAttr( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHTTEXT ), wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ), wxNullFont );
 	m_AllReset		= wxListItemAttr( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT), wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ), g_fntListBold );
 
@@ -175,7 +175,7 @@ wxString CActivityListBox::OnGetItemText(long item, long column) const
 }
 bool CActivityListBox::HasShowAllRow() const 
 { 
-	return (g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_STANDARD || g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_SLOPPY);
+	return (wxGetApp().Prefs.eSelStyle == MUSIK_SELECTION_TYPE_STANDARD || wxGetApp().Prefs.eSelStyle == MUSIK_SELECTION_TYPE_SLOPPY);
 }
 wxString CActivityListBox::GetRowText( long row, bool bPure ) const
 {
@@ -183,20 +183,20 @@ wxString CActivityListBox::GetRowText( long row, bool bPure ) const
 			return _("Show all ") + m_pParent->GetActivityTypeStr() + wxT( "s" );
 		if(HasShowAllRow())
 			row--;
-		if(g_Prefs.bSortArtistWithoutPrefix && !bPure && m_pParent->GetActivityType() == MUSIK_LBTYPE_ARTISTS)
+		if(wxGetApp().Prefs.bSortArtistWithoutPrefix && !bPure && m_pParent->GetActivityType() == MUSIK_LBTYPE_ARTISTS)
 			return MoveArtistPrefixToEnd(SanitizedString( m_Items.Item( row ) ));
 		else
 			return SanitizedString( m_Items.Item( row ) );
 }
 wxListItemAttr* CActivityListBox::OnGetItemAttr(long item) const
 {
-	if ( g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_HIGHLIGHT && item < m_Related )
+	if ( wxGetApp().Prefs.eSelStyle == MUSIK_SELECTION_TYPE_HIGHLIGHT && item < m_Related )
 		return ( wxListItemAttr* )&m_AllReset;
 
 	else if ( item == 0 && HasShowAllRow())
 		return ( wxListItemAttr* )&m_AllReset;
 
-	if ( g_Prefs.bActStripes == 1 )
+	if ( wxGetApp().Prefs.bActStripes == 1 )
 		return item % 2 ? (wxListItemAttr *)&m_DarkAttr : (wxListItemAttr *)&m_LightAttr;
 
 	return ( wxListItemAttr* )&m_LightAttr;
@@ -473,7 +473,7 @@ void CActivityBox::GetRelatedList( CActivityBox *pDst, wxArrayString & aReturn )
 	EMUSIK_LIB_TYPE InType	= ACTIVITY_TYPE2LIB_TYPE( m_ActivityType );
 	EMUSIK_LIB_TYPE OutType	= ACTIVITY_TYPE2LIB_TYPE( pDst->GetActivityType() );
 
-	g_Library.GetInfo( sel, InType, OutType, aReturn );
+	wxGetApp().Library.GetInfo( sel, InType, OutType, aReturn );
 }
 
 void CActivityBox::ResetCaption()
@@ -497,16 +497,16 @@ void CActivityBox::GetFullList( wxArrayString & aReturn )
 	switch	( m_ActivityType)
 	{
 	case MUSIK_LBTYPE_ARTISTS:
-		g_Library.GetAllArtists( aReturn );
+		wxGetApp().Library.GetAllArtists( aReturn );
   		break;
 	case MUSIK_LBTYPE_ALBUMS:
-		g_Library.GetAllAlbums( aReturn );
+		wxGetApp().Library.GetAllAlbums( aReturn );
     		break;
 	case MUSIK_LBTYPE_GENRES:
-		g_Library.GetAllGenres( aReturn );
+		wxGetApp().Library.GetAllGenres( aReturn );
     		break;
 	case MUSIK_LBTYPE_YEARS:
-		g_Library.GetAllYears( aReturn );
+		wxGetApp().Library.GetAllYears( aReturn );
 		break;
   	case MUSIK_LBTYPE_NULL:
     		wxASSERT(0);
@@ -525,7 +525,7 @@ void CActivityBox::GetSelectedSongs( CMusikSongArray& array )
 	{
 	  wxArrayString list;
 	  GetSelected( list );
-	  g_Library.GetSongs( list, ACTIVITY_TYPE2LIB_TYPE( GetActivityType() ), array );
+	  wxGetApp().Library.GetSongs( list, ACTIVITY_TYPE2LIB_TYPE( GetActivityType() ), array );
 	  return;
 	}
  
@@ -536,7 +536,7 @@ void CActivityBox::GetSelectedSongs( CMusikSongArray& array )
 	//--- only the correct, selected artist's album songs	---//
 	//--- get displayed										---//
 	//---------------------------------------------------------//
-	else if ( g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_STANDARD || g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_SLOPPY )
+	else if ( wxGetApp().Prefs.eSelStyle == MUSIK_SELECTION_TYPE_STANDARD || wxGetApp().Prefs.eSelStyle == MUSIK_SELECTION_TYPE_SLOPPY )
 	{
 		CActivityBox *pParentBox = g_ActivityAreaCtrl->GetParentBox();
 		if ( pParentBox != NULL )
@@ -614,7 +614,7 @@ void CActivityBox::GetSelectedSongs( CMusikSongArray& array )
 					sParent += wxT(" = ");
 				}
 			}
-			g_Library.QuerySongsWhere( sParent, array ,true);
+			wxGetApp().Library.QuerySongsWhere( sParent, array ,true);
 			return;
 		}
 	}
@@ -721,10 +721,9 @@ wxString CActivityBox::DNDGetList()
 	sRet.Alloc(255 * songs.GetCount());
 	for ( size_t i = 0; i < songs.GetCount(); i++ )
 	{
+		sRet += songs.Item( i ).MetaData.Filename.GetFullPath();
 		if	( i == ( songs.GetCount() - 1 ) )
-			sRet += songs.Item( i ).Filename;	
-		else
-			sRet += songs.Item( i ).Filename + wxT("\n");
+			sRet += wxT("\n");
 	}
 	return sRet;
 }
@@ -757,21 +756,21 @@ void CActivityBox::OnPlayInstantly( wxCommandEvent& WXUNUSED(event) )
 {
 	CMusikSongArray aResult;
 	GetSelectedSongs(aResult);
-	g_Player.InsertToPlaylist(aResult);
+	wxGetApp().Player.InsertToPlaylist(aResult);
 
 }
 void CActivityBox::OnPlayAsNext ( wxCommandEvent& WXUNUSED(event) )
 {
 	CMusikSongArray aResult;
 	GetSelectedSongs(aResult);
-	g_Player.InsertToPlaylist(aResult,g_Player.IsPlaying() ? false : true);
+	wxGetApp().Player.InsertToPlaylist(aResult,wxGetApp().Player.IsPlaying() ? false : true);
 
 }
 void CActivityBox::OnPlayEnqueued	( wxCommandEvent& WXUNUSED(event) )
 {
 	CMusikSongArray aResult;
 	GetSelectedSongs(aResult);
-	g_Player.AddToPlaylist(aResult,g_Player.IsPlaying() ? false : true);
+	wxGetApp().Player.AddToPlaylist(aResult,wxGetApp().Player.IsPlaying() ? false : true);
 }
 
 //-----------------------------//
@@ -785,7 +784,7 @@ void CActivityBox::StartRenameThread( int mode, const wxArrayString &WXUNUSED(se
 		m_ActiveThreadController.AttachAndRun( new MusikActivityRenameThread( this, mode, newvalue ) );
     }
 	else
-		wxMessageBox( _( "An internal error has occured.\nPrevious thread not terminated correctly.\n\nPlease contact the "MUSIKAPPNAME" development team with this error." ), MUSIKAPPNAME_VERSION, wxICON_STOP );
+		InternalErrorMessageBox(wxT("Previous thread not terminated correctly."));
 }
 
 
@@ -815,7 +814,7 @@ void CActivityBox::OnRenameThreadProg( wxCommandEvent& WXUNUSED(event) )
 void CActivityBox::OnRenameThreadEnd( wxCommandEvent& WXUNUSED(event) )
 {
 	m_ActiveThreadController.Join();// waits until threads really ends
-	if ( g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_HIGHLIGHT || g_ActivityAreaCtrl->GetParentBox() == this )
+	if ( wxGetApp().Prefs.eSelStyle == MUSIK_SELECTION_TYPE_HIGHLIGHT || g_ActivityAreaCtrl->GetParentBox() == this )
 		ResetContents();
 	else
 	{

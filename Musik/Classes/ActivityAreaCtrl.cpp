@@ -36,7 +36,7 @@ CActivityAreaCtrl::CActivityAreaCtrl( wxWindow *pParent )
 	: wxSashLayoutWindow( pParent, MUSIK_ACTIVITYCTRL, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxTAB_TRAVERSAL|wxNO_BORDER|wxCLIP_CHILDREN | wxSW_3D )
 {
 	memset(m_ActivityBox,0,sizeof(m_ActivityBox));
-	SetBackgroundColour( *wxTheColourDatabase->FindColour(wxT("LIGHT STEEL BLUE")));
+	SetBackgroundColour( wxTheColourDatabase->Find(wxT("LIGHT STEEL BLUE")));
 	m_pPanel = new wxPanel( this, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxNO_BORDER|wxCLIP_CHILDREN|wxTAB_TRAVERSAL );
 	pTopSizer = new wxBoxSizer( wxHORIZONTAL );
 	m_pPanel->SetSizer( pTopSizer );
@@ -56,9 +56,9 @@ bool CActivityAreaCtrl::Create()
 	Delete();
 	for(size_t i = 0; i < ActivityBoxesMaxCount;i++)
 	{
-		if ( g_Prefs.nActBoxType[i] > 0 && m_ActivityBox[i] == NULL )
+		if ( wxGetApp().Prefs.nActBoxType[i] > 0 && m_ActivityBox[i] == NULL )
 		{
-			m_ActivityBox[i] = new CActivityBox( m_pPanel, MUSIK_ACTIVITYBOX1 + i, g_Prefs.nActBoxType[i] );
+			m_ActivityBox[i] = new CActivityBox( m_pPanel, MUSIK_ACTIVITYBOX1 + i, wxGetApp().Prefs.nActBoxType[i] );
 			m_ActivityBox[i]->ResetCaption();
 			pTopSizer->Add( m_ActivityBox[i], 1, wxEXPAND | wxRIGHT, 1 );
 		}
@@ -79,7 +79,7 @@ void CActivityAreaCtrl::Delete()
 	{
 		if ( m_ActivityBox[i] != NULL )
 		{
-			pTopSizer->Remove( m_ActivityBox[i] );
+			pTopSizer->Detach( m_ActivityBox[i] );
 			delete m_ActivityBox[i];
 			m_ActivityBox[i] = NULL;
 		}
@@ -176,7 +176,7 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSelectedBox )
 	//--- parent and which are children, if there	---//
 	//--- is no parent already.						---//
 	//-------------------------------------------------//
-	if ( g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_STANDARD )
+	if ( wxGetApp().Prefs.eSelStyle == MUSIK_SELECTION_TYPE_STANDARD )
 	{
 		if ( GetParentId() == 0 )
 			SetParent( pSelectedBox->GetListId(), false );
@@ -187,7 +187,7 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSelectedBox )
 	//--- and reset is clicked or nothing is selected ---//
 	//--- reset all the boxes						  ---//
 	//---------------------------------------------------//
-	if ( ( g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_STANDARD || g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_SLOPPY ) && ( pSelectedBox->IsSelected( 0 ) || pSelectedBox->GetSelectedItemCount() < 1 ) )
+	if ( ( wxGetApp().Prefs.eSelStyle == MUSIK_SELECTION_TYPE_STANDARD || wxGetApp().Prefs.eSelStyle == MUSIK_SELECTION_TYPE_SLOPPY ) && ( pSelectedBox->IsSelected( 0 ) || pSelectedBox->GetSelectedItemCount() < 1 ) )
 	{
 		SetParent( 0, false );
 		pSelectedBox->ResetContents();	
@@ -197,9 +197,9 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSelectedBox )
 			if ( pOtherBoxes[j] != NULL )	
 				pOtherBoxes[j]->ResetContents();	
 		}
-		if ( g_Prefs.bShowAllSongs == 1 )
+		if ( wxGetApp().Prefs.bShowAllSongs == 1 )
 		{
-			g_Library.GetAllSongs( g_Playlist );
+			wxGetApp().Library.GetAllSongs( g_Playlist );
 			g_PlaylistBox->Update();
 			g_PlaylistChanged = true;
 
@@ -212,10 +212,10 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSelectedBox )
 	//--- and a valid item is clicked, update the ---//
 	//--- other controls with the right values    ---//
 	//-----------------------------------------------//
-	else if ( ( g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_STANDARD || g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_SLOPPY ) && ( !pSelectedBox->IsSelected( 0 ) && pSelectedBox->GetSelectedItemCount() > 0 ) )
+	else if ( ( wxGetApp().Prefs.eSelStyle == MUSIK_SELECTION_TYPE_STANDARD || wxGetApp().Prefs.eSelStyle == MUSIK_SELECTION_TYPE_SLOPPY ) && ( !pSelectedBox->IsSelected( 0 ) && pSelectedBox->GetSelectedItemCount() > 0 ) )
 	{
 		wxArrayString temp_list;
-		if ( ( g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_STANDARD && GetParentId() == pSelectedBox->GetListId() ) || g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_SLOPPY )
+		if ( ( wxGetApp().Prefs.eSelStyle == MUSIK_SELECTION_TYPE_STANDARD && GetParentId() == pSelectedBox->GetListId() ) || wxGetApp().Prefs.eSelStyle == MUSIK_SELECTION_TYPE_SLOPPY )
 		{
 			for(size_t j = 0 ; j < WXSIZEOF(pOtherBoxes);j++)
 			{
@@ -233,7 +233,7 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSelectedBox )
 	//--- and no items are selected, unselect ---//
 	//--- all the corresponding items		  ---//
 	//-------------------------------------------//
-	else if ( g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_HIGHLIGHT && pSelectedBox->GetSelectedItemCount() < 1 )
+	else if ( wxGetApp().Prefs.eSelStyle == MUSIK_SELECTION_TYPE_HIGHLIGHT && pSelectedBox->GetSelectedItemCount() < 1 )
 	{
 		pSelectedBox->DeselectAll();
 		for(size_t j = 0 ; j < WXSIZEOF(pOtherBoxes);j++)
@@ -241,9 +241,9 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSelectedBox )
 			if ( pOtherBoxes[j] != NULL )	pOtherBoxes[j]->DeselectAll();
 		}
 
-		if ( g_Prefs.bShowAllSongs == 1 )
+		if ( wxGetApp().Prefs.bShowAllSongs == 1 )
 		{
-			g_Library.GetAllSongs( g_Playlist );
+			wxGetApp().Library.GetAllSongs( g_Playlist );
 			g_PlaylistBox->Update();
 			g_PlaylistChanged = true;
 			return;
@@ -255,7 +255,7 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSelectedBox )
 	//--- and 1+ items are selected, select   ---//
 	//--- all the corresponding items		  ---//
 	//-------------------------------------------//
-	else if ( g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_HIGHLIGHT && pSelectedBox->GetSelectedItemCount() > 0 )
+	else if ( wxGetApp().Prefs.eSelStyle == MUSIK_SELECTION_TYPE_HIGHLIGHT && pSelectedBox->GetSelectedItemCount() > 0 )
 	{
 		wxArrayString rel;
 		wxArrayString all;
@@ -289,7 +289,7 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSelectedBox )
 		}
 	}
 
-	if ( ( g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_STANDARD || g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_SLOPPY ) && ( pSelectedBox->IsSelected( 0 ) || pSelectedBox->GetSelectedItemCount() < 1 ) )
+	if ( ( wxGetApp().Prefs.eSelStyle == MUSIK_SELECTION_TYPE_STANDARD || wxGetApp().Prefs.eSelStyle == MUSIK_SELECTION_TYPE_SLOPPY ) && ( pSelectedBox->IsSelected( 0 ) || pSelectedBox->GetSelectedItemCount() < 1 ) )
 	{
 		g_Playlist.Clear();
 		g_PlaylistBox->Update();
@@ -359,8 +359,8 @@ void CActivityAreaCtrl::OnActivityBoxActivated	( wxListEvent& event)
 
 void CActivityAreaCtrl::OnSashDragged	(wxSashEvent & ev)
 {
-	g_Prefs.nActivityCtrlHeight = ev.GetDragRect().height;
-	SetDefaultSize(wxSize( 1000, g_Prefs.nActivityCtrlHeight));
+	wxGetApp().Prefs.nActivityCtrlHeight = ev.GetDragRect().height;
+	SetDefaultSize(wxSize( 1000, wxGetApp().Prefs.nActivityCtrlHeight));
 	ev.Skip();
 }
 void CActivityAreaCtrl::OnSize( wxSizeEvent& event )

@@ -19,8 +19,7 @@
 #ifndef WX_PRECOMP
 	#include "wx/wx.h"
 #endif 
-#include "../MusikGlobals.h"
-#include "ActivityBox.h"
+#include "../MusikDefines.h"
 #include <wx/config.h> 
 #include <wx/confbase.h>
 #include <wx/fileconf.h> 

@@ -22,6 +22,8 @@
 #include "wx/wfstream.h"
 #include "wx/utils.h"
 
+
+
 CTunage::CTunage()
 {
 }
@@ -33,28 +35,28 @@ CTunage::~CTunage()
 
 ///////////////////////////////////////////////////////////////////////////////
 
-void CTunage::Execute( CMusikSong& song )
+void CTunage::Execute(const CMusikSong& song )
 {
 	// bail if nothing to do
-	if ( !g_Prefs.bTunageWriteFile && !g_Prefs.bTunagePostURL && !g_Prefs.bTunageRunApp )
+	if ( !wxGetApp().Prefs.bTunageWriteFile && !wxGetApp().Prefs.bTunagePostURL && !wxGetApp().Prefs.bTunageRunApp )
 		return;
 
 	m_Song = song;
 
-	if ( g_Prefs.bTunageWriteFile )
+	if ( wxGetApp().Prefs.bTunageWriteFile )
 		WriteFile();
 
-	if ( g_Prefs.bTunagePostURL )
+	if ( wxGetApp().Prefs.bTunagePostURL )
 		PostURL();
 
-	if ( g_Prefs.bTunageRunApp )
+	if ( wxGetApp().Prefs.bTunageRunApp )
 		RunApp();
 }
 
 void CTunage::Stopped()
 {
 	CMusikSong stopsong;
-	stopsong.Filesize = -1;
+	stopsong.MetaData.nFilesize = -1;
 	Execute( stopsong );
 }
 
@@ -62,11 +64,11 @@ void CTunage::Stopped()
 
 void CTunage::PostURL()
 {
-	if ( g_Prefs.sTunageURL == wxT("") )
+	if ( wxGetApp().Prefs.sTunageURL == wxT("") )
 		return;
 
 	// create a valid URL
-	wxString urltext( g_Prefs.sTunageURL );
+	wxString urltext( wxGetApp().Prefs.sTunageURL );
 	ParseTags( urltext );
 	urltext = wxURL::ConvertToValidURI( urltext );
 	wxURL url( urltext );
@@ -96,23 +98,23 @@ void CTunage::PostURL()
 
 void CTunage::WriteFile()
 {
-	if ( ( g_Prefs.sTunageFilename == wxT("") ) || ( g_Prefs.sTunageFileLine == wxT("") ) )
+	if ( ( wxGetApp().Prefs.sTunageFilename == wxT("") ) || ( wxGetApp().Prefs.sTunageFileLine == wxT("") ) )
 		return;
 
-	if ( !g_Prefs.bTunageAppendFile )
+	if ( !wxGetApp().Prefs.bTunageAppendFile )
 	{
-		if ( wxFileExists( g_Prefs.sTunageFilename ) )
-			wxRemoveFile( g_Prefs.sTunageFilename );
+		if ( wxFileExists( wxGetApp().Prefs.sTunageFilename ) )
+			wxRemoveFile( wxGetApp().Prefs.sTunageFilename );
 	}
 
 	wxTextFile Out;	
-	Out.Create( g_Prefs.sTunageFilename );
+	Out.Create( wxGetApp().Prefs.sTunageFilename );
 	Out.Open();
 
 	if ( !Out.IsOpened() )
 		return;
 
-	wxString line( g_Prefs.sTunageFileLine );
+	wxString line( wxGetApp().Prefs.sTunageFileLine );
 	ParseTags( line );
 
 	Out.AddLine( line );
@@ -124,10 +126,10 @@ void CTunage::WriteFile()
 
 void CTunage::RunApp()
 {
-	if ( g_Prefs.sTunageCmdLine == wxT("") )
+	if ( wxGetApp().Prefs.sTunageCmdLine == wxT("") )
 		return;
 
-	wxString cmd( g_Prefs.sTunageCmdLine );
+	wxString cmd( wxGetApp().Prefs.sTunageCmdLine );
 	ParseTags( cmd );
 
 	wxExecute( cmd );
@@ -139,23 +141,23 @@ void CTunage::RunApp()
 void CTunage::ParseTags( wxString& str )
 {
 	CNiceFilesize filesize;
-	filesize.AddB( m_Song.Filesize );
+	filesize.AddB( m_Song.MetaData.nFilesize );
 	wxString sFilesize = filesize.GetFormatted();
 
-	str.Replace( wxT("$ARTIST"), m_Song.Artist );
-	str.Replace( wxT("$ALBUM"), m_Song.Album );
-	str.Replace( wxT("$TITLE"), m_Song.Title );
+	str.Replace( wxT("$ARTIST"), ConvFromUTF8( m_Song.MetaData.Artist ));
+	str.Replace( wxT("$ALBUM"), ConvFromUTF8( m_Song.MetaData.Album ));
+	str.Replace( wxT("$TITLE"), ConvFromUTF8(m_Song.MetaData.Title ));
 
-	if ( m_Song.Filesize == -1 )
-		str.Replace( wxT("$NAME"), g_Prefs.sTunageStoppedText );
+	if ( m_Song.MetaData.nFilesize == -1 )
+		str.Replace( wxT("$NAME"), wxGetApp().Prefs.sTunageStoppedText );
 	else
-		str.Replace( wxT("$NAME"), wxString::Format( wxT("%s - %s"),(const wxChar*) m_Song.Artist, (const wxChar *)m_Song.Title ) );
+		str.Replace( wxT("$NAME"), wxString::Format( wxT("%s - %s"),(const wxChar*)ConvFromUTF8(m_Song.MetaData.Artist), (const wxChar *)ConvFromUTF8(m_Song.MetaData.Title) ) );
 
-	str.Replace( wxT("$FILENAME"), m_Song.Filename );
+	str.Replace( wxT("$FILENAME"), m_Song.MetaData.Filename.GetFullPath() );
 	str.Replace( wxT("$FILESIZE"), sFilesize );
-	str.Replace( wxT("$BITRATE"), wxString::Format( wxT("%d"), m_Song.Bitrate ) );
+	str.Replace( wxT("$BITRATE"), wxString::Format( wxT("%d"), m_Song.MetaData.nBitrate ) );
 
 	str.Replace( wxT("$TIMESPLAYED"), wxString::Format( wxT("%d"), m_Song.TimesPlayed ) );
-	str.Replace( wxT("$TRACKNUM"), wxString::Format( wxT("%d"), m_Song.TrackNum ) );
+	str.Replace( wxT("$TRACKNUM"), wxString::Format( wxT("%d"), m_Song.MetaData.nTracknum ) );
 }
 

@@ -103,35 +103,33 @@ void SortArrayByLength ( wxArrayString* pArray )
 	}
 }
 
-wxString GetGenre ( const wxString & sGenre ) 
-{ 
-	// if sGenre is a number, the name will be returned
-	// if sGenre is something like (nnn) XXXXX , the name of the number nnn will be returned
-	// if nothing matches the sGenre will be returned, but if sGenre is an empty string, wxT("<unknown>") will be returned
-	wxString aReturn(sGenre);
-	if ( sGenre.Length() > 0 )
-	{
-		int nGenreID = -1;
-		if(wxIsdigit(sGenre[0]))
-			nGenreID = wxStringToInt( sGenre );
-		else if (sGenre.StartsWith(wxT("("),&aReturn))
-		{	
-			aReturn = aReturn.BeforeFirst(')');
-			nGenreID = wxStringToInt( aReturn );
-		}
-		if (nGenreID >=0 && nGenreID < ID3_NR_OF_V1_GENRES )
-			aReturn = ConvA2W( ID3_v1_genre_description[nGenreID] );
-	}
+//wxString GetGenre ( const wxString & sGenre ) 
+//{ 
+//	// if sGenre is a number, the name will be returned
+//	// if sGenre is something like (nnn) XXXXX , the name of the number nnn will be returned
+//	// if nothing matches the sGenre will be returned, but if sGenre is an empty string, wxT("<unknown>") will be returned
+//	wxString aReturn(sGenre);
+//	if ( sGenre.Length() > 0 )
+//	{
+//		int nGenreID = -1;
+//		if(wxIsdigit(sGenre[0]))
+//			nGenreID = wxStringToInt( sGenre );
+//		else if (sGenre.StartsWith(wxT("("),&aReturn))
+//		{	
+//			aReturn = aReturn.BeforeFirst(')');
+//			nGenreID = wxStringToInt( aReturn );
+//		}
+//		if (nGenreID >=0 && nGenreID < ID3_NR_OF_V1_GENRES )
+//			aReturn = ConvA2W( ID3_v1_genre_description[nGenreID] );
+//	}
+//	return aReturn;
+//}
 
-	return aReturn;
-}
-
-int GetGenreID( const wxString & sGenre )
+int GetGenreID( const CSongMetaData::StringData & sGenre )
 {		
 	for ( int i = 0; i < ID3_NR_OF_V1_GENRES; i++ )
 	{
-		wxString sCur = ConvA2W( ID3_v1_genre_description[i] );
-		if ( sGenre.CmpNoCase( sCur ) == 0)
+		if(strcasecmp(sGenre,ID3_v1_genre_description[i]) == 0)
 			return i;
 	}
 	return -1; //--- return -1 if unknown ---//
@@ -159,7 +157,7 @@ wxString MStoStr( int timems )
 wxString GetJustFilename( const wxString & filename )
 {
 	wxArrayString paths;
-	DelimitStr( filename, wxString( MUSIK_PATH_SEPARATOR ), paths, false );
+	DelimitStr( filename,  wxFileName::GetPathSeparator() , paths, false );
 	return paths.Item( paths.GetCount() - 1 );	
 }
 
@@ -253,7 +251,7 @@ wxString MoveArtistPrefixToEnd( const wxString & str )
 }
 wxString SanitizedString( const wxString & str )
 {
-	if ( !g_Prefs.bBlankSwears )
+	if ( !wxGetApp().Prefs.bBlankSwears )
 		return str;
 
 	wxString outstr( str );
@@ -579,9 +577,9 @@ CMusikTagger::CMusikTagger(const wxString &sTheMask, bool bConvertUnderscoresToS
 {
 	wxString sMask(sTheMask);
 	sMask.Trim();
-	if(sMask.Left(1) != wxString(MUSIK_PATH_SEPARATOR))
+	if(sMask.Left(1) != wxFileName::GetPathSeparator())
 	{
-		sMask = MUSIK_PATH_SEPARATOR + sMask;
+		sMask.Prepend( wxFileName::GetPathSeparator() );
 	}
 	wxRegEx reMatchRegexSpecialChars(wxT("([{}\\:\\^\\*\\.\\+\\$\\(\\)\\|\\?\\\\]|\\[|\\])"));
 	reMatchRegexSpecialChars.ReplaceAll(&sMask,wxT("\\\\\\1"));// replace all special regex chars by \char
@@ -614,7 +612,7 @@ CMusikTagger::CMusikTagger(const wxString &sTheMask, bool bConvertUnderscoresToS
 
 bool CMusikTagger::Retag(CMusikSong * Song) const
 {
-	wxString sFile	= Song->Filename;
+	wxString sFile	= Song->MetaData.Filename.GetFullPath();
 	//-------------------------------------------------//
 	//--- get rid of the file extension.		---//
 	//-------------------------------------------------//
@@ -626,42 +624,43 @@ bool CMusikTagger::Retag(CMusikSong * Song) const
 	{
 		for(size_t i = 0;i < m_PlaceHolderArray.GetCount(); i++ )
 		{
-			wxString sField;
+			
 			size_t start = 0,len = 0;
 			if(!m_reMask.GetMatch(&start,&len,i + 1))
 				break;
-			sField = sFile.Mid(start, len);
+			CSongMetaData::StringData sField = ConvToUTF8(sFile.Mid(start, len));
+
 			switch ( m_PlaceHolderArray[i] )
 			{
 			case '1':
 			case 't':
 			case 'T':
-				Song->Title = sField;
+				Song->MetaData.Title = sField;
 				break;
 			case '2':
 			case 'a':
 			case 'A':
-				Song->Artist = sField;
+				Song->MetaData.Artist = sField;
 				break;
 			case '3':
 			case 'b':
 			case 'B':
-				Song->Album = sField;
+				Song->MetaData.Album = sField;
 				break;
 			case '4':
 			case 'g':
 			case 'G':
-				Song->Genre = sField;
+				Song->MetaData.Genre = sField;
 				break;
 			case '5':
 			case 'y':
 			case 'Y':
-				Song->Year = sField;
+				Song->MetaData.Year = sField;
 				break;
 			case '6':
 			case 'n':
 			case 'N':
-				Song->TrackNum = wxStringToInt( sField);
+				Song->MetaData.nTracknum = atoi( sField);
 				break;
 			default:
 				// skip

@@ -63,7 +63,7 @@ void CGaugeSeekEvt::OnLeftDown( wxMouseEvent& event )
 		if ( lType == wxGA_HORIZONTAL )
 			g_TimeSeeking = true;
 
-		if ( ( lType == wxGA_HORIZONTAL && g_Player.IsSeekable() ) || lType == wxGA_VERTICAL )
+		if ( ( lType == wxGA_HORIZONTAL && wxGetApp().Player.IsSeekable() ) || lType == wxGA_VERTICAL )
 			SetFromMousePos( event );
 	}
 
@@ -77,7 +77,7 @@ void CGaugeSeekEvt::OnMouseMove( wxMouseEvent& event )
 	{
 		if ( event.LeftIsDown() )
 		{
-			if ( ( lType == wxGA_HORIZONTAL && g_Player.IsSeekable() ) || lType == wxGA_VERTICAL )
+			if ( ( lType == wxGA_HORIZONTAL && wxGetApp().Player.IsSeekable() ) || lType == wxGA_VERTICAL )
 				SetFromMousePos( event );		
 		}
 	}
@@ -99,11 +99,11 @@ void CGaugeSeekEvt::OnLeftUp( wxMouseEvent& WXUNUSED(event) )
 			//-----------------------------------------------//   		
 			if ( lType == wxGA_HORIZONTAL )
 			{
-				if(g_Player.IsSeekable())
+				if(wxGetApp().Player.IsSeekable())
 				{
 					//--- set player pos ---//
-					int nTime = ( (int)fPos * (int)g_Player.GetDuration( FMOD_SEC ) ) / (int)100;
-					g_Player.SetTime( nTime );	
+					int nTime = ( (int)fPos * (int)wxGetApp().Player.GetDuration( FMOD_SEC ) ) / (int)100;
+					wxGetApp().Player.SetTime( nTime );	
 				}
 				g_TimeSeeking = false;
 			}
@@ -142,8 +142,8 @@ void CGaugeSeekEvt::SetFromMousePos( wxMouseEvent& event )
 		}
 
 		//--- set string ---//
-		int nCurrTime = (int)( (float)g_Player.GetDuration( FMOD_MSEC ) * (float)( fPos / (float)100 ) );
-		g_NowPlayingCtrl->SetTime( MStoStr( nCurrTime ) );
+		int nCurrTime = (int)( (float)wxGetApp().Player.GetDuration( FMOD_MSEC ) * (float)( fPos / (float)100 ) );
+		g_MusikFrame->m_pNowPlayingCtrl->SetTime( MStoStr( nCurrTime ) );
 	}
 
 	//-----------------------------------------------//
@@ -170,11 +170,11 @@ void CGaugeSeekEvt::SetFromMousePos( wxMouseEvent& event )
 		}
 
 		//--- set volume ---//
-		g_Prefs.nSndVolume = (int)pParent->GetValue();
+		wxGetApp().Prefs.nSndVolume = (int)pParent->GetValue();
 
 		if ( g_FaderThread->IsCrossfaderActive() )
 			g_FaderThread->CrossfaderStop();
 
-		g_Player.SetVolume();
+		wxGetApp().Player.SetVolume();
 	}
 }

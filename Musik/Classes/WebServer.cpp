@@ -21,7 +21,8 @@
 #include "../MusikUtils.h"
 #include "../MusikGlobals.h"
 
-CMusikWebServer::CMusikWebServer()
+CMusikWebServer::CMusikWebServer(CMusikPlayer * pPlayer)
+:m_pPlayer(pPlayer)
 {
 	m_bRunning = false;
 }
@@ -33,7 +34,7 @@ CMusikWebServer::~CMusikWebServer()
 void CMusikWebServer::Start()
 {
 	wxIPV4address addr;
-    addr.Service( g_Prefs.nWebServerPort );
+    addr.Service( wxGetApp().Prefs.nWebServerPort );
 
 	pServer = new wxSocketServer( addr );
 
@@ -112,33 +113,32 @@ void CMusikWebServer::ProcessRequest(wxString reqstr)
 	{
 		if ( reqstr.Find( wxT("next.mkc") ) > -1 )
 		{
-			g_Player.NextSong();
+			m_pPlayer->NextSong();
 		}
 
 		if ( reqstr.Find( wxT("previous.mkc") ) > -1 )
 		{
-			g_Player.PrevSong();
+			m_pPlayer->PrevSong();
 		}
 
 		if ( reqstr.Find( wxT("pause.mkc") ) > -1 )
 		{
-			g_Player.Pause();
-			g_NowPlayingCtrl->PauseBtnToPlayBtn();
+			m_pPlayer->Pause();
 		}
 
 		if ( reqstr.Find( wxT("stop.mkc") ) > -1 )
 		{
-			g_Player.Stop();
+			m_pPlayer->Stop();
 		}
 
 		if ( reqstr.Find( wxT("play.mkc") ) > -1 )
 		{
-			g_Player.PlayPause();
+			m_pPlayer->PlayPause();
 		}
 		
 		if ( reqstr.Find( wxT("resume.mkc" ) ) > -1 )
 		{
-			g_Player.Resume();
+			m_pPlayer->Resume();
 		}
 
 		wxString server_version;

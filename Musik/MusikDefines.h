@@ -27,24 +27,23 @@
 #define	MUSIK_SIMPLEQUERY		9996
 #define MUSIK_NOWPLAYING_TIMER	9997
 #define MUSIK_ACTIVITYCTRL		9998
-#define MUSIK_VERSION_STR		"0.3.1 CVS"
-#define MUSIKAPPNAME			"wxMusik"
-#define MUSIKAPPNAME_VERSION	wxT(MUSIKAPPNAME" "MUSIK_VERSION_STR)
-#define MUSIKSERV_VERSION		wxT( MUSIKAPPNAME"Serv "MUSIK_VERSION_STR )
-
+#define MUSIK_VERSION_STR		wxT("0.3.1 CVS")
+#define MUSIKAPPNAME			wxT("wxMusik")
+#define MUSIKAPPNAME_VERSION	MUSIKAPPNAME wxT(" ") MUSIK_VERSION_STR
+#define MUSIKSERV_VERSION		MUSIKAPPNAME wxT("Serv ") MUSIK_VERSION_STR
 //----------------------------------//
 //--- path stuff ~/.Musik/ vs ./ ---//
 //----------------------------------//
 #include <wx/filename.h>
 #define MUSIK_HOME_DIR 			wxFileName::GetHomeDir() + wxFileName::GetPathSeparator() + wxT( ".Musik" ) + wxFileName::GetPathSeparator()
-#define MUSIK_PLAYLIST_DIR		g_Prefs.sDataPath + wxT( "playlists" ) + wxFileName::GetPathSeparator()
-#define MUSIK_DB_FILENAME		g_Prefs.sDataPath + wxT( "musiklib.db" )
-#define MUSIK_SOURCES_FILENAME	g_Prefs.sDataPath + wxT( "musiksources.dat" )
-#define MUSIK_PATHS_FILENAME	g_Prefs.sDataPath + wxT( "musikpaths.dat" )
-#define MUSIK_VERSION_FILENAME	g_Prefs.sDataPath + wxT( "musikversion.dat" )
-#define MUSIK_PLAYERLIST_FILENAME	g_Prefs.sDataPath + wxT( "musikplayerlist.dat" )
+#define MUSIK_PLAYLIST_DIR		wxGetApp().Prefs.sDataPath + wxT( "playlists" ) + wxFileName::GetPathSeparator()
+#define MUSIK_DB_FILENAME		wxGetApp().Prefs.sDataPath + wxT( "musiklib.db" )
+#define MUSIK_SOURCES_FILENAME	wxGetApp().Prefs.sDataPath + wxT( "musiksources.dat" )
+#define MUSIK_PATHS_FILENAME	wxGetApp().Prefs.sDataPath + wxT( "musikpaths.dat" )
+#define MUSIK_VERSION_FILENAME	wxGetApp().Prefs.sDataPath + wxT( "musikversion.dat" )
+#define MUSIK_PLAYERLIST_FILENAME	wxGetApp().Prefs.sDataPath + wxT( "musikplayerlist.dat" )
 
-#define MUSIK_PATH_SEPARATOR	wxFileName::GetPathSeparator()
+	
 //-------------------------------------------------//
 //--- for some reason some versions of wx do	---//
 //--- not have this macro. pulled straight from	---//
@@ -66,6 +65,7 @@
 
 #ifdef _MSC_VER
 #define strncasecmp strnicmp
+#define strcasecmp	stricmp 
 #endif
 //-------------------------//
 //--- enumerated values ---//
@@ -221,7 +221,47 @@ enum EMUSIK_MENU_ITEMS
     
 };
 
-//const EMUSIK_MENU_ITEMS MUSIK_PLAYLIST_DISPLAY_FIRST = MUSIK_PLAYLIST_DISPLAY_RATING;
-//const EMUSIK_MENU_ITEMS MUSIK_PLAYLIST_DISPLAY_LAST = MUSIK_PLAYLIST_DISPLAY_NOTES;
+enum EMUSIK_LIB_TYPE
+{
+	MUSIK_LIB_INVALID = -1,
+	MUSIK_LIB_ARTIST = 0,
+	MUSIK_LIB_ALBUM,
+	MUSIK_LIB_GENRE,
+	MUSIK_LIB_SONG,
+	MUSIK_LIB_YEAR,
+	MUSIK_LIB_DECADE
+};
 
+enum EMUSIK_FORMAT_TYPE
+{
+	MUSIK_FORMAT_INVALID = -1,
+	MUSIK_FORMAT_MP3 = 0,
+	MUSIK_FORMAT_OGG,
+	MUSIK_FORMAT_MOD,
+	MUSIK_FORMAT_WAV,
+	MUSIK_FORMAT_WMA,
+	MUSIK_FORMAT_AIFF,
+	MUSIK_FORMAT_NETSTREAM
+};
+
+enum EMUSIK_ACTIVITY_TYPE
+{
+	MUSIK_LBTYPE_NULL = 0,
+	MUSIK_LBTYPE_ARTISTS,
+	MUSIK_LBTYPE_ALBUMS,
+	MUSIK_LBTYPE_GENRES,
+	MUSIK_LBTYPE_YEARS,
+};
+
+enum EMUSIK_PLAYMODE
+{
+	MUSIK_PLAYMODE_NORMAL = 0,
+	MUSIK_PLAYMODE_LOOPSONG,
+	MUSIK_PLAYMODE_LOOPLIST,
+	MUSIK_PLAYMODE_SHUFFLE,
+	MUSIK_PLAYMODE_AUTO_DJ
+
+};
+
+const size_t ActivityBoxesMaxCount = 4;
 #endif//MUSIKDEFINES_H

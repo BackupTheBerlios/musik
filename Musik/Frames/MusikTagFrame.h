@@ -60,7 +60,7 @@ class  CPlaylistCtrl;
 class MusikTagFrame : public wxFrame
 {
 public:
-	MusikTagFrame( wxFrame* pParent, CPlaylistCtrl * playlistctrl, int nCurFrame, int nEditType, int n );
+	MusikTagFrame( wxFrame* pParent, CPlaylistCtrl * playlistctrl, int nCurFrame);
 
 	//--- objects ---//
 	wxTextCtrl  *tcFilename;
@@ -124,6 +124,7 @@ public:
 	void SetEnabled		();
 	void Apply			( bool close = false );
 	void SaveCurSong	();
+	void SaveSong		(int n);
 	void Next			();
 	void Prev			();
 	void SetCaption		();

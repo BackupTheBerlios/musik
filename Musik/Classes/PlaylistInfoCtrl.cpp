@@ -27,7 +27,7 @@ CPlaylistInfoCtrl::CPlaylistInfoCtrl( wxWindow *parent ,IPlaylistInfo *pIPlaylis
 {
 
 //	SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_3DFACE ) );
-	SetBackgroundColour( *wxTheColourDatabase->FindColour(wxT("LIGHT STEEL BLUE")));
+	SetBackgroundColour( wxTheColourDatabase->Find(wxT("LIGHT STEEL BLUE")));
 
  	//--- static text objects ---/
 	stTotal			= new wxStaticText( this, -1, _( "Total Songs: " ),			wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
@@ -72,9 +72,9 @@ CPlaylistInfoCtrl::CPlaylistInfoCtrl( wxWindow *parent ,IPlaylistInfo *pIPlaylis
 void CPlaylistInfoCtrl::Update()
 {
 	//--- playlist info ---//
-	if ( g_Prefs.bShowPLInfo == 1 )
+	if ( wxGetApp().Prefs.bShowPLInfo == 1 )
 	{
-		stTotalVal->SetLabel( wxString::Format( wxT( "%d" ), g_Library.GetSongCount() ) );
+		stTotalVal->SetLabel( wxString::Format( wxT( "%d" ), wxGetApp().Library.GetSongCount() ) );
 		stPlaylistVal->SetLabel( wxString::Format( wxT( "%d" ), m_pIPlaylistInfo->GetCount() ) );
 		int nPlaylistTime = m_pIPlaylistInfo->GetTotalPlayingTimeInSeconds();
 		wxTimeSpan PlayTime( 0, 0, nPlaylistTime );

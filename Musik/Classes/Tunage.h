@@ -28,7 +28,7 @@ public:
 	CTunage();
 	~CTunage();
 
-	void Execute( CMusikSong& song );
+	void Execute(const CMusikSong& song );
 	void Stopped();
 
 private:
@@ -40,6 +40,7 @@ private:
 
 	void ParseTags( wxString& str );
 };
+
 
 
 #endif

@@ -55,7 +55,7 @@ MusikVolumeFrame::MusikVolumeFrame( wxFrame* pParent, wxPoint pos )
 	//-------------------------//
 	//--- initialize values ---//
 	//-------------------------//
-	gSeek->SetValue( g_Prefs.nSndVolume );
+	gSeek->SetValue( wxGetApp().Prefs.nSndVolume );
 
 	SetSizerAndFit( pTopSizer );
 

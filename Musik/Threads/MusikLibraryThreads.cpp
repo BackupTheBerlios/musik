@@ -22,8 +22,8 @@
 //---------------------------------//
 //---		update library		---//
 //---------------------------------//
-MusikUpdateLibThread::MusikUpdateLibThread( wxArrayString* del, wxArrayString & m_refFiles, bool bCompleteRebuild)
-	:MusikScanNewThread(m_refFiles)
+MusikUpdateLibThread::MusikUpdateLibThread(wxEvtHandler *pParent, wxArrayString* del, wxArrayString & m_refFiles, bool bCompleteRebuild)
+	:MusikScanNewThread(pParent,m_refFiles)
 {
 	m_Add	= g_Paths.GetList();
 	m_Del	= del;
@@ -32,147 +32,160 @@ MusikUpdateLibThread::MusikUpdateLibThread( wxArrayString* del, wxArrayString & 
 
 void *MusikUpdateLibThread::Entry()
 {
-	//--- setup ---//
-	g_MusikLibraryFrame->SetProgress		( 0 );
-	g_MusikLibraryFrame->SetProgressType	( MUSIK_LIBRARY_UPDATE_THREAD );
-
+	bool bDatabaseChanged = false;
 	//--- events we'll post as we go along ---//
 	wxCommandEvent UpdateLibStartEvt	( wxEVT_COMMAND_MENU_SELECTED, MUSIK_LIBRARY_THREAD_START );
-	wxCommandEvent UpdateProgEvt		( wxEVT_COMMAND_MENU_SELECTED, MUSIK_LIBRARY_THREAD_PROG );	
-
-	wxPostEvent( g_MusikLibraryFrame, UpdateLibStartEvt );
-
-	if ( m_Del->GetCount() <= 0 && m_Add->GetCount() <= 0 )
-		return NULL;
-   g_Library.BeginTransaction();
-	//--- remove old songs ---//
-	if ( m_Del->GetCount() > 0 )
-	{
-		for ( size_t i = 0; i < m_Del->GetCount(); i++ )
-		{
-			if ( m_Del->Item( i ) != wxT("") )
-				g_Library.RemoveSongDir( m_Del->Item( i ) );
-		}
-	}
-
-	//--- search / add new songs ---//
-	if(m_refFiles.IsEmpty())
-		GetMusicDirs( *m_Add,m_refFiles);
-
-	float fPos;
-	int nLastProg = 0;
-	int nCurrProg = 0;
-	wxString sProgress;
-	size_t nTotal = m_refFiles.GetCount();
-
-	g_MusikLibraryFrame->SetTotal( nTotal );
 	
-	for ( size_t i = 0; i < nTotal; i++ )
+	UpdateLibStartEvt.SetExtraLong(MUSIK_LIBRARY_UPDATE_THREAD);
+	wxPostEvent( Parent(), UpdateLibStartEvt );
+
+	if ( m_Del->GetCount() || m_Add->GetCount()  )
 	{
-		if ( TestDestroy() )
-			break;
 
-		else
+		wxGetApp().Library.BeginTransaction();
+		//--- remove old songs ---//
+		if ( m_Del->GetCount() > 0 )
 		{
-			//--- figure out progress, then post the event ---//
-			fPos = ( i * 100 ) / nTotal;
-			nCurrProg = (int)fPos;
-			if ( nCurrProg > nLastProg )
+			for ( size_t i = 0; i < m_Del->GetCount(); i++ )
 			{
-				g_MusikLibraryFrame->SetCurrent( i );
-				g_MusikLibraryFrame->SetProgress( nCurrProg );
-				wxPostEvent( g_MusikLibraryFrame, UpdateProgEvt );
-				Yield();
+				if ( m_Del->Item( i ) != wxT("") )
+					wxGetApp().Library.RemoveSongDir( m_Del->Item( i ) );
 			}
-			nLastProg = nCurrProg;
-			
-			//--- add the item ---//
-			if (!g_Library.FileInLibrary( m_refFiles.Item( i ), true ) )
-				g_Library.AddSongDataFromFile( m_refFiles.Item( i ) );
-			else if(m_bCompleteRebuild)
-			{
-				g_Library.UpdateSongDataFromFile( m_refFiles.Item( i ) );
-			}
-
-
 		}
 
-	}
-	g_Library.EndTransaction();
-	//--- clear del list, add list is part of g_Paths ---//
-	m_Del->Clear();
+		//--- search / add new songs ---//
+		if(m_refFiles.IsEmpty())
+			GetMusicDirs( *m_Add,m_refFiles);
 
+		float fPos;
+		int nLastProg = 0;
+		int nCurrProg = 0;
+		wxString sProgress;
+		size_t nTotal = m_refFiles.GetCount();
+
+
+		wxCommandEvent evtSetTotalFiles	( wxEVT_COMMAND_MENU_SELECTED, MUSIK_LIBRARY_THREAD_PROG );
+		evtSetTotalFiles.SetInt(SET_TOTAL);
+		evtSetTotalFiles.SetExtraLong( nTotal );
+		wxPostEvent( Parent(), evtSetTotalFiles );
+
+		wxCommandEvent UpdateProgEvt		( wxEVT_COMMAND_MENU_SELECTED, MUSIK_LIBRARY_THREAD_PROG );	
+		UpdateProgEvt.SetInt(SET_CURRENT);
+		UpdateProgEvt.SetExtraLong( 0 );
+		
+		for ( size_t i = 0; i < nTotal; i++ )
+		{
+			if ( TestDestroy() )
+				break;
+
+			else
+			{
+				//--- figure out progress, then post the event ---//
+				fPos = ( i * 100 ) / nTotal;
+				nCurrProg = (int)fPos;
+				if ( nCurrProg > nLastProg )
+				{
+					UpdateProgEvt.SetExtraLong(i);
+					wxPostEvent( Parent(), UpdateProgEvt );
+				}
+				nLastProg = nCurrProg;
+				
+				//--- add the item ---//
+				if (!wxGetApp().Library.FileInLibrary( m_refFiles.Item( i ), true ) )
+				{
+					bDatabaseChanged = true;
+					wxGetApp().Library.AddSongDataFromFile( m_refFiles.Item( i ) );
+				}
+				else if(m_bCompleteRebuild)
+				{
+					bDatabaseChanged = true;
+					wxGetApp().Library.UpdateSongDataFromFile( m_refFiles.Item( i ) );
+				}
+
+
+			}
+
+		}
+		wxGetApp().Library.EndTransaction();
+		//--- clear del list, add list is part of g_Paths ---//
+		m_Del->Clear();
+	}
+	wxCommandEvent UpdateLibEndEvt	( wxEVT_COMMAND_MENU_SELECTED, MUSIK_LIBRARY_THREAD_END );	
+	UpdateLibEndEvt.SetExtraLong(bDatabaseChanged ? 1:0);
+	wxPostEvent( Parent(), UpdateLibEndEvt );
 	return NULL;
 }
 
 void MusikUpdateLibThread::OnExit()
 {
-	wxCommandEvent UpdateLibEndEvt	( wxEVT_COMMAND_MENU_SELECTED, MUSIK_LIBRARY_THREAD_END );	
-	wxPostEvent( g_MusikLibraryFrame, UpdateLibEndEvt );
+
 }
 
 //---------------------------------//
 //---	scan for new files		---//
 //---------------------------------//
-MusikScanNewThread::MusikScanNewThread(wxArrayString & refFiles)
-        : wxThread(wxTHREAD_JOINABLE)
+MusikScanNewThread::MusikScanNewThread(wxEvtHandler *pParent,wxArrayString & refFiles)
+        :m_pParent(pParent), wxThread(wxTHREAD_JOINABLE)
 		,m_refFiles(refFiles)
 {
 }
 
 void *MusikScanNewThread::Entry()
 {
-	//--- setup ---//
-	g_MusikLibraryFrame->SetProgress		( 0 );
-	g_MusikLibraryFrame->SetProgressType	( MUSIK_LIBRARY_SCANNEW_THREAD );
 
 	//--- events we'll post as we go along ---//
 	wxCommandEvent ScanNewStartEvt	( wxEVT_COMMAND_MENU_SELECTED, MUSIK_LIBRARY_THREAD_START );
-	wxCommandEvent ScanNewProgEvt	( wxEVT_COMMAND_MENU_SELECTED, MUSIK_LIBRARY_THREAD_PROG );	
+	ScanNewStartEvt.SetExtraLong(MUSIK_LIBRARY_SCANNEW_THREAD);
+	wxPostEvent( Parent(), ScanNewStartEvt );
 
-	wxPostEvent( g_MusikLibraryFrame, ScanNewStartEvt );
-
-	if ( g_Paths.GetCount() <= 0 )
-		return NULL;
-
-	wxString sCurrPath;
-	
-	float fPos;
-	for ( size_t i = 0; i < g_Paths.GetCount(); i++ )
+	if ( g_Paths.GetCount() > 0 )
 	{
-		if ( TestDestroy() )
-			break;
-		else 
+
+		wxString sCurrPath;
+		wxCommandEvent evtSetTotalFiles	( wxEVT_COMMAND_MENU_SELECTED, MUSIK_LIBRARY_THREAD_PROG );
+		evtSetTotalFiles.SetInt(SET_TOTAL);
+		wxCommandEvent ScanNewProgEvt	( wxEVT_COMMAND_MENU_SELECTED, MUSIK_LIBRARY_THREAD_PROG );	
+		ScanNewProgEvt.SetInt(SET_CURRENT);
+		wxCommandEvent evtSetNewFiles	( wxEVT_COMMAND_MENU_SELECTED, MUSIK_LIBRARY_THREAD_PROG );
+		evtSetNewFiles.SetInt(SET_NEW);
+		
+		
+		for ( size_t i = 0; i < g_Paths.GetCount(); i++ )
 		{
-			sCurrPath = g_Paths.Item( i );
+			if ( TestDestroy() )
+				break;
+			else 
+			{
+				sCurrPath = g_Paths.Item( i );
 
-			//--- get directory ---//
-			int nLastCount = m_refFiles.GetCount();
-			GetMusicDir( sCurrPath, m_refFiles );
+				//--- get directory ---//
+				int nLastCount = m_refFiles.GetCount();
+				GetMusicDir( sCurrPath, m_refFiles );
 
-			//--- do math ---//
-			int nTotal		= m_refFiles.GetCount() - nLastCount;
-			int nCompare	= g_Library.GetSongDirCount( sCurrPath );
-			int nResult		= nTotal - nCompare;
+				//--- do math ---//
+				int nTotal		= m_refFiles.GetCount() - nLastCount;
+				evtSetTotalFiles.SetExtraLong( nTotal );
+				wxPostEvent( Parent(), evtSetTotalFiles );
 
-			//--- post update progress event ---//
-			fPos = ( i * 100 ) / g_Paths.GetCount();
-			g_MusikLibraryFrame->SetProgress( (int)fPos );
-			g_MusikLibraryFrame->SetTotal( nTotal );
-			g_MusikLibraryFrame->SetNew( nResult );
-			g_MusikLibraryFrame->SetListItem( i );
-			wxPostEvent( g_MusikLibraryFrame, ScanNewProgEvt );
-			Yield();
+				int nCompare	= wxGetApp().Library.GetSongDirCount( sCurrPath );
+				int nResult		= nTotal - nCompare;
+
+				//--- post update progress event ---//
+				evtSetNewFiles.SetExtraLong( nResult );
+				wxPostEvent( Parent(), evtSetNewFiles );
+				ScanNewProgEvt.SetExtraLong(i);
+				wxPostEvent( Parent(), ScanNewProgEvt );
+			}
 		}
 	}
+	wxCommandEvent ScanNewEndEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_LIBRARY_THREAD_END );	
+	wxPostEvent( Parent(), ScanNewEndEvt );
 
 	return NULL;
 }
 
 void MusikScanNewThread::OnExit()
 {
-	wxCommandEvent ScanNewEndEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_LIBRARY_THREAD_END );	
-	wxPostEvent( g_MusikLibraryFrame, ScanNewEndEvt );
 }
 
 class wxMusicTraverser : public wxDirTraverser
@@ -203,8 +216,8 @@ public:
 			{
 
 				wxCommandEvent UpdateScanProg( wxEVT_COMMAND_MENU_SELECTED, MUSIK_LIBRARY_THREAD_SCAN_PROG );
-				g_MusikLibraryFrame->SetScanCount( m_files.GetCount() );
-				wxPostEvent( g_MusikLibraryFrame, UpdateScanProg );
+				UpdateScanProg.SetExtraLong((long)m_files.GetCount());
+				wxPostEvent( m_pThread->Parent(), UpdateScanProg );
 			}
 		}
         
@@ -258,26 +271,25 @@ void MusikScanNewThread::GetMusicDir( const wxString & sDir, wxArrayString & aFi
 //---------------------------------//
 //---	  purge old files		---//
 //---------------------------------//
-MusikPurgeLibThread::MusikPurgeLibThread()
-        : wxThread(wxTHREAD_JOINABLE)
+MusikPurgeLibThread::MusikPurgeLibThread(wxEvtHandler *pParent)
+        : m_pParent(pParent), wxThread(wxTHREAD_JOINABLE)
 {
 }
 
 void *MusikPurgeLibThread::Entry()
 {
 	//--- setup ---//
-	g_MusikLibraryFrame->SetProgress		( 0 );
-	g_MusikLibraryFrame->SetProgressType	( MUSIK_LIBRARY_PURGE_THREAD );
-
+	 bool bDatabaseChanged = false;
 	//--- events we'll post as we go along ---//
 	wxCommandEvent PurgeStartEvt	( wxEVT_COMMAND_MENU_SELECTED, MUSIK_LIBRARY_THREAD_START );
-	wxCommandEvent PurgeProgEvt		( wxEVT_COMMAND_MENU_SELECTED, MUSIK_LIBRARY_THREAD_PROG );	
+	
 
-	wxPostEvent( g_MusikLibraryFrame, PurgeStartEvt );
+	PurgeStartEvt.SetExtraLong(MUSIK_LIBRARY_PURGE_THREAD);
+	wxPostEvent( Parent(), PurgeStartEvt );
 
 	//--- start the process ---//
 	wxArrayString songs;
-	g_Library.Query( wxT("select filename from songs;"), songs );
+	wxGetApp().Library.Query( wxT("select filename from songs;"), songs );
 
 	float fPos;
 	int nLastProg = 0;
@@ -285,8 +297,15 @@ void *MusikPurgeLibThread::Entry()
 	wxString sProgress;
 	size_t nTotal = songs.GetCount();
 
-	g_MusikLibraryFrame->SetTotal( nTotal );
-	g_Library.BeginTransaction();
+	wxCommandEvent evtSetTotalFiles	( wxEVT_COMMAND_MENU_SELECTED, MUSIK_LIBRARY_THREAD_PROG );
+	evtSetTotalFiles.SetInt(SET_TOTAL);
+	evtSetTotalFiles.SetExtraLong( nTotal );
+	wxPostEvent( Parent(), evtSetTotalFiles );
+	
+	wxCommandEvent PurgeProgEvt		( wxEVT_COMMAND_MENU_SELECTED, MUSIK_LIBRARY_THREAD_PROG );	
+	PurgeProgEvt.SetInt(SET_CURRENT);
+
+	wxGetApp().Library.BeginTransaction();
 	for ( size_t i = 0; i < nTotal; i++ )
 	{
 		if ( TestDestroy() )
@@ -298,24 +317,25 @@ void *MusikPurgeLibThread::Entry()
 			nCurrProg = (int)fPos;
 			if ( nCurrProg > nLastProg )
 			{
-				g_MusikLibraryFrame->SetCurrent( i );
-				g_MusikLibraryFrame->SetProgress( nCurrProg );
-				wxPostEvent( g_MusikLibraryFrame, PurgeProgEvt );
-				Yield();
+				PurgeProgEvt.SetExtraLong( i );
+				wxPostEvent( Parent(), PurgeProgEvt );
 			}
 			nLastProg = nCurrProg;
 
 			//--- check item and purge ---//
-			g_Library.CheckAndPurge( songs.Item( i ) );
+			if(wxGetApp().Library.CheckAndPurge( songs.Item( i ) ))
+				bDatabaseChanged = true;
 		}
 	}
-	g_Library.EndTransaction();
+	wxGetApp().Library.EndTransaction();
+	wxCommandEvent PurgeEndEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_LIBRARY_THREAD_END );
+	PurgeEndEvt.SetExtraLong(bDatabaseChanged ? 1:0);
+	wxPostEvent( Parent(), PurgeEndEvt );
+
 	return NULL;
 }
 
 void MusikPurgeLibThread::OnExit()
 {
-	wxCommandEvent PurgeEndEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_LIBRARY_THREAD_END );	
-	wxPostEvent( g_MusikLibraryFrame, PurgeEndEvt );
 }
 

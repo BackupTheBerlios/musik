@@ -89,13 +89,11 @@ extern const wxString g_PlaylistColumnDBNames[NPLAYLISTCOLUMNS] =
 //------------------------//
 //--- internal objects ---//
 //------------------------//
-CMusikPrefs			g_Prefs;
-CMusikLibrary		g_Library;
-CMusikPlayer		g_Player;
+
 CMusikPaths			g_Paths;
 CMusikSongArray		g_Playlist;	
 CMusikSongArray		g_LibPlaylist;
-CMusikWebServer		g_WebServer;
+
 
 wxCriticalSection	g_protectingStreamArrays; // to protect access to ActiveStreams and ActiveChannels
 CMusikStreamArray	g_ActiveStreams;
@@ -106,7 +104,6 @@ wxImageList*		g_NullImageList;
 wxImageList*		g_RatingImages;
 CMusikFX			g_FX;
 
-CTunage				g_Tunage;
 
 //----------------//
 //--- controls ---//
@@ -114,8 +111,7 @@ CTunage				g_Tunage;
 CActivityAreaCtrl	*g_ActivityAreaCtrl;
 CPlaylistBox		*g_PlaylistBox;
 CSourcesBox			*g_SourcesCtrl;
-CNowPlayingCtrl		*g_NowPlayingCtrl;
-wxGauge				*g_Progress;
+
 
 //-------------//
 //--- fonts ---//

@@ -24,6 +24,8 @@
 #include <wx/socket.h>
 #ifdef wxHAS_TASK_BAR_ICON
 #include "wx/taskbar.h"
+class CNowPlayingCtrl;
+class MusikLibraryFrame;
 
 class MusikTaskBarIcon: public wxTaskBarIcon
 {
@@ -131,6 +133,8 @@ public:
 	//--- sizers ---//
 	wxBoxSizer *vsTopBottom;
 
+	CNowPlayingCtrl		*m_pNowPlayingCtrl;
+
 	//----------------------------------------------------------------//
 	//--- Routines dealing with events. List box's clicked, menu   ---//
 	//--- items selected, playlist buttons pushed, dialog resized, ---//
@@ -198,6 +202,8 @@ private:
 	MusikWriteDirtyThread* pWriteDirtyThread;
 	
 	wxTextCtrl* m_TextSimpleQuery;
+	wxGauge	  *	m_pProgressGauge;
+
 	wxString m_customQuery;
 
 	wxSashLayoutWindow *m_pBottomPanel;

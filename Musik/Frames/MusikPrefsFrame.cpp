@@ -421,7 +421,7 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//--- information ---//
 	wxString sInfo = 
 		wxString( _("\nAuto Rename syntax:\n\n") ) + 
-		wxString( wxString( MUSIK_PATH_SEPARATOR ) + _( " - Directory Separator\n" ) ) +
+		wxString(wxFileName::GetPathSeparator() + _( " - Directory Separator\n" ) ) +
 		wxString( _("%1 - Song Title\n")				) + 
 		wxString( _("%2 - Artist Name\n")				) +
 		wxString( _("%3 - Album Name\n")				) +
@@ -526,67 +526,67 @@ void MusikPrefsFrame::LoadPrefs()
 	//--------------------------//
 	//--- options -> general ---//
 	//--------------------------//
-	chkAutoPlayOnAppStart->SetValue	( g_Prefs.bAutoPlayOnAppStart	);
+	chkAutoPlayOnAppStart->SetValue	( wxGetApp().Prefs.bAutoPlayOnAppStart	);
 #ifdef wxHAS_TASK_BAR_ICON
-	chkHideOnMinimize->SetValue		( g_Prefs.bHideOnMinimize	);
+	chkHideOnMinimize->SetValue		( wxGetApp().Prefs.bHideOnMinimize	);
 #endif
-	chkAutoScan->SetValue			( g_Prefs.bAutoAdd	);
-	chkShowAllSongs->SetValue		( g_Prefs.bShowAllSongs );
-	chkBlankSwears->SetValue		( g_Prefs.bBlankSwears );
-	chkSortArtistWithoutPrefix->SetValue( g_Prefs.bSortArtistWithoutPrefix );
-	chkPlaylistStripes->SetValue	( g_Prefs.bPLStripes );
-	chkActivityBoxStripes->SetValue	( g_Prefs.bActStripes );
-	chkSourcesBoxStripes->SetValue	( g_Prefs.bSourcesStripes );
+	chkAutoScan->SetValue			( wxGetApp().Prefs.bAutoAdd	);
+	chkShowAllSongs->SetValue		( wxGetApp().Prefs.bShowAllSongs );
+	chkBlankSwears->SetValue		( wxGetApp().Prefs.bBlankSwears );
+	chkSortArtistWithoutPrefix->SetValue( wxGetApp().Prefs.bSortArtistWithoutPrefix );
+	chkPlaylistStripes->SetValue	( wxGetApp().Prefs.bPLStripes );
+	chkActivityBoxStripes->SetValue	( wxGetApp().Prefs.bActStripes );
+	chkSourcesBoxStripes->SetValue	( wxGetApp().Prefs.bSourcesStripes );
 
-	btnPlaylistStripeColour->SetBackgroundColour( StringToColour( g_Prefs.sPLStripeColour ) );
-	btnActivityStripeColour->SetBackgroundColour( StringToColour( g_Prefs.sActStripeColour ) );
-	btnSourcesStripeColour->SetBackgroundColour( StringToColour( g_Prefs.sSourcesStripeColour ) );
+	btnPlaylistStripeColour->SetBackgroundColour( StringToColour( wxGetApp().Prefs.sPLStripeColour ) );
+	btnActivityStripeColour->SetBackgroundColour( StringToColour( wxGetApp().Prefs.sActStripeColour ) );
+	btnSourcesStripeColour->SetBackgroundColour( StringToColour( wxGetApp().Prefs.sSourcesStripeColour ) );
 
 	//-----------------------------//
 	//--- options -> selections ---//
 	//-----------------------------//
-	cmbSelStyle->SetSelection		( g_Prefs.eSelStyle );
+	cmbSelStyle->SetSelection		( wxGetApp().Prefs.eSelStyle );
 	for(size_t i = 0; i < WXSIZEOF(cmbActivityBoxes);i++)
-		cmbActivityBoxes[i]->SetSelection	( g_Prefs.nActBoxType[i] );
+		cmbActivityBoxes[i]->SetSelection	( wxGetApp().Prefs.nActBoxType[i] );
 
 	//---------------------------//
 	//--- options -> playlist ---//
 	//---------------------------//
 	for(size_t i = 0 ;i < NPLAYLISTCOLUMNS; i ++)
 	{
-		chkPLColumnEnable[i]->SetValue			( g_Prefs.bPlaylistColumnEnable[i]);
-		cmbPLColumnStatic[i]->SetSelection		( g_Prefs.bPlaylistColumnDynamic[PLAYLISTCOLUMN_RATING]			);
+		chkPLColumnEnable[i]->SetValue			( wxGetApp().Prefs.bPlaylistColumnEnable[i]);
+		cmbPLColumnStatic[i]->SetSelection		( wxGetApp().Prefs.bPlaylistColumnDynamic[PLAYLISTCOLUMN_RATING]			);
 	}
 
 
 	//-------------------------//
 	//--- options -> tunage ---//
 	//-------------------------//
-	chkTunageWriteFile->SetValue		( g_Prefs.bTunageWriteFile );
-	chkTunageAppendFile->SetValue		( g_Prefs.bTunageAppendFile );
-	chkTunagePostURL->SetValue			( g_Prefs.bTunagePostURL );
-	chkTunageRunApp->SetValue			( g_Prefs.bTunageRunApp );
-	chkTunageRunOnStop->SetValue		( g_Prefs.bTunageRunOnStop );
-	tcTunageFilename->SetValue			( g_Prefs.sTunageFilename );
-	tcTunageFileLine->SetValue			( g_Prefs.sTunageFileLine );
-	tcTunageURL->SetValue				( g_Prefs.sTunageURL );
-	tcTunageCmdLine->SetValue			( g_Prefs.sTunageCmdLine );
-	tcTunageStoppedText->SetValue		( g_Prefs.sTunageStoppedText );
+	chkTunageWriteFile->SetValue		( wxGetApp().Prefs.bTunageWriteFile );
+	chkTunageAppendFile->SetValue		( wxGetApp().Prefs.bTunageAppendFile );
+	chkTunagePostURL->SetValue			( wxGetApp().Prefs.bTunagePostURL );
+	chkTunageRunApp->SetValue			( wxGetApp().Prefs.bTunageRunApp );
+	chkTunageRunOnStop->SetValue		( wxGetApp().Prefs.bTunageRunOnStop );
+	tcTunageFilename->SetValue			( wxGetApp().Prefs.sTunageFilename );
+	tcTunageFileLine->SetValue			( wxGetApp().Prefs.sTunageFileLine );
+	tcTunageURL->SetValue				( wxGetApp().Prefs.sTunageURL );
+	tcTunageCmdLine->SetValue			( wxGetApp().Prefs.sTunageCmdLine );
+	tcTunageStoppedText->SetValue		( wxGetApp().Prefs.sTunageStoppedText );
 
 	//--------------------------//
 	//--- tagging -> general ---//
 	//--------------------------//
-	chkActivityWrite->SetValue		( g_Prefs.bActBoxWrite	);
-	chkActivityClear->SetValue		( g_Prefs.bActBoxClear	);
-	chkActivityRename->SetValue		( g_Prefs.bActBoxRename );
-	chkTagDlgWrite->SetValue		( g_Prefs.bTagDlgWrite	);
-	chkTagDlgClear->SetValue		( g_Prefs.bTagDlgClear	);
-	chkTagDlgRename->SetValue		( g_Prefs.bTagDlgRename );
+	chkActivityWrite->SetValue		( wxGetApp().Prefs.bActBoxWrite	);
+	chkActivityClear->SetValue		( wxGetApp().Prefs.bActBoxClear	);
+	chkActivityRename->SetValue		( wxGetApp().Prefs.bActBoxRename );
+	chkTagDlgWrite->SetValue		( wxGetApp().Prefs.bTagDlgWrite	);
+	chkTagDlgClear->SetValue		( wxGetApp().Prefs.bTagDlgClear	);
+	chkTagDlgRename->SetValue		( wxGetApp().Prefs.bTagDlgRename );
 
 	//---------------------------//
 	//--- tagging -> auto tag ---//
 	//---------------------------//
-	tcAutoRename->SetValue			( g_Prefs.sAutoRename	);
+	tcAutoRename->SetValue			( wxGetApp().Prefs.sAutoRename	);
 
 	//---------------------------//
 	//--- sound -> crossfader ---//
@@ -595,28 +595,28 @@ void MusikPrefsFrame::LoadPrefs()
 	float		fDuration;
 	wxString	sDuration;
 
-	chkCrossfade->SetValue				( g_Prefs.bFadeEnable );
-	fDuration =							(float)g_Prefs.nFadeDuration / 1000;
+	chkCrossfade->SetValue				( wxGetApp().Prefs.bFadeEnable );
+	fDuration =							(float)wxGetApp().Prefs.nFadeDuration / 1000;
 	sDuration.sprintf					( wxT("%.1f"), fDuration );
 	tcDuration->SetValue				( sDuration );
 
-	chkCrossfadeSeek->SetValue			( g_Prefs.bFadeSeekEnable );
-	fDuration =							(float)g_Prefs.nFadeSeekDuration / 1000;
+	chkCrossfadeSeek->SetValue			( wxGetApp().Prefs.bFadeSeekEnable );
+	fDuration =							(float)wxGetApp().Prefs.nFadeSeekDuration / 1000;
 	sDuration.sprintf					( wxT("%.1f"), fDuration );
 	tcSeekDuration->SetValue			( sDuration );
 
-	chkCrossfadePauseResume->SetValue	( g_Prefs.bFadePauseResumeEnable );
-	fDuration =							(float)g_Prefs.nFadePauseResumeDuration / 1000;
+	chkCrossfadePauseResume->SetValue	( wxGetApp().Prefs.bFadePauseResumeEnable );
+	fDuration =							(float)wxGetApp().Prefs.nFadePauseResumeDuration / 1000;
 	sDuration.sprintf					( wxT("%.1f"), fDuration );
 	tcPauseResumeDuration->SetValue		( sDuration );
 
-	chkCrossfadeStop->SetValue			( g_Prefs.bFadeStopEnable );
-	fDuration =							(float)g_Prefs.nFadeStopDuration / 1000;
+	chkCrossfadeStop->SetValue			( wxGetApp().Prefs.bFadeStopEnable );
+	fDuration =							(float)wxGetApp().Prefs.nFadeStopDuration / 1000;
 	sDuration.sprintf					( wxT("%.1f"), fDuration );
 	tcStopDuration->SetValue			( sDuration );
 
-	chkCrossfadeExit->SetValue			( g_Prefs.bFadeExitEnable );
-	fDuration =							(float)g_Prefs.nFadeExitDuration / 1000;
+	chkCrossfadeExit->SetValue			( wxGetApp().Prefs.bFadeExitEnable );
+	fDuration =							(float)wxGetApp().Prefs.nFadeExitDuration / 1000;
 	sDuration.sprintf					( wxT("%.1f"), fDuration );
 	tcExitDuration->SetValue			( sDuration );
 
@@ -626,30 +626,30 @@ void MusikPrefsFrame::LoadPrefs()
 	FindDevices();
 	wxString sSndRate, sLength;
 	float fLength;
-	cmbOutputDrv->SetSelection		( g_Prefs.nSndOutput );
-    cmbSndDevice->SetSelection		( g_Prefs.nSndDevice );
-	sSndRate.sprintf				( wxT("%d"), g_Prefs.nSndRate );
-	fLength =						(float)g_Prefs.nSndBuffer / 1000;
+	cmbOutputDrv->SetSelection		( wxGetApp().Prefs.nSndOutput );
+    cmbSndDevice->SetSelection		( wxGetApp().Prefs.nSndDevice );
+	sSndRate.sprintf				( wxT("%d"), wxGetApp().Prefs.nSndRate );
+	fLength =						(float)wxGetApp().Prefs.nSndBuffer / 1000;
 	sLength.sprintf					( wxT("%.1f"), fLength );
 	tcBufferLength->SetValue		( sLength );
 	cmbPlayRate->SetSelection		( cmbPlayRate->FindString ( sSndRate ) );
-	tcMaxChannels->SetValue			( IntTowxString( g_Prefs.nSndMaxChan ) );
-	chkUse_MPEGACCURATE_ForMP3VBRFiles->SetValue(g_Prefs.bUse_MPEGACCURATE_ForMP3VBRFiles);
+	tcMaxChannels->SetValue			( IntTowxString( wxGetApp().Prefs.nSndMaxChan ) );
+	chkUse_MPEGACCURATE_ForMP3VBRFiles->SetValue(wxGetApp().Prefs.bUse_MPEGACCURATE_ForMP3VBRFiles);
 	//---------------------------//
 	//--- streaming -> buffer ---//
 	//---------------------------//
-	tcStreamingBufferSize->SetValue			( IntTowxString( g_Prefs.nStreamingBufferSize ) );
-	tcStreamingPreBufferPercent->SetValue	( IntTowxString( g_Prefs.nStreamingPreBufferPercent ) );
-	tcStreamingReBufferPercent->SetValue	( IntTowxString( g_Prefs.nStreamingReBufferPercent ) );
+	tcStreamingBufferSize->SetValue			( IntTowxString( wxGetApp().Prefs.nStreamingBufferSize ) );
+	tcStreamingPreBufferPercent->SetValue	( IntTowxString( wxGetApp().Prefs.nStreamingPreBufferPercent ) );
+	tcStreamingReBufferPercent->SetValue	( IntTowxString( wxGetApp().Prefs.nStreamingReBufferPercent ) );
 
 	//---------------------------------//
 	//--- streaming -> proxy server ---//
 	//---------------------------------//
-	chkUseProxyServer->SetValue( g_Prefs.bUseProxyServer );
-	tcProxyServer->SetValue( g_Prefs.sProxyServer );		
-	tcProxyServerPort->SetValue( g_Prefs.sProxyServerPort );		
-	tcProxyServerUser->SetValue( g_Prefs.sProxyServerUser );	
-	tcProxyServerPassword->SetValue( g_Prefs.sProxyServerPassword );	
+	chkUseProxyServer->SetValue( wxGetApp().Prefs.bUseProxyServer );
+	tcProxyServer->SetValue( wxGetApp().Prefs.sProxyServer );		
+	tcProxyServerPort->SetValue( wxGetApp().Prefs.sProxyServerPort );		
+	tcProxyServerUser->SetValue( wxGetApp().Prefs.sProxyServerUser );	
+	tcProxyServerPassword->SetValue( wxGetApp().Prefs.sProxyServerPassword );	
 }
 
 void MusikPrefsFrame::FindDevices()
@@ -761,55 +761,55 @@ void MusikPrefsFrame::SavePrefs()
 	//--- Options -> general ---//
 	//--------------------------//
 
-	g_Prefs.bAutoAdd		= chkAutoScan->GetValue();
-	g_Prefs.bAutoPlayOnAppStart	= chkAutoPlayOnAppStart->GetValue();
+	wxGetApp().Prefs.bAutoAdd		= chkAutoScan->GetValue();
+	wxGetApp().Prefs.bAutoPlayOnAppStart	= chkAutoPlayOnAppStart->GetValue();
 #ifdef wxHAS_TASK_BAR_ICON
-	g_Prefs.bHideOnMinimize	= chkHideOnMinimize->GetValue();
+	wxGetApp().Prefs.bHideOnMinimize	= chkHideOnMinimize->GetValue();
 #endif
-	g_Prefs.bShowAllSongs	= chkShowAllSongs->GetValue();
-	g_Prefs.bBlankSwears	= chkBlankSwears->GetValue();
+	wxGetApp().Prefs.bShowAllSongs	= chkShowAllSongs->GetValue();
+	wxGetApp().Prefs.bBlankSwears	= chkBlankSwears->GetValue();
 
-	if(g_Prefs.bSortArtistWithoutPrefix != chkSortArtistWithoutPrefix->GetValue())
+	if(wxGetApp().Prefs.bSortArtistWithoutPrefix != chkSortArtistWithoutPrefix->GetValue())
 	{
 		bPlaylistUpdate = true;
 		bActivityUpdate = true;
-		g_Prefs.bSortArtistWithoutPrefix = chkSortArtistWithoutPrefix->GetValue();
+		wxGetApp().Prefs.bSortArtistWithoutPrefix = chkSortArtistWithoutPrefix->GetValue();
 	}
-	if ( chkPlaylistStripes->GetValue() != g_Prefs.bPLStripes )
+	if ( chkPlaylistStripes->GetValue() != wxGetApp().Prefs.bPLStripes )
 	{
-		g_Prefs.bPLStripes = chkPlaylistStripes->GetValue();
+		wxGetApp().Prefs.bPLStripes = chkPlaylistStripes->GetValue();
 		bPlaylistUpdate = true;
 	}
-	if ( ColourToString( btnPlaylistStripeColour->GetBackgroundColour() ) != g_Prefs.sPLStripeColour )
+	if ( ColourToString( btnPlaylistStripeColour->GetBackgroundColour() ) != wxGetApp().Prefs.sPLStripeColour )
 	{
-		g_Prefs.sPLStripeColour = ColourToString( btnPlaylistStripeColour->GetBackgroundColour() );
+		wxGetApp().Prefs.sPLStripeColour = ColourToString( btnPlaylistStripeColour->GetBackgroundColour() );
 		bPlaylistUpdate = true;
 	}
 	if ( bPlaylistUpdate )
 		g_PlaylistBox->Update();
 
-	if ( chkActivityBoxStripes->GetValue() != g_Prefs.bActStripes )
+	if ( chkActivityBoxStripes->GetValue() != wxGetApp().Prefs.bActStripes )
 	{
-		g_Prefs.bActStripes = chkActivityBoxStripes->GetValue();
+		wxGetApp().Prefs.bActStripes = chkActivityBoxStripes->GetValue();
 		bActivityUpdate = true;
 	}
-	if ( ColourToString( btnActivityStripeColour->GetBackgroundColour() ) != g_Prefs.sActStripeColour )
+	if ( ColourToString( btnActivityStripeColour->GetBackgroundColour() ) != wxGetApp().Prefs.sActStripeColour )
 	{
-		g_Prefs.sActStripeColour = ColourToString( btnActivityStripeColour->GetBackgroundColour() );
+		wxGetApp().Prefs.sActStripeColour = ColourToString( btnActivityStripeColour->GetBackgroundColour() );
 		bActivityUpdate = true;
 	}
 	if ( bActivityUpdate )
 		g_ActivityAreaCtrl->ResetAllContents();
 
 	bool bSourcesUpdate = false;
-	if ( chkSourcesBoxStripes->GetValue() != g_Prefs.bSourcesStripes )
+	if ( chkSourcesBoxStripes->GetValue() != wxGetApp().Prefs.bSourcesStripes )
 	{
-		g_Prefs.bSourcesStripes = chkSourcesBoxStripes->GetValue();
+		wxGetApp().Prefs.bSourcesStripes = chkSourcesBoxStripes->GetValue();
 		bSourcesUpdate = true;
 	}
-	if ( ColourToString( btnSourcesStripeColour->GetBackgroundColour() ) != g_Prefs.sSourcesStripeColour )
+	if ( ColourToString( btnSourcesStripeColour->GetBackgroundColour() ) != wxGetApp().Prefs.sSourcesStripeColour )
 	{
-		g_Prefs.sSourcesStripeColour = ColourToString( btnSourcesStripeColour->GetBackgroundColour() );
+		wxGetApp().Prefs.sSourcesStripeColour = ColourToString( btnSourcesStripeColour->GetBackgroundColour() );
 		bSourcesUpdate = true;
 	}
 	if ( bSourcesUpdate )
@@ -818,16 +818,16 @@ void MusikPrefsFrame::SavePrefs()
 	//-----------------------------//
     //--- Options -> selections ---//
 	//-----------------------------//
-	if ( (EMUSIK_ACTIVITY_SELECTION_TYPE)cmbSelStyle->GetSelection() != g_Prefs.eSelStyle )
+	if ( (EMUSIK_ACTIVITY_SELECTION_TYPE)cmbSelStyle->GetSelection() != wxGetApp().Prefs.eSelStyle )
 	{
-		g_Prefs.eSelStyle = (EMUSIK_ACTIVITY_SELECTION_TYPE)cmbSelStyle->GetSelection();
+		wxGetApp().Prefs.eSelStyle = (EMUSIK_ACTIVITY_SELECTION_TYPE)cmbSelStyle->GetSelection();
 		bShowUnselChange = true;
 	}
 	for(size_t i = 0; i < WXSIZEOF(cmbActivityBoxes);i++)
 	{
-		if ( cmbActivityBoxes[i]->GetSelection() != g_Prefs.nActBoxType[i] )
+		if ( cmbActivityBoxes[i]->GetSelection() != wxGetApp().Prefs.nActBoxType[i] )
 		{
-			g_Prefs.nActBoxType[i] = (EMUSIK_ACTIVITY_TYPE)cmbActivityBoxes[i]->GetSelection();
+			wxGetApp().Prefs.nActBoxType[i] = (EMUSIK_ACTIVITY_TYPE)cmbActivityBoxes[i]->GetSelection();
 			bActivityChange = true;
 		}
 	}
@@ -840,15 +840,15 @@ void MusikPrefsFrame::SavePrefs()
 	for(size_t i = 0 ;i < NPLAYLISTCOLUMNS; i ++)
 	{
 		//--- enable / disable ---//
-		if ( g_Prefs.bPlaylistColumnEnable[i] != chkPLColumnEnable[i]->GetValue() )
+		if ( wxGetApp().Prefs.bPlaylistColumnEnable[i] != chkPLColumnEnable[i]->GetValue() )
 		{
-			g_Prefs.bPlaylistColumnEnable[i] = chkPLColumnEnable[i]->GetValue();
+			wxGetApp().Prefs.bPlaylistColumnEnable[i] = chkPLColumnEnable[i]->GetValue();
 			bResetColumns = true;
 		}
 		//--- standard / dynamic ---//
-		if ( g_Prefs.bPlaylistColumnDynamic[i] != cmbPLColumnStatic[i]->GetSelection() )
+		if ( wxGetApp().Prefs.bPlaylistColumnDynamic[i] != (cmbPLColumnStatic[i]->GetSelection() ? true : false) )
 		{
-			g_Prefs.bPlaylistColumnDynamic[i] = cmbPLColumnStatic[i]->GetSelection();
+			wxGetApp().Prefs.bPlaylistColumnDynamic[i] = cmbPLColumnStatic[i]->GetSelection();
 			bResetColumns = true;
 		}
 	}
@@ -857,134 +857,134 @@ void MusikPrefsFrame::SavePrefs()
 	//-------------------------//
 	//--- options -> tunage ---//
 	//-------------------------//
-	g_Prefs.bTunageWriteFile	= chkTunageWriteFile->GetValue();
-	g_Prefs.bTunageAppendFile	= chkTunageAppendFile->GetValue();
-	g_Prefs.bTunagePostURL		= chkTunagePostURL->GetValue();
-	g_Prefs.bTunageRunApp		= chkTunageRunApp->GetValue();
-	g_Prefs.bTunageRunOnStop	= chkTunageRunOnStop->GetValue();
-	g_Prefs.sTunageFilename		= tcTunageFilename->GetValue();
-	g_Prefs.sTunageFileLine		= tcTunageFileLine->GetValue();
-	g_Prefs.sTunageURL			= tcTunageURL->GetValue();
-	g_Prefs.sTunageCmdLine		= tcTunageCmdLine->GetValue();
-	g_Prefs.sTunageStoppedText	= tcTunageStoppedText->GetValue();
+	wxGetApp().Prefs.bTunageWriteFile	= chkTunageWriteFile->GetValue();
+	wxGetApp().Prefs.bTunageAppendFile	= chkTunageAppendFile->GetValue();
+	wxGetApp().Prefs.bTunagePostURL		= chkTunagePostURL->GetValue();
+	wxGetApp().Prefs.bTunageRunApp		= chkTunageRunApp->GetValue();
+	wxGetApp().Prefs.bTunageRunOnStop	= chkTunageRunOnStop->GetValue();
+	wxGetApp().Prefs.sTunageFilename		= tcTunageFilename->GetValue();
+	wxGetApp().Prefs.sTunageFileLine		= tcTunageFileLine->GetValue();
+	wxGetApp().Prefs.sTunageURL			= tcTunageURL->GetValue();
+	wxGetApp().Prefs.sTunageCmdLine		= tcTunageCmdLine->GetValue();
+	wxGetApp().Prefs.sTunageStoppedText	= tcTunageStoppedText->GetValue();
 
 
 	//--------------------------//
 	//--- tagging -> general ---//
 	//--------------------------//
-	g_Prefs.bActBoxWrite	= chkActivityWrite->GetValue();
-	g_Prefs.bActBoxClear	= chkActivityClear->GetValue();
-	g_Prefs.bActBoxRename	= chkActivityRename->GetValue();
-	g_Prefs.bTagDlgWrite	= chkTagDlgWrite->GetValue();
-	g_Prefs.bTagDlgClear	= chkTagDlgClear->GetValue();
-	g_Prefs.bTagDlgRename	= chkTagDlgRename->GetValue();
+	wxGetApp().Prefs.bActBoxWrite	= chkActivityWrite->GetValue();
+	wxGetApp().Prefs.bActBoxClear	= chkActivityClear->GetValue();
+	wxGetApp().Prefs.bActBoxRename	= chkActivityRename->GetValue();
+	wxGetApp().Prefs.bTagDlgWrite	= chkTagDlgWrite->GetValue();
+	wxGetApp().Prefs.bTagDlgClear	= chkTagDlgClear->GetValue();
+	wxGetApp().Prefs.bTagDlgRename	= chkTagDlgRename->GetValue();
 
 	//-----------------------//
 	//--- tagging -> auto ---//
 	//-----------------------//
-	g_Prefs.sAutoRename = tcAutoRename->GetValue();
+	wxGetApp().Prefs.sAutoRename = tcAutoRename->GetValue();
 
 	//---------------------------//
 	//--- sound -> crossfader ---//
 	//---------------------------//
-	g_Prefs.bFadeEnable = chkCrossfade->GetValue();
-	g_Prefs.bFadeSeekEnable = chkCrossfadeSeek->GetValue();
-	g_Prefs.bFadePauseResumeEnable = chkCrossfadePauseResume->GetValue();
-	g_Prefs.bFadeStopEnable = chkCrossfadeStop->GetValue();
-	g_Prefs.bFadeExitEnable = chkCrossfadeExit->GetValue();
+	wxGetApp().Prefs.bFadeEnable = chkCrossfade->GetValue();
+	wxGetApp().Prefs.bFadeSeekEnable = chkCrossfadeSeek->GetValue();
+	wxGetApp().Prefs.bFadePauseResumeEnable = chkCrossfadePauseResume->GetValue();
+	wxGetApp().Prefs.bFadeStopEnable = chkCrossfadeStop->GetValue();
+	wxGetApp().Prefs.bFadeExitEnable = chkCrossfadeExit->GetValue();
 	
 	double fDuration;
 	int nDuration;
 	
 	fDuration = StringToDouble( tcDuration->GetValue() );
 	nDuration = ( int )( fDuration * 1000 );
-	g_Prefs.nFadeDuration = nDuration;
+	wxGetApp().Prefs.nFadeDuration = nDuration;
 	
     fDuration = StringToDouble( tcSeekDuration->GetValue() );
 	nDuration = ( int )( fDuration * 1000 );
-	g_Prefs.nFadeSeekDuration = nDuration;
+	wxGetApp().Prefs.nFadeSeekDuration = nDuration;
 
 	fDuration = StringToDouble( tcPauseResumeDuration->GetValue() );
 	nDuration = ( int )( fDuration * 1000 );
-	g_Prefs.nFadePauseResumeDuration = nDuration;
+	wxGetApp().Prefs.nFadePauseResumeDuration = nDuration;
 	
 	fDuration = StringToDouble( tcStopDuration->GetValue() );
 	nDuration = ( int )( fDuration * 1000 );
-	g_Prefs.nFadeStopDuration = nDuration;
+	wxGetApp().Prefs.nFadeStopDuration = nDuration;
 	
 	fDuration = StringToDouble( tcExitDuration->GetValue() );
 	nDuration = ( int )( fDuration * 1000 );
-	g_Prefs.nFadeExitDuration = nDuration;
+	wxGetApp().Prefs.nFadeExitDuration = nDuration;
 	
 	//-----------------------//
 	//--- sound -> driver ---//
 	//-----------------------//
-	if ( cmbOutputDrv->GetSelection() != g_Prefs.nSndOutput )
+	if ( cmbOutputDrv->GetSelection() != wxGetApp().Prefs.nSndOutput )
 	{
-		g_Prefs.nSndOutput = cmbOutputDrv->GetSelection();
+		wxGetApp().Prefs.nSndOutput = cmbOutputDrv->GetSelection();
 		bRestartFMOD = true;
 	}
-	if ( cmbSndDevice->GetSelection() != g_Prefs.nSndDevice )
+	if ( cmbSndDevice->GetSelection() != wxGetApp().Prefs.nSndDevice )
 	{
-		g_Prefs.nSndDevice = cmbSndDevice->GetSelection();
+		wxGetApp().Prefs.nSndDevice = cmbSndDevice->GetSelection();
 		bRestartFMOD = true;
 	}
-	if ( wxStringToInt( cmbPlayRate->GetString( cmbPlayRate->GetSelection() ) ) != g_Prefs.nSndRate )
+	if ( wxStringToInt( cmbPlayRate->GetString( cmbPlayRate->GetSelection() ) ) != wxGetApp().Prefs.nSndRate )
 	{
 		int nRate = wxStringToInt( cmbPlayRate->GetString( cmbPlayRate->GetSelection() ) );
-		g_Prefs.nSndRate = nRate;
+		wxGetApp().Prefs.nSndRate = nRate;
 		bRestartFMOD = true;
 	}
-	if ( wxStringToInt( tcMaxChannels->GetValue() ) != g_Prefs.nSndMaxChan )
+	if ( wxStringToInt( tcMaxChannels->GetValue() ) != wxGetApp().Prefs.nSndMaxChan )
 	{
-		g_Prefs.nSndMaxChan = wxStringToInt( tcMaxChannels->GetValue() );
+		wxGetApp().Prefs.nSndMaxChan = wxStringToInt( tcMaxChannels->GetValue() );
 		bRestartFMOD = true;
 	}
 	double fLength = StringToDouble( tcBufferLength->GetValue() );
 	int nLength = ( int )( fLength * 1000 );
-	g_Prefs.nSndBuffer = nLength;
+	wxGetApp().Prefs.nSndBuffer = nLength;
 
-	g_Prefs.bUse_MPEGACCURATE_ForMP3VBRFiles = chkUse_MPEGACCURATE_ForMP3VBRFiles->GetValue();
+	wxGetApp().Prefs.bUse_MPEGACCURATE_ForMP3VBRFiles = chkUse_MPEGACCURATE_ForMP3VBRFiles->GetValue();
 
 	//---------------------------//
 	//--- streaming -> buffer ---//
 	//---------------------------//
 	bool bNetBufferSettingChanged = false;
- 	if ( wxStringToInt( tcStreamingBufferSize->GetValue( ) ) != g_Prefs.nStreamingBufferSize )
+ 	if ( wxStringToInt( tcStreamingBufferSize->GetValue( ) ) != wxGetApp().Prefs.nStreamingBufferSize )
 	{
-		g_Prefs.nStreamingBufferSize = wxStringToInt( tcStreamingBufferSize->GetValue( ) );
+		wxGetApp().Prefs.nStreamingBufferSize = wxStringToInt( tcStreamingBufferSize->GetValue( ) );
 		bNetBufferSettingChanged = true;
 	}
- 	if ( wxStringToInt( tcStreamingPreBufferPercent->GetValue( ) ) != g_Prefs.nStreamingPreBufferPercent )
+ 	if ( wxStringToInt( tcStreamingPreBufferPercent->GetValue( ) ) != wxGetApp().Prefs.nStreamingPreBufferPercent )
 	{
-		g_Prefs.nStreamingPreBufferPercent = wxStringToInt( tcStreamingPreBufferPercent->GetValue( ) );
+		wxGetApp().Prefs.nStreamingPreBufferPercent = wxStringToInt( tcStreamingPreBufferPercent->GetValue( ) );
 		bNetBufferSettingChanged = true;
 	}
- 	if ( wxStringToInt( tcStreamingReBufferPercent->GetValue( ) ) != g_Prefs.nStreamingReBufferPercent )
+ 	if ( wxStringToInt( tcStreamingReBufferPercent->GetValue( ) ) != wxGetApp().Prefs.nStreamingReBufferPercent )
 	{
-		g_Prefs.nStreamingReBufferPercent = wxStringToInt( tcStreamingReBufferPercent->GetValue( )  );
+		wxGetApp().Prefs.nStreamingReBufferPercent = wxStringToInt( tcStreamingReBufferPercent->GetValue( )  );
 		bNetBufferSettingChanged = true;
 	}
 	//---------------------------------//
 	//--- streaming -> proxy server ---//
 	//---------------------------------//
-	g_Prefs.bUseProxyServer = chkUseProxyServer->GetValue();
-	g_Prefs.sProxyServer = tcProxyServer->GetValue(); 
-	g_Prefs.sProxyServer = tcProxyServer->GetValue(  );		
-	g_Prefs.sProxyServerPort = tcProxyServerPort->GetValue(  );		
-	g_Prefs.sProxyServerUser = tcProxyServerUser->GetValue(  );	
-	g_Prefs.sProxyServerPassword = tcProxyServerPassword->GetValue(  );	
+	wxGetApp().Prefs.bUseProxyServer = chkUseProxyServer->GetValue();
+	wxGetApp().Prefs.sProxyServer = tcProxyServer->GetValue(); 
+	wxGetApp().Prefs.sProxyServer = tcProxyServer->GetValue(  );		
+	wxGetApp().Prefs.sProxyServerPort = tcProxyServerPort->GetValue(  );		
+	wxGetApp().Prefs.sProxyServerUser = tcProxyServerUser->GetValue(  );	
+	wxGetApp().Prefs.sProxyServerPassword = tcProxyServerPassword->GetValue(  );	
 
 
 	//--- if we need to restart fmod ---//
 	if ( bRestartFMOD )
-		g_Player.InitializeFMOD( FMOD_INIT_RESTART );
+		wxGetApp().Player.InitializeFMOD( FMOD_INIT_RESTART );
 	else if(bNetBufferSettingChanged)
 	{
-		g_Player.InitFMOD_NetBuffer();
+		wxGetApp().Player.InitFMOD_NetBuffer();
 	}
 
-	g_Player.InitFMOD_ProxyServer();
+	wxGetApp().Player.InitFMOD_ProxyServer();
 
 	if ( bActivityChange )
 	{

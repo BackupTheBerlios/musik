@@ -15,6 +15,7 @@
 #include "wx/wxprec.h"
 //--- globals ---//
 #include "NowPlayingCtrl.h"
+#include "Tunage.h"
 #include "../MusikGlobals.h"
 #include "../MusikUtils.h"
 
@@ -156,12 +157,12 @@ CNowPlayingCtrl::CNowPlayingCtrl( wxWindow *parent )
 	const wxString playmode_choices[] ={_("Normal"),_("Loop Song"),_("Loop List"),_("Shuffle"),_("Auto DJ")};
 	
 	wxChoice *choicePlaymode = new wxChoice(this,MUSIK_NOWPLAYINGCTRL_PLAYMODE,wxDefaultPosition,wxDefaultSize,WXSIZEOF(playmode_choices),playmode_choices);
-	int playmode = g_Prefs.ePlaymode;
+	int playmode = wxGetApp().Prefs.ePlaymode;
 	choicePlaymode->SetSelection(playmode);
 	vsPlayModeCol->Add( choicePlaymode,0, wxRIGHT|wxLEFT|wxALIGN_CENTRE_VERTICAL, 5 ); //-- small top border --//
 	wxCheckBox * pCrossfade = new wxCheckBox( this, MUSIK_CHK_CROSSFADE, _("Crossfade"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 	vsPlayModeCol->Add( pCrossfade,0, wxALIGN_CENTRE_VERTICAL|wxRIGHT, 2 ); //-- small top border --//
-	pCrossfade->SetValue( g_Prefs.bGlobalFadeEnable );
+	pCrossfade->SetValue( wxGetApp().Prefs.bGlobalFadeEnable );
   	vsRightCol->Add( vsPlayModeCol, 0 ); //-- small top border --//
 	vsRightCol->Add( gSeek, 0, wxTOP|wxEXPAND, 2 ); //-- small top border --//
 
@@ -178,6 +179,7 @@ CNowPlayingCtrl::CNowPlayingCtrl( wxWindow *parent )
 	g_TimeSeeking = false;
 
 	ResetInfo();
+	m_pTunage = new CTunage;
 }
 
 CNowPlayingCtrl::~CNowPlayingCtrl()
@@ -201,6 +203,7 @@ CNowPlayingCtrl::~CNowPlayingCtrl()
 
 	gSeek->PopEventHandler();
 	delete pSeekEvt;
+	delete m_pTunage;
 }
 
 //-------------------//
@@ -208,7 +211,7 @@ CNowPlayingCtrl::~CNowPlayingCtrl()
 //-------------------//
 void CNowPlayingCtrl::OnTimer( wxTimerEvent& WXUNUSED(event) )
 {
-	if ( g_Player.IsPlaying() && !g_Player.IsStopping() )
+	if ( wxGetApp().Player.IsPlaying() && !wxGetApp().Player.IsStopping() )
 		UpdateTime();
 }
 
@@ -258,7 +261,7 @@ void CNowPlayingCtrl::PauseBtnToPlayBtn()
 
 static int nTimeDisplayMode = 0;
 
-void CNowPlayingCtrl::OnClickTimeDisplay(wxMouseEvent & event)
+void CNowPlayingCtrl::OnClickTimeDisplay(wxMouseEvent & WXUNUSED(event))
 {
 	
 	//if(stCurtime && stCurtime->GetRect().Inside(event.GetPosition()))
@@ -272,7 +275,7 @@ void CNowPlayingCtrl::UpdateTime()
 
 	if ( !g_TimeSeeking )
 	{
-	 	float fPos = (float)100* ( (float)g_Player.GetTime( FMOD_SEC ) / (float)g_Player.GetDuration( FMOD_SEC ) );
+	 	float fPos = (float)100* ( (float)wxGetApp().Player.GetTime( FMOD_SEC ) / (float)wxGetApp().Player.GetDuration( FMOD_SEC ) );
 	    
 		//--- now, if we're in gtk and we set the wxGauge 	---//
 		//--- to a value below 2.0, it changes to 100%		---//
@@ -285,7 +288,7 @@ void CNowPlayingCtrl::UpdateTime()
 		gSeek->SetValue( (int)fPos );
 		
 		//--- time label ---//
-		stCurtime->SetLabel( wxT( " - " ) + ((nTimeDisplayMode== 0) ? g_Player.GetTimeStr():g_Player.GetTimeLeftStr()) );
+		stCurtime->SetLabel( wxT( " - " ) + ((nTimeDisplayMode== 0) ? wxGetApp().Player.GetTimeStr():wxGetApp().Player.GetTimeLeftStr()) );
 		Layout();
 	}
 }
@@ -306,38 +309,38 @@ void CNowPlayingCtrl::ResetInfo()
 		gSeek->SetValue( 1 );
 	#endif
 
-	g_Tunage.Stopped();
+	m_pTunage->Stopped();
 
 	Layout();
 }
 
-void CNowPlayingCtrl::UpdateInfo( CMusikSong song )
+void CNowPlayingCtrl::UpdateInfo( const CMusikSong &song )
 {
 	//--- first things first, verify data in song ---//
-	song.Artist = SanitizedString( song.Artist );
-	song.Title = SanitizedString( song.Title );
-	if ( song.Artist.IsEmpty())
-		song.Artist = _( "Unknown Artist" );
-	if ( song.Title.IsEmpty() )
-		song.Title = _( "Unknown Song" );
+	wxString sArtist = SanitizedString( ConvFromUTF8( song.MetaData.Artist ));
+	wxString sTitle = SanitizedString( ConvFromUTF8( song.MetaData.Title ));
+	if ( sArtist.IsEmpty())
+		sArtist = _( "Unknown Artist" );
+	if ( sTitle.IsEmpty() )
+		sTitle = _( "Unknown Song" );
 
 	// tell Tunage to do it's thing if file has changed
-	if ( m_sLastFile != song.Filename )
-		g_Tunage.Execute( song );
+	if ( m_LastFile != song.MetaData.Filename )
+		m_pTunage->Execute( song );
 
-	m_sLastFile = song.Filename;
+	m_LastFile = song.MetaData.Filename;
 
 	//--- caption bar title ---//
-	g_MusikFrame->SetTitle( wxString( MUSIKAPPNAME_VERSION ) + wxT( " [ " ) + song.Artist + wxT( " - " ) +  song.Title + wxT( " ]" ) );
+	g_MusikFrame->SetTitle( wxString( MUSIKAPPNAME_VERSION ) + wxT( " [ " ) + sArtist + wxT( " - " ) +  sTitle + wxT( " ]" ) );
 
 	//--- title / artist / time -//
-	song.Title.Replace	( wxT( "&" ), wxT( "&&" ), TRUE );
-	song.Artist.Replace	( wxT( "&" ), wxT( "&&" ), TRUE );
+	sTitle.Replace	( wxT( "&" ), wxT( "&&" ), TRUE );
+	sArtist.Replace	( wxT( "&" ), wxT( "&&" ), TRUE );
 
-	if ( song.Title != stSong->GetLabel() )
-		stSong->SetLabel( song.Title );
-	if ( song.Artist != stArtist->GetLabel() )
-		stArtist->SetLabel( song.Artist );
+	if ( sTitle != stSong->GetLabel() )
+		stSong->SetLabel( sTitle );
+	if ( sArtist != stArtist->GetLabel() )
+		stArtist->SetLabel( sArtist );
 	UpdateTime();
 
 	Layout();
@@ -345,24 +348,24 @@ void CNowPlayingCtrl::UpdateInfo( CMusikSong song )
 
 void CNowPlayingCtrl::PlayerStop( wxCommandEvent& WXUNUSED(event) )
 {	
-	g_Player.Stop();
+	wxGetApp().Player.Stop();
 }
 
 void CNowPlayingCtrl::PlayerPlayPause( wxCommandEvent& WXUNUSED(event) )	
 {	
-	g_Player.PlayPause();
+	wxGetApp().Player.PlayPause();
 }
 
 void CNowPlayingCtrl::PlayerNext( wxCommandEvent& WXUNUSED(event) )	
 {	
 	Freeze();
-	g_Player.NextSong();
+	wxGetApp().Player.NextSong();
 	Thaw();
 }
 
 void CNowPlayingCtrl::PlayerPrev( wxCommandEvent& WXUNUSED(event) )	
 {	
-	g_Player.PrevSong();
+	wxGetApp().Player.PrevSong();
 }
 
 void CNowPlayingCtrl::PlayerVolume( wxCommandEvent& WXUNUSED(event) )	
@@ -380,10 +383,10 @@ void CNowPlayingCtrl::PlayerVolume( wxCommandEvent& WXUNUSED(event) )
 void CNowPlayingCtrl::OnPlayMode( wxCommandEvent&	event )
 {
 	int modesel = event.GetSelection();
-	g_Prefs.ePlaymode = (EMUSIK_PLAYMODE)modesel;
-	g_Player.SetPlaymode(g_Prefs.ePlaymode);
+	wxGetApp().Prefs.ePlaymode = (EMUSIK_PLAYMODE)modesel;
+	wxGetApp().Player.SetPlaymode(wxGetApp().Prefs.ePlaymode);
 }
 void CNowPlayingCtrl::OnCheckCrossfade	( wxCommandEvent&	event )
 {
-	g_Prefs.bGlobalFadeEnable = event.IsChecked();
+	wxGetApp().Prefs.bGlobalFadeEnable = event.IsChecked();
 }

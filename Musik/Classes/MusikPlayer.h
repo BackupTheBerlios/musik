@@ -43,15 +43,6 @@ enum EMUSIK_CROSSFADER_TYPE
 //--- CMusikStreamArray declaration ---//
 WX_DECLARE_OBJARRAY( FSOUND_STREAM*, CMusikStreamArray );
 
-enum EMUSIK_PLAYMODE
-{
-	MUSIK_PLAYMODE_NORMAL = 0,
-	MUSIK_PLAYMODE_LOOPSONG,
-	MUSIK_PLAYMODE_LOOPLIST,
-	MUSIK_PLAYMODE_SHUFFLE,
-	MUSIK_PLAYMODE_AUTO_DJ
-
-};
 
 enum EFMOD_INIT
 {
@@ -156,7 +147,7 @@ public:
 	size_t GetShuffledSong		();
 	EMUSIK_PLAYMODE GetPlaymode () { return m_Playmode; }
 	const CMusikSongArray &	GetPlaylist	( ) {return  m_Playlist;}
-
+	void RefreshInternalPlaylist();
 	
 	//------------//
 	//--- sets ---//
@@ -195,6 +186,7 @@ private:
 	void _AddRandomSongs();
 	int _NetStreamStatusUpdate(FSOUND_STREAM * pStream);
 
+	
 	CMusikSongArray m_Playlist;			//--- heart and soul.								---//
 	EMUSIK_PLAYMODE	m_Playmode;			//--- repeat, shuffle, etc							---//
 	size_t			m_SongIndex;		//--- current index in playlist						---//

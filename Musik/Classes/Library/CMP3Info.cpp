@@ -192,7 +192,7 @@ int CMP3Info::getLengthInSeconds() {
 	if ( mp3BitRate )
 		return (int)(kiloBitFileSize/getBitrate());
 	else
-		return g_Player.GetFileDuration( fileName, FMOD_SEC );
+		return wxGetApp().Player.GetFileDuration( fileName, FMOD_SEC );
 }
 
 

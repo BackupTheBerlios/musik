@@ -47,7 +47,7 @@ private:
 	int				m_Mode;
 	int				m_Type;
 	wxString		m_TypeStr;
-	wxString		m_Replace;
+	CSongMetaData::StringData m_Replace;
 
 	CMusikSongArray m_Songs;
 };

@@ -179,5 +179,5 @@ void CMusikFX::SaveBands( wxFileConfig *pConfig )
 void CMusikFX::SetFrequency( float newfreq )
 {
 	m_Frequency = newfreq;
-	g_Player.SetFrequency();
+	wxGetApp().Player.SetFrequency();
 }

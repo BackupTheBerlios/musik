@@ -32,136 +32,8 @@
 #include <wx/filename.h>
 
 #include "../MusikUtils.h"
-enum EMUSIK_LIB_TYPE
-{
-	MUSIK_LIB_INVALID = -1,
-    MUSIK_LIB_ARTIST = 0,
-	MUSIK_LIB_ALBUM,
-	MUSIK_LIB_GENRE,
-	MUSIK_LIB_SONG,
-	MUSIK_LIB_YEAR,
-	MUSIK_LIB_DECADE
-};
+#include "../MusikDefines.h"
 
-enum EMUSIK_FORMAT_TYPE
-{
-	MUSIK_FORMAT_INVALID = -1,
-	MUSIK_FORMAT_MP3 = 0,
-	MUSIK_FORMAT_OGG,
-	MUSIK_FORMAT_MOD,
-	MUSIK_FORMAT_WAV,
-	MUSIK_FORMAT_WMA,
-	MUSIK_FORMAT_AIFF,
-	MUSIK_FORMAT_NETSTREAM
-};
-
-class CSongMetaData
-{
-public:
-	class StringData
-	{
-	public:
-		StringData()
-		{
-			m_szData = NULL;
-			m_bOwner = false;
-		}
-		void Attach(const char* sz ,bool bOwner = true)
-		{
-			Empty();
-			m_bOwner = bOwner;
-			m_szData =  sz ;
-		}
-		StringData(const StringData & rhs)
-		{
-			m_bOwner = true;
-			m_szData =  _StrDup(rhs.m_szData);
-		}
-		StringData & operator=(const StringData & rhs)
-		{
-			if(this != &rhs)
-			{
-				Empty();
-				m_bOwner = true;
-				m_szData =  _StrDup(rhs.m_szData);
-			}
-			return *this;
-		}
-		StringData & operator=(const char * sz)
-		{
-			Empty();
-			m_bOwner = true;
-			m_szData =  _StrDup(sz);
-			return *this;
-		}
-
-		operator const char *()	const 
-		{
-			return IsEmpty() ? "" : m_szData;
-		}
-		bool IsEmpty()	const 
-		{
-			return (m_szData == NULL) || (Length() == 0);
-		}
-		void Empty()
-		{
-			if(m_szData && m_bOwner)
-				delete [] (m_szData);
-			m_szData = NULL;
-		}
-		const char * Detach()
-		{
-			const char * tmp = m_szData;
-			m_szData = NULL;
-			return tmp;
-		}
-		size_t Length()	const
-		{
-			return (m_szData == NULL) ? 0 : strlen(m_szData);
-		}
-		~StringData()
-		{
-		  Empty();
-		}
-	protected:
-		const char * _StrDup(const char * sz)
-		{
-			if(!sz)
-				return NULL;
-			char *buf = new char[strlen(sz) + 1];
-			if(buf)
-			{
-				strcpy(buf,sz);
-			}
-			return buf;
-		}
-	private:
-		const char *m_szData;
-		bool m_bOwner;
-	};
-public:
-	CSongMetaData()
-	{
-	  eFormat = MUSIK_FORMAT_INVALID;
-	  bVBR = false;
-	  nDuration_ms = nBitrate  = nFilesize   =	nTracknum = 0;
-	}
-
-	wxFileName			Filename;
-	StringData			Title;
-	StringData			Artist;
-	StringData			Album;
-	StringData			Genre;
-	StringData			Year;
-	StringData			Notes;
-	int				    nTracknum;
-	EMUSIK_FORMAT_TYPE  eFormat;
-	int					nDuration_ms;
-	bool				bVBR;
-	int					nBitrate;
-	int					nFilesize;
-
-};
 
 class CMusikSong
 {
@@ -170,23 +42,11 @@ public:
 
 public:
 	int			songid;
-	wxString	Filename;
-	wxString	Title;
-	int			TrackNum;
-	wxString	Artist;
-	wxString	Album;
-	wxString	Genre;
-	wxString	Year;
+	CSongMetaData MetaData;
 	double		LastPlayed;
-	int			Format;
-	int			Duration;
 	int			Rating;
 	int			TimesPlayed;
-	int			Bitrate;
-	bool		VBR;
-	wxString	Notes;
 	double		TimeAdded;
-	int			Filesize;
 	int			Check1;		//--- for tag dlg stuff, checks to see if it needs to be written to file / db ---//
 };
 
@@ -225,7 +85,7 @@ public:
 	//--------------------//
 	//--- writing tags ---//
 	//--------------------//
-	bool RenameFile			( CMusikSong* song, bool bClearCheck = false );
+	bool RenameFile			( CMusikSong & song );
 	bool RetagFile			( const CMusikTagger & tagger, CMusikSong* song );
 	bool ReplaceMask		( wxString *sSrc, wxString sMask, wxString sTarget, bool bReplaceAll = true  );
 	int  ClearDirtyTags		( );
@@ -294,8 +154,8 @@ private:
 	void AddWMA				( const wxString & filename );
 	void AddAIFF			( const wxString & filename );
 
-	void WriteMP3Tag		( const CMusikSong & song, bool ClearAll );
-	bool WriteOGGTag		( const CMusikSong & song, bool ClearAll );
+	void WriteMP3Tag		( const CSongMetaData & MetaData, bool ClearAll );
+	bool WriteOGGTag		( const CSongMetaData & MetaData, bool ClearAll );
 
 	wxString  m_sSortAllSongsQuery;
 	wxString m_lastQueryWhere;
@@ -314,23 +174,24 @@ private:
 	inline static void _AssignSongTableColumnDataToSong(CMusikSong * pSong, const char **coldata)
 	{
 		pSong->songid		= StringToInt		( coldata[0] );
-		pSong->Filename		= wxConvertMB2WX	( coldata[1] );
-		pSong->Title		= ConvDBFieldToWX	( coldata[2] );
-		pSong->TrackNum		= StringToInt		( coldata[3] );
-		pSong->Artist		= ConvDBFieldToWX	( coldata[4] );
-		pSong->Album		= ConvDBFieldToWX	( coldata[5] );
-		pSong->Genre		= ConvDBFieldToWX	( coldata[6] );
-		pSong->Duration		= StringToInt		( coldata[7] );
-		pSong->Format		= StringToInt		( coldata[8] );
-		pSong->VBR			= StringToInt		( coldata[9] ) ? true: false;
-		pSong->Year			= ConvDBFieldToWX	( coldata[10] );
-		pSong->Rating		= StringToInt		( coldata[11] );
-		pSong->Bitrate		= StringToInt		( coldata[12] );
-		pSong->LastPlayed	= CharStringToDouble( coldata[13] );
-		pSong->Notes		= ConvDBFieldToWX	( coldata[14] );
-		pSong->TimesPlayed	= StringToInt		( coldata[15] );	
-		pSong->TimeAdded	= CharStringToDouble( coldata[16] );
-		pSong->Filesize		= StringToInt		( coldata[17] );
+		pSong->MetaData.Filename		= wxConvertMB2WX	( coldata[1] );
+		pSong->MetaData.Title			=					  coldata[2];
+		pSong->MetaData.nTracknum		= StringToInt		( coldata[3] );
+		pSong->MetaData.Artist			=					  coldata[4];
+		pSong->MetaData.Album			=					  coldata[5] ;
+		pSong->MetaData.Genre			=					  coldata[6] ;
+		pSong->MetaData.nDuration_ms	= StringToInt		( coldata[7] );
+		pSong->MetaData.eFormat			= (EMUSIK_FORMAT_TYPE) 
+										  StringToInt		( coldata[8] );
+		pSong->MetaData.bVBR			= StringToInt		( coldata[9] ) ? true: false;
+		pSong->MetaData.Year			=					  coldata[10];
+		pSong->Rating					= StringToInt		( coldata[11] );
+		pSong->MetaData.nBitrate		= StringToInt		( coldata[12] );
+		pSong->LastPlayed				= CharStringToDouble( coldata[13] );
+		pSong->MetaData.Notes			=					  coldata[14];
+		pSong->TimesPlayed				= StringToInt		( coldata[15] );	
+		pSong->TimeAdded				= CharStringToDouble( coldata[16] );
+		pSong->MetaData.nFilesize		= StringToInt		( coldata[17] );
 	}
 	static int sqlite_callbackAddToStringArray(void *args, int numCols, char **results, char ** columnNames);
 	static int sqlite_callbackAddToSongArray(void *args, int numCols, char **results, char ** columnNames);

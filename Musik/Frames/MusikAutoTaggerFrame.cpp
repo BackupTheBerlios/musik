@@ -66,11 +66,11 @@ CMusikAutoTaggerFrame::CMusikAutoTaggerFrame( wxWindow* parent, wxWindowID id, c
     Create(parent, id, caption, pos, size, style);
 
 	wxArrayString aMasks;
-	DelimitStr(g_Prefs.sAutoTag,wxT("|"),aMasks);
+	DelimitStr(wxGetApp().Prefs.sAutoTag,wxT("|"),aMasks);
 	size_t i = 0;
 	for(; i < aMasks.Count()-1;i++)
         m_CBTagMask->Append(aMasks[i]);
-	if(aMasks.Count() && (wxStringToInt(aMasks[i]) < aMasks.Count()))
+	if(aMasks.Count() && ((size_t)wxStringToInt(aMasks[i]) < aMasks.Count()))
 		m_sMask = aMasks[wxStringToInt(aMasks[i])];
 }
 
@@ -215,17 +215,17 @@ void CMusikAutoTaggerFrame::OnBnRemoveMask( wxCommandEvent& event )
 
 void CMusikAutoTaggerFrame::OnOk( wxCommandEvent& event )
 {
-	g_Prefs.sAutoTag.Empty();
+	wxGetApp().Prefs.sAutoTag.Empty();
 	for(int i = 0 ; i < m_CBTagMask->GetCount();i++)
 	{
-		g_Prefs.sAutoTag += m_CBTagMask->GetString(i);
-		g_Prefs.sAutoTag +='|';
+		wxGetApp().Prefs.sAutoTag += m_CBTagMask->GetString(i);
+		wxGetApp().Prefs.sAutoTag +='|';
 	}
 	if(m_CBTagMask->GetCount() == 0)
-		g_Prefs.sAutoTag += wxT("%a-%b-%n%t|");
+		wxGetApp().Prefs.sAutoTag += wxT("%a-%b-%n%t|");
 	int sel = m_CBTagMask->GetSelection();
 	sel = (wxNOT_FOUND == sel) ? 0 : sel;
-	g_Prefs.sAutoTag += IntTowxString(sel);
+	wxGetApp().Prefs.sAutoTag += IntTowxString(sel);
 	wxDialog::OnOK(event);
 	// Insert custom code here
 	event.Skip();

@@ -41,7 +41,7 @@ void *MusikTagApplyThread::Entry()
 	int nLastProg = 0;
 	int nCurrProg = 0;
 	bool bRenameOK;
-	g_Library.BeginTransaction();
+	wxGetApp().Library.BeginTransaction();
 	for( size_t i = 0; i < m_Songs.GetCount(); i++ )
 	{
 		//-----------------------//
@@ -66,9 +66,10 @@ void *MusikTagApplyThread::Entry()
 				//--- rename the file ---//
 				//-----------------------//
 				bRenameOK = true;
-				if ( g_Prefs.bTagDlgRename == 1 )
+				if ( wxGetApp().Prefs.bTagDlgRename == 1 )
 				{
-					bRenameOK = g_Library.RenameFile( &m_Songs.Item( i ), true );
+					bRenameOK = wxGetApp().Library.RenameFile( m_Songs.Item( i ));
+					m_Songs.Item( i ).Check1 = 0;
 				}
 
 				//--------------------------//
@@ -76,27 +77,27 @@ void *MusikTagApplyThread::Entry()
 				//--------------------------//
 				if ( bRenameOK )
 				{
-					if ( g_Prefs.bTagDlgWrite == 1 )
+					if ( wxGetApp().Prefs.bTagDlgWrite == 1 )
 					{
 						//-----------------------------------------//
 						//--- rename will update the lib, so if	---//
 						//--- we're not renaming, update db too	---//
 						//-----------------------------------------//
-						g_Library.WriteTag( m_Songs.Item( i ),(bool)g_Prefs.bTagDlgClear ,g_Prefs.bTagDlgRename == 0 );
+						wxGetApp().Library.WriteTag( m_Songs.Item( i ),(bool)wxGetApp().Prefs.bTagDlgClear ,wxGetApp().Prefs.bTagDlgRename == 0 );
 					}
 
 					//-----------------------------//
 					//--- write tag for db only ---//
 					//-----------------------------//
-					if ( g_Prefs.bTagDlgWrite == 0 && g_Prefs.bTagDlgRename == 0 )
+					if ( wxGetApp().Prefs.bTagDlgWrite == 0 && wxGetApp().Prefs.bTagDlgRename == 0 )
 					{
-						g_Library.UpdateItem( m_Songs.Item( i ), true );
+						wxGetApp().Library.UpdateItem( m_Songs.Item( i ), true );
 					}
 				}
 			}
 		}
 	}
-	g_Library.EndTransaction();
+	wxGetApp().Library.EndTransaction();
 	return NULL;
 }
 

@@ -158,8 +158,8 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/D ID3LIB_LINKOPTION=1"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(VORBISDIR)\include;..\fmodapi\api\inc;..\wx2\wxWindows\lib\mswud;&quot;$(ID3LIBDIR)\include&quot;;$(OGGDIR)\include;..\wx2\wxWindows\include;$(SQLITEDIR);MMShellHook"
-				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;WINVER=0x400;_MT;_UNICODE"
+				AdditionalIncludeDirectories="&quot;$(VORBISDIR)\include&quot;;$(FMODDIR)\api\inc;&quot;$(WXDIR)\lib\vc_lib\mswd&quot;;&quot;$(ID3LIBDIR)\include&quot;;&quot;$(OGGDIR)\include&quot;;&quot;$(WXDIR)\include&quot;;&quot;$(SQLITEDIR)&quot;;MMShellHook"
+				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;WINVER=0x400;_MT;_UNICODE;wxUSE_UNICODE"
 				StringPooling="TRUE"
 				MinimalRebuild="TRUE"
 				ExceptionHandling="TRUE"
@@ -168,17 +168,17 @@
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="3"
 				PrecompiledHeaderThrough="wx/wxprec.h"
-				WarningLevel="3"
-				Detect64BitPortabilityProblems="TRUE"
+				WarningLevel="4"
+				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="3"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib zlibd.lib regexd.lib pngd.lib jpegd.lib tiffd.lib wxmswud.lib id3libd.lib fmodvc.lib sqlite.lib vorbisfile_static_d.lib ogg_static_d.lib vorbis_static_d.lib MMShellHook.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib id3libd.lib fmodvc.lib sqlite.lib vorbisfile_static_d.lib ogg_static_d.lib vorbis_static_d.lib MMShellHook.lib wxmsw25ud_core.lib wxbase25ud.lib wxbase25ud_net.lib wxregexud.lib wxmsw25ud_adv.lib wxzlibd.lib"
 				OutputFile="$(OutDir)/wxMusik.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="$(SQLITEDIR)\Debug;..\wx2\wxWindows\lib\;..\fmodapi\api\lib;$(VORBISDIR)\win32\Vorbis_Static_Debug;&quot;$(ID3LIBDIR)\libprj&quot;;$(VORBISDIR)\win32\VorbisFile_Static_Debug;$(VORBISDIR)\win32\VorbisEnc_Static_Debug;$(OGGDIR)\win32\Static_Debug;_Debug"
+				AdditionalLibraryDirectories="&quot;$(SQLITEDIR)\Debug&quot;;&quot;$(WXDIR)\lib\vc_lib&quot;;&quot;$(FMODDIR)\api\lib&quot;;&quot;$(VORBISDIR)\win32\Vorbis_Static_Debug&quot;;&quot;$(ID3LIBDIR)\libprj&quot;;&quot;$(VORBISDIR)\win32\VorbisFile_Static_Debug&quot;;&quot;$(VORBISDIR)\win32\VorbisEnc_Static_Debug&quot;;&quot;$(OGGDIR)\win32\Static_Debug&quot;;_Debug"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/Musik.pdb"
 				SubSystem="2"
@@ -221,12 +221,12 @@
 				GlobalOptimizations="TRUE"
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="TRUE"
-				FavorSizeOrSpeed="1"
+				FavorSizeOrSpeed="2"
 				OmitFramePointers="TRUE"
-				OptimizeForProcessor="3"
+				OptimizeForProcessor="0"
 				OptimizeForWindowsApplication="TRUE"
-				AdditionalIncludeDirectories="$(VORBISDIR)\include;..\fmodapi\api\inc;..\wx2\wxWindows\lib\mswu;&quot;$(ID3LIBDIR)\include&quot;;$(OGGDIR)\include;..\wx2\wxWindows\include;$(SQLITEDIR);MMShellHook"
-				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;WINVER=0x400;_MT;_UNICODE"
+				AdditionalIncludeDirectories="&quot;$(VORBISDIR)\include&quot;;&quot;$(FMODDIR)\api\inc&quot;;&quot;$(WXDIR)\lib\vc_lib\mswu&quot;;&quot;$(ID3LIBDIR)\include&quot;;&quot;$(OGGDIR)\include&quot;;&quot;$(WXDIR)\include&quot;;&quot;$(SQLITEDIR)&quot;;MMShellHook"
+				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;WINVER=0x400;_MT;_UNICODE;wxUSE_UNICODE"
 				StringPooling="TRUE"
 				ExceptionHandling="TRUE"
 				RuntimeLibrary="2"
@@ -235,17 +235,19 @@
 				UsePrecompiledHeader="3"
 				PrecompiledHeaderThrough="wx/wxprec.h"
 				WarningLevel="4"
-				Detect64BitPortabilityProblems="TRUE"
+				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="/NODEFAULTLIB:libcmt.lib"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib zlib.lib regex.lib png.lib jpeg.lib tiff.lib wxmswu.lib id3lib.lib fmodvc.lib sqlite.lib vorbisfile_static.lib ogg_static.lib vorbis_static.lib MMShellHook.lib"
+				AdditionalOptions="/NODEFAULTLIB:libcmt.lib
+/NODEFAULTLIB:msvcrtd.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib id3lib.lib fmodvc.lib sqlite.lib vorbisfile_static.lib ogg_static.lib vorbis_static.lib MMShellHook.lib wxmsw25u_core.lib wxbase25u.lib wxbase25u_net.lib wxregexu.lib wxmsw25u_adv.lib wxzlibd.lib"
+				ShowProgress="2"
 				OutputFile="$(OutDir)/wxMusik.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="$(SQLITEDIR)\Release;..\wx2\wxWindows\lib\;..\fmodapi\api\lib;$(VORBISDIR)\win32\Vorbis_Static_Release;&quot;$(ID3LIBDIR)\libprj&quot;;$(VORBISDIR)\win32\VorbisFile_Static_Release;$(VORBISDIR)\win32\VorbisEnc_Static_Release;$(OGGDIR)\win32\Static_Release;_Release"
+				AdditionalLibraryDirectories="&quot;$(SQLITEDIR)\Release&quot;;&quot;$(WXDIR)\lib\vc_lib&quot;;&quot;$(FMODDIR)\api\lib&quot;;&quot;$(VORBISDIR)\win32\Vorbis_Static_Release&quot;;&quot;$(ID3LIBDIR)\libprj&quot;;&quot;$(VORBISDIR)\win32\VorbisFile_Static_Release&quot;;&quot;$(VORBISDIR)\win32\VorbisEnc_Static_Release&quot;;&quot;$(OGGDIR)\win32\Static_Release&quot;;_Release"
 				IgnoreAllDefaultLibraries="FALSE"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
@@ -702,6 +704,9 @@
 			</Filter>
 		</Filter>
 		<File
+			RelativePath=".\changelog.txt">
+		</File>
+		<File
 			RelativePath=".\Musik.rc">
 			<FileConfiguration
 				Name="Debug|Win32">
@@ -727,6 +732,9 @@
 					Name="VCResourceCompilerTool"
 					AdditionalIncludeDirectories="..\wx2\wxwindows\include"/>
 			</FileConfiguration>
+		</File>
+		<File
+			RelativePath=".\todo.txt">
 		</File>
 	</Files>
 	<Globals>

@@ -62,7 +62,7 @@ void* MusikPlaylistRenameThread::Entry()
 		if ( TestDestroy() )
 			break;
 
-		g_Library.RenameFile( &m_Songs.Item( i ) );
+		wxGetApp().Library.RenameFile( m_Songs.Item( i ) );
 		Yield();
 	}
 	return NULL;
@@ -100,10 +100,10 @@ void* MusikPlaylistRetagThread::Entry()
     float fPos = 0;
 	int nLastProg = 0;
 	int nCurrProg = 0;
-//	wxString sMask	= g_Prefs.sAutoTag;
-	CMusikTagger tagger(m_sTagMask,g_Prefs.bAutoTagConvertUnderscoresToSpaces);
+//	wxString sMask	= wxGetApp().Prefs.sAutoTag;
+	CMusikTagger tagger(m_sTagMask,wxGetApp().Prefs.bAutoTagConvertUnderscoresToSpaces);
 //////////////////////////////////////////////////////////////////////////////
-	g_Library.BeginTransaction();
+	wxGetApp().Library.BeginTransaction();
 	for ( size_t i = 0; i < m_Songs.GetCount(); i++ )
 	{
 		//-----------------------//
@@ -121,10 +121,10 @@ void* MusikPlaylistRetagThread::Entry()
 		if ( TestDestroy() )
 			break;
 
-		g_Library.RetagFile(tagger, &m_Songs.Item( i ) );
+		wxGetApp().Library.RetagFile(tagger, &m_Songs.Item( i ) );
 		Yield();
 	}
-	g_Library.EndTransaction();
+	wxGetApp().Library.EndTransaction();
 	return NULL;
 }
 

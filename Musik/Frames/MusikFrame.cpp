@@ -19,6 +19,7 @@
 #include "../MusikGlobals.h"
 #include "../MusikUtils.h"
 #include "../MusikApp.h"
+#include "../Classes/NowPlayingCtrl.h"
 //--- frames ---	//
 #include "MusikLibraryFrame.h"
 #include "MusikPrefsFrame.h"
@@ -83,19 +84,19 @@ void MusikTaskBarIcon::OnMenuHide(wxCommandEvent& )
 }
 void MusikTaskBarIcon::OnMenuPlayPause(wxCommandEvent& )
 {
-	g_Player.PlayPause();
+	wxGetApp().Player.PlayPause();
 }
 void MusikTaskBarIcon::OnMenuPrev(wxCommandEvent& )
 {
-	g_Player.PrevSong();
+	wxGetApp().Player.PrevSong();
 }
 void MusikTaskBarIcon::OnMenuNext(wxCommandEvent& )
 {
-	g_Player.NextSong();
+	wxGetApp().Player.NextSong();
 }
 void MusikTaskBarIcon::OnMenuStop(wxCommandEvent& )
 {
-	g_Player.Stop();
+	wxGetApp().Player.Stop();
 }
 
 void MusikTaskBarIcon::OnMenuExit(wxCommandEvent& )
@@ -121,15 +122,15 @@ void MusikTaskBarIcon::OnRButtonUp(wxEvent&)
 		menu.Append(PU_HIDE, _("&Hide wxMusik"));
 	menu.AppendSeparator();
 
-	if ( g_Player.IsPlaying() && !g_Player.IsPaused() )
+	if ( wxGetApp().Player.IsPlaying() && !wxGetApp().Player.IsPaused() )
 		menu.Append(PU_PLAYPAUSE, _("&Pause"));
-	else if ( g_Player.IsPlaying() && g_Player.IsPaused() )
+	else if ( wxGetApp().Player.IsPlaying() && wxGetApp().Player.IsPaused() )
 		menu.Append(PU_PLAYPAUSE, _("&Resume"));
-	else if ( !g_Player.IsPlaying() )
+	else if ( !wxGetApp().Player.IsPlaying() )
 		menu.Append(PU_PLAYPAUSE, _("&Play"));
 	menu.Append(PU_PREV, _("&Previous"));
 	menu.Append(PU_NEXT, _("&Next"));
-	if ( g_Player.IsPlaying() )
+	if ( wxGetApp().Player.IsPlaying() )
 		menu.Append(PU_STOP, _("&Stop"));
 	menu.AppendSeparator();
 
@@ -197,7 +198,7 @@ MusikFrame::MusikFrame()
 	g_SourcesCtrl = new CSourcesBox( this );
 
 	g_SourcesCtrl->SetSashVisible(wxSASH_RIGHT, true);
-	g_SourcesCtrl->SetDefaultSize(wxSize(g_Prefs.nSourceBoxWidth,1000));
+	g_SourcesCtrl->SetDefaultSize(wxSize(wxGetApp().Prefs.nSourceBoxWidth,1000));
 	g_SourcesCtrl->SetAlignment(wxLAYOUT_LEFT);
 	g_SourcesCtrl->SetOrientation(wxLAYOUT_VERTICAL);
 	g_SourcesCtrl->SetSashBorder(wxSASH_RIGHT, true);
@@ -209,7 +210,7 @@ MusikFrame::MusikFrame()
 	//---------------------//
 	g_ActivityAreaCtrl = new CActivityAreaCtrl( this );
 	g_ActivityAreaCtrl->SetSashVisible(wxSASH_BOTTOM, true);
-	g_ActivityAreaCtrl->SetDefaultSize(wxSize(1000,g_Prefs.nActivityCtrlHeight));
+	g_ActivityAreaCtrl->SetDefaultSize(wxSize(1000,wxGetApp().Prefs.nActivityCtrlHeight));
 	g_ActivityAreaCtrl->SetAlignment(wxLAYOUT_TOP);
 	g_ActivityAreaCtrl->SetOrientation(wxLAYOUT_HORIZONTAL);
 	g_ActivityAreaCtrl->SetSashBorder(wxSASH_BOTTOM, true);
@@ -220,38 +221,38 @@ MusikFrame::MusikFrame()
 	//-------------------//
 	//--- now playing ---//
 	//-------------------//
-	g_NowPlayingCtrl = new CNowPlayingCtrl( m_pBottomPanel );
+	m_pNowPlayingCtrl = new CNowPlayingCtrl( m_pBottomPanel );
 
 	//---------------------------------//
 	//--- progress bar for whatever ---//
 	//---------------------------------//
-	g_Progress = new wxGauge( m_pBottomPanel, -1, 100, wxPoint( 0, 0 ), wxSize( 0, 18 ), wxGA_SMOOTH );
+	m_pProgressGauge = new wxGauge( m_pBottomPanel, -1, 100, wxPoint( 0, 0 ), wxSize( 0, 18 ), wxGA_SMOOTH );
 
 	//--------------------------//
 	//--- top / bottom sizer ---//
 	//--------------------------//
 //	vsTopBottom->Add( hsLeftRight,		1, wxEXPAND | wxALL				  );
-	vsTopBottom->Add( g_Progress,		0, wxEXPAND | wxLEFT | wxRIGHT, 1 );
-	vsTopBottom->Add( g_NowPlayingCtrl, 0, wxEXPAND | wxLEFT | wxRIGHT, 1 );
+	vsTopBottom->Add( m_pProgressGauge,		0, wxEXPAND | wxLEFT | wxRIGHT, 1 );
+	vsTopBottom->Add( m_pNowPlayingCtrl, 0, wxEXPAND | wxLEFT | wxRIGHT, 1 );
 
 	//--- hide progress bar for the time being, and set its abort var to false ---//
-	vsTopBottom->Show( g_Progress, false );
+	vsTopBottom->Show( m_pProgressGauge, false );
 
 	m_pBottomPanel->SetSizer(vsTopBottom);
 	//--- taylor ui ---//
 	ShowPlaylistInfo();
 	ShowSources();
-	SetStayOnTop(( bool )g_Prefs.bStayOnTop);
+	SetStayOnTop(( bool )wxGetApp().Prefs.bStayOnTop);
 
 	CreateMainMenu();
 
 	//--- restore placement or use defaults ---//
 	g_DisablePlacement = false;
 
-	g_Player.SetPlaymode(g_Prefs.ePlaymode);
+	wxGetApp().Player.SetPlaymode(wxGetApp().Prefs.ePlaymode);
 
 	//--- update database information, then set sound volume ---//
-	g_Player.SetVolume();
+	wxGetApp().Player.SetVolume();
 
 	SetActiveThread( NULL );
 
@@ -318,9 +319,9 @@ void MusikFrame::CreateMainMenu()
 }
 void MusikFrame::AutoUpdate	( const wxArrayString & Filenames ,bool bPlayFilesAfterAdding)
 {
-	g_MusikLibraryFrame = new MusikLibraryFrame( ( wxFrame* )this, Filenames,bPlayFilesAfterAdding );
+	MusikLibraryFrame *p= new MusikLibraryFrame( ( wxFrame* )this, Filenames,bPlayFilesAfterAdding );
 	this->Enable	( FALSE );
-	g_MusikLibraryFrame->Show	( TRUE	); 
+	p->Show	( TRUE	); 
 }
 
 
@@ -440,7 +441,7 @@ void MusikFrame::GetListCtrlFont()
 //--------------------------------------------//
 void MusikFrame::TogglePlaylistInfo()
 {
-	g_Prefs.bShowPLInfo = !g_Prefs.bShowPLInfo;
+	wxGetApp().Prefs.bShowPLInfo = !wxGetApp().Prefs.bShowPLInfo;
 	ShowPlaylistInfo();
 
 }
@@ -452,14 +453,14 @@ void MusikFrame::ShowPlaylistInfo()
 
 void MusikFrame::ShowSources()
 {
-	g_SourcesCtrl->Show(  ( bool )g_Prefs.bShowSources );
+	g_SourcesCtrl->Show(  ( bool )wxGetApp().Prefs.bShowSources );
 	wxLayoutAlgorithm layout;
     layout.LayoutWindow(this,g_PlaylistBox);
 }
 
 void MusikFrame::ToggleSources()
 {
-	g_Prefs.bShowSources = !g_Prefs.bShowSources;
+	wxGetApp().Prefs.bShowSources = !wxGetApp().Prefs.bShowSources;
 
 	ShowSources();
 }
@@ -490,15 +491,15 @@ void MusikFrame::ShowActivityArea( bool bShow )
 void MusikFrame::ToggleActivities()
 {
 	
-	g_Prefs.bShowActivities = !g_Prefs.bShowActivities;
+	wxGetApp().Prefs.bShowActivities = !wxGetApp().Prefs.bShowActivities;
 
-	ShowActivityArea( g_Prefs.bShowActivities );
+	ShowActivityArea( wxGetApp().Prefs.bShowActivities );
 }
 
 void MusikFrame::EnableProgress( bool enable )
 {
 
-	vsTopBottom->Show( g_Progress, enable );
+	vsTopBottom->Show( m_pProgressGauge, enable );
 	Enable( !enable );
 	m_pBottomPanel->Layout();
    	m_pBottomPanel->SetDefaultSize(vsTopBottom->GetMinSize());
@@ -536,23 +537,23 @@ void MusikFrame::SetTitle(const wxString& title)
 	{
 		if(message == WM_APPCOMMAND)
 		{
-			wxCommandEvent cev;
+			
 			switch( GET_APPCOMMAND_LPARAM( lParam ) )
 			{
 			case APPCOMMAND_MEDIA_NEXTTRACK:
-				if( g_Player.IsPlaying() )
-					g_NowPlayingCtrl->PlayerNext( cev );
+				if( wxGetApp().Player.IsPlaying() )
+					wxGetApp().Player.NextSong();
 				return 1;
 			case APPCOMMAND_MEDIA_PREVIOUSTRACK:
-				if( g_Player.IsPlaying() )
-					g_NowPlayingCtrl->PlayerPrev( cev );
+				if( wxGetApp().Player.IsPlaying() )
+					wxGetApp().Player.PrevSong();
 				return 1;
 			case APPCOMMAND_MEDIA_STOP:
-				if( g_Player.IsPlaying() )
-					g_NowPlayingCtrl->PlayerStop( cev );
+				if( wxGetApp().Player.IsPlaying() )
+					wxGetApp().Player.Stop();;
 				return 1;
 			case APPCOMMAND_MEDIA_PLAY_PAUSE:
-					g_NowPlayingCtrl->PlayerPlayPause( cev );
+					wxGetApp().Player.PlayPause();
 				return 1;		
 			}
 		}

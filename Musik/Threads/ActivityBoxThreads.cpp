@@ -28,7 +28,7 @@ MusikActivityRenameThread::MusikActivityRenameThread( CActivityBox* parent_box, 
 	m_Mode		= mode;
 	m_Type		= m_ParentBox->GetActivityType();
 	m_TypeStr	= m_ParentBox->GetActivityTypeStr();
-	m_Replace	= newvalue;
+	m_Replace	= ConvToUTF8(newvalue);
 }
 
 void* MusikActivityRenameThread::Entry()
@@ -79,35 +79,35 @@ void* MusikActivityRenameThread::Entry()
 			switch( m_Type )
 			{
 			case MUSIK_LBTYPE_ARTISTS:
-				m_Songs.Item( i ).Artist = m_Replace;
+				m_Songs.Item( i ).MetaData.Artist = m_Replace;
 				break;
 			case MUSIK_LBTYPE_ALBUMS:
-				m_Songs.Item( i ).Album	= m_Replace;
+				m_Songs.Item( i ).MetaData.Album	= m_Replace;
 				break;
 			case MUSIK_LBTYPE_GENRES:
-				m_Songs.Item( i ).Genre = m_Replace;
+				m_Songs.Item( i ).MetaData.Genre = m_Replace;
 				break;
 			case MUSIK_LBTYPE_YEARS:
-				m_Songs.Item( i ).Year = m_Replace;
+				m_Songs.Item( i ).MetaData.Year = m_Replace;
 				break;
 			}
 
 			//--------------------------//
 			//--- write tags to file ---//
 			//--------------------------//
-			if ( g_Prefs.bActBoxWrite == 1 )
-				g_Library.WriteTag( m_Songs.Item( i ), (bool)g_Prefs.bActBoxClear );
+			if ( wxGetApp().Prefs.bActBoxWrite == 1 )
+				wxGetApp().Library.WriteTag( m_Songs.Item( i ), (bool)wxGetApp().Prefs.bActBoxClear );
 
 			//-------------------//
 			//--- rename file ---//
 			//-------------------//
-			if ( g_Prefs.bActBoxRename == 1 )
-				g_Library.RenameFile( &m_Songs.Item( i ) );
+			if ( wxGetApp().Prefs.bActBoxRename == 1 )
+				wxGetApp().Library.RenameFile( m_Songs.Item( i ) );
 
 			//----------------------------------//
 			//--- if not writing, flag dirty ---//
 			//----------------------------------//
-			g_Library.UpdateItem(m_Songs.Item( i ), g_Prefs.bActBoxWrite == 0 );
+			wxGetApp().Library.UpdateItem(m_Songs.Item( i ), wxGetApp().Prefs.bActBoxWrite == 0 );
 
 		}
 	}

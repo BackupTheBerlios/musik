@@ -20,13 +20,153 @@
 #endif
 #include <wx/regex.h>
 #include <wx/listctrl.h>
+#include "MusikDefines.h"
 
+class CSongMetaData
+{
+public:
+	class StringData
+	{
+	public:
+		StringData()
+		{
+			m_szData = NULL;
+			m_bOwner = false;
+		}
+		StringData(const char* sz , size_t len = (size_t) -1)
+		{
+			Assign(sz,len);
+		}
 
+		void Assign(const char* sz , size_t len = (size_t) -1)
+		{
+			m_szData = _StrDup(sz,len);
+			m_bOwner = true;
+		}
+		off_t Find(int ch)   const
+		{
+			if(m_szData)
+			{
+				char *pos = strchr(m_szData,ch);
+				return pos - m_szData;
+			}
+			return -1;
+		}
+		const char * Substr(off_t start)
+		{
+			return IsEmpty() ? "" : m_szData + start;
+		}
+		void Attach(const char* sz ,bool bOwner = true)
+		{
+			Empty();
+			m_bOwner = bOwner;
+			m_szData =  sz ;
+		}
+		StringData(const StringData & rhs)
+		{
+			m_bOwner = true;
+			m_szData =  _StrDup(rhs.m_szData);
+		}
+		StringData & operator=(const StringData & rhs)
+		{
+			if(this != &rhs)
+			{
+				Empty();
+				m_bOwner = true;
+				m_szData =  _StrDup(rhs.m_szData);
+			}
+			return *this;
+		}
+		StringData & operator=(const char * sz)
+		{
+			Empty();
+			m_bOwner = true;
+			m_szData =  _StrDup(sz);
+			return *this;
+		}
+
+		operator const char *()	const 
+		{
+			return IsEmpty() ? "" : m_szData;
+		}
+		bool IsEmpty()	const 
+		{
+			return (m_szData == NULL) || (Length() == 0);
+		}
+		void Empty()
+		{
+			if(m_szData && m_bOwner)
+				delete [] (m_szData);
+			m_szData = NULL;
+		}
+		const char * Detach()
+		{
+			const char * tmp = m_szData;
+			m_szData = NULL;
+			return tmp;
+		}
+		size_t Length()	const
+		{
+			return (m_szData == NULL) ? 0 : strlen(m_szData);
+		}
+		~StringData()
+		{
+			Empty();
+		}
+	protected:
+		const char * _StrDup(const char * sz, size_t len=(size_t) -1)
+		{
+			if(!sz)
+				return NULL;
+			len = (len == (size_t) -1) ? strlen(sz) : len;
+			char *buf = new char[len + 1];
+			if(buf)
+			{
+				strncpy(buf,sz,len);
+				buf[len] = 0;
+			}
+			return buf;
+		}
+	private:
+		const char *m_szData;
+		bool m_bOwner;
+	};
+public:
+	CSongMetaData()
+	{
+		eFormat = MUSIK_FORMAT_INVALID;
+		bVBR = false;
+		nDuration_ms = nBitrate  = nFilesize   =	nTracknum = 0;
+	}
+
+	wxFileName			Filename;
+	StringData			Title;
+	StringData			Artist;
+	StringData			Album;
+	StringData			Genre;
+	StringData			Year;
+	StringData			Notes;
+	int				    nTracknum;
+	EMUSIK_FORMAT_TYPE  eFormat;
+	int					nDuration_ms;
+	bool				bVBR;
+	int					nBitrate;
+	int					nFilesize;
+
+};
+
+inline wxString FilenameAsUrl(const wxFileName &fn)
+{
+	wxString url = fn.GetFullPath(wxPATH_NATIVE);
+  	url.Replace(wxT("\\"), wxT("/"));
+	url.Replace(wxT("//http/"),wxT("http://"));
+	return url;
+}
 //------------------------------------------------------------------//
-//--- misc utility functions, see implementation for description ---//
+//--- misc utility functions, see implementatio		n for description ---//
 //------------------------------------------------------------------//
-wxString		GetGenre			(  const wxString & sGenre );
-int				GetGenreID			(  const wxString & sGenre );
+// wxString		GetGenre			(  const wxString & sGenre );
+int				GetGenreID			(  const CSongMetaData::StringData & sGenre  );
 
 void			DelimitStr			( wxString sStr, wxString sDel, wxArrayString &aReturn, bool bRemoveDelimiter = true );
 
@@ -62,19 +202,11 @@ inline wxString ConvA2W( const char *pChar )
 	wxString s(wxConvCurrent->cMB2WX( pChar ) );
 	return s;
 }
-inline wxCharBuffer ConvW2A( const wxString &s )
-{
-	return wxConvCurrent->cWX2MB( s );
-}
-inline wxCharBuffer ConvQueryToMB( const wxString &s )
+inline const wxCharBuffer ConvW2A( const wxString &s )
 {
 	return wxConvCurrent->cWX2MB( s );
 }
 
-inline wxCharBuffer ConvDBFieldToMB( const wxString &s )
-{
-	return wxConvCurrent->cWX2MB( s );
-}
 inline wxCharBuffer ConvFNToFieldMB( const wxString &s )
 {
 	return wxConvCurrent->cWX2MB( s );
@@ -83,18 +215,48 @@ inline wxString ConvFNToFieldWX( const char *pchar )
 {
 	return wxConvCurrent->cMB2WX( pchar );
 }
-inline wxString ConvDBFieldToWX( const char *pchar )
+
+inline const wxCharBuffer ConvToUTF8( const wxString &s )
 {
-	return wxConvCurrent->cMB2WX( pchar );
-}
-inline wxCharBuffer ConvToUTF8( const wxString &s )
-{
+#if wxUSE_UNICODE
+	return wxConvUTF8.cWC2MB(s);
+#else
 	return wxConvUTF8.cWC2WX(wxConvCurrent->cMB2WC(s));
+#endif
 }
-inline wxCharBuffer ConvFromUTF8( const char *s )
+inline const wxCharBuffer ConvFromISO8859_1ToUTF8( const char *s )
+{
+	return wxConvUTF8.cWC2MB(wxConvISO8859_1.cMB2WC(s));
+}
+
+
+#if wxUSE_UNICODE
+inline const wxWCharBuffer ConvFromUTF8( const char *s )
+{
+	return wxConvUTF8.cMB2WC(s);
+}
+#else
+inline const wxCharBuffer ConvFromUTF8( const char *s )
 {
 	return wxConvCurrent->cWC2WX(wxConvUTF8.cMB2WC(s));
 }
+#endif
+
+inline const wxCharBuffer ConvFromUTF8ToISO8859_1( const char *s )
+{
+#if wxUSE_UNICODE
+	return wxConvISO8859_1.cWX2MB(	ConvFromUTF8( s )  );
+#else
+	return wxConvISO8859_1.cWC2WX(wxConvUTF8.cMB2WC(s));
+#endif
+
+}
+inline const wxCharBuffer ConvQueryToMB( const wxString &s )
+{
+	return ConvToUTF8(s);
+}
+
+
 inline int wxStringToInt( const wxString &str )
 {
 	long lRet;
@@ -118,6 +280,12 @@ inline double StringToDouble( wxString str )
 	double ret;
 	str.ToDouble( &ret );
 	return ret;
+}
+inline void InternalErrorMessageBox( const wxString &sText)
+{
+	wxString sMessage = wxString::Format(wxT("An internal error has occured.\n%s,\n\nPlease contact the ") MUSIKAPPNAME wxT(" development team with this error."),sText);
+	wxMessageBox( sMessage,MUSIKAPPNAME_VERSION, wxOK|wxICON_ERROR );
+
 }
 
 double CharStringToDouble(const char *z);
@@ -158,6 +326,5 @@ public:
 	CMusikTagger(const wxString &sMask, bool bConvertUnderscoresToSpaces);
 	bool Retag(CMusikSong * Song) const;
 };
-
 
 #endif

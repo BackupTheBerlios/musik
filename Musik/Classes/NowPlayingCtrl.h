@@ -21,6 +21,7 @@
 #endif 
 #include "../Classes/MusikLibrary.h"
 
+
 enum EMUSIK_NOWPLAYINGCTRL_ID
 {
 	MUSIK_NOWPLAYINGCTRL_PLAYPAUSE = 0,
@@ -32,6 +33,8 @@ enum EMUSIK_NOWPLAYINGCTRL_ID
 	MUSIK_NOWPLAYINGCTRL_TIMEDISPLAY
 
 };
+
+class CTunage;
 
 //--- bitmap button and seek bar event handler ---//
 #include "BtnDown.h"
@@ -98,7 +101,7 @@ public:
 	//--- funcs ---//
 	void PlayBtnToPauseBtn();
 	void PauseBtnToPlayBtn();
-	void UpdateInfo( CMusikSong song );
+	void UpdateInfo( const CMusikSong &song );
 	void SetTime( wxString sTimeStr );
 	void ResetInfo();
 
@@ -109,7 +112,8 @@ private:
 	void KillTimer();
 	wxTimer *pSecTimer;
 
-	wxString m_sLastFile;
+	wxFileName m_LastFile;
+	CTunage* m_pTunage;
 };
 
 #endif

@@ -24,10 +24,12 @@
 
 #define MAX_BUF_LEN 1024
 
+class CMusikPlayer;
+
 class CMusikWebServer
 {
 public:
-	CMusikWebServer();
+	CMusikWebServer(CMusikPlayer * pPlayer);
 	~CMusikWebServer();
 
 public:
@@ -47,6 +49,8 @@ private:
 
 	wxSocketBase *pSocket;
 	wxSocketServer *pServer;
+
+	CMusikPlayer * m_pPlayer;
 };
 
 #endif

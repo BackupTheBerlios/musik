@@ -21,7 +21,7 @@ IMPLEMENT_APP( MusikApp )
 
 //--- related frames ---//
 #include "Frames/MusikFrame.h"
-#include "Frames/MusikLibraryFrame.h"
+
 
 //--- globals ---//
 #include "MusikGlobals.h"
@@ -77,7 +77,7 @@ bool MusikApp::OnInit()
 {
 	static const wxCmdLineEntryDesc cmdLineDesc[] =
 	{
-		{ wxCMD_LINE_PARAM,  NULL, NULL, "mp3/ogg file", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE | wxCMD_LINE_PARAM_OPTIONAL},
+		{ wxCMD_LINE_PARAM,  NULL, NULL, wxT("mp3/ogg file"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE | wxCMD_LINE_PARAM_OPTIONAL},
 		{ wxCMD_LINE_NONE }
 	};
 
@@ -106,7 +106,6 @@ bool MusikApp::OnInit()
 
 		return false;
 	}
-
 	//--- setup our home dir ---//
 	if ( !wxDirExists( MUSIK_HOME_DIR ) )
 		wxMkdir( MUSIK_HOME_DIR );
@@ -124,15 +123,15 @@ bool MusikApp::OnInit()
 		wxMkdir( MUSIK_PLAYLIST_DIR );
 
 	//--- load library and paths ---//
-	if(!g_Library.Load())
+	if(!wxGetApp().Library.Load())
 	{
 		wxMessageBox( _("Initialization of library failed."), MUSIKAPPNAME_VERSION, wxOK | wxICON_ERROR );
 		return FALSE;
 	}
 	g_Paths.Load();
-	g_Player.Init(arrParams.GetCount() > 0);
+	Player.Init(arrParams.GetCount() > 0);
 	//--- initialize fmod ---//
-	if ( g_Player.InitializeFMOD( FMOD_INIT_START ) != FMOD_INIT_SUCCESS )
+	if ( wxGetApp().Player.InitializeFMOD( FMOD_INIT_START ) != FMOD_INIT_SUCCESS )
 		wxMessageBox( _("Initialization of FMOD sound system failed."), MUSIKAPPNAME_VERSION, wxOK | wxICON_ERROR );
 
 
@@ -145,7 +144,7 @@ bool MusikApp::OnInit()
     MusikFrame *pMain = new MusikFrame();
 
 	//--- restore placement or use defaults ---//
-	if ( !SetFramePlacement( pMain, g_Prefs.sFramePlacement ) )
+	if ( !SetFramePlacement( pMain, wxGetApp().Prefs.sFramePlacement ) )
 	{
 		wxSize Size( 
 			wxSystemSettings::GetMetric( wxSYS_SCREEN_X ) * 75 / 100, 
@@ -159,17 +158,17 @@ bool MusikApp::OnInit()
 	SetTopWindow( pMain );
 
 	//--- start webserver if necessary ---//
-	if ( g_Prefs.bWebServerEnable )
-		g_WebServer.Start();
+	if ( Prefs.bWebServerEnable )
+		WebServer.Start();
 
 	//--- autostart stuff ---//
-	if ( g_Prefs.bFirstRun )
+	if ( Prefs.bFirstRun )
 	{
 		wxCommandEvent dummy_ev;
 		pMain->OnSetupPaths(dummy_ev);
 	}
-	else if (g_Prefs.bAutoAdd || arrParams.GetCount() > 0)
-	{	if(g_Prefs.bAutoAdd)
+	else if (Prefs.bAutoAdd || arrParams.GetCount() > 0)
+	{	if(Prefs.bAutoAdd)
 			pMain->AutoUpdate();
 		if(arrParams.GetCount() > 0)
 			pMain->AutoUpdate(arrParams,true);
@@ -184,10 +183,16 @@ bool MusikApp::OnInit()
 	g_FaderThread->Create();
 	g_FaderThread->Run();
 
-	m_Server.Create(MUSIK_APP_SERVICE);
+	m_pServer = new MusikAppServer;
+	if(m_pServer)
+		m_pServer->Create(MUSIK_APP_SERVICE);
 	return TRUE;
 }
-
+int MusikApp::OnExit()
+{
+	delete m_pServer;
+	return 0;
+}
 void MusikApp::CheckVersion()
 {
 	wxString sVersion;
@@ -212,7 +217,7 @@ void MusikApp::CheckVersion()
 		//-------------------------------------------------//
 		if ( wxFileExists( MUSIK_SOURCES_FILENAME ) || wxFileExists( MUSIK_DB_FILENAME ) )
 		{
-			wxMessageBox( wxT( MUSIKAPPNAME" has detected version 0.1.2 or earlier was previously installed.\n\nDue to the changes from 0.1.2 to the current version, your Sources list and Library must be reset. We apologize for any inconvenience this may cause." ), MUSIKAPPNAME_VERSION, wxICON_INFORMATION );
+			wxMessageBox(wxString(MUSIKAPPNAME) + _(" has detected version 0.1.2 or earlier was previously installed.\n\nDue to the changes from 0.1.2 to the current version, your Sources list and Library must be reset. We apologize for any inconvenience this may cause.") , MUSIKAPPNAME_VERSION, wxICON_INFORMATION );
 	
 			if ( wxFileExists( MUSIK_SOURCES_FILENAME ) )
 				wxRemoveFile( MUSIK_SOURCES_FILENAME );
@@ -260,7 +265,7 @@ void MusikApp::WriteVersion()
   	}
 }
 
-wxConnectionBase * MusikAppServer::OnAcceptConnection(const wxString& topic)
+wxConnectionBase * MusikAppServer::OnAcceptConnection(const wxString& WXUNUSED(topic))
 {
 
 	return new MusikAppConnection;

@@ -23,6 +23,12 @@
 #include <wx/dir.h>
 #include <wx/filename.h>
 
+enum MUSIK_LIBRARY_THREAD_COMMAND
+{
+	SET_CURRENT = 1,
+	SET_TOTAL,
+	SET_NEW
+};
 class wxMusicTraverser;
 //---------------------------------------------//
 //--- NOTE: use g_MusikLibraryFrame as the	---//
@@ -32,10 +38,11 @@ class wxMusicTraverser;
 class MusikScanNewThread : public wxThread
 {
 public:
-	MusikScanNewThread(wxArrayString & m_refFiles);
+	MusikScanNewThread(wxEvtHandler *pParent,wxArrayString & m_refFiles);
 
 	virtual void *Entry();
 	virtual void OnExit();
+	wxEvtHandler *Parent() {return m_pParent;}
 protected:
 
 	void GetMusicDirs (  const wxArrayString & aDirs, wxArrayString & aFiles );
@@ -43,14 +50,14 @@ protected:
 
 
 	wxArrayString & m_refFiles;
-	
+	wxEvtHandler *m_pParent;
 	friend class wxMusicTraverser;
 };
 
 class MusikUpdateLibThread : public MusikScanNewThread
 {
 public:
-	MusikUpdateLibThread( wxArrayString* del , wxArrayString & m_refFiles, bool bCompleteRebuild );
+	MusikUpdateLibThread(wxEvtHandler *pParent, wxArrayString* del , wxArrayString & m_refFiles, bool bCompleteRebuild );
 
 	virtual void *Entry();
 	virtual void OnExit();
@@ -66,11 +73,13 @@ private:
 class MusikPurgeLibThread : public wxThread
 {
 public:
-	MusikPurgeLibThread();
+	MusikPurgeLibThread(wxEvtHandler *pParent);
 
 	virtual void *Entry();
 	virtual void OnExit();
-
+	wxEvtHandler *Parent() {return m_pParent;}
+protected:
+   wxEvtHandler *m_pParent;
 };
 
 #endif

@@ -80,22 +80,22 @@ END_EVENT_TABLE()
 void MusikFrame::OnMove ( wxMoveEvent& WXUNUSED(event) )	
 { 
 	if ( !g_DisablePlacement )
-		g_Prefs.sFramePlacement = GetFramePlacement( this );
+		wxGetApp().Prefs.sFramePlacement = GetFramePlacement( this );
 }
 
 void MusikFrame::OnMaximize( wxMaximizeEvent& event )
 {
 	if ( !g_DisablePlacement )
-		g_Prefs.sFramePlacement = GetFramePlacement( this );
+		wxGetApp().Prefs.sFramePlacement = GetFramePlacement( this );
 	event.Skip();
 }
 
 void MusikFrame::OnIconize( wxIconizeEvent& event )
 {
 	if ( !g_DisablePlacement )
-		g_Prefs.sFramePlacement = GetFramePlacement( this );
+		wxGetApp().Prefs.sFramePlacement = GetFramePlacement( this );
 #ifdef wxHAS_TASK_BAR_ICON
-	if( m_pTaskBarIcon && g_Prefs.bHideOnMinimize )
+	if( m_pTaskBarIcon && wxGetApp().Prefs.bHideOnMinimize )
 	{
 		if(event.Iconized())
 		{
@@ -121,12 +121,12 @@ void MusikFrame::OnSize	( wxSizeEvent& WXUNUSED(event) )
 
 	m_pBottomPanel->Layout();
 
-	g_NowPlayingCtrl->Refresh();
-	g_NowPlayingCtrl->Update();
+	m_pNowPlayingCtrl->Refresh();
+	m_pNowPlayingCtrl->Update();
 
 	
 	if ( !g_DisablePlacement )
-		g_Prefs.sFramePlacement = GetFramePlacement( this );
+		wxGetApp().Prefs.sFramePlacement = GetFramePlacement( this );
 }
 
 void MusikFrame::OnClose( wxCloseEvent& WXUNUSED(event) )
@@ -137,9 +137,9 @@ void MusikFrame::OnClose( wxCloseEvent& WXUNUSED(event) )
 	//--- event will be posted back when done.		---//
     //-------------------------------------------------//
 	Show( false );
-	if ( g_Prefs.bGlobalFadeEnable && g_Prefs.bFadeExitEnable && g_Player.IsPlaying() && !g_Player.IsPaused() )
+	if ( wxGetApp().Prefs.bGlobalFadeEnable && wxGetApp().Prefs.bFadeExitEnable && wxGetApp().Player.IsPlaying() && !wxGetApp().Player.IsPaused() )
 	{
-		g_Player.Stop( true, true );
+		wxGetApp().Player.Stop( true, true );
 		return;
 	}
 
@@ -160,8 +160,8 @@ void MusikFrame::OnClose( wxCloseEvent& WXUNUSED(event) )
     //-------------------------------------------------//
     //--- stop webserver if necessary				---//
     //-------------------------------------------------//
-    if ( g_Prefs.bWebServerEnable )
-		g_WebServer.Stop();
+    if ( wxGetApp().Prefs.bWebServerEnable )
+		wxGetApp().WebServer.Stop();
 
     //-------------------------------------------------//
     //--- clear up the image lists					---//
@@ -176,15 +176,15 @@ void MusikFrame::OnClose( wxCloseEvent& WXUNUSED(event) )
 	g_FaderThread->Wait();
 	delete g_FaderThread;
 	g_FaderThread = NULL;
-	g_Player.Shutdown();
+	wxGetApp().Player.Shutdown();
 	Destroy();
 }
 
 void MusikFrame::OnSetupPaths( wxCommandEvent& WXUNUSED(event) )
 {
-	g_MusikLibraryFrame = new MusikLibraryFrame( ( wxFrame* )this, wxPoint( 0, 0 ), wxSize( 480, 240 ) );
+	MusikLibraryFrame* pMusikLibraryFrame = new MusikLibraryFrame( ( wxFrame* )this, wxPoint( 0, 0 ), wxSize( 480, 240 ) );
 	this->Enable( FALSE );	
-	g_MusikLibraryFrame->Show();
+	pMusikLibraryFrame->Show();
 }
 
 void MusikFrame::OnPreferences( wxCommandEvent &WXUNUSED(event) )
@@ -214,13 +214,13 @@ void MusikFrame::OnFX( wxCommandEvent &WXUNUSED(event) )
 void MusikFrame::OnStayOnTop( wxCommandEvent &WXUNUSED(event) )	
 { 
 	#ifdef __WXMSW__
-		g_Prefs.bStayOnTop = !g_Prefs.bStayOnTop;
-		SetStayOnTop(g_Prefs.bStayOnTop);
+		wxGetApp().Prefs.bStayOnTop = !wxGetApp().Prefs.bStayOnTop;
+		SetStayOnTop(wxGetApp().Prefs.bStayOnTop);
 	#endif
 }
 void MusikFrame::OnUpdateUIStayOnTop( wxUpdateUIEvent& event)
 {
-	event.Check(g_Prefs.bStayOnTop);
+	event.Check(wxGetApp().Prefs.bStayOnTop);
 }
 void MusikFrame::OnPlaylistInfoState( wxCommandEvent& WXUNUSED(event) )	
 { 
@@ -228,7 +228,7 @@ void MusikFrame::OnPlaylistInfoState( wxCommandEvent& WXUNUSED(event) )
 }
 void MusikFrame::OnUpdateUIPlaylistInfoState( wxUpdateUIEvent& event)
 {
-	event.Check(g_Prefs.bShowPLInfo);
+	event.Check(wxGetApp().Prefs.bShowPLInfo);
 }
 
 void MusikFrame::OnSourcesState( wxCommandEvent& WXUNUSED(event) )
@@ -237,7 +237,7 @@ void MusikFrame::OnSourcesState( wxCommandEvent& WXUNUSED(event) )
 }
 void MusikFrame::OnUpdateUISourcesState( wxUpdateUIEvent& event)
 {
-	event.Check( g_Prefs.bShowSources );
+	event.Check( wxGetApp().Prefs.bShowSources );
 }
 
 void MusikFrame::OnActivitiesState( wxCommandEvent& WXUNUSED(event) )
@@ -246,7 +246,7 @@ void MusikFrame::OnActivitiesState( wxCommandEvent& WXUNUSED(event) )
 }
 void MusikFrame::OnUpdateUIActivitiesState( wxUpdateUIEvent& event)
 {
-	event.Check(g_Prefs.bShowActivities);
+	event.Check(wxGetApp().Prefs.bShowActivities);
 }
 
 void MusikFrame::OnSimpleQueryDlg( wxCommandEvent& WXUNUSED(event) )
@@ -277,7 +277,7 @@ void MusikFrame::OnWriteTags( wxCommandEvent& WXUNUSED(event) )
 
 void MusikFrame::OnWriteTagsClearDirty( wxCommandEvent& WXUNUSED(event) )
 {
-	int nCleared = g_Library.ClearDirtyTags();
+	int nCleared = wxGetApp().Library.ClearDirtyTags();
 	if ( !nCleared )
 		wxMessageBox( _( "There are no pending tags to finalize." ), MUSIKAPPNAME_VERSION, wxICON_INFORMATION );
 	else
@@ -315,7 +315,7 @@ void MusikFrame::WriteTags()
 			pWriteDirtyThread->Run();
         }
 	else
-		wxMessageBox( _( "An internal error has occured.\nPrevious thread not terminated correctly.\n\nPlease contact the "MUSIKAPPNAME" development team with this error." ), MUSIKAPPNAME_VERSION, wxICON_STOP );
+		InternalErrorMessageBox(wxT("Previous thread not terminated correctly."));
 }
 
 //------------------------//
@@ -329,7 +329,7 @@ void MusikFrame::LibraryCustomQuery()
 	{
 		m_customQuery = sQuery;
 
-		g_Library.QuerySongsWhere( m_customQuery, g_Playlist );
+		wxGetApp().Library.QuerySongsWhere( m_customQuery, g_Playlist );
 		g_PlaylistBox->Update( );
 		g_PlaylistChanged = true;
 	}
@@ -383,7 +383,7 @@ void MusikFrame::LibrarySimpleQuery( wxString sQueryVal )
 
 	}
 
-	g_Library.QuerySongsWhere( sQuery, g_Playlist ,true);  // true means query sorted
+	wxGetApp().Library.QuerySongsWhere( sQuery, g_Playlist ,true);  // true means query sorted
 	g_PlaylistBox->Update( );
 	g_PlaylistChanged = true;
 }
@@ -393,7 +393,7 @@ void MusikFrame::LibrarySimpleQuery( wxString sQueryVal )
 //------------------------//
 void MusikFrame::OnServerEvent(wxSocketEvent& event)
 {
-	if ( !g_WebServer.IsRunning() )
+	if ( !wxGetApp().WebServer.IsRunning() )
 		return;
 
 	//------------------------------------------------------//
@@ -402,7 +402,7 @@ void MusikFrame::OnServerEvent(wxSocketEvent& event)
 	switch( event.GetSocketEvent() )
 	{
 		case wxSOCKET_CONNECTION:
-			g_WebServer.Listen();
+			wxGetApp().WebServer.Listen();
 			break;
 		
 		case wxSOCKET_INPUT:
@@ -444,7 +444,7 @@ void MusikFrame::OnUpdateProgress( wxCommandEvent& WXUNUSED(event) )
 {
 	if ( GetActiveThread() != NULL )
 	{
-		g_Progress->SetValue( GetProgress() );
+		m_pProgressGauge->SetValue( GetProgress() );
 	}
 }
 
@@ -452,7 +452,7 @@ void MusikFrame::OnEndProgress( wxCommandEvent& WXUNUSED(event) )
 {
 	EnableProgress( false );
 
-	g_Progress->SetValue( 0 );
+	m_pProgressGauge->SetValue( 0 );
 	
 	SetProgress	( 0 );
 	SetProgressType	( 0 );

@@ -82,16 +82,11 @@ public:
 
 	size_t  GetProgress			()	{ return m_Progress;		}
 	size_t  GetProgressType		()	{ return m_ProgressType;	}
-	size_t	GetScanCount		()	{ return m_ScanCount;		}
 	
-	size_t	GetCurrent			()	{ return m_Current;			}
 	size_t	GetTotal			()	{ return m_Total;			}
 
-	void SetCurrent				( size_t n )	{ m_Current = n;	}
 	void SetTotal				( size_t n )	{ m_Total = n;		}
-	void SetListItem			( size_t n )	{ m_ListItem = n;	}
 	void SetNew					( size_t n )	{ m_New = n;		}
-	void SetScanCount			( size_t n )	{ m_ScanCount = n;	}
 
 	wxListCtrl		*lcPaths;
 	wxGauge			*gProgress;
@@ -116,7 +111,7 @@ public:
 
 	DECLARE_EVENT_TABLE()
 private:
-
+	wxStopWatch m_StopWatch;
 	//--- variables the threads use to talk to the main ui ---//
 	int m_Progress;
 	int m_ProgressType;
@@ -124,11 +119,10 @@ private:
 	CThreadController m_ActiveThreadController;
 
 	wxArrayString m_arrScannedFiles;
-	size_t m_ListItem;
 	size_t m_Total;
 	size_t m_New;
 	size_t m_ScanCount;
-	size_t m_Current;
+	
 
 	bool m_FirstStart;
 	bool m_AutoStart;

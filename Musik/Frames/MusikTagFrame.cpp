@@ -49,7 +49,7 @@ BEGIN_EVENT_TABLE( MusikTagFrame, wxFrame )
 	EVT_MENU			( MUSIK_TAG_THREAD_PROG,	MusikTagFrame::OnTagThreadProg			)
 END_EVENT_TABLE()
 
-MusikTagFrame::MusikTagFrame( wxFrame* pParent, CPlaylistCtrl * pPlaylistctrl, int nCurFrame, int nEditType, int n )
+MusikTagFrame::MusikTagFrame( wxFrame* pParent, CPlaylistCtrl * pPlaylistctrl, int nCurFrame)
 	: wxFrame ( pParent, -1, wxT(""), wxPoint( 0, 0 ), wxSize( 420, 230 ), wxCAPTION | wxTAB_TRAVERSAL | wxFRAME_FLOAT_ON_PARENT | wxFRAME_NO_TASKBAR )
 	, m_Songs(*pPlaylistctrl->GetPlaylist())
 {
@@ -75,8 +75,18 @@ MusikTagFrame::MusikTagFrame( wxFrame* pParent, CPlaylistCtrl * pPlaylistctrl, i
 	m_WriteTag	= false;
 	m_Close		= false;
 	nFrame		= nCurFrame;
-	nIndex		= 0;
-	m_EditType	= nEditType;
+	
+	
+	//--- if there is only 1 song selected, setup for single edit mode ---//
+	if ( m_arrSongsSelected.GetCount() <= 1 )
+	{
+		m_EditType = MUSIK_TAG_SINGLE;
+	}
+	//--- more than 1 song, setup for batch edit mode ---//
+	else 
+	{
+		m_EditType = MUSIK_TAG_MULTIPLE;
+	}
 
 	//-----------------//
 	//--- set title ---//
@@ -242,13 +252,13 @@ MusikTagFrame::MusikTagFrame( wxFrame* pParent, CPlaylistCtrl * pPlaylistctrl, i
 	//-------------------//	
 	// get genre from db
 	wxArrayString arrGenre;
-	g_Library.GetAllGenres(arrGenre);
+	wxGetApp().Library.GetAllGenres(arrGenre);
 
 	// add standard id3v1 genres to array
 	for ( int i = 0; i < ID3_NR_OF_V1_GENRES; i++ )
 		arrGenre.Add(ConvA2W( ID3_v1_genre_description[i] )	);
 	arrGenre.Sort();
-	for ( int i = 0; i < arrGenre.GetCount(); i++ )	
+	for ( size_t i = 0; i < arrGenre.GetCount(); i++ )	
 	{
 		if( i > 0 && arrGenre[i] == arrGenre[i-1])
 			continue; // skip double entrys
@@ -276,9 +286,9 @@ bool MusikTagFrame::Show( bool show )
 			hsNav->Show( btnNext, false );
 		}	
 
-		chkWriteTag->SetValue	( g_Prefs.bTagDlgWrite	);
-		chkClear->SetValue		( g_Prefs.bTagDlgClear	);
-		chkRename->SetValue		( g_Prefs.bTagDlgRename	);
+		chkWriteTag->SetValue	( wxGetApp().Prefs.bTagDlgWrite	);
+		chkClear->SetValue		( wxGetApp().Prefs.bTagDlgClear	);
+		chkRename->SetValue		( wxGetApp().Prefs.bTagDlgRename	);
 
 		SetChecks( m_EditType );
 		PopulateTagDlg();
@@ -330,14 +340,14 @@ void MusikTagFrame::SetChecks( const int i )
 void MusikTagFrame::PopulateTagDlg()
 {
 	//--- filename ---//
-	tcFilename->SetValue( m_Songs.Item( nIndex ).Filename );
+	tcFilename->SetValue( m_Songs.Item( nIndex ).MetaData.Filename.GetFullPath() );
 
 	//--- title ---//
-	tcTitle->SetValue( m_Songs.Item( nIndex ).Title	);	
+	tcTitle->SetValue(ConvFromUTF8( m_Songs.Item( nIndex ).MetaData.Title	));	
 
 	//--- track number ---//
 	wxString sTrackNum;
-	int nTrackNum = m_Songs.Item( nIndex ).TrackNum;
+	int nTrackNum = m_Songs.Item( nIndex ).MetaData.nTracknum;
 	if( nTrackNum < 1 )
 		sTrackNum = wxT("0");
 	else
@@ -345,19 +355,14 @@ void MusikTagFrame::PopulateTagDlg()
 	tcTrackNum->SetValue	( sTrackNum		);
 
 	//--- artist ---//
-	tcArtist->SetValue( m_Songs.Item( nIndex ).Artist );
+	tcArtist->SetValue(ConvFromUTF8( m_Songs.Item( nIndex ).MetaData.Artist ));
 
 	//--- album ---//
-	tcAlbum->SetValue( m_Songs.Item( nIndex ).Album	);
-
+	tcAlbum->SetValue(ConvFromUTF8( m_Songs.Item( nIndex ).MetaData.Album	));
 	//--- genre ---//
-	wxString sGenre = m_Songs.Item( nIndex ).Genre;
-	cmbGenre->SetValue( sGenre );
+	cmbGenre->SetValue( ConvFromUTF8( m_Songs.Item( nIndex ).MetaData.Genre ) );
     //--- year ---//
-	if( m_Songs.Item( nIndex ).Year.IsEmpty() )
-		tcYear->SetValue( wxT("") );
-	else
-		tcYear->SetValue( m_Songs.Item( nIndex ).Year );
+	tcYear->SetValue(ConvFromUTF8( m_Songs.Item( nIndex ).MetaData.Year ));
 
 	//--- if we are at beginning, disable back, enable forward ---//
 	if( nIndex == 0 )
@@ -462,113 +467,71 @@ void MusikTagFrame::Prev()
 	--nIndex;
 	PopulateTagDlg();
 }
-
 void MusikTagFrame::SaveCurSong()
 {
+	SaveSong(nIndex);
+}
+void MusikTagFrame::SaveSong(int n)
+{
 	//--- update title ---//
-	if ( tcTitle->IsEnabled() && ( tcTitle->GetValue() != m_Songs.Item( nIndex ).Title ) )
+	if ( tcTitle->IsEnabled() && ( tcTitle->GetValue() != ConvFromUTF8( m_Songs.Item( n ).MetaData.Title )) )
 	{
-		m_Songs.Item( nIndex ).Title = tcTitle->GetValue();
-		m_Songs.Item( nIndex ).Check1 = 1;
+		m_Songs.Item( n ).MetaData.Title = ConvToUTF8( tcTitle->GetValue() );
+		m_Songs.Item( n ).Check1 = 1;
 	}
 	//--- update track number ---//
 	long nTrackNum;
 	tcTrackNum->GetValue().ToLong( &nTrackNum );
-	if ( tcTrackNum->IsEnabled() && nTrackNum != m_Songs.Item( nIndex ).TrackNum )
+	if ( tcTrackNum->IsEnabled() && nTrackNum != m_Songs.Item( n ).MetaData.nTracknum )
 	{
-		m_Songs.Item( nIndex ).TrackNum = nTrackNum;
-		m_Songs.Item( nIndex ).Check1 = 1;
+		m_Songs.Item( n ).MetaData.nTracknum = nTrackNum;
+		m_Songs.Item( n ).Check1 = 1;
 	}
 	//--- artist ---//
-	if ( tcArtist->IsEnabled() && tcArtist->GetValue() != m_Songs.Item( nIndex ).Artist )
+	if ( tcArtist->IsEnabled() && tcArtist->GetValue() != ConvFromUTF8( m_Songs.Item( n ).MetaData.Artist ))
 	{
-		m_Songs.Item( nIndex ).Artist = tcArtist->GetValue();
-		m_Songs.Item( nIndex ).Check1 = 1;
+		m_Songs.Item( n ).MetaData.Artist = ConvToUTF8( tcArtist->GetValue() );
+		m_Songs.Item( n ).Check1 = 1;
 	}
 
 	//--- album ---//
-	if ( tcAlbum->IsEnabled() && tcAlbum->GetValue() != m_Songs.Item( nIndex ).Album )
+	if ( tcAlbum->IsEnabled() && tcAlbum->GetValue() != ConvFromUTF8( m_Songs.Item( n ).MetaData.Album ))
 	{
-		m_Songs.Item( nIndex ).Album = tcAlbum->GetValue();
-		m_Songs.Item( nIndex ).Check1 = 1;
+		m_Songs.Item( n ).MetaData.Album = ConvToUTF8(tcAlbum->GetValue());
+		m_Songs.Item( n ).Check1 = 1;
 	}
 	//--- genre ---//
-	if ( cmbGenre->IsEnabled() && cmbGenre->GetValue() != m_Songs.Item( nIndex ).Genre )
+	if ( cmbGenre->IsEnabled() && cmbGenre->GetValue() != ConvFromUTF8( m_Songs.Item( n ).MetaData.Genre ))
 	{
-		m_Songs.Item( nIndex ).Genre = cmbGenre->GetValue();
-		m_Songs.Item( nIndex ).Check1 = 1;
+		m_Songs.Item( n ).MetaData.Genre = ConvToUTF8(cmbGenre->GetValue());
+		m_Songs.Item( n ).Check1 = 1;
 	}
 
 	//--- year ---//
-	if ( tcYear->IsEnabled() && tcYear->GetValue() != m_Songs.Item( nIndex ).Year )
+	if ( tcYear->IsEnabled() && tcYear->GetValue() != ConvFromUTF8(m_Songs.Item( n ).MetaData.Year) )
 	{
-		m_Songs.Item( nIndex ).Year = tcYear->GetValue();
-		m_Songs.Item( nIndex ).Check1 = 1;
+		m_Songs.Item( n ).MetaData.Year = ConvW2A(tcYear->GetValue());
+		m_Songs.Item( n ).Check1 = 1;
 	}
-	m_bDirty = m_bDirty || m_Songs.Item( nIndex ).Check1 == 1;
+	m_bDirty = m_bDirty || m_Songs.Item( n ).Check1 == 1;  // if m_bDirty is once set TRUE, it stays TRUE
 }
 
 
 
 void MusikTagFrame::CheckChangesBatch()
 {
-
-	int nTrackNum = wxStringToInt( tcTitle->GetValue() );
 	for ( size_t j = 0; j < m_arrSongsSelected.GetCount(); j++ )
 	{
-		size_t i = m_arrSongsSelected[j];
-		//--- title ---//
-		if ( tcTitle->IsEnabled() && m_Songs.Item( i ).Title != tcTitle->GetValue() )
-		{
-			m_Songs.Item( i ).Title = tcTitle->GetValue();
-			m_Songs.Item( i ).Check1 = 1;
-		}
-
-		//--- track number ---//
-		if ( tcTrackNum->IsEnabled() && m_Songs.Item( i ).TrackNum != nTrackNum )
-		{
-			m_Songs.Item( i ).TrackNum = nTrackNum;
-			m_Songs.Item( i ).Check1 = 1;
-		}
-
-		//--- artist ---//
-		if ( tcArtist->IsEnabled() && m_Songs.Item( i ).Artist != tcArtist->GetValue() )
-		{
-			m_Songs.Item( i ).Artist = tcArtist->GetValue();
-			m_Songs.Item( i ).Check1 = 1;
-		}
-
-		//--- album ---//
-		if ( tcAlbum->IsEnabled() && m_Songs.Item( i ).Album != tcAlbum->GetValue() )
-		{
-			m_Songs.Item( i ).Album = tcAlbum->GetValue();
-			m_Songs.Item( i ).Check1 = 1;
-		}
-
-		//--- genre ---//
-		if ( cmbGenre->IsEnabled() && m_Songs.Item( i ).Genre != cmbGenre->GetValue() )
-		{
-			m_Songs.Item( i ).Genre = cmbGenre->GetValue();
-			m_Songs.Item( i ).Check1 = 1;
-		}
-
-		//--- year ---//
-		if ( tcYear->IsEnabled() && m_Songs.Item( i ).Year != tcYear->GetValue() )
-		{
-			m_Songs.Item( i ).Year = tcYear->GetValue();
-			m_Songs.Item( i ).Check1 = 1;
-		}
-		if(!m_bDirty && m_Songs.Item( i ).Check1)
-			m_bDirty =true; // set to dirty if one of the songs is dirty
+		SaveSong(m_arrSongsSelected[j]);
 	}
 }
 
 void MusikTagFrame::Apply( bool close )
 {
 	//--- save settings ---//
-	g_Prefs.bTagDlgWrite = chkWriteTag->IsChecked() ? 1:0;
-	g_Prefs.bTagDlgClear = chkClear->IsChecked() ? 1:0;
-	g_Prefs.bTagDlgRename = chkRename->IsChecked() ? 1:0;
+	wxGetApp().Prefs.bTagDlgWrite = chkWriteTag->IsChecked() ? 1:0;
+	wxGetApp().Prefs.bTagDlgClear = chkClear->IsChecked() ? 1:0;
+	wxGetApp().Prefs.bTagDlgRename = chkRename->IsChecked() ? 1:0;
 
 	//--- do we close upon thread completion? ---//
 	m_Close = close;
@@ -596,7 +559,7 @@ void MusikTagFrame::Apply( bool close )
 		}
 	}
 	else
-		wxMessageBox( _("An internal error has occured.\nPrevious thread not terminated correctly.\n\nPlease contact the "MUSIKAPPNAME" development team with this error."), MUSIKAPPNAME_VERSION, wxICON_STOP );
+		InternalErrorMessageBox(wxT("Previous thread not terminated correctly."));
 }
 void MusikTagFrame::Close()
 {

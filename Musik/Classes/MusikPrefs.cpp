@@ -30,8 +30,8 @@ void CMusikPrefs::LoadPrefs()
 	 
 	if(sDataPath.IsEmpty())
 		  sDataPath = MUSIK_HOME_DIR;
-	if(sDataPath.Right(1) != MUSIK_PATH_SEPARATOR)
-		   sDataPath += MUSIK_PATH_SEPARATOR;
+	if(sDataPath.Right(1) != wxFileName::GetPathSeparator())
+		   sDataPath += wxFileName::GetPathSeparator();
 	g_FX.LoadBands( this );
 }
 

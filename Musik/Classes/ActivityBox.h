@@ -32,16 +32,9 @@
 
 #include "MusikListCtrl.h"
 
-enum EMUSIK_ACTIVITY_TYPE
-{
-	MUSIK_LBTYPE_NULL = 0,
-	MUSIK_LBTYPE_ARTISTS,
-	MUSIK_LBTYPE_ALBUMS,
-	MUSIK_LBTYPE_GENRES,
-	MUSIK_LBTYPE_YEARS,
-};
 
-const size_t ActivityBoxesMaxCount = 4;
+
+
 //--- forward declarations ---//
 class CActivityBox;
 class MusikActivityRenameThread;

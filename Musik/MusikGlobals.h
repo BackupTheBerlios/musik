@@ -39,7 +39,7 @@
 #pragma warning(disable : 4800)		//--- 'int' forcing bool to true or false								---//
 #endif
 #include "MusikDefines.h"
-
+#include "Frames/MusikFrame.h"
 
 
 extern const int g_PlaylistColumnAlign[NPLAYLISTCOLUMNS];
@@ -55,47 +55,31 @@ extern const wxString g_PlaylistColumnDBNames[NPLAYLISTCOLUMNS];
 class	MusikFrame;
 extern	MusikFrame *g_MusikFrame;
 
-
-//--------------------------------//
-//--- pointer to library frame ---//
-//--------------------------------//
-#include "Frames/MusikLibraryFrame.h"
-class MusikLibraryFrame;
-extern MusikLibraryFrame *g_MusikLibraryFrame;
-
 //------------------------//
 //--- internal objects ---//
 //------------------------//
-#include "Classes/MusikLibrary.h"
-#include "Classes/MusikPlayer.h"
-#include "Classes/MusikPrefs.h"
-#include "Classes/WebServer.h"
 #include "Threads/MusikThreads.h"
 #include <wx/image.h>
 #include <wx/imaglist.h>
 #include "Classes/MusikFX.h"
-#include "Classes/Tunage.h"
 
+#include "MusikApp.h"
 //forward declarations
 class CMusikPrefs;
 class CMusikPaths;
 
-extern CMusikLibrary		g_Library;
-extern CMusikPlayer			g_Player;			
-extern CMusikPrefs			g_Prefs;			
 extern CMusikPaths			g_Paths;			
 extern CMusikSongArray		g_Playlist;	
 extern CMusikSongArray		g_LibPlaylist;	
 extern wxCriticalSection	g_protectingStreamArrays;
 extern CMusikStreamArray	g_ActiveStreams;
 extern wxArrayInt			g_ActiveChannels;
-extern CMusikWebServer		g_WebServer;
 extern MusikFaderThread*	g_FaderThread;
 extern wxImageList*			g_SourcesImages; 
 extern wxImageList*			g_NullImageList;
 extern wxImageList*			g_RatingImages;
 extern CMusikFX				g_FX;
-extern CTunage				g_Tunage;
+
 
 //----------------//
 //--- controls ---//
@@ -110,8 +94,8 @@ class CPlaylistBox;
 extern CActivityAreaCtrl	*g_ActivityAreaCtrl;
 extern CPlaylistBox		*g_PlaylistBox;	
 extern CSourcesBox			*g_SourcesCtrl;	
-extern CNowPlayingCtrl		*g_NowPlayingCtrl;
-extern wxGauge				*g_Progress;
+
+
 
 //------------//
 //--- misc ---//

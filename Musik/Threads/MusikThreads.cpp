@@ -85,13 +85,13 @@ void *MusikFaderThread::Entry()
 
 	while ( !TestDestroy() )
 	{
-		if ( g_Player.IsPlaying() )		
+		if ( wxGetApp().Player.IsPlaying() )		
 		{
 			//-----------------------------------------------------//
 			//--- check the player flag to see if we need		---//
 			//--- to trigger the crossfade begin thread			---//
 			//-----------------------------------------------------//
-			if ( g_Player.BeginFade() )	
+			if ( wxGetApp().Player.BeginFade() )	
 			{
 				//-------------------------------------------------//
 				//--- kill the existing crossfade thread (if	---//
@@ -107,7 +107,7 @@ void *MusikFaderThread::Entry()
 					//-------------------------------------------------//
 					//--- let the player know we got the message	---//
 					//-------------------------------------------------//
- 					g_Player.CaughtBeginFade();
+ 					wxGetApp().Player.CaughtBeginFade();
 
 					//-------------------------------------------------//
 					//--- if no old crossfader is active, fire up a	---//
@@ -119,7 +119,7 @@ void *MusikFaderThread::Entry()
 				}
 			}
 
-			if ( ( !g_Player.IsStartingNext() ) && ( !g_Player.IsFading() ) && ( g_Player.GetTimeLeft( FMOD_MSEC ) <= ( g_Prefs.nFadeDuration + 1000 ) ) )
+			if ( ( !wxGetApp().Player.IsStartingNext() ) && ( !wxGetApp().Player.IsFading() ) && ( wxGetApp().Player.GetTimeLeft( FMOD_MSEC ) <= ( wxGetApp().Prefs.nFadeDuration + 1000 ) ) )
 			{
 				//-------------------------------------------------//
 				//--- if there is no fading at all going on,	---//
@@ -127,12 +127,12 @@ void *MusikFaderThread::Entry()
 				//--- time left, go ahead and start up the next	---//
 				//--- track										---//
 				//-------------------------------------------------//
-				if ( (( g_Prefs.bGlobalFadeEnable == 0 ) ||  ( g_Prefs.bFadeEnable == 0 )) && ( g_Player.GetTimeLeft( FMOD_MSEC ) <= 10 ) )
+				if ( (( wxGetApp().Prefs.bGlobalFadeEnable == 0 ) ||  ( wxGetApp().Prefs.bFadeEnable == 0 )) && ( wxGetApp().Player.GetTimeLeft( FMOD_MSEC ) <= 10 ) )
 				{
-					if(g_Player.IsPlaying())
+					if(wxGetApp().Player.IsPlaying())
 					{
-						g_Player.SetStartingNext( true );
-						wxPostEvent( &g_Player, NextSongEvt );
+						wxGetApp().Player.SetStartingNext( true );
+						wxPostEvent( &wxGetApp().Player, NextSongEvt );
 					}
 				}
 				//-------------------------------------------------//
@@ -141,10 +141,10 @@ void *MusikFaderThread::Entry()
 				//--- the duration is such that we should		---//
 				//--- queue up the next song and start the fade	---//
 				//-------------------------------------------------//
-				else if ( ( g_Prefs.bGlobalFadeEnable == 1 ) && ( g_Prefs.bFadeEnable == 1 ) && ( g_Player.GetTimeLeft( FMOD_MSEC ) <= g_Prefs.nFadeDuration ) )
+				else if ( ( wxGetApp().Prefs.bGlobalFadeEnable == 1 ) && ( wxGetApp().Prefs.bFadeEnable == 1 ) && ( wxGetApp().Player.GetTimeLeft( FMOD_MSEC ) <= wxGetApp().Prefs.nFadeDuration ) )
 				{
-					g_Player.SetStartingNext( true );
-					wxPostEvent( &g_Player, NextSongEvt );
+					wxGetApp().Player.SetStartingNext( true );
+					wxPostEvent( &wxGetApp().Player, NextSongEvt );
 					Yield();
 				}
 			}
@@ -167,7 +167,7 @@ void MusikFaderThread::OnExit()
 MusikCrossfaderThread::MusikCrossfaderThread( MusikFaderThread *pParent )
 :wxThread(wxTHREAD_JOINABLE)
 {
-	m_FadeType		= g_Player.GetCrossfadeType();
+	m_FadeType		= wxGetApp().Player.GetCrossfadeType();
 	m_Parent		= pParent;
 	m_StopPlayer	= false;
 	m_Aborted		= false;
@@ -199,7 +199,7 @@ void *MusikCrossfaderThread::Entry()
 	//--- duration, no fading. return.				---//
 	//-------------------------------------------------//
 
-	if ( g_Player.GetDuration( FMOD_MSEC ) < ( g_Prefs.nFadeDuration * 2 ) )
+	if ( wxGetApp().Player.GetDuration( FMOD_MSEC ) < ( wxGetApp().Prefs.nFadeDuration * 2 ) )
 	{
         FSOUND_SetVolume( g_ActiveChannels.Item( g_ActiveChannels.GetCount() - 1 ), maxVolume );
 		return NULL;
@@ -236,15 +236,15 @@ void *MusikCrossfaderThread::Entry()
 	//-------------------------------------------------//
 	int nFadeDuration = 0; 
 	if ( m_FadeType == CROSSFADE_NORMAL )
-		nFadeDuration = g_Prefs.nFadeDuration;
+		nFadeDuration = wxGetApp().Prefs.nFadeDuration;
 	else if ( m_FadeType == CROSSFADE_SEEK )
-		nFadeDuration = g_Prefs.nFadeSeekDuration;
+		nFadeDuration = wxGetApp().Prefs.nFadeSeekDuration;
 	else if ( m_FadeType == CROSSFADE_PAUSE || m_FadeType == CROSSFADE_RESUME )
-		nFadeDuration = g_Prefs.nFadePauseResumeDuration;
+		nFadeDuration = wxGetApp().Prefs.nFadePauseResumeDuration;
 	else if ( m_FadeType == CROSSFADE_STOP )
-		nFadeDuration = g_Prefs.nFadeStopDuration;
+		nFadeDuration = wxGetApp().Prefs.nFadeStopDuration;
 	else if ( m_FadeType == CROSSFADE_EXIT )
-		nFadeDuration = g_Prefs.nFadeExitDuration;
+		nFadeDuration = wxGetApp().Prefs.nFadeExitDuration;
 
 	//-------------------------------------------------//
     //--- the total number of seconds the fade will	---//
@@ -346,17 +346,17 @@ void MusikCrossfaderThread::OnExit()
 		//--- on.										---//
 		//-------------------------------------------------//
 		if ( m_FadeType == CROSSFADE_STOP || m_FadeType == CROSSFADE_EXIT )
-			g_Player.FinalizeStop();
+			wxGetApp().Player.FinalizeStop();
 		else if ( m_FadeType == CROSSFADE_PAUSE )
-			g_Player.FinalizePause();
+			wxGetApp().Player.FinalizePause();
 		else if ( m_FadeType == CROSSFADE_RESUME )
-			g_Player.FinalizeResume();
+			wxGetApp().Player.FinalizeResume();
 
 		Yield();
 		if(m_FadeType != CROSSFADE_EXIT)// if we would send the FadeCompleteEvt on exit we get in trouble with the CMusikPlayer::ClearOldStreams() which tries to stop the fader thread( while it waits the ExitCompleteEvt is dispatched by wx and g_FaderThread is deleted, if CrossfaderStop returns from wait it will crash)
 		{
 			wxCommandEvent FadeCompleteEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYER_FADE_COMPLETE );	
-			wxPostEvent( &g_Player, FadeCompleteEvt );
+			wxPostEvent( &wxGetApp().Player, FadeCompleteEvt );
 		}
 		Yield();
 
@@ -396,7 +396,7 @@ void *MusikWriteDirtyThread::Entry()
 	wxPostEvent( g_MusikFrame, WriteTagStartEvt );
 
 	CMusikSongArray aDirty;
-	g_Library.QuerySongsWhere( wxT("dirty = 1"), aDirty );
+	wxGetApp().Library.QuerySongsWhere( wxT("dirty = 1"), aDirty );
 
 	if ( aDirty.GetCount() > 0 )
 	{
@@ -424,8 +424,8 @@ void *MusikWriteDirtyThread::Entry()
 			//-----------------------------//
 			//--- write the tag to file	---//
 			//-----------------------------//
-			g_Library.WriteTag( aDirty.Item( i ), m_Clear ,false); // no db update
-			g_Library.UpdateItemResetDirty( aDirty.Item( i )); // just clear dirty flag
+			wxGetApp().Library.WriteTag( aDirty.Item( i ), m_Clear ,false); // no db update
+			wxGetApp().Library.UpdateItemResetDirty( aDirty.Item( i )); // just clear dirty flag
 
 		}
 
