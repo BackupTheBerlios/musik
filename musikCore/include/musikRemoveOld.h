@@ -143,7 +143,7 @@ static void musikRemoveOldWorker( CmusikThread* thread )
 
 	thread->m_Finished = true;
 
-	if ( !thread->m_Abort || ( thread->m_Abort && params->m_CallFunctorOnAbort ) )
+	if ( params->m_Functor && ( !thread->m_Abort || ( thread->m_Abort && params->m_CallFunctorOnAbort ) ) )
 		params->m_Functor->OnThreadEnd( (void*)thread );
 	
 	delete params;

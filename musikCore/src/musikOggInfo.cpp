@@ -136,7 +136,7 @@ bool CmusikOggInfo::WriteInfo( CmusikSongInfo info )
 	if ( !pIn )
 		return false;
 
-	// open up the temp ogg file, this will
+	// open up the temp ogg file; this will
 	// be where the new tag gets written
 	pOut = fopen( sTempFilename.c_str(), "wb" );
 	if ( !pOut )
@@ -175,11 +175,10 @@ bool CmusikOggInfo::WriteInfo( CmusikSongInfo info )
 	fclose( pIn );
 	fclose( pOut );
 
-    // remove old file, rename new file
-	CStdString sTempFilename2 = CmusikFilename::GetTempFilename( sFilename, true );
 
 	// attempt to rename the original file to 
 	// a new temporary filename
+	CStdString sTempFilename2 = CmusikFilename::GetTempFilename( sFilename, true );
 	if ( !rename( sFilename.c_str(), sTempFilename2.c_str() ) ) 
 		return false;
 

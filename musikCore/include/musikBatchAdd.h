@@ -191,7 +191,7 @@ static void musikBatchAddWorker( CmusikThread* thread )
 		delete params->m_Files;
 
 	// call the functor's OnThreadEnd
-	if ( ( thread->m_Abort && params->m_CallFunctorOnAbort ) || !thread->m_Abort )
+	if ( params->m_Functor && ( ( thread->m_Abort && params->m_CallFunctorOnAbort ) || !thread->m_Abort ) )
 		params->m_Functor->OnThreadEnd( (void*)thread );
 
 	delete params;
