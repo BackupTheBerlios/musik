@@ -100,6 +100,7 @@ protected:
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 public:
 	CButton m_AutoSynchronize;
+	CButton m_LibraryShowAll;
 };
 
 ///////////////////////////////////////////////////

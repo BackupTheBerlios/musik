@@ -371,11 +371,10 @@ void CMainFrame::Initmusik()
 	m_DirSyncDlg	= NULL;
 	
 	// show all songs, if we are supposed to
+	m_LibPlaylist = new CmusikPlaylist();
+	
 	if ( m_Prefs->LibraryShowsAllSongs() )
-	{
-		m_LibPlaylist = new CmusikPlaylist();
 		m_Library->GetAllSongs( *m_LibPlaylist );
-	}
 
 	// setup the player...
 	m_Player = new CmusikPlayer( m_NewSong, m_Library );
@@ -1006,7 +1005,9 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 			if ( !m_LibPlaylist )
 				m_LibPlaylist = new CmusikPlaylist();
 
-			m_Library->GetAllSongs( *m_LibPlaylist );
+			if ( m_Prefs->LibraryShowsAllSongs() )
+				m_Library->GetAllSongs( *m_LibPlaylist );
+
 			m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, MUSIK_SOURCES_TYPE_LIBRARY );
 			m_wndView->GetCtrl()->UpdateV();
 			m_wndView->GetCtrl()->HideSortArrow();

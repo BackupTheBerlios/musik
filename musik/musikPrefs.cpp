@@ -372,7 +372,7 @@ void CmusikPrefs::SavePrefs()
 	config->SetValue( "Dialog", "Playlist Info Visible", BoolToString( m_Dlg_PlaylistInfoVisible ) );
 	config->SetValue( "Dialog", "Synchronize Old Files on Startup", BoolToString( m_Dlg_SynchronizeOnStartup ) );
 	config->SetValue( "Dialog", "Write Tags to File", BoolToString( m_Dlg_WriteTagsToFile ) );
-	config->SetValue( "Dialog", "Library Shows All Files", BoolToString( m_Dlg_LibraryShowsAllSongs ) );
+	config->SetValue( "Dialog", "Library Shows All Songs", BoolToString( m_Dlg_LibraryShowsAllSongs ) );
 	config->SetValue( "Dialog", "Minimize to Notification Tray", BoolToString( m_Dlg_MinimizeToTray ) );
 
 	// selection area

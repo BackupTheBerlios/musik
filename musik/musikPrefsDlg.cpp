@@ -38,6 +38,7 @@ void CmusikPrefsInterfaceGeneral::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_CHECK2, m_PromptDropOnPlaylist);
 	DDX_Control(pDX, IDC_CHECK_STARTWITHWINDOWS, m_StartWithWindows);
 	DDX_Control(pDX, IDC_CHECK4, m_AutoSynchronize);
+	DDX_Control(pDX, IDC_CHECK3, m_LibraryShowAll);
 }
 
 ///////////////////////////////////////////////////
@@ -63,6 +64,7 @@ void CmusikPrefsInterfaceGeneral::LoadPrefs()
 	m_PromptDropOnPlaylist.SetCheck( m_Prefs->GetFileDropPrompt() == -1 ? true : false );
 	m_StartWithWindows.SetCheck( GetStartup() );
 	m_AutoSynchronize.SetCheck( m_Prefs->SynchronizeOnStartup() );
+	m_LibraryShowAll.SetCheck( m_Prefs->LibraryShowsAllSongs() );
 }
 
 ///////////////////////////////////////////////////
@@ -70,7 +72,6 @@ void CmusikPrefsInterfaceGeneral::LoadPrefs()
 void CmusikPrefsInterfaceGeneral::CommitChanges()
 {
 	m_Prefs->SetMinimizeToTray( m_EnableTrayIcon.GetCheck() );
-	m_Prefs->SetSynchronizeOnStartup( m_AutoSynchronize.GetCheck() );
 
 	if ( !m_PromptSavePlaylists.GetCheck() )
 	{
@@ -92,6 +93,9 @@ void CmusikPrefsInterfaceGeneral::CommitChanges()
 		EnableStartup();
 	else
 		DisableStartup();
+
+	m_Prefs->SetSynchronizeOnStartup( m_AutoSynchronize.GetCheck() );
+	m_Prefs->SetLibraryShowsAllSongs( m_LibraryShowAll.GetCheck() );
 }
 
 ///////////////////////////////////////////////////
