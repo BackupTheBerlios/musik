@@ -57,6 +57,7 @@ ADD_EXECUTABLE(wxMusik
         ${wxMusik_SOURCE_DIR}/Classes/Library/MetaDataHandler
         ${wxMusik_SOURCE_DIR}/Classes/Library/vcedit
 		"${wxMusik_SOURCE_DIR}/3rd Party/Bitap/libbitap"
+		"${wxMusik_SOURCE_DIR}/3rd Party/TagHelper/idtag.cpp"
 		
         ${wxMusik_SOURCE_DIR}/Frames/MusikFrame
         ${wxMusik_SOURCE_DIR}/Frames/MusikFrameEvents

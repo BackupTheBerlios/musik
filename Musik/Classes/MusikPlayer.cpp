@@ -1024,7 +1024,7 @@ void CMusikPlayer::_AddRandomSongs()
 		m_SongIndex = 0;
 
 	int nSongsToAdd = m_Playlist.GetCount() ? (wxGetApp().Prefs.nAutoDJChooseSongsToPlayInAdvance - (m_Playlist.GetCount() - 1 - m_SongIndex))
-											:wxGetApp().Prefs.nAutoDJChooseSongsToPlayInAdvance;
+											:(int)wxGetApp().Prefs.nAutoDJChooseSongsToPlayInAdvance;
 	if(nSongsToAdd <= 0)
 		return;
 	if(MUSIK_PLAYMODE_AUTO_DJ == m_Playmode)
