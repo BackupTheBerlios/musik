@@ -8,7 +8,7 @@ inline int StringToInt( const string str )
 	return atoi( str.c_str() );	
 }
 
-inline string IntToString( int n )
+inline string IntToString( const int &n )
 {
 	char buffer[20];
 	itoa( n, buffer, 10 );
@@ -16,7 +16,7 @@ inline string IntToString( int n )
     return str;	
 }
 
-inline CSize StringToCSize( string str )
+inline CSize StringToCSize( const string &str )
 {
 	CSize ret;
 	CString cstr = str.c_str();
@@ -34,7 +34,7 @@ inline CSize StringToCSize( string str )
 	return ret;
 }
 
-inline string CSizeToString( CSize size )
+inline string CSizeToString( const CSize &size )
 {
 	string ret;
 	char buffer_w[10];
@@ -51,7 +51,7 @@ inline string CSizeToString( CSize size )
 	return str;
 }
 
-inline CPoint StringToCPoint( string str )
+inline CPoint StringToCPoint( const string &str )
 {
 	CPoint ret;
 	CString cstr = str.c_str();
@@ -72,7 +72,7 @@ inline CPoint StringToCPoint( string str )
 	return ret;
 }
 
-inline string CPointToString( CPoint pt )
+inline string CPointToString( const CPoint &pt )
 {
 	string ret;
 	char buffer_x[10];
@@ -89,7 +89,7 @@ inline string CPointToString( CPoint pt )
 	return str;
 }
 
-inline CIntArray StringToCIntArray( string str )
+inline CIntArray StringToCIntArray( const string &str )
 {
 	CIntArray ret;
 	CString cstr = str.c_str();
@@ -104,6 +104,20 @@ inline CIntArray StringToCIntArray( string str )
 	};
 
 	return ret;
+}
+
+inline string CIntArrayToString( const CIntArray &array )
+{
+	CString CRet;
+	char buffer[10];
+	for ( int i = 0; i < array.size(); i++ )
+	{
+		CRet += itoa( array.at( i ), buffer, 10 );
+		if ( i != ( array.size() - 1 ) )
+			CRet += ",";
+	}
+	string sRet = CRet.GetBuffer();
+	return sRet;
 }
 
 CMusikPrefs::CMusikPrefs( CString filename )
@@ -166,6 +180,7 @@ void CMusikPrefs::SavePrefs()
 	//-----------------------------------------------------//
 	//--- playlist										---//
 	//-----------------------------------------------------//
+	config->SetValue( "Playlist", "Column Order", CIntArrayToString( m_Playlist_Order ) );
 
 	//-----------------------------------------------------//
 	//--- sources										---//
