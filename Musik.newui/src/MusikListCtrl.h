@@ -54,6 +54,8 @@ public:
 	virtual void StartEditInPlace();
 	virtual void EndEditInPlace( wxCommandEvent& event );
 
+	CMusikEditInPlaceCtrl* GetEditInPlaceCtrl(){ return m_EditInPlace; }
+
 	DECLARE_EVENT_TABLE();
 
 private:

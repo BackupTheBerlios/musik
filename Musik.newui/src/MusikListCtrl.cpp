@@ -72,8 +72,8 @@ CMusikListCtrl::CMusikListCtrl( wxWindow *parent, wxWindowID id, long flags )
 	SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ) );
 	
 	m_EditInPlace = new CMusikEditInPlaceCtrl( this, -1 );
-	m_EditInPlace->Enable( false );
-	m_EditInPlace->Show( false );
+	GetEditInPlaceCtrl()->Enable( false );
+	GetEditInPlaceCtrl()->Show( false );
 	m_Parent = parent;
 }
 
@@ -83,14 +83,14 @@ CMusikListCtrl::~CMusikListCtrl()
 
 void CMusikListCtrl::StartEditInPlace()
 {
-	m_EditInPlace->SetSize( GetClientSize().GetWidth(), -1 );
-	m_EditInPlace->Move( 0, ( GetClientSize().GetHeight() ) - ( m_EditInPlace->GetSize().GetHeight() ) );
-	m_EditInPlace->Enable( true );
-	m_EditInPlace->Show( true );
-	m_EditInPlace->SetFocus();
+	GetEditInPlaceCtrl()->SetSize( GetClientSize().GetWidth(), -1 );
+	GetEditInPlaceCtrl()->Move( 0, ( GetClientSize().GetHeight() ) - ( GetEditInPlaceCtrl()->GetSize().GetHeight() ) );
+	GetEditInPlaceCtrl()->Enable( true );
+	GetEditInPlaceCtrl()->Show( true );
+	GetEditInPlaceCtrl()->SetFocus();
 }
 
 void CMusikListCtrl::EndEditInPlace( wxCommandEvent& event )
 {
-	wxMessageBox( m_EditInPlace->GetStr() );
+	wxMessageBox( GetEditInPlaceCtrl()->GetStr() );
 }
