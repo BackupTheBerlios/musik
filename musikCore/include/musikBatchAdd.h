@@ -122,7 +122,12 @@ public:
 	int open( void* params )
 	{
 		m_Params = (CmusikBatchAdd*)params;
-		int ret_code = activate( THR_NEW_LWP | THR_JOINABLE | THR_USE_AFX );
+		
+#ifdef WIN32
+	int ret_code = activate( THR_NEW_LWP | THR_JOINABLE | THR_USE_AFX );
+#else 
+	int ret_code = activate( THR_NEW_LWP | THR_JOINABLE );
+#endif
 
 		return ret_code;
 	}

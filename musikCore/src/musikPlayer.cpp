@@ -99,8 +99,13 @@ void CmusikPlayerWorker::StopWait()
 int CmusikPlayerWorker::open( void* player )
 {
 	m_Player = (CmusikPlayer*)player;
+	
+#ifdef WIN32
 	int ret_code = activate( THR_NEW_LWP | THR_JOINABLE | THR_USE_AFX );
-
+#else 
+	int ret_code = activate( THR_NEW_LWP | THR_JOINABLE );
+#endif
+	
 	return ret_code;
 }
 
