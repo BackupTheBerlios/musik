@@ -34,15 +34,13 @@
 //   A simple class to manage crossfade durations for
 //   various events.
 //
-// Example: 
+// Usage: 
 //
 //   The UI can construct these objects and pass them to
 //   the player via CMusikPlayer::SetCrossfader()
 //
 //   CMusikLibrary, however, will load the default values
 //   on a per song basis.
-//
-// Usage: 
 //
 //   Construct the object (takes no args), then use 
 //   CMusikCrossfader::Set() to set the values, then

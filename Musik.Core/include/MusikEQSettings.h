@@ -34,12 +34,10 @@
 //   A simple class to manage the band positions of
 //   Musik's built in 18 band, dual channel equalizer.
 //
-// Example: 
+// Usage: 
 //
 //   The UI can construct these objects and pass them to
 //   the player via CMusikPlayer::SetEQ()
-//
-// Usage: 
 //
 //   Construct the object (takes no args), then use 
 //   CMusikEqualizer::Set() to set the values, then

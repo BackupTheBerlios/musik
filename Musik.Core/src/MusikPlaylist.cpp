@@ -1,4 +1,69 @@
 ///////////////////////////////////////////////////
+// 
+// Info:
+//
+//   Musik is a a cross platform, open source
+//   multimedia library. More information at:
+//
+//     http://musik.berlios.de
+//     http://musik.sourceforge.net
+//
+// Copyright and Credits:
+//
+//   Copyright      : Casey Langen, 2003
+//   Casey Langen   : Lead Developer, Project Manager. E-Mail: casey@bak.rr.com
+//   Dustin Carter  : Developer, pain in the ass
+//   Simon Windmill : Developer, the most helpful person thats immediately available ;)
+//
+// License:
+//
+//   See license.txt included with this distribution
+//
+///////////////////////////////////////////////////
+//
+// Class(s): 
+//
+//   CMusikPlaylist,
+//   CMusikSong,
+//   CMusikSongInfo
+//
+// Filename(s): 
+//
+//   MusikPlaylist.h, MusikPlaylist.cpp
+//
+// Information:
+//
+//   CMusikPlaylist:
+//     is a CMusikSongArray manager. It allows easy
+//     adding, removing, and querying of songs.
+//
+//   CMusikSong:
+//     is a small class that only contains the (unique)
+//     ID of the song as it exists in the loaded database, as
+//     well as a few utility functions to access it's respective
+//     information. The library must be setup using
+//     CMusikSong::SetLibrary(), which is a static function.
+//
+//   CMusikSongInfo:
+//     is a larger class than CMusikSong, as it actually
+//     stores all of the database information in memory,
+//     rather than querying the database to retrieve it.
+//
+// Usage: 
+//
+//   CMusikPlaylist:
+//     Create an instance and Add(), Remove(), etc.
+//
+//   CMusikSong:
+//     Create and set the song with SetID()
+//     Use GetField() to retrieve information
+//
+//   CMusikSongInfo:
+//     Create, then use CMusikLibrary::GetSongInfoFromID()
+//     to populate. GetField() or various other Get() functions
+//     to query.
+//
+///////////////////////////////////////////////////
 
 #include "stdafx.h"
 #include "../include/MusikPlaylist.h"

@@ -38,11 +38,6 @@
 //   Using dynamic arrays helps to keep things easily
 //   maintained.
 //
-// Example: 
-//
-//   If you don't know what an example of an array is,
-//   you have issues.   
-//
 // Usage: 
 //
 //   Use just as standard std vector arrays. 

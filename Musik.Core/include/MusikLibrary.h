@@ -46,7 +46,7 @@
 //   Use the Set() and Get() functions to store and retrieve
 //   information.
 //
-///////////////////////////////////////////////////1`
+///////////////////////////////////////////////////
 
 #ifndef C_MUSIK_LIBRARY_H
 #define C_MUSIK_LIBRARY_H

@@ -34,12 +34,10 @@
 //   This class provides a generic way for CMusikPlayer
 //   to pass events to a UI.
 // 
-// Example: 
-//
-//   Notify a UI when the currently playing song has 
-//   changed.
-//
 // Usage: 
+//
+//   This can be used to notify a UI when the currently 
+//   playing song has changed.
 //
 //   This object is pure virtual, so instantiate a new
 //   object from it, overriding the Call() function. When
