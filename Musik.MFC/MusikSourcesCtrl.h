@@ -46,14 +46,10 @@ protected:
 	// pointer to main frame
 	CFrameWnd* m_Parent;
 
-	// mouse being track?
-	bool m_MouseTrack;
-
-	// mfc message maps
+   	// mfc message maps
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg LRESULT OnMouseLeave(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 
 	// drop target for the playlist
 	CMusikSourcesDropTarget* m_DropTarget;

@@ -29,7 +29,6 @@ CMusikSourcesCtrl::CMusikSourcesCtrl( CFrameWnd* parent, CMusikLibrary* library,
 	m_DynPlaylistRoot	= NULL;
 
 	m_Startup			= true;
-	m_MouseTrack		= false;
 
 	m_Player			= player;
 }
@@ -50,8 +49,7 @@ CMusikSourcesCtrl::~CMusikSourcesCtrl()
 BEGIN_MESSAGE_MAP( CMusikSourcesCtrl, CMusikPropTree )
 	ON_WM_CREATE()
 	ON_WM_SHOWWINDOW()
-	ON_WM_MOUSEMOVE()
-	ON_MESSAGE(WM_MOUSELEAVE, OnMouseLeave)
+	ON_WM_KEYDOWN()
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -565,59 +563,35 @@ void CMusikSourcesCtrl::OnShowWindow(BOOL bShow, UINT nStatus)
 	}
 }
 
-///////////////////////////////////////////////////
-
-void CMusikSourcesCtrl::OnMouseMove(UINT nFlags, CPoint point)
+void CMusikSourcesCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	if ( !m_MouseTrack )
+	// user requested playlist deletion
+	if ( nChar == VK_DELETE )
 	{
-		TRACKMOUSEEVENT tme;
-		tme.cbSize = sizeof(tme);
-		tme.dwFlags = TME_LEAVE;
-		tme.hwndTrack = m_hWnd;
-		tme.dwHoverTime = HOVER_DEFAULT;
-		::_TrackMouseEvent(&tme);
+		CMusikPropTreeItem* pItem = GetFocusedItem();
+		if ( pItem )
+		{
+			// type was standard playlist...
+			if ( pItem->GetPlaylistType() == MUSIK_PLAYLIST_TYPE_STANDARD )
+			{
+				int nID = pItem->GetPlaylistID();
+				int nPos = -1;
+				
+				for ( size_t i = 0; i < m_StdPlaylists.size(); i++ )
+				{
+					if ( m_StdPlaylists.at( i ) == pItem )
+					{
+						nPos = i;
+						break;
+					}
+				}
 
-		m_MouseTrack = true; 	
-	}
-
-	CMusikPropTreeItem* pItem = FindItem( point );
-
-	// we are dragging...
-	if ( pItem && pItem->GetPlaylistType() != -1 && m_MouseTrack && ( nFlags & MK_LBUTTON ) )
-	{
-		DoDrag( pItem );
-		return;
-	}
-
-	// not dragging, just track mouse
-	// and hilight hovered entry...
-	else if ( pItem != NULL )
-	{
-		CMusikPropTreeItem* pFocus = GetHoveredItem();
-		if ( pFocus )
-			pFocus->Hover( FALSE );
-
-		pItem->Hover( TRUE );
-		SetHoveredItem( pItem );
-
-		Invalidate();
+				if ( nPos != -1 )
+				{
+					m_Library->DeleteStdPlaylist( nID );
+					LoadStdPlaylists();
+				}
+			}		
+		}
 	}
 }
-
-///////////////////////////////////////////////////
-
-LRESULT CMusikSourcesCtrl::OnMouseLeave(WPARAM wParam, LPARAM lParam)
-{
-	CMusikPropTreeItem* pFocus = GetHoveredItem();
-	if ( pFocus )
-		pFocus->Hover( FALSE );
-
-    SetHoveredItem( NULL );
-
-	Invalidate();
-
-	return 0L;
-}
-
-///////////////////////////////////////////////////
