@@ -131,6 +131,8 @@ public:
 	void GetStdPlaylistSongs	( const wxArrayString & aFiles, CMusikSongArray & aReturn );
 	bool 			GetSongFromFilename	( const wxString& filename, CMusikSong *pSong );
 
+	void SortPlaylist( const wxString& sortstr, bool descending );
+
 	//--------------------//
 	//--- getting info ---//
 	//--------------------//

@@ -361,7 +361,6 @@ bool CMusikLibrary::WriteOGGTag( const CMusikSong & song, bool ClearAll )
     state = vcedit_new_state();
 
     //--- if file couldn't be loaded, return ---//
-	
 	if ( !in.Open( sRename, "r+b" ) )
 	{
 		wxRenameFile( sRename, filename );
@@ -391,7 +390,6 @@ bool CMusikLibrary::WriteOGGTag( const CMusikSong & song, bool ClearAll )
 	vorbis_comment_add_tag( vc, "DATE",			( char* )( ( const char* )ConvDBFieldToMB( song.Year )	)	);
 
 	//--- write new file ---//
-	
 	if ( out.Open( filename, "w+b" ) )
 		vcedit_write( state, out.fp() );
 
@@ -816,6 +814,68 @@ void CMusikLibrary::GetStdPlaylistSongs( const wxArrayString & aFiles, CMusikSon
 	return;
 }
 
+void CMusikLibrary::SortPlaylist( const wxString& sortstr, bool descending )
+{
+	
+	wxString sQuery;
+	
+	bool numeric = false;
+	if ( ( sortstr == wxT("Duration") ) || ( sortstr == wxT("TrackNum") ) || ( sortstr == wxT("TimesPlayed") ) || ( sortstr == wxT("Bitrate") ) )
+		numeric = true;
+
+	if ( !numeric )
+	{
+		sQuery = wxT("select filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize, UPPER(");
+		sQuery += sortstr;
+		sQuery += wxT(") as up");
+		sQuery += sortstr;		
+		sQuery += wxT(" from songs where filename in (");
+	}
+	else
+		sQuery = wxT("select filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize from songs where filename in (");
+
+	wxArrayString aFiles;
+	for ( size_t n = 0; n < g_Playlist.GetCount(); n++ )
+	{
+		const CMusikSong& song = g_Playlist.Item ( n );
+		aFiles.Add( song.Filename );
+	}
+	g_Playlist.Clear();
+	
+	sQuery.Alloc(sQuery.Len() + aFiles.GetCount() * 30); // optimization ( the 30 is a wild guess)
+	for ( size_t i = 0; i < aFiles.GetCount(); i++ )
+	{
+		//--- if song has a ' ---//	
+		wxString filename( aFiles.Item( i ) );
+		filename.Replace( wxT("'"), wxT("''"), TRUE );
+
+		sQuery += wxT("'");
+		sQuery += filename;
+		//--- not at the end ---//
+		if ( i != aFiles.GetCount() - 1 )
+			sQuery += wxT("', ");
+		//--- at the end ---//
+		else
+		{
+			if ( !numeric )
+				sQuery += wxT("' ) order by up");
+			else
+				sQuery += wxT("' ) order by ");
+			sQuery += sortstr;
+			if ( descending )
+				sQuery += wxT(" desc");
+			sQuery += wxT(";");
+		}
+	}
+
+	g_Playlist.Alloc(aFiles.GetCount());
+	{
+		wxCriticalSectionLocker lock( m_csDBAccess );
+		sqlite_exec( m_pDB, ConvQueryToMB( sQuery ), &sqlite_callbackAddToSongArray, &g_Playlist, NULL );
+	}
+	
+	return;
+}
 
 void CMusikLibrary::QuerySongs( const wxString & queryWhere, CMusikSongArray & aReturn )
 {

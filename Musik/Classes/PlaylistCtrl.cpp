@@ -275,6 +275,7 @@ CPlaylistCtrl::CPlaylistCtrl( wxWindow *parent, const wxWindowID id, const wxPoi
 	m_Overflow = 0;
 
 	SetActiveThread( NULL );
+
 }
 
 CPlaylistCtrl::~CPlaylistCtrl()
@@ -290,7 +291,26 @@ void CPlaylistCtrl::OnColumnClick( wxListEvent& event )
 	wxListItem col;
 	col.m_mask = wxLIST_MASK_TEXT;
 	GetColumn( colid, col );
-	wxMessageBox( col.m_text, wxT("TESTES TESTES 123") );
+
+	wxString sortstr;
+	if ( col.m_text == wxT("Track") )
+		sortstr = wxT("TrackNum");
+	else if ( col.m_text == wxT("Times Played") )
+		sortstr = wxT("TimesPlayed");
+	else if ( col.m_text == wxT("Last Played") )
+		sortstr = wxT("LastPlayed");
+	else if ( col.m_text == wxT("Time") )
+		sortstr = wxT("Duration");
+	else
+		sortstr = col.m_text;
+
+	bool desc = false;
+	m_aColumnSorting.Item( colid ) = -m_aColumnSorting.Item( colid );	
+	if ( m_aColumnSorting.Item( colid ) < 0 )
+		desc = true;
+
+	g_Library.SortPlaylist( sortstr, desc );
+	g_PlaylistCtrl->Update();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -668,10 +688,14 @@ wxString CPlaylistCtrl::OnGetItemText(long item, long column) const
 void CPlaylistCtrl::FindColumnOrder()
 {
 	m_ColumnOrder.Clear();
+	m_aColumnSorting.Clear();
 	for ( int i = 0; i < NPLAYLISTCOLUMNS; i++ )
 	{
 		if ( g_Prefs.nPlaylistColumnEnable[i] == 1 )
+		{
 			m_ColumnOrder.Add( i );
+			m_aColumnSorting.Add( -1 );
+		}
 	}
 }
 

@@ -184,6 +184,7 @@ private:
 	size_t m_Overflow;
 	bool m_ColSaveNeeded;
 
+	wxArrayInt m_aColumnSorting;
 
 	//--------------//
 	//--- thread ---//
@@ -193,6 +194,7 @@ private:
 	int m_Progress;
 	int m_ProgressType;
 	wxThread* m_ActiveThread;
+
 };
 
 class PlaylistDropTarget : public wxTextDropTarget
