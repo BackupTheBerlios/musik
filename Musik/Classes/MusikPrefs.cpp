@@ -127,7 +127,8 @@ void CMusikPrefs::LoadPrefs()
 	//--- bitrate, 50, disabled, static ---//
 	config->Read( wxString::Format( wxT( "PlaylistColumn%dEnable"	),	PLAYLISTCOLUMN_BITRATE		),	&nPlaylistColumnEnable	[PLAYLISTCOLUMN_BITRATE],			0	);
 	config->Read( wxString::Format( wxT( "PlaylistColumn%dSize"		),	PLAYLISTCOLUMN_BITRATE		),	&nPlaylistColumnSize	[PLAYLISTCOLUMN_BITRATE],			50	);
-	config->Read( wxString::Format( wxT( "PlaylistColumn%dDynamic"	),	PLAYLISTCOLUMN_BITRATE		),	&nPlaylistColumnDynamic	[PLAYLISTCOLUMN_BITRATE],			0	);
+	config->Read( wxString::Format( wxT( "PlaylistColumn%dDynamic"	),	PLAYLISTCOLUMN_BITRATE		),	&nPlaylistColumnDynamic	[PLAYLISTCOLUMN_BITRATE],	
+		0	);
 	//--- filename, 40%, disabled, dynamic ---//
 	config->Read( wxString::Format( wxT( "PlaylistColumn%dEnable"	),	PLAYLISTCOLUMN_FILENAME		),	&nPlaylistColumnEnable	[PLAYLISTCOLUMN_FILENAME],		0	);
 	config->Read( wxString::Format( wxT( "PlaylistColumn%dSize"		),	PLAYLISTCOLUMN_FILENAME		),	&nPlaylistColumnSize	[PLAYLISTCOLUMN_FILENAME],		40	);
@@ -147,7 +148,9 @@ void CMusikPrefs::LoadPrefs()
 		sAutoTag.Replace( wxT( "/" ), wxT( "\\" ), true );
 	#endif
 
-	//--- apply unweildy defaults ---//
+	//-----------------------------//
+	//--- make sure these exist ---//
+	//-----------------------------//
 	if ( sPLStripeColour.IsEmpty()		) sPLStripeColour		= wxT("244, 244, 244");
 	if ( sActStripeColour.IsEmpty()		) sActStripeColour		= wxT("244, 244, 244");
 	if ( sSourcesStripeColour.IsEmpty()	) sSourcesStripeColour	= wxT("244, 244, 244");
