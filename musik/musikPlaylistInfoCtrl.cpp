@@ -229,7 +229,7 @@ void CmusikPlaylistInfoCtrl::DrawEQ( HDC hdc )
     for ( int x = 0; x < VIZ_WIDTH; x++ )
     {
 		// get the "height" of the sample
-        int sample_y = min( (int)(spectrum[x] * 4.0f * (float)VIZ_HEIGHT), VIZ_HEIGHT - 1 );
+        int sample_y = min( (int)(spectrum[x] * 4.0f * (float)VIZ_HEIGHT), (VIZ_HEIGHT - 1) );
         
         for ( int y = 0; y < sample_y; y++ )
         {
