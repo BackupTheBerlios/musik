@@ -20,6 +20,7 @@ public:
 	//--- events ---//
 	//--------------//
 	void OnClose			( wxCommandEvent& WXUNUSED(event) );
+	void OnSlider(wxScrollEvent& event);
 	
 	//-------------------------//
 	//--- utility functions ---//
@@ -34,7 +35,8 @@ public:
 	//------------------//
 	//--- eq sliders ---//
 	//------------------//
-	wxSlider	*slL0;
+	wxSlider	*slLeft[18];
+	wxSlider	*slRight[18];
 	
 	//--------------//
 	//--- sizers ---//
