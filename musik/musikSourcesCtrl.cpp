@@ -780,11 +780,11 @@ void CmusikSourcesCtrl::DoDrag( CmusikPropTreeItem* pItem )
 	else if ( nMode == MUSIK_PLAYLIST_TYPE_LIBRARY )
 	{
 		CMainFrame* pMain = (CMainFrame*)m_Parent;
-		if ( pMain->m_LibPlaylist )
+		if ( pMain->m_Playlist )
 		{
 			m_Library->BeginTransaction();
-			for ( size_t i = 0; i < pMain->m_LibPlaylist->GetCount(); i++ )
-				files.push_back( pMain->m_LibPlaylist->GetField( i, MUSIK_LIBRARY_TYPE_FILENAME ) );
+			for ( size_t i = 0; i < pMain->m_Playlist->GetCount(); i++ )
+				files.push_back( pMain->m_Playlist->GetField( i, MUSIK_LIBRARY_TYPE_FILENAME ) );
 			m_Library->EndTransaction();
 		}
 	}
