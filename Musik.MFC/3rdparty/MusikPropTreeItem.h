@@ -1,5 +1,6 @@
 ///////////////////////////////////////////////////
-// PropTree.h : header file
+//
+// PropTreeItem.h
 //
 //  Copyright (C) 1998-2001 Scott Ramsay
 //	sramsay@gonavi.com
@@ -17,10 +18,16 @@
 //	If you use this code, drop me an email.  I'd like to know if you find the code
 //	useful.
 //
-//  Modified by Casey Langen for Musik MFC port...
-//  Rather than linking to a dll or external lib, it compiles in.
-//  Changes default look and behavior as well. Much thanks to the
-//  Author Scott Ramsay.
+//  Modified heavily by Casey Langen for Musik MFC port...
+//    - Rather than linking to a dll or external lib, it compiles in.
+//    - PropTree and PropTreeList combined into one file
+//    - Mouse hover tracking
+//    - Drawing enhancements
+//    - Various Musik specific functions
+//
+//  The Musik team thanks Scott Ramsay for creating this great
+//  class and making it open source. Cheers.
+//
 ///////////////////////////////////////////////////
 
 #pragma once

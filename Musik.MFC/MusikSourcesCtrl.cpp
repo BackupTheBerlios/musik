@@ -41,7 +41,6 @@ CMusikSourcesCtrl::~CMusikSourcesCtrl()
 
 BEGIN_MESSAGE_MAP( CMusikSourcesCtrl, CMusikPropTree )
 	ON_WM_CREATE()
-	ON_WM_MOUSEMOVE()
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -250,9 +249,4 @@ void CMusikSourcesCtrl::KillFocus( bool redraw )
 
 ///////////////////////////////////////////////////
 
-void CMusikSourcesCtrl::OnMouseMove(UINT nFlags, CPoint point)
-{
-	// TODO: Add your message handler code here and/or call default
 
-	CMusikPropTree::OnMouseMove(nFlags, point);
-}

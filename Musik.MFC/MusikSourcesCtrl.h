@@ -66,8 +66,6 @@ private:
 	CMusikSourcesItemPtrArray m_Libraries;
 	CMusikSourcesItemPtrArray m_StdPlaylists;
 	CMusikSourcesItemPtrArray m_DynPlaylists;
-public:
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 };
 
 ///////////////////////////////////////////////////
