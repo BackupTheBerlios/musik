@@ -411,6 +411,16 @@
 						RelativePath=".\musikDynamicPlaylistEditor.h">
 					</File>
 				</Filter>
+				<Filter
+					Name="musikDirSync"
+					Filter="">
+					<File
+						RelativePath=".\musikDirSync.cpp">
+					</File>
+					<File
+						RelativePath=".\musikDirSync.h">
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 		<Filter
@@ -457,9 +467,6 @@
 			</File>
 			<File
 				RelativePath=".\musik.h">
-			</File>
-			<File
-				RelativePath=".\musikDirSync.h">
 			</File>
 			<File
 				RelativePath=".\Resource.h">
@@ -668,9 +675,6 @@
 				</File>
 			</Filter>
 		</Filter>
-		<File
-			RelativePath=".\musikDirSync.cpp">
-		</File>
 	</Files>
 	<Globals>
 		<Global

@@ -50,6 +50,7 @@ public:
 	bool PurgeOnStartup(){ return m_Dlg_PurgeOnStartup; }
 	bool WriteTagsToFile(){ return m_Dlg_WriteTagsToFile; }
 	bool LibraryShowsAllSongs(){ return m_Dlg_LibraryShowsAllSongs; }
+	bool MinimizeToTray(){ return m_Dlg_MinimizeToTray; }
 
 	void SetDlgSize( const CSize sz ){ m_Dlg_Size = sz; }
 	void SetDlgPos( const CPoint pt ){ m_Dlg_Pos = pt; }
@@ -61,6 +62,7 @@ public:
 	void SetPurgeOnStartup( bool purge ){ m_Dlg_PurgeOnStartup = purge; }
 	void SetWriteTagsToFile( bool write ){ m_Dlg_WriteTagsToFile = write; }
 	void SetLibraryShowsAllSongs( bool showall ){ m_Dlg_LibraryShowsAllSongs = showall; }
+	void SetMinimizeToTray( bool tray ){ m_Dlg_MinimizeToTray = tray; }
 
 	//
 	// selection box
@@ -163,6 +165,7 @@ private:
 	bool	m_Dlg_PurgeOnStartup;
 	bool	m_Dlg_WriteTagsToFile;
 	bool	m_Dlg_LibraryShowsAllSongs;
+	bool	m_Dlg_MinimizeToTray;
 
 	// selection area
 	size_t	m_SelectionBox_Count;

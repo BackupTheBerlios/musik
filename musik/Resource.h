@@ -18,7 +18,7 @@
 #define IDD_SAVESTDPLAYLIST             137
 #define IDD_FILEDROP                    138
 #define IDD_FILEDROPDLG                 138
-#define IDD_SYNC_DIRS                   140
+#define IDD_DIR_SYNC                    140
 #define IDC_CHECK_STARTUPSCAN           1007
 #define IDC_CHECK_PL_STRIPES            1009
 #define IDC_COMBO1                      1010
@@ -35,6 +35,7 @@
 #define IDC_BUTTON2                     1018
 #define IDC_BTNYES                      1018
 #define IDC_FIELDSTRING2                1018
+#define IDC_CLOSE                       1018
 #define IDC_REMEMBER                    1019
 #define IDC_ENABLE_QUERY3               1019
 #define IDC_RADIO1                      1020
@@ -61,9 +62,11 @@
 #define IDC_FIELDVARIABLE1              1035
 #define IDC_FIELDSTRING1                1036
 #define IDC_BUTTON1                     1038
+#define IDC_ADD                         1038
 #define IDC_BUTTON3                     1039
+#define IDC_REMOVE                      1039
 #define IDC_LIST2                       1040
-#define IDC_BUTTON4                     1041
+#define IDC_DIRS                        1040
 #define ID_FILE_PREFERENCES             32771
 #define ID_FILE_SEP                     32772
 #define ID_ADD_FILES                    32774

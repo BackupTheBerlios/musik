@@ -155,11 +155,16 @@ BEGIN
     VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT, NOINVERT
     VK_BACK,        ID_EDIT_UNDO,           VIRTKEY, ALT, NOINVERT
     "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL, NOINVERT
-    "M",            ID_FILE_MANAGEDIRECTORIES, VIRTKEY, CONTROL, NOINVERT
+    "M",            ID_FILE_SYNCHRONIZEDDIRECTORIES, VIRTKEY, CONTROL, 
+                                                    NOINVERT
     "P",            ID_FILE_PREFERENCES,    VIRTKEY, CONTROL, NOINVERT
     "S",            ID_FILE_SAVEPLAYLIST,   VIRTKEY, CONTROL, NOINVERT
     VK_F6,          ID_NEXT_PANE,           VIRTKEY, NOINVERT
     VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
+    "Z",            ID_VIEW_CROSSFADER,     VIRTKEY, SHIFT, CONTROL, 
+                                                    NOINVERT
+    "X",            ID_VIEW_EQUALIZER,      VIRTKEY, SHIFT, CONTROL, 
+                                                    NOINVERT
     "D",            ID_VIEW_NOWPLAYING,     VIRTKEY, SHIFT, CONTROL, 
                                                     NOINVERT
     "F",            ID_VIEW_PLAYLISTINFORMATION, VIRTKEY, SHIFT, CONTROL, 
@@ -167,10 +172,6 @@ BEGIN
     "S",            ID_VIEW_SELECTIONBOXES, VIRTKEY, SHIFT, CONTROL, 
                                                     NOINVERT
     "A",            ID_VIEW_SOURCES,        VIRTKEY, SHIFT, CONTROL, 
-                                                    NOINVERT
-    "Z",            ID_VIEW_CROSSFADER,     VIRTKEY, SHIFT, CONTROL, 
-                                                    NOINVERT
-    "X",            ID_VIEW_EQUALIZER,      VIRTKEY, SHIFT, CONTROL, 
                                                     NOINVERT
 END
 
@@ -187,7 +188,7 @@ CAPTION "About musik:Cube"
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,114,12,20,20
-    DEFPUSHBUTTON   "close",IDOK,190,242,50,16,WS_GROUP
+    DEFPUSHBUTTON   "ok",IDOK,190,242,50,16,WS_GROUP
     CTEXT           "Casey Langen: Lead developer, project manager",
                     IDC_STATIC,12,66,222,8
     CTEXT           "Dustin Carter: Developer, webmaster",IDC_STATIC,12,78,
@@ -273,7 +274,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION |
 CAPTION "musik:Cube"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "okay",IDOK,167,84,50,14
+    DEFPUSHBUTTON   "ok",IDOK,167,84,50,14
     PUSHBUTTON      "cancel",IDCANCEL,113,84,50,14
     CONTROL         "Remember my answer",IDC_REMEMBER,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,6,86,87,10
@@ -339,17 +340,16 @@ BEGIN
     EDITTEXT        IDC_FIELDSTRING5,192,102,66,14,ES_AUTOHSCROLL
 END
 
-IDD_SYNC_DIRS DIALOGEX 0, 0, 294, 127
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
-    WS_SYSMENU
-CAPTION "musik:Cube Directory Synchronization"
+IDD_DIR_SYNC DIALOGEX 0, 0, 294, 127
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
+CAPTION "musik:Cube Directory Synchronization (not done yet)"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    PUSHBUTTON      "add",IDC_BUTTON1,6,108,50,14
-    PUSHBUTTON      "remove",IDC_BUTTON3,60,108,50,14
-    LISTBOX         IDC_LIST2,6,5,282,97,LBS_SORT | LBS_NOINTEGRALHEIGHT | 
+    PUSHBUTTON      "add",IDC_ADD,6,108,50,14
+    PUSHBUTTON      "remove",IDC_REMOVE,60,108,50,14
+    LISTBOX         IDC_DIRS,6,5,282,97,LBS_SORT | LBS_NOINTEGRALHEIGHT | 
                     WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "close",IDC_BUTTON2,238,108,50,14
+    PUSHBUTTON      "close",IDC_CLOSE,238,108,50,14
 END
 
 
@@ -474,7 +474,7 @@ BEGIN
         BOTTOMMARGIN, 142
     END
 
-    IDD_SYNC_DIRS, DIALOG
+    IDD_DIR_SYNC, DIALOG
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 287

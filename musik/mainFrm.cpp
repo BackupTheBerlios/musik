@@ -85,6 +85,8 @@ int WM_SOURCESNOWPLAYING	= RegisterWindowMessage( "SOURCESNOWPLAYING" );
 int WM_SOURCESSTDPLAYLIST	= RegisterWindowMessage( "SOURCESSTDPLAYLIST" );
 int WM_SOURCESDYNPLAYLIST	= RegisterWindowMessage( "SOURCESDYNDPLAYLIST" );
 
+int WM_CLOSEDIRSYNC			= RegisterWindowMessage( "CLOSEDIRSYNC" );
+
 // we get these ones from the player
 // via a CmusikFrmFunctor after a
 // certain operation as completed
@@ -148,6 +150,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_COMMAND(ID_UNSYNCHRONIZEDTAGS_FINALIZEFORDATABASEONLY, OnUnsynchronizedtagsFinalizefordatabaseonly)
 	ON_COMMAND(ID_VIEW_CROSSFADER, OnViewCrossfader)
 	ON_COMMAND(ID_VIEW_EQUALIZER, OnViewEqualizer)
+	ON_COMMAND(ID_FILE_SYNCHRONIZEDDIRECTORIES, OnFileSynchronizeddirectories)
 
 	// update ui
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SOURCES, OnUpdateViewSources)
@@ -162,6 +165,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_UPDATE_COMMAND_UI(ID_PLAYBACKMODE_INTRO, OnUpdatePlaybackmodeIntro)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_CROSSFADER, OnUpdateViewCrossfader)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_EQUALIZER, OnUpdateViewEqualizer)
+	ON_UPDATE_COMMAND_UI(ID_FILE_SYNCHRONIZEDDIRECTORIES, OnUpdateFileSynchronizeddirectories)
 
 	// custom message maps
 	ON_REGISTERED_MESSAGE( WM_SELBOXUPDATE, OnUpdateSel )
@@ -184,8 +188,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_REMOVEOLD_END, OnThreadEnd )
 	ON_REGISTERED_MESSAGE( WM_PLAYER_PLAYSEL, OnPlayerPlaySel )
 	ON_REGISTERED_MESSAGE( WM_BATCHADD_VERIFY_PLAYLIST, OnVerifyPlaylist )
-	ON_COMMAND(ID_FILE_SYNCHRONIZEDDIRECTORIES, OnFileSynchronizeddirectories)
-	ON_UPDATE_COMMAND_UI(ID_FILE_SYNCHRONIZEDDIRECTORIES, OnUpdateFileSynchronizeddirectories)
+	ON_REGISTERED_MESSAGE( WM_CLOSEDIRSYNC, OnCloseDirSync )
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -274,12 +277,12 @@ CMainFrame::CMainFrame()
 {
 	m_ProtectingThreads = new ACE_Thread_Mutex();
 
+	m_hIcon16 = ( HICON )LoadImage( AfxGetApp()->m_hInstance, MAKEINTRESOURCE( IDI_MUSIK_16 ), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR );
+	m_hIcon32 = ( HICON )LoadImage( AfxGetApp()->m_hInstance, MAKEINTRESOURCE( IDI_MUSIK_32 ), IMAGE_ICON, 32, 32, LR_DEFAULTCOLOR );
+
 	InitPaths();
 	Initmusik();
 	InitDragTypes();
-
-	m_hIcon16 = ( HICON )LoadImage( AfxGetApp()->m_hInstance, MAKEINTRESOURCE( IDI_MUSIK_16 ), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR );
-	m_hIcon32 = ( HICON )LoadImage( AfxGetApp()->m_hInstance, MAKEINTRESOURCE( IDI_MUSIK_32 ), IMAGE_ICON, 32, 32, LR_DEFAULTCOLOR );
 }
 
 ///////////////////////////////////////////////////
@@ -344,7 +347,7 @@ void CMainFrame::Initmusik()
 	m_Library		= new CmusikLibrary( ( CStdString )m_Database );
 	m_Prefs			= new CmusikPrefs( m_PrefsIni );
 	m_DirSyncDlg	= NULL;
-
+	
 	// show all songs, if we are supposed to
 	if ( m_Prefs->LibraryShowsAllSongs() )
 	{
@@ -723,6 +726,9 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		thread->Start( (ACE_THR_FUNC)musikRemoveOldWorker, params );
 	}
 
+	// tray icon stuff
+	InitTrayIcon();
+
 	return 0;
 }
 
@@ -830,6 +836,8 @@ BOOL CMainFrame::DestroyWindow()
 	CString sProfile = _T( "musikProfile" );
 	CSizingControlBar::GlobalSaveState( this, sProfile );
 	SaveBarState( sProfile );
+
+	HideTrayIcon();
 
 	return CFrameWnd::DestroyWindow();
 }
@@ -1087,6 +1095,11 @@ LRESULT CMainFrame::OnSongChange( WPARAM wParam, LPARAM lParam )
 
 	m_Caption = s;
 
+	if ( m_Prefs->MinimizeToTray() )
+	{
+		strncpy ( m_TrayIcon.szTip, m_Caption, sizeof( m_TrayIcon.szTip ) );
+		Shell_NotifyIcon( NIM_MODIFY, &m_TrayIcon );
+	}
 	return 0L;
 }	
 
@@ -1847,6 +1860,23 @@ void CMainFrame::OnSysCommand(UINT nID, LPARAM lParam)
 		return;
 	}
 
+	if ( m_Prefs->MinimizeToTray() )
+	{
+		if ( nID == SC_MINIMIZE )
+		{
+			ShowWindow( SW_MINIMIZE );
+			ShowWindow( SW_HIDE );
+			ShowTrayIcon();
+			return;
+		}
+		else if ( nID == SC_RESTORE )
+		{
+			ShowWindow( SW_SHOW );
+			HideTrayIcon();
+			return;
+		}
+	}
+
 	CFrameWnd::OnSysCommand(nID, lParam);
 }
 
@@ -1904,8 +1934,8 @@ void CMainFrame::OnFileSynchronizeddirectories()
 	if ( !m_DirSyncDlg )
 	{
 		m_DirSyncDlg = new CmusikDirSync( this );
-		m_DirSyncDlg->Create( IDD_SYNC_DIRS, this );
-		m_DirSyncDlg->ShowWindow( SW_SHOWNORMAL );
+		m_DirSyncDlg->Create( IDD_DIR_SYNC, this );
+		m_DirSyncDlg->ShowWindow( SW_SHOW );
 	}
 }
 
@@ -1917,3 +1947,82 @@ void CMainFrame::OnUpdateFileSynchronizeddirectories(CCmdUI *pCmdUI)
 }
 
 ///////////////////////////////////////////////////
+
+LRESULT CMainFrame::OnCloseDirSync( WPARAM wParam, LPARAM lParam )
+{
+	if ( m_DirSyncDlg )
+	{
+		m_DirSyncDlg->DestroyWindow();
+		delete m_DirSyncDlg;
+		m_DirSyncDlg = NULL;
+	}
+
+	return 0L;
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::InitTrayIcon()
+{
+	m_TrayIcon.cbSize = sizeof( NOTIFYICONDATA ); 
+	m_TrayIcon.hWnd   = GetSafeHwnd(); 
+	m_TrayIcon.uID    = ID_NOTIFY_ICON;
+	m_TrayIcon.hIcon  = m_hIcon16; 
+	m_TrayIcon.uCallbackMessage = TRAY_NOTIFY_EVT; 
+	m_TrayIcon.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP; 
+	strncpy ( m_TrayIcon.szTip, m_Caption, sizeof( m_TrayIcon.szTip ) );
+
+	m_TrayIconVisible = false;
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::ShowTrayIcon()
+{
+	if ( !m_TrayIconVisible )
+	{
+		m_TrayIcon.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP; 
+		Shell_NotifyIcon( NIM_ADD, &m_TrayIcon );	
+		m_TrayIconVisible = true;
+	}
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::HideTrayIcon()
+{
+	if ( m_TrayIconVisible )
+	{
+		m_TrayIcon.uFlags = NIF_ICON;
+		Shell_NotifyIcon( NIM_DELETE, &m_TrayIcon );
+		m_TrayIconVisible = false;
+	}
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CMainFrame::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
+{
+	// process messages from the tray
+	if ( message == TRAY_NOTIFY_EVT )
+	{
+		switch( lParam )
+		{
+		case WM_LBUTTONDBLCLK:
+			ShowWindow( SW_NORMAL );
+			SetForegroundWindow();
+			SetFocus();
+			HideTrayIcon();
+			return 1L;
+			break;
+		case WM_RBUTTONDOWN:
+		case WM_CONTEXTMENU:
+			break;
+		}
+	}
+
+	return CFrameWnd::WindowProc(message, wParam, lParam);
+}
+
+///////////////////////////////////////////////////
+

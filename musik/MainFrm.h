@@ -64,6 +64,13 @@
 
 ///////////////////////////////////////////////////
 
+// task tray notification stuff
+
+#define ID_NOTIFY_ICON 125
+#define TRAY_NOTIFY_EVT (WM_USER+1245)
+
+///////////////////////////////////////////////////
+
 enum 
 {
 	SYSMENU_RESETDIALOG = 85904,
@@ -201,6 +208,7 @@ protected:
 	afx_msg LRESULT OnPlayerPlaySel( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnBatchAddNew( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnVerifyPlaylist( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnCloseDirSync( WPARAM wParam, LPARAM lParam );
 
 	// mfc message maps
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -261,6 +269,14 @@ protected:
 	// macros
 	DECLARE_DYNAMIC(CMainFrame)
 	DECLARE_MESSAGE_MAP()
+
+	// tray icon
+	NOTIFYICONDATA m_TrayIcon;
+	bool m_TrayIconVisible;
+	void InitTrayIcon();
+	void ShowTrayIcon();
+	void HideTrayIcon();
+	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
 };
 
 ///////////////////////////////////////////////////
