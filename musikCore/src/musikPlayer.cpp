@@ -641,6 +641,63 @@ bool CmusikPlayer::Play( int index, int fade_type, int start_pos )
 
 ///////////////////////////////////////////////////
 
+void CmusikPlayer::EnquePaused( int index )
+{
+	// should only get here if we're paused
+	if ( !IsPaused() )
+		return;
+
+	// if we're missing a playlist, or the next
+	// song is out of range, we don't want anything 
+	// to do with it
+	if ( index == -1 )
+		index = m_Index;
+
+	if ( !m_Playlist || index > (int)m_Playlist->GetCount() - 1 || index < -1 )
+		return;
+
+	m_Library->GetSongInfoFromID( m_Playlist->GetSongID( index ), &m_CurrSong );
+
+	// setup next stream
+	FSOUND_STREAM* pNewStream = FSOUND_Stream_Open( 
+		m_CurrSong.GetFilename().c_str(), 
+		FSOUND_NORMAL | FSOUND_2D | FSOUND_MPEGACCURATE, 
+		0,
+		0 );
+
+	// assure the stream was loaded
+	if ( !pNewStream )
+	{
+		TRACE0( "Song file failed to load. Invalid filename?\n" );
+		return;
+	}
+
+	// clean anything left over
+	CleanOldStreams( true );
+
+	// increment handle
+	m_Handle++;
+
+	// inc the next channel, 
+	PushNewChannel();
+
+	// add the new channel and stream
+	m_ActiveStreams->push_back( pNewStream );
+	m_ActiveChannels->push_back( GetCurrChannel() );
+
+	// setup playback, then pause
+	FSOUND_Stream_Play( GetCurrChannel(), pNewStream );
+	FSOUND_SetVolume( GetCurrChannel(), 0 );
+	FSOUND_SetPaused( FSOUND_ALL, TRUE );
+
+	m_Index = index;
+
+	if ( m_Functor )
+		m_Functor->OnNewSong();
+}
+
+///////////////////////////////////////////////////
+
 bool CmusikPlayer::Next()
 {
 	if ( !m_Playlist )
@@ -648,17 +705,22 @@ bool CmusikPlayer::Next()
 
 	if ( GetPlaymode() == MUSIK_PLAYER_PLAYMODE_LOOP || GetPlaymode() == MUSIK_PLAYER_PLAYMODE_NORMAL )
 	{
-		if ( m_Index + 1 == (int)m_Playlist->GetCount() )
+		if ( m_Index + 1 > (int)m_Playlist->GetCount() )
 		{
 			if ( GetPlaymode() == MUSIK_PLAYER_PLAYMODE_LOOP )	
 				m_Index = 0;
 			else
 				return false;
 		}
+		else 
+			m_Index++;
 	}
 
-
-	Play( m_Index + 1, MUSIK_CROSSFADER_NEW_SONG );
+	if ( IsPlaying() && !IsPaused() )
+		Play( m_Index + 1, MUSIK_CROSSFADER_NEW_SONG );
+	else
+		EnquePaused( -1 );
+		
 
 	return true;
 }
@@ -672,7 +734,7 @@ bool CmusikPlayer::Prev()
 
 	// if the song is under 2000 ms, we want to go
 	// to the previous track
-	if ( GetTimeNow( MUSIK_TIME_MS ) < 2000 )
+	if ( GetTimeNow( MUSIK_TIME_MS ) < 2000 || !IsPlaying() )
 	{
 		if ( GetPlaymode() == MUSIK_PLAYER_PLAYMODE_NORMAL )
 		{
@@ -692,8 +754,10 @@ bool CmusikPlayer::Prev()
 	// song time elapsted is greater than 2000 ms
 	// we want to start the song over
 	// m_Index == m_Index
-
-	Play( m_Index, MUSIK_CROSSFADER_NEW_SONG );
+	if ( IsPlaying() && !IsPaused() )
+		Play( m_Index, MUSIK_CROSSFADER_NEW_SONG );
+	else
+		EnquePaused( -1 );
 
 	return true;
 }

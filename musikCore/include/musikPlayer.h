@@ -175,6 +175,10 @@ public:
 	void Stop();
 	void Exit();
 
+	// used for enquing the next / prev song if
+	// playback is currently paused
+	void EnquePaused( int index );
+
 	// only the thread should touch these
 	void FinalizePause();
 	void FinalizeResume();
