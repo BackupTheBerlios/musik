@@ -270,8 +270,7 @@ void CMusikPlayer::InitThread()
 		m_ThreadID,
 		m_ThreadHND );
 
-	// i don't think this is necessary
-	//ACE_Thread::join( m_ThreadHND );
+	ACE_Thread::join( 0, m_ThreadHND, 0 );
 }
 
 ///////////////////////////////////////////////////
