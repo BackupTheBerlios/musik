@@ -628,7 +628,7 @@ bool CMusikTagger::Retag(CMusikSong * Song) const
 			size_t start = 0,len = 0;
 			if(!m_reMask.GetMatch(&start,&len,i + 1))
 				break;
-			CSongMetaData::StringData sField = ConvToUTF8(sFile.Mid(start, len));
+			CSongMetaData::StringData sField = ConvToUTF8(sFile.Mid(start, len)).data();
 
 			switch ( m_PlaceHolderArray[i] )
 			{

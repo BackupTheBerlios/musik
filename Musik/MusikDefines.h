@@ -13,6 +13,10 @@
 #ifndef MUSIKDEFINES_H
 #define MUSIKDEFINES_H
 
+#ifndef max
+#define max(a, b)   (((a) > (b)) ? (a) : (b))
+#endif
+
 //---------------//
 //--- defines ---//
 //---------------//
