@@ -9,7 +9,8 @@
  *  See the file "license.txt" for information on usage and redistribution
  *  of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 */
-// For compilers that support precompilation, includes "wx/wx.h".
+
+//--- For compilers that support precompilation, includes "wx/wx.h". ---//
 #include "wx/wxprec.h"
 #include "MusikLibraryThreads.h"
 
@@ -125,7 +126,6 @@ void *MusikScanNewThread::Entry()
 	if ( g_Paths.GetCount() <= 0 )
 		return NULL;
 
-	wxArrayString aDir;
 	wxArrayString aFiles;
 	wxString sTitle;
 	
@@ -137,16 +137,12 @@ void *MusikScanNewThread::Entry()
 		else 
 		{
 			//--- get directory ---//
-			aDir.Clear();
-			aFiles.Clear();
-			aDir.Add( g_Paths.Item( i ) );
-			aFiles = GetMusicDirs( &aDir );
+			aFiles = GetMusicDir( &g_Paths.Item( i ) );
 
-			//--- get count ---//
-			int nCount = aFiles.GetCount();
 			//--- do math ---//
-			int nCompare = g_Library.GetSongDirCount( aDir.Item( 0 ) );
-			int nResult = nCount - nCompare;
+			int nCount		= aFiles.GetCount();
+			int nCompare	= g_Library.GetSongDirCount( g_Paths.Item( i ) );
+			int nResult		= nCount - nCompare;
 
 			//--- post update progress event ---//
 			fPos = ( i * 100 ) / g_Paths.GetCount();

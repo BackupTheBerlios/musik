@@ -238,6 +238,23 @@ wxArrayString GetMusicDirs( wxArrayString *aDirs )
 	return aFiles;
 }
 
+wxArrayString GetMusicDir( wxString* sDir )
+{
+	wxArrayString aFiles;
+
+	if ( *sDir != wxT( "" ) )
+	{
+		wxDir dir( *sDir );
+		if ( dir.IsOpened() )
+		{
+			wxMusicTraverser traverser( aFiles );
+			dir.Traverse( traverser );
+		}
+	}
+
+	return aFiles;
+}
+
 //--- return all the playlist files in the playlist dir ---//
 wxArrayString GetPlaylistDir()
 {

@@ -29,6 +29,7 @@ wxString			GetGenre			( wxString sGenre );
 int					GetGenreID			( wxString sGenre );
 wxArrayString		DelimitStr			( wxString sStr, wxString sDel, bool bRemoveDelimiter = true );
 wxArrayString		GetMusicDirs		( wxArrayString *aDirs );
+wxArrayString		GetMusicDir			( wxString* sDir );
 wxArrayString		GetPlaylistDir		();
 wxString			MStoStr				( int timems );
 int					TimeToSec			( wxString sTime );
