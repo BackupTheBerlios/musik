@@ -153,12 +153,15 @@ void CMusikPlaylistView::OnDropFiles(HDROP hDropInfo)
 	TCHAR szNextFile [MAX_PATH];
 	
 	nNumFiles = DragQueryFile ( hDropInfo, -1, NULL, 0 );
+	CStdStringArray* files = NULL;
 
 	// if the thread exists, pause it
 	if ( m_BatchAddThr )
 		m_BatchAddThr->Pause();
+
+	// otherwise create a new list of files
 	else
-		CStdStringArray* files = new CStdStringArray();
+		files = new CStdStringArray();
 
 	for ( size_t i = 0; i < nNumFiles; i++ )
 	{
