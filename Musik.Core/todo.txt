@@ -1,0 +1,11 @@
+Musik.Core Todo list:
+
+CMusikLibrary:
+
+  1. AppendStdPlaylist()
+  2. InitEqTable(), and equalizer preset access
+  3. GetCrossfader(), and crossfader preset access
+
+CMusikPlayer:
+
+  1. 
