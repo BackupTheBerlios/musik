@@ -175,6 +175,7 @@ public:
 	void GetStdPlaylistFns	( CmusikPlaylist& playlist, CStdStringArray& target, bool clear_target = true );
 	void CreateStdPlaylist	( const CStdString& name, const CStdStringArray& files );
 	void AppendStdPlaylist	( int id, const CStdStringArray& files );
+	void RenameStdPlaylist	( int id, const CStdString& str );
 	void CreateDynPlaylist	( const CStdString& name, const CStdString& query );
 	void DeleteStdPlaylist	( const CStdString& name );
 	void DeleteStdPlaylist	( int id );

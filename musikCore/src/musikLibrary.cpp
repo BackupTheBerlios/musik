@@ -708,6 +708,27 @@ void CmusikLibrary::AppendStdPlaylist( int id, const CStdStringArray& files )
 
 ///////////////////////////////////////////////////
 
+void CmusikLibrary::RenameStdPlaylist( int id, const CStdString& str )
+{
+	if ( !m_pDB )
+		return;
+
+	if ( id >= 0 )
+	{
+		m_ProtectingLibrary->acquire();
+
+		sqlite_exec_printf( m_pDB, "UPDATE %q SET std_playlist_name=%Q WHERE std_playlist_id=%d;",
+		NULL, NULL, NULL, 
+		STD_PLAYLIST_TABLE_NAME,
+		str.c_str(),
+		id );
+
+		m_ProtectingLibrary->release();
+	}
+}
+
+///////////////////////////////////////////////////
+
 void CmusikLibrary::GetStdPlaylist( int id, CmusikPlaylist& target, bool clear_target )
 {
 	if ( !m_pDB )
