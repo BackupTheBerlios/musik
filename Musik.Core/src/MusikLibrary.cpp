@@ -102,12 +102,12 @@ void CMusikLibrary::InitFields()
 	m_Fields.push_back( _T( "Year" ) );
 	m_Fields.push_back( _T( "Genre" ) );
 	m_Fields.push_back( _T( "Title" ) );
-	m_Fields.push_back( _T( "Track Number" ) );
+	m_Fields.push_back( _T( "Track" ) );
 	m_Fields.push_back( _T( "Time Added" ) );
 	m_Fields.push_back( _T( "Last Played" ) );
 	m_Fields.push_back( _T( "Filesize" ) );
 	m_Fields.push_back( _T( "Format" ) );
-	m_Fields.push_back( _T( "Duration" ) );
+	m_Fields.push_back( _T( "Time" ) );
 	m_Fields.push_back( _T( "Rating" ) );
 	m_Fields.push_back( _T( "Times Played" ) );
 	m_Fields.push_back( _T( "Bitrate" ) );
