@@ -29,28 +29,29 @@
 #include "../Threads/PlaylistCtrlThreads.h"
 
 BEGIN_EVENT_TABLE(CPlaylistCtrl, wxListCtrl)
-	EVT_LIST_ITEM_ACTIVATED		( MUSIK_PLAYLIST,											CPlaylistCtrl::PlaySel			)	
-	EVT_LIST_BEGIN_DRAG			( MUSIK_PLAYLIST,											CPlaylistCtrl::BeginDrag		)
-	EVT_LIST_ITEM_SELECTED		( MUSIK_PLAYLIST,											CPlaylistCtrl::UpdateSel		)
-	EVT_LIST_COL_END_DRAG		( MUSIK_PLAYLIST,											CPlaylistCtrl::EndDragCol		)
-	EVT_MENU					( MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FROM_PLAYLIST,		CPlaylistCtrl::OnDelSel			)
-	EVT_MENU					( MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FILES,				CPlaylistCtrl::OnDelFiles		)
-	EVT_MENU					( MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FROM_DB,				CPlaylistCtrl::OnDelFilesDB		)
-	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_RENAME_FILES,						CPlaylistCtrl::OnRenameFiles	)
-	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_RETAG_FILES,						CPlaylistCtrl::OnRetagFiles		)
-	EVT_MENU_RANGE		( MUSIK_PLAYLIST_CONTEXT_UNRATED, MUSIK_PLAYLIST_CONTEXT_RATE5, CPlaylistCtrl::OnRateSel) 	
-	EVT_UPDATE_UI_RANGE		( MUSIK_PLAYLIST_CONTEXT_UNRATED, MUSIK_PLAYLIST_CONTEXT_RATE5,	CPlaylistCtrl::OnUpdateUIRateSel	)
+	EVT_LIST_ITEM_ACTIVATED		( MUSIK_PLAYLIST,														CPlaylistCtrl::PlaySel				)	
+	EVT_LIST_BEGIN_DRAG			( MUSIK_PLAYLIST,														CPlaylistCtrl::BeginDrag			)
+	EVT_LIST_ITEM_SELECTED		( MUSIK_PLAYLIST,														CPlaylistCtrl::UpdateSel			)
+	EVT_LIST_COL_END_DRAG		( MUSIK_PLAYLIST,														CPlaylistCtrl::EndDragCol			)
+	EVT_MENU					( MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FROM_PLAYLIST,					CPlaylistCtrl::OnDelSel				)
+	EVT_MENU					( MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FILES,							CPlaylistCtrl::OnDelFiles			)
+	EVT_MENU					( MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FROM_DB,							CPlaylistCtrl::OnDelFilesDB			)
+	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_RENAME_FILES,									CPlaylistCtrl::OnRenameFiles		)
+	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_RETAG_FILES,									CPlaylistCtrl::OnRetagFiles			)
+	EVT_MENU_RANGE				( MUSIK_PLAYLIST_CONTEXT_UNRATED, MUSIK_PLAYLIST_CONTEXT_RATE5,			CPlaylistCtrl::OnRateSel			) 	
+	EVT_UPDATE_UI_RANGE			( MUSIK_PLAYLIST_CONTEXT_UNRATED, MUSIK_PLAYLIST_CONTEXT_RATE5,			CPlaylistCtrl::OnUpdateUIRateSel	)
 	EVT_MENU_RANGE				( MUSIK_PLAYLIST_CONTEXT_TAG_TITLE,	MUSIK_PLAYLIST_CONTEXT_TAG_YEAR,	CPlaylistCtrl::OnClickEditTag		)
-	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_SMART,								CPlaylistCtrl::OnDisplaySmart	)
-	EVT_CONTEXT_MENU			(															CPlaylistCtrl::ShowMenu			)
-	EVT_CHAR					(															CPlaylistCtrl::TranslateKeys	)
-	EVT_LIST_COL_CLICK			( MUSIK_PLAYLIST,											CPlaylistCtrl::OnColumnClick	)
+	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_SMART,											CPlaylistCtrl::OnDisplaySmart		)
+	EVT_CONTEXT_MENU			(																		CPlaylistCtrl::ShowMenu				)
+	EVT_CHAR					(																		CPlaylistCtrl::TranslateKeys		)
+	EVT_LIST_COL_CLICK			( MUSIK_PLAYLIST,														CPlaylistCtrl::OnColumnClick		)
 
 	//---------------------------------------------------------//
 	//--- column on off stuff.								---//
 	//-------------  		--------------------------------------------//
-	EVT_MENU_RANGE				( MUSIK_PLAYLIST_DISPLAY_FIRST, MUSIK_PLAYLIST_DISPLAY_LAST,	CPlaylistCtrl::OnDisplayMenu	)
-	EVT_UPDATE_UI_RANGE		( MUSIK_PLAYLIST_DISPLAY_FIRST, MUSIK_PLAYLIST_DISPLAY_LAST,	CPlaylistCtrl::OnUpdateUIDisplayMenu	)
+	EVT_MENU_RANGE			( MUSIK_PLAYLIST_DISPLAY_FIRST, MUSIK_PLAYLIST_DISPLAY_LAST,				CPlaylistCtrl::OnDisplayMenu			)
+	EVT_UPDATE_UI_RANGE		( MUSIK_PLAYLIST_DISPLAY_FIRST, MUSIK_PLAYLIST_DISPLAY_LAST,				CPlaylistCtrl::OnUpdateUIDisplayMenu	)
+
 	//---------------------------------------------------------//
 	//--- threading events.. we use EVT_MENU becuase its	---//
 	//--- nice and simple, and gets the job done. this may	---//
@@ -820,7 +821,7 @@ void CPlaylistCtrl::SetSelFirst()
 	SetItemState( g_Player.GetCurIndex(), wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
 	SetFocus();
 	EnsureVisible( g_Player.GetCurIndex() );
-	Refresh();
+	Refresh( false );
 }
 
 //----------------------------------------//
@@ -883,7 +884,6 @@ void CPlaylistCtrl::Update( bool bSelFirst, bool  bRescaleColumns)
 	if ( bSelFirst && GetItemCount() )
 		SetItemState( 0, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );	
 	Thaw();
-	Refresh( false );
 
 	if( bRescaleColumns )
 		RescaleColumns();
@@ -1013,8 +1013,6 @@ void CPlaylistCtrl::RescaleColumns( bool bFreeze, bool bSave, bool bAutoFit )
 
 	if ( bAutoFit )
 		SaveColumns();
-
-	Refresh( false );
 }
 
 void CPlaylistCtrl::ResetColumns( bool update, bool rescale )
