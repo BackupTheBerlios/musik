@@ -42,8 +42,8 @@ MusikVolumeFrame::MusikVolumeFrame( wxFrame* pParent, wxPoint pos )
 	SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_3DFACE ) );
 	pCrossfade = new wxCheckBox( this, MUSIK_CHK_CROSSFADE, _("Crossfade"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 	gSeek = new wxGauge	( this, -1, 255, wxPoint( -1, -1 ), wxSize( wxSystemSettings::GetMetric(wxSYS_HSCROLL_Y), -1 ), wxGA_SMOOTH | wxGA_VERTICAL | wxCLIP_CHILDREN );
-	pSeekEvt = new CGaugeSeekEvt	( gSeek, wxGA_VERTICAL );
-	gSeek->PushEventHandler			( pSeekEvt );
+	pSeekEvt = new CGaugeSeekEvt( gSeek, wxGA_VERTICAL );
+	gSeek->PushEventHandler( pSeekEvt );
 	static wxString choices[3] = {_("Normal"),_("Loop"),_("Shuffle")};
 	m_pRadioBoxPlaymode = new wxRadioBox( this, -1, _("Play Mode"), wxDefaultPosition, wxDefaultSize, WXSIZEOF(choices),choices, 1, wxRA_SPECIFY_COLS );
 
@@ -59,18 +59,17 @@ MusikVolumeFrame::MusikVolumeFrame( wxFrame* pParent, wxPoint pos )
 	pTopSizer->Add( gSeek, 0, wxEXPAND| wxALIGN_RIGHT| wxALL, 2 );
 
 
-	// init values
+	//-------------------------//
+	//--- initialize values ---//
+	//-------------------------//
 	gSeek->SetValue( g_Prefs.nSndVolume );
-
-	if(g_Prefs.nRepeat)
-        	m_pRadioBoxPlaymode->SetSelection( 1 );
-	else if(g_Prefs.nShuffle)
-        	m_pRadioBoxPlaymode->SetSelection( 2 );
+	pCrossfade->SetValue( g_Prefs.nGlobalFadeEnable );
+	if( g_Prefs.nRepeat )
+        m_pRadioBoxPlaymode->SetSelection( 1 );
+	else if( g_Prefs.nShuffle )
+        m_pRadioBoxPlaymode->SetSelection( 2 );
 	else
 		m_pRadioBoxPlaymode->SetSelection( 0 );
-
-	pCrossfade->SetValue( g_Prefs.nGlobalFadeEnable );
-
 
 	SetSizerAndFit( pTopSizer );
 
