@@ -104,7 +104,17 @@ void CmusikPlaylistInfoCtrl::OnPaint()
 	memDC.Draw3dRect( rect, m_Prefs->MUSIK_COLOR_BTNSHADOW, m_Prefs->MUSIK_COLOR_BTNHILIGHT );
 
 	// draw the bitchin' background
-	DrawEQ( memDC.GetSafeHdc() );
+	switch ( m_Prefs->GetPlaylistInfoVizStyle() )
+	{
+	case PLAYLIST_INFO_VIZ_STYLE_NONE:
+		break;
+
+	case PLAYLIST_INFO_VIZ_STYLE_EQ:
+		DrawEQ( memDC.GetSafeHdc() );
+		break;
+	}
+
+	
 
 	// put the text over it
 	SetTextAlign( memDC.GetSafeHdc(), TA_CENTER );

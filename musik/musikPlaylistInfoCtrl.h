@@ -60,6 +60,12 @@ class CmusikPlaylistCtrl;
 
 ///////////////////////////////////////////////////
 
+enum PLAYLIST_INFO_VIZ_STYLE
+{
+	PLAYLIST_INFO_VIZ_STYLE_NONE = 0,
+	PLAYLIST_INFO_VIZ_STYLE_EQ,
+};
+
 class CmusikPlaylistInfoCtrl : public CWnd
 {
 #define VIZ_WIDTH     128
