@@ -27,6 +27,13 @@
 //class CNowPlayingCtrl;
 class MusikLibraryFrame;
 
+//quite hackish attempt to be able to compile with release 2.5.2 and cvs HEAD before 2.5.3 release
+#if wxVERSION_NUMBER < 2503
+#ifndef wxSUBRELEASE_NUMBER
+#define wxTaskBarIconEvent wxEvent
+#endif
+#endif
+
 class MusikTaskBarIcon: public wxTaskBarIcon
 {
 public:
@@ -109,7 +116,7 @@ public:
 	//--- virtual overrides ---//
 	//-------------------------//
 	virtual void SetTitle(const wxString& title);
-
+	virtual void SetSongInfoText(const wxString& info);
 
 	//------------------------------//
 	//---     activity boxes     ---//

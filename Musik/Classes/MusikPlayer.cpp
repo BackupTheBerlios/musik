@@ -875,12 +875,16 @@ size_t CMusikPlayer::GetShuffledSong()
 	int nMaxRepeatCount = 30;
 	do {
 		repeat = false;
-		r = GetRandomNumber() % m_Playlist.GetCount();
+		
+		r = (int) m_Playlist.GetCount() * (GetRandomNumber() / (RandomMax + 1.0));  // random range  [0 , m_Playlist.GetCount()-1] 
 
 		if(m_arrHistory.GetCount() == m_Playlist.GetCount())
 		{	// history is as large as the playlist
-			// clear the history and start anew
-			m_arrHistory.Clear();
+			// clear half of the history 
+			for(int i = 0; i < m_arrHistory.GetCount()/2;i++)
+			{
+				m_arrHistory.RemoveAt(0);
+			}
 			break;
 		}
 		if(nMaxRepeatCount--) // only check for repeats nMaxRepeatCount times, to prevent endless do loop
@@ -910,6 +914,7 @@ size_t CMusikPlayer::GetShuffledSong()
 		m_arrHistory.RemoveAt(0);
 	}
 	m_arrHistory.Add(r);
+	wxLogDebug(wxT("songindex %d\n"),r);
 	return r;
 }
 
@@ -947,16 +952,20 @@ void CMusikPlayer::NextSong()
 
 	case MUSIK_PLAYMODE_SHUFFLE:
 		{
-			if (m_Playlist.GetCount() && (m_SongIndex < m_Playlist.GetCount() - 1) )
-			{  // check if the following song , should always be played(even if we are in shuffle mode)
-			   if(m_Playlist[m_SongIndex + 1].bForcePlay)
-			   {
-				   m_Playlist[m_SongIndex + 1].bForcePlay = 0; //reset flag
-				   m_SongIndex++;
-				   Play(m_SongIndex);
-			   }
-			   else
-				   Play( GetShuffledSong() );
+			if (m_Playlist.GetCount())
+			{
+				if(m_SongIndex < m_Playlist.GetCount() - 1) 
+				{  // check if the following song , should always be played(even if we are in shuffle mode)
+					if(m_Playlist[m_SongIndex + 1].bForcePlay)
+					{
+						m_Playlist[m_SongIndex + 1].bForcePlay = 0; //reset flag
+						m_SongIndex++;
+						m_arrHistory.Add(m_SongIndex); // add to shuffle history too
+						Play(m_SongIndex);
+						return;
+					}
+				}
+			   Play( GetShuffledSong() );
 			}
 		}
 		break;
@@ -997,7 +1006,11 @@ void CMusikPlayer::PrevSong()
 			break;
 	
 		case MUSIK_PLAYMODE_SHUFFLE:
-			NextSong();
+			if(m_arrHistory.GetCount() >= 2)
+			{
+				m_SongIndex = m_arrHistory[m_arrHistory.GetCount() - 2];
+				Play( m_SongIndex );
+			}
 			break;
 		}
 	}
@@ -1027,61 +1040,33 @@ void CMusikPlayer::_AddRandomSongs()
 		arrSongs[i].bChosenByUser = 0;
 	AddToPlaylist(arrSongs,false);
 }
+
 void CMusikPlayer::_ChooseRandomSongs(int nSongsToAdd,CMusikSongArray &arrSongs)
 {
 	if(nSongsToAdd <= 0)
 		return;
-	int nMaxRepeatCount = 30;
-	int maxsongid = wxGetApp().Library.QueryCount("select max(songid) from autodj_songs;");
-
-	while ( (nMaxRepeatCount > 0) && (arrSongs.GetCount() < (size_t)nSongsToAdd))
+	wxString sQuerySongs = wxString::Format(wxT(" select autodj_songs.songid from autodj_songs ") 
+		wxT("where lastplayed < julianday('now','-%d hours');"),(int)wxGetApp().Prefs.nAutoDjDoNotPlaySongPlayedTheLastNHours);	 //(int) cast to make gcc 2.95 happy
+	wxArrayInt arrSongIds;
+	wxGetApp().Library.Query(sQuerySongs,arrSongIds);
+	if(arrSongIds.GetCount() < nSongsToAdd )
+	{  // not enough songs found, so relax the DoNotPlaySongPlayedTheLastNHours condition to 2 hours
+		sQuerySongs = wxString::Format(wxT(" select autodj_songs.songid from autodj_songs ") 
+			wxT("where lastplayed < julianday('now','-2 hours');"));	 //(int) cast to make gcc 2.95 happy
+		wxGetApp().Library.Query(sQuerySongs,arrSongIds);
+	}
+	while (arrSongIds.GetCount() && (arrSongs.GetCount() < (size_t)nSongsToAdd))
 	{
-		
-#if 0
-		int r = GetRandomNumber() % (wxGetApp().Library.GetSongCount());
-		wxString sQueryRandomSong = wxString::Format(wxT(" select autodj_songs.songid from autodj_songs " 
-					"where songs.songid not in(select songid from songhistory "
-					"where date_played > julianday('now','-%d hours')) limit 1 offset %d;"),nMaxRepeatCount < 5 ? 1 : (int)wxGetApp().Prefs.nAutoDjDoNotPlaySongPlayedTheLastNHours,r);
-	
-#else
-		int r = GetRandomNumber() % (maxsongid + 1);
-	   wxString sQueryRandomSong = wxString::Format(wxT(" select autodj_songs.songid from autodj_songs ") 
-		   wxT("where autodj_songs.songid = %d and autodj_songs.songid not in(select songid from songhistory ")
-		   wxT("where date_played > julianday('now','-%d days'));"),r,nMaxRepeatCount < 5 ? 1 : (int)wxGetApp().Prefs.nAutoDjDoNotPlaySongPlayedTheLastNHours);	 //(int) cast to make gcc 2.95 happy
-
-
-#endif
-		int songid = wxGetApp().Library.QueryCount(ConvQueryToMB(sQueryRandomSong));
-		bool repeat = false;
-		if(songid > -1)
+		int r = (int) arrSongIds.GetCount() * (GetRandomNumber() / (RandomMax + 1.0));  // random range  [0 , arrSongIds.GetCount()-1] 
+		CMusikSong song;
+		if(wxGetApp().Library.GetSongFromSongid(arrSongIds[r],&song))
 		{
-			CMusikSong song;
-			if(wxGetApp().Library.GetSongFromSongid(songid,&song))
+			if(song.MetaData.Filename.FileExists())
 			{
-					if(song.MetaData.Filename.FileExists())
-					{
-						//--- check for repeats ---//
-						for ( size_t j = 0;  j < arrSongs.GetCount(); j++ )
-						{
-							if ( songid == arrSongs[j].songid )
-							{
-								repeat = true; 
-								break;
-							}
-						}
-						if(!repeat)
-							arrSongs.Add(song);
-					}
-					else
-					{
-						repeat = true; 
-					}
+				arrSongs.Add(song);
 			}
+			arrSongIds.RemoveAt(r); //remove index, so songid cannot be chosen again.
 		}
-		else 
-			repeat = true;
-		if(repeat)
-			nMaxRepeatCount--;
 	} 
 }
 void CMusikPlayer::_ChooseRandomAlbumSongs(int nAlbumsToAdd,CMusikSongArray &arrAlbumSongs)
@@ -1096,8 +1081,7 @@ void CMusikPlayer::_ChooseRandomAlbumSongs(int nAlbumsToAdd,CMusikSongArray &arr
 	wxArrayString arrAlbums;
 	while ( (nMaxRepeatCount > 0) && ( arrAlbums.GetCount() < (size_t)nAlbumsToAdd ))
 	{
-		
-		int r = GetRandomNumber() % (albums_count);
+		int r = (int) albums_count * (GetRandomNumber() / (RandomMax + 1.0));  // random range  [0 , albums_count-1] 
 		wxString sQueryRandomAlbum = wxString::Format(wxT("select album||'|'||artist from autodj_albums where most_lastplayed < julianday('now','-%d hours') limit 1 offset %d;") 
 											,nMaxRepeatCount < 5 ? 1 : (int)wxGetApp().Prefs.nAutoDjDoNotPlaySongPlayedTheLastNHours,r);
 

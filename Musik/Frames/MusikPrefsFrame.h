@@ -34,7 +34,8 @@ enum EMUSIK_PREFERENCES_OBJECT_ID
 	MUSIK_PREFERENCES_CANCEL,
 	MUSIK_PREFERENCES_PLAYLIST_STRIPE_COLOUR,
 	MUSIK_PREFERENCES_ACTIVITY_STRIPE_COLOUR,
-	MUSIK_PREFERENCES_SOURCES_STRIPE_COLOUR
+	MUSIK_PREFERENCES_SOURCES_STRIPE_COLOUR,
+	MUSIK_PREFERENCES_PLAYLIST_BORDER_COLOUR
 };
 
 class MusikPrefsFrame : public wxFrame
@@ -82,6 +83,8 @@ public:
 	wxCheckBox	*chkSourcesBoxStripes;
 	wxButton	*btnSourcesStripeColour;
 
+	wxCheckBox	*chkPlaylistBorder;
+	wxButton	*btnPlaylistBorderColour;
 	//-----------------------------//
 	//--- options -> selections ---//
 	//-----------------------------//
@@ -156,7 +159,7 @@ public:
 	wxBoxSizer		*vsSound_Driver;
 	wxBoxSizer		*vsSound_Crossfader;
 	wxFlexGridSizer	*vsOptions_Selections;
-	wxFlexGridSizer	*vsOptions_Playlist;
+	wxBoxSizer		*vsOptions_Playlist;
 	wxBoxSizer		*vsOptions_Interface;
 	wxBoxSizer		*vsOptions_Misc;
 	wxBoxSizer		*vsOptions_Tunage;

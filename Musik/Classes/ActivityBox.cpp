@@ -84,18 +84,19 @@ END_EVENT_TABLE()
 
 void CActivityListBox::OnChar(wxKeyEvent& event)
 {
-	int keycode=event.GetKeyCode();
-	if ((keycode>=WXK_SPACE)&&(keycode<=0xff))
+	wxChar keycode=event.GetUnicodeKey();
+	if ((keycode>=WXK_SPACE))
 	{
 		if(m_OnCharStopWatch.Time()>1000)
 		{ // More than 1000 ms have passed since the last character was entered.
 			// Reset the search string.
 			m_sSearch.Empty();
 		}
-		m_sSearch+=char(keycode&0xff);
+		m_sSearch+=keycode;
+		m_sSearch.LowerCase();
 		for (int i=HasShowAllRow()?1:0;i<GetItemCount();++i)
 		{
-			if (GetRowText(i,false).Left(m_sSearch.Len()).IsSameAs(m_sSearch,false))
+			if (0 == wxStrcoll(GetRowText(i,false).Left(m_sSearch.Len()).Lower(),m_sSearch))
 			{ // Move this item to the center of the list.
 				int centeroffset = (GetCountPerPage() - 1) / 2;
 				int showitem=0;
@@ -542,6 +543,11 @@ EMUSIK_LIB_TYPE CActivityBox::ACTIVITY_TYPE2LIB_TYPE( EMUSIK_ACTIVITY_TYPE lbtyp
 	}
 }
 
+int wxCMPFUNC_CONV wxStringSortAscendingLocale(wxString* s1, wxString* s2)
+{
+	return wxStrcoll(s1->Lower().c_str(), s2->Lower().c_str());
+}
+
 void CActivityBox::GetRelatedList( CActivityBox *pDst, wxArrayString & aReturn )
 {
 	aReturn.Clear();
@@ -551,30 +557,32 @@ void CActivityBox::GetRelatedList( CActivityBox *pDst, wxArrayString & aReturn )
 	EMUSIK_LIB_TYPE InType	= ACTIVITY_TYPE2LIB_TYPE( m_ActivityType );
 	EMUSIK_LIB_TYPE OutType	= ACTIVITY_TYPE2LIB_TYPE( pDst->GetActivityType() );
 
-	wxGetApp().Library.GetInfo( sel, InType, OutType, aReturn );
+	wxGetApp().Library.GetInfo( sel, InType, OutType, aReturn ,false);
+	aReturn.Sort(wxStringSortAscendingLocale);
 }
 
 
 void CActivityBox::ResetContents(bool selectnone)
 {
 	wxArrayString list;
-	GetFullList(list);
+	GetFullList(list,false);
+	list.Sort(wxStringSortAscendingLocale);
 	SetContents( list , selectnone );
 }
 
-void CActivityBox::GetFullList( wxArrayString & aReturn )
+void CActivityBox::GetFullList( wxArrayString & aReturn ,bool bSorted)
 {
 	aReturn.Clear();
 	switch	( m_ActivityType)
 	{
 	case MUSIK_LBTYPE_ARTISTS:
-		wxGetApp().Library.GetAllArtists( aReturn );
+		wxGetApp().Library.GetAllArtists( aReturn ,bSorted);
   		break;
 	case MUSIK_LBTYPE_ALBUMS:
-		wxGetApp().Library.GetAllAlbums( aReturn );
+		wxGetApp().Library.GetAllAlbums( aReturn ,bSorted);
     		break;
 	case MUSIK_LBTYPE_GENRES:
-		wxGetApp().Library.GetAllGenres( aReturn );
+		wxGetApp().Library.GetAllGenres( aReturn ,bSorted);
     		break;
 	case MUSIK_LBTYPE_YEARS:
 		wxGetApp().Library.GetAllYears( aReturn );

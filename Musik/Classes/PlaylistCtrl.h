@@ -94,7 +94,7 @@ public:
 	void OnKeyDown		( wxKeyEvent&		pEvent			);
 	void EndDragCol		( wxListEvent&		event			);
 	void BeginDragCol	( wxListEvent&		event			);
-	void PlaySel		( wxListEvent&		WXUNUSED(event)	);
+	void OnItemActivate		( wxListEvent&		WXUNUSED(event)	);
 
 
 	wxDragResult OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames,wxDragResult def);
@@ -171,6 +171,7 @@ protected:
 	virtual bool OnRescaleColumns() {RescaleColumns(false); return true;}
 	void RescaleColumns		( bool bFreeze = true, bool bSave = false, bool bAutoFit = false );
 	wxMenu * CreateContextMenu();
+	wxString EmptyColumnString() const;
 	//--- vars ---//
 	wxArrayInt		aCurSel;
 

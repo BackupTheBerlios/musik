@@ -34,7 +34,6 @@ CPictureBox::CPictureBox( wxWindow *parent )
 ,m_Timer(this)
 {
 	m_bDefaultImageFailed = false;
-	SetBackgroundColour(WXSYSTEMCOLOUR(wxT("LIGHT STEEL BLUE")));
 	Show(false);
 }
 void CPictureBox::OnIdle(wxIdleEvent & event)
@@ -117,7 +116,7 @@ public:
 
 	virtual wxDirTraverseResult OnDir(const wxString& WXUNUSED(dirname))
 	{
-		return wxDIR_CONTINUE;
+		return wxDIR_STOP;
 	}
 
 private:
@@ -185,30 +184,45 @@ void CPictureBox::OnPaint(wxPaintEvent &)
 	const int offset= 5;
 	width -= 2*offset;
 	height -= 2*offset;
-	int bmpwidth = 0,bmpheight = 0;
-	if(width > height)
+	int bmpwidth = m_image.GetWidth(),bmpheight = m_image.GetHeight();
+	if((double)width/(double)height > (double)bmpwidth/(double)bmpheight)
 	{
-		bmpwidth = (int)(((double)m_image.GetWidth() * height)/((double)m_image.GetHeight()) + 0.5);
-		bmpheight = height;
-		if(bmpwidth > width)
+		if(bmpwidth > bmpheight)
 		{
-			bmpheight = (int)(((double)m_image.GetHeight() * width)/((double)m_image.GetWidth()) + 0.5);
 			bmpwidth = width;
+			bmpheight = (int)(((double)height * bmpwidth)/((double)width) + 0.5);			
+		}
+		else
+		{
+			bmpheight = height;
+			bmpwidth = (int)(((double)width * bmpheight)/((double)height) + 0.5);
+			
 		}
 	}
 	else
 	{
-		bmpheight = (int)(((double)m_image.GetHeight() * width)/((double)m_image.GetWidth()) + 0.5);
-		bmpwidth = width;
+		if(bmpheight > bmpwidth)
+		{
+			bmpheight = height;
+			bmpwidth = (int)(((double)width * bmpheight)/((double)height) + 0.5);
+		}
+		else
+		{
+			bmpwidth = width;
+			bmpheight = (int)(((double)height * bmpwidth)/((double)width) + 0.5);
+		}
 	}
-	wxBitmap bmp = wxBitmap(m_image.Scale(bmpwidth, bmpheight));
-	dc.DrawBitmap(bmp,offset,offset);
-
+	m_image.ConvertAlphaToMask();
+	wxBitmap bmp = wxBitmap(m_image.Scale(bmpwidth, bmpheight),dc);
+	wxCoord x = abs(bmpwidth - width)/2 + offset;
+	wxCoord y = abs(bmpheight - height)/2 + offset ;
+	dc.DrawBitmap(bmp,x,y,true);
 	wxColour BGColor =  GetBackgroundColour();
 	wxBrush MyBrush(BGColor ,wxSOLID);
 	dc.SetBackground(MyBrush);
-
-	MyRegion.Subtract(offset,offset,bmpwidth,bmpheight);
+	wxRegion regionBmp(bmp);
+	regionBmp.Offset(x,y);
+	MyRegion.Subtract(regionBmp);
 	// now destroy the old clipping region
 	dc.DestroyClippingRegion();
 	//and set the new one

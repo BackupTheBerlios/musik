@@ -243,6 +243,9 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle )
 	//--- Options -> General ---//
 	//--------------------------//
 	PREF_CREATE_CHECKBOX(AutoPlayOnAppStart,_("Automatically play song on startup"));
+	PREF_CREATE_CHECKBOX(ShowLibraryOnStart,_("Show Library on startup"));
+	PREF_CREATE_CHECKBOX(DoubleClickReplacesPlaylist,_("Double click replaces playlist"));
+	
 	PREF_CREATE_CHECKBOX(AutoPlayOnDropFilesInPlaylist,	_("Automatically play songs, dropped into playlist"));
 	PREF_CREATE_CHECKBOX(StopSongOnNowPlayingClear,	_("Stop song, if Now Playing is cleared"));
 #ifdef wxHAS_TASK_BAR_ICON
@@ -256,16 +259,19 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle )
 	chkPlaylistStripes		=	new wxCheckBox_NoFlicker( this, -1,	_("Show \"stripes\" in playlist"),wxDefaultPosition,wxDefaultSize,0 );
 	chkActivityBoxStripes	=	new wxCheckBox_NoFlicker( this, -1,	_("Show \"stripes\" in selection boxes"),wxDefaultPosition,wxDefaultSize,0 );
 	chkSourcesBoxStripes	=	new wxCheckBox_NoFlicker( this, -1,	_("Show \"stripes\" in sources box"),wxDefaultPosition,wxDefaultSize,0 );
-
+	chkPlaylistBorder		=   new wxCheckBox_NoFlicker( this, -1,	_("Use selected border colour"),wxDefaultPosition,wxDefaultSize,0 );
 	btnPlaylistStripeColour	=	new wxButton_NoFlicker( this, MUSIK_PREFERENCES_PLAYLIST_STRIPE_COLOUR,	_("Set Color") );
 	btnActivityStripeColour	=	new wxButton_NoFlicker( this, MUSIK_PREFERENCES_ACTIVITY_STRIPE_COLOUR,	_("Set Color") );
 	btnSourcesStripeColour	=	new wxButton_NoFlicker( this, MUSIK_PREFERENCES_SOURCES_STRIPE_COLOUR,	_("Set Color") );
-
+	btnPlaylistBorderColour =   new wxButton_NoFlicker( this, MUSIK_PREFERENCES_PLAYLIST_BORDER_COLOUR,	_("Set Color") );
 	//--------------------------------//
 	//--- Options -> General Sizer ---//
 	//--------------------------------//
 	vsOptions_Interface = new wxBoxSizer( wxVERTICAL );
 	vsOptions_Interface->Add( chkAutoPlayOnAppStart,	0, wxALL, 4 );
+	vsOptions_Interface->Add( chkShowLibraryOnStart,	0, wxALL, 4 );
+	vsOptions_Interface->Add( chkDoubleClickReplacesPlaylist,	0, wxALL, 4 );
+
 	vsOptions_Interface->Add( chkAutoPlayOnDropFilesInPlaylist,	0, wxALL, 4 );
 	vsOptions_Interface->Add( chkStopSongOnNowPlayingClear,	0, wxALL, 4 );
 #ifdef wxHAS_TASK_BAR_ICON
@@ -281,12 +287,16 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle )
 	vsOptions_Interface->Add( btnActivityStripeColour,	0, wxALL, 4 );
 	vsOptions_Interface->Add( chkSourcesBoxStripes,		0, wxALL, 4 );
 	vsOptions_Interface->Add( btnSourcesStripeColour,	0, wxALL, 4 );
+	vsOptions_Interface->Add( chkPlaylistBorder,		0, wxALL, 4 );
+	vsOptions_Interface->Add( btnPlaylistBorderColour,	0, wxALL, 4 );
 
 	//---------------------------------//
 	//--- Options -> Playlist Sizer ---//
 	//---------------------------------//
-	vsOptions_Playlist = new wxFlexGridSizer( 12, 2, 2, 2 );
-
+	vsOptions_Playlist = new wxBoxSizer( wxVERTICAL );
+	
+	wxFlexGridSizer *vsOptions_Playlist_Columns = new wxFlexGridSizer( NPLAYLISTCOLUMNS, 2, 2, 2 );
+	vsOptions_Playlist->Add(vsOptions_Playlist_Columns);
 	//---------------------------//
 	//--- Options -> Playlist ---//
 	//---------------------------//
@@ -295,11 +305,12 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle )
 	for(size_t i = 0; i < NPLAYLISTCOLUMNS; i++)
 	{
 		chkPLColumnEnable[i] = new  wxCheckBox_NoFlicker(	this, -1, wxString(wxGetTranslation(g_PlaylistColumnLabels[i]))+wxT(":"));
-		vsOptions_Playlist->Add(chkPLColumnEnable[i],		0, wxALIGN_CENTER_VERTICAL | wxADJUST_MINSIZE );
+		vsOptions_Playlist_Columns->Add(chkPLColumnEnable[i],		0, wxALIGN_CENTER_VERTICAL | wxADJUST_MINSIZE );
 		cmbPLColumnStatic[i] = new wxComboBox( this, -1, wxT(""), wxDefaultPosition, wxDefaultSize, WXSIZEOF(choicesCMBStatic), choicesCMBStatic, wxCB_READONLY );
-		vsOptions_Playlist->Add( cmbPLColumnStatic[i],		0 );
+		vsOptions_Playlist_Columns->Add( cmbPLColumnStatic[i],		0 );
 	}
-
+	PREF_CREATE_CHECKBOX(DisplayEmptyPlaylistColumnAsUnkown,_("Display <unknown> in empty colums"));
+	vsOptions_Playlist->Add( chkDisplayEmptyPlaylistColumnAsUnkown,		0, wxTOP, 5 );
 	//-------------------------//
 	//--- options -> tunage ---//
 	//-------------------------//
@@ -616,10 +627,12 @@ void MusikPrefsFrame::LoadPrefs()
 	chkPlaylistStripes->SetValue	( wxGetApp().Prefs.bPLStripes );
 	chkActivityBoxStripes->SetValue	( wxGetApp().Prefs.bActStripes );
 	chkSourcesBoxStripes->SetValue	( wxGetApp().Prefs.bSourcesStripes );
+	chkPlaylistBorder->SetValue	( wxGetApp().Prefs.bPlaylistBorder );
 
 	btnPlaylistStripeColour->SetBackgroundColour( StringToColour( wxGetApp().Prefs.sPLStripeColour ) );
 	btnActivityStripeColour->SetBackgroundColour( StringToColour( wxGetApp().Prefs.sActStripeColour ) );
 	btnSourcesStripeColour->SetBackgroundColour( StringToColour( wxGetApp().Prefs.sSourcesStripeColour ) );
+	btnPlaylistBorderColour->SetBackgroundColour( StringToColour( wxGetApp().Prefs.sPlaylistBorderColour ) );
 
 	//-----------------------------//
 	//--- options -> selections ---//
@@ -805,7 +818,7 @@ bool MusikPrefsFrame::SavePrefs()
 	bool bActivityChange	= false;
 	bool bPlaylistUpdate = false;
 	bool bActivityUpdate = false;
-
+	bool bSourcesUpdate = false;
 	//--------------------------//
 	//--- Options -> general ---//
 	//--------------------------//
@@ -827,6 +840,19 @@ bool MusikPrefsFrame::SavePrefs()
 		wxGetApp().Prefs.sPLStripeColour = ColourToString( btnPlaylistStripeColour->GetBackgroundColour() );
 		bPlaylistUpdate = true;
 	}
+	if ( chkPlaylistBorder->GetValue() != wxGetApp().Prefs.bPlaylistBorder )
+	{
+		wxGetApp().Prefs.bPlaylistBorder = chkPlaylistBorder->GetValue();
+		bPlaylistUpdate = true;
+		bSourcesUpdate = true;
+	}
+	if ( ColourToString( btnPlaylistBorderColour->GetBackgroundColour() ) != wxGetApp().Prefs.sPlaylistBorderColour )
+	{
+		wxGetApp().Prefs.sPlaylistBorderColour = ColourToString( btnPlaylistBorderColour->GetBackgroundColour() );
+		bPlaylistUpdate = true;
+		bSourcesUpdate = true;
+	}
+
 	if ( bPlaylistUpdate )
 		g_PlaylistBox->Update();
 
@@ -843,7 +869,7 @@ bool MusikPrefsFrame::SavePrefs()
 	if ( bActivityUpdate )
 		g_ActivityAreaCtrl->ResetAllContents();
 
-	bool bSourcesUpdate = false;
+	
 	if ( chkSourcesBoxStripes->GetValue() != wxGetApp().Prefs.bSourcesStripes )
 	{
 		wxGetApp().Prefs.bSourcesStripes = chkSourcesBoxStripes->GetValue();
@@ -1007,6 +1033,12 @@ bool MusikPrefsFrame::SavePrefs()
 	if ( bResetColumns )
 		g_PlaylistBox->PlaylistCtrl().ResetColumns( true, true );
 	
+	if(bSourcesUpdate || bActivityUpdate || bPlaylistUpdate)
+	{
+		// force update of evrything
+		g_MusikFrame->Show(false);
+		g_MusikFrame->Show();	
+	}
 	TransferDataFromWindow();
 	return true;
 }

@@ -28,12 +28,10 @@ EVT_ERASE_BACKGROUND(CPlaylistInfoCtrl::OnEraseBackground)
 END_EVENT_TABLE()
 
 CPlaylistInfoCtrl::CPlaylistInfoCtrl( wxWindow *parent ,IPlaylistInfo *pIPlaylistInfo )
-	: wxPanel( parent, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ),wxNO_FULL_REPAINT_ON_RESIZE| wxCLIP_CHILDREN )
+	: wxPanel( parent, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ),wxNO_FULL_REPAINT_ON_RESIZE| wxCLIP_CHILDREN|wxTRANSPARENT_WINDOW )
 	,m_pIPlaylistInfo( pIPlaylistInfo )
 {
 
-//	SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_3DFACE ) );
-	SetBackgroundColour( parent->GetBackgroundColour() );
  	//--- static text objects ---/
 	stTotal			= new wxStaticText_NoFlicker( this, -1, _( "Total Songs: " ),			wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
 	stTotalVal		= new wxStaticText_NoFlicker( this, -1, wxT( "0" ),					wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
@@ -132,6 +130,18 @@ void CPlaylistInfoCtrl::Update()
 		else if ( totsize < ( kbsize * kbsize * kbsize * kbsize ) )
 			strsize = wxString::Format( wxT("%.2f gb"), totsize / kbsize / kbsize / kbsize );
 		stFilesizeVal->SetLabel( strsize );
+	}
+	wxColour bg = GetParent()->GetBackgroundColour();
+	if(GetBackgroundColour() !=  bg)
+	{
+		SetBackgroundColour( bg );
+		wxWindowList & children = GetChildren();
+		for ( wxWindowList::Node *node = children.GetFirst(); node; node = node->GetNext() )
+		{
+			wxWindow *current = (wxWindow *)node->GetData();
+			current->SetBackgroundColour(bg);
+		}
+
 	}
 	Layout();
 }

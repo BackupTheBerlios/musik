@@ -188,7 +188,7 @@ public:
 	void Update				( bool selectnone = true )			{ pListBox->Update( selectnone );		}	
 	void ResetContents		(bool selectnone = true);
 	void SetContents		( const wxArrayString &list ,bool selectnone = true); 
-	void GetFullList		( wxArrayString & aReturn );
+	void GetFullList		( wxArrayString & aReturn, bool bSorted = true );
 	void SetPlaylist		();
 	void EnableProgress		( bool enable = true );
 	void SetRelated			( int n );

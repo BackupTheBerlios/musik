@@ -317,7 +317,7 @@ bool			SetFramePlacement	( wxFrame* frame, wxString place );
 
 void			SeedRandom			( unsigned long s );
 long			GetRandomNumber		();
-
+const int RandomMax = 0x7fffffffL;
 //-------------------------//
 //--- Unicode functions ---//
 //-------------------------//

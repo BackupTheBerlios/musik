@@ -164,7 +164,8 @@ public:
 	//--- only place needed functions here to reduce overhead	---//
 	//-------------------------------------------------------------//
 	int  GetSelType				( )	{ return m_pListBox->GetSelType();	}
-	void Update					( ) { m_pListBox->Update();				}
+	void Update					( ); 
+	
 	void UpdateCurrent			( ) { m_pListBox->UpdateSel(m_pListBox->GetIndex()); }
 	void SelectLibrary			( bool bSwitchView = true ) { m_pListBox->UpdateSel(bSwitchView ? (size_t) -2:(size_t) -4); }
 	void SelectNowPlaying		( ) { m_pListBox->UpdateSel((size_t) -3); }

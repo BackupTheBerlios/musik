@@ -1462,6 +1462,7 @@ CSourcesBox::CSourcesBox( wxWindow *parent )
 	pSizer->Add( m_pListBox, 1, wxEXPAND|wxALIGN_TOP , 0 );
 	pSizer->Add( m_pPictureBox, 0, wxEXPAND|wxALIGN_BOTTOM , 0 );
 	m_pPanel->SetSizer( pSizer );
+	Update();
 }
 
 void CSourcesBox::OnSashDragged	(wxSashEvent & ev)
@@ -1501,6 +1502,17 @@ void CSourcesBox::ShowAlbumArt(bool bShow)
 	}
 	m_pPanel->Layout();
 }
+void CSourcesBox::Update( ) 
+{ 
+	m_pListBox->Update();
+	SetBackgroundColour(wxGetApp().Prefs.bPlaylistBorder ?  
+		StringToColour(wxGetApp().Prefs.sPlaylistBorderColour)
+		:wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+	m_pPictureBox->SetBackgroundColour(wxGetApp().Prefs.bPlaylistBorder ?  
+		StringToColour(wxGetApp().Prefs.sPlaylistBorderColour)
+		:wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+}
+
 CSourcesBox::~CSourcesBox()
 {
 	

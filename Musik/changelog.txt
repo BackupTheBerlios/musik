@@ -1,3 +1,27 @@
+0.3.1.5 to 0.3.1.6
+- fix AutoDj selection routine. Was made in good intention,but badly done,so didnt work quite right. Random selection has been enhance for shuffle play too.
++ Trayicon text displays now  song  properties multiple lines. Album  info has been added.
++ Added DisableTrayIcon setting in perfs file, for people who dont like it, or have a windowmanager which is not supported.
++ Searching with the search box, now includes the genre
++ added new hotkey i in playlist to play selected songs instantly ( useful if option "Double click replaces playlist" is active but you dont want to replace playlist 
+- Hotkey F8 did not work in playlist
++ added portuguese translation (thanks to Marc Gayot)
++ added spanish translation (thanks to Iván Campaña)
+- fixed bug with adding notes containing accented chars. the note was discared if it did contain such a char.
++ In Shuffle mode , pressing "previous" goes to start ( as usual) pressing prev. again goes to previously played song
+  and not another randomly chosen song as before.
++ Currently playing song uses playlist border colour as background, if border colour is actibvated
++ Border colour of playlist is configurable now
++ New option "Double click replaces playlist" instead of adding song to NowPlaying
++ New option "Show Library on startup" instead of NowPlaying
++ New option "Display <unknown> in empty colums" for playlist, if you disable it, the column will be empty.
+- fixed centering of picture in album info. Transparency of picture( if available) is used now 
+- fixed some other minor bug
+- fixed crash while drag and drop under some circumstances
++added norsk bokmal translation( thanks to 
++ added czech translation (thanks to Vit Hrachovy)
+
+
 0.3.1.4 to 0.3.1.5
 + supported new formats: mp2, wav , aiff and wma(windows only).  wav , aiff and wma tag writing is not (yet) supported.
 + new ui language available: french

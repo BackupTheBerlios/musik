@@ -154,8 +154,7 @@ bool CMusikLibrary::Load()
 		sqlite_exec( m_pDB, "PRAGMA synchronous = OFF;", NULL, NULL, NULL );
 		sqlite_exec( m_pDB, "PRAGMA cache_size = 10000;", NULL, NULL, NULL );
 		CheckVersion();
-		sqlite_exec_printf( m_pDB,	"CREATE VIEW autodj_songs as select * from songs where %s;"
-			, NULL, NULL, NULL ,( const char* )ConvToUTF8(wxGetApp().Prefs.sAutoDjFilter ));	
+		SetAutoDjFilter(wxGetApp().Prefs.sAutoDjFilter );
 		sqlite_exec( m_pDB,	"CREATE VIEW valid_albums as select album,artist,most_lastplayed from ("
 			"select album,artist,sum(duration) as sum_duration,max(lastplayed+0) as most_lastplayed "  
 			"from songs where album != '' group by album) where sum_duration > 1500000;"
@@ -333,6 +332,8 @@ void CMusikLibrary::remprefixFunc(sqlite_func *context, int argc, const char **a
 						"Der ",
 						"Die ",
 						"Das ",
+						"Le ",
+						"La "
 					};
 	int argvlen = strlen(argv[0]);
 	for(size_t i=0; i<sizeof(pPrefixArray)/sizeof(pPrefixArray[0]); i++)
@@ -585,14 +586,21 @@ void CMusikLibrary::VerifyYearList( const wxArrayString & aList,wxArrayString & 
 	}
 	return;
 }
+int CMusikLibrary::sqlite_callbackAddToIntArray(void *args, int WXUNUSED(numCols), char **results, char ** WXUNUSED(columnNames))
+{
+
+	wxArrayInt * p = (wxArrayInt*)args;
+	p->Add( atoi(results[0]) ); 
+    return 0;
+}
 int CMusikLibrary::sqlite_callbackAddToStringArray(void *args, int WXUNUSED(numCols), char **results, char ** WXUNUSED(columnNames))
 {
 
 	wxArrayString * p = (wxArrayString*)args;
 	p->Add( ConvFromUTF8( results[0] )); 
-    return 0;
+	return 0;
 }
-void CMusikLibrary::GetInfo( const wxArrayString & aList, int nInType, int nOutType ,wxArrayString & aReturn )
+void CMusikLibrary::GetInfo( const wxArrayString & aList, int nInType, int nOutType ,wxArrayString & aReturn, bool bSorted )
 {
 	aReturn.Clear();
 	wxString sInfo;
@@ -606,18 +614,29 @@ void CMusikLibrary::GetInfo( const wxArrayString & aList, int nInType, int nOutT
 	switch ( nOutType )
 	{
 	case MUSIK_LIB_ARTIST:
-		if( wxGetApp().Prefs.bSortArtistWithoutPrefix)
-			query = wxT("select distinct artist,UPPER(REMPREFIX(artist)) as UP from songs where ");
+		if(bSorted)
+		{
+			if( wxGetApp().Prefs.bSortArtistWithoutPrefix)
+				query = wxT("select distinct artist,UPPER(REMPREFIX(artist)) as UP from songs where ");
+			else
+				query = wxT("select distinct artist,UPPER(artist) as UP from songs where ");
+		}
 		else
-			query = wxT("select distinct artist,UPPER(artist) as UP from songs where ");
+			query = wxT("select distinct artist from songs where ");
 		break;
 
 	case MUSIK_LIB_ALBUM:
-		query = wxT("select distinct album,UPPER(album) as UP from songs where ");
+		if(bSorted)
+			query = wxT("select distinct album,UPPER(album) as UP from songs where ");
+		else
+			query = wxT("select distinct album from songs where ");
 		break;
 
 	case MUSIK_LIB_GENRE:
-		query = wxT("select distinct genre,UPPER(genre) as UP from songs where ");
+		if(bSorted)
+			query = wxT("select distinct genre,UPPER(genre) as UP from songs where ");
+		else
+			query = wxT("select distinct genre from songs where ");
 		break;
 
 	case MUSIK_LIB_YEAR:
@@ -663,22 +682,24 @@ void CMusikLibrary::GetInfo( const wxArrayString & aList, int nInType, int nOutT
 
 	}
 
-	switch ( nOutType )
+	if(bSorted)
 	{
-	case MUSIK_LIB_ARTIST:
-	case MUSIK_LIB_ALBUM:
-	case MUSIK_LIB_GENRE:
-		query += wxT("order by UP");
-		break;
+		switch ( nOutType )
+		{
+		case MUSIK_LIB_ARTIST:
+		case MUSIK_LIB_ALBUM:
+		case MUSIK_LIB_GENRE:
+			query += wxT("order by UP");
+			break;
 
-	case MUSIK_LIB_YEAR:
-		query += wxT("order by year");
-		break;
+		case MUSIK_LIB_YEAR:
+			query += wxT("order by year");
+			break;
 
-	case MUSIK_LIB_DECADE:
-		break;
+		case MUSIK_LIB_DECADE:
+			break;
+		}
 	}
-
 	query += wxT(";");
 
 	//--- run query ---//
@@ -754,6 +775,18 @@ void CMusikLibrary::Query( const wxString & query, wxArrayString & aReturn ,bool
 	}
 	wxCriticalSectionLocker lock( m_csDBAccess );
 	sqlite_exec(m_pDB, ConvQueryToMB( query ), &sqlite_callbackAddToStringArray, &aReturn, NULL);
+}
+void CMusikLibrary::Query( const wxString & query, wxArrayInt & aReturn ,bool bClearArray )
+{
+	if(bClearArray)
+	{
+
+		aReturn.Clear();
+		//--- run the query ---//
+		aReturn.Alloc( GetSongCount() );
+	}
+	wxCriticalSectionLocker lock( m_csDBAccess );
+	sqlite_exec(m_pDB, ConvQueryToMB( query ), &sqlite_callbackAddToIntArray, &aReturn, NULL);
 }
 
 int CMusikLibrary::sqlite_callbackAddToSongMap(void *args, int WXUNUSED(numCols), char **results, char ** WXUNUSED(columnNames))
@@ -1344,23 +1377,35 @@ void CMusikLibrary::GetAllSongs( CMusikSongArray & aReturn, bool bSorted )
 	QuerySongsWhere( wxString(), aReturn ,bSorted);
 }
 
-void CMusikLibrary::GetAllArtists( wxArrayString & aReturn )
+void CMusikLibrary::GetAllArtists( wxArrayString & aReturn, bool bSorted  )
 {
-	if(wxGetApp().Prefs.bSortArtistWithoutPrefix)
-		Query( wxT("select distinct artist,UPPER(REMPREFIX(artist)) as UP from songs order by UP;"), aReturn );
+	if(bSorted)
+	{
+		if(wxGetApp().Prefs.bSortArtistWithoutPrefix)
+			Query( wxT("select distinct artist,UPPER(REMPREFIX(artist)) as UP from songs order by UP;"), aReturn );
+		else	
+			Query( wxT("select distinct artist,UPPER(artist) as UP from songs order by UP;"), aReturn );
+	}
 	else
-		Query( wxT("select distinct artist,UPPER(artist) as UP from songs order by UP;"), aReturn );
+		Query( wxT("select distinct artist from songs;"), aReturn );
+
 
 }
 
-void CMusikLibrary::GetAllAlbums( wxArrayString & aReturn )
+void CMusikLibrary::GetAllAlbums( wxArrayString & aReturn, bool bSorted  )
 {
-	Query( wxT("select distinct album,UPPER(album) as UP from songs order by UP;"), aReturn );
+	if(bSorted)
+		Query( wxT("select distinct album,UPPER(album) as UP from songs order by UP;"), aReturn );
+	else
+		Query( wxT("select distinct album from songs;"), aReturn );
 }
 
-void CMusikLibrary::GetAllGenres( wxArrayString & aReturn )	
+void CMusikLibrary::GetAllGenres( wxArrayString & aReturn, bool bSorted )	
 { 
-	Query( wxT("select distinct genre,UPPER(genre) as UP from songs order by UP;"), aReturn );					
+	if(bSorted)
+		Query( wxT("select distinct genre,UPPER(genre) as UP from songs order by UP;"), aReturn );					
+	else
+		Query( wxT("select distinct genre as UP from songs;"), aReturn );					
 }
 
 bool CMusikLibrary::SetAutoDjFilter(const wxString & sFilter)

@@ -207,7 +207,10 @@ MusikFrame::MusikFrame()
 		SetIcon( wxICON( musicbox ) );
 	#endif
 #ifdef wxHAS_TASK_BAR_ICON
-  m_pTaskBarIcon = new MusikTaskBarIcon(this);
+	if(wxGetApp().Prefs.bDisableTrayIcon)
+		m_pTaskBarIcon = NULL;
+	else
+		m_pTaskBarIcon = new MusikTaskBarIcon(this);
 #endif
 	//--- colours ---//
 	this->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_3DFACE ) );
@@ -572,13 +575,15 @@ void MusikFrame::EnableProgress( bool enable )
 
 void MusikFrame::SetTitle(const wxString& title)
 {
+	wxFrame::SetTitle(wxT( "[ " ) + title + wxT( " ] " )+ wxString( MUSIKAPPNAME_VERSION ));
+}
+void MusikFrame::SetSongInfoText(const wxString& info)
+{
 #ifdef wxHAS_TASK_BAR_ICON
 	if(	m_pTaskBarIcon )
-		m_pTaskBarIcon->SetIcon(wxIcon(tray_xpm), title);
+		m_pTaskBarIcon->SetIcon(wxIcon(tray_xpm), info);
 #endif
-	wxFrame::SetTitle(title);
 }
-
 
 //---------------------------------------------------------//
 //--- support for microsoft windows multimedia keyboard ---//

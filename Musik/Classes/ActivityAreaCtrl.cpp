@@ -36,7 +36,7 @@ CActivityAreaCtrl::CActivityAreaCtrl( wxWindow *pParent )
 	: wxSashLayoutWindow( pParent, MUSIK_ACTIVITYCTRL, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxTAB_TRAVERSAL|wxNO_BORDER|wxCLIP_CHILDREN | wxSW_3D )
 {
 	memset(m_ActivityBox,0,sizeof(m_ActivityBox));
-	SetBackgroundColour(WXSYSTEMCOLOUR(wxT("LIGHT STEEL BLUE")));
+	//SetBackgroundColour(WXSYSTEMCOLOUR(wxT("LIGHT STEEL BLUE")));
 	m_pPanel = new wxPanel( this, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxNO_BORDER|wxCLIP_CHILDREN|wxTAB_TRAVERSAL );
 	pTopSizer = new wxBoxSizer( wxHORIZONTAL );
 	m_pPanel->SetSizer( pTopSizer );

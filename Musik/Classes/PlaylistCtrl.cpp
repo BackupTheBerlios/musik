@@ -79,7 +79,6 @@ CPlaylistBox::CPlaylistBox( wxWindow *parent )
 	: wxPanel( parent, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ),wxNO_FULL_REPAINT_ON_RESIZE| wxTAB_TRAVERSAL|wxCLIP_CHILDREN|wxSUNKEN_BORDER )
 	
 {
-	SetBackgroundColour( WXSYSTEMCOLOUR(wxT("LIGHT STEEL BLUE")));
 
 	//--- CSourcesListBox ---//
 	m_pPlaylistCtrl	= new CPlaylistCtrl( this, MUSIK_PLAYLIST, wxPoint( -1, -1 ), wxSize( -1, -1 ) );
@@ -106,6 +105,9 @@ void CPlaylistBox::ShowPlaylistInfo()
 }
 void CPlaylistBox::Update( bool bSelFirstItem )
 {
+	SetBackgroundColour(wxGetApp().Prefs.bPlaylistBorder ?  
+										StringToColour(wxGetApp().Prefs.sPlaylistBorderColour)
+										:wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 	m_pPlaylistCtrl->Update(bSelFirstItem);
 	if ( wxGetApp().Prefs.bShowPLInfo )
 	{
@@ -157,7 +159,7 @@ CPlaylistBox::~CPlaylistBox()
 
 
 BEGIN_EVENT_TABLE(CPlaylistCtrl, CMusikListCtrl)
-	EVT_LIST_ITEM_ACTIVATED		( -1,														CPlaylistCtrl::PlaySel				)	
+	EVT_LIST_ITEM_ACTIVATED		( -1,														CPlaylistCtrl::OnItemActivate		)	
 	EVT_LIST_BEGIN_DRAG			( -1,														CPlaylistCtrl::BeginDrag			)
 	EVT_LIST_ITEM_SELECTED		( -1,														CPlaylistCtrl::UpdateSel			)
 	EVT_LIST_COL_BEGIN_DRAG		( -1,														CPlaylistCtrl::BeginDragCol			)
@@ -655,12 +657,19 @@ void CPlaylistCtrl::EndDragCol( wxListEvent& WXUNUSED(event) )
 }
 
 
-void CPlaylistCtrl::PlaySel( wxListEvent& (event) )
+void CPlaylistCtrl::OnItemActivate( wxListEvent& (event) )
 {
 	if(g_SourcesCtrl->GetSelType() == MUSIK_SOURCES_NOW_PLAYING)
 		wxGetApp().Player.PlayByUser(event.GetIndex());
+	else if (wxGetApp().Prefs.bDoubleClickReplacesPlaylist)
+	{
+		wxCommandEvent dummy;
+		OnPlayReplace(dummy);
+	}
 	else
+	{
 		OnPlayInstantly(event);
+	}
 }
 
 void CPlaylistCtrl::OnKeyDown( wxKeyEvent& event )
@@ -732,6 +741,12 @@ void CPlaylistCtrl::OnKeyDown( wxKeyEvent& event )
 					else
 						RateSel(nKeyCode - '0');
 					break;
+				case 'I':
+					{
+						wxCommandEvent dummy;
+						OnPlayInstantly( dummy );
+					}
+					break;
 				case 'E':
 					{
 						wxCommandEvent dummy;
@@ -770,6 +785,11 @@ wxString CPlaylistCtrl::OnGetItemText(long item, long column) const
 
 }
 
+wxString CPlaylistCtrl::EmptyColumnString()	const
+{
+	return wxGetApp().Prefs.bDisplayEmptyPlaylistColumnAsUnkown == true ? _( "<unknown>" ):wxEmptyString;
+}
+
 wxString CPlaylistCtrl::GetItemText(long item, EPLAYLISTCOLUMNS eColumnType) const
 {
 	if(item >= (long)g_Playlist.GetCount())
@@ -793,7 +813,8 @@ wxString CPlaylistCtrl::GetItemText(long item, EPLAYLISTCOLUMNS eColumnType) con
 
 	case PLAYLISTCOLUMN_ARTIST:
 		if ( song.MetaData.Artist.IsEmpty() )
-			return _( "<unknown>" );
+			return EmptyColumnString();
+			
 		else 
 		{
 			return SanitizedString(ConvFromUTF8( song.MetaData.Artist ));
@@ -802,21 +823,21 @@ wxString CPlaylistCtrl::GetItemText(long item, EPLAYLISTCOLUMNS eColumnType) con
 
 	case PLAYLISTCOLUMN_ALBUM:
 		if ( song.MetaData.Album.IsEmpty() )
-			return _( "<unknown>" );
+			return  EmptyColumnString();
 		else
 			return SanitizedString(ConvFromUTF8( song.MetaData.Album ));
 		break;
 
 	case PLAYLISTCOLUMN_YEAR:
 		if ( song.MetaData.Year.IsEmpty() )
-			return _( "<unknown>" );
+			return  EmptyColumnString();
 		else
 			return ConvFromUTF8(song.MetaData.Year);
 		break;
 
 	case PLAYLISTCOLUMN_GENRE:
 		if ( song.MetaData.Genre.IsEmpty() )
-			return _( "<unknown>" );
+			return  EmptyColumnString();
 		else
 			return SanitizedString(ConvFromUTF8( song.MetaData.Genre ));
 		break;
@@ -1120,10 +1141,13 @@ void CPlaylistCtrl::Update( bool bSelFirst)
 	//----------------------------------------------------------------------------------//
 
 	//--- setup listbox colours from prefs	---//
+	wxColour bk_col_light_active( wxGetApp().Prefs.bPlaylistBorder ? StringToColour( wxGetApp().Prefs.sPlaylistBorderColour ) : wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ) );
+	wxColour bk_col_dark_active( wxGetApp().Prefs.bPlaylistBorder ? StringToColour( wxGetApp().Prefs.sPlaylistBorderColour ) : StringToColour( wxGetApp().Prefs.sPLStripeColour ) );
+
 	m_LightAttr			= wxListItemAttr( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT), wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ), wxNullFont );
-	m_SelectedLightAttr	= wxListItemAttr( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT), wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ), g_fntListBold );
+	m_SelectedLightAttr	= wxListItemAttr( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT), bk_col_light_active, g_fntListBold );
 	m_DarkAttr			= wxListItemAttr( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT), StringToColour( wxGetApp().Prefs.sPLStripeColour ), wxNullFont );
-	m_SelectedDarkAttr	= wxListItemAttr( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT), StringToColour( wxGetApp().Prefs.sPLStripeColour ), g_fntListBold );
+	m_SelectedDarkAttr	= wxListItemAttr( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT), bk_col_dark_active, g_fntListBold );
 
 	//--- SetItemCount() kinda tells the virtual list control to udpate ---//
 	// no Freeze() here , because RescaleColumns(); will not work correctly then
@@ -1716,7 +1740,6 @@ CSearchBox::CSearchBox( wxWindow *parent )
 :wxPanel( parent, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ),wxNO_FULL_REPAINT_ON_RESIZE| wxTAB_TRAVERSAL|wxCLIP_CHILDREN|wxBORDER_RAISED )
 ,m_Timer(this,MUSIK_SEARCHBOX_TIMERID)
 {
-	//SetBackgroundColour( parent->GetBackgroundColour() );
 	//--------------------//
 	//--- simple query ---//
 	//--------------------//
@@ -1741,6 +1764,7 @@ CSearchBox::CSearchBox( wxWindow *parent )
 	m_arrFieldsToSearch.Add(g_PlaylistColumnDBNames[PLAYLISTCOLUMN_TITLE]);
 	m_arrFieldsToSearch.Add(g_PlaylistColumnDBNames[PLAYLISTCOLUMN_FILENAME]);
 	m_arrFieldsToSearch.Add(g_PlaylistColumnDBNames[PLAYLISTCOLUMN_NOTES]);
+	m_arrFieldsToSearch.Add(g_PlaylistColumnDBNames[PLAYLISTCOLUMN_GENRE]);
 	SetSizer(pSizer);
 }
 CSearchBox::~CSearchBox()

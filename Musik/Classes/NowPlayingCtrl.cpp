@@ -62,11 +62,6 @@ END_EVENT_TABLE()
 CNowPlayingCtrl::CNowPlayingCtrl( wxWindow *parent )
 	: wxPanel( parent, -1, wxDefaultPosition, wxDefaultSize, wxCLIP_CHILDREN| wxTAB_TRAVERSAL |wxFULL_REPAINT_ON_RESIZE)
 {
-	wxColour bg = wxSystemSettings::GetColour( wxSYS_COLOUR_3DFACE );
-
-//	SetBackgroundColour( bg );
-
-
 	//-----------------------------//
 	//--- title / artist / time ---//
 	//-----------------------------//
@@ -428,6 +423,7 @@ void CNowPlayingCtrl::UpdateInfo( const CMusikSong &song )
 	//--- first things first, verify data in song ---//
 	wxString sArtist = SanitizedString( ConvFromUTF8( song.MetaData.Artist ));
 	wxString sTitle = SanitizedString( ConvFromUTF8( song.MetaData.Title ));
+	wxString sAlbum = SanitizedString( ConvFromUTF8( song.MetaData.Album ));
 	if ( sArtist.IsEmpty())
 		sArtist = _( "Unknown Artist" );
 	if ( sTitle.IsEmpty() )
@@ -440,7 +436,15 @@ void CNowPlayingCtrl::UpdateInfo( const CMusikSong &song )
 	m_LastFile = song.MetaData.Filename;
 
 	//--- caption bar title ---//
-	g_MusikFrame->SetTitle( wxT( "[ " ) + sArtist + wxT( " - " ) +  sTitle + wxT( " ] " ) + wxString( MUSIKAPPNAME_VERSION ) );
+	g_MusikFrame->SetTitle( sArtist + wxT( " - " ) +  sTitle + (!sAlbum.IsEmpty() ? wxT( " - " ) + sAlbum : wxEmptyString) );
+
+	wxString sSongInfoText(
+		wxString(_("Album"))+wxT(":")+ sAlbum + wxT("\n") +
+		_("Artist")+wxT(":")+ sArtist + wxT("\n") +
+		_("Title")+wxT(":")+ sTitle +	wxT("\n") 
+
+		);
+	g_MusikFrame->SetSongInfoText( sSongInfoText );
 
 	//--- title / artist / time -//
 	sTitle.Replace	( wxT( "&" ), wxT( "&&" ), TRUE );

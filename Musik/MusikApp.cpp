@@ -203,8 +203,7 @@ bool MusikApp::OnInit()
 		pMain->Center();
 	}
 	pMain->SetTitle( MUSIKAPPNAME_VERSION );
-	pMain->Show();
-
+	pMain->SetSongInfoText(MUSIKAPPNAME);
 	new MusikLogWindow(pMain,wxString::Format(_("%s Logging Window"),MUSIKAPPNAME),MUSIK_LW_ClearContentOnClose|MUSIK_LW_ShowOnLog); 
 	
 	wxLog::SetVerbose(Prefs.bLogVerbose);
@@ -228,10 +227,13 @@ bool MusikApp::OnInit()
 			pMain->AutoUpdate(arrParams,MUSIK_UpdateFlags::InsertFilesIntoPlayer|MUSIK_UpdateFlags::PlayFiles);
 	}
 	else
-	{// as standard select now playing, its faster than selecting the library.
-		g_SourcesCtrl->SelectNowPlaying();
+	{	if (Prefs.bShowLibraryOnStart)
+			g_SourcesCtrl->SelectLibrary();
+		else
+			g_SourcesCtrl->SelectNowPlaying();
 		g_PlaylistBox->Update();
 	}
+	pMain->Show();
 	//--- startup the crossfader			---//
 	g_FaderThread = new MusikFaderThread();
 	g_FaderThread->Create();

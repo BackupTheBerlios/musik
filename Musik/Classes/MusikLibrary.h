@@ -107,6 +107,7 @@ public:
 	//--- generic querying ---//
 	//------------------------//
 	void Query				( const wxString & query, wxArrayString & aReturn ,bool bClearArray = true);
+	void Query				( const wxString & query, wxArrayInt & aReturn ,bool bClearArray = true);
 	void QuerySongsWhere	( const wxString & query, CMusikSongArray & aReturn ,bool bSorted = false,bool bClearArray=true);	  //if bSorted ==true,  use SetSortOrderField to set sorting string
 	void QuerySongsFrom		( const wxString & queryFrom, CMusikSongArray & aReturn ,bool bSorted = false);
 	void RedoLastQuerySongsWhere( CMusikSongArray & aReturn ,bool bSorted = false);
@@ -115,13 +116,11 @@ public:
 	//---   life a little bit easier  ---//
 	//-----------------------------------//
 	void GetAllSongs		( CMusikSongArray & aReturn	,bool bSorted = true);
-	void GetAllArtists		( wxArrayString & aReturn );
-	void GetAllAlbums		( wxArrayString & aReturn );
-	void GetAllGenres		( wxArrayString & aReturn );
+	void GetAllArtists		( wxArrayString & aReturn ,bool bSorted = true);
+	void GetAllAlbums		( wxArrayString & aReturn ,bool bSorted = true);
+	void GetAllGenres		( wxArrayString & aReturn ,bool bSorted = true);
 	void GetAllYears		( wxArrayString & aReturn );
-	void GetArtistAlbums	( const wxArrayString & aArtists, wxArrayString & aReturn );
-
-	void GetInfo			( const wxArrayString & aInfo, int nInType, int nOutType, wxArrayString & aReturn );
+	void GetInfo			( const wxArrayString & aInfo, int nInType, int nOutType, wxArrayString & aReturn, bool bSorted = true);
 	void GetSongs			( const wxArrayString & aInfo, int nInType, CMusikSongArray & aReturn );
 	int QueryCount			(const char * szQuery );
 
@@ -172,6 +171,7 @@ private:
 		pSong->TimeAdded				= CharStringToDouble( coldata[16] );
 		pSong->MetaData.nFilesize		= StringToInt		( coldata[17] );
 	}
+	static int sqlite_callbackAddToIntArray(void *args, int numCols, char **results, char ** columnNames);
 	static int sqlite_callbackAddToStringArray(void *args, int numCols, char **results, char ** columnNames);
 	static int sqlite_callbackAddToSongArray(void *args, int numCols, char **results, char ** columnNames);
 	static int sqlite_callbackAddToSongMap(void *args, int numCols, char **results, char ** columnNames);

@@ -20,6 +20,7 @@
 	#include "wx/wx.h"
 #endif 
 #include "../MusikDefines.h"
+#include "../MusikUtils.h"
 #include <wx/config.h> 
 #include <wx/confbase.h>
 #include <wx/fileconf.h> 
@@ -257,7 +258,10 @@ public:
 		,eSelStyle(this,wxT( "SelectionStyle" ),MUSIK_SELECTION_TYPE_STANDARD)
 		,bShowAllSongs(this,wxT( "SelectingLibraryDisplaysSongs" ),true)
 		,bLogVerbose(this,wxT( "LogVerbose" ),true)
+		,bDisableTrayIcon(this,wxT("DisableTrayIcon"),false)
 		,sLocale(this,wxT( "Locale" ),wxT("default"))
+		,bShowLibraryOnStart(this,wxT( "ShowLibraryOnStart" ),false)
+		,bDoubleClickReplacesPlaylist(this,wxT( "DoubleClickReplacesPlaylist" ),false)
 
 		,nSndOutput(this,wxT( "OutputDriver" ),0)
 		,nSndDevice(this,wxT( "SoundDevice" ),0)
@@ -271,9 +275,13 @@ public:
 		,bPLStripes(this,wxT( "PlaylistStripes" ),true)
 		,bActStripes(this,wxT( "ActivityStripes" ),false)
 		,bSourcesStripes(this,wxT( "SourcesStripes" ),false)
+		,bPlaylistBorder(this,wxT( "PlaylistBorder" ),true)
+
 		,sPLStripeColour(this,wxT( "PlaylistStripeColour" ),wxT("244, 244, 244"))
 		,sActStripeColour(this,wxT( "ActivityStripeColour" ),wxT("244, 244, 244"))
 		,sSourcesStripeColour(this,wxT( "SourcesStripeColour" ),wxT("244, 244, 244"))
+		,sPlaylistBorderColour(this,wxT( "PlaylistBorderColour" ),wxT("143, 143, 188"))
+
 		,bShowPLInfo(this,wxT( "ShowPlaylistInfo" ),true)
 		,bShowAlbumArt(this,wxT( "ShowAlbumArt" ),true)
 		,bShowSources(this,wxT( "ShowSources" ),true)
@@ -324,6 +332,7 @@ public:
 		,nSourceBoxWidth(this,wxT( "SourceBoxWidth" ),130)
 		,nActivityCtrlHeight(this,wxT( "ActivityCtrlHeight" ),120)
 		,bPlaylistSmartColumns(this,wxT( "SmartPlaylistColumns" ),true)
+		,bDisplayEmptyPlaylistColumnAsUnkown(this,wxT( "DisplayEmptyPlaylistColumnAsUnkown" ),true)
 
 		,bTunageWriteFile(this,wxT( "TunageWriteFile" ),false)
 		,sTunageFilename(this,wxT( "TunageFilename" ),wxT("") )
@@ -380,7 +389,10 @@ public:
 	CConfigSetting<Value<int>,EMUSIK_ACTIVITY_SELECTION_TYPE> eSelStyle;
 	CConfigSettingBool bShowAllSongs;
 	CConfigSettingBool bLogVerbose;
+	CConfigSettingBool bDisableTrayIcon;
 	CConfigSettingString sLocale;
+	CConfigSettingBool bShowLibraryOnStart;
+	CConfigSettingBool bDoubleClickReplacesPlaylist;
 
 	CConfigSettingInt nSndOutput;
 	CConfigSettingInt nSndDevice;
@@ -394,9 +406,12 @@ public:
 	CConfigSettingBool bPLStripes;
 	CConfigSettingBool bActStripes;
 	CConfigSettingBool bSourcesStripes;
+	CConfigSettingBool bPlaylistBorder;
+
 	CConfigSettingString sPLStripeColour;
 	CConfigSettingString sActStripeColour;
 	CConfigSettingString sSourcesStripeColour;
+	CConfigSettingString sPlaylistBorderColour;
 	CConfigSettingBool bShowPLInfo;
 	CConfigSettingBool bShowAlbumArt;
 	CConfigSettingBool bShowSources;
@@ -450,6 +465,7 @@ public:
 	CConfigSettingInt nSourceBoxWidth;
 	CConfigSettingInt nActivityCtrlHeight;
 	CConfigSettingBool bPlaylistSmartColumns;
+	CConfigSettingBool bDisplayEmptyPlaylistColumnAsUnkown;
 
 	CConfigSettingBool bTunageWriteFile;
 	CConfigSettingPath sTunageFilename;
@@ -504,7 +520,7 @@ public:
 	size_t GetCount(){ return m_Paths.GetCount(); }
 	void Clear(){ m_Paths.Clear(); }
 	void Add( wxString s ){ m_Paths.Add( s ); }
-	void Remove( size_t nIndex ){ m_Paths.Remove( nIndex ); }
+	void Remove( size_t nIndex ){ m_Paths.RemoveAt( nIndex ); }
 
 	wxArrayString* GetList(){ return &m_Paths; }
 

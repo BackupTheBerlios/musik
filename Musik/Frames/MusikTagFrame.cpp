@@ -532,7 +532,7 @@ void MusikTagFrame::SaveSong(int n)
 	//--- year ---//
 	if ( tcNotes->IsEnabled() && tcNotes->GetValue() != ConvFromUTF8(m_Songs.Item( n ).MetaData.Notes) )
 	{
-		m_Songs.Item( n ).MetaData.Notes = ConvW2A(tcNotes->GetValue());
+		m_Songs.Item( n ).MetaData.Notes = ConvToUTF8(tcNotes->GetValue());
 		m_Songs.Item( n ).Check1 = 1;
 	}
 	m_bDirty = m_bDirty || m_Songs.Item( n ).Check1 == 1;  // if m_bDirty is once set TRUE, it stays TRUE
