@@ -1076,7 +1076,7 @@ void CmusikPlayer::CleanOldStreams( bool kill_primary )
 {
 	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingStreams );
 	{
-		assert( m_ActiveStreams->size() == m_ActiveChannels->size() );
+		ASSERT( m_ActiveStreams->size() == m_ActiveChannels->size() );
 
 		if ( !m_ActiveStreams->size() )
 			return;

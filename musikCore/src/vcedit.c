@@ -6,10 +6,10 @@
  *
  * Comment editing backend, suitable for use by nice frontend interfaces.
  *
- * last modified: $Id: vcedit.c,v 1.1 2003/12/09 09:42:05 avatar5d Exp $
+ * last modified: $Id: vcedit.c,v 1.2 2004/01/14 18:16:13 avatar5d Exp $
  */
 
-#ifndef _(x)
+#ifndef _()
 	#define _(x) (x)
 #endif
 

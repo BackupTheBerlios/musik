@@ -74,6 +74,10 @@ typedef CStdString CmusikString;
 	#ifndef Sleep
 		#define Sleep(x) sleep(x)
 	#endif
+
+	#ifndef ASSERT
+		#define ASSERT(x) assert(x)
+	#endif
 #endif
 
 ///////////////////////////////////////////////////
