@@ -115,6 +115,9 @@ void CMusikPlaylistCtrl::SaveColumns()
 
 void CMusikPlaylistCtrl::SetPlaylist( CMusikPlaylist* playlist )
 {
+	if ( m_SongInfoCache )
+		m_SongInfoCache->SetPlaylist( playlist );
+
 	m_Playlist = playlist;
 	m_Changed = true;
 }

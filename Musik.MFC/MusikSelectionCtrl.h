@@ -9,13 +9,15 @@ class CMusikLibrary;
 
 class CMusikSelectionCtrl : public CMusikListCtrl
 {
-	DECLARE_DYNAMIC(CMusikSelectionCtrl)
 	static bool m_Updating;
 
 public:
+
+	// construct / destruct
 	CMusikSelectionCtrl( CFrameWnd* parent, CMusikLibrary* library, int type, int ctrl_id );
 	virtual ~CMusikSelectionCtrl();
 
+	// gets
 	int GetCtrlID	(){ return m_ID; }
 	CString			GetTypeDB();
 	CString			GetTypeStr();
@@ -23,21 +25,32 @@ public:
 	void			GetSelItems( CStdStringArray& items, bool format_query = true );
 	CStdString		GetSelQuery();
 
+	// queries
 	bool			IsItemSelected( int item );
 	bool			IsParent(){ return m_ParentBox; }
 
-	void			RescaleColumn();
-
+	// sets
 	void SetParent( bool parent = true ){ m_ParentBox = parent; }
+	static void SetUpdating( bool updating = true ){ m_Updating = updating; }
 
+	// misc
+	void			RescaleColumn();
 	void UpdateV( bool update_count = false );
 	void UpdateV( CStdString query, bool update_count = false );
 
-	static void SetUpdating( bool updating = true ){ m_Updating = updating; }
+	// message maps
+	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnLvnItemchanged(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult);
 
 protected:
+
+	// inits
 	void InitFonts();
 
+	// core
 	CFrameWnd* m_Parent;
 	CMusikLibrary* m_Library;
 	CStdStringArray m_Items;
@@ -45,17 +58,13 @@ protected:
 	int m_ID;
 	bool m_ParentBox;
 
+	// fonts
 	CFont m_Regular;
 	CFont m_Bold;
 
+	// macros
 	DECLARE_MESSAGE_MAP()
-
-public:
-	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg void OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void OnLvnItemchanged(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult);
+	DECLARE_DYNAMIC(CMusikSelectionCtrl)
 };
 
 

@@ -92,6 +92,8 @@ void CMusikSelectionCtrl::UpdateV( bool update_count )
 
 	m_Items.insert( m_Items.begin(), top );
 	SetItemCountEx( m_Items.size(), LVSICF_NOINVALIDATEALL | LVSICF_NOSCROLL );
+
+	RedrawWindow();
 }
 
 ///////////////////////////////////////////////////

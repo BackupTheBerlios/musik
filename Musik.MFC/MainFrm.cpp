@@ -365,6 +365,10 @@ bool CMainFrame::PlayCmd( const CStdString& fn )
 						m_Player->Play( pPlaylist->GetCount() - 1, MUSIK_CROSSFADER_NEW_SONG );
 				}
 
+				// reset the selection boxes
+				for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
+					m_wndSelectionBars[i]->GetCtrl()->UpdateV( true );
+
 				return true;
 			}
 		}
