@@ -10,6 +10,13 @@
 #include "MusikSimpleQueryCtrl.h"
 #include "MusikNowPlayingCtrl.h"
 
+enum E_MUSIK_MAIN_MENU_ITEMS
+{
+	FILE_MENU_SETUP_LIBRARY = wxID_HIGHEST,
+	FILE_MENU_PREFERENCES,
+	FILE_MENU_EXIT
+};
+
 class CMusikFrame : public wxFrame
 {
 public:
@@ -24,6 +31,7 @@ public:
 private:
 	void CreateSashes();
 	void CreateControls();
+	void CreateMenu();
 
 	//-------------------------------------------------//
 	//--- sashes that are of interest				---//
@@ -42,6 +50,14 @@ private:
 	CMusikPlaylistCtrl		*m_PlaylistCtrl;
 	CMusikSimpleQueryCtrl	*m_SimpleQueryCtrl;
 	CMusikNowPlayingCtrl	*m_NowPlayingCtrl;
+
+	//-------------------------------------------------//
+	//--- menus										---//
+	//-------------------------------------------------//
+	wxMenuBar*	main_menu;
+	wxMenu*		file_menu;
+	wxMenu*		view_menu;
+	wxMenu*		help_menu;
 };
 
 #endif

@@ -16,6 +16,7 @@ CMusikFrame::CMusikFrame()
 
 	CreateSashes();
 	CreateControls();
+	CreateMenu();
 
 	Layout();
 }
@@ -135,4 +136,35 @@ void CMusikFrame::CreateControls()
 	m_PlaylistCtrl		= new CMusikPlaylistCtrl		( m_PlaylistSash, -1 );
 	m_SimpleQueryCtrl	= new CMusikSimpleQueryCtrl		( m_SimpleQuerySash, -1 );
 	m_NowPlayingCtrl	= new CMusikNowPlayingCtrl		( m_NowPlayingSash, -1 );
+}
+
+void CMusikFrame::CreateMenu()
+{
+	//-------------------------------------------------//
+	//--- file menu									---//
+	//-------------------------------------------------//
+	file_menu = new wxMenu();
+	file_menu->Append( FILE_MENU_SETUP_LIBRARY, wxT( "Setup Library" ), wxT( "" ), wxITEM_NORMAL );
+	file_menu->Append( FILE_MENU_PREFERENCES, wxT( "Preferences" ), wxT( "" ), wxITEM_NORMAL );
+	file_menu->AppendSeparator();
+	file_menu->Append( FILE_MENU_EXIT, wxT( "E&xit" ), wxT( "" ), wxITEM_NORMAL );
+
+	//-------------------------------------------------//
+	//--- view menu									---//
+	//-------------------------------------------------//
+	view_menu = new wxMenu();
+
+	//-------------------------------------------------//
+	//--- help menu									---//
+	//-------------------------------------------------//
+	help_menu = new wxMenu();
+
+	//-------------------------------------------------//
+	//--- construct and set the main menu bar		---//
+	//-------------------------------------------------//
+	main_menu = new wxMenuBar();
+	main_menu->Append( file_menu, wxT( "&File" ) );
+	main_menu->Append( view_menu, wxT( "&View" ) );
+	main_menu->Append( help_menu, wxT( "&Help" ) );
+	SetMenuBar( main_menu );
 }
