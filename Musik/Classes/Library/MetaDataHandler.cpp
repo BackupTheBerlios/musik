@@ -16,7 +16,7 @@
 // For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
 //--- mp3 / ogg helpers ---//
-#include "../MusikUtils.h"
+#include "../../MusikUtils.h"
 #include "CMP3Info.h"
 #include "COggInfo.h"
 #include "CFMODInfo.h"
