@@ -406,10 +406,10 @@ void CMusikPlayer::Resume( bool bCheckFade )
 	FSOUND_SetPaused( FSOUND_ALL, FALSE );
 	m_Paused = false;
 
-	//-----------------------------------------------------//
-	//--- setup crossfader and return, if	the prefs	---//
-	//--- say so.										---//
-	//-----------------------------------------------------//
+	//-------------------------------------------------//
+	//--- setup crossfader and return, if the prefs	---//
+	//--- say so.									---//
+	//-------------------------------------------------//
 	if ( bCheckFade && g_Prefs.nFadePauseResumeEnable && g_Prefs.nGlobalFadeEnable )
 		SetFadeStart();
 	else
@@ -694,7 +694,7 @@ int CMusikPlayer::GetFileDuration( wxString sFilename, int nType )
 	int duration = -1;
 
 	//-------------------------------------------------//
-	//--- this should be FSOUND_MPEGACCURATE to get	---//
+	//--- this should be FSOUND_MPEGACCURATE to get	---++//
 	//--- an accurate length, but it's way slower..	---//
 	//-------------------------------------------------//
 	#if (MUSIK_FMOD_VERSION >= 0x0370)

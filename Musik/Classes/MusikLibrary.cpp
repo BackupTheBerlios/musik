@@ -864,7 +864,8 @@ void CMusikLibrary::SortPlaylist( const wxString& sortstr, bool descending )
 		wxCriticalSectionLocker lock( m_csDBAccess );
 		sqlite_exec( m_pDB, ConvQueryToMB( sQuery ), &sqlite_callbackAddToSongArray, &g_Playlist, NULL );
 	}
-  g_PlaylistChanged = true;
+
+	g_PlaylistChanged = true;
 	return;
 }
 

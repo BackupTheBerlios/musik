@@ -29,28 +29,28 @@
 #include "../Threads/PlaylistCtrlThreads.h"
 
 BEGIN_EVENT_TABLE(CPlaylistCtrl, wxListCtrl)
-	EVT_LIST_ITEM_ACTIVATED		( MUSIK_PLAYLIST,											CPlaylistCtrl::PlaySel			)	
-	EVT_LIST_BEGIN_DRAG			( MUSIK_PLAYLIST,											CPlaylistCtrl::BeginDrag		)
-	EVT_LIST_ITEM_SELECTED		( MUSIK_PLAYLIST,											CPlaylistCtrl::UpdateSel		)
-	EVT_LIST_COL_END_DRAG		( MUSIK_PLAYLIST,											CPlaylistCtrl::EndDragCol		)
-	EVT_MENU					( MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FROM_PLAYLIST,		CPlaylistCtrl::OnDelSel			)
-	EVT_MENU					( MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FILES,				CPlaylistCtrl::OnDelFiles		)
-	EVT_MENU					( MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FROM_DB,				CPlaylistCtrl::OnDelFilesDB		)
-	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_RENAME_FILES,						CPlaylistCtrl::OnRenameFiles	)
-	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_RETAG_FILES,						CPlaylistCtrl::OnRetagFiles		)
-	EVT_MENU_RANGE		( MUSIK_PLAYLIST_CONTEXT_UNRATED, MUSIK_PLAYLIST_CONTEXT_RATE5, CPlaylistCtrl::OnRateSel) 	
-	EVT_UPDATE_UI_RANGE		( MUSIK_PLAYLIST_CONTEXT_UNRATED, MUSIK_PLAYLIST_CONTEXT_RATE5,	CPlaylistCtrl::OnUpdateUIRateSel	)
+	EVT_LIST_ITEM_ACTIVATED		( MUSIK_PLAYLIST,														CPlaylistCtrl::PlaySel				)	
+	EVT_LIST_BEGIN_DRAG			( MUSIK_PLAYLIST,														CPlaylistCtrl::BeginDrag			)
+	EVT_LIST_ITEM_SELECTED		( MUSIK_PLAYLIST,														CPlaylistCtrl::UpdateSel			)
+	EVT_LIST_COL_END_DRAG		( MUSIK_PLAYLIST,														CPlaylistCtrl::EndDragCol			)
+	EVT_MENU					( MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FROM_PLAYLIST,					CPlaylistCtrl::OnDelSel				)
+	EVT_MENU					( MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FILES,							CPlaylistCtrl::OnDelFiles			)
+	EVT_MENU					( MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FROM_DB,							CPlaylistCtrl::OnDelFilesDB			)
+	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_RENAME_FILES,									CPlaylistCtrl::OnRenameFiles		)
+	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_RETAG_FILES,									CPlaylistCtrl::OnRetagFiles			)
+	EVT_MENU_RANGE				( MUSIK_PLAYLIST_CONTEXT_UNRATED, MUSIK_PLAYLIST_CONTEXT_RATE5,			CPlaylistCtrl::OnRateSel			) 	
+	EVT_UPDATE_UI_RANGE			( MUSIK_PLAYLIST_CONTEXT_UNRATED, MUSIK_PLAYLIST_CONTEXT_RATE5,			CPlaylistCtrl::OnUpdateUIRateSel	)
 	EVT_MENU_RANGE				( MUSIK_PLAYLIST_CONTEXT_TAG_TITLE,	MUSIK_PLAYLIST_CONTEXT_TAG_YEAR,	CPlaylistCtrl::OnClickEditTag		)
-	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_SMART,								CPlaylistCtrl::OnDisplaySmart	)
-	EVT_CONTEXT_MENU			(															CPlaylistCtrl::ShowMenu			)
-	EVT_CHAR					(															CPlaylistCtrl::TranslateKeys	)
-	EVT_LIST_COL_CLICK			( MUSIK_PLAYLIST,											CPlaylistCtrl::OnColumnClick	)
+	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_SMART,											CPlaylistCtrl::OnDisplaySmart		)
+	EVT_CONTEXT_MENU			(																		CPlaylistCtrl::ShowMenu				)
+	EVT_CHAR					(																		CPlaylistCtrl::TranslateKeys		)
+	EVT_LIST_COL_CLICK			( MUSIK_PLAYLIST,														CPlaylistCtrl::OnColumnClick		)
 
 	//---------------------------------------------------------//
 	//--- column on off stuff.								---//
 	//-------------  		--------------------------------------------//
-	EVT_MENU_RANGE				( MUSIK_PLAYLIST_DISPLAY_FIRST, MUSIK_PLAYLIST_DISPLAY_LAST,	CPlaylistCtrl::OnDisplayMenu	)
-	EVT_UPDATE_UI_RANGE		( MUSIK_PLAYLIST_DISPLAY_FIRST, MUSIK_PLAYLIST_DISPLAY_LAST,	CPlaylistCtrl::OnUpdateUIDisplayMenu	)
+	EVT_MENU_RANGE				( MUSIK_PLAYLIST_DISPLAY_FIRST, MUSIK_PLAYLIST_DISPLAY_LAST,	CPlaylistCtrl::OnDisplayMenu				)
+	EVT_UPDATE_UI_RANGE		( MUSIK_PLAYLIST_DISPLAY_FIRST, MUSIK_PLAYLIST_DISPLAY_LAST,		CPlaylistCtrl::OnUpdateUIDisplayMenu		)
 	//---------------------------------------------------------//
 	//--- threading events.. we use EVT_MENU becuase its	---//
 	//--- nice and simple, and gets the job done. this may	---//
@@ -219,21 +219,21 @@ CPlaylistCtrl::CPlaylistCtrl( wxWindow *parent, const wxWindowID id, const wxPoi
 
 	//--- columns context menu ---//
 	playlist_context_display_menu = new wxMenu;
-	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_RATING,		_( "Rating" ) );
-	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_TRACK,		_( "Track" ) );
-	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_TITLE,		_( "Title" ) );
-	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_ARTIST,		_( "Artist" ));
-	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_ALBUM,		_( "Album" ) );
+	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_RATING,			_( "Rating" ) );
+	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_TRACK,			_( "Track" ) );
+	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_TITLE,			_( "Title" ) );
+	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_ARTIST,			_( "Artist" ));
+	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_ALBUM,			_( "Album" ) );
 	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_YEAR,			_( "Year" ) );
-	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_GENRE,		_( "Genre" ) );
+	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_GENRE,			_( "Genre" ) );
 	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_TIMES_PLAYED,	_( "Times Played" ) );
-	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_LAST_PLAYED,	_( "Last Played" ));
+	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_LAST_PLAYED,		_( "Last Played" ));
 	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_TIME,			_( "Time" ) );
-	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_BITRATE,		_( "Bitrate" ) );
+	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_BITRATE,			_( "Bitrate" ) );
 	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_FILENAME,		_( "Filename" ) );
 	playlist_context_display_menu->AppendSeparator();
-	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_FIT,			_( "Fit Columns" ) );
-	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_SMART,		_( "No Horizontal Scroll" ) );
+	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_FIT,				_( "Fit Columns" ) );
+	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_SMART,			_( "No Horizontal Scroll" ) );
 
 	//--- main context menu ---//
 	playlist_context_menu = new wxMenu;
@@ -268,8 +268,9 @@ void CPlaylistCtrl::OnColumnClick( wxListEvent& event )
 {
 	int ActualColumn = m_ColumnOrder.Item( event.GetColumn() );
 	wxString sortstr = g_PlaylistColumnDBNames[ ActualColumn ];
-	m_aColumnSorting.Item( ActualColumn ) = -m_aColumnSorting.Item( ActualColumn );	
-	bool desc = ( m_aColumnSorting.Item( ActualColumn ) < 0 );
+
+	m_aColumnSorting.Item( event.GetColumn() ) = -m_aColumnSorting.Item( event.GetColumn() );	
+	bool desc = ( m_aColumnSorting.Item( event.GetColumn() ) < 0 );
 
 	g_Library.SortPlaylist( sortstr, desc );
 	Update();
