@@ -61,6 +61,7 @@ protected:
 	afx_msg int OnCreate( LPCREATESTRUCT lpCreateStruct );
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnEqualizerPresets();
+	afx_msg void OnEqualizerLockchannels();
 
 	// custom message maps
 	afx_msg LRESULT OnClosePresets( WPARAM wParam, LPARAM lParam );
@@ -68,6 +69,10 @@ protected:
 	// macros
 	DECLARE_DYNAMIC(CmusikEqualizerBar)
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnEqualizerState16band();
+	afx_msg void OnEqualizerState8band();
+	afx_msg void OnEqualizerState4band();
 };
 
 ///////////////////////////////////////////////////
@@ -78,11 +83,9 @@ protected:
 
 enum 
 {
-	MUSIK_EQUALIZER_CTRL_16BANDS = 0,
-	MUSIK_EQUALIZER_CTRL_8BANDS,
-	MUSIK_EQUALIZER_CTRL_4BANDS,
-	MUSIK_EQUALIZER_CTRL_CHANNELS_LOCKED,
-	MUSIK_EQUALIZER_CTRL_CHANNELS_UNLOCKED
+	MUSIK_EQUALIZER_CTRL_16BANDS = 16,
+	MUSIK_EQUALIZER_CTRL_8BANDS = 8,
+	MUSIK_EQUALIZER_CTRL_4BANDS = 4
 };
 
 ///////////////////////////////////////////////////
@@ -97,8 +100,16 @@ public:
 	CmusikEqualizerCtrl( CmusikLibrary* library, CmusikPlayer* player, CmusikPrefs* prefs );
 	virtual ~CmusikEqualizerCtrl();
 
-	void SetBandCount( int band_state );
-	void SetBandLockState( int lock_state );
+	// band state
+	void SetBandState( int band_state );
+	int GetBandState(){ return m_BandState; }
+
+	// channel lock
+	void SetChannelsLocked( bool locked );
+	bool IsChannelsLocked(){ return m_ChannelsLocked; }
+
+	// band layout
+	void LayoutBands();
 
 	// message maps
 	afx_msg void OnPaint();
@@ -107,6 +118,10 @@ public:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 
 protected:
+
+	// status
+	bool m_ChannelsLocked;
+	int m_BandState;
 
 	// core
 	CmusikLibrary* m_Library;

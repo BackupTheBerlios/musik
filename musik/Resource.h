@@ -124,9 +124,6 @@
 #define ID_UNSYNCHRONIZEDTAGS_FINALIZEFORDATABASEONLY 32820
 #define ID_FILE_SYNCHRONIZEDDIRECTORIES 32826
 #define ID_EQUALIZER_DISPLAY            32827
-#define ID_DISPLAY_16BAND               32828
-#define ID_DISPLAY_8BAND                32829
-#define ID_DISPLAY_4BAND                32830
 #define ID_DISPLAY_LOCKCHANNELS         32831
 #define ID_EQUALIZER_PRESETS            32832
 #define ID_EQUALIZER_LOCKCHANNELS       32833
@@ -152,13 +149,16 @@
 #define ID_SOURCES_DELETE               32853
 #define ID_Menu32854                    32854
 #define ID_SOURCES_EDITQUERY            32855
+#define ID_EQUALIZER_STATE_16BAND       32856
+#define ID_EQUALIZER_STATE_8BAND        32857
+#define ID_EQUALIZER_STATE_4BAND        32858
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        145
-#define _APS_NEXT_COMMAND_VALUE         32856
+#define _APS_NEXT_COMMAND_VALUE         32859
 #define _APS_NEXT_CONTROL_VALUE         1048
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

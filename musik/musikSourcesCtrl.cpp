@@ -39,6 +39,7 @@ BEGIN_MESSAGE_MAP(CmusikSourcesBar, baseCmusikSourcesBar)
 	ON_NOTIFY( PTN_SELCHANGE, IDC_SOURCES, OnItemChanged )
 	ON_COMMAND(ID_SOURCES_RENAME, OnSourcesRename)
 	ON_COMMAND(ID_SOURCES_DELETE, OnSourcesDelete)
+	ON_COMMAND(ID_EQUALIZER_STATE_16BAND, OnEqualizerState16band)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -1024,3 +1025,8 @@ void CmusikSourcesBar::OnSourcesDelete()
 }
 
 ///////////////////////////////////////////////////
+
+void CmusikSourcesBar::OnEqualizerState16band()
+{
+	
+}

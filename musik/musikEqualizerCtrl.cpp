@@ -44,10 +44,19 @@ CmusikEqualizerBar::~CmusikEqualizerBar()
 ///////////////////////////////////////////////////
 
 BEGIN_MESSAGE_MAP(CmusikEqualizerBar, baseCmusikEqualizerBar)
+	// mfc maps
 	ON_WM_CREATE()
 	ON_WM_SIZE()
+
+	// custom messages
 	ON_REGISTERED_MESSAGE( WM_CLOSEEQUALIZERPRESETS, OnClosePresets )
+
+	// menu commands
 	ON_COMMAND(ID_EQUALIZER_PRESETS, OnEqualizerPresets)
+	ON_COMMAND(ID_EQUALIZER_LOCKCHANNELS, OnEqualizerLockchannels)
+	ON_COMMAND(ID_EQUALIZER_STATE_16BAND, OnEqualizerState16band)
+	ON_COMMAND(ID_EQUALIZER_STATE_8BAND, OnEqualizerState8band)
+	ON_COMMAND(ID_EQUALIZER_STATE_4BAND, OnEqualizerState4band)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -85,6 +94,23 @@ void CmusikEqualizerBar::OnOptions()
 
 	main_menu.LoadMenu( IDR_EQUALIZER_MENU );
 	popup_menu = main_menu.GetSubMenu( 0 );
+
+	// update ui does not work becuase the
+	// menu does not belong to a CView or
+	// CFrameWnd inherited class, so this
+	// updates the menu items...
+	popup_menu->CheckMenuItem( ID_EQUALIZER_LOCKCHANNELS, GetCtrl()->IsChannelsLocked() ? MF_CHECKED : MF_UNCHECKED );
+	popup_menu->EnableMenuItem( ID_EQUALIZER_PRESETS, ( m_Presets == 0 ) ? MF_ENABLED : MF_GRAYED | MF_DISABLED );
+	
+	int band_state = GetCtrl()->GetBandState();
+	if ( band_state == MUSIK_EQUALIZER_CTRL_16BANDS )
+		popup_menu->CheckMenuItem( ID_EQUALIZER_STATE_16BAND, MF_CHECKED );
+	else if ( band_state == MUSIK_EQUALIZER_CTRL_8BANDS )
+		popup_menu->CheckMenuItem( ID_EQUALIZER_STATE_8BAND, MF_CHECKED );
+	else if ( band_state == MUSIK_EQUALIZER_CTRL_4BANDS )
+		popup_menu->CheckMenuItem( ID_EQUALIZER_STATE_4BAND, MF_CHECKED );
+	else
+		ASSERT( 0 );
 
 	popup_menu->TrackPopupMenu( 0, pos.x, pos.y, this );
 }
@@ -128,6 +154,40 @@ void CmusikEqualizerBar::OnSize(UINT nType, int cx, int cy)
 
 ///////////////////////////////////////////////////
 
+void CmusikEqualizerBar::OnEqualizerLockchannels()
+{
+	if ( GetCtrl()->IsChannelsLocked() )
+		GetCtrl()->SetChannelsLocked( false );
+	else
+		GetCtrl()->SetChannelsLocked( true );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikEqualizerBar::OnEqualizerState16band()
+{
+	GetCtrl()->SetBandState( MUSIK_EQUALIZER_CTRL_16BANDS );
+	GetCtrl()->LayoutBands();
+}
+
+///////////////////////////////////////////////////
+
+void CmusikEqualizerBar::OnEqualizerState8band()
+{
+	GetCtrl()->SetBandState( MUSIK_EQUALIZER_CTRL_8BANDS );
+	GetCtrl()->LayoutBands();
+}
+
+///////////////////////////////////////////////////
+
+void CmusikEqualizerBar::OnEqualizerState4band()
+{
+	GetCtrl()->SetBandState( MUSIK_EQUALIZER_CTRL_4BANDS );
+	GetCtrl()->LayoutBands();
+}
+
+///////////////////////////////////////////////////
+
 // CmusikEqualizerCtrl
 
 ///////////////////////////////////////////////////
@@ -141,6 +201,9 @@ CmusikEqualizerCtrl::CmusikEqualizerCtrl( CmusikLibrary* library, CmusikPlayer* 
 	m_Library = library;
 	m_Player = player;
 	m_Prefs = prefs;
+
+	m_ChannelsLocked = true;
+	m_BandState = MUSIK_EQUALIZER_CTRL_16BANDS;
 }
 
 ///////////////////////////////////////////////////
@@ -210,24 +273,57 @@ void CmusikEqualizerCtrl::OnSize(UINT nType, int cx, int cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 
-	int width_remaining = ( ( cx - ( 16 * 16 ) ) / 16 );
+	int width_remaining = ( ( cx - ( 16 * GetBandState() ) ) / GetBandState() );
 
 	CRect curr;
-	for ( size_t i = 0; i < 16; i++ )
+	for ( int i = 0; i < 16; i++ )
 	{
-		curr.top = 0;
-		curr.bottom = cy / 2;
-		curr.left = ( i * 16 ) + ( ( i + 1 ) * width_remaining );
-		curr.right = curr.left + 16;
+		if ( GetBandState() == MUSIK_EQUALIZER_CTRL_16BANDS )
+		{
+			curr.top = 0;
+			curr.bottom = cy / 2;
+			curr.left = ( i * 16 ) + ( ( i + 1 ) * width_remaining );
+			curr.right = curr.left + 16;
 
-		m_LeftBands[i].MoveWindow( curr );
+			m_LeftBands[i].MoveWindow( curr );
 
-		curr.top = curr.bottom;
-		curr.bottom = cy;
+			curr.top = curr.bottom;
+			curr.bottom = cy;
 
-		m_RightBands[i].MoveWindow( curr );
+			m_RightBands[i].MoveWindow( curr );
+		}
+		else if ( GetBandState() == MUSIK_EQUALIZER_CTRL_8BANDS )
+		{
+
+		}
+		else if ( GetBandState() == MUSIK_EQUALIZER_CTRL_4BANDS )
+		{
+
+		}
 	}
 }
 
 ///////////////////////////////////////////////////
 
+void CmusikEqualizerCtrl::LayoutBands()
+{
+	CRect rcClient;
+	GetClientRect( &rcClient );
+	OnSize( NULL, rcClient.Width(), rcClient.Height() );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikEqualizerCtrl::SetChannelsLocked( bool locked )
+{
+	m_ChannelsLocked = locked;
+}
+
+///////////////////////////////////////////////////
+
+void CmusikEqualizerCtrl::SetBandState( int state )
+{
+	m_BandState = state;
+}
+
+///////////////////////////////////////////////////

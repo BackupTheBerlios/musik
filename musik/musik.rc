@@ -143,9 +143,10 @@ BEGIN
     BEGIN
         POPUP "Display"
         BEGIN
-            MENUITEM "16 Band",                     ID_DISPLAY_16BAND
-            MENUITEM "8 Band",                      ID_DISPLAY_8BAND
-            MENUITEM "4 Band",                      ID_DISPLAY_4BAND
+            MENUITEM "16 Band",                     ID_EQUALIZER_STATE_16BAND
+
+            MENUITEM "8 Band",                      ID_EQUALIZER_STATE_8BAND
+            MENUITEM "4 Band",                      ID_EQUALIZER_STATE_4BAND
         END
         MENUITEM "Lock Channels",               ID_EQUALIZER_LOCKCHANNELS
         MENUITEM SEPARATOR
