@@ -104,7 +104,7 @@ void MusikFrame::OnSize	( wxCommandEvent& WXUNUSED(event) )
 
 void MusikFrame::OnCloseEvt( wxCommandEvent& WXUNUSED(event) )
 {
-	Destroy();
+	Close();
 }
 
 void MusikFrame::OnClose( wxCloseEvent& WXUNUSED(event) )
