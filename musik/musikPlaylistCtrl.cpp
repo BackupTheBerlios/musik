@@ -449,7 +449,7 @@ void CmusikPlaylistCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 				pDC->SelectObject( m_StarFont );
 				pDC->SetTextColor( m_Prefs->MUSIK_COLOR_LISTCTRLTEXT );
 			}
-			else if ( m_Player->IsPlaying() && m_Playlist->GetSongID( pLVCD->nmcd.dwItemSpec ) == m_Player->GetCurrPlaying()->GetID() )
+			else if ( m_Player->GetPlaylist() == m_Playlist && m_Player->IsPlaying() && m_Playlist->GetSongID( pLVCD->nmcd.dwItemSpec ) == m_Player->GetCurrPlaying()->GetID() )
 			{
 				pDC->SelectObject( m_BoldFont );
 				pDC->SetTextColor( m_Prefs->MUSIK_COLOR_LISTCTRLTEXT );				

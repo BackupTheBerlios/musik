@@ -306,7 +306,7 @@ void CmusikLibrary::InitTimeAdded()
 	tm *ptm = NULL;
 	ptm = localtime( &curr_time );
 
-	m_TimeAdded.Format( "%02d:%02d:%02d %02d/%02d/%d", ptm->tm_hour, ptm->tm_min, ptm->tm_sec, ptm->tm_mday, ptm->tm_mon, ptm->tm_year + 1900);
+	m_TimeAdded.Format( "%02d/%02d/%d %02d:%02d:%02d ", ptm->tm_mday, ptm->tm_mon, ptm->tm_year + 1900, ptm->tm_hour, ptm->tm_min, ptm->tm_sec );
 }
 
 ///////////////////////////////////////////////////
@@ -1081,10 +1081,10 @@ int CmusikLibrary::AppendStdPlaylist( int id, const CmusikStringArray& files, bo
 		{
 			AddSong( files.at( i ) );
 
-			m_ProtectingLibrary.lock();
-				if ( add_to_library )
-					AddSong( files.at( i ) );
+			if ( add_to_library )
+				AddSong( files.at( i ) );
 
+			m_ProtectingLibrary.lock();
 				nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %d, %Q );",
 				NULL, NULL, NULL, 
 				STD_PLAYLIST_SONGS,

@@ -126,7 +126,7 @@ END_MESSAGE_MAP()
 
 void CmusikPlaylistInfoCtrl::OnPaint()
 {
-	m_ProtectingUpdate.lock();
+	//m_ProtectingUpdate.lock();
 
 	CPaintDC dc(this);
 

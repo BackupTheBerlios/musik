@@ -2,6 +2,8 @@
 
 a5:
 
+  - tag editing dialog (right click in playlist -> properties)
+  - fixed a nasty mutex deadlock in the backend
   - ditched ACE for OpenThreads
   - much improved selection box updating while threading.
   - updated about box
@@ -136,7 +138,6 @@ can confuse it into crashing.
 stuff that isn't implemented / doesn't work yet:
 
   - dynamic playlist creation
-  - dialog to view tag properties
 
 ----------------------------------------------------------------------------
 

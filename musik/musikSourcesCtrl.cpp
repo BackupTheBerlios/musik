@@ -1245,6 +1245,8 @@ LRESULT CmusikSourcesCtrl::OnEditCommit( WPARAM wParam, LPARAM lParam )
 		}
 	}
 
+	SetFocusedItem( NULL );
+
 	m_EditInPlace.EnableWindow( FALSE );
 	m_EditLock = false;
 

@@ -66,7 +66,8 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/D ID3LIB_LINKOPTION=1"
+				AdditionalOptions="/D ID3LIB_LINKOPTION=1
+"
 				AdditionalIncludeDirectories="../_inc/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;NO_TCL"
 				RuntimeLibrary="2"
