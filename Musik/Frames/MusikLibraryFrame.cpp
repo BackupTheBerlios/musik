@@ -227,9 +227,11 @@ void MusikLibraryFrame::CreateControls()
 	SetSizer( vsTopSizer );
 }
 
-//--- these need to stay in the implmentation ---//
 void MusikLibraryFrame::OnRebuildAll( wxCommandEvent& WXUNUSED(event) )	
 { 
+	if ( wxMessageBox( _( "Would you like to clear Musik's library database?" ), MUSIK_VERSION, wxYES_NO | wxICON_QUESTION ) == wxYES )
+		g_Library.RemoveAll();
+
 	PathsSave(); 
 	UpdateLibrary( false );	
 }
@@ -244,9 +246,9 @@ bool MusikLibraryFrame::Show( bool show )
 	if ( g_Prefs.nFirstRun )
 	{
 		wxString sMessage = 	wxT( "This is the first time Musik has been run.\n\nTo begin, you must first add directories " 	)
-								wxT( "to the database. Select \"Add Directory\" from the \"Songs\" menu, then press the " 			)
-								wxT( "\"OK\" button to rebuild the library.\n\nTo display this window again, press " 				) 
-								wxT( "CTRL+L in the main window, or select \"Library Setup\" from the \"Library\" menu."			);
+								wxT( "to the database. Select \"Add Directory\" from the \"Songs\" menu, then press the " 		)
+								wxT( "\"OK\" button to rebuild the library.\n\nTo display this window again, press " 			) 
+								wxT( "CTRL+L in the main window, or select \"Library Setup\" from the \"Library\" menu."		);
 							
 		wxMessageBox( sMessage, MUSIK_VERSION, wxICON_INFORMATION );
 	
