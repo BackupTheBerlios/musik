@@ -270,9 +270,8 @@ void CPlaylistCtrl::OnColumnClick( wxListEvent& event )
 {
 	int ActualColumn = m_ColumnOrder.Item( event.GetColumn() );
 	wxString sortstr = g_PlaylistColumnDBNames[ ActualColumn ];
-
-	m_aColumnSorting.Item( event.GetColumn() ) = -m_aColumnSorting.Item( event.GetColumn() );	
-	bool desc = ( m_aColumnSorting.Item( event.GetColumn() ) < 0 );
+	m_aColumnSorting.Item( ActualColumn ) = -m_aColumnSorting.Item( ActualColumn );	
+	bool desc = ( m_aColumnSorting.Item( ActualColumn ) < 0 );
 
 	g_Library.SortPlaylist( sortstr, desc );
 	Update();
@@ -445,7 +444,7 @@ void CPlaylistCtrl::OnUpdateUIRateSel ( wxUpdateUIEvent &event)
 	}
 }
 
-void CPlaylistCtrl::OnDisplaySmart( wxCommandEvent& event )
+void CPlaylistCtrl::OnDisplaySmart( wxCommandEvent& WXUNUSED(event) )
 {
 	g_Prefs.nPlaylistSmartColumns = !g_Prefs.nPlaylistSmartColumns;
 	RescaleColumns();
@@ -816,18 +815,6 @@ wxString CPlaylistCtrl::GetFilename( int nItem )
 	return wxT( "" );
 }
 
-//----------------------------------------------//
-//--- functions to set playlist information. ---//
-//----------------------------------------------//
-void CPlaylistCtrl::SetSelFirst()
-{
-	// set selection of playlist to first item
-	wxListCtrlSelNone( this );
-	SetItemState( g_Player.GetCurIndex(), wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
-	SetFocus();
-	EnsureVisible( g_Player.GetCurIndex() );
-	Refresh();
-}
 
 //----------------------------------------//
 //--- various other functions we need. ---//
@@ -888,13 +875,14 @@ void CPlaylistCtrl::Update( bool bSelFirst, bool  bRescaleColumns)
 	//--- sel first item, if we're supposed to ---//
 	if ( bSelFirst && GetItemCount() )
 		SetItemState( 0, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );	
-	Thaw();
 
 	if( bRescaleColumns )
-		RescaleColumns();
+		RescaleColumns( false );
 
 	if ( g_Prefs.nShowPLInfo )
 		g_PlaylistInfoCtrl->Update();
+
+	Thaw();
 }
 
 void CPlaylistCtrl::RescaleColumns( bool bFreeze, bool bSave, bool bAutoFit )
@@ -1168,9 +1156,10 @@ void CPlaylistCtrl::DelSelSongs(bool bDeleteFromDB, bool bDeleteFromComputer)
 		nFirstSel = GetItemCount() - 1;
 	SetItemState( nFirstSel, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
 
+	Thaw();
+
 	g_ActivityAreaCtrl->ResetAllContents();
 
-	Thaw();
 }
 
 void CPlaylistCtrl::RenameSelFiles()

@@ -24,6 +24,7 @@ BEGIN_EVENT_TABLE(CGaugeSeekEvt, wxEvtHandler)
 	EVT_LEFT_DOWN			(CGaugeSeekEvt::OnLeftDown		) 
 	EVT_LEFT_UP				(CGaugeSeekEvt::OnLeftUp		) 
 	EVT_MOTION				(CGaugeSeekEvt::OnMouseMove		) 
+	EVT_ERASE_BACKGROUND	( CGaugeSeekEvt::OnEraseBackground )
 END_EVENT_TABLE()
 
 CGaugeSeekEvt::CGaugeSeekEvt( wxGauge *parent, long style )
@@ -32,6 +33,10 @@ CGaugeSeekEvt::CGaugeSeekEvt( wxGauge *parent, long style )
 	lType		= style; 
 	m_LastPos	= -1;
 	m_Dragging	= false;
+}
+void CGaugeSeekEvt::OnEraseBackground( wxEraseEvent& WXUNUSED(event) )
+{	
+	// empty => no background erasing to avoid flicker
 }
 
 void CGaugeSeekEvt::OnLeftDown( wxMouseEvent& event )
@@ -69,7 +74,7 @@ void CGaugeSeekEvt::OnMouseMove( wxMouseEvent& event )
 	event.Skip();
 }
 
-void CGaugeSeekEvt::OnLeftUp( wxMouseEvent& event )
+void CGaugeSeekEvt::OnLeftUp( wxMouseEvent& WXUNUSED(event) )
 {
 	if ( m_Dragging )
 	{
@@ -92,10 +97,10 @@ void CGaugeSeekEvt::OnLeftUp( wxMouseEvent& event )
 	}
 }
 
-void CGaugeSeekEvt::SetFromMousePos( wxMouseEvent& WXUNUSED(event) )
+void CGaugeSeekEvt::SetFromMousePos( wxMouseEvent& event )
 {
 	//--- stuff we'll need for calculation ---//
-	wxPoint mousepos	= pParent->ScreenToClient( wxGetMousePosition() );
+	wxPoint mousepos	= event.GetPosition();
 	wxSize	wndsize		= pParent->GetSize();
 
 	//---------------------------------------------//

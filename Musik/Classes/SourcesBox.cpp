@@ -586,9 +586,10 @@ void CSourcesListBox::Update()
 
 	Freeze();
 	SetItemCount( g_SourcesList.GetCount() );
-	Thaw();
-	Refresh( false );
 	RescaleColumns();
+	Thaw();
+	// Thaw() will call refresh, dont do it twice
+	//Refresh( false );
 }
 
 

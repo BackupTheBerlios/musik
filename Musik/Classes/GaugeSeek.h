@@ -29,8 +29,8 @@ public:
 	void OnLeftDown			( wxMouseEvent& event );
 	void OnLeftUp			( wxMouseEvent& event );
 	void OnMouseMove		( wxMouseEvent& event );
-	void SetFromMousePos	( wxMouseEvent& WXUNUSED(event) );
-
+	void SetFromMousePos	( wxMouseEvent& event );
+	void OnEraseBackground  ( wxEraseEvent& event );
 	DECLARE_EVENT_TABLE()
 private:
 	bool m_Dragging;

@@ -27,6 +27,7 @@ BEGIN_EVENT_TABLE(CMusikEQGauge, wxEvtHandler)
 	EVT_LEFT_DOWN				( CMusikEQGauge::OnLeftDown		) 
 	EVT_LEFT_UP					( CMusikEQGauge::OnLeftUp		)
 	EVT_MOTION					( CMusikEQGauge::OnMouseMove	) 
+	EVT_ERASE_BACKGROUND		( CMusikEQGauge::OnEraseBackground )
 END_EVENT_TABLE()
 
 CMusikEQGauge::CMusikEQGauge( CMusikEQCtrl* parent, size_t nChannel, size_t nBandID )
@@ -42,9 +43,9 @@ CMusikEQGauge::~CMusikEQGauge()
 {
 }
 
-void CMusikEQGauge::OnEraseBackground( wxEraseEvent& event )
-{
-	Refresh( FALSE );
+void CMusikEQGauge::OnEraseBackground( wxEraseEvent& WXUNUSED(event) )
+{	
+	// empty => no background erasing to avoid flicker
 }
 
 void CMusikEQGauge::SetPos( size_t m_Pos )
@@ -110,7 +111,7 @@ void CMusikEQGauge::OnLeftUp( wxMouseEvent& event )
 void CMusikEQGauge::SetFromMousePos( wxMouseEvent& event )
 {
 	//--- stuff we'll need for calculation ---//
-	m_MousePos	= ScreenToClient( wxGetMousePosition() );
+	m_MousePos	= event.GetPosition();
 	m_WndSize	= GetSize();	
 
 	//--- set value ---//

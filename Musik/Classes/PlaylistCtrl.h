@@ -90,7 +90,6 @@ public:
 	//------------//
 	//--- sets ---//
 	//------------//
-	void			SetSelFirst			();
 	void			SetIndex			( int n ){ nCurSel = n; }
 
 	//--------------//

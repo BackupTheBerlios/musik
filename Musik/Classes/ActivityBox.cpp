@@ -98,24 +98,25 @@ void CActivityListBox::OnChar( wxKeyEvent& event )
   else
     event.Skip();
 }  
-void CActivityListBox::RescaleColumns()
+void CActivityListBox::RescaleColumns( bool bFreeze )
 {
+	if( bFreeze )
+		Freeze();
 	int nWidth, nHeight;
 	GetClientSize	( &nWidth, &nHeight );
-	SetColumnWidth	( 0, 0 );
+	if(GetColumnWidth( 0 ) != 0)
+		SetColumnWidth	( 0, 0 );
 
 	if ( GetColumnWidth( 1 ) != nWidth )
 	{
-		Freeze();
-
 		#ifdef __WXMSW__
 			SetColumnWidth	( 1, nWidth );
 		#elif defined __WXGTK__
 			SetColumnWidth( 1, nWidth - wxSystemSettings::GetMetric(wxSYS_HSCROLL_Y) - GetColumnWidth( 0 ) - 1 );			
 		#endif 
-
-		Thaw();
 	}
+	if( bFreeze )
+		Thaw();
 }
 
 void CActivityListBox::SetList( const wxArrayString &  aList )
@@ -141,10 +142,9 @@ void CActivityListBox::Update( bool selnone )
 	SetItemCount( GetRowCount() );
 	if ( selnone )
 		wxListCtrlSelNone( this );
-
+	RescaleColumns(false); // no freeze in RescaleColumns
 	Thaw();
-
-	RescaleColumns();
+	wxWindow::Update(); // instantly update window content
 }
 
 //---------------------------------------------------//

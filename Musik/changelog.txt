@@ -1,4 +1,7 @@
 0.2.1 to 0.2.2
+ + Using indexes on the tables, speeding up some sql-selects and updating of the library, if new songs are available(gunnar)
+ + Reduced some flicker from selection listboxes(gunnar)
+ + Reduced flicker of gauge control for position, fx and volume (gunnar)
  + Tunage - a simple system to update a file, URL, or run an app when song changes (SiW)
  - Fixed Bug: Sorting numeric fields now works again (SiW)
  - Fixed Bug: Serious Bug in delete from db and computer. The wrong files are deleted. This bug was introduced by me in 0.2.1. Shame on me. (gunnar)

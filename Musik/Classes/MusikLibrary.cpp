@@ -89,44 +89,51 @@ bool CMusikLibrary::Load()
 	//--- look for database.. if need be, create it and create tables ---//
 	char *errmsg = NULL;
 	
-	// does file already exist, if nt we create the table
-	wxString query;
-	if ( !wxFileExists( sFilename ) )
-	{
 		//--- create the tables ---//
-		query  = wxT( "create table songs ( "			);
-		query += wxT( "songid INTEGER PRIMARY KEY, "	);
-		query += wxT( "format number(1), "				);
-		query += wxT( "vbr number(1), "					);
-		query += wxT("filename varchar(255), "			);
-		query += wxT( "artist varchar(255), "			);
-		query += wxT( "title varchar(255), "			);
-		query += wxT( "album varchar(255), "			);
-		query += wxT( "tracknum number(3), "			);
-		query += wxT( "year varchar(255), "				);
-		query += wxT( "genre varchar(255), "			);
-		query += wxT( "rating number(1), "				);
-		query += wxT( "bitrate number(10), "			);
-		query += wxT( "lastplayed timestamp, "			);
-		query += wxT( "notes varchar(255), "			);
-		query += wxT( "timesplayed number(5), "			);
-		query += wxT( "duration number(10), "			);
-		query += wxT( "timeadded timestamp, "			);
-		query += wxT( "filesize number(10), "			);
-		query += wxT( "dirty number(10) "				);
-		query += wxT( " );"								);
-	}
+	static const char *szCreateDBQuery  = 
+			"CREATE TABLE songs ( "	
+			"songid INTEGER PRIMARY KEY, "
+			"format number(1), "		
+			"vbr number(1), "			
+			"filename varchar(255), "	
+			"artist varchar(255), "	
+			"title varchar(255), "	
+			"album varchar(255), "	
+			"tracknum number(3), "	
+			"year varchar(255), "		
+			"genre varchar(255), "	
+			"rating number(1), "		
+			"bitrate number(10), "	
+			"lastplayed timestamp, "	
+			"notes varchar(255), "	
+			"timesplayed number(5), "	
+			"duration number(10), "	
+			"timeadded timestamp, "	
+			"filesize number(10), "	
+			"dirty number(10) "		
+			" );";
+	const char* szCreateIdxQuery =
+			"CREATE INDEX songs_title_idx on songs (title);"
+			"CREATE UNIQUE INDEX songs_filename_idx on songs (filename);"
+			"CREATE INDEX songs_artist_idx on songs (artist);"
+			"CREATE INDEX songs_album_idx on songs (album);"
+			"CREATE INDEX songs_genre_idx on songs (genre);"
+			"CREATE INDEX songs_artist_album_tracknum_idx on songs (artist,album,tracknum);"
+			;
+
 	wxCriticalSectionLocker lock( m_csDBAccess ); // just in case...
 	m_pDB = sqlite_open( wxConvertWX2MB(sFilename), 0666, &errmsg );
 
-	if ( !query.IsEmpty() )
+	if( m_pDB )
 	{
-		const wxCharBuffer pQuery = ConvQueryToMB(query);
-		sqlite_exec( m_pDB, pQuery, NULL, NULL, NULL );
+
+		// always create table, if it exists can error will be returned by sqlite_exec, but we dont care.
+		sqlite_exec( m_pDB, szCreateDBQuery, NULL, NULL, NULL );
+		sqlite_exec( m_pDB, szCreateIdxQuery, NULL, NULL, NULL );
 	}
 	if ( errmsg )
 			free( errmsg );
-	return true;
+	return m_pDB != NULL;
 }
 
 //---  if true, compares the full path, if false, just looks for the filename itself   ---//
@@ -343,7 +350,7 @@ void CMusikLibrary::WriteMP3Tag( const CMusikSong & song, bool ClearAll )
 	id3Tag.Update();	
 }
 
-bool CMusikLibrary::WriteOGGTag( const CMusikSong & song, bool ClearAll )
+bool CMusikLibrary::WriteOGGTag( const CMusikSong & song, bool WXUNUSED(ClearAll) )
 {
 	wxString filename = song.Filename;
 	//--- generate a temp filename, then rename the ogg ---//
@@ -418,7 +425,7 @@ int CMusikLibrary::ClearDirtyTags()
 	return nCount;
 }
 
-void CMusikLibrary::AddMod( const wxString & filename )
+void CMusikLibrary::AddMod( const wxString & WXUNUSED(filename) )
 {
 	//int format = MUSIK_FORMAT_MOD;
 }
@@ -495,17 +502,17 @@ void CMusikLibrary::AddOgg( const wxString & filename )
 	}
 }
 
-void CMusikLibrary::AddWav( const wxString & filename )
+void CMusikLibrary::AddWav( const wxString & WXUNUSED(filename) )
 {
 	//int format = MUSIK_FORMAT_WAV;
 }
 
-void CMusikLibrary::AddWMA( const wxString & filename )
+void CMusikLibrary::AddWMA( const wxString & WXUNUSED(filename) )
 {
 	//int format = MUSIK_FORMAT_WMA;
 }
 
-void CMusikLibrary::AddAIFF( const wxString & filename )
+void CMusikLibrary::AddAIFF( const wxString & WXUNUSED(filename) )
 {
 	//int format = MUSIK_FORMAT_AIFF;
 }
@@ -520,7 +527,7 @@ void CMusikLibrary::VerifyYearList( const wxArrayString & aList,wxArrayString & 
 	}
 	return;
 }
-static int sqlite_callbackAddToStringArray(void *args, int numCols, char **results, char **columnNames)
+static int sqlite_callbackAddToStringArray(void *args, int WXUNUSED(numCols), char **results, char ** WXUNUSED(columnNames))
 {
 
 	wxArrayString * p = (wxArrayString*)args;
@@ -626,7 +633,7 @@ void CMusikLibrary::GetInfo( const wxArrayString & aList, int nInType, int nOutT
 	}
 	
 }
-static int sqlite_callbackAddToSongArray(void *args, int numCols, char **results, char **columnNames)
+static int sqlite_callbackAddToSongArray(void *args, int WXUNUSED(numCols), char **results, char ** WXUNUSED(columnNames))
 {
 
 	CMusikSongArray * p = (CMusikSongArray*)args;
@@ -718,7 +725,7 @@ void CMusikLibrary::Query( const wxString & query, wxArrayString & aReturn )
 	sqlite_exec(m_pDB, ConvQueryToMB( query ), &sqlite_callbackAddToStringArray, &aReturn, NULL);
 }
 
-static int sqlite_callbackAddToSongMap(void *args, int numCols, char **results, char **columnNames)
+static int sqlite_callbackAddToSongMap(void *args, int WXUNUSED(numCols), char **results, char ** WXUNUSED(columnNames))
 {
 	//-------------------------------------------------------------------------//
 	//--- maps filename to CMusingSong objects ptrs, ptrs because this		---//

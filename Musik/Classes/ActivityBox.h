@@ -63,7 +63,7 @@ public:
 	void DeselectAll	();
 	bool IsSelected		( int n );
 	void Update			( bool selectnone );
-	void RescaleColumns	();
+	void RescaleColumns	( bool bFreeze = true );
 
   void OnChar( wxKeyEvent& event );
   DECLARE_EVENT_TABLE()
@@ -71,7 +71,7 @@ private:
 	//--- virtual functions ---//
     virtual	wxString		OnGetItemText	(long item, long column) const;
     virtual	wxListItemAttr*	OnGetItemAttr	(long item) const;
-	virtual	int				OnGetItemImage	(long item) const { return 0; }
+	virtual	int				OnGetItemImage	(long WXUNUSED(item)) const { return 0; }
 
 	inline bool		HasShowAllRow	() const; 
 	size_t			GetRowCount		() const { return HasShowAllRow()?( size_t )m_Items.GetCount()+ 1: ( size_t )m_Items.GetCount(); }
