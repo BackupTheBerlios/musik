@@ -1,0 +1,31 @@
+musik Todo list:
+
+1.  Time seek bar
+2.  Playback buttons
+3.  Preferences Dialog
+4.  Edit Tag Dialog
+5.  Dynamic Playlist Dialog
+6.  Selection Box "edit in place"
+7.  Sources Box "edit in place"
+8.  Jukebox playlist type
+
+Stuff Added 
+
+7.  DND append playlist by dragging files over
+    existing "standard playlist"
+6.  DND from sources to explorer, e.g,
+    cd burner.
+5.  Changed "Libraries / Devices" to "Music"
+4.  Better memory management for navigation system, 
+    maybe cut in half?
+3.  Reworked navigation system. "now playing" type
+    points to the player's internal playlist, so
+    you can browse and toggle back to your que
+    at any time.   
+2.  Undockable windows now display their custom
+    gripper (caption bar) as well
+1.  Theme support
+
+
+
+

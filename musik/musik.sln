@@ -1,0 +1,27 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "musik", "musik.vcproj", "{99140D9E-2F39-406D-AD74-CA89B8C354CF}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		NASM Debug = NASM Debug
+		NASM Release = NASM Release
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{99140D9E-2F39-406D-AD74-CA89B8C354CF}.Debug.ActiveCfg = Debug|Win32
+		{99140D9E-2F39-406D-AD74-CA89B8C354CF}.Debug.Build.0 = Debug|Win32
+		{99140D9E-2F39-406D-AD74-CA89B8C354CF}.NASM Debug.ActiveCfg = Debug|Win32
+		{99140D9E-2F39-406D-AD74-CA89B8C354CF}.NASM Debug.Build.0 = Debug|Win32
+		{99140D9E-2F39-406D-AD74-CA89B8C354CF}.NASM Release.ActiveCfg = Release|Win32
+		{99140D9E-2F39-406D-AD74-CA89B8C354CF}.NASM Release.Build.0 = Release|Win32
+		{99140D9E-2F39-406D-AD74-CA89B8C354CF}.Release.ActiveCfg = Release|Win32
+		{99140D9E-2F39-406D-AD74-CA89B8C354CF}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
