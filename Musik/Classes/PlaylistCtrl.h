@@ -179,6 +179,7 @@ private:
 	//--------------------//
 	wxArrayInt m_ColumnOrder;
 	bool m_ColsChanged;
+	size_t m_Overflow;
 
 	//--------------//
 	//--- thread ---//

@@ -232,6 +232,7 @@ CPlaylistCtrl::CPlaylistCtrl( wxWindow *parent, const wxWindowID id, const wxPoi
 	g_DragInProg = false;
 	m_ColsChanged = false;
 	nCurSel = -1;
+	m_Overflow = 0;
 
 	SetActiveThread( NULL );
 }
@@ -262,7 +263,17 @@ void CPlaylistCtrl::SaveColumns()
 		//-----------------------------------------//
 		if ( g_Prefs.nPlaylistColumnDynamic[nCurrCol] == 0 )
 		{
-			g_Prefs.nPlaylistColumnSize[nCurrCol] = GetColumnWidth( i );
+			//-------------------------------------------------//
+			//--- overflow pixels get placed in the first	---//
+			//--- column. remove them when we save.			---//
+			//-------------------------------------------------//
+			if ( i == 0 )
+			{
+				g_Prefs.nPlaylistColumnSize[nCurrCol] = GetColumnWidth( i ) - m_Overflow;
+				size_t m_Overflow = 0;
+			}
+			else
+				g_Prefs.nPlaylistColumnSize[nCurrCol] = GetColumnWidth( i );
 		}
 
 		//-----------------------------------------//
@@ -357,6 +368,7 @@ void CPlaylistCtrl::EndDragCol( wxListEvent& event )
 		event.Veto();
 
 	m_ColsChanged = true;
+	Refresh();
 }
 
 void CPlaylistCtrl::PlaySel( wxListEvent& WXUNUSED(event) )
@@ -869,8 +881,8 @@ void CPlaylistCtrl::RescaleColumns()
 	//-------------------------------------------------//
 	if ( g_Prefs.nPlaylistSmartColumns == 1 && nTotalPercent )
 	{
-		size_t nOverflow = client_size.GetWidth() - ( nStaticWidth + nDynamicWidth );
-		size_t nLastSize = GetColumnWidth( 0 ) + nOverflow;
+		m_Overflow = client_size.GetWidth() - ( nStaticWidth + nDynamicWidth );
+		size_t nLastSize = GetColumnWidth( 0 ) + m_Overflow;
 		SetColumnWidth( 0, nLastSize );
 	}
 
