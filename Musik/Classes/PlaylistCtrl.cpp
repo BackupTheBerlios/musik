@@ -323,8 +323,9 @@ bool PlaylistDropTarget::HighlightSel( const  wxPoint & pPos )
 //----------------------------//
 CPlaylistCtrl::CPlaylistCtrl( CPlaylistBox *parent, const wxWindowID id, const wxPoint& pos, const wxSize& size )
 	:	CMusikListCtrl		( parent, id, pos, size,wxNO_BORDER)
-	,m_pParent(parent)
 	,m_bInternalDragInProcess(false)
+	,m_pParent(parent)
+	
 {
 	SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ) );
 

@@ -21,15 +21,19 @@ bool CMP3Info::ReadMetaData(CSongMetaData & MetaData) const
 	ifstream stream(f);
 #else
 	// ifstream::ifstream(FILE *f) seems to be only available on windows
-	ifstream stream(ConvFn2A(MetaData.Filename.GetFullPath(),ios_base::in|ios_base::binary);
+	ifstream stream;
+	stream.open(ConvFn2A(MetaData.Filename.GetFullPath(),ios_base::in|ios_base::binary);
 	if(!stream)
 		return false;
 #endif
 	ID3_IFStreamReader reader(stream);		
 	ID3_Tag		id3Tag;
 	id3Tag.Link( reader, (flags_t)ID3TT_ALL );
+
 	stream.close();
+#ifdef __WXMSW__
 	fclose(f);
+#endif
 	MetaData.Artist.Attach	( ID3_GetArtist	( &id3Tag ));
 	MetaData.Title.Attach	( ID3_GetTitle	( &id3Tag ));
 	MetaData.Album.Attach	( ID3_GetAlbum	( &id3Tag ));
