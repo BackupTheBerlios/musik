@@ -57,13 +57,11 @@ struct Value
 template <class T>
 struct NullEncoder
 {
-	static void EncodeValue(T & v)
+	static void EncodeValue(T & )
 	{
-		v;
 	}
-	static void DecodeValue(T & v)
+	static void DecodeValue(T & )
 	{
-		v;
 	}
 };
 

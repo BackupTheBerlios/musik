@@ -275,7 +275,7 @@ inline double StringToDouble( wxString str )
 }
 inline void InternalErrorMessageBox( const wxString &sText)
 {
-	wxString sMessage = wxString::Format(wxT("An internal error has occured.\n%s,\n\nPlease contact the ") MUSIKAPPNAME wxT(" development team with this error."),sText);
+	wxString sMessage = wxString::Format(wxT("An internal error has occured.\n%s,\n\nPlease contact the ") MUSIKAPPNAME wxT(" development team with this error."),(const wxChar *)sText);
 	wxMessageBox( sMessage,MUSIKAPPNAME_VERSION, wxOK|wxICON_ERROR );
 
 }
