@@ -40,6 +40,9 @@ public:
 	// gets
 	CmusikSelectionCtrl* GetCtrl(){ return m_wndChild; }
 
+	// showing options menu
+	virtual void OnOptions();
+
 protected:
 
 	// child
@@ -79,10 +82,6 @@ public:
 	CStdString GetSelQuery();
 	CStdString GetEditCommitStr();
 
-	// queries
-	bool IsItemSelected( int item );
-	bool IsParent(){ return m_ParentBox; }
-
 	// sets
 	void SetParent( bool parent = true ){ m_ParentBox = parent; }
 	static void SetUpdating( bool updating = true ){ m_Updating = updating; }
@@ -91,6 +90,13 @@ public:
 	void RescaleColumn();
 	void UpdateV( bool update_count = false );
 	void UpdateV( CStdString query, bool update_count = false );
+
+	// queries
+	bool IsItemSelected( int item );
+	bool IsParent(){ return m_ParentBox; }
+
+	// showing the dropdown menu
+	void ShowMenu();
 
 	// mfc message maps
 	afx_msg void OnSize(UINT nType, int cx, int cy);
@@ -145,6 +151,8 @@ protected:
 	// macros
 	DECLARE_MESSAGE_MAP()
 	DECLARE_DYNAMIC(CmusikSelectionCtrl)
+public:
+	afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
 };
 
 ///////////////////////////////////////////////////

@@ -19,6 +19,7 @@
 #define IDD_FILEDROP                    138
 #define IDD_FILEDROPDLG                 138
 #define IDD_DIR_SYNC                    140
+#define IDD_EQUALIZER_SETS              141
 #define IDC_CHECK_STARTUPSCAN           1007
 #define IDC_CHECK_PL_STRIPES            1009
 #define IDC_COMBO1                      1010
@@ -38,6 +39,7 @@
 #define IDC_CLOSE                       1018
 #define IDC_REMEMBER                    1019
 #define IDC_ENABLE_QUERY3               1019
+#define IDC_BUTTON4                     1019
 #define IDC_RADIO1                      1020
 #define IDC_RADIO_ADD_PLAYLIST          1020
 #define IDC_FIELDTYPE3                  1020
@@ -67,6 +69,12 @@
 #define IDC_REMOVE                      1039
 #define IDC_LIST2                       1040
 #define IDC_DIRS                        1040
+#define IDC_LIST1                       1042
+#define IDC_BUTTON5                     1043
+#define IDC_BUTTON6                     1044
+#define IDC_BUTTON7                     1045
+#define IDC_BUTTON8                     1046
+#define IDC_BUTTON9                     1047
 #define ID_FILE_PREFERENCES             32771
 #define ID_FILE_SEP                     32772
 #define ID_ADD_FILES                    32774
@@ -110,9 +118,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        141
+#define _APS_NEXT_RESOURCE_VALUE        142
 #define _APS_NEXT_COMMAND_VALUE         32827
-#define _APS_NEXT_CONTROL_VALUE         1042
+#define _APS_NEXT_CONTROL_VALUE         1048
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

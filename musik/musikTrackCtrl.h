@@ -29,6 +29,11 @@ public:
 	afx_msg void OnPaint();
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+
+	// use this to get colors
+	CmusikPrefs* m_Prefs;
 
 protected:	
 
@@ -45,9 +50,6 @@ protected:
 	// lock movement if no playback
 	bool m_LockIfNotPlaying;
 
-	// use this to get colors
-	CmusikPrefs* m_Prefs;
-
 	// use this to determine if 
 	// the slider should be locked
 	CmusikPlayer* m_Player;
@@ -60,9 +62,6 @@ protected:
 	// message maps
 	DECLARE_DYNAMIC(CmusikTrackCtrl)
 	DECLARE_MESSAGE_MAP()
-public:
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 };
 
 ///////////////////////////////////////////////////

@@ -8,6 +8,7 @@
 #include "MEMDC.H"
 
 #include "../musikCore/include/musikLibrary.h"
+#include ".\musikselectionctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -79,6 +80,13 @@ void CmusikSelectionBar::OnSize(UINT nType, int cx, int cy)
 
 ///////////////////////////////////////////////////
 
+void CmusikSelectionBar::OnOptions()
+{
+	m_wndChild->ShowMenu();
+}
+
+///////////////////////////////////////////////////
+
 // CmusikSelectionCtrl
 
 ///////////////////////////////////////////////////
@@ -136,6 +144,7 @@ BEGIN_MESSAGE_MAP(CmusikSelectionCtrl, CmusikListCtrl)
 	// custom message maps
 	ON_REGISTERED_MESSAGE(WM_SELECTION_EDIT_COMMIT,OnEditCommit)
 	ON_REGISTERED_MESSAGE(WM_SELECTION_EDIT_CANCEL,OnEditCancel)
+	ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -723,6 +732,20 @@ LRESULT CmusikSelectionCtrl::OnEditCommit( WPARAM wParam, LPARAM lParam )
 CStdString CmusikSelectionCtrl::GetEditCommitStr()
 {
 	return m_CommitStr;
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionCtrl::ShowMenu()
+{
+	MessageBox( "Some day I will popup a menu of things to do.", MUSIK_VERSION_STR, MB_ICONINFORMATION );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionCtrl::OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/)
+{
+	// ShowMenu();
 }
 
 ///////////////////////////////////////////////////

@@ -396,7 +396,7 @@ void CmusikTrackCtrl::OnPosChanged()
 	if ( GetParent() )
 	{
 		int WM_TRACKCHANGE = RegisterWindowMessage( "TRACKCHANGE" );		
-		GetParent()->SendMessage( WM_TRACKCHANGE, NULL, NULL );
+		GetParent()->SendMessage( WM_TRACKCHANGE, (WPARAM)this, NULL );
 	}
 
 	TRACE0( "CmusikTrackCtrl::OnPosChanged()\n" );
@@ -409,7 +409,7 @@ void CmusikTrackCtrl::OnFinishDrag()
 	if ( GetParent() )
 	{
 		int WM_TRACKDRAGFINISH = RegisterWindowMessage( "TRACKDRAGFINISH" );		
-		GetParent()->SendMessage( WM_TRACKDRAGFINISH, NULL, NULL );
+		GetParent()->SendMessage( WM_TRACKDRAGFINISH, (WPARAM)this, NULL );
 	}
 
 	TRACE0( "CmusikTrackCtrl::OnFinishDrag()\n" );
@@ -422,7 +422,7 @@ void CmusikTrackCtrl::OnBeginDrag()
 	if ( GetParent() )
 	{
 		int WM_TRACKDRAGBEGIN = RegisterWindowMessage( "TRACKDRAGBEGIN" );		
-		GetParent()->SendMessage( WM_TRACKDRAGBEGIN, NULL, NULL );
+		GetParent()->SendMessage( WM_TRACKDRAGBEGIN, (WPARAM)this, NULL );
 	}
 
 	TRACE0( "CmusikTrackCtrl::OnBeginDrag()\n" );

@@ -61,6 +61,8 @@ void CmusikDockBar::OnNcLButtonUp( UINT nHitTest, CPoint point )
 {
     if ( nHitTest == HTCLOSE )
         m_pDockSite->ShowControlBar(this, FALSE, FALSE); // hide
+	else if ( nHitTest == HTOPTIONS )
+		OnOptions();
 
     basemusikDockBar::OnNcLButtonUp( nHitTest, point );
 }
@@ -380,3 +382,14 @@ BOOL CmusikDockBar::OnEraseBkgnd(CDC* pDC)
 }
 
 ///////////////////////////////////////////////////
+
+void CmusikDockBar::OnOptions()
+{
+	TRACE0( "Options button pressed\n" );
+}
+
+///////////////////////////////////////////////////
+
+
+///////////////////////////////////////////////////
+

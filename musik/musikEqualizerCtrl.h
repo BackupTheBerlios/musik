@@ -5,6 +5,7 @@
 ///////////////////////////////////////////////////
 
 #include "musikDockBar.h"
+#include "musikTrackCtrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -13,6 +14,8 @@ class CmusikLibrary;
 class CmusikPlayer;
 class CmusikPrefs;
 class CmusikDockBar;
+class CmusikEQSettings;
+class CmusikEqualizer;
 
 ///////////////////////////////////////////////////
 
@@ -70,6 +73,8 @@ public:
 	// message maps
 	afx_msg void OnPaint();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnSize(UINT nType, int cx, int cy);
 
 protected:
 
@@ -77,6 +82,10 @@ protected:
 	CmusikLibrary* m_Library;
 	CmusikPlayer* m_Player;
 	CmusikPrefs* m_Prefs;
+
+	// controls
+	CmusikTrackCtrl m_LeftBands[16];
+	CmusikTrackCtrl m_RightBands[16];
 
 	// macros
 	DECLARE_DYNAMIC(CmusikEqualizerCtrl)

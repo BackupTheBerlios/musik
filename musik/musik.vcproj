@@ -421,6 +421,16 @@
 						RelativePath=".\musikDirSync.h">
 					</File>
 				</Filter>
+				<Filter
+					Name="musikEqualizerSets"
+					Filter="">
+					<File
+						RelativePath=".\musikEqualizerSets.cpp">
+					</File>
+					<File
+						RelativePath=".\musikEqualizerSets.h">
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 		<Filter

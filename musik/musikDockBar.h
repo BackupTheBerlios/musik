@@ -16,7 +16,7 @@ class CmusikDockbarBtn;
 
 ///////////////////////////////////////////////////
 
-#define HTOPTIONS ( HTCLOSE + 1 )
+#define HTOPTIONS ( HTCLOSE + 56 )
 
 ///////////////////////////////////////////////////
 
@@ -49,6 +49,10 @@ protected:
 
 	// custom message maps
     afx_msg LRESULT OnSetText(WPARAM wParam, LPARAM lParam);
+
+	// virtual function to call when the 
+	// option button is pressed
+	virtual void OnOptions();
 
 	// appearance
     int     m_cyGripper;
