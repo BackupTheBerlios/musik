@@ -12,6 +12,17 @@
 #define strnocasecmp _stricmp
 #endif
 
+#ifndef _MAX_PATH
+#define _MAX_PATH 256
+#endif
+#ifndef _MAX_DIR
+#define _MAX_DIR 256
+#endif
+#ifndef _MAX_FNAME
+#define _MAX_FNAME 256
+#endif
+
+
 size_t   unicodeToUtf8 ( const wchar_t* lpWideCharStr, char* lpMultiByteStr, int cwcChars );
 size_t   utf8ToUnicode ( const char* lpMultiByteStr, wchar_t* lpWideCharStr, int cmbChars );
 int   ConvertANSIToUTF8 ( const char* ansi, char* utf8 );                   // convert current locale  to UTF-8
@@ -154,7 +165,7 @@ char* CSimpleTagReader::TagValue ( const char* item)
 
     for ( i = 0; i < tagitem_count; i++ ) {
         // Are items case sensitive?
-        if ( _stricmp ( item, tagitems[i].Item ) == 0 )
+        if ( strnocasecmp ( item, tagitems[i].Item ) == 0 )
             return (char*)tagitems[i].Value;
     }
 
@@ -224,7 +235,7 @@ int CSimpleTagReader::InsertTagField ( const char* item, size_t itemsize, const 
 
     for ( i = 0; i < tagitem_count; i++ ) {
         // are items case sensitive?
-        if ( _stricmp ( item, tagitems[i].Item ) == 0 )               // replace value of first item found
+        if ( strnocasecmp ( item, tagitems[i].Item ) == 0 )               // replace value of first item found
             return ReplaceTagField ( value, valuesize, flags, i, (tag_rel)0 );
     }
 
@@ -241,7 +252,7 @@ int CSimpleTagReader::InsertTagFieldLonger ( const char* item, size_t itemsize, 
 
     for ( i = 0; i < tagitem_count; i++ ) {
         // are items case sensitive?
-        if ( _stricmp ( item, tagitems[i].Item ) == 0 ) {
+        if ( strnocasecmp ( item, tagitems[i].Item ) == 0 ) {
             if ( reliability > tagitems[i].Reliability )              // replace value of first item found
                 return ReplaceTagField ( value, valuesize, flags, i, reliability );
             else
@@ -477,7 +488,7 @@ GenreToInteger ( const char* GenreStr)
     size_t  i;
 
     for ( i = 0; i < sizeof(GenreList) / sizeof(*GenreList); i++ ) {
-        if ( 0 == _stricmp ( GenreStr, GenreList [i] ) )
+        if ( 0 == strnocasecmp ( GenreStr, GenreList [i] ) )
             return i;
     }
 
@@ -628,7 +639,7 @@ int CSimpleTagReader::GuessTagFromName ( const char* filename, const char* namin
     for ( i = 0; i < strlen (name) - 5; i++ ) {
         if ( name[i] != '\\' && name[i] != '/' ) continue;
 
-        if ( _strnicmp ( (char *)(name+i+1), "(CD", 3 ) == 0 || _strnicmp ( (char *)(name+i+1), "(DVD", 4 ) == 0 )
+        if ( strnocasecmp ( (char *)(name+i+1), "(CD", 3 ) == 0 || strnocasecmp ( (char *)(name+i+1), "(DVD", 4 ) == 0 )
             name[i] = ' ';
     }
 
@@ -833,7 +844,7 @@ int GuessTagFromName_Test ( const char* filename, const char* naming_scheme, cha
     for ( i = 0; i < strlen (name) - 5; i++ ) {
         if ( name[i] != '\\' && name[i] != '/' ) continue;
 
-        if ( _strnicmp ( (char *)(name+i+1), "(CD", 3 ) == 0 || _strnicmp ( (char *)(name+i+1), "(DVD", 4 ) == 0 )
+        if ( strnocasecmp ( (char *)(name+i+1), "(CD", 3 ) == 0 || strnocasecmp ( (char *)(name+i+1), "(DVD", 4 ) == 0 )
             name[i] = ' ';
     }
 
