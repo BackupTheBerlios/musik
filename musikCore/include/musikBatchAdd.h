@@ -177,15 +177,16 @@ static void musikBatchAddWorker( CmusikThread* thread )
 	params->m_Library->EndTransaction();
 
 
-	// delete thread
+	// flag thread operation as complete
+	thread->m_Finished = true;
+
 	// trigger functor (to delete file list)
 	if ( params->m_DeleteFilelist )
 		delete params->m_Files;
 
+	// call the functor's OnThreadEnd
 	if ( ( thread->m_Abort && params->m_CallFunctorOnAbort ) || !thread->m_Abort )
 		params->m_Functor->OnThreadEnd( (void*)thread );
-
-	thread->m_Finished = true;
 }
 
 ///////////////////////////////////////////////////
