@@ -190,6 +190,7 @@ CPlaylistCtrl::CPlaylistCtrl( wxWindow *parent, const wxWindowID id, const wxPoi
 	:	wxListCtrl		( parent, id, pos, size, wxLC_REPORT | wxLC_VIRTUAL | wxSIMPLE_BORDER | wxCLIP_CHILDREN & ~wxHSCROLL )
 {
 	//--- setup headers ---//
+	FindColumnOrder();
 	ResetColumns();
 
 	//--- rating menu ---//
@@ -861,11 +862,6 @@ void CPlaylistCtrl::ResetColumns( bool update )
 	int nColumnCount = GetColumnCount();
 	for ( size_t i = 0; i < nColumnCount; i++ )
 		DeleteColumn( 0 );
-
-	//-------------------------------------------------//
-	//--- get the order of the enabled columns		---//
-	//-------------------------------------------------//
-	FindColumnOrder();
 
 	//-------------------------------------------------//
 	//--- construct all columns, and set any static	---//

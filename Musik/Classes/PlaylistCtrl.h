@@ -100,21 +100,22 @@ public:
 	//--------------//
 	//--- others ---//
 	//--------------//
-	void ResynchItem	( int item, int lastitem = -1, bool refreshonly = true );
-	void Update			( bool bSelFirstItem = true );
-	void RescaleColumns	( );
-	void ResetColumns	( bool update = false );
-	void RateSel		( int nVal );
-	void EditTag		( int i );
-	void DelSelSongs	();
-	void DelSelFiles	();
-	void DelSelFilesDB	();
-	void RenameSelFiles	();
-	void RetagSelFiles	();
-	bool ViewDirtyTags	();
-	void ToggleIcons	();
-	void ShowIcons		();
-	void SaveColumns	();
+	void ResynchItem		( int item, int lastitem = -1, bool refreshonly = true );
+	void Update				( bool bSelFirstItem = true );
+	void RescaleColumns		( );
+	void ResetColumns		( bool update = false );
+	void RateSel			( int nVal );
+	void EditTag			( int i );
+	void DelSelSongs		( );
+	void DelSelFiles		( );
+	void DelSelFilesDB		( );
+	void RenameSelFiles		( );
+	void RetagSelFiles		( );
+	bool ViewDirtyTags		( );
+	void ToggleIcons		( );
+	void ShowIcons			( );
+	void SaveColumns		( );
+	void FindColumnOrder	( );
 
 	//---------------------------------------------//
 	//---          drag and drop stuff.         ---//
@@ -177,7 +178,6 @@ private:
 	//--------------------//
 	//--- column order ---//
 	//--------------------//
-	void FindColumnOrder();
 	wxArrayInt m_ColumnOrder;
 
 	//--------------//
