@@ -1,4 +1,5 @@
 0.1.2 to 0.1.3
+ + Dropdown box in Preferences -> Options -> Selections for selection style. Used to be a checkbox. (avatar)
  - Fixed Bug: standard playlists would not get saved under certain circumstances, saved twice under others. (avatar)
  + More crossfader smoothness. We gotta have the smoothest fader around now (avatar)
  - Fixed Bug: Optimized ogg read support a little, which magically fixed the last known memory leak. (avatar)

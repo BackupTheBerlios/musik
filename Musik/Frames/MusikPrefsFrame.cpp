@@ -153,8 +153,6 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//----------------------------//
 	//--- Options -> Selection ---//
 	//----------------------------//
-	//--- show unselected check box ---//
-	chkShowUnsel = new wxCheckBox( this, -1, _("Show unrelated material, highlight related"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 	//--- activity box 1 ---//
 	wxStaticText *stActivityBox1 = new wxStaticText( this, -1, _("Selection Box 1:"), wxPoint( 0, 0 ), wxSize( -1, -1 ), wxALIGN_LEFT );
 	cmbActivityBox1 = new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
@@ -163,7 +161,6 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	cmbActivityBox1->Append ( _("Album") );
 	cmbActivityBox1->Append ( _("Genre") );
 	cmbActivityBox1->Append ( _("Year") );
-	/*cmbActivityBox1->Append ( _("Decade") );*/
 	//--- activity box 2 ---//
 	wxStaticText *stActivityBox2 = new wxStaticText( this, -1, _("Selection Box 2:"), wxPoint( 0, 0 ), wxSize( -1, -1), wxALIGN_LEFT );
 	cmbActivityBox2 = new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
@@ -172,7 +169,6 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	cmbActivityBox2->Append ( _("Album") );
 	cmbActivityBox2->Append ( _("Genre") );
 	cmbActivityBox2->Append ( _("Year") );
-	/*cmbActivityBox1->Append ( _("Decade") );*/
 	//--- activity box 3 ---//
 	wxStaticText *stActivityBox3 = new wxStaticText( this, -1, _("Selection Box 3:"), wxPoint( 0, 0 ), wxSize( -1, -1), wxALIGN_LEFT );
 	cmbActivityBox3 = new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
@@ -181,7 +177,6 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	cmbActivityBox3->Append ( _("Album") );
 	cmbActivityBox3->Append ( _("Genre") );
 	cmbActivityBox3->Append ( _("Year") );
-	/*cmbActivityBox1->Append ( _("Decade") );*/
 	//--- activity box 4 ---//
 	wxStaticText *stActivityBox4 = new wxStaticText( this, -1, _("Selection Box 4:"), wxPoint( 0, 0 ), wxSize( -1, -1), wxALIGN_LEFT );
 	cmbActivityBox4 = new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
@@ -190,12 +185,18 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	cmbActivityBox4->Append ( _("Album") );
 	cmbActivityBox4->Append ( _("Genre") );
 	cmbActivityBox4->Append ( _("Year") );
-	/*cmbActivityBox1->Append ( _("Decade") );*/
-	//--- activity box sizers ---//
-	hsActivityBox1 = new wxBoxSizer ( wxHORIZONTAL );
-	hsActivityBox2 = new wxBoxSizer	( wxHORIZONTAL );
-	hsActivityBox3 = new wxBoxSizer	( wxHORIZONTAL );
-	hsActivityBox4 = new wxBoxSizer	( wxHORIZONTAL );
+	//--- selection style ---//
+	wxStaticText *stSelStyle = new wxStaticText( this, -1, _("Selection Style:" ), wxPoint( 0, 0 ), wxSize( -1, -1 ), wxALIGN_LEFT );
+	cmbSelStyle = new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
+	cmbSelStyle->Append( _( "Standard" ) );
+	cmbSelStyle->Append( _( "Sloppy" ) );
+	cmbSelStyle->Append( _( "Highlight") );
+	//--- sizers ---//
+	hsActivityBox1	= new wxBoxSizer	( wxHORIZONTAL );
+	hsActivityBox2	= new wxBoxSizer	( wxHORIZONTAL );
+	hsActivityBox3	= new wxBoxSizer	( wxHORIZONTAL );
+	hsActivityBox4	= new wxBoxSizer	( wxHORIZONTAL );
+	hsSelStyle		= new wxBoxSizer	( wxHORIZONTAL );
 	hsActivityBox1->Add ( stActivityBox1,	0, wxCENTER | wxRIGHT, 4 );
 	hsActivityBox2->Add ( stActivityBox2,	0, wxCENTER | wxRIGHT, 4 );
 	hsActivityBox3->Add ( stActivityBox3,	0, wxCENTER | wxRIGHT, 4 );
@@ -204,6 +205,8 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	hsActivityBox2->Add ( cmbActivityBox2,	1, wxCENTER, 0 );
 	hsActivityBox3->Add ( cmbActivityBox3,	1, wxCENTER, 0 );
 	hsActivityBox4->Add ( cmbActivityBox4,	1, wxCENTER, 0 );
+	hsSelStyle->Add( stSelStyle, 0, wxCENTER | wxRIGHT, 4 );
+	hsSelStyle->Add( cmbSelStyle, 1, wxCENTER, 0 );
 
 	//-------------------------------//
 	//--- Sound -> Playback Sizer ---//
@@ -331,7 +334,7 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	vsOptions_Selections->Add ( hsActivityBox2,		0, wxALL, 4 );
 	vsOptions_Selections->Add ( hsActivityBox3,		0, wxALL, 4 );
 	vsOptions_Selections->Add ( hsActivityBox4,		0, wxALL, 4 );
-	vsOptions_Selections->Add ( chkShowUnsel,		0, wxALL, 4 );
+	vsOptions_Selections->Add ( hsSelStyle,			0, wxALL, 4 );
 
 	//----------------------------//
 	//--- System Buttons Sizer ---//
@@ -425,7 +428,7 @@ void MusikPrefsFrame::LoadPrefs()
 	//-----------------------------//
 	//--- options -> selections ---//
 	//-----------------------------//
-	chkShowUnsel->SetValue			( g_Prefs.nShowUnsel );
+	cmbSelStyle->SetSelection		( g_Prefs.nSelStyle );
 	cmbActivityBox1->SetSelection	( g_Prefs.nActBox1 );
 	cmbActivityBox2->SetSelection	( g_Prefs.nActBox2 );
 	cmbActivityBox3->SetSelection	( g_Prefs.nActBox3 );
@@ -605,9 +608,9 @@ void MusikPrefsFrame::SavePrefs()
 	//-----------------------------//
     //--- Options -> selections ---//
 	//-----------------------------//
-	if ( chkShowUnsel->GetValue() != g_Prefs.nShowUnsel )
+	if ( cmbSelStyle->GetSelection() != g_Prefs.nSelStyle )
 	{
-		g_Prefs.nShowUnsel = chkShowUnsel->GetValue();
+		g_Prefs.nSelStyle = cmbSelStyle->GetSelection();
 		bShowUnselChange = true;
 	}
 

@@ -138,10 +138,10 @@ wxString CActivityListBox::OnGetItemText(long item, long column) const
 
 wxListItemAttr* CActivityListBox::OnGetItemAttr(long item) const
 {
-	if ( g_Prefs.nShowUnsel == 1 && item < m_Related )
+	if ( g_Prefs.nSelStyle == 2 && item < m_Related )
 		return ( wxListItemAttr* )&m_DarkAttr;
 
-	else if ( g_Prefs.nShowUnsel == 0 && item == 0 )
+	else if ( ( g_Prefs.nSelStyle == 0 || g_Prefs.nSelStyle == 1 ) && item == 0 )
 		return ( wxListItemAttr* )&m_AllReset;
 
 	if ( g_Prefs.nActStripes == 1 )
@@ -451,7 +451,7 @@ wxArrayString CActivityBox::GetFullList()
 void CActivityBox::SetPlaylist()
 {
 	//--- if we show unselected entries ---//
-	if ( g_Prefs.nShowUnsel == 1 || ( g_ActivityAreaCtrl->GetParentBox() == this ) )
+	if ( g_Prefs.nSelStyle == 2 || ( g_ActivityAreaCtrl->GetParentBox() == this ) )
 	{
 	  wxArrayString list;
 	  list = GetSelected();
@@ -479,7 +479,7 @@ void CActivityBox::SetPlaylist()
 	//--- only the correct, selected artist's album songs	---//
 	//--- get displayed										---//
 	//---------------------------------------------------------//
-	else if ( g_Prefs.nShowUnsel == 0 )
+	else if ( g_Prefs.nSelStyle == 0 || g_Prefs.nSelStyle == 1 )
 	{
 		CActivityBox *pParentBox = g_ActivityAreaCtrl->GetParentBox();
 		if ( pParentBox != NULL )
@@ -549,7 +549,7 @@ void CActivityBox::SetPlaylist()
 
 void CActivityBox::SetContents( wxArrayString *pList )
 {
-	if ( g_Prefs.nShowUnsel == 0 )
+	if ( g_Prefs.nSelStyle == 0 || g_Prefs.nSelStyle == 1 )
 		pList->Insert( _("All / Reset"), 0 );
 
 	pListBox->SetList( pList );
@@ -711,7 +711,7 @@ void CActivityBox::OnRenameThreadProg( wxCommandEvent& WXUNUSED(event) )
 
 void CActivityBox::OnRenameThreadEnd( wxCommandEvent& WXUNUSED(event) )
 {
-	if ( g_Prefs.nShowUnsel == 1 || g_ActivityAreaCtrl->GetParentBox() == this )
+	if ( g_Prefs.nSelStyle == 2 || g_ActivityAreaCtrl->GetParentBox() == this )
 		ResetContents();
 			else
 	{

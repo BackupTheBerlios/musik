@@ -91,11 +91,11 @@ public:
 	//-----------------------------//
 	//--- options -> selections ---//
 	//-----------------------------//
-	wxCheckBox	*chkShowUnsel;
 	wxComboBox	*cmbActivityBox1;
 	wxComboBox	*cmbActivityBox2;
 	wxComboBox	*cmbActivityBox3;
 	wxComboBox	*cmbActivityBox4;
+	wxComboBox	*cmbSelStyle;
 
 	//--------------------------//
 	//--- tagging -> general ---//
@@ -146,6 +146,7 @@ public:
 	wxBoxSizer	*hsActivityBox2;
 	wxBoxSizer	*hsActivityBox3;
 	wxBoxSizer	*hsActivityBox4;
+	wxBoxSizer	*hsSelStyle;
 	wxBoxSizer	*hsSelectionStyle;
 	wxBoxSizer	*hsBufferLength;
 	wxBoxSizer	*hsDuration;

@@ -225,7 +225,7 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 	//--- parent and which are children, if there	---//
 	//--- is no parent already.						---//
 	//-------------------------------------------------//
-	if ( g_Prefs.nShowUnsel == 0 )
+	if ( g_Prefs.nSelStyle == 0 )
 	{
 		if ( GetParentId() == 0 )
 			SetParent( pSel->GetListId(), false );
@@ -236,7 +236,7 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 	//--- and reset is clicked or nothing is selected ---//
 	//--- reset all the boxes						  ---//
 	//---------------------------------------------------//
-	if ( g_Prefs.nShowUnsel == 0 && ( pSel->IsSelected( 0 ) || pSel->GetSelectedItemCount() < 1 ) )
+	if ( ( g_Prefs.nSelStyle == 0 || g_Prefs.nSelStyle == 1 ) && ( pSel->IsSelected( 0 ) || pSel->GetSelectedItemCount() < 1 ) )
 	{
 		SetParent( 0, false );
 		pSel->ResetContents();	
@@ -262,10 +262,10 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 	//--- and a valid item is clicked, update the ---//
 	//--- other controls with the right values    ---//
 	//-----------------------------------------------//
-	else if ( g_Prefs.nShowUnsel == 0 && ( !pSel->IsSelected( 0 ) && pSel->GetSelectedItemCount() > 0 ) )
+	else if ( ( g_Prefs.nSelStyle == 0 || g_Prefs.nSelStyle == 1 ) && ( !pSel->IsSelected( 0 ) && pSel->GetSelectedItemCount() > 0 ) )
 	{
 		wxArrayString temp_list;
-		if ( /*GetParentId() == pSel->GetListId()*/ 1 == 1 )
+		if ( GetParentId() == pSel->GetListId() || g_Prefs.nSelStyle == 1 )
 		{
 			if ( pBox1 != NULL )
 			{
@@ -290,7 +290,7 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 	//--- and no items are selected, unselect ---//
 	//--- all the corresponding items		  ---//
 	//-------------------------------------------//
-	else if ( g_Prefs.nShowUnsel == 1 && pSel->GetSelectedItemCount() < 1 )
+	else if ( g_Prefs.nSelStyle == 2 && pSel->GetSelectedItemCount() < 1 )
 	{
 		pSel->DeselectAll();
 		if ( pBox1 != NULL )	pBox1->DeselectAll();
@@ -314,7 +314,7 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 	//--- and 1+ items are selected, select   ---//
 	//--- all the corresponding items		  ---//
 	//-------------------------------------------//
-	else if ( g_Prefs.nShowUnsel == 1 && pSel->GetSelectedItemCount() > 0 )
+	else if ( g_Prefs.nSelStyle == 2 && pSel->GetSelectedItemCount() > 0 )
 	{
 		wxArrayString rel;
 		wxArrayString all;

@@ -33,7 +33,7 @@ public:
 	int nAutoAdd;
 	int nShowAllSongs;
 
-	int nShowUnsel;
+	int nSelStyle;
 
 	int nSndOutput;
 	int nSndDevice;

@@ -31,7 +31,7 @@ void CMusikPrefs::LoadPrefs()
 {
 	wxFileConfig *config;
 	config = new wxFileConfig( CONFIG_NAME );
-	config->Read( wxT( "ShowUnselected" ),							&nShowUnsel,			0						);
+	config->Read( wxT( "SelectionStyle" ),							&nSelStyle,				0						);
 	config->Read( wxT( "OutputDriver" ),							&nSndOutput,			0						);
 	config->Read( wxT( "SoundDevice" ),								&nSndDevice,			0						);
 	config->Read( wxT( "PlaybackRate" ),							&nSndRate,				44100					);
@@ -112,7 +112,7 @@ void CMusikPrefs::SavePrefs()
 
 	wxFileConfig *config;
 	config = new wxFileConfig( CONFIG_NAME );
-	config->Write( wxT( "ShowUnselected" ),							nShowUnsel				);
+	config->Write( wxT( "SelectionStyle" ),							nSelStyle				);
 	config->Write( wxT( "OutputDriver" ),							nSndOutput				);
 	config->Write( wxT( "SoundDevice" ),							nSndDevice				);
 	config->Write( wxT( "PlaybackRate" ),							nSndRate				);
