@@ -292,7 +292,7 @@ void CmusikPlaylistInfoCtrl::UpdateInfo()
 				strtime = span.Format( "%H:%M:%S" );
 		
 			CString strsize( "0.0 mb" );
-			/*double totsize = m_ListCtrl->GetPlaylist()->GetDiskspace();
+			double totsize = m_ListCtrl->GetPlaylist()->GetDiskspace();
 			if ( totsize < 1024.0 )
 				strsize.Format( "%.2f b", totsize );
 			else if ( totsize < ( 1024.0 * 1024.0 ) )
@@ -300,7 +300,7 @@ void CmusikPlaylistInfoCtrl::UpdateInfo()
 			else if ( totsize < ( 1024.0 * 1024.0 * 1024.0 ) )
 				strsize.Format( "%.2f mb", totsize / 1024.0 / 1024.0 );
 			else if ( totsize < ( 1024.0 * 1024.0 * 1024.0 * 1024.0 ) )
-				strsize.Format( "%.2f gb", totsize / 1024.0 / 1024.0 / 1024.0 );*/
+				strsize.Format( "%.2f gb", totsize / 1024.0 / 1024.0 / 1024.0 );
 
 			m_strInfo.Format( "number of songs: %d    running time: %s    size: %s", m_ListCtrl->GetPlaylist()->GetCount(), strtime, strsize );
 		}
