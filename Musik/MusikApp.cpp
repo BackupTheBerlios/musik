@@ -26,8 +26,53 @@ IMPLEMENT_APP( MusikApp )
 //--- globals ---//
 #include "MusikGlobals.h"
 #include "MusikUtils.h"
+#define MUSIK_APP_SERVICE wxT("/tmp/wxMusikApp.server")
+
+class MusikAppConnection: public wxConnection
+{
+public:
+	bool OnPoke(const wxString& topic, const wxString& item, wxChar *data, int size, wxIPCFormat format);
+	bool OnDisconnect();
+};
+
+class MusikAppClient: public wxClient
+{
+public:
+	wxConnectionBase *OnMakeConnection()
+	{
+		return new MusikAppConnection;
+	}
+};
 
 
+bool MusikAppConnection::OnPoke(const wxString& WXUNUSED(topic), const wxString& item, wxChar *data, int size, wxIPCFormat format)
+
+{
+	if((item == wxT("PlayFiles")) && (format == wxIPC_TEXT) )
+	{
+		wxString sData(data,size);
+		wxArrayString aFilelist;
+		DelimitStr(sData,wxT("\n"),aFilelist);
+		wxGetApp().OnPlayFiles(aFilelist);
+	}
+	return TRUE;
+}
+bool MusikAppConnection::OnDisconnect()
+{
+	return wxConnection::OnDisconnect();
+}
+void MusikApp::OnPlayFiles(const wxArrayString &aFilelist)
+{
+	static bool bRecursiveEntry= false;
+	if(bRecursiveEntry)
+		return;
+	bRecursiveEntry = true;
+	if(g_MusikFrame)
+	{
+		g_MusikFrame->AutoUpdate(aFilelist,true);
+	}
+	bRecursiveEntry = false;
+}
 bool MusikApp::OnInit()
 {
 	static const wxCmdLineEntryDesc cmdLineDesc[] =
@@ -49,8 +94,16 @@ bool MusikApp::OnInit()
 	m_pSingleInstanceChecker = new wxSingleInstanceChecker(GetAppName());
 	if ( m_pSingleInstanceChecker->IsAnotherRunning() )
 	{
-		//wxLogError(_("Another program instance is already running, aborting."));
-		//TODO: send params somehow to the other instannce. maybe using wxServer/wxClient
+		MusikAppClient client;
+		MusikAppConnection *pConn = (MusikAppConnection *)client.MakeConnection(wxT("localhost"),MUSIK_APP_SERVICE,wxT("wxMusikInternal"));
+		wxString sData;
+		for( size_t i = 0; i < arrParams.GetCount(); i++)
+		{
+			sData += arrParams[i];
+			sData += wxT("\n");
+		}
+		pConn->Poke(wxT("PlayFiles"),sData.GetWriteBuf(sData.Length()),sData.Length(),wxIPC_TEXT);
+
 		return false;
 	}
 
@@ -112,9 +165,8 @@ bool MusikApp::OnInit()
 	//--- autostart stuff ---//
 	if ( g_Prefs.bFirstRun )
 	{
-		g_MusikLibraryFrame = new MusikLibraryFrame( ( wxFrame* )pMain, wxPoint( 0, 0 ), wxSize( 480, 240 ) );
-		pMain->Enable	( FALSE );
-		g_MusikLibraryFrame->Show	( TRUE	);
+		wxCommandEvent dummy_ev;
+		pMain->OnSetupPaths(dummy_ev);
 	}
 	else if (g_Prefs.bAutoAdd || arrParams.GetCount() > 0)
 	{	if(g_Prefs.bAutoAdd)
@@ -132,6 +184,7 @@ bool MusikApp::OnInit()
 	g_FaderThread->Create();
 	g_FaderThread->Run();
 
+	m_Server.Create(MUSIK_APP_SERVICE);
 	return TRUE;
 }
 
@@ -207,3 +260,8 @@ void MusikApp::WriteVersion()
   	}
 }
 
+wxConnectionBase * MusikAppServer::OnAcceptConnection(const wxString& topic)
+{
+
+	return new MusikAppConnection;
+}

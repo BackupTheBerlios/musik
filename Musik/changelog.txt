@@ -1,5 +1,7 @@
 
 0.3.0.2 to 0.3.1 CVS
++ callback api adapted to fmod 3.72 api
++ new started instance delegates its paramters to already rnning instance now.
 - fixed bug: songs were not played until the end( last n seconds , depending on setting of crossfading duration were missing), if crossfading was disabled.
 + New Context Menu item "Clear List" if your are viewing the NOW Playing playlist.
 + New Playmode Auto DJ. Shuffle only randomizes the current NOW Playing playlist. Auto DJ selects 15 songs randomly from the whole library in advance if active. 

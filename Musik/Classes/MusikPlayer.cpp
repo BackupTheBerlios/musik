@@ -30,7 +30,7 @@ WX_DEFINE_OBJARRAY( CMusikStreamArray );
 
 #define MUSIK_FMOD_VERSION 0x0370 //--- 0x0363 or 0x0370 ---//
 
-void * F_CALLBACKAPI dspcallback(void *WXUNUSED(originalbuffer), void *newbuffer, int length, int WXUNUSED(param))
+void * F_CALLBACKAPI dspcallback(void *WXUNUSED(originalbuffer), void *newbuffer, int length, void * WXUNUSED(userdata))
 {
 	// 2 channels (stereo), 16 bit sound
 	g_FX.ProcessSamples( newbuffer, length, 2, 16 );
@@ -291,7 +291,7 @@ void CMusikPlayer::PlayReplaceList(int nItemToPlay,const CMusikSongArray & playl
 	SetPlaylist( playlist );
 	Play( nItemToPlay );
 }
-signed char F_CALLBACKAPI CMusikPlayer::MetadataCallback(char *name, char *value, int userdata)
+signed char F_CALLBACKAPI CMusikPlayer::MetadataCallback(char *name, char *value, void* userdata)
 {
  	CMusikPlayer * _this = (CMusikPlayer *)userdata;
 	_this->_SetMetaData(name, value);
@@ -499,7 +499,7 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 	}
 	if(_CurrentSongIsNetStream())
 	{
-		FSOUND_Stream_Net_SetMetadataCallback(pNewStream, MetadataCallback, (int)this);
+		FSOUND_Stream_Net_SetMetadataCallback(pNewStream, MetadataCallback, this);
 	}
 	FSOUND_SetVolume( GetCurrChannel(), 0 );
 	FSOUND_Stream_SetTime( pNewStream, nStartPos * 1000 );

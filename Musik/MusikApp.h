@@ -18,7 +18,13 @@
 	#include "wx/wx.h"
 #endif 
 #include <wx/snglinst.h>
+#include <wx/ipc.h>
 
+class MusikAppServer: public wxServer
+{
+public:
+	virtual wxConnectionBase * OnAcceptConnection(const wxString& topic);
+};
 class MusikApp : public wxApp
 {
 public:
@@ -27,12 +33,14 @@ public:
 		delete m_pSingleInstanceChecker;
 	}
 	virtual bool OnInit();
+	void OnPlayFiles(const wxArrayString &aFilelist);
 private:
 	wxString ReadVersion();
 	void WriteVersion();
 	void CheckVersion();
 
 	wxSingleInstanceChecker *m_pSingleInstanceChecker;
+	MusikAppServer m_Server;
 };
 
 DECLARE_APP(MusikApp)

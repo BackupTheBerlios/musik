@@ -189,7 +189,7 @@ private:
 	bool _CurrentSongNeedsMPEGACCURATE();
 	bool _CurrentSongIsNetStream();
 	bool _IsNETSTREAMConnecting() { return (m_p_NETSTREAM_Connecting != NULL);}
-	static signed char F_CALLBACKAPI MetadataCallback(char *name, char *value, int userdata);
+	static signed char F_CALLBACKAPI MetadataCallback(char *name, char *value, void * userdata);
 	void _SetMetaData(char *name, char *value);
 	void _UpdateNetstreamMetadata( wxCommandEvent& event );
 	void _AddRandomSongs();
