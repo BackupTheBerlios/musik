@@ -177,7 +177,7 @@ typedef CConfigSetting<wxString,wxString,PathEncoder>  CConfigSettingPath;
 #if defined __WXMSW__
 #define CONFIG_NAME wxT( ".Musik\\Musik.ini" )
 #else
-#define CONFIG_NAME wxT( "MusikPrefs" )s
+#define CONFIG_NAME wxT( "MusikPrefs" )
 #endif
 
 

@@ -87,6 +87,24 @@ TARGET_LINK_LIBRARIES(wxMusik
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -ansi -pedantic")
 SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -pipe -fomit-frame-pointer")
 
+SET(MyExecutable_PATH ${EXECUTABLE_OUTPUT_PATH})
+
+IF(NOT MyExecutable_PATH)
+  SET(MyExecutable_PATH ${CMAKE_CURRENT_BINARY_DIR})
+
+ENDIF(NOT MyExecutable_PATH)
+
+IF(APPLE)
+  FIND_PROGRAM(VTK_APPLE_RESOURCE Rez /Developer/Tools)
+  IF(VTK_APPLE_RESOURCE)
+    ADD_CUSTOM_COMMAND(SOURCE wxMusik
+                       COMMAND ${VTK_APPLE_RESOURCE}
+                       ARGS -d __DARWIN__ -t APPL Carbon.r /usr/local/lib/libwx_mac-2.5.1.r -o
+                       ${MyExecutable_PATH}/wxMusik
+                       TARGET wxMusik)
+  ENDIF(VTK_APPLE_RESOURCE)
+ENDIF(APPLE)
+
 # Set install options
 INSTALL_TARGETS(/usr/local/bin wxMusik)
 
