@@ -133,6 +133,23 @@ public:
 		m_LastItemRange = m_ItemRange;
 	}	
 
+	CStdString GetValue( int id, int field )
+	{
+		if ( id > (int)m_Items.size() || id < 0 )
+		{
+			#ifdef _DEBUG
+				CStdString sErr;
+				sErr.Format( "CMusikDynDspInfo failed. Item %d was requested, but there are only %d items\n", id, m_Items.size()-1 );
+				TRACE0( sErr.c_str() );
+			#endif
+			
+			return "[musik.cache]";
+		}
+
+		return 
+			m_Items.at( id ).GetField( field );
+	}	
+
 	bool ResyncItem( int songid )
 	{
 		for ( size_t i = 0; i < m_Items.size(); i++ )

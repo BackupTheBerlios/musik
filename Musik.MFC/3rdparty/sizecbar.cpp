@@ -472,7 +472,7 @@ void CSizingControlBar::OnNcCalcSize(BOOL bCalcValidRects,
         int nThis;
         GetRowSizingBars(arrSCBars, nThis);
 
-        BOOL bHorz = IsHorzDocked();
+		BOOL bHorz = IsHorzDocked();
         if (nThis > 0)
             m_dwSCBStyle |= bHorz ? SCBS_EDGELEFT : SCBS_EDGETOP;
 

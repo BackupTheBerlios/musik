@@ -203,7 +203,7 @@ void CMusikPlaylistCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 
 		// otherwise, just use the value we are supposed to
 		else
-			sValue = m_SongInfoCache->items()->at( nItem - m_SongInfoCache->GetFirst() ).GetField( nType );
+			sValue = m_SongInfoCache->GetValue( nItem - m_SongInfoCache->GetFirst(), nType );
 
 		// copy the buffer of the correct display string
 		// to the current LV_ITEM
@@ -377,7 +377,7 @@ void CMusikPlaylistCtrl::OnPaint()
 
 CString CMusikPlaylistCtrl::GetTimeStr( int item )
 {
-	int time_ms  = atoi( m_SongInfoCache->items()->at( item - m_SongInfoCache->GetFirst() ).GetDuration() );
+	int time_ms = atoi( m_SongInfoCache->GetValue( item - m_SongInfoCache->GetFirst(), MUSIK_LIBRARY_TYPE_DURATION ).c_str() );
 
 	CString sTime;
 
@@ -400,7 +400,7 @@ CString CMusikPlaylistCtrl::GetTimeStr( int item )
 
 CString CMusikPlaylistCtrl::GetRating( int item )
 {
-	int nRating = atoi( m_SongInfoCache->items()->at( item - m_SongInfoCache->GetFirst() ).GetRating() );
+	int nRating = atoi( m_SongInfoCache->GetValue( item - m_SongInfoCache->GetFirst(), MUSIK_LIBRARY_TYPE_RATING ).c_str() );
 
 	CString sRating;
 	switch ( nRating )

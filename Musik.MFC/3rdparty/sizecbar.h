@@ -132,7 +132,6 @@ protected:
     virtual void OnTrackInvertTracker();
     virtual void NcPaintGripper(CDC* pDC, CRect rcClient);
     virtual void NcCalcClient(LPRECT pRc, UINT nDockBarID);
-	virtual void DrawBorders(CDC* pDC, CRect& rcRect){}
 
     virtual void AlignControlBars();
     void GetRowInfo(int& nFirst, int& nLast, int& nThis);

@@ -377,12 +377,3 @@ BOOL CMusikDockBar::OnEraseBkgnd(CDC* pDC)
 }
 
 ///////////////////////////////////////////////////
-
-void CMusikDockBar::DrawBorders( CDC* pDC, CRect& rect )
-{
-	int i;
-	// we don't want borders, damnit
-}
-
-///////////////////////////////////////////////////
-

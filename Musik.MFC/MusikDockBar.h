@@ -38,11 +38,10 @@ public:
 
 protected:
 
-	// overrides
+	// mfc message maps and overrides
 	virtual void NcPaintGripper(CDC* pDC, CRect rcClient);
 	virtual void NcCalcClient(LPRECT pRc, UINT nDockBarID);
 	virtual void OnUpdateCmdUI(CFrameWnd* pTarget, BOOL bDisableIfNoHndler);
-	virtual void DrawBorders( CDC* pDC, CRect& rect );
     afx_msg UINT OnNcHitTest(CPoint point);
     afx_msg void OnNcLButtonUp(UINT nHitTest, CPoint point);
 	afx_msg void OnNcPaint();
