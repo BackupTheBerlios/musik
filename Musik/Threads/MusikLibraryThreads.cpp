@@ -23,7 +23,7 @@
 //---		update library		---//
 //---------------------------------//
 MusikUpdateLibThread::MusikUpdateLibThread( wxArrayString* del )
-        : wxThread()
+        : wxThread(wxTHREAD_JOINABLE)
 {
 	m_Add	= g_Paths.GetList();
 	m_Del	= del;
@@ -111,7 +111,7 @@ void MusikUpdateLibThread::OnExit()
 //---	scan for new files		---//
 //---------------------------------//
 MusikScanNewThread::MusikScanNewThread()
-        : wxThread()
+        : wxThread(wxTHREAD_JOINABLE)
 {
 }
 
@@ -175,7 +175,7 @@ void MusikScanNewThread::OnExit()
 //---	  purge old files		---//
 //---------------------------------//
 MusikPurgeLibThread::MusikPurgeLibThread()
-        : wxThread()
+        : wxThread(wxTHREAD_JOINABLE)
 {
 }
 

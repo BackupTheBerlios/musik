@@ -76,7 +76,7 @@ public:
 
 	void SetProgress			( int n )			{ m_Progress = n;			}
 	void SetProgressType		( int n )			{ m_ProgressType = n;		}
-	void SetActiveThread		( wxThread* thread)	{ m_ActiveThread = thread;	}	
+	void SetActiveThread		( wxThread* thread);
 
 	size_t  GetProgress			()	{ return m_Progress;		}
 	size_t  GetProgressType		()	{ return m_ProgressType;	}

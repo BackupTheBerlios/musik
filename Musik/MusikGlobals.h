@@ -294,6 +294,7 @@ extern CMusikPaths			g_Paths;
 extern CMusikSongArray		g_Playlist;	
 extern CMusikSongArray		g_LibPlaylist;	
 extern wxArrayString		g_SourcesList;
+extern wxMutex				g_protectingStreamArrays;
 extern CMusikStreamArray	g_ActiveStreams;
 extern wxArrayInt			g_ActiveChannels;
 extern CMusikWebServer		g_WebServer;

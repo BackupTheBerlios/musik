@@ -572,7 +572,7 @@ void CActivityBox::GetSelectedSongs( CMusikSongArray& array )
 					sParent += wxT(" or ");
 					sParent += sParentType;
 					sParent += wxT(" like ");
-			    	}
+				}
 			}
 
 			g_Library.QuerySongs( sParent, array );

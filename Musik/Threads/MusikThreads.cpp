@@ -31,17 +31,12 @@
 //---- how to que up the next song. also triggers fades	---//
 //---------------------------------------------------------//
 MusikFaderThread::MusikFaderThread()
+ :wxThread(wxTHREAD_JOINABLE)
 {
 	pCrossfader = NULL;
-	m_CrossfaderActive = false;
-	m_CrossfadersActive = 0;
 	m_Worker = 0;
 }
 
-void MusikFaderThread::SetCrossfaderActive( bool active )
-{
-	m_CrossfaderActive = active;
-}
 
 void MusikFaderThread::CrossfaderAbort()
 {
@@ -51,14 +46,19 @@ void MusikFaderThread::CrossfaderAbort()
 		//--- Abort() tells fader NOT to clean up old streams	---//
 		//---------------------------------------------------------//
 		pCrossfader->Abort();		
-		pCrossfader->Delete();	
+		CrossfaderStop();
 	}
 }
 
 void MusikFaderThread::CrossfaderStop()
 {
 	if ( IsCrossfaderActive() )
+	{
 		pCrossfader->Delete();
+		pCrossfader->Wait();
+		delete pCrossfader;
+		pCrossfader = NULL;
+	}
 }
 
 void MusikFaderThread::StartNew()
@@ -66,6 +66,7 @@ void MusikFaderThread::StartNew()
 	//--------------------------------//
 	//--- fire up a new crossfader ---//
 	//--------------------------------//
+	wxASSERT(pCrossfader == NULL);
 	pCrossfader = new MusikCrossfaderThread( this );
 	pCrossfader->Create();
 	pCrossfader->Run();
@@ -146,11 +147,7 @@ void *MusikFaderThread::Entry()
 
 void MusikFaderThread::OnExit()
 {
-	if ( IsCrossfaderActive() )
-		pCrossfader->Delete();
-
-	while ( IsCrossfaderActive() )
-		Sleep( 10 );
+	CrossfaderStop();
 }
 
 //---------------------------------------------------------//
@@ -158,6 +155,7 @@ void MusikFaderThread::OnExit()
 //---- the array, while fading *all* the others out		---//
 //---------------------------------------------------------//
 MusikCrossfaderThread::MusikCrossfaderThread( MusikFaderThread *pParent )
+:wxThread(wxTHREAD_JOINABLE)
 {
 	m_FadeType		= g_Player.GetCrossfadeType();
 	m_Parent		= pParent;
@@ -178,8 +176,8 @@ void MusikCrossfaderThread::SetStopPlayer()
 
 void *MusikCrossfaderThread::Entry()
 {
-	m_Parent->SetCrossfaderActive();
-	wxMutexLocker locker( protectingStreamArrays );
+	
+	wxMutexLocker locker( g_protectingStreamArrays );
 
 	//-------------------------------------------------//
 	//--- if the fade duration * 2 (fade in and		---//
@@ -318,7 +316,7 @@ void *MusikCrossfaderThread::Entry()
 
 void MusikCrossfaderThread::OnExit()
 {
-	m_Parent->SetCrossfaderActive( false );
+	
 	m_Parent->WorkerDec();
 	//-------------------------------------------------//
 	//--- if we ended naturally, that means no		---//

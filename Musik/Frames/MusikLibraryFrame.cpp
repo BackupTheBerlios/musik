@@ -68,7 +68,7 @@ MusikLibraryFrame::MusikLibraryFrame( wxFrame* pParent )
 	m_FirstStart	= false;
 	m_MenuCreated	= false;
 	bRebuild		= false;
-	SetActiveThread( NULL );
+	m_ActiveThread  = NULL;
 
 	//-----------------------//
 	//--- create controls ---//
@@ -156,7 +156,7 @@ MusikLibraryFrame::MusikLibraryFrame( wxFrame* pParent, const wxPoint &pos, cons
 	m_AutoStart		= false;
 	m_Close			= false;
 	m_MenuCreated	= true;
-	SetActiveThread( NULL );
+	m_ActiveThread  = NULL;
 
 	//--------------------//
 	//--- center frame ---//
@@ -546,6 +546,7 @@ void MusikLibraryFrame::ScanNew()
 	{
 		pScanNewThread = new MusikScanNewThread();
 		pScanNewThread->Create();
+		SetActiveThread	( pScanNewThread );
 		pScanNewThread->Run();
 	}
 	else
@@ -564,6 +565,7 @@ void MusikLibraryFrame::UpdateLibrary( bool bConfirm )
 	{
 		pUpdateLibThread = new MusikUpdateLibThread( &aDelDirs );
 		pUpdateLibThread->Create();
+		SetActiveThread	( pUpdateLibThread );
 		pUpdateLibThread->Run();
 	}
 	else
@@ -576,6 +578,7 @@ void MusikLibraryFrame::PurgeLibrary()
 	{
 		pPurgeLibThread = new MusikPurgeLibThread();
 		pPurgeLibThread->Create();
+		SetActiveThread	( pPurgeLibThread );
 		pPurgeLibThread->Run();
 	}
 	else
@@ -615,18 +618,6 @@ void MusikLibraryFrame::OnThreadStart( wxCommandEvent& WXUNUSED(event) )
 {
 	EnableProgress( true );
 
-	if ( GetProgressType() == MUSIK_LIBRARY_SCANNEW_THREAD )
-	{
-		SetActiveThread	( pScanNewThread );
-	}
-	else if ( GetProgressType() == MUSIK_LIBRARY_UPDATE_THREAD )
-	{
-		SetActiveThread	( pUpdateLibThread );
-	}
-	else if ( GetProgressType() == MUSIK_LIBRARY_PURGE_THREAD )
-	{
-		SetActiveThread	( pPurgeLibThread );
-	}
 }
 
 //-----------------------------------------------------//
@@ -634,6 +625,7 @@ void MusikLibraryFrame::OnThreadStart( wxCommandEvent& WXUNUSED(event) )
 //-----------------------------------------------------//
 void MusikLibraryFrame::OnThreadEnd( wxCommandEvent& WXUNUSED(event) )
 {
+	SetActiveThread	( NULL );
 	EnableProgress( false );
 
 	if ( GetProgressType() == MUSIK_LIBRARY_SCANNEW_THREAD )
@@ -666,7 +658,7 @@ void MusikLibraryFrame::OnThreadEnd( wxCommandEvent& WXUNUSED(event) )
 
 	SetProgress	( 0 );
 	SetProgressType	( 0 );
-	SetActiveThread	( NULL );
+
 
 	SetTitle( _( "Musik Library Setup" ) );
 }
@@ -709,3 +701,20 @@ void MusikLibraryFrame::OnThreadScanProg( wxCommandEvent& WXUNUSED(event) )
 	m_Title.sprintf( _( "Scanning directory for audio files: %d files scanned" ), GetScanCount() );
 	SetTitle( m_Title );
 }
+
+void MusikLibraryFrame::SetActiveThread( wxThread* newactivethread)
+{
+	wxThread * pCurrThread = GetActiveThread();
+	if(newactivethread == NULL)
+	{
+		
+		wxASSERT(pCurrThread);
+		pCurrThread->Wait();// wait until thread has completed
+		delete pCurrThread;
+	}
+	else
+	{
+		wxASSERT(pCurrThread == NULL); // ATTENTION!!! there is an active thread. someone forgot to call SetActiveThread(NULL)
+	}
+	m_ActiveThread = newactivethread;
+}	

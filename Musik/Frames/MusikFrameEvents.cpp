@@ -153,6 +153,9 @@ void MusikFrame::OnClose( wxCloseEvent& WXUNUSED(event) )
 	//--- delete the thread object and destroy.		---//
 	//-------------------------------------------------//
     g_FaderThread->Delete();
+	g_FaderThread->Wait();
+	delete g_FaderThread;
+	g_FaderThread = NULL;
 	g_Player.Shutdown();
 	Destroy();
 }

@@ -46,8 +46,7 @@ public:
 	void WorkerDec				(){ m_Worker--; };
 	int  GetWorkerCount			(){ return m_Worker; }
 
-	bool IsCrossfaderActive		(){ return m_CrossfaderActive; }
-	void SetCrossfaderActive	( bool active = true );
+	bool IsCrossfaderActive		(){ return pCrossfader != NULL; }
 
 private:
 
@@ -55,8 +54,6 @@ private:
 
 	MusikCrossfaderThread *pCrossfader;
 
-	int m_CrossfadersActive;
-	bool m_CrossfaderActive;
 };
 
 //---------------------------------------------------------//
@@ -74,7 +71,6 @@ public:
 	virtual void *Entry();
 	virtual void OnExit();
 private:
-	wxMutex protectingStreamArrays;
 	MusikFaderThread *m_Parent;
 	bool m_StopPlayer;
 	bool m_Aborted;
