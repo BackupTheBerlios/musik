@@ -717,7 +717,7 @@ bool CmusikPlayer::Next()
 	}
 
 	if ( IsPlaying() && !IsPaused() )
-		Play( m_Index + 1, MUSIK_CROSSFADER_NEW_SONG );
+		Play( m_Index, MUSIK_CROSSFADER_NEW_SONG );
 	else
 		EnquePaused( -1 );
 		
