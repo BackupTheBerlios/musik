@@ -92,6 +92,8 @@ void CMainFrame::CleanMusik()
 		delete m_Library;
 	if ( m_Prefs )
 		delete m_Prefs;
+	if ( m_Player )
+		delete m_Player;
 	if ( m_LibPlaylist )
 		delete m_LibPlaylist;
 	if ( m_DynPlaylist )
