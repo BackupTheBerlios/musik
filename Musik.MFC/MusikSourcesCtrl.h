@@ -32,7 +32,7 @@ protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 
 	// create default headers
-	void CreateHeaders();
+	void InitItems();
 	CPropTreeItem* m_LibrariesRoot;
 	CPropTreeItem* m_StdPlaylistRoot;
 	CPropTreeItem* m_DynPlaylistRoot;

@@ -88,7 +88,20 @@ static int sqlite_GetSongInfoFromID( void *args, int numCols, char **results, ch
 static int sqlite_AddSongToStringArray( void *args, int numCols, char **results, char ** columnNames )
 {
 	// this is a callback for sqlite to use when 
-	// adding items (fields) to a wxArrayString	
+	// adding items (fields) to a CStdStringArray	
+
+	CStdStringArray* p = (CStdStringArray*)args;
+	p->push_back( results[0] ); 
+
+    return 0;
+}
+
+///////////////////////////////////////////////////
+
+static int sqlite_AddPlaylistToStringArray( void *args, int numCols, char **results, char ** columnNames )
+{
+	// this is a callback for sqlite to use when 
+	// adding playlist names to a CStdStringArray	
 
 	CStdStringArray* p = (CStdStringArray*)args;
 	p->push_back( results[0] ); 
@@ -702,7 +715,7 @@ void CMusikLibrary::GetAllDistinct( int source_type, CStdStringArray& target, bo
 
 int CMusikLibrary::GetSongCount()
 {
-	char *query = sqlite_mprintf( "select count(*) from " SONG_TABLE_NAME " ;" );
+	char *query = sqlite_mprintf( "SELECT COUNT(*) FROM " SONG_TABLE_NAME " ;" );
 	int result = QueryCount(query);
 	sqlite_freemem( query );
 	return result;
@@ -734,7 +747,7 @@ void CMusikLibrary::GetSongInfoFromID( int id, CMusikSongInfo* info )
 {
 	CStdString query;
 
-	query.Format( _T( "select tracknum,artist,album,genre,title,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize,filename from %s where songid = %d;" ), 
+	query.Format( _T( "SELECT tracknum,artist,album,genre,title,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize,filename FROM %s WHERE songid = %d;" ), 
 		SONG_TABLE_NAME,
 		id );
 	
@@ -819,6 +832,20 @@ bool CMusikLibrary::SetSongRating( int songid, int rating )
 		return false;
 	
 	return true;    
+}
+
+///////////////////////////////////////////////////
+
+void CMusikLibrary::GetAllStdPlaylists( CStdStringArray* target, bool clear_target )
+{
+	if ( clear_target )
+		target->clear();
+
+	CStdString sQuery( _T( "SELECT std_playlist_name  FROM " ) STD_PLAYLIST_TABLE_NAME _T( " WHERE std_playlist_name <> ''" ) );
+
+	m_ProtectingLibrary->acquire();
+	sqlite_exec( m_pDB, sQuery.c_str(), &sqlite_AddPlaylistToStringArray, target, NULL );
+	m_ProtectingLibrary->release();
 }
 
 ///////////////////////////////////////////////////

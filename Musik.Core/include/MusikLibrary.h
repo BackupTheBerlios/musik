@@ -6,8 +6,10 @@
 ///////////////////////////////////////////////////
 
 #include <iostream>
+
 #include "sqlite.h"
 #include "StdString.h"
+
 #include "MusikArrays.h"
 #include "MusikPlaylist.h"
 
@@ -95,6 +97,7 @@ public:
 	int	 GetSongCount		();
 	void GetFieldFromID		( int id, int field, CStdString& string );
 	void GetSongInfoFromID	( int id, CMusikSongInfo* info );
+	void GetAllStdPlaylists ( CStdStringArray* target, bool clear_target = true );
 
 	//-----------------------------------------------------//
 	//--- for creating and retrieving playlists			---//

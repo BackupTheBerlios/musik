@@ -5,6 +5,8 @@
 #include "Musik.h"
 #include "MusikSourcesCtrl.h"
 
+#include "../Musik.Core/include/MusikLibrary.h"
+
 ///////////////////////////////////////////////////
 
 IMPLEMENT_DYNAMIC( CMusikSourcesCtrl, CPropTree )
@@ -34,7 +36,7 @@ END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
 
-void CMusikSourcesCtrl::CreateHeaders()
+void CMusikSourcesCtrl::InitItems()
 {
 	// libraries / devices
 	if ( m_LibrariesRoot )
@@ -59,6 +61,7 @@ void CMusikSourcesCtrl::CreateHeaders()
 	m_StdPlaylistRoot->SetLabelText( _T( "Standard Playlists" ) );
 	m_StdPlaylistRoot->SetInfoText(_T(""));
 	m_StdPlaylistRoot->Expand( true );
+	LoadStdPlaylists();
 
 	// dynamic playlists
 	if ( m_DynPlaylistRoot )
@@ -80,52 +83,7 @@ int CMusikSourcesCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if ( CPropTree::OnCreate(lpCreateStruct) == -1 )
 		return -1;
 
-	CreateHeaders();
-
-	/*
-	CPropTreeItem* pSourcesRoot;
-	pSourcesRoot = InsertItem( new CPropTreeItem() );
-	pSourcesRoot->SetLabelText( _T( "Libraries / Devices" ) );
-	pSourcesRoot->SetInfoText(_T(""));
-	pSourcesRoot->Expand( true );
-
-	CPropTreeItem* pMusikLibrary;
-	pMusikLibrary = InsertItem( new CPropTreeItem(), pSourcesRoot );
-	pMusikLibrary->SetLabelText( _T( "Musik Library" ) );
-
-	CPropTreeItem* pMusikiPod;
-	pMusikiPod = InsertItem( new CPropTreeItem(), pSourcesRoot );
-	pMusikiPod->SetLabelText( _T( "iPod" ) );
-
-	CPropTreeItem* pMusikZen;
-	pMusikZen = InsertItem( new CPropTreeItem(), pSourcesRoot );
-	pMusikZen->SetLabelText( _T( "Zen" ) );
-
-	CPropTreeItem* pStandardRoot;
-	pStandardRoot = InsertItem( new CPropTreeItem() );
-	pStandardRoot->SetLabelText( _T( "Standard Playlists" ) );
-	pStandardRoot->SetInfoText(_T(""));
-	pStandardRoot->Expand( true );
-
-	CPropTreeItem* pStandardObsure;
-	pStandardObsure = InsertItem( new CPropTreeItem(), pStandardRoot );
-	pStandardObsure->SetLabelText( _T( "Obsure" ) );
-
-	CPropTreeItem* pStandardRemix;
-	pStandardRemix = InsertItem( new CPropTreeItem(), pStandardRoot );
-	pStandardRemix->SetLabelText( _T( "remix" ) );
-
-	CPropTreeItem* pDynamicRoot;
-	pDynamicRoot = InsertItem( new CPropTreeItem() );
-	pDynamicRoot->SetLabelText( _T( "Dynamic Playlists" ) );
-	pDynamicRoot->SetInfoText(_T(""));
-	pDynamicRoot->Expand( true );
-
-	CPropTreeItem* pDynamicHighRated;
-	pDynamicHighRated = InsertItem( new CPropTreeItem(), pDynamicRoot );
-	pDynamicHighRated->SetLabelText( _T( "High Rated" ) );
-	pDynamicHighRated->SetInfoText( _T( "" ) );
-	*/
+	InitItems();
 
 	return 0;
 }
@@ -141,7 +99,23 @@ void CMusikSourcesCtrl::LoadLibraries()
 
 void CMusikSourcesCtrl::LoadStdPlaylists()
 {
+	for ( size_t i = 0; i < m_StdPlaylists.size(); i++ )
+		DeleteItem( m_StdPlaylists.at( i ) );
 
+	m_StdPlaylists.clear();
+
+	CStdStringArray items;
+	m_Library->GetAllStdPlaylists( &items );
+
+	CPropTreeItem* temp;
+	for ( size_t i = 0; i < items.size(); i++ )
+	{
+		temp = InsertItem( new CPropTreeItem(), m_StdPlaylistRoot );
+		temp->SetLabelText( (CString)items.at( i ) );
+		temp->SetInfoText( _T( "" ) );
+
+		m_StdPlaylists.push_back( temp );
+	}
 }
 
 ///////////////////////////////////////////////////
