@@ -17,6 +17,8 @@
 #define new DEBUG_NEW
 #endif
 
+int WM_SELBOXUPDATE = RegisterWindowMessage( "SELBOXUPDATE" );
+
 // CMainFrame
 
 IMPLEMENT_DYNAMIC(CMainFrame, CFrameWnd)
@@ -24,6 +26,7 @@ IMPLEMENT_DYNAMIC(CMainFrame, CFrameWnd)
 BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
+	ON_REGISTERED_MESSAGE( WM_SELBOXUPDATE, OnUpdateSel )
 END_MESSAGE_MAP()
 
 
@@ -264,4 +267,11 @@ void CMainFrame::OnDestroy()
 	m_Prefs->SetDlgPos( CPoint( rc_dlg.left, rc_dlg.top ) );
 
 	CFrameWnd::OnDestroy();
+}
+
+LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
+{
+	MessageBox( "test", NULL, NULL );
+
+	return 0L;
 }

@@ -15,7 +15,7 @@ CMusikSelectionCtrl::CMusikSelectionCtrl( CFrameWnd* parent, CMusikLibrary* libr
 {
 	m_Library = library;
 	m_Type = type;
-	m_Parent = (CMainFrame*)parent;
+	m_Parent = parent;
 	HideScrollBars( LCSB_NCOVERRIDE, /*SB_HORZ*/ SB_BOTH );
 }
 
@@ -89,6 +89,8 @@ void CMusikSelectionCtrl::OnLvnItemchanged(NMHDR *pNMHDR, LRESULT *pResult)
 	{
 		if ( pNMLV->uNewState & LVIS_SELECTED )
 		{
+			int WM_SELBOXUPDATE = RegisterWindowMessage( "SELBOXUPDATE" );
+			m_Parent->SendMessage( WM_SELBOXUPDATE );
 		}
 	}
 

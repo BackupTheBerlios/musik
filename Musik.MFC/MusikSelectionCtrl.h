@@ -6,7 +6,6 @@
 #include "../Musik.Core/include/MusikArrays.h"
 
 class CMusikLibrary;
-class CMainFrame;
 
 class CMusikSelectionCtrl : public CMusikListCtrl
 {
@@ -17,7 +16,7 @@ public:
 	virtual ~CMusikSelectionCtrl();
 
 protected:
-	CMainFrame* m_Parent;
+	CFrameWnd* m_Parent;
 	CMusikLibrary* m_Library;
 	CStdStringArray m_Items;
 	int m_Type;
