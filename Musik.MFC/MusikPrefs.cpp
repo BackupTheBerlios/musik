@@ -216,26 +216,30 @@ CMusikPrefs::~CMusikPrefs()
 void CMusikPrefs::LoadPrefs()
 {
 	// main dialog
-	m_Dlg_Size = StringToCSize( config->GetValue( "Dialog", "Dialog Size", "800x600" ) );
-	m_Dlg_Pos = StringToCPoint( config->GetValue( "Dialog", "Dialog Position", "50,50" ) );
+	m_Dlg_Size		= StringToCSize( config->GetValue( "Dialog", "Dialog Size", "800x600" ) );
+	m_Dlg_Pos		= StringToCPoint( config->GetValue( "Dialog", "Dialog Position", "50,50" ) );
 	m_Dlg_Maximized	= StringToBool( config->GetValue( "Dialog", "Maximized", "0" ) );
 
 	// selection area
 	m_SelectionBox_Count = StringToInt( config->GetValue( "Selection Area", "Count", "2" ) );
 
 	// playlist
-	m_Playlist_Order = StringToCIntArray( config->GetValue( "Playlist", "Column Order", GetDefPlaylistOrder() ) );
-	m_Playlist_Sizes = StringToCIntArray( config->GetValue( "Playlist", "Column Sizes", GetDefPlaylistSizes() ) );
-	m_Playlist_Stripe_Color = StringToCOLORREF( config->GetValue( "Playlist", "Stripe Color", GetDefPlaylistStripeColor() ) );
+	m_Playlist_Order		= StringToCIntArray( config->GetValue( "Playlist", "Column Order", GetDefPlaylistOrder() ) );
+	m_Playlist_Sizes		= StringToCIntArray( config->GetValue( "Playlist", "Column Sizes", GetDefPlaylistSizes() ) );
+	m_Playlist_Stripe_Color	= StringToCOLORREF( config->GetValue( "Playlist", "Stripe Color", GetDefPlaylistStripeColor() ) );
 
 	// now playing
-	m_NowPlaying_Height = StringToInt( config->GetValue( "Now Playing", "Height", "72" ) );
+	m_NowPlaying_Height					= StringToInt( config->GetValue( "Now Playing", "Height", "72" ) );
+	m_NowPlaying_TitleFont				= StringToInt( config->GetValue( "Now Playing", "Title Font Size", "20" ) );
+	m_NowPlaying_AlbumArtistFont		= StringToInt( config->GetValue( "Now Playing", "Album Artist Font Size", "16" ) );
+	m_NowPlaying_IsTitleFontBold		= StringToBool( config->GetValue( "Now Playing", "Title Font Bold", "1" ) );
+	m_NowPlaying_IsAlbumArtistFontBold	= StringToBool( config->GetValue( "Now Playing", "Album Artist Bold", "1" ) );
 
 	// player
-	m_Player_Driver = StringToInt( config->GetValue( "Player", "Driver", "0" ) );
-	m_Player_Device = StringToInt( config->GetValue( "Player", "Device", "0" ) );
-	m_Player_Rate = StringToInt( config->GetValue( "Player", "Rate", "44100" ) );
-	m_Player_Max_Channels = StringToInt( config->GetValue( "Player", "Maximum Channels", "6" ) );
+	m_Player_Driver			= StringToInt( config->GetValue( "Player", "Driver", "0" ) );
+	m_Player_Device			= StringToInt( config->GetValue( "Player", "Device", "0" ) );
+	m_Player_Rate			= StringToInt( config->GetValue( "Player", "Rate", "44100" ) );
+	m_Player_Max_Channels	= StringToInt( config->GetValue( "Player", "Maximum Channels", "6" ) );
 }
 
 ///////////////////////////////////////////////////
@@ -257,6 +261,10 @@ void CMusikPrefs::SavePrefs()
 
 	// now playing
 	config->SetValue( "Now Playing", "Height", IntToString( m_NowPlaying_Height ) );
+	config->SetValue( "Now Playing", "Title Font Size", IntToString( m_NowPlaying_TitleFont ) );
+	config->SetValue( "Now Playing", "Album Artist Font Size", IntToString( m_NowPlaying_AlbumArtistFont ) );
+	config->SetValue( "Now Playing", "Title Font Bold", BoolToString( m_NowPlaying_IsTitleFontBold ) );
+	config->SetValue( "Now Playing", "Album Artist Bold", BoolToString( m_NowPlaying_IsAlbumArtistFontBold ) );
 
 	// player
 	config->SetValue( "Player", "Driver", IntToString( m_Player_Driver ) );

@@ -4,6 +4,7 @@
 
 #include "Musik.h"
 #include "MusikNowPlayingBar.h"
+#include "MusikPrefs.h"
 
 #include "../Musik.Core/include/MusikPlayer.h"
 
@@ -17,9 +18,9 @@ static char THIS_FILE[] = __FILE__;
 
 ///////////////////////////////////////////////////
 
-CMusikNowPlayingBar::CMusikNowPlayingBar( CMusikPlayer* player )
+CMusikNowPlayingBar::CMusikNowPlayingBar( CMusikPlayer* player, CMusikPrefs* prefs )
 {
-	m_wndChild = new CMusikNowPlayingCtrl( player );
+	m_wndChild = new CMusikNowPlayingCtrl( player, prefs );
 }
 
 ///////////////////////////////////////////////////

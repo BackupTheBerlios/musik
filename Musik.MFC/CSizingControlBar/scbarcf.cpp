@@ -117,42 +117,7 @@ void CSizingControlBarCF::NcPaintGripper(CDC* pDC, CRect rcClient)
     BOOL bGradient = FALSE;
     ::SystemParametersInfo(SPI_GETGRADIENTCAPTIONS, 0, &bGradient, 0);
     
-    //if (!bGradient)
-        pDC->FillSolidRect(&rcGrip, clrCptn); // solid color
-	/*
-    else
-    {
-        // gradient from left to right or from bottom to top
-        // get second gradient color (the right end)
-        COLORREF clrCptnRight = ::GetSysColor(COLOR_GRADIENTACTIVECAPTION);
-
-        // this will make 2^6 = 64 fountain steps
-        int nShift = 6;
-        int nSteps = 1 << nShift;
-
-        for (int i = 0; i < nSteps; i++)
-        {
-            // do a little alpha blending
-            int nR = (GetRValue(clrCptn) * (nSteps - i) +
-                      GetRValue(clrCptnRight) * i) >> nShift;
-            int nG = (GetGValue(clrCptn) * (nSteps - i) +
-                      GetGValue(clrCptnRight) * i) >> nShift;
-            int nB = (GetBValue(clrCptn) * (nSteps - i) +
-                      GetBValue(clrCptnRight) * i) >> nShift;
-
-            COLORREF cr = RGB(nR, nG, nB);
-
-            // then paint with the resulting color
-            CRect r2 = rcGrip;
-            r2.left = rcGrip.left + 
-                ((i * rcGrip.Width()) >> nShift);
-            r2.right = rcGrip.left + 
-                (((i + 1) * rcGrip.Width()) >> nShift);
-            if (r2.Width() > 0)
-                pDC->FillSolidRect(r2, cr);
-        }
-    }
-	*/
+    pDC->FillSolidRect(&rcGrip, clrCptn); // solid color
 
     // draw the caption text - first select a font
     CFont font;

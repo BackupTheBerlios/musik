@@ -95,6 +95,13 @@ void CMusikPlaylistView::OnNcPaint()
 	rcBorder.bottom -= 5;
 	pDC.Draw3dRect( rcBorder, GetSysColor( COLOR_BTNSHADOW ), GetSysColor( COLOR_BTNHILIGHT ) );
 
+	CRect rcBottom;
+	rcBottom.left = 0;
+	rcBottom.right = rcClient.Width();
+	rcBottom.top = rcClient.Height() - 2;
+	rcBottom.bottom = rcClient.Height();
+	pDC.Draw3dRect( rcBottom, GetSysColor( COLOR_BTNSHADOW ), GetSysColor( COLOR_BTNHILIGHT ) );
+
     // client area is not our bussiness
 	GetWindowRect( rcWindow );
 	ScreenToClient( rcWindow );

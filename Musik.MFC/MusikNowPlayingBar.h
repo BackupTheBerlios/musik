@@ -15,6 +15,7 @@
 ///////////////////////////////////////////////////
 
 class CMusikPlayer;
+class CMusikPrefs;
 
 ///////////////////////////////////////////////////
 
@@ -23,7 +24,7 @@ class CMusikNowPlayingBar : public baseCMusikNowPlayingBar
 public:
 
 	// construct and destruct
-	CMusikNowPlayingBar( CMusikPlayer* player );
+	CMusikNowPlayingBar( CMusikPlayer* player, CMusikPrefs* prefs );
 	virtual ~CMusikNowPlayingBar();
 
 	// get control

@@ -9,6 +9,7 @@
 ///////////////////////////////////////////////////
 
 class CMusikPlayer;
+class CMusikPrefs;
 
 ///////////////////////////////////////////////////
 
@@ -17,7 +18,7 @@ class CMusikNowPlayingCtrl : public CWnd
 public:
 
 	// construct and destruct
-	CMusikNowPlayingCtrl( CMusikPlayer* player );
+	CMusikNowPlayingCtrl( CMusikPlayer* player, CMusikPrefs* prefs );
 	virtual ~CMusikNowPlayingCtrl();
 
 	// update
@@ -35,12 +36,16 @@ protected:
 	// our player
 	CMusikPlayer* m_Player;
 
+	// our prefs
+	CMusikPrefs* m_Prefs;
+
 	// font stuff
 	void InitFonts();
 	CFont m_ArtistFont;
 	CFont m_AlbumFont;
 	CFont m_TitleFont;
 	CFont m_DefaultFont;
+	int m_DefaultHeight;
 
 	// artist / album / title
 	CNowPlayingStatic m_Artist;

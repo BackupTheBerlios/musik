@@ -4,6 +4,7 @@
 
 #include "Musik.h"
 #include "MusikNowPlayingCtrl.h"
+#include "MusikPrefs.h"
 
 #include "../Musik.Core/include/MusikPlayer.h"
 
@@ -15,9 +16,10 @@ IMPLEMENT_DYNAMIC(CMusikNowPlayingCtrl, CWnd)
 
 ///////////////////////////////////////////////////
 
-CMusikNowPlayingCtrl::CMusikNowPlayingCtrl( CMusikPlayer* player )
+CMusikNowPlayingCtrl::CMusikNowPlayingCtrl( CMusikPlayer* player, CMusikPrefs* prefs )
 {
 	m_Player = player;
+	m_Prefs = prefs;
 }
 
 ///////////////////////////////////////////////////
@@ -65,7 +67,7 @@ int CMusikNowPlayingCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_By.Create( _T( "" ), WS_CHILD | WS_VISIBLE | SS_LEFT, CRect( 0, 0, 0, 0 ), this );
 	m_By.SetFont( &m_DefaultFont );
-	m_By.SetDynText( _T( " by " ) );
+	m_By.SetDynText( _T( "by " ) );
 
 	m_Artist.Create( _T( "" ), WS_CHILD | WS_VISIBLE | SS_LEFT, CRect( 0, 0, 0, 0 ), this );
 	m_Artist.SetFont( &m_ArtistFont );
@@ -95,26 +97,33 @@ void CMusikNowPlayingCtrl::Layout( bool redraw )
 
 	// move artist to correct place
 	m_Title.GetClientRect( &size );
-    m_Title.MoveWindow( rcClient.left + 2, rcClient.top + 2, size.Width(), size.Height() );
+	int last_y = size.bottom + 2;
+	m_Title.MoveWindow( rcClient.left + 2, rcClient.top + 2, size.Width(), size.Height() );
+
+	// pixels separating the bottom of
+	// the default font and album artist
+	// font. 
+	int diff = m_Prefs->GetNowPlayingAlbumArtistFontSize() - m_DefaultHeight;
+	diff /= 2;
 
 	// move the "by"
 	m_By.GetClientRect( &size );
-	m_By.MoveWindow( rcClient.left + 2, rcClient.top + 28, size.Width(), size.Height() );
+	m_By.MoveWindow( rcClient.left + 2, last_y + diff, size.Width(), size.Height() );
 
 	// move artist 
 	int last_x = size.right + 2;
 	m_Artist.GetClientRect( &size );
-	m_Artist.MoveWindow( last_x + 2, rcClient.top + 26, size.Width(), size.Height() );
+	m_Artist.MoveWindow( last_x + 2, last_y, size.Width(), size.Height() );
 
 	// move the "from"
 	last_x += size.right + 2;
 	m_From.GetClientRect( &size );
-	m_From.MoveWindow( last_x + 2, rcClient.top + 28, size.Width(), size.Height() );
+	m_From.MoveWindow( last_x + 2, last_y + diff, size.Width(), size.Height() );
 
 	// move the album
 	last_x += size.right + 2;
 	m_Album.GetClientRect( &size );
-	m_Album.MoveWindow( last_x + 2, rcClient.top + 26, size.Width(), size.Height() );
+	m_Album.MoveWindow( last_x + 2, last_y, size.Width(), size.Height() );
 
 	if ( redraw )
 	{
@@ -128,19 +137,34 @@ void CMusikNowPlayingCtrl::Layout( bool redraw )
 
 void CMusikNowPlayingCtrl::InitFonts()
 {
+	// create default font
 	m_DefaultFont.CreateStockObject( DEFAULT_GUI_FONT );
 
+	// get default font size
 	LOGFONT pBoldFont;
 	m_DefaultFont.GetLogFont( &pBoldFont );
-	pBoldFont.lfWeight = FW_BOLD;
-	pBoldFont.lfHeight = 20;
+	m_DefaultHeight = abs( pBoldFont.lfHeight );
+
+	// create title font
+	if ( m_Prefs->IsNowPlayingTitleFontBold() )
+		pBoldFont.lfWeight = FW_BOLD;
+	else
+		pBoldFont.lfWeight = FW_NORMAL;
+	pBoldFont.lfHeight = m_Prefs->GetNowPlayingTitleFontSize();
 
 	m_TitleFont.CreateFontIndirect( &pBoldFont );
 
-	pBoldFont.lfHeight = 16;
+	// create artist and album font
+	if ( m_Prefs->IsNowPlayingAlbumArtistFontBold() )
+		pBoldFont.lfWeight = FW_BOLD;
+	else
+		pBoldFont.lfWeight = FW_NORMAL;
+	pBoldFont.lfHeight = m_Prefs->GetNowPlayingAlbumArtistFontSize();
+
 	m_ArtistFont.CreateFontIndirect( &pBoldFont );
 	m_AlbumFont.CreateFontIndirect( &pBoldFont );
 
+	// set the window to the default font
 	SetFont( &m_DefaultFont );
 }
 

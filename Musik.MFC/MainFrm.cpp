@@ -13,6 +13,7 @@
 
 #include <io.h>
 #include <Direct.h>
+#include ".\mainfrm.h"
 
 ///////////////////////////////////////////////////
 
@@ -34,6 +35,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_WM_DESTROY()
 	ON_REGISTERED_MESSAGE( WM_SELBOXUPDATE, OnUpdateSel )
 	ON_REGISTERED_MESSAGE( WM_SONGCHANGE, OnSongChange )
+	ON_WM_SETFOCUS()
+	ON_WM_KILLFOCUS()
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -222,7 +225,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	EnableDocking( CBRS_ALIGN_TOP );
 
 	// now playing control
-	m_wndNowPlaying = new CMusikNowPlayingBar( m_Player );
+	m_wndNowPlaying = new CMusikNowPlayingBar( m_Player, m_Prefs );
 	m_wndNowPlaying->Create( _T( "Musik Now Playing" ), this, ID_NOWPLAYING );
 	m_wndNowPlaying->SetBarStyle( m_wndNowPlaying->GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC & ~SCBS_EDGEALL );
 	m_wndNowPlaying->EnableDocking( CBRS_ALIGN_BOTTOM );
@@ -450,3 +453,22 @@ LRESULT CMainFrame::OnSongChange( WPARAM wParam, LPARAM lParam )
 }	
 
 ///////////////////////////////////////////////////
+
+void CMainFrame::OnSetFocus(CWnd* pOldWnd)
+{
+	CFrameWnd::OnSetFocus(pOldWnd);
+
+	TRACE0( _T( "Main window's focus gained\n" ) );
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnKillFocus(CWnd* pNewWnd)
+{
+	CFrameWnd::OnKillFocus(pNewWnd);
+
+	TRACE0( _T( "Main window's focus lost\n" ) );
+}
+
+///////////////////////////////////////////////////
+
