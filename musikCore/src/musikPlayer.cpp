@@ -244,8 +244,6 @@ void* F_CALLBACKAPI CmusikPlayer::musikEQCallback( void* originalbuffer, void *n
 	// be used to process the sample
 	CmusikEqualizer* ptrEQ = (CmusikEqualizer*)param;
 
-	ptrEQ->GetSongEq(  10 );
-
 	// two channel ( stereo ), 16 bit sound
 	ptrEQ->ProcessDSP( newbuffer, length, 2, 16 );
 	return newbuffer;
@@ -553,6 +551,8 @@ bool CmusikPlayer::Play( int index, int fade_type, int start_pos )
 	// out any old streams before we start up the next
 	if ( !IsCrossfaderActive() || ( m_Crossfader->GetDuration( fade_type ) <= 0 && fade_type == MUSIK_CROSSFADER_NONE ) )
 	{
+		// set new equalizer...
+		m_EQ->GetSongEq( m_Playlist->GetSongID( index ) );
 		FSOUND_SetVolume( GetCurrChannel(), m_Volume );
 		CleanOldStreams();
 	}
@@ -809,6 +809,9 @@ int CmusikPlayer::GetTimeRemain( int mode )
 
 void CmusikPlayer::FinishCrossfade()
 {
+	if ( IsEqualizerActive() && m_FadeType != MUSIK_CROSSFADER_EXIT )
+		m_EQ->GetSongEq( m_Playlist->GetSongID( m_Index ) );
+	
 	SetVolume( m_Volume, true );
 	CleanOldStreams();
 }

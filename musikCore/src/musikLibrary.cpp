@@ -1752,7 +1752,7 @@ int CmusikLibrary::GetEqualizerIDFromSongID( int id )
 	int target;
 
 	CStdString sQuery;
-	sQuery.Format( "SELECT equalizer FROM " SONG_TABLE_NAME " WHERE songid = '%d';", id );
+	sQuery.Format( "SELECT equalizer FROM " SONG_TABLE_NAME " WHERE songid = %d;", id );
 
 	m_ProtectingLibrary->acquire();
 	sqlite_exec( m_pDB, sQuery.c_str(), &sqlite_GetEqualizerIDFromID, &target, NULL );
@@ -1896,7 +1896,7 @@ void CmusikLibrary::GetEqualizer( int eq_id, CmusikEQSettings* target )
 
 	sqlite_exec_printf( m_pDB, "SELECT hz55_left, hz77_left, hz110_left, hz156_left, hz220_left, hz311_left, hz440_left, hz622_left, hz880_left, hz1244_left, hz1760_left, hz2489_left, hz3520_left, hz4978_left, hz7040_left, hz9956_left, hz14080_left, hz19912_left,"
 								" hz55_right, hz77_right, hz110_right, hz156_right, hz220_right, hz311_right, hz440_right, hz622_right, hz880_right, hz1244_right, hz1760_right, hz2489_right, hz3520_right, hz4978_right, hz7040_right, hz9956_right, hz14080_right hz19912_right, equalizer_name"
-								" WHERE equalizer_id = eq_id;", &sqlite_GetEqualizer, &target, NULL );
+								" WHERE equalizer_id = %d;", &sqlite_GetEqualizer, &target, NULL, eq_id );
 	
 	m_ProtectingLibrary->release();
 }

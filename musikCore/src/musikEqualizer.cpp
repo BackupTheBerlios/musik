@@ -81,13 +81,6 @@ CmusikEqualizer::~CmusikEqualizer()
 
 ///////////////////////////////////////////////////
 
-void CmusikEqualizer::GetSongEq( int songid )
-{
-
-}
-
-///////////////////////////////////////////////////
-
 void CmusikEqualizer::SetLibrary( CmusikLibrary* library )
 {
 	m_Library = library;
@@ -122,6 +115,22 @@ void CmusikEqualizer::CleanEqualizer()
 void CmusikEqualizer::ProcessDSP( void* buffer, int length, int channels, int bitspersample )
 {
 	equ_modifySamples( (char*)buffer, length, channels, bitspersample );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikEqualizer::GetSongEq( int songid )
+{
+	int nID = m_Library->GetEqualizerIDFromSongID( songid );
+
+	if ( nID > -1 )
+	{
+		CmusikEQSettings eq;
+		m_Library->GetEqualizer( nID, &eq );
+
+		m_EQ.Set( MUSIK_EQ_SETTINGS_LEFT_BAND, eq.m_Left );
+		m_EQ.Set( MUSIK_EQ_SETTINGS_RIGHT_BAND, eq.m_Right );
+	}
 }
 
 ///////////////////////////////////////////////////
