@@ -47,14 +47,16 @@ MusikFXFrame::MusikFXFrame( wxFrame *pParent, const wxString &sTitle, const wxPo
 		SetIcon( wxICON( musicbox ) );
 	#endif
 	
-	hsLeftSliders = new wxBoxSizer( wxHORIZONTAL );
-	hsRightSliders = new wxBoxSizer( wxHORIZONTAL );
-	vsSliders = new wxBoxSizer( wxVERTICAL );
-	vsEQControls = new wxBoxSizer( wxVERTICAL );
-	hsEQ = new wxBoxSizer( wxHORIZONTAL );
-	
-	hsControls = new wxBoxSizer( wxHORIZONTAL );
-	vsMain = new wxBoxSizer( wxVERTICAL );
+	//-------------------//
+	//--- init sizers ---//
+	//-------------------//
+	hsLeftSliders	= new wxBoxSizer( wxHORIZONTAL );
+	hsRightSliders	= new wxBoxSizer( wxHORIZONTAL );
+	vsSliders		= new wxBoxSizer( wxVERTICAL );
+	vsEQControls	= new wxBoxSizer( wxVERTICAL );
+	hsEQ			= new wxBoxSizer( wxHORIZONTAL );
+	hsControls		= new wxBoxSizer( wxHORIZONTAL );
+	vsMain			= new wxBoxSizer( wxVERTICAL );
 
 	vsSliders->Add( hsLeftSliders );
 	vsSliders->Add( hsRightSliders );
@@ -66,8 +68,6 @@ MusikFXFrame::MusikFXFrame( wxFrame *pParent, const wxString &sTitle, const wxPo
 
 	SetSizer( vsMain );
 
-	int leftslidercount = 1;
-	int rightslidercount = 2;
 	for ( int n = 0; n < 18; n++ )
 	{
 		slLeft[n] = new CMusikFXGauge( this, MUSIK_FX_LEFT, n );
@@ -154,7 +154,9 @@ void MusikFXFrame::SlidersFromBands()
 	for ( int n = 0; n < 18; n++ )
 	{
 		slLeft[n]->SetValue( (int)( 100.0f - ( ldata[n] * 50.0f ) ) );
+		slLeft[n]->Colourize();
 		slRight[n]->SetValue( (int)( 100.0f - ( rdata[n] * 50.0f ) ) );
+		slRight[n]->Colourize();
 	}
 }
 

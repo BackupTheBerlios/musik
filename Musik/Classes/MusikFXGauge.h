@@ -24,6 +24,7 @@ public:
 
 	void SetEQ();
 	void SetPos( size_t m_Pos );
+	void Colourize( );
 
 private:
 	CMusikFXHandler *m_EvtHandler;

@@ -31,13 +31,30 @@ CMusikFXGauge::~CMusikFXGauge()
 void CMusikFXGauge::SetPos( size_t m_Pos )
 {
 	SetValue( (int)m_Pos );
+	Colourize();
 	if ( m_Parent->chkLock->IsChecked() )
 	{
 		if ( m_Channel == MUSIK_FX_LEFT )
+		{
 			m_Parent->slRight[m_BandID]->SetValue( m_Pos );
+			m_Parent->slRight[m_BandID]->Colourize();
+		}
 		else
+		{
 			m_Parent->slLeft[m_BandID]->SetValue( m_Pos );
+			m_Parent->slLeft[m_BandID]->Colourize();
+		}
 	}
+}
+
+void CMusikFXGauge::Colourize()
+{
+	/*
+	if ( g_Prefs.nEQColourize != 1 )
+		return;
+	*/
+	int nGreen = (int)( 200.0f * (float)GetValue() / 100.0f );
+	SetForegroundColour( wxColour( 200 - nGreen, nGreen, 0 ) );
 }
 
 void CMusikFXGauge::SetEQ()

@@ -64,12 +64,13 @@ bool MusikApp::OnInit()
 	view_menu->Check	( MUSIK_MENU_PLAYLISTINFO_STATE, ( bool )g_Prefs.nShowPLInfo );
 	view_menu->Append	( MUSIK_MENU_SHOW_RATINGS, _("Show Ratings\tCtrl-4"), wxT(""), wxITEM_CHECK );
 	view_menu->Check	( MUSIK_MENU_SHOW_RATINGS, ( bool )g_Prefs.nShowRatings );
+	view_menu->AppendSeparator();
+	view_menu->Append	( MUSIK_MENU_FX, _("FX\tCtrl-F") );
 	#ifdef __WXMSW__
 		view_menu->AppendSeparator();
 		view_menu->Append	( MUSIK_MENU_STAY_ON_TOP, _("Always On Top\tCtrl-T"), wxT(""), wxITEM_CHECK );
 //		view_menu->Check	( MUSIK_MENU_STAY_ON_TOP, ( bool )g_Prefs.nStayOnTop );
 	#endif
-	view_menu->Append	( MUSIK_MENU_FX, _("FX") );
 
 	//--- library -> pending tags ---//
 	library_writetags_menu = new wxMenu;
