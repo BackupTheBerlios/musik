@@ -280,8 +280,6 @@ void CNowPlayingCtrl::SetTime( wxString sTimeStr )
 
 void CNowPlayingCtrl::ResetInfo()
 {
-	g_MusikFrame->SetTitle( MUSIK_VERSION );
-
 	stSong->SetLabel	( _( "Playback Stopped" )	);
 	stArtist->SetLabel	( _( "Playback Stopped" )	);
 	stCurtime->SetLabel	( _( " - 0:00" )			);
@@ -327,7 +325,6 @@ void CNowPlayingCtrl::UpdateInfo( wxString sFilename )
 void CNowPlayingCtrl::PlayerStop( wxCommandEvent& WXUNUSED(event) )
 {	
 	g_Player.Stop();
-	ResetInfo();
 }
 
 void CNowPlayingCtrl::PlayerPlayPause( wxCommandEvent& WXUNUSED(event) )	

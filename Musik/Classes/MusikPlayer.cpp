@@ -364,6 +364,9 @@ void CMusikPlayer::Stop()
 	m_SongIndex	= 0;
 	m_LastSong	= 0;
 
+	g_MusikFrame->SetTitle( MUSIK_VERSION );
+
+	g_NowPlayingCtrl->ResetInfo();
 	g_NowPlayingCtrl->PauseBtnToPlayBtn();
 }
 
@@ -414,7 +417,10 @@ void CMusikPlayer::NextSong()
 	{
 	case MUSIK_PLAYMODE_NORMAL:
 		m_SongIndex++;
-		Play( m_SongIndex );
+		if ( m_SongIndex >= g_Playlist.GetCount() )
+			Stop();
+		else
+			Play( m_SongIndex );
 		break;
 
 	case MUSIK_PLAYMODE_LOOPSONG:
