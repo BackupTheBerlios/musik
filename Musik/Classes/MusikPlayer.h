@@ -153,7 +153,7 @@ private:
 	CMusikSongArray m_Playlist;			//--- heart and soul.									---//
 	int				m_Playmode;			//--- repeat, shuffle, etc                      ---//
 	size_t			m_SongIndex;		//--- current index in playlist                 ---//
-	int				m_LastSong;			//--- last song played, used for updating			---//
+	size_t			m_LastSong;			//--- last song played, used for updating			---//
 	bool			m_Playing;			//--- currently playing?								---//
 	bool			m_Paused;			//--- currently paused?								---//
 	bool			m_BeginFade;		//--- should we begin fading?						---//

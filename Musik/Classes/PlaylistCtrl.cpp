@@ -631,11 +631,17 @@ void CPlaylistCtrl::ResynchItem( int item, int lastitem, bool refreshonly )
 	{
 		wxString sCurrFile = g_Playlist.Item( item ).Filename;
 		g_Library.GetSongFromFilename( sCurrFile, &g_Playlist.Item( item ) );
+		
+		if ( lastitem > -1 && lastitem != item )
+		{
+			wxString sCurrFile = g_Playlist.Item( lastitem ).Filename;
+			g_Library.GetSongFromFilename( sCurrFile, &g_Playlist.Item(lastitem ) );		
+		}			
 	}
 
 	RefreshItem( item );
 
-	if ( lastitem > -1 )
+	if ( lastitem > -1 && lastitem != item )
 		RefreshItem( lastitem );
 }
 

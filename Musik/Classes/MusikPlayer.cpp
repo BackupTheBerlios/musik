@@ -46,7 +46,7 @@ CMusikPlayer::CMusikPlayer()
 	m_BeginFade		= false;
 	m_StartingNext	= false;
 	m_SongIndex		= 0;
-	m_LastSong		= -1;
+	m_LastSong		= 0;
 	m_Channels		= -1;
 	m_Playmode		= MUSIK_PLAYMODE_NORMAL;
 	m_CrossfadeType	= 0;
@@ -132,7 +132,8 @@ void CMusikPlayer::SetPlaymode( )
 
 void CMusikPlayer::PlayCurSel()
 {
-	//--- play ---//
+	m_LastSong	= m_SongIndex;
+	
 	int nCurSel = g_PlaylistCtrl->GetNextItem( -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED );
 	if ( nCurSel > -1 )
 	{
@@ -159,7 +160,6 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 		//-----------------------------//
 		//--- start with the basics ---//
 		//-----------------------------//
-		m_LastSong		= m_SongIndex;
 		m_SongIndex		= nItem;	
 		m_CurrentFile	= m_Playlist.Item( nItem ).Filename;
 
@@ -237,7 +237,7 @@ void CMusikPlayer::UpdateUI()
 	//-------------------------------------------------//
 	//--- this will resynch the current item if the	---//
 	//--- playlist appears to be the same. a better	---//
-	//--- check is not necessary.					---//
+	//--- check is not necessary.						---//
 	//-------------------------------------------------//
 	if ( m_Playlist.GetCount() == g_Playlist.GetCount() )
 		g_PlaylistCtrl->ResynchItem	( m_SongIndex, m_LastSong );
@@ -295,7 +295,7 @@ void CMusikPlayer::Stop()
 	g_ActiveChannels.Clear();
 
 	m_SongIndex	= 0;
-	m_LastSong	= -1;
+	m_LastSong	= 0;
 
 	g_NowPlayingCtrl->PauseBtnToPlayBtn();
 }
@@ -341,6 +341,8 @@ size_t CMusikPlayer::GetRandomSong()
 
 void CMusikPlayer::NextSong()
 {
+	m_LastSong	= m_SongIndex;
+	
 	switch ( m_Playmode )
 	{
 	case MUSIK_PLAYMODE_NORMAL:
@@ -368,6 +370,8 @@ void CMusikPlayer::NextSong()
 
 void CMusikPlayer::PrevSong()
 {
+	m_LastSong	= m_SongIndex;
+	
 	if ( g_ActiveStreams.GetCount() && GetTime( FMOD_MSEC ) > 2000 )	// 2 second grace period to go to previous track
 	{
 		Play( m_SongIndex );
