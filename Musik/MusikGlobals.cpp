@@ -18,10 +18,6 @@
 //----------------//
 #include "MusikGlobals.h"
 
-//----------------------//
-//--- pointer to app ---//
-//----------------------//
-MusikApp *pMusikApp;
 
 //----------------------------//
 //--- pointer to MusikFrame ---//
@@ -95,7 +91,7 @@ CMusikSongArray		g_LibPlaylist;
 wxArrayString		g_SourcesList;
 CMusikWebServer		g_WebServer;
 
-wxMutex				g_protectingStreamArrays; // to protect access to ActiveStreams and ActiveChannels
+wxCriticalSection	g_protectingStreamArrays; // to protect access to ActiveStreams and ActiveChannels
 CMusikStreamArray	g_ActiveStreams;
  wxArrayInt			g_ActiveChannels;
 MusikFaderThread*	g_FaderThread;
@@ -145,5 +141,4 @@ bool g_PlaylistChanged;
 bool g_FirstRun;
 bool g_TimeSeeking;
 bool g_DisablePlacement;
-
 

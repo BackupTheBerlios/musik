@@ -115,6 +115,7 @@ public:
 	bool IsFading			( ) { return ( m_Fading );		}
 	bool IsStartingNext		( ) { return ( m_StartingNext );}
 	bool IsStopping			( ) { return ( m_Stopping );	}
+	bool IsSeekable			( ) { return IsPlaying() && !_CurrentSongIsNetStream();}
 	bool BeginFade			( )	{ return ( m_BeginFade );	}
 	void CaughtBeginFade	( )	{ m_BeginFade = false;		}
 
@@ -140,7 +141,6 @@ public:
 	int	 GetTime				( int nType );
 	int	 GetTimeLeft			( int nType );
 	int	 GetCurrChannel			( );
-	void IncNextChannel			( );
 	wxString GetTimeStr			( );
 	wxString GetCurrentFile		() { return m_CurrentFile; }
 	int GetCrossfadeType		() { return m_CrossfadeType; }
@@ -174,6 +174,13 @@ public:
 private:
 	bool _IsSeekCrossFadingDisabled();
 	bool _CurrentSongNeedsMPEGACCURATE();
+	bool _CurrentSongIsNetStream();
+	bool _IsNETSTREAMConnecting() { return (m_p_NETSTREAM_Connecting != NULL);}
+	static signed char F_CALLBACKAPI MetadataCallback(char *name, char *value, int userdata);
+	void _SetMetaData(char *name, char *value);
+	void _UpdateNetstreamMetadata( wxCommandEvent& event );
+
+	int _NetStreamStatusUpdate(FSOUND_STREAM * pStream);
 
 	CMusikSongArray m_Playlist;			//--- heart and soul.								---//
 	EMUSIK_PLAYMODE	m_Playmode;			//--- repeat, shuffle, etc							---//
@@ -192,6 +199,14 @@ private:
 	FSOUND_DSPUNIT	*m_DSP;
 
 	int m_Channels;
+	int m_NETSTREAM_read_percent;
+	int m_NETSTREAM_bitrate;
+	int m_NETSTREAM_status;
+	unsigned int m_NETSTREAM_flags;
+	bool m_b_NETSTREAM_AbortConnect;
+	FSOUND_STREAM * m_p_NETSTREAM_Connecting;
+	CMusikSong m_MetaDataSong;
+	wxCriticalSection m_critMetadata;
 };
 
 #endif

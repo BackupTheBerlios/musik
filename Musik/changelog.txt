@@ -1,4 +1,5 @@
 0.2.1 to 0.2.2
+ + Internet Radio streams are now supported (at least the kind of net streams, which fmod supports) (gunnar) 
  + You can search in activity list boxes for artist etc. by entering more than one char now (gunnar)
  + New option to sort the artist without prefix (e.g The Beatles become Beatles concerning sorting order) (gunnar)
  + New permanent sources entry "Now Playing" showing which playlist the internal player works on. If selected it is scrolled to the actually played song (gunnar)

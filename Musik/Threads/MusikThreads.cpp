@@ -26,6 +26,8 @@
 //--- MusikFrame here ---//
 #include "../Frames/MusikFrame.h"
 
+//--- fmod ---//
+#include "fmod.h"
 //---------------------------------------------------------//
 //---- always running thread. it figures out when and 	---//
 //---- how to que up the next song. also triggers fades	---//
@@ -102,6 +104,7 @@ void *MusikFaderThread::Entry()
 					//--- let the player know we got the message	---//
 					//-------------------------------------------------//
  					g_Player.CaughtBeginFade();
+
 					//-------------------------------------------------//
 					//--- if no old crossfader is active, fire up a	---//
 					//--- new one. if there was one active, once it	---//
@@ -115,10 +118,10 @@ void *MusikFaderThread::Entry()
 			if ( ( !g_Player.IsStartingNext() ) && ( !g_Player.IsFading() ) && ( g_Player.GetTimeLeft( FMOD_MSEC ) <= ( g_Prefs.nFadeDuration + 1000 ) ) )
 			{
 				//-------------------------------------------------//
-				//--- if there is no fading at all going on,	---//
-				//--- and there is 10 mseconds or less playback	---//
-				//--- time left, go ahead and start up the next	---//
-				//--- track										---//
+				//--- if currently we are not fading, but the	---//
+				//--- crossfader is enabled, check to see if	---//
+				//--- the duration is such that we should		---//
+				//--- queue up the next song and start the fade	---//
 				//-------------------------------------------------//
 				if ( ( g_Prefs.nGlobalFadeEnable == 0 ) || ( ( g_Prefs.nFadeEnable == 0 ) && ( g_Player.GetTimeLeft( FMOD_MSEC ) <= 10 ) ) )
 				{
@@ -128,10 +131,10 @@ void *MusikFaderThread::Entry()
 				}
 
 				//-------------------------------------------------//
-				//--- if currently we are not fading, but the	---//
-				//--- crossfader is enabled, check to see if	---//
-				//--- the duration is such that we should		---//
-				//--- queue up the next song and start the fade	---//
+				//--- if there is no fading at all going on,	---//
+				//--- and there is 10 mseconds or less playback	---//
+				//--- time left, go ahead and start up the next	---//
+				//--- track										---//
 				//-------------------------------------------------//
 				else if ( ( g_Prefs.nFadeEnable == 1 ) && ( g_Player.GetTimeLeft( FMOD_MSEC ) <= g_Prefs.nFadeDuration ) )
 				{
@@ -139,7 +142,6 @@ void *MusikFaderThread::Entry()
 					wxPostEvent( &g_Player, NextSongEvt );
 					Yield();
 				}
-
 			}
 		}	
 		Sleep( 10 );
@@ -180,8 +182,10 @@ void MusikCrossfaderThread::SetStopPlayer()
 void *MusikCrossfaderThread::Entry()
 {
 	
-	wxMutexLocker locker( g_protectingStreamArrays );
+	wxCriticalSectionLocker locker( g_protectingStreamArrays );
 
+	if(g_ActiveStreams.GetCount() == 0)
+		return NULL;
 	//-------------------------------------------------//
 	//--- if the fade duration * 2 (fade in and		---//
 	//--- fade out) is shorter than the stream 		---//
@@ -189,7 +193,7 @@ void *MusikCrossfaderThread::Entry()
 	//-------------------------------------------------//
 	if ( g_Player.GetDuration( FMOD_MSEC ) < ( g_Prefs.nFadeDuration * 2 ) )
 	{
-		FSOUND_SetVolume( g_ActiveChannels.Item( g_ActiveChannels.GetCount() - 1 ), g_Prefs.nSndVolume );
+        FSOUND_SetVolume( g_ActiveChannels.Item( g_ActiveChannels.GetCount() - 1 ), g_Prefs.nSndVolume );
 		return NULL;
 	}
 	
@@ -346,16 +350,17 @@ void MusikCrossfaderThread::OnExit()
 		wxPostEvent( &g_Player, FadeCompleteEvt );
 		Yield();
 
-		//-------------------------------------------------//
-		//--- if the fade type was an OnExit type, then	---//
-		//--- post an event to close the app.			---//
-		//-------------------------------------------------//
-		if ( m_FadeType == CROSSFADE_EXIT )
-		{
-			wxCommandEvent ExitCompleteEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_FRAME_EXIT_FADE_DONE );
-			wxPostEvent( g_MusikFrame, ExitCompleteEvt );
-		}
 	}
+	//-------------------------------------------------//
+	//--- if the fade type was an OnExit type, then	---//
+	//--- post an event to close the app.			---//
+	//-------------------------------------------------//
+	if ( m_FadeType == CROSSFADE_EXIT )
+	{
+		wxCommandEvent ExitCompleteEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_FRAME_EXIT_FADE_DONE );
+		wxPostEvent( g_MusikFrame, ExitCompleteEvt );
+	}
+
 }
 
 //---------------------------------------------------------//

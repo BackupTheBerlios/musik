@@ -86,6 +86,8 @@ public:
 	wxBitmap		bmpLibrary;
 	wxBitmap		bmpPlaylist;
 	wxBitmap		bmpDynamic;
+	wxBitmap		bmpNowplaying;
+	wxBitmap		bmpNetstream;
 
 	//--- rating bitmaps ---//
 	wxBitmap		bmpRating0;
@@ -160,7 +162,7 @@ private:
 	int m_ProgressType;
 	wxThread* m_ActiveThread;
 	MusikWriteDirtyThread* pWriteDirtyThread;
-
+	
 	wxTextCtrl* m_TextSimpleQuery;
 	wxString m_customQuery;
 };

@@ -10,13 +10,9 @@
  *  See the file "license.txt" for information on usage and redistribution
  *  of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 */
-
-//--- For compilers that support precompilation, includes "wx/wx.h". ---//
+// For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
-
 #include "GaugeSeek.h"
-
-//--- globals ---//
 #include "../MusikGlobals.h"
 #include "../MusikUtils.h" 
 
@@ -56,7 +52,6 @@ void CGaugeSeekEvt::OnEraseBackground( wxEraseEvent& WXUNUSED(event) )
 
 void CGaugeSeekEvt::OnLeftDown( wxMouseEvent& event )
 {
-	//-----------------------------------------------------//
 	//--- we're using the seek bar AND music is playing ---//
 	//--- OR we're adjusting volume                     ---//
 	//-----------------------------------------------------//
@@ -68,11 +63,12 @@ void CGaugeSeekEvt::OnLeftDown( wxMouseEvent& event )
 		if ( lType == wxGA_HORIZONTAL )
 			g_TimeSeeking = true;
 
-		if ( ( lType == wxGA_HORIZONTAL && g_Player.IsPlaying() ) || lType == wxGA_VERTICAL )
+		if ( ( lType == wxGA_HORIZONTAL && g_Player.IsSeekable() ) || lType == wxGA_VERTICAL )
 			SetFromMousePos( event );
 	}
 
 	event.Skip();
+
 }
 
 void CGaugeSeekEvt::OnMouseMove( wxMouseEvent& event )
@@ -81,7 +77,7 @@ void CGaugeSeekEvt::OnMouseMove( wxMouseEvent& event )
 	{
 		if ( event.LeftIsDown() )
 		{
-			if ( ( lType == wxGA_HORIZONTAL && g_Player.IsPlaying() ) || lType == wxGA_VERTICAL )
+			if ( ( lType == wxGA_HORIZONTAL && g_Player.IsSeekable() ) || lType == wxGA_VERTICAL )
 				SetFromMousePos( event );		
 		}
 	}
@@ -97,15 +93,18 @@ void CGaugeSeekEvt::OnLeftUp( wxMouseEvent& WXUNUSED(event) )
 
 		if ( g_ActiveStreams.GetCount() )
 		{
-     		//-----------------------------------------------//
+			//-----------------------------------------------//
 			//--- if we have left up and modifying time	  ---//
 			//--- assume user is done. update pos		  ---//
 			//-----------------------------------------------//   		
 			if ( lType == wxGA_HORIZONTAL )
 			{
-				//--- set player pos ---//
-				int nTime = ( (int)fPos * (int)g_Player.GetDuration( FMOD_SEC ) ) / (int)100;
-				g_Player.SetTime( nTime );	
+				if(g_Player.IsSeekable())
+				{
+					//--- set player pos ---//
+					int nTime = ( (int)fPos * (int)g_Player.GetDuration( FMOD_SEC ) ) / (int)100;
+					g_Player.SetTime( nTime );	
+				}
 				g_TimeSeeking = false;
 			}
 		}
@@ -135,6 +134,7 @@ void CGaugeSeekEvt::SetFromMousePos( wxMouseEvent& event )
 			fPos = 100.0f;
 
 		int nThisPos = (int)fPos;
+
 		if ( nThisPos != m_LastPos )
 		{
 			pParent->SetValue( nThisPos );

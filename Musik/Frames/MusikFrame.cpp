@@ -32,6 +32,8 @@
 #include "../images/sources/dynamic.xpm"
 #include "../images/sources/library.xpm"
 #include "../images/sources/standard.xpm"
+#include "../images/sources/netstream.xpm"
+#include "../images/sources/nowplaying.xpm"
 #include "../images/ratings/rating0.xpm"
 #include "../images/ratings/rating1.xpm"
 #include "../images/ratings/rating2.xpm"
@@ -226,14 +228,15 @@ void MusikFrame::LoadImageLists()
 	bmpLibrary	= wxIcon( library_xpm );
 	bmpPlaylist = wxIcon( standard_xpm );
 	bmpDynamic	= wxIcon( dynamic_xpm );
-	
+	bmpNowplaying =  wxIcon( nowplaying_xpm );
+	bmpNetstream =  wxIcon( netstream_xpm );
 	g_SourcesImages->Add( bmpLibrary );
 	g_SourcesImages->Add( bmpPlaylist );
 	g_SourcesImages->Add( bmpDynamic );
 ///// just to fill it up
 	g_SourcesImages->Add( bmpPlaylist );
-	g_SourcesImages->Add( bmpPlaylist );
-	g_SourcesImages->Add( bmpPlaylist );
+	g_SourcesImages->Add( bmpNetstream );
+	g_SourcesImages->Add( bmpNowplaying );
 
 	//--- ratings image list ---//
 	g_RatingImages = new wxImageList( 32, 14, true );

@@ -347,8 +347,13 @@ void CPlaylistCtrl::ShowMenu( wxCommandEvent& WXUNUSED(event) )
 
 	bool bItemSel = false;
 	if ( GetSelectedItemCount() > 0 )
-		bItemSel = true;
-
+	{
+		int nFirstIndex = GetNextItem( -1, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
+		if(g_Playlist.Item ( nFirstIndex ).Format != MUSIK_FORMAT_NETSTREAM)
+		{
+			bItemSel = true;
+		}
+	}
 	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_DELETENODE,	bItemSel );
 	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_RENAME_FILES, bItemSel );
 	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_RETAG_FILES,	bItemSel );
@@ -457,15 +462,18 @@ void CPlaylistCtrl::BeginDrag( wxEvent& WXUNUSED(event) )
 	g_DragInProg = true;
 
 	//--- pass selected items ---//
-	wxString sDrop = wxT( "p\n" ) + GetSelFiles();
-	DNDSetCurSel();
+	wxString sValidSelFiles = GetSelFiles();
+	if(!sValidSelFiles.IsEmpty())
+	{
+		wxString sDrop = wxT( "p\n" ) + sValidSelFiles;
+		DNDSetCurSel();
 
-	//--- initialize drag and drop... SourcesDropTarget / PlaylistDropTarget should take care of the rest ---//
-	wxDropSource dragSource( this );
-	wxTextDataObject song_data( sDrop );
-	dragSource.SetData( song_data );
-	dragSource.DoDragDrop( TRUE );
-
+		//--- initialize drag and drop... SourcesDropTarget / PlaylistDropTarget should take care of the rest ---//
+		wxDropSource dragSource( this );
+		wxTextDataObject song_data( sDrop );
+		dragSource.SetData( song_data );
+		dragSource.DoDragDrop( TRUE );
+	}
 	//--- tell program we're done dragging ---//
 	g_DragInProg = false;
 }
@@ -714,12 +722,15 @@ wxString CPlaylistCtrl::GetSelFiles()
 		nIndex = GetNextItem( nIndex, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
 		if( i == -1)
 			break;
-		sResult += GetFilename( nIndex );
-		sResult+= wxT( "\n" ); // only add \n if it is not the last name
+		if(g_Playlist.Item( nIndex ).Format != MUSIK_FORMAT_NETSTREAM)
+		{
+			sResult += GetFilename( nIndex );
+			sResult+= wxT( "\n" ); // only add \n if it is not the last name
+		}
 	}
 
 	//--- we don't need the last \n ---//
-	return sResult.Truncate( sResult.Length() - 1 );	
+	return sResult.IsEmpty() ? sResult : sResult.Truncate( sResult.Length() - 1 );	
 }
 
 wxArrayInt CPlaylistCtrl::GetSelItems()
@@ -860,6 +871,15 @@ void CPlaylistCtrl::ResynchItem( int item, int lastitem, bool refreshonly )
 
 	if ( lastitem > -1 && lastitem != item )
 		RefreshItem( lastitem );	
+}
+void CPlaylistCtrl::ResynchItem( int item, const CMusikSong & song)
+{
+	wxASSERT(g_Playlist.GetCount() &&(item < g_Playlist.GetCount()));
+	if(g_Playlist.GetCount() && (item < g_Playlist.GetCount()) && (g_SourcesCtrl->GetSelType() == MUSIK_SOURCES_NOW_PLAYING))
+	{
+		g_Playlist.Item( item ) = song;
+		RefreshItem( item );
+	}
 }
 
 void CPlaylistCtrl::Update( bool bSelFirst)
@@ -1127,6 +1147,11 @@ void CPlaylistCtrl::DelSelSongs(bool bDeleteFromDB, bool bDeleteFromComputer)
 		if ( confirm.ShowModal() == wxID_NO )
 			return;
 	}
+	else if( MUSIK_SOURCES_LIBRARY == g_SourcesCtrl->GetSelType() )
+	{// we do not want to delete entry from the library playlist ( it would have no effect if library is reselected)
+		return;// ignore
+	}
+
 	wxString sError;
 	Freeze();
 	int nIndex = -1;
@@ -1136,7 +1161,7 @@ void CPlaylistCtrl::DelSelSongs(bool bDeleteFromDB, bool bDeleteFromComputer)
 	wxString sFile;
 	nIndex = -1;
 	int nFirstSel = GetNextItem( nIndex, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
-	g_PlaylistChanged = true;  // playlist will be changed, else we would not be here
+	int nDeletedSongs = 0;
 	for ( int i = 0; i < nSelCount; i++ )
 	{
 		//--- find next item to delete ---//
@@ -1144,14 +1169,16 @@ void CPlaylistCtrl::DelSelSongs(bool bDeleteFromDB, bool bDeleteFromComputer)
 		if ( nIndex == -1 )
 			break;
 		
-		// correct nIndex by nIndex - i, substract the number of entry,
+		// correct nIndex by nIndex - nDeletedSongs, substract the number of entry,
 		// which have been already deleted from the array
 		// because GetNextItem() still returns the old index values
+		if(g_Playlist.Item( nIndex - nDeletedSongs).Format == MUSIK_FORMAT_NETSTREAM)
+			continue;// net streams cannot be deleted from the playlist ( they are deleted in the sources box)
   		
 	   //--- if its valid, delete ---//
 		if( bDeleteFromDB )
 		{
-	    	sFile = g_Playlist.Item( nIndex - i).Filename; // get the filename before song is deleted from the array
+	    	sFile = g_Playlist.Item( nIndex - nDeletedSongs).Filename; // get the filename before song is deleted from the array
 			if( bDeleteFromComputer )
 			{
 				if ( !wxRemoveFile( sFile ) )
@@ -1159,8 +1186,10 @@ void CPlaylistCtrl::DelSelSongs(bool bDeleteFromDB, bool bDeleteFromComputer)
 			}
 			g_Library.RemoveSong( sFile );
 		}
-		g_Playlist.RemoveAt( nIndex - i, 1 );
+		g_Playlist.RemoveAt( nIndex - nDeletedSongs, 1 );
+		nDeletedSongs ++;
 	}
+	g_PlaylistChanged = (nDeletedSongs > 0);  
 
 	//--- if certain files couldn't be deleted ---//
 	if ( !sError.IsEmpty() )
@@ -1249,8 +1278,11 @@ void CPlaylistCtrl::DNDSetCurSel()
 			nIndex = GetNextItem( nIndex, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
 			if ( nIndex == -1 )
 				break;
-			aCurSel.Add( nIndex );
-			aCurSelSongs.Add( g_Playlist.Item( nIndex ) );
+			if(g_Playlist.Item( nIndex ).Format != MUSIK_FORMAT_NETSTREAM)
+			{
+				aCurSel.Add( nIndex );
+				aCurSelSongs.Add( g_Playlist.Item( nIndex ) );
+			}
 			
 		}
 	}

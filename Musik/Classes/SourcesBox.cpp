@@ -98,6 +98,10 @@ bool SourcesDropTarget::OnDropText( wxCoord x, wxCoord y, const wxString &text )
 			{
 				wxMessageBox( _( "Cannot drag songs into Now Playing." ), MUSIK_VERSION, wxOK | wxICON_INFORMATION );
 			}
+			else if ( m_SourcesListBox->GetType( n ) == MUSIK_SOURCES_NETSTREAM )
+			{
+				wxMessageBox( _( "Cannot drag songs into a net stream." ), MUSIK_VERSION, wxOK | wxICON_INFORMATION );
+			}
 
 			//--- drag over an existing item, append ---//
 			else if ( n > 0 )
@@ -122,7 +126,7 @@ bool SourcesDropTarget::OnDropText( wxCoord x, wxCoord y, const wxString &text )
 	return TRUE;
 }
 
-wxDragResult SourcesDropTarget::OnDragOver(wxCoord x, wxCoord y, wxDragResult def)
+wxDragResult SourcesDropTarget::OnDragOver(wxCoord x, wxCoord y, wxDragResult WXUNUSED(def))
 {
 	const wxPoint& pt = wxPoint( x, y );
 	HighlightSel( pt );
@@ -150,6 +154,7 @@ BEGIN_EVENT_TABLE(CSourcesListBox, CMusikListCtrl)
 	EVT_MENU					(MUSIK_SOURCE_CONTEXT_CREATE_CURRENT_PLAYLIST,	CSourcesListBox::CreateCurPlaylist		)	// Sources Context -> Create -> Create from Current
 	EVT_MENU					(MUSIK_SOURCE_CONTEXT_STANDARD_PLAYLIST,		CSourcesListBox::StandardPlaylist		)	// Sources Context -> Create -> Standard Playlist
 	EVT_MENU					(MUSIK_SOURCE_CONTEXT_DYNAMIC_PLAYLIST,			CSourcesListBox::DynamicPlaylist		)	// Sources Context -> Create -> Dynamic Playlist
+	EVT_MENU					(MUSIK_SOURCE_CONTEXT_CREATE_NETSTREAM,			CSourcesListBox::NetStream				)	// Sources Context -> Create -> Net Stream
 	EVT_MENU					(MUSIK_SOURCE_CONTEXT_EDIT_QUERY,				CSourcesListBox::EditQuery				)	// Sources Context -> Edit Query
 	EVT_MENU					(MUSIK_SOURCE_CONTEXT_DELETE,					CSourcesListBox::Delete					)	// Sources Context -> Delete
 	EVT_MENU					(MUSIK_SOURCE_CONTEXT_RENAME,					CSourcesListBox::Rename					)	// Sources Context -> Rename
@@ -179,6 +184,7 @@ CSourcesListBox::CSourcesListBox( wxPanel* parent )
 	sources_context_menu_new->AppendSeparator();
 	sources_context_menu_new->Append( MUSIK_SOURCE_CONTEXT_STANDARD_PLAYLIST, _( "Standard Playlist" ) );
 	sources_context_menu_new->Append( MUSIK_SOURCE_CONTEXT_DYNAMIC_PLAYLIST, _( "Dynamic Playlist" ) );
+	sources_context_menu_new->Append( MUSIK_SOURCE_CONTEXT_CREATE_NETSTREAM, _( "Net Stream" ) );
 
 	sources_context_menu = new wxMenu;
 	sources_context_menu->Append( MUSIK_SOURCE_CONTEXT_CREATE, _( "&Create New" ), sources_context_menu_new );
@@ -258,6 +264,15 @@ void CSourcesListBox::DynamicPlaylist( wxCommandEvent& WXUNUSED(event) )
 	{
 		wxString sName = dlg.GetValue();
 		NewPlaylist( sName, wxT( "" ), MUSIK_SOURCES_PLAYLIST_DYNAMIC );
+	}
+}
+void CSourcesListBox::NetStream( wxCommandEvent& WXUNUSED(event) )
+{
+	wxTextEntryDialog dlg( this, _( "Enter name of the net stream:" ), MUSIK_VERSION, wxT( "" ) );
+	if ( dlg.ShowModal() == wxID_OK )
+	{
+		wxString sName = dlg.GetValue();
+		NewPlaylist( sName, wxT( "" ), MUSIK_SOURCES_NETSTREAM );
 	}
 }
 void CSourcesListBox::EditQuery( wxCommandEvent& WXUNUSED(event) )
@@ -405,6 +420,13 @@ void CSourcesListBox::UpdateSel( size_t index )
 		{
 			g_Playlist = g_Player.GetPlaylist();
 		}
+		else if ( m_CurSel != 0 && m_CurSel != -1 && nSelType == MUSIK_SOURCES_NETSTREAM )
+		{
+			CMusikSong song;
+			LoadNetStream(GetItemText( m_CurSel ), song);
+			g_Playlist.Clear();
+			g_Playlist.Add(song);
+		}
 
 		//--- update ui with new list ---//
 		g_PlaylistCtrl->Update(true);
@@ -461,10 +483,15 @@ void CSourcesListBox::EndEditLabel( wxListEvent& pEvent )
 
 		//--- get str of type ---//
 		wxString sType;
-		if ( nType == MUSIK_SOURCES_PLAYLIST_STANDARD )
+		switch ( nType)
+		{
+		case MUSIK_SOURCES_PLAYLIST_STANDARD:
 			sType = wxT( "[s] " );
-		else if ( nType == MUSIK_SOURCES_PLAYLIST_DYNAMIC )
+		case MUSIK_SOURCES_PLAYLIST_DYNAMIC:
 			sType = wxT( "[d] " );
+		case MUSIK_SOURCES_NETSTREAM:
+			sType = wxT( "[u] " );
+		}
 
 		//--- rename in musiksources.dat ---//
 		g_SourcesList.Item( m_SourcesEditIndex ) = sType + pEvent.GetText();
@@ -518,7 +545,7 @@ void CSourcesListBox::Load()
 			break;
 	}
 	if((g_SourcesList.GetCount() == i) )
-	{// no [n] found
+	{// no [l] found
 		g_SourcesList.Insert(wxT( "[l] Musik Library"), 0);
 	}
 }
@@ -597,24 +624,8 @@ wxListItemAttr* CSourcesListBox::OnGetItemAttr(long item) const
 
 int	CSourcesListBox::OnGetItemImage	(long item) const
 {
-	wxString type = g_SourcesList.Item( item ).Left( 3 );
 
-	type.MakeLower();
-
-	if ( type == wxT( "[l]" ) )
-		return MUSIK_SOURCES_LIBRARY;
-	else if ( type == wxT( "[s]" ) )
-		return MUSIK_SOURCES_PLAYLIST_STANDARD;
-	else if ( type == wxT( "[d]" ) )
-		return MUSIK_SOURCES_PLAYLIST_DYNAMIC;
-	else if ( type == wxT( "[a]" ) )
-		return MUSIK_SOURCES_ALARM;
-	else if ( type == wxT( "[c]" ) )
-		return MUSIK_SOURCES_CDROM_DRIVE;
-	else if ( type == wxT( "[n]" ) )
-		return  MUSIK_SOURCES_NOW_PLAYING;
-    
-	return MUSIK_SOURCES_NONE;	
+	return GetType(item);	
 }
 
 void CSourcesListBox::Update()
@@ -652,11 +663,11 @@ void CSourcesListBox::DelSel()
 	int nType = GetType( nIndex );
 
 	//--- no item selected? bail ---//
-	if ( nIndex == - 1 || nType == MUSIK_SOURCES_LIBRARY )
+	if ( nIndex == - 1 || nType == MUSIK_SOURCES_LIBRARY || nType == MUSIK_SOURCES_NOW_PLAYING )
 		return;
 
 	//--- if we have a standard or dynamic playlist, delete the file ---//
-	if ( nType == MUSIK_SOURCES_PLAYLIST_STANDARD || nType == MUSIK_SOURCES_PLAYLIST_DYNAMIC )
+	if ( nType == MUSIK_SOURCES_PLAYLIST_STANDARD || nType == MUSIK_SOURCES_PLAYLIST_DYNAMIC || MUSIK_SOURCES_NETSTREAM)
 	{
 		wxString sFilename = GetItemText( nIndex );
 		SourcesToFilename( &sFilename, nType );
@@ -690,12 +701,12 @@ void CSourcesListBox::RenameSel()
 		EditLabel( nIndex );
 }
 
-int CSourcesListBox::GetType(long index)
+int CSourcesListBox::GetType(long index) const 
 {
 	if( index < 0)
-		return -1;
+		return MUSIK_SOURCES_NONE;
 	wxString sType = g_SourcesList.Item( index ).Left( 3 );
-
+	
 	if ( sType == wxT( "[l]" ) )
 		return MUSIK_SOURCES_LIBRARY;
 	else if ( sType == wxT( "[s]" ) )
@@ -704,12 +715,12 @@ int CSourcesListBox::GetType(long index)
 		return MUSIK_SOURCES_PLAYLIST_DYNAMIC;
 	else if ( sType == wxT( "[c]" ) )
 		return MUSIK_SOURCES_CDROM_DRIVE;
-	else if ( sType == wxT( "[a]" ) )
-		return MUSIK_SOURCES_ALARM;
 	else if ( sType == wxT( "[n]" ) )
 		return MUSIK_SOURCES_NOW_PLAYING;
+	else if ( sType == wxT( "[u]" ) )
+		return MUSIK_SOURCES_NETSTREAM;
 	
-	return -1;
+	return MUSIK_SOURCES_NONE;
 }
 
 int CSourcesListBox::GetItemImage( long index )
@@ -778,14 +789,23 @@ void CSourcesListBox::NewPlaylist( wxString sName, wxString sVal, int nType )
 	if ( GetSelType() == MUSIK_SOURCES_LIBRARY )
 		g_LibPlaylist = g_Playlist;
 
+	switch ( nType )
+	{
+	case MUSIK_SOURCES_PLAYLIST_STANDARD:
     //--- create standard playlist ---//
-	if ( nType == MUSIK_SOURCES_PLAYLIST_STANDARD )
 		CreateStdPlaylist( sName, sVal );
-
+		break;
 	//--- create dynamic playlist
-	else if ( nType == MUSIK_SOURCES_PLAYLIST_DYNAMIC )
+	case MUSIK_SOURCES_PLAYLIST_DYNAMIC:
 		CreateDynPlaylist( sName );
-}
+		break;
+	case MUSIK_SOURCES_NETSTREAM:
+		CreateNetStream( sName );
+		break;
+	default:
+		wxASSERT(false);
+	}
+}	
 
 bool CSourcesListBox::PlaylistExists( wxString sName, int type )
 {
@@ -966,6 +986,53 @@ wxString CSourcesListBox::PromptDynamicPlaylist( wxString sQuery )
 	return wxT( "" );
 }
 
+bool CSourcesListBox::CreateNetStream( wxString sName)
+{
+	//-------------------------------------------------------------//
+	//--- see if the net stream exists, if it does check to see	---//
+	//--- if its not visible. if its not then ask if it should	---//
+	//--- be. will also prompt to append if already exists		---//
+	//-------------------------------------------------------------//
+	if ( PlaylistExists( sName, MUSIK_SOURCES_NETSTREAM ) )
+	{
+		//-----------------------------------------------------//
+		//--- search the list to see if the item is visible ---//
+		//-----------------------------------------------------//
+		if ( FindInSources( sName, MUSIK_SOURCES_NETSTREAM ) == -1 )
+		{
+			if ( wxMessageBox( _( "Net Stream \"" ) + sName + _( "\" already exists, but does not appear to be visible in the panel.\n\nWould you like to show it?" ), MUSIK_VERSION, wxYES_NO | wxICON_QUESTION ) == wxYES )
+			{		
+				g_SourcesList.Add( wxT( "[u] " ) + sName );
+				Update();
+			}
+		}
+		return true;
+	}
+	
+	//---------------------------------------------------------------//
+	//--- otherwise the net stream does not already exist, so we  ---//
+	//--- need to add it to the sources list and update the		  ---//
+	//--- control.												  ---//
+	//---------------------------------------------------------------//
+	wxString sAddress = PromptNetStreamAddress(wxT(""));
+	if ((sAddress.IsEmpty() == false) && PlaylistToFile( sName, &sAddress, MUSIK_SOURCES_NETSTREAM ) )
+	{    
+		g_SourcesList.Add( wxT( "[u] " ) + sName );
+		Update();
+		return true;
+	}
+	return false;
+	
+}
+wxString CSourcesListBox::PromptNetStreamAddress( wxString sAddress )
+{
+	wxTextEntryDialog dlg( this, _( "Enter net stream address(URL):" ), MUSIK_VERSION, sAddress );
+
+	if ( dlg.ShowModal() == wxID_OK )
+		return dlg.GetValue();	
+
+	return wxT( "" );
+}
 wxString CSourcesListBox::GetPlaylistName( int nIndex )
 {
 	wxString sRet = g_SourcesList.Item( nIndex );
@@ -1037,7 +1104,32 @@ wxString CSourcesListBox::LoadDynPlaylist( wxString sName )
 
 	return sReturn;
 }
+void CSourcesListBox::LoadNetStream(wxString sName, CMusikSong & song )
+{
+	wxString sFilename = sName;
+	SourcesToFilename( &sFilename ,MUSIK_SOURCES_NETSTREAM);
 
+	if ( !wxFileExists( sFilename ) )
+	{
+		return ;
+	}
+	wxTextFile In( sFilename );
+	In.Open();
+	if ( !In.IsOpened() )
+	{
+		return;
+	}
+	if(In.GetLineCount() >= 1)
+	{
+		song.Title = sName;
+		song.Artist = _("Net Stream");
+		song.Filename = In.GetLine(0);
+		song.Format = MUSIK_FORMAT_NETSTREAM;
+
+	}
+	In.Close();
+
+	return;}
 void CSourcesListBox::AddMissing( const wxArrayString & playlists )
 {
 	wxString sExt, sName, sAdd;
@@ -1090,8 +1182,11 @@ int CSourcesListBox::FindInSources( wxString sName, int nType )
 	case MUSIK_SOURCES_CDROM_DRIVE:
 		sFind = wxT( "[c] " );
 		break;
-	case MUSIK_SOURCES_ALARM:
-		sFind = wxT( "[a] " );
+	case MUSIK_SOURCES_NOW_PLAYING:
+		sFind = wxT( "[n] " );
+		break;
+	case MUSIK_SOURCES_NETSTREAM:
+		sFind = wxT( "[u] " );
 		break;
 	default:
 		return -1;
@@ -1116,11 +1211,20 @@ void CSourcesListBox::SourcesToFilename( wxString* sSources, int nType )
 	sName = sName.Lower();	
 
 	wxString sExt;
-	if ( nType == MUSIK_SOURCES_PLAYLIST_STANDARD )
+	switch ( nType )
+	{
+	case MUSIK_SOURCES_PLAYLIST_STANDARD:
 		sExt = wxT( ".mpl" );
-	else if ( nType == MUSIK_SOURCES_PLAYLIST_DYNAMIC )
+		break;
+	case MUSIK_SOURCES_PLAYLIST_DYNAMIC:
 		sExt = wxT( ".mpd" );
-	
+		break;
+	case MUSIK_SOURCES_NETSTREAM:
+		sExt = wxT( ".mpu" );
+		break;
+	default:
+		wxASSERT(false);
+	}	
 	*sSources = MUSIK_PLAYLIST_DIR + sName + sExt;
 }
 
@@ -1145,5 +1249,5 @@ CSourcesBox::CSourcesBox( wxWindow *parent )
 
 CSourcesBox::~CSourcesBox()
 {
-	delete pListBox;
+	
 }

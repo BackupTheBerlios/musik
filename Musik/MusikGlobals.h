@@ -139,6 +139,7 @@ enum EMUSIK_THREAD_EVENTS
 
 	MUSIK_PLAYER_NEXT_SONG,
 	MUSIK_PLAYER_FADE_COMPLETE,
+	MUSIK_PLAYER_NEW_METADATA,
 	MUSIK_PLAYER_STOP,
 	MUSIK_PLAYER_PAUSE,
 	MUSIK_PLAYER_RESUME,
@@ -223,6 +224,7 @@ enum EMUSIK_MENU_ITEMS
 	MUSIK_SOURCE_CONTEXT_CREATE_CURRENT_PLAYLIST,
 	MUSIK_SOURCE_CONTEXT_STANDARD_PLAYLIST,
 	MUSIK_SOURCE_CONTEXT_DYNAMIC_PLAYLIST,
+	MUSIK_SOURCE_CONTEXT_CREATE_NETSTREAM,
 	MUSIK_SOURCE_CONTEXT_EDIT_QUERY,
 	MUSIK_SOURCE_CONTEXT_RENAME,
 	MUSIK_SOURCE_CONTEXT_DELETE,
@@ -241,11 +243,7 @@ enum EMUSIK_MENU_ITEMS
 
 const EMUSIK_MENU_ITEMS MUSIK_PLAYLIST_DISPLAY_FIRST = MUSIK_PLAYLIST_DISPLAY_RATING;
 const EMUSIK_MENU_ITEMS MUSIK_PLAYLIST_DISPLAY_LAST = MUSIK_PLAYLIST_DISPLAY_FILENAME;
-//----------------------//
-//--- pointer to app ---//
-//----------------------//
-class	MusikApp;
-extern	MusikApp *pMusikApp;
+
 
 //---------------------------//
 //--- pointer to main dlg ---//
@@ -285,7 +283,7 @@ extern CMusikPaths			g_Paths;
 extern CMusikSongArray		g_Playlist;	
 extern CMusikSongArray		g_LibPlaylist;	
 extern wxArrayString		g_SourcesList;
-extern wxMutex				g_protectingStreamArrays;
+extern wxCriticalSection	g_protectingStreamArrays;
 extern CMusikStreamArray	g_ActiveStreams;
 extern wxArrayInt			g_ActiveChannels;
 extern CMusikWebServer		g_WebServer;
@@ -342,5 +340,7 @@ extern wxFont g_fntRegular;
 extern wxFont g_fntBold;
 extern wxFont g_fntListBold;
 extern wxFont g_fntInfo;
+
+
 
 #endif

@@ -373,6 +373,8 @@ void CMusikLibrary::WriteTag(  CMusikSong & song, bool ClearAll , bool bUpdateDB
 		WriteMP3Tag( song, ClearAll );
 	else if ( song.Format == MUSIK_FORMAT_OGG )
 		WriteOGGTag( song, ClearAll );
+	else
+		return;
 	if( bUpdateDB )
 	{
 		//-----------------------------//

@@ -99,6 +99,7 @@ public:
 	//--- others ---//
 	//--------------//
 	void ResynchItem		( int item, int lastitem = -1, bool refreshonly = true );
+	void ResynchItem		( int item, const CMusikSong & song);
 	void Update				( bool bSelFirstItem = true);
 	void ResetColumns		( bool update = false, bool rescale = false );
 	void RateSel			( int nVal );

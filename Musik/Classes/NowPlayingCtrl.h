@@ -19,6 +19,7 @@
 #ifndef WX_PRECOMP
 	#include "wx/wx.h"
 #endif 
+#include "../Classes/MusikLibrary.h"
 
 enum EMUSIK_NOWPLAYINGCTRL_ID
 {
@@ -86,18 +87,18 @@ public:
 
 	//--- button down events (win32) ---//
 	#ifdef __WXMSW__
-		CBtnDownEvt *pPrevEvt;
-		CBtnDownEvt *pNextEvt;
-		CBtnDownEvt *pPlayEvt;
-		CBtnDownEvt *pPauseEvt;
-		CBtnDownEvt *pStopEvt;
-		CBtnDownEvt *pVolumeEvt;
+	CBtnDownEvt *pPrevEvt;
+	CBtnDownEvt *pNextEvt;
+	CBtnDownEvt *pPlayEvt;
+	CBtnDownEvt *pPauseEvt;
+	CBtnDownEvt *pStopEvt;
+	CBtnDownEvt *pVolumeEvt;
 	#endif
 
 	//--- funcs ---//
 	void PlayBtnToPauseBtn();
 	void PauseBtnToPlayBtn();
-	void UpdateInfo( wxString filename );
+	void UpdateInfo( CMusikSong song );
 	void SetTime( wxString sTimeStr );
 	void ResetInfo();
 

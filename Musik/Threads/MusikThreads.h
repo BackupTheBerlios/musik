@@ -19,8 +19,7 @@
 	#include "wx/wx.h"
 #endif
 
-//--- fmod ---//
-#include "fmod.h"
+
 
 class MusikFrame;
 

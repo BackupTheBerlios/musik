@@ -30,7 +30,7 @@ enum EMUSIK_LIBRARY_TYPE
     MUSIK_SOURCES_PLAYLIST_STANDARD,
 	MUSIK_SOURCES_PLAYLIST_DYNAMIC,
 	MUSIK_SOURCES_CDROM_DRIVE,
-	MUSIK_SOURCES_ALARM,
+	MUSIK_SOURCES_NETSTREAM,
 	MUSIK_SOURCES_NOW_PLAYING,
 	MUSIK_SOURCES_NONE
 };
@@ -50,6 +50,7 @@ public:
 	void CreateCurPlaylist		( wxCommandEvent& WXUNUSED(event) );
 	void StandardPlaylist		( wxCommandEvent& WXUNUSED(event) );
 	void DynamicPlaylist		( wxCommandEvent& WXUNUSED(event) );
+	void NetStream				( wxCommandEvent& WXUNUSED(event) );
 	void EditQuery				( wxCommandEvent& WXUNUSED(event) );
 	void Delete					( wxCommandEvent& WXUNUSED(event) )	{ DelSel();		};
 	void Rename					( wxCommandEvent& WXUNUSED(event) )	{ RenameSel();	};
@@ -80,8 +81,9 @@ public:
 	void ResetAll				( )						{ ClearAll(); InsertColumn( 0, _( "Sources" ) );	}	
 	void ShowIconsChecked		( bool bCheck );
 	int  GetSelType				( )						{ return  GetType( m_CurSel );	}
-	int  GetType				( long index );
+	int  GetType				( long index ) const ;
 	int  GetItemImage			( long index );
+	
 	void RescanPlaylistDir		( );
 	void ShowIcons				( );
 	void ToggleIcons			( );
@@ -100,13 +102,16 @@ public:
 	//---standard / dynamic ---//
 	bool CreateStdPlaylist			( wxString sName, wxString sSongs );
 	bool CreateDynPlaylist			( wxString sName );
+	bool CreateNetStream			( wxString sName);
     void AppendStdPlaylist			( wxString sName, wxString sSongs );
 	void RewriteStdPlaylist			();
 	void UpdateDynPlaylist			( int nIndex );
 	void LoadStdPlaylist			( wxString sName, wxArrayString & aReturn );
 	wxString LoadDynPlaylist		( wxString sName );
+	void LoadNetStream				(wxString sName, CMusikSong & song );
 	bool PlaylistToFile				( wxString sName, wxString* sItems, int type, bool bDelOld = true );
 	wxString PromptDynamicPlaylist	( wxString sQuery );
+	wxString PromptNetStreamAddress	( wxString sAddress );
 	wxString GetPlaylistName		( int nIndex );
 
 	DECLARE_EVENT_TABLE()
