@@ -193,10 +193,8 @@ void CPropTreeList::OnPaint()
 	}
 
 	// remove clip region
-	/*
 	SelectClipRgn(memdc.m_hDC, NULL);
 	DeleteObject(hRgn);
-	*/
 
 	// copy back buffer to the display
 	dc.GetClipBox(&rc);

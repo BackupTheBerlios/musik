@@ -536,15 +536,6 @@ void CSizingControlBar::OnNcPaint()
     mdc.FillRect(rcDraw, CBrush::FromHandle(
         (HBRUSH) GetClassLong(m_hWnd, GCL_HBRBACKGROUND)));
 
-    if (m_dwSCBStyle & SCBS_SHOWEDGES)
-    {
-        CRect rcEdge; // paint the sizing edges
-        for (int i = 0; i < 4; i++)
-            if (GetEdgeRect(rcBar, GetEdgeHTCode(i), rcEdge))
-                mdc.Draw3dRect(rcEdge, ::GetSysColor(COLOR_BTNHIGHLIGHT),
-                    ::GetSysColor(COLOR_BTNSHADOW));
-    }
-
     NcPaintGripper(&mdc, rcClient);
 
     // client area is not our bussiness :)
