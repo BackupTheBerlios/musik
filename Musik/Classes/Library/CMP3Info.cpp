@@ -56,7 +56,7 @@ int CMP3Info::loadInfo( const wxString &srcMP3 ) {
     // open input-file stream to the specified file, name
     ifstream* ifile = new ifstream( ( const char* )ConvFNToFieldMB( srcMP3 ), ios::in | ios::binary /*| ios::nocreate*/);
 
-    if (ifile) { // if the file was opened correctly
+	if (!ifile->fail()) { // if the file was opened correctly
 
         // get file size, by setting the pointer in the end and tell the position
         ifile->seekg(0,ios::end);
@@ -78,7 +78,7 @@ int CMP3Info::loadInfo( const wxString &srcMP3 ) {
             // if no header has been found after 200kB
             // or the end of the file has been reached
             // then there's probably no mp3-file
-            if ( pos>(1024*200) || ifile->eof() ) {
+            if ( pos>(1024*1000) || ifile->eof() ) {
                 ifile->close();
                 delete ifile;
                 return ERR_NOMP3FILE;
