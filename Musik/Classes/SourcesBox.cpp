@@ -430,7 +430,7 @@ void CSourcesListBox::UpdateSel( size_t index )
 		else if (  m_CurSel != -1 && nSelType == MUSIK_SOURCES_PLAYLIST_DYNAMIC )
 		{
 			wxString sQuery = LoadDynPlaylist( GetItemText( m_CurSel ) );
-			 g_Library.QuerySongs( sQuery, g_Playlist );
+			 g_Library.QuerySongsWhere( sQuery, g_Playlist );
 		}
 		else if (  m_CurSel != -1 && nSelType == MUSIK_SOURCES_NOW_PLAYING )
 		{
@@ -980,7 +980,7 @@ void CSourcesListBox::UpdateDynPlaylist( int nIndex )
 		g_SourcesList.Item( nIndex ) = wxT( "[d] " ) + sName;
 		PlaylistToFile( sName, &sQuery, MUSIK_SOURCES_PLAYLIST_DYNAMIC );
 
-		g_Library.QuerySongs( sQuery, g_Playlist );
+		g_Library.QuerySongsWhere( sQuery, g_Playlist );
 		g_PlaylistBox->Update();
 	}
 }
