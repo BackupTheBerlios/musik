@@ -284,8 +284,8 @@ int CMainFrameWorker::svc()
 					sCaption.Format( _T( "%s (%d workers)" ), m_Parent->m_Caption, task_count );
 
 				m_Parent->SetWindowText( sCaption );
+				last_task_count = task_count;
 			}
-			last_task_count = task_count;
 
 			// requery every 3 seconds
 			cnt++;

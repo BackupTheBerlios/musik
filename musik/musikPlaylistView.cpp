@@ -266,16 +266,25 @@ void CmusikPlaylistView::UpdatePlaylistInfo()
 
 void CmusikPlaylistView::OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/)
 {
-	CRect rcHeader;
+	CRect rcHeader, rcPlaylist;
 	GetCtrl()->GetHeaderCtrl()->GetClientRect( rcHeader );
+	GetCtrl()->GetClientRect( rcPlaylist );
 
 	CPoint pos;
 	GetCursorPos( &pos );
 	ScreenToClient( &pos );
 
+	if ( m_Prefs->PlaylistInfoVisible() || m_Prefs->GetPlaylistInfoVizStyle() )
+	{
+		rcHeader.OffsetRect( 0, VIZ_HEIGHT + 2 + 4  );
+
+		rcPlaylist.OffsetRect( 0, VIZ_HEIGHT + 2 + 4 );
+		rcPlaylist.OffsetRect( 0, rcHeader.Height() );
+	}
+
 	if ( rcHeader.PtInRect( pos ) )
 		GetCtrl()->ShowHeaderMenu();
-	else
+	else if ( rcPlaylist.PtInRect( pos ) )
 		GetCtrl()->ShowContextMenu();
 }
 
