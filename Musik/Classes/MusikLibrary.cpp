@@ -1111,7 +1111,7 @@ bool CMusikLibrary::RenameFile( CMusikSong* song, bool bClearCheck )
 	//--- new filename information ---//
 	//--------------------------------//
 	wxFileName filename( song->Filename );
-	wxString sPrePath	= /*filename.GetVolume() + filename.GetVolumeSeparator() +*/ filename.GetPath() + filename.GetPathSeparator();
+	wxString sPrePath	= filename.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR );
 	wxString sFile		= g_Prefs.sAutoRename;
 	wxString sExt		= wxT(".") + filename.GetExt();
 
@@ -1209,7 +1209,9 @@ bool CMusikLibrary::RenameFile( CMusikSong* song, bool bClearCheck )
 	wxString oldfilename = song->Filename;
 	wxString newfilename = sFinalPath + sFile + sExt;
 
+	//-----------------------------------------//
 	//--- filename already the same? return ---//
+	//-----------------------------------------//
 	if ( oldfilename == newfilename )
 	{
 		g_Library.UpdateItem( oldfilename, *song, false );
@@ -1219,11 +1221,6 @@ bool CMusikLibrary::RenameFile( CMusikSong* song, bool bClearCheck )
 
 		return true;
 	}
-
-	//--- file already exists? return false ---//
-	if ( wxFileExists( newfilename ) )
-		return false;
-
 
 	//-----------------------------------------//
 	//--- file does need to be renamed, so	---//
@@ -1237,10 +1234,7 @@ bool CMusikLibrary::RenameFile( CMusikSong* song, bool bClearCheck )
 		if ( bClearCheck )
 			song->Check1 = 0;
 
-		if ( wxFileExists( oldfilename ) )
-			return true;
-		else
-			return true;
+		return true;
 	}
 	
 	//-----------------------------------------//
