@@ -291,6 +291,26 @@
 							RelativePath=".\musikSelectionCtrl.h">
 						</File>
 					</Filter>
+					<Filter
+						Name="musikCrossfaderCtrl"
+						Filter="">
+						<File
+							RelativePath=".\musikCrossfaderCtrl.cpp">
+						</File>
+						<File
+							RelativePath=".\musikCrossfaderCtrl.h">
+						</File>
+					</Filter>
+					<Filter
+						Name="musikEqualizerCtrl"
+						Filter="">
+						<File
+							RelativePath=".\musikEqualizerCtrl.cpp">
+						</File>
+						<File
+							RelativePath=".\musikEqualizerCtrl.h">
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="musikTreePrefs"
