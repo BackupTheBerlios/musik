@@ -3302,7 +3302,7 @@ void CMainFrame::ImportWinamp()
 	if ( m_WinampVis )
 		DeinitWinamp();
 
-	m_WinampVis = LoadLibrary( _T( "d:\\source\\_dll\\winamp.dll" ) );
+	m_WinampVis = LoadLibrary( _T( "winamp.dll" ) );
 
 	visLoadVisPlugins = ( lpfnLoadVisPlugins )GetProcAddress( m_WinampVis, _T( "_LoadVisPlugins@4" ) );
 	visGetVisInfo = ( lpfnGetVisInfo )GetProcAddress( m_WinampVis, _T( "_GetVisInfo@4" ) );
@@ -3326,7 +3326,7 @@ void CMainFrame::GetVisList()
 	if ( m_WinampVis )
 	{
 		m_VisList.clear();
-		visLoadVisPlugins( ( LPCTSTR )_T( "c:\\program files\\winamp\\plugins\\" ) );
+		visLoadVisPlugins( m_Prefs->GetWinampPluginDir().c_str() );
 
 		for ( size_t i = 0; i < visGetVisCount(); i++ )
 		{

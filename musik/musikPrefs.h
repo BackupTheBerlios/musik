@@ -123,10 +123,13 @@ public:
 	string GetWinampVisName(){ return m_WinampVis_Name; }
 	int GetWinampVisModule(){ return m_WinampVis_Module; }
 	int GetWinampVis(){ return m_WinampVis_Lib; }
+	string GetWinampPluginDir() { return m_Winamp_PluginDir; }
 
 	void SetWinampVisName( string& name ){ m_WinampVis_Name = name; }
 	void SetWinampVisModule( int module ){ m_WinampVis_Module = module; }
 	void SetWinampVis( int vis ){ m_WinampVis_Lib = vis; }
+	void SetWinampPluginDir ( string val ) { m_Winamp_PluginDir = val; }
+
 
 	//
 	// selection box
@@ -254,6 +257,8 @@ public:
 	void SetTunageEnabled( bool val ) { m_Tunage_Enabled = val; }
 	void SetTunageWriteFile( bool val ) { m_Tunage_WriteFile = val; }	void SetTunageFilename( string val ) { m_Tunage_Filename = val; }	void SetTunageFileLine( string val ) { m_Tunage_FileLine = val; }	void SetTunageAppendFile( bool val ) {  m_Tunage_AppendFile = val; }	void SetTunagePostURL( bool val ) {  m_Tunage_PostURL = val; }	void SetTunageURL( string val ) {  m_Tunage_URL = val; }	void SetTunageRunApp( bool val ) { m_Tunage_RunApp = val; }	void SetTunageCmdLine( string val ) {  m_Tunage_CmdLine = val; }	void SetTunageRunOnStop( bool val ) {  m_Tunage_RunOnStop = val; }	void SetTunageStoppedText( string val ) { m_Tunage_StoppedText = val; }
 
+	
+
 protected:
 
 	CIniFile* config;
@@ -282,6 +287,7 @@ private:
 	string m_WinampVis_Name;
 	int m_WinampVis_Module;
 	int m_WinampVis_Lib;
+	string m_Winamp_PluginDir;
 
 	// sources
 	bool	m_Sources_SubLibsVisible;
@@ -342,6 +348,7 @@ private:
 	// tunage
 	bool m_Tunage_Enabled;
 	bool m_Tunage_WriteFile;	string m_Tunage_Filename;	string m_Tunage_FileLine;	bool m_Tunage_AppendFile;	bool m_Tunage_PostURL;	string m_Tunage_URL;	bool m_Tunage_RunApp;	string m_Tunage_CmdLine;	bool m_Tunage_RunOnStop;	string m_Tunage_StoppedText;
+
 };
 
 ///////////////////////////////////////////////////
