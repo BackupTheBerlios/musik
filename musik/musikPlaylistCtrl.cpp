@@ -114,6 +114,7 @@ BEGIN_MESSAGE_MAP(CmusikPlaylistCtrl, CmusikListCtrl)
 
 	// custom messages
 	ON_REGISTERED_MESSAGE( WM_TAGPROPERTIESDESTROY, OnTagEditDestroy )
+	ON_NOTIFY_REFLECT(LVN_ITEMCHANGED, OnLvnItemchanged)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -753,6 +754,9 @@ void CmusikPlaylistCtrl::SetPlaylist( CmusikPlaylist* playlist )
 
 	if ( m_InfoCtrl )
 		m_InfoCtrl->UpdateInfo();	
+
+	if ( m_TagEdit )
+		m_TagEdit->UpdatePlaylist( m_Playlist );
 }
 
 ///////////////////////////////////////////////////
@@ -1916,6 +1920,8 @@ void CmusikPlaylistCtrl::OnPlaylistcontextmenuProperties()
 		m_TagEdit = new CmusikTagDlg( this, m_Playlist, m_Library );
 		m_TagEdit->Create( IDD_TAG_PROPERTIES, this );
 		m_TagEdit->ShowWindow( SW_SHOWNORMAL );
+
+		m_TagEdit->UpdateSel( GetFirstSelected() );
 	}
 }
 
@@ -1927,6 +1933,18 @@ LRESULT CmusikPlaylistCtrl::OnTagEditDestroy( WPARAM wParam, LPARAM lParam )
 	m_TagEdit = NULL;
 
 	return 0L;
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::OnLvnItemchanged(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
+
+	if ( m_TagEdit )
+		m_TagEdit->UpdateSel( pNMLV->iItem );
+	
+	*pResult = 0;
 }
 
 ///////////////////////////////////////////////////

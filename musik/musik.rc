@@ -598,36 +598,42 @@ END
 IDD_TAG_PROPERTIES DIALOGEX 0, 0, 269, 221
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
     WS_SYSMENU
-CAPTION "musikCube Tag Properties"
+CAPTION "musikCube Song Properties"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,215,202,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,6,202,50,14
-    LTEXT           "Title:",IDC_STATIC,6,116,24,8
     EDITTEXT        IDC_TITLE,36,114,174,14,ES_AUTOHSCROLL
-    LTEXT           "Track:",IDC_STATIC,215,116,21,8
     EDITTEXT        IDC_TRACK,240,114,24,14,ES_AUTOHSCROLL
-    LTEXT           "Artist:",IDC_STATIC,6,135,24,8
     EDITTEXT        IDC_ARTIST,36,132,228,14,ES_AUTOHSCROLL
     EDITTEXT        IDC_ALBUM,36,150,228,14,ES_AUTOHSCROLL
+    COMBOBOX        IDC_GENRE,36,168,90,30,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_YEAR,158,168,24,14,ES_AUTOHSCROLL
+    COMBOBOX        IDC_RATING,216,169,48,65,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    PUSHBUTTON      "Prev",IDC_PREV,6,203,50,14
+    PUSHBUTTON      "Next",IDC_NEXT,60,203,50,14
+    PUSHBUTTON      "Apply",IDC_APPLY,114,203,50,14
+    PUSHBUTTON      "Close",IDC_CLOSE,215,203,50,14
+    LTEXT           "Title:",IDC_STATIC,6,116,24,8
+    LTEXT           "Track:",IDC_STATIC,215,116,21,8
+    LTEXT           "Artist:",IDC_STATIC,6,135,24,8
     LTEXT           "Album:",IDC_STATIC,6,153,24,8
-    PUSHBUTTON      "Next",IDC_BUTTON1,161,202,50,14
-    PUSHBUTTON      "Prev",IDC_BUTTON3,108,202,50,14
     LTEXT           "Genre:",IDC_STATIC,6,170,24,8
-    COMBOBOX        IDC_GENRE,36,169,84,30,CBS_DROPDOWN | CBS_SORT | 
-                    WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Year:",IDC_STATIC,126,170,24,8
-    EDITTEXT        IDC_YEAR,150,167,40,14,ES_AUTOHSCROLL
-    LTEXT           "Bitrate:",IDC_BITRATE,6,30,258,8
-    LTEXT           "Duration",IDC_DURATION,6,42,258,8
-    LTEXT           "Format",IDC_FORMAT,6,54,258,8
-    LTEXT           "Time Added",IDC_TIMEADDED,6,66,258,8
-    LTEXT           "Last Played",IDC_LASTPLAYED,6,78,258,8
-    LTEXT           "Times Played",IDC_TIMESPLAYED,6,90,258,8
-    LTEXT           "Rating:",IDC_STATIC,198,172,24,8
-    COMBOBOX        IDC_RATING,228,170,36,30,CBS_DROPDOWN | CBS_SORT | 
-                    WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Filename: ",IDC_FILENAME,6,6,258,24,SS_ENDELLIPSIS
+    LTEXT           "Year:",IDC_STATIC,134,171,18,8
+    LTEXT           "x",IDC_BITRATE,72,30,192,8
+    LTEXT           "x",IDC_DURATION,72,42,192,8
+    LTEXT           "x",IDC_FORMAT,72,54,192,8
+    LTEXT           "x",IDC_TIMEADDED,72,66,192,8
+    LTEXT           "x",IDC_LASTPLAYED,72,78,192,8
+    LTEXT           "x",IDC_TIMESPLAYED,72,90,192,8
+    LTEXT           "Rating:",IDC_STATIC,189,171,24,8
+    LTEXT           "Filename: ",IDC_FILENAME,6,6,258,24
+    LTEXT           "Times Played: ",IDC_STATIC,6,90,54,8
+    LTEXT           "Last Played:",IDC_STATIC,6,78,54,8
+    LTEXT           "Time Added:",IDC_STATIC,6,66,54,8
+    LTEXT           "Format:",IDC_STATIC,6,54,54,8
+    LTEXT           "Duration:",IDC_STATIC,6,42,54,8
+    LTEXT           "Bitrate:",IDC_STATIC,6,30,54,8
 END
 
 IDD_PROPPAGE_TUNAGE DIALOGEX 0, 0, 210, 154

@@ -111,9 +111,11 @@
 #define IDC_FIELDSTRING1                1036
 #define IDC_BUTTON1                     1038
 #define IDC_ADD                         1038
+#define IDC_NEXT                        1038
 #define IDC_BUTTON3                     1039
 #define IDC_REMOVE                      1039
 #define IDC_SAVE_ACTIVE_AS_NEW          1039
+#define IDC_PREV                        1039
 #define IDC_LIST2                       1040
 #define IDC_DIRS                        1040
 #define IDC_PRESET_BOX                  1040
@@ -162,6 +164,7 @@
 #define IDC_TITLE                       1067
 #define IDC_GENRE                       1068
 #define IDC_YEAR                        1069
+#define IDC_APPLY                       1070
 #define ID_FILE_PREFERENCES             32771
 #define ID_FILE_SEP                     32772
 #define ID_ADD_FILES                    32774
@@ -297,7 +300,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        165
 #define _APS_NEXT_COMMAND_VALUE         32943
-#define _APS_NEXT_CONTROL_VALUE         1070
+#define _APS_NEXT_CONTROL_VALUE         1071
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif

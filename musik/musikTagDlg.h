@@ -31,10 +31,7 @@
 //
 // Information:
 //
-//   The tag editing dialog is treated as a child of
-//   the playlist window -- therefor it has a pointer
-//   to its parent. it is allowed to talk back and forth
-//   directly without posting messages. 
+//   The tag editing dialog 
 // 
 // Usage: 
 //
@@ -61,24 +58,33 @@ public:
 	virtual ~CmusikTagDlg();
 
 	// helpers
-	void UpdateSongInfo( int item = 0 );
 	void UpdateSel( int index = 0 );
+	void UpdatePlaylist( CmusikPlaylist* playlist ){ m_Playlist = playlist; }
 
 	// misc
 	enum { IDD = IDD_TAG_PROPERTIES };
 	virtual void DoDataExchange(CDataExchange* pDX);  
 	void OnClose();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	virtual BOOL OnInitDialog();
+
+	// mfc messages
+	afx_msg void OnBnClickedClose();
 
 protected:
+
+	// update info
+	void UpdateDlg();
 
 	// from parent
 	CWnd* m_Parent;
 	CmusikLibrary* m_Library;
 	CmusikPlaylist* m_Playlist;
-	CmusikSongInfoArray m_Songs;
+	CmusikSongInfo m_Song;
+
 	int m_SongIndex;
 
+	// macros
 	DECLARE_DYNAMIC(CmusikTagDlg)
 	DECLARE_MESSAGE_MAP()
 

@@ -219,6 +219,7 @@ protected:
 	afx_msg void OnPlaylistcontextmenuShufflenowplaying();
 	afx_msg void OnPlaylistcontextmenuProperties();
 	afx_msg LRESULT OnTagEditDestroy( WPARAM wParam = NULL, LPARAM lParam = NULL );
+	afx_msg void OnLvnItemchanged(NMHDR *pNMHDR, LRESULT *pResult);
 
 	// CmusikPlaylistDropTarget calls
 	// this function once files have
