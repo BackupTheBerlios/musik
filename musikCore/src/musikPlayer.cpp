@@ -1392,6 +1392,9 @@ bool CmusikPlayer::FindNewIndex( int songid )
 {	
 	bool found = false;
 
+	if ( songid == m_Playlist->GetSongID( m_Index ) )
+		return true;
+
 	for ( size_t i = 0; i < m_Playlist->GetCount(); i++ )
 	{
 		if ( m_Playlist->GetSongID( i ) == songid )
