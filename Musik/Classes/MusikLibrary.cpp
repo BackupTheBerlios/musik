@@ -129,7 +129,6 @@ bool CMusikLibrary::Load()
 		sqlite_exec( m_pDB, pQuery, NULL, NULL, NULL );
 	}
 	
-
 	if ( errmsg )
 			free( errmsg );
 			
@@ -278,47 +277,46 @@ void CMusikLibrary::AddMP3( const wxString & filename )
 void CMusikLibrary::WriteMP3Tag( const wxString & filename, bool ClearAll )
 {
 	//wxMutexLocker lock( LibMutex );
-
 	CMusikSong song;
+
 	if ( GetSongFromFilename( filename, &song ) )
 	{
 		ID3_Tag	id3Tag;
-		if ( id3Tag.Link( ( const char* )ConvFNToFieldMB( filename ) , ID3TT_ALL ) )
+		id3Tag.Link( ( const char* )ConvFNToFieldMB( filename ) , ID3TT_ALL );
+
+		//--- itterate through and delete ALL TAG INFO ---//
+		if ( ClearAll )
 		{
-			//--- itterate through and delete ALL TAG INFO ---//
-			if ( ClearAll )
+			ID3_Tag::Iterator* iter = id3Tag.CreateIterator();
+			ID3_Frame* frame = NULL;
+			while (NULL != (frame = iter->GetNext()))
 			{
-				ID3_Tag::Iterator* iter = id3Tag.CreateIterator();
-				ID3_Frame* frame = NULL;
-				while (NULL != (frame = iter->GetNext()))
-				{
-					frame = id3Tag.RemoveFrame(frame);
-					delete frame;
-				}
+				frame = id3Tag.RemoveFrame(frame);
+				delete frame;
 			}
-
-			//--- clear only fields of interest ---//
-			else if ( !ClearAll )
-			{
-				ID3_RemoveTitles	( &id3Tag ); 
-				ID3_RemoveArtists	( &id3Tag );
-				ID3_RemoveAlbums	( &id3Tag );
-				ID3_RemoveTracks	( &id3Tag );
-				ID3_RemoveYears		( &id3Tag );
-				ID3_RemoveGenres	( &id3Tag );
-			}
-
-			//--- tag ---//
-			ID3_AddTitle	( &id3Tag, ( const char* )ConvDBFieldToMB( song.Title ),	true ); 
-			ID3_AddArtist	( &id3Tag, ( const char* )ConvDBFieldToMB( song.Artist ),	true );
-			ID3_AddAlbum	( &id3Tag, ( const char* )ConvDBFieldToMB( song.Album ),	true );
-			ID3_AddYear		( &id3Tag, ( const char* )ConvDBFieldToMB( song.Year ), 	true );
-			ID3_AddTrack	( &id3Tag, song.TrackNum,									true );
-			ID3_AddGenre	( &id3Tag, GetGenreID( song.Genre ),						true );
-
-			//--- write to file ---//
-			id3Tag.Update();
 		}
+
+		//--- clear only fields of interest ---//
+		else if ( !ClearAll )
+		{
+			ID3_RemoveTitles	( &id3Tag ); 
+			ID3_RemoveArtists	( &id3Tag );
+			ID3_RemoveAlbums	( &id3Tag );
+			ID3_RemoveTracks	( &id3Tag );
+			ID3_RemoveYears		( &id3Tag );
+			ID3_RemoveGenres	( &id3Tag );
+		}
+
+		//--- tag ---//
+		ID3_AddTitle	( &id3Tag, ( const char* )ConvDBFieldToMB( song.Title ),	true ); 
+		ID3_AddArtist	( &id3Tag, ( const char* )ConvDBFieldToMB( song.Artist ),	true );
+		ID3_AddAlbum	( &id3Tag, ( const char* )ConvDBFieldToMB( song.Album ),	true );
+		ID3_AddYear		( &id3Tag, ( const char* )ConvDBFieldToMB( song.Year ), 	true );
+		ID3_AddTrack	( &id3Tag, song.TrackNum,									true );
+		ID3_AddGenre	( &id3Tag, GetGenreID( song.Genre ),						true );
+
+		//--- write to file ---//
+		id3Tag.Update();
 	}
 }
 
