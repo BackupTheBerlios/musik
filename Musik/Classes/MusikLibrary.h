@@ -70,6 +70,8 @@ public:
 	int			Bitrate;
 	bool		VBR;
 	wxString	Notes;
+	wxString	TimeAdded;
+	int			Filesize;
 	int			Check1;		//--- for tag dlg stuff, checks to see if it needs to be written to file / db ---//
 };
 

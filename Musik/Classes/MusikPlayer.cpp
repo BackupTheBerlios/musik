@@ -465,6 +465,20 @@ void CMusikPlayer::PrevSong()
 	}
 }
 
+int CMusikPlayer::GetFilesize( wxString sFilename )
+{
+	int filesize = -1;
+	FSOUND_STREAM *pStream = FSOUND_Stream_OpenFile( ( const char* )ConvFNToFieldMB( sFilename ), FSOUND_2D, 0 );
+
+	if ( pStream )
+	{
+		filesize = FSOUND_Stream_GetLength( pStream );
+		FSOUND_Stream_Close( pStream );
+	}
+	
+	return filesize;
+}
+
 void CMusikPlayer::SetVolume()
 {
 	if ( IsPlaying() )

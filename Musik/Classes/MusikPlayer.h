@@ -119,6 +119,7 @@ public:
 	size_t	GetCurIndex			( ) { return ( m_SongIndex ); }
 	int	 GetDuration			( int nType );
 	int	 GetFileDuration		( wxString sFilename, int nType );
+	int  GetFilesize			( wxString sFilename );
 	int	 GetLastTime			( int nType );
 	int	 GetTime				( int nType );
 	int	 GetTimeLeft			( int nType );

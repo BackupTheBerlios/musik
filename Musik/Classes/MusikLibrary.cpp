@@ -52,6 +52,8 @@ CMusikSong::CMusikSong()
 	Genre 		= _("<unknown>");
 	Year 		= wxT("");
 	LastPlayed 	= wxT("");
+	TimeAdded	= wxT("");
+	Filesize	= 0;
 	Format 		= 0;
 	Duration	= 0;
 	Rating 		= 0;
@@ -118,6 +120,8 @@ bool CMusikLibrary::Load()
 		query += wxT( "notes varchar(255), "			);
 		query += wxT( "timesplayed number(5), "			);
 		query += wxT( "duration number(10), "			);
+		query += wxT( "timeadded timestamp, "			);
+		query += wxT( "filesize number(10), "			);
 		query += wxT( "dirty number(10) "				);
 		query += wxT( " );"								);
 	}
@@ -218,6 +222,9 @@ void CMusikLibrary::AddMP3( const wxString & filename )
 	int duration	= 0;
 	int vbr			= 0;
 	int timesplayed = 0;
+	wxDateTime currtime = wxDateTime::Now();
+	wxString timeadded = currtime.Format();
+	int filesize = 0;
 	int dirty = 0;
 
 	//--- first get the things that can be gleaned from the header ---//
@@ -227,6 +234,7 @@ void CMusikLibrary::AddMP3( const wxString & filename )
 		duration	= mp3info.getLengthInSeconds() * 1000;
 		bitrate		= mp3info.getBitrate();
 		vbr			= mp3info.isVBitRate();
+		filesize	= mp3info.getFileSize();
 		
 		//--- link and load mp3 ---//
 		ID3_Tag		id3Tag;
@@ -248,7 +256,7 @@ void CMusikLibrary::AddMP3( const wxString & filename )
 		sGenre = GetGenre( sGenre );
 		
 		//--- run the query ---//
-		sqlite_exec_printf( m_pDB, "insert into songs values ( %Q, %d, %d, %Q, %Q, %Q, %Q, %d, %Q, %Q, %d, %d, %Q, %Q, %d, %d, %d );", NULL, NULL, NULL, NULL,
+		sqlite_exec_printf( m_pDB, "insert into songs values ( %Q, %d, %d, %Q, %Q, %Q, %Q, %d, %Q, %Q, %d, %d, %Q, %Q, %d, %d, %Q, %d, %d );", NULL, NULL, NULL, NULL,
 			format,	
 			vbr, 
 			( const char* )ConvFNToFieldMB( filename ), 
@@ -264,6 +272,8 @@ void CMusikLibrary::AddMP3( const wxString & filename )
 			"",//notes 
 			timesplayed, 
 			duration, 
+			( const char* )ConvDBFieldToMB( timeadded ),
+			filesize,
 			dirty );
 
 		ID3_FreeString(szArtist);
@@ -439,10 +449,12 @@ void CMusikLibrary::AddOgg( const wxString & filename )
 	wxString notes;
 	int timesplayed = 0;
 	int dirty 		= 0;
+	int filesize	= 0;
 
 	COggInfo oggInfo;
 	if ( oggInfo.loadInfo( filename ) )
 	{
+		filesize	= g_Player.GetFilesize( filename );
 		duration	= g_Player.GetFileDuration( filename, FMOD_MSEC );
 		bitrate		= oggInfo.GetBitrate();
 		vbr			= true;
@@ -454,6 +466,9 @@ void CMusikLibrary::AddOgg( const wxString & filename )
 		genre		= oggInfo.GetGenre();
 		tracknum	= oggInfo.GetTrackNum();
 
+		wxDateTime currtime = wxDateTime::Now();
+		wxString timeadded = currtime.Format();
+
 		if ( artist.Length() < 0 )
 			artist = justfilename;
 
@@ -464,7 +479,7 @@ void CMusikLibrary::AddOgg( const wxString & filename )
 			title = justfilename;
 
 		//--- run the query ---//
-		sqlite_exec_printf( m_pDB, "insert into songs values ( %Q, %d, %d, %Q, %Q, %Q, %Q, %d, %Q, %Q, %d, %d, %Q, %Q, %d, %d, %d );", NULL, NULL, NULL, NULL,	
+		sqlite_exec_printf( m_pDB, "insert into songs values ( %Q, %d, %d, %Q, %Q, %Q, %Q, %d, %Q, %Q, %d, %d, %Q, %Q, %d, %d, %Q, %d, %d );", NULL, NULL, NULL, NULL,	
 			format,	
 			vbr, 
 			( const char* )ConvFNToFieldMB( filename ),
@@ -480,6 +495,8 @@ void CMusikLibrary::AddOgg( const wxString & filename )
 			( const char* )ConvDBFieldToMB( notes ), 
 			timesplayed, 
 			duration, 
+			( const char* )ConvDBFieldToMB( timeadded ), 
+			filesize,
 			dirty );
 	
 	}
@@ -635,13 +652,13 @@ CMusikSongArray CMusikLibrary::GetSongs( wxArrayString *aList, int nInType )
 		wxCharBuffer ItemStr =  ConvQueryToMB(aList->Item( i )) ;
 			
 		if ( nInType == MUSIK_LIB_ARTIST )
-			query = sqlite_mprintf( "select filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed from songs where artist = %Q order by album,tracknum;", (const char*)ItemStr );
+			query = sqlite_mprintf( "select filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize from songs where artist = %Q order by album,tracknum;", (const char*)ItemStr );
 		else if ( nInType == MUSIK_LIB_ALBUM )
-			query = sqlite_mprintf( "select filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed from songs where album = %Q order by album,tracknum;", (const char*)ItemStr  );
+			query = sqlite_mprintf( "select filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize from songs where album = %Q order by album,tracknum;", (const char*)ItemStr  );
 		else if ( nInType == MUSIK_LIB_GENRE )
-			query = sqlite_mprintf( "select filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed from songs where genre = %Q order by album,tracknum;", (const char*)ItemStr  );
+			query = sqlite_mprintf( "select filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize from songs where genre = %Q order by album,tracknum;", (const char*)ItemStr  );
 		else if ( nInType == MUSIK_LIB_YEAR )
-			query = sqlite_mprintf( "select filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed from songs where year = %Q order by album,tracknum;", (const char*)ItemStr  );
+			query = sqlite_mprintf( "select filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize from songs where year = %Q order by album,tracknum;", (const char*)ItemStr  );
 
 		//--- run query ---//
 		const char *pTail;
@@ -673,6 +690,8 @@ CMusikSongArray CMusikLibrary::GetSongs( wxArrayString *aList, int nInType )
 			pLibItem->LastPlayed	= ConvDBFieldToWX	( coldata[12] );
 			pLibItem->Notes			= ConvDBFieldToWX	( coldata[13] );
 			pLibItem->TimesPlayed	= StringToInt		( coldata[14] );
+			pLibItem->TimeAdded		= ConvDBFieldToWX	( coldata[15] );
+			pLibItem->Filesize		= StringToInt		( coldata[16] );
 
 			aReturn.Add( pLibItem );// array takes ownerhip of object
 		}
@@ -721,7 +740,7 @@ CMusikSongArray CMusikLibrary::GetStdPlaylistSongs( wxArrayString *aFiles )
 {
 	CMusikSongArray aReturn;
 	
-	wxString sQuery = wxT("select filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed from songs where filename in (");
+	wxString sQuery = wxT("select filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize from songs where filename in (");
 
 	sQuery.Alloc(sQuery.Len() + aFiles->GetCount() * 30); // optimization ( the 30 is a wild guess)
 	for ( size_t i = 0; i < aFiles->GetCount(); i++ )
@@ -787,6 +806,8 @@ CMusikSongArray CMusikLibrary::GetStdPlaylistSongs( wxArrayString *aFiles )
 			pSong->LastPlayed	= ConvDBFieldToWX	( coldata[12] );
 			pSong->Notes		= ConvDBFieldToWX	( coldata[13] );
 			pSong->TimesPlayed	= StringToInt		( coldata[14] );
+			pSong->TimeAdded	= ConvDBFieldToWX	( coldata[15] );
+			pSong->Filesize		= StringToInt		( coldata[16] );
 
 			theMap[sCurrFile]	= pSong;            
 		}
@@ -831,7 +852,7 @@ CMusikSongArray CMusikLibrary::QuerySongs( const wxString & queryWhere )
 	sqlite_vm *pVM;
 	char *errmsg;
 
-	wxString query(wxT("select filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed from songs where "));
+	wxString query(wxT("select filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize from songs where "));
 	query += queryWhere + wxT(";");
 	const wxCharBuffer pQuery = ConvQueryToMB(query);
 	sqlite_compile( m_pDB, pQuery, &pTail, &pVM, &errmsg );
@@ -864,6 +885,8 @@ CMusikSongArray CMusikLibrary::QuerySongs( const wxString & queryWhere )
 			pLibItem->LastPlayed	= ConvDBFieldToWX	( coldata[12] );
 			pLibItem->Notes			= ConvDBFieldToWX	( coldata[13] );
 			pLibItem->TimesPlayed	= StringToInt		( coldata[14] );
+			pLibItem->TimeAdded		= ConvDBFieldToWX	( coldata[15] );
+			pLibItem->Filesize		= StringToInt		( coldata[16] );
 			
 			aReturn.Add( pLibItem );
 		}
@@ -946,7 +969,7 @@ int CMusikLibrary::GetSongCount()
 
 bool CMusikLibrary::GetSongFromFilename( const wxString& filename, CMusikSong *pSong )
 {
-	char *query = sqlite_mprintf( "select filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed from songs where filename = %Q;", ( const char* )ConvFNToFieldMB( filename ) );
+	char *query = sqlite_mprintf( "select filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize from songs where filename = %Q;", ( const char* )ConvFNToFieldMB( filename ) );
 
 	//--- run query ---//
 	const char *pTail;
@@ -977,6 +1000,8 @@ bool CMusikLibrary::GetSongFromFilename( const wxString& filename, CMusikSong *p
 		pSong->LastPlayed	= ConvDBFieldToWX	( coldata[12] );
 		pSong->Notes		= ConvDBFieldToWX	( coldata[13] );
 		pSong->TimesPlayed	= StringToInt		( coldata[14] );	
+		pSong->TimeAdded	= ConvDBFieldToWX	( coldata[15] );
+		pSong->Filesize		= StringToInt		( coldata[16] );
 		pSong->Filename		= filename;
 
 		m_FoundSong = true;
@@ -998,7 +1023,7 @@ void CMusikLibrary::UpdateItem( const wxString & fn, CMusikSong & newsonginfo, b
 		wxString OldFilename( fn );
 
 		//--- run statement to update current item ---//
-		int result = sqlite_exec_printf( m_pDB, "update songs set format=%d, vbr=%d, filename=%Q, artist=%Q, title=%Q, album=%Q, tracknum=%d, year=%Q, genre=%Q, rating=%d, bitrate=%d, lastplayed=%Q, notes=%Q, timesplayed=%d, duration=%d, dirty=%d where filename = %Q;", NULL, NULL, NULL, 
+		int result = sqlite_exec_printf( m_pDB, "update songs set format=%d, vbr=%d, filename=%Q, artist=%Q, title=%Q, album=%Q, tracknum=%d, year=%Q, genre=%Q, rating=%d, bitrate=%d, lastplayed=%Q, notes=%Q, timesplayed=%d, duration=%d, timeadded=%Q, filesize=%d, dirty=%d where filename = %Q;", NULL, NULL, NULL, 
 			newsonginfo.Format, 
 			newsonginfo.VBR, 
 			( const char* )ConvFNToFieldMB( filename ), 
@@ -1013,6 +1038,8 @@ void CMusikLibrary::UpdateItem( const wxString & fn, CMusikSong & newsonginfo, b
 			( const char* )ConvDBFieldToMB( newsonginfo.LastPlayed ), 
 			( const char* )ConvDBFieldToMB( newsonginfo.Notes ), 
 			newsonginfo.TimesPlayed, 
+			( const char* )ConvDBFieldToMB( newsonginfo.TimeAdded ), 
+			newsonginfo.Filesize,
 			newsonginfo.Duration, 
 			(int)bDirty, 
 			( const char* )ConvDBFieldToMB( OldFilename ) );

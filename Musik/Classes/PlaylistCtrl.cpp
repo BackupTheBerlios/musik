@@ -14,6 +14,8 @@
 //--- For compilers that support precompilation, includes "wx/wx.h". ---//
 #include "wx/wxprec.h"
 
+#include "wx/file.h"
+
 #include "PlaylistCtrl.h"
 
 //--- globals ---//
@@ -578,7 +580,6 @@ int CPlaylistCtrl::GetTotalPlayingTimeInSeconds()
 	}
 	return Duration;
 }
-
 
 wxString CPlaylistCtrl::GetFilename( int nItem )
 {
