@@ -640,14 +640,25 @@ void CmusikPlaylistCtrl::OnNMClick(NMHDR *pNMHDR, LRESULT *pResult)
 					nRating++;
 			}
 
-
             m_Library->SetSongRating( m_Playlist->GetSongID( hit_test.iItem ), nRating );	
-			if ( m_SongInfoCache->ResyncItem( m_Playlist->GetSongID( hit_test.iItem ) ) )
-				RedrawItems( hit_test.iItem, hit_test.iItem );
+			ResyncItem( m_Playlist->GetSongID( hit_test.iItem ), hit_test.iItem );
 		}
 	}
 
 	*pResult = 0;
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::ResyncItem( size_t songid, int item )
+{
+	if ( m_SongInfoCache->ResyncItem( songid ) )
+	{
+		if ( item != -1 )
+			RedrawItems( item, item );
+		else
+			RedrawWindow();
+	}
 }
 
 ///////////////////////////////////////////////////

@@ -80,7 +80,9 @@ public:
 	void InitColors();
 	void UpdateV( bool redraw = true, bool select_none = false );
 	void ScrollToCurr();
+	void ResyncItem( size_t songid, int item = -1 );
 
+	// stuff dealing with the playlist header
 	void ShowContextMenu();
 	void ShowHeaderMenu();
 	int GetColumnPos( int field );
