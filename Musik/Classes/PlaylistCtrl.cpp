@@ -69,6 +69,7 @@ BEGIN_EVENT_TABLE(CPlaylistCtrl, wxListCtrl)
 	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_TIME,								CPlaylistCtrl::OnDisplayMenu	)
 	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_BITRATE,							CPlaylistCtrl::OnDisplayMenu	)
 	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_FILENAME,							CPlaylistCtrl::OnDisplayMenu	)
+	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_FIT,								CPlaylistCtrl::OnDisplayMenu	)
 
 	//---------------------------------------------------------//
 	//--- threading events.. we use EVT_MENU becuase its	---//
@@ -251,6 +252,7 @@ CPlaylistCtrl::CPlaylistCtrl( wxWindow *parent, const wxWindowID id, const wxPoi
 	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_BITRATE,		_( "Bitrate" ),			wxT( "" ), wxITEM_CHECK );
 	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_FILENAME,		_( "Filename" ),		wxT( "" ), wxITEM_CHECK );
 	playlist_context_display_menu->AppendSeparator();
+	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_FIT,			_( "Fit Columns" ),		wxT( "" ), wxITEM_CHECK );
 	playlist_context_display_menu->Append( MUSIK_PLAYLIST_DISPLAY_SMART,		_( "Smart Resizing" ),	wxT( "" ), wxITEM_CHECK );
 
 	//--- main context menu ---//
@@ -406,10 +408,14 @@ void CPlaylistCtrl::ShowMenu( wxCommandEvent& WXUNUSED(event) )
 
 void CPlaylistCtrl::OnDisplayMenu( wxCommandEvent& event )
 {
-	playlist_context_display_menu->Check( event.GetId(), !event.IsChecked() );
+	if ( event.GetId() != MUSIK_PLAYLIST_DISPLAY_FIT )
+		playlist_context_display_menu->Check( event.GetId(), !event.IsChecked() );
 
 	switch ( event.GetId() )
 	{
+	case MUSIK_PLAYLIST_DISPLAY_FIT:
+		RescaleColumns( true, false, true );
+		break;
 	case MUSIK_PLAYLIST_DISPLAY_RATING:
 		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_RATING] = !event.IsChecked();
 		break;
@@ -893,12 +899,12 @@ void CPlaylistCtrl::Update( bool bSelFirst, bool  bRescaleColumns)
 		g_PlaylistInfoCtrl->Update();
 }
 
-void CPlaylistCtrl::RescaleColumns( bool bFreeze, bool bSave )
+void CPlaylistCtrl::RescaleColumns( bool bFreeze, bool bSave, bool bAutoFit )
 {
 	if ( g_DisablePlacement )
 		return;
 
-	if ( m_ColSaveNeeded )
+	if ( m_ColSaveNeeded && !bAutoFit )
 		SaveColumns();
 
 	if ( bFreeze )
@@ -935,7 +941,7 @@ void CPlaylistCtrl::RescaleColumns( bool bFreeze, bool bSave )
 	//--- if using smart columns, we need to find	---//
 	//--- what percentages mean.					---//
 	//-------------------------------------------------//
-	if ( g_Prefs.nPlaylistSmartColumns == 1 )
+	if ( g_Prefs.nPlaylistSmartColumns == 1 || bAutoFit )
 	{
 		for ( size_t i = 0; i < m_ColumnOrder.GetCount(); i++ )
 		{
@@ -978,7 +984,7 @@ void CPlaylistCtrl::RescaleColumns( bool bFreeze, bool bSave )
 		{
 			n_LastDyn = i;
 
-			if ( g_Prefs.nPlaylistSmartColumns == 1 )
+			if ( g_Prefs.nPlaylistSmartColumns == 1 || bAutoFit )
 			{
 				f_Per = ( (float)g_Prefs.nPlaylistColumnSize[nCurrItem] / (float)nTotalPercent ) * nRemainingWidth;
 				n_Per = (int)f_Per;
@@ -999,7 +1005,7 @@ void CPlaylistCtrl::RescaleColumns( bool bFreeze, bool bSave )
 	//--- remaining pixels, that may have been		---//
 	//--- lost by integer division.					---//
 	//-------------------------------------------------//
-	if ( g_Prefs.nPlaylistSmartColumns == 1 && nTotalPercent && nDynamicWidth )
+	if ( ( g_Prefs.nPlaylistSmartColumns == 1 || bAutoFit ) && nTotalPercent && nDynamicWidth )
 	{
 		m_Overflow = client_size.GetWidth() - ( nStaticWidth + nDynamicWidth );
 		size_t nLastSize = GetColumnWidth( n_LastDyn ) + m_Overflow;
@@ -1011,6 +1017,9 @@ void CPlaylistCtrl::RescaleColumns( bool bFreeze, bool bSave )
 	//-------------------------------------------------//
 	if ( bFreeze )
 		Thaw();
+
+	if ( bAutoFit )
+		SaveColumns();
 
 	Refresh( false );
 }
