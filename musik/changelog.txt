@@ -2,18 +2,17 @@
 
 a2:
  
+  - much improved navigation. double clicking a song adds it
+    to the now playing queue. it is played in the background
+    until either another song is clicked or it expires. also
+    dropping files onto now playing not only queues the songs
+    but starts playback.
   - fixed a bug where clearing the now playing and clicking
     a column to sort would crash 
   - the playlist now has an icon to indicate if a song is
     playing or not.
   - bug where hiding selection boxes and reshowing would 
     scramble sizes
-  - if musik is playing and a song is double clicked, the 
-    playlist is no longer exchanged for the visible one. the
-    new song is inserted as the next song in line and started.
-    holding ALT down changes to the visible playlist.
-  - fixed a bug where maximizing, minimizing, then restoring
-    would not restore to maximized.
   - crossfader presets and settings are now available to
     the user. see file -> preferences -> sound -> crossfader
   - duplicate equalizer and crossfader preset names are

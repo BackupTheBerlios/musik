@@ -772,69 +772,38 @@ bool CmusikPlaylistCtrl::PlayItem( int n )
 		n = GetNextSelectedItem ( pos );
 	}	
 
-	// give the current playlist to the player,
-	// unless the player already owns it.
-	if ( m_Changed )
+	int insert_at = -1;
+
+	// get activated item's songid
+	CmusikSong song;
+	song.SetID( m_Playlist->GetSongID( n ) );
+
+	// assure player has a playlist
+	if ( !m_Player->GetPlaylist() )
+		m_Player->SetPlaylist( new CmusikPlaylist() );
+
+	// insert song into player's playlist
+	if ( m_Player->GetPlaylist() != m_Playlist )
 	{
-		// (prompt to) save the current playlist...
-		if ( m_PlaylistType == MUSIK_PLAYLIST_TYPE_STANDARD )
-			SavePlaylist();
-
-
-		// if the player is playing and CTRL is not
-		// not, it as the next song.
-		if ( m_Player->IsPlaying() && m_Playlist != m_Player->GetPlaylist() && GetKeyState( VK_MENU ) >= 0 )
+		if ( m_Player->GetIndex() + 1 >= m_Player->GetPlaylist()->GetCount() )
 		{
-			CmusikSong song;
-			song.SetID( m_Playlist->GetSongID( n ) );
-
-			if ( m_Player->GetIndex() + 1 >= m_Player->GetPlaylist()->GetCount() )
-				m_Player->GetPlaylist()->Add( song );
-            else
-				m_Player->GetPlaylist()->InsertAt( song.GetID(), m_Player->GetIndex() + 1 ); 
-			
-			m_Player->Next();
-			return true;
+			m_Player->GetPlaylist()->Add( song );
+			insert_at = m_Player->GetPlaylist()->GetCount() - 1;
 		}
-
-		// give the current playlist to the player,
-		// if it does not belong to the player. otherwise,
-		// it will delete itself, then try to copy itself.
-		// confused yet? i am...
-		else if ( m_Playlist != m_Player->GetPlaylist() )
+		else
 		{
-			// the player now owns the playlist, we
-			// just continue to point to it. later,
-			// a message will be sent back to it's previous
-			// owner, letting it know its ok to create
-			// a new one in it's place.
-			m_Player->SetPlaylist( m_Playlist );
+			insert_at = m_Player->GetIndex() + 1;
+			m_Player->GetPlaylist()->InsertAt( song.GetID(), insert_at ); 
 		}
-
-		// post a message to our parent, letting it
-		// know the player owns the playlist.
-		int WM_PLAYERNEWPLAYLIST = RegisterWindowMessage( "PLAYERNEWPLAYLIST" );
-		m_Parent->SendMessage( WM_PLAYERNEWPLAYLIST, (WPARAM)m_PlaylistType );
-
-		// the current playlist always becomes the
-		// now playing after an item is activated,
-		// so our type is now "now playing" and our
-		// playlist points to the player
-		m_PlaylistType = MUSIK_SOURCES_TYPE_NOWPLAYING;
-
-		// playlist up to date!
-		m_Changed = false;
 	}
+	else
+		insert_at = n;
+	
+	// play it
+	if ( insert_at > -1 )
+		m_Player->Play( insert_at, MUSIK_CROSSFADER_NEW_SONG );
 
-	// play the song in the (new) playlist at
-	// the acitvated item.
-	if ( n > -1 )
-	{
-		m_Player->Play( n, MUSIK_CROSSFADER_NEW_SONG );
-		return true;
-	}
-
-	return false;
+	SetItemState( n, 0, LVIS_SELECTED );
 }
 
 ///////////////////////////////////////////////////
@@ -845,7 +814,16 @@ void CmusikPlaylistCtrl::OnLvnItemActivate(NMHDR *pNMHDR, LRESULT *pResult)
 	*pResult = NULL;
 
 	int item = pNMIA->iItem;
-	
+
+	// (prompt to) save the current playlist...
+	if ( m_Changed )
+	{
+		if ( m_PlaylistType == MUSIK_PLAYLIST_TYPE_STANDARD )
+			SavePlaylist();
+
+		m_Changed = false;
+	}
+
 	PlayItem( item );
 }
 
@@ -949,6 +927,10 @@ void CmusikPlaylistCtrl::BeginDrag( NMHDR* pNMHDR, bool right_button )
 
 	datasrc.CacheGlobalData ( right_button ? m_DropID_R : m_DropID_L, hgBool, &etc );
 
+	bool was_player_empty = false;
+	if ( m_Player->GetPlaylist() && !m_Player->GetPlaylist()->GetCount() )
+		was_player_empty = true;
+
 	// post a message to the main frame, letting
 	// it know that drag and drop has started
 	int WM_DRAGSTART = RegisterWindowMessage( "DRAGSTART" );
@@ -959,6 +941,14 @@ void CmusikPlaylistCtrl::BeginDrag( NMHDR* pNMHDR, bool right_button )
 
 	// post a message to the main frame, letting
 	// it know that drag and drop has completed
+	if ( was_player_empty )
+	{
+		if ( !m_Player->IsPlaying() )
+			m_Player->Play( 0, MUSIK_CROSSFADER_NEW_SONG );
+		else
+			m_Player->FindNewIndex( m_Player->GetCurrPlaying()->GetID() );
+	}
+
 	int WM_DRAGEND = RegisterWindowMessage( "DRAGEND" );
 	m_Parent->SendMessage( WM_DRAGEND, NULL );
 

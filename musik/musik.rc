@@ -365,21 +365,23 @@ FONT 8, "MS Shell Dlg", 0, 0, 0x0
 BEGIN
     CONTROL         "Minimize to notification tray (next to clock)",
                     IDC_CHECK_ENABLETRAYICON,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,5,35,151,10
+                    WS_TABSTOP,5,33,151,10
     CONTROL         "Start musikCube in tray on Windows startup",
                     IDC_CHECK_STARTWITHWINDOWS,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,5,48,157,10
+                    WS_TABSTOP,5,46,157,10
     CONTROL         "Prompt to save changes to playlists",IDC_CHECK1,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,6,66,129,10
+                    BS_AUTOCHECKBOX | WS_TABSTOP,6,64,129,10
     CONTROL         "Prompt when dropping files onto playlist",IDC_CHECK2,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,77,143,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,75,143,10
     CONTROL         "Automatically synchronize directories on startup",
-                    IDC_CHECK4,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,96,
+                    IDC_CHECK4,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,94,
                     169,10
     CONTROL         "Selecting ""Library"" displays all files",IDC_CHECK3,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,114,125,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,112,125,10
     CTEXT           "All users should consider setting up the following options:",
                     IDC_STATIC,12,11,186,13
+    CONTROL         "Treat playlists as separate libraries",IDC_CHECK5,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,129,127,10
 END
 
 IDD_PROPPAGE_SOUND_DRIVER DIALOGEX 0, 0, 210, 154
