@@ -80,7 +80,8 @@ bool CmusikMp3Info::LoadInfo( const CStdString& fn )
 
 	year_temp.Replace( "(", "" );
 	year_temp.Replace( ")", "" );
-	if ( atoi( year_temp.c_str() ) == 0 || year_temp.GetLength() != 4 || year_temp.IsEmpty() )
+	int year = atoi( year_temp.c_str() );
+	if ( year == 0 || year > 9999 || year < 1000 )
 		year_temp = "0";
 		
 	track_num.Replace( "(", "" );
