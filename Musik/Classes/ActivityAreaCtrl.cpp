@@ -23,31 +23,12 @@
 #include "PlaylistCtrl.h"
 
 BEGIN_EVENT_TABLE(CActivityAreaCtrl, wxSashLayoutWindow)
-	EVT_LIST_ITEM_FOCUSED		( MUSIK_ACTIVITYBOX1, CActivityAreaCtrl::OnActivityBoxFocused	)
-	EVT_LIST_ITEM_FOCUSED		( MUSIK_ACTIVITYBOX2, CActivityAreaCtrl::OnActivityBoxFocused	)
-	EVT_LIST_ITEM_FOCUSED		( MUSIK_ACTIVITYBOX3, CActivityAreaCtrl::OnActivityBoxFocused	)
-	EVT_LIST_ITEM_FOCUSED		( MUSIK_ACTIVITYBOX4, CActivityAreaCtrl::OnActivityBoxFocused	)
-	EVT_LIST_ITEM_SELECTED		( MUSIK_ACTIVITYBOX1, CActivityAreaCtrl::OnActivityBoxSelected	)
-	EVT_LIST_ITEM_SELECTED		( MUSIK_ACTIVITYBOX2, CActivityAreaCtrl::OnActivityBoxSelected	)
-	EVT_LIST_ITEM_SELECTED		( MUSIK_ACTIVITYBOX3, CActivityAreaCtrl::OnActivityBoxSelected	)
-	EVT_LIST_ITEM_SELECTED		( MUSIK_ACTIVITYBOX4, CActivityAreaCtrl::OnActivityBoxSelected	)
-	EVT_LIST_ITEM_DESELECTED	( MUSIK_ACTIVITYBOX1, CActivityAreaCtrl::OnActivityBoxSelected	) // just use the same method for deselection
-	EVT_LIST_ITEM_DESELECTED	( MUSIK_ACTIVITYBOX2, CActivityAreaCtrl::OnActivityBoxSelected	)
-	EVT_LIST_ITEM_DESELECTED	( MUSIK_ACTIVITYBOX3, CActivityAreaCtrl::OnActivityBoxSelected	)
-	EVT_LIST_ITEM_DESELECTED	( MUSIK_ACTIVITYBOX4, CActivityAreaCtrl::OnActivityBoxSelected	)
-	EVT_LIST_COL_BEGIN_DRAG		( MUSIK_ACTIVITYBOX1, CActivityAreaCtrl::OnActivityBoxColResize	)
-	EVT_LIST_COL_BEGIN_DRAG		( MUSIK_ACTIVITYBOX2, CActivityAreaCtrl::OnActivityBoxColResize	)
-	EVT_LIST_COL_BEGIN_DRAG		( MUSIK_ACTIVITYBOX3, CActivityAreaCtrl::OnActivityBoxColResize	)
-	EVT_LIST_COL_BEGIN_DRAG		( MUSIK_ACTIVITYBOX4, CActivityAreaCtrl::OnActivityBoxColResize	)
-	EVT_LIST_ITEM_ACTIVATED		( MUSIK_ACTIVITYBOX1, CActivityAreaCtrl::OnActivityBoxActivated	)
-	EVT_LIST_ITEM_ACTIVATED		( MUSIK_ACTIVITYBOX2, CActivityAreaCtrl::OnActivityBoxActivated	)
-	EVT_LIST_ITEM_ACTIVATED		( MUSIK_ACTIVITYBOX3, CActivityAreaCtrl::OnActivityBoxActivated	)
-	EVT_LIST_ITEM_ACTIVATED		( MUSIK_ACTIVITYBOX4, CActivityAreaCtrl::OnActivityBoxActivated	)
-	EVT_LIST_BEGIN_DRAG			( MUSIK_ACTIVITYBOX1, CActivityAreaCtrl::OnActivityBox1SelDrag	)
-	EVT_LIST_BEGIN_DRAG			( MUSIK_ACTIVITYBOX2, CActivityAreaCtrl::OnActivityBox2SelDrag	)
-	EVT_LIST_BEGIN_DRAG			( MUSIK_ACTIVITYBOX3, CActivityAreaCtrl::OnActivityBox3SelDrag	)
-	EVT_LIST_BEGIN_DRAG			( MUSIK_ACTIVITYBOX4, CActivityAreaCtrl::OnActivityBox4SelDrag	)
-	EVT_SASH_DRAGGED			( MUSIK_ACTIVITYCTRL, CActivityAreaCtrl::OnSashDragged			)
+	EVT_LIST_ITEM_FOCUSED		( -1, CActivityAreaCtrl::OnActivityBoxFocused	)
+	EVT_LIST_ITEM_SELECTED		( -1, CActivityAreaCtrl::OnActivityBoxSelected	)
+	EVT_LIST_ITEM_DESELECTED	( -1, CActivityAreaCtrl::OnActivityBoxSelected	) // just use the same method for deselection
+	EVT_LIST_COL_BEGIN_DRAG		( -1, CActivityAreaCtrl::OnActivityBoxColResize	)
+	EVT_LIST_ITEM_ACTIVATED		( -1, CActivityAreaCtrl::OnActivityBoxActivated	)
+	EVT_SASH_DRAGGED			( -1, CActivityAreaCtrl::OnSashDragged			)
 	EVT_SIZE					(					  CActivityAreaCtrl::OnSize					)
 END_EVENT_TABLE()
 
@@ -64,6 +45,7 @@ CActivityAreaCtrl::CActivityAreaCtrl( wxWindow *pParent )
 	m_pPanel->SetSizer( pTopSizer );
 	m_Selected = m_bFocused = m_Selecting = false;
 	m_UpdatePlaylist = true;
+	m_bContentInvalid = true;
 	Create();
 }
 
@@ -153,17 +135,30 @@ void CActivityAreaCtrl::Delete()
 
 void CActivityAreaCtrl::ResetAllContents( bool bUpdatePlaylist )
 {
+	if(!IsShown())
+	{
+		m_bContentInvalid = true;
+		return;
+	}
 	m_UpdatePlaylist = bUpdatePlaylist;
 
 	if ( m_ActivityBox1 != NULL )	m_ActivityBox1->ResetContents();
 	if ( m_ActivityBox2 != NULL )	m_ActivityBox2->ResetContents();
 	if ( m_ActivityBox3 != NULL )	m_ActivityBox3->ResetContents();
 	if ( m_ActivityBox4 != NULL )	m_ActivityBox4->ResetContents();
-
+	m_bContentInvalid = false;
 	m_UpdatePlaylist = true;
 }
 
-
+bool CActivityAreaCtrl::Show(bool show /* = TRUE  */)
+{
+	bool bRes = wxSashLayoutWindow::Show(show);
+	if(show && m_bContentInvalid)
+	{
+		ResetAllContents();
+	}
+	return bRes;
+}
 void CActivityAreaCtrl::SetParent( int nID, bool bUpdate )
 {
 	m_ParentId = nID;
@@ -175,31 +170,23 @@ void CActivityAreaCtrl::SetParent( int nID, bool bUpdate )
 	else if ( nID == MUSIK_ACTIVITYBOX1 )
 	{
 		m_ParentBox = m_ActivityBox1;
-		if ( m_ActivityBox1 != NULL && bUpdate )
-			UpdateSel( m_ActivityBox1 );
-		return;
 	}
 	else if ( nID == MUSIK_ACTIVITYBOX2 )
 	{
 		m_ParentBox = m_ActivityBox2;
-		if ( m_ActivityBox2 != NULL && bUpdate )
-			UpdateSel( m_ActivityBox2 );
-		return;
 	}
 	else if ( nID == MUSIK_ACTIVITYBOX3 )
 	{
 		m_ParentBox = m_ActivityBox3;
-		if ( m_ActivityBox3 != NULL && bUpdate  )
-			UpdateSel( m_ActivityBox3 );
-		return;
 	}
 	else if ( nID == MUSIK_ACTIVITYBOX4 )
 	{
 		m_ParentBox = m_ActivityBox4;
-		if ( m_ActivityBox4 != NULL && bUpdate )
-			UpdateSel( m_ActivityBox4 );
-		return;
 	}
+	if ( m_ParentBox != NULL && bUpdate )
+		UpdateSel( m_ParentBox );
+	return;
+
 }
 
 void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
@@ -452,28 +439,6 @@ void CActivityAreaCtrl::OnActivityBoxSelected( wxListEvent& event )
 	wxListEvent ev(wxEVT_COMMAND_LIST_ITEM_ACTIVATED,event.GetId());
 	m_Selected = true;
 	::wxPostEvent( this, ev );
-}
-//--------------------------//
-//--- drag and drop event ---//
-//---------------------------//
-void CActivityAreaCtrl::OnActivityBox1SelDrag( wxListEvent& WXUNUSED(event) )
-{	
-	m_ActivityBox1->DNDBegin();		
-}
-
-void CActivityAreaCtrl::OnActivityBox2SelDrag( wxListEvent& WXUNUSED(event) )	
-{	
-	m_ActivityBox2->DNDBegin();		
-}
-
-void CActivityAreaCtrl::OnActivityBox3SelDrag( wxListEvent& WXUNUSED(event) )	
-{	
-	m_ActivityBox3->DNDBegin();		
-}
-
-void CActivityAreaCtrl::OnActivityBox4SelDrag( wxListEvent& WXUNUSED(event) )	
-{	
-	m_ActivityBox4->DNDBegin();		
 }
 
 //----------------------------//

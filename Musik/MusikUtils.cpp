@@ -79,6 +79,7 @@ void  DelimitStr( wxString sStr, wxString sDel, wxArrayString &aReturn, bool bRe
 	}
 
 	//--- strip last delimiter ---//
+	if(aReturn.GetCount() > 0)
 	aReturn.Item( aReturn.GetCount()-1 ).Replace( sDel, wxT( "" ), true );
 
 	return;

@@ -133,6 +133,21 @@ public:
 	CActivityBox( wxWindow *parent, wxWindowID id, EMUSIK_ACTIVITY_TYPE nType );
 	~CActivityBox();
 	
+	void OnActivityBoxSelDrag( wxListEvent& WXUNUSED(event) )
+	{	
+		DNDBegin();		
+	}
+	void ShowMenu		( wxContextMenuEvent&	event );
+	//--------------//
+	//--- playing ---//
+	//--------------//
+	void OnPlayInstantly( wxCommandEvent& event );	
+	void OnPlayAsNext	( wxCommandEvent& event );
+	void OnPlayEnqueued	( wxCommandEvent& event );
+
+
+	//other
+	void OnRename(wxCommandEvent& WXUNUSED(event)) { EditBegin();}
 	//--- thread event handlers ---//
 	void StartRenameThread		( int mode, const wxArrayString & sel, wxString newvalue );
 	void OnRenameThreadStart	( wxCommandEvent& WXUNUSED(event) );
@@ -189,7 +204,8 @@ public:
 	int GetProgressType()		{ return m_ProgressType;	}
 
 	DECLARE_EVENT_TABLE()
-
+protected:
+	wxMenu * CreateContextMenu();
 private:
 
 	EMUSIK_LIB_TYPE ACTIVITY_TYPE2LIB_TYPE ( EMUSIK_ACTIVITY_TYPE lbtype );

@@ -103,17 +103,10 @@ void CMusikPlayer::Init()
 }
 CMusikPlayer::~CMusikPlayer()
 {
-	if(m_Playlist.GetCount() == 0)
-	{
 		wxRemoveFile( MUSIK_PLAYERLIST_FILENAME );
-	}
-	else
-	{
-		wxTextFile Out;	
-		if ( !Out.Create( MUSIK_PLAYERLIST_FILENAME ) )
-		{
-			Out.Open( MUSIK_PLAYERLIST_FILENAME );
-		}
+		wxTextFile Out;
+		Out.Create( MUSIK_PLAYERLIST_FILENAME );
+		Out.Open();
 		if ( Out.IsOpened() )
 		{
 			for ( size_t i = 0; i < m_Playlist.GetCount(); i++ )
@@ -124,7 +117,6 @@ CMusikPlayer::~CMusikPlayer()
 			Out.Write( Out.GuessType() );
 			Out.Close();
 		}
-	}    
 
 
 	//---------------------------------------------------------//
@@ -501,7 +493,7 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 	//---------------------------------------------//
 	{
 		wxCriticalSectionLocker lock(g_protectingStreamArrays);
-		for(int i = 0; i < g_ActiveChannels.GetCount();i++)
+		for(size_t i = 0; i < g_ActiveChannels.GetCount();i++)
 		{
 			if(g_ActiveChannels[i] == GetCurrChannel())
 			{
@@ -535,7 +527,7 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 	if ( g_Prefs.nFadeEnable == 0 || g_Prefs.nGlobalFadeEnable == 0 )
 	{
 		if(g_ActiveChannels.GetCount())
-			FSOUND_SetVolume( g_ActiveChannels.Item( g_ActiveChannels.GetCount() - 1 ), g_Prefs.nSndVolume );
+			FSOUND_SetVolume( g_ActiveChannels.Item( g_ActiveChannels.GetCount() - 1 ), 255 );
 		ClearOldStreams();
 	}
 
@@ -631,11 +623,6 @@ void CMusikPlayer::SetFrequency()
 void CMusikPlayer::UpdateUI()
 {
 	CMusikSong song;
-	//-------------------------------------------------//
-	//--- this will resynch the current item if the	---//
-	//--- playlist appears to be the same. a better	---//
-	//--- check is not necessary.					---//
-	//-------------------------------------------------//
 	if(_CurrentSongIsNetStream())
 	{
 		song = m_Playlist.Item( m_SongIndex );
@@ -646,6 +633,10 @@ void CMusikPlayer::UpdateUI()
 		g_PlaylistBox->PlaylistCtrl().Update(false);
 		g_Library.UpdateItemLastPlayed	( m_CurrentFile );
 		g_Library.GetSongFromFilename( m_CurrentFile, &song );
+	}
+	if(g_SourcesCtrl->GetSelType() == MUSIK_SOURCES_NOW_PLAYING)
+	{
+		g_PlaylistBox->PlaylistCtrl().EnsureVisible(m_SongIndex);
 	}
 	g_NowPlayingCtrl->UpdateInfo	( song );
 }
@@ -881,7 +872,10 @@ void CMusikPlayer::NextSong()
 			return;
 		m_SongIndex++;
 		if ( m_SongIndex >= m_Playlist.GetCount() )
+		{
 			Stop();
+			m_SongIndex = 0;
+		}
 		else
 			Play( m_SongIndex );
 		break;
@@ -961,8 +955,7 @@ int CMusikPlayer::GetFilesize( wxString sFilename )
 
 void CMusikPlayer::SetVolume()
 {
-	if ( IsPlaying() && (g_ActiveChannels.GetCount()) )
-		FSOUND_SetVolume( g_ActiveChannels.Item( g_ActiveChannels.GetCount() - 1 ), g_Prefs.nSndVolume );
+	FSOUND_SetSFXMasterVolume(g_Prefs.nSndVolume);
 }
 
 int CMusikPlayer::GetDuration( int nType )
@@ -1174,7 +1167,7 @@ void CMusikPlayer::AddToPlaylist( CMusikSongArray & songstoadd ,bool bPlayFirstA
 	wxCriticalSectionLocker locker( m_critInternalData);
 	size_t size = songstoadd.GetCount();
 	int plsize = m_Playlist.GetCount();
-	for(int i = 0; i < size ; i++)
+	for(size_t i = 0; i < size ; i++)
 	{
 		m_Playlist.Add(songstoadd.Detach(0));
 	}
@@ -1192,7 +1185,7 @@ void CMusikPlayer::InsertToPlaylist( CMusikSongArray & songstoadd ,bool bPlayFir
 	size_t plsize = m_Playlist.GetCount();
 	if(plsize == 0 || !IsPlaying())
 	{// list empty, add
-		for(int i = 0; i < size ; i++)
+		for(size_t i = 0; i < size ; i++)
 			m_Playlist.Add(songstoadd.Detach(0));
 		if(bPlayFirstInserted)
 		{
@@ -1206,7 +1199,7 @@ void CMusikPlayer::InsertToPlaylist( CMusikSongArray & songstoadd ,bool bPlayFir
 
 	}
 // list not empty ,insert
-	for(int i = 0; i < size ; i++)
+	for(size_t i = 0; i < size ; i++)
 	{
 		m_Playlist.Insert(songstoadd.Detach(0), m_SongIndex + 1 + i );
 	}
@@ -1217,7 +1210,7 @@ void CMusikPlayer::InsertToPlaylist( CMusikSongArray & songstoadd ,bool bPlayFir
 		Play(m_SongIndex);
 	}
 }
-void CMusikPlayer::RemovePlaylistEntry( int index )
+void CMusikPlayer::RemovePlaylistEntry( size_t index )
 {
 	wxCriticalSectionLocker locker( m_critInternalData);
 	wxASSERT(index < m_Playlist.GetCount()); 
@@ -1233,18 +1226,18 @@ void CMusikPlayer::RemovePlaylistEntry( int index )
 	m_Playlist.RemoveAt(index);
 }
 
-void  CMusikPlayer::MovePlaylistEntrys(int nMoveTo ,const wxArrayInt &arrToMove)
+void  CMusikPlayer::MovePlaylistEntrys(size_t nMoveTo ,const wxArrayInt &arrToMove)
 {
 	wxCriticalSectionLocker locker( m_critInternalData);
 	wxASSERT(nMoveTo >= -1 && nMoveTo <= m_Playlist.GetCount()); 
-	int i = arrToMove.GetCount() - 1;
+	size_t i = arrToMove.GetCount() - 1;
 	// first move all entrys which are behind nMoveTo;
 	for(;i >= 0 ; i--)
 	{
 
 		if(nMoveTo > arrToMove[i])
 			break;
-		int ToMoveIdx = arrToMove[i] + ( arrToMove.GetCount() - 1 - i);
+		size_t ToMoveIdx = arrToMove[i] + ( arrToMove.GetCount() - 1 - i);
 		m_Playlist.Insert(m_Playlist.Detach(ToMoveIdx),nMoveTo);
 
 		if(ToMoveIdx > m_SongIndex && nMoveTo <= m_SongIndex)
@@ -1253,9 +1246,9 @@ void  CMusikPlayer::MovePlaylistEntrys(int nMoveTo ,const wxArrayInt &arrToMove)
 			m_SongIndex = nMoveTo;
 	}
 	// now move all entry which are before
-	for(int j = i; j >= 0; j--)
+	for(size_t j = i; j >= 0; j--)
 	{
-		int MoveToIdx = nMoveTo - (i - j) - 1;
+		size_t MoveToIdx = nMoveTo - (i - j) - 1;
 		m_Playlist.Insert(m_Playlist.Detach(arrToMove[j]),MoveToIdx);
 		if(arrToMove[j] < m_SongIndex && MoveToIdx  > m_SongIndex)
 			m_SongIndex--;

@@ -32,8 +32,9 @@
 				UsePrecompiledHeader="3"
 				PrecompiledHeaderThrough="wx/wxprec.h"
 				WarningLevel="4"
-				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="3"/>
+				Detect64BitPortabilityProblems="FALSE"
+				DebugInformationFormat="3"
+				ShowIncludes="FALSE"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -102,7 +103,7 @@
 				UsePrecompiledHeader="3"
 				PrecompiledHeaderThrough="wx/wxprec.h"
 				WarningLevel="4"
-				Detect64BitPortabilityProblems="TRUE"
+				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="3"/>
 			<Tool
 				Name="VCCustomBuildTool"/>

@@ -279,6 +279,8 @@ void MusikFrame::OnTranslateKeys( wxKeyEvent& event )
 			GetActiveThread()->Delete();
 		}
 	}
+	else
+		event.Skip();
 }
 
 void MusikFrame::WriteTags()
@@ -339,14 +341,33 @@ void MusikFrame::LibrarySimpleQueryDlg()
 
 void MusikFrame::LibrarySimpleQuery( wxString sQueryVal )
 {
-	if ( sQueryVal.Left( 1 ) == wxT("!") )
-		sQueryVal = sQueryVal.Right( sQueryVal.Length() - 1 );	//--- remove "!" ---//
 
 	sQueryVal.Replace( wxT("'"), wxT("''") ); //--- double apostrophe to make valid syntax ---//
-	wxString sString = wxT("'%") + sQueryVal + wxT("%'");
+
+	wxArrayString sTokens;
+	if ( sQueryVal.Left( 1 ) == wxT("!") )
+	{
+		sQueryVal = sQueryVal.Right( sQueryVal.Length() - 1 );	//--- remove "!" ---//
+		sTokens.Add(sQueryVal);
+	}
+	else
+		DelimitStr(sQueryVal,wxT(" "),sTokens,true);
+
 	wxString sQuery;
-	sQuery.sprintf( wxT("artist like %s or album like %s or title like %s or filename like %s "),
-		( const wxChar *)sString, (const wxChar *) sString, (const wxChar *)sString,(const wxChar*) sString );
+
+	for ( size_t i = 0; i < sTokens.GetCount() ; i++)
+	{
+		
+		wxString sString = wxT("'%") + sTokens[i] + wxT("%'");
+		sQuery+= wxString::Format( wxT("(artist like %s or album like %s or title like %s or filename like %s )"),
+			( const wxChar *)sString, (const wxChar *) sString, (const wxChar *)sString,(const wxChar*) sString );
+		if(i != sTokens.GetCount() - 1)
+		{
+			sQuery += wxT(" and ");
+		}
+
+	}
+
 	g_Library.QuerySongsWhere( sQuery, g_Playlist ,true);  // true means query sorted
 	g_PlaylistBox->Update( );
 	g_PlaylistChanged = true;

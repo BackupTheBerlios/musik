@@ -33,13 +33,9 @@ public:
 	MusikVolumeFrame( wxFrame* pParent, wxPoint pos );
 	~MusikVolumeFrame() { gSeek->PopEventHandler( true ); }
 
-	wxRadioBox*	    m_pRadioBoxPlaymode;
-	wxCheckBox*		pCrossfade;
 	wxGauge*		gSeek;		
 	CGaugeSeekEvt*	pSeekEvt;
 
-	wxBoxSizer*		pChecks;
-	wxBoxSizer*		pMain;
 
 	void Close();
 

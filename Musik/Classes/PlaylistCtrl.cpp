@@ -126,11 +126,11 @@ CPlaylistBox::~CPlaylistBox()
 
 
 BEGIN_EVENT_TABLE(CPlaylistCtrl, CMusikListCtrl)
-	EVT_LIST_ITEM_ACTIVATED		( MUSIK_PLAYLIST,														CPlaylistCtrl::PlaySel				)	
-	EVT_LIST_BEGIN_DRAG			( MUSIK_PLAYLIST,														CPlaylistCtrl::BeginDrag			)
-	EVT_LIST_ITEM_SELECTED		( MUSIK_PLAYLIST,														CPlaylistCtrl::UpdateSel			)
-	EVT_LIST_COL_BEGIN_DRAG		( MUSIK_PLAYLIST,														CPlaylistCtrl::BeginDragCol			)
-	EVT_LIST_COL_END_DRAG		( MUSIK_PLAYLIST,														CPlaylistCtrl::EndDragCol			)
+	EVT_LIST_ITEM_ACTIVATED		( -1,														CPlaylistCtrl::PlaySel				)	
+	EVT_LIST_BEGIN_DRAG			( -1,														CPlaylistCtrl::BeginDrag			)
+	EVT_LIST_ITEM_SELECTED		( -1,														CPlaylistCtrl::UpdateSel			)
+	EVT_LIST_COL_BEGIN_DRAG		( -1,														CPlaylistCtrl::BeginDragCol			)
+	EVT_LIST_COL_END_DRAG		( -1,														CPlaylistCtrl::EndDragCol			)
 	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_PLAY_INSTANTLY,								CPlaylistCtrl::OnPlayInstantly		)
 	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_PLAY_ASNEXT,									CPlaylistCtrl::OnPlayAsNext			)
 	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_PLAY_ENQUEUED,									CPlaylistCtrl::OnPlayEnqueued		)
@@ -148,7 +148,7 @@ BEGIN_EVENT_TABLE(CPlaylistCtrl, CMusikListCtrl)
 	EVT_MENU					( MUSIK_PLAYLIST_DISPLAY_FIT,											CPlaylistCtrl::OnDisplayFit			)
 	EVT_CONTEXT_MENU			(																		CPlaylistCtrl::ShowMenu				)
 	EVT_CHAR					(																		CPlaylistCtrl::TranslateKeys		)
-	EVT_LIST_COL_CLICK			( MUSIK_PLAYLIST,														CPlaylistCtrl::OnColumnClick		)
+	EVT_LIST_COL_CLICK			( -1,														CPlaylistCtrl::OnColumnClick		)
 
 	//---------------------------------------------------------//
 	//--- column on off stuff.								---//
@@ -288,13 +288,33 @@ CPlaylistCtrl::CPlaylistCtrl( CPlaylistBox *parent, const wxWindowID id, const w
 	//--- setup headers ---//
 	m_ColSaveNeeded = false;
 	ResetColumns();
+
+
+	//--- setup drop target ---//
+	SetDropTarget( new PlaylistDropTarget( this ) );
+
+	//--- not dragging, no selections ---//
+	g_DragInProg = false;
+	nCurSel = -1;
+	m_Overflow = 0;
+	m_bColDragging = false;
+
+}
+
+CPlaylistCtrl::~CPlaylistCtrl()
+{
+}
+
+///////////////////////////////////////////////////////////////////////////////
+wxMenu * CPlaylistCtrl::CreateContextMenu()
+{
 	//Play menu
 	wxMenu * playlist_context_play_menu = new wxMenu;
-	playlist_context_play_menu->Append( MUSIK_PLAYLIST_CONTEXT_PLAY_ASNEXT , _( "Next" ), wxT( "" ), wxITEM_CHECK );
-	playlist_context_play_menu->Append( MUSIK_PLAYLIST_CONTEXT_PLAY_ENQUEUED, _( "Enqueue" ), wxT( "" ), wxITEM_CHECK );
-	playlist_context_play_menu->Append( MUSIK_PLAYLIST_CONTEXT_PLAY_INSTANTLY , _( "Instantly" ), wxT( "" ), wxITEM_CHECK );
-	playlist_context_play_menu->Append( MUSIK_PLAYLIST_CONTEXT_PLAY_REPLACE_PLAYERLIST, _( "Replace current playlist" ), wxT( "" ), wxITEM_CHECK );
-	
+	playlist_context_play_menu->Append( MUSIK_PLAYLIST_CONTEXT_PLAY_ASNEXT , _( "Next" ), wxT( "" ) );
+	playlist_context_play_menu->Append( MUSIK_PLAYLIST_CONTEXT_PLAY_ENQUEUED, _( "Enqueue" ), wxT( "" ) );
+	playlist_context_play_menu->Append( MUSIK_PLAYLIST_CONTEXT_PLAY_INSTANTLY , _( "Instantly" ), wxT( "" ));
+	playlist_context_play_menu->Append( MUSIK_PLAYLIST_CONTEXT_PLAY_REPLACE_PLAYERLIST, _( "Replace current playlist" ), wxT( "" ) );
+
 	//--- rating menu ---//
 	wxMenu *playlist_context_rating_menu = new wxMenu;
 	playlist_context_rating_menu->Append( MUSIK_PLAYLIST_CONTEXT_UNRATED, _( "Unrated" ), wxT( "" ), wxITEM_CHECK );
@@ -341,7 +361,7 @@ CPlaylistCtrl::CPlaylistCtrl( CPlaylistBox *parent, const wxWindowID id, const w
 	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_SMART,			_( "No Horizontal Scroll" ) );
 
 	//--- main context menu ---//
-	playlist_context_menu = new wxMenu;
+	wxMenu *playlist_context_menu = new wxMenu;
 	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_PLAYNODE,			_( "&Play" ),					playlist_context_play_menu );
 	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_RATENODE,			_( "&Rating" ),					playlist_context_rating_menu );
 	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_DISPLAYNODE,		_( "Display" ),					playlist_context_display_menu );
@@ -350,25 +370,24 @@ CPlaylistCtrl::CPlaylistCtrl( CPlaylistBox *parent, const wxWindowID id, const w
 	playlist_context_menu->AppendSeparator();
 	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_TAGNODE,			_( "Edit &Tag" ),				playlist_context_edit_tag_menu );
 
+	bool bNetStreamSel = false;
+	if ( GetSelectedItemCount() > 0 )
+	{
+		int nFirstIndex = GetNextItem( -1, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
+		bNetStreamSel  = (g_Playlist.Item ( nFirstIndex ).Format == MUSIK_FORMAT_NETSTREAM);
+	}
+	bool bIsNowPlayingSelected = (g_SourcesCtrl->GetSelType() == MUSIK_SOURCES_NOW_PLAYING);
 
-	//--- setup drop target ---//
-	SetDropTarget( new PlaylistDropTarget( this ) );
+	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_PLAYNODE,		!bNetStreamSel && !bIsNowPlayingSelected);
+	//	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_DELETENODE,	!bNetStreamSel );
+	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_RENAME_FILES, !bNetStreamSel );
+	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_RETAG_FILES,	!bNetStreamSel );
+	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_RATENODE,		!bNetStreamSel );
+	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_TAGNODE,		!bNetStreamSel );
 
-	//--- not dragging, no selections ---//
-	g_DragInProg = false;
-	nCurSel = -1;
-	m_Overflow = 0;
-	m_bColDragging = false;
 
+	return playlist_context_menu;
 }
-
-CPlaylistCtrl::~CPlaylistCtrl()
-{
-	delete playlist_context_menu;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-
 void CPlaylistCtrl::OnColumnClick( wxListEvent& event )
 {
 	if(g_SourcesCtrl->GetSelType() != MUSIK_SOURCES_LIBRARY) // only sort in library view, else we will destroy the user playlist
@@ -452,23 +471,10 @@ void CPlaylistCtrl::ShowMenu( wxContextMenuEvent& WXUNUSED(event) )
 {
 	wxPoint pos = ScreenToClient( wxGetMousePosition() );
 
-	bool bItemSel = false;
-	if ( GetSelectedItemCount() > 0 )
-	{
-		int nFirstIndex = GetNextItem( -1, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
-		if(g_Playlist.Item ( nFirstIndex ).Format != MUSIK_FORMAT_NETSTREAM)
-		{
-			bItemSel = true;
-		}
-	}
-	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_PLAYNODE,		bItemSel );
-//	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_DELETENODE,	bItemSel );
-	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_RENAME_FILES, bItemSel );
-	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_RETAG_FILES,	bItemSel );
-	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_RATENODE,		bItemSel );
-	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_TAGNODE,		bItemSel );
+	wxMenu *playlist_context_menu = CreateContextMenu();
 
 	PopupMenu( playlist_context_menu, pos );
+	delete playlist_context_menu;
 }
 int CPlaylistCtrl::DisplayEventId2ColumnId( int evid)
 {
@@ -632,6 +638,9 @@ void CPlaylistCtrl::TranslateKeys( wxKeyEvent& event )
 			case WXK_BACK:
 				DelSelSongs(true);// delete songs from db
 				break;
+			default:
+				event.Skip();
+				return;
 		}
 	}
 	else if ( event.ControlDown() == TRUE )
@@ -648,6 +657,9 @@ void CPlaylistCtrl::TranslateKeys( wxKeyEvent& event )
 		case WXK_BACK:
 			DelSelSongs(true,true);// delete from db and computer
 			break;
+		default:
+			event.Skip();
+			return;
 		}
 	}
 	else if ( event.AltDown() == FALSE )
@@ -914,7 +926,7 @@ void CPlaylistCtrl::GetAllFilesList(wxArrayString & aResult )
 	return;
 }
 
-void CPlaylistCtrl::GetSelSongs(CMusikSongArray & aResult)
+void CPlaylistCtrl::GetSelectedSongs(CMusikSongArray & aResult)
 {
 	aResult.Clear();
 	int nIndex = -1;
@@ -1348,7 +1360,7 @@ void CPlaylistCtrl::RenameSelFiles()
 	if ( m_ActiveThreadController.IsAlive() == false )
     {
 		CMusikSongArray songs;
-		GetSelSongs( songs );
+		GetSelectedSongs( songs );
 		m_ActiveThreadController.AttachAndRun( new MusikPlaylistRenameThread(this, songs ) );
     }
 	else
@@ -1366,7 +1378,7 @@ void CPlaylistCtrl::RetagSelFiles()
 			return;
 		g_Prefs.nAutoTagConvertUnderscoresToSpaces = dlg.GetConvertUnderscoresToSpaces() ?1:0;
 		CMusikSongArray songs;
-		GetSelSongs( songs );
+		GetSelectedSongs( songs );
 		m_ActiveThreadController.AttachAndRun( new MusikPlaylistRetagThread(this, dlg.GetMask(), songs ) );
 	}
 	else
@@ -1536,21 +1548,21 @@ CMusikSongArray * CPlaylistCtrl::GetPlaylist()
 void CPlaylistCtrl::OnPlayInstantly( wxCommandEvent& WXUNUSED(event) )
 {
 	CMusikSongArray aResult;
-	GetSelSongs(aResult);
+	GetSelectedSongs(aResult);
 	g_Player.InsertToPlaylist(aResult);
 
 }
 void CPlaylistCtrl::OnPlayAsNext ( wxCommandEvent& WXUNUSED(event) )
 {
 	CMusikSongArray aResult;
-	GetSelSongs(aResult);
+	GetSelectedSongs(aResult);
 	g_Player.InsertToPlaylist(aResult,g_Player.IsPlaying() ? false : true);
 
 }
 void CPlaylistCtrl::OnPlayEnqueued	( wxCommandEvent& WXUNUSED(event) )
 {
 	CMusikSongArray aResult;
-	GetSelSongs(aResult);
+	GetSelectedSongs(aResult);
 	g_Player.AddToPlaylist(aResult,g_Player.IsPlaying() ? false : true);
 }
 void CPlaylistCtrl::OnPlayReplace	( wxCommandEvent& WXUNUSED(event) )

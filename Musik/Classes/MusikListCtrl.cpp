@@ -52,7 +52,7 @@ bool CMusikListCtrl::OnRescaleColumns()
 #include "wx/dcbuffer.h"
 void CMusikListCtrl::Freeze()
 {
-	m_freezeCount++;
+	if(!m_freezeCount++)
 	wxListCtrl::Freeze();
 }
 void CMusikListCtrl::Thaw()

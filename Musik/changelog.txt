@@ -1,5 +1,12 @@
 
 0.3.0.2 to 0.3.1 CVS
++ On start, now playing list is shown instead of Musik Library, this way startup time is faster.
++ Now Playing list scrolls to new song on song change
++ Sources box now scroll automatically while drag and dropping
++ some code cleanup as usual
++ Some controls which were hidden in the Volume Popup are now in the main window ( crossfader checkbox and playmode choice)
+- fixed bug in the automatically Now Playing list saving
++ New Context Menu for Selection Boxes ( essentially the same like the new Play sub menu in the playlist)
 + Now Playing list is now automatically saved on program exit and restored on next program start
 + New submenu "Play", offers enqueuing instant playing etc. of selected songs.
 + change of operation: double click in Playlist no longer makes the whole list active ( this can achived by a new submenu), but inserts the clicked song into the "now playing playlist" and plays it instantly

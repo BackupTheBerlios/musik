@@ -42,25 +42,25 @@ BEGIN_EVENT_TABLE(CNowPlayingCtrl, wxPanel)
 	EVT_BUTTON	(MUSIK_NOWPLAYINGCTRL_PREV,				CNowPlayingCtrl::PlayerPrev				)	// prev button pressed
 	EVT_BUTTON	(MUSIK_NOWPLAYINGCTRL_VOLUME,			CNowPlayingCtrl::PlayerVolume			)	// prev button pressed
 	EVT_TIMER	(MUSIK_NOWPLAYING_TIMER,				CNowPlayingCtrl::OnTimer				)	// timer
+	EVT_CHOICE	(MUSIK_NOWPLAYINGCTRL_PLAYMODE,			CNowPlayingCtrl::OnPlayMode) 
+	EVT_CHECKBOX(MUSIK_CHK_CROSSFADE,					CNowPlayingCtrl::OnCheckCrossfade)
 END_EVENT_TABLE()
 
 CNowPlayingCtrl::CNowPlayingCtrl( wxWindow *parent )
-	: wxPanel( parent, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxTRANSPARENT_WINDOW | wxTAB_TRAVERSAL )
+	: wxPanel( parent, -1, wxDefaultPosition, wxDefaultSize, wxCLIP_CHILDREN| wxTAB_TRAVERSAL |wxFULL_REPAINT_ON_RESIZE)
 {
 	wxColour bg = wxSystemSettings::GetColour( wxSYS_COLOUR_3DFACE );
 
-	SetBackgroundColour( bg );
+//	SetBackgroundColour( bg );
 
-	pLeftPanel = new wxPanel( this , -1, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxTRANSPARENT_WINDOW );
-	pRightPanel = new wxPanel( this , -1, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxTRANSPARENT_WINDOW );
 
 	//-----------------------------//
 	//--- title / artist / time ---//
 	//-----------------------------//
 	//--- now playing static text objects ---//
-	stSong			= new wxStaticText	( pLeftPanel, -1, _( "" ),	wxPoint( 0, 0 ), wxSize( 0, 0 ), 0 );
-	stArtist		= new wxStaticText	( pLeftPanel, -1, _( "" ),	wxPoint( 0, 0 ), wxSize( 0, 0 ), 0 );
-	stCurtime		= new wxStaticText	( pLeftPanel, -1, _( "" ),	wxPoint( -1, -1 ), wxSize( -1, -1 ), 0 );	
+	stSong			= new wxStaticText	( this, -1, _( "" ),	wxDefaultPosition, wxDefaultSize, 0 );
+	stArtist		= new wxStaticText	( this, -1, _( "" ),	wxDefaultPosition, wxDefaultSize, 0 );
+	stCurtime		= new wxStaticText	( this, -1, _( "" ),	wxDefaultPosition, wxDefaultSize, 0 );	
 
 	//--- fonts ---//
 	stSong->SetFont		( g_fntSong );
@@ -85,11 +85,11 @@ CNowPlayingCtrl::CNowPlayingCtrl( wxWindow *parent )
 	bmVolumeDown	= wxBitmap( volume_down_xpm );
 
 	//--- buttons ---//
-	btnPrev			= new wxBitmapButton( pRightPanel, MUSIK_NOWPLAYINGCTRL_PREV, bmPrev, wxPoint( -1, -1 ), wxSize( 40, 20 ), 0 );
-	btnNext			= new wxBitmapButton( pRightPanel, MUSIK_NOWPLAYINGCTRL_NEXT, bmNext, wxPoint( -1, -1 ), wxSize( 40, 20 ), 0 );
-	btnPlayPause	= new wxBitmapButton( pRightPanel, MUSIK_NOWPLAYINGCTRL_PLAYPAUSE, bmPlay, wxPoint( -1, -1 ), wxSize( 40, 20 ), 0 );	
-	btnStop			= new wxBitmapButton( pRightPanel, MUSIK_NOWPLAYINGCTRL_STOP, bmStop, wxPoint( -1, -1 ), wxSize( 40, 20 ), 0 );
-	btnVolume		= new wxBitmapButton( pRightPanel, MUSIK_NOWPLAYINGCTRL_VOLUME, bmVolume, wxPoint( -1, -1 ), wxSize( 40, 20 ), 0 );
+	btnPrev			= new wxBitmapButton( this, MUSIK_NOWPLAYINGCTRL_PREV, bmPrev, wxDefaultPosition, wxSize( 40, 20 ), 0 );
+	btnNext			= new wxBitmapButton( this, MUSIK_NOWPLAYINGCTRL_NEXT, bmNext, wxDefaultPosition, wxSize( 40, 20 ), 0 );
+	btnPlayPause	= new wxBitmapButton( this, MUSIK_NOWPLAYINGCTRL_PLAYPAUSE, bmPlay, wxDefaultPosition, wxSize( 40, 20 ), 0 );	
+	btnStop			= new wxBitmapButton( this, MUSIK_NOWPLAYINGCTRL_STOP, bmStop, wxDefaultPosition, wxSize( 40, 20 ), 0 );
+	btnVolume		= new wxBitmapButton( this, MUSIK_NOWPLAYINGCTRL_VOLUME, bmVolume, wxDefaultPosition, wxSize( 40, 20 ), 0 );
 
 	//--- events ---//
 	btnPrev->SetBitmapLabel				( bmPrev );
@@ -120,7 +120,7 @@ CNowPlayingCtrl::CNowPlayingCtrl( wxWindow *parent )
 	//----------------//
 	//--- seek bar ---//
 	//----------------//
-	gSeek		= new wxGauge		( pRightPanel, -1, 100, wxPoint( 0, 0 ), wxSize( 200, wxSystemSettings::GetMetric( wxSYS_HSCROLL_Y ) ), wxGA_SMOOTH | wxGA_HORIZONTAL | wxCLIP_CHILDREN );
+	gSeek		= new wxGauge		( this, -1, 100, wxDefaultPosition, wxSize( 12* wxSystemSettings::GetMetric( wxSYS_HSCROLL_Y ), wxSystemSettings::GetMetric( wxSYS_HSCROLL_Y ) ), wxGA_SMOOTH | wxGA_HORIZONTAL | wxCLIP_CHILDREN );
 	pSeekEvt	= new CGaugeSeekEvt	( gSeek );
 	gSeek->PushEventHandler( pSeekEvt );
 
@@ -128,34 +128,47 @@ CNowPlayingCtrl::CNowPlayingCtrl( wxWindow *parent )
 	//--- sizer for artist and time ---//
 	//---------------------------------//
 	hsArtistTime = new wxBoxSizer( wxHORIZONTAL );
-	hsArtistTime->Add( stArtist, 0, wxADJUST_MINSIZE | wxALIGN_CENTRE_VERTICAL /*| wxEXPAND*/ );
-	hsArtistTime->Add( stCurtime, 0, wxADJUST_MINSIZE | wxALIGN_CENTRE_VERTICAL /*| wxEXPAND*/ );
+	hsArtistTime->Add( stArtist, 0, wxADJUST_MINSIZE | wxALIGN_CENTRE_VERTICAL  );
+	hsArtistTime->Add( stCurtime, 0, wxADJUST_MINSIZE | wxALIGN_CENTRE_VERTICAL );
 
 	//--- song title, artist and time ---//
 	vsLeftCol = new wxBoxSizer( wxVERTICAL );
-	vsLeftCol->Add( stSong, 0, wxADJUST_MINSIZE | wxBOTTOM /*| wxEXPAND*/, 4 );
-	vsLeftCol->Add( hsArtistTime, 0, wxEXPAND );
+	vsLeftCol->Add( stSong, 0, wxADJUST_MINSIZE | wxBOTTOM , 4 );
+	vsLeftCol->Add( hsArtistTime, 0, wxADJUST_MINSIZE );
 
-	pLeftPanel->SetSizerAndFit( vsLeftCol );
 
 	//--- buttons, seek bar panel ---//
-	hsButtons = new wxBoxSizer( wxHORIZONTAL );
-	hsButtons->Add( btnPrev );
-	hsButtons->Add( btnPlayPause );
-	hsButtons->Add( btnStop );
-	hsButtons->Add( btnNext );
-	hsButtons->Add( btnVolume );
+	wxGridSizer *hsButtons = new wxGridSizer(1,5,2,2);
+	hsButtons->Add( btnPrev ,0,wxALIGN_CENTRE_HORIZONTAL );
+	hsButtons->Add( btnPlayPause ,0,wxALIGN_CENTRE_HORIZONTAL );
+	hsButtons->Add( btnStop ,0,wxALIGN_CENTRE_HORIZONTAL );
+	hsButtons->Add( btnNext ,0,wxALIGN_CENTRE_HORIZONTAL );
+	hsButtons->Add( btnVolume,0,wxALIGN_CENTRE_HORIZONTAL );
 
 	vsRightCol = new wxBoxSizer( wxVERTICAL );
-	vsRightCol->Add( hsButtons, 1 );
-	vsRightCol->Add( gSeek, 1, wxTOP, 2 ); //-- small top border --//
 
-	pRightPanel->SetSizerAndFit( vsRightCol );
+	//--- playmode ---//
+	wxBoxSizer *vsPlayModeCol = new wxBoxSizer( wxHORIZONTAL );
+	vsPlayModeCol->Add( hsButtons, 1,wxEXPAND|wxALL,2 );
 
-	hsCols = new wxBoxSizer( wxHORIZONTAL );
-	hsCols->Add( pLeftPanel,	0, wxADJUST_MINSIZE /*| wxEXPAND*/ | wxALL, 2	);
-	hsCols->Add( 0, -1,			1, wxEXPAND);
-	hsCols->Add( pRightPanel,	0, wxADJUST_MINSIZE | wxALL, 2	);
+//	vsPlayModeCol->Add( new wxStaticText	( this, -1, _( "Play mode" ) ), 1 );
+	const wxString playmode_choices[] ={_("Normal"),_("Loop"),_("Shuffle")};
+	
+	wxChoice *choicePlaymode = new wxChoice(this,MUSIK_NOWPLAYINGCTRL_PLAYMODE,wxDefaultPosition,wxDefaultSize,WXSIZEOF(playmode_choices),playmode_choices);
+	int playmode = g_Prefs.nShuffle ? 2 : (g_Prefs.nRepeat ? 1 : 0); 
+	choicePlaymode->SetSelection(playmode);
+	vsPlayModeCol->Add( choicePlaymode,0, wxRIGHT|wxLEFT|wxALIGN_CENTRE_VERTICAL, 5 ); //-- small top border --//
+	wxCheckBox * pCrossfade = new wxCheckBox( this, MUSIK_CHK_CROSSFADE, _("Crossfade"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+	vsPlayModeCol->Add( pCrossfade,0, wxALIGN_CENTRE_VERTICAL|wxRIGHT, 2 ); //-- small top border --//
+	pCrossfade->SetValue( g_Prefs.nGlobalFadeEnable );
+  	vsRightCol->Add( vsPlayModeCol, 0 ); //-- small top border --//
+	vsRightCol->Add( gSeek, 0, wxTOP|wxEXPAND, 2 ); //-- small top border --//
+
+
+
+	wxGridSizer *hsCols = new wxGridSizer( 1,2,0,0);
+	hsCols->Add( vsLeftCol,	0, wxADJUST_MINSIZE | wxALL, 2	);
+	hsCols->Add( vsRightCol,	0, wxALIGN_RIGHT|wxADJUST_MINSIZE | wxALL, 2	);
 
 	SetSizerAndFit( hsCols );
 
@@ -349,4 +362,31 @@ void CNowPlayingCtrl::PlayerVolume( wxCommandEvent& WXUNUSED(event) )
 	pos.y -= DlgSize.GetHeight();	
 	pDlg->Move( pos );
 	pDlg->Show();
+}
+
+void CNowPlayingCtrl::OnPlayMode( wxCommandEvent&	event )
+{
+	int modesel = event.GetSelection();
+	g_Prefs.nRepeat = 0;
+	g_Prefs.nShuffle = 0;
+	switch(modesel)
+	{
+	case 0:
+		break;
+	case 1:
+		g_Prefs.nRepeat = 1;
+		break;
+	case 2:
+		g_Prefs.nShuffle = 1;
+		break;
+
+	default:
+		break;
+	}
+	
+	g_Player.SetPlaymode();
+}
+void CNowPlayingCtrl::OnCheckCrossfade	( wxCommandEvent&	event )
+{
+	g_Prefs.nGlobalFadeEnable = event.IsChecked();
 }

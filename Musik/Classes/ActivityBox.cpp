@@ -56,8 +56,8 @@ void CActivityEditEvt::TranslateKeys( wxKeyEvent& event )
 		pParent->EditCancel();
 	else if ( nKey == WXK_RETURN )
 		pParent->EditCommit();
-  else  
-  	event.Skip( TRUE );
+	else  
+  		event.Skip( TRUE );
 }
 
 //------------------------//
@@ -278,6 +278,15 @@ BEGIN_EVENT_TABLE(CActivityBox, wxPanel)
     EVT_MENU			( MUSIK_ACTIVITY_RENAME_THREAD_START,	CActivityBox::OnRenameThreadStart	)
 	EVT_MENU			( MUSIK_ACTIVITY_RENAME_THREAD_END,		CActivityBox::OnRenameThreadEnd		)
 	EVT_MENU			( MUSIK_ACTIVITY_RENAME_THREAD_PROG,	CActivityBox::OnRenameThreadProg	)
+
+	EVT_LIST_BEGIN_DRAG			( -1, CActivityBox::OnActivityBoxSelDrag	)
+	EVT_CONTEXT_MENU			(													CActivityBox::ShowMenu				)
+
+	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_PLAY_INSTANTLY,			CActivityBox::OnPlayInstantly		)
+	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_PLAY_ASNEXT,				CActivityBox::OnPlayAsNext			)
+	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_PLAY_ENQUEUED,				CActivityBox::OnPlayEnqueued		)
+	EVT_MENU					( MUSIK_SOURCE_CONTEXT_RENAME,						CActivityBox::OnRename				)	
+
 END_EVENT_TABLE()
 
 //-----------------//
@@ -704,11 +713,8 @@ void CActivityBox::DNDBegin()
 wxString CActivityBox::DNDGetList()
 {
 	//--- get selected items ---//
-	wxArrayString list;
 	CMusikSongArray songs;
-	GetSelected( list );
 	GetSelectedSongs( songs );
-	list.Clear();
 
 	//--- add songs to dnd string ---//
 	wxString sRet;
@@ -721,6 +727,51 @@ wxString CActivityBox::DNDGetList()
 			sRet += songs.Item( i ).Filename + wxT("\n");
 	}
 	return sRet;
+}
+
+void CActivityBox::ShowMenu( wxContextMenuEvent& WXUNUSED(event) )
+{
+	wxPoint pos = ScreenToClient( wxGetMousePosition() );
+
+	wxMenu *context_menu = CreateContextMenu();
+
+	PopupMenu( context_menu, pos );
+	delete context_menu;
+}
+wxMenu * CActivityBox::CreateContextMenu()
+{
+	//Play menu
+	wxMenu * context_play_menu = new wxMenu;
+	context_play_menu->Append( MUSIK_PLAYLIST_CONTEXT_PLAY_ASNEXT , _( "Next" ), wxT( "" ) );
+	context_play_menu->Append( MUSIK_PLAYLIST_CONTEXT_PLAY_ENQUEUED, _( "Enqueue" ), wxT( "" ) );
+	context_play_menu->Append( MUSIK_PLAYLIST_CONTEXT_PLAY_INSTANTLY , _( "Instantly" ), wxT( "" ));
+	context_play_menu->Append( MUSIK_PLAYLIST_CONTEXT_PLAY_REPLACE_PLAYERLIST, _( "Replace current playlist" ), wxT( "" ) );
+	//--- main context menu ---//
+	wxMenu *context_menu = new wxMenu;
+	context_menu->Append( MUSIK_PLAYLIST_CONTEXT_PLAYNODE,	_( "&Play" ),	context_play_menu );
+	context_menu->Append( MUSIK_SOURCE_CONTEXT_RENAME, _( "&Rename\t F2" ) );
+
+	return context_menu;
+}
+void CActivityBox::OnPlayInstantly( wxCommandEvent& WXUNUSED(event) )
+{
+	CMusikSongArray aResult;
+	GetSelectedSongs(aResult);
+	g_Player.InsertToPlaylist(aResult);
+
+}
+void CActivityBox::OnPlayAsNext ( wxCommandEvent& WXUNUSED(event) )
+{
+	CMusikSongArray aResult;
+	GetSelectedSongs(aResult);
+	g_Player.InsertToPlaylist(aResult,g_Player.IsPlaying() ? false : true);
+
+}
+void CActivityBox::OnPlayEnqueued	( wxCommandEvent& WXUNUSED(event) )
+{
+	CMusikSongArray aResult;
+	GetSelectedSongs(aResult);
+	g_Player.AddToPlaylist(aResult,g_Player.IsPlaying() ? false : true);
 }
 
 //-----------------------------//

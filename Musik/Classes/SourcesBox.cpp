@@ -119,7 +119,6 @@ bool SourcesDropTarget::OnDropSources( wxCoord x, wxCoord y, const wxString &sSo
 }
 bool SourcesDropTarget::OnDropSonglist( wxCoord x, wxCoord y, const wxString &sFiles )
 {
-	size_t n = -1;
 	if ( !sFiles.IsEmpty() )
 	{
 		//--- where did we land? ---//
@@ -174,16 +173,6 @@ bool SourcesDropTarget::OnDropSonglist( wxCoord x, wxCoord y, const wxString &sF
 		}
 		
 	}
-/*
- 	if ( n >= 0 )
-	{
-		g_DragInProg = true;
-		wxListCtrlSelNone( m_SourcesListBox );
-		m_SourcesListBox->SetItemState( n, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
-		g_DragInProg = false;
-	}
-*/
-
 	return true;
 }
 
@@ -205,6 +194,12 @@ bool SourcesDropTarget::HighlightSel( const wxPoint &pPos )
 	{
 		return false;
 	}
+	long topitem = m_SourcesListBox->GetTopItem();
+	long countperpage = m_SourcesListBox->GetCountPerPage();
+	if( n == topitem && n > 0)
+		m_SourcesListBox->EnsureVisible(n - 1);
+	else if((n == topitem + countperpage - 1) &&  (n < m_SourcesListBox->GetItemCount() - 1))
+		m_SourcesListBox->EnsureVisible(n + 1);
 	
 	if ( n != nLastHit )
 	{
@@ -634,7 +629,7 @@ void CSourcesListBox::Load()
 
 	m_SourcesList = FileToStringArray( MUSIK_SOURCES_FILENAME );
 
-	int i = 0;
+	size_t i = 0;
 	for(i = 0; i < m_SourcesList.GetCount();i++)
 	{
 		if(m_SourcesList[i].Left(3) == wxT( "[l]" ))

@@ -54,7 +54,10 @@ public:
 	//--------------//
 	//--- events ---//
 	//--------------//
+
+	//--------------//
 	//--- playing ---//
+	//--------------//
 	void OnPlayInstantly( wxCommandEvent& event );	
 	void OnPlayAsNext	( wxCommandEvent& event );
 	void OnPlayEnqueued	( wxCommandEvent& event );
@@ -105,7 +108,7 @@ public:
 	void			GetSelItems		(wxArrayInt & aResult);
 	void			GetSelFilesList	( wxArrayString & aResult );
 	void			GetAllFilesList ( wxArrayString & aResult );
-	void			GetSelSongs		( CMusikSongArray & aResult );
+	void			GetSelectedSongs( CMusikSongArray & aResult );
 	wxString 		GetFilename		( int nItem );
 	CMusikSongArray * GetPlaylist	();
 //IPlaylistInfo
@@ -169,7 +172,7 @@ public:
 protected:
 	virtual bool OnRescaleColumns() {RescaleColumns(false); return true;}
 	void RescaleColumns		( bool bFreeze = true, bool bSave = false, bool bAutoFit = false );
-
+	wxMenu * CreateContextMenu();
 
 private:
 
@@ -191,10 +194,6 @@ private:
 	wxListItemAttr m_SelectedLightAttr;
 	wxListItemAttr m_SelectedDarkAttr;
 
-	//--------------------//
-	//--- menu objects ---//
-	//--------------------//
-	wxMenu *playlist_context_menu;
 
 	//--------------------//
 	//--- column order ---//

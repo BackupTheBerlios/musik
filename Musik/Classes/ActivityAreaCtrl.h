@@ -31,10 +31,6 @@ public:
 	//--- events ---//
 	void OnActivityBoxFocused		( wxListEvent& event);
 	void OnActivityBoxSelected		( wxListEvent& event);
-	void OnActivityBox1SelDrag		( wxListEvent& WXUNUSED(event) );
-	void OnActivityBox2SelDrag		( wxListEvent& WXUNUSED(event) );
-	void OnActivityBox3SelDrag		( wxListEvent& WXUNUSED(event) );
-	void OnActivityBox4SelDrag		( wxListEvent& WXUNUSED(event) );
 	void OnActivityBoxColResize		( wxListEvent& event ){ event.Veto(); }
 	void OnActivityBoxActivated		( wxListEvent& event );
 
@@ -46,6 +42,7 @@ public:
 	void Delete();
 	void ResetAllContents( bool bUpdatePlaylist = true );
 
+	bool Show(bool show = true);
 	void SetParent( int ACTIVITY_BOX_ID, bool bUpdate = false );
 
 	int GetParentId(){ return m_ParentId; }
@@ -67,6 +64,7 @@ private:
 	bool m_Selected;
 	bool m_Selecting;
 	bool m_UpdatePlaylist;
+	bool m_bContentInvalid;
 };
 
 #endif

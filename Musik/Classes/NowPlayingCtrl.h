@@ -27,7 +27,9 @@ enum EMUSIK_NOWPLAYINGCTRL_ID
 	MUSIK_NOWPLAYINGCTRL_NEXT,
 	MUSIK_NOWPLAYINGCTRL_PREV,
 	MUSIK_NOWPLAYINGCTRL_STOP,
-	MUSIK_NOWPLAYINGCTRL_VOLUME
+	MUSIK_NOWPLAYINGCTRL_VOLUME,
+	MUSIK_NOWPLAYINGCTRL_PLAYMODE
+
 };
 
 //--- bitmap button and seek bar event handler ---//
@@ -47,7 +49,8 @@ public:
 	void PlayerPrev			( wxCommandEvent&	WXUNUSED(event) );	
 	void PlayerVolume		( wxCommandEvent&	WXUNUSED(event) );	
 	void OnTimer			( wxTimerEvent&		WXUNUSED(event) );
-
+	void OnPlayMode			( wxCommandEvent&	event );
+	void OnCheckCrossfade	( wxCommandEvent&	event );
 	//--- play control bitmaps ---//
 	wxBitmap	bmPrev,		bmPrevDown;
 	wxBitmap	bmNext,		bmNextDown;
@@ -74,16 +77,11 @@ public:
 	wxStaticText *stArtist;
 	wxStaticText *stCurtime;
 
-	//--- left and right panels ---//
-	wxPanel* pLeftPanel;
-	wxPanel* pRightPanel;
 
 	//--- sizers ---//
 	wxBoxSizer *hsArtistTime;
 	wxBoxSizer *vsLeftCol;
-	wxBoxSizer *hsButtons;
 	wxBoxSizer *vsRightCol;
-	wxBoxSizer *hsCols;
 
 	//--- button down events (win32) ---//
 	#ifdef __WXMSW__

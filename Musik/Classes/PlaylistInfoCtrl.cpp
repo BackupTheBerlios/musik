@@ -22,7 +22,7 @@
 #include "../MusikUtils.h"
 
 CPlaylistInfoCtrl::CPlaylistInfoCtrl( wxWindow *parent ,IPlaylistInfo *pIPlaylistInfo )
-	: wxPanel( parent, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxTRANSPARENT_WINDOW|wxTAB_TRAVERSAL )
+	: wxPanel( parent, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxCLIP_CHILDREN|wxTAB_TRAVERSAL )
 	,m_pIPlaylistInfo( pIPlaylistInfo )
 {
 

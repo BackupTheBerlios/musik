@@ -242,7 +242,6 @@ MusikFrame::MusikFrame()
 	ShowPlaylistInfo();
 	ShowSources();
 	SetStayOnTop(( bool )g_Prefs.nStayOnTop);
-	ShowActivityArea( g_Prefs.nShowActivities );
 
 
 	//--- restore placement or use defaults ---//
@@ -288,24 +287,30 @@ bool MusikFrame::Show( bool show )
 		if ( g_Prefs.nFirstRun || g_Prefs.nAutoAdd )
 		{
 			if(g_Prefs.nFirstRun)
-		{
-			g_MusikLibraryFrame = new MusikLibraryFrame( ( wxFrame* )this, wxPoint( 0, 0 ), wxSize( 480, 240 ) );
-			this->Enable	( FALSE );
-			g_MusikLibraryFrame->Show	( TRUE	);
-		}
+			{
+				g_MusikLibraryFrame = new MusikLibraryFrame( ( wxFrame* )this, wxPoint( 0, 0 ), wxSize( 480, 240 ) );
+				this->Enable	( FALSE );
+				g_MusikLibraryFrame->Show	( TRUE	);
+			}
 			else
 				AutoUpdate();
-            return bRet;
+          return bRet;
 		}
 		else
 		{
-			g_ActivityAreaCtrl->ResetAllContents();
+			g_SourcesCtrl->SelectNowPlaying();
+			g_PlaylistBox->Update();
+
+			/*
+			ShowActivityArea( g_Prefs.nShowActivities );
+    		g_ActivityAreaCtrl->ResetAllContents();
 			if ( g_Prefs.nShowAllSongs == 1 )
 			{
 				g_Library.GetAllSongs( g_Playlist );
 				g_SourcesCtrl->SelectLibrary();
 				g_PlaylistBox->Update(true);
 			}
+			*/
 		}
 		//--- startup the crossfader			---//
 		g_FaderThread = new MusikFaderThread();

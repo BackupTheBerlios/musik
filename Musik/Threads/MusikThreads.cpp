@@ -189,14 +189,17 @@ void *MusikCrossfaderThread::Entry()
 
 	if(g_ActiveStreams.GetCount() == 0)
 		return NULL;
+	
+	int maxVolume = 255; // TODO: this value must be adapted to replay gain.
 	//-------------------------------------------------//
 	//--- if the fade duration * 2 (fade in and		---//
 	//--- fade out) is shorter than the stream 		---//
 	//--- duration, no fading. return.				---//
 	//-------------------------------------------------//
+
 	if ( g_Player.GetDuration( FMOD_MSEC ) < ( g_Prefs.nFadeDuration * 2 ) )
 	{
-        FSOUND_SetVolume( g_ActiveChannels.Item( g_ActiveChannels.GetCount() - 1 ), g_Prefs.nSndVolume );
+        FSOUND_SetVolume( g_ActiveChannels.Item( g_ActiveChannels.GetCount() - 1 ), maxVolume );
 		return NULL;
 	}
 	
@@ -249,7 +252,7 @@ void *MusikCrossfaderThread::Entry()
 
 	//-------------------------------------------------//
 	//--- the total number of fades. there will be	---//
-	//--- 10 fades every second, smoooth.			---//
+	//--- 10 fades every second, smooth.			---//
 	//-------------------------------------------------//
 	float fFadeCount = 10.0f * fFadeSecs;
 	int nFadeCount = (int) fFadeCount;
@@ -260,7 +263,7 @@ void *MusikCrossfaderThread::Entry()
 	//--- the volume step for the primary stream.	---//
 	//--- this is the channel that will fade IN		---//
 	//-------------------------------------------------//
-	int nFadeStep = g_Prefs.nSndVolume / nFadeCount;
+	int nFadeStep = maxVolume / nFadeCount;
 	if ( nFadeStep < 1 )
 		nFadeStep = 1;
 	
@@ -295,7 +298,7 @@ void *MusikCrossfaderThread::Entry()
 			return NULL;
 
 		//-----------------------------------------//
-		//--- fade all the secondy streams out.	---//
+		//--- fade all the secondary streams out.	---//
 		//-----------------------------------------//
 		for ( size_t j = 0; j < nFadeOutStreams; j++ )
 		{
@@ -313,8 +316,8 @@ void *MusikCrossfaderThread::Entry()
 		if ( nFadeInStreamID > -1 )
 		{
 			nCurrPriVol += nFadeStep;
-			if ( nCurrPriVol > g_Prefs.nSndVolume )
-				nCurrPriVol = g_Prefs.nSndVolume;
+			if ( nCurrPriVol > maxVolume )
+				nCurrPriVol = maxVolume;
 	
 			FSOUND_SetVolume( g_ActiveChannels.Item( nFadeInStreamID ), nCurrPriVol );
 		}
