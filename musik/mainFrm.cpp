@@ -1053,6 +1053,14 @@ void CMainFrame::OnViewPlaylistinformation()
 		m_Prefs->SetPlaylistInfoVisible( false );
 	else
 		m_Prefs->SetPlaylistInfoVisible( true );
+
+	// send a "dummy" size event to the
+	// window, so it re-creates or removes
+	// the now playing window.
+	CRect lpRect;
+	m_wndView->GetClientRect( &lpRect );
+	m_wndView->OnSize( NULL, lpRect.Width(), lpRect.Height() );
+	RedrawWindow();
 }
 
 ///////////////////////////////////////////////////

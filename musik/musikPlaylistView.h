@@ -27,6 +27,12 @@ public:
 	// get the playlist control
 	CmusikPlaylistCtrl* GetCtrl(){ return m_Playlist; }
 
+	// mfc message maps
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnNcPaint();
+	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+
 protected:
 
 	// playlist GUI object
@@ -51,12 +57,6 @@ protected:
 	// after files have been dropped
 	CWnd* m_Parent;
 	
-	// mfc message maps
-	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg void OnNcPaint();
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
-
 	// macros
 	DECLARE_DYNAMIC(CmusikPlaylistView)
 	DECLARE_MESSAGE_MAP()

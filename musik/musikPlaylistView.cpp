@@ -170,9 +170,6 @@ void CmusikPlaylistView::OnNcPaint()
 	rcDraw.right -= 1;
 	rcDraw.bottom -= 1;
 	dc.ExcludeClipRect( rcDraw );
-
-	//if ( m_Prefs->PlaylistInfoVisible() )
-	//	dc.ExcludeClipRect( rcInfo );
 }
 
 ///////////////////////////////////////////////////
