@@ -91,12 +91,10 @@ BEGIN_MESSAGE_MAP(CMusikPropTree, CWnd)
 	ON_WM_SETCURSOR()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONDBLCLK()
-	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSEWHEEL()
 	ON_WM_KEYDOWN()
 	ON_WM_GETDLGCODE()
 	ON_WM_VSCROLL()
-	ON_MESSAGE(WM_MOUSELEAVE, OnMouseLeave)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -107,10 +105,7 @@ CMusikPropTree::CMusikPropTree( CMusikPrefs* prefs, CMusikLibrary* library, UINT
 	m_nLastUID(1),
 	m_pFocus(NULL),
 	m_pHovered(NULL),
-	m_BackBufferSize(0,0),
-	m_bMouseTrack(false),
-	m_HoverLast(NULL),
-	m_HoverCurrent(NULL)
+	m_BackBufferSize(0,0)
 {
 	m_Root.Expand();
 
@@ -1093,68 +1088,7 @@ void CMusikPropTree::OnLButtonDblClk(UINT, CPoint point)
 
 ///////////////////////////////////////////////////
 
-void CMusikPropTree::OnMouseMove(UINT nFlags, CPoint point)
-{
-	if ( !m_bMouseTrack )
-	{
-		TRACKMOUSEEVENT tme;
-		tme.cbSize = sizeof(tme);
-		tme.dwFlags = TME_LEAVE;
-		tme.hwndTrack = m_hWnd;
-		tme.dwHoverTime = HOVER_DEFAULT;
-		::_TrackMouseEvent(&tme);
 
-		m_bMouseTrack = true; 	
-	}
-
-	CMusikPropTreeItem* pItem = HitTestEx( point );
-
-	// we are dragging...
-	if ( pItem && pItem->GetPlaylistType() != -1 && m_bMouseTrack && ( nFlags & MK_LBUTTON ) )
-	{
-		DoDrag( pItem );
-		return;
-	}
-
-	// not dragging, just track mouse
-	// and hilight hovered entry...
-	else if ( m_HoverCurrent != pItem && pItem != NULL )
-	{
-		m_HoverLast = m_HoverCurrent;
-		m_HoverCurrent = pItem;
-
-		if ( m_HoverLast != NULL )
-			m_HoverLast->SetMouseOver( FALSE );
-
-		m_HoverCurrent->SetMouseOver( TRUE );
-
-		SetHoveredItem( m_HoverCurrent );
-		Invalidate();
-	}
-}
-
-///////////////////////////////////////////////////
-
-LRESULT CMusikPropTree::OnMouseLeave(WPARAM wParam, LPARAM lParam)
-{
-	m_bMouseTrack = false;
-
-	if ( m_HoverCurrent )
-	{
-		m_HoverCurrent->SetMouseOver( FALSE );
-		m_HoverCurrent = NULL;
-	}
-
-	if ( m_HoverLast )
-	{
-		m_HoverLast->SetMouseOver( FALSE );
-		m_HoverLast = NULL;
-	}
-
-    SetHoveredItem( NULL );
-
-	return 0L;
-}
 
 ///////////////////////////////////////////////////
 
@@ -1334,13 +1268,6 @@ void CMusikPropTree::CheckVisibleFocus()
 
 		Invalidate();
 	}
-}
-
-///////////////////////////////////////////////////
-
-void CMusikPropTree::DoDrag( CMusikPropTreeItem* pItem )
-{
-	TRACE0( "Default CMusikPropTree DoDrag() handler does nothing, please override it.\n" );	
 }
 
 ///////////////////////////////////////////////////

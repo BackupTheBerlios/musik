@@ -96,7 +96,7 @@ CMusikPropTreeItem::CMusikPropTreeItem() :
 	m_dwState(0),
 	m_bActivated(FALSE),
 	m_bCommitOnce(FALSE),
-	m_bMouseOver(FALSE),
+	m_bHover(FALSE),
 	m_rcExpand(0,0,0,0),
 	m_pParent(NULL),
 	m_pSibling(NULL),
@@ -156,16 +156,16 @@ BOOL CMusikPropTreeItem::IsSelected()
 
 ///////////////////////////////////////////////////
 
-BOOL CMusikPropTreeItem::IsMouseOver()
+BOOL CMusikPropTreeItem::IsHovered()
 {
-	return m_bMouseOver;
+	return m_bHover;
 }
 
 ///////////////////////////////////////////////////
 
-void CMusikPropTreeItem::SetMouseOver( BOOL bMouseOver )
+void CMusikPropTreeItem::Hover( BOOL bHover )
 {
-	m_bMouseOver = bMouseOver;
+	m_bHover = bHover;
 }
 
 ///////////////////////////////////////////////////
@@ -467,7 +467,7 @@ LONG CMusikPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 			hOld = pDC->SelectObject( CreateSolidBrush( m_pProp->m_Prefs->MUSIK_COLOR_ACTIVECAPTION ) );
 			pDC->PatBlt( rc.left, drc.top, 8, drc.Height(), PATCOPY);
 		}
-		else if ( IsMouseOver() )
+		else if ( IsHovered() )
 		{
 			hOld = pDC->SelectObject( CreateSolidBrush( m_pProp->m_Prefs->MUSIK_COLOR_INACTIVECAPTION ) );
 			pDC->PatBlt( rc.left, drc.top, 8, drc.Height(), PATCOPY);

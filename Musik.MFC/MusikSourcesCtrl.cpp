@@ -9,6 +9,7 @@
 #include "Musik.h"
 #include "MusikSourcesCtrl.h"
 #include "MusikSourcesDropTarget.h"
+#include ".\musiksourcesctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -28,6 +29,7 @@ CMusikSourcesCtrl::CMusikSourcesCtrl( CFrameWnd* parent, CMusikLibrary* library,
 	m_DynPlaylistRoot	= NULL;
 
 	m_Startup			= true;
+	m_MouseTrack		= false;
 
 	m_Player			= player;
 }
@@ -48,6 +50,8 @@ CMusikSourcesCtrl::~CMusikSourcesCtrl()
 BEGIN_MESSAGE_MAP( CMusikSourcesCtrl, CMusikPropTree )
 	ON_WM_CREATE()
 	ON_WM_SHOWWINDOW()
+	ON_WM_MOUSEMOVE()
+	ON_MESSAGE(WM_MOUSELEAVE, OnMouseLeave)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -563,3 +567,57 @@ void CMusikSourcesCtrl::OnShowWindow(BOOL bShow, UINT nStatus)
 
 ///////////////////////////////////////////////////
 
+void CMusikSourcesCtrl::OnMouseMove(UINT nFlags, CPoint point)
+{
+	if ( !m_MouseTrack )
+	{
+		TRACKMOUSEEVENT tme;
+		tme.cbSize = sizeof(tme);
+		tme.dwFlags = TME_LEAVE;
+		tme.hwndTrack = m_hWnd;
+		tme.dwHoverTime = HOVER_DEFAULT;
+		::_TrackMouseEvent(&tme);
+
+		m_MouseTrack = true; 	
+	}
+
+	CMusikPropTreeItem* pItem = FindItem( point );
+
+	// we are dragging...
+	if ( pItem && pItem->GetPlaylistType() != -1 && m_MouseTrack && ( nFlags & MK_LBUTTON ) )
+	{
+		DoDrag( pItem );
+		return;
+	}
+
+	// not dragging, just track mouse
+	// and hilight hovered entry...
+	else if ( pItem != NULL )
+	{
+		CMusikPropTreeItem* pFocus = GetHoveredItem();
+		if ( pFocus )
+			pFocus->Hover( FALSE );
+
+		pItem->Hover( TRUE );
+		SetHoveredItem( pItem );
+
+		Invalidate();
+	}
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CMusikSourcesCtrl::OnMouseLeave(WPARAM wParam, LPARAM lParam)
+{
+	CMusikPropTreeItem* pFocus = GetHoveredItem();
+	if ( pFocus )
+		pFocus->Hover( FALSE );
+
+    SetHoveredItem( NULL );
+
+	Invalidate();
+
+	return 0L;
+}
+
+///////////////////////////////////////////////////

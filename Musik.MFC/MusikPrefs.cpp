@@ -203,10 +203,11 @@ inline CMusikCrossfader StringToCrossfader( const string& str )
 
 	double new_song		= atof( CStr.Tokenize( ",", pos ) );
 	double pause_resume	= atof( CStr.Tokenize( ",", pos ) );
+	double seek			= atof( CStr.Tokenize( ",", pos ) );
 	double stop			= atof( CStr.Tokenize( ",", pos ) );
 	double exit			= atof( CStr.Tokenize( ",", pos ) );
 
-	ret.Set( (float)new_song, (float)pause_resume, (float)stop, (float)exit );
+	ret.Set( (float)new_song, (float)pause_resume, (float)seek, (float)stop, (float)exit );
 
 	return ret;
 }
@@ -216,9 +217,10 @@ inline CMusikCrossfader StringToCrossfader( const string& str )
 inline string CrossfaderToString( CMusikCrossfader& fader )
 {
 	CStdString sRet;
-	sRet.Format( _T( "%f, %f, %f, %f" ), 
+	sRet.Format( _T( "%f, %f, %f, %f, %f" ), 
 		fader.GetDuration( MUSIK_CROSSFADER_NEW_SONG ),
 		fader.GetDuration( MUSIK_CROSSFADER_PAUSE_RESUME ),
+		fader.GetDuration( MUSIK_CROSSFADER_SEEK ),
 		fader.GetDuration( MUSIK_CROSSFADER_STOP ),
 		fader.GetDuration( MUSIK_CROSSFADER_EXIT ) );
 
@@ -234,18 +236,18 @@ CMusikPrefs::CMusikPrefs( CString filename )
 	if ( !config->ReadFile() )
 		config->WriteFile();
 
-	m_ActiveCaptionDef		= false;
-	m_CaptionDef			= false;
-	m_InctiveCaptionDef		= false;
-	m_InctiveCaptionTextDef	= false;
-	m_BtnFaceDef			= false;
-	m_BtnTextDef			= false;
-	m_BtnHilightDef			= false;
-	m_BtnShadowDef			= false;
-	m_ListCtrlDef			= false;
-	m_ListCtrlTextDef		= false;
-	m_HilightDef			= false;
-	m_HilightTextDef		= false;
+	m_ActiveCaptionDef			= false;
+	m_CaptionDef				= false;
+	m_InactiveCaptionDef		= false;
+	m_InactiveCaptionTextDef	= false;
+	m_BtnFaceDef				= false;
+	m_BtnTextDef				= false;
+	m_BtnHilightDef				= false;
+	m_BtnShadowDef				= false;
+	m_ListCtrlDef				= false;
+	m_ListCtrlTextDef			= false;
+	m_HilightDef				= false;
+	m_HilightTextDef			= false;
 
 	LoadPrefs();
 }
@@ -293,7 +295,7 @@ void CMusikPrefs::LoadPrefs()
 	MUSIK_COLOR_ACTIVECAPTION		= StringToCOLORREF( config->GetValue( "Dialog Colors", "Active Caption", "255,0,255" ) );
 	MUSIK_COLOR_CAPTIONTEXT			= StringToCOLORREF( config->GetValue( "Dialog Colors", "Active Caption Text", "255,0,255" ) );
 	MUSIK_COLOR_INACTIVECAPTION		= StringToCOLORREF( config->GetValue( "Dialog Colors", "Inactive Caption", "255,0,255" ) );
-	MUSIK_COLOR_INACTIVECAPTIONTEXT	= StringToCOLORREF( config->GetValue( "Dialog Colors", "Inctive Caption Text", "255,0,255" ) );
+	MUSIK_COLOR_INACTIVECAPTIONTEXT	= StringToCOLORREF( config->GetValue( "Dialog Colors", "Inactive Caption Text", "255,0,255" ) );
 	MUSIK_COLOR_BTNFACE				= StringToCOLORREF( config->GetValue( "Dialog Colors", "Button Face", "255,0,255" ) );
 	MUSIK_COLOR_BTNTEXT				= StringToCOLORREF( config->GetValue( "Dialog Colors", "Button Text", "255,0,255" ) );
 	MUSIK_COLOR_BTNHILIGHT			= StringToCOLORREF( config->GetValue( "Dialog Colors", "Button Highlight", "255,0,255" ) );
@@ -343,7 +345,7 @@ void CMusikPrefs::SavePrefs()
 	config->SetValue( "Dialog Colors", "Active Caption", COLORREFToString( MUSIK_COLOR_ACTIVECAPTION ) );
 	config->SetValue( "Dialog Colors", "Active Caption Text", COLORREFToString( MUSIK_COLOR_CAPTIONTEXT ) );
 	config->SetValue( "Dialog Colors", "Inactive Caption", COLORREFToString( MUSIK_COLOR_INACTIVECAPTION ) );
-	config->SetValue( "Dialog Colors", "Inctive Caption Text", COLORREFToString( MUSIK_COLOR_INACTIVECAPTIONTEXT ) );
+	config->SetValue( "Dialog Colors", "Inactive Caption Text", COLORREFToString( MUSIK_COLOR_INACTIVECAPTIONTEXT ) );
 	config->SetValue( "Dialog Colors", "Button Face", COLORREFToString( MUSIK_COLOR_BTNFACE ) );
 	config->SetValue( "Dialog Colors", "Button Text", COLORREFToString( MUSIK_COLOR_BTNTEXT ) );
 	config->SetValue( "Dialog Colors", "Button Highlight", COLORREFToString( MUSIK_COLOR_BTNHILIGHT ) );
@@ -407,13 +409,13 @@ void CMusikPrefs::ParseColors()
 	if ( MUSIK_COLOR_INACTIVECAPTION == transparent )
 	{
 		MUSIK_COLOR_INACTIVECAPTION = GetSysColor( COLOR_INACTIVECAPTION );
-		m_InctiveCaptionDef = true;
+		m_InactiveCaptionDef = true;
 	}
 
 	if ( MUSIK_COLOR_INACTIVECAPTIONTEXT == transparent )
 	{	
 		MUSIK_COLOR_INACTIVECAPTIONTEXT = GetSysColor( COLOR_INACTIVECAPTIONTEXT );
-		m_InctiveCaptionTextDef = true;
+		m_InactiveCaptionTextDef = true;
 	}
 
 	if ( MUSIK_COLOR_BTNFACE == transparent )
@@ -475,10 +477,10 @@ void CMusikPrefs::ThemeChanged()
 	if ( m_CaptionDef )
 		MUSIK_COLOR_CAPTIONTEXT = GetSysColor( COLOR_CAPTIONTEXT );
 
-	if ( m_InctiveCaptionDef )
+	if ( m_InactiveCaptionDef )
 		MUSIK_COLOR_INACTIVECAPTION = GetSysColor( COLOR_INACTIVECAPTION );
 
-	if ( m_InctiveCaptionTextDef )
+	if ( m_InactiveCaptionTextDef )
 		MUSIK_COLOR_INACTIVECAPTIONTEXT = GetSysColor( COLOR_INACTIVECAPTIONTEXT );
 
 	if ( m_BtnFaceDef )
@@ -519,10 +521,10 @@ void CMusikPrefs::UnparseColors()
 	if ( MUSIK_COLOR_CAPTIONTEXT == GetSysColor( COLOR_CAPTIONTEXT ) && m_CaptionDef )
 		MUSIK_COLOR_CAPTIONTEXT = transparent;
 
-	if ( MUSIK_COLOR_INACTIVECAPTION == GetSysColor( COLOR_INACTIVECAPTION ) && m_InctiveCaptionDef )
+	if ( MUSIK_COLOR_INACTIVECAPTION == GetSysColor( COLOR_INACTIVECAPTION ) && m_InactiveCaptionDef )
 		MUSIK_COLOR_INACTIVECAPTION = transparent;
 
-	if ( MUSIK_COLOR_INACTIVECAPTIONTEXT == GetSysColor( COLOR_INACTIVECAPTIONTEXT ) && m_InctiveCaptionTextDef )
+	if ( MUSIK_COLOR_INACTIVECAPTIONTEXT == GetSysColor( COLOR_INACTIVECAPTIONTEXT ) && m_InactiveCaptionTextDef )
 		MUSIK_COLOR_INACTIVECAPTIONTEXT = transparent;
 	
 	if ( MUSIK_COLOR_BTNFACE == GetSysColor( COLOR_BTNFACE ) && m_BtnFaceDef )

@@ -70,7 +70,7 @@ protected:
 	UINT m_DropID;
 
 	// tracking mouse
-	bool m_bMouseTrack;
+	bool m_MouseTrack;
 
 	// core
 	CFrameWnd* m_Parent;

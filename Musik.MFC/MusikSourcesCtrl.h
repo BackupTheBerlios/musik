@@ -35,7 +35,7 @@ public:
 	void FocusNowPlaying();
 
 	// overrides
-	virtual void DoDrag( CMusikPropTreeItem* pItem );
+	void DoDrag( CMusikPropTreeItem* pItem );
 	virtual CMusikPropTreeItem* FindItem( const POINT& pt );
 
 	// message maps
@@ -46,8 +46,14 @@ protected:
 	// pointer to main frame
 	CFrameWnd* m_Parent;
 
-	// message maps
+	// mouse being track?
+	bool m_MouseTrack;
+
+	// mfc message maps
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg LRESULT OnMouseLeave(WPARAM wParam, LPARAM lParam);
+	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 
 	// drop target for the playlist
 	CMusikSourcesDropTarget* m_DropTarget;
@@ -89,8 +95,6 @@ private:
 	CMusikSourcesItemPtrArray m_Libraries;
 	CMusikSourcesItemPtrArray m_StdPlaylists;
 	CMusikSourcesItemPtrArray m_DynPlaylists;
-public:
-	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 };
 
 ///////////////////////////////////////////////////

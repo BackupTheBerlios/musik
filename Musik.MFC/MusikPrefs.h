@@ -135,8 +135,8 @@ private:
 	// theme aware stuff
 	bool m_ActiveCaptionDef;
 	bool m_CaptionDef;
-	bool m_InctiveCaptionDef;
-	bool m_InctiveCaptionTextDef;
+	bool m_InactiveCaptionDef;
+	bool m_InactiveCaptionTextDef;
 	bool m_BtnFaceDef;
 	bool m_BtnTextDef;
 	bool m_BtnHilightDef;

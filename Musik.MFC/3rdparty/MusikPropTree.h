@@ -172,8 +172,6 @@ public:
 
 	// mfc message maps
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-	afx_msg LRESULT OnMouseLeave(WPARAM wParam, LPARAM lParam);
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 
 protected:
 
@@ -185,13 +183,6 @@ protected:
 	// drag and drop related stuff
 	UINT m_DropID;
 	bool m_IsWinNT;
-	bool m_bMouseTrack;
-	virtual void DoDrag( CMusikPropTreeItem* pItem );
-
-	// which items are (were) currently
-	// hovered (mouse is over) in the list
-	CMusikPropTreeItem* m_HoverLast;
-	CMusikPropTreeItem* m_HoverCurrent;
 
 	// bitmap back buffer for flicker free drawing
 	CBitmap	m_BackBuffer;

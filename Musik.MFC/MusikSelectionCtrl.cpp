@@ -27,7 +27,7 @@ CMusikSelectionCtrl::CMusikSelectionCtrl( CFrameWnd* parent, CMusikLibrary* libr
 	m_ID = ctrlid;
 	m_DropID = dropid;
 	m_ParentBox = false;
-	m_bMouseTrack = false;
+	m_MouseTrack = false;
 	m_IsWinNT = ( 0 == ( GetVersion() & 0x80000000 ) );
 	HideScrollBars( LCSB_NCOVERRIDE, SB_HORZ );
 	InitFonts();
@@ -376,7 +376,7 @@ void CMusikSelectionCtrl::OnPaint()
 
 LRESULT CMusikSelectionCtrl::OnMouseLeave( WPARAM wParam, LPARAM lParam )
 {
-	m_bMouseTrack = false;
+	m_MouseTrack = false;
 	return 0L;
 }
 
@@ -388,9 +388,9 @@ void CMusikSelectionCtrl::OnMouseMove(UINT nFlags, CPoint point)
 	// without the button down to start
 	// tracking. once tracking begins,
 	// dnd can begin. once the mouse leaves 
-	// the window, m_bMouseTrack is false and
+	// the window, m_MouseTrack is false and
 	// dnd cannot happen
-	if ( !m_bMouseTrack && !( nFlags & MK_LBUTTON ) )
+	if ( !m_MouseTrack && !( nFlags & MK_LBUTTON ) )
 	{
 		TRACKMOUSEEVENT tme;
 		tme.cbSize = sizeof(tme);
@@ -399,10 +399,10 @@ void CMusikSelectionCtrl::OnMouseMove(UINT nFlags, CPoint point)
 		tme.dwHoverTime = HOVER_DEFAULT;
 		::_TrackMouseEvent(&tme);
 
-		m_bMouseTrack = true; 	
+		m_MouseTrack = true; 	
 	}
 
-	if ( ( nFlags & MK_LBUTTON ) && GetSelectedCount() && m_bMouseTrack )
+	if ( ( nFlags & MK_LBUTTON ) && GetSelectedCount() && m_MouseTrack )
 	{
 		COleDataSource datasrc;
 		HGLOBAL        hgDrop;
@@ -551,8 +551,6 @@ void CMusikSelectionCtrl::OnMouseMove(UINT nFlags, CPoint point)
 			break;
 		}		
 	}
-
-	CMusikListCtrl::OnMouseMove(nFlags, point);
 }
 
 ///////////////////////////////////////////////////

@@ -62,7 +62,7 @@ public:
 	// set states
 	void Select(BOOL bSelect = TRUE);
 	void Expand(BOOL bExpand = TRUE);
-	void SetMouseOver( BOOL bMouseOver = TRUE );
+	void Hover( BOOL bHover = TRUE );
 
 	// returns TRUE if the point is on the expand button
 	BOOL HitExpand(const POINT& pt);
@@ -72,7 +72,7 @@ public:
 	BOOL IsRootLevel();
 
 	// returns TRUE if the mouse is over the item
-	BOOL IsMouseOver();
+	BOOL IsHovered();
 
 	// returns the total height of the item and 
 	// all its children
@@ -184,7 +184,7 @@ private:
 	DWORD				m_dwState;
 
 	// TRUE if the mouse is over the item
-	BOOL				m_bMouseOver;
+	BOOL				m_bHover;
 
 	// TRUE if item is activated
 	BOOL				m_bActivated;
