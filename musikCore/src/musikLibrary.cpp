@@ -91,7 +91,7 @@ static int sqlite_AddSongToPlaylist(void *args, int numCols, char **results, cha
 
 ///////////////////////////////////////////////////
 
-static int sqlite_GetSongFieldFromID( void *args, int numCols, char **results, char ** columnNames )
+static int sqlite_GetFieldFromID( void *args, int numCols, char **results, char ** columnNames )
 {
 	// this is a callback for sqlite to use when
 	// finding a song's field
@@ -170,19 +170,6 @@ static int sqlite_GetEqualizer( void *args, int numCols, char **results, char **
 
 ///////////////////////////////////////////////////
 
-static int sqlite_GetPlaylistID( void *args, int numCols, char **results, char ** columnNames )
-{
-	// this is a callback for sqlite to use when
-	// finding a playlist's internal ID
-
-	int* n = (int*)args;
-	*n = atoi( results[0] ); 
-
-    return 0;
-}
-
-///////////////////////////////////////////////////
-
 static int sqlite_GetSongInfoFromID( void *args, int numCols, char **results, char ** columnNames )
 {
 	// this is a callback for sqlite to use when
@@ -227,7 +214,7 @@ static int sqlite_AddSongToStringArray( void *args, int numCols, char **results,
 
 ///////////////////////////////////////////////////
 
-static int sqlite_GetIntFromField( void *args, int numCols, char **results, char ** columnNames )
+static int sqlite_GetIntFromRow( void *args, int numCols, char **results, char ** columnNames )
 {
 	// this is a callback for sqlite to use when 
 	// finding the song id from a filename	
@@ -867,7 +854,7 @@ int CmusikLibrary::CreateStdPlaylist( const CStdString& name, const CStdStringAr
 
 	// get the ID of the newly created entry
 	nRet = sqlite_exec_printf( m_pDB, "SELECT std_playlist_id FROM %Q WHERE std_playlist_name = %Q;", 
-		&sqlite_GetPlaylistID, &nID, NULL,
+		&sqlite_GetIntFromRow, &nID, NULL,
 		STD_PLAYLIST_TABLE_NAME,
 		name.c_str() );
 	
@@ -1130,7 +1117,7 @@ int CmusikLibrary::DeleteStdPlaylist( const CStdString& name )
 
 	// get ID of the currently named playlist
 	nRet = sqlite_exec_printf( m_pDB, "SELECT std_playlist_id FROM %Q WHERE std_playlist_name = %Q;", 
-		&sqlite_GetPlaylistID, &nID, NULL,
+		&sqlite_GetIntFromRow, &nID, NULL,
 		STD_PLAYLIST_TABLE_NAME, 
 		name.c_str() );
 	
@@ -1545,7 +1532,7 @@ int CmusikLibrary::GetFieldFromID( int id, int field, CStdString& string )
 	m_ProtectingLibrary->acquire();
 
 	int nRet = sqlite_exec_printf( m_pDB, "SELECT %q FROM %Q WHERE songid = %d;", 
-		&sqlite_GetSongFieldFromID, &string, NULL,
+		&sqlite_GetFieldFromID, &string, NULL,
 		type.c_str(),
 		SONG_TABLE_NAME, 
 		id );
@@ -1729,7 +1716,7 @@ int CmusikLibrary::GetAllCrossfaders( CIntArray* target, bool clear_target )
 	m_ProtectingLibrary->acquire();
 	
 	int nRet = sqlite_exec_printf( m_pDB, "SELECT crossfader_id FROM %Q WHERE crossfader_id > -1;", 
-		&sqlite_AddRowToIntArray, target, NULL,
+		&sqlite_GetIntFromRow, target, NULL,
 		CROSSFADER_PRESET );
 
 	m_ProtectingLibrary->release();
@@ -1769,7 +1756,7 @@ int CmusikLibrary::GetIDFromFilename( CStdString fn )
 	m_ProtectingLibrary->acquire();
 
 	sqlite_exec_printf( m_pDB, "SELECT songid FROM %Q WHERE filename = %Q;", 
-		&sqlite_GetIntFromField, &target, NULL,
+		&sqlite_GetIntFromRow, &target, NULL,
 		SONG_TABLE_NAME,
 		fn.c_str() );
 
@@ -2173,7 +2160,7 @@ int CmusikLibrary::GetSongFormatFromID( int id, int* target )
 	m_ProtectingLibrary->acquire();
 
 	int nRet = sqlite_exec_printf( m_pDB, "SELECT format FROM %Q WHERE songid = %d;", 
-		&sqlite_GetIntFromField, target, NULL,
+		&sqlite_GetIntFromRow, target, NULL,
 		SONG_TABLE_NAME,
 		id );
 
