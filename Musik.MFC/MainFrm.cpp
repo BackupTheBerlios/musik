@@ -222,7 +222,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	EnableDocking( CBRS_ALIGN_TOP );
 
 	// now playing control
-	m_wndNowPlaying = new CMusikNowPlayingBar();
+	m_wndNowPlaying = new CMusikNowPlayingBar( m_Player );
 	m_wndNowPlaying->Create( _T( "Musik Now Playing" ), this, ID_NOWPLAYING );
 	m_wndNowPlaying->SetBarStyle( m_wndNowPlaying->GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC & ~SCBS_EDGEALL );
 	m_wndNowPlaying->EnableDocking( CBRS_ALIGN_BOTTOM );
@@ -428,6 +428,8 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 	return 0L;
 }
 
+///////////////////////////////////////////////////
+
 LRESULT CMainFrame::OnSongChange( WPARAM wParam, LPARAM lParam )
 {
 	if ( m_Player->IsPlaying() )
@@ -438,9 +440,13 @@ LRESULT CMainFrame::OnSongChange( WPARAM wParam, LPARAM lParam )
 			m_Player->GetCurrPlaying()->GetArtist().c_str() );
 
 		SetWindowText( s );
+		
+		m_wndNowPlaying->GetCtrl()->UpdateInfo();
 	}
 	else
 		SetWindowText( _T( "Musik" ) );	
 
 	return 0L;
 }	
+
+///////////////////////////////////////////////////

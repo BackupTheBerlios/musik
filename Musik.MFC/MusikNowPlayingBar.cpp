@@ -5,6 +5,8 @@
 #include "Musik.h"
 #include "MusikNowPlayingBar.h"
 
+#include "../Musik.Core/include/MusikPlayer.h"
+
 ///////////////////////////////////////////////////
 
 #ifdef _DEBUG
@@ -15,14 +17,16 @@ static char THIS_FILE[] = __FILE__;
 
 ///////////////////////////////////////////////////
 
-CMusikNowPlayingBar::CMusikNowPlayingBar()
+CMusikNowPlayingBar::CMusikNowPlayingBar( CMusikPlayer* player )
 {
+	m_wndChild = new CMusikNowPlayingCtrl( player );
 }
 
 ///////////////////////////////////////////////////
 
 CMusikNowPlayingBar::~CMusikNowPlayingBar()
 {
+	delete m_wndChild;
 }
 
 ///////////////////////////////////////////////////
@@ -39,13 +43,13 @@ int CMusikNowPlayingBar::OnCreate( LPCREATESTRUCT lpCreateStruct )
 	if ( baseCMusikNowPlayingBar::OnCreate(lpCreateStruct) == -1 )
 		return -1;
 
-	if ( !m_wndChild.Create( NULL, NULL, WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0), this, 123) )
+	if ( !m_wndChild->Create( NULL, NULL, WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0), this, 123) )
 		return -1;
 
 	if ( !m_Font.CreateStockObject(DEFAULT_GUI_FONT) )
 		return -1;
 
-	m_wndChild.SetFont( &m_Font );
+	m_wndChild->SetFont( &m_Font );
 	
 	return 0;
 }
@@ -59,7 +63,8 @@ void CMusikNowPlayingBar::OnSize(UINT nType, int cx, int cy)
 	CRect rcClient;
 	GetClientRect( &rcClient );
 
-	m_wndChild.MoveWindow( &rcClient );
+	m_wndChild->MoveWindow( &rcClient );
+	m_wndChild->Layout();
 }
 
 ///////////////////////////////////////////////////

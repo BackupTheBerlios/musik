@@ -212,6 +212,16 @@
 					<File
 						RelativePath=".\MusikNowPlayingCtrl.h">
 					</File>
+					<Filter
+						Name="CNowPlayingStatic"
+						Filter="">
+						<File
+							RelativePath=".\MusikNowPlayingStatic.cpp">
+						</File>
+						<File
+							RelativePath=".\MusikNowPlayingStatic.h">
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="MusikSelectionCtrl"
