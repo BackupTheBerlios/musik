@@ -1,8 +1,8 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// CSizingControlBarG           Version 2.43
+// CSizingControlBarCF          Version 2.43
 // 
-// Created: Jan 24, 1998        Last Modified: August 03, 2000
+// Created: Dec 21, 1998        Last Modified: August 03, 2000
 //
 // See the official site at www.datamekanix.com for documentation and
 // the latest news.
@@ -24,6 +24,11 @@
 //
 // Send bug reports, bug fixes, enhancements, requests, flames, etc. to
 // cristi@datamekanix.com or post them at the message board at the site.
+/////////////////////////////////////////////////////////////////////////
+// The Musik Team attempted to gain permission to distribute these files
+// with the source, but no response was ever recieved. The code is 
+// somewhat modified, and if the author wishes us to remove it, he
+// should contact Casey Langen at casey@bak.rr.com
 /////////////////////////////////////////////////////////////////////////
 
 // sizecbar.cpp : implementation file

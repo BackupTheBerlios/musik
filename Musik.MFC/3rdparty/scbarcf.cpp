@@ -25,6 +25,11 @@
 // Send bug reports, bug fixes, enhancements, requests, flames, etc. to
 // cristi@datamekanix.com or post them at the message board at the site.
 /////////////////////////////////////////////////////////////////////////
+// The Musik Team attempted to gain permission to distribute these files
+// with the source, but no response was ever recieved. The code is 
+// somewhat modified, and if the author wishes us to remove it, he
+// should contact Casey Langen at casey@bak.rr.com
+/////////////////////////////////////////////////////////////////////////
 
 #include <stdafx.h>
 #include "scbarcf.h"

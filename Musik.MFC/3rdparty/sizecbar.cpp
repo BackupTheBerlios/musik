@@ -50,6 +50,11 @@
 //  o   And, of course, many thanks to all of you who used this code,
 //      for the invaluable feedback I received.
 /////////////////////////////////////////////////////////////////////////
+// The Musik Team attempted to gain permission to distribute these files
+// with the source, but no response was ever recieved. The code is 
+// somewhat modified, and if the author wishes us to remove it, he
+// should contact Casey Langen at casey@bak.rr.com
+/////////////////////////////////////////////////////////////////////////
 
 // sizecbar.cpp : implementation file
 //
