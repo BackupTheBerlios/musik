@@ -409,6 +409,13 @@ void CMusikPlayer::Stop( bool bCheckFade, bool bExit )
 	}
 
 	//-------------------------------------------------//
+	//--- update the ui.							---//
+	//-------------------------------------------------//
+	g_MusikFrame->SetTitle( MUSIK_VERSION );
+	g_NowPlayingCtrl->ResetInfo();
+	g_NowPlayingCtrl->PauseBtnToPlayBtn();
+
+	//-------------------------------------------------//
 	//--- setup crossfader and return, if the prefs	---//
 	//--- say so.									---//
 	//-------------------------------------------------//
@@ -437,6 +444,11 @@ void CMusikPlayer::Stop( bool bCheckFade, bool bExit )
 		}
 	}
 	
+	//-------------------------------------------------//
+	//--- if we arrive at this point, either the 	---//
+	//--- crossfade has finished, or no crossfade	---//
+	//--- was enabled. clean up, at any rate.		---//
+	//-------------------------------------------------//
 	m_Playing = false;
 
 	int nStreamCount = g_ActiveStreams.GetCount();
@@ -456,11 +468,6 @@ void CMusikPlayer::Stop( bool bCheckFade, bool bExit )
 
 	m_SongIndex	= 0;
 	m_LastSong	= 0;
-
-	g_MusikFrame->SetTitle( MUSIK_VERSION );
-
-	g_NowPlayingCtrl->ResetInfo();
-	g_NowPlayingCtrl->PauseBtnToPlayBtn();
 }
 
 size_t CMusikPlayer::GetRandomSong()
