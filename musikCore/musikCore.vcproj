@@ -243,6 +243,9 @@
 			RelativePath=".\include\musikFunctor.h">
 		</File>
 		<File
+			RelativePath=".\include\musikRemoveOld.h">
+		</File>
+		<File
 			RelativePath=".\include\StdString.h">
 		</File>
 	</Files>

@@ -2,7 +2,7 @@
 // 
 // Info:
 //
-//   musik is a a cross platform, open source
+//   musik is a cross platform, open source
 //   multimedia library. More information at:
 //
 //     http://musik.berlios.de
