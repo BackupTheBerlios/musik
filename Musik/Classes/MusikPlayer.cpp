@@ -332,17 +332,14 @@ void CMusikPlayer::Pause( bool bCheckFade )
 	if ( bCheckFade )
 	{
 		if ( g_Prefs.nFadePauseResumeEnable == 1 )
-		{
 			SetFadeStart();
-			return;
-		}
 	}
+	else
+		FinalizePause();
+}
 
-	//-------------------------------------------------//
-	//--- if we get here, the fade out is done, or	---//
-	//--- fading is disabled. so actually pause the	---//
-	//--- stream and update the UI.					---//
-	//-------------------------------------------------//
+void CMusikPlayer::FinalizePause()
+{
 	FSOUND_SetPaused( FSOUND_ALL, TRUE );
 }
 
@@ -369,7 +366,12 @@ void CMusikPlayer::Resume( bool bCheckFade )
 			SetFadeStart();
 	}
 	else
-		SetVolume();
+		FinalizeResume();
+}
+
+void CMusikPlayer::FinalizeResume()
+{
+	SetVolume();
 }
 
 void CMusikPlayer::Stop( bool bCheckFade, bool bExit )
@@ -402,7 +404,6 @@ void CMusikPlayer::Stop( bool bCheckFade, bool bExit )
 		{
 			if ( g_Prefs.nFadeExitEnable == 1 && IsPlaying() )
 			{
-				SetCrossfadeType( CROSSFADE_EXIT );
 				SetFadeStart();
 				return;
 			}
@@ -413,18 +414,17 @@ void CMusikPlayer::Stop( bool bCheckFade, bool bExit )
 		{
 			if ( g_Prefs.nFadeStopEnable == 1 && IsPlaying() )
 			{
-				SetCrossfadeType( CROSSFADE_STOP );
 				SetFadeStart();
 				return;
 			}				
 		}
 	}
-	
-	//-------------------------------------------------//
-	//--- if we arrive at this point, either the 	---//
-	//--- crossfade has finished, or no crossfade	---//
-	//--- was enabled. clean up, at any rate.		---//
-	//-------------------------------------------------//
+	else
+		FinalizeStop();
+}
+
+void CMusikPlayer::FinalizeStop()
+{
 	m_Playing = false;
 
 	int nStreamCount = g_ActiveStreams.GetCount();
@@ -668,11 +668,11 @@ void CMusikPlayer::SetFadeComplete()
 	m_Fading = false; 
 	
 	if ( GetCrossfadeType() == CROSSFADE_PAUSE )
-		Pause( false );
+		FinalizePause();
 	else if ( GetCrossfadeType() == CROSSFADE_RESUME )
-		Resume( false );
+		FinalizeResume();
 	else if ( GetCrossfadeType() == CROSSFADE_STOP || GetCrossfadeType() == CROSSFADE_EXIT )
-		Stop( false );
+		FinalizeStop();
 	
 	ClearOldStreams();
 }

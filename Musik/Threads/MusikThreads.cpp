@@ -290,6 +290,21 @@ void MusikCrossfaderThread::OnExit()
 	m_Parent->SetCrossfaderActive( false );
 
 	//-------------------------------------------------//
+	//--- finalize whatever type of fade was going	---//
+	//--- on.										---//
+	//-------------------------------------------------//
+	/*
+	if ( m_FadeType == CROSSFADE_STOP || m_FadeType == CROSSFADE_EXIT )
+		g_Player.FinalizeStop();
+	else if ( m_FadeType == CROSSFADE_PAUSE )
+		g_Player.FinalizePause();
+	else if ( m_FadeType == CROSSFADE_RESUME )
+		g_Player.FinalizeResume();
+	Yield();
+	*/
+
+
+	//-------------------------------------------------//
 	//--- if we ended naturally, that means no		---//
 	//--- other crossfader spawned. tell the player	---//
 	//--- no other fading is going on, so it can	---//
@@ -303,14 +318,12 @@ void MusikCrossfaderThread::OnExit()
 	}
 
 	//-------------------------------------------------//
-	//--- otherwise, something sent us the abort	---//
+	//--- if aborted, something sent us the abort	---//
 	//--- signal. the thread was just killed, so	---//
 	//--- start a new one up.						---//
 	//-------------------------------------------------//
 	else if ( m_Aborted )
-	{
 		m_Parent->StartNew();
-	}
 }
 
 //---------------------------------------------------------//
