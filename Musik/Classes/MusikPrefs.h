@@ -20,6 +20,7 @@
 	#include "wx/wx.h"
 #endif 
 #include "../MusikGlobals.h"
+#include "ActivityBox.h"
 
 class CMusikPrefs
 {

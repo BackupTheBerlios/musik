@@ -244,7 +244,7 @@ void *MusikCrossfaderThread::Entry()
 	//--- 10 fades every second, smoooth.			---//
 	//-------------------------------------------------//
 	float fFadeCount = 10.0f * fFadeSecs;
-	int nFadeCount = fFadeCount;
+	int nFadeCount = (int) fFadeCount;
 	if ( nFadeCount < 1 )
 		nFadeCount = 1;
 

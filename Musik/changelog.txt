@@ -1,4 +1,9 @@
 0.1.3 to 0.1.4
+ + Compiles now with wxGTK 2.4.1 too ( not only wxWindows cvs version). No gtk2 wxWindows is really needed. It compiles on my gentoo box with the standard wxGtk 2.4.1(gunnar)
+ + Removed all warnings on linux compiling (gunnar)
+ + Multimedia keyboard support on windows should really work now ( gunnar)
+ + Fixed Bug: Playlist was not shown on linux, bcause playlistctrl was freezed. wonder why that error did not have effect on windows.(gunnar)
+ + Fixed Bug: compiles on linux again (gunnar)
  + Fixed Bug: Hiding / Showing the activity boxes could make the playlist info disappear. (avatar)
  + Fixed Bug: clicking and dragging outside the seek bar, then releasing in the seek bar could cause a crash (avatar)
  + Took out "Scan for new files" in Library setup. Just caused confusion. (avatar)

@@ -31,9 +31,17 @@
 //--- for CMusikSongArray ---//
 #include "MusikLibrary.h"
 
+
+enum EMUSIK_ACTIVITY_TYPE
+{
+	MUSIK_LBTYPE_NULL = 0,
+	MUSIK_LBTYPE_ARTISTS,
+	MUSIK_LBTYPE_ALBUMS,
+	MUSIK_LBTYPE_GENRES,
+	MUSIK_LBTYPE_YEARS
+};
+
 //--- forward declarations ---//
-enum EMUSIK_ACTIVITY_TYPE;
-enum EMUSIK_LIB_TYPE;
 class CActivityBox;
 class MusikActivityRenameThread;
 
@@ -67,7 +75,7 @@ private:
 	virtual	int				OnGetItemImage	(long item) const { return 0; }
 
 	inline bool		HasShowAllRow	() const; 
-	long			GetRowCount		() const { return HasShowAllRow()?( long )m_Items.GetCount()+ 1: ( long )m_Items.GetCount(); }
+	size_t			GetRowCount		() const { return HasShowAllRow()?( size_t )m_Items.GetCount()+ 1: ( size_t )m_Items.GetCount(); }
 	inline wxString GetRowText		( long row ) const ;
 
 	//--- stripe colors ---//

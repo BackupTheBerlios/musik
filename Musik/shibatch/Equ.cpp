@@ -30,7 +30,6 @@ static volatile int chg_ires,cur_ires;
 static int winlen,winlenbit,tabsize,nbufsamples;
 static short *inbuf;
 static REAL *outbuf;
-static int maxamp;
 int enable = 1, dither = 0;
 
 #define NCH 2
@@ -320,7 +319,7 @@ int equ_modifySamples(char *buf,int nsamples,int nch,int bps)
   REAL *ires;
   int amax =  (1 << (bps-1))-1;
   int amin = -(1 << (bps-1));
-  static float hm1 = 0, hm2 = 0;
+  static float hm1 = 0;
 
   if (chg_ires) {
 	  cur_ires = chg_ires;
@@ -349,11 +348,11 @@ int equ_modifySamples(char *buf,int nsamples,int nch,int bps)
 					if (amax < s) s = amax;
 					s = RINT(s);
 					hm1 = s - u;
-					((unsigned char *)buf)[i+p*nch] = s + 0x80;
+					((unsigned char *)buf)[i+p*nch] = (unsigned char)(s + 0x80);
 				} else {
 					if (s < amin) s = amin;
 					if (amax < s) s = amax;
-					((unsigned char *)buf)[i+p*nch] = RINT(s) + 0x80;
+					((unsigned char *)buf)[i+p*nch] = (unsigned char) (RINT(s) + 0x80);
 				}
 			}
 		for(i=winlen*nch;i<tabsize*nch;i++)
@@ -375,7 +374,7 @@ int equ_modifySamples(char *buf,int nsamples,int nch,int bps)
 					if (amax < s) s = amax;
 					s = RINT(s);
 					hm1 = s - u;
-					((short *)buf)[i+p*nch] = s;
+					((short *)buf)[i+p*nch] = (short)s;
 				} else {
 					if (s < amin) s = amin;
 					if (amax < s) s = amax;
@@ -477,7 +476,7 @@ int equ_modifySamples(char *buf,int nsamples,int nch,int bps)
 					if (amax < s) s = amax;
 					s = RINT(s);
 					hm1 = s - u;
-					((unsigned char *)buf)[i+p*nch] = s + 0x80;
+					((unsigned char *)buf)[i+p*nch] = (unsigned char)(s + 0x80);
 				} else {
 					if (s < amin) s = amin;
 					if (amax < s) s = amax;
@@ -500,7 +499,7 @@ int equ_modifySamples(char *buf,int nsamples,int nch,int bps)
 					if (amax < s) s = amax;
 					s = RINT(s);
 					hm1 = s - u;
-					((short *)buf)[i+p*nch] = s;
+					((short *)buf)[i+p*nch] = (short)s;
 				} else {
 					if (s < amin) s = amin;
 					if (amax < s) s = amax;

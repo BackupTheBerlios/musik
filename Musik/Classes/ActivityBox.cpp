@@ -180,7 +180,6 @@ void CActivityListBox::DeselectAll()
 void CActivityListBox::SetSel( const  wxArrayString & aList )
 {
 	DeselectAll();
-	int nPos = -1;
 	for ( size_t i = 0; i < aList.GetCount(); i++ )
 	{
 		SetSel(aList.Item( i ), false);
@@ -214,7 +213,6 @@ void CActivityListBox::GetSelected(wxArrayString & aReturn)
 
 wxString CActivityListBox::GetFirstSel()
 {
-	bool bUnknown = false;
 	int nIndex = -1;
 	for ( int i = 0; i < GetSelectedItemCount(); i++ )
 	{
@@ -384,6 +382,9 @@ wxString CActivityBox::GetActivityTypeStr()
 	case MUSIK_LBTYPE_YEARS:
 		return wxT( "year" );
 		break;
+  case MUSIK_LBTYPE_NULL:
+    wxASSERT(0);
+    break;  
 	}
 	return wxT( "" );
 }
@@ -399,8 +400,10 @@ EMUSIK_LIB_TYPE CActivityBox::ACTIVITY_TYPE2LIB_TYPE( EMUSIK_ACTIVITY_TYPE lbtyp
 		return MUSIK_LIB_GENRE;
 	case MUSIK_LBTYPE_YEARS:
 		return MUSIK_LIB_YEAR;
+    case MUSIK_LBTYPE_NULL:
+    default:    
+	    return MUSIK_LIB_INVALID;
 	}
-	return MUSIK_LIB_INVALID;
 }
 
 void CActivityBox::GetRelatedList( CActivityBox *pDst, wxArrayString & aReturn )
@@ -426,10 +429,7 @@ void CActivityBox::ResetCaption()
 void CActivityBox::ResetContents()
 {
 	wxArrayString list;
-	if			( m_ActivityType == MUSIK_LBTYPE_ARTISTS	)	g_Library.GetAllArtists( list );
-	else if		( m_ActivityType == MUSIK_LBTYPE_ALBUMS		)	g_Library.GetAllAlbums( list );
-	else if		( m_ActivityType == MUSIK_LBTYPE_GENRES		)	g_Library.GetAllGenres( list );
-	else if		( m_ActivityType == MUSIK_LBTYPE_YEARS		)	g_Library.GetAllYears( list );
+	GetFullList(list);
 	SetContents( list );
 }
 
@@ -440,13 +440,20 @@ void CActivityBox::GetFullList( wxArrayString & aReturn )
 	{
 	case MUSIK_LBTYPE_ARTISTS:
 		g_Library.GetAllArtists( aReturn );
+    break;
 	case MUSIK_LBTYPE_ALBUMS:
 		g_Library.GetAllAlbums( aReturn );
+    break;
 	case MUSIK_LBTYPE_GENRES:
 		g_Library.GetAllGenres( aReturn );
+    break;
 	case MUSIK_LBTYPE_YEARS:
 		g_Library.GetAllYears( aReturn );
-	}
+    break;
+  case MUSIK_LBTYPE_NULL:
+    wxASSERT(0);
+    break;
+  }
 }
 
 void CActivityBox::GetSelectedSongs( CMusikSongArray& array )
@@ -533,13 +540,17 @@ void CActivityBox::GetSelectedSongs( CMusikSongArray& array )
 			for ( size_t i = 0; i < aThisSel.GetCount(); i++ )
 			{
 				aThisSel.Item( i ).Replace( wxT( "'" ), wxT( "''" ), true );
-				sThis += wxT("'") + aThisSel.Item( i );
-
+				sThis += wxT("'");
+				sThis += aThisSel.Item( i );
 				
 				if ( i == ( aThisSel.GetCount() - 1 ) )
 				      sThis += wxT("'");				
 				else
-					sThis += wxT("' or ") + sThisType + wxT(" like ");
+				{
+				      sThis += wxT("' or ");
+				      sThis += sThisType;
+				      sThis += wxT(" like ");
+				}
 			}
 
 			//-------------------------------------------------//
@@ -551,10 +562,17 @@ void CActivityBox::GetSelectedSongs( CMusikSongArray& array )
 			for ( size_t i = 0; i < aParentSel.GetCount(); i++ )
 			{
 				aParentSel.Item( i ).Replace( wxT( "'" ), wxT( "''" ), true );
-				sParent += wxT("'") + aParentSel.Item( i ) + wxT("' and " ) + sThis;
-
+				sParent += wxT("'");
+				sParent += aParentSel.Item( i );
+				sParent += wxT("' and " );
+				sParent += sThis;
 				if ( i != ( aParentSel.GetCount() - 1 ) )
-					sParent += wxT(" or ") + sParentType + wxT( " like " );
+				//--- not last item, so format string for another ---//
+				{
+					sParent += wxT(" or ");
+					sParent += sParentType;
+					sParent += wxT(" like ");
+			    }
 			}
 
 			g_Library.QuerySongs( sParent, array );

@@ -219,7 +219,7 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 	//--- which box are we?             ---//
 	//--- and which are the other ones? ---//
 	//-------------------------------------//
-	CActivityBox *pBox1, *pBox2, *pBox3;
+	CActivityBox *pBox1 = NULL, *pBox2 = NULL , *pBox3 = NULL;
 	if ( pSel == m_ActivityBox1 )
 	{	pBox1 = m_ActivityBox2;		pBox2 = m_ActivityBox3;		pBox3 = m_ActivityBox4;		}
 	else if ( pSel == m_ActivityBox2 )

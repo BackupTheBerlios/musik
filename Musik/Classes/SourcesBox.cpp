@@ -33,7 +33,7 @@
 bool SourcesDropTarget::OnDropText( wxCoord x, wxCoord y, const wxString &text )
 {
 	wxString sFiles = text;
-	long n;
+	long n = -1;
 	if ( sFiles != wxT( "" ) )
 	{
 		//--- seperate values. "s\n" for sources, "p\n" for playlist, "a\n" for activity box ---//

@@ -84,7 +84,7 @@ TARGET_LINK_LIBRARIES(Musik
 
 # Set build variables
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -ansi -pedantic")
-SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
+SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -pipe -fomit-frame-pointer")
 
 # Set install options
 INSTALL_TARGETS(/bin Musik)

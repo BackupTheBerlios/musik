@@ -482,7 +482,7 @@ void CMusikPlayer::FinalizeStop()
 
 size_t CMusikPlayer::GetRandomSong()
 {
-	size_t r;
+	size_t r = 0;
 
 	if( !m_RandomIndex || !m_Playlist.GetCount() )
 		return 0;

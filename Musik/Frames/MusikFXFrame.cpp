@@ -40,6 +40,10 @@ BEGIN_EVENT_TABLE(MusikFXFrame, wxFrame)
 	EVT_COMMAND_SCROLL		( SLD_PITCH,		MusikFXFrame::OnSlidePitch		)
 END_EVENT_TABLE()
 
+#ifndef wxCLOSE_BOX
+#define wxCLOSE_BOX 0
+#endif
+
 MusikFXFrame::MusikFXFrame( wxFrame *pParent, const wxString &sTitle, const wxPoint &pos, const wxSize &size ) 
 	: wxFrame ( pParent, -1, sTitle, pos, size, wxCAPTION | wxTAB_TRAVERSAL | wxCLOSE_BOX | wxSYSTEM_MENU | wxFRAME_NO_TASKBAR )
 {
