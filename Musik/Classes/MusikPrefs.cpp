@@ -82,7 +82,6 @@ void CMusikPrefs::LoadPrefs()
 	config->Read( wxT( "EnableWebserver" ),						&nWebServerEnable,			0						);
 	config->Read( wxT( "Webserverport" ),						&nWebServerPort,			6395					);
 	config->Read( wxT( "FramePlacement" ),						&sFramePlacement,			wxT("0,0,800,600,0,0")	);
-	config->Read( wxT( "MusikVersion" ),						&sMusikVersion,				wxT("Musik 0.1.2")		);
 	config->Read( wxT( "SmartPlaylistColumns" ),				&nPlaylistSmartColumns,		1						);
 
 	//-----------------------------------------------------//
@@ -229,9 +228,9 @@ void CMusikPrefs::SavePrefs()
 	config->Write( wxT( "EnableWebserver" ),				nWebServerEnable			);
 	config->Write( wxT( "WebserverPort" ),					nWebServerPort				);
 	config->Write( wxT( "FramePlacement" ),					sFramePlacement				);
-	config->Write( wxT( "MusikVersion" ),					sMusikVersion				);
 	config->Write( wxT( "SmartPlaylistColumns" ),			nPlaylistSmartColumns		);
-    //--- playlist columns ---//
+
+	//--- playlist columns ---//
 	for( int i = 0; i < NPLAYLISTCOLUMNS; i++ )
 	{
 		config->Write( wxString::Format( wxT( "PlaylistColumn%dEnable" ),	i ),	nPlaylistColumnEnable[i]	);

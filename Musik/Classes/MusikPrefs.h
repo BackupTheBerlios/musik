@@ -97,7 +97,6 @@ public:
 
 	wxString sAutoRename;
 	wxString sAutoTag;
-	wxString sMusikVersion;
 
 	int nPlaylistSmartColumns;
 	int nPlaylistColumnEnable[NPLAYLISTCOLUMNS];

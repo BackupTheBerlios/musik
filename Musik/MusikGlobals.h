@@ -77,6 +77,7 @@
 #define MUSIK_DB_FILENAME		MUSIK_HOME_DIR + wxT( "musiklib.db" )
 #define MUSIK_SOURCES_FILENAME	MUSIK_HOME_DIR + wxT( "musiksources.dat" )
 #define MUSIK_PATHS_FILENAME	MUSIK_HOME_DIR + wxT( "musikpaths.dat" )
+#define MUSIK_VERSION_FILENAME	MUSIK_HOME_DIR + wxT( "musikversion.dat" )
 #define MUSIK_PATH_SEPARATOR	wxFileName::GetPathSeparator()
 
 //-------------------------//

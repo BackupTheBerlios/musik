@@ -23,6 +23,8 @@ class MusikApp : public wxApp
 public:
 	virtual bool OnInit();
 private:
+	wxString ReadVersion();
+	void WriteVersion();
 	void CheckVersion();
 };
 

@@ -12,6 +12,7 @@
 
 //--- For compilers that support precompilation, includes "wx/wx.h". ---//
 #include "wx/wxprec.h"
+#include "wx/textfile.h"
 
 #include "MusikApp.h"
 IMPLEMENT_APP( MusikApp )
@@ -134,30 +135,65 @@ void MusikApp::CheckVersion()
 {
 	bool bSavePrefs = false;
 
-	//--------------------------------//
-	//--- if we have a new version ---//
-	//--------------------------------//
-	if ( g_Prefs.sMusikVersion != wxString( MUSIK_VERSION ) )
+	wxString sVersion;
+	if ( wxFileExists( MUSIK_VERSION_FILENAME ) )
 	{
-		//------------------------------------//
-		//--- if the old version was 0.1.2 ---//
-		//------------------------------------//
-		if ( g_Prefs.sMusikVersion == wxT( "Musik 0.1.2" ) )
-		{
-			if ( wxFileExists( MUSIK_SOURCES_FILENAME ) || wxFileExists( MUSIK_DB_FILENAME ) )
-			{
-				wxMessageBox( wxT( "Musik has detected version 0.1.2 or earlier was previously installed.\n\nDue to the changes from 0.1.2 to the current version, your Sources list and Library must be reset. We apologize for any inconvenience this may cause." ), MUSIK_VERSION, wxICON_INFORMATION );
-		
-				if ( wxFileExists( MUSIK_SOURCES_FILENAME ) )
-					wxRemoveFile( MUSIK_SOURCES_FILENAME );
-				if ( wxFileExists( MUSIK_DB_FILENAME ) )
-					wxRemoveFile( MUSIK_DB_FILENAME );
-			}
-			g_Prefs.sMusikVersion = MUSIK_VERSION;
-			bSavePrefs = true;
-		}
-	}
+		sVersion = ReadVersion();
 
-	if ( bSavePrefs )
-		g_Prefs.SavePrefs();
+		//-------------------------------------------------//
+		//--- if version XXX was detected, we'll want	---//
+		//--- to do XXX. not needed right now.			---//
+		//-------------------------------------------------//
+	}
+	else
+	{
+		//-------------------------------------------------//
+		//--- if these files exist, but the version.dat	---//
+		//--- does not, some version prior to 0.1.3 was	---//
+		//--- installed. give user a nice little		---//
+		//--- warning.									---//
+		//-------------------------------------------------//
+		if ( wxFileExists( MUSIK_SOURCES_FILENAME ) || wxFileExists( MUSIK_DB_FILENAME ) )
+		{
+			wxMessageBox( wxT( "Musik has detected version 0.1.2 or earlier was previously installed.\n\nDue to the changes from 0.1.2 to the current version, your Sources list and Library must be reset. We apologize for any inconvenience this may cause." ), MUSIK_VERSION, wxICON_INFORMATION );
+	
+			if ( wxFileExists( MUSIK_SOURCES_FILENAME ) )
+				wxRemoveFile( MUSIK_SOURCES_FILENAME );
+			if ( wxFileExists( MUSIK_DB_FILENAME ) )
+				wxRemoveFile( MUSIK_DB_FILENAME );
+		}		
+		WriteVersion();
+	}
+}
+
+wxString MusikApp::ReadVersion()
+{
+	wxTextFile ver( MUSIK_VERSION_FILENAME );
+	wxString sRet;
+	if ( ver.Open() )
+	{
+		if ( ver.GetLineCount() != 0 )
+			sRet = ver.GetLine( 0 );
+		ver.Close();
+	}
+	return sRet;
+}
+
+void MusikApp::WriteVersion()
+{
+	wxTextFile ver;
+	if ( wxFileExists( MUSIK_VERSION_FILENAME ) )
+		ver.Open( MUSIK_VERSION_FILENAME );
+	else
+	{
+		ver.Create( MUSIK_VERSION_FILENAME );
+		ver.Open( MUSIK_VERSION_FILENAME );
+	}
+    
+	if ( ver.IsOpened() )
+	{
+		ver.AddLine( MUSIK_VERSION );
+		ver.Write();
+		ver.Close();
+	}
 }
