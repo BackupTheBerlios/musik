@@ -131,6 +131,10 @@ public:
 	void FinishCrossfade();
 	void SetCrossfader( CMusikCrossfader fader, bool force_init = true );
 
+	// playlist management
+	void CleanPlaylist();
+	void InitBlankPlaylist();
+
 	// equalizer stuff
 	void InitEQ_DSP();
 	void CleanEQ_DSP();

@@ -172,6 +172,7 @@ public:
 	void GetAllDynPlaylists	( CMusikPlaylistInfoArray* target, bool clear_target = true );
 	void GetStdPlaylist		( int id, CMusikPlaylist& target, bool clear_target = true );
 	void GetStdPlaylistFns	( int id, CStdStringArray& target, bool clear_target = true );
+	void GetStdPlaylistFns	( CMusikPlaylist& playlist, CStdStringArray& target, bool clear_target = true );
 	void CreateStdPlaylist	( const CStdString& name, const CStdStringArray& files, bool verify = false );
 	void AppendStdPlaylist	( int id, const CStdStringArray& files, bool verify = false );
 	void CreateDynPlaylist	( const CStdString& name, const CStdString& query );

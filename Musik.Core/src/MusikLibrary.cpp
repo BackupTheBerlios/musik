@@ -725,12 +725,36 @@ void CMusikLibrary::GetStdPlaylistFns( int id, CStdStringArray& target, bool cle
 	if ( !ids.GetCount() )
 		return;
 
+	if ( clear_target )
+		target.clear();
+
 	// do it
 	m_ProtectingLibrary->acquire();
 	BeginTransaction();
 
 	for ( size_t i = 0; i < ids.GetCount(); i++ )
 		target.push_back( ids.GetField( i, MUSIK_LIBRARY_TYPE_FILENAME ) );
+
+	EndTransaction();
+	m_ProtectingLibrary->release();
+}
+
+///////////////////////////////////////////////////
+
+void CMusikLibrary::GetStdPlaylistFns( CMusikPlaylist& playlist, CStdStringArray& target, bool clear_target )
+{
+	if ( !playlist.GetCount() )
+		return;
+
+	if ( clear_target )
+		target.clear();
+
+	// do it
+	m_ProtectingLibrary->acquire();
+	BeginTransaction();
+
+	for ( size_t i = 0; i < playlist.GetCount(); i++ )
+		target.push_back( playlist.GetField( i, MUSIK_LIBRARY_TYPE_FILENAME ) );
 
 	EndTransaction();
 	m_ProtectingLibrary->release();

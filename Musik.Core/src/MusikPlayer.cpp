@@ -299,10 +299,11 @@ CMusikPlayer::~CMusikPlayer()
 			Sleep( 100 );
 	}
 
-	CleanThread();
+    CleanThread();
 	CleanEqualizer();
 	CleanCrossfader();
 	CleanSound();
+	CleanPlaylist();
 }
 
 ///////////////////////////////////////////////////
@@ -832,6 +833,25 @@ void CMusikPlayer::SetCrossfader( CMusikCrossfader fader, bool force_init )
 		InitCrossfader();
 
 	*m_Crossfader = fader;
+}
+
+///////////////////////////////////////////////////
+
+void CMusikPlayer::CleanPlaylist()
+{
+	if ( m_Playlist )
+	{
+		delete m_Playlist;
+		m_Playlist = NULL;
+	}
+}
+
+///////////////////////////////////////////////////
+
+void CMusikPlayer::InitBlankPlaylist()
+{
+	CleanPlaylist();
+	m_Playlist = new CMusikPlaylist();
 }
 
 ///////////////////////////////////////////////////
