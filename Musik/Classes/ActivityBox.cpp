@@ -193,12 +193,13 @@ void CActivityListBox::SetSel( wxString sel )
 wxArrayString CActivityListBox::GetSelected()
 {
 	wxArrayString aReturn;
-	int nIndex = -1;
-	for ( int i = 0; i < GetSelectedItemCount(); i++ )
+	int nIndex = 0;
+	for ( ;; )
 	{
 		nIndex = GetNextItem( nIndex, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
-		if ( nIndex > -1 )
-			aReturn.Add( pItems->Item( nIndex ) );
+		if ( nIndex == -1 )
+			break;
+		aReturn.Add( pItems->Item( nIndex ) );
 	}
 	return aReturn;
 }
@@ -513,29 +514,43 @@ void CActivityBox::SetPlaylist()
 				return;
 
 			//--- make this box'es portion of query ---//
-			wxString sThis = sThisType + wxT(" like ");
+			wxString sThis; 
+			sThis.Alloc(aThisSel.GetCount() * 40); // optimization ( the 40 is a wild guess)
+			sThis += sThisType + wxT(" like ");
 			for ( size_t i = 0; i < aThisSel.GetCount(); i++ )
 			{
 				aThisSel.Item( i ).Replace( wxT( "'" ), wxT( "''" ), true );
-
+				sThis += wxT("'");
+				sThis += aThisSel.Item( i );
 				if ( i == ( aThisSel.GetCount() - 1 ) )
-					sThis = sThis + wxT("'") + aThisSel.Item( i ) + wxT("'");
-
+				{// end of line
+				      sThis + wxT("'");
+				}
 				else
-					sThis = sThis + wxT("'") + aThisSel.Item( i ) + wxT("' or ") + sThisType + wxT(" like ");
+				{
+				      sThis += wxT("' or ");
+				      sThis += sThisType;
+				      sThis += wxT(" like ");
+				}
 			}
 
 			//--- make parent portion of query ---//
-			wxString sParent = sParentType + wxT(" like ");
+			wxString sParent;
+			sParent.Alloc(aParentSel.GetCount() * (50+ sThis.Length()+sParentType.Length())); // optimization ( the 40 is a wild guess)
+			sParent = sParentType + wxT(" like "); 
 			for ( size_t i = 0; i < aParentSel.GetCount(); i++ )
 			{
 				aParentSel.Item( i ).Replace( wxT( "'" ), wxT( "''" ), true );
-
-				if ( i == ( aParentSel.GetCount() - 1 ) )
-					sParent = sParent + wxT("'") + aParentSel.Item( i ) + wxT("' and " ) + sThis;
-
-				else
-					sParent = sParent + wxT("'") + aParentSel.Item( i ) + wxT("' and " ) + sThis + wxT(" or ") + sParentType + wxT(" like ");
+				sParent += wxT("'");
+				sParent += aParentSel.Item( i );
+				sParent += wxT("' and " );
+				sParent += sThis;
+				if ( i != ( aParentSel.GetCount() - 1 ) )
+				{
+					sParent += wxT(" or ");
+					sParent += sParentType;
+					sParent += wxT(" like ");
+			    	}
 			}
 
 			//--- compile query ---//
@@ -713,7 +728,7 @@ void CActivityBox::OnRenameThreadEnd( wxCommandEvent& WXUNUSED(event) )
 {
 	if ( g_Prefs.nSelStyle == 2 || g_ActivityAreaCtrl->GetParentBox() == this )
 		ResetContents();
-			else
+	else
 	{
 		if ( g_ActivityAreaCtrl->GetParentBox() != NULL )
 			g_ActivityAreaCtrl->UpdateSel( g_ActivityAreaCtrl->GetParentBox() );

@@ -10,7 +10,8 @@
  *  See the file "license.txt" for information on usage and redistribution
  *  of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 */
-
+// For compilers that support precompilation, includes "wx/wx.h".
+#include "wx/wxprec.h"
 #include "MusikPrefs.h"
 
 //--- wx config stuff ---//
@@ -77,6 +78,10 @@ void CMusikPrefs::LoadPrefs()
 	config->Read( wxT( "EnableWebserver" ),							&nWebServerEnable,		0						);
 	config->Read( wxT( "Webserverport" ),							&nWebServerPort,		6395					);
 	config->Read( wxT( "FramePlacement" ),							&sFramePlacement,		wxT("")					);
+	for(int i=0;i < NPLAYLISTCOLUMS;i++)
+	{
+		config->Read( wxString::Format(wxT("PlaylistColum%dSize"),i),&nPlaylistColumSize[i],50);
+	}
 
 	g_FX.LoadBands( config );
 
@@ -162,6 +167,10 @@ void CMusikPrefs::SavePrefs()
 	config->Write( wxT( "EnableWebserver" ),						nWebServerEnable		);
 	config->Write( wxT( "WebserverPort" ),							nWebServerPort			);
 	config->Write( wxT( "FramePlacement" ),							sFramePlacement			);
+	for(int i=0;i < NPLAYLISTCOLUMS;i++)
+	{
+		config->Write( wxString::Format(wxT("PlaylistColum%dSize"),i),nPlaylistColumSize[i]);
+	}
 
 	g_FX.SaveBands( config );
 

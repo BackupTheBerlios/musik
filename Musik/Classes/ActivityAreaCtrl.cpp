@@ -11,7 +11,6 @@
  *  See the file "license.txt" for information on usage and redistribution
  *  of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 */
-
 //--- For compilers that support precompilation, includes "wx/wx.h". ---//
 #include "wx/wxprec.h"
 
@@ -22,18 +21,23 @@
 #include "../MusikUtils.h"
 
 BEGIN_EVENT_TABLE(CActivityAreaCtrl, wxPanel)
-	EVT_LIST_ITEM_FOCUSED		(MUSIK_ACTIVITYBOX1, CActivityAreaCtrl::OnActivityBox1Focused	)
-	EVT_LIST_ITEM_FOCUSED		(MUSIK_ACTIVITYBOX2, CActivityAreaCtrl::OnActivityBox2Focused	)
-	EVT_LIST_ITEM_FOCUSED		(MUSIK_ACTIVITYBOX3, CActivityAreaCtrl::OnActivityBox3Focused	)
-	EVT_LIST_ITEM_FOCUSED		(MUSIK_ACTIVITYBOX4, CActivityAreaCtrl::OnActivityBox4Focused	)
-	EVT_LIST_ITEM_SELECTED		(MUSIK_ACTIVITYBOX1, CActivityAreaCtrl::OnActivityBox1SelChange	)
-	EVT_LIST_ITEM_SELECTED		(MUSIK_ACTIVITYBOX2, CActivityAreaCtrl::OnActivityBox2SelChange	)
-	EVT_LIST_ITEM_SELECTED		(MUSIK_ACTIVITYBOX3, CActivityAreaCtrl::OnActivityBox3SelChange	)
-	EVT_LIST_ITEM_SELECTED		(MUSIK_ACTIVITYBOX4, CActivityAreaCtrl::OnActivityBox4SelChange	)
-	EVT_LIST_ITEM_ACTIVATED		(MUSIK_ACTIVITYBOX1, CActivityAreaCtrl::OnActivityBox1Activated	)
-	EVT_LIST_ITEM_ACTIVATED		(MUSIK_ACTIVITYBOX2, CActivityAreaCtrl::OnActivityBox2Activated	)
-	EVT_LIST_ITEM_ACTIVATED		(MUSIK_ACTIVITYBOX3, CActivityAreaCtrl::OnActivityBox3Activated	)
-	EVT_LIST_ITEM_ACTIVATED		(MUSIK_ACTIVITYBOX4, CActivityAreaCtrl::OnActivityBox4Activated	)
+	EVT_LIST_ITEM_FOCUSED		(MUSIK_ACTIVITYBOX1, CActivityAreaCtrl::OnActivityBoxFocused	)
+	EVT_LIST_ITEM_FOCUSED		(MUSIK_ACTIVITYBOX2, CActivityAreaCtrl::OnActivityBoxFocused	)
+	EVT_LIST_ITEM_FOCUSED		(MUSIK_ACTIVITYBOX3, CActivityAreaCtrl::OnActivityBoxFocused	)
+	EVT_LIST_ITEM_FOCUSED		(MUSIK_ACTIVITYBOX4, CActivityAreaCtrl::OnActivityBoxFocused	)
+	EVT_LIST_ITEM_SELECTED		(MUSIK_ACTIVITYBOX1, CActivityAreaCtrl::OnActivityBoxSelected	)
+	EVT_LIST_ITEM_SELECTED		(MUSIK_ACTIVITYBOX2, CActivityAreaCtrl::OnActivityBoxSelected	)
+	EVT_LIST_ITEM_SELECTED		(MUSIK_ACTIVITYBOX3, CActivityAreaCtrl::OnActivityBoxSelected	)
+	EVT_LIST_ITEM_SELECTED		(MUSIK_ACTIVITYBOX4, CActivityAreaCtrl::OnActivityBoxSelected	)
+	EVT_LIST_ITEM_DESELECTED		(MUSIK_ACTIVITYBOX1, CActivityAreaCtrl::OnActivityBoxSelected	) // just use the same method for deselection
+	EVT_LIST_ITEM_DESELECTED		(MUSIK_ACTIVITYBOX2, CActivityAreaCtrl::OnActivityBoxSelected	)
+	EVT_LIST_ITEM_DESELECTED		(MUSIK_ACTIVITYBOX3, CActivityAreaCtrl::OnActivityBoxSelected	)
+	EVT_LIST_ITEM_DESELECTED		(MUSIK_ACTIVITYBOX4, CActivityAreaCtrl::OnActivityBoxSelected	)
+
+	EVT_LIST_ITEM_ACTIVATED		(MUSIK_ACTIVITYBOX1, CActivityAreaCtrl::OnActivityBoxActivated	)
+	EVT_LIST_ITEM_ACTIVATED		(MUSIK_ACTIVITYBOX2, CActivityAreaCtrl::OnActivityBoxActivated	)
+	EVT_LIST_ITEM_ACTIVATED		(MUSIK_ACTIVITYBOX3, CActivityAreaCtrl::OnActivityBoxActivated	)
+	EVT_LIST_ITEM_ACTIVATED		(MUSIK_ACTIVITYBOX4, CActivityAreaCtrl::OnActivityBoxActivated	)
 	EVT_LIST_BEGIN_DRAG			(MUSIK_ACTIVITYBOX1, CActivityAreaCtrl::OnActivityBox1SelDrag	)
 	EVT_LIST_BEGIN_DRAG			(MUSIK_ACTIVITYBOX2, CActivityAreaCtrl::OnActivityBox2SelDrag	)
 	EVT_LIST_BEGIN_DRAG			(MUSIK_ACTIVITYBOX3, CActivityAreaCtrl::OnActivityBox3SelDrag	)
@@ -48,11 +52,10 @@ CActivityAreaCtrl::CActivityAreaCtrl( wxWindow *pParent )
 	m_ActivityBox3	= NULL;
 	m_ActivityBox4	= NULL;
 
-	SetSelecting( false );
 	
 	pTopSizer = new wxBoxSizer( wxHORIZONTAL );
 	SetSizerAndFit( pTopSizer );
-
+	m_Selected = m_bFocused = false;
 	Create();
 }
 
@@ -204,8 +207,6 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 	if ( g_DragInProg )
 		return;
 
-	SetSelecting( true );
-
 	//-------------------------------------//
 	//--- which box are we?             ---//
 	//--- and which are the other ones? ---//
@@ -252,7 +253,6 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 				g_Playlist = g_Library.GetAllSongs();
 				g_PlaylistCtrl->Update();
 			}
-			SetSelecting( false );
 			return;
 		}
 	}
@@ -304,7 +304,6 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 				g_Playlist = g_Library.GetAllSongs();
 				g_PlaylistCtrl->Update();
 			}
-			SetSelecting( false );
 			return;
 		}		
 	}
@@ -395,7 +394,6 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 	}
 	
 	pSel->SetPlaylist();
-	SetSelecting( false );
 }
 
 
@@ -407,235 +405,71 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 //--- when using a virtual wxListCtrl, there are a few selection problems. specifically,		---//
 //--- if the user holds shift to select, the selection will never get updated if the			---//
 //--- event EVT_LIST_ITEM_SELECTED is used. so, instead we use EVT_LIST_ITEM_FOCUSED...			---//
-//--- only this will not get called if items are DESLECTED. in windows, EVT_LIST_ITEM_FOCUSED	---//
-//--- gets called, first, then EVT_LIST_ITEM_SELECTED. HOWEVER... in linux its the				---//
-//--- opposite. EVT_LIST_ITEM_SELECTED then EVT_LIST_ITEM_FOCUSED. we have to assure only one	---//
-//--- of these is called, becuase if they are both called, the selection event will be called	---//
-//--- twice. no good. thats why there are two events that do the same thing. thats why there	---//
-//--- is an #ifdef																				---//
+//--- EVT_LIST_ITEM_SELECTED is not fired on virtual list box if multi selection is done		---//
+//----by the user.																				---//			
+//--- On Windows EVT_LIST_ITEM_FOCUSED is not fired if the item already has the focus.			---//
+//--- So in windows, we cannot use  EVT_LIST_ITEM_FOCUSED alone.								---//
+//--- Order of  EVT_LIST_ITEM_SELECTED and EVT_LIST_ITEM_FOCUSED is different on linux and win. ---//
+//--- we have to assure only one is execute, because if they are both called, the selection		---//
+//--- event will be called twice. no good. thats why there are three events that do the same	---//
+//--- thing.																					---//
+//--- to save the #ifdef code on linux and win is the same, would not be						---//
+//--- neccessary but doesnt harm.																	---//
 //-------------------------------------------------------------------------------------------------//
 
-//----------------------------//
-//--- BEGIN WIN32 SPECIFIC ---//
-//----------------------------//
-#if defined __WXMSW__
-void CActivityAreaCtrl::OnActivityBox1Focused( wxListEvent& WXUNUSED(event) )
+void CActivityAreaCtrl::OnActivityBoxFocused( wxListEvent& event )
 {
-	if ( !IsSelecting() )
+	if(m_Selected)
 	{
-		UpdateSel( m_ActivityBox1 );
-		SetSelecting( false );
-		g_FocusDone = true;
+		m_Selected = false;
+		return;
 	}
+	wxListEvent ev(wxEVT_COMMAND_LIST_ITEM_ACTIVATED,event.GetId());
+	m_bFocused = true;
+	::wxPostEvent(this,ev);
 }
 
-void CActivityAreaCtrl::OnActivityBox2Focused( wxListEvent& WXUNUSED(event) )
+void CActivityAreaCtrl::OnActivityBoxSelected( wxListEvent& event )
 {
-	if ( !IsSelecting() )
+	if(m_bFocused)
 	{
-		UpdateSel( m_ActivityBox2 );
-		SetSelecting( false );	
-		g_FocusDone = true;
-	}
+		m_bFocused = false;
+		return;
 }
-
-void CActivityAreaCtrl::OnActivityBox3Focused( wxListEvent& WXUNUSED(event) )
-{
-	if ( !IsSelecting() )
-	{
-		UpdateSel( m_ActivityBox3 ); 
-		SetSelecting( false );	
-		g_FocusDone = true;
-	}
+	wxListEvent ev(wxEVT_COMMAND_LIST_ITEM_ACTIVATED,event.GetId());
+	m_Selected = true;
+	::wxPostEvent(this,ev);
 }
-
-void CActivityAreaCtrl::OnActivityBox4Focused( wxListEvent& WXUNUSED(event) )
-{
-	if ( !IsSelecting() )
-	{
-		UpdateSel( m_ActivityBox4 );
-		SetSelecting( false );
-		g_FocusDone = true;
-	}
-}
-
-void CActivityAreaCtrl::OnActivityBox1SelChange( wxListEvent& WXUNUSED(event) )
-{
-	if ( !IsSelecting() && !g_FocusDone )
-	{
-		UpdateSel( m_ActivityBox1 );
-		SetSelecting( false );
-	} 
-	g_FocusDone = false;
-}
-
-void CActivityAreaCtrl::OnActivityBox2SelChange( wxListEvent& WXUNUSED(event) )
-{
-	if ( !IsSelecting() && !g_FocusDone )
-	{
-		UpdateSel( m_ActivityBox2 );
-		SetSelecting( false );
-	} 
-	g_FocusDone = false;
-}
-
-void CActivityAreaCtrl::OnActivityBox3SelChange( wxListEvent& WXUNUSED(event) )
-{
-	if ( !IsSelecting() && !g_FocusDone )
-	{
-		UpdateSel( m_ActivityBox3 );
-		SetSelecting( false );
-	} 
-	g_FocusDone = false;
-}
-
-void CActivityAreaCtrl::OnActivityBox4SelChange( wxListEvent& WXUNUSED(event) )
-{
-	if ( !IsSelecting() && !g_FocusDone )
-	{
-		UpdateSel( m_ActivityBox4 );
-		SetSelecting( false );
-	} 
-	g_FocusDone = false;
-}
-//----------------------------//
-//--- END WIN32 SPECIFIC   ---//
-//----------------------------//
-//--- BEGIN GTK2 SPECIFIC  ---//
-//----------------------------//
-#elif defined __WXGTK__
-void CActivityAreaCtrl::OnActivityBox1SelChange( wxListEvent& WXUNUSED(event) )
-{
-	if ( !IsSelecting() )
-	{
-		UpdateSel( m_ActivityBox1 );
-		SetSelecting( false );
-		g_FocusDone = true;
-	}
-}
-
-void CActivityAreaCtrl::OnActivityBox2SelChange( wxListEvent& WXUNUSED(event) )
-{
-	if ( !IsSelecting() )
-	{
-		UpdateSel( m_ActivityBox2 );
-		SetSelecting( false );
-		g_FocusDone = true;
-	}
-}
-
-void CActivityAreaCtrl::OnActivityBox3SelChange( wxListEvent& WXUNUSED(event) )
-{
-	if ( !IsSelecting() )
-	{
-		UpdateSel( m_ActivityBox3 );
-		SetSelecting( false );
-		g_FocusDone = true;
-	}
-}
-
-void CActivityAreaCtrl::OnActivityBox4SelChange( wxListEvent& WXUNUSED(event) )
-{
-	if ( !IsSelecting() )
-	{
-		UpdateSel( m_ActivityBox4 );
-		SetSelecting( false );	
-		g_FocusDone = true;
-	}
-}
-
-void CActivityAreaCtrl::OnActivityBox1Focused( wxListEvent& WXUNUSED(event) )
-{
-	if ( !IsSelecting() && !g_FocusDone )
-	{
-		UpdateSel( m_ActivityBox1 );
-		SetSelecting( false );	
-	} 
-	g_FocusDone = false;
-}
-
-void CActivityAreaCtrl::OnActivityBox2Focused( wxListEvent& WXUNUSED(event) )
-{
-	if ( !IsSelecting() && !g_FocusDone )
-	{
-		UpdateSel( m_ActivityBox2 );
-		SetSelecting( false );	
-	} 
-	g_FocusDone = false;
-}
-
-void CActivityAreaCtrl::OnActivityBox3Focused( wxListEvent& WXUNUSED(event) )
-{
-	if ( !IsSelecting() && !g_FocusDone )
-	{
-		UpdateSel( m_ActivityBox3 );
-		SetSelecting( false );	
-	} 
-	g_FocusDone = false;
-}
-
-void CActivityAreaCtrl::OnActivityBox4Focused( wxListEvent& WXUNUSED(event) )
-{
-	if ( !IsSelecting() && !g_FocusDone )
-	{
-		UpdateSel( m_ActivityBox4 );
-		SetSelecting( false );	
-	} 
-	g_FocusDone = false;
-}
-#endif
-//--------------------------//
-//--- END GTK2 SPECIFIC  ---//
 //--------------------------//
 //--- drag and drop event ---//
 //---------------------------//
 void CActivityAreaCtrl::OnActivityBox1SelDrag( wxListEvent& WXUNUSED(event) )
 {	
-	if ( !IsSelecting() )	
-		m_ActivityBox1->DNDBegin();		
+	m_ActivityBox1->DNDBegin();		
 }
 
 void CActivityAreaCtrl::OnActivityBox2SelDrag( wxListEvent& WXUNUSED(event) )	
 {	
-	if ( !IsSelecting() )	
-		m_ActivityBox2->DNDBegin();		
+	m_ActivityBox2->DNDBegin();		
 }
 
 void CActivityAreaCtrl::OnActivityBox3SelDrag( wxListEvent& WXUNUSED(event) )	
 {	
-	if ( !IsSelecting() )	
-		m_ActivityBox3->DNDBegin();		
+	m_ActivityBox3->DNDBegin();		
 }
 
 void CActivityAreaCtrl::OnActivityBox4SelDrag( wxListEvent& WXUNUSED(event) )	
 {	
-	if ( !IsSelecting() )
-		m_ActivityBox4->DNDBegin();		
+	m_ActivityBox4->DNDBegin();		
 }
 
 //----------------------------//
 //--- item activated event ---//
 //----------------------------//
-void CActivityAreaCtrl::OnActivityBox1Activated	( wxListEvent& WXUNUSED(event) )	
+void CActivityAreaCtrl::OnActivityBoxActivated	( wxListEvent& event)
 {	
-	if ( !IsSelecting() )
-		SetParent( MUSIK_ACTIVITYBOX1, true );
+		SetParent( event.GetId(), true );
+		m_Selected = m_bFocused = false;
 }
 
-void CActivityAreaCtrl::OnActivityBox2Activated	( wxListEvent& WXUNUSED(event) )	
-{	
-	if ( !IsSelecting() ) 
-		SetParent( MUSIK_ACTIVITYBOX2, true );	
-}
 
-void CActivityAreaCtrl::OnActivityBox3Activated	( wxListEvent& WXUNUSED(event) )	
-{	
-	if ( !IsSelecting() ) 
-		SetParent( MUSIK_ACTIVITYBOX3, true );	
-}
-
-void CActivityAreaCtrl::OnActivityBox4Activated	( wxListEvent& WXUNUSED(event) )	
-{	
-	if ( !IsSelecting() ) 
-		SetParent( MUSIK_ACTIVITYBOX4, true );	
-}

@@ -237,6 +237,20 @@ CPlaylistCtrl::CPlaylistCtrl( wxWindow *parent, const wxWindowID id, const wxPoi
 
 CPlaylistCtrl::~CPlaylistCtrl()
 {
+	for(int i=0;i < NPLAYLISTCOLUMS;i++)
+	{
+		if(GetColumnWidth(i) == 0)
+		{// special treatment of 0 columns, if colum size is 0 ( because its display is suppressed) and  
+		 // its value is not store already, set it to 50, else keep the stored value
+			if( g_Prefs.nPlaylistColumSize[i] == 0)
+			{
+				g_Prefs.nPlaylistColumSize[i] = 50;
+			}
+			continue;	// simply keep the stored value	
+		}
+		g_Prefs.nPlaylistColumSize[i] = GetColumnWidth(i);
+	}
+
 	delete playlist_context_menu;
 }
 
@@ -383,67 +397,67 @@ void CPlaylistCtrl::TranslateKeys( wxKeyEvent& pEvent )
 //---------------------------------------------------//
 wxString CPlaylistCtrl::OnGetItemText(long item, long column) const
 {
-    CMusikSong song = g_Playlist.Item ( item );
+    const CMusikSong & song = g_Playlist.Item ( item );
 	switch ( column )
 	{
-	case 0:
+	case PLAYLISTCOLUM_RATING:
 		break;
 
-	case 1:
+	case PLAYLISTCOLUM_TITLE:
 		return SanitizedString( song.Title );		
 		break;
 
-	case 2:
+	case PLAYLISTCOLUM_TRACK:
 		if ( song.TrackNum > 0 )
 			return wxString::Format( wxT( "%d" ), song.TrackNum );
 		else
 			return wxT( "-" );
 		break;
 
-	case 3:
+	case PLAYLISTCOLUM_TIME:
 		return MStoStr( song.Duration );
 		break;
 
-	case 4:
+	case PLAYLISTCOLUM_ARTIST:
 		if ( song.Artist == wxT( "<unknown>" ) )
 			return wxT( "-" );
 		else 
 			return SanitizedString( song.Artist );
 		break;
 
-	case 5:
+	case PLAYLISTCOLUM_ALBUM:
 		if ( song.Album == wxT( "<unknown>" ) )
 			return wxT( "-" );
 		else
 			return SanitizedString( song.Album );
 		break;
 
-	case 6:
+	case PLAYLISTCOLUM_GENRE:
 		if ( song.Genre == wxT( "<unknown>" ) )
 			return wxT( "-" );
 		else
 			return SanitizedString( song.Genre );
 		break;
 
-	case 7:
+	case PLAYLISTCOLUM_YEAR:
 		if ( song.Year == wxT( "<unknown>" ) )
 			return wxT( "-" );
 		else
 			return song.Year;
 		break;
 
-	case 8:
-		if ( song.TimesPlayed > 0 )
+	case PLAYLISTCOLUM_TIMES_PLAYED:
 		{
 			wxString str;
-			str.sprintf( wxT( "%d" ), song.TimesPlayed );
+			if ( song.TimesPlayed > 0 )
+			{
+				str << song.TimesPlayed;
+			}
 			return str;
 		}
-		else
-			return wxT( "" );
 		break;
 
-	case 9:
+	case PLAYLISTCOLUM_LAST_PLAYED:
 		if ( song.LastPlayed != wxT( "" ) )
 			return song.LastPlayed;
 		else
@@ -454,13 +468,12 @@ wxString CPlaylistCtrl::OnGetItemText(long item, long column) const
 
 int CPlaylistCtrl::OnGetItemImage(long item) const
 {
-	CMusikSong song = g_Playlist.Item ( item );
-	return song.Rating;
+	return g_Playlist.Item ( item ).Rating;
 }
 
 wxListItemAttr* CPlaylistCtrl::OnGetItemAttr(long item) const
 {
-	CMusikSong song = g_Playlist.Item ( item );
+	const CMusikSong & song = g_Playlist.Item ( item );
 	if ( song.Filename == g_Player.GetCurrentFile() )
 		return (wxListItemAttr*)&m_SelectedAttr;		
 	else
@@ -590,7 +603,7 @@ int CPlaylistCtrl::GetTotalPlayingTimeInSeconds()
 	int Duration = 0;
 	for ( int i = 0; i < GetItemCount(); i++ )
 	{
-		CMusikSong song = g_Playlist.Item ( i );
+		const CMusikSong & song = g_Playlist.Item ( i );
 		Duration += song.Duration/1000;
 	}
 	return Duration;
@@ -600,7 +613,7 @@ wxString CPlaylistCtrl::GetFilename( int nItem )
 {
 	if ( nItem > -1 )
 	{
-		CMusikSong song = g_Playlist.Item ( nItem );
+		const CMusikSong & song = g_Playlist.Item ( nItem );
 		return song.Filename;
 	}
 
@@ -703,6 +716,7 @@ void CPlaylistCtrl::Update( bool bSelFirst )
 
 void CPlaylistCtrl::RescaleColumns()
 {
+/*+++++++++++++ do nothing, user sets column width	+++++++++++++++
 	Freeze();
 
 	int nWidth, nHeight;
@@ -747,32 +761,50 @@ void CPlaylistCtrl::RescaleColumns()
 
 	Thaw();
 	Refresh();
+*/
 }
 
 void CPlaylistCtrl::ResetColumns( bool update )
 {
-	ClearAll();
-
-	if ( g_Prefs.nShowRatings == 1 )
-		InsertColumn( 0, _( "Rating" ),	wxLIST_FORMAT_CENTER,	50 );
-	else
-		InsertColumn( 0, _( "" ),		wxLIST_FORMAT_CENTER,	0 );
-	
-	InsertColumn( 1, _( "Title" ),		wxLIST_FORMAT_LEFT,		50 );
-	InsertColumn( 2, _( "Track" ),		wxLIST_FORMAT_RIGHT,	50 );
-	InsertColumn( 3, _( "Time" ),		wxLIST_FORMAT_RIGHT,	50 );
-	InsertColumn( 4, _( "Artist" ),		wxLIST_FORMAT_LEFT,		50 );
-	InsertColumn( 5, _( "Album" ),		wxLIST_FORMAT_LEFT,		50 );
-	InsertColumn( 6, _( "Genre" ),		wxLIST_FORMAT_LEFT,		50 );
-
-	if ( g_Prefs.nExtendedPlaylist )
+	int cntColumns = GetColumnCount();
+	bool bUpdateNeeded = false;
+	if(cntColumns == 0)
 	{
-		InsertColumn( 7, _( "Year" ),		wxLIST_FORMAT_LEFT, 50 );
-		InsertColumn( 8, _( "Times Played" ), wxLIST_FORMAT_CENTER, 50 );
-		InsertColumn( 9, _( "Last Played" ), wxLIST_FORMAT_CENTER, 50 );
+		InsertColumn( PLAYLISTCOLUM_RATING, _( "Rating" ),		wxLIST_FORMAT_CENTER,	g_Prefs.nPlaylistColumSize[PLAYLISTCOLUM_RATING] );
+		InsertColumn( PLAYLISTCOLUM_TITLE, _( "Title" ),		wxLIST_FORMAT_LEFT,		g_Prefs.nPlaylistColumSize[PLAYLISTCOLUM_TITLE] );
+		InsertColumn( PLAYLISTCOLUM_TRACK, _( "Track" ),		wxLIST_FORMAT_RIGHT,	g_Prefs.nPlaylistColumSize[PLAYLISTCOLUM_TRACK] );
+		InsertColumn( PLAYLISTCOLUM_TIME, _( "Time" ),			wxLIST_FORMAT_RIGHT,	g_Prefs.nPlaylistColumSize[PLAYLISTCOLUM_TIME] );
+		InsertColumn( PLAYLISTCOLUM_ARTIST, _( "Artist" ),		wxLIST_FORMAT_LEFT,		g_Prefs.nPlaylistColumSize[PLAYLISTCOLUM_ARTIST] );
+		InsertColumn( PLAYLISTCOLUM_ALBUM, _( "Album" ),		wxLIST_FORMAT_LEFT,		g_Prefs.nPlaylistColumSize[PLAYLISTCOLUM_ALBUM] );
+		InsertColumn( PLAYLISTCOLUM_GENRE, _( "Genre" ),		wxLIST_FORMAT_LEFT,		g_Prefs.nPlaylistColumSize[PLAYLISTCOLUM_GENRE] );
+		bUpdateNeeded = true;
+	}
+	
+	SetColumnWidth( PLAYLISTCOLUM_RATING, g_Prefs.nShowRatings ? g_Prefs.nPlaylistColumSize[PLAYLISTCOLUM_RATING]: 0);
+
+
+	if ( g_Prefs.nExtendedPlaylist && (cntColumns >= 0 && cntColumns <= PLAYLISTCOLUM_YEAR))
+	{
+		InsertColumn( PLAYLISTCOLUM_YEAR, _( "Year" ),		wxLIST_FORMAT_LEFT, g_Prefs.nPlaylistColumSize[PLAYLISTCOLUM_YEAR] );
+		InsertColumn( PLAYLISTCOLUM_TIMES_PLAYED, _( "Times Played" ), wxLIST_FORMAT_CENTER, g_Prefs.nPlaylistColumSize[PLAYLISTCOLUM_TIMES_PLAYED] );
+		InsertColumn( PLAYLISTCOLUM_LAST_PLAYED, _( "Last Played" ), wxLIST_FORMAT_CENTER, g_Prefs.nPlaylistColumSize[PLAYLISTCOLUM_LAST_PLAYED] );
+		bUpdateNeeded = true;
+	}
+	else if (!g_Prefs.nExtendedPlaylist && (cntColumns > PLAYLISTCOLUM_YEAR))
+	{
+		// save column width
+		g_Prefs.nPlaylistColumSize[PLAYLISTCOLUM_LAST_PLAYED] = GetColumnWidth(PLAYLISTCOLUM_LAST_PLAYED);
+		g_Prefs.nPlaylistColumSize[PLAYLISTCOLUM_TIMES_PLAYED] = GetColumnWidth(PLAYLISTCOLUM_TIMES_PLAYED);
+		g_Prefs.nPlaylistColumSize[PLAYLISTCOLUM_YEAR] = GetColumnWidth(PLAYLISTCOLUM_YEAR);
+
+		DeleteColumn( PLAYLISTCOLUM_LAST_PLAYED);
+		DeleteColumn( PLAYLISTCOLUM_TIMES_PLAYED);
+		DeleteColumn( PLAYLISTCOLUM_YEAR);
+		
+		bUpdateNeeded = true;
 	}
 
-	if ( update )
+	if ( update && bUpdateNeeded)
 		Update();
 }
 

@@ -21,10 +21,12 @@
 				AdditionalOptions="/D ID3LIB_LINKOPTION=3"
 				Optimization="0"
 				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;WINVER=0x400;_MT;wxUSE_GUI=1;__WXDEBUG__;WXDEBUG=1;wxUSE_UNICODE=1"
+				StringPooling="TRUE"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
+				SmallerTypeCheck="TRUE"
 				RuntimeLibrary="3"
-				UsePrecompiledHeader="2"
+				UsePrecompiledHeader="3"
 				PrecompiledHeaderThrough="wx/wxprec.h"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
@@ -67,18 +69,23 @@
 			IntermediateDirectory="_Release"
 			ConfigurationType="1"
 			UseOfMFC="0"
-			CharacterSet="2">
+			CharacterSet="1">
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/D ID3LIB_LINKOPTION=3"
 				Optimization="3"
-				InlineFunctionExpansion="1"
+				GlobalOptimizations="TRUE"
+				InlineFunctionExpansion="2"
+				EnableIntrinsicFunctions="TRUE"
+				FavorSizeOrSpeed="1"
 				OmitFramePointers="TRUE"
+				OptimizeForWindowsApplication="TRUE"
 				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;WINVER=0x400;_MT;wxUSE_GUI=1"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
+				BufferSecurityCheck="FALSE"
 				EnableFunctionLevelLinking="TRUE"
-				UsePrecompiledHeader="2"
+				UsePrecompiledHeader="3"
 				PrecompiledHeaderThrough="wx/wxprec.h"
 				WarningLevel="4"
 				Detect64BitPortabilityProblems="TRUE"
@@ -92,9 +99,9 @@
 				OutputFile="$(OutDir)/Musik.exe"
 				LinkIncremental="1"
 				IgnoreAllDefaultLibraries="FALSE"
-				GenerateDebugInformation="FALSE"
+				GenerateDebugInformation="TRUE"
 				SubSystem="2"
-				OptimizeReferences="0"
+				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				OptimizeForWindows98="1"
 				TargetMachine="1"/>
@@ -143,6 +150,21 @@
 			</File>
 			<File
 				RelativePath="MusikUtils.h">
+			</File>
+			<File
+				RelativePath=".\wxprec.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"/>
+				</FileConfiguration>
 			</File>
 		</Filter>
 		<Filter
@@ -383,6 +405,18 @@
 					</File>
 					<File
 						RelativePath=".\Classes\Library\vcedit.c">
+						<FileConfiguration
+							Name="Debug|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath=".\Classes\Library\vcedit.h">

@@ -82,6 +82,20 @@
 //-------------------------//
 //--- enumerated values ---//
 //-------------------------//
+enum EPLAYLISTCOLUMS
+{
+	PLAYLISTCOLUM_RATING=0,
+	PLAYLISTCOLUM_TITLE=1,
+	PLAYLISTCOLUM_TRACK=2,
+	PLAYLISTCOLUM_TIME=3,
+	PLAYLISTCOLUM_ARTIST=4,
+	PLAYLISTCOLUM_ALBUM=5,
+	PLAYLISTCOLUM_GENRE=6,
+	PLAYLISTCOLUM_YEAR=7,
+	PLAYLISTCOLUM_TIMES_PLAYED=8,
+	PLAYLISTCOLUM_LAST_PLAYED=9,
+	NPLAYLISTCOLUMS // this must be always the last entry
+};
 enum EMUSIK_ACTIVITY_TYPE
 {
 	MUSIK_LBTYPE_NULL = 0,
@@ -243,6 +257,10 @@ extern MusikLibraryFrame *g_MusikLibraryFrame;
 #include <wx/image.h>
 #include <wx/imaglist.h>
 #include "Classes/MusikFX.h"
+
+//forward declarations
+class CMusikPrefs;
+class CMusikPaths;
 
 extern CMusikLibrary		g_Library;
 extern CMusikPlayer			g_Player;			

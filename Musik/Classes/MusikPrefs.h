@@ -19,6 +19,7 @@
 #ifndef WX_PRECOMP
 	#include "wx/wx.h"
 #endif 
+#include "../MusikGlobals.h"
 
 class CMusikPrefs
 {
@@ -93,6 +94,8 @@ public:
 
 	wxString sAutoRename;
 	wxString sAutoTag;
+
+	int nPlaylistColumSize[NPLAYLISTCOLUMS];
 };
 
 class CMusikPaths

@@ -29,22 +29,13 @@ public:
 	~CActivityAreaCtrl();
 
 	//--- events ---//
-	void OnActivityBox1Focused		( wxListEvent& WXUNUSED(event) );
-	void OnActivityBox2Focused		( wxListEvent& WXUNUSED(event) );
-	void OnActivityBox3Focused		( wxListEvent& WXUNUSED(event) );
-	void OnActivityBox4Focused		( wxListEvent& WXUNUSED(event) );
-	void OnActivityBox1SelChange	( wxListEvent& WXUNUSED(event) );
-	void OnActivityBox2SelChange	( wxListEvent& WXUNUSED(event) );
-	void OnActivityBox3SelChange	( wxListEvent& WXUNUSED(event) );
-	void OnActivityBox4SelChange	( wxListEvent& WXUNUSED(event) );
+	void OnActivityBoxFocused		( wxListEvent& event);
+	void OnActivityBoxSelected		( wxListEvent& event);
 	void OnActivityBox1SelDrag		( wxListEvent& WXUNUSED(event) );
 	void OnActivityBox2SelDrag		( wxListEvent& WXUNUSED(event) );
 	void OnActivityBox3SelDrag		( wxListEvent& WXUNUSED(event) );
 	void OnActivityBox4SelDrag		( wxListEvent& WXUNUSED(event) );
-	void OnActivityBox1Activated	( wxListEvent& WXUNUSED(event) );
-	void OnActivityBox2Activated	( wxListEvent& WXUNUSED(event) );
-	void OnActivityBox3Activated	( wxListEvent& WXUNUSED(event) );
-	void OnActivityBox4Activated	( wxListEvent& WXUNUSED(event) );
+	void OnActivityBoxActivated	( wxListEvent& event );
 	
 	//--- member functions ---//
 	void UpdateSel( CActivityBox *pSel );
@@ -53,8 +44,6 @@ public:
 	void ResetAllContents();
 	void RescaleColumns();
 
-	bool IsSelecting(){ return m_SelInProg; }
-	void SetSelecting( bool bSelInProg = true ){ m_SelInProg = bSelInProg; }
 
 	void SetParent( int ACTIVITY_BOX_ID, bool bUpdate = false );
 
@@ -64,7 +53,6 @@ public:
 	DECLARE_EVENT_TABLE()
 
 private:
-	bool m_SelInProg;
 	int m_ParentId;
 	CActivityBox *m_ParentBox;
 
@@ -73,7 +61,8 @@ private:
 	CActivityBox *m_ActivityBox3;	
 	CActivityBox *m_ActivityBox4;
 	wxBoxSizer* pTopSizer;
-
+	bool m_bFocused; // this flags are used, to make instant selection working
+	bool m_Selected;
 };
 
 #endif

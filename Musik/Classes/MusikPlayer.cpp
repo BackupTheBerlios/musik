@@ -104,28 +104,41 @@ int CMusikPlayer::InitializeFMOD( int nFunction, int nSndOutput, int nSndDevice,
 		//-----------------//
 		#if defined(__WXMSW__)
 				if ( nSndOutput == 0 )
+				{
 					if( FSOUND_SetOutput( FSOUND_OUTPUT_DSOUND ) == FALSE )
 						return FMOD_INIT_ERROR_DSOUND;
+				}
 				else if ( nSndOutput == 1 )
+				{
 					if ( FSOUND_SetOutput( FSOUND_OUTPUT_WINMM ) == FALSE )
 						return FMOD_INIT_ERROR_WINDOWS_WAVEFORM;
+				}
 				else if ( nSndOutput == 2 )
+				{
 					if ( FSOUND_SetOutput( FSOUND_OUTPUT_ASIO ) == FALSE )
 						return FMOD_INIT_ERROR_ASIO;
-
+				}
 		//-----------------//
 		//--- linux		---//
 		//-----------------//
 		#elif defined (__WXGTK__)
 				if ( nSndOutput == 0 )
+		{
 					if( FSOUND_SetOutput( FSOUND_OUTPUT_OSS ) == FALSE )
 						return FMOD_INIT_ERROR_OSS;
+		}
+		// esd
 				else if ( nSndOutput == 1 )
+		{
 					if ( FSOUND_SetOutput( FSOUND_OUTPUT_ESD ) == FALSE )
 						return FMOD_INIT_ERROR_ESD;
+		}
+		// alsa
 				else if ( nSndOutput == 2 )
+		{
 					if ( FSOUND_SetOutput( FSOUND_OUTPUT_ALSA ) == FALSE )
 						return FMOD_INIT_ERROR_ALSA;
+		}
 		#endif
 
 		//---------------------//
