@@ -251,11 +251,12 @@ void* F_CALLBACKAPI CMusikPlayer::MusikEQCallback( void* originalbuffer, void *n
 
 ///////////////////////////////////////////////////
 
-CMusikPlayer::CMusikPlayer( CMusikFunctor* functor, CMusikLibrary* library, CMusikPlaylist* playlist )
+CMusikPlayer::CMusikPlayer( CMusikFunctor* functor, CMusikLibrary* library )
 {
 	m_Functor			= functor;
 	m_Library			= library;
-	m_Playlist			= playlist;
+
+	m_Playlist			= NULL;
 
 	m_IsPlaying			= false;
 	m_IsPaused			= false;
@@ -266,10 +267,9 @@ CMusikPlayer::CMusikPlayer( CMusikFunctor* functor, CMusikLibrary* library, CMus
 	m_Crossfader		= NULL;
 	m_ActiveStreams		= NULL;	
 	m_ActiveChannels	= NULL;
-	m_Mutex				= NULL;
-	m_ThreadID			= NULL;
-	m_ThreadHND			= NULL;
 	m_EQ_DSP			= NULL;
+
+	m_pThread			= NULL;
 
 	m_Handle			= 0;
 
@@ -309,38 +309,20 @@ CMusikPlayer::~CMusikPlayer()
 
 void CMusikPlayer::InitThread()
 {
-	// create the thread
-	m_Mutex	= new ACE_Thread_Mutex();
-	m_ThreadID = new ACE_thread_t();
-	m_ThreadHND = new ACE_hthread_t();
-
-	// spawn the thread
-	ACE_Thread::spawn( (ACE_THR_FUNC)MusikPlayerWorker,
-		this,
-		THR_JOINABLE | THR_NEW_LWP,
-		m_ThreadID,
-		m_ThreadHND );
-
-	// join it to the main thread
-	#ifdef WIN32
-		ACE_Thread::join( m_ThreadHND );
-	#else
-		ACE_Thread::join( 0, m_ThreadHND, 0 );
-	#endif
-
+	if ( !m_pThread )
+		m_pThread = new CMusikThread( (ACE_THR_FUNC)MusikPlayerWorker, this );
 }
 
 ///////////////////////////////////////////////////
 
 void CMusikPlayer::CleanThread()
 {
-	// suspend the thread so we can kill it
-	ACE_Thread::suspend( *m_ThreadHND );
-
-	// delete 'em
-	if ( m_Mutex ) 	delete m_Mutex;
-	if ( m_ThreadID ) delete m_ThreadID;	
-	if ( m_ThreadHND ) delete m_ThreadHND;
+	if ( m_pThread )
+	{
+		m_pThread->Kill();
+		delete m_pThread;
+		m_pThread = NULL;
+	}
 }
 
 ///////////////////////////////////////////////////

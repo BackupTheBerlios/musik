@@ -53,10 +53,8 @@
 
 #include "MusikPlaylist.h"
 
+#include "MusikThread.h"
 #include "MusikCrossfader.h"
-
-#include "ace/Thread.h"
-#include "ace/Synch.h"
 
 #include "fmod.h"
 
@@ -117,7 +115,7 @@ class CMusikPlayer
 public: 	
 
 	// construct and destruct
-	CMusikPlayer( CMusikFunctor* functor, CMusikLibrary* library, CMusikPlaylist* playlist );
+	CMusikPlayer( CMusikFunctor* functor, CMusikLibrary* library );
 	~CMusikPlayer();
 
 	// sound system initialization and
@@ -186,6 +184,7 @@ public:
 	int GetPlaymode(){ return m_PlayMode; }
 	void SetPlaymode( int mode ){ m_PlayMode = mode; }
 	void SetSafeShutdown(){ m_ShutDown = true; }
+	CMusikPlaylist* GetPlaylist(){ return m_Playlist; }
 
 private:
 
@@ -256,13 +255,10 @@ private:
 	void CleanEqualizer();
 
 	// main thread and mutex
+	CMusikThread* m_pThread;
 	void InitThread();
 	void CleanThread();
 	
-	ACE_Thread_Mutex* m_Mutex;
-	ACE_thread_t* m_ThreadID;
-	ACE_hthread_t* m_ThreadHND;
-
 	// pointer to library and playlist
 	CMusikLibrary* m_Library;
 	CMusikPlaylist* m_Playlist;

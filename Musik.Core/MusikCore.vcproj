@@ -34,7 +34,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="acesd.lib fmodvc.lib sqlite.lib vorbis_static_d.lib vorbisfile_static_d.lib ogg_static_d.lib"
+				AdditionalDependencies="../_lib/acesd.lib ../_lib/fmodvc.lib ../_lib/sqlite.lib ../_lib/vorbis_static_d.lib ../_lib/vorbisfile_static_d.lib ../_lib/ogg_static_d.lib"
 				OutputFile="$(OutDir)/$(ProjectName)D.lib"
 				IgnoreAllDefaultLibraries="TRUE"/>
 			<Tool
@@ -65,6 +65,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="../_inc/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;ACE_AS_STATIC_LIBS"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -75,7 +76,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="aces.lib fmodvc.lib sqlite.lib vorbis_static.lib vorbisfile_static.lib ogg_static.lib"
+				AdditionalDependencies="../_lib/aces.lib ../_lib/fmodvc.lib ../_lib/sqlite.lib ../_lib/vorbis_static.lib ../_lib/vorbisfile_static.lib ../_lib/ogg_static.lib"
 				IgnoreAllDefaultLibraries="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -199,6 +200,16 @@
 				Name="Helpers"
 				Filter="">
 			</Filter>
+		</Filter>
+		<Filter
+			Name="MusikThread"
+			Filter="">
+			<File
+				RelativePath=".\src\MusikThread.cpp">
+			</File>
+			<File
+				RelativePath=".\include\MusikThread.h">
+			</File>
 		</Filter>
 		<File
 			RelativePath=".\include\MusikArrays.h">

@@ -68,6 +68,26 @@ public:
 	{
 		// pure virtual
 	}
+
+	virtual void OnThreadStart()
+	{
+		// pure virtual
+	}
+
+	virtual void OnThreadEnd()
+	{
+		// pure virtual
+	}
+
+	virtual void OnThreadProgress()
+	{
+		// pure virtual
+	}
+
+	virtual void OnThreadNewFile()
+	{
+		// pure virtual
+	}
 };
 
 ///////////////////////////////////////////////////
