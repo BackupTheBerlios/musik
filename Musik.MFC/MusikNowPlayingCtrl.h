@@ -6,16 +6,22 @@
 
 class CMusikNowPlayingCtrl : public CWnd
 {
-	DECLARE_DYNAMIC(CMusikNowPlayingCtrl)
+
 
 public:
+
+	// construct and destruct
 	CMusikNowPlayingCtrl();
 	virtual ~CMusikNowPlayingCtrl();
 
 protected:
-	DECLARE_MESSAGE_MAP()
-public:
+
+	// message maps
 	afx_msg void OnPaint();
+
+	// macros
+	DECLARE_DYNAMIC(CMusikNowPlayingCtrl)
+	DECLARE_MESSAGE_MAP()
 };
 
 ///////////////////////////////////////////////////

@@ -16,37 +16,19 @@
 
 class CMusikNowPlayingBar : public baseCMusikNowPlayingBar
 {
-//-------------------------------------------------//
-//--- implementation							---//
-//-------------------------------------------------//
 public:
 	CMusikNowPlayingBar();
 	virtual ~CMusikNowPlayingBar();
 
-//-------------------------------------------------//
-//--- variables									---//
-//-------------------------------------------------//
 protected:
+	// default stuff
 	CMusikNowPlayingCtrl m_wndChild;
 	CFont m_Font;
 
-//-------------------------------------------------//
-//--- operations								---//
-//-------------------------------------------------//
-
-//-------------------------------------------------//
-//--- overrides									---//
-//-------------------------------------------------//
-
-//-------------------------------------------------//
-//--- message maps								---//
-//-------------------------------------------------//
-protected:
+	// message map
 	afx_msg int OnCreate( LPCREATESTRUCT lpCreateStruct );
-	DECLARE_MESSAGE_MAP()
-public:
-
 	afx_msg void OnSize(UINT nType, int cx, int cy);
+	DECLARE_MESSAGE_MAP()
 };
 
 ///////////////////////////////////////////////////
