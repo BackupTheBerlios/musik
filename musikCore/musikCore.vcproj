@@ -22,7 +22,7 @@
 				AdditionalOptions="/D ID3LIB_LINKOPTION=1"
 				Optimization="0"
 				AdditionalIncludeDirectories="../_inc/"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;ACE_AS_STATIC_LIBS"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;ACE_AS_STATIC_LIBS;NO_TCL"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -34,7 +34,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="../_lib/aced.lib ../_lib/fmodvc.lib ../_lib/sqlite.lib ../_lib/vorbis_static_d.lib ../_lib/vorbisfile_static_d.lib ../_lib/ogg_static_d.lib"
+				AdditionalDependencies="../_lib/aced.lib ../_lib/fmodvc.lib ../_lib/vorbis_static_d.lib ../_lib/vorbisfile_static_d.lib ../_lib/ogg_static_d.lib"
 				OutputFile="$(OutDir)/$(ProjectName)D.lib"
 				IgnoreAllDefaultLibraries="TRUE"/>
 			<Tool
@@ -77,7 +77,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="../_lib/ace.lib ../_lib/fmodvc.lib ../_lib/sqlite.lib ../_lib/vorbis_static.lib ../_lib/vorbisfile_static.lib ../_lib/ogg_static.lib"
+				AdditionalDependencies="../_lib/ace.lib ../_lib/fmodvc.lib ../_lib/vorbis_static.lib ../_lib/vorbisfile_static.lib ../_lib/ogg_static.lib"
 				IgnoreAllDefaultLibraries="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -210,6 +210,106 @@
 			</File>
 			<File
 				RelativePath=".\include\musikDir.h">
+			</File>
+		</Filter>
+		<Filter
+			Name="sqlite"
+			Filter="">
+			<File
+				RelativePath="..\sqlite\attach.c">
+			</File>
+			<File
+				RelativePath="..\sqlite\auth.c">
+			</File>
+			<File
+				RelativePath="..\sqlite\btree.c">
+			</File>
+			<File
+				RelativePath="..\sqlite\btree_rb.c">
+			</File>
+			<File
+				RelativePath="..\sqlite\build.c">
+			</File>
+			<File
+				RelativePath="..\sqlite\copy.c">
+			</File>
+			<File
+				RelativePath="..\sqlite\date.c">
+			</File>
+			<File
+				RelativePath="..\sqlite\delete.c">
+			</File>
+			<File
+				RelativePath="..\sqlite\expr.c">
+			</File>
+			<File
+				RelativePath="..\sqlite\func.c">
+			</File>
+			<File
+				RelativePath="..\sqlite\hash.c">
+			</File>
+			<File
+				RelativePath="..\sqlite\insert.c">
+			</File>
+			<File
+				RelativePath="..\sqlite\main.c">
+			</File>
+			<File
+				RelativePath="..\sqlite\opcodes.c">
+			</File>
+			<File
+				RelativePath="..\sqlite\os.c">
+			</File>
+			<File
+				RelativePath="..\sqlite\pager.c">
+			</File>
+			<File
+				RelativePath="..\sqlite\parse.c">
+			</File>
+			<File
+				RelativePath="..\sqlite\pragma.c">
+			</File>
+			<File
+				RelativePath="..\sqlite\printf.c">
+			</File>
+			<File
+				RelativePath="..\sqlite\random.c">
+			</File>
+			<File
+				RelativePath="..\sqlite\select.c">
+			</File>
+			<File
+				RelativePath="..\sqlite\shell.c">
+			</File>
+			<File
+				RelativePath="..\sqlite\table.c">
+			</File>
+			<File
+				RelativePath="..\sqlite\tclsqlite.c">
+			</File>
+			<File
+				RelativePath="..\sqlite\tokenize.c">
+			</File>
+			<File
+				RelativePath="..\sqlite\trigger.c">
+			</File>
+			<File
+				RelativePath="..\sqlite\update.c">
+			</File>
+			<File
+				RelativePath="..\sqlite\util.c">
+			</File>
+			<File
+				RelativePath="..\sqlite\vacuum.c">
+			</File>
+			<File
+				RelativePath="..\sqlite\vdbe.c">
+			</File>
+			<File
+				RelativePath="..\sqlite\vdbeaux.c">
+			</File>
+			<File
+				RelativePath="..\sqlite\where.c">
 			</File>
 		</Filter>
 		<File

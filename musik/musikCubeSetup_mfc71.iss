@@ -23,13 +23,13 @@ Name: desktopicon; Description: Create a &desktop icon; GroupDescription: Additi
 Name: quicklaunchicon; Description: Create a &Quick Launch icon; GroupDescription: Additional icons:; Flags: unchecked
 
 [Files]
-Source: sqlite.dll; DestDir: {app}; Flags: ignoreversion
 Source: fmod.dll; DestDir: {app}; Flags: ignoreversion
 Source: MFC71.dll; DestDir: {app}; Flags: ignoreversion
 Source: msvcp71.dll; DestDir: {app}; Flags: ignoreversion
 Source: msvcr71.dll; DestDir: {app}; Flags: ignoreversion
 Source: musik.exe; DestDir: {app}; Flags: ignoreversion
 Source: license.txt; DestDir: {app}; Flags: ignoreversion
+Source: winamp.dll; DestDir: {app}; Flags: ignoreversion
 Source: changelog.txt; DestDir: "{app}"; Flags: ignoreversion
 Source: musik.exe.manifest; DestDir: {app}; Flags: ignoreversion
 Source: musik.ttf; DestDir: {fonts}; FontInstall: musikCube TrueType Font; Flags: ignoreversion
