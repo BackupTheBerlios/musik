@@ -1,4 +1,52 @@
 ///////////////////////////////////////////////////
+// 
+// Info:
+//
+//   Musik is a a cross platform, open source
+//   multimedia library. More information at:
+//
+//     http://musik.berlios.de
+//     http://musik.sourceforge.net
+//
+// Copyright and Credits:
+//
+//   Copyright      : Casey Langen, 2003
+//   Casey Langen   : Lead Developer, Project Manager. E-Mail: casey@bak.rr.com
+//   Dustin Carter  : Developer, pain in the ass
+//   Simon Windmill : Developer, the most helpful person thats immediately available ;)
+//
+// License:
+//
+//   See license.txt included with this distribution
+//
+///////////////////////////////////////////////////
+//
+// Class(s): 
+//
+//   CMusikLibrary
+//
+// Filename(s): 
+//
+//   MusikLibrary.h, MusikLibrary.cpp
+//
+// Information:
+//
+//   CMusikLibrary is a front end to read and write
+//   a Musik library database.
+// 
+// Example: 
+//
+//   A UI can use this class to quickly query and store
+//   information of media.
+//
+// Usage: 
+//
+//   Fairly straight forward, just create an instance
+//   of the class, or even inherit a new one from it.
+//   Use the Set() and Get() functions to store and retrieve
+//   information.
+//
+///////////////////////////////////////////////////1`
 
 #ifndef C_MUSIK_LIBRARY_H
 #define C_MUSIK_LIBRARY_H
