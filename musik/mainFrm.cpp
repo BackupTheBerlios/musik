@@ -1664,7 +1664,7 @@ LRESULT CMainFrame::OnSongStop( WPARAM wParam, LPARAM lParam )
 
 	SetWindowText( MUSIK_VERSION_STR );
 
-	if ( visSetVisPlaying )
+	if ( m_WinampVis )
 		visSetVisPlaying( FALSE );
 	
 	return 0L;

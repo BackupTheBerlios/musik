@@ -153,12 +153,6 @@ CmusikPlaylistCtrl::CmusikPlaylistCtrl( CFrameWnd* mainwnd, CmusikLibrary* libra
 
 	// get rating extent 
 	GetRatingExtent();
-
-	// image list contains the little speaker
-	// icon that appears when a visible song
-	// is playing...
-	m_ImageList = new CImageList();
-	m_ImageList->Create( 1, 16, ILC_COLOR32, 0, 0 );
 }
 
 ///////////////////////////////////////////////////
@@ -169,7 +163,6 @@ CmusikPlaylistCtrl::~CmusikPlaylistCtrl()
 		delete m_Playlist;
 
 	delete m_SongInfoCache;
-	delete m_ImageList;
 }
 
 ///////////////////////////////////////////////////
@@ -293,7 +286,6 @@ int CmusikPlaylistCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	ResetColumns( false );
-	SetImageList( m_ImageList, LVSIL_SMALL );
 
 	return 0;
 }
