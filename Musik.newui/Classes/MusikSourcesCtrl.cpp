@@ -2,7 +2,7 @@
 #include "MusikSourcesCtrl.h"
 
 CMusikSourcesCtrl::CMusikSourcesCtrl( wxWindow* parent, wxWindowID id )
-	: CMusikListCtrl( parent, id )
+	: CMusikListCtrl( parent, id, wxNO_FULL_REPAINT_ON_RESIZE | wxLC_ALIGN_LEFT | wxLC_REPORT | wxLC_VIRTUAL | wxLC_EDIT_LABELS | wxLC_SINGLE_SEL | wxSIMPLE_BORDER & ~wxHSCROLL )
 {
 	Reset( true, true );
 }

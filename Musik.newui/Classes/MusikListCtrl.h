@@ -7,7 +7,7 @@
 class CMusikListCtrl : public wxListCtrl
 {
 public:
-	CMusikListCtrl( wxWindow *parent, wxWindowID id );
+	CMusikListCtrl( wxWindow *parent, wxWindowID id, long flags = 0 );
 	~CMusikListCtrl();
 
 	//---------------------------------------------------------//

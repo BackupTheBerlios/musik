@@ -14,8 +14,8 @@ BEGIN_EVENT_TABLE( CMusikListCtrl, wxListCtrl )
 	EVT_SIZE						(		CMusikListCtrl::OnResize			)
 END_EVENT_TABLE()
 
-CMusikListCtrl::CMusikListCtrl( wxWindow *parent, wxWindowID id )
-	: wxListCtrl( parent, id, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxNO_FULL_REPAINT_ON_RESIZE | wxLC_ALIGN_LEFT | wxLC_REPORT | wxLC_VIRTUAL | wxLC_EDIT_LABELS | wxLC_SINGLE_SEL | wxSIMPLE_BORDER & ~wxHSCROLL )
+CMusikListCtrl::CMusikListCtrl( wxWindow *parent, wxWindowID id, long flags )
+	: wxListCtrl( parent, id, wxPoint( -1, -1 ), wxSize( -1, -1 ), flags )
 {
 	SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ) );
 }
