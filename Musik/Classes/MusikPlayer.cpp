@@ -372,8 +372,8 @@ void CMusikPlayer::Resume( bool bCheckFade )
 
 void CMusikPlayer::Stop( bool bCheckFade, bool bExit )
 {
-	//if ( g_FaderThread->IsCrossfaderActive() )
-	//	g_FaderThread->CrossfaderAbort();
+	if ( g_FaderThread->IsCrossfaderActive() )
+		g_FaderThread->CrossfaderAbort();
 
 	m_Playing = false;
 	
