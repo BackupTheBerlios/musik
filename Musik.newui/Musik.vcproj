@@ -194,13 +194,23 @@
 				</Filter>
 			</Filter>
 			<Filter
-				Name="SelectionAreaCtrl"
+				Name="MusikSelectionAreaCtrl"
 				Filter="">
 				<File
 					RelativePath=".\src\MusikSelectionAreaCtrl.cpp">
 				</File>
 				<File
 					RelativePath=".\src\MusikSelectionAreaCtrl.h">
+				</File>
+			</Filter>
+			<Filter
+				Name="MusikSimpleQueryCtrl"
+				Filter="">
+				<File
+					RelativePath=".\src\MusikSimpleQueryCtrl.cpp">
+				</File>
+				<File
+					RelativePath=".\src\MusikSimpleQueryCtrl.h">
 				</File>
 			</Filter>
 		</Filter>
