@@ -3,17 +3,20 @@
 
 [Setup]
 AppName=Musik
-AppVerName="Musik 0.2.0"
+AppVerName=Musik 0.2.1
 AppPublisherURL=http://musik.berlios.de
 AppSupportURL=http://musik.berlios.de
 AppUpdatesURL=http://musik.berlios.de
 DefaultDirName={pf}\Musik
 DefaultGroupName=Musik
+AllowNoIcons=yes
 LicenseFile=license.txt
 
 [Tasks]
 ; NOTE: The following entry contains English phrases ("Create a desktop icon" and "Additional icons"). You are free to translate them into another language if required.
 Name: "desktopicon"; Description: "Create a &desktop icon"; GroupDescription: "Additional icons:"
+; NOTE: The following entry contains English phrases ("Create a Quick Launch icon" and "Additional icons"). You are free to translate them into another language if required.
+Name: "quicklaunchicon"; Description: "Create a &Quick Launch icon"; GroupDescription: "Additional icons:"; Flags: unchecked
 
 [Files]
 Source: "Musik.exe"; DestDir: "{app}"; Flags: ignoreversion
@@ -32,6 +35,7 @@ Name: "{group}\Musik"; Filename: "{app}\Musik.exe"
 ; NOTE: The following entry contains an English phrase ("Uninstall"). You are free to translate it into another language if required.
 Name: "{group}\Uninstall Musik"; Filename: "{uninstallexe}"
 Name: "{userdesktop}\Musik"; Filename: "{app}\Musik.exe"; Tasks: desktopicon
+Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\Musik"; Filename: "{app}\Musik.exe"; Tasks: quicklaunchicon
 
 [Run]
 ; NOTE: The following entry contains an English phrase ("Launch"). You are free to translate it into another language if required.
