@@ -130,9 +130,8 @@ public:
 	// current window text
 	CString m_Caption;
 
-	// mutex
-	ACE_Thread_Mutex* m_ProtectingThreads;
-	int m_ThreadCount;
+	// thread stuff
+	size_t GetThreadCount();
 
 protected: 
 
@@ -235,6 +234,10 @@ protected:
 	// list of all threads running
 	bool FreeThread( CmusikThread* pThread );
 	CmusikThreadPtrArray m_Threads;
+
+	// mutex to synchronize thread array
+	ACE_Thread_Mutex* m_ProtectingThreads;
+	int m_ThreadCount;
 
 	// batch functors threads will use
 	CmusikBatchAddFunctor* m_BatchAddFnct;

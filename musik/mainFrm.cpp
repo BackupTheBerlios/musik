@@ -239,16 +239,12 @@ static void MainFrameWorker( CmusikThread* thread )
 				break;			
 			}
 
-			parent->m_ProtectingThreads->acquire();
-		
 			sCaption = parent->m_Caption;
-			for ( size_t i = 0; i < parent->m_Threads.size(); i++ )
+			for ( size_t i = 0; i < parent->GetThreadCount(); i++ )
 			{
 				sCaption += _T( "  " );
 				sCaption += turn;
 			}
-
-			parent->m_ProtectingThreads->release();
 
 			parent->SetWindowText( sCaption );
 
@@ -1873,6 +1869,19 @@ void CMainFrame::OnViewEqualizer()
 void CMainFrame::OnUpdateViewEqualizer(CCmdUI *pCmdUI)
 {
 	pCmdUI->SetCheck( m_wndEqualizer->IsVisible() );
+}
+
+///////////////////////////////////////////////////
+
+size_t CMainFrame::GetThreadCount()
+{
+	size_t count;
+
+	m_ProtectingThreads->acquire();
+	count = m_Threads.size();
+	m_ProtectingThreads->release();
+
+	return count;
 }
 
 ///////////////////////////////////////////////////
