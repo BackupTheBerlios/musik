@@ -1,16 +1,21 @@
 musik Todo list:
 
-1.  Time seek bar [avatar]
-2.  Playback buttons [avatar]
-3.  Preferences Dialog [dcarter]
-4.  Edit Tag Dialog [dcarter]
-5.  Dynamic Playlist Dialog [dcarter]
-6.  Selection Box "edit in place" [avatar]
-8.  Jukebox playlist type [dcarter/avatar]
+1.  Playback icons
+2.  Preferences Dialog [dcarter]
+3.  Edit Tag Dialog [dcarter]
+4.  Dynamic Playlist Dialog [dcarter]
+5.  Selection Box "edit in place" [avatar]
+6.  Jukebox playlist type [dcarter/avatar]
+7.  
 
 Stuff Added 
 
-8.  Sources box "edit in place" for playlist
+14. Standard playlist save confirmation
+13. Standard playlist drag and drop rearrange
+12. Volume slider
+11. Time slider
+10. Playback buttons
+9.  Sources box "edit in place" for playlist
     renaming.
 8.  File -> Open and File -> Open Directory. fast
     and threaded...

@@ -245,7 +245,7 @@ void CmusikPrefs::LoadPrefs()
 	m_Playlist_Sizes		= StringToCIntArray( config->GetValue( "Playlist", "Column Sizes", GetDefPlaylistSizes() ) );
 
 	// now playing
-	m_NowPlaying_CaptionFont = StringToInt( config->GetValue( "Now Playing", "Caption Font Size", "11" ) );
+	m_NowPlaying_CaptionFont = StringToInt( config->GetValue( "Now Playing", "Caption Font Size", "12" ) );
 	
 	// player
 	m_Player_Driver			= StringToInt( config->GetValue( "Player", "Driver", "0" ) );
