@@ -101,6 +101,18 @@ class ACE_Mutex;
 
 ///////////////////////////////////////////////////
 
+// transparency
+
+#ifndef WS_EX_LAYERED
+	#define WS_EX_LAYERED           0x00080000
+	#define LWA_COLORKEY            0x00000001
+	#define LWA_ALPHA               0x00000002
+#endif
+
+typedef BOOL (WINAPI *lpfnSetLayeredWindowAttributes)(HWND hWnd, 
+								COLORREF crKey, BYTE bAlpha, DWORD dwFlags);
+///////////////////////////////////////////////////
+
 typedef std::vector<CmusikSelectionBar*> CmusikSelBarArray;
 
 ///////////////////////////////////////////////////
@@ -180,6 +192,11 @@ public:
 
 	// task stuff
 	size_t GetTaskCount();
+
+	// transparency
+	lpfnSetLayeredWindowAttributes m_pSetLayeredWindowAttributes;
+	void SetTransparency( int trans );
+	BOOL InitTrans();
 
 protected: 
 

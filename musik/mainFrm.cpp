@@ -247,9 +247,34 @@ int CMainFrameWorker::svc()
 	suspend.set( 0.1f );
 	sleep.set( 1.0f );
 
+	bool is_frame_focused = false;
+
 	CString sCaption;
 	while ( !m_Stop )
 	{
+		if ( !is_frame_focused && GetForegroundWindow() == m_Parent->GetSafeHwnd() )
+		{
+			for ( int i = 1; i < 10; i++ )
+			{
+				m_Parent->SetTransparency( i * 25 );
+				ACE_OS::sleep( suspend );
+			}
+
+			m_Parent->SetTransparency( 255 );
+			is_frame_focused = true;
+		}
+		else if ( is_frame_focused && GetForegroundWindow() != m_Parent->GetSafeHwnd() )
+		{
+			for ( int i = 1; i < 10; i++ )
+			{
+				m_Parent->SetTransparency( 255 - ( i * 25 ) );
+				ACE_OS::sleep( suspend );
+			}
+
+			m_Parent->SetTransparency( 25 );
+			is_frame_focused = false;
+		}
+		
 		if ( m_Parent->GetTaskCount() )
 		{
 			switch ( pos )
@@ -693,6 +718,9 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if ( !m_AutoStart && m_Prefs->SynchronizeOnStartup() )
 		SynchronizeDirs();
 
+	InitTrans();
+	//SetTransparency( 255 );
+
 	return 0;
 }
 
@@ -1081,6 +1109,48 @@ int CMainFrame::GetSelPlaylistType()
 		return pItem->GetPlaylistType();
 	
 	return -1;
+}
+
+///////////////////////////////////////////////////
+
+// author: Per-Erik Nordlund 
+// from: http://www.codeproject.com/w2k/win2k_transparent.asp
+
+void CMainFrame::SetTransparency( int trans )
+{
+	m_pSetLayeredWindowAttributes(m_hWnd, 0, trans, LWA_ALPHA);
+
+	/*
+	OSVERSIONINFO os = { sizeof(os) };
+	GetVersionEx(&os);
+
+	// use m_bWin2k before any call to the
+	// m_pSetLayeredWindowAttributes to make sure we are runninng Win2K
+	BOOL m_bWin2K = ( VER_PLATFORM_WIN32_NT == os.dwPlatformId && 
+					os.dwMajorVersion >= 5 ); 
+	*/
+}
+
+///////////////////////////////////////////////////
+
+BOOL CMainFrame::InitTrans()
+{
+	// Here we import the function from USER32.DLL
+	HMODULE hUser32 = GetModuleHandle(_T("USER32.DLL"));
+	m_pSetLayeredWindowAttributes = 
+						(lpfnSetLayeredWindowAttributes)GetProcAddress(hUser32, 
+						"SetLayeredWindowAttributes");
+
+	// If the import did not succeed, make sure your app can handle it!
+	if (NULL == m_pSetLayeredWindowAttributes)
+		return FALSE; //Bail out!!!
+
+	// Check the current state of the dialog, and then add the 
+		// WS_EX_LAYERED attribute
+	SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) 
+				| WS_EX_LAYERED);
+
+	return TRUE;
 }
 
 ///////////////////////////////////////////////////
