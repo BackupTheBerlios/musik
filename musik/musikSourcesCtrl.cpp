@@ -9,6 +9,7 @@
 #include "musik.h"
 #include "musikSourcesCtrl.h"
 #include "musikSourcesDropTarget.h"
+#include ".\musiksourcesctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -234,6 +235,7 @@ CmusikSourcesCtrl::CmusikSourcesCtrl( CFrameWnd* parent, CmusikLibrary* library,
 	m_DropArrange		= false;
 	m_Startup			= true;
 	m_Player			= player;
+	m_MouseTrack		= false;
 }
 
 ///////////////////////////////////////////////////
@@ -260,6 +262,8 @@ BEGIN_MESSAGE_MAP( CmusikSourcesCtrl, CmusikPropTree )
 	ON_REGISTERED_MESSAGE(WM_SOURCES_EDIT_COMMIT, OnEditCommit)
 	ON_REGISTERED_MESSAGE(WM_SOURCES_EDIT_CANCEL, OnEditCancel)
 	ON_REGISTERED_MESSAGE(WM_SOURCES_EDIT_CHANGE, OnEditChange)
+	ON_WM_MOUSEMOVE()
+	ON_MESSAGE(WM_MOUSELEAVE, OnMouseLeave)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -878,7 +882,7 @@ void CmusikSourcesCtrl::DeleteSel()
 				{
 					nPos = i;
 
-					if ( nPos == m_StdPlaylists.size() - 1 )
+					if ( nPos >= m_StdPlaylists.size() - 2 )
 						nNextPos = nPos - 1;
 					else
 						nNextPos = nPos;
@@ -1091,6 +1095,42 @@ void CmusikSourcesCtrl::FinishQuickSearch()
 
 	int WM_SOURCESLIBRARY = RegisterWindowMessage( "SOURCESLIBRARY" );
 	parent->GetParent()->SendMessage( WM_SOURCESLIBRARY, NULL );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSourcesCtrl::OnMouseMove(UINT nFlags, CPoint point)
+{
+	if ( !m_MouseTrack )
+	{
+		TRACKMOUSEEVENT tme;
+		tme.cbSize = sizeof( tme );
+		tme.dwFlags = TME_LEAVE;
+		tme.hwndTrack = m_hWnd;
+		tme.dwHoverTime = HOVER_DEFAULT;
+		::_TrackMouseEvent( &tme );
+
+		m_MouseTrack = true; 	
+	}
+
+	if ( m_MouseTrack && ( nFlags & MK_LBUTTON ) )
+	{
+		CmusikPropTreeItem* pItem = FindItem( point );
+		if ( pItem && pItem->GetPlaylistType() != -1 )
+		{
+			DoDrag( pItem );
+			return;
+		}
+	}
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CmusikSourcesCtrl::OnMouseLeave( WPARAM wParam, LPARAM lParam )
+{
+	m_MouseTrack = false;
+
+	return 1L;
 }
 
 ///////////////////////////////////////////////////

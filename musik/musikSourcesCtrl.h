@@ -133,9 +133,10 @@ protected:
 	afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
 
 	// custom message maps
-	LRESULT OnEditCommit( WPARAM wParam, LPARAM lParam );
-	LRESULT OnEditCancel( WPARAM wParam, LPARAM lParam );
-	LRESULT OnEditChange( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnEditCommit( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnEditCancel( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnEditChange( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnMouseLeave( WPARAM wParam, LPARAM lParam );
 
 	// drop target for the playlist
 	CmusikSourcesDropTarget* m_DropTarget;
@@ -175,6 +176,9 @@ private:
 	// quick search
 	void FinishQuickSearch();
 
+	// mouse tracking?
+	bool m_MouseTrack;
+
 	// Create... new playlist
 	CmusikPropTreeItem* CreateNewStdPlaylist( CmusikStringArray* files = NULL );
 
@@ -191,6 +195,8 @@ private:
 	CmusikSourcesItemPtrArray m_Src;
 	CmusikSourcesItemPtrArray m_StdPlaylists;
 	CmusikSourcesItemPtrArray m_DynPlaylists;
+public:
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 };
 
 ///////////////////////////////////////////////////
