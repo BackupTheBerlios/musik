@@ -266,7 +266,7 @@ private:
 	// them...
 	int m_MaxChannels;
 	int m_CurrChannel;
-	void PushNewChannel();
+	int PushNewChannel();
 
 	// a pointer to the currently playing stream
 	FSOUND_STREAM* GetCurrStream();

@@ -683,12 +683,12 @@ bool CmusikPlayer::Play( int index, int fade_type, int start_pos )
 	m_FadeType = fade_type;
 
 	// inc the next channel, 
-	PushNewChannel();
+	int curr_chan = PushNewChannel();
 
 	// add the new channel and stream
 	m_ProtectingStreams->acquire();
 	m_ActiveStreams->push_back( pNewStream );
-	m_ActiveChannels->push_back( GetCurrChannel() );
+	m_ActiveChannels->push_back( curr_chan );
 	m_ProtectingStreams->release();
 
 	// play it: set volume
@@ -931,12 +931,14 @@ void CmusikPlayer::Exit()
 
 ///////////////////////////////////////////////////
 
-void CmusikPlayer::PushNewChannel()
+int CmusikPlayer::PushNewChannel()
 {
 	if ( ( m_CurrChannel + 1 ) == m_MaxChannels )
 		m_CurrChannel = 0;
 	else
 		m_CurrChannel++;
+
+	return m_CurrChannel;
 }
 
 ///////////////////////////////////////////////////
