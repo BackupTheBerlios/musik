@@ -570,6 +570,19 @@ CMusikSongArray CPlaylistCtrl::GetSelSongs()
 	return aResult;
 }
 
+wxString CPlaylistCtrl::GetTotalFilesize()
+{
+	CNiceFilesize filesize;
+
+	for ( int i = 0; i < GetItemCount(); i++ )
+	{
+		CMusikSong song = g_Playlist.Item( i );
+		filesize.AddB( song.Filesize );
+	}
+
+	return filesize.GetFormatted();
+}
+
 int CPlaylistCtrl::GetTotalPlayingTimeInSeconds()
 {
 	int Duration = 0;

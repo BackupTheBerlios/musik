@@ -553,3 +553,96 @@ long GetRandomNumber(void)
 
 	return (long)(y>>1);
 }
+
+///////////////////////////////////////////////////////////////////////////////
+
+CNiceFilesize::CNiceFilesize()
+{
+	m_Bytes = 0;
+	m_Kilobytes = 0;
+	m_Megabytes = 0;
+	m_Gigabytes = 0;
+	m_Terabytes = 0;
+}
+
+CNiceFilesize::~CNiceFilesize()
+{
+}
+
+void CNiceFilesize::AddB( long b )
+{
+	if ( ( m_Bytes + b ) > 1023 )
+	{
+		long kb = ( m_Bytes + b ) / 1024;
+		long by = ((m_Bytes + b) * 100 / 1024) % 100;
+		AddK( kb );
+		m_Bytes = by;
+	}
+	else
+		m_Bytes += b;
+
+}
+
+void CNiceFilesize::AddK( long k )
+{
+	if ( ( m_Kilobytes + k ) > 1023 )
+	{
+		long mb = ( m_Kilobytes + k ) / 1024;
+		long kb = ((m_Kilobytes + k) * 100 / 1024) % 100;
+		AddM( mb );
+		m_Kilobytes = kb;
+	}
+	else
+		m_Kilobytes += k;
+
+}
+
+void CNiceFilesize::AddM( long m )
+{
+	if ( ( m_Megabytes + m ) > 1023 )
+	{
+		long gb = (m_Megabytes + m) / 1024;
+		long mb = ((m_Megabytes + m) * 100 / 1024) % 100;
+		AddG( gb );
+		m_Megabytes = mb;
+	}
+	else
+		m_Megabytes += m;
+
+}
+
+void CNiceFilesize::AddG( long g )
+{	
+	if ( ( m_Gigabytes + g ) > 1023 )
+	{
+		long tb = ( m_Gigabytes + g ) / 1024;
+		long gb = ((m_Gigabytes + g) * 100 / 1024) % 100;
+		AddT( tb );
+		m_Gigabytes = gb;
+	}
+	else
+		m_Gigabytes += g;
+}
+
+
+void CNiceFilesize::AddT( long t )
+{
+	m_Terabytes += t;
+}
+
+wxString CNiceFilesize::GetFormatted()
+{
+	if ( m_Terabytes > 0 )
+		return wxString::Format( _("%d.%02d TB"), m_Terabytes, m_Gigabytes );
+	
+	if ( m_Gigabytes > 0 )
+		return wxString::Format( _("%d.%02d GB"), m_Gigabytes, m_Megabytes );
+
+	if ( m_Megabytes > 0 )
+		return wxString::Format( _("%d.%02d MB"), m_Megabytes, m_Kilobytes );
+
+	if ( m_Kilobytes > 0 )
+		return wxString::Format( _("%d.%02d KB"), m_Kilobytes, m_Bytes );
+
+	return wxString( _("empty") );
+}

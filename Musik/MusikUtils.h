@@ -21,6 +21,7 @@
 
 #include <wx/listctrl.h>
 
+
 //------------------------------------------------------------------//
 //--- misc utility functions, see implementation for description ---//
 //------------------------------------------------------------------//
@@ -109,5 +110,28 @@ inline double StringToDouble( wxString str )
 	str.ToDouble( &ret );
 	return ret;
 }
+
+
+class CNiceFilesize
+{
+public:
+	CNiceFilesize();
+	~CNiceFilesize();
+
+public:
+	long	m_Bytes;
+	long	m_Kilobytes;
+	long	m_Megabytes;
+	long	m_Gigabytes;
+	long	m_Terabytes;
+
+	void	AddB( long b );
+	void	AddK( long k );
+	void	AddM( long m );
+	void	AddG( long g );
+	void	AddT( long t );
+
+	wxString	GetFormatted();
+};
 
 #endif

@@ -31,6 +31,8 @@ public:
 	wxStaticText* stPlaylistVal;
 	wxStaticText* stRuntime;	
 	wxStaticText* stRuntimeVal;	
+	wxStaticText* stFilesize;
+	wxStaticText* stFilesizeVal;
 
 	wxBoxSizer *pSizer;
 	wxBoxSizer *pVert;

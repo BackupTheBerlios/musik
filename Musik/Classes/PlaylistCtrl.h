@@ -88,6 +88,7 @@ public:
 	CMusikSongArray GetSelSongs		();
 	wxString		GetFilename		( int nItem );
 	int				GetTotalPlayingTimeInSeconds();
+	wxString		GetTotalFilesize();
 	
 	//------------//
 	//--- sets ---//

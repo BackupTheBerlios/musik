@@ -33,6 +33,8 @@ CPlaylistInfoCtrl::CPlaylistInfoCtrl( wxWindow *parent )
 	stPlaylistVal	= new wxStaticText( this, -1, wxT( "0" ),					wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
 	stRuntime		= new wxStaticText( this, -1, _( "Playlist Runtime: " ),	wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
 	stRuntimeVal	= new wxStaticText( this, -1, wxT( "0:00" ),				wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
+	stFilesize		= new wxStaticText( this, -1, _( "Playlist size: " ),		wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
+	stFilesizeVal	= new wxStaticText( this, -1, wxT( "0.0 mb" ),				wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
 	
 	//--- window spacers ---//
 	wxWindow *pSpacer1 = new wxWindow( this, -1, wxPoint( -1, -1 ), wxSize( -1, 0 ), wxNO_BORDER );
@@ -45,6 +47,8 @@ CPlaylistInfoCtrl::CPlaylistInfoCtrl( wxWindow *parent )
 	stPlaylistVal->SetFont	( g_fntBold );
 	stRuntime->SetFont		( g_fntRegular );
 	stRuntimeVal->SetFont	( g_fntBold );
+	stFilesize->SetFont		( g_fntRegular );
+	stFilesizeVal->SetFont	( g_fntBold );
 
 	//--- playlist info sizer ---//
 	pSizer = new wxBoxSizer	( wxHORIZONTAL	);
@@ -55,6 +59,8 @@ CPlaylistInfoCtrl::CPlaylistInfoCtrl( wxWindow *parent )
 	pSizer->Add( stPlaylistVal,	0, wxLEFT | wxALIGN_CENTER_HORIZONTAL | wxADJUST_MINSIZE  , 4 );
 	pSizer->Add( stRuntime,		0, wxLEFT | wxALIGN_CENTER_HORIZONTAL | wxADJUST_MINSIZE  , 24 );
 	pSizer->Add( stRuntimeVal,	0, wxLEFT | wxALIGN_CENTER_HORIZONTAL | wxADJUST_MINSIZE  , 4 );   
+	pSizer->Add( stFilesize,	0, wxLEFT | wxALIGN_CENTER_HORIZONTAL | wxADJUST_MINSIZE  , 24 );
+	pSizer->Add( stFilesizeVal,	0, wxLEFT | wxALIGN_CENTER_HORIZONTAL | wxADJUST_MINSIZE  , 4 );
 	pSizer->Add( pSpacer2,		1, wxEXPAND );
 
 	//--- top sizer, vertical ---//
@@ -75,6 +81,7 @@ void CPlaylistInfoCtrl::Update()
 		int nPlaylistTime = g_PlaylistCtrl->GetTotalPlayingTimeInSeconds();
 		wxTimeSpan PlayTime( 0, 0, nPlaylistTime );
 		stRuntimeVal->SetLabel ( PlayTime.Format() );
+		stFilesizeVal->SetLabel( g_PlaylistCtrl->GetTotalFilesize() );
 	}
 	Layout();
 }
