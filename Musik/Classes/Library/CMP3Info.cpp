@@ -14,10 +14,17 @@ CMP3Info::CMP3Info()
 bool CMP3Info::ReadMetaData(CSongMetaData & MetaData) const
 {
 	//--- load and link mp3 ---//
+#ifdef __WXMSW__
 	FILE * f = wxFopen(MetaData.Filename.GetFullPath(), wxT("rb"));
 	if(f == NULL)
 		return false;
 	ifstream stream(f);
+#else
+	// ifstream::ifstream(FILE *f) seems to be only available on windows
+	ifstream stream(ConvFn2A(MetaData.Filename.GetFullPath(),ios_base::in|ios_base::binary);
+	if(!stream)
+		return false;
+#endif
 	ID3_IFStreamReader reader(stream);		
 	ID3_Tag		id3Tag;
 	id3Tag.Link( reader, (flags_t)ID3TT_ALL );
