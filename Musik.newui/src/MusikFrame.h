@@ -9,6 +9,7 @@
 #include "MusikPlaylistCtrl.h"
 #include "MusikSimpleQueryCtrl.h"
 #include "MusikNowPlayingCtrl.h"
+#include "MusikLibrary.h"
 
 enum E_MUSIK_MAIN_MENU_ITEMS
 {
@@ -36,6 +37,8 @@ public:
 	virtual bool Show( bool show = true );
 
 private:
+	void CreateCore();
+	void DeleteCore();
 	void CreateSashes();
 	void CreateControls();
 	void CreateMenu();
@@ -65,6 +68,11 @@ private:
 	wxMenu*		file_menu;
 	wxMenu*		view_menu;
 	wxMenu*		help_menu;
+
+	//-------------------------------------------------//
+	//--- the core stuff. library / player / etc	---//
+	//-------------------------------------------------//
+	CMusikLibrary* m_MusikLibrary;
 };
 
 #endif

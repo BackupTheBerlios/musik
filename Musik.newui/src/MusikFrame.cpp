@@ -14,6 +14,7 @@ CMusikFrame::CMusikFrame()
 	SetIcon( wxICON( musicbox ) );
 	SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNFACE ) );
 
+	CreateCore();
 	CreateSashes();
 	CreateControls();
 	CreateMenu();
@@ -23,6 +24,7 @@ CMusikFrame::CMusikFrame()
 
 CMusikFrame::~CMusikFrame()
 {
+	DeleteCore();
 }
 
 bool CMusikFrame::Show( bool show )
@@ -30,6 +32,16 @@ bool CMusikFrame::Show( bool show )
 	bool ret = wxFrame::Show();
 
     return ret;
+}
+
+void CMusikFrame::CreateCore()
+{
+	m_MusikLibrary = new CMusikLibrary();
+}
+
+void CMusikFrame::DeleteCore()
+{
+	delete m_MusikLibrary;
 }
 
 void CMusikFrame::CreateSashes()
