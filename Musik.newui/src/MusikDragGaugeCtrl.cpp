@@ -8,8 +8,8 @@ BEGIN_EVENT_TABLE( CMusikDragGaugeCtrl, wxGauge )
 	EVT_SIZE				( CMusikDragGaugeCtrl::OnSize			)
 END_EVENT_TABLE()
 
-CMusikDragGaugeCtrl::CMusikDragGaugeCtrl( wxWindow* parent, wxWindowID id, long style )
-	: wxGauge( parent, id, 100, wxDefaultPosition, wxDefaultSize, style | wxGA_SMOOTH )
+CMusikDragGaugeCtrl::CMusikDragGaugeCtrl( wxWindow* parent, wxWindowID id, wxSize size, long style )
+	: wxGauge( parent, id, 100, wxDefaultPosition, size, style | wxGA_SMOOTH )
 {
 	m_Parent	= parent;
 	m_Style		= style;

@@ -6,7 +6,7 @@
 class CMusikDragGaugeCtrl : public wxGauge
 {
 public:
-	CMusikDragGaugeCtrl( wxWindow* parent, wxWindowID id, long type );
+	CMusikDragGaugeCtrl( wxWindow* parent, wxWindowID id, wxSize size, long type );
 	~CMusikDragGaugeCtrl();
 
 	void OnLeftUp			( wxMouseEvent& event );

@@ -2,6 +2,7 @@
 #define C_MUSIK_NOW_PLAYING_CTRL
 
 #include "wx/wxprec.h"
+#include "MusikSeekCtrl.h"
 
 enum EMUSIK_NOWPLAYINGCTRL_ID
 {
@@ -22,12 +23,6 @@ public:
 
 	DECLARE_EVENT_TABLE()
 private:
-
-	//---------------------------------//
-	//--- panels					---//
-	//---------------------------------//
-	wxPanel* m_LeftPanel;
-	wxPanel* m_RightPanel;
 
 	//---------------------------------//
 	//--- playback control buttons	---//
@@ -58,7 +53,7 @@ private:
 	//---------------------------------//
 	//--- seek bar					---//
 	//---------------------------------//
-	wxGauge* m_Seek;
+	CMusikSeekCtrl	* m_Seek;
 	
 	//---------------------------------//
 	//--- fonts						---//
@@ -72,8 +67,8 @@ private:
 	//---------------------------------//
 	wxBoxSizer* m_ArtistSizer;
 	wxBoxSizer* m_ButtonSizer;
-	wxBoxSizer* m_LeftSizer;
-	wxBoxSizer* m_RightSizer;
+	wxBoxSizer* m_TopSizer;
+	wxBoxSizer* m_BottomSizer;
 	wxBoxSizer*	m_MainSizer;
 
 	void SetupFonts();

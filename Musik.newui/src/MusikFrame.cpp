@@ -46,7 +46,7 @@ void CMusikFrame::CreateSashes()
 	//---------------------------------//
 	pSash = new wxSashLayoutWindow( pMain, -1, wxDefaultPosition, wxDefaultSize, wxNO_BORDER | wxCLIP_CHILDREN );
 	pSash->SetAlignment( wxLAYOUT_BOTTOM );
-	pSash->SetDefaultSize( wxSize( -1, 80 ) );
+	pSash->SetDefaultSize( wxSize( -1, 52 ) );
 	pSash->SetOrientation( wxLAYOUT_HORIZONTAL );
 	//pSash->SetBackgroundColour( wxColour( 255, 0, 255 ) );
 	pSash->SetSashVisible( wxSASH_TOP, true );

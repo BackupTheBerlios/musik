@@ -223,6 +223,26 @@
 					RelativePath=".\src\MusikNowPlayingCtrl.h">
 				</File>
 			</Filter>
+			<Filter
+				Name="MusikDragGauge"
+				Filter="">
+				<File
+					RelativePath=".\src\MusikDragGaugeCtrl.cpp">
+				</File>
+				<File
+					RelativePath=".\src\MusikDragGaugeCtrl.h">
+				</File>
+				<Filter
+					Name="MusikSeekCtrl"
+					Filter="">
+					<File
+						RelativePath=".\src\MusikSeekCtrl.cpp">
+					</File>
+					<File
+						RelativePath=".\src\MusikSeekCtrl.h">
+					</File>
+				</Filter>
+			</Filter>
 		</Filter>
 		<File
 			RelativePath=".\Musik.rc">
