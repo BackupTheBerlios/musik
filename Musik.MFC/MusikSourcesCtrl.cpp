@@ -626,10 +626,6 @@ void CMusikSourcesCtrl::OnNewHoveredItem( int nIndex )
 
 ///////////////////////////////////////////////////
 
-// something here breaks if deleting
-// items while moving the mouse... not
-// exactly sure why.
-
 CMusikPropTreeItem* CMusikSourcesCtrl::FindItemAtIndex( int nIndex )
 {
 	CMusikPropTreeItem* pItem = NULL;
