@@ -869,10 +869,10 @@ void CPlaylistCtrl::Update( bool bSelFirst)
 	//----------------------------------------------------------------------------------//
 
 	//--- setup listbox colours from prefs	---//
-	m_LightAttr			= wxListItemAttr( *wxBLACK, wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ), wxNullFont );
-	m_SelectedLightAttr	= wxListItemAttr( *wxBLACK, wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ), g_fntListBold );
-	m_DarkAttr			= wxListItemAttr( *wxBLACK, StringToColour( g_Prefs.sPLStripeColour ), wxNullFont );
-	m_SelectedDarkAttr	= wxListItemAttr( *wxBLACK, StringToColour( g_Prefs.sPLStripeColour ), g_fntListBold );
+	m_LightAttr			= wxListItemAttr( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT), wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ), wxNullFont );
+	m_SelectedLightAttr	= wxListItemAttr( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT), wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ), g_fntListBold );
+	m_DarkAttr			= wxListItemAttr( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT), StringToColour( g_Prefs.sPLStripeColour ), wxNullFont );
+	m_SelectedDarkAttr	= wxListItemAttr( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT), StringToColour( g_Prefs.sPLStripeColour ), g_fntListBold );
 
 	//--- SetItemCount() kinda tells the virtual list control to udpate ---//
 	// no Freeze() here , because RescaleColumns(); will not work correctly then

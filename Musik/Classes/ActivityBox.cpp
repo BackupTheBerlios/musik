@@ -98,6 +98,7 @@ void CActivityListBox::OnChar( wxKeyEvent& event )
   else
     event.Skip();
 }  
+
 void CActivityListBox::RescaleColumns( bool bFreeze )
 {
 	if( bFreeze )
@@ -133,10 +134,10 @@ void CActivityListBox::Update( bool selnone )
 	//----------------------------------------------------------------------------------//
 
 	//--- update colors from prefs ---//
-	m_LightAttr		= wxListItemAttr( *wxBLACK, wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ), wxNullFont );
-	m_DarkAttr		= wxListItemAttr( *wxBLACK, StringToColour( g_Prefs.sActStripeColour ), wxNullFont );
+	m_LightAttr		= wxListItemAttr( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT), wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ), wxNullFont );
+	m_DarkAttr		= wxListItemAttr( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT), StringToColour( g_Prefs.sActStripeColour ), wxNullFont );
 	m_ActiveAttr	= wxListItemAttr( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHTTEXT ), wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ), wxNullFont );
-	m_AllReset		= wxListItemAttr( *wxBLACK, wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ), g_fntListBold );
+	m_AllReset		= wxListItemAttr( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT), wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ), g_fntListBold );
 
 	SetItemCount( GetRowCount() );
 	RescaleColumns();
@@ -144,6 +145,7 @@ void CActivityListBox::Update( bool selnone )
 		wxListCtrlSelNone( this );
 	wxWindow::Update(); // instantly update window content
 }
+
 
 //---------------------------------------------------//
 //--- virtual functions. careful with these ones, ---// 

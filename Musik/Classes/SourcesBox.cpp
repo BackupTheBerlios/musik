@@ -401,6 +401,7 @@ void CSourcesListBox::UpdateSel( size_t index )
 		//--- update ui with new list ---//
 		g_PlaylistCtrl->Update(true);
 		g_MusikFrame->ShowActivityArea( false );
+		
 	}
 
 	g_PlaylistChanged = true; 
@@ -580,13 +581,14 @@ void CSourcesListBox::Update()
 	//---  *wxArrayString, that the virtual listctrl then references via callbacks   ---//
 	//----------------------------------------------------------------------------------//
 
-	m_Light		= wxListItemAttr( *wxBLACK, wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ), wxNullFont	);
-	m_LightBold	= wxListItemAttr( *wxBLACK, wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ), g_fntListBold		);
-	m_Dark		= wxListItemAttr( *wxBLACK, StringToColour( g_Prefs.sSourcesStripeColour ), wxNullFont );
-	m_DarkBold	= wxListItemAttr( *wxBLACK, StringToColour( g_Prefs.sSourcesStripeColour ), g_fntListBold );
+	m_Light		= wxListItemAttr( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT), wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ), wxNullFont	);
+	m_LightBold	= wxListItemAttr( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT), wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ), g_fntListBold		);
+	m_Dark		= wxListItemAttr( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT), StringToColour( g_Prefs.sSourcesStripeColour ), wxNullFont );
+	m_DarkBold	= wxListItemAttr( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT), StringToColour( g_Prefs.sSourcesStripeColour ), g_fntListBold );
 
 	SetItemCount( g_SourcesList.GetCount() );
 	RescaleColumns();
+
 }
 
 
