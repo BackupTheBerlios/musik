@@ -117,11 +117,10 @@ BEGIN
 
         MENUITEM SEPARATOR
         MENUITEM "&Sources\tCtrl+Shift+A",      ID_VIEW_SOURCES
-        MENUITEM "Selection &Boxes\tCtrl+Shift+S", ID_VIEW_SELECTIONBOXES
-        MENUITEM "&Now Playing\tCtrl+Shift+D",  ID_VIEW_NOWPLAYING
-        MENUITEM "Playlist &Information\tCtrl+Shift+F", 
+        MENUITEM "&Now Playing\tCtrl+Shift+S",  ID_VIEW_NOWPLAYING
+        MENUITEM "Playlist &Information\tCtrl+Shift+D", 
                                                 ID_VIEW_PLAYLISTINFORMATION
-        MENUITEM "E&qualizer\tCtrl+Shift+X",    ID_VIEW_EQUALIZER
+        MENUITEM "E&qualizer\tCtrl+Shift+F",    ID_VIEW_EQUALIZER
     END
     POPUP "&Audio"
     BEGIN
@@ -319,13 +318,11 @@ BEGIN
     VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
     "Z",            ID_VIEW_CROSSFADER,     VIRTKEY, SHIFT, CONTROL, 
                                                     NOINVERT
-    "X",            ID_VIEW_EQUALIZER,      VIRTKEY, SHIFT, CONTROL, 
+    "F",            ID_VIEW_EQUALIZER,      VIRTKEY, SHIFT, CONTROL, 
                                                     NOINVERT
-    "D",            ID_VIEW_NOWPLAYING,     VIRTKEY, SHIFT, CONTROL, 
+    "S",            ID_VIEW_NOWPLAYING,     VIRTKEY, SHIFT, CONTROL, 
                                                     NOINVERT
-    "F",            ID_VIEW_PLAYLISTINFORMATION, VIRTKEY, SHIFT, CONTROL, 
-                                                    NOINVERT
-    "S",            ID_VIEW_SELECTIONBOXES, VIRTKEY, SHIFT, CONTROL, 
+    "D",            ID_VIEW_PLAYLISTINFORMATION, VIRTKEY, SHIFT, CONTROL, 
                                                     NOINVERT
     "A",            ID_VIEW_SOURCES,        VIRTKEY, SHIFT, CONTROL, 
                                                     NOINVERT

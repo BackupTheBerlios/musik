@@ -146,9 +146,7 @@ void CmusikSourcesBar::OnItemChanged( NMHDR* pNotifyStruct, LRESULT* plResult )
 		// library selected
 		if ( playlist_type == MUSIK_SOURCES_TYPE_LIBRARY )
 		{
-			int WM_SOURCESLIBRARY = RegisterWindowMessage( "SOURCESLIBRARY" );
-			m_Parent->SendMessage( WM_SOURCESLIBRARY, NULL );
-
+			GetCtrl()->FocusLibrary();
 			return;
 		}
 
@@ -169,9 +167,7 @@ void CmusikSourcesBar::OnItemChanged( NMHDR* pNotifyStruct, LRESULT* plResult )
 		// now playing selected
 		else if ( playlist_type == MUSIK_SOURCES_TYPE_NOWPLAYING )
 		{
-			int WM_SOURCESNOWPLAYING = RegisterWindowMessage( "SOURCESNOWPLAYING" );
-			m_Parent->SendMessage( WM_SOURCESNOWPLAYING, NULL );
-
+			GetCtrl()->FocusNowPlaying();
 			return;
 		}
 
@@ -409,6 +405,9 @@ void CmusikSourcesCtrl::FocusLibrary()
 
 	m_Lib.at( 0 )->Select( TRUE );
 	SetFocusedItem( m_Lib.at( 0 ) );
+
+	int WM_SOURCESLIBRARY = RegisterWindowMessage( "SOURCESLIBRARY" );
+	m_Parent->SendMessage( WM_SOURCESLIBRARY, NULL );
 }
 
 ///////////////////////////////////////////////////
@@ -429,6 +428,9 @@ void CmusikSourcesCtrl::FocusNowPlaying()
 
 	m_Lib.at( 1 )->Select( TRUE );
 	SetFocusedItem( m_Lib.at( 1 ) );
+
+	int WM_SOURCESNOWPLAYING = RegisterWindowMessage( "SOURCESNOWPLAYING" );
+	m_Parent->SendMessage( WM_SOURCESNOWPLAYING, NULL );
 }
 
 ///////////////////////////////////////////////////
@@ -977,19 +979,10 @@ void CmusikSourcesCtrl::DeleteSel()
 				if ( nNextPos == -1 || m_StdPlaylists.size() <= 1 )
 				{
 					if ( !m_Player->IsPlaying() )
-					{
 						FocusLibrary();
 
-						int WM_SOURCESLIBRARY = RegisterWindowMessage( "SOURCESLIBRARY" );
-						m_Parent->SendMessage( WM_SOURCESLIBRARY, NULL );
-					}
 					else
-					{
 						FocusNowPlaying();
-
-						int WM_SOURCESNOWPLAYING = RegisterWindowMessage( "SOURCESNOWPLAYING" );
-						m_Parent->SendMessage( WM_SOURCESNOWPLAYING, NULL );
-					}
 				}
 				else
 				{
@@ -1158,11 +1151,6 @@ LRESULT CmusikSourcesCtrl::OnEditChange( WPARAM wParam, LPARAM lParam )
 void CmusikSourcesCtrl::FinishQuickSearch()
 {
 	CmusikSourcesBar* parent = (CmusikSourcesBar*)GetParent();
-
-	FocusLibrary();
-
-	int WM_SOURCESLIBRARY = RegisterWindowMessage( "SOURCESLIBRARY" );
-	parent->GetParent()->SendMessage( WM_SOURCESLIBRARY, NULL );
 }
 
 ///////////////////////////////////////////////////

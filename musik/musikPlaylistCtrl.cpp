@@ -399,7 +399,7 @@ void CmusikPlaylistCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 	}
 	if ( pItem->mask & LVIF_IMAGE )
 	{
-		if ( m_Playlist->GetSongID( pItem->iItem ) == m_Player->GetCurrPlaying()->GetID() )
+		if ( m_Player->IsPlaying() && m_Playlist->GetSongID( pItem->iItem ) == m_Player->GetCurrPlaying()->GetID() )
 			pItem->iImage = 1;
 		else
 			pItem->iImage = 0;

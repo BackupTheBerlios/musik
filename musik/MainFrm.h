@@ -220,6 +220,8 @@ protected:
 	CmusikSelBarArray		m_wndSelectionBars;
 	CmusikEqualizerBar*		m_wndEqualizer;
 
+	void ShowSelectionBoxes( BOOL show = TRUE );
+
 	// utility functions
 	void DockBarLeftOf( CSizingControlBar* Bar, CSizingControlBar* LeftOf );
 	bool RecurseMkDir( char* pszDir );
@@ -266,7 +268,6 @@ protected:
 	afx_msg void OnViewPlaylistinformation();
 	afx_msg void OnUpdateViewSources(CCmdUI *pCmdUI);
 	afx_msg void OnViewSources();
-	afx_msg void OnViewSelectionboxes();
 	afx_msg void OnUpdateViewSelectionboxes(CCmdUI *pCmdUI);
 	afx_msg void OnViewNowplaying();
 	afx_msg void OnUpdateViewNowplaying(CCmdUI *pCmdUI);

@@ -62,7 +62,6 @@
 
 #include <io.h>
 #include <Direct.h>
-#include ".\mainfrm.h"
 
 ///////////////////////////////////////////////////
 
@@ -147,7 +146,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_COMMAND(ID_FILE_SAVEPLAYLIST, OnFileSaveplaylist)
 	ON_COMMAND(ID_VIEW_PLAYLISTINFORMATION, OnViewPlaylistinformation)
 	ON_COMMAND(ID_VIEW_SOURCES, OnViewSources)
-	ON_COMMAND(ID_VIEW_SELECTIONBOXES, OnViewSelectionboxes)
 	ON_COMMAND(ID_VIEW_NOWPLAYING, OnViewNowplaying)
 	ON_COMMAND(ID_AUDIO_EQUALIZER_ENABLED, OnAudioEqualizerEnabled)
 	ON_COMMAND(ID_AUDIO_CROSSFADER_ENABLED, OnAudioCrossfaderEnabled)
@@ -685,6 +683,8 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 			CSizingControlBar::GlobalLoadState( this, sProfile );
 			LoadBarState( sProfile );
 		}
+
+		ShowSelectionBoxes( TRUE );
 	}
 
 	// fire the updater task off
@@ -1360,6 +1360,8 @@ LRESULT CMainFrame::OnSourcesLibrary( WPARAM wParam, LPARAM lParam )
 			m_Library->GetAllSongs( *m_LibPlaylist );
 	}
 
+	ShowSelectionBoxes( TRUE );
+	
 	m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, MUSIK_SOURCES_TYPE_LIBRARY );
 	m_wndView->GetCtrl()->UpdateV();
 	m_wndView->GetCtrl()->HideSortArrow();
@@ -1399,6 +1401,8 @@ LRESULT CMainFrame::OnSourcesNowPlaying( WPARAM wParam, LPARAM lParam )
 		ASSERT( 1 );
 	}
 
+	ShowSelectionBoxes( FALSE );
+
 	m_wndView->GetCtrl()->SetPlaylist( m_Player->GetPlaylist(), MUSIK_SOURCES_TYPE_NOWPLAYING );
 	m_wndView->GetCtrl()->UpdateV();
 	m_wndView->GetCtrl()->ScrollToCurr();
@@ -1421,6 +1425,9 @@ LRESULT CMainFrame::OnSourcesStdPlaylist( WPARAM wParam, LPARAM lParam )
 	m_Library->GetStdPlaylist( nID, *m_StdPlaylist, true );
 	m_StdPlaylist->SetPlaylistID( nID );
 
+	m_Library->PopulateTempSongTable( *m_StdPlaylist );
+	ShowSelectionBoxes( FALSE );
+	
 	m_wndView->GetCtrl()->SetPlaylist( m_StdPlaylist, MUSIK_PLAYLIST_TYPE_STANDARD );
 	m_wndView->GetCtrl()->UpdateV();
 	m_wndView->GetCtrl()->HideSortArrow();
@@ -1487,7 +1494,8 @@ LRESULT CMainFrame::OnPlayerNewPlaylist( WPARAM wParam, LPARAM lParam )
 		m_StdPlaylist = new CmusikPlaylist();
 
 	m_wndSources->GetCtrl()->FocusNowPlaying();
-
+	ShowSelectionBoxes( FALSE );
+	
 	return 0L;
 }
 
@@ -1815,31 +1823,15 @@ void CMainFrame::OnUpdateViewSources(CCmdUI *pCmdUI)
 
 ///////////////////////////////////////////////////
 
-void CMainFrame::OnViewSelectionboxes()
+void CMainFrame::ShowSelectionBoxes( BOOL show )
 {
-	if ( !m_Prefs->GetSelBoxCount() )
-		return;
-
-	BOOL allvisible = TRUE;
-	for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
-	{
-		if ( !m_wndSelectionBars.at( i )->IsVisible() )
-		{
-			allvisible = FALSE;
-			break;
-		}
-	}
-
-	if ( allvisible )
-	{
-		for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
-			ShowControlBar( m_wndSelectionBars.at( i ), FALSE, TRUE );
-	}
+	if ( show )
+		CSizingControlBar::GlobalLoadState( this, _T( "musikProfile" ) );
 	else
-	{
-		for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
-			ShowControlBar( m_wndSelectionBars.at( i ), TRUE, TRUE );
-	}
+		CSizingControlBar::GlobalSaveState( this, _T( "musikProfile" ) );
+
+	for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
+		ShowControlBar( m_wndSelectionBars.at( i ), show, TRUE );
 }
 
 ///////////////////////////////////////////////////
