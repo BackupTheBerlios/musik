@@ -793,6 +793,7 @@ void CPlaylistCtrl::EditTag( int i )
 void CPlaylistCtrl::DelSelSongs()
 {
 	Freeze();
+
 	int nIndex = -1;
 	int nSelCount = GetSelectedItemCount();
 
@@ -812,6 +813,7 @@ void CPlaylistCtrl::DelSelSongs()
 			n++;
 		}
 	}
+
 	Update( false );
 
 	//--- select the last known item ---//
@@ -822,6 +824,7 @@ void CPlaylistCtrl::DelSelSongs()
 	//--- if we just messed with a standard playlist, rewrite it ---//
 	if ( nSelCount > 0 && g_SourcesCtrl->GetSelType() == MUSIK_SOURCES_PLAYLIST_STANDARD )
 		g_SourcesCtrl->RewriteStdPlaylist();
+
 	Thaw();
 }
 
