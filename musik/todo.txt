@@ -1,16 +1,19 @@
 musik Todo list:
 
-1.  Time seek bar
-2.  Playback buttons
-3.  Preferences Dialog
-4.  Edit Tag Dialog
-5.  Dynamic Playlist Dialog
-6.  Selection Box "edit in place"
-7.  Sources Box "edit in place"
-8.  Jukebox playlist type
+1.  Time seek bar [avatar]
+2.  Playback buttons [avatar]
+3.  Preferences Dialog [dcarter]
+4.  Edit Tag Dialog [dcarter]
+5.  Dynamic Playlist Dialog [dcarter]
+6.  Selection Box "edit in place" [avatar]
+8.  Jukebox playlist type [dcarter/avatar]
 
 Stuff Added 
 
+8.  Sources box "edit in place" for playlist
+    renaming.
+8.  File -> Open and File -> Open Directory. fast
+    and threaded...
 7.  DND append playlist by dragging files over
     existing "standard playlist"
 6.  DND from sources to explorer, e.g,
