@@ -26,12 +26,21 @@ BEGIN_EVENT_TABLE(CGaugeSeekEvt, wxEvtHandler)
 	EVT_MOTION				(CGaugeSeekEvt::OnMouseMove		) 
 END_EVENT_TABLE()
 
+CGaugeSeekEvt::CGaugeSeekEvt( wxGauge *parent, long style )
+{
+	pParent		= parent; 
+	lType		= style; 
+	m_LastPos	= -1;
+	m_Dragging	= false;
+}
+
 void CGaugeSeekEvt::OnLeftDown( wxMouseEvent& event )
 {
 	//-----------------------------------------------------//
 	//--- we're using the seek bar AND music is playing ---//
 	//--- OR we're adjusting volume                     ---//
 	//-----------------------------------------------------//
+	m_Dragging = true;
 	pParent->CaptureMouse();
 
 	if ( lType == wxGA_HORIZONTAL )
@@ -57,29 +66,32 @@ void CGaugeSeekEvt::OnMouseMove( wxMouseEvent& event )
 
 void CGaugeSeekEvt::OnLeftUp( wxMouseEvent& event )
 {
-	pParent->ReleaseMouse();
-
-	if ( g_ActiveStreams.GetCount() )
+	if ( m_Dragging )
 	{
-		//-----------------------------------------------//
-		//--- if we have left up and modifying volume ---//
-		//--- assume user is done. destroy the frame  ---//
-		//-----------------------------------------------//
-		if ( lType == wxGA_VERTICAL )
-			g_VolumeFrame->Close();
+		pParent->ReleaseMouse();
 
-     	//-----------------------------------------------//
-		//--- if we have left up and modifying time	  ---//
-		//--- assume user is done. update pos		  ---//
-		//-----------------------------------------------//   		
-		else if ( lType == wxGA_HORIZONTAL )
+		if ( g_ActiveStreams.GetCount() )
 		{
-			//--- set player pos ---//
-			int nTime = ( (int)fPos * (int)g_Player.GetDuration( FMOD_SEC ) ) / (int)100;
-			g_Player.SetTime( nTime );	
-			g_TimeSeeking = false;
+			//-----------------------------------------------//
+			//--- if we have left up and modifying volume ---//
+			//--- assume user is done. destroy the frame  ---//
+			//-----------------------------------------------//
+			if ( lType == wxGA_VERTICAL )
+				g_VolumeFrame->Close();
+
+     		//-----------------------------------------------//
+			//--- if we have left up and modifying time	  ---//
+			//--- assume user is done. update pos		  ---//
+			//-----------------------------------------------//   		
+			else if ( lType == wxGA_HORIZONTAL )
+			{
+				//--- set player pos ---//
+				int nTime = ( (int)fPos * (int)g_Player.GetDuration( FMOD_SEC ) ) / (int)100;
+				g_Player.SetTime( nTime );	
+				g_TimeSeeking = false;
+			}
 		}
-	}	
+	}
 }
 
 void CGaugeSeekEvt::SetFromMousePos( wxMouseEvent& WXUNUSED(event) )

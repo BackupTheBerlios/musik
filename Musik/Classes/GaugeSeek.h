@@ -23,7 +23,7 @@
 class CGaugeSeekEvt : public wxEvtHandler
 {
 public:
-	CGaugeSeekEvt( wxGauge *parent, long style = wxGA_HORIZONTAL ){ pParent = parent; lType = style; m_LastPos = -1;  }
+	CGaugeSeekEvt( wxGauge *parent, long style = wxGA_HORIZONTAL );
 	~CGaugeSeekEvt(){}
 	
 	void OnLeftDown			( wxMouseEvent& event );
@@ -33,6 +33,7 @@ public:
 
 	DECLARE_EVENT_TABLE()
 private:
+	bool m_Dragging;
 	int		m_LastPos;
 	long	lType;
 	wxGauge	*pParent;
