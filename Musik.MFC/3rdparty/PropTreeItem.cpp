@@ -121,9 +121,16 @@ void CPropTreeItem::SetPlaylistInfo( const CMusikPlaylistInfo info )
 
 ///////////////////////////////////////////////////
 
-int CPropTreeItem::GetSourcesType()
+int CPropTreeItem::GetPlaylistType()
 {
 	return m_PlaylistInfo->GetType();
+}
+
+///////////////////////////////////////////////////
+
+int CPropTreeItem::GetPlaylistID()
+{
+	return m_PlaylistInfo->GetID();
 }
 
 ///////////////////////////////////////////////////
@@ -310,6 +317,13 @@ void CPropTreeItem::Activate()
 	m_bCommitOnce = FALSE;
 
 	OnActivate();
+}
+
+///////////////////////////////////////////////////
+
+void CPropTreeItem::Deactivate()
+{
+	CommitChanges();
 }
 
 ///////////////////////////////////////////////////

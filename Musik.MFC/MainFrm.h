@@ -104,6 +104,9 @@ protected:
 	void InitMusik();
 	void CleanMusik();
 
+	// memory management
+	void CleanPlaylists();
+
 	// resetting controls
 	void LoadDlgSize();
 

@@ -538,7 +538,20 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 	}
 	CMusikSelectionCtrl::SetUpdating( false );
 
+	// get the songs
 	m_Library->GetRelatedSongs( sSender, pSender->GetType(), *m_LibPlaylist );
+
+	// make sure the correct playlist is set
+	if ( m_wndView->GetCtrl()->GetPlaylist() != m_LibPlaylist )
+	{
+		CleanPlaylists();
+		m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist );
+
+		// deselect any sources item
+		m_wndSources->GetCtrl()->KillFocus();
+	}
+
+	// update the window
 	m_wndView->GetCtrl()->UpdateV();
 
 	return 0L;
@@ -591,6 +604,17 @@ LRESULT CMainFrame::OnSourcesStdPlaylist( WPARAM wParam, LPARAM lParam )
 {
 	TRACE0( "A standard playlist was clicked\n" );
 
+	CleanPlaylists();
+	m_StdPlaylist = new CMusikPlaylist();
+
+	int nID = m_wndSources->GetCtrl()->GetFocusedItem()->GetPlaylistID();
+	m_Library->GetStdPlaylist( nID, *m_StdPlaylist, true );
+
+	m_wndView->GetCtrl()->SetPlaylist( m_StdPlaylist );
+	m_wndView->GetCtrl()->UpdateV();
+
+
+
 	return 0L;
 }
 
@@ -604,3 +628,21 @@ LRESULT CMainFrame::OnSourcesDynPlaylist( WPARAM wParam, LPARAM lParam )
 }
 
 ///////////////////////////////////////////////////
+
+void CMainFrame::CleanPlaylists()
+{
+	if ( m_StdPlaylist )
+	{
+		delete m_StdPlaylist;
+		m_StdPlaylist = NULL;
+	}
+
+	if ( m_DynPlaylist )
+	{
+		delete m_DynPlaylist;
+		m_DynPlaylist = NULL;
+	}
+}
+
+///////////////////////////////////////////////////
+

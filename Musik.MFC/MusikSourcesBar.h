@@ -28,6 +28,9 @@ public:
 	CMusikSourcesBar( CFrameWnd* parent, CMusikLibrary* library );
 	virtual ~CMusikSourcesBar();
 
+	// gets
+	CMusikSourcesCtrl* GetCtrl(){ return m_wndChild; }
+
 protected:
 
 	// children

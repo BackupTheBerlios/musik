@@ -134,16 +134,31 @@ void CMusikSourcesCtrl::OnDropFiles(HDROP hDropInfo)
 	TCHAR szNextFile [MAX_PATH];
 	
 	nNumFiles = DragQueryFile ( hDropInfo, -1, NULL, 0 );
+	CStdStringArray files;
 
 	for ( size_t i = 0; i < nNumFiles; i++ )
 	{
 		if ( DragQueryFile( hDropInfo, i, szNextFile, MAX_PATH ) > 0 )
-		{
-			MessageBox( szNextFile );
-		}
+			files.push_back( szNextFile );
 	}
 
 	DragFinish( hDropInfo );
 
+	m_Library->CreateStdPlaylist( "New Playlist 1", files );
+
 	CPropTree::OnDropFiles(hDropInfo);
 }
+
+///////////////////////////////////////////////////
+
+void CMusikSourcesCtrl::KillFocus()
+{
+	CPropTreeItem* pItem = GetFocusedItem();
+	if ( pItem )
+	{
+		pItem->Select( FALSE );
+		SetFocusedItem( NULL );
+	}
+}
+
+///////////////////////////////////////////////////

@@ -43,7 +43,8 @@ public:
 	// MUSIK SPECIFIC: get the playlist info...
 	void SetPlaylistInfo( const CMusikPlaylistInfo info );
 	CMusikPlaylistInfo* GetPlaylistInfo() { return m_PlaylistInfo; }
-	int GetSourcesType();
+	int GetPlaylistType();
+	int GetPlaylistID();
 
 	// treeItem states
 	BOOL IsExpanded();
@@ -93,6 +94,7 @@ public:
 
 	// call to activate item attribute
 	void Activate();
+	void Deactivate();
 
 	//
 	// Overrideables

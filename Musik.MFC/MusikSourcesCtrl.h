@@ -26,6 +26,9 @@ public:
 	CMusikSourcesCtrl( CMusikLibrary* m_Library );
 	virtual ~CMusikSourcesCtrl();
 
+	// actions
+	void KillFocus();
+
 protected:
 
 	// message maps
