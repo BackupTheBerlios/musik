@@ -52,6 +52,7 @@
 #include "../musikCore/include/musikFilename.h"
 #include "../musikCore/include/musikBatchAdd.h"
 #include "../musikCore/include/musikRemoveOld.h"
+#include "../musikCore/include/musikBatchRetag.h"
 #include "../musikCore/include/musikCrossfader.h"
 #include "../musikCore/include/musikEQSettings.h"
 

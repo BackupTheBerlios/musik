@@ -46,6 +46,11 @@ public:
 		m_Parent->PostMessage( WM_SONGPAUSERESUME, NULL );
 	}
 
+	virtual void OnPlaybackFailed()
+	{
+		MessageBox( NULL, "Playback failed.\n\nThis needs to post an event to the main frame.", "musik:Cube", MB_ICONINFORMATION );
+	}
+
 private:
 	CWnd* m_Parent;
 };
