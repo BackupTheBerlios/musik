@@ -60,7 +60,6 @@
 #include <Direct.h>
 
 #include "3rdparty/TreePropSheet.h"
-#include ".\mainfrm.h"
 
 ///////////////////////////////////////////////////
 
@@ -489,8 +488,24 @@ void CMainFrame::ResetUI()
 
 ///////////////////////////////////////////////////
 
-void CMainFrame::ResetSelBoxes()
+void CMainFrame::ResetSelBoxes( bool requery )
 {
+	if ( requery )
+	{
+		CmusikSelectionCtrl* parent = NULL;
+
+		for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
+		{
+			if ( m_wndSelectionBars[i]->GetCtrl()->IsParent() )
+			{
+				parent = m_wndSelectionBars[i]->GetCtrl();
+				OnUpdateSel( (WPARAM)parent, NULL );
+				m_wndSelectionBars[i]->GetCtrl()->UpdateV( true );		
+				return;
+			}
+		}	
+	}
+
 	CmusikSelectionCtrl::SetUpdating( true );
 	for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
 	{

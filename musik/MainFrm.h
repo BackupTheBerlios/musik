@@ -97,7 +97,7 @@ public:
 
 	// ui related functions
 	void ResetUI();
-	void ResetSelBoxes();
+	void ResetSelBoxes( bool requery = true );
 
 	// overrides
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
