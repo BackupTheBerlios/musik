@@ -1220,7 +1220,17 @@ void CMainFrame::OnViewSelectionboxes()
 	if ( !m_Prefs->GetSelBoxCount() )
 		return;
 
-	if ( m_wndSelectionBars[0]->IsVisible() )
+	BOOL allvisible = TRUE;
+	for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
+	{
+		if ( !m_wndSelectionBars[i]->IsVisible() )
+		{
+			allvisible = FALSE;
+			break;
+		}
+	}
+
+	if ( allvisible )
 	{
 		for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
 			ShowControlBar( m_wndSelectionBars[i], FALSE, TRUE );
@@ -1238,7 +1248,17 @@ void CMainFrame::OnViewSelectionboxes()
 
 void CMainFrame::OnUpdateViewSelectionboxes(CCmdUI *pCmdUI)
 {
-	pCmdUI->SetCheck( m_wndSelectionBars[0]->IsVisible() );
+	BOOL allvisible = TRUE;
+	for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
+	{
+		if ( !m_wndSelectionBars[i]->IsVisible() )
+		{
+			allvisible = FALSE;
+			break;
+		}
+	}
+
+	pCmdUI->SetCheck( allvisible );
 }
 
 ///////////////////////////////////////////////////
