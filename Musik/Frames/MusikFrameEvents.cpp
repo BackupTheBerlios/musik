@@ -240,7 +240,11 @@ void MusikFrame::OnWriteTags( wxCommandEvent& WXUNUSED(event) )
 
 void MusikFrame::OnWriteTagsClearDirty( wxCommandEvent& WXUNUSED(event) )
 {
-	g_Library.ClearDirtyTags( true );	
+	int nCleared = g_Library.ClearDirtyTags();
+	if ( !nCleared )
+		wxMessageBox( _( "There are no pending tags to finalize." ), MUSIK_VERSION, wxICON_INFORMATION );
+	else
+		wxMessageBox( IntTowxString( nCleared ) + wxT( " tags pending to be written were finalized for the database only. These tags will not be written to file." ), MUSIK_VERSION, wxICON_INFORMATION );
 }
 
 void MusikFrame::OnRescanPlaylistDir( wxCommandEvent& WXUNUSED(event) )

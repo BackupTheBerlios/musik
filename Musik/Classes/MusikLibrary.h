@@ -113,7 +113,7 @@ public:
 	bool RenameFile			( CMusikSong* song, bool bClearCheck = false );
 	bool RetagFile			( CMusikSong* song );
 	bool ReplaceMask		( wxString *sSrc, wxString sMask, wxString sTarget, bool bReplaceAll = true  );
-	void ClearDirtyTags		( bool bInform );
+	int  ClearDirtyTags		( );
 	void WriteTag			(  CMusikSong & song, bool ClearAll, bool bUpdateDB = true );
 	
 	//----------------//

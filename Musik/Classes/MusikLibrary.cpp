@@ -122,7 +122,6 @@ bool CMusikLibrary::Load()
 	if ( !query.IsEmpty() )
 	{
 		const wxCharBuffer pQuery = ConvQueryToMB(query);
-
 		sqlite_exec( m_pDB, pQuery, NULL, NULL, NULL );
 	}
 	if ( errmsg )
@@ -290,12 +289,11 @@ void CMusikLibrary::WriteTag(  CMusikSong & song, bool ClearAll , bool bUpdateDB
 		WriteMP3Tag( song, ClearAll );
 	else if ( song.Format == MUSIK_FORMAT_OGG )
 		WriteOGGTag( song, ClearAll );
-	if(bUpdateDB )
+	if( bUpdateDB )
 	{
 		//-----------------------------//
 		//--- flag item as clean	---//
 		//-----------------------------//
-
 		UpdateItem( song.Filename, song , false );
 	}
 }
@@ -408,21 +406,15 @@ bool CMusikLibrary::WriteOGGTag( const CMusikSong & song, bool ClearAll )
 	return true;
 }
 
-void CMusikLibrary::ClearDirtyTags( bool bInform )
+int CMusikLibrary::ClearDirtyTags()
 {
 	CMusikSongArray aDirty;
 	g_Library.QuerySongs( wxT("dirty = 1"), aDirty );
 	size_t nCount = aDirty.GetCount();
 	for( size_t i = 0; i < nCount; i++ )
 		UpdateItem( aDirty.Item( i ).Filename, aDirty.Item( i ), false );
-	
-	if ( bInform )
-	{
-		if ( nCount < 1 )
-			wxMessageBox( _( "There are no pending tags to finalize." ), MUSIK_VERSION, wxICON_INFORMATION );
-		else
-			wxMessageBox( IntTowxString( nCount ) + wxT( " tags pending to be written were finalized for the database only. These tags will not be written to file." ), MUSIK_VERSION, wxICON_INFORMATION );
-	}
+
+	return nCount;
 }
 
 void CMusikLibrary::AddMod( const wxString & filename )
@@ -785,7 +777,6 @@ void CMusikLibrary::GetStdPlaylistSongs( const wxArrayString & aFiles, CMusikSon
 			sQuery += wxT("' );");
 	}
 	myStringToMusikSongPtrMap theMap;
-	//--- run query ---//
 	//---------------------------------------------------------------------//
 	//--- we fill the map and afterwards a array from the map because	---//
 	//--- we can have multiple filenames in the same list				---//
@@ -794,6 +785,7 @@ void CMusikLibrary::GetStdPlaylistSongs( const wxArrayString & aFiles, CMusikSon
 		wxCriticalSectionLocker lock( m_csDBAccess );
 		sqlite_exec(m_pDB, ConvQueryToMB( sQuery ), &sqlite_callbackAddToSongMap, &theMap, NULL);
 	}
+
 	aReturn.Alloc(aFiles.GetCount());
 	for ( size_t i = 0; i < aFiles.GetCount(); i++ )
 	{
@@ -1060,6 +1052,7 @@ bool CMusikLibrary::RenameFile( CMusikSong* song, bool bClearCheck )
 {
 	//--------------------------------//
 	//--- new filename information ---//
+	//--------------------------------//
 	wxFileName filename( song->Filename );
 	wxString sPrePath	= filename.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR );
 	wxString sFile		= g_Prefs.sAutoRename;
