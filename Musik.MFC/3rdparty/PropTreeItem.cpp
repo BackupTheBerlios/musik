@@ -473,7 +473,7 @@ LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 	// root level items have a dark, colored background
 	if (IsRootLevel())
 	{
-		HGDIOBJ hOld = pDC->SelectObject(GetSysColorBrush(COLOR_INACTIVECAPTION));
+		HGDIOBJ hOld = pDC->SelectObject( CreateSolidBrush( m_pProp->m_Prefs->MUSIK_COLOR_INACTIVECAPTION ) );
 		pDC->PatBlt(rc.left, drc.top, rc.right - rc.left + 1, drc.Height(), PATCOPY);
 		pDC->SelectObject(hOld);
 	}
@@ -484,23 +484,23 @@ LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 		HGDIOBJ hOld;
 
 		//the object
-		hOld = pDC->SelectObject( GetSysColorBrush(COLOR_BTNHILIGHT) );
+		hOld = pDC->SelectObject( CreateSolidBrush( m_pProp->m_Prefs->MUSIK_COLOR_LISTCTRL ) );
 		pDC->PatBlt(rc.left + 14, drc.top, rc.right - rc.left + 1, drc.Height(), PATCOPY);
 
 		//the gutter
 		if ( IsSelected() )
 		{
-			hOld = pDC->SelectObject( GetSysColorBrush(COLOR_ACTIVECAPTION) );
+			hOld = pDC->SelectObject( CreateSolidBrush( m_pProp->m_Prefs->MUSIK_COLOR_ACTIVECAPTION ) );
 			pDC->PatBlt( rc.left, drc.top, 8, drc.Height(), PATCOPY);
 		}
 		else if ( IsMouseOver() )
 		{
-			hOld = pDC->SelectObject( GetSysColorBrush(COLOR_INACTIVECAPTION) );
+			hOld = pDC->SelectObject( CreateSolidBrush( m_pProp->m_Prefs->MUSIK_COLOR_INACTIVECAPTION ) );
 			pDC->PatBlt( rc.left, drc.top, 8, drc.Height(), PATCOPY);
 		}
 		else
 		{
-			hOld = pDC->SelectObject( GetSysColorBrush(COLOR_BTNFACE) );
+			hOld = pDC->SelectObject( CreateSolidBrush( m_pProp->m_Prefs->MUSIK_COLOR_BTNFACE ) );
 			pDC->PatBlt( rc.left, drc.top, 8, drc.Height(), PATCOPY);
 		}
 
@@ -533,13 +533,16 @@ LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 	{
 		if (IsRootLevel() || IsSelected())
 		{
-			pDC->SelectObject(CPropTree::GetBoldFont());
-			pDC->SetTextColor(GetSysColor(COLOR_CAPTIONTEXT));
+			pDC->SelectObject( CPropTree::GetBoldFont() );
+			if ( IsRootLevel() )
+				pDC->SetTextColor( m_pProp->m_Prefs->MUSIK_COLOR_CAPTIONTEXT );
+			else
+				pDC->SetTextColor( m_pProp->m_Prefs->MUSIK_COLOR_LISTCTRLTEXT );
 		}
 		else
 		{
-			pDC->SelectObject(CPropTree::GetNormalFont());
-			pDC->SetTextColor(GetSysColor(COLOR_BTNTEXT));
+			pDC->SelectObject( CPropTree::GetNormalFont() );
+			pDC->SetTextColor( m_pProp->m_Prefs->MUSIK_COLOR_LISTCTRLTEXT );
 		}
 
 		
@@ -560,7 +563,7 @@ LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 			pDC->SelectObject(oPen);
 
 			if ( !IsRootLevel() )
-				pDC->SetTextColor(GetSysColor(COLOR_BTNTEXT));
+				pDC->SetTextColor( m_pProp->m_Prefs->MUSIK_COLOR_LISTCTRLTEXT );
 		}
 
 		// check if we need to draw the text as disabled
@@ -581,11 +584,11 @@ LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 	// top and bottom
 	if ( IsSelected() )
 	{
-		HLine( pDC->m_hDC, 10, pt.y, rc.right, GetSysColor(COLOR_BTNFACE) );
-		HLine( pDC->m_hDC, 10, pt.y + nTotal - 1, rc.right, GetSysColor(COLOR_BTNFACE) );
+		HLine( pDC->m_hDC, 8, pt.y, rc.right, m_pProp->m_Prefs->MUSIK_COLOR_BTNFACE );
+		HLine( pDC->m_hDC, 8, pt.y + nTotal - 1, rc.right, m_pProp->m_Prefs->MUSIK_COLOR_BTNFACE );
 	}
 	else if ( IsRootLevel() )
-		HLine( pDC->m_hDC, 0, pt.y + nTotal - 1, rc.right, GetSysColor(COLOR_BTNFACE) );
+		HLine( pDC->m_hDC, 0, pt.y + nTotal - 1, rc.right, m_pProp->m_Prefs->MUSIK_COLOR_BTNFACE );
 
 	// draw children
 	if (GetChild() && IsExpanded())

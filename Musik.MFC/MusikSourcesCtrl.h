@@ -15,6 +15,7 @@ typedef std::vector<CPropTreeItem*> CMusikSourcesItemPtrArray;
 ///////////////////////////////////////////////////
 
 class CMusikLibrary;
+class CMusikPrefs;
 
 ///////////////////////////////////////////////////
 
@@ -23,7 +24,7 @@ class CMusikSourcesCtrl : public CPropTree
 public:
 
 	// construct / destruct
-	CMusikSourcesCtrl( CMusikLibrary* m_Library );
+	CMusikSourcesCtrl( CMusikLibrary* library, CMusikPrefs* prefs );
 	virtual ~CMusikSourcesCtrl();
 
 	// actions

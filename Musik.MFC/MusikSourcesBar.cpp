@@ -21,7 +21,7 @@ static char THIS_FILE[] = __FILE__;
 CMusikSourcesBar::CMusikSourcesBar( CFrameWnd* parent, CMusikLibrary* library, CMusikPrefs* prefs )
 	: baseCMusikSourcesBar( prefs )
 {
-	m_wndChild = new CMusikSourcesCtrl( library );
+	m_wndChild = new CMusikSourcesCtrl( library, prefs );
 	m_Parent = parent;
 }
 

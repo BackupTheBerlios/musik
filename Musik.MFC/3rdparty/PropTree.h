@@ -39,6 +39,8 @@
 #include "PropTreeList.h"
 #include "PropTreeItem.h"
 
+#include "../MusikPrefs.h"
+
 ///////////////////////////////////////////////////
 
 class CPropTree;
@@ -80,9 +82,13 @@ typedef struct _NMPROPTREE
 
 class CPropTree : public CWnd
 {
+	// so they can access the prefs
+	friend class CPropTreeItem;
+	friend class CPropTreeList;
+
 public:
 	// construct / destruct
-	CPropTree();
+	CPropTree( CMusikPrefs* prefs );
 	virtual ~CPropTree();
 
 	// overrides
@@ -151,6 +157,9 @@ public:
 	LRESULT SendNotify(UINT nNotifyCode, CPropTreeItem* pItem = NULL);
 
 protected:
+
+	// musik prefs, used for being theme aware
+	CMusikPrefs* m_Prefs;
 
 	// resize the child windows to fit the exact 
 	// dimensions the CPropTree control

@@ -71,7 +71,7 @@ CPropTreeItem* CPropTree::s_pFound;
 
 ///////////////////////////////////////////////////
 
-CPropTree::CPropTree() :
+CPropTree::CPropTree( CMusikPrefs* prefs ) :
 	m_bShowInfo(TRUE),
 	m_pVisbleList(NULL),
 	m_Origin(100,0),
@@ -81,6 +81,9 @@ CPropTree::CPropTree() :
 	m_bDisableInput(FALSE)
 {
 	m_Root.Expand();
+
+	// prefs
+	m_Prefs = prefs;
 
 	// init global resources only once
 	if (!s_nInstanceCount)

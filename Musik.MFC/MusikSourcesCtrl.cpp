@@ -14,12 +14,15 @@ IMPLEMENT_DYNAMIC( CMusikSourcesCtrl, CPropTree )
 
 ///////////////////////////////////////////////////
 
-CMusikSourcesCtrl::CMusikSourcesCtrl( CMusikLibrary* library )
+CMusikSourcesCtrl::CMusikSourcesCtrl( CMusikLibrary* library, CMusikPrefs* prefs )
+	: CPropTree( prefs )
 {
 	m_LibrariesRoot		= NULL;
 	m_StdPlaylistRoot	= NULL;
-	m_DynPlaylistRoot	= NULL;;
+	m_DynPlaylistRoot	= NULL;
+
 	m_Library			= library;
+	m_Prefs				= prefs;
 }
 
 ///////////////////////////////////////////////////
