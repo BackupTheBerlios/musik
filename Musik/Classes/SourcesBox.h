@@ -146,7 +146,6 @@ public:
 	//-------------------------------------------------------------//
 	CSourcesListBox* GetListCtrl( )	{ return pListBox;					}
 	int GetSelType				( )	{ return pListBox->GetSelType();	}
-	void RewriteStdPlaylist		( ) { pListBox->RewriteStdPlaylist();	}
 	void RescaleColumns			( ) { pListBox->RescaleColumns();		}
 	void RescanPlaylistDir		( ) { pListBox->RescanPlaylistDir();	}
 	void Update					( ) { pListBox->Update();				}
