@@ -70,7 +70,7 @@ int CMusikNowPlayingCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if ( !m_Info->Create( NULL, NULL, WS_CHILD | WS_VISIBLE, rcClient, this, 123, NULL ) )
 		return -1;
 
-	m_Info->Set( "%f20 %c test %a4 %c in the year %a2" );
+	m_Info->Set( "%b20 %a4 %c  in the year %a2" );
 	
 	GetDC()->SetBkColor( GetSysColor( COLOR_BTNHILIGHT ) );
 

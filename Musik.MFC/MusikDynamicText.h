@@ -60,7 +60,7 @@ public:
 
 	// sets
 	void SetDynText( const CString& str );
-	void SetDynFont( int size = -1, int bold = 0, int italic = 0, int underline = 0, int strikethrough = 0 );
+	void SetDynFont( int size = -1, int bold = 0, int italic = 0 );
 	void SetType( int n ){ m_Type = n; }
 
 	// misc

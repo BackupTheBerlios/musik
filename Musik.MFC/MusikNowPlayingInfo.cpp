@@ -41,12 +41,15 @@ END_MESSAGE_MAP()
 
 void CMusikNowPlayingInfo::UpdateInfo( bool refresh )
 {
+	SetRedraw( false );
 	int type;
 	for ( size_t i = 0; i < m_Captions.size(); i++ )
 	{
 		type = m_Captions.at( i )->GetType();
 		m_Captions.at( i )->SetDynText( (CString)m_Player->GetCurrPlaying()->GetField( type ) );		
 	}
+	SetRedraw( true );
+
 	Layout( refresh );
 }
 
@@ -54,6 +57,8 @@ void CMusikNowPlayingInfo::UpdateInfo( bool refresh )
 
 void CMusikNowPlayingInfo::Layout( bool refresh )
 {
+	SetRedraw( false );
+
 	CSize rect = GetSize();
 
 	CMusikFontBaseline blLargest, blCurrent;
@@ -63,19 +68,27 @@ void CMusikNowPlayingInfo::Layout( bool refresh )
 	int nCurrY = 0;
 
 	CRect rcClient;
+	CPoint ptLoc;
 	for ( size_t i = 0; i < m_LayoutOrder.size(); i++ )
 	{
 		GetBaseline( m_LayoutOrder.at( i )->GetFontSize(), &blCurrent );
-		nCurrY = blLargest.m_Ascending - blCurrent.m_Ascending - blCurrent.m_Descending;
+
+		ptLoc.x = nCurrX;
+		ptLoc.y = blLargest.m_Ascending - blCurrent.m_Ascending;	
+
+		if ( ptLoc.y )
+			ptLoc.y -= 2 * blCurrent.m_Descending;
 
 		m_LayoutOrder.at( i )->GetClientRect( rcClient );
-		m_LayoutOrder.at( i )->MoveWindow( CRect( CPoint( nCurrX, nCurrY ), CSize( rcClient.Width(), rcClient.Height() ) ) );
-		
-		if ( refresh )
-			m_LayoutOrder.at( i )->RedrawWindow();
+		m_LayoutOrder.at( i )->MoveWindow( CRect( ptLoc, CSize( rcClient.Width(), rcClient.Height() ) ) );
 
 		nCurrX += m_LayoutOrder.at( i )->GetWidth();
 	}
+
+	SetRedraw( true );
+
+	if ( refresh )
+		RedrawWindow( NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE | RDW_ERASENOW | RDW_ALLCHILDREN );
 }
 
 ///////////////////////////////////////////////////
@@ -135,13 +148,23 @@ void CMusikNowPlayingInfo::InitObjects()
 		sCheck.MakeLower();
 
 		// we found a new font
-		if ( sCheck == _T( "f" ) )
+		if ( sCheck == _T( "f" ) || sCheck == _T( "b" ) || sCheck == _T( "i" ) || sCheck == _T( "m" ) )
 		{
 			sCurr = m_Items.at( i ).Right( m_Items.at( i ).GetLength()  - 1 );
 			sCurr.TrimLeft();
 			sCurr.TrimRight();
 
 			m_FontSize = atoi( sCurr.GetBuffer() );
+
+			if ( sCheck == _T( "b" ) || sCheck == _T( "m" ) )
+				m_FontBold = 1;
+			else
+				m_FontBold = 0;
+
+			if ( sCheck == _T( "i" ) || sCheck == _T( "m" ) )
+				m_FontItalic = 1;
+			else
+				m_FontItalic = 0;
 		}
 
 		// found a comment (default font)
@@ -167,7 +190,7 @@ void CMusikNowPlayingInfo::InitObjects()
 
 		// found a new object, so create it
 		// with the current font and text
-		else
+		else if ( sCheck == _T( "a" ) )
 		{
 			sCurr = m_Items.at( i ).Right( m_Items.at( i ).GetLength()  - 1 );
 			sCurr.TrimLeft();
@@ -177,13 +200,15 @@ void CMusikNowPlayingInfo::InitObjects()
 			pTemp = new CMusikDynamicText();
 			pTemp->Create( NULL, WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0 ), this );
 
-			pTemp->SetDynFont( m_FontSize );
+			pTemp->SetDynFont( m_FontSize, m_FontBold, m_FontItalic );
 			pTemp->SetDynText( "Playback Stopped" );
 			pTemp->SetType( atoi( sCurr.GetBuffer() ) );
 
 			m_Captions.push_back( pTemp );
 			m_LayoutOrder.push_back( pTemp );
 		}
+		else
+			TRACE0( "Invalid mask specified." );
 	}
 
 	if ( m_Player->IsPlaying() )

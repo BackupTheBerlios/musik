@@ -1,5 +1,8 @@
 // %a 1 <-- attribute
 // %f 2 <-- regular font size
+// %b 2 <-- bold
+// %i 2 <-- italic
+// %m 2 <-- bold / italic
 // %c from the album <-- comment
 
 ///////////////////////////////////////////////////
@@ -79,6 +82,8 @@ protected:
 
 	// current font size
 	int m_FontSize;
+	int m_FontBold;
+	int m_FontItalic;
 
 	// arrays so we can easily keep track
 	// of which font goes to which item...

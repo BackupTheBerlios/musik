@@ -107,7 +107,7 @@ void CMusikDynamicText::UpdateDynSize()
 
 ///////////////////////////////////////////////////
 
-void CMusikDynamicText::SetDynFont( int size, int bold, int italic, int underline, int strikethrough )
+void CMusikDynamicText::SetDynFont( int size, int bold, int italic )
 {
 	if ( pFont )
 		delete pFont;
@@ -126,10 +126,6 @@ void CMusikDynamicText::SetDynFont( int size, int bold, int italic, int underlin
 		pLogFont.lfWeight = FW_BOLD;
 	if ( italic )
 		pLogFont.lfItalic = true;
-	if ( underline )
-		pLogFont.lfUnderline = true;
-	if ( strikethrough )
-		pLogFont.lfStrikeOut = true;
 
 	// delete default font, make a new one
 	// from the log font
