@@ -227,6 +227,12 @@
 			<File
 				RelativePath=".\Threads\MusikThreads.h">
 			</File>
+			<File
+				RelativePath=".\Threads\PlaylistCtrlThreads.cpp">
+			</File>
+			<File
+				RelativePath=".\Threads\PlaylistCtrlThreads.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="Events"
@@ -301,12 +307,6 @@
 				</File>
 				<File
 					RelativePath=".\Classes\PlaylistCtrl.h">
-				</File>
-				<File
-					RelativePath=".\Threads\PlaylistCtrlThreads.cpp">
-				</File>
-				<File
-					RelativePath=".\Threads\PlaylistCtrlThreads.h">
 				</File>
 			</Filter>
 			<Filter
