@@ -79,6 +79,8 @@ protected:
 	// macros
 	DECLARE_DYNAMIC(CmusikEqualizerBar)
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnEqualizerCloseView();
 };
 
 ///////////////////////////////////////////////////

@@ -168,14 +168,16 @@ BEGIN
         MENUITEM "Set as Default",              ID_EQUALIZER_SET_AS_DEFAULT
         MENUITEM SEPARATOR
         MENUITEM "Presets",                     ID_EQUALIZER_PRESETS
+        MENUITEM SEPARATOR
+        MENUITEM "Close View",                  ID_EQUALIZER_CLOSE_VIEW
     END
 END
 
-IDR_SELECTION_BOX_MENU MENU 
+IDR_SELECTION_BOX_OPTIONS_MENU MENU 
 BEGIN
     POPUP "Selection Box"
     BEGIN
-        POPUP "Change Type"
+        POPUP "Change View"
         BEGIN
             MENUITEM "Artist",                      ID_CHANGETYPE_ARTIST
             MENUITEM "Album",                       ID_CHANGETYPE_ALBUM
@@ -192,10 +194,8 @@ BEGIN
             MENUITEM "Bitrate",                     ID_CHANGETYPE_BITRATE
         END
         MENUITEM SEPARATOR
-        MENUITEM "Add New",                     ID_SELECTIONBOX_ADDNEW
-        MENUITEM "Remove",                      ID_SELECTIONBOX_REMOVE
-        MENUITEM SEPARATOR
-        MENUITEM "Rename\tF2",                  ID_SELECTIONBOX_RENAME
+        MENUITEM "Add View",                    ID_SELECTIONBOX_ADDVIEW
+        MENUITEM "Close View",                  ID_SELECTIONBOX_CLOSEVIEW
     END
 END
 
@@ -223,6 +223,15 @@ BEGIN
         MENUITEM "Stop",                        ID_NOTIFICATIONTRAY_STOP
         MENUITEM SEPARATOR
         MENUITEM "Exit",                        ID_NOTIFICATIONTRAY_EXIT
+    END
+END
+
+IDR_SELECTION_BOX_CONTEXT_MENU MENU 
+BEGIN
+    POPUP "Selection Box Context"
+    BEGIN
+        MENUITEM "Rename\tF2",                  ID_SELECTIONBOXCONTEXT_RENAME
+
     END
 END
 

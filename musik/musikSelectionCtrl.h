@@ -61,7 +61,8 @@ public:
 	afx_msg void OnChangetypeBitrate();
 
 	// misc
-	void ShowMenu();
+	void ShowOptionsMenu();
+	void ShowContextMenu();
 
 	// showing options menu
 	virtual void OnOptions();

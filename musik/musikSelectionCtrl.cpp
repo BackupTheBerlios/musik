@@ -8,7 +8,6 @@
 #include "MEMDC.H"
 
 #include "../musikCore/include/musikLibrary.h"
-#include ".\musikselectionctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -38,9 +37,9 @@ CmusikSelectionBar::~CmusikSelectionBar()
 BEGIN_MESSAGE_MAP(CmusikSelectionBar, baseCmusikSelectionBar)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
-	ON_COMMAND(ID_SELECTIONBOX_RENAME, OnSelectionboxRename)
-	ON_COMMAND(ID_SELECTIONBOX_REMOVE, OnSelectionboxRemove)
-	ON_COMMAND(ID_SELECTIONBOX_ADDNEW, OnSelectionboxAddnew)
+	ON_COMMAND(ID_SELECTIONBOXCONTEXT_RENAME, OnSelectionboxRename)
+	ON_COMMAND(ID_SELECTIONBOX_CLOSEVIEW, OnSelectionboxRemove)
+	ON_COMMAND(ID_SELECTIONBOX_ADDVIEW, OnSelectionboxAddnew)
 	ON_COMMAND(ID_CHANGETYPE_ARTIST, OnChangetypeArtist)
 	ON_COMMAND(ID_CHANGETYPE_ALBUM, OnChangetypeAlbum)
 	ON_COMMAND(ID_CHANGETYPE_YEAR, OnChangetypeYear)
@@ -100,7 +99,7 @@ void CmusikSelectionBar::OnSize(UINT nType, int cx, int cy)
 
 void CmusikSelectionBar::OnOptions()
 {
-	ShowMenu();
+	ShowOptionsMenu();
 }
 
 ///////////////////////////////////////////////////
@@ -112,7 +111,7 @@ void CmusikSelectionBar::OnSelectionboxRename()
 
 ///////////////////////////////////////////////////
 
-void CmusikSelectionBar::ShowMenu()
+void CmusikSelectionBar::ShowContextMenu()
 {
 	CPoint pos;
 	::GetCursorPos( &pos );
@@ -120,12 +119,32 @@ void CmusikSelectionBar::ShowMenu()
 	CMenu main_menu;
 	CMenu* popup_menu;
 
-	main_menu.LoadMenu( IDR_SELECTION_BOX_MENU );
+	main_menu.LoadMenu( IDR_SELECTION_BOX_CONTEXT_MENU );
+	popup_menu = main_menu.GetSubMenu( 0 );
+
+	// check / enable / disable menu items
+	if ( GetCtrl()->GetSelectedCount() == 0 )
+		popup_menu->EnableMenuItem( ID_SELECTIONBOXCONTEXT_RENAME, MF_DISABLED | MF_GRAYED );
+		
+	popup_menu->TrackPopupMenu( 0, pos.x, pos.y, this );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionBar::ShowOptionsMenu()
+{
+	CPoint pos;
+	::GetCursorPos( &pos );
+
+	CMenu main_menu;
+	CMenu* popup_menu;
+
+	main_menu.LoadMenu( IDR_SELECTION_BOX_OPTIONS_MENU );
 	popup_menu = main_menu.GetSubMenu( 0 );
 
 	// check / enable / disable menu items
 	if ( m_Prefs->GetSelBoxCount() == 1 )
-		popup_menu->EnableMenuItem( ID_SELECTIONBOX_REMOVE, MF_DISABLED | MF_GRAYED );
+		popup_menu->EnableMenuItem( ID_SELECTIONBOX_CLOSEVIEW, MF_DISABLED | MF_GRAYED );
 
 	if ( GetCtrl()->GetSelectedCount() == 0 )
 		popup_menu->EnableMenuItem( ID_SELECTIONBOX_RENAME, MF_DISABLED | MF_GRAYED );
@@ -965,7 +984,7 @@ CmusikString CmusikSelectionCtrl::GetEditCommitStr()
 void CmusikSelectionCtrl::OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/)
 {
 	CmusikSelectionBar* parent = (CmusikSelectionBar*)GetParent();
-	parent->ShowMenu();
+	parent->ShowContextMenu();
 }
 
 ///////////////////////////////////////////////////

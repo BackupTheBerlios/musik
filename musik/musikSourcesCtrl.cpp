@@ -21,10 +21,12 @@
 ///////////////////////////////////////////////////
 
 CmusikSourcesBar::CmusikSourcesBar( CFrameWnd* parent, CmusikLibrary* library, CmusikPlayer* player, CmusikPrefs* prefs, UINT dropid, UINT pldropid_r, UINT sbdropid_r )
-	: CmusikDockBar( prefs )
+	: CmusikDockBar( prefs, NULL, false )
 {
 	m_wndChild = new CmusikSourcesCtrl( parent, library, player, prefs, dropid, pldropid_r, sbdropid_r );
 	m_Parent = parent;
+
+	m_ForceDrawBorder = true;
 }
 
 ///////////////////////////////////////////////////
@@ -64,6 +66,8 @@ int CmusikSourcesBar::OnCreate( LPCREATESTRUCT lpCreateStruct )
 
 	m_wndChild->SetFont( &m_Font );
 
+	ShowGripper( false );
+
 	return 0;
 }
 
@@ -71,7 +75,7 @@ int CmusikSourcesBar::OnCreate( LPCREATESTRUCT lpCreateStruct )
 
 void CmusikSourcesBar::OnSize(UINT nType, int cx, int cy)
 {
-	CSizingControlBar::OnSize(nType, cx, cy);
+	CmusikDockBar::OnSize(nType, cx, cy);
 
 	CRect client_size;
 	GetClientRect( &client_size );
@@ -149,20 +153,14 @@ void CmusikSourcesBar::OnItemChanged( NMHDR* pNotifyStruct, LRESULT* plResult )
 
 ///////////////////////////////////////////////////
 
-void CmusikSourcesBar::OnOptions()
-{
-	ShowMenu( true );
-}
-
-///////////////////////////////////////////////////
-
 void CmusikSourcesBar::ShowMenu( bool force_show )
 {
 	if ( GetCtrl()->m_EditInPlace.IsVisible() )
 		GetCtrl()->m_EditInPlace.Cancel();
+
 	CmusikPropTreeItem* pItem = GetCtrl()->GetFocusedItem();
 
-	if ( pItem || ( !pItem && force_show ) )
+	if ( pItem )
 	{
 		CPoint pos;
 		::GetCursorPos( &pos );
@@ -196,7 +194,6 @@ void CmusikSourcesBar::ShowMenu( bool force_show )
 		popup_menu->TrackPopupMenu( 0, pos.x, pos.y, this );
 	}
 }
-
 
 ///////////////////////////////////////////////////
 

@@ -59,7 +59,7 @@ public:
 	virtual ~CmusikSourcesBar();
 
 	// options
-	virtual void OnOptions();
+	virtual void OnOptions(){}
 	void ShowMenu( bool force_show = false );
 
 	// gets
@@ -131,6 +131,7 @@ protected:
 	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 
 	// custom message maps
 	afx_msg LRESULT OnEditCommit( WPARAM wParam, LPARAM lParam );
@@ -195,8 +196,6 @@ private:
 	CmusikSourcesItemPtrArray m_Src;
 	CmusikSourcesItemPtrArray m_StdPlaylists;
 	CmusikSourcesItemPtrArray m_DynPlaylists;
-public:
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 };
 
 ///////////////////////////////////////////////////

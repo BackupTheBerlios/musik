@@ -64,6 +64,7 @@ BEGIN_MESSAGE_MAP(CmusikEqualizerBar, baseCmusikEqualizerBar)
 	ON_COMMAND(ID_EQUALIZER_RESETDEFAULT, OnEqualizerResetdefault)
 	ON_COMMAND(ID_EQUALIZER_AUTOMATICALLYSAVE, OnEqualizerAutomaticallySave)
 	ON_COMMAND(ID_EQUALIZER_ENABLED2, OnEqualizerEnabled)
+	ON_COMMAND(ID_EQUALIZER_CLOSE_VIEW, OnEqualizerCloseView)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -229,6 +230,14 @@ void CmusikEqualizerBar::OnEqualizerAutomaticallySave()
 void CmusikEqualizerBar::OnEqualizerEnabled()
 {
 	GetParent()->SendMessage( WM_COMMAND, ID_AUDIO_EQUALIZER_ENABLED );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikEqualizerBar::OnEqualizerCloseView()
+{
+	CFrameWnd* parent = (CFrameWnd*)GetParent();
+	parent->ShowControlBar( this, FALSE, FALSE );
 }
 
 ///////////////////////////////////////////////////

@@ -68,7 +68,7 @@ class CmusikDockBar : public basemusikDockBar
 public:
 
 	// construct / destruct
-    CmusikDockBar( CmusikPrefs* prefs = NULL, CMenu* menu = NULL  );
+    CmusikDockBar( CmusikPrefs* prefs = NULL, CMenu* menu = NULL, bool show_options_button = true  );
 	~CmusikDockBar();
 
 	// override default create method
@@ -105,11 +105,11 @@ protected:
 	// appearance
     int     m_cyGripper;
 	bool	m_ShowGripper;
-	BOOL    m_bActive;
     CString m_sFontFace;
+	bool	m_ShowButton;
+	bool	m_ForceDrawBorder;
 
 	// gripper icons
-	CmusikDockbarBtn* m_biHide;
 	CmusikDockbarBtn* m_biOptions;
 
 	// musik stuff
@@ -130,7 +130,7 @@ public:
 	~CmusikDockbarBtn(){}
 
     void Move(CPoint ptTo) {ptOrg = ptTo; };
-    CRect GetRect() { return CRect(ptOrg, CSize(11, 11)); };
+    CRect GetRect() { return CRect(ptOrg, CSize(12, 12)); };
     void Paint(CDC* pDC);
 
     BOOL    bPushed;

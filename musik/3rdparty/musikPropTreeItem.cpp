@@ -458,6 +458,7 @@ LONG CmusikPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 		pDC->PatBlt(rc.left, drc.top, rc.right - rc.left + 1, drc.Height(), PATCOPY);
 
 		pDC->SelectObject(hOld);
+
 		//the gutter
 		if ( IsSelected() )
 		{

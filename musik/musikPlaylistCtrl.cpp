@@ -1232,7 +1232,8 @@ void CmusikPlaylistCtrl::OnLvnColumnclick(NMHDR *pNMHDR, LRESULT *pResult)
 
 		UpdateV();
 
-
+		if ( m_PlaylistType == MUSIK_PLAYLIST_TYPE_STANDARD )
+			m_PlaylistNeedsSave = true;
 	}
 
 	*pResult = 0;

@@ -66,27 +66,27 @@ END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
 
-CmusikDockBar::CmusikDockBar( CmusikPrefs* prefs, CMenu* menu )
+CmusikDockBar::CmusikDockBar( CmusikPrefs* prefs, CMenu* menu, bool show_options_button )
 {
-	m_bActive = false;
-
+	m_ForceDrawBorder = false;
 	m_Prefs = prefs;
 	m_Menu = menu;
 
 	ShowGripper( true );
     m_cyGripper = 12;
 
-	m_biHide = new CmusikDockbarBtn( prefs, 'r' );
-	m_biOptions = new CmusikDockbarBtn( prefs, 'u' );
+	m_ShowButton = show_options_button;
+
+	if ( m_ShowButton )
+		m_biOptions = new CmusikDockbarBtn( prefs, '6' );
+	else
+		m_biOptions = NULL;
 }
 
 ///////////////////////////////////////////////////
 
 CmusikDockBar::~CmusikDockBar()
 {
-	if ( m_biHide )
-		delete m_biHide;
-
 	if ( m_biOptions )
 		delete m_biOptions;
 }
@@ -103,9 +103,10 @@ void CmusikDockBar::ShowGripper( bool show )
 void CmusikDockBar::OnNcLButtonUp( UINT nHitTest, CPoint point )
 {
     if ( nHitTest == HTCLOSE )
-        m_pDockSite->ShowControlBar(this, FALSE, FALSE); // hide
-	else if ( nHitTest == HTOPTIONS )
+	{
 		OnOptions();
+		return;
+	}
 
     basemusikDockBar::OnNcLButtonUp( nHitTest, point );
 }
@@ -120,22 +121,21 @@ void CmusikDockBar::NcCalcClient( LPRECT pRc, UINT nDockBarID )
     // subtract edges
     basemusikDockBar::NcCalcClient(pRc, nDockBarID);
 
-    if ( !IsFloating() && ( !HasGripper() || !m_ShowGripper ) )
-        return;
+	CRect rc(pRc); 
+    if ( IsFloating() || ( HasGripper() && m_ShowGripper ) )
+    {
+		// the client rect as calculated by 
+		// the base class
+		rc.DeflateRect( 0, m_cyGripper, 0, 0 );
 
-	// the client rect as calculated by 
-	// the base class
-    CRect rc(pRc); 
+		// set position for option button
+		CPoint ptOptBtn = CPoint( rc.right - 13, rc.top - 14 );
 
-    rc.DeflateRect( 0, m_cyGripper, 0, 0 );
-
-    // set position for the close 
-	// and option buttons
-    CPoint ptOrgBtn = CPoint( rc.right - 12, rc.top - 13 );
-	CPoint ptOptBtn = CPoint( ptOrgBtn.x - 14, ptOrgBtn.y );
-
-    m_biHide->Move( ptOrgBtn - rcBar.TopLeft() );
-	m_biOptions->Move( ptOptBtn - rcBar.TopLeft() );
+		if ( m_ShowButton && m_biOptions )
+			m_biOptions->Move( ptOptBtn - rcBar.TopLeft() );
+	}
+	else
+		rc.DeflateRect( 0, -1, 0, 0 );
 
     *pRc = rc;
 }
@@ -162,7 +162,7 @@ void CmusikDockBar::OnNcPaint()
     NcPaintGripper( &mdc, rcClient );
 
 	// draw border...
-	if ( m_ShowGripper )
+	if ( ( m_ShowGripper || m_ForceDrawBorder ) && !IsFloating() )
 	{
 		rcClient.InflateRect( 1, 1, 1, 1 );
 		mdc.Draw3dRect( rcClient, m_Prefs->MUSIK_COLOR_BTNSHADOW, m_Prefs->MUSIK_COLOR_BTNHILIGHT );
@@ -216,13 +216,24 @@ void CmusikDockBar::NcPaintGripper( CDC* pDC, CRect rcClient )
 
     // compute the caption rectangle
     CRect rcGrip = rcClient;
-    CRect rcBtn = m_biOptions->GetRect();
+    
+	CRect rcBtn = rcClient;
+	if ( m_ShowButton && m_biOptions )
+		rcBtn = m_biOptions->GetRect();
 
 	// gripper at top
-	rcGrip.left -= 1;
-    rcGrip.top -= m_cyGripper + 2;
-    rcGrip.bottom = rcGrip.top + 11;
-    rcGrip.right = rcBtn.left - 3;
+
+	if ( IsFloating() )
+		rcGrip.left = 2;
+	else
+		rcGrip.left = 4;
+
+    rcGrip.top = 4;
+    rcGrip.bottom = 14;
+
+	if ( m_ShowButton )
+	  rcGrip.right = rcBtn.left - 2;
+
     rcGrip.InflateRect( 0, 1 );
 
     // draw the caption background
@@ -240,11 +251,7 @@ void CmusikDockBar::NcPaintGripper( CDC* pDC, CRect rcClient )
     if ( bFont )
     {
         // get the text color
-		COLORREF clrCptnText;
-		if ( m_bActive )
-			clrCptnText = m_Prefs->MUSIK_COLOR_CAPTIONTEXT;
-		else
-			clrCptnText = m_Prefs->MUSIK_COLOR_INACTIVECAPTIONTEXT;
+		COLORREF clrCptnText = m_Prefs->MUSIK_COLOR_CAPTIONTEXT;
 
 		int nOldBkMode = pDC->SetBkMode( TRANSPARENT );
         COLORREF clrOldText = pDC->SetTextColor( clrCptnText );
@@ -264,8 +271,8 @@ void CmusikDockBar::NcPaintGripper( CDC* pDC, CRect rcClient )
     }
 
     // draw the buttons
-    m_biHide->Paint( pDC );
-	m_biOptions->Paint( pDC );
+	if ( m_ShowButton && m_biOptions )
+		m_biOptions->Paint( pDC );
 }
 
 ///////////////////////////////////////////////////
@@ -280,17 +287,14 @@ UINT CmusikDockBar::OnNcHitTest( CPoint point )
     if ( nRet != HTCLIENT )
         return nRet;
 
-	// hit the close button
-    CRect rc = m_biHide->GetRect();
-    rc.OffsetRect( rcBar.TopLeft() );
-    if ( rc.PtInRect( point ) )
-        return HTCLOSE;
-
-	// hit options button
-	rc = m_biOptions->GetRect();
-	rc.OffsetRect( rcBar.TopLeft() );
-	if ( rc.PtInRect( point ) )
-		return HTOPTIONS;
+	// hit the options button
+	if ( m_ShowButton && m_biOptions )
+	{
+		CRect rc = m_biOptions->GetRect();
+		rc.OffsetRect( rcBar.TopLeft() );
+		if ( rc.PtInRect( point ) )
+			return HTCLOSE;
+	}
 
     return HTCLIENT;
 }
@@ -302,49 +306,29 @@ void CmusikDockBar::OnUpdateCmdUI( CFrameWnd* pTarget, BOOL bDisableIfNoHndler )
     UNUSED_ALWAYS( bDisableIfNoHndler );
     UNUSED_ALWAYS( pTarget );
 
-    if ( !HasGripper() )
-        return;
+	// was the options buton pressed?
+	if ( HasGripper() && m_ShowButton && m_biOptions )
+	{  
+		// what was hit?
+		CPoint pt;
+		::GetCursorPos(&pt);
+   		BOOL bLButtonDown = ( ::GetKeyState( VK_LBUTTON ) < 0 );
+		UINT nHit = OnNcHitTest( pt );
 
-    CPoint pt;
-    ::GetCursorPos(&pt);
+		BOOL bHideHit			= ( nHit == HTCLOSE );
+		BOOL bWasHidePushed		= m_biOptions->bPushed;
+		m_biOptions->bPushed	= bHideHit && bLButtonDown;
+		BOOL bWasHideRaised		= m_biOptions->bRaised;
+		m_biOptions->bRaised	= bHideHit && !bLButtonDown;
 
-    BOOL bLButtonDown = ( ::GetKeyState( VK_LBUTTON ) < 0 );
-	
-	// what was hit?
-	UINT nHit = OnNcHitTest( pt );
+		// needs painting
+		BOOL bNeedsPaint = FALSE;
+		bNeedsPaint |=	( m_biOptions->bPushed ^ bWasHidePushed ) ||
+						( m_biOptions->bRaised ^ bWasHideRaised );
 
-	// was the close buton pressed?
-	BOOL bHideHit			= ( nHit == HTCLOSE );
-    BOOL bWasHidePushed		= m_biHide->bPushed;
-    m_biHide->bPushed		= bHideHit && bLButtonDown;
-    BOOL bWasHideRaised		= m_biHide->bRaised;
-    m_biHide->bRaised		= bHideHit && !bLButtonDown;
-
-	// needs painting
-	BOOL bNeedsPaint = FALSE;
-    bNeedsPaint |=	( m_biHide->bPushed ^ bWasHidePushed ) ||
-					( m_biHide->bRaised ^ bWasHideRaised );
-
-	if ( bNeedsPaint )
-	{
 		SendMessage( WM_NCPAINT );
-		return;
+			return;
 	}
-
-	// was the option button pressed?
-    BOOL bOptionsHit		= ( nHit == HTOPTIONS );
-    BOOL bWasOptionsPushed	= m_biOptions->bPushed;
-    m_biOptions->bPushed	= bOptionsHit && bLButtonDown;
-    BOOL bWasOptionsRaised	= m_biOptions->bRaised;
-    m_biOptions->bRaised	= bOptionsHit && !bLButtonDown;
-
-	// needs painting
-	bNeedsPaint = FALSE;
-    bNeedsPaint |=	( m_biOptions->bPushed ^ bWasOptionsPushed ) ||
-					( m_biOptions->bRaised ^ bWasOptionsRaised );
-
-	if ( bNeedsPaint )
-		SendMessage( WM_NCPAINT );
 }
 
 ///////////////////////////////////////////////////
@@ -395,7 +379,7 @@ void CmusikDockbarBtn::Paint(CDC* pDC)
     CFont* oldfont = pDC->SelectObject( &font );
 
 	// draw the text
-    pDC->TextOut( ptOrg.x + 2, ptOrg.y + 2, CString( m_Btn ) );
+    pDC->TextOut( ptOrg.x + 2, ptOrg.y + 3, CString( m_Btn ) );
 
 	// select the old object
     pDC->SelectObject( oldfont );
