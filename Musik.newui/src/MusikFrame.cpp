@@ -1,6 +1,7 @@
 #include "wx/wxprec.h"
 
 #include "MusikFrame.h"
+#include "MusikUTF8.h"
 
 #ifdef __WXMSW__
 	#include "MMShellHook.h"

@@ -25,4 +25,11 @@ inline int StringToInt( const char* pChar )
 	return atoi( pChar );
 }
 
+inline wxString IntTowxString( int n )
+{
+	wxString ret;
+	ret << n;
+	return ret;
+}
+
 #endif
