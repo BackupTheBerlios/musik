@@ -12,7 +12,8 @@
  *  See the file "license.txt" for information on usage and redistribution
  *  of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 */
-// For compilers that support precompilation, includes "wx/wx.h".
+
+//--- For compilers that support precompilation, includes "wx/wx.h". ---//
 #include "wx/wxprec.h"
 #include "MusikPlayer.h"
 
@@ -33,7 +34,7 @@ BEGIN_EVENT_TABLE( CMusikPlayer, wxEvtHandler )
 	//--- nice and simple, and gets the job done. this may	---//
 	//--- become a little prettier later, but it works.		---//
 	//---------------------------------------------------------//
-    EVT_MENU			( MUSIK_PLAYER_NEXT_SONG, CMusikPlayer::OnNextSongEvt )
+    EVT_MENU			( MUSIK_PLAYER_NEXT_SONG,		CMusikPlayer::OnNextSongEvt		)
     EVT_MENU			( MUSIK_PLAYER_FADE_COMPLETE,	CMusikPlayer::OnFadeCompleteEvt )
 END_EVENT_TABLE()
 
@@ -75,48 +76,54 @@ int CMusikPlayer::InitializeFMOD( int nFunction, int nSndOutput, int nSndDevice,
 	if ( ( nFunction == FMOD_INIT_RESTART ) || ( nFunction == FMOD_INIT_STOP ) )
 		FSOUND_Close();
 
-	// set driver
+	//---------------------//
+	//--- setup driver	---//
+	//---------------------//
 	if ( ( nFunction == FMOD_INIT_START ) || ( nFunction == FMOD_INIT_RESTART ) )
 	{
-#if defined(__WXMSW__)
-		// direct sound
-		if ( nSndOutput == 0 )
-			if( FSOUND_SetOutput( FSOUND_OUTPUT_DSOUND ) == FALSE )
-				return FMOD_INIT_ERROR_DSOUND;
-		// windows waveform
-		else if ( nSndOutput == 1 )
-			if ( FSOUND_SetOutput( FSOUND_OUTPUT_WINMM ) == FALSE )
-				return FMOD_INIT_ERROR_WINDOWS_WAVEFORM;
-		// asio?
-		else if ( nSndOutput == 2 )
-			if ( FSOUND_SetOutput( FSOUND_OUTPUT_ASIO ) == FALSE )
-				return FMOD_INIT_ERROR_ASIO;
-#elif defined (__WXMAC__)
-		// mac stuff
-#elif defined (__WXGTK__)
-		// oss
-		if ( nSndOutput == 0 )
-			if( FSOUND_SetOutput( FSOUND_OUTPUT_OSS ) == FALSE )
-				return FMOD_INIT_ERROR_OSS;
-		// esd
-		else if ( nSndOutput == 1 )
-			if ( FSOUND_SetOutput( FSOUND_OUTPUT_ESD ) == FALSE )
-				return FMOD_INIT_ERROR_ESD;
-		// alsa
-		else if ( nSndOutput == 2 )
-			if ( FSOUND_SetOutput( FSOUND_OUTPUT_ALSA ) == FALSE )
-				return FMOD_INIT_ERROR_ALSA;
-#endif
+		//-----------------//
+		//--- windows	---//
+		//-----------------//
+		#if defined(__WXMSW__)
+				if ( nSndOutput == 0 )
+					if( FSOUND_SetOutput( FSOUND_OUTPUT_DSOUND ) == FALSE )
+						return FMOD_INIT_ERROR_DSOUND;
+				else if ( nSndOutput == 1 )
+					if ( FSOUND_SetOutput( FSOUND_OUTPUT_WINMM ) == FALSE )
+						return FMOD_INIT_ERROR_WINDOWS_WAVEFORM;
+				else if ( nSndOutput == 2 )
+					if ( FSOUND_SetOutput( FSOUND_OUTPUT_ASIO ) == FALSE )
+						return FMOD_INIT_ERROR_ASIO;
 
-		// set device
+		//-----------------//
+		//--- linux		---//
+		//-----------------//
+		#elif defined (__WXGTK__)
+				if ( nSndOutput == 0 )
+					if( FSOUND_SetOutput( FSOUND_OUTPUT_OSS ) == FALSE )
+						return FMOD_INIT_ERROR_OSS;
+				else if ( nSndOutput == 1 )
+					if ( FSOUND_SetOutput( FSOUND_OUTPUT_ESD ) == FALSE )
+						return FMOD_INIT_ERROR_ESD;
+				else if ( nSndOutput == 2 )
+					if ( FSOUND_SetOutput( FSOUND_OUTPUT_ALSA ) == FALSE )
+						return FMOD_INIT_ERROR_ALSA;
+		#endif
+
+		//---------------------//
+		//--- setup device	---//
+		//---------------------//
 		if ( FSOUND_SetDriver( nSndDevice ) == FALSE )
 			return FMOD_INIT_ERROR_DEVICE_NOT_READY;
 
-		// initialize system
+		//-------------------------//
+		//--- initialize system	---//
+		//-------------------------//
 		FSOUND_SetBufferSize( 100 );
 		if ( FSOUND_Init( nSndRate , MAXCHANNELS, 0 ) == FALSE )
 			return FMOD_INIT_ERROR_INIT;
 	}
+
 	return FMOD_INIT_SUCCESS;
 }
 
@@ -263,7 +270,10 @@ void CMusikPlayer::Pause()
 	m_Paused = true;
 	FSOUND_SetPaused( FSOUND_ALL, TRUE );
 
-	// if we pause during a crossfade, just delete the channel and stop fading
+	//-------------------------------------------------//
+	//--- if we pause during a crossfade, just		---//
+	//--- delete the channel and stop fading		---//
+	//-------------------------------------------------//
 	if ( m_Fading )
 		SetFadeComplete();
 
@@ -370,9 +380,12 @@ void CMusikPlayer::NextSong()
 
 void CMusikPlayer::PrevSong()
 {
-	m_LastSong	= m_SongIndex;
-	
-	if ( g_ActiveStreams.GetCount() && GetTime( FMOD_MSEC ) > 2000 )	// 2 second grace period to go to previous track
+	m_LastSong = m_SongIndex;
+
+	//---------------------------------------------------------//
+	//--- 2  second grace period to go to previous track	---//
+	//---------------------------------------------------------//
+	if ( g_ActiveStreams.GetCount() && GetTime( FMOD_MSEC ) > 2000 )	
 	{
 		Play( m_SongIndex );
 		return;
@@ -475,18 +488,14 @@ wxString CMusikPlayer::SecToStr( int nSec )
 	return result;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-
-/**
- * \brief Gets the duration of a song by loading and closing a file
- * \param filename 
- * \return duration of song, in milliseconds, -1 if a failure
- */
 int CMusikPlayer::GetFileDuration( wxString sFilename, int nType )
 {
 	int duration = -1;
 
-	// this should be FSOUND_MPEGACCURATE to get an accurate length, but it's way slower..
+	//-------------------------------------------------//
+	//--- this should be FSOUND_MPEGACCURATE to get	---//
+	//--- an accurate length, but it's way slower..	---//
+	//-------------------------------------------------//
 	FSOUND_STREAM *pStream = FSOUND_Stream_OpenFile( StringToANSI( sFilename ), FSOUND_2D, 0 );
 
 	if ( pStream )
