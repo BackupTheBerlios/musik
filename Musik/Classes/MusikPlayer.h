@@ -182,10 +182,7 @@ private:
 	bool			m_Stopping;			//--- is the player currently stopping?				---//
 	wxString		m_CurrentFile;		//--- filename of current song						---//0
 	int				m_CrossfadeType;	
-
-	int				m_RandomSeed;		//--- random seed for consistent results			---//
-	size_t			m_RandomIndex;		//--- index into the stream of random numbers		---//
-	size_t			m_History[5];		//--- history of songs played, to avoid repeats		---//
+	size_t			m_History[25];		//--- history of songs played, to avoid repeats		---//
 
 	FSOUND_DSPUNIT	*m_DSP;
 

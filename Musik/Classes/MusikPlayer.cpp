@@ -27,6 +27,7 @@
 #include <wx/arrimpl.cpp>
 WX_DEFINE_OBJARRAY( CMusikStreamArray );
 
+#define MUSIK_FMOD_VERSION 0x0363 //0x0370
 
 void * F_CALLBACKAPI dspcallback(void *originalbuffer, void *newbuffer, int length, int param)
 {
@@ -66,7 +67,8 @@ CMusikPlayer::CMusikPlayer()
 	m_DSP			= NULL;
 
 	//--- initialize random playback ---//
-	m_RandomSeed = wxGetLocalTime();
+	long RandomSeed = wxGetLocalTime();
+	SeedRandom( RandomSeed );
 	//--- clear history ---//
 	m_History[0] = m_History[1] = m_History[2] = m_History[3] = m_History[4] = ~0;
 }
@@ -223,8 +225,11 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 		//--- bottom of the g_ActiveStreams array	---//
 		//---------------------------------------------//
 		FSOUND_Stream_SetBufferSize( g_Prefs.nSndBuffer );
+#if (MUSIK_FMOD_VERSION >= 0x0370)
 		FSOUND_STREAM* pNewStream = FSOUND_Stream_Open( ( const char* )ConvFNToFieldMB( m_CurrentFile ), FSOUND_2D, 0, 0 );
-
+#else
+		FSOUND_STREAM* pNewStream = FSOUND_Stream_OpenFile( ( const char* )ConvFNToFieldMB( m_CurrentFile ), FSOUND_2D, 0);
+#endif
 		InitDSP();
 		
 		//---------------------------------------------//
@@ -334,7 +339,7 @@ void CMusikPlayer::ClearOldStreams( bool bClearAll )
 		if ( g_FaderThread->GetWorkerCount() )
 			return;
 	}
-
+	wxMutexLocker lock(g_protectingStreamArrays);
 	int nStreamCount = g_ActiveStreams.GetCount();
 
 	//-------------------------------------------------//
@@ -348,7 +353,7 @@ void CMusikPlayer::ClearOldStreams( bool bClearAll )
 	{
 		FSOUND_Stream_Stop	( g_ActiveStreams.Item( 0 ) );
 		FSOUND_Stream_Close	( g_ActiveStreams.Item( 0 ) );
-		wxMutexLocker lock(g_protectingStreamArrays);
+		
 		g_ActiveStreams.RemoveAt( 0 );
 		g_ActiveChannels.RemoveAt( 0 );
 	}
@@ -497,12 +502,7 @@ size_t CMusikPlayer::GetRandomSong()
 	if( m_Playlist.GetCount() == 0 )
 		return 0;
 
-	//--- prevent stream from getting so long it might bog down the machine :) ---//
-	m_RandomIndex &= 65535;
-
-	//--- iterate random stream to current position ---//
-	SeedRandom( m_RandomSeed );
-		bool repeat = false;
+	bool repeat = false;
 	int nMaxRepeatCount = 10;
 	do {
 		repeat = false;
@@ -556,7 +556,6 @@ void CMusikPlayer::NextSong()
 		break;
 
 	case MUSIK_PLAYMODE_RANDOM:
-		m_RandomIndex++;
 		Play( GetRandomSong() );
 		break;
 	}
@@ -605,7 +604,11 @@ void CMusikPlayer::PrevSong()
 int CMusikPlayer::GetFilesize( wxString sFilename )
 {
 	int filesize = -1;
+#if (MUSIK_FMOD_VERSION >= 0x0370)
 	FSOUND_STREAM *pStream = FSOUND_Stream_Open( ( const char* )ConvFNToFieldMB( sFilename ), FSOUND_2D, 0, 0 );
+#else
+	FSOUND_STREAM* pStream = FSOUND_Stream_OpenFile( ( const char* )ConvFNToFieldMB( sFilename ), FSOUND_2D, 0);
+#endif
 
 	if ( pStream )
 	{
@@ -693,7 +696,11 @@ int CMusikPlayer::GetFileDuration( wxString sFilename, int nType )
 	//--- this should be FSOUND_MPEGACCURATE to get	---//
 	//--- an accurate length, but it's way slower..	---//
 	//-------------------------------------------------//
+#if (MUSIK_FMOD_VERSION >= 0x0370)
 	FSOUND_STREAM *pStream = FSOUND_Stream_Open( ( const char* )ConvFNToFieldMB( sFilename ), FSOUND_2D, 0, 0 );
+#else
+	FSOUND_STREAM* pStream = FSOUND_Stream_OpenFile( ( const char* )ConvFNToFieldMB( sFilename ), FSOUND_2D, 0);
+#endif
 
 	if ( pStream )
 	{
