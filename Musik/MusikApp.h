@@ -17,7 +17,7 @@
 #ifndef WX_PRECOMP
 	#include "wx/wx.h"
 #endif 
-
+#ifdef wxHAS_TASK_BAR_ICON
 #include "wx/taskbar.h"
 
 class MusikTaskBarIcon: public wxTaskBarIcon
@@ -43,13 +43,15 @@ DECLARE_EVENT_TABLE()
 private:
 	wxFrame *m_pFrame;
 };
-
+#endif
 
 class MusikApp : public wxApp
 {
 public:
 	virtual bool OnInit();
+#ifdef wxHAS_TASK_BAR_ICON
 	MusikTaskBarIcon   TaskBarIcon;
+#endif
 private:
 	wxString ReadVersion();
 	void WriteVersion();

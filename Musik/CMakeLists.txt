@@ -32,8 +32,8 @@ ADD_EXECUTABLE(wxMusik
         MusikGlobals
         MusikUtils
 
-        ${wxwxMusik_SOURCE_DIR}/Classes/ActivityBox
-        ${wxwxMusik_SOURCE_DIR}/Classes/ActivityAreaCtrl
+        ${wxMusik_SOURCE_DIR}/Classes/ActivityBox
+        ${wxMusik_SOURCE_DIR}/Classes/ActivityAreaCtrl
         ${wxMusik_SOURCE_DIR}/Classes/BtnDown
         ${wxMusik_SOURCE_DIR}/Classes/GaugeSeek
         ${wxMusik_SOURCE_DIR}/Classes/MusikLibrary

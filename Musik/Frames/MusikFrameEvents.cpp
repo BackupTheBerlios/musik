@@ -91,12 +91,14 @@ void MusikFrame::OnIconize( wxIconizeEvent& event )
 {
 	if ( !g_DisablePlacement )
 		g_Prefs.sFramePlacement = GetFramePlacement( this );
+#ifdef wxHAS_TASK_BAR_ICON
 	if(event.Iconized())
 	{
 		Show(FALSE);
 		wxGetApp().TaskBarIcon.SetIcon(wxIcon(tray_xpm), GetTitle());
 	}
 	event.Skip(FALSE);
+#endif
 }
 
 void MusikFrame::OnSize	( wxSizeEvent& WXUNUSED(event) )	

@@ -396,7 +396,9 @@ void MusikFrame::EnableProgress( bool enable )
 
 void MusikFrame::SetTitle(const wxString& title)
 {
+#ifdef wxHAS_TASK_BAR_ICON
 	wxGetApp().TaskBarIcon.SetIcon(wxIcon(tray_xpm), title);
+#endif
 	wxFrame::SetTitle(title);
 }
 

@@ -27,6 +27,7 @@ IMPLEMENT_APP( MusikApp )
 #include "MusikGlobals.h"
 #include "MusikUtils.h"
 
+#ifdef wxHAS_TASK_BAR_ICON
 enum {
     PU_RESTORE = 11101,
     PU_HIDE ,
@@ -126,7 +127,7 @@ void MusikTaskBarIcon::OnLButtonDClick(wxEvent&)
     RestoreFrame();
 }
 
-
+#endif //#ifdef wxHAS_TASK_BAR_ICON
 bool MusikApp::OnInit()
 {
 	g_FirstRun = true;
@@ -222,7 +223,9 @@ bool MusikApp::OnInit()
 		pMain->SetSize( Size );
 		pMain->Center();
 	}
+#ifdef wxHAS_TASK_BAR_ICON
 	TaskBarIcon.SetFrame(pMain);
+#endif
 	pMain->SetTitle( MUSIKAPPNAME_VERSION );
 	pMain->SetMenuBar( menu_bar );
 	pMain->Show(TRUE);
