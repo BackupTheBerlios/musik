@@ -210,32 +210,21 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	cmbSelStyle->Append( _( "Standard" ) );
 	cmbSelStyle->Append( _( "Sloppy" ) );
 	cmbSelStyle->Append( _( "Highlight") );
-	//--- sizers ---//
-	hsActivityBox1	= new wxBoxSizer	( wxHORIZONTAL );
-	hsActivityBox2	= new wxBoxSizer	( wxHORIZONTAL );
-	hsActivityBox3	= new wxBoxSizer	( wxHORIZONTAL );
-	hsActivityBox4	= new wxBoxSizer	( wxHORIZONTAL );
-	hsSelStyle		= new wxBoxSizer	( wxHORIZONTAL );
-	hsActivityBox1->Add ( stActivityBox1,	0, wxCENTER | wxRIGHT, 4 );
-	hsActivityBox2->Add ( stActivityBox2,	0, wxCENTER | wxRIGHT, 4 );
-	hsActivityBox3->Add ( stActivityBox3,	0, wxCENTER | wxRIGHT, 4 );
-	hsActivityBox4->Add ( stActivityBox4,	0, wxCENTER | wxRIGHT, 4 );
-	hsActivityBox1->Add ( cmbActivityBox1,	1, wxCENTER, 0 );
-	hsActivityBox2->Add ( cmbActivityBox2,	1, wxCENTER, 0 );
-	hsActivityBox3->Add ( cmbActivityBox3,	1, wxCENTER, 0 );
-	hsActivityBox4->Add ( cmbActivityBox4,	1, wxCENTER, 0 );
-	hsSelStyle->Add( stSelStyle, 0, wxCENTER | wxRIGHT, 4 );
-	hsSelStyle->Add( cmbSelStyle, 1, wxCENTER, 0 );
 
 	//-----------------------------------//
 	//--- Options -> Selections Sizer ---//
 	//-----------------------------------//
-	vsOptions_Selections = new wxBoxSizer ( wxVERTICAL );
-	vsOptions_Selections->Add ( hsActivityBox1,		0, wxALL, 4 );
-	vsOptions_Selections->Add ( hsActivityBox2,		0, wxALL, 4 );
-	vsOptions_Selections->Add ( hsActivityBox3,		0, wxALL, 4 );
-	vsOptions_Selections->Add ( hsActivityBox4,		0, wxALL, 4 );
-	vsOptions_Selections->Add ( hsSelStyle,			0, wxALL, 4 );
+	vsOptions_Selections = new wxGridSizer ( 4, 2, 2, 2 );
+	vsOptions_Selections->Add( stActivityBox1,	0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
+	vsOptions_Selections->Add( cmbActivityBox1,	1, wxCENTER, 0 );
+	vsOptions_Selections->Add( stActivityBox2,	0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
+	vsOptions_Selections->Add( cmbActivityBox2,	1, wxCENTER, 0 );
+	vsOptions_Selections->Add( stActivityBox3,	0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
+	vsOptions_Selections->Add( cmbActivityBox3,	1, wxCENTER, 0 );
+	vsOptions_Selections->Add( stActivityBox4,	0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
+	vsOptions_Selections->Add( cmbActivityBox4,	1, wxCENTER, 0 );
+	vsOptions_Selections->Add( stSelStyle,		0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
+	vsOptions_Selections->Add( cmbSelStyle,		1, wxCENTER, 0 );
 
 	//--------------------------//
 	//--- Options -> General ---//
@@ -353,80 +342,31 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//---------------------------------//
 	//--- Options -> Playlist Sizer ---//
 	//---------------------------------//
-
-	//---  pl rating sizer ---//
-	hsPLRating = new wxBoxSizer( wxHORIZONTAL );
-	hsPLRating->Add( chkRatingEnable, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 2 );
-
-	//---  pl track num sizer ---//
-	hsPLTrack =	 new wxBoxSizer( wxHORIZONTAL );
-	hsPLTrack->Add(	chkTrackEnable,	0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 2 );
-	hsPLTrack->Add(	cmbTrackStatic,	0 );
-
-	//---  pl title sizer ---//
-	hsPLTitle =	new wxBoxSizer( wxHORIZONTAL );
-	hsPLTitle->Add(	chkTitleEnable,	0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 2 );
-	hsPLTitle->Add(	cmbTitleStatic,	0 );
-
-	//--- pl artist sizer ---//
-	hsPLArtist = new wxBoxSizer( wxHORIZONTAL );
-	hsPLArtist->Add( chkArtistEnable, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 2 );
-	hsPLArtist->Add( cmbArtistStatic, 0 );
-
-	//--- pl album sizer ---//
-	hsPLAlbum =	new wxBoxSizer( wxHORIZONTAL );
-	hsPLAlbum->Add(	chkAlbumEnable,	0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 2 );
-	hsPLAlbum->Add(	cmbAlbumStatic,	0 );
-
-	//--- pl year sizer ---//
-	hsPLYear = new wxBoxSizer( wxHORIZONTAL );
-	hsPLYear->Add( chkYearEnable, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 2 );
-	hsPLYear->Add( cmbYearStatic, 0 );
-
-	//--- pl genre sizer ---//
-	hsPLGenre =	new wxBoxSizer( wxHORIZONTAL );
-	hsPLGenre->Add(	chkGenreEnable,	0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 2 );
-	hsPLGenre->Add(	cmbGenreStatic,	0 );
-
-	//--- pl times played sizer ---//
-	hsPLTimesPlayed = new wxBoxSizer( wxHORIZONTAL );
-	hsPLTimesPlayed->Add( chkTimesPlayedEnable,	0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 2 );
-	hsPLTimesPlayed->Add( cmbTimesPlayedStatic,	0 );
-
-	//--- pl last played sizer ---//
-	hsPLLastPlayed = new wxBoxSizer( wxHORIZONTAL );
-	hsPLLastPlayed->Add( chkLastPlayedEnable,	0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 2 );
-	hsPLLastPlayed->Add( cmbLastPlayedStatic,	0 );
-
-	//--- pl time sizer --//
-	hsPLTime = new wxBoxSizer( wxHORIZONTAL );
-	hsPLTime->Add( chkTimeEnable, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 2 );
-	hsPLTime->Add( cmbTimeStatic, 0 );
-
-	//--- pl bitrate sizer ---//
-	hsPLBitrate = new wxBoxSizer( wxHORIZONTAL );
-	hsPLBitrate->Add( chkBitrateEnable,	0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 2 );
-	hsPLBitrate->Add( cmbBitrateStatic,	0 );
-
-	//--- pl filename sizer ---//
-	hsPLFilename = new wxBoxSizer( wxHORIZONTAL );
-	hsPLFilename->Add( chkFilenameEnable, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 2 );
-	hsPLFilename->Add( cmbFilenameStatic, 0 );
-
-	//--- main sizer for playlist options ---//
-	vsOptions_Playlist = new wxBoxSizer( wxVERTICAL   );
-	vsOptions_Playlist->Add( hsPLRating,		0, wxALL | wxEXPAND, 2 );
-	vsOptions_Playlist->Add( hsPLTrack,			0, wxALL | wxEXPAND, 2 );
-	vsOptions_Playlist->Add( hsPLTitle,			0, wxALL | wxEXPAND, 2 );
-	vsOptions_Playlist->Add( hsPLArtist,		0, wxALL | wxEXPAND, 2 );
-	vsOptions_Playlist->Add( hsPLAlbum,			0, wxALL | wxEXPAND, 2 );
-	vsOptions_Playlist->Add( hsPLYear,			0, wxALL | wxEXPAND, 2 );
-	vsOptions_Playlist->Add( hsPLGenre,			0, wxALL | wxEXPAND, 2 );
-	vsOptions_Playlist->Add( hsPLTimesPlayed,	0, wxALL | wxEXPAND, 2 );
-	vsOptions_Playlist->Add( hsPLLastPlayed,	0, wxALL | wxEXPAND, 2 );
-	vsOptions_Playlist->Add( hsPLTime,			0, wxALL | wxEXPAND, 2 );
-	vsOptions_Playlist->Add( hsPLBitrate,		0, wxALL | wxEXPAND, 2 );
-	vsOptions_Playlist->Add( hsPLFilename,		0, wxALL | wxEXPAND, 2 );
+	vsOptions_Playlist = new wxGridSizer( 12, 2, 2, 2 );
+	vsOptions_Playlist->Add( chkRatingEnable,		0, wxALIGN_CENTER_VERTICAL | wxADJUST_MINSIZE );
+	vsOptions_Playlist->Add( 0,						0 );
+	vsOptions_Playlist->Add( chkTrackEnable,		0, wxALIGN_CENTER_VERTICAL | wxADJUST_MINSIZE );
+	vsOptions_Playlist->Add( cmbTrackStatic,		0 );
+	vsOptions_Playlist->Add( chkTitleEnable,		0, wxALIGN_CENTER_VERTICAL | wxADJUST_MINSIZE );
+	vsOptions_Playlist->Add( cmbTitleStatic,		0 );
+	vsOptions_Playlist->Add( chkArtistEnable,		0, wxALIGN_CENTER_VERTICAL | wxADJUST_MINSIZE );
+	vsOptions_Playlist->Add( cmbArtistStatic,		0 );
+	vsOptions_Playlist->Add( chkAlbumEnable,		0, wxALIGN_CENTER_VERTICAL | wxADJUST_MINSIZE );
+	vsOptions_Playlist->Add( cmbAlbumStatic,		0 );
+	vsOptions_Playlist->Add( chkYearEnable,			0, wxALIGN_CENTER_VERTICAL | wxADJUST_MINSIZE );
+	vsOptions_Playlist->Add( cmbYearStatic,			0 );
+	vsOptions_Playlist->Add( chkGenreEnable,		0, wxALIGN_CENTER_VERTICAL | wxADJUST_MINSIZE );
+	vsOptions_Playlist->Add( cmbGenreStatic,		0 );
+	vsOptions_Playlist->Add( chkTimesPlayedEnable,	0, wxALIGN_CENTER_VERTICAL | wxADJUST_MINSIZE );
+	vsOptions_Playlist->Add( cmbTimesPlayedStatic,	0 );
+	vsOptions_Playlist->Add( chkLastPlayedEnable,	0, wxALIGN_CENTER_VERTICAL | wxADJUST_MINSIZE );
+	vsOptions_Playlist->Add( cmbLastPlayedStatic,	0 );
+	vsOptions_Playlist->Add( chkTimeEnable,			0, wxALIGN_CENTER_VERTICAL | wxADJUST_MINSIZE );
+	vsOptions_Playlist->Add( cmbTimeStatic,			0 );
+	vsOptions_Playlist->Add( chkBitrateEnable,		0, wxALIGN_CENTER_VERTICAL | wxADJUST_MINSIZE );
+	vsOptions_Playlist->Add( cmbBitrateStatic,		0 );
+	vsOptions_Playlist->Add( chkFilenameEnable,		0, wxALIGN_CENTER_VERTICAL | wxADJUST_MINSIZE );
+	vsOptions_Playlist->Add( cmbFilenameStatic,		0 );
 
 	//--------------------------//
 	//--- Tagging -> General ---//

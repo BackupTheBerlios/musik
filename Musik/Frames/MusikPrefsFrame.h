@@ -165,18 +165,13 @@ public:
 	//--------------//
 	wxBoxSizer	*vsSound_Driver;
 	wxBoxSizer	*vsSound_Playback;
-	wxBoxSizer	*vsOptions_Selections;
-	wxBoxSizer	*vsOptions_Playlist;
+	wxGridSizer	*vsOptions_Selections;
+	wxGridSizer	*vsOptions_Playlist;
 	wxBoxSizer	*vsOptions_Interface;
 	wxBoxSizer	*vsOptions_Misc;
 	wxBoxSizer	*vsTagging_General;
 	wxBoxSizer	*vsTagging_Auto;
 	wxBoxSizer	*hsSplitter;
-	wxBoxSizer	*hsActivityBox1;
-	wxBoxSizer	*hsActivityBox2;
-	wxBoxSizer	*hsActivityBox3;
-	wxBoxSizer	*hsActivityBox4;
-	wxBoxSizer	*hsSelStyle;
 	wxBoxSizer	*hsSelectionStyle;
 	wxBoxSizer	*hsBufferLength;
 	wxBoxSizer	*hsDuration;
@@ -184,18 +179,6 @@ public:
 	wxBoxSizer	*vsOutputDrv;	
 	wxBoxSizer	*vsSndDevice;
 	wxBoxSizer	*vsPlayRate;
-	wxBoxSizer	*hsPLRating;
-	wxBoxSizer	*hsPLTrack;
-	wxBoxSizer	*hsPLTitle;
-	wxBoxSizer	*hsPLArtist;
-	wxBoxSizer	*hsPLAlbum;
-	wxBoxSizer	*hsPLYear;
-	wxBoxSizer	*hsPLGenre;
-	wxBoxSizer	*hsPLTimesPlayed;
-	wxBoxSizer	*hsPLLastPlayed;
-	wxBoxSizer	*hsPLTime;
-	wxBoxSizer	*hsPLBitrate;
-	wxBoxSizer	*hsPLFilename;
 	wxBoxSizer	*hsSysButtons;
 	wxBoxSizer	*vsTopSizer;
 
