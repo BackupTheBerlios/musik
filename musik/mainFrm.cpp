@@ -99,6 +99,7 @@ int WM_RESTARTSOUNDSYSTEM	= RegisterWindowMessage( "RESTARTSOUNDSYSTEM" );
 int WM_SONGCHANGE			= RegisterWindowMessage( "SONGCHANGE" );
 int WM_SONGSTOP				= RegisterWindowMessage( "SONGSTOP" );
 int WM_SONGPAUSE			= RegisterWindowMessage( "SONGPAUSERESUME" );
+int WM_EQUALIZERCHANGE		= RegisterWindowMessage( "EQUALIZERCHANGE" );
 
 // these will come from all over the UI,
 // such as the now playing control and 
@@ -214,6 +215,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_SELBOXREQUESTUPDATE, OnSelBoxRequestUpdate )
 	ON_REGISTERED_MESSAGE( WM_GETPLAYLIST, OnGetCurrPlaylist )
 	ON_REGISTERED_MESSAGE( WM_RESTARTSOUNDSYSTEM, OnRestartSoundSystem )
+	ON_REGISTERED_MESSAGE( WM_EQUALIZERCHANGE, OnEqualizerChange )
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -1257,6 +1259,15 @@ CmusikString CMainFrame::GetSelQuery( CmusikSelectionCtrl* target )
 
 ///////////////////////////////////////////////////
 
+LRESULT CMainFrame::OnEqualizerChange( WPARAM wParam, LPARAM lParam )
+{
+	m_wndEqualizer->GetCtrl()->LoadCurrSong();
+
+	return 0L;
+}
+
+///////////////////////////////////////////////////
+
 LRESULT CMainFrame::OnSongChange( WPARAM wParam, LPARAM lParam )
 {
 	CString s;
@@ -1269,9 +1280,6 @@ LRESULT CMainFrame::OnSongChange( WPARAM wParam, LPARAM lParam )
 	m_wndNowPlaying->GetCtrl()->UpdateInfo();
 	m_wndNowPlaying->GetCtrl()->UpdateButtonStates();
 	
-	// update EQ view
-	m_wndEqualizer->GetCtrl()->LoadCurrSong();
-
 	// if the player is playing, then we need
 	// to do our own updating
 	if ( m_Player->IsPlaying() )

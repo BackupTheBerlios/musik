@@ -28,6 +28,12 @@ public:
 		m_Parent->PostMessage( WM_SONGCHANGE, NULL );
 	}
 
+	virtual void OnNewEqualizer()
+	{
+		int WM_EQUALIZERCHANGE = RegisterWindowMessage( "EQUALIZERCHANGE" );
+		m_Parent->PostMessage( WM_EQUALIZERCHANGE, NULL );
+	}
+
 	virtual void OnStop()
 	{
 		int WM_SONGSTOP = RegisterWindowMessage( "SONGSTOP" );

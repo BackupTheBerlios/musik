@@ -261,12 +261,6 @@ static void musikPlayerWorker( CmusikThread* thread )
 										player->UpdateEqualizer();
 								}
 
-								if ( nFadeType != MUSIK_CROSSFADER_EXIT )
-								{
-									if ( player->GetFunctor() )
-										player->GetFunctor()->OnNewSong();
-								}
-
 								eq_updated = true;
 							}
 						}
@@ -463,7 +457,7 @@ void CmusikPlayer::InitThread()
 	if ( !m_pThread )
 	{
 		m_pThread = new CmusikThread();
-		m_pThread->Start( (ACE_THR_FUNC)musikPlayerWorker, (void*)this );
+		m_pThread->Start( (ACE_THR_FUNC)musikPlayerWorker, (void*)this, true, MUSIK_THREAD_TYPE_PLAYER_WORKER );
 	}
 }
 
@@ -695,6 +689,8 @@ bool CmusikPlayer::Play( int index, int fade_type, int start_pos )
 	// from it's ID
 	if ( fade_type != MUSIK_CROSSFADER_SEEK )
 		m_Library->GetSongInfoFromID( m_Playlist->GetSongID( index ), &m_CurrSong );
+
+	m_Functor->OnNewSong();
 
 	// setup next stream
 	FSOUND_STREAM* pNewStream = FSOUND_Stream_Open( 
@@ -1424,6 +1420,8 @@ void CmusikPlayer::UpdateEqualizer()
 			GetEqualizer()->SetNewSong( m_Playlist->GetSongID( m_Index ) );
 		else
 			GetEqualizer()->SetNewSong( -1 );
+
+		m_Functor->OnNewEqualizer();
 	}
 }
 

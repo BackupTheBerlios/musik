@@ -53,6 +53,18 @@
 
 ///////////////////////////////////////////////////
 
+enum
+{
+	MUSIK_THREAD_TYPE_UNKNOWN = -1,
+	MUSIK_THREAD_TYPE_BATCHADD = 0,
+	MUSIK_THREAD_TYPE_BATCHRETAG,
+	MUSIK_THREAD_TYPE_REMOVEOLD,
+	MUSIK_THREAD_TYPE_PLAYER_WORKER,
+	MUSIK_THREAD_TYPE_LAST
+};
+
+///////////////////////////////////////////////////
+
 class CmusikThread
 {
 public:
@@ -62,7 +74,7 @@ public:
 	~CmusikThread();
 
 	// functions
-	void Start( ACE_THR_FUNC func, void* args, bool join = true );
+	void Start( ACE_THR_FUNC func, void* args, bool join = true, int type = MUSIK_THREAD_TYPE_UNKNOWN );
 	void Suspend( bool wait = false );
 	void Resume();
 	void Abort();
@@ -74,6 +86,7 @@ public:
 	bool IsRunning(){ return m_Running; }
 	bool IsSuspended(){ return m_Suspended; }
 	bool IsJoined(){ return m_Joined; }
+	int GetType(){ return m_Type; }
 
 	// this tells the thread to break whatever
 	// it is doing and cleanup. 
@@ -92,6 +105,7 @@ private:
 	bool m_Running;
 	bool m_Suspended;
 	bool m_Joined;
+	int m_Type;
 
 	ACE_thread_t* m_ThreadID;
 	ACE_hthread_t* m_ThreadHND;

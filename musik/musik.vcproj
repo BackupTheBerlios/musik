@@ -385,19 +385,6 @@
 					<File
 						RelativePath=".\musikDirSync.h">
 					</File>
-					<Filter
-						Name="Functors"
-						Filter="">
-						<File
-							RelativePath=".\MainFrmFunctor.h">
-						</File>
-						<File
-							RelativePath=".\musikBatchAddFunctor.h">
-						</File>
-						<File
-							RelativePath=".\musikRemoveOldFunctor.h">
-						</File>
-					</Filter>
 				</Filter>
 				<Filter
 					Name="musikEqualizerSets"
@@ -457,6 +444,19 @@
 						</File>
 					</Filter>
 				</Filter>
+			</Filter>
+			<Filter
+				Name="Functors"
+				Filter="">
+				<File
+					RelativePath=".\MainFrmFunctor.h">
+				</File>
+				<File
+					RelativePath=".\musikBatchAddFunctor.h">
+				</File>
+				<File
+					RelativePath=".\musikRemoveOldFunctor.h">
+				</File>
 			</Filter>
 		</Filter>
 		<Filter

@@ -108,6 +108,11 @@ public:
 		// pure virtual
 	}
 
+	virtual void OnNewEqualizer()
+	{
+		// pure virtual
+	}
+
 	virtual bool VerifyPlaylist( void* pl_addr = NULL )
 	{
 		return true;

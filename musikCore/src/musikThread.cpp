@@ -74,9 +74,10 @@ CmusikThread::~CmusikThread()
 
 ///////////////////////////////////////////////////
 
-void CmusikThread::Start( ACE_THR_FUNC func, void* args, bool join )
+void CmusikThread::Start( ACE_THR_FUNC func, void* args, bool join, int type )
 {
 	m_Args = args;
+	m_Type = type;
 
 	// kill the old thread if it 
 	// is running...
@@ -86,23 +87,31 @@ void CmusikThread::Start( ACE_THR_FUNC func, void* args, bool join )
 	m_ThreadID = new ACE_thread_t();
 	m_ThreadHND = new ACE_hthread_t();
 
-	// spawn the thread function
-	ACE_Thread::spawn( (ACE_THR_FUNC)func,
-		this,
-		THR_JOINABLE | THR_NEW_LWP,
-		m_ThreadID,
-		m_ThreadHND );
-
-	// join it to the main thread
+	// spawn the main thread either joined...
 	if ( join )
 	{
+		ACE_Thread::spawn( (ACE_THR_FUNC)func,
+			this,
+			THR_JOINABLE | THR_NEW_LWP,
+			m_ThreadID,
+			m_ThreadHND );
+
 		#ifdef WIN32
 			ACE_Thread::join( m_ThreadHND );
 		#else
 			ACE_Thread::join( 0, m_ThreadHND, 0 );
 		#endif
 	}
+
+	// ... or unjoined to the main thread
 	else
+	{
+		ACE_Thread::spawn( (ACE_THR_FUNC)func,
+			this,
+			THR_NEW_LWP,
+			m_ThreadID,
+			m_ThreadHND );
+	}
 
 	m_Joined = join;
 	m_Running = true;
