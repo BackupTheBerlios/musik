@@ -11,9 +11,6 @@
 #include "../musikCore/include/StdString.h"
 #include "../musikCore/include/musikArrays.h"
 
-#include "ace/Thread.h"
-#include "ace/Synch.h"
-
 ///////////////////////////////////////////////////
 
 class CmusikLibrary;
@@ -141,6 +138,8 @@ public:
 	afx_msg void OnLvnMarqueeBegin(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
+	afx_msg void OnLvnBegindrag(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnLvnBeginrdrag(NMHDR *pNMHDR, LRESULT *pResult);
 
 	// custom message maps
 	LRESULT OnEditCommit( WPARAM wParam, LPARAM lParam );
@@ -193,15 +192,9 @@ protected:
 	CFont m_Bold;
 	CFont m_StarFont;
 
-	// mutex to protect items...
-	ACE_Thread_Mutex m_ProtectingItems;
-
 	// macros
 	DECLARE_DYNAMIC(CmusikSelectionCtrl)
 	DECLARE_MESSAGE_MAP()
-public:
-	afx_msg void OnLvnBegindrag(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void OnLvnBeginrdrag(NMHDR *pNMHDR, LRESULT *pResult);
 };
 
 ///////////////////////////////////////////////////
