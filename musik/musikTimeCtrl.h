@@ -24,6 +24,7 @@ public:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
+	afx_msg void OnTimer(UINT nIDEvent);
 
 protected:
 
@@ -35,6 +36,10 @@ protected:
 	CmusikTrackCtrl* m_TimeCtrl;
 	CmusikDynamicText* m_CurTime;
 	CmusikDynamicText* m_TotalTime;
+	void RescaleInfo( int cx );
+
+	// timer
+	UINT m_TimerID;
 
 	// macros
 	DECLARE_DYNAMIC(CmusikTimeCtrl)

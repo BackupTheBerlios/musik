@@ -11,10 +11,15 @@
 #include "../musikCore/include/musikPlayer.h"
 
 #include "MEMDC.H"
+#include ".\musiktimectrl.h"
 
 ///////////////////////////////////////////////////
 
 IMPLEMENT_DYNAMIC(CmusikTimeCtrl, CWnd)
+
+///////////////////////////////////////////////////
+
+#define MUSIK_SEEK_TIMER WM_USER + 1
 
 ///////////////////////////////////////////////////
 
@@ -49,6 +54,7 @@ BEGIN_MESSAGE_MAP(CmusikTimeCtrl, CWnd)
 	ON_WM_SIZE()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
+	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -58,11 +64,12 @@ int CmusikTimeCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CWnd::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-	m_TimeCtrl = new CmusikTrackCtrl( m_Prefs );
+	m_TimeCtrl = new CmusikTrackCtrl( m_Prefs, m_Player );
 	if ( !m_TimeCtrl->Create( TBS_HORZ | TBS_NOTICKS | WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0 ), this, 123 ) )
 		return false;
-
+    
 	m_TimeCtrl->SetRange( 0, 100 );
+	m_TimeCtrl->SetLockIfNotPlaying();
 
 	m_CurTime = new CmusikDynamicText();
 	if ( !m_CurTime->Create( NULL, WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0 ), this ) )
@@ -75,6 +82,8 @@ int CmusikTimeCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return false;
 	m_TotalTime->SetDynFont( 11, 1, 0 );
 	m_TotalTime->SetDynText( _T( "0:00" ) );
+	
+	m_TimerID = SetTimer( MUSIK_SEEK_TIMER, 1000, NULL );
 
 	return 0;
 }
@@ -82,6 +91,13 @@ int CmusikTimeCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 ///////////////////////////////////////////////////
 
 void CmusikTimeCtrl::OnSize(UINT nType, int cx, int cy)
+{
+	RescaleInfo( cx );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikTimeCtrl::RescaleInfo( int cx )
 {
 	CRect rcClient;
 	GetClientRect( &rcClient );
@@ -137,6 +153,19 @@ void CmusikTimeCtrl::OnPaint()
 	memDC.FillSolidRect( clip, m_Prefs->MUSIK_COLOR_BTNFACE );
 
 	DefWindowProc( WM_PAINT, (WPARAM)memDC->m_hDC, (LPARAM)0 );
+}
+
+///////////////////////////////////////////////////
+
+void CmusikTimeCtrl::OnTimer(UINT nIDEvent)
+{
+	if ( nIDEvent == MUSIK_SEEK_TIMER )
+	{
+		if ( m_Player->IsPlaying() && !m_Player->IsPaused() )
+		{
+			
+		}
+	}
 }
 
 ///////////////////////////////////////////////////

@@ -6,6 +6,8 @@
 
 #include "musikPrefs.h"
 
+#include "../musikCore/include/musikPlayer.h"
+
 #include "MEMDC.H"
 #include ".\musiktrackctrl.h"
 
@@ -15,11 +17,14 @@ IMPLEMENT_DYNAMIC(CmusikTrackCtrl, CSliderCtrl)
 
 ///////////////////////////////////////////////////
 
-CmusikTrackCtrl::CmusikTrackCtrl( CmusikPrefs* prefs )
+CmusikTrackCtrl::CmusikTrackCtrl( CmusikPrefs* prefs, CmusikPlayer* player )
 {
 	m_Prefs = prefs;
+	m_Player = player;
+
 	m_LeftDown = false;
 	m_IsCapturing = false;
+	m_LockIfNotPlaying = false;
 	m_LastPos = -1;
 	m_Cursor.x = -1;
 	m_Cursor.y = -1;
@@ -198,6 +203,9 @@ void CmusikTrackCtrl::OnSetFocus(CWnd* pOldWnd)
 
 void CmusikTrackCtrl::OnMouseMove(UINT nFlags, CPoint point)
 {
+	if ( m_Player && m_LockIfNotPlaying && !m_Player->IsPlaying() )
+		return;
+
     if ( nFlags & MK_LBUTTON )
 	{
 		if ( !m_IsCapturing )
@@ -217,6 +225,9 @@ void CmusikTrackCtrl::OnMouseMove(UINT nFlags, CPoint point)
 
 void CmusikTrackCtrl::OnLButtonDown(UINT nFlags, CPoint point)
 {
+	if ( m_Player && m_LockIfNotPlaying && !m_Player->IsPlaying() )
+		return;
+
 	GetCursorPos( &m_Cursor );
 	SetPosFromMouse();
 }
@@ -225,6 +236,9 @@ void CmusikTrackCtrl::OnLButtonDown(UINT nFlags, CPoint point)
 
 void CmusikTrackCtrl::OnLButtonUp(UINT nFlags, CPoint point)
 {
+	if ( m_Player && m_LockIfNotPlaying && !m_Player->IsPlaying() )
+		return;
+
 	if ( m_LeftDown )
 	{
         CPoint posCurr;

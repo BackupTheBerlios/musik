@@ -5,6 +5,7 @@
 ///////////////////////////////////////////////////
 
 class CmusikPrefs;
+class CmusikPlayer;
 
 ///////////////////////////////////////////////////
 
@@ -13,8 +14,12 @@ class CmusikTrackCtrl : public CSliderCtrl
 public:
 
 	// construct / destruct
-	CmusikTrackCtrl( CmusikPrefs* prefs = NULL );
+	CmusikTrackCtrl( CmusikPrefs* prefs = NULL, CmusikPlayer* player = NULL );
 	virtual ~CmusikTrackCtrl();
+
+	// misc
+	void SetLockIfNotPlaying( bool lock = true ){ m_LockIfNotPlaying = lock; }
+	bool IsLockSet(){ return m_LockIfNotPlaying; }
 
 	// public mfc message maps
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
@@ -35,8 +40,15 @@ protected:
 	void SetPosFromMouse();
 	virtual void OnPosChanged();
 
-	// use this to get colors...
+	// lock movement if no playback
+	bool m_LockIfNotPlaying;
+
+	// use this to get colors
 	CmusikPrefs* m_Prefs;
+
+	// use this to determine if 
+	// the slider should be locked
+	CmusikPlayer* m_Player;
 
 	// drawing...
 	void DrawChannel( CDC* pDC, const CRect& rect, BOOL bHoriz );
