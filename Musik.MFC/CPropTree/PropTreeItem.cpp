@@ -435,8 +435,16 @@ LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 		pDC->PatBlt(rc.left + 14, drc.top, rc.right - rc.left + 1, drc.Height(), PATCOPY);
 
 		//the gutter
-		hOld = pDC->SelectObject( GetSysColorBrush(COLOR_BTNFACE) );
-		pDC->PatBlt( rc.left, drc.top, 14, drc.Height(), PATCOPY);
+		if ( IsSelected() )
+		{
+			hOld = pDC->SelectObject( GetSysColorBrush(COLOR_ACTIVECAPTION) );
+			pDC->PatBlt( rc.left, drc.top, 8, drc.Height(), PATCOPY);
+		}
+		else
+		{
+			hOld = pDC->SelectObject( GetSysColorBrush(COLOR_BTNFACE) );
+			pDC->PatBlt( rc.left, drc.top, 8, drc.Height(), PATCOPY);
+		}
 
 		pDC->SelectObject(hOld);
 	}
@@ -485,11 +493,7 @@ LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 		{
 			HGDIOBJ oPen = pDC->SelectObject(GetStockObject(NULL_PEN));
 			HGDIOBJ oBrush;
-			if ( !IsRootLevel() )
-				oBrush = pDC->SelectObject(GetSysColorBrush(COLOR_BTNFACE));
-			else
-				oBrush = pDC->SelectObject(GetSysColorBrush(COLOR_INACTIVECAPTION));
-			
+
 			CRect dr;
 			dr = drc;
 			dr.left = PROPTREEITEM_EXPANDCOLUMN;
@@ -497,7 +501,6 @@ LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 			pDC->Rectangle(&dr);
 			
 			pDC->SelectObject(oPen);
-			pDC->SelectObject(oBrush);
 
 			if ( !IsRootLevel() )
 				pDC->SetTextColor(GetSysColor(COLOR_BTNTEXT));
@@ -518,10 +521,8 @@ LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 	}	
 
 	// draw horzontal sep
-	if ( IsRootLevel() )
+	if ( IsRootLevel() || IsSelected() )
 		HLine( pDC->m_hDC, 0, pt.y + nTotal - 1, rc.right, GetSysColor(COLOR_BTNFACE) );
-	else
-		HLine( pDC->m_hDC, PROPTREEITEM_EXPANDCOLUMN, pt.y + nTotal - 1, rc.right - PROPTREEITEM_EXPANDCOLUMN + 1, GetSysColor(COLOR_BTNFACE) );
 
 	// draw children
 	if (GetChild() && IsExpanded())
