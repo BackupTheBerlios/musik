@@ -550,7 +550,6 @@ void MusikPrefsFrame::LoadPrefs()
 	cmbTimeStatic->SetSelection			( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TIME]			);
 	cmbBitrateStatic->SetSelection		( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_BITRATE]		);
 	cmbFilenameStatic->SetSelection		( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_FILENAME]		);
-	
 
 	//--------------------------//
 	//--- tagging -> general ---//
@@ -760,30 +759,125 @@ void MusikPrefsFrame::SavePrefs()
 	//---------------------------//
 	//--- options -> playlist ---//
 	//---------------------------//
-	g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_RATING]		= chkRatingEnable->GetValue();
-	g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TRACK]			= chkTrackEnable->GetValue();
-	g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TITLE]			= chkTitleEnable->GetValue();
-	g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_ARTIST]		= chkArtistEnable->GetValue();
-	g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_ALBUM]			= chkAlbumEnable->GetValue();
-	g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_YEAR]			= chkYearEnable->GetValue();
-	g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_GENRE]			= chkGenreEnable->GetValue();
-	g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TIMES_PLAYED]	= chkTimesPlayedEnable->GetValue();
-	g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_LAST_PLAYED]	= chkLastPlayedEnable->GetValue();	
-	g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TIME]			= chkTimeEnable->GetValue();	
-	g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_BITRATE]		= chkBitrateEnable->GetValue();	
-	g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_FILENAME]		= chkFilenameEnable->GetValue();	
+	bool bResetColumns = false;
+	//--- enable / disable ---//
+	if ( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_RATING] != chkRatingEnable->GetValue() )
+	{
+		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_RATING] = chkRatingEnable->GetValue();
+		bResetColumns = true;
+	}
+	if ( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TRACK] != chkTrackEnable->GetValue() )
+	{
+		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TRACK]	= chkTrackEnable->GetValue();
+		bResetColumns = true;
+	}
+	if ( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TITLE] != chkTitleEnable->GetValue() )
+	{
+		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TITLE]	= chkTitleEnable->GetValue();
+		bResetColumns = true;
+	}
+	if ( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_ARTIST] != chkArtistEnable->GetValue() )
+	{
+		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_ARTIST] = chkArtistEnable->GetValue();
+		bResetColumns = true;
+	}
+	if ( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_ALBUM] != chkAlbumEnable->GetValue() )
+	{
+		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_ALBUM]	= chkAlbumEnable->GetValue();
+		bResetColumns = true;
+	}
+	if ( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_YEAR] != chkYearEnable->GetValue() )
+	{
+		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_YEAR] = chkYearEnable->GetValue();
+		bResetColumns = true;
+	}
+	if ( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_GENRE] != chkGenreEnable->GetValue() )
+	{
+		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_GENRE] = chkGenreEnable->GetValue();
+		bResetColumns = true;
+	}
+	if ( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TIMES_PLAYED] != chkTimesPlayedEnable->GetValue() )
+	{
+		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TIMES_PLAYED] = chkTimesPlayedEnable->GetValue();
+		bResetColumns = true;
+	}
+	if ( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_LAST_PLAYED] != chkLastPlayedEnable->GetValue() )
+	{
+		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_LAST_PLAYED] = chkLastPlayedEnable->GetValue();	
+		bResetColumns = true;
+	}
+	if ( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TIME] != chkTimeEnable->GetValue() )
+	{
+		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TIME] = chkTimeEnable->GetValue();	
+		bResetColumns = true;
+	}
+	if ( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_BITRATE] != chkBitrateEnable->GetValue() )
+	{
+		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_BITRATE] = chkBitrateEnable->GetValue();	
+		bResetColumns = true;
+	}
+	if ( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_FILENAME] != chkFilenameEnable->GetValue() )
+	{
+		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_FILENAME] = chkFilenameEnable->GetValue();
+		bResetColumns = true;
+	}
 
-	g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TRACK]		= cmbTrackStatic->GetSelection();
-	g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TITLE]		= cmbTitleStatic->GetSelection();
-	g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_ARTIST]		= cmbArtistStatic->GetSelection();
-	g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_ALBUM]		= cmbAlbumStatic->GetSelection();
-	g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_YEAR]			= cmbYearStatic->GetSelection();
-	g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_GENRE]		= cmbGenreStatic->GetSelection();
-	g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TIMES_PLAYED]	= cmbTimesPlayedStatic->GetSelection();
-	g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_LAST_PLAYED]	= cmbLastPlayedStatic->GetSelection();
-	g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TIME]			= cmbTimeStatic->GetSelection();
-	g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_BITRATE]		= cmbBitrateStatic->GetSelection();
-	g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_FILENAME]		= cmbFilenameStatic->GetSelection();
+	//--- standard / dynamic ---//
+	if ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TRACK] != cmbTrackStatic->GetSelection() )
+	{
+		g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TRACK] = cmbTrackStatic->GetSelection();
+		bResetColumns = true;
+	}
+	if ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TITLE] != cmbTitleStatic->GetSelection() )
+	{
+		g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TITLE] = cmbTitleStatic->GetSelection();
+		bResetColumns = true;
+	}
+	if ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_ARTIST] != cmbArtistStatic->GetSelection() )
+	{
+		g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_ARTIST] = cmbArtistStatic->GetSelection();
+		bResetColumns = true;
+	}
+	if ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_ALBUM] != cmbAlbumStatic->GetSelection() )
+	{
+		g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_ALBUM] = cmbAlbumStatic->GetSelection();
+		bResetColumns = true;
+	}
+	if ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_YEAR] != cmbYearStatic->GetSelection() )
+	{
+		g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_YEAR] = cmbYearStatic->GetSelection();
+		bResetColumns = true;
+	}
+	if ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_GENRE] != cmbGenreStatic->GetSelection() )
+	{
+		g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_GENRE] = cmbGenreStatic->GetSelection();
+		bResetColumns = true;
+	}
+	if ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TIMES_PLAYED] != cmbTimesPlayedStatic->GetSelection() )
+	{
+		g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TIMES_PLAYED] = cmbTimesPlayedStatic->GetSelection();
+		bResetColumns = true;
+	}
+	if ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_LAST_PLAYED] != cmbLastPlayedStatic->GetSelection() )
+	{
+		g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_LAST_PLAYED] = cmbLastPlayedStatic->GetSelection();
+		bResetColumns = true;
+	}
+	if ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TIME] != cmbTimeStatic->GetSelection() )
+	{
+		g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TIME] = cmbTimeStatic->GetSelection();
+		bResetColumns = true;
+	}
+	if ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_BITRATE] != cmbBitrateStatic->GetSelection() )
+	{
+		g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_BITRATE] = cmbBitrateStatic->GetSelection();
+		bResetColumns = true;
+	}
+	if ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_FILENAME] != cmbFilenameStatic->GetSelection() )
+	{
+		g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_FILENAME] = cmbFilenameStatic->GetSelection();
+		bResetColumns = true;
+	}
 
 	//--------------------------//
 	//--- tagging -> general ---//
@@ -875,4 +969,7 @@ void MusikPrefsFrame::SavePrefs()
 	}
 	else if ( bShowUnselChange )
 		g_ActivityAreaCtrl->ResetAllContents();
+
+	if ( bResetColumns )
+		g_PlaylistCtrl->ResetColumns( true, true );
 }

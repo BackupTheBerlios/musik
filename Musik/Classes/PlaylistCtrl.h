@@ -103,7 +103,7 @@ public:
 	void ResynchItem		( int item, int lastitem = -1, bool refreshonly = true );
 	void Update				( bool bSelFirstItem = true );
 	void RescaleColumns		( );
-	void ResetColumns		( bool update = false );
+	void ResetColumns		( bool update = false, bool rescale = false );
 	void RateSel			( int nVal );
 	void EditTag			( int i );
 	void DelSelSongs		( );

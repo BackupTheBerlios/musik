@@ -890,7 +890,7 @@ void CPlaylistCtrl::RescaleColumns()
 	Refresh();
 }
 
-void CPlaylistCtrl::ResetColumns( bool update )
+void CPlaylistCtrl::ResetColumns( bool update, bool rescale )
 {
 	//-------------------------------------------------//
 	//--- clear all columns							---//
@@ -910,6 +910,9 @@ void CPlaylistCtrl::ResetColumns( bool update )
 		nCurrType = m_ColumnOrder.Item( i );
 		InsertColumn( i, g_PlaylistColumnLabels[nCurrType], g_PlaylistColumnAlign[nCurrType], 50 );
 	}
+
+	if ( rescale )
+		RescaleColumns();
 
 	if ( update )
 		Update();
