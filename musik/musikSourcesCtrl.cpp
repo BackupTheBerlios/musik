@@ -29,6 +29,7 @@ CmusikSourcesCtrl::CmusikSourcesCtrl( CFrameWnd* parent, CmusikLibrary* library,
 	m_LibrariesRoot		= NULL;
 	m_StdPlaylistRoot	= NULL;
 	m_DynPlaylistRoot	= NULL;
+	m_DropArrange		= false;
 	m_Startup			= true;
 	m_Player			= player;
 }
@@ -208,6 +209,33 @@ void CmusikSourcesCtrl::OnDropFiles(HDROP hDropInfo)
 	ScreenToClient( &pos );
 
 	CmusikPropTreeItem* pItem = FindItem( pos );
+
+	// drag originated from ourselves
+	if ( m_DropArrange )
+	{
+		if ( pItem )
+		{
+			CmusikPropTreeItem* pSel = GetFocusedItem();
+
+			if ( pSel != pItem && pSel->GetPlaylistType() == pItem->GetPlaylistType() )
+			{
+				MessageBox( "Successful drag" );
+				/*
+				int nSrcIdx, nDstIdx;
+				switch ( pSel->GetPlaylistType() )
+				{
+				case MUSIK_PLAYLIST_TYPE_STANDARD:
+					
+
+				}
+				*/
+			}
+		}
+				
+		SetCursor( LoadCursor( NULL, IDC_ARROW ) );
+		m_DropArrange = false;
+		return;
+	}
 
 	// make sure the item isn't root
 	if ( pItem != NULL && pItem->IsRootLevel() )
@@ -509,6 +537,45 @@ void CmusikSourcesCtrl::DoDrag( CmusikPropTreeItem* pItem )
 
 		break;
 	}	
+}
+
+///////////////////////////////////////////////////
+
+int CmusikSourcesCtrl::FindInDynPlaylists( CmusikPropTreeItem* pItem )
+{
+	for ( size_t i = 0; i < m_DynPlaylists.size(); i++ )
+	{
+		if ( m_DynPlaylists.at( i ) == pItem )
+			return i;
+	}
+
+	return -1;
+}
+
+///////////////////////////////////////////////////
+
+int CmusikSourcesCtrl::FindInStdPlaylists( CmusikPropTreeItem* pItem )
+{
+	for ( size_t i = 0; i < m_StdPlaylists.size(); i++ )
+	{
+		if ( m_StdPlaylists.at( i ) == pItem )
+			return i;
+	}
+
+	return -1;
+}
+
+///////////////////////////////////////////////////
+
+int CmusikSourcesCtrl::FindInLibraries( CmusikPropTreeItem* pItem )
+{
+	for ( size_t i = 0; i < m_Libraries.size(); i++ )
+	{
+		if ( m_Libraries.at( i ) == pItem )
+			return i;
+	}
+
+	return -1;
 }
 
 ///////////////////////////////////////////////////

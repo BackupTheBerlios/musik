@@ -24,6 +24,9 @@ class CmusikSourcesDropTarget;
 
 class CmusikSourcesCtrl : public CmusikPropTree
 {
+
+	friend class CmusikSourcesDropTarget;
+
 public:
 
 	// construct / destruct
@@ -57,9 +60,11 @@ protected:
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	LRESULT OnEditCommit( WPARAM wParam, LPARAM lParam );
 	LRESULT OnEditCancel( WPARAM wParam, LPARAM lParam );
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 
 	// drop target for the playlist
 	CmusikSourcesDropTarget* m_DropTarget;
+	bool m_DropArrange;
 
 	// create default headers
 	void InitItems();
@@ -67,10 +72,13 @@ protected:
 	CmusikPropTreeItem* m_StdPlaylistRoot;
 	CmusikPropTreeItem* m_DynPlaylistRoot;
 
-	// loading the items
+	// loading and finding the items
 	void LoadLibraries();
 	void LoadStdPlaylists();
 	void LoadDynPlaylists();
+	int FindInLibraries( CmusikPropTreeItem* pItem );
+	int FindInStdPlaylists( CmusikPropTreeItem* pItem );
+	int FindInDynPlaylists( CmusikPropTreeItem* pItem );
 
 	// macros
 	DECLARE_DYNAMIC(CmusikSourcesCtrl)
@@ -101,8 +109,6 @@ private:
 	CmusikSourcesItemPtrArray m_Libraries;
 	CmusikSourcesItemPtrArray m_StdPlaylists;
 	CmusikSourcesItemPtrArray m_DynPlaylists;
-public:
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 };
 
 ///////////////////////////////////////////////////

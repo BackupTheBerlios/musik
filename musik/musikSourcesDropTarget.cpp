@@ -103,18 +103,19 @@ DROPEFFECT CmusikSourcesDropTarget::OnDragOver ( CWnd* pWnd, COleDataObject* pDa
 	DROPEFFECT dwEffect = DROPEFFECT_NONE;
 
     // Check for our own custom clipboard format in the data object.  If it's
-    // present, then the DnD was initiated from our own window, and we won't
-    // accept the drop.
-    // If it's not present, then we check for CF_HDROP data in the data object.
-    if ( pDataObject->GetGlobalData ( m_uSourceID ) == NULL )
-	{
-		// Look for CF_HDROP data in the data object, and accept the drop if
-		// it's there.
-		if ( pDataObject->GetGlobalData ( CF_HDROP ) != NULL )
-			dwEffect = DROPEFFECT_COPY;
-	}
+    // present, then the DnD was initiated from our own window, and we want to
+	// rearrange items. Set the flag in the playlist control.
+    if ( pDataObject->GetGlobalData ( m_uSourceID ) != NULL )
+		m_pList->m_DropArrange = true;
+	else
+		m_pList->m_DropArrange = false;
 
-    // Call the DnD helper.
+	// Look for CF_HDROP data in the data object, and accept the drop if
+	// it's there.
+	if ( pDataObject->GetGlobalData ( CF_HDROP ) != NULL )
+		dwEffect = DROPEFFECT_COPY;
+
+		// Call the DnD helper.
 	if ( m_bUseDnDHelper )
 		m_piDropHelper->DragOver ( &point, dwEffect );
 
