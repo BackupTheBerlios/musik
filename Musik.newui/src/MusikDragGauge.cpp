@@ -24,10 +24,13 @@ CMusikDragGauge::~CMusikDragGauge()
 
 void CMusikDragGauge::OnLeftDown( wxMouseEvent& event )
 {
-	if ( event.LeftDown() )
+	if ( IsEnabled() )
 	{
-		m_Dragging = true;
-		CaptureMouse();
+		if ( event.LeftDown() )
+		{
+			m_Dragging = true;
+			CaptureMouse();
+		}
 	}
 
 	event.Skip();
