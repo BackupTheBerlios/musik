@@ -189,10 +189,16 @@ bool SourcesDropTarget::HighlightSel( const wxPoint &pPos )
 	int nFlags;
 	long n = m_SourcesListBox->HitTest( pPos, nFlags );
 	m_SourcesListBox->SetFocus();
-	if(n == m_SourcesListBox->FindInSources(wxT( "Musik Library" ),MUSIK_SOURCES_LIBRARY))
+	EMUSIK_SOURCES_TYPE Type = m_SourcesListBox->GetType(n);
+	if(n != m_SourcesListBox->m_CurSel)
+		m_SourcesListBox->SetItemState( m_SourcesListBox->m_CurSel, 0, wxLIST_STATE_FOCUSED );
+	if(Type == MUSIK_SOURCES_NONE)
+		return true;// drag over non, means create new playlist from drag data
+	else if((Type != MUSIK_SOURCES_NOW_PLAYING) && (Type != MUSIK_SOURCES_PLAYLIST_STANDARD) )
 	{
 		return false;
 	}
+
 	long topitem = m_SourcesListBox->GetTopItem();
 	long countperpage = m_SourcesListBox->GetCountPerPage();
 	if( n == topitem && n > 0)
@@ -419,7 +425,7 @@ void CSourcesListBox::CopyFiles( wxCommandEvent& WXUNUSED(event) )
 		destname.SetPath(destdir);
 		if(!wxCopyFile( sourcename.GetFullPath(), destname.GetFullPath()))
 		{
-
+			
 			wxString errmsg = wxString::Format(_("Failed to copy file %s. Continue?"),(const wxChar *)sourcename.GetFullPath());
 			if(wxMessageBox(errmsg,	_("File copy error"),wxYES|wxNO|wxCENTER|wxICON_ERROR ) == wxNO)
 				break;
@@ -558,7 +564,7 @@ void CSourcesListBox::UpdateSel( size_t index )
 
 void CSourcesListBox::BeginEditLabel( wxListEvent& event )
 {
-	int nType = GetType( event.GetIndex() );
+	EMUSIK_SOURCES_TYPE nType = GetType( event.GetIndex() );
 	//--- Musik Library entry edited ---//
 	if ( nType == MUSIK_SOURCES_LIBRARY )
 	{
@@ -582,7 +588,7 @@ void CSourcesListBox::EndEditLabel( wxListEvent& event )
 	if ( sCheck.IsEmpty() )
 		return; // do not want to rename to an empty string ( or one that only consists of spaces
 
-	int nType = GetType( event.GetIndex() );
+	EMUSIK_SOURCES_TYPE nType = GetType( event.GetIndex() );
 
 	wxString sType;
 	if(!GetTypeAsString(nType,sType))
@@ -821,7 +827,7 @@ void CSourcesListBox::RenameSel()
 		EditLabel( nIndex );
 }
 
-int CSourcesListBox::GetType(long index) const 
+EMUSIK_SOURCES_TYPE CSourcesListBox::GetType(long index) const 
 {
 	if( index < 0)
 		return MUSIK_SOURCES_NONE;

@@ -25,7 +25,7 @@
 
 #include <wx/dnd.h>
 
-enum EMUSIK_LIBRARY_TYPE
+enum EMUSIK_SOURCES_TYPE
 {
 	MUSIK_SOURCES_LIBRARY = 0,
     MUSIK_SOURCES_PLAYLIST_STANDARD,
@@ -85,8 +85,8 @@ public:
 	int  GetIndex				( )						{ return m_CurSel;		}
 	int  GetDragIndex			( )						{ return m_DragIndex;	}
 	void ResetAll				( )						{ ClearAll(); InsertColumn( 0, _( "Sources" ) );	}	
-	int  GetSelType				( )						{ return  GetType( m_CurSel );	}
-	int  GetType				( long index ) const ;
+	EMUSIK_SOURCES_TYPE  GetSelType				( )						{ return  GetType( m_CurSel );	}
+	EMUSIK_SOURCES_TYPE  GetType				( long index ) const ;
 	bool GetTypeAsString		( int nType, wxString &sType ) const ;
 	int  GetItemImage			( long index );
 	
