@@ -383,10 +383,9 @@ BEGIN
                     125,10
     CTEXT           "All users should consider setting up the following options:",
                     IDC_STATIC,12,11,186,13
-    CONTROL         "Double-clicking a song in the ""Library"" adds the entire",
+    CONTROL         "Starting a new song replaces current ""Now Playing"" with the active playlist.",
                     IDC_CHECK6,"Button",BS_AUTOCHECKBOX | BS_LEFT | BS_TOP | 
-                    WS_TABSTOP,6,123,186,9
-    LTEXT           "playlist to the ""Now Playing""",IDC_STATIC,17,133,97,8
+                    BS_MULTILINE | WS_TABSTOP,6,123,186,21
 END
 
 IDD_PROPPAGE_SOUND_DRIVER DIALOGEX 0, 0, 210, 154

@@ -773,6 +773,39 @@ void CmusikPlaylistCtrl::SetPlaylist( CmusikPlaylist* playlist )
 
 bool CmusikPlaylistCtrl::PlayItem( int n )
 {
+	if ( m_Prefs->AddEntireToNP() )
+		return PlayItem_ReplaceNP( n );
+
+	return PlayItem_AddNP( n );
+}
+
+///////////////////////////////////////////////////
+
+bool CmusikPlaylistCtrl::PlayItem_ReplaceNP( int n )
+{
+	if ( !m_Playlist )
+		return false;
+
+	if ( n == -1 )
+	{
+		POSITION pos = GetFirstSelectedItemPosition();
+		n = GetNextSelectedItem ( pos );
+	}	
+
+	if ( m_Player->GetPlaylist() != m_Playlist )
+		m_Player->SetPlaylist( m_Playlist );
+
+	m_Player->Play( n, MUSIK_CROSSFADER_NEW_SONG );
+
+	SetItemState( n, 0, LVIS_SELECTED );
+
+	return true;
+}
+
+///////////////////////////////////////////////////
+
+bool CmusikPlaylistCtrl::PlayItem_AddNP( int n )
+{
 	if ( !m_Playlist )
 		return false;
 

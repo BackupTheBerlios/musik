@@ -96,7 +96,7 @@ void CmusikPrefs::LoadPrefs()
 	m_Dlg_WriteTagsToFile		= StringToBool( config->GetValue( "Dialog", "Write Tags to File", "0" ) );
 	m_Dlg_LibraryShowsAllSongs	= StringToBool( config->GetValue( "Dialog", "Library Shows All Songs", "1" ) );
 	m_Dlg_MinimizeToTray		= StringToBool( config->GetValue( "Dialog", "Minimize to Notification Tray", "0" ) );
-	m_Dlg_AddEntireToNP			= StringToBool( config->GetValue( "Dialog", "Add Entire Library Playlist to Now Playing", "1" ) );
+	m_Dlg_AddEntireToNP			= StringToBool( config->GetValue( "Dialog", "Add Entire Library Playlist to Now Playing", "0" ) );
 
 	// selection area
 	m_SelectionBox_Types = StringToCIntArray( config->GetValue( "Selection Area", "Types", "1,2" ) );

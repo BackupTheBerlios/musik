@@ -113,6 +113,10 @@ protected:
 	UINT m_DropID_L;
 	UINT m_DropID_R;
 
+	// internal play routines
+	bool PlayItem_AddNP( int n = -1 );
+	bool PlayItem_ReplaceNP( int n = -1 );
+
 	// for some reason creating a CmusikDir
 	// object during a drop operation causes
 	// it to fail. i can't imagine why, its 
