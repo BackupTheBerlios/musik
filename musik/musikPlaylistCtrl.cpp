@@ -223,7 +223,7 @@ void CmusikPlaylistCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 				sValue = m_SongInfoCache->GetValue( nItem - m_SongInfoCache->GetFirst(), nType );
 		}
 		else
-			sValue = _T( "[musik.uncached]" );
+			sValue = _T( "[musik.caching]" );
 
 		// copy the buffer of the correct display string
 		// to the current LV_ITEM

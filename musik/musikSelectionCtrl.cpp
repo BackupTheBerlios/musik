@@ -249,7 +249,7 @@ void CmusikSelectionCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 			// array of items.
 			if ( pItem->iItem >= (int)m_Items.size() )
 			{
-				CString sNull = _T( "[musik.error]" );
+				CString sNull = _T( "[musik.caching]" );
 				char* pStr = sNull.GetBuffer();
 
 				pItem->cchTextMax = sizeof( *pStr );

@@ -217,7 +217,7 @@ static void MainFrameWorker( CmusikThread* thread )
 		if ( thread->m_Abort )
 			break;
 
-		if ( parent->m_ThreadCount )
+		if ( parent->GetThreadCount() )
 		{
 			switch ( pos )
 			{
@@ -379,6 +379,7 @@ void CMainFrame::Cleanmusik()
 	// player, library, etc, etc... so we need to:
 	// suspend, set abort switch, and then
 	// resume any remaning threads...
+	m_ProtectingThreads->acquire();
 	if ( m_Updater )
 	{
 		m_Updater->Suspend( true );
@@ -390,6 +391,7 @@ void CMainFrame::Cleanmusik()
 
         delete m_Updater;
 	}
+	m_ProtectingThreads->release();
 
 	m_ProtectingThreads->acquire();
 	for ( size_t i = 0; i < m_Threads.size(); i++ )
@@ -519,15 +521,11 @@ void CMainFrame::ResetSelBoxes( bool requery )
 {
 	if ( requery )
 	{
-		CmusikSelectionCtrl* parent = NULL;
-
 		for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
 		{
 			if ( m_wndSelectionBars[i]->GetCtrl()->IsParent() )
 			{
-				parent = m_wndSelectionBars[i]->GetCtrl();
-				OnUpdateSel( (WPARAM)parent, NULL );
-				m_wndSelectionBars[i]->GetCtrl()->UpdateV( true );		
+				OnUpdateSel( (WPARAM)m_wndSelectionBars[i]->GetCtrl()->GetCtrlID(), NULL );
 				return;
 			}
 		}	
@@ -694,8 +692,10 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 
 	// fire the updater thread off
+	m_ProtectingThreads->acquire();
 	m_Updater = new CmusikThread();
 	m_Updater->Start( (ACE_THR_FUNC)MainFrameWorker, this );
+	m_ProtectingThreads->release();
 
 	// startup a thread in the background
 	// to remove old files...
@@ -991,6 +991,8 @@ LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 			m_wndView->GetCtrl()->SetPlaylist( m_LibPlaylist, MUSIK_SOURCES_TYPE_LIBRARY );
 			m_wndView->GetCtrl()->UpdateV();
 		}
+
+		m_wndSources->GetCtrl()->FocusLibrary();
 
 		return 0L;
 	}	

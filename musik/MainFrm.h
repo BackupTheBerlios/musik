@@ -230,6 +230,14 @@ protected:
 	afx_msg void OnPlaybackmodeRepeatplaylist();
 	afx_msg void OnUpdatePlaybackmodeIntro(CCmdUI *pCmdUI);
 	afx_msg void OnPlaybackmodeIntro();
+	afx_msg void OnUnsynchronizedtagsView();
+	afx_msg void OnUnsynchronizedtagsWritetofile();
+	afx_msg void OnUnsynchronizedtagsFinalizefordatabaseonly();
+	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
+	afx_msg void OnUpdateViewCrossfader(CCmdUI *pCmdUI);
+	afx_msg void OnViewCrossfader();
+	afx_msg void OnViewEqualizer();
+	afx_msg void OnUpdateViewEqualizer(CCmdUI *pCmdUI);
 
 	// list of all threads running
 	bool FreeThread( CmusikThread* pThread );
@@ -247,16 +255,6 @@ protected:
 	// macros
 	DECLARE_DYNAMIC(CMainFrame)
 	DECLARE_MESSAGE_MAP()
-
-public:
-	afx_msg void OnUnsynchronizedtagsView();
-	afx_msg void OnUnsynchronizedtagsWritetofile();
-	afx_msg void OnUnsynchronizedtagsFinalizefordatabaseonly();
-	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
-	afx_msg void OnUpdateViewCrossfader(CCmdUI *pCmdUI);
-	afx_msg void OnViewCrossfader();
-	afx_msg void OnViewEqualizer();
-	afx_msg void OnUpdateViewEqualizer(CCmdUI *pCmdUI);
 };
 
 ///////////////////////////////////////////////////
