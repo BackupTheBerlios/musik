@@ -101,9 +101,17 @@ BOOL CMusikApp::OnAnotherInstanceMessage( LPMSG pMsg )
 		::GlobalGetAtomName( (ATOM)pMsg->wParam, m_lpCmdLine, _MAX_FNAME );	
 
 		// delete the atom
+		int nChecker = 0;
 		::SetLastError( ERROR_SUCCESS );
 		while ( ::GetLastError() == ERROR_SUCCESS )
+		{
 			::GlobalDeleteAtom(  (ATOM)pMsg->wParam );	
+			nChecker++;
+			if ( nChecker > 100 )
+				break;
+		}
+		if ( nChecker > 100 )
+			TRACE0( "There appears to be a problem removing the global ATOM.\n" );
 	}
 
 	Play( m_lpCmdLine );
