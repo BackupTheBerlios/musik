@@ -128,8 +128,10 @@ static void musikBatchAddWorker( CmusikThread* thread )
 		if ( thread->IsSuspended() )
 		{
 			thread->m_Asleep = true;
+
 			while ( thread->IsSuspended() )
 				ACE_OS::sleep( sleep );
+
 			thread->m_Asleep = false;
 		}
 
@@ -173,7 +175,8 @@ static void musikBatchAddWorker( CmusikThread* thread )
 		curr_prog = ( 100 * i ) / params->m_Files->size();
 		if ( curr_prog != last_prog )
 		{
-			params->m_Functor->OnThreadProgress( curr_prog );
+			if ( params->m_Functor )
+				params->m_Functor->OnThreadProgress( curr_prog );
 			last_prog = curr_prog;
 		}
 

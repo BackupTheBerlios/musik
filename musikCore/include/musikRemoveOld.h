@@ -62,14 +62,16 @@ public:
 	// construct / destruct
 	CmusikRemoveOld()
 	{
-		m_Functor				= NULL;
-		m_Library				= NULL;
+		m_Functor = NULL;
+		m_Library = NULL;
+		m_CallFunctorOnAbort = false;
 	}
 
 	CmusikRemoveOld( CmusikLibrary* pLibrary, CmusikFunctor* pFunctor )
 	{
-		m_Functor				= pFunctor;
-		m_Library				= pLibrary;
+		m_Functor = pFunctor;
+		m_Library = pLibrary;
+		m_CallFunctorOnAbort = false;
 	}
 
 	~CmusikRemoveOld()
@@ -80,6 +82,7 @@ public:
 	// these variables.
 	CmusikLibrary* m_Library;
 	CmusikFunctor* m_Functor;
+	bool m_CallFunctorOnAbort;
 };
 
 ///////////////////////////////////////////////////
@@ -129,7 +132,9 @@ static void musikRemoveOldWorker( CmusikThread* thread )
 		curr_prog = ( 100 * i ) / all_files.size();
 		if ( curr_prog != last_prog )
 		{
-			params->m_Functor->OnThreadProgress( curr_prog );
+			if ( params->m_Functor )
+				params->m_Functor->OnThreadProgress( curr_prog );
+
 			last_prog = curr_prog;
 		}
 
@@ -137,7 +142,9 @@ static void musikRemoveOldWorker( CmusikThread* thread )
 	params->m_Library->EndTransaction();
 
 	thread->m_Finished = true;
-	params->m_Functor->OnThreadEnd( (void*)thread );
+
+	if ( !thread->m_Abort || ( thread->m_Abort && params->m_CallFunctorOnAbort ) )
+		params->m_Functor->OnThreadEnd( (void*)thread );
 	
 	delete params;
 }
