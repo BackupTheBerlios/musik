@@ -95,10 +95,12 @@ public:
 	// items
 	CPropTreeItem* GetRootItem();
 	CPropTreeItem* GetFocusedItem();
+	CPropTreeItem* GetHoveredItem();
 	CPropTreeItem* InsertItem(CPropTreeItem* pItem, CPropTreeItem* pParent = NULL);
 	void DeleteItem(CPropTreeItem* pItem);
 	void DeleteAllItems();
 	void SetFocusedItem(CPropTreeItem* pItem);
+	void SetHoveredItem(CPropTreeItem* pItem);
 	BOOL IsItemVisible(CPropTreeItem* pItem);
 	void EnsureVisible(CPropTreeItem* pItem);
 	CPropTreeItem* FindItem(const POINT& pt);
@@ -178,6 +180,9 @@ protected:
 
 	// Pointer to the focused item (selected)
 	CPropTreeItem* m_pFocus;
+
+	// Pointer to hovered item (mouse over)
+	CPropTreeItem* m_pHovered;
 
 	// PropTree scroll position. x = splitter position, y = vscroll position
 	CPoint m_Origin;

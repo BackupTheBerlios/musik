@@ -640,6 +640,7 @@ void CMusikLibrary::CreateStdPlaylist( const CStdString& name, const CStdStringA
 	// insert songs into playlist
 	if ( nID >= 0 )
 	{
+		BeginTransaction();
 		for ( size_t i = 0; i < songids.size(); i++ )
 		{
 			sqlite_exec_printf( m_pDB, "INSERT INTO %q VALUES ( %Q, %d, %d );",
@@ -649,6 +650,7 @@ void CMusikLibrary::CreateStdPlaylist( const CStdString& name, const CStdStringA
 				nID,
 				GetIDFromFilename( songids.at( i ) ) );
 		}
+		EndTransaction();
 	}	
 
 	// release the mutex lock
@@ -668,12 +670,14 @@ void CMusikLibrary::AppendStdPlaylist( int id, const CStdStringArray& files )
 
 		for ( size_t i = 0; i < files.size(); i++ )
 		{
+			BeginTransaction();
 			sqlite_exec_printf( m_pDB, "INSERT INTO %q VALUES ( %Q, %d, %d );",
 			NULL, NULL, NULL, 
 			STD_PLAYLIST_SONGS,
 			NULL,
 			id,
 			GetIDFromFilename( files.at( i ) ) );
+			EndTransaction();
 		}
 
 		m_ProtectingLibrary->release();

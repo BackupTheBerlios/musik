@@ -381,6 +381,7 @@ void CPropTreeList::OnMouseMove(UINT, CPoint point)
 					m_HoverLast->SetMouseOver( FALSE );
 
 				m_HoverCurrent->SetMouseOver( TRUE );
+				m_pProp->SetHoveredItem( m_HoverCurrent );
 				m_pProp->Invalidate();
 			}		
 
@@ -407,7 +408,7 @@ LRESULT CPropTreeList::OnMouseLeave(WPARAM wParam, LPARAM lParam)
 		m_HoverLast = NULL;
 	}
 
-	m_pProp->SetFocusedItem( NULL );
+    m_pProp->SetHoveredItem( NULL );
 
 	return 0L;
 }

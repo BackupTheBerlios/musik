@@ -77,6 +77,7 @@ CPropTree::CPropTree() :
 	m_Origin(100,0),
 	m_nLastUID(1),
 	m_pFocus(NULL),
+	m_pHovered(NULL),
 	m_bDisableInput(FALSE)
 {
 	m_Root.Expand();
@@ -258,6 +259,13 @@ CFont* CPropTree::GetBoldFont()
 CPropTreeItem* CPropTree::GetFocusedItem()
 {
 	return m_pFocus;
+}
+
+///////////////////////////////////////////////////
+
+CPropTreeItem* CPropTree::GetHoveredItem()
+{
+	return m_pHovered;
 }
 
 ///////////////////////////////////////////////////
@@ -455,6 +463,20 @@ void CPropTree::SetFocusedItem(CPropTreeItem* pItem)
 
 	Invalidate();
 }
+
+///////////////////////////////////////////////////
+
+void CPropTree::SetHoveredItem(CPropTreeItem* pItem)
+{
+	m_pHovered = pItem;
+	EnsureVisible(m_pHovered);
+
+	if (!IsWindow(m_hWnd))
+		return;
+
+	Invalidate();
+}
+
 
 ///////////////////////////////////////////////////
 

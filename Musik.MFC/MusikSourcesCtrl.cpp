@@ -180,6 +180,7 @@ void CMusikSourcesCtrl::KillFocus()
 	{
 		pItem->Select( FALSE );
 		SetFocusedItem( NULL );
+		Invalidate();
 	}
 }
 
