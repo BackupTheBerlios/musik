@@ -1415,6 +1415,32 @@ int CmusikLibrary::GetAllSongs( CmusikPlaylist& target )
 
 ///////////////////////////////////////////////////
 
+int CmusikLibrary::QuickQuery( CStdString str, CmusikPlaylist& target )
+{
+	if ( !m_DatabaseOpen )
+		return -1;
+
+	target.Clear();
+
+	str = "%" + str + "%";
+
+	int nRet;
+	ACE_Guard<ACE_Thread_Mutex> guard( *m_ProtectingLibrary );
+	{
+		nRet = sqlite_exec_printf( m_pDB, "SELECT songid FROM %Q WHERE artist LIKE %Q OR album LIKE %Q OR title LIKE %Q OR filename LIKE %Q;", 
+			&sqlite_AddSongToPlaylist, &target, NULL,
+			SONG_TABLE_NAME, 
+			str.c_str(),
+			str.c_str(),
+			str.c_str(),
+			str.c_str() );
+	}
+
+	return nRet;
+}
+
+///////////////////////////////////////////////////
+
 int CmusikLibrary::QuerySongs( const CStdString& query, CmusikPlaylist& target )
 {
 	if ( !m_DatabaseOpen )
