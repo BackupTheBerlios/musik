@@ -316,6 +316,9 @@
 			Name="Core"
 			Filter="">
 			<File
+				RelativePath="..\Musik.Core\include\MusikArrays.h">
+			</File>
+			<File
 				RelativePath="..\Musik.Core\src\MusikLibrary.cpp">
 			</File>
 			<File

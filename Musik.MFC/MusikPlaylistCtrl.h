@@ -5,7 +5,7 @@
 class CMusikLibrary;
 class CMusikPrefs;
 class CMusikPlaylist;
-class CMusikSongInfo;
+class CMusikSongInfoCache;
 
 class CMusikPlaylistCtrl : public CListCtrl
 {
@@ -33,7 +33,7 @@ protected:
 	CFont m_Bullets;
 	CFont m_Items;
 
-	CMusikSongInfo *m_SongInfo;
+	CMusikSongInfoCache* m_SongInfoCache;
 
 //-------------------------------------------------//
 //--- operations								---//
@@ -59,6 +59,7 @@ public:
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnLvnItemActivate(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnLvnOdcachehint(NMHDR *pNMHDR, LRESULT *pResult);
 };
 
 

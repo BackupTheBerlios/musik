@@ -1,5 +1,4 @@
-// MusikPlaylistCtrl.cpp : implementation file
-//
+///////////////////////////////////////////////////
 
 #include "stdafx.h"
 #include "Musik.h"
@@ -10,11 +9,12 @@
 #include "../Musik.Core/include/MusikPlaylist.h"
 #include "../Musik.Core/include/MusikArrays.h"
 #include "../Musik.Core/include/MusikLibrary.h"
+#include "../Musik.Core/include/MusikSongInfoCache.h"
 
 #include "MEMDC.H"
 #include ".\musikplaylistctrl.h"
 
-// CMusikPlaylistCtrl
+///////////////////////////////////////////////////
 
 IMPLEMENT_DYNAMIC(CMusikPlaylistCtrl, CListCtrl)
 CMusikPlaylistCtrl::CMusikPlaylistCtrl( CMusikLibrary* library, CMusikPrefs* prefs, CMusikPlaylist* playlist )
@@ -22,7 +22,8 @@ CMusikPlaylistCtrl::CMusikPlaylistCtrl( CMusikLibrary* library, CMusikPrefs* pre
 	m_Library	= library;
 	m_Prefs		= prefs;
 	m_Playlist	= playlist;
-	m_SongInfo	= NULL;
+
+	m_SongInfoCache = new CMusikSongInfoCache( m_Playlist, m_Library );
 
 	InitFonts();
 }
@@ -31,6 +32,7 @@ CMusikPlaylistCtrl::CMusikPlaylistCtrl( CMusikLibrary* library, CMusikPrefs* pre
 
 CMusikPlaylistCtrl::~CMusikPlaylistCtrl()
 {
+	delete m_SongInfoCache;
 }
 
 ///////////////////////////////////////////////////
@@ -45,6 +47,7 @@ BEGIN_MESSAGE_MAP(CMusikPlaylistCtrl, CListCtrl)
 	ON_WM_ERASEBKGND()
 	ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, OnNMCustomdraw)
 	ON_NOTIFY_REFLECT(LVN_ITEMACTIVATE, OnLvnItemActivate)
+	ON_NOTIFY_REFLECT(LVN_ODCACHEHINT, OnLvnOdcachehint)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -140,7 +143,7 @@ void CMusikPlaylistCtrl::SaveColumns()
 void CMusikPlaylistCtrl::UpdateV()
 {
 	SetRedraw( false );
-	SetItemCountEx( m_Playlist->size(), LVSICF_NOINVALIDATEALL | LVSICF_NOSCROLL );
+	SetItemCountEx( m_Playlist->size(), LVSICF_NOINVALIDATEALL /*| LVSICF_NOSCROLL*/ );
 
 	CRect rcClient;
 	GetClientRect( &rcClient );
@@ -175,22 +178,28 @@ void CMusikPlaylistCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	NMLVDISPINFO *pDispInfo = reinterpret_cast<NMLVDISPINFO*>(pNMHDR);
 
-	LV_ITEM* pItem = &(pDispInfo->item );
-	int nItem = pItem->iItem;
-	int nSub  = pItem->iSubItem;
-	int nType = m_Prefs->GetPlaylistCol( nSub );
+	LV_ITEM* pItem = &( pDispInfo->item );
 
-	CString sValue;
-	
-	if ( m_Prefs->GetPlaylistCol( nSub ) == MUSIK_LIBRARY_TYPE_RATING )
-		sValue = GetRating( nItem );
-	else
-		sValue = m_Playlist->GetField( nItem, nType );
+	if ( pItem->mask & LVIF_TEXT )
+	{
+		int nItem = pItem->iItem;
+		int nSub  = pItem->iSubItem;
+		int nType = m_Prefs->GetPlaylistCol( nSub );
 
-	char* pStr = sValue.GetBuffer();
+		pItem->mask |= LVIF_DI_SETITEM;
 
-	pItem->cchTextMax = sizeof( *pStr );
-	lstrcpy( pItem->pszText, pStr );
+		CString sValue;
+		
+		if ( m_Prefs->GetPlaylistCol( nSub ) == MUSIK_LIBRARY_TYPE_RATING )
+			sValue = GetRating( nItem );
+		else
+			sValue = m_Playlist->GetField( nItem, nType );
+
+		char* pStr = sValue.GetBuffer();
+
+		pItem->cchTextMax = sizeof( *pStr );
+		lstrcpy( pItem->pszText, pStr );
+	}
 
 	*pResult = 0;
 }
@@ -309,3 +318,11 @@ void CMusikPlaylistCtrl::OnLvnItemActivate(NMHDR *pNMHDR, LRESULT *pResult)
 }
 
 ///////////////////////////////////////////////////
+void CMusikPlaylistCtrl::OnLvnOdcachehint(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMLVCACHEHINT pCacheHint = reinterpret_cast<LPNMLVCACHEHINT>(pNMHDR);
+
+	m_SongInfoCache->Set( pCacheHint->iFrom, pCacheHint->iTo );
+
+	*pResult = 0;
+}
