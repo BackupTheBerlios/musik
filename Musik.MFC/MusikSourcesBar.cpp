@@ -83,21 +83,21 @@ void CMusikSourcesBar::OnItemChanged( NMHDR* pNotifyStruct, LRESULT* plResult )
 			return;
 
 		// library or device selected
-		if ( pNMPropTree->pItem->GetSourcesType() == MUSIK_SOURCES_LIBRARY_OR_DEVICE )
+		if ( pNMPropTree->pItem->GetSourcesType() == MUSIK_PLAYLIST_TYPE_LIBRARY_OR_DEVICE )
 		{
 			int WM_SOURCESLIBRARY = RegisterWindowMessage( "SOURCESLIBRARY" );
 			m_Parent->SendMessage( WM_SOURCESLIBRARY, NULL );
 		}
 
 		// standard playlist selected
-		if ( pNMPropTree->pItem->GetSourcesType() == MUSIK_SOURCES_STANDARD_PLAYLIST )
+		if ( pNMPropTree->pItem->GetSourcesType() == MUSIK_PLAYLIST_TYPE_STANDARD )
 		{
 			int WM_SOURCESSTDPLAYLIST = RegisterWindowMessage( "SOURCESSTDPLAYLIST" );
 			m_Parent->SendMessage( WM_SOURCESSTDPLAYLIST, NULL );
 		}
 
 		// standard playlist selected
-		if ( pNMPropTree->pItem->GetSourcesType() == MUSIK_SOURCES_DYNAMIC_PLAYLIST )
+		if ( pNMPropTree->pItem->GetSourcesType() == MUSIK_PLAYLIST_TYPE_DYNAMIC )
 		{
 			int WM_SOURCESDYNPLAYLIST = RegisterWindowMessage( "SOURCESDYNDPLAYLIST" );		
 			m_Parent->SendMessage( WM_SOURCESDYNPLAYLIST, NULL );

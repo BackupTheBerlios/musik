@@ -547,7 +547,8 @@ LRESULT CMainFrame::OnSongChange( WPARAM wParam, LPARAM lParam )
 	if ( m_Player->IsPlaying() )
 	{
 		CString s;
-		s.Format( _T( "Musik [ %s - %s ]" ), 
+		s.Format( _T( "%s [ %s - %s ]" ), 
+			MUSIK_VERSION_STR,
 			m_Player->GetCurrPlaying()->GetTitle().c_str(), 
 			m_Player->GetCurrPlaying()->GetArtist().c_str() );
 
@@ -557,7 +558,7 @@ LRESULT CMainFrame::OnSongChange( WPARAM wParam, LPARAM lParam )
 		m_wndView->GetCtrl()->RedrawWindow();
 	}
 	else
-		SetWindowText( _T( "Musik" ) );	
+		SetWindowText( MUSIK_VERSION_STR );	
 
 	return 0L;
 }	

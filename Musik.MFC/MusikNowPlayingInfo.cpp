@@ -62,7 +62,6 @@
 #include "MusikNowPlayingInfo.h"
 
 #include "../Musik.Core/include/MusikPlayer.h"
-#include ".\musiknowplayinginfo.h"
 
 ///////////////////////////////////////////////////
 

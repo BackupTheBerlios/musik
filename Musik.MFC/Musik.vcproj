@@ -234,6 +234,16 @@
 							RelativePath=".\MusikNowPlayingInfo.h">
 						</File>
 					</Filter>
+					<Filter
+						Name="MusikSeekBar"
+						Filter="">
+						<File
+							RelativePath=".\MusikSeekBar.cpp">
+						</File>
+						<File
+							RelativePath=".\MusikSeekBar.h">
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="MusikSelectionCtrl"

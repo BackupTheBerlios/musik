@@ -28,6 +28,7 @@
 ///////////////////////////////////////////////////
 
 class CPropTree;
+class CMusikPlaylistInfo;
 
 ///////////////////////////////////////////////////
 
@@ -39,12 +40,10 @@ public:
 	CPropTreeItem();
 	virtual ~CPropTreeItem();
 
-	// MUSIK SPECIFIC -- get the current
-	// item's type. it will either be
-	// a library / device, standard playlist,
-	// or dynamic playlist
-	int  GetSourcesType()			{ return m_SourcesType; }
-	void SetSourcesType( int n )	{ m_SourcesType = n; }
+	// MUSIK SPECIFIC: get the playlist info...
+	void SetPlaylistInfo( const CMusikPlaylistInfo info );
+	CMusikPlaylistInfo* GetPlaylistInfo() { return m_PlaylistInfo; }
+	int GetSourcesType();
 
 	// treeItem states
 	BOOL IsExpanded();
@@ -167,8 +166,8 @@ protected:
 	// ID of control item (should be unique)
 	UINT				m_nCtrlID;
 
-	// MUSIK SPECIFIC: sources type
-	int					m_SourcesType;
+	// MUSIK SPECIFIC: item's playlist information
+	CMusikPlaylistInfo*	m_PlaylistInfo;
 
 private:
 	enum TreeItemStates

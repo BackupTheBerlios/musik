@@ -6,7 +6,6 @@
 #include "MusikSourcesCtrl.h"
 
 #include "../Musik.Core/include/MusikLibrary.h"
-#include ".\musiksourcesctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -107,16 +106,14 @@ void CMusikSourcesCtrl::LoadStdPlaylists()
 
 	m_StdPlaylists.clear();
 
-	CStdStringArray items;
+	CMusikPlaylistInfoArray items;
 	m_Library->GetAllStdPlaylists( &items );
 
 	CPropTreeItem* temp;
 	for ( size_t i = 0; i < items.size(); i++ )
 	{
 		temp = InsertItem( new CPropTreeItem(), m_StdPlaylistRoot );
-		temp->SetLabelText( (CString)items.at( i ) );
-		temp->SetInfoText( _T( "" ) );
-		temp->SetSourcesType( MUSIK_SOURCES_STANDARD_PLAYLIST );
+		temp->SetPlaylistInfo( items.at( i ) );
 
 		m_StdPlaylists.push_back( temp );
 	}

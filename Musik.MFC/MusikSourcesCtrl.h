@@ -18,16 +18,6 @@ class CMusikLibrary;
 
 ///////////////////////////////////////////////////
 
-enum
-{
-	MUSIK_SOURCES_INVALID_TYPE = -1,
-	MUSIK_SOURCES_LIBRARY_OR_DEVICE,
-	MUSIK_SOURCES_STANDARD_PLAYLIST,
-	MUSIK_SOURCES_DYNAMIC_PLAYLIST
-};
-
-///////////////////////////////////////////////////
-
 class CMusikSourcesCtrl : public CPropTree
 {
 public:
@@ -65,6 +55,7 @@ private:
 	CMusikSourcesItemPtrArray m_Libraries;
 	CMusikSourcesItemPtrArray m_StdPlaylists;
 	CMusikSourcesItemPtrArray m_DynPlaylists;
+
 public:
 	afx_msg void OnDropFiles(HDROP hDropInfo);
 };

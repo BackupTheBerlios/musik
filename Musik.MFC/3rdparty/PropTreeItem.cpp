@@ -25,6 +25,8 @@
 
 #include "stdafx.h"
 
+#include "../../Musik.Core/include/MusikPlaylist.h"
+
 #include "PropTree.h"
 #include "PropTreeItem.h"
 
@@ -93,13 +95,35 @@ CPropTreeItem::CPropTreeItem() :
 	m_pChild(NULL),
 	m_pVis(NULL)
 {
-	m_SourcesType = -1;
+	m_PlaylistInfo = new CMusikPlaylistInfo();
 }
 
 ///////////////////////////////////////////////////
 
 CPropTreeItem::~CPropTreeItem()
 {
+	if ( m_PlaylistInfo )
+		delete m_PlaylistInfo;
+}
+
+///////////////////////////////////////////////////
+
+void CPropTreeItem::SetPlaylistInfo( const CMusikPlaylistInfo info )
+{
+	if ( m_PlaylistInfo )
+	{
+		*m_PlaylistInfo = info;
+
+		SetLabelText( m_PlaylistInfo->GetName() );
+		SetInfoText( _T( "" ) );
+	}
+}
+
+///////////////////////////////////////////////////
+
+int CPropTreeItem::GetSourcesType()
+{
+	return m_PlaylistInfo->GetType();
 }
 
 ///////////////////////////////////////////////////

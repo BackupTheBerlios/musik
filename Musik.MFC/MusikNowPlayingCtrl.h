@@ -39,6 +39,7 @@ protected:
 	// macros
 	DECLARE_DYNAMIC(CMusikNowPlayingCtrl)
 	DECLARE_MESSAGE_MAP()
+
 public:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnDestroy();
