@@ -23,11 +23,6 @@
 
 #include "../Classes/MusikLibrary.h"
 
-//-----------------------------------------//
-//--- NOTE: use g_MusikTagFrame as the	---//
-//--- parent window.					---//
-//-----------------------------------------//
-
 class MusikTagApplyThread : public wxThread
 {
 public:

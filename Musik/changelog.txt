@@ -1,8 +1,10 @@
+0.2.0 to 0.2.1
+ - Fixed Bug: Now compiles with wxGtk 2.4.1 again. (gunnar)
+ + The query text field is now disabled if a user playlist is displayed, because one ould easily destroy his playlist, by typing something in the textfield for search. (gunnar)
+ + Simplified some routines, by reusing existing code and by make for loops as short as possible (break from them as soon as possible) (gunnar)
+ + Reworked the tagging code, it should be much faster now and more thread safe. (gunnar)
+
 0.1.3 to 0.2.0 (aka 0.1.4)
- - Fixed Bug: Now compiles with wxGtk 2.4.1 again.
- + The query text field is now disabled if a user playlist is displayed, because one ould easily destroy his playlist, by typing something in the textfield for search.
- + Simplified some routines, by reusing existing code and by make for loops as short as possible ( break from them as soon as possible) (gunnar)
- + Reworked the tagging code, it should be much faster now and more thread safe.(gunnar)
  + InnoSetup rather than NSIS for Win32 installer. (avatar)
  - Fixed Bug: Playlist of selected artists and albums is now sorted after artist, album, trackum (gunnar)
  + Added "Shuffle," "Random," and "Crossfade" to volume popup window. (avatar)

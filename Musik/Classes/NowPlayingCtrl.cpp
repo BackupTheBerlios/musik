@@ -250,8 +250,6 @@ void CNowPlayingCtrl::UpdateTime()
 {
 	if ( !g_TimeSeeking )
 	{
-		stCurtime->Freeze();
-
 		float fPos = (float)100* ( (float)g_Player.GetTime( FMOD_SEC ) / (float)g_Player.GetDuration( FMOD_SEC ) );
 	
 		//-----------------------------------------------------//
@@ -268,8 +266,6 @@ void CNowPlayingCtrl::UpdateTime()
 
 		//--- time label ---//
 		stCurtime->SetLabel( wxT( " - " ) + g_Player.GetTimeStr() );
-
-		stCurtime->Thaw();
 	}
 }
 
