@@ -24,6 +24,7 @@
 #include "wx/thread.h"
 #include "wx/dnd.h"
 
+#include "../MusikDefines.h"
 #define MUSIK_ACT_TEXT 9998
 
 #include "../ThreadController.h"
@@ -135,7 +136,11 @@ public:
 	{	
 		DNDBegin();		
 	}
-	void ShowMenu		( wxContextMenuEvent&	event );
+#ifdef WXMUSIK_BUGWORKAROUND_LISTCTRL_CONTEXTMENU
+	void ShowMenu				( wxListEvent& event );
+#else	
+	void ShowMenu				( wxContextMenuEvent& event );
+#endif	
 	//--------------//
 	//--- playing ---//
 	//--------------//

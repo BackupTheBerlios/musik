@@ -61,7 +61,13 @@ public:
 	void OnSize					( wxSizeEvent	  &WXUNUSED(event)	)		{ PathsResize();												}
 	void OnKeyPress				( wxListEvent	  &event			)		{ PathsListProcessKeys( event );								}
 	void OnClickOK				( wxCommandEvent  &WXUNUSED(event)	)		{ Close( false );												}
-	void OnClickCancel			( wxCommandEvent  &WXUNUSED(event)	)		{ Close( true );												}
+	void OnClickCancel			( wxCommandEvent  &WXUNUSED(event)	)		
+	{
+		if ( m_ActiveThreadController.IsAlive() )
+			m_ActiveThreadController.Cancel();
+ 		else	
+			Close( true );	
+	}
 	void OnClickClearLibrary	( wxCommandEvent  &WXUNUSED(event)	)		{ ClearLibrary();												}
 	void OnClickScan			( wxCommandEvent  &WXUNUSED(event)	)		{ ScanNew();													}
 	void OnUpdateAll			( wxCommandEvent  &WXUNUSED(event)	);

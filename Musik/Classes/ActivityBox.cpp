@@ -352,7 +352,12 @@ BEGIN_EVENT_TABLE(CActivityBox, wxPanel)
 	EVT_MENU			( MUSIK_ACTIVITY_RENAME_THREAD_PROG,	CActivityBox::OnRenameThreadProg	)
 
 	EVT_LIST_BEGIN_DRAG			( -1, CActivityBox::OnActivityBoxSelDrag	)
-	EVT_CONTEXT_MENU			(													CActivityBox::ShowMenu				)
+#ifdef WXMUSIK_BUGWORKAROUND_LISTCTRL_CONTEXTMENU
+	EVT_LIST_ITEM_RIGHT_CLICK(-1, CActivityBox::ShowMenu)
+#else
+	EVT_CONTEXT_MENU			(												CSourcesListBox::ShowMenu				)
+
+#endif	
 
 	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_PLAY_INSTANTLY,			CActivityBox::OnPlayInstantly		)
 	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_PLAY_ASNEXT,				CActivityBox::OnPlayAsNext			)
@@ -832,7 +837,11 @@ wxString CActivityBox::DNDGetList()
 	return sRet;
 }
 
-void CActivityBox::ShowMenu( wxContextMenuEvent& WXUNUSED(event) )
+#ifdef WXMUSIK_BUGWORKAROUND_LISTCTRL_CONTEXTMENU
+void CActivityBox::ShowMenu( wxListEvent& WXUNUSED(event) )
+#else
+void CActivityBox::ShowMenu( wxContextMenuEvent &WXUNUSED(event) )
+#endif
 {
 	wxPoint pos = ScreenToClient( wxGetMousePosition() );
 

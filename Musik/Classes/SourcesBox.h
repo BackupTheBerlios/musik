@@ -19,7 +19,7 @@
 #ifndef WX_PRECOMP
 	#include "wx/wx.h"
 #endif 
-
+#include "../MusikDefines.h"
 #include "ActivityBox.h"
 #include <wx/laywin.h>
 
@@ -50,7 +50,11 @@ public:
 	//--------------//
 	//--- events ---//
 	//--------------//
+#ifdef WXMUSIK_BUGWORKAROUND_LISTCTRL_CONTEXTMENU
+	void ShowMenu				( wxListEvent& event );
+#else	
 	void ShowMenu				( wxContextMenuEvent& event );
+#endif	
 	void CreateCurPlaylist		( wxCommandEvent& event );
 	void OnClearPlayerlist		( wxCommandEvent& event );
 	void StandardPlaylist		( wxCommandEvent& event );

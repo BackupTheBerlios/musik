@@ -32,7 +32,7 @@
 #include <wx/mimetype.h>
 
 BEGIN_EVENT_TABLE(MusikPrefsFrame, wxFrame)
-	EVT_CHAR_HOOK			(											MusikPrefsFrame::OnTranslateKeys	)
+	EVT_CHAR	(											MusikPrefsFrame::OnTranslateKeys	)
 	EVT_TREE_SEL_CHANGED	(MUSIK_PREFERENCES_TREE,					MusikPrefsFrame::OnTreeChange		)
 	EVT_BUTTON				(MUSIK_PREFERENCES_OK,						MusikPrefsFrame::OnClickOK			)
 	EVT_BUTTON				(MUSIK_PREFERENCES_APPLY,					MusikPrefsFrame::OnClickApply		)

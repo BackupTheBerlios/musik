@@ -224,7 +224,12 @@ bool SourcesDropTarget::HighlightSel( const wxPoint &pPos )
 //--- CSourcesListBox ---//
 //-----------------------//
 BEGIN_EVENT_TABLE(CSourcesListBox, CMusikListCtrl)
+#ifdef WXMUSIK_BUGWORKAROUND_LISTCTRL_CONTEXTMENU
+	EVT_LIST_ITEM_RIGHT_CLICK(MUSIK_SOURCES_LISTCTRL, CSourcesListBox::ShowMenu)
+#else
 	EVT_CONTEXT_MENU			(												CSourcesListBox::ShowMenu				)
+
+#endif	
 	EVT_MENU					(MUSIK_PLAYLIST_CLEARPLAYERLIST,				CSourcesListBox::OnClearPlayerlist		)	// Sources Context -> Create -> Create from Current
 	EVT_MENU					(MUSIK_SOURCE_CONTEXT_CREATE_CURRENT_PLAYLIST,	CSourcesListBox::CreateCurPlaylist		)	// Sources Context -> Create -> Create from Current
 	EVT_MENU					(MUSIK_SOURCE_CONTEXT_STANDARD_PLAYLIST,		CSourcesListBox::StandardPlaylist		)	// Sources Context -> Create -> Standard Playlist
@@ -329,7 +334,11 @@ wxMenu * CSourcesListBox::CreateContextMenu()
 	return context_menu;
 
 }
+#ifdef WXMUSIK_BUGWORKAROUND_LISTCTRL_CONTEXTMENU
+void CSourcesListBox::ShowMenu( wxListEvent& WXUNUSED(event) )
+#else
 void CSourcesListBox::ShowMenu( wxContextMenuEvent &WXUNUSED(event) )
+#endif
 {
 	wxPoint pos = ScreenToClient( wxGetMousePosition() );
 

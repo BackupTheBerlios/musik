@@ -27,7 +27,11 @@
 
 BEGIN_EVENT_TABLE(MusikLibraryFrame, wxFrame)
 	EVT_CONTEXT_MENU	( 									MusikLibraryFrame::PathsPopupMenu			)
+#ifdef 	__WXMSW__
 	EVT_CHAR_HOOK		(									MusikLibraryFrame::TranslateKeys			)
+#else	
+	EVT_CHAR		(									MusikLibraryFrame::TranslateKeys			)
+#endif	
 	EVT_MENU			( MUSIK_PATHS_MENU_ADD,				MusikLibraryFrame::OnClickAdd				)
 	EVT_MENU			( MUSIK_PATHS_MENU_REMOVESEL,		MusikLibraryFrame::OnClickRemoveSel			)
 	EVT_MENU			( MUSIK_PATHS_MENU_REMOVEALL,		MusikLibraryFrame::OnClickRemoveAll			)
@@ -82,7 +86,7 @@ MusikLibraryFrame::MusikLibraryFrame( wxFrame* pParent ,const wxArrayString &arr
 	//--- load paths and hide unneeded stuff ---//
 	//------------------------------------------//
 	vsTopSizer->Show( lcPaths, false );
-	vsTopSizer->Show( hsSysButtons, false );
+	vsTopSizer->Show( hsSysButtons, true );
 	
 	#ifdef __WXGTK__
 	wxSize size = vsTopSizer->GetMinSize();
@@ -593,9 +597,15 @@ void MusikLibraryFrame::EnableProgress( bool enable )
 
 	lcPaths->Enable		( !enable );
 	btnOK->Enable		( !enable );
-	btnCancel->Enable	( !enable );
-	Enable( !enable );
-
+//	btnCancel->Enable	( !enable );
+//	Enable( !enable );
+	if(GetMenuBar())
+	{
+		for(size_t i = 0;i < GetMenuBar()->GetMenuCount();i++)
+		{
+			GetMenuBar()->EnableTop(i,!enable);
+		}
+	}
 	Layout();
 }
 

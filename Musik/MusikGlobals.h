@@ -114,6 +114,4 @@ extern wxFont g_fntBold;
 extern wxFont g_fntListBold;
 extern wxFont g_fntInfo;
 
-
-
 #endif	//MUSIKGLOBALS_H
