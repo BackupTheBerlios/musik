@@ -244,6 +244,34 @@
 				</Filter>
 			</Filter>
 		</Filter>
+		<Filter
+			Name="Core"
+			Filter="">
+			<Filter
+				Name="MusikLibrary"
+				Filter="">
+				<File
+					RelativePath=".\src\MusikLibrary.cpp">
+				</File>
+				<File
+					RelativePath=".\src\MusikLibrary.h">
+				</File>
+			</Filter>
+			<Filter
+				Name="MusikSong"
+				Filter="">
+			</Filter>
+			<Filter
+				Name="MusikPlayer"
+				Filter="">
+				<File
+					RelativePath=".\src\MusikPlayer.cpp">
+				</File>
+				<File
+					RelativePath=".\src\MusikPlayer.h">
+				</File>
+			</Filter>
+		</Filter>
 		<File
 			RelativePath=".\Musik.rc">
 		</File>
