@@ -467,10 +467,8 @@ void CSourcesListBox::EndEditLabel( wxListEvent& pEvent )
 {
 #if wxMINOR_VERSION > 4
 	if(pEvent.IsEditCancelled())
-#else
-	if(pEvent.Cancelled())
-#endif
 		return;
+#endif
 	int nType = GetType( m_SourcesEditIndex );
 
 	//--- Musik Library entry edited ---//

@@ -81,7 +81,7 @@ private:
     virtual	wxListItemAttr*	OnGetItemAttr	(long item) const;
 	virtual	int				OnGetItemImage	(long WXUNUSED(item)) const { return 0; }
 
-	inline bool		HasShowAllRow	() const; 
+	bool		HasShowAllRow	() const; 
 	size_t			GetRowCount		() const { return HasShowAllRow()?( size_t )m_Items.GetCount()+ 1: ( size_t )m_Items.GetCount(); }
 	inline wxString GetRowText		( long row, bool bPure = true ) const ;
 
