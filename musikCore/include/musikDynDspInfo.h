@@ -133,16 +133,13 @@ public:
 		m_Items.clear();
 		CmusikSongInfo item;
 		int nID;
-
-		m_Library->BeginTransaction();
 		for ( int i = m_ItemRange.GetFirst(); i < m_ItemRange.GetLast(); i++ )
 		{
 			nID = m_Songs->GetSongID( i );
-			m_Library->GetSongInfoFromID( nID, &item, false );
+			m_Library->GetSongInfoFromID( nID, &item );
 			m_Items.push_back( item );
 		}
-		m_Library->EndTransaction();
-
+		
 		// store the last known range, so we
 		// can later compare it to anew one
 		m_LastItemRange = m_ItemRange;

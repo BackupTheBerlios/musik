@@ -70,7 +70,7 @@ bool CmusikMp3Info::LoadInfo( const CStdString& fn )
 	if ( !id3Tag.GetFileSize() )
 		return false;
 
-	// get the info...  
+	// get the info...
 	char* pArtist	= ID3_GetArtist	( &id3Tag );
 	char* pAlbum	= ID3_GetAlbum	( &id3Tag );
 	char* pTitle	= ID3_GetTitle	( &id3Tag );

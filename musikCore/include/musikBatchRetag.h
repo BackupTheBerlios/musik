@@ -127,7 +127,7 @@ static void musikBatchRetagWorker( CmusikThread* thread )
 		bool success = false;	
 		if ( params->m_WriteToFile )
 		{
-			params->m_Library->GetSongFormatFromID( params->m_UpdatedTags->at( i ).GetID(), &nFormat, false );
+			params->m_Library->GetSongFormatFromID( params->m_UpdatedTags->at( i ).GetID(), &nFormat );
 			if ( nFormat == MUSIK_LIBRARY_FORMAT_MP3 )
 				success = CmusikMp3Info::WriteInfo( params->m_UpdatedTags->at( i ) );
 			else if ( nFormat == MUSIK_LIBRARY_FORMAT_OGG )
@@ -141,7 +141,7 @@ static void musikBatchRetagWorker( CmusikThread* thread )
 			if ( !params->m_WriteToFile )
 				params->m_UpdatedTags->at( i ).SetDirtyFlag( "1" );
 
-			params->m_Library->SetSongInfo( &params->m_UpdatedTags->at( i ), false );
+			params->m_Library->SetSongInfo( &params->m_UpdatedTags->at( i ) );
 		}
 
 		// post progress to the functor

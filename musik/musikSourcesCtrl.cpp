@@ -400,16 +400,16 @@ void CmusikSourcesCtrl::OnDropFiles(HDROP hDropInfo)
 		// hit now playing?
 		else if ( pItem->GetPlaylistType() == MUSIK_SOURCES_TYPE_NOWPLAYING )
 		{
-			CmusikSong song;
+			bool begin_trans = false;
 
 			m_Library->BeginTransaction();
-
+			CmusikSong song;
 			for ( size_t i = 0; i < files.size(); i++ )
 			{
 				// add song (if necessary)
-				m_Library->AddSong( files.at( i ), false );
+				m_Library->AddSong( files.at( i ) );
 
-				if ( m_Library->GetSongFromFilename( files.at( i ), song, false ) )
+				if ( m_Library->GetSongFromFilename( files.at( i ), song ) )
 					m_Player->GetPlaylist()->Add( song );
 			}
 			m_Library->EndTransaction();

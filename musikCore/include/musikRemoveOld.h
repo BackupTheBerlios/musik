@@ -89,7 +89,7 @@ static void musikRemoveOldWorker( CmusikThread* thread )
 	size_t last_prog = 0;
 
 	CStdStringArray all_files;
-	params->m_Library->GetAllDistinct( MUSIK_LIBRARY_TYPE_FILENAME, all_files );
+	params->m_Library->GetAllDistinct( MUSIK_LIBRARY_TYPE_FILENAME, all_files, false );
 
 	// sleep if we go idle
 	ACE_Time_Value sleep;
@@ -120,7 +120,7 @@ static void musikRemoveOldWorker( CmusikThread* thread )
 
 		// see if the file exists
 		if ( !CmusikFilename::FileExists( all_files.at ( i ) ) )
-			params->m_Library->RemoveSong( all_files.at ( i ), false );
+			params->m_Library->RemoveSong( all_files.at ( i ) );
 
 		// post progress to the functor
 		curr_prog = ( 100 * i ) / all_files.size();

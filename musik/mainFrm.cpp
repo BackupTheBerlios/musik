@@ -241,9 +241,6 @@ static void MainFrameWorker( CmusikThread* thread )
 				sCaption += turn;
 			}
 
-			if ( parent->m_Threads.size() )
-				parent->SetWindowText( sCaption );
-
 			// update ui every 3 seconds
 			++cnt;
 			if ( cnt == 6 )
@@ -688,7 +685,7 @@ bool CMainFrame::PlayCmd( const CString& fn )
 	if ( m_Library )
 	{
 		// add song to library, if necessary
-		m_Library->AddSong( (CStdString)fn, true );
+		m_Library->AddSong( (CStdString)fn );
 
 		// get player's playlist
 		CmusikPlaylist* pPlaylist = m_Player->GetPlaylist();
@@ -1714,7 +1711,7 @@ void CMainFrame::OnUnsynchronizedtagsView()
 	if ( !m_LibPlaylist )
 		m_LibPlaylist = new CmusikPlaylist();
 
-	m_Library->GetDirtySongs( m_LibPlaylist );
+	m_Library->GetDirtySongs( m_LibPlaylist, true );
 
 	// make sure the correct playlist is set
 	if ( m_wndView->GetCtrl()->GetPlaylist() != m_LibPlaylist )
@@ -1731,7 +1728,7 @@ void CMainFrame::OnUnsynchronizedtagsWritetofile()
 {
 	// get dirty items into a new playlist
 	CmusikPlaylist* playlist = new CmusikPlaylist();
-	m_Library->GetDirtySongs( playlist );
+	m_Library->GetDirtySongs( playlist, false );
 
 	// create a new CmusikSongInfoArray and update
 	// all the respective values...

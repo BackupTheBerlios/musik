@@ -910,8 +910,7 @@ FSOUND_STREAM* CmusikPlayer::GetCurrStream()
 	if ( m_ActiveStreams->size() )
 		return m_ActiveStreams->at( m_ActiveStreams->size() - 1 );
 
-	else
-		return NULL;
+	return NULL;
 }
 
 ///////////////////////////////////////////////////
