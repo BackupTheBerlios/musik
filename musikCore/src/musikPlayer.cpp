@@ -81,6 +81,8 @@ void CmusikPlayerWorker::StopWait()
 {
 	if ( m_Active )
 	{
+		m_Stop = true;
+
 		ACE_Time_Value half_sec;
 		half_sec.set( (double)0.5 );
 
@@ -96,14 +98,7 @@ void CmusikPlayerWorker::StopWait()
 int CmusikPlayerWorker::open( void* player )
 {
 	m_Player = (CmusikPlayer*)player;
-
 	int ret_code = activate( THR_NEW_LWP | THR_JOINABLE | THR_USE_AFX );
-
-	if ( !ret_code )
-	{
-		m_Active = true;
-		m_Finished = false;
-	}
 
 	return ret_code;
 }
@@ -112,6 +107,10 @@ int CmusikPlayerWorker::open( void* player )
 
 int CmusikPlayerWorker::svc()
 {
+	m_Active = true;
+	m_Finished = false;
+	m_Stop = false;
+
 	TRACE0( "Player worker function started...\n" );
 
 	ACE_Time_Value sleep_regular, sleep_tight;
@@ -122,7 +121,7 @@ int CmusikPlayerWorker::svc()
 	int nTimeRemain;
 	int nTimeElapsed;
 
-	while ( !m_Exit )
+	while ( !m_Exit && !m_Stop )
 	{
 		// check every half second if we're plaing
 		// and not aborting. 
@@ -946,7 +945,10 @@ void CmusikPlayer::ThrExit()
 		m_PlayerWorker->StopWait();
 	}
 	else
+	{
+		m_PlayerWorker->StopWait();
 		FinalizeExit();
+	}
 }
 
 ///////////////////////////////////////////////////
