@@ -23,8 +23,6 @@ IMPLEMENT_DYNAMIC(CMainFrame, CFrameWnd)
 
 BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_WM_CREATE()
-	ON_WM_SETFOCUS()
-//	ON_WM_SIZE()
 	ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
@@ -47,6 +45,8 @@ CMainFrame::~CMainFrame()
 	for ( int i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
 		delete m_wndSelectionBars[i];
 	delete m_wndView;
+	delete m_wndSources;
+	delete m_wndNowPlaying;
 
 	delete m_Library;
 	delete m_Prefs;
@@ -71,6 +71,14 @@ void CMainFrame::ResetDialogRect()
 	CPoint dlg_pos = m_Prefs->GetDlgPos();
 
 	MoveWindow( dlg_pos.x, dlg_pos.y, dlg_size.cx, dlg_size.cy );
+}
+
+void CMainFrame::ResetNowPlaying()
+{
+	CRect rc;
+	GetClientRect( &rc );
+	
+	//m_wndNowPlaying.SetWindowPos( this, 0, rc.Height() - m_Prefs->GetNowPlayingHeight(), rc.Width(), m_Prefs->GetNowPlayingHeight(), NULL );
 }
 
 bool CMainFrame::RecurseMkDir( char* pszDir )
@@ -128,8 +136,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if ( CFrameWnd::OnCreate(lpCreateStruct) == -1 )
 		return -1;
 
-	ResetDialogRect();
-
 	//-------------------------------------------------//
 	//--- create a background window				---//
 	//-------------------------------------------------//
@@ -145,11 +151,12 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	//-------------------------------------------------//
 	//--- now playing control						---//
 	//-------------------------------------------------//
-	m_wndNowPlaying.Create( _T( "Musik Now Playing" ), this, 123 );
-	m_wndNowPlaying.SetBarStyle( m_wndNowPlaying.GetBarStyle() | CBRS_TOOLTIPS /*| CBRS_FLYBY*/ | CBRS_SIZE_DYNAMIC & ~SCBS_EDGEALL );
-	m_wndNowPlaying.EnableDocking( CBRS_ALIGN_BOTTOM );
-	m_wndNowPlaying.ShowGripper( false );
-	DockControlBar( &m_wndNowPlaying, AFX_IDW_DOCKBAR_BOTTOM );
+	m_wndNowPlaying = new CMusikNowPlayingBar();
+	m_wndNowPlaying->Create( _T( "Musik Now Playing" ), this, ID_NOWPLAYING );
+	m_wndNowPlaying->SetBarStyle( m_wndNowPlaying->GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC & ~SCBS_EDGEALL );
+	m_wndNowPlaying->EnableDocking( CBRS_ALIGN_BOTTOM );
+	m_wndNowPlaying->ShowGripper( false );
+	DockControlBar( m_wndNowPlaying, AFX_IDW_DOCKBAR_BOTTOM );
 
 	//-------------------------------------------------//
 	//--- selection controls						---//
@@ -157,7 +164,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
 	{
 		m_wndSelectionBars[i] = new CMusikSelectionBar( m_Library, i );
-		m_wndSelectionBars[i]->Create( _T( "Musik Selection Box" ), this, 123 );
+		m_wndSelectionBars[i]->Create( _T( "Musik Selection Box" ), this, ID_SELECTIONBOX_START + i );
 		m_wndSelectionBars[i]->SetBarStyle( m_wndSelectionBars[i]->GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC );
 		m_wndSelectionBars[i]->EnableDocking( CBRS_ALIGN_ANY );
 		if ( i == 0 )
@@ -169,10 +176,14 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	//-------------------------------------------------//
 	//--- sources control							---//
 	//-------------------------------------------------//
-	m_wndSourcesBar.Create( _T( "Musik Sources" ), this, 123 );
-	m_wndSourcesBar.EnableDocking( CBRS_ALIGN_LEFT | CBRS_ALIGN_RIGHT );
-    m_wndSourcesBar.SetBarStyle( m_wndSourcesBar.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC );
-	DockControlBar( &m_wndSourcesBar, AFX_IDW_DOCKBAR_LEFT );
+	m_wndSources = new CMusikSourcesBar();
+	m_wndSources->Create( _T( "Musik Sources" ), this, ID_SOURCESBOX );
+	m_wndSources->EnableDocking( CBRS_ALIGN_LEFT | CBRS_ALIGN_RIGHT );
+    m_wndSources->SetBarStyle( m_wndSources->GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC );
+	DockControlBar( m_wndSources, AFX_IDW_DOCKBAR_LEFT );
+
+	ResetDialogRect();
+	CSizingControlBar::GlobalLoadState( this, "MusikDockBars" );
 
 	return 0;
 }
@@ -208,12 +219,6 @@ void CMainFrame::Dump(CDumpContext& dc) const
 
 
 // CMainFrame message handlers
-
-void CMainFrame::OnSetFocus(CWnd* /*pOldWnd*/)
-{
-	// forward focus to the view window
-}
-
 BOOL CMainFrame::OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
 {
 	// let the view have first crack at the command
@@ -229,11 +234,13 @@ BOOL CMainFrame::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* pContext )
 
 void CMainFrame::OnDestroy()
 {
-	CFrameWnd::OnDestroy();
+	CSizingControlBar::GlobalSaveState( this, "MusikDockBars" );
 	
 	CRect rc_dlg;
 	GetWindowRect( &rc_dlg );
 
 	m_Prefs->SetDlgSize( CSize( rc_dlg.right - rc_dlg.left, rc_dlg.bottom - rc_dlg.top ) );
 	m_Prefs->SetDlgPos( CPoint( rc_dlg.left, rc_dlg.top ) );
+
+	CFrameWnd::OnDestroy();
 }

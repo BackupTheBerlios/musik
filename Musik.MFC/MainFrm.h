@@ -9,6 +9,14 @@
 #include "MusikSelectionBar.h"
 #include "MusikNowPlayingBar.h"
 
+//-------------------------------------------------//
+//--- these need to remain constant, or 		---//
+//--- problems may arise.						---//
+//-------------------------------------------------//
+#define ID_NOWPLAYING 1344
+#define ID_SOURCESBOX 1345
+#define ID_SELECTIONBOX_START 1346
+
 class CMusikLibrary;
 
 class CMainFrame : public CFrameWnd
@@ -48,8 +56,8 @@ protected:
 	CString m_PrefsIni;
 
 	CMusikPlaylistView* m_wndView;
-	CMusikSourcesBar m_wndSourcesBar;
-	CMusikNowPlayingBar m_wndNowPlaying;
+	CMusikSourcesBar* m_wndSources;
+	CMusikNowPlayingBar* m_wndNowPlaying;
 	CMusikSelectionBar* m_wndSelectionBars[4];
 
 //-------------------------------------------------//
@@ -57,6 +65,7 @@ protected:
 //-------------------------------------------------//
 public:
 	void ResetDialogRect();
+	void ResetNowPlaying();
 
 protected:
 	void DockBarLeftOf( CSizingControlBar* Bar, CSizingControlBar* LeftOf );
@@ -77,7 +86,6 @@ public:
 //-------------------------------------------------//
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg void OnSetFocus(CWnd *pOldWnd);
 
 	DECLARE_MESSAGE_MAP()
 public:

@@ -109,8 +109,8 @@ void CMusikPrefs::LoadPrefs()
 	//-----------------------------------------------------//
 	//--- whole dialog									---//
 	//-----------------------------------------------------//
-	m_DlgSize = StringToCSize( config->GetValue( "Dialog", "Dialog Size", "800x600" ) );
-	m_DlgPos = StringToCPoint( config->GetValue( "Dialog", "Dialog Position", "50,50" ) );
+	m_Dlg_Size	= StringToCSize( config->GetValue( "Dialog", "Dialog Size", "800x600" ) );
+	m_Dlg_Pos	= StringToCPoint( config->GetValue( "Dialog", "Dialog Position", "50,50" ) );
 
 	//-----------------------------------------------------//
 	//--- selection area								---//
@@ -124,6 +124,11 @@ void CMusikPrefs::LoadPrefs()
 	//-----------------------------------------------------//
 	//--- sources										---//
 	//-----------------------------------------------------//
+
+	//-----------------------------------------------------//
+	//--- now playing									---//
+	//-----------------------------------------------------//
+	m_NowPlaying_Height = StringToInt( config->GetValue( "Now Playing", "Height", "72" ) );
 }
 
 void CMusikPrefs::SavePrefs()
@@ -131,8 +136,8 @@ void CMusikPrefs::SavePrefs()
 	//-----------------------------------------------------//
 	//--- whole dialog									---//
 	//-----------------------------------------------------//
-	config->SetValue( "Dialog", "Dialog Size", CSizeToString( m_DlgSize ) );
-	config->SetValue( "Dialog", "Dialog Position", CPointToString( m_DlgPos ) );
+	config->SetValue( "Dialog", "Dialog Size", CSizeToString( m_Dlg_Size ) );
+	config->SetValue( "Dialog", "Dialog Position", CPointToString( m_Dlg_Pos ) );
 
 	//-----------------------------------------------------//
 	//--- selection area								---//
@@ -146,6 +151,11 @@ void CMusikPrefs::SavePrefs()
 	//-----------------------------------------------------//
 	//--- sources										---//
 	//-----------------------------------------------------//
+
+	//-----------------------------------------------------//
+	//--- now playing									---//
+	//-----------------------------------------------------//
+	config->SetValue( "Now Playing", "Height", IntToString( m_NowPlaying_Height ) );
 
 	config->WriteFile();
 }

@@ -909,7 +909,7 @@ void CSizingControlBar::GetRowSizingBars(CSCBArray& arrSCBars, int& nThis)
 
 BOOL CSizingControlBar::NegotiateSpace(int nLengthTotal, BOOL bHorz)
 {
-    ASSERT(bHorz == IsHorzDocked());
+    //ASSERT(bHorz == IsHorzDocked());
 
     int nFirst, nLast, nThis;
     GetRowInfo(nFirst, nLast, nThis);

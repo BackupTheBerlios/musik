@@ -16,16 +16,18 @@ public:
 	//-----------------------------------------------------//
 	//--- whole dialog									---//
 	//-----------------------------------------------------//
-	CSize	GetDlgSize	()						{ return m_DlgSize; }
-	CPoint	GetDlgPos	()						{ return m_DlgPos; }
+	CSize	GetDlgSize	()						{ return m_Dlg_Size; }
+	CPoint	GetDlgPos	()						{ return m_Dlg_Pos; }
 
-	void	SetDlgSize	( const CSize size )	{ m_DlgSize = size; }
-	void	SetDlgPos	( const CPoint pt )		{ m_DlgPos = pt; }
+	void	SetDlgSize	( const CSize size )	{ m_Dlg_Size = size; }
+	void	SetDlgPos	( const CPoint pt )		{ m_Dlg_Pos = pt; }
 
 	//-----------------------------------------------------//
 	//--- selection area								---//
 	//-----------------------------------------------------//
-	int GetSelBoxCount(){ return m_SelectionBox_Count; }
+	int		GetSelBoxCount()					{ return m_SelectionBox_Count; }
+
+	void	SetSelBoxCount( size_t n )			{ m_SelectionBox_Count = n; }
 
 	//-----------------------------------------------------//
 	//--- playlist										---//
@@ -35,11 +37,19 @@ public:
 	//--- sources										---//
 	//-----------------------------------------------------//
 
+	//-----------------------------------------------------//
+	//--- now playing									---//
+	//-----------------------------------------------------//
+	int		GetNowPlayingHeight()				{ return m_NowPlaying_Height; }
+
 protected:
 	CIniFile* config;
 
 private:
-	int m_SelectionBox_Count;
-	CSize m_DlgSize;
-	CPoint m_DlgPos;
+	size_t m_SelectionBox_Count;
+
+	CSize m_Dlg_Size;
+	CPoint m_Dlg_Pos;
+
+	int m_NowPlaying_Height;
 };
