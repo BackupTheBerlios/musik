@@ -126,7 +126,7 @@ File *FileRef::create(const Filename & fileName, bool readAudioProperties,
 {
   // Ok, this is really dumb for now, but it works for testing.
 
-  String s = fileName;
+  String s = (const TCHAR*)fileName;
 
   if(s.size() > 4) {	
     if(s.substr(s.size() - 4, 4).upper() == ".OGG")

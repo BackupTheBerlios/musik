@@ -27,7 +27,7 @@
 #include <wx/dir.h>
 #include "wx/defs.h"
 #include <wx/mimetype.h>
-#include <mpeg\id3v1\id3v1genres.h>
+#include <mpeg/id3v1/id3v1genres.h>
 
 #if wxUSE_STATLINE
 #include "wx/statline.h"

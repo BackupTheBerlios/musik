@@ -1,8 +1,8 @@
-# Anjuta Version 1.1.97 
+# Anjuta Version 1.2.2 
 Compatibility Level: 1 
 
 <PROJECT_DESCRIPTION_START>
-Some description<PROJECT_DESCRIPTION_END>
+<PROJECT_DESCRIPTION_END>
 <CONFIG_PROGS_START>
 <CONFIG_PROGS_END>
 <CONFIG_LIBS_START>
@@ -22,18 +22,18 @@ Some description<PROJECT_DESCRIPTION_END>
 
 props.file.type=project
 
-anjuta.version=1.1.97
+anjuta.version=1.2.2
 anjuta.compatibility.level=1
 
 project.name=Musik
 project.type=wxWINDOWS
 project.target.type=EXECUTABLE
-project.version=0.1.3 CVS
-project.author=Casey Langen
-project.source.target=Musik
-project.has.gettext=0
+project.version=0.99
+project.author=Gunnar Roth
+project.source.target=unknown
+project.has.gettext=1
 project.gui.command=
-project.programming.language=C_C++
+project.programming.language=C++
 project.excluded.modules=intl
 
 project.config.extra.modules.before=
@@ -41,9 +41,9 @@ project.config.extra.modules.after=
 project.config.blocked=1
 project.config.disable.overwriting=1 1 1 1 1 1 1 1 1 
 
-project.menu.entry=Musik Version 0.1.3 CVS
+project.menu.entry=Musik Version 0.99
 project.menu.group=Application
-project.menu.comment=Musik Version 0.1.3 CVS
+project.menu.comment=Musik Version 0.99
 project.menu.icon=
 project.menu.need.terminal=0
 
@@ -52,14 +52,12 @@ anjuta.program.arguments=
 preferences.build.option.jobs=0
 preferences.build.option.silent=0
 preferences.build.option.autosave=0
-preferences.anjuta.make.options=-k
 preferences.make=make
 preferences.build.option.keep.going=1
 preferences.build.option.warn.undef=0
 preferences.autoformat.custom.style= -i8 -sc -bli0 -bl0 -cbi0 -ss
-preferences.autoformat.style=Style of Kangleipak
 preferences.indent.opening=0
-preferences.autoformat.disable=0
+preferences.autoformat.disable=1
 preferences.indent.automatic=1
 preferences.use.tabs=1
 preferences.indent.size=4
@@ -69,112 +67,152 @@ preferences.indent.closing=0
 module.include.name=.
 module.include.type=
 module.include.files=\
-	Classes/Library/CFrameHeader.h\
-	Classes/Library/CMP3Info.h\
-	Classes/Library/COggInfo.h\
-	Classes/Library/CVBitRate.h\
-	Classes/Library/i18n.h\
-	Classes/Library/vcedit.h\
-	Classes/ActivityAreaCtrl.h\
-	Classes/ActivityBox.h\
-	Classes/BtnDown.h\
-	Classes/GaugeSeek.h\
-	Classes/ListHeader.h\
+	DNDHelper.h\
+	shibatch/paramlist.hpp\
+	Frames/MusikVolumeFrame.h\
+	Frames/MusikTagFrame.h\
+	Frames/MusikLibraryFrame.h\
+	Frames/MusikAutoTaggerFrame.h\
+	Frames/MusikFrame.h\
+	Frames/MusikFXFrame.h\
+	Frames/MusikPrefsFrame.h\
+	MusikVersion.h\
+	resource.h\
+	rty/Bitap/libbitap.h\
+	rty/TagHelper/idtag.h\
+	Classes/MusikPrefs.h\
+	Classes/MusikListCtrl.h\
+	Classes/PictureBox.h\
+	Classes/Tunage.h\
 	Classes/MusikLibrary.h\
 	Classes/MusikPlayer.h\
-	Classes/MusikPrefs.h\
-	Classes/NowPlayingCtrl.h\
+	Classes/MusikEQCtrl.h\
 	Classes/PlaylistCtrl.h\
-	Classes/PlaylistInfoCtrl.h\
-	Classes/SourcesBox.h\
+	Classes/ActivityBox.h\
+	Classes/ActivityAreaCtrl.h\
+	Classes/Library/vcedit.h\
+	Classes/Library/CFMODInfo.h\
+	Classes/Library/MetaDataHandler.h\
+	Classes/Library/i18n.h\
+	Classes/Library/COggInfo.h\
+	Classes/Library/CInfo.h\
+	Classes/Library/CMP3Info.h\
+	Classes/GaugeSeek.h\
+	Classes/NowPlayingCtrl.h\
 	Classes/WebServer.h\
-	MusikApp.h\
-	MusikGlobals.h\
-	MusikUtils.h\
-	Frames/MusikFrame.h\
-	Frames/MusikLibraryFrame.h\
-	Frames/MusikPrefsFrame.h\
-	Frames/MusikTagFrame.h\
-	Frames/MusikVolumeFrame.h\
-	Threads/ActivityBoxThreads.h\
+	Classes/PlaylistInfoCtrl.h\
+	Classes/MusikEQGauge.h\
+	Classes/SourcesBox.h\
+	Classes/BtnDown.h\
+	Classes/MusikFX.h\
+	MMShellHook/MMShellHook.h\
+	MMShellHook/resource.h\
+	ThreadController.h\
+	MusikAboutDlg.h\
+	DataObjectCompositeEx.h\
 	Threads/MusikLibraryThreads.h\
+	Threads/PlaylistCtrlThreads.h\
 	Threads/MusikTagThreads.h\
 	Threads/MusikThreads.h\
-	Threads/PlaylistCtrlThreads.h\
-	shibatch/paramlist.hpp\
-	Classes/MusikFX.h\
-	Classes/MusikEQCtrl.h\
-	Frames/MusikFXFrame.h\
-	Classes/MusikEQGauge.h
+	Threads/ActivityBoxThreads.h\
+	MusikUtils.h\
+	MusikApp.h\
+	MusikDefines.h\
+	MusikGlobals.h
 
 module.source.name=.
 module.source.type=
 module.source.files=\
-	Classes/Library/CFrameHeader.cpp\
-	Classes/Library/CMP3Info.cpp\
-	Classes/Library/COggInfo.cpp\
-	Classes/Library/CVBitRate.cpp\
-	Classes/Library/vcedit.c\
-	Classes/ActivityAreaCtrl.cpp\
-	Classes/ActivityBox.cpp\
-	Classes/BtnDown.cpp\
-	Classes/GaugeSeek.cpp\
-	Classes/ListHeader.cpp\
-	Classes/MusikLibrary.cpp\
-	Classes/MusikPlayer.cpp\
-	Classes/MusikPrefs.cpp\
-	Classes/NowPlayingCtrl.cpp\
-	Classes/PlaylistCtrl.cpp\
-	Classes/PlaylistInfoCtrl.cpp\
-	Classes/SourcesBox.cpp\
-	Classes/WebServer.cpp\
-	MusikApp.cpp\
-	MusikGlobals.cpp\
-	MusikUtils.cpp\
-	Frames/MusikFrame.cpp\
-	Frames/MusikFrameEvents.cpp\
-	Frames/MusikLibraryFrame.cpp\
-	Frames/MusikPrefsFrame.cpp\
-	Frames/MusikTagFrame.cpp\
-	Frames/MusikVolumeFrame.cpp\
-	Threads/ActivityBoxThreads.cpp\
-	Threads/MusikLibraryThreads.cpp\
-	Threads/MusikTagThreads.cpp\
-	Threads/MusikThreads.cpp\
-	Threads/PlaylistCtrlThreads.cpp\
-	shibatch/Fftsg_fl.cpp\
 	shibatch/Equ.cpp\
+	shibatch/Fftsg_fl.cpp\
+	Frames/MusikTagFrame.cpp\
+	Frames/MusikFrame.cpp\
+	Frames/MusikVolumeFrame.cpp\
+	Frames/MusikLibraryFrame.cpp\
+	Frames/MusikAutoTaggerFrame.cpp\
+	Frames/MusikFrameEvents.cpp\
 	Frames/MusikFXFrame.cpp\
-	Classes/MusikFX.cpp\
+	Frames/MusikPrefsFrame.cpp\
+	rty/Bitap/libbitap.c\
+	rty/TagHelper/idtag.cpp\
+	MusikUtils.cpp\
+	MusikAboutDlg.cpp\
+	Classes/MusikPlayer.cpp\
+	Classes/WebServer.cpp\
 	Classes/MusikEQCtrl.cpp\
-	Classes/MusikEQGauge.cpp
+	Classes/Tunage.cpp\
+	Classes/PlaylistInfoCtrl.cpp\
+	Classes/PlaylistCtrl.cpp\
+	Classes/MusikEQGauge.cpp\
+	Classes/MusikPrefs.cpp\
+	Classes/BtnDown.cpp\
+	Classes/ActivityAreaCtrl.cpp\
+	Classes/GaugeSeek.cpp\
+	Classes/PictureBox.cpp\
+	Classes/Library/vcedit.c\
+	Classes/Library/MetaDataHandler.cpp\
+	Classes/Library/CMP3Info.cpp\
+	Classes/Library/CFMODInfo.cpp\
+	Classes/Library/COggInfo.cpp\
+	Classes/NowPlayingCtrl.cpp\
+	Classes/MusikListCtrl.cpp\
+	Classes/MusikLibrary.cpp\
+	Classes/SourcesBox.cpp\
+	Classes/MusikFX.cpp\
+	Classes/ActivityBox.cpp\
+	MMShellHook/MMShellHook.cpp\
+	MusikGlobals.cpp\
+	wxprec.cpp\
+	Threads/PlaylistCtrlThreads.cpp\
+	Threads/MusikLibraryThreads.cpp\
+	Threads/MusikThreads.cpp\
+	Threads/MusikTagThreads.cpp\
+	Threads/ActivityBoxThreads.cpp\
+	MusikApp.cpp
 
 module.pixmap.name=.
 module.pixmap.type=
 module.pixmap.files=\
+	data/musik.png\
 	musik.ico\
 	musik.png\
-	images/playback/next.xpm\
-	images/playback/next_down.xpm\
-	images/playback/pause.xpm\
-	images/playback/pause_down.xpm\
-	images/playback/play.xpm\
-	images/playback/play_down.xpm\
-	images/playback/prev.xpm\
-	images/playback/prev_down.xpm\
-	images/playback/stop.xpm\
-	images/playback/stop_down.xpm\
-	images/playback/volume.xpm\
-	images/playback/volume_down.xpm\
+	images/tray.xpm\
 	images/ratings/rating0.xpm\
 	images/ratings/rating1.xpm\
 	images/ratings/rating2.xpm\
 	images/ratings/rating3.xpm\
 	images/ratings/rating4.xpm\
 	images/ratings/rating5.xpm\
-	images/sources/dynamic.xpm\
+	images/ratings/rating6.xpm\
+	images/ratings/rating7.xpm\
+	images/ratings/rating8.xpm\
+	images/ratings/rating9.xpm\
+	images/ratings/rating-1.xpm\
+	images/ratings/rating-2.xpm\
+	images/ratings/rating-3.xpm\
+	images/ratings/rating-4.xpm\
+	images/ratings/rating-5.xpm\
+	images/ratings/rating-6.xpm\
+	images/ratings/rating-7.xpm\
+	images/ratings/rating-8.xpm\
+	images/ratings/rating-9.xpm\
+	images/sources/netstream.xpm\
 	images/sources/library.xpm\
-	images/sources/standard.xpm
+	images/sources/nowplaying.xpm\
+	images/sources/standard.xpm\
+	images/sources/dynamic.xpm\
+	images/playback/play_down.xpm\
+	images/playback/volume.xpm\
+	images/playback/stop_down.xpm\
+	images/playback/prev_down.xpm\
+	images/playback/next_down.xpm\
+	images/playback/pause.xpm\
+	images/playback/pause_down.xpm\
+	images/playback/prev.xpm\
+	images/playback/next.xpm\
+	images/playback/volume_down.xpm\
+	images/playback/play.xpm\
+	images/playback/stop.xpm
 
 module.data.name=.
 module.data.type=
@@ -186,7 +224,10 @@ module.help.files=
 
 module.doc.name=.
 module.doc.type=
-module.doc.files=
+module.doc.files=\
+	doc-pak/compile.html\
+	compile.html\
+	binlibs/README
 
 module.po.files=
 

@@ -76,7 +76,6 @@ File::File(const Filename & file)
 #ifdef _WIN32
   d->file = _tfopen(file, d->readOnly ? _T("rb") : _T("r+b"));
 #else
-  file.
   d->file = fopen(file, d->readOnly ? "r" : "r+");
 #endif
   if(!d->file)

@@ -1,7 +1,7 @@
 
 PROJECT(wxMusik)
 
-SUBDIRS(data locale)
+SUBDIRS(data locale "3rd-Party")
 # Configure for a wxWindows build
 INCLUDE(${CMAKE_ROOT}/Modules/FindwxWindows.cmake)
 
@@ -14,25 +14,23 @@ IF(CMAKE_WX_CXX_FLAGS)
 ENDIF(CMAKE_WX_CXX_FLAGS)
 
 # ogg-vorbis library
-FIND_LIBRARY(OGG_LIBRARY NAMES ogg PATHS /usr/lib /usr/local/lib)
+#FIND_LIBRARY(OGG_LIBRARY NAMES ogg PATHS /usr/lib /usr/local/lib)
 
 # SQLite library
 FIND_LIBRARY(SQLITE_LIBRARY NAMES sqlite PATHS /usr/lib /usr/local/lib)
 
-# id3 library
-FIND_LIBRARY(ID3_LIBRARY NAMES id3 PATHS /usr/lib /usr/local/lib)
 
 # fmod library
-FIND_LIBRARY(FMOD_LIBRARY NAMES fmod-3.74 PATHS /usr/lib /usr/local/lib)
+FIND_LIBRARY(FMOD_LIBRARY NAMES fmod-3.74 fmod PATHS /usr/lib /usr/local/lib)
 
 # Vorbis library
-FIND_LIBRARY(VORBIS_LIBRARY NAMES vorbis PATHS /usr/lib /usr/local/lib)
+#FIND_LIBRARY(VORBIS_LIBRARY NAMES vorbis PATHS /usr/lib /usr/local/lib)
 
 ADD_EXECUTABLE(wxMusik
         MusikApp
         MusikGlobals
         MusikUtils
-		MusikAboutDlg
+	MusikAboutDlg
         ${wxMusik_SOURCE_DIR}/Classes/ActivityBox
         ${wxMusik_SOURCE_DIR}/Classes/ActivityAreaCtrl
         ${wxMusik_SOURCE_DIR}/Classes/BtnDown
@@ -43,7 +41,7 @@ ADD_EXECUTABLE(wxMusik
         ${wxMusik_SOURCE_DIR}/Classes/NowPlayingCtrl
         ${wxMusik_SOURCE_DIR}/Classes/MusikListCtrl
         ${wxMusik_SOURCE_DIR}/Classes/PlaylistCtrl
-		${wxMusik_SOURCE_DIR}/Classes/PlaylistInfoCtrl
+	${wxMusik_SOURCE_DIR}/Classes/PlaylistInfoCtrl
         ${wxMusik_SOURCE_DIR}/Classes/SourcesBox
         ${wxMusik_SOURCE_DIR}/Classes/WebServer
         ${wxMusik_SOURCE_DIR}/Classes/MusikFX
@@ -52,13 +50,11 @@ ADD_EXECUTABLE(wxMusik
         ${wxMusik_SOURCE_DIR}/Classes/Tunage
         ${wxMusik_SOURCE_DIR}/Classes/PictureBox
 
-        ${wxMusik_SOURCE_DIR}/Classes/Library/CMP3Info
-        ${wxMusik_SOURCE_DIR}/Classes/Library/COggInfo
+        ${wxMusik_SOURCE_DIR}/Classes/Library/TagLibInfo
         ${wxMusik_SOURCE_DIR}/Classes/Library/CFMODInfo
         ${wxMusik_SOURCE_DIR}/Classes/Library/MetaDataHandler
-        ${wxMusik_SOURCE_DIR}/Classes/Library/vcedit
-		"${wxMusik_SOURCE_DIR}/3rd Party/Bitap/libbitap"
-		"${wxMusik_SOURCE_DIR}/3rd Party/TagHelper/idtag.cpp"
+	"${wxMusik_SOURCE_DIR}/3rd-Party/Bitap/libbitap"
+	"${wxMusik_SOURCE_DIR}/3rd-Party/TagHelper/idtag.cpp"
 		
         ${wxMusik_SOURCE_DIR}/Frames/MusikFrame
         ${wxMusik_SOURCE_DIR}/Frames/MusikFrameEvents
@@ -67,8 +63,8 @@ ADD_EXECUTABLE(wxMusik
         ${wxMusik_SOURCE_DIR}/Frames/MusikTagFrame
         ${wxMusik_SOURCE_DIR}/Frames/MusikVolumeFrame
         ${wxMusik_SOURCE_DIR}/Frames/MusikFXFrame
-		${wxMusik_SOURCE_DIR}/Frames/MusikAutoTaggerFrame
- 		${wxMusik_SOURCE_DIR}/Threads/ActivityBoxThreads
+	${wxMusik_SOURCE_DIR}/Frames/MusikAutoTaggerFrame
+ 	${wxMusik_SOURCE_DIR}/Threads/ActivityBoxThreads
         ${wxMusik_SOURCE_DIR}/Threads/PlaylistCtrlThreads
         ${wxMusik_SOURCE_DIR}/Threads/MusikLibraryThreads
         ${wxMusik_SOURCE_DIR}/Threads/MusikTagThreads
@@ -78,13 +74,15 @@ ADD_EXECUTABLE(wxMusik
         ${wxMusik_SOURCE_DIR}/shibatch/Fftsg_fl.cpp
     )
 
+INCLUDE_DIRECTORIES("${wxMusik_SOURCE_DIR}")
+INCLUDE_DIRECTORIES("${wxMusik_SOURCE_DIR}/3rd-Party/taglib")
+INCLUDE_DIRECTORIES("${wxMusik_SOURCE_DIR}/3rd-Party/taglib/toolkit")
+
 TARGET_LINK_LIBRARIES(wxMusik 
         ${WXWINDOWS_LIBRARY} 
-        ${OGG_LIBRARY}
         ${SQLITE_LIBRARY}
-        ${ID3_LIBRARY}
         ${FMOD_LIBRARY}
-        ${VORBIS_LIBRARY}
+        TagLib 
     )
 
 # Set build variables
@@ -103,7 +101,7 @@ IF(APPLE)
   IF(VTK_APPLE_RESOURCE)
     ADD_CUSTOM_COMMAND(SOURCE wxMusik
                        COMMAND ${VTK_APPLE_RESOURCE}
-                       ARGS -d __DARWIN__ -t APPL Carbon.r /usr/local/lib/libwx_mac-2.5.1.r -o
+                       ARGS -d __DARWIN__ -t APPL Carbon.r /usr/local/lib/libwx_macu-2.5.3.r -o
                        ${MyExecutable_PATH}/wxMusik
                        TARGET wxMusik)
   ENDIF(VTK_APPLE_RESOURCE)

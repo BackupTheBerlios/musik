@@ -1,7 +1,7 @@
 #ifndef PREFUTIL_H
 #define PREFUTIL_H
 
-#include "../MusikUtils.h"
+#include "MusikUtils.h"
 
 #define PREF_CREATE_CHECKBOX(prefname,text) \
 	wxCheckBox *chk##prefname	=	new wxCheckBox_NoFlicker( this, -1,text,wxDefaultPosition,wxDefaultSize,0 \

@@ -12,7 +12,7 @@
 
 //--- For compilers that support precompilation, includes "wx/wx.h". ---//
 #include "wx/wxprec.h"
-#include <mpeg\id3v1\id3v1genres.h>
+#include <mpeg/id3v1/id3v1genres.h>
 #include "MusikTagFrame.h"
 
 

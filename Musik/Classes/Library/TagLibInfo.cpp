@@ -1,6 +1,7 @@
 #include "wx/wxprec.h"
+#include <string.h>
 #include "TagLibInfo.h"
-#include "../MusikUtils.h"
+#include "MusikUtils.h"
 #include <fileref.h>
 #include <tag.h>
 #include <tfile.h>
@@ -10,8 +11,11 @@ CTagLibInfo::CTagLibInfo(void)
 }
 bool CTagLibInfo::ReadMetaData(CSongMetaData & MetaData) const
 {
+#ifdef __WXMSW
 	TagLib::FileRef f(  MetaData.Filename.GetFullPath().c_str());
-
+#else
+	TagLib::FileRef f(TagLib::Filename((const char*)ConvFn2A(MetaData.Filename.GetFullPath())) );
+#endif
 	if(f.isNull())
 		return false;
 	TagLib::Tag *tag = f.tag();
@@ -21,7 +25,7 @@ bool CTagLibInfo::ReadMetaData(CSongMetaData & MetaData) const
 		MetaData.Artist  = tag->artist().toCString(true);
 		MetaData.Album = tag->album().toCString(true);
 		char szYear[20];
-		itoa(tag->year(),szYear,10);
+		sprintf(szYear,"%d",tag->year());
 		MetaData.Year = szYear; 
 		MetaData.Notes =  tag->comment().toCString(true);
 		MetaData.nTracknum = tag->track();
@@ -45,7 +49,11 @@ bool CTagLibInfo::ReadMetaData(CSongMetaData & MetaData) const
 
 bool  CTagLibInfo::WriteMetaData(const CSongMetaData & MetaData,bool bClearAll)
 {
+#ifdef __WXMSW__
 	TagLib::FileRef f( TagLib::Filename(MetaData.Filename.GetFullPath().c_str()));
+#else
+	TagLib::FileRef f(TagLib::Filename((const char*)ConvFn2A(MetaData.Filename.GetFullPath())) );
+#endif
 	if(f.isNull())
 		return false;
 	
