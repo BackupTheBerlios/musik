@@ -1,0 +1,97 @@
+a1: January 25, 2004, 2:15 AM
+
+don't expect another build for a few weeks. please
+stress test this build if at all possible. see if you
+can confuse it into crashing. 
+
+stuff that isn't implemented / doesn't work yet: 
+
+    - playlist information area 
+    - dynamic playlist creation
+    - dialog to view tag properties
+    - crossfader preset dialog
+
+known bugs:
+ 
+    - crashes on showing window: it has been impossible thus far 
+      to reproduce on command, and simon and i have each
+      seen it only once.
+
+-------------------------------------------------------------------------
+
+   what we've been up to since 0.2.1 CVS: a quick ramble
+
+      musik, up to version 0.2.1, was not ment or developed
+      to be an extremely usable, stable product. it was a 
+      concept to test various aspects of creating an
+      extremely easy and powerful audio library and player.  
+          
+      we came to one conclusion after almost a year of
+      development and two, maybe three of planning:
+      the backend and the frontend must exist separate. 
+      
+      the backend would be completely independant 
+      of any gui. why?
+
+          - no cross platform gui toolkit offered 
+            quite the flexability we wanted. 
+
+          - becuase the core contains no gui, it could be 
+            nearly complete ANSI C++, as long as we chose
+            the right libraries to use for helpers (threads,
+            sql access, etc).
+
+          - to limit overhead
+
+          - not only could we easily use the core to make 
+            our own mp3 player, but so could others
+
+       platforms we support:
+
+          - supported: 
+           
+            windows nt 4.0, 
+            windows 2000
+            windows xp
+            linux with oss and alsa 
+
+          - unsupported: 
+
+             windows 95
+             windows 98
+             windows me. 
+
+             from our personal experience dustin and i believe 
+             the preceding versions of windows to be inherently 
+             unstable.
+
+             musik will probably run on these platforms, but is
+             not officially supported, meaning we may help you,
+             we may not. sorry. :(
+              
+       whats new with the windows gui?
+
+           - completely redesigned interface. moved from wxWindows to
+             mfc, using limited overhead while still sporting a lot 
+             of features. oh yeah -- and its fast. really fast.
+
+           - minimal cpu and memory usage making it very lightweight.
+
+           - dockable panels (everyone should be excited)
+
+           - automatic saving and loading of equalizer presets
+             on a per song basis or through the preset manager.
+
+           - crossfader is more accurate than ever before, and
+             now has its own preset manager (dialog not
+             implemented yet).
+
+           - gui workflow has been extremely optimized with the new 
+             "Now Playing" sources entry.
+
+       and whats new with the linux gui?
+
+           - havn't even started it yet.
+
+-------------------------------------------------------------------------
+
