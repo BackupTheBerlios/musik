@@ -61,6 +61,8 @@
 #include "musikArrays.h"
 #include "musikPlaylist.h"
 
+#include "../musikCore/include/musikEQSettings.h"
+
 ///////////////////////////////////////////////////
 
 enum
@@ -81,6 +83,7 @@ enum
 	MUSIK_LIBRARY_TYPE_TIMESPLAYED,		// 12
 	MUSIK_LIBRARY_TYPE_BITRATE,			// 13
 	MUSIK_LIBRARY_TYPE_FILENAME,		// 14
+	MUSIK_LIBRARY_TYPE_EQUALIZER,		// 15
 	MUSIK_LIBRARY_FIELD_COUNT = MUSIK_LIBRARY_TYPE_FILENAME + 1
 };
 
@@ -152,49 +155,53 @@ public:
 	int					GetSongFieldDBID( CStdString field );
 
 	// querying songs
-	void GetAllSongs		( CmusikPlaylist & target );
-	void GetRelatedItems	( int source_type, const CStdStringArray & source_items, int target_type, CStdStringArray & target );
-	void GetRelatedItems	( CStdString sub_query, int order_by, CStdStringArray& target );
-	void GetRelatedSongs	( CStdString sub_query, int order_by, CmusikPlaylist& target );
-	void GetAllDistinct		( int source_type, CStdStringArray& target, bool clear_target = true );
-	int	 GetSongCount		();
-	void GetFieldFromID		( int id, int field, CStdString& string );
-	void GetSongInfoFromID	( int id, CmusikSongInfo* info );
-	int  GetIDFromFilename	( CStdString fn );
-	void GetSongFromFilename( CStdString fn, CmusikSong& song );
-	bool IsSongInLibrary	( CStdString fn );
+	void GetAllSongs				( CmusikPlaylist & target );
+	void GetRelatedItems			( int source_type, const CStdStringArray & source_items, int target_type, CStdStringArray & target );
+	void GetRelatedItems			( CStdString sub_query, int order_by, CStdStringArray& target );
+	void GetRelatedSongs			( CStdString sub_query, int order_by, CmusikPlaylist& target );
+	void GetAllDistinct				( int source_type, CStdStringArray& target, bool clear_target = true );
+	int	 GetSongCount				();
+	void GetFieldFromID				( int id, int field, CStdString& string );
+	void GetSongInfoFromID			( int id, CmusikSongInfo* info );
+	int  GetIDFromFilename			( CStdString fn );
+	void GetSongFromFilename		( CStdString fn, CmusikSong& song );
+	bool IsSongInLibrary			( CStdString fn );
 
 	// updating songs
-	bool SetSongInfo		( int songid, CmusikSongInfo* info );
-	bool SetLastPlayedToNow	( int songid );
-	bool SetSongRating		( int songid, int rating );
+	bool SetSongInfo				( int songid, CmusikSongInfo* info );
+	bool SetLastPlayedToNow			( int songid );
+	bool SetSongRating				( int songid, int rating );
 
 	// querying playlist
-	void GetAllStdPlaylists ( CmusikPlaylistInfoArray* target, bool clear_target = true );
-	void GetAllDynPlaylists	( CmusikPlaylistInfoArray* target, bool clear_target = true );
-	void GetStdPlaylist		( int id, CmusikPlaylist& target, bool clear_target = true );
-	void GetStdPlaylistFns	( int id, CStdStringArray& target, bool clear_target = true );
-	void GetStdPlaylistFns	( CmusikPlaylist& playlist, CStdStringArray& target, bool clear_target = true );
-	void CreateStdPlaylist	( const CStdString& name, const CStdStringArray& files );
-	void AppendStdPlaylist	( int id, const CStdStringArray& files );
-	void RenameStdPlaylist	( int id, const CStdString& str );
-	void CreateDynPlaylist	( const CStdString& name, const CStdString& query );
-	void DeleteStdPlaylist	( const CStdString& name );
-	void DeleteStdPlaylist	( int id );
-	void DeleteDynPlaylist	( const CStdString& name );
-	void DeleteDynPlaylist	( int id );
+	void GetAllStdPlaylists			( CmusikPlaylistInfoArray* target, bool clear_target = true );
+	void GetAllDynPlaylists			( CmusikPlaylistInfoArray* target, bool clear_target = true );
+	void GetStdPlaylist				( int id, CmusikPlaylist& target, bool clear_target = true );
+	void GetStdPlaylistFns			( int id, CStdStringArray& target, bool clear_target = true );
+	void GetStdPlaylistFns			( CmusikPlaylist& playlist, CStdStringArray& target, bool clear_target = true );
+	void CreateStdPlaylist			( const CStdString& name, const CStdStringArray& files );
+	void AppendStdPlaylist			( int id, const CStdStringArray& files );
+	void RenameStdPlaylist			( int id, const CStdString& str );
+	void CreateDynPlaylist			( const CStdString& name, const CStdString& query );
+	void DeleteStdPlaylist			( const CStdString& name );
+	void DeleteStdPlaylist			( int id );
+	void DeleteDynPlaylist			( const CStdString& name );
+	void DeleteDynPlaylist			( int id );
 
 	// querying crossfaders
-	void GetCrossfader		( const CStdString& name, CmusikCrossfader* fader );
-	void GetAllCrossfaders	( CStdStringArray* target, bool clear_target = true );
-	void CreateCrossfader	( CmusikCrossfader* fader );
-	void DeleteCrossfader	( CmusikCrossfader* fader );
-	void DeleteCrossfader	( const CStdString& name );
-
-	// paths
-
+	void GetCrossfader				( const CStdString& name, CmusikCrossfader* fader );
+	void GetAllCrossfaders			( CStdStringArray* target, bool clear_target = true );
+	void CreateCrossfader			( CmusikCrossfader* fader );
+	void DeleteCrossfader			( const CStdString& name );
 
 	// equalizers
+	void CreateEqualizer			( const CmusikEQSettings& eq, const CStdString& name );
+	void DeleteEqualizer			( int id );
+	int GetEqualizerIDFromSongID	( int id );
+	void UpdateEqualizer			( int id, const CmusikEQSettings& eq );
+	void GetEqualizer				( int eq_id, CmusikEQSettings* eq );
+
+	// paths
+	// NOTHING IS HERE YET!
 
 	// misc stuff
 	static int GetFilesize( const CStdString& fn );

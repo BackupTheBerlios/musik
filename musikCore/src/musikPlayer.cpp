@@ -301,7 +301,11 @@ CmusikPlayer::~CmusikPlayer()
 			Sleep( 100 );
 	}
 
-    CleanThread();
+
+	FSOUND_Close();
+	
+	CleanThread();
+	CleanEQ_DSP();
 	CleanEqualizer();
 	CleanCrossfader();
 	CleanSound();
@@ -350,9 +354,7 @@ void CmusikPlayer::CleanCrossfader()
 
 void CmusikPlayer::InitEqualizer()
 {
-	if ( m_EQ ) 
-		delete m_EQ;
-
+	CleanEqualizer();
 	m_EQ = new CmusikEqualizer( m_Library );
 }
 
@@ -689,6 +691,8 @@ FSOUND_STREAM* CmusikPlayer::GetCurrStream()
 
 void CmusikPlayer::InitEQ_DSP()
 {
+	CleanEQ_DSP();
+
 	if ( !m_EQ_DSP )
 	{
 		if ( !m_EQ )
@@ -704,18 +708,21 @@ void CmusikPlayer::InitEQ_DSP()
 
 ///////////////////////////////////////////////////
 
-void CmusikPlayer::EnableEQ( bool enable, bool force_init )
+void CmusikPlayer::EnableEQ( bool enable )
 {
 	if ( enable )
 	{
-		if ( !m_EQ_DSP && force_init )
+		if ( !m_EQ_DSP )
 			InitEQ_DSP();
 
 		if ( m_EQ_DSP )
 			FSOUND_DSP_SetActive( m_EQ_DSP, m_IsEQActive );
 	}
 	else
+	{
+		CleanEqualizer();
 		CleanEQ_DSP();
+	}
 }
 
 ///////////////////////////////////////////////////

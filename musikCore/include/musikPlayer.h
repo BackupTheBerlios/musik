@@ -141,9 +141,7 @@ public:
 	CmusikEqualizer* GetEqualizer(){ return m_EQ; }
 
 	// equalizer stuff
-	void InitEQ_DSP();
-	void CleanEQ_DSP();
-	void EnableEQ( bool enable, bool force_init = true );
+	void EnableEQ( bool enable );
 
 	// contains the information of the 
 	// currently playing song
@@ -260,6 +258,9 @@ private:
 
 	void InitEqualizer();
 	void CleanEqualizer();
+
+	void InitEQ_DSP();
+	void CleanEQ_DSP();
 
 	// internal functions to maintain the
 	// current set of crossfader prefs...

@@ -192,6 +192,7 @@ public:
 	CStdString	GetTimeAdded()		{ return m_TimeAdded; }
 	CStdString	GetFilesize()		{ return m_Filesize; }
 	CStdString	GetDirtyFlag()		{ return m_Dirty; }
+	CStdString	GetEqualizer()		{ return m_Equalizer; }
 	
 	CStdString	GetField( int field );
 	
@@ -213,6 +214,7 @@ public:
 	void	SetTimeAdded( CStdString s )	{ m_TimeAdded = s; }
 	void	SetFilesize( CStdString s )		{ m_Filesize = s; }
 	void	SetDirtyFlag( CStdString s )	{ m_Dirty = s; }
+	void	SetEqualizer( CStdString s )	{ m_Equalizer = s; }
 
 protected:
 	int m_ID;
@@ -220,7 +222,7 @@ protected:
 	CStdString	m_Rating, m_Bitrate, m_Duration, m_Dirty, m_Filesize,
 				m_TimesPlayed, m_TrackNum, m_Format, m_VBR, m_Filename,
 				m_Title, m_Artist, m_Album, m_Year, m_Genre, m_LastPlayed,
-				m_TimeAdded, m_Notes;
+				m_TimeAdded, m_Notes, m_Equalizer;
 
 };
 

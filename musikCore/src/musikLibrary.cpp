@@ -112,6 +112,54 @@ static int sqlite_GetCrossfader( void *args, int numCols, char **results, char *
 
 ///////////////////////////////////////////////////
 
+static int sqlite_GetEqualizer( void *args, int numCols, char **results, char ** columnNames )
+{
+	CmusikEQSettings* p = (CmusikEQSettings*)args;
+
+	p->m_Left[0]		= (float)atof( results[0] );	
+	p->m_Left[1]		= (float)atof( results[1] );
+	p->m_Left[2]		= (float)atof( results[2] );
+	p->m_Left[3]		= (float)atof( results[3] );
+	p->m_Left[4]		= (float)atof( results[4] );
+	p->m_Left[5]		= (float)atof( results[5] );
+	p->m_Left[6]		= (float)atof( results[6] );	
+	p->m_Left[7]		= (float)atof( results[7] );
+	p->m_Left[8]		= (float)atof( results[8] );
+	p->m_Left[9]		= (float)atof( results[9] );
+	p->m_Left[10]		= (float)atof( results[10] );
+	p->m_Left[11]		= (float)atof( results[11] );
+	p->m_Left[12]		= (float)atof( results[12] );	
+	p->m_Left[13]		= (float)atof( results[13] );
+	p->m_Left[14]		= (float)atof( results[14] );
+	p->m_Left[15]		= (float)atof( results[15] );
+	p->m_Left[16]		= (float)atof( results[16] );
+	p->m_Left[17]		= (float)atof( results[17] );
+	p->m_Right[0]		= (float)atof( results[18] );	
+	p->m_Right[1]		= (float)atof( results[19] );
+	p->m_Right[2]		= (float)atof( results[20] );
+	p->m_Right[3]		= (float)atof( results[21] );
+	p->m_Right[4]		= (float)atof( results[22] );
+	p->m_Right[5]		= (float)atof( results[23] );
+	p->m_Right[6]		= (float)atof( results[24] );	
+	p->m_Right[7]		= (float)atof( results[25] );
+	p->m_Right[8]		= (float)atof( results[26] );
+	p->m_Right[9]		= (float)atof( results[27] );
+	p->m_Right[10]		= (float)atof( results[28] );
+	p->m_Right[11]		= (float)atof( results[29] );
+	p->m_Right[12]		= (float)atof( results[30] );	
+	p->m_Right[13]		= (float)atof( results[31] );
+	p->m_Right[14]		= (float)atof( results[32] );
+	p->m_Right[15]		= (float)atof( results[33] );
+	p->m_Right[16]		= (float)atof( results[34] );
+	p->m_Right[17]		= (float)atof( results[35] );
+
+    p->m_Name = results[36];
+
+	return 0;
+}
+
+///////////////////////////////////////////////////
+
 static int sqlite_GetPlaylistID( void *args, int numCols, char **results, char ** columnNames )
 {
 	// this is a callback for sqlite to use when
@@ -149,6 +197,7 @@ static int sqlite_GetSongInfoFromID( void *args, int numCols, char **results, ch
 	p->SetTimeAdded		( results[14] );
 	p->SetFilesize		( results[15] );
 	p->SetFilename		( results[16] );
+	p->SetEqualizer		( results[17] );
 
     return 0;
 }
@@ -224,6 +273,17 @@ static int sqlite_AddDynPlaylistInfoArray( void *args, int numCols, char **resul
 
 ///////////////////////////////////////////////////
 
+static int sqlite_GetEqualizerIDFromID( void *args, int numCols, char **results, char **columnNames )
+{
+	int* p = (int*)args;
+
+	*p = atoi( results[0] );
+
+	return 0;
+}
+
+///////////////////////////////////////////////////
+
 CmusikLibrary::CmusikLibrary( const CStdString& filename )
 {
 	m_pDB = NULL;
@@ -277,6 +337,7 @@ void CmusikLibrary::InitFields()
 	m_Fields.push_back( "Times Played" );
 	m_Fields.push_back( "Bitrate" );
 	m_Fields.push_back( "Filename" );
+	m_Fields.push_back( "Equalizer" );
 
 	m_FieldsDB.push_back( "artist" );
 	m_FieldsDB.push_back( "album" );
@@ -293,6 +354,7 @@ void CmusikLibrary::InitFields()
 	m_FieldsDB.push_back( "timesplayed" );
 	m_FieldsDB.push_back( "bitrate" );
 	m_FieldsDB.push_back( "filename" );
+	m_FieldsDB.push_back( "equalizer" );
 }
 
 ///////////////////////////////////////////////////
@@ -414,7 +476,7 @@ bool CmusikLibrary::InitEqTable()
 		"hz7040_right INTEGER, "
 		"hz9956_right INTEGER, "
 		"hz14080_right INTEGER, "
-		"hz19912_right INTEGER, "
+		"hz19912_right INTEGER "
 		" ); ";
 
 	// put a lock on the library and open it up
@@ -576,7 +638,8 @@ bool CmusikLibrary::InitLibTable()
 		"duration number(10), "	
 		"timeadded timestamp, "	
 		"filesize number(10), "	
-		"dirty number(10) "		
+		"dirty number(10), "
+		"equalizer number(10) "
 		" );";
 
 	// construct the index
@@ -732,24 +795,6 @@ void CmusikLibrary::DeleteCrossfader( const CStdString& name )
 	sQuery.Format( "DELETE FROM %s WHERE crossfader_name = %s",
 		CROSSFADER_PRESET,
 		name.c_str() );
-
-	m_ProtectingLibrary->acquire();
-	sqlite_exec_printf( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
-	m_ProtectingLibrary->release();
-}
-
-///////////////////////////////////////////////////
-
-void CmusikLibrary::DeleteCrossfader( CmusikCrossfader* fader )
-{
-	if ( !m_pDB )
-		return;
-
-	CStdString sQuery;
-
-	sQuery.Format( "DELETE FROM %s WHERE crossfader_name = %s",
-		CROSSFADER_PRESET,
-		fader->GetName().c_str() );
 
 	m_ProtectingLibrary->acquire();
 	sqlite_exec_printf( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
@@ -1344,7 +1389,7 @@ void CmusikLibrary::GetSongInfoFromID( int id, CmusikSongInfo* info )
 {
 	CStdString query;
 
-	query.Format( "SELECT tracknum,artist,album,genre,title,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize,filename FROM %s WHERE songid = %d;", 
+	query.Format( "SELECT tracknum,artist,album,genre,title,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize,filename,equalizer FROM %s WHERE songid = %d;", 
 		SONG_TABLE_NAME,
 		id );
 	
@@ -1588,7 +1633,7 @@ bool CmusikLibrary::AddOGG( const CStdString& fn )
 	{
 		m_ProtectingLibrary->acquire();
 
-		int result = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %d, %d, %Q, %Q, %Q, %Q, %d, %Q, %Q, %d, %d, %Q, %Q, %d, %d, %Q, %d, %d );", NULL, NULL, NULL, 
+		int result = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %d, %d, %Q, %Q, %Q, %Q, %d, %Q, %Q, %d, %d, %Q, %Q, %d, %d, %Q, %d, %d, %d );", NULL, NULL, NULL, 
 			SONG_TABLE_NAME,								// song table 		
 			NULL,											// id
 			MUSIK_LIBRARY_FORMAT_OGG,						// format
@@ -1608,7 +1653,8 @@ bool CmusikLibrary::AddOGG( const CStdString& fn )
 			atoi( info.Get()->GetDuration() ),				// duration
 			m_TimeAdded.c_str(),							// time added
 			GetFilesize( fn ),								// file size
-			0 );											// dirty
+			0,												// dirty
+			-1 );											// default equalizer
 
 		m_ProtectingLibrary->release();
 
@@ -1631,7 +1677,7 @@ bool CmusikLibrary::AddMP3( const CStdString& fn )
 	{
 		m_ProtectingLibrary->acquire();
 
-		int result = sqlite_exec_printf( m_pDB, "INSERT INTO %q VALUES ( %Q, %d, %d, %Q, %Q, %Q, %Q, %d, %Q, %Q, %d, %d, %Q, %Q, %d, %d, %Q, %d, %d );", NULL, NULL, NULL, 
+		int result = sqlite_exec_printf( m_pDB, "INSERT INTO %q VALUES ( %Q, %d, %d, %Q, %Q, %Q, %Q, %d, %Q, %Q, %d, %d, %Q, %Q, %d, %d, %Q, %d, %d, %d );", NULL, NULL, NULL, 
 			SONG_TABLE_NAME,								// song table 		
 			NULL,											// id
 			MUSIK_LIBRARY_FORMAT_MP3,						// format
@@ -1651,7 +1697,8 @@ bool CmusikLibrary::AddMP3( const CStdString& fn )
 			atoi( info.Get()->GetDuration() ),				// duration
 			m_TimeAdded.c_str(),							// time added
 			GetFilesize( fn ),								// file size
-			0 );											// dirty
+			0,												// dirty
+			-1 );											// default equalizer
 
 		m_ProtectingLibrary->release();
 
@@ -1696,6 +1743,162 @@ bool CmusikLibrary::IsSongInLibrary( CStdString fn )
 	m_ProtectingLibrary->release();
 
 	return result;
+}
+
+///////////////////////////////////////////////////
+
+int CmusikLibrary::GetEqualizerIDFromSongID( int id )
+{
+	int target;
+
+	CStdString sQuery;
+	sQuery.Format( "SELECT equalizer FROM " SONG_TABLE_NAME " WHERE songid = '%d';", id );
+
+	m_ProtectingLibrary->acquire();
+	sqlite_exec( m_pDB, sQuery.c_str(), &sqlite_GetEqualizerIDFromID, &target, NULL );
+	m_ProtectingLibrary->release();
+
+	return target;
+}
+
+///////////////////////////////////////////////////
+
+void CmusikLibrary::CreateEqualizer( const CmusikEQSettings& eq, const CStdString& name )
+{
+	if ( !m_pDB )
+		return;
+
+	m_ProtectingLibrary->acquire();
+
+	int result = sqlite_exec_printf( m_pDB, "INSERT INTO %q VALUES ( %Q, %Q, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, );", NULL, NULL, NULL, 
+		CROSSFADER_PRESET,								// song table 		
+		NULL,											// id
+		name.c_str(),									// name
+		eq.m_Left[0],
+		eq.m_Left[1],
+		eq.m_Left[2],
+		eq.m_Left[3],
+		eq.m_Left[4],
+		eq.m_Left[5],
+		eq.m_Left[6],
+		eq.m_Left[7],
+		eq.m_Left[8],
+		eq.m_Left[9],
+		eq.m_Left[10],
+		eq.m_Left[11],
+		eq.m_Left[12],
+		eq.m_Left[13],
+		eq.m_Left[14],
+		eq.m_Left[15],
+		eq.m_Left[16],
+		eq.m_Left[17],
+		eq.m_Right[0],
+		eq.m_Right[1],
+		eq.m_Right[2],
+		eq.m_Right[3],
+		eq.m_Right[4],
+		eq.m_Right[5],
+		eq.m_Right[6],
+		eq.m_Right[7],
+		eq.m_Right[8],
+		eq.m_Right[9],
+		eq.m_Right[10],
+		eq.m_Right[11],
+		eq.m_Right[12],
+		eq.m_Right[13],
+		eq.m_Right[14],
+		eq.m_Right[15],
+		eq.m_Right[16],
+		eq.m_Right[17] );
+
+	m_ProtectingLibrary->release();
+}
+
+///////////////////////////////////////////////////
+
+void CmusikLibrary::DeleteEqualizer( int id )
+{
+	if ( !m_pDB )
+		return;
+
+	m_ProtectingLibrary->acquire();
+
+	int result = sqlite_exec_printf( m_pDB, "DELETE FROM %q WHERE equalizer_id = %d;",
+		NULL, NULL, NULL, 
+		CROSSFADER_PRESET,	
+		id );
+
+	m_ProtectingLibrary->release();
+}
+
+///////////////////////////////////////////////////
+
+void CmusikLibrary::UpdateEqualizer( int id, const CmusikEQSettings& eq )
+{
+	if ( !m_pDB )
+		return;
+
+	m_ProtectingLibrary->acquire();
+
+	sqlite_exec_printf( m_pDB, "UPDATE %q set equalizer_name = %Q, hz55_left = %d, hz77_left = %d, hz110_left = %d, hz156_left = %d, hz220_left = %d, hz311_left = %d, hz440_left = %d, hz622_left = %d, hz880_left = %d, hz1244_left = %d, hz1760_left = %d, hz2489_left = %d, hz3520_left = %d, hz4978_left = %d, hz7040_left = %d, hz9956_left = %d, hz14080_left = %d, hz19912_left = %d,"
+						" hz55_right = %d, hz77_right = %d, hz110_right = %d, hz156_right = %d, hz220_right = %d, hz311_right = %d, hz440_right = %d, hz622_right = %d, hz880_right = %d, hz1244_right = %d, hz1760_right = %d, hz2489_right = %d, hz3520_right = %d, hz4978_right = %d, hz7040_right = %d, hz9956_right = %d, hz14080_right = %d, hz19912_right = %d WHERE equalizer_id = %d;",
+			NULL, NULL, NULL,
+			CROSSFADER_PRESET,
+			eq.m_Name.c_str(),
+			eq.m_Left[0],
+			eq.m_Left[1],
+			eq.m_Left[2],
+			eq.m_Left[3],
+			eq.m_Left[4],
+			eq.m_Left[5],
+			eq.m_Left[6],
+			eq.m_Left[7],
+			eq.m_Left[8],
+			eq.m_Left[9],
+			eq.m_Left[10],
+			eq.m_Left[11],
+			eq.m_Left[12],
+			eq.m_Left[13],
+			eq.m_Left[14],
+			eq.m_Left[15],
+			eq.m_Left[16],
+			eq.m_Left[17],
+			eq.m_Right[0],
+			eq.m_Right[1],
+			eq.m_Right[2],
+			eq.m_Right[3],
+			eq.m_Right[4],
+			eq.m_Right[5],
+			eq.m_Right[6],
+			eq.m_Right[7],
+			eq.m_Right[8],
+			eq.m_Right[9],
+			eq.m_Right[10],
+			eq.m_Right[11],
+			eq.m_Right[12],
+			eq.m_Right[13],
+			eq.m_Right[14],
+			eq.m_Right[15],
+			eq.m_Right[16],
+			eq.m_Right[17] );
+
+	m_ProtectingLibrary->release();
+}
+
+///////////////////////////////////////////////////
+
+void CmusikLibrary::GetEqualizer( int eq_id, CmusikEQSettings* target )
+{
+	if ( !m_pDB )
+		return;
+
+	m_ProtectingLibrary->acquire();
+
+	sqlite_exec_printf( m_pDB, "SELECT hz55_left, hz77_left, hz110_left, hz156_left, hz220_left, hz311_left, hz440_left, hz622_left, hz880_left, hz1244_left, hz1760_left, hz2489_left, hz3520_left, hz4978_left, hz7040_left, hz9956_left, hz14080_left, hz19912_left,"
+								" hz55_right, hz77_right, hz110_right, hz156_right, hz220_right, hz311_right, hz440_right, hz622_right, hz880_right, hz1244_right, hz1760_right, hz2489_right, hz3520_right, hz4978_right, hz7040_right, hz9956_right, hz14080_right hz19912_right, equalizer_name"
+								" WHERE equalizer_id = eq_id;", &sqlite_GetEqualizer, &target, NULL );
+	
+	m_ProtectingLibrary->release();
 }
 
 ///////////////////////////////////////////////////

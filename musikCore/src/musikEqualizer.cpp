@@ -61,6 +61,8 @@ static			paramlist			paramroot;
 
 CmusikEqualizer::CmusikEqualizer( CmusikLibrary* library )
 {
+	m_TableSet = false;
+
 	m_Library = library;
 
 	// if the equalizer is active,
@@ -73,7 +75,8 @@ CmusikEqualizer::CmusikEqualizer( CmusikLibrary* library )
 
 CmusikEqualizer::~CmusikEqualizer()
 {
-
+	if ( m_TableSet )
+		CleanEqualizer();
 }
 
 ///////////////////////////////////////////////////
@@ -94,11 +97,16 @@ void CmusikEqualizer::SetLibrary( CmusikLibrary* library )
 
 void CmusikEqualizer::InitEqualizer()
 {
+	if ( m_TableSet )
+		CleanEqualizer();
+
 	// 14 is the magic number
 	equ_init( 14 ); 
 
 	// MUST be called before CmusikEqualizer::ProcessDSP()
 	equ_makeTable( m_EQ.m_Left, m_EQ.m_Right, &paramroot, 44100 );
+
+	m_TableSet = true;
 }
 
 ///////////////////////////////////////////////////
@@ -106,6 +114,7 @@ void CmusikEqualizer::InitEqualizer()
 void CmusikEqualizer::CleanEqualizer()
 {
 	equ_quit();
+	m_TableSet = false;
 }
 
 ///////////////////////////////////////////////////
