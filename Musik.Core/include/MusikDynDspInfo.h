@@ -2,8 +2,8 @@
 //
 // Class(s): 
 //
-//    CMusikDynDspInfoRange, 
-//    CMusikDynDspInfo
+//   CMusikDynDspInfoRange, 
+//   CMusikDynDspInfo
 //
 // Filename(s): 
 //
@@ -24,7 +24,7 @@
 // Usage: 
 //
 //   Construct it with a pointer to a CMusikPlaylist object
-//   to be managed, and a CMusikLibrary object to query.
+//   to be managed, and a CMusikLary objecibrt to query.
 //
 //   When the range of managed songs is known, pass it via
 //   SetRange. The CMusikDynDspInfo() class is now ready
@@ -37,6 +37,10 @@
 //   Casey Langen   : Lead Developer, Project Manager
 //   Dustin Carter  : Developer, pain in the ass
 //   Simon Windmill : Developer, the most helpful person thats immediately available ;)
+// 
+// License:
+//
+//   See license.txt included with this distribution
 //
 ///////////////////////////////////////////////////
 

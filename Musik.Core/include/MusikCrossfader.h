@@ -1,4 +1,42 @@
 ///////////////////////////////////////////////////
+//
+// Class(s): 
+//
+//   CMusikCrossfader 
+//
+// Filename(s): 
+//
+//   MusikCrossfader.h,
+//
+// Information:
+//
+//   A simple class to manage the band positions of
+//   Musik's built in 18 band, dual channel equalizer.
+//
+// Example: 
+//
+//   The UI can construct these objects and pass them to
+//   the player via CMusikPlayer::SetEQ()
+//
+// Usage: 
+//
+//   Construct the object (takes no args), then use 
+//   CMusikCrossfader::Set() to set the values, then
+//   CMusikPlayer::SetEQ()
+//
+// Copyright and Credits:
+//
+//   Copyright      : Casey Langen, 2003
+//
+//   Casey Langen   : Lead Developer, Project Manager
+//   Dustin Carter  : Developer, pain in the ass
+//   Simon Windmill : Developer, the most helpful person thats immediately available ;)
+// 
+// License:
+//
+//   See license.txt included with this distribution
+//
+///////////////////////////////////////////////////
 
 #ifndef C_MUSIK_CROSSFADER
 #define C_MUSIK_CROSSFADER
