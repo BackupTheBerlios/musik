@@ -118,6 +118,7 @@ void MusikFrame::OnCloseEvt( wxCommandEvent& WXUNUSED(event) )
 
 void MusikFrame::OnExitFadeDone( wxCommandEvent& WXUNUSED(event) )
 {
+	g_FaderThread->Delete();
 	Destroy();
 }
 

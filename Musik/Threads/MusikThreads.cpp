@@ -59,6 +59,18 @@ void MusikFaderThread::CrossfaderStop()
 		pCrossfader->Delete();
 }
 
+void MusikFaderThread::StartNew()
+{
+	//--------------------------------//
+	//--- fire up a new crossfader ---//
+	//--------------------------------//
+	pCrossfader = new MusikCrossfaderThread( this );
+	pCrossfader->Create();
+	pCrossfader->Run();
+
+	SetCrossfaderActive();
+}
+
 void *MusikFaderThread::Entry()
 {
 	wxCommandEvent NextSongEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYER_NEXT_SONG );	
@@ -67,25 +79,32 @@ void *MusikFaderThread::Entry()
 	{
 		if ( g_Player.IsPlaying() )		
 		{
-			//-------------------------------------------------//
-			//--- check the player flag to see if we need	---//
-			//--- to trigger the crossfade begin thread		---//
-			//-------------------------------------------------//
+			//-----------------------------------------------------//
+			//--- check the player flag to see if we need		---//
+			//--- to trigger the crossfade begin thread			---//
+			//-----------------------------------------------------//
 			if ( g_Player.BeginFade() )	
 			{
-				//----------------------------------------------//
-				//--- let the player know we got the message ---//
-				//----------------------------------------------//
+				//-------------------------------------------------//
+				//--- let the player know we got the message	---//
+				//-------------------------------------------------//
  				g_Player.CaughtBeginFade();
 
-				//--------------------------------//
-				//--- fire up a new crossfader ---//
-				//--------------------------------//
-				pCrossfader = new MusikCrossfaderThread( this );
-				pCrossfader->Create();
-				pCrossfader->Run();
+				//-------------------------------------------------//
+				//--- kill the existing crossfade thread (if	---//
+				//--- it exists still)							---//
+				//-------------------------------------------------//
+				if ( IsCrossfaderActive() )
+					CrossfaderAbort();
 
-				SetCrossfaderActive();
+				//-------------------------------------------------//
+				//--- if no old crossfader is active, fire up a	---//
+				//--- new one. if there was one active, once it	---//
+				//--- cleans up, an event will be posted to		---//
+				//--- start a new one.							---//
+				//-------------------------------------------------//
+				else
+					StartNew();
 			}
 
 			if ( ( !g_Player.IsStartingNext() ) && ( !g_Player.IsFading() ) && ( g_Player.GetTimeLeft( FMOD_MSEC ) <= ( g_Prefs.nFadeDuration + 1000 ) ) )
@@ -281,57 +300,16 @@ void MusikCrossfaderThread::OnExit()
 		wxCommandEvent FadeCompleteEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYER_FADE_COMPLETE );	
 		wxPostEvent( &g_Player, FadeCompleteEvt );
 		Yield();
-
-		return;
 	}
 
 	//-------------------------------------------------//
 	//--- otherwise, something sent us the abort	---//
-	//--- signal. so kill the thread, then recall	---//
-	//--- whatever function aborted it.				---//
+	//--- signal. the thread was just killed, so	---//
+	//--- start a new one up.						---//
 	//-------------------------------------------------//
-	else
+	else if ( m_Aborted )
 	{
-		if ( m_FadeType == CROSSFADE_STOP || m_FadeType == CROSSFADE_EXIT )
-		{
-			wxCommandEvent StopPlayerEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYER_STOP );	
-			wxPostEvent( &g_Player, StopPlayerEvt );
-			Yield();
-
-			//-----------------------------------------------------//
-			//--- and if its an exit, clean up. this probably	---//
-			//--- needs work.									---//
-			//-----------------------------------------------------//
-			if ( m_FadeType == CROSSFADE_EXIT )
-			{
-				m_Parent->Delete();
-				Yield();
-
-				wxCommandEvent ExitPlayerEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_FRAME_EXIT_FADE_DONE );
-				wxPostEvent( g_MusikFrame, ExitPlayerEvt );
-				Yield();	
-			}
-
-			return;
-		}
-
-		else if ( m_FadeType == CROSSFADE_PAUSE )
-		{
-			wxCommandEvent PausePlayerEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYER_PAUSE );	
-			wxPostEvent( &g_Player, PausePlayerEvt );
-			Yield();
-
-			return;
-		}
-
-		else if ( m_FadeType == CROSSFADE_RESUME )
-		{
-			wxCommandEvent ResumePlayerEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYER_RESUME );	
-			wxPostEvent( &g_Player, ResumePlayerEvt );
-			Yield();
-
-			return;
-		}
+		m_Parent->StartNew();
 	}
 }
 

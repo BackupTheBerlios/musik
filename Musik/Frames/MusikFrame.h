@@ -162,7 +162,6 @@ private:
 	wxThread* m_ActiveThread;
 	MusikWriteDirtyThread* pWriteDirtyThread;
 
-
 	wxString m_customQuery;
 };
 

@@ -130,12 +130,12 @@ public:
 	int	 GetLastTime			( int nType );
 	int	 GetTime				( int nType );
 	int	 GetTimeLeft			( int nType );
-	int	 GetCurrChannel		( );
-	void IncNextChannel		( );
-	wxString GetTimeStr		( );
-	wxString GetCurrentFile	() { return m_CurrentFile; }
-	int GetCrossfadeType	() { return m_CrossfadeType; }
-	size_t GetRandomSong	();
+	int	 GetCurrChannel			( );
+	void IncNextChannel			( );
+	wxString GetTimeStr			( );
+	wxString GetCurrentFile		() { return m_CurrentFile; }
+	int GetCrossfadeType		() { return m_CrossfadeType; }
+	size_t GetRandomSong		();
 
 	//------------//
 	//--- sets ---//
@@ -160,21 +160,21 @@ public:
 	
 private:
 	
-	CMusikSongArray m_Playlist;			//--- heart and soul.									---//
-	int				m_Playmode;			//--- repeat, shuffle, etc                      ---//
-	size_t			m_SongIndex;		//--- current index in playlist                 ---//
+	CMusikSongArray m_Playlist;			//--- heart and soul.								---//
+	int				m_Playmode;			//--- repeat, shuffle, etc							---//
+	size_t			m_SongIndex;		//--- current index in playlist						---//
 	size_t			m_LastSong;			//--- last song played, used for updating			---//
-	bool			m_Playing;			//--- currently playing?								---//
+	bool			m_Playing;			//--- currently playing?							---//
 	bool			m_Paused;			//--- currently paused?								---//
 	bool			m_BeginFade;		//--- should we begin fading?						---//
 	bool			m_Fading;			//--- currently (cross)fading?						---//
-	bool			m_StartingNext;		//--- in the middle of starting up a next song?	---//
+	bool			m_StartingNext;		//--- in the middle of starting up a next song?		---//
 	wxString		m_CurrentFile;		//--- filename of current song						---//
 	int				m_CrossfadeType;	
 
-	int				m_RandomSeed;		//--- random seed for consistent results        ---//
-	size_t			m_RandomIndex;		//--- index into the stream of random numbers   ---//
-	size_t			m_History[5];		//--- history of songs played, to avoid repeats ---//
+	int				m_RandomSeed;		//--- random seed for consistent results			---//
+	size_t			m_RandomIndex;		//--- index into the stream of random numbers		---//
+	size_t			m_History[5];		//--- history of songs played, to avoid repeats		---//
 
 	FSOUND_DSPUNIT	*m_DSP;
 

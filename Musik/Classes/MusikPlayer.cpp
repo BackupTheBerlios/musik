@@ -202,15 +202,11 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 		m_CurrentFile	= m_Playlist.Item( nItem ).Filename;
 
 		//---------------------------------------------//
-		//--- if there is already a fade in			---//
-		//--- progress, then we need to abort it	---//
+		//--- set the fade type, let the thread 	---//
+		//--- worry about cleaning any existing		---//
+		//--- fades.								---//
 		//---------------------------------------------//
 		SetCrossfadeType( nFadeType );
-		if ( g_FaderThread->IsCrossfaderActive() )
-		{
-			g_FaderThread->CrossfaderAbort();
-			//return false;
-		}
 
 		//---------------------------------------------//
 		//--- open a new stream and push it to the	---//
@@ -317,17 +313,12 @@ void CMusikPlayer::ClearOldStreams()
 
 void CMusikPlayer::Pause( bool bCheckFade )
 {
-	//-------------------------------------------------//
-	//--- if we pause during a crossfade, kill the	---//
-	//--- thread and wait for it to call this		---//
-	//--- function again upon termination.			---//
-	//-------------------------------------------------//
+	//---------------------------------------------//
+	//--- set the fade type, let the thread 	---//
+	//--- worry about cleaning any existing		---//
+	//--- fades.								---//
+	//---------------------------------------------//
 	SetCrossfadeType( CROSSFADE_PAUSE );
-	if ( g_FaderThread->IsCrossfaderActive() )
-	{
-		g_FaderThread->CrossfaderAbort();
-		return;
-	}
 
 	m_Paused = true;
 	g_NowPlayingCtrl->PauseBtnToPlayBtn();
@@ -357,17 +348,12 @@ void CMusikPlayer::Pause( bool bCheckFade )
 
 void CMusikPlayer::Resume( bool bCheckFade )
 {
-	//-------------------------------------------------//
-	//--- if we resume during a crossfade, kill the	---//
-	//--- thread and wait for it to call this		---//
-	//--- function again upon termination.			---//
-	//-------------------------------------------------//
+	//---------------------------------------------//
+	//--- set the fade type, let the thread 	---//
+	//--- worry about cleaning any existing		---//
+	//--- fades.								---//
+	//---------------------------------------------//
 	SetCrossfadeType( CROSSFADE_RESUME );
-	if ( g_FaderThread->IsCrossfaderActive() )
-	{
-		g_FaderThread->CrossfaderAbort();
-		return;
-	}
 
 	g_NowPlayingCtrl->PlayBtnToPauseBtn();
 	FSOUND_SetPaused( FSOUND_ALL, FALSE );
@@ -388,11 +374,15 @@ void CMusikPlayer::Resume( bool bCheckFade )
 
 void CMusikPlayer::Stop( bool bCheckFade, bool bExit )
 {
-	if ( g_FaderThread->IsCrossfaderActive() )
-	{
-		g_FaderThread->CrossfaderAbort();
-		return;
-	}
+	//---------------------------------------------//
+	//--- set the fade type, let the thread 	---//
+	//--- worry about cleaning any existing		---//
+	//--- fades.								---//
+	//---------------------------------------------//
+	if ( !bExit )
+		SetCrossfadeType( CROSSFADE_STOP );
+	else
+		SetCrossfadeType( CROSSFADE_EXIT );
 
 	//-------------------------------------------------//
 	//--- update the ui.							---//

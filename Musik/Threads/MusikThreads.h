@@ -38,6 +38,8 @@ public:
 	virtual void *Entry();
 	virtual void OnExit();
 
+	void StartNew();
+
 	void CrossfaderAbort		();
 	void CrossfaderStop			();
 
@@ -45,6 +47,10 @@ public:
 	void SetCrossfaderActive	( bool active = true );
 
 private:
+
+
+	int m_Type;
+
 	MusikCrossfaderThread *pCrossfader;
 
 	int m_CrossfadersActive;
