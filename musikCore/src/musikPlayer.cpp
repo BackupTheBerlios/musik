@@ -70,7 +70,7 @@ static void musikPlayerWorker( CmusikPlayer* player )
 	while ( !player->IsShuttingDown() )
 	{
 		// check every half second
-		if ( player->IsPlaying() && !player->IsPaused() )
+		if ( player->IsPlaying() )
 		{
 			// start a tighter loop if the crossfader 
 			// is inactive and there is less than
@@ -128,12 +128,12 @@ static void musikPlayerWorker( CmusikPlayer* player )
 					int nMainStream			= -1;
 					size_t nChildCount		= 0;
 
-					// if the fade type is pause, resume, stop
+					// if the fade type is pause, stop
 					// or exit, we need ALL the streams as
-					// children.
-					if ( nFadeType == MUSIK_CROSSFADER_PAUSE_RESUME || nFadeType == MUSIK_CROSSFADER_STOP || nFadeType == MUSIK_CROSSFADER_EXIT )
+					// children. children always fade out
+					if ( ( nFadeType == MUSIK_CROSSFADER_PAUSE_RESUME && player->IsPlaying() && !player->IsPaused() ) || nFadeType == MUSIK_CROSSFADER_STOP || nFadeType == MUSIK_CROSSFADER_EXIT )
 						nChildCount = player->GetStreamCount();
-
+    
 					// otherwise its a regular fade, so find the
 					// main and child streams
 					else
@@ -158,7 +158,8 @@ static void musikPlayerWorker( CmusikPlayer* player )
 					// 0 - 255. minimum of 1 per step.
 					int nFadeStep = player->GetMaxVolume() / nFadeCount;
 
-					if ( nFadeStep < 1 ) nFadeStep = 1;
+					if ( nFadeStep < 1 ) 
+						nFadeStep = 1;
 
 					// an array containing the volume steps for
 					// all the secondary streams
@@ -220,10 +221,20 @@ static void musikPlayerWorker( CmusikPlayer* player )
 					if ( player->GetFadeType() == MUSIK_CROSSFADER_EXIT )
 						player->SetSafeShutdown();
 
+					// if the last fade type was a Pause / Resume, we need
+					// to tell the player to finish the operation
+					else if ( player->GetFadeType() == MUSIK_CROSSFADER_PAUSE_RESUME )
+					{
+						if ( !player->IsPaused() )
+							player->FinalizePause();
+						else
+							player->FinalizeResume();
+					}
+
 				}
-	
-				if ( fade_success )
-					player->FinishCrossfade();
+
+				if ( fade_success && player->GetFadeType() != MUSIK_CROSSFADER_PAUSE_RESUME  )
+					player->FinalizeNewSong();
 
 				TRACE0( "Crossfade finished successfully\n" );
 
@@ -868,7 +879,7 @@ int CmusikPlayer::GetTimeRemain( int mode )
 
 ///////////////////////////////////////////////////
 
-void CmusikPlayer::FinishCrossfade()
+void CmusikPlayer::FinalizeNewSong()
 {
 	if ( IsEqualizerActive() && m_FadeType != MUSIK_CROSSFADER_EXIT && m_EQ )
 		m_EQ->GetSongEq( m_Playlist->GetSongID( m_Index ) );
@@ -957,6 +968,73 @@ CStdString CmusikPlayer::GetTimeStr( int time_ms )
 		sTime.Format( "%d:%02d", minutes, seconds );
 	
 	return sTime;
+}
+
+///////////////////////////////////////////////////
+
+bool CmusikPlayer::Pause()
+{
+	if ( IsPlaying() && !IsPaused() )
+	{
+		if ( IsCrossfaderActive() && m_Crossfader->GetDuration ( MUSIK_CROSSFADER_PAUSE_RESUME ) > 0.0f )
+		{
+			m_FadeType = MUSIK_CROSSFADER_PAUSE_RESUME;
+			FlagCrossfade();
+		}
+		else
+			FinalizePause();
+	}
+
+	return true;
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlayer::FinalizePause()
+{
+	FSOUND_SetPaused( FSOUND_ALL, TRUE );
+
+	CleanOldStreams();
+	m_IsPaused = true;
+	m_IsPlaying = true;
+
+	if ( m_Functor )
+		m_Functor->OnPause();
+}
+
+///////////////////////////////////////////////////
+
+bool CmusikPlayer::Resume()
+{
+	if ( IsPlaying() && IsPaused() )
+	{
+		CleanOldStreams();
+		FSOUND_SetPaused( FSOUND_ALL, FALSE );
+
+		if ( IsCrossfaderActive() && m_Crossfader->GetDuration ( MUSIK_CROSSFADER_PAUSE_RESUME ) > 0.0f )
+		{
+			m_FadeType = MUSIK_CROSSFADER_PAUSE_RESUME;
+			FlagCrossfade();
+		}
+		else
+			FinalizeResume();
+	}
+
+	return true;
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlayer::FinalizeResume()
+{
+	FSOUND_SetVolume( GetCurrChannel(), m_Volume );
+	CleanOldStreams();
+
+	m_IsPaused = false;
+	m_IsPlaying = true;
+
+	if ( m_Functor )
+		m_Functor->OnResume();
 }
 
 ///////////////////////////////////////////////////

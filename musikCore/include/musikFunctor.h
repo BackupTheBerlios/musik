@@ -69,6 +69,16 @@ public:
 		// pure virtual
 	}
 
+	virtual void OnPause()
+	{
+		// pure virtual
+	}
+
+	virtual void OnResume()
+	{
+		// pure virtual
+	}
+
 	virtual void OnThreadStart()
 	{
 		// pure virtual
