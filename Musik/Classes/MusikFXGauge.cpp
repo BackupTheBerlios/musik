@@ -101,6 +101,11 @@ void CMusikFXGauge::SetFromMousePos( wxMouseEvent& event )
 
 	//--- set value ---//
 	m_Temp = (float)100* ( (float)m_MousePos.y / (float)m_WndSize.GetHeight() );
+	if ( m_Temp < 0.0f )
+		m_Temp = 0.0f;
+	else if ( m_Temp > 100.0f )
+		m_Temp = 100.0f;
+
 	if ( m_Temp != m_Pos )
 	{
 		m_Pos = m_Temp;
