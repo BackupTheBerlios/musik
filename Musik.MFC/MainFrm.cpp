@@ -93,20 +93,13 @@ void CMainFrame::InitMusik()
 
 void CMainFrame::CleanMusik()
 {
-	if ( m_Library )
-		delete m_Library;
-	if ( m_Prefs )
-		delete m_Prefs;
-	if ( m_Player )
-		delete m_Player;
-	if ( m_NewSong )
-		delete m_NewSong;
-	if ( m_LibPlaylist )
-		delete m_LibPlaylist;
-	if ( m_DynPlaylist )
-		delete m_DynPlaylist;
-	if ( m_StdPlaylist )
-		delete m_StdPlaylist;
+	if ( m_Library )		delete m_Library;
+	if ( m_Prefs )			delete m_Prefs;
+	if ( m_Player )			delete m_Player;
+	if ( m_NewSong )		delete m_NewSong;
+	if ( m_LibPlaylist )	delete m_LibPlaylist;
+	if ( m_DynPlaylist )	delete m_DynPlaylist;
+	if ( m_StdPlaylist )	delete m_StdPlaylist;
 }
 
 ///////////////////////////////////////////////////
