@@ -57,14 +57,13 @@ void* MusikActivityRenameThread::Entry()
 	}
 
 	else if ( m_Mode == ACTIVITY_RENAME_SONGS )
-	{		m_Songs = g_PlaylistCtrl->GetSelSongs();
+	{
+		m_Songs = g_PlaylistCtrl->GetSelSongs();
 	}
 
 	float fPos = 0;
 	int nLastProg = 0;
 	int nCurrProg = 0;
-
-	bool bRenameOK;
 
 	for ( size_t i = 0; i < m_Songs.GetCount(); i++ )
 	{
