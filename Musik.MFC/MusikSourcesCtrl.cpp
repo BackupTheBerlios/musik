@@ -32,7 +32,7 @@ int CMusikSourcesCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CListCtrl::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-	InsertColumn( 0, "Sources" );
+	InsertColumn( 0, _T( "Sources" ) );
 
 	return 0;
 }
