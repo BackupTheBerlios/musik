@@ -106,29 +106,41 @@ bool CMainFrame::RecurseMkDir( char* pszDir )
     return true;
 }
 
-void CMainFrame::DockBarLeftOf( CSizingControlBar* Bar, CSizingControlBar* LeftOf )
+void CMainFrame::DockBarLeftOf( CSizingControlBar* pBar, CSizingControlBar* pTargetBar )
 {
-	CRect rect;
-	DWORD dw;
-	UINT n;
-	
-	// get MFC to adjust the dimensions of all docked ToolBars
-	// so that GetWindowRect will be accurate
-	RecalcLayout(TRUE);
-	
-	LeftOf->GetWindowRect(&rect);
-	rect.OffsetRect(1,0);
-	dw=LeftOf->GetBarStyle();
-	n = 0;
-	n = (dw&CBRS_ALIGN_TOP) ? AFX_IDW_DOCKBAR_TOP : n;
-	n = (dw&CBRS_ALIGN_BOTTOM && n==0) ? AFX_IDW_DOCKBAR_BOTTOM : n;
-	n = (dw&CBRS_ALIGN_LEFT && n==0) ? AFX_IDW_DOCKBAR_LEFT : n;
-	n = (dw&CBRS_ALIGN_RIGHT && n==0) ? AFX_IDW_DOCKBAR_RIGHT : n;
-	
-	// When we take the default parameters on rect, DockControlBar will dock
-	// each Toolbar on a seperate line. By calculating a rectangle, we
-	// are simulating a Toolbar being dragged to that location and docked.
-	DockControlBar(Bar,n,&rect);
+    ASSERT(pBar != NULL);
+    ASSERT(pTargetBar != NULL);
+    ASSERT(pBar != pTargetBar);
+
+    // the neighbour must be already docked
+    CDockBar* pDockBar = pTargetBar->m_pDockBar;
+    ASSERT(pDockBar != NULL);
+    UINT nDockBarID = pTargetBar->m_pDockBar->GetDlgCtrlID();
+    ASSERT(nDockBarID != AFX_IDW_DOCKBAR_FLOAT);
+
+    bool bHorz = (nDockBarID == AFX_IDW_DOCKBAR_TOP ||
+        nDockBarID == AFX_IDW_DOCKBAR_BOTTOM);
+
+    // dock normally (inserts a new row)
+    DockControlBar(pBar, nDockBarID);
+
+    // delete the new row (the bar pointer and the row end mark)
+    pDockBar->m_arrBars.RemoveAt(pDockBar->m_arrBars.GetSize() - 1);
+    pDockBar->m_arrBars.RemoveAt(pDockBar->m_arrBars.GetSize() - 1);
+
+    // find the target bar
+    for (int i = 0; i < pDockBar->m_arrBars.GetSize(); i++)
+    {
+        void* p = pDockBar->m_arrBars[i];
+        if (p == pTargetBar) // and insert the new bar after it
+            pDockBar->m_arrBars.InsertAt(i + 1, pBar);
+    }
+
+    // move the new bar into position
+    CRect rBar;
+    pTargetBar->GetWindowRect(rBar);
+    rBar.OffsetRect(bHorz ? 1 : 0, bHorz ? 0 : 1);
+    pBar->MoveWindow(rBar);
 }
 
 int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -161,14 +173,16 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	//-------------------------------------------------//
 	//--- selection controls						---//
 	//-------------------------------------------------//
-	for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
+	for ( int i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
 	{
 		m_wndSelectionBars[i] = new CMusikSelectionBar( m_Library, i );
 		m_wndSelectionBars[i]->Create( _T( "Musik Selection Box" ), this, ID_SELECTIONBOX_START + i );
 		m_wndSelectionBars[i]->SetBarStyle( m_wndSelectionBars[i]->GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC );
 		m_wndSelectionBars[i]->EnableDocking( CBRS_ALIGN_ANY );
 		if ( i == 0 )
+		{
 			DockControlBar( m_wndSelectionBars[i] );
+		}
 		else
 			DockBarLeftOf( m_wndSelectionBars[i], m_wndSelectionBars[i-1] );
 	}
@@ -182,7 +196,14 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
     m_wndSources->SetBarStyle( m_wndSources->GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC );
 	DockControlBar( m_wndSources, AFX_IDW_DOCKBAR_LEFT );
 
+	//-------------------------------------------------//
+	//--- rescale dialog based on prefs				---//
+	//-------------------------------------------------//
 	ResetDialogRect();
+
+	//-------------------------------------------------//
+	//--- load dockbar sizes and positions			---//
+	//-------------------------------------------------//
 	CSizingControlBar::GlobalLoadState( this, "MusikDockBars" );
 
 	return 0;

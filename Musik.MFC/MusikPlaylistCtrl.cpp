@@ -7,6 +7,7 @@
 
 #include "../Musik.Core/include/MusikLibrary.h"
 #include "MusikPrefs.h"
+#include ".\musikplaylistctrl.h"
 
 // CMusikPlaylistCtrl
 
@@ -25,15 +26,11 @@ CMusikPlaylistCtrl::~CMusikPlaylistCtrl()
 BEGIN_MESSAGE_MAP(CMusikPlaylistCtrl, CListCtrl)
 	ON_WM_NCPAINT()
 	ON_WM_NCCALCSIZE()
+	ON_WM_CREATE()
 END_MESSAGE_MAP()
-
-
-
-// CMusikPlaylistCtrl message handlers
 
 void CMusikPlaylistCtrl::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp)
 {
-	// TODO: Add your message handler code here and/or call default
 	lpncsp->rgrc[0].bottom -= 6;
 	lpncsp->rgrc[0].top += 4;
 	lpncsp->rgrc[0].right -= 4;
@@ -80,4 +77,26 @@ void CMusikPlaylistCtrl::OnNcPaint()
     mdc.SelectObject(pOldBm);
     bm.DeleteObject();
     mdc.DeleteDC();
+}
+
+///////////////////////////////////////////////////
+
+void CMusikPlaylistCtrl::ResetColumns()
+{
+	for ( int i = 0; i < m_Library->GetSongFieldCnt(); i++ )
+	{
+		InsertColumn( i, m_Library->GetSongField( i ) );
+	}
+}
+
+///////////////////////////////////////////////////
+
+int CMusikPlaylistCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	if ( CListCtrl::OnCreate( lpCreateStruct ) == -1 )
+		return -1;
+
+	ResetColumns();
+
+	return 0;
 }

@@ -1,7 +1,9 @@
 #pragma once
 
 #include "MusikListCtrl.h"
+
 #include "../Musik.Core/include/StdString.h"
+#include "../Musik.Core/include/MusikArrays.h"
 
 class CMusikLibrary;
 
