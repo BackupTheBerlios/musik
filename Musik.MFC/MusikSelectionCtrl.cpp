@@ -18,7 +18,7 @@ CMusikSelectionCtrl::CMusikSelectionCtrl( CFrameWnd* parent, CMusikLibrary* libr
 	m_Parent = parent;
 	m_ID = ctrl_id;
 	m_Updating = false;
-	HideScrollBars( LCSB_NCOVERRIDE, SB_HORZ /*SB_BOTH*/ );
+	HideScrollBars( LCSB_NCOVERRIDE, SB_HORZ );
 }
 
 CMusikSelectionCtrl::~CMusikSelectionCtrl()
