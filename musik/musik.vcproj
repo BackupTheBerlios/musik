@@ -143,128 +143,9 @@
 			<File
 				RelativePath=".\MainFrm.h">
 			</File>
-			<File
-				RelativePath=".\MainFrmFunctor.h">
-			</File>
-			<File
-				RelativePath=".\musikBatchAddFunctor.h">
-			</File>
-			<File
-				RelativePath=".\musikRemoveOldFunctor.h">
-			</File>
 			<Filter
 				Name="Controls"
 				Filter="">
-				<Filter
-					Name="musikSourcesCtrl"
-					Filter="">
-					<File
-						RelativePath=".\musikSourcesCtrl.cpp">
-					</File>
-					<File
-						RelativePath=".\musikSourcesCtrl.h">
-					</File>
-					<File
-						RelativePath=".\musikSourcesDropTarget.cpp">
-					</File>
-					<File
-						RelativePath=".\musikSourcesDropTarget.h">
-					</File>
-					<Filter
-						Name="musikPropTree"
-						Filter="">
-						<File
-							RelativePath=".\3rdparty\musikPropTree.cpp">
-						</File>
-						<File
-							RelativePath=".\3rdparty\musikPropTree.h">
-						</File>
-						<File
-							RelativePath=".\3rdparty\musikPropTreeItem.cpp">
-						</File>
-						<File
-							RelativePath=".\3rdparty\musikPropTreeItem.h">
-						</File>
-					</Filter>
-				</Filter>
-				<Filter
-					Name="musikPlaylistCtrl"
-					Filter="">
-					<File
-						RelativePath=".\musikPlaylistCtrl.cpp">
-					</File>
-					<File
-						RelativePath=".\musikPlaylistCtrl.h">
-					</File>
-					<File
-						RelativePath=".\musikPlaylistDropTarget.cpp">
-					</File>
-					<File
-						RelativePath=".\musikPlaylistDropTarget.h">
-					</File>
-					<File
-						RelativePath=".\musikPlaylistView.cpp">
-					</File>
-					<File
-						RelativePath=".\musikPlaylistView.h">
-					</File>
-				</Filter>
-				<Filter
-					Name="musikNowPlayingCtrl"
-					Filter="">
-					<File
-						RelativePath=".\musikNowPlayingCtrl.cpp">
-					</File>
-					<File
-						RelativePath=".\musikNowPlayingCtrl.h">
-					</File>
-					<Filter
-						Name="musikNowPlayingInfo"
-						Filter="">
-						<File
-							RelativePath=".\musikDynamicText.cpp">
-						</File>
-						<File
-							RelativePath=".\musikDynamicText.h">
-						</File>
-						<File
-							RelativePath=".\musikNowPlayingInfo.cpp">
-						</File>
-						<File
-							RelativePath=".\musikNowPlayingInfo.h">
-						</File>
-					</Filter>
-					<Filter
-						Name="musikVolumeCtrl"
-						Filter="">
-						<File
-							RelativePath=".\musikVolumeCtrl.cpp">
-						</File>
-						<File
-							RelativePath=".\musikVolumeCtrl.h">
-						</File>
-					</Filter>
-					<Filter
-						Name="musikTimeCtrl"
-						Filter="">
-						<File
-							RelativePath=".\musikTimeCtrl.cpp">
-						</File>
-						<File
-							RelativePath=".\musikTimeCtrl.h">
-						</File>
-					</Filter>
-				</Filter>
-				<Filter
-					Name="musikSelectionCtrl"
-					Filter="">
-					<File
-						RelativePath=".\musikSelectionCtrl.cpp">
-					</File>
-					<File
-						RelativePath=".\musikSelectionCtrl.h">
-					</File>
-				</Filter>
 				<Filter
 					Name="musikListCtrl"
 					Filter="">
@@ -280,6 +161,28 @@
 					<File
 						RelativePath=".\musikListCtrl.h">
 					</File>
+					<Filter
+						Name="musikPlaylistCtrl"
+						Filter="">
+						<File
+							RelativePath=".\musikPlaylistCtrl.cpp">
+						</File>
+						<File
+							RelativePath=".\musikPlaylistCtrl.h">
+						</File>
+						<File
+							RelativePath=".\musikPlaylistDropTarget.cpp">
+						</File>
+						<File
+							RelativePath=".\musikPlaylistDropTarget.h">
+						</File>
+						<File
+							RelativePath=".\musikPlaylistView.cpp">
+						</File>
+						<File
+							RelativePath=".\musikPlaylistView.h">
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="musikDockBar"
@@ -298,6 +201,94 @@
 						</File>
 						<File
 							RelativePath=".\3rdparty\sizecbar.h">
+						</File>
+					</Filter>
+					<Filter
+						Name="musikSourcesCtrl"
+						Filter="">
+						<File
+							RelativePath=".\musikSourcesCtrl.cpp">
+						</File>
+						<File
+							RelativePath=".\musikSourcesCtrl.h">
+						</File>
+						<File
+							RelativePath=".\musikSourcesDropTarget.cpp">
+						</File>
+						<File
+							RelativePath=".\musikSourcesDropTarget.h">
+						</File>
+						<Filter
+							Name="musikPropTree"
+							Filter="">
+							<File
+								RelativePath=".\3rdparty\musikPropTree.cpp">
+							</File>
+							<File
+								RelativePath=".\3rdparty\musikPropTree.h">
+							</File>
+							<File
+								RelativePath=".\3rdparty\musikPropTreeItem.cpp">
+							</File>
+							<File
+								RelativePath=".\3rdparty\musikPropTreeItem.h">
+							</File>
+						</Filter>
+					</Filter>
+					<Filter
+						Name="musikNowPlayingCtrl"
+						Filter="">
+						<File
+							RelativePath=".\musikNowPlayingCtrl.cpp">
+						</File>
+						<File
+							RelativePath=".\musikNowPlayingCtrl.h">
+						</File>
+						<Filter
+							Name="musikNowPlayingInfo"
+							Filter="">
+							<File
+								RelativePath=".\musikDynamicText.cpp">
+							</File>
+							<File
+								RelativePath=".\musikDynamicText.h">
+							</File>
+							<File
+								RelativePath=".\musikNowPlayingInfo.cpp">
+							</File>
+							<File
+								RelativePath=".\musikNowPlayingInfo.h">
+							</File>
+						</Filter>
+						<Filter
+							Name="musikVolumeCtrl"
+							Filter="">
+							<File
+								RelativePath=".\musikVolumeCtrl.cpp">
+							</File>
+							<File
+								RelativePath=".\musikVolumeCtrl.h">
+							</File>
+						</Filter>
+						<Filter
+							Name="musikTimeCtrl"
+							Filter="">
+							<File
+								RelativePath=".\musikTimeCtrl.cpp">
+							</File>
+							<File
+								RelativePath=".\musikTimeCtrl.h">
+							</File>
+						</Filter>
+					</Filter>
+					<Filter
+						Name="musikSelectionCtrl"
+						Filter="">
+						<File
+							RelativePath=".\musikSelectionCtrl.cpp">
+						</File>
+						<File
+							RelativePath=".\musikSelectionCtrl.h">
 						</File>
 					</Filter>
 				</Filter>
@@ -353,30 +344,43 @@
 						RelativePath=".\musikTrackCtrl.h">
 					</File>
 				</Filter>
+			</Filter>
+			<Filter
+				Name="Functors"
+				Filter="">
+				<File
+					RelativePath=".\MainFrmFunctor.h">
+				</File>
+				<File
+					RelativePath=".\musikBatchAddFunctor.h">
+				</File>
+				<File
+					RelativePath=".\musikRemoveOldFunctor.h">
+				</File>
+			</Filter>
+			<Filter
+				Name="Dialogs"
+				Filter="">
 				<Filter
-					Name="musikThreadCtrl"
+					Name="musikFileDrop"
 					Filter="">
+					<File
+						RelativePath=".\musikFileDrop.cpp">
+					</File>
+					<File
+						RelativePath=".\musikFileDrop.h">
+					</File>
 				</Filter>
-			</Filter>
-			<Filter
-				Name="musikSaveStdPlaylist"
-				Filter="">
-				<File
-					RelativePath=".\musikSaveStdPlaylist.cpp">
-				</File>
-				<File
-					RelativePath=".\musikSaveStdPlaylist.h">
-				</File>
-			</Filter>
-			<Filter
-				Name="musikFileDrop"
-				Filter="">
-				<File
-					RelativePath=".\musikFileDrop.cpp">
-				</File>
-				<File
-					RelativePath=".\musikFileDrop.h">
-				</File>
+				<Filter
+					Name="musikSaveStdPlaylist"
+					Filter="">
+					<File
+						RelativePath=".\musikSaveStdPlaylist.cpp">
+					</File>
+					<File
+						RelativePath=".\musikSaveStdPlaylist.h">
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 		<Filter
