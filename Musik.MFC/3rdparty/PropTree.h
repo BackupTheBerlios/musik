@@ -82,7 +82,7 @@ typedef struct _NMPROPTREE
 
 class CPropTree : public CWnd
 {
-	// so they can access the prefs
+	// so they can access the musik prefs
 	friend class CPropTreeItem;
 	friend class CPropTreeList;
 
@@ -90,6 +90,11 @@ public:
 	// construct / destruct
 	CPropTree( CMusikPrefs* prefs );
 	virtual ~CPropTree();
+
+	// musik actions
+	void LockDrop(){ m_LockDrop = TRUE; }
+	void UnlockDrop(){ m_LockDrop = FALSE; }
+	BOOL IsDropLocked(){ return m_LockDrop; }
 
 	// overrides
 	BOOL Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID);
@@ -160,6 +165,7 @@ protected:
 
 	// musik prefs, used for being theme aware
 	CMusikPrefs* m_Prefs;
+	BOOL m_LockDrop;
 
 	// resize the child windows to fit the exact 
 	// dimensions the CPropTree control

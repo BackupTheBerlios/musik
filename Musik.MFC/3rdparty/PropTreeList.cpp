@@ -345,6 +345,9 @@ void CPropTreeList::OnLButtonDblClk(UINT, CPoint point)
 
 void CPropTreeList::OnMouseMove(UINT, CPoint point)
 {
+	if ( m_pProp->IsDropLocked() )
+		return;
+
 	if ( !m_bMouseTrack )
 	{
 		TRACKMOUSEEVENT tme;
@@ -357,24 +360,25 @@ void CPropTreeList::OnMouseMove(UINT, CPoint point)
 		m_bMouseTrack = true; 	
 	}
 
-	if ( m_HoverCurrent != m_pProp->HitTestEx( point ) )
+	// do not rely on CPoint, it can
+	// give us bogus data that crashes
+	CPoint ptCurr;
+	GetCursorPos( &ptCurr );
+	ScreenToClient( &ptCurr );
+
+	CPropTreeItem* pItem = m_pProp->HitTestEx( ptCurr );
+	if ( m_HoverCurrent != pItem && pItem != NULL )
 	{
-		m_HoverCurrent = m_pProp->HitTestEx( point );
-		if ( m_HoverCurrent )
-		{
-			// mouse is over a new item
-			if ( m_HoverCurrent != m_HoverLast )
-			{
-				if ( m_HoverLast )
-					m_HoverLast->SetMouseOver( FALSE );
+		m_HoverLast = m_HoverCurrent;
+		m_HoverCurrent = pItem;
 
-				m_HoverCurrent->SetMouseOver( TRUE );
-				m_pProp->SetHoveredItem( m_HoverCurrent );
-				m_pProp->Invalidate();
-			}		
+		if ( m_HoverLast != NULL )
+			m_HoverLast->SetMouseOver( FALSE );
 
-			m_HoverLast = m_HoverCurrent;
-		}
+		m_HoverCurrent->SetMouseOver( TRUE );
+
+		m_pProp->SetHoveredItem( m_HoverCurrent );
+		m_pProp->Invalidate();
 	}
 }
 

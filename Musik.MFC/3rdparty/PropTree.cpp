@@ -78,7 +78,8 @@ CPropTree::CPropTree( CMusikPrefs* prefs ) :
 	m_nLastUID(1),
 	m_pFocus(NULL),
 	m_pHovered(NULL),
-	m_bDisableInput(FALSE)
+	m_bDisableInput(FALSE),
+	m_LockDrop(FALSE)
 {
 	m_Root.Expand();
 

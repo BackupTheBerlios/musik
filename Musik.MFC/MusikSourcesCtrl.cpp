@@ -134,6 +134,8 @@ void CMusikSourcesCtrl::LoadDynPlaylists()
 
 void CMusikSourcesCtrl::OnDropFiles(HDROP hDropInfo)
 {
+	LockDrop();
+
 	size_t nNumFiles;
 	TCHAR szNextFile [MAX_PATH];
 	
@@ -171,7 +173,7 @@ void CMusikSourcesCtrl::OnDropFiles(HDROP hDropInfo)
 	// show
 	LoadStdPlaylists();
 
-	CPropTree::OnDropFiles(hDropInfo);
+	UnlockDrop();
 }
 
 ///////////////////////////////////////////////////
