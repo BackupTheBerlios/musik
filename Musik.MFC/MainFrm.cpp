@@ -7,6 +7,9 @@
 #include "../Musik.Core/include/MusikLibrary.h"
 #include "../Musik.Core/include/StdString.h"
 
+#include <io.h>
+#include <Direct.h>
+
 #include "MainFrm.h"
 
 #ifdef _DEBUG
@@ -29,7 +32,10 @@ END_MESSAGE_MAP()
 CMainFrame::CMainFrame()
 {
 	InitPaths();
+
 	m_Library = new CMusikLibrary( ( CStdString )m_Database );
+	m_Prefs = new CMusikPrefs( m_PrefsIni );
+
 	//m_hIcon16 = ( HICON )LoadImage( AfxGetApp()->m_hInstance, MAKEINTRESOURCE( IDI_ICON16 ), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR );
 	//m_hIcon32 = ( HICON )LoadImage( AfxGetApp()->m_hInstance, MAKEINTRESOURCE( IDI_ICON32 ), IMAGE_ICON, 32, 32, LR_DEFAULTCOLOR );
 }
@@ -37,6 +43,7 @@ CMainFrame::CMainFrame()
 CMainFrame::~CMainFrame()
 {
 	delete m_Library;
+	delete m_Prefs;
 
 	for ( int i = 0; i < 4; i++ )
 		delete m_wndSelectionBars[i];
@@ -51,7 +58,36 @@ void CMainFrame::InitPaths()
 	m_UserDir = buffer;
 	m_UserDir += _T( "\\.Musik\\" );
 
+	RecurseMkDir( m_UserDir.GetBuffer() );
+
 	m_Database = m_UserDir + _T( "musiklib.db" );
+	m_PrefsIni = m_UserDir + _T( "musikprefs.ini" );
+}
+
+bool CMainFrame::RecurseMkDir( char* pszDir )
+{
+    char*   pszLastSlash;
+    char    cTmp;
+
+	if( _access( pszDir, 0 ) != -1 )
+        return true;
+
+    pszLastSlash = strrchr( pszDir, '\\' );
+    if ( pszLastSlash )
+    {
+        cTmp = *pszLastSlash;
+        *pszLastSlash = '\0';
+
+        RecurseMkDir( pszDir );
+
+        *pszLastSlash = cTmp;
+    }
+
+
+    if ( _mkdir( pszDir ) == -1 )
+		return false;
+
+    return true;
 }
 
 void CMainFrame::DockBarLeftOf( CSizingControlBar* Bar, CSizingControlBar* LeftOf )

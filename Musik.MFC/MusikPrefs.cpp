@@ -9,5 +9,5 @@ CMusikPrefs::CMusikPrefs( CString filename )
 
 CMusikPrefs::~CMusikPrefs()
 {
-
+    delete config;
 }

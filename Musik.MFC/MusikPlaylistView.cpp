@@ -17,6 +17,7 @@ CMusikPlaylistView::CMusikPlaylistView( CMusikLibrary* library )
 
 CMusikPlaylistView::~CMusikPlaylistView()
 {
+	delete m_Playlist;
 }
 
 

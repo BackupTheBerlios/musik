@@ -2,6 +2,7 @@
 
 #include "MusikSourcesCtrl.h"
 #include "MusikPlaylistCtrl.h"
+#include "MusikPrefs.h"
 
 #include "MusikSourcesBar.h"
 #include "MusikPlaylistView.h"
@@ -40,8 +41,11 @@ private:
 
 protected:
 	CMusikLibrary* m_Library;
+	CMusikPrefs* m_Prefs;
+
 	CString m_UserDir;
 	CString m_Database;
+	CString m_PrefsIni;
 
 	CMusikPlaylistView* m_wndView;
 	CMusikSourcesBar m_wndSourcesBar;
@@ -54,9 +58,10 @@ protected:
 public:
 	void DockBarLeftOf( CSizingControlBar* Bar, CSizingControlBar* LeftOf );
 
-private:
-
 protected:
+	bool RecurseMkDir( char* pszDir );
+
+private:
 
 //-------------------------------------------------//
 //--- overrides									---//

@@ -10,8 +10,13 @@ public:
 	CMusikPrefs( CString filename );
 	~CMusikPrefs();
 
+	void LoadPrefs();
+	void SavePrefs();
+
 protected:
 	CIniReader* config;
 
 private:
+
+
 };
