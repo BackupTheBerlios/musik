@@ -86,12 +86,12 @@ public:
 
 	//--- button down events (win32) ---//
 	#ifdef __WXMSW__
-	CBtnDownEvt *pPrevEvt;
-	CBtnDownEvt *pNextEvt;
-	CBtnDownEvt *pPlayEvt;
-	CBtnDownEvt *pPauseEvt;
-	CBtnDownEvt *pStopEvt;
-	CBtnDownEvt *pVolumeEvt;
+		CBtnDownEvt *pPrevEvt;
+		CBtnDownEvt *pNextEvt;
+		CBtnDownEvt *pPlayEvt;
+		CBtnDownEvt *pPauseEvt;
+		CBtnDownEvt *pStopEvt;
+		CBtnDownEvt *pVolumeEvt;
 	#endif
 
 	//--- funcs ---//

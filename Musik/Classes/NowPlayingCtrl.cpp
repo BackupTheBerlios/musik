@@ -294,7 +294,9 @@ void CNowPlayingCtrl::ResetInfo()
 
 void CNowPlayingCtrl::UpdateInfo( wxString sFilename )
 {
-	Freeze();
+	stSong->Freeze();
+	stArtist->Freeze();
+	stCurtime->Freeze();
 
 	//--- first things first, verify data in song ---//
 	CMusikSong song;
@@ -317,7 +319,9 @@ void CNowPlayingCtrl::UpdateInfo( wxString sFilename )
 	stArtist->SetLabel( song.Artist );
 	stCurtime->SetLabel( wxT( " - 0:00 " ) );
 
-	Thaw();
+	stSong->Thaw();
+	stArtist->Thaw();
+	stCurtime->Thaw();
 
 	Layout();
 }
