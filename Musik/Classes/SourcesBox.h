@@ -89,19 +89,19 @@ public:
 	//-------------------------//
 	//--- playlist routines ---//
 	//-------------------------//
+	void AddMissing			( wxArrayString playlists );
 	void NewPlaylist		( wxString sName, wxString sVal, int nType );
-	bool PlaylistExists		( wxString sName );
-	bool PlaylistVisible	( wxString sFilename );
-	void AddMissing			( wxString sName );
+	bool PlaylistExists		( wxString sName, int type = MUSIK_SOURCES_PLAYLIST_STANDARD );
 	void FilenameToSources	( wxString* sFilename );
 	void SourcesToFilename	( wxString* sSources, int type = MUSIK_SOURCES_PLAYLIST_STANDARD );
+	int  FindInSources		( wxString sName, int nType );
 
 	//---standard / dynamic ---//
 	bool CreateStdPlaylist			( wxString sName, wxString sSongs );
 	bool CreateDynPlaylist			( wxString sName );
     void AppendStdPlaylist			( wxString sName, wxString sSongs );
 	void RewriteStdPlaylist			();
-	void UpdateDynPlaylist			( wxString sName = wxT(""), int nIndex = -1 );
+	void UpdateDynPlaylist			( int nIndex = -1 );
 	wxArrayString LoadStdPlaylist	( wxString sName );
 	wxString LoadDynPlaylist		( wxString sName );
 	bool PlaylistToFile				( wxString sName, wxString* sItems, int type, bool bDelOld = true );
