@@ -42,13 +42,12 @@ CMainFrame::CMainFrame()
 
 CMainFrame::~CMainFrame()
 {
+	for ( int i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
+		delete m_wndSelectionBars[i];
+	delete m_wndView;
+
 	delete m_Library;
 	delete m_Prefs;
-
-	for ( int i = 0; i < 4; i++ )
-		delete m_wndSelectionBars[i];
-
-	delete m_wndView;
 }
 
 void CMainFrame::InitPaths()
@@ -143,7 +142,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	//-------------------------------------------------//
 	//--- selection controls						---//
 	//-------------------------------------------------//
-	for ( size_t i = 0; i < 4; i++ )
+	for ( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
 	{
 		m_wndSelectionBars[i] = new CMusikSelectionBar( m_Library, i );
 		m_wndSelectionBars[i]->Create( _T( "Musik Selection Box" ), this, 123 );
