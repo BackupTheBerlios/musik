@@ -24,6 +24,7 @@ CMusikFXGauge::CMusikFXGauge( MusikFXFrame* parent, size_t nChannel, size_t nBan
 	m_Channel = nChannel;
 	m_BandID = nBandID;
 	m_Parent = parent;	
+	m_Dragging = false;
 }
 
 CMusikFXGauge::~CMusikFXGauge()
@@ -71,6 +72,7 @@ void CMusikFXGauge::SetEQ()
 
 void CMusikFXGauge::OnLeftDown( wxMouseEvent& event )
 {
+	m_Dragging = true;
 	CaptureMouse();
     SetFromMousePos( event );
 }
@@ -83,8 +85,12 @@ void CMusikFXGauge::OnMouseMove( wxMouseEvent& event )
 
 void CMusikFXGauge::OnLeftUp( wxMouseEvent& event )
 {
-	SetEQ();
-	ReleaseMouse();
+	if ( m_Dragging )
+	{
+		SetEQ();
+		ReleaseMouse();
+		m_Dragging = false;
+	}
 }
 
 void CMusikFXGauge::SetFromMousePos( wxMouseEvent& event )

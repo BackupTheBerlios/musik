@@ -35,6 +35,8 @@ public:
 	DECLARE_EVENT_TABLE()
 
 private:
+	bool m_Dragging;
+
 	MusikFXFrame *m_Parent;
 	size_t m_Channel;
 	size_t m_BandID;
