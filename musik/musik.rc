@@ -354,8 +354,7 @@ BEGIN
                     IDC_STATIC,12,36,222,24
     CTEXT           "website: http://www.musikcube.com\ne-mail: casey@bak.rr.com",
                     IDC_STATIC,12,174,222,18
-    CTEXT           "musikCube 0.3.0 CVS\nmusik:Core 0.3.0 CVS",IDC_STATIC,
-                    12,150,222,18
+    CTEXT           "musikCore a1\nmusikCube a1",IDC_STATIC,12,150,222,18
     CTEXT           "Project musik, including musik:Core and musikCube is copyright (C) Casey Langen 2003.  Project musik is open source under the BSD license. See license.txt for more information",
                     IDC_STATIC,12,198,222,30
     GROUPBOX        "",IDC_STATIC,6,2,234,232

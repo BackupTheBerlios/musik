@@ -497,6 +497,7 @@ LONG CmusikPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 	// calc label position
 	ir = drc;
 	ir.left += PROPTREEITEM_SPACE;
+	ir.top += 2;
 	
 	// draw label
 	if ( !m_sLabel.IsEmpty() )

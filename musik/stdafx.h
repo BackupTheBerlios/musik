@@ -43,7 +43,7 @@
 #include "3rdparty/sizecbar.h"
 
 #ifndef MUSIK_VERSION_STR
-#define MUSIK_VERSION_STR "musikCube 0.3.0 CVS (test23)" 
+#define MUSIK_VERSION_STR "musikCube a1" 
 #endif
 
 #include <shlwapi.h>

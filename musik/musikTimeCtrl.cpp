@@ -266,6 +266,7 @@ void CmusikTimeCtrl::OnNewSong()
 
 		return;
 	}
+
 	else if ( !m_Player->IsPlaying() )
 	{
 		CString sTimeStr = m_Player->GetTimeStr( m_Player->GetDuration( MUSIK_TIME_MS ) );

@@ -1,14 +1,14 @@
-musik Todo list:
+musikCube Todo list:
 
 1.  Edit Tag Dialog [avatar]
 2.  Dynamic Playlist Dialog [avatar]
 3.  Jukebox playlist type [dcarter/avatar]
 4.  Playlist info [avatar]
-5.  Delete songs
-6.  Playlist column selection
+5.  Crossfader preset manager [avatar]
 
 Stuff Added 
 
+23. CmusikThread -> CmusikTask
 22. Preferences dialog.
 21. Directory synchronization 
 20. Right click menus implemented
