@@ -23,6 +23,8 @@ CMusikPlaylistCtrl::CMusikPlaylistCtrl( CMusikLibrary* library, CMusikPrefs* pre
 	m_Prefs		= prefs;
 	m_Playlist	= playlist;
 
+	m_RatingWidth = -1;
+
 	m_SongInfoCache = new CMusikDynDspInfo( m_Playlist, m_Library );
 
 	InitFonts();
@@ -209,6 +211,15 @@ void CMusikPlaylistCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 		CDC *pDC = CDC::FromHandle(pLVCD->nmcd.hdc);
 		int nSubType = m_Prefs->GetPlaylistCol( pLVCD->iSubItem );
 
+		// if this value is uninitialized we need to find
+		// it... it is the width of the rating font
+		if ( m_RatingWidth == -1 )
+		{
+			pDC->SelectObject( m_Bullets );
+			CSize size = pDC->GetOutputTextExtent( _T( "-----" ) );
+			m_RatingWidth = size.cx;
+		}
+
 		if ( nSubType == MUSIK_LIBRARY_TYPE_RATING )
 		{
 			pDC->SelectObject( m_Bullets );
@@ -335,9 +346,15 @@ void CMusikPlaylistCtrl::OnNMClick(NMHDR *pNMHDR, LRESULT *pResult)
 			CRect sub_item_rect;
 			GetSubItemRect( hit_test.iItem, hit_test.iSubItem, LVIR_BOUNDS, sub_item_rect );
 
-			int nRating = ( ( ptCurr.x * 100 ) / ( m_Prefs->GetPlaylistColWidth( hit_test.iSubItem ) ) ) / 20;
-            m_Library->SetSongRating( m_Playlist->items()->at( hit_test.iItem ).GetID(), nRating );	
+			int nRating;
+			if ( ptCurr.x <= 6 )
+				nRating = 0;
+			else if ( ptCurr.x >= m_RatingWidth )
+				nRating = 5;
+			else
+				nRating = ( ( ptCurr.x - 6 ) / ( m_RatingWidth / 5 ) ) + 1;
 
+            m_Library->SetSongRating( m_Playlist->items()->at( hit_test.iItem ).GetID(), nRating );	
 			if ( m_SongInfoCache->ResyncItem( m_Playlist->items()->at( hit_test.iItem ).GetID() ) )
 				RedrawItems( hit_test.iItem, hit_test.iItem );
 		}
