@@ -292,7 +292,9 @@ void CmusikPlaylistCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 
 		else
 		{
-			if ( m_Player->GetCurrPlaying()->GetID() == m_Playlist->GetSongID( pLVCD->nmcd.dwItemSpec ) )
+			if ( m_Player->GetCurrPlaying()->GetID() == m_Playlist->GetSongID( pLVCD->nmcd.dwItemSpec ) && 
+				GetPlaylist() == m_Player->GetPlaylist() && 
+				pLVCD->nmcd.dwItemSpec == m_Player->GetIndex() )
 				pDC->SelectObject( m_BoldFont );
 			else
 				pDC->SelectObject( m_ItemFont );
