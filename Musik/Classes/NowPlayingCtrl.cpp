@@ -57,9 +57,10 @@ CNowPlayingCtrl::CNowPlayingCtrl( wxWindow *parent )
 	//--- title / artist / time ---//
 	//-----------------------------//
 	//--- now playing static text objects ---//
-	stSong			= new wxStaticText	( pLeftPanel, -1, _( "Playback Stopped" ),	wxPoint( 0, 0 ), wxSize( 0, 0 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
-	stArtist		= new wxStaticText	( pLeftPanel, -1, _( "Artist Name" ),			wxPoint( 0, 0 ), wxSize( 0, 0 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
-	stCurtime		= new wxStaticText	( pLeftPanel, -1, wxT( " - 0:00" ),			wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
+	stSong			= new wxStaticText	( pLeftPanel, -1, _( "" ),	wxPoint( 0, 0 ), wxSize( 0, 0 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
+	stArtist		= new wxStaticText	( pLeftPanel, -1, _( "" ),	wxPoint( 0, 0 ), wxSize( 0, 0 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );
+	stCurtime		= new wxStaticText	( pLeftPanel, -1, _( "" ),	wxPoint( -1, -1 ), wxSize( -1, -1 ), wxALIGN_LEFT | wxTRANSPARENT_WINDOW );	
+
 	//--- fonts ---//
 	stSong->SetFont		( g_fntSong );
 	stArtist->SetFont	( g_fntArtist );
@@ -126,12 +127,12 @@ CNowPlayingCtrl::CNowPlayingCtrl( wxWindow *parent )
 	//--- sizer for artist and time ---//
 	//---------------------------------//
 	hsArtistTime = new wxBoxSizer( wxHORIZONTAL );
-	hsArtistTime->Add( stArtist, 0, wxEXPAND | wxADJUST_MINSIZE | wxALIGN_CENTRE_VERTICAL );
-	hsArtistTime->Add( stCurtime, 0, wxEXPAND | wxADJUST_MINSIZE | wxALIGN_CENTRE_VERTICAL );
+	hsArtistTime->Add( stArtist, 0, wxADJUST_MINSIZE /*| wxEXPAND /*| wxALIGN_CENTRE_VERTICAL*/ );
+	hsArtistTime->Add( stCurtime, 0, wxADJUST_MINSIZE /*| wxEXPAND | wxALIGN_CENTRE_VERTICAL*/ );
 
 	//--- song title, artist and time ---//
 	vsLeftCol = new wxBoxSizer( wxVERTICAL );
-	vsLeftCol->Add( stSong, 0, wxADJUST_MINSIZE | wxEXPAND | wxBOTTOM, 4 );
+	vsLeftCol->Add( stSong, 0, wxADJUST_MINSIZE /*| wxEXPAND | wxBOTTOM*/, 4 );
 	vsLeftCol->Add( hsArtistTime, 0, wxEXPAND );
 
 	pLeftPanel->SetSizerAndFit( vsLeftCol );
@@ -151,7 +152,7 @@ CNowPlayingCtrl::CNowPlayingCtrl( wxWindow *parent )
 	pRightPanel->SetSizerAndFit( vsRightCol );
 
 	hsCols = new wxBoxSizer( wxHORIZONTAL );
-	hsCols->Add( pLeftPanel,	0, wxADJUST_MINSIZE | wxEXPAND | wxALL, 2	);
+	hsCols->Add( pLeftPanel,	0, wxADJUST_MINSIZE /*| wxEXPAND*/ | wxALL, 2	);
 	hsCols->Add( 0, 0,			1, wxEXPAND);
 	hsCols->Add( pRightPanel,	0, wxEXPAND | wxALL, 2	);
 
@@ -160,6 +161,10 @@ CNowPlayingCtrl::CNowPlayingCtrl( wxWindow *parent )
 	pSecTimer = NULL;
 	StartTimer();
 	g_TimeSeeking = false;
+
+	stSong->SetLabel	( _( "Playback Stopped" )	);
+	stArtist->SetLabel	( _( "No Artist" )			);
+	stCurtime->SetLabel	( _( " - 0:00" )			);
 }
 
 CNowPlayingCtrl::~CNowPlayingCtrl()
@@ -266,8 +271,6 @@ void CNowPlayingCtrl::SetTime( wxString sTimeStr )
 
 void CNowPlayingCtrl::UpdateInfo( wxString sFilename )
 {
-	this->Freeze();
-
 	//--- first things first, verify data in song ---//
 	CMusikSong song;
 	g_Library.GetSongFromFilename( sFilename, &song );
@@ -289,9 +292,7 @@ void CNowPlayingCtrl::UpdateInfo( wxString sFilename )
 	stArtist->SetLabel( song.Artist );
 	stCurtime->SetLabel( wxT( " - 0:00 " ) );
 
-	this->Thaw();
 	Layout();
-
 }
 
 void CNowPlayingCtrl::PlayerStop( wxCommandEvent& WXUNUSED(event) )
