@@ -11,9 +11,10 @@
 */
 
 //--- For compilers that support precompilation, includes "wx/wx.h". ---//
-#include "wx/wxprec.h"
-#include "wx/textfile.h"
-#include "wx/cmdline.h"
+#include <wx/wxprec.h>
+#include <wx/textfile.h>
+#include <wx/cmdline.h>
+#include <wx/progdlg.h>
 #include "MusikApp.h"
 IMPLEMENT_APP( MusikApp )
 
@@ -78,7 +79,7 @@ void MusikApp::OnPlayFiles(const wxArrayString &aFilelist)
 	bRecursiveEntry = true;
 	if(g_MusikFrame)
 	{
-		g_MusikFrame->AutoUpdate(aFilelist,true);
+		g_MusikFrame->AutoUpdate(aFilelist,MUSIK_UpdateFlags::InsertFilesIntoPlayer|MUSIK_UpdateFlags::PlayFiles);
 	}
 	bRecursiveEntry = false;
 }
@@ -128,6 +129,9 @@ bool MusikApp::OnInit()
 		pConn->Poke(wxT("RaiseFrame"),NULL,0,wxIPC_PRIVATE);
 		return false;
 	}
+
+	wxImage::AddHandler(new wxPNGHandler);
+	wxImage::AddHandler(new wxJPEGHandler);
 	//--- setup our home dir ---//
 	if ( !wxDirExists( MUSIK_HOME_DIR ) )
 		wxMkdir( MUSIK_HOME_DIR );
@@ -195,7 +199,7 @@ bool MusikApp::OnInit()
 	{	if(Prefs.bAutoAdd)
 			pMain->AutoUpdate();
 		if(arrParams.GetCount() > 0)
-			pMain->AutoUpdate(arrParams,true);
+			pMain->AutoUpdate(arrParams,MUSIK_UpdateFlags::InsertFilesIntoPlayer|MUSIK_UpdateFlags::PlayFiles);
 	}
 	else
 	{// as standard select now playing, its faster than selecting the library.
@@ -266,4 +270,84 @@ wxConnectionBase * MusikAppServer::OnAcceptConnection(const wxString& WXUNUSED(t
 {
 
 	return new MusikAppConnection;
+}
+
+
+
+/*
+What could be improved here:
+-Option to prepend a numerical value to the destination filename to maintain 
+the same order as the playlist
+-Option to create a directory in the destination directory based on playlist name
+-A progress dialog
+SiW
+*/
+void MusikApp::CopyFiles(const CMusikSongArray &songs)
+{
+	//--------------------------------//
+	//--- first choose a directory ---//
+	//--------------------------------//
+	wxFileName destdir;
+	wxDirDialog dirdlg( g_MusikFrame, _("Please choose location to copy songs to:"), wxT(""), wxDD_NEW_DIR_BUTTON );
+	if ( dirdlg.ShowModal() == wxID_OK )
+		destdir.AssignDir(dirdlg.GetPath());
+	else
+		return;
+	wxLongLong llFree;
+	wxGetDiskSpace(destdir.GetFullPath(),NULL,&llFree);
+	wxLongLong llNeeded =  GetTotalFilesize(songs);
+	if(llFree  < llNeeded)
+	{
+		wxLongLong_t  ToLessBytes = llNeeded.GetValue() - llFree.GetValue();
+		wxString  sToLessBytes = wxString::Format(wxT("%")wxLongLongFmtSpec wxT("d"), ToLessBytes);
+		// not enough free space
+		wxString errmsg = wxString::Format(_("There is not enough free space in directory \"%s\". You need %s bytes more free. Continue nevertheless?"),(const wxChar *)destdir.GetFullPath(),(const wxChar *)sToLessBytes);
+		if(wxMessageBox(errmsg,	_("File copy warning"),wxYES|wxNO|wxCENTER|wxICON_EXCLAMATION ) == wxNO)
+		{
+			return;
+		}
+	}
+
+
+	//-----------------------------------------------------//
+	//--- now just loop through the files and copy them ---//
+	//-----------------------------------------------------//
+
+	wxProgressDialog dialog(_T("Copy files dialog"),
+		_T("An informative message"),
+		100,    // range
+		g_MusikFrame,   // parent
+		wxPD_CAN_ABORT |
+		wxPD_APP_MODAL |
+		// wxPD_AUTO_HIDE | -- try this as well
+		wxPD_ELAPSED_TIME |
+		wxPD_ESTIMATED_TIME |
+		wxPD_REMAINING_TIME);
+
+	wxLongLong llRemaining = llNeeded;
+
+	for ( size_t n = 0; n < songs.GetCount(); n++ )
+	{
+		const wxFileName & sourcename = songs[n].MetaData.Filename;
+		wxFileName destname( sourcename );
+		destname.SetPath(destdir.GetPath(0));   // GetPath(0) because the default is GetPath(int flags = wxPATH_GET_VOLUME,
+		destname.SetVolume(destdir.GetVolume());	  // i do it this complicated way, because wxFileName::SetPath() is buggy, as it does not handle the volume of path
+		wxLongLong llPercent = ((llNeeded - llRemaining) * wxLL(100) /llNeeded );
+		
+		if(!dialog.Update(llPercent.ToLong(),wxString::Format(_("copying %s"),(const wxChar *)sourcename.GetFullPath())))
+		{
+			break;
+		}
+		if(!wxCopyFile( sourcename.GetFullPath(), destname.GetFullPath()))
+		{
+
+			wxString errmsg = wxString::Format(_("Failed to copy file %s. Continue?"),(const wxChar *)sourcename.GetFullPath());
+			if(wxMessageBox(errmsg,	_("File copy error"),wxYES|wxNO|wxCENTER|wxICON_ERROR ) == wxNO)
+				break;
+		}
+		llRemaining -= songs[n].MetaData.nFilesize;
+	}
+	dialog.Update(99,wxT(""));	// this is needed to make the gauge fill the whole area.
+	dialog.Update(100,wxT(""));
+
 }

@@ -64,7 +64,6 @@ CMusikPlayer::CMusikPlayer()
 	m_StartingNext	= false;
 	m_Stopping		= false;
 	m_SongIndex		= 0;
-	m_Channels		= -1;
 	m_CrossfadeType	= 0;
 	m_DSP			= NULL;
 	m_Playmode = MUSIK_PLAYMODE_NORMAL;
@@ -83,6 +82,7 @@ CMusikPlayer::CMusikPlayer()
 	m_NETSTREAM_last_read_percent = 0;
 	m_nLastSongTime = 0;
 	m_bSuppressAutomaticSongPicking = false;
+	m_bPostPlayRestartInProgress = false;
 }
 
 void CMusikPlayer::Init(bool bSuppressAutoPlay)
@@ -340,7 +340,7 @@ void CMusikPlayer::_SetMetaData(char *name, char *value)
 		m_MetaDataSong.MetaData.nTracknum = atoi(value);
 	}
 
-	::wxLogDebug(wxT("metadate received: name=%s,value=%s"),(const wxChar*)sMetadataName,(const wxChar*)value);
+//	::wxLogDebug(wxT("metadate received: name=%s,value=%s"),(const wxChar*)sMetadataName,(const wxChar*)value);
 }
 void CMusikPlayer::_UpdateNetstreamMetadata(wxCommandEvent& WXUNUSED(event))
 {
@@ -364,15 +364,19 @@ void CMusikPlayer::_UpdateNetstreamMetadata(wxCommandEvent& WXUNUSED(event))
 }
 void CMusikPlayer::_PostPlayRestart( int nStartPos )
 {
+		if(m_bPostPlayRestartInProgress)
+			return;
 		if(IsPlaying())
-			Stop();	 // stop current stream
+			Stop(false);	 // stop current stream
 		wxCommandEvent PlayRestartEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYER_PLAY_RESTART );
 		PlayRestartEvt.SetInt( nStartPos );
+		m_bPostPlayRestartInProgress = true;
 		wxPostEvent( this,  PlayRestartEvt);
 }   
 
 void CMusikPlayer::OnPlayRestart( wxCommandEvent& event )
 {//this method is used in case of a network problem when streaming
+		m_bPostPlayRestartInProgress = false;
 		Play(  m_SongIndex , event.GetInt() ); // start playing of current stream
 }
 bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
@@ -446,10 +450,7 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 		nFlags |= FSOUND_NONBLOCKING;
 
 	wxString sFilename;
-	if(_CurrentSongIsNetStream())
-		sFilename = FilenameAsUrl(m_CurrentSong.MetaData.Filename);
-	else
-		sFilename = m_CurrentSong.MetaData.Filename.GetFullPath();
+	sFilename = m_CurrentSong.MetaData.Filename.GetFullPath();
 
 	FSOUND_STREAM* pNewStream = FSOUND_Stream_Open( ( const char* )ConvW2A( sFilename ), nFlags , 0, 0 );
 	if(pNewStream == NULL)
@@ -505,8 +506,25 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 	//--- start playback on the new stream on	---//
 	//--- the designated channel.				---//
 	//---------------------------------------------//
-	m_Channels = FSOUND_Stream_PlayEx( FSOUND_FREE, pNewStream,NULL,TRUE);//start paused
-	if(m_Channels  == -1)
+	int retries = 2;
+	int nChannel = -1;
+	while( retries -- && (nChannel == -1))
+	{
+		nChannel = FSOUND_Stream_PlayEx( FSOUND_FREE, pNewStream,NULL,TRUE);//start paused
+		if(nChannel == -1)
+		{
+			wxCriticalSectionLocker lock(g_protectingStreamArrays);
+			if(g_ActiveChannels.GetCount())
+			{
+				FSOUND_Stream_Stop ( g_ActiveStreams[0] );
+				FSOUND_Stream_Close( g_ActiveStreams[0] );
+				g_ActiveStreams.RemoveAt(0);
+				g_ActiveChannels.RemoveAt(0);
+			}
+
+		}
+	}
+	if(nChannel  == -1)
 	{
 		wxMessageBox(_("Play failed, please try again."));
 		wxLogDebug(wxT("play failed:%s"),(const wxChar *) ConvA2W(FMOD_ErrorString(FSOUND_GetError())));
@@ -519,9 +537,9 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 	{
 		FSOUND_Stream_Net_SetMetadataCallback(pNewStream, MetadataCallback, this);
 	}
-	FSOUND_SetVolume( GetCurrChannel(), 0 );
+	FSOUND_SetVolume( nChannel, 0 );
 	FSOUND_Stream_SetTime( pNewStream, nStartPos * 1000 );
-	FSOUND_SetPaused(GetCurrChannel(), FALSE);
+	FSOUND_SetPaused(nChannel, FALSE);
 	g_FaderThread->CrossfaderAbort();
 	//---------------------------------------------//
 	//--- update the global arrays containing	---//
@@ -529,19 +547,8 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 	//---------------------------------------------//
 	{
 		wxCriticalSectionLocker lock(g_protectingStreamArrays);
-		for(size_t i = 0; i < g_ActiveChannels.GetCount();i++)
-		{
-			if(g_ActiveChannels[i] == GetCurrChannel())
-			{
-				FSOUND_Stream_Stop ( g_ActiveStreams[i] );
-				FSOUND_Stream_Close( g_ActiveStreams[i] );
-				g_ActiveStreams.RemoveAt(i);
-				g_ActiveChannels.RemoveAt(i);
-				break;
-			}
-		}
 		g_ActiveStreams.Add( pNewStream );
-		g_ActiveChannels.Add( GetCurrChannel() );
+		g_ActiveChannels.Add( nChannel );
 	}
 	m_Playing = true;
 
@@ -1311,13 +1318,6 @@ void CMusikPlayer::SetFadeStart()
 {
 	m_BeginFade = true;
 	m_Fading = true; 
-}
-
-
-
-int CMusikPlayer::GetCurrChannel()
-{
-	return m_Channels;
 }
 
 void CMusikPlayer::AddToPlaylist( CMusikSongArray & songstoadd ,bool bPlayFirstAdded )

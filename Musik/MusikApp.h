@@ -45,6 +45,7 @@ public:
 	virtual bool OnInit();
 	virtual int OnExit();
 	void OnPlayFiles(const wxArrayString &aFilelist);
+	void CopyFiles(const CMusikSongArray &songs);
 public:
 	CMusikPrefs			Prefs;
 	CMusikLibrary		Library;

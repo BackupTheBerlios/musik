@@ -38,7 +38,7 @@ class IPlaylistInfo
 {
 public:
 	virtual int				GetTotalPlayingTimeInSeconds()=0;
-	virtual double			GetTotalFilesize()=0;
+	virtual wxLongLong		GetTotalFilesize()=0;
 	virtual int				GetCount()=0;
 
 };
@@ -95,7 +95,7 @@ public:
 	void PlaySel		( wxListEvent&		WXUNUSED(event)	);
 
 
-	bool OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames);
+	wxDragResult OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames,wxDragResult def);
 	//------------------------//
 	//--- threading events ---//
 	//------------------------//
@@ -111,13 +111,12 @@ public:
 	wxString		GetSelFiles		();
 	void			GetSelItems		(wxArrayInt & aResult);
 	void			GetSelFilesList	( wxArrayString & aResult );
-	void			GetAllFilesList ( wxArrayString & aResult );
 	void			GetSelectedSongs( CMusikSongArray & aResult );
 	wxString 		GetFilename		( int nItem );
 	CMusikSongArray * GetPlaylist	();
 //IPlaylistInfo
 	int				GetTotalPlayingTimeInSeconds();
-	double			GetTotalFilesize();
+	wxLongLong		GetTotalFilesize();
 	int				GetCount() { return GetItemCount();}
 	//------------//
 	//--- sets ---//

@@ -28,6 +28,12 @@
 //--- threads ---//
 #include "../Threads/MusikTagThreads.h"
 
+int wxCMPFUNC_CONV NoCaseCompareFunc (const wxString& first,
+									  const wxString& second)
+{
+	return first.CmpNoCase(second);
+}
+
 BEGIN_EVENT_TABLE( MusikTagFrame, wxFrame )
 	EVT_CHAR_HOOK		(							MusikTagFrame::OnTranslateKeys			)
 	EVT_COMMAND_RANGE		( MUSIK_TAG_CHK_TAGFIRST,MUSIK_TAG_CHK_TAGLAST,wxEVT_COMMAND_CHECKBOX_CLICKED ,	MusikTagFrame::OnClickCheckTags		)
@@ -269,13 +275,18 @@ MusikTagFrame::MusikTagFrame( wxFrame* pParent, CPlaylistCtrl * pPlaylistctrl, i
 	// add standard id3v1 genres to array
 	for ( int i = 0; i < ID3_NR_OF_V1_GENRES; i++ )
 		arrGenre.Add(ConvA2W( ID3_v1_genre_description[i] )	);
+	// case sort first
 	arrGenre.Sort();
-	for ( size_t i = 0; i < arrGenre.GetCount(); i++ )	
+	// eliminate  double entrys
+	for ( size_t i = arrGenre.GetCount() - 1 ; i != (size_t)-1 ; i-- )	
 	{
 		if( i > 0 && arrGenre[i] == arrGenre[i-1])
-			continue; // skip double entrys
-		cmbGenre->Append( arrGenre[i]);
+			arrGenre.RemoveAt(i);
 	}
+	// no case sort
+	arrGenre.Sort(NoCaseCompareFunc);
+	cmbGenre->Append(arrGenre);
+
 }
 
 void MusikTagFrame::SetCaption()

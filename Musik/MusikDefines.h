@@ -13,6 +13,8 @@
 #ifndef MUSIKDEFINES_H
 #define MUSIKDEFINES_H
 
+#include "MusikVersion.h"
+
 // wx 2.4.2 compatiblity macros
 #if wxVERSION_NUMBER >= 2500  
 #define WXSYSTEMCOLOUR(x)	wxTheColourDatabase->Find(x)
@@ -45,33 +47,10 @@
 #define MUSIK_NOWPLAYING_TIMER	9997
 #define MUSIK_ACTIVITYCTRL		9998
 
-#define MUSIK_STRINGIZE2(x)  #x
-#define MUSIK_STRINGIZE(x)  wxT(MUSIK_STRINGIZE2(x))
-
-#define MUSIK_VERSION_MAJOR		0
-#define MUSIK_VERSION_MAJORSUB	3
-#define MUSIK_VERSION_MINOR		1
-#define MUSIK_VERSION_MINORSUB	1
-
-#define MUSIK_VERSION(ma,mas,mi,mis) ((((unsigned long)((char)ma))<<24) | (((unsigned long)((char)mas))<<16) | (((unsigned long)((char)mi))<<8) | (((unsigned long)((char)mis))))
-#define MUSIK_VERSION_CURRENT MUSIK_VERSION(MUSIK_VERSION_MAJOR,MUSIK_VERSION_MAJORSUB,MUSIK_VERSION_MINOR,MUSIK_VERSION_MINORSUB) 
-#ifdef __WXDEBUG__
-#define MUSIK_VERSION_DEBUG wxT("-DEBUG-")
-#else
-#define MUSIK_VERSION_DEBUG wxT("")
-#endif
-#define MUSIK_VERSION_ADDENDUM	wxT(" CVS")
-//#define MUSIK_VERSION_ADDENDUM	wxT("")
-							  
-#define MUSIK_VERSION_STR		MUSIK_STRINGIZE(MUSIK_VERSION_MAJOR) wxT(".") \
-								MUSIK_STRINGIZE(MUSIK_VERSION_MAJORSUB) wxT(".") \
-								MUSIK_STRINGIZE(MUSIK_VERSION_MINOR) wxT(".") \
-								MUSIK_STRINGIZE(MUSIK_VERSION_MINORSUB) MUSIK_VERSION_DEBUG \
-								MUSIK_VERSION_ADDENDUM
 
 #define MUSIKAPPNAME			wxT("wxMusik")
-#define MUSIKAPPNAME_VERSION	MUSIKAPPNAME wxT(" ") MUSIK_VERSION_STR
-#define MUSIKSERV_VERSION		MUSIKAPPNAME wxT("Serv ") MUSIK_VERSION_STR
+#define MUSIKAPPNAME_VERSION	MUSIKAPPNAME wxT(" ") MUSIK_FULL_VERSION_STR
+#define MUSIKSERV_VERSION		MUSIKAPPNAME wxT("Serv ") MUSIK_FULL_VERSION_STR
 //----------------------------------//
 //--- path stuff ~/.Musik/ vs ./ ---//
 //----------------------------------//
@@ -201,9 +180,7 @@ enum EMUSIK_MENU_ITEMS
 	MUSIK_MENU_VIEW_DIRTY_TAGS,
 	MUSIK_MENU_WRITE_TAGS,
 	MUSIK_MENU_WRITE_CLEAR_DIRTY,
-	MUSIK_MENU_PREFERENCES,
 	MUSIK_MENU_FX,
-  	MUSIK_MENU_EXIT,
 	MUSIK_MENU_SOURCES_STATE,
 	MUSIK_MENU_ACTIVITIES_STATE,
 	MUSIK_MENU_PLAYLISTINFO_STATE,
@@ -314,5 +291,14 @@ enum EMUSIK_PLAYMODE
 
 };
 
+struct MUSIK_UpdateFlags
+{
+	enum eUpdateFlags
+	{
+		InsertFilesIntoPlayer = 1,
+		EnquequeFilesIntoPlayer	= 2,
+		PlayFiles				=4
+	};
+};
 
 #endif//MUSIKDEFINES_H

@@ -20,6 +20,7 @@
 #include "MusikPrefsFrame.h"
 #include "MusikFXFrame.h"
 
+#include "../MusikAboutDlg.h"
 //--- globals ---//
 #include "../MusikGlobals.h"
 #include "../MusikUtils.h"
@@ -34,10 +35,11 @@ DECLARE_APP( MusikApp )
 #include <wx/filedlg.h>
 
 BEGIN_EVENT_TABLE(MusikFrame, wxFrame)
-	EVT_MENU					(MUSIK_MENU_PREFERENCES,			MusikFrame::OnPreferences			)	// File->Preferences
-	EVT_MENU					(MUSIK_MENU_EXIT,					MusikFrame::OnMenuClose				)	// File->Exit
+	EVT_MENU					(wxID_PREFERENCES,					MusikFrame::OnPreferences			)	// File->Preferences
+	EVT_MENU					(wxID_EXIT,							MusikFrame::OnMenuClose				)	// File->Exit
+	EVT_MENU					(wxID_ABOUT,						MusikFrame::OnMenuAbout				)	// Help->About
 	EVT_MENU					(MUSIK_MENU_SOURCES_STATE,			MusikFrame::OnSourcesState			)	// View->Show Sources
-	EVT_UPDATE_UI				(MUSIK_MENU_SOURCES_STATE,			MusikFrame::OnUpdateUISourcesState		)	
+	EVT_UPDATE_UI				(MUSIK_MENU_SOURCES_STATE,			MusikFrame::OnUpdateUISourcesState	)	
 	EVT_MENU					(MUSIK_MENU_ACTIVITIES_STATE,		MusikFrame::OnActivitiesState		)	// View->Show Selections
 	EVT_UPDATE_UI				(MUSIK_MENU_ACTIVITIES_STATE,		MusikFrame::OnUpdateUIActivitiesState)	
 	EVT_MENU					(MUSIK_MENU_PLAYLISTINFO_STATE,		MusikFrame::OnPlaylistInfoState		)	// View->Show Playlist Info
@@ -188,6 +190,12 @@ void MusikFrame::OnSetupPaths( wxCommandEvent& WXUNUSED(event) )
 	pMusikLibraryFrame->Show();
 }
 
+void MusikFrame::OnMenuAbout( wxCommandEvent &WXUNUSED(event) )
+{
+	CMusikAboutDlg d(this);
+	d.ShowModal();
+
+}
 void MusikFrame::OnPreferences( wxCommandEvent &WXUNUSED(event) )
 {
 	
@@ -471,3 +479,4 @@ void MusikFrame::OnSashDraggedActivityCtrl	(wxSashEvent & WXUNUSED(ev))
 	wxLayoutAlgorithm layout;
     layout.LayoutWindow(this,g_PlaylistBox);
 }
+

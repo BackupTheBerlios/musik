@@ -80,6 +80,7 @@ public:
 	//--------------------------//
 	wxCheckBox	*chkAutoScan;
 	wxCheckBox	*chkAutoPlayOnAppStart;
+	wxCheckBox	*chkAutoPlayOnDropFilesInPlaylist;
 #ifdef wxHAS_TASK_BAR_ICON
 	wxCheckBox	*chkHideOnMinimize;
 #endif

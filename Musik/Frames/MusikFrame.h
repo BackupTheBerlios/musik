@@ -67,6 +67,7 @@ public:
 	void OnSize						( wxSizeEvent	&	WXUNUSED(event) );
 	void OnClose					( wxCloseEvent&		WXUNUSED(event) );
 	void OnMenuClose				( wxCommandEvent&	WXUNUSED(event) ){ Close();};
+	void OnMenuAbout				( wxCommandEvent&	event);
 
 	void OnSetupPaths				( wxCommandEvent&	WXUNUSED(event) );
 	void OnPreferences				( wxCommandEvent&	event			);
@@ -143,7 +144,7 @@ public:
 	void	LibrarySimpleQueryDlg	();
 	void	LibrarySimpleQueryEdit	();
 
-	void	AutoUpdate	( const wxArrayString & Filenames = wxArrayString(),bool bPlayFilesAfterAdding = false);
+	void	AutoUpdate	( const wxArrayString & Filenames = wxArrayString(),DWORD flags = 0);
 	//--- tag related ---//
 	void	WriteTags				();
 

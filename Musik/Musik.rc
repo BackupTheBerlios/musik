@@ -10,6 +10,8 @@
 #define APSTUDIO_HIDDEN_SYMBOLS
 MUSICBOX                ICON                    "musik.ico"
 #include "wx/msw/wx.rc"
+#define wxT(x) x 
+#include "MusikVersion.h"
 #undef APSTUDIO_HIDDEN_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
@@ -33,6 +35,8 @@ BEGIN
     "#define APSTUDIO_HIDDEN_SYMBOLS\r\n"
     "MUSICBOX                ICON                    ""musik.ico""\r\n"
     "#include ""wx/msw/wx.rc""\r\n"
+	"#define wxT(x) x \r\n"
+	"#include ""MusikVersion.h""\r\n"
     "#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
     "\0"
 END
@@ -52,8 +56,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 0,3,1,1
- PRODUCTVERSION 0,3,1,1
+ FILEVERSION MUSIK_VERSION_MAJOR,MUSIK_VERSION_MAJORSUB,MUSIK_VERSION_MINOR,MUSIK_VERSION_MINORSUB
+ PRODUCTVERSION MUSIK_VERSION_MAJOR,MUSIK_VERSION_MAJORSUB,MUSIK_VERSION_MINOR,MUSIK_VERSION_MINORSUB
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -70,12 +74,15 @@ BEGIN
         BEGIN
             VALUE "Comments", "License for most of the code is BSD License. Source code is available from musik.berlios.de"
             VALUE "FileDescription", "wxMusik Application"
-            VALUE "FileVersion", "0, 3, 1, 1"
+            VALUE "FileVersion", MUSIK_VERSION_COMMA_STR
             VALUE "InternalName", "wxMusik"
             VALUE "LegalCopyright", "Copyright (C) 2004"
             VALUE "OriginalFilename", "wxMusik.exe"
             VALUE "ProductName", "wx Musik Application"
-            VALUE "ProductVersion", "0, 3, 1, 1"
+            VALUE "ProductVersion", MUSIK_VERSION_COMMA_STR
+#ifndef MUSIK_OFFICIAL_BUILD
+			VALUE "PrivateBuild",    MUSIK_VERSION_DEBUG MUSIK_VERSION_ADDENDUM "\0"
+#endif
         END
     END
     BLOCK "VarFileInfo"

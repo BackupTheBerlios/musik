@@ -402,42 +402,12 @@ What could be improved here:
 -Option to prepend a numerical value to the destination filename to maintain 
  the same order as the playlist
 -Option to create a directory in the destination directory based on playlist name
--A progress dialog
+
 SiW
 */
 void CSourcesListBox::CopyFiles( wxCommandEvent& WXUNUSED(event) )
 {
-	//--------------------------------//
-	//--- first choose a directory ---//
-	//--------------------------------//
-	wxString destdir;
-	wxDirDialog dirdlg( this, _("Please choose location to copy songs to:"), wxT(""), wxDD_NEW_DIR_BUTTON );
-	if ( dirdlg.ShowModal() == wxID_OK )
-		destdir = dirdlg.GetPath();
-	else
-		return;
-
-	//-----------------------------------------------------//
-	//--- now just loop through the files and copy them ---//
-	//-----------------------------------------------------//
-	wxArrayString filenames;
-	g_PlaylistBox->PlaylistCtrl().GetAllFilesList( filenames );
-
-	wxString sourcebasename, sourceext;
-	for ( size_t n = 0; n < filenames.GetCount(); n++ )
-	{
-		wxFileName sourcename( filenames.Item( n ) );
-		wxFileName destname( sourcename );
-		destname.SetPath(destdir);
-		if(!wxCopyFile( sourcename.GetFullPath(), destname.GetFullPath()))
-		{
-			
-			wxString errmsg = wxString::Format(_("Failed to copy file %s. Continue?"),(const wxChar *)sourcename.GetFullPath());
-			if(wxMessageBox(errmsg,	_("File copy error"),wxYES|wxNO|wxCENTER|wxICON_ERROR ) == wxNO)
-				break;
-		}
-	}
-
+	wxGetApp().CopyFiles(*g_PlaylistBox->PlaylistCtrl().GetPlaylist());
 }
 
 
@@ -540,7 +510,7 @@ void CSourcesListBox::UpdateSel( size_t index )
 		else if (  m_CurSel != -1 && nSelType == MUSIK_SOURCES_PLAYLIST_DYNAMIC )
 		{
 			wxString sQuery = LoadDynPlaylist( GetItemText( m_CurSel ) );
-			 wxGetApp().Library.QuerySongsWhere( sQuery, g_Playlist );
+			RealizeDynPlaylist(sQuery,g_Playlist);
 		}
 		else if ( m_CurSel != -1 && nSelType == MUSIK_SOURCES_NETSTREAM )
 		{
@@ -1103,7 +1073,7 @@ void CSourcesListBox::UpdateDynPlaylist( int nIndex )
 		m_SourcesList.Item( nIndex ) = wxT( "[d] " ) + sName;
 		PlaylistToFile( sName, &sQuery, MUSIK_SOURCES_PLAYLIST_DYNAMIC );
 
-		wxGetApp().Library.QuerySongsWhere( sQuery, g_Playlist );
+		RealizeDynPlaylist(sQuery,g_Playlist);
 		g_PlaylistBox->Update();
 	}
 }
@@ -1132,7 +1102,7 @@ wxString CSourcesListBox::PromptDynamicPlaylist( wxString sQuery )
 		_("(your popular tracks)\n")			 +
 		_T("lastplayed !='' and lastplayed >= julianday('now','start of month')\n")   +
 		_("(all songs played this month)");
-	wxTextEntryDialog dlg( this,sInfo , MUSIKAPPNAME_VERSION, sQuery );
+	wxMultiLineTextEntryDialog dlg( this,sInfo , MUSIKAPPNAME_VERSION, sQuery );
 
 	if ( dlg.ShowModal() == wxID_OK )
 		return dlg.GetValue();	
@@ -1193,7 +1163,7 @@ void CSourcesListBox::UpdateNetStream( int nIndex )
 	CMusikSong song;
 	LoadNetStream( sName,song );
 
-	wxString sAddress = PromptNetStreamAddress( FilenameAsUrl(song.MetaData.Filename) );
+	wxString sAddress = PromptNetStreamAddress(song.MetaData.Filename.GetFullPath() );
 
 	if ( sAddress != wxT( "" ) )
 	{
@@ -1271,10 +1241,21 @@ wxString CSourcesListBox::LoadDynPlaylist( wxString sName )
 	In.Open();
 	if ( !In.IsOpened() )
 		return wxT( "" );
-
-	sReturn = In.GetLine( 0 );
-
+	for ( size_t i = 0; i < In.GetLineCount(); i++ )
+	{
+		sReturn += In.GetLine( i );
+	}
 	return sReturn;
+}
+void CSourcesListBox::RealizeDynPlaylist(  const wxString & sQuery, CMusikSongArray & aReturn )
+{
+	wxString myQuery = sQuery;
+	if(sQuery.StartsWith(wxT("FROM "),&myQuery))
+	{
+		wxGetApp().Library.QuerySongsFrom( myQuery ,aReturn);
+	}
+	else
+		wxGetApp().Library.QuerySongsWhere( sQuery, aReturn );
 }
 void CSourcesListBox::LoadNetStream(wxString sName, CMusikSong & song )
 {
@@ -1433,7 +1414,7 @@ bool CSourcesListBox::AddSourceContentToNowPlaying(int nIndex)
 	else if ( nType == MUSIK_SOURCES_PLAYLIST_DYNAMIC )
 	{
 		wxString sQuery = LoadDynPlaylist( GetItemText( nIndex ) );
-		wxGetApp().Library.QuerySongsWhere( sQuery, songs );
+		RealizeDynPlaylist(sQuery,songs);
 	}
 	else if ( nType == MUSIK_SOURCES_NOW_PLAYING )
 	{

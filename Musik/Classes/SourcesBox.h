@@ -113,6 +113,7 @@ public:
 	void RewriteStdPlaylist			();
 	void UpdateDynPlaylist			( int nIndex );
 	void LoadStdPlaylist			( wxString sName, wxArrayString & aReturn );
+	void RealizeDynPlaylist			( const wxString & sQuery, CMusikSongArray & aReturn );
 	wxString LoadDynPlaylist		( wxString sName );
 	void LoadNetStream				(wxString sName, CMusikSong & song );
 	void UpdateNetStream			( int nIndex );

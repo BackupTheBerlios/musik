@@ -28,7 +28,12 @@
 #include <wx/filename.h>
 #include <wx/tokenzr.h>
 #include <wx/dir.h>
+#include "wx/defs.h"
 
+
+#if wxUSE_STATLINE
+#include "wx/statline.h"
+#endif
 
 
 class wxPlaylistTraverser : public wxDirTraverser
@@ -478,6 +483,18 @@ long GetRandomNumber(void)
 	return (long)(y>>1);
 }
 
+wxLongLong GetTotalFilesize(const CMusikSongArray &songs)
+{
+	wxLongLong filesize = 0;
+	for ( size_t i = 0; i < songs.GetCount(); i++ )
+	{
+		const CMusikSong &song = songs.Item( i );
+		filesize += song.MetaData.nFilesize;
+	}
+
+	return filesize;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 CNiceFilesize::CNiceFilesize()
@@ -895,3 +912,101 @@ bool MusikLogWindow::OnFrameClose(wxFrame * frame)
 	return TRUE;
 }
 
+static const int wxID_TEXT = 3000;
+
+BEGIN_EVENT_TABLE(wxMultiLineTextEntryDialog, wxDialog)
+EVT_BUTTON(wxID_OK, wxMultiLineTextEntryDialog::OnOK)
+END_EVENT_TABLE()
+
+IMPLEMENT_CLASS(wxMultiLineTextEntryDialog, wxDialog)
+
+wxMultiLineTextEntryDialog::wxMultiLineTextEntryDialog(wxWindow *parent,
+						   const wxString& message,
+						   const wxString& caption,
+						   const wxString& value ,
+						   long style ,
+						   const wxPoint& pos ,const wxSize & size )
+	:wxDialog(parent, -1, caption, pos, size,wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER | wxDIALOG_MODAL)
+	, m_value(value)
+{
+	m_dialogStyle = style;
+	m_value = value;
+
+	wxBeginBusyCursor();
+
+	wxBoxSizer *topsizer = new wxBoxSizer( wxVERTICAL );
+
+	// 1) text message
+	topsizer->Add( CreateTextSizer( message ), 0, wxALL, 10 );
+
+	// 2) text ctrl
+	m_textctrl = new wxTextCtrl(this, wxID_TEXT, value,
+		wxDefaultPosition, wxSize(400, 80),
+		(style & ~wxTextEntryDialogStyle)| wxTE_MULTILINE );
+	topsizer->Add( m_textctrl, 1, wxEXPAND | wxLEFT|wxRIGHT, 15 );
+
+#if wxUSE_VALIDATORS
+	wxTextValidator validator( wxFILTER_NONE, &m_value );
+	m_textctrl->SetValidator( validator );
+#endif
+	// wxUSE_VALIDATORS
+
+#if wxUSE_STATLINE
+	// 3) static line
+	topsizer->Add( new wxStaticLine( this, -1 ), 0, wxEXPAND | wxLEFT|wxRIGHT|wxTOP, 10 );
+#endif
+
+	// 4) buttons
+	topsizer->Add( CreateButtonSizer( style ), 0, wxCENTRE | wxALL, 10 );
+
+	SetAutoLayout( TRUE );
+	SetSizer( topsizer );
+
+	topsizer->SetSizeHints( this );
+	topsizer->Fit( this );
+
+	Centre( wxBOTH );
+
+	m_textctrl->SetSelection(-1, -1);
+	m_textctrl->SetFocus();
+
+	wxEndBusyCursor();
+}
+
+
+void wxMultiLineTextEntryDialog::OnOK(wxCommandEvent& WXUNUSED(event) )
+{
+#if wxUSE_VALIDATORS
+	if( Validate() && TransferDataFromWindow() ) 
+	{
+		EndModal( wxID_OK );
+	}
+#else
+	m_value = m_textctrl->GetValue();
+
+	EndModal(wxID_OK);
+#endif
+	// wxUSE_VALIDATORS
+}
+
+void wxMultiLineTextEntryDialog::SetValue(const wxString& val)
+{
+	m_value = val;
+
+	m_textctrl->SetValue(val);
+}
+
+#if wxUSE_VALIDATORS
+void wxMultiLineTextEntryDialog::SetTextValidator( long style )
+{
+	wxTextValidator validator( style, &m_value );
+	m_textctrl->SetValidator( validator );
+}
+
+void wxMultiLineTextEntryDialog::SetTextValidator( wxTextValidator& validator )
+{
+	m_textctrl->SetValidator( validator );
+}
+
+#endif
+// wxUSE_VALIDATORS

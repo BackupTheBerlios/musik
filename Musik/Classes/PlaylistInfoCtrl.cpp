@@ -80,15 +80,16 @@ void CPlaylistInfoCtrl::Update()
 		wxTimeSpan PlayTime( 0, 0, nPlaylistTime );
 		stRuntimeVal->SetLabel ( PlayTime.Format() );
 		wxString strsize( wxT("0.0 mb") );
-		double totsize = m_pIPlaylistInfo->GetTotalFilesize();
-		if ( totsize < 1024.0 )
-			strsize = wxString::Format( wxT("%.2f b"), totsize );
-		else if ( totsize < ( 1024.0 * 1024.0 ) )
-			strsize = wxString::Format( wxT("%.2f kb"), totsize / 1024.0 );
-		else if ( totsize < ( 1024.0 * 1024.0 * 1024.0 ) )
-			strsize = wxString::Format( wxT("%.2f mb"), totsize / 1024.0 / 1024.0 );
-		else if ( totsize < ( 1024.0 * 1024.0 * 1024.0 * 1024.0 ) )
-			strsize = wxString::Format( wxT("%.2f gb"), totsize / 1024.0 / 1024.0 / 1024.0 );
+		double kbsize = 1024.0;
+		double totsize = m_pIPlaylistInfo->GetTotalFilesize().GetValue();
+		if ( totsize < kbsize )
+			strsize = wxString::Format( wxT("%.2f b"),totsize );
+		else if ( totsize < ( kbsize * kbsize ) )
+			strsize = wxString::Format( wxT("%.2f kb"), totsize / kbsize );
+		else if ( totsize < ( kbsize * kbsize * kbsize ) )
+			strsize = wxString::Format( wxT("%.2f mb"), totsize / kbsize / kbsize);
+		else if ( totsize < ( kbsize * kbsize * kbsize * kbsize ) )
+			strsize = wxString::Format( wxT("%.2f gb"), totsize / kbsize / kbsize / kbsize );
 		stFilesizeVal->SetLabel( strsize );
 	}
 	Layout();

@@ -58,14 +58,14 @@ END_EVENT_TABLE()
 //---  gets called automatically  ---//
 //--- on startup to add new files ---//
 //-----------------------------------//
-MusikLibraryFrame::MusikLibraryFrame( wxFrame* pParent ,const wxArrayString &arrFilenamesToScan, bool bPlayFilesAfterAdding)
+MusikLibraryFrame::MusikLibraryFrame( wxFrame* pParent ,const wxArrayString &arrFilenamesToScan,DWORD flags)
 	: wxFrame( pParent, -1, _("Searching for and Adding New Files"), wxPoint( -1, -1 ), wxSize( 600, 48 ), wxCAPTION | wxFRAME_FLOAT_ON_PARENT | wxFRAME_NO_TASKBAR | wxCLIP_CHILDREN )
 {
 	m_arrScannedFiles = arrFilenamesToScan;
 	//------------------------------//
 	//--- initialize needed vars ---//
 	//------------------------------//
-	m_bPlayFilesAfterAdding =  bPlayFilesAfterAdding;
+	m_flagsUpdate =  flags;
 	m_Close			= true;
 	m_AutoStart		= true;
 	m_FirstStart	= false;
@@ -160,7 +160,7 @@ MusikLibraryFrame::MusikLibraryFrame( wxFrame* pParent, const wxPoint &pos, cons
 	m_AutoStart		= false;
 	m_Close			= false;
 	m_MenuCreated	= true;
-	m_bPlayFilesAfterAdding = false;
+	m_flagsUpdate = 0;
 	//--------------------//
 	//--- center frame ---//
 	//--------------------//
@@ -646,13 +646,16 @@ void MusikLibraryFrame::OnThreadEnd( wxCommandEvent& event )
 		if(bDatabaseChanged)
 			g_ActivityAreaCtrl->ResetAllContents();
 
-		if(m_bPlayFilesAfterAdding && m_arrScannedFiles.GetCount())
+		if((m_flagsUpdate & (MUSIK_UpdateFlags::InsertFilesIntoPlayer | MUSIK_UpdateFlags::EnquequeFilesIntoPlayer)) && m_arrScannedFiles.GetCount())
 		{
 			CMusikSongArray songs;
 			wxGetApp().Library.GetFilelistSongs( m_arrScannedFiles, songs );
 			if(	songs.GetCount())
 			{
-				wxGetApp().Player.InsertToPlaylist(songs,true);
+				if(m_flagsUpdate & MUSIK_UpdateFlags::InsertFilesIntoPlayer )
+					wxGetApp().Player.InsertToPlaylist(songs,(MUSIK_UpdateFlags::PlayFiles & m_flagsUpdate) == MUSIK_UpdateFlags::PlayFiles);
+				else if(m_flagsUpdate & MUSIK_UpdateFlags::EnquequeFilesIntoPlayer )
+					wxGetApp().Player.AddToPlaylist(songs,(MUSIK_UpdateFlags::PlayFiles & m_flagsUpdate) == MUSIK_UpdateFlags::PlayFiles);
 				g_SourcesCtrl->SelectNowPlaying();
 				g_PlaylistBox->Update();
 			}

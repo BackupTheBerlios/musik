@@ -242,6 +242,7 @@ public:
 		,bFirstRun(this,wxT("FirstRun"),true)
 		,bAutoAdd(this,wxT( "AddFilesonStartup" ),false)
 		,bAutoPlayOnAppStart(this,wxT( "AutoPlayOnAppStart" ),false)
+		,bAutoPlayOnDropFilesInPlaylist(this,wxT( "AutoPlayOnDropFilesInPlaylist" ),true)
 		,eSelStyle(this,wxT( "SelectionStyle" ),MUSIK_SELECTION_TYPE_STANDARD)
 		,bShowAllSongs(this,wxT( "SelectingLibraryDisplaysSongs" ),true)
 		,nSndOutput(this,wxT( "OutputDriver" ),0)
@@ -347,6 +348,7 @@ public:
 	CConfigSettingBool bFirstRun;
 	CConfigSettingBool bAutoAdd;
 	CConfigSettingBool bAutoPlayOnAppStart;
+	CConfigSettingBool bAutoPlayOnDropFilesInPlaylist;
 	CConfigSetting<Value<int>,EMUSIK_ACTIVITY_SELECTION_TYPE> eSelStyle;
 	CConfigSettingBool bShowAllSongs;
 	CConfigSettingInt nSndOutput;

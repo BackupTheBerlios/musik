@@ -35,23 +35,6 @@
 #include "../MusikDefines.h"
 
 
-class CMusikSong
-{
-public:
-	CMusikSong();
-
-public:
-	int			songid;
-	CSongMetaData MetaData;
-	double		LastPlayed;
-	int			Rating;
-	int			TimesPlayed;
-	double		TimeAdded;
-	int			Check1;		//--- for tag dlg stuff, checks to see if it needs to be written to file / db ---//
-};
-
-WX_DECLARE_OBJARRAY( CMusikSong, CMusikSongArray );
-
 class CMusikLibrary : public wxEvtHandler
 {
 public:
@@ -127,6 +110,7 @@ public:
 	//------------------------//
 	void Query				( const wxString & query, wxArrayString & aReturn ,bool bClearArray = true);
 	void QuerySongsWhere	( const wxString & query, CMusikSongArray & aReturn ,bool bSorted = false);	  //if bSorted ==true,  use SetSortOrderField to set sorting string
+	void QuerySongsFrom		( const wxString & queryFrom, CMusikSongArray & aReturn ,bool bSorted = false);
 	void RedoLastQuerySongsWhere( CMusikSongArray & aReturn ,bool bSorted = false);
 	//-----------------------------------//
 	//--- pre-defined queries to make ---//

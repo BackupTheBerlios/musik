@@ -80,8 +80,8 @@ Global
 		{C4650E41-AD5A-41D8-89D8-3ED472E4D10F}.Universal Debug.Build.0 = Debug|Win32
 		{C4650E41-AD5A-41D8-89D8-3ED472E4D10F}.Universal Release.ActiveCfg = Release|Win32
 		{C4650E41-AD5A-41D8-89D8-3ED472E4D10F}.Universal Release.Build.0 = Release|Win32
-		{C4650E41-AD5A-41D8-89D8-3ED472E4D10F}.Universal Unicode Debug.ActiveCfg = Debug|Win32
-		{C4650E41-AD5A-41D8-89D8-3ED472E4D10F}.Universal Unicode Debug.Build.0 = Debug|Win32
+		{C4650E41-AD5A-41D8-89D8-3ED472E4D10F}.Universal Unicode Debug.ActiveCfg = Universal Unicode Debug|Win32
+		{C4650E41-AD5A-41D8-89D8-3ED472E4D10F}.Universal Unicode Debug.Build.0 = Universal Unicode Debug|Win32
 		{C4650E41-AD5A-41D8-89D8-3ED472E4D10F}.Universal Unicode Release.ActiveCfg = Release|Win32
 		{C4650E41-AD5A-41D8-89D8-3ED472E4D10F}.Universal Unicode Release.Build.0 = Release|Win32
 		{C372ABA2-E90B-459B-B5B2-A9A181DFE807}.Debug.ActiveCfg = Debug|Win32

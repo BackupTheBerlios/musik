@@ -38,7 +38,8 @@ enum EMUSIK_Library_OBJECT_ID
 class MusikLibraryFrame : public wxFrame
 {
 public:
-	MusikLibraryFrame( wxFrame* pParent ,const wxArrayString &arrFilenamesToScan = wxArrayString(),bool bPlayFilesAfterAdding = false);
+
+	MusikLibraryFrame( wxFrame* pParent ,const wxArrayString &arrFilenamesToScan = wxArrayString(),DWORD flags = 0);
 	MusikLibraryFrame( wxFrame* pParent, const wxPoint &pos, const wxSize &size );
 
 	//--- functions ---//
@@ -128,7 +129,7 @@ private:
 	bool m_AutoStart;
 	bool m_Close;
 	bool m_MenuCreated;
-	bool m_bPlayFilesAfterAdding;
+	DWORD m_flagsUpdate;
 	wxString m_Title; //--- so it doesn't have to be recreated millions of times ---//
 
 	wxArrayString aDelDirs;

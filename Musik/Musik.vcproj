@@ -39,7 +39,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib id3libd.lib fmodvc.lib sqlite.lib vorbisfile_static_d.lib ogg_static_d.lib vorbis_static_d.lib MMShellHook.lib wxmsw25d_core.lib wxbase25d.lib wxbase25d_net.lib wxzlibd.lib wxregexd.lib wxmsw25d_adv.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib id3libd.lib fmodvc.lib sqlite.lib vorbisfile_static_d.lib ogg_static_d.lib vorbis_static_d.lib MMShellHook.lib wxmsw25d_core.lib wxbase25d.lib wxbase25d_net.lib wxmsw25d_html.lib wxzlibd.lib wxregexd.lib wxmsw25d_adv.lib wxpngd.lib wxjpegd.lib"
 				ShowProgress="2"
 				OutputFile="$(OutDir)/wxMusik.exe"
 				LinkIncremental="1"
@@ -110,7 +110,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/NODEFAULTLIB:libcmt.lib"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib wxzlib.lib wxregex.lib wxpng.lib wxjpeg.lib wxtiff.lib wxmsw25_core.lib wxbase25.lib wxbase25_net.lib wxmsw25_adv.lib id3lib.lib fmodvc.lib sqlite.lib vorbisfile_static.lib ogg_static.lib vorbis_static.lib MMShellHook.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib wxzlib.lib wxregex.lib wxpng.lib wxjpeg.lib wxtiff.lib wxmsw25_core.lib wxbase25.lib wxbase25_net.lib wxmsw25_adv.lib wxmsw25_html.lib id3lib.lib fmodvc.lib sqlite.lib vorbisfile_static.lib ogg_static.lib vorbis_static.lib MMShellHook.lib"
 				ShowProgress="2"
 				OutputFile="$(OutDir)/wxMusik.exe"
 				LinkIncremental="1"
@@ -175,7 +175,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib id3libd.lib fmodvc.lib sqlite.lib vorbisfile_static_d.lib ogg_static_d.lib vorbis_static_d.lib MMShellHook.lib wxmsw25ud_core.lib wxbase25ud.lib wxbase25ud_net.lib wxregexud.lib wxmsw25ud_adv.lib wxzlibd.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib id3libd.lib fmodvc.lib sqlite.lib vorbisfile_static_d.lib ogg_static_d.lib vorbis_static_d.lib MMShellHook.lib wxmsw25ud_core.lib wxbase25ud.lib wxbase25ud_net.lib wxregexud.lib wxmsw25ud_adv.lib wxzlibd.lib wxmsw25ud_html.lib wxpngd.lib wxjpegd.lib"
 				OutputFile="$(OutDir)/wxMusik.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(SQLITEDIR)\Debug&quot;;&quot;$(WXDIR)\lib\vc_lib&quot;;&quot;$(FMODDIR)\api\lib&quot;;&quot;$(VORBISDIR)\win32\Vorbis_Static_Debug&quot;;&quot;$(ID3LIBDIR)\libprj&quot;;&quot;$(VORBISDIR)\win32\VorbisFile_Static_Debug&quot;;&quot;$(VORBISDIR)\win32\VorbisEnc_Static_Debug&quot;;&quot;$(OGGDIR)\win32\Static_Debug&quot;;_Debug"
@@ -243,7 +243,7 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/NODEFAULTLIB:libcmt.lib
 /NODEFAULTLIB:msvcrtd.lib"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib id3lib.lib fmodvc.lib sqlite.lib vorbisfile_static.lib ogg_static.lib vorbis_static.lib MMShellHook.lib wxmsw25u_core.lib wxbase25u.lib wxbase25u_net.lib wxregexu.lib wxmsw25u_adv.lib wxzlibd.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib id3lib.lib fmodvc.lib sqlite.lib vorbisfile_static.lib ogg_static.lib vorbis_static.lib MMShellHook.lib wxmsw25u_core.lib wxbase25u.lib wxbase25u_net.lib wxregexu.lib wxmsw25u_adv.lib wxzlib.lib wxmsw25u_html.lib wxpng.lib wxjpeg.lib"
 				ShowProgress="2"
 				OutputFile="$(OutDir)/wxMusik.exe"
 				LinkIncremental="1"
@@ -277,6 +277,64 @@
 			<Tool
 				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
+		<Configuration
+			Name="Universal Unicode Debug|Win32"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="1"
+			CharacterSet="1">
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalOptions="/D ID3LIB_LINKOPTION=1"
+				Optimization="0"
+				AdditionalIncludeDirectories="&quot;$(VORBISDIR)\include&quot;;&quot;$(FMODDIR)\api\inc&quot;;&quot;$(WXDIR)\lib\vc_lib\mswunivud&quot;;&quot;$(ID3LIBDIR)\include&quot;;&quot;$(OGGDIR)\include&quot;;&quot;$(WXDIR)\include&quot;;&quot;$(SQLITEDIR)&quot;;MMShellHook"
+				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;WINVER=0x400;_MT;_UNICODE;wxUSE_UNICODE"
+				StringPooling="TRUE"
+				MinimalRebuild="TRUE"
+				ExceptionHandling="TRUE"
+				BasicRuntimeChecks="0"
+				SmallerTypeCheck="TRUE"
+				RuntimeLibrary="3"
+				UsePrecompiledHeader="3"
+				PrecompiledHeaderThrough="wx/wxprec.h"
+				WarningLevel="4"
+				Detect64BitPortabilityProblems="FALSE"
+				DebugInformationFormat="3"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib id3libd.lib fmodvc.lib sqlite.lib vorbisfile_static_d.lib ogg_static_d.lib vorbis_static_d.lib MMShellHook.lib wxmswuniv25ud_core.lib wxbase25ud.lib wxbase25ud_net.lib wxregexud.lib wxmswuniv25ud_adv.lib wxzlibd.lib wxmswuniv25ud_html.lib wxpngd.lib wxjpegd.lib"
+				OutputFile="$(OutDir)/wxMusik.exe"
+				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;$(SQLITEDIR)\Debug&quot;;&quot;$(WXDIR)\lib\vc_lib&quot;;&quot;$(FMODDIR)\api\lib&quot;;&quot;$(VORBISDIR)\win32\Vorbis_Static_Debug&quot;;&quot;$(ID3LIBDIR)\libprj&quot;;&quot;$(VORBISDIR)\win32\VorbisFile_Static_Debug&quot;;&quot;$(VORBISDIR)\win32\VorbisEnc_Static_Debug&quot;;&quot;$(OGGDIR)\win32\Static_Debug&quot;;_Debug"
+				GenerateDebugInformation="TRUE"
+				ProgramDatabaseFile="$(OutDir)/Musik.pdb"
+				SubSystem="2"
+				TargetMachine="1"
+				FixedBaseAddress="1"/>
+			<Tool
+				Name="VCMIDLTool"/>
+			<Tool
+				Name="VCPostBuildEventTool"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				AdditionalIncludeDirectories="$(WXDIR)\include"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+		</Configuration>
 	</Configurations>
 	<References>
 	</References>
@@ -284,6 +342,9 @@
 		<Filter
 			Name="Global"
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm">
+			<File
+				RelativePath=".\MusikAboutDlg.cpp">
+			</File>
 			<File
 				RelativePath="MusikApp.cpp">
 			</File>
@@ -304,6 +365,9 @@
 			</File>
 			<File
 				RelativePath="MusikUtils.h">
+			</File>
+			<File
+				RelativePath=".\MusikVersion.h">
 			</File>
 			<File
 				RelativePath=".\ThreadController.h">
@@ -334,6 +398,12 @@
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="1"/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Universal Unicode Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"/>
+				</FileConfiguration>
 			</File>
 		</Filter>
 		<Filter
@@ -344,6 +414,9 @@
 			</File>
 			<File
 				RelativePath=".\DNDHelper.h">
+			</File>
+			<File
+				RelativePath=".\MusikAboutDlg.h">
 			</File>
 			<File
 				RelativePath=".\resource.h">
@@ -627,6 +700,12 @@
 								Name="VCCLCompilerTool"
 								UsePrecompiledHeader="0"/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Universal Unicode Debug|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath=".\Classes\Library\vcedit.h">
@@ -728,6 +807,12 @@
 			</FileConfiguration>
 			<FileConfiguration
 				Name="Release Unicode|Win32">
+				<Tool
+					Name="VCResourceCompilerTool"
+					AdditionalIncludeDirectories="..\wx2\wxwindows\include"/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Universal Unicode Debug|Win32">
 				<Tool
 					Name="VCResourceCompilerTool"
 					AdditionalIncludeDirectories="..\wx2\wxwindows\include"/>

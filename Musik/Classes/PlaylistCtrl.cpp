@@ -53,9 +53,9 @@ public:
 	//-------------------------//
 	//--- virtual functions ---//
 	//-------------------------//
-	virtual bool		 OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames);
+	virtual wxDragResult OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames,wxDragResult def);
 
-	virtual bool		 OnDropSonglist(wxCoord x, wxCoord y, const wxString& text);
+	virtual wxDragResult OnDropSonglist(wxCoord x, wxCoord y, const wxString& text,wxDragResult def);
 	virtual wxDragResult OnDragOver(wxCoord x, wxCoord y, wxDragResult def);
 
 	//-------------------------//
@@ -176,25 +176,25 @@ END_EVENT_TABLE()
 
 wxDragResult PlaylistDropTarget::OnData(wxCoord x, wxCoord y, wxDragResult def)
 {
-	bool bRes = false;
+	
 	if (GetData() )
 	{
 			
 		wxDataObjectSimple *dobj = ((wxDataObjectCompositeEx *)GetDataObject())->GetActualDataObject();
 		
 		if( dobj == (wxDataObjectSimple *)m_pSonglistDObj )
-			bRes = OnDropSonglist(x, y, m_pSonglistDObj->GetText());
+			def  = OnDropSonglist(x, y, m_pSonglistDObj->GetText(), def );
 		else if( dobj == (wxDataObjectSimple *)m_pFileDObj )
-			bRes = OnDropFiles(x, y, m_pFileDObj->GetFilenames());
+			def  = OnDropFiles(x, y, m_pFileDObj->GetFilenames(), def);
 	}
-	return bRes ? def : wxDragNone;
+	return def;
 }
 
-bool PlaylistDropTarget::OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames)
+wxDragResult PlaylistDropTarget::OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames,wxDragResult def)
 {
-	return m_pPlaylistCtrl->OnDropFiles( x,  y,  filenames);
+	return m_pPlaylistCtrl->OnDropFiles( x,  y,  filenames ,def);
 }
-bool PlaylistDropTarget::OnDropSonglist( wxCoord x, wxCoord y, const wxString &sFiles )
+wxDragResult PlaylistDropTarget::OnDropSonglist( wxCoord x, wxCoord y, const wxString &sFiles,wxDragResult def )
 {
 	//--- make sure we have something ---//
 	if ( sFiles != wxT( "" ) )
@@ -210,7 +210,7 @@ bool PlaylistDropTarget::OnDropSonglist( wxCoord x, wxCoord y, const wxString &s
 		if ( m_pPlaylistCtrl->DNDIsSel( n ) )
 		{
 			m_pPlaylistCtrl->aCurSel.Clear();
-			return false;
+			return wxDragNone;
 		}
 
 		//--- first lets make sure user intended to drop files in the playlist ---//
@@ -227,7 +227,7 @@ bool PlaylistDropTarget::OnDropSonglist( wxCoord x, wxCoord y, const wxString &s
 			if ( n == -2 )
 			{	//--- error, couldn't locate our position ---//
 				InternalErrorMessageBox(wxT("Could not find previous item's position."));
-				return false;
+				return wxDragNone;
 			}
 			if(n >= nLastSelItem)
 				n++;
@@ -236,7 +236,7 @@ bool PlaylistDropTarget::OnDropSonglist( wxCoord x, wxCoord y, const wxString &s
 		}
 	}
 	m_pPlaylistCtrl->DNDDone();
-	return true;
+	return def;
 }
 
 wxDragResult PlaylistDropTarget::OnDragOver(wxCoord x, wxCoord y, wxDragResult def)
@@ -685,13 +685,13 @@ void CPlaylistCtrl::OnKeyDown( wxKeyEvent& event )
 					else
 						RateSel(nKeyCode - '0');
 					break;
-				case 'e':
+				case 'E':
 					{
 						wxCommandEvent dummy;
 						OnPlayEnqueued( dummy );
 					}
 					break;
-				case 'n':
+				case 'N':
 					{
 						wxCommandEvent dummy;
 						OnPlayAsNext( dummy );
@@ -801,11 +801,7 @@ wxString CPlaylistCtrl::GetItemText(long item, EPLAYLISTCOLUMNS eColumnType) con
 
 	case PLAYLISTCOLUMN_FILENAME:
 		{
-			wxString fn = song.MetaData.Filename.GetFullPath();
-			if(fn.StartsWith(wxT("\\\\http")))
-				return FilenameAsUrl(fn); 
-			else
-				return fn;
+			return song.MetaData.Filename.GetFullPath();
 		}
 		break;
 	case PLAYLISTCOLUMN_NOTES:
@@ -951,18 +947,6 @@ void CPlaylistCtrl::GetSelFilesList( wxArrayString & aResult )
 	return;
 }
 
-void CPlaylistCtrl::GetAllFilesList(wxArrayString & aResult )
-{
-	aResult.Clear();
-	aResult.Alloc(GetItemCount());
-	for ( int i = 0; i < GetItemCount(); i++ )
-	{
-		aResult.Add( GetFilename( i ) );
-	}
-
-	return;
-}
-
 void CPlaylistCtrl::GetSelectedSongs(CMusikSongArray & aResult)
 {
 	aResult.Clear();
@@ -982,9 +966,9 @@ void CPlaylistCtrl::GetSelectedSongs(CMusikSongArray & aResult)
 	return;
 }
 
-double CPlaylistCtrl::GetTotalFilesize()
+wxLongLong CPlaylistCtrl::GetTotalFilesize()
 {
-	double filesize = 0.0;
+	wxLongLong filesize = 0;
 	for ( size_t i = 0; i < g_Playlist.GetCount(); i++ )
 	{
 		const CMusikSong &song = g_Playlist.Item( i );
@@ -1511,11 +1495,11 @@ void CPlaylistCtrl::DNDDone()
 }
 
 
-bool CPlaylistCtrl::OnDropFiles(wxCoord WXUNUSED(x), wxCoord WXUNUSED(y), const wxArrayString& filenames)
+wxDragResult CPlaylistCtrl::OnDropFiles(wxCoord WXUNUSED(x), wxCoord WXUNUSED(y), const wxArrayString& filenames,wxDragResult def)
 {
-   g_MusikFrame->AutoUpdate(filenames,true);
+	g_MusikFrame->AutoUpdate(filenames,((def == wxDragMove)|| wxGetApp().Prefs.bAutoPlayOnDropFilesInPlaylist) ? (MUSIK_UpdateFlags::InsertFilesIntoPlayer|MUSIK_UpdateFlags::PlayFiles) : MUSIK_UpdateFlags::EnquequeFilesIntoPlayer );
 
-   return true;
+   return def;
 }
 
 //----------------------------------------//

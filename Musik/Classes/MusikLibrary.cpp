@@ -856,7 +856,7 @@ void CMusikLibrary::GetFilelistSongs( const wxArrayString & aFiles, CMusikSongAr
 {
 	aReturn.Clear();
 	
-	wxString sQuery = wxT("select songid,filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize from songs where filename in (");
+	wxString sQuery = wxT("select ")  MUSIK_LIB_ALL_SONGCOLUMNS  wxT(" from songs where filename in (");
 
 	sQuery.Alloc(sQuery.Len() + aFiles.GetCount() * 30); // optimization ( the 30 is a wild guess)
 	for ( size_t i = 0; i < aFiles.GetCount(); i++ )
@@ -919,7 +919,7 @@ void CMusikLibrary::SetSortOrderField( int nField, bool descending )
 
 	if ( !numeric )
 	{
-		m_sSortAllSongsQuery = wxT("select songid,filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize, UPPER(");
+		m_sSortAllSongsQuery = wxT("select ") MUSIK_LIB_ALL_SONGCOLUMNS wxT(", UPPER(");
 		if(wxGetApp().Prefs.bSortArtistWithoutPrefix && (sortstr == wxT("artist")) )
 		{
 			m_sSortAllSongsQuery += wxT("REMPREFIX(");
@@ -934,7 +934,7 @@ void CMusikLibrary::SetSortOrderField( int nField, bool descending )
 		m_sSortAllSongsQuery += wxT(" from songs ");
 	}
 	else
-		m_sSortAllSongsQuery = wxT("select songid,filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize from songs ");
+		m_sSortAllSongsQuery = wxT("select ") MUSIK_LIB_ALL_SONGCOLUMNS wxT(" from songs ");
 
 	m_sSortAllSongsQuery += wxT("%s"); // add placeholder for possible where clause
 
@@ -1031,7 +1031,7 @@ void CMusikLibrary::QuerySongsWhere( const wxString & queryWhere, CMusikSongArra
 	}
 	else
 	{
-		query = wxT("select songid,filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize from songs");
+		query = wxT("select ") MUSIK_LIB_ALL_SONGCOLUMNS wxT(" from songs");
 		query += myqueryWhere; 
 		query += wxT(";");		
 	}
@@ -1048,6 +1048,35 @@ void CMusikLibrary::QuerySongsWhere( const wxString & queryWhere, CMusikSongArra
 	return;
 }
 
+
+void CMusikLibrary::QuerySongsFrom( const wxString & queryFrom, CMusikSongArray & aReturn ,bool bSorted)
+{
+	aReturn.Clear();
+	//--- run query ---//
+	wxString query;
+	wxString myqueryFrom = wxT(" FROM ") + queryFrom;
+	if( bSorted && !m_sSortAllSongsQuery.IsEmpty() )
+	{
+		query = wxString::Format(  m_sSortAllSongsQuery , (const wxChar *)myqueryFrom );
+	}
+	else
+	{
+		query = wxT("select ") MUSIK_LIB_ALL_SONGCOLUMNS;
+		query += myqueryFrom; 
+		query += wxT(";");		
+	}
+
+	const wxCharBuffer pQuery = ConvQueryToMB(query);
+	aReturn.Alloc(GetSongCount());
+	{
+		// keep lock as short as possible by using {} scope
+		wxCriticalSectionLocker lock( m_csDBAccess );
+		sqlite_exec(m_pDB, pQuery, &sqlite_callbackAddToSongArray, &aReturn, NULL);
+	}
+
+	aReturn.Shrink();
+	return;
+}
 
 void CMusikLibrary::UpdateItemLastPlayed( const CMusikSong & song )
 {
@@ -1099,7 +1128,7 @@ int CMusikLibrary::GetSongCount()
 
 bool CMusikLibrary::GetSongFromSongid( int songid, CMusikSong *pSong )
 {
-	char *query = sqlite_mprintf( "select songid,filename,title,tracknum,artist,album,genre,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize from songs where songid = %d;", songid );
+	char *query = sqlite_mprintf(ConvQueryToMB( wxT("select ") MUSIK_LIB_ALL_SONGCOLUMNS wxT(" from songs where songid = %d;")), songid );
 		
 	//--- run query ---//
 	const char *pTail;

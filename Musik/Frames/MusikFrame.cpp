@@ -287,9 +287,9 @@ void MusikFrame::CreateMainMenu()
 	//------------------//
 	//--- file ---//
 	wxMenu* file_menu = new wxMenu;
-	file_menu->Append( MUSIK_MENU_PREFERENCES, _("&Preferences\tCtrl-P") );
+	file_menu->Append( wxID_PREFERENCES, _("&Preferences\tCtrl-P") );
 	file_menu->AppendSeparator();
-	file_menu->Append( MUSIK_MENU_EXIT, _("E&xit") );
+	file_menu->Append( wxID_EXIT, _("E&xit") );
 
 	//--- view ---//
 	wxMenu* view_menu = new wxMenu;
@@ -318,7 +318,9 @@ void MusikFrame::CreateMainMenu()
 	library_menu->Append( MUSIK_MENU_CUSTOMQUERY, _("&Custom Query") );
 	library_menu->AppendSeparator();
 	library_menu->Append( MUSIK_MENU_WRITE, _("&Pending Tags"), library_writetags_menu );
-
+	wxMenu *help_menu = new wxMenu;
+	help_menu->Append( wxID_ABOUT, wxString(_("&About")) + wxT(" ") + MUSIKAPPNAME +wxT(" ...") );
+	
 	//----------------//
 	//--- menu bar ---//
 	//----------------//
@@ -326,13 +328,14 @@ void MusikFrame::CreateMainMenu()
 	menu_bar->Append( file_menu,	_("&File") );
 	menu_bar->Append( view_menu, 	_("&View") );
 	menu_bar->Append( library_menu,	_("&Library") );
+	menu_bar->Append( help_menu, _("&Help") );
 
 	SetMenuBar( menu_bar );
 
 }
-void MusikFrame::AutoUpdate	( const wxArrayString & Filenames ,bool bPlayFilesAfterAdding)
+void MusikFrame::AutoUpdate	( const wxArrayString & Filenames ,DWORD flags )
 {
-	MusikLibraryFrame *p= new MusikLibraryFrame( ( wxFrame* )this, Filenames,bPlayFilesAfterAdding );
+	MusikLibraryFrame *p= new MusikLibraryFrame( ( wxFrame* )this, Filenames,flags );
 	this->Enable	( FALSE );
 	p->Show	( TRUE	); 
 }

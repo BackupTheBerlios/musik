@@ -1,3 +1,21 @@
+0.3.1.1 to 0.3.1.2
++ Query enter dialog has now a multi line text control for better input comfort
++ now it is possible to use songhistory in your dynamic paylist query. for example to display the last 50 played songs, the query is
+  FROM songhistory join songs on songs.songid=songhistory.songid order by songhistory.date_played desc limit 50
+  (note the FROM!) 
+  or to get the 100 most skipped songs ( less than 33 percent played)
+  FROM (select songid as aid,count(*) as acount from songhistory where percent_played < 33 group by songhistory.songid) join songs on songs.songid=aid order by acount desc limit 100
+
+- fixed some other small bugs i dont know anymore
+- fixed bug which gives  a funny sound when now playling list is cleared while song is playing
+- fixed bug which leads to an error box, when skipping songs fast and crossfading is enabled
+- fixed bug which let 'n' and 'e' key not work in playlist, n plays song as next one, e enqueues song at the end of the list.
++ playing dropped files from filemanager is now an option
++ while Copying files a progress dialog is now shown. A warning is issued if not enough space in target directory.
+- fixed bug which made the CopyFiles function unusable on windows
++ finally added an About Dialog
+-remove pedantic flag from CMakeLists.txt , to make it compile without error on "long long is not ansi".
+
 0.3.1.0 to 0.3.1.1
 - quick fix for linux bug, if log window is about to be opened, if a warning occurs while scanning this gives an xlib error. feature disabled on linux for now
 - Loop song is now Repeat Song, same for loop list.

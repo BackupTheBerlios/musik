@@ -217,6 +217,7 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//--- Options -> General ---//
 	//--------------------------//
 	chkAutoPlayOnAppStart	=	new wxCheckBox( this, -1,	_("Automatically play song on startup") );
+	chkAutoPlayOnDropFilesInPlaylist =	new wxCheckBox( this, -1,	_("Automatically play songs, dropped into playlist") );
 #ifdef wxHAS_TASK_BAR_ICON
 	chkHideOnMinimize		=	new wxCheckBox( this, -1,	_("Hide Window on Mimimize") );
 #endif
@@ -237,6 +238,7 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//--------------------------------//
 	vsOptions_Interface = new wxBoxSizer( wxVERTICAL );
 	vsOptions_Interface->Add( chkAutoPlayOnAppStart,	0, wxALL, 4 );
+	vsOptions_Interface->Add( chkAutoPlayOnDropFilesInPlaylist,	0, wxALL, 4 );
 #ifdef wxHAS_TASK_BAR_ICON
 	vsOptions_Interface->Add( chkHideOnMinimize,		0, wxALL, 4 );
 #endif
@@ -598,6 +600,7 @@ void MusikPrefsFrame::LoadPrefs()
 	//--- options -> general ---//
 	//--------------------------//
 	chkAutoPlayOnAppStart->SetValue	( wxGetApp().Prefs.bAutoPlayOnAppStart	);
+	chkAutoPlayOnDropFilesInPlaylist->SetValue	( wxGetApp().Prefs.bAutoPlayOnDropFilesInPlaylist);
 #ifdef wxHAS_TASK_BAR_ICON
 	chkHideOnMinimize->SetValue		( wxGetApp().Prefs.bHideOnMinimize	);
 #endif
@@ -853,6 +856,8 @@ void MusikPrefsFrame::SavePrefs()
 
 	wxGetApp().Prefs.bAutoAdd		= chkAutoScan->GetValue();
 	wxGetApp().Prefs.bAutoPlayOnAppStart	= chkAutoPlayOnAppStart->GetValue();
+	wxGetApp().Prefs.bAutoPlayOnDropFilesInPlaylist	= chkAutoPlayOnDropFilesInPlaylist->GetValue();
+
 #ifdef wxHAS_TASK_BAR_ICON
 	wxGetApp().Prefs.bHideOnMinimize	= chkHideOnMinimize->GetValue();
 #endif

@@ -140,7 +140,7 @@ public:
 	int	 GetLastTime			( int nType );
 	int	 GetTime				( int nType );
 	int	 GetTimeLeft			( int nType );
-	int	 GetCurrChannel			( );
+	
 	wxString GetTimeStr			( );
 	wxString GetTimeLeftStr		( );
 	int GetCurrentSongid		() { return m_CurrentSong.songid; }
@@ -205,7 +205,6 @@ private:
 	size_t			m_nMaxHistory;
 	FSOUND_DSPUNIT	*m_DSP;
 
-	int m_Channels;
 	int m_NETSTREAM_read_percent;
 	int m_NETSTREAM_last_read_percent;
 	int m_NETSTREAM_bitrate;
@@ -220,6 +219,8 @@ private:
 	wxStopWatch m_StreamIsWorkingStopWatch;
 	bool m_bStreamIsWorkingStopWatchIsRunning;
 	int m_nLastSongTime;
+
+	bool m_bPostPlayRestartInProgress;
 
 };
 

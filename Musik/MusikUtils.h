@@ -20,7 +20,98 @@
 #endif
 #include <wx/regex.h>
 #include <wx/listctrl.h>
+#include <wx/textdlg.h>
+
 #include "MusikDefines.h"
+
+class CSongPath
+{
+public:
+	CSongPath()
+	{
+	}
+ 
+   explicit CSongPath(const wxString &s)
+	   :m_sPath(s)
+   {
+   }
+   ~CSongPath()
+   {
+
+   }
+
+   const CSongPath & operator=(const wxString &sz)
+   {
+	   m_sPath = sz;
+	   return *this;
+   }
+   const CSongPath & operator=(const wxFileName & fn)
+   {
+	   m_sPath = fn.GetFullPath(wxPATH_NATIVE);
+	   return *this;
+   }
+   const CSongPath & operator=(const CSongPath & rhs)
+   {
+	   if(this != &rhs)
+	   {
+		   m_sPath = rhs.m_sPath;
+	   }
+	   return *this;
+   }
+
+   bool operator==(const CSongPath & rhs) const
+   {
+	   	   return m_sPath == rhs.m_sPath;
+   }
+   bool operator==(const wxFileName & rhs) const
+   {
+	   return m_sPath == rhs.GetFullPath(wxPATH_NATIVE);
+   }
+   bool operator !=(const wxFileName & rhs) const
+   {
+	   return !(*this == rhs);
+   }
+
+   operator wxFileName () const
+   {
+	   return wxFileName(m_sPath,wxPATH_NATIVE);
+   }
+  const wxString & GetFullPath() const
+   {
+	   return m_sPath;
+   }
+   bool FileExists() const
+   {
+	   if(!IsUrl())
+		   return wxFileExists(m_sPath);
+	   return true;
+   }
+   bool IsUrl()	const
+   {
+	   return m_sPath.StartsWith(wxT("http://"));
+   }
+   bool IsFile() const
+   {
+		return !IsUrl();
+   }
+   wxString GetPath(int flags = wxPATH_GET_VOLUME,
+	   wxPathFormat format = wxPATH_NATIVE) const
+   {
+	   wxFileName fn(m_sPath);
+	   return fn.GetPath(   flags, format);
+   }
+   wxString GetExt() const
+   {
+		size_t pos = m_sPath.rfind('.');
+		if(pos != wxStringBase::npos )
+		{
+			return m_sPath.Right(m_sPath.Len() - pos - 1);
+		}
+		return wxString();
+   }
+private:
+	wxString m_sPath;
+};
 
 class CSongMetaData
 {
@@ -67,7 +158,7 @@ public:
 			m_bOwner = true;
 			m_szData =  _StrDup(rhs.m_szData);
 		}
-		StringData & operator=(const StringData & rhs)
+		const StringData & operator=(const StringData & rhs)
 		{
 			if(this != &rhs)
 			{
@@ -77,7 +168,7 @@ public:
 			}
 			return *this;
 		}
-		StringData & operator=(const char * sz)
+		const StringData & operator=(const char * sz)
 		{
 			Empty();
 			m_bOwner = true;
@@ -139,7 +230,7 @@ public:
 		nDuration_ms = nBitrate  = nFilesize   =	nTracknum = 0;
 	}
 
-	wxFileName			Filename;
+	CSongPath			Filename;
 	StringData			Title;
 	StringData			Artist;
 	StringData			Album;
@@ -155,17 +246,44 @@ public:
 
 };
 
-inline wxString FilenameAsUrl(const wxFileName &fn)
+
+class CMusikSong
 {
-	wxString url = fn.GetFullPath(wxPATH_NATIVE);
-#ifdef __WXMSW__
-  	url.Replace(wxT("\\"), wxT("/"));
-	url.Replace(wxT("//http/"),wxT("http://"));
-#else
-	url.Replace(wxT("http:/"),wxT("http://"));
-#endif
-	return url;
-}
+public:
+	CMusikSong();
+
+public:
+	int			songid;
+	CSongMetaData MetaData;
+	double		LastPlayed;
+	int			Rating;
+	int			TimesPlayed;
+	double		TimeAdded;
+	int			Check1;		//--- for tag dlg stuff, checks to see if it needs to be written to file / db ---//
+};
+
+#define MUSIK_LIB_ALL_SONGCOLUMNS	wxT(" songs.songid,")	  \
+									wxT("songs.filename,")	  \
+									wxT("songs.title,")	  \
+									wxT("songs.tracknum,")	  \
+									wxT("songs.artist,")	  \
+									wxT("songs.album,")	  \
+									wxT("songs.genre,")	  \
+									wxT("songs.duration,")	  \
+									wxT("songs.format,")	  \
+									wxT("songs.vbr,")		  \
+									wxT("songs.year,")		  \
+									wxT("songs.rating,")	  \
+									wxT("songs.bitrate,")	  \
+									wxT("songs.lastplayed,") \
+									wxT("songs.notes,")	  \
+									wxT("songs.timesplayed,")\
+									wxT("songs.timeadded,")  \
+									wxT("songs.filesize ")
+
+WX_DECLARE_OBJARRAY( CMusikSong, CMusikSongArray );
+
+
 //------------------------------------------------------------------//
 //--- misc utility functions, see implementatio		n for description ---//
 //------------------------------------------------------------------//
@@ -294,6 +412,9 @@ double CharStringToDouble(const char *z);
 void DoubleToCharString(double r, char *z);
 wxString GetForbiddenChars(wxPathFormat format = wxPATH_NATIVE);
 
+
+wxLongLong GetTotalFilesize(const CMusikSongArray &songs);
+
 class CNiceFilesize
 {
 public:
@@ -351,6 +472,40 @@ protected:
 private:
 	long	m_Style;	
 	DECLARE_NO_COPY_CLASS(MusikLogWindow)
+};
+
+class  wxMultiLineTextEntryDialog : public wxDialog
+{
+public:
+	wxMultiLineTextEntryDialog(wxWindow *parent,
+		const wxString& message,
+		const wxString& caption = wxGetTextFromUserPromptStr,
+		const wxString& value = wxEmptyString,
+		long style = wxTextEntryDialogStyle,
+		const wxPoint& pos = wxDefaultPosition,const wxSize & size = wxDefaultSize);
+
+	void SetValue(const wxString& val);
+	wxString GetValue() const { return m_value; }
+
+#if wxUSE_VALIDATORS
+	void SetTextValidator( wxTextValidator& validator );
+	void SetTextValidator( long style = wxFILTER_NONE );
+	wxTextValidator* GetTextValidator() { return (wxTextValidator*)m_textctrl->GetValidator(); }
+#endif
+	// wxUSE_VALIDATORS
+
+	// implementation only
+	void OnOK(wxCommandEvent& event);
+
+protected:
+	wxTextCtrl *m_textctrl;
+	wxString    m_value;
+	long        m_dialogStyle;
+
+private:
+	DECLARE_EVENT_TABLE()
+	DECLARE_DYNAMIC_CLASS(wxMultiLineTextEntryDialog)
+	DECLARE_NO_COPY_CLASS(wxMultiLineTextEntryDialog)
 };
 
 #endif
