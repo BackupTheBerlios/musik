@@ -392,10 +392,10 @@
 					Name="musikDynamicPlaylistEditor"
 					Filter="">
 					<File
-						RelativePath=".\musikDynamicPlaylistEditor.cpp">
+						RelativePath=".\musikDyanmicPlaylistEditor.cpp">
 					</File>
 					<File
-						RelativePath=".\musikDynamicPlaylistEditor.h">
+						RelativePath=".\musikDyanmicPlaylistEditor.h">
 					</File>
 				</Filter>
 				<Filter

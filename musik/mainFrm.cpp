@@ -62,7 +62,6 @@
 #include <Direct.h>
 
 #include "3rdparty/TreePropSheet.h"
-#include ".\mainfrm.h"
 
 ///////////////////////////////////////////////////
 
@@ -162,6 +161,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_COMMAND(ID_NOTIFICATIONTRAY_PAUSE, OnNotificationtrayPause)
 	ON_COMMAND(ID_NOTIFICATIONTRAY_NEXT, OnNotificationtrayNext)
 	ON_COMMAND(ID_NOTIFICATIONTRAY_PREV, OnNotificationtrayPrev)
+	ON_COMMAND(ID_FILE_CLEARLIBRARY, OnFileClearlibrary)
 
 	// update ui
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SOURCES, OnUpdateViewSources)
@@ -207,7 +207,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_BATCHADD_VERIFY_PLAYLIST, OnVerifyPlaylist )
 	ON_REGISTERED_MESSAGE( WM_CLOSEDIRSYNC, OnCloseDirSync )
 	ON_REGISTERED_MESSAGE( WM_SELBOXADDREMOVE, OnSelBoxAddRemove )
-	ON_COMMAND(ID_FILE_CLEARLIBRARY, OnFileClearlibrary)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////

@@ -122,6 +122,7 @@ public:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 	virtual BOOL OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
 	virtual BOOL OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* pContext );
+	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
 
 	// debug stuffs
 	#ifdef _DEBUG
@@ -206,8 +207,8 @@ protected:
 	afx_msg LRESULT OnSourcesStdPlaylist( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSourcesDynPlaylist( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSourcesQuickSearch( WPARAM wParam, LPARAM lParam );
-	afx_msg LRESULT OnDragStart(  WPARAM wParam, LPARAM lParam );
-	afx_msg LRESULT OnDragEnd(  WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnDragStart( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnDragEnd( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSelBoxesReset( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSelBoxEditCommit( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnPlayerNewPlaylist( WPARAM wParam, LPARAM lParam );
@@ -272,7 +273,7 @@ protected:
 	afx_msg void OnNotificationtrayPrev();
 	afx_msg void OnUpdateNotificationtrayStop(CCmdUI *pCmdUI);
 	afx_msg void OnNotificationtrayStop();
-	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
+	afx_msg void OnFileClearlibrary();
 
 	// list of all threads running
 	bool FreeThread( CmusikThread* pThread );
@@ -300,8 +301,6 @@ protected:
 	void InitTrayIcon();
 	void ShowTrayIcon();
 	void HideTrayIcon();
-public:
-	afx_msg void OnFileClearlibrary();
 };
 
 ///////////////////////////////////////////////////
