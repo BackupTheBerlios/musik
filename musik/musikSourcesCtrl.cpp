@@ -16,8 +16,8 @@ IMPLEMENT_DYNAMIC( CmusikSourcesCtrl, CmusikPropTree )
 
 ///////////////////////////////////////////////////
 
-int WM_MUSIKEDITCOMMIT_SOURCES = RegisterWindowMessage( "MUSIKEDITCOMMIT" );
-int WM_MUSIKEDITCANCEL_SOURCES = RegisterWindowMessage( "MUSIKEDITCANCEL" );
+int WM_SOURCES_EDIT_COMMIT = RegisterWindowMessage( "MUSIKEDITCOMMIT" );
+int WM_SOURCES_EDIT_CANCEL = RegisterWindowMessage( "MUSIKEDITCANCEL" );
 
 ///////////////////////////////////////////////////
 
@@ -48,12 +48,15 @@ CmusikSourcesCtrl::~CmusikSourcesCtrl()
 ///////////////////////////////////////////////////
 
 BEGIN_MESSAGE_MAP( CmusikSourcesCtrl, CmusikPropTree )
+	// mfc message maps
 	ON_WM_CREATE()
 	ON_WM_SHOWWINDOW()
 	ON_WM_KEYDOWN()
 	ON_WM_MOUSEMOVE()
-	ON_REGISTERED_MESSAGE(WM_MUSIKEDITCOMMIT_SOURCES,OnEditCommit)
-	ON_REGISTERED_MESSAGE(WM_MUSIKEDITCANCEL_SOURCES,OnEditCancel)
+
+	// custom message maps
+	ON_REGISTERED_MESSAGE(WM_SOURCES_EDIT_COMMIT, OnEditCommit)
+	ON_REGISTERED_MESSAGE(WM_SOURCES_EDIT_CANCEL, OnEditCancel)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -283,6 +286,8 @@ void CmusikSourcesCtrl::OnDropFiles(HDROP hDropInfo)
 		// hit now playing?
 		else if ( pItem->GetPlaylistType() == MUSIK_SOURCES_TYPE_NOWPLAYING )
 		{
+			bool begin_trans = false;
+
 			m_Library->BeginTransaction();
 			CmusikSong song;
 			for ( size_t i = 0; i < files.size(); i++ )

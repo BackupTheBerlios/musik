@@ -20,6 +20,11 @@ IMPLEMENT_DYNAMIC(CmusikSelectionCtrl, CmusikListCtrl)
 
 ///////////////////////////////////////////////////
 
+int WM_SELECTION_EDIT_COMMIT = RegisterWindowMessage( "MUSIKEDITCOMMIT" );
+int WM_SELECTION_EDIT_CANCEL = RegisterWindowMessage( "MUSIKEDITCANCEL" );
+
+///////////////////////////////////////////////////
+
 CmusikSelectionCtrl::CmusikSelectionCtrl( CFrameWnd* parent, CmusikLibrary* library, CmusikPrefs* prefs, int type, int ctrlid, int dropid )
 {
 	m_Library = library;
@@ -45,6 +50,7 @@ CmusikSelectionCtrl::~CmusikSelectionCtrl()
 ///////////////////////////////////////////////////
 
 BEGIN_MESSAGE_MAP(CmusikSelectionCtrl, CmusikListCtrl)
+	// mfc message maps
 	ON_WM_CREATE()
 	ON_NOTIFY_REFLECT(LVN_GETDISPINFO, OnLvnGetdispinfo)
 	ON_NOTIFY_REFLECT(LVN_ITEMCHANGED, OnLvnItemchanged)
@@ -54,6 +60,11 @@ BEGIN_MESSAGE_MAP(CmusikSelectionCtrl, CmusikListCtrl)
 	ON_WM_MOUSEMOVE()
 	ON_MESSAGE(WM_MOUSELEAVE, OnMouseLeave)
 	ON_NOTIFY_REFLECT(LVN_MARQUEEBEGIN, OnLvnMarqueeBegin)
+	ON_WM_KEYDOWN()
+
+	// custom message maps
+	ON_REGISTERED_MESSAGE(WM_SELECTION_EDIT_COMMIT,OnEditCommit)
+	ON_REGISTERED_MESSAGE(WM_SELECTION_EDIT_CANCEL,OnEditCancel)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -70,11 +81,16 @@ int CmusikSelectionCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	GetParent()->SetWindowText( sTitle );
 
-	CRect client_size;
-	GetClientRect( &client_size );
+	// edit in place
+	m_EditInPlace.Create( WS_CHILD | WS_CLIPCHILDREN, CRect( 0, 0, 0, 0 ), this, 123 );
+	m_EditInPlace.EnableWindow( FALSE );
 
+	CFont font;
+	font.CreateStockObject( DEFAULT_GUI_FONT );
+	m_EditInPlace.SetFont( &font );
+
+    // set initial state
 	RescaleColumn();
-
 	UpdateV( true );
 
 	return 0;
@@ -560,6 +576,58 @@ void CmusikSelectionCtrl::OnLvnMarqueeBegin(NMHDR *pNMHDR, LRESULT *pResult)
 	// returning non-zero ignores the message,
 	// and marquee never appears.
 	*pResult = 1;
+}
+
+///////////////////////////////////////////////////
+
+void CmusikSelectionCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	// user pressed f2 to rename an entry
+	if ( nChar == VK_F2 )
+	{
+		CStdStringArray items;
+		GetSelItems( items );
+
+		// make sure somethign is selected
+		if ( !items.size() )
+			return;
+
+		// first selected item rect
+		CRect rcItem;
+		GetItemRect( GetSelectionMark(), rcItem, LVIR_BOUNDS );
+		rcItem.left += 2;
+
+		m_EditInPlace.EnableWindow( TRUE );
+		m_EditInPlace.MoveWindow( rcItem );
+		m_EditInPlace.SetFocus();
+		m_EditInPlace.SetString( m_Items.at( GetSelectionMark() ).c_str() );
+		m_EditInPlace.ShowWindow( SW_SHOWDEFAULT );		
+	}
+
+	CmusikListCtrl::OnKeyDown(nChar, nRepCnt, nFlags);
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CmusikSelectionCtrl::OnEditCancel( WPARAM wParam, LPARAM lParam )
+{
+	m_EditInPlace.EnableWindow( FALSE );
+	SetFocus();
+
+	return 0L;
+}
+
+///////////////////////////////////////////////////
+
+LRESULT CmusikSelectionCtrl::OnEditCommit( WPARAM wParam, LPARAM lParam )
+{
+	// code here
+	// CString sName = m_EditInPlace.GetString();
+
+	m_EditInPlace.EnableWindow( FALSE );
+	SetFocus();
+
+	return 0L;
 }
 
 ///////////////////////////////////////////////////

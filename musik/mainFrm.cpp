@@ -340,10 +340,9 @@ void CMainFrame::Initmusik()
 	{
 		CmusikRemoveOld* params = new CmusikRemoveOld( m_Library, m_RemoveOldFnct );
 		CmusikThread* thread = new CmusikThread();
-	
-		thread->Start( (ACE_THR_FUNC)musikRemoveOldWorker, params );
-	
 		m_Threads.push_back( thread );
+
+		thread->Start( (ACE_THR_FUNC)musikRemoveOldWorker, params );
 	}
 }
 
@@ -356,18 +355,6 @@ void CMainFrame::Cleanmusik()
 	// player, library, etc, etc... so we need to:
 	// suspend, set abort switch, and then
 	// resume any remaning threads...
-	for ( size_t i = 0; i < m_Threads.size(); i++ )
-	{
-		m_Threads.at( i )->Suspend( true );
-		m_Threads.at( i )->Abort();
-		m_Threads.at( i )->Resume();
-
-		while ( !m_Threads.at( i )->m_Finished )
-			Sleep( 50 );
-
-		delete m_Threads.at( i );
-	}
-
 	if ( m_Updater )
 	{
 		m_Updater->Suspend( true );
@@ -378,6 +365,18 @@ void CMainFrame::Cleanmusik()
 			Sleep( 50 );
 
         delete m_Updater;
+	}
+
+	for ( size_t i = 0; i < m_Threads.size(); i++ )
+	{
+		m_Threads.at( i )->Suspend( true );
+		m_Threads.at( i )->Abort();
+		m_Threads.at( i )->Resume();
+
+		while ( !m_Threads.at( i )->m_Finished )
+			Sleep( 50 );
+
+		delete m_Threads.at( i );
 	}
 
 	if ( m_Library )	
@@ -1162,9 +1161,9 @@ void CMainFrame::OnOpenFiles()
 		{
 			CmusikBatchAdd* params = new CmusikBatchAdd( files, NULL, m_Library, NULL, m_BatchAddFnct, 0, 0, 1 );
 			CmusikThread* thread = new CmusikThread();
-			thread->Start( (ACE_THR_FUNC)musikBatchAddWorker, (void*)params );
-
 			m_Threads.push_back( thread );
+
+			thread->Start( (ACE_THR_FUNC)musikBatchAddWorker, (void*)params );
 		}
 		else
 			delete files;
@@ -1182,9 +1181,9 @@ LRESULT CMainFrame::OnBatchAddNew( WPARAM wParam, LPARAM lParam )
 		params->m_Functor = m_BatchAddFnct;
 
 		CmusikThread* thread = new CmusikThread();
-		thread->Start( (ACE_THR_FUNC)musikBatchAddWorker, (void*)params );
+		m_Threads.push_back( thread );
 
-		m_Threads.push_back( thread );		
+		thread->Start( (ACE_THR_FUNC)musikBatchAddWorker, (void*)params );
 	}
 
 	return 0L;
@@ -1280,9 +1279,9 @@ void CMainFrame::OnOpenDirectory()
 		{
 			CmusikBatchAdd* params = new CmusikBatchAdd( files, NULL, m_Library, NULL, m_BatchAddFnct, 0, 0, 1 );
 			CmusikThread* thread = new CmusikThread();
-			thread->Start( (ACE_THR_FUNC)musikBatchAddWorker, (void*)params );
-
 			m_Threads.push_back( thread );
+
+			thread->Start( (ACE_THR_FUNC)musikBatchAddWorker, (void*)params );
 		}
 		else 
 			delete files;

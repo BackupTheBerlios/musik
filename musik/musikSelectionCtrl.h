@@ -5,6 +5,7 @@
 ///////////////////////////////////////////////////
 
 #include "musikListCtrl.h"
+#include "musikEditInPlace.h"
 
 #include "../musikCore/include/StdString.h"
 #include "../musikCore/include/musikArrays.h"
@@ -27,23 +28,23 @@ public:
 	virtual ~CmusikSelectionCtrl();
 
 	// gets
-	int GetCtrlID	(){ return m_ID; }
-	CString			GetTypeDB();
-	CString			GetTypeStr();
-	int				GetType(){ return m_Type; }
-	void			GetSelItems( CStdStringArray& items, bool format_query = true );
-	CStdString		GetSelQuery();
+	int GetCtrlID (){ return m_ID; }
+	CString GetTypeDB();
+	CString GetTypeStr();
+	int	GetType(){ return m_Type; }
+	void GetSelItems( CStdStringArray& items, bool format_query = true );
+	CStdString GetSelQuery();
 
 	// queries
-	bool			IsItemSelected( int item );
-	bool			IsParent(){ return m_ParentBox; }
+	bool IsItemSelected( int item );
+	bool IsParent(){ return m_ParentBox; }
 
 	// sets
 	void SetParent( bool parent = true ){ m_ParentBox = parent; }
 	static void SetUpdating( bool updating = true ){ m_Updating = updating; }
 
 	// misc
-	void			RescaleColumn();
+	void RescaleColumn();
 	void UpdateV( bool update_count = false );
 	void UpdateV( CStdString query, bool update_count = false );
 
@@ -57,6 +58,11 @@ public:
 	afx_msg void OnPaint();
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnLvnMarqueeBegin(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+
+	// custom message maps
+	LRESULT OnEditCommit( WPARAM wParam, LPARAM lParam );
+	LRESULT OnEditCancel( WPARAM wParam, LPARAM lParam );
 
 	// custom message maps
 	afx_msg LRESULT OnMouseLeave( WPARAM wParam, LPARAM lParam );
@@ -72,6 +78,9 @@ protected:
 
 	// tracking mouse
 	bool m_MouseTrack;
+
+	// F2...
+	CmusikEditInPlace m_EditInPlace;
 
 	// core
 	CFrameWnd* m_Parent;

@@ -58,9 +58,11 @@ protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+
+	// custom message maps
 	LRESULT OnEditCommit( WPARAM wParam, LPARAM lParam );
 	LRESULT OnEditCancel( WPARAM wParam, LPARAM lParam );
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 
 	// drop target for the playlist
 	CmusikSourcesDropTarget* m_DropTarget;
