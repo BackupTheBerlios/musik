@@ -89,6 +89,7 @@ public:
 	int nFadeStopDuration;
 	int nFadeExitDuration;
 
+	int nUse_MPEGACCURATE_ForMP3VBRFiles;
 	int nAutoDelta;
 
 	int nBlankSwears;

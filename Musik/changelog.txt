@@ -1,4 +1,5 @@
 0.2.1 to 0.2.2
+ + Made a new option (under Sound/Driver) for using  FSOUND_MPEGACCURATE when a stream is openend for a mp3-vbr file. This makes opning slower and seek crossfading unusable(which is disabled then for that cause), BUT progress bar and playing time behave correctly for that files. The option is ON as default. See BUG #958 (gunnar)
  + In Random Playmode, the currently displayed playlist will be made active if "play" is pressed while player is stopped. Before this change the user had to double click an entry of the playlist first to make the playlist active.(gunnar)
  - Fixed Bug: If a Playlist which was selected by using the Selection Boxes was activly playing and the user chooses Show All , the current song could not be stopped/paused and a double click in  the playlistctrl had no effect too.(gunnar)
  + Using indexes on the tables, speeding up some sql-selects and updating of the library, if new songs are available(gunnar)

@@ -151,20 +151,27 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	tcMaxChannels = new wxTextCtrl	( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( 32, -1 ) );
 	wxStaticText *stMaxChannels = new wxStaticText( this, -1, _("Maximum sound channels:"), wxPoint( 0, 0 ), wxSize( -1, -1 ), wxALIGN_LEFT );
 	
+	//Use_MPEGACCURATE_ForMP3VBRFiles
+	chkUse_MPEGACCURATE_ForMP3VBRFiles = new wxCheckBox( this, -1, _("Use MPEGACCURATE for Mp3-VBR Files"),		wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+	
 	//-----------------------------//
 	//--- Sound -> Driver Sizer ---//
 	//-----------------------------//
-	vsSound_Driver = new wxFlexGridSizer ( 6, 2, 2, 2 );
-	vsSound_Driver->Add( stOutputDrv, 0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
-	vsSound_Driver->Add( cmbOutputDrv, 1, wxCENTER, 0 );
-	vsSound_Driver->Add( stSndDevice, 0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
-	vsSound_Driver->Add( cmbSndDevice, 1, wxCENTER, 0 );
-	vsSound_Driver->Add( stPlayRate, 0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
-	vsSound_Driver->Add( cmbPlayRate, 1, wxCENTER, 0 );	
-	vsSound_Driver->Add( stBufferLength, 0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
-	vsSound_Driver->Add( tcBufferLength, 1, wxCENTER, 0 );
-	vsSound_Driver->Add( stMaxChannels, 0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
-	vsSound_Driver->Add( tcMaxChannels, 1, wxCENTER, 0 );
+	wxFlexGridSizer *fsSound_Driver = new wxFlexGridSizer( 6, 2, 2, 2 );
+	fsSound_Driver->Add( stOutputDrv, 0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
+	fsSound_Driver->Add( cmbOutputDrv, 1, wxCENTER, 0 );
+	fsSound_Driver->Add( stSndDevice, 0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
+	fsSound_Driver->Add( cmbSndDevice, 1, wxCENTER, 0 );
+	fsSound_Driver->Add( stPlayRate, 0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
+	fsSound_Driver->Add( cmbPlayRate, 1, wxCENTER, 0 );	
+	fsSound_Driver->Add( stBufferLength, 0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
+	fsSound_Driver->Add( tcBufferLength, 1, wxCENTER, 0 );
+	fsSound_Driver->Add( stMaxChannels, 0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
+	fsSound_Driver->Add( tcMaxChannels, 1, wxCENTER, 0 );
+
+	vsSound_Driver = new wxBoxSizer( wxVERTICAL );
+	vsSound_Driver->Add( fsSound_Driver,	0, wxALL, 4  );
+	vsSound_Driver->Add( chkUse_MPEGACCURATE_ForMP3VBRFiles );
 
 	//----------------------------//
 	//--- Options -> Selection ---//
@@ -696,6 +703,8 @@ void MusikPrefsFrame::LoadPrefs()
 	tcBufferLength->SetValue		( sLength );
 	cmbPlayRate->SetSelection		( cmbPlayRate->FindString ( sSndRate ) );
 	tcMaxChannels->SetValue			( IntTowxString( g_Prefs.nSndMaxChan ) );
+	chkUse_MPEGACCURATE_ForMP3VBRFiles->SetValue(g_Prefs.nUse_MPEGACCURATE_ForMP3VBRFiles);
+
 }
 
 void MusikPrefsFrame::FindDevices()
@@ -1091,6 +1100,8 @@ void MusikPrefsFrame::SavePrefs()
 	double fLength = StringToDouble( tcBufferLength->GetValue() );
 	int nLength = ( int )( fLength * 1000 );
 	g_Prefs.nSndBuffer = nLength;
+
+	g_Prefs.nUse_MPEGACCURATE_ForMP3VBRFiles = chkUse_MPEGACCURATE_ForMP3VBRFiles->GetValue();
 
 	//--- save ---//
 	g_Prefs.SavePrefs();

@@ -184,11 +184,11 @@ public:
 	wxComboBox	*cmbPlayRate;
 	wxTextCtrl	*tcBufferLength;
 	wxTextCtrl	*tcMaxChannels;
-
+	wxCheckBox	*chkUse_MPEGACCURATE_ForMP3VBRFiles;
 	//--------------//
 	//--- sizers ---//
 	//--------------//
-	wxFlexGridSizer	*vsSound_Driver;
+	wxBoxSizer		*vsSound_Driver;
 	wxBoxSizer		*vsSound_Crossfader;
 	wxFlexGridSizer	*vsOptions_Selections;
 	wxFlexGridSizer	*vsOptions_Playlist;

@@ -84,7 +84,7 @@ void CMusikPrefs::LoadPrefs()
 	config->Read( wxT( "Webserverport" ),						&nWebServerPort,			6395					);
 	config->Read( wxT( "FramePlacement" ),						&sFramePlacement,			wxT("0,0,800,600,0,0")	);
 	config->Read( wxT( "SmartPlaylistColumns" ),				&nPlaylistSmartColumns,		1						);
-
+	config->Read( wxT( "Use_MPEGACCURATE_ForMP3VBRFiles" ),		&nUse_MPEGACCURATE_ForMP3VBRFiles,	1				);
 	//-----------------------------------------------------//
 	//--- we gotta load these by hand (not with a loop)	---//
 	//--- so at one point we can mess with column		---//
@@ -310,6 +310,7 @@ void CMusikPrefs::SavePrefs()
 	config->Write( wxT( "WebserverPort" ),					nWebServerPort				);
 	config->Write( wxT( "FramePlacement" ),					sFramePlacement				);
 	config->Write( wxT( "SmartPlaylistColumns" ),			nPlaylistSmartColumns		);
+	config->Write( wxT( "Use_MPEGACCURATE_ForMP3VBRFiles" ),nUse_MPEGACCURATE_ForMP3VBRFiles );
 
 	//--- playlist columns ---//
 	for( int i = 0; i < NPLAYLISTCOLUMNS; i++ )

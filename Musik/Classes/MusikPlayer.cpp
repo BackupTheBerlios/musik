@@ -29,7 +29,7 @@ WX_DEFINE_OBJARRAY( CMusikStreamArray );
 
 #define MUSIK_FMOD_VERSION 0x0363 //--- 0x0363 or 0x0370 ---//
 
-void * F_CALLBACKAPI dspcallback(void *originalbuffer, void *newbuffer, int length, int param)
+void * F_CALLBACKAPI dspcallback(void *WXUNUSED(originalbuffer), void *newbuffer, int length, int WXUNUSED(param))
 {
 	// 2 channels (stereo), 16 bit sound
 	g_FX.ProcessSamples( newbuffer, length, 2, 16 );
@@ -226,11 +226,21 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 		//--- bottom of the g_ActiveStreams array	---//
 		//---------------------------------------------//
 		FSOUND_Stream_SetBufferSize( g_Prefs.nSndBuffer );
+		int nFlags = FSOUND_NORMAL | FSOUND_2D ;
+		if( _CurrentSongNeedsMPEGACCURATE())
+			nFlags |= FSOUND_MPEGACCURATE;
+
 		#if ( MUSIK_FMOD_VERSION >= 0x0370 )
-			FSOUND_STREAM* pNewStream = FSOUND_Stream_Open( ( const char* )ConvFNToFieldMB( m_CurrentFile ), FSOUND_2D, 0, 0 );
+		FSOUND_STREAM* pNewStream = FSOUND_Stream_Open( ( const char* )ConvFNToFieldMB( m_CurrentFile ), nFlags , 0, 0 );
 		#else
-			FSOUND_STREAM* pNewStream = FSOUND_Stream_OpenFile( ( const char* )ConvFNToFieldMB( m_CurrentFile ), FSOUND_2D, 0);
+		FSOUND_STREAM* pNewStream = FSOUND_Stream_OpenFile( ( const char* )ConvFNToFieldMB( m_CurrentFile ), nFlags , 0);
 		#endif
+		if(pNewStream == NULL)
+		{
+			wxMessageBox( _( "Playback will be stopped, because loading failed.\n Filename:" ) + m_CurrentFile, MUSIK_VERSION, wxICON_STOP );
+			Stop(false);
+			return false;
+		}
 		InitDSP();
 		
 		//---------------------------------------------//
@@ -663,13 +673,30 @@ wxString CMusikPlayer::GetTimeStr()
 
 void CMusikPlayer::SetTime( int nSec )
 {
-	if ( g_Prefs.nFadeSeekEnable == 0 || m_Paused )
-	FSOUND_Stream_SetTime( g_ActiveStreams.Item( g_ActiveStreams.GetCount() - 1 ), nSec * 1000 );
-
+	if(_IsSeekCrossFadingDisabled())
+	{
+		FSOUND_Stream_SetTime( g_ActiveStreams.Item( g_ActiveStreams.GetCount() - 1 ), nSec * 1000 );
+	}
 	else
+	{
 		Play( m_SongIndex, nSec, CROSSFADE_SEEK );
+	}
 }
 
+bool CMusikPlayer::_IsSeekCrossFadingDisabled()
+{
+	return ( g_Prefs.nGlobalFadeEnable == 0 || g_Prefs.nFadeSeekEnable == 0 || m_Paused 
+		||  _CurrentSongNeedsMPEGACCURATE()); // no seek crossfadeing, because _CurrentSongNeedsMPEGACCURATE files are slow in opening
+
+}
+bool CMusikPlayer::_CurrentSongNeedsMPEGACCURATE()
+{
+	return (g_Prefs.nUse_MPEGACCURATE_ForMP3VBRFiles
+			&&(m_SongIndex <  m_Playlist.GetCount())
+			&& m_Playlist.Item( m_SongIndex ).VBR 
+			&& (m_Playlist.Item( m_SongIndex ).Format == MUSIK_FORMAT_MP3) ); 
+	//  mp3 vbr files, takes much to long, needs FSOUND_MPEGACCURATE flag
+}
 wxString CMusikPlayer::SecToStr( int nSec )
 {
 	wxString result;

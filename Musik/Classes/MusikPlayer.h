@@ -171,6 +171,8 @@ public:
 	DECLARE_EVENT_TABLE()
 	
 private:
+	bool _IsSeekCrossFadingDisabled();
+	bool _CurrentSongNeedsMPEGACCURATE();
 	
 	CMusikSongArray m_Playlist;			//--- heart and soul.								---//
 	EMUSIK_PLAYMODE	m_Playmode;			//--- repeat, shuffle, etc							---//
