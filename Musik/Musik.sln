@@ -1,6 +1,7 @@
 Microsoft Visual Studio Solution File, Format Version 8.00
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Musik", "Musik.vcproj", "{C4650E41-AD5A-41D8-89D8-3ED472E4D10F}"
 	ProjectSection(ProjectDependencies) = postProject
+		{C372ABA2-E90B-459B-B5B2-A9A181DFE807} = {C372ABA2-E90B-459B-B5B2-A9A181DFE807}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MMShellHook", "MMShellHook\MMShellHook.vcproj", "{C372ABA2-E90B-459B-B5B2-A9A181DFE807}"

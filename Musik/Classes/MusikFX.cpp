@@ -12,7 +12,7 @@
  *
  *  See the file "license.txt" for information on usage and redistribution
  *  of this file, and for a DISCLAIMER OF ALL WARRANTIES.
-*/// For compilers that support precompilation, includes "wx/wx.h".#include "wx/wxprec.h"
+*/#include "wx/wxprec.h"	   // For compilers that support precompilation, includes "wx/wx.h".
 
 #include "MusikFX.h"
 #include "../MusikGlobals.h"
