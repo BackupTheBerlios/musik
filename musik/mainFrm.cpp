@@ -314,7 +314,7 @@ CMainFrameFader::svc()
 {
 	// sleep if we go idle
 	ACE_Time_Value suspend, sleep;
-	sleep.set( 0.5f );
+	sleep.set( 1.0f );
 
 	m_Stop = false;
 	m_Active = true;
@@ -365,7 +365,7 @@ CMainFrameFader::svc()
 				else	// non adaptive
 				{
 					int interval = ( focused_per - unfocused_per ) / fade_steps;
-					sleep.set( (float)( fade_dur / 10 ) / (float)( fade_steps ) );
+					suspend.set( (float)( fade_dur / 10 ) / (float)( fade_steps ) );
 
 					for ( int i = 0; i < fade_steps; i++ )
 					{
@@ -416,7 +416,7 @@ CMainFrameFader::svc()
 				else	// non adaptive
 				{
 					int interval = ( focused_per - unfocused_per ) / fade_steps;
-					sleep.set( (float)( fade_dur / 10 ) / (float)( fade_steps ) );
+					suspend.set( (float)( fade_dur / 10 ) / (float)( fade_steps ) );
 
 					for ( int i = 0; i < fade_steps; i++ )
 					{
