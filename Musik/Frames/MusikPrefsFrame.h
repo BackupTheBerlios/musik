@@ -126,6 +126,26 @@ public:
 	wxComboBox* cmbBitrateStatic;
 	wxComboBox* cmbFilenameStatic;
 
+	//-------------------------//
+	//--- options -> tunage ---//
+	//-------------------------//
+	wxCheckBox*	chkTunageWriteFile;
+	wxCheckBox* chkTunageAppendFile;
+	wxCheckBox* chkTunagePostURL;
+	wxCheckBox* chkTunageRunApp;
+	wxCheckBox* chkTunageRunOnStop;
+
+	wxTextCtrl*	tcTunageFilename;
+	wxTextCtrl* tcTunageFileLine;
+	wxTextCtrl* tcTunageURL;
+	wxTextCtrl* tcTunageCmdLine;
+	wxTextCtrl* tcTunageStoppedText;
+
+	wxStaticBox *sbTunageFile;
+	wxStaticBox *sbTunageURL;
+	wxStaticBox *sbTunageApp;
+	wxStaticBox *sbTunageMisc;
+
 	//--------------------------//
 	//--- tagging -> general ---//
 	//--------------------------//

@@ -360,7 +360,70 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//-------------------------//
 	//--- Options -> Tunage ---//
 	//-------------------------//
+	chkTunageWriteFile	= new wxCheckBox( this, -1, _("Enable"),			wxPoint(0,0), wxSize(-1,-1) );
+	chkTunageAppendFile = new wxCheckBox( this, -1, _("Append to file"),			wxPoint(0,0), wxSize(-1,-1) );
+	chkTunagePostURL	= new wxCheckBox( this, -1, _("Enable"),			wxPoint(0,0), wxSize(-1,-1) );
+	chkTunageRunApp		= new wxCheckBox( this, -1, _("Enable"),				wxPoint(0,0), wxSize(-1,-1) );
+	chkTunageRunOnStop	= new wxCheckBox( this, -1, _("Update when Musik stops"),	wxPoint(0,0), wxSize(-1,-1) );
+
+	wxStaticText *stTunageFilename	= new wxStaticText( this, -1, _("Filename:"),		wxPoint(0,0), wxSize( 75, -1 ), wxALIGN_LEFT );
+	wxStaticText *stTunageFileLine	= new wxStaticText( this, -1, _("Line to write:"),	wxPoint(0,0), wxSize( 75, -1 ), wxALIGN_LEFT );
+	wxStaticText *stTunageURL		= new wxStaticText( this, -1, _("URL:"),			wxPoint(0,0), wxSize( 75, -1 ), wxALIGN_LEFT );
+	wxStaticText *stTunageCmdLine	= new wxStaticText( this, -1, _("Command line:"),	wxPoint(0,0), wxSize( 75, -1 ), wxALIGN_LEFT );
+	wxStaticText *stTunageStoppedText = new wxStaticText( this, -1, _("Stopped Text:"),	wxPoint(0,0), wxSize( 75, -1 ), wxALIGN_LEFT );
+
+	tcTunageFilename	= new wxTextCtrl( this, -1, _(""),	wxPoint(0,0), wxSize( -1, -1 ) );
+	tcTunageFileLine	= new wxTextCtrl( this, -1, _(""),	wxPoint(0,0), wxSize( -1, -1 ) );
+	tcTunageURL			= new wxTextCtrl( this, -1, _(""),	wxPoint(0,0), wxSize( -1, -1 ) );
+	tcTunageCmdLine		= new wxTextCtrl( this, -1, _(""),	wxPoint(0,0), wxSize( -1, -1 ) );
+	tcTunageStoppedText = new wxTextCtrl( this, -1, _(""),	wxPoint(0,0), wxSize( -1, -1 ) );
+
+	wxBoxSizer *hsTunageFilename = new wxBoxSizer( wxHORIZONTAL );
+	hsTunageFilename->Add( stTunageFilename, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 2 );
+	hsTunageFilename->Add( tcTunageFilename, 1, wxEXPAND, 0 );
+	wxBoxSizer *hsTunageFileLine = new wxBoxSizer( wxHORIZONTAL );
+	hsTunageFileLine->Add( stTunageFileLine, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 2 );
+	hsTunageFileLine->Add( tcTunageFileLine, 1, wxEXPAND, 0 );
+	wxBoxSizer *hsTunageURL = new wxBoxSizer( wxHORIZONTAL );
+	hsTunageURL->Add( stTunageURL, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 2 );
+	hsTunageURL->Add( tcTunageURL, 1, wxEXPAND, 0 );
+	wxBoxSizer *hsTunageCmdLine = new wxBoxSizer( wxHORIZONTAL );
+	hsTunageCmdLine->Add( stTunageCmdLine, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 2 );
+	hsTunageCmdLine->Add( tcTunageCmdLine, 1, wxEXPAND, 0 );
+	wxBoxSizer *hsTunageStoppedText = new wxBoxSizer( wxHORIZONTAL );
+	hsTunageStoppedText->Add( stTunageStoppedText, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 2 );
+	hsTunageStoppedText->Add( tcTunageStoppedText, 1, wxEXPAND, 0 );
+
+	
+	sbTunageFile = new wxStaticBox( this, -1, _("Write to file") );
+	sbTunageURL = new wxStaticBox( this, -1, _("Post to a website") );
+	sbTunageApp = new wxStaticBox( this, -1, _("Run a program") );
+	sbTunageMisc = new wxStaticBox( this, -1, _("Misc.") );
+
+	wxStaticBoxSizer *vsTunageFile = new wxStaticBoxSizer( sbTunageFile, wxVERTICAL );
+	vsTunageFile->Add( chkTunageWriteFile,		0, wxALL, 2 );
+	vsTunageFile->Add( hsTunageFilename,		0, wxALL | wxEXPAND, 2 );
+	vsTunageFile->Add( hsTunageFileLine,		0, wxALL | wxEXPAND, 2 );
+	vsTunageFile->Add( chkTunageAppendFile,		0, wxALL, 2 );
+	
+	wxStaticBoxSizer *vsTunageURL = new wxStaticBoxSizer( sbTunageURL, wxVERTICAL );
+	vsTunageURL->Add( chkTunagePostURL,		0, wxALL, 2 );
+	vsTunageURL->Add( hsTunageURL,				0, wxALL | wxEXPAND, 2 );
+	
+	wxStaticBoxSizer *vsTunageApp = new wxStaticBoxSizer( sbTunageApp, wxVERTICAL );
+	vsTunageApp->Add( chkTunageRunApp,			0, wxALL, 2 );
+	vsTunageApp->Add( hsTunageCmdLine,			0, wxALL | wxEXPAND, 2 );
+	
+	wxStaticBoxSizer *vsTunageMisc = new wxStaticBoxSizer( sbTunageMisc, wxVERTICAL );
+	vsTunageMisc->Add( chkTunageRunOnStop,		0, wxALL, 2 );
+	vsTunageMisc->Add( hsTunageStoppedText,		0, wxALL | wxEXPAND, 2 );
+
 	vsOptions_Tunage = new wxBoxSizer( wxVERTICAL );
+	vsOptions_Tunage->Add( vsTunageFile,		0, wxALL | wxEXPAND, 2 );
+	vsOptions_Tunage->Add( vsTunageURL,			0, wxALL | wxEXPAND, 2 );
+	vsOptions_Tunage->Add( vsTunageApp,			0, wxALL | wxEXPAND, 2 );
+	vsOptions_Tunage->Add( vsTunageMisc,		0, wxALL | wxEXPAND, 2 );
+	
 
 	//--------------------------//
 	//--- Tagging -> General ---//
@@ -557,6 +620,20 @@ void MusikPrefsFrame::LoadPrefs()
 	cmbBitrateStatic->SetSelection		( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_BITRATE]		);
 	cmbFilenameStatic->SetSelection		( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_FILENAME]		);
 
+	//-------------------------//
+	//--- options -> tunage ---//
+	//-------------------------//
+	chkTunageWriteFile->SetValue		( g_Prefs.nTunageWriteFile );
+	chkTunageAppendFile->SetValue		( g_Prefs.nTunageAppendFile );
+	chkTunagePostURL->SetValue			( g_Prefs.nTunagePostURL );
+	chkTunageRunApp->SetValue			( g_Prefs.nTunageRunApp );
+	chkTunageRunOnStop->SetValue		( g_Prefs.nTunageRunOnStop );
+	tcTunageFilename->SetValue			( g_Prefs.sTunageFilename );
+	tcTunageFileLine->SetValue			( g_Prefs.sTunageFileLine );
+	tcTunageURL->SetValue				( g_Prefs.sTunageURL );
+	tcTunageCmdLine->SetValue			( g_Prefs.sTunageCmdLine );
+	tcTunageStoppedText->SetValue		( g_Prefs.sTunageStoppedText );
+
 	//--------------------------//
 	//--- tagging -> general ---//
 	//--------------------------//
@@ -637,6 +714,10 @@ void MusikPrefsFrame::HidePanels()
 	hsSplitter->Show( vsOptions_Interface,	false );
 	hsSplitter->Show( vsOptions_Playlist,	false );
 	hsSplitter->Show( vsOptions_Tunage,		false );
+	sbTunageFile->Show( false );
+	sbTunageURL->Show( false );
+	sbTunageApp->Show( false );
+	sbTunageMisc->Show( false );
 	hsSplitter->Show( vsSound_Crossfader,	false );
 	hsSplitter->Show( vsSound_Driver,		false );
 	hsSplitter->Show( vsTagging_General,	false );
@@ -684,6 +765,10 @@ void MusikPrefsFrame::UpdatePrefsPanel()
 	{
 		HidePanels();
 		hsSplitter->Show( vsOptions_Tunage, true );
+		sbTunageFile->Show( true );
+		sbTunageURL->Show( true );
+		sbTunageApp->Show( true );
+		sbTunageMisc->Show( true );
 	}
 
 	this->Layout();
@@ -912,6 +997,21 @@ void MusikPrefsFrame::SavePrefs()
 		g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_FILENAME] = cmbFilenameStatic->GetSelection();
 		bResetColumns = true;
 	}
+
+	//-------------------------//
+	//--- options -> tunage ---//
+	//-------------------------//
+	g_Prefs.nTunageWriteFile	= chkTunageWriteFile->GetValue();
+	g_Prefs.nTunageAppendFile	= chkTunageAppendFile->GetValue();
+	g_Prefs.nTunagePostURL		= chkTunagePostURL->GetValue();
+	g_Prefs.nTunageRunApp		= chkTunageRunApp->GetValue();
+	g_Prefs.nTunageRunOnStop	= chkTunageRunOnStop->GetValue();
+	g_Prefs.sTunageFilename		= tcTunageFilename->GetValue();
+	g_Prefs.sTunageFileLine		= tcTunageFileLine->GetValue();
+	g_Prefs.sTunageURL			= tcTunageURL->GetValue();
+	g_Prefs.sTunageCmdLine		= tcTunageCmdLine->GetValue();
+	g_Prefs.sTunageStoppedText	= tcTunageStoppedText->GetValue();
+
 
 	//--------------------------//
 	//--- tagging -> general ---//
