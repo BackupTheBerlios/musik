@@ -99,13 +99,13 @@ public:
 		m_Songs = playlist;
 	}
 
-	void Set( int from, int to )
+	void Set( int from, int to, bool force_update = false )
 	{ 
 		// set the current item range
 		m_ItemRange.Set( from, to + 1 );
 
 		// same item range as before, just return.
-		if ( m_ItemRange.GetFirst() == m_LastItemRange.GetFirst() && 
+		if ( !force_update && m_ItemRange.GetFirst() == m_LastItemRange.GetFirst() && 
 			 m_ItemRange.GetLast() == m_LastItemRange.GetLast() )
 			 return;
 

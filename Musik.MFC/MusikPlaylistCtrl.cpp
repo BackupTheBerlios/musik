@@ -127,7 +127,7 @@ void CMusikPlaylistCtrl::SetPlaylist( CMusikPlaylist* playlist )
 void CMusikPlaylistCtrl::UpdateV()
 {
 	SetRedraw( false );
-	m_SongInfoCache->Set( 0, 0 );
+	m_SongInfoCache->Set( 0, 0, true );
 	SetItemCountEx( m_Playlist->GetCount(), LVSICF_NOINVALIDATEALL | LVSICF_NOSCROLL );
 
 	CRect rcClient;

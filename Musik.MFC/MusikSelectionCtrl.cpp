@@ -234,12 +234,15 @@ CStdString CMusikSelectionCtrl::GetSelQuery()
 	sQuery += _T( " like " );
 	for ( size_t i = 0; i < selected_items.size(); i++ )
 	{
+		selected_items.at( i ).Replace( "'", "''" );
+
 		if ( i == selected_items.size() - 1 )
 		{
 			sQuery += _T( "'" );
 			sQuery += selected_items.at( i );
 			sQuery += _T( "' " );
 		}
+
 		else
 		{
 			sQuery += _T( "'" );
