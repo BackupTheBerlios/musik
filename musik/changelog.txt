@@ -1,5 +1,14 @@
 -------------------------------------------------------------------------
 
+a3:
+
+  - fixed a bug where adding synchronized paths with spaces
+    could cause a "conflicting path" error.
+  - fixed a bug where dropping from sources without a playlist
+    would not start playback
+
+-------------------------------------------------------------------------
+
 a2:
  
   - much improved navigation. double clicking a song adds it

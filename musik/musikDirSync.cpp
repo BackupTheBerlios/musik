@@ -144,10 +144,14 @@ void CmusikDirSync::OnBnClickedAdd()
 			imalloc->Release ( );
 		}
 
-		if ( ValidatePath( path ) )
+		CString str_path = path;
+		if ( str_path.Right( 1 ) != _T( "\\" ) )
+			str_path += _T( "\\" );	
+		
+		if ( ValidatePath( str_path ) )
 		{
-			m_Library->AddPath( path );
-			m_wndPaths.AddString( path );
+			m_Library->AddPath( str_path.GetBuffer() );
+			m_wndPaths.AddString( str_path );
 
 			m_Changed = true;
 		}
