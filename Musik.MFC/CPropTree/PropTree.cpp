@@ -119,9 +119,6 @@ int CPropTree::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	GetClientRect(rc);
 
-	// create CPropTreeList
-	//
-
 	dwStyle = WS_VISIBLE|WS_CHILD|WS_VSCROLL;
 
 	if (!m_List.Create(dwStyle, rc, this, 100))
@@ -131,8 +128,6 @@ int CPropTree::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 
 	m_List.SetPropOwner(this);
-
-	dwStyle &= ~WS_VSCROLL;
 
 	return 0;
 }

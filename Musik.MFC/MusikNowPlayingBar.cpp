@@ -29,12 +29,12 @@ int CMusikNowPlayingBar::OnCreate( LPCREATESTRUCT lpCreateStruct )
 	if ( baseCMusikNowPlayingBar::OnCreate(lpCreateStruct) == -1 )
 		return -1;
 
-	SetSCBStyle( GetSCBStyle() | SCBS_SHOWEDGES | SCBS_SIZECHILD );
+	SetSCBStyle( GetSCBStyle() | SCBS_SIZECHILD );
 
 	if ( !m_wndChild.Create( NULL, NULL, WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0), this, 123) )
 		return -1;
 
-	m_wndChild.ModifyStyleEx( 0, WS_EX_CLIENTEDGE );
+	m_wndChild.ModifyStyleEx( 0, WS_EX_STATICEDGE );
 
 	if ( !m_Font.CreateStockObject(DEFAULT_GUI_FONT) )
 		return -1;

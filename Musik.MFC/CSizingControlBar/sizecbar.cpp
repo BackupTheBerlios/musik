@@ -1240,7 +1240,7 @@ void CSCBDockContext::StartDrag(CPoint pt)
     CMiniFrameWnd::CalcBorders(&m_rectFrameDragHorz,
         WS_THICKFRAME, WS_EX_FORCESIZEBOX);
 #else
-    CMiniFrameWnd::CalcBorders(&m_rectFrameDragHorz, WS_THICKFRAME);
+    CMiniFrameWnd::CalcBorders(&m_rectFrameDragHorz, /*WS_THICKFRAME*/WS_BORDER );
 #endif
     m_rectFrameDragHorz.DeflateRect(2, 2);
     m_rectFrameDragVert = m_rectFrameDragHorz;
@@ -1380,7 +1380,7 @@ void CSCBMiniDockFrameWnd::OnGetMinMaxInfo(MINMAXINFO FAR* lpMMI)
 #ifndef _SCB_MINIFRAME_CAPTION
         CMiniFrameWnd::CalcBorders(&r, WS_THICKFRAME);
 #else
-        CMiniFrameWnd::CalcBorders(&r, WS_THICKFRAME|WS_CAPTION);
+        CMiniFrameWnd::CalcBorders(&r, /*WS_THICKFRAME*/WS_BORDER|WS_CAPTION);
 #endif //_SCB_MINIFRAME_CAPTION
         lpMMI->ptMinTrackSize.x = r.Width();
         lpMMI->ptMinTrackSize.y = r.Height();

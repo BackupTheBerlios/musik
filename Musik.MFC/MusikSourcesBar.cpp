@@ -29,12 +29,8 @@ int CMusikSourcesBar::OnCreate( LPCREATESTRUCT lpCreateStruct )
 	if ( baseCMusikSourcesBar::OnCreate(lpCreateStruct) == -1 )
 		return -1;
 
-	//SetSCBStyle( GetSCBStyle() | SCBS_SHOWEDGES | SCBS_SIZECHILD );
-
 	if ( !m_wndChild.Create( WS_CHILD | WS_VISIBLE | PTS_NOTIFY, CRect( 0, 0, 0, 0 ), this, 123) )
 		return -1;
-
-	m_wndChild.ModifyStyleEx( 0, WS_EX_CLIENTEDGE );
 
 	if ( !m_Font.CreateStockObject( DEFAULT_GUI_FONT ) )
 		return -1;
