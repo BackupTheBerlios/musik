@@ -353,7 +353,7 @@ void MusikTagFrame::PopulateTagDlg()
 	//--- genre ---//
 	wxString sGenre = m_Songs.Item( nIndex ).Genre;
 	int nGenre = GetGenreID( sGenre );
-	if ( nGenre != 12 )
+	if ( nGenre != -1 )
 		cmbGenre->SetValue( sGenre );
 	else
 		cmbGenre->SetValue( _("Other") );

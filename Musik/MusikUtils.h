@@ -25,15 +25,15 @@
 //------------------------------------------------------------------//
 //--- misc utility functions, see implementation for description ---//
 //------------------------------------------------------------------//
-wxString		GetGenre			( wxString sGenre );
-int				GetGenreID			( wxString sGenre );
+wxString		GetGenre			(  const wxString & sGenre );
+int				GetGenreID			(  const wxString & sGenre );
 
 wxArrayString	DelimitStr			( wxString sStr, wxString sDel, bool bRemoveDelimiter = true );
 size_t			GetDelimitCount		( wxString sStr, wxString sDel );
 
 void			GetPlaylistDir		( wxArrayString & aFiles );
 wxString		MStoStr				( int timems );
-wxArrayString	FileToStringArray	( wxString sFilename );
+wxArrayString	FileToStringArray	(  const wxString &  sFilename );
 int				MusikRound			( float x );
 int				FindStrInArray		( wxArrayString* array, wxString pattern );
 wxString		SanitizedString		( const wxString & str );

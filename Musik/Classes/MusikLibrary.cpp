@@ -332,8 +332,11 @@ void CMusikLibrary::WriteMP3Tag( const CMusikSong & song, bool ClearAll )
 	ID3_AddAlbum	( &id3Tag, ( const char* )ConvDBFieldToMB( song.Album ),	true );
 	ID3_AddYear		( &id3Tag, ( const char* )ConvDBFieldToMB( song.Year ), 	true );
 	ID3_AddTrack	( &id3Tag, song.TrackNum,									true );
-	ID3_AddGenre	( &id3Tag, GetGenreID( song.Genre ),						true );
-
+	int genreid = GetGenreID( song.Genre );
+	if(genreid == -1)
+		ID3_AddGenre	( &id3Tag, song.Genre ,						true );// write ID3V2 string genre tag
+	else
+		ID3_AddGenre	( &id3Tag, genreid,						true );// write ID3V1 integer genre id
 	//--- write to file ---//
 	id3Tag.Update();
 	

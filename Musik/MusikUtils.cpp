@@ -185,40 +185,38 @@ size_t GetDelimitCount ( wxString sStr, wxString sDel )
 	return aTemp.GetCount();
 }
 
-wxString GetGenre ( wxString sGenre ) 
+wxString GetGenre ( const wxString & sGenre ) 
 { 
+	// if sGenre is a number, the name will be returned
+	// if sGenre is something like (nnn) XXXXX , the name of the number nnn will be returned
+	// if nothing matches the sGenre will be returned, but if sGenre is an empty string, _("<unknown>") will be returned
+	wxString aReturn(sGenre);
 	if ( sGenre.Length() > 0 )
 	{
-		if ( ( sGenre.Length() == 5 ) || ( sGenre.Length() == 4 ) || ( sGenre.Length() == 3 ) )
-		{
-			sGenre.Replace( wxT("("), wxT("") );
-			sGenre.Replace( wxT(")"), wxT("") );
+		int nGenreID = -1;
+		if(wxIsdigit(sGenre[0]))
+			nGenreID = wxStringToInt( sGenre );
+		else if (sGenre.StartsWith(wxT("("),&aReturn))
+			nGenreID = wxStringToInt( aReturn );
 
-			int nGenreID = wxStringToInt( sGenre );
-
-			if ( nGenreID < ID3_NR_OF_V1_GENRES )
-				sGenre = ConvA2W( ID3_v1_genre_description[nGenreID] );
-			else
-				sGenre = wxT( "<unknown>" );
-		}
+		if (nGenreID >=0 && nGenreID < ID3_NR_OF_V1_GENRES )
+			aReturn = ConvA2W( ID3_v1_genre_description[nGenreID] );
 	}
 	else
-		sGenre = _("<unknown>");
+		aReturn = _("<unknown>");
 
-	return sGenre;
+	return aReturn;
 }
 
-int GetGenreID( wxString sGenre )
+int GetGenreID( const wxString & sGenre )
 {		
-	sGenre = sGenre.MakeLower();
 	for ( int i = 0; i < ID3_NR_OF_V1_GENRES; i++ )
 	{
 		wxString sCur = ConvA2W( ID3_v1_genre_description[i] );
-		sCur.MakeLower();
-		if ( sGenre == sCur )
+		if ( sGenre.CmpNoCase( sCur ))
 			return i;
 	}
-	return 12; //--- return "Other" if unknown ---//
+	return -1; //--- return -1 if unknown ---//
 }
 
 wxString MStoStr( int timems )
@@ -260,7 +258,7 @@ void GetPlaylistDir( wxArrayString & aFiles )
 	return;
 }
 
-wxArrayString FileToStringArray( wxString sName )
+wxArrayString FileToStringArray(  const wxString & sName )
 {
 	wxArrayString aReturn;
 
