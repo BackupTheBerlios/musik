@@ -144,23 +144,12 @@ wxArrayString GetMusicDir( wxString* sDir )
 wxArrayString DelimitStr( wxString sStr, wxString sDel, bool bRemoveDelimiter )
 {
 	wxArrayString aReturn;
-	while ( wxStrcspn( sStr, sDel ) < wxStrlen( sStr ) )
-	{
-		int nDelLoc = (int)wxStrcspn( sStr, sDel );
-		int nDelLen = (int)wxStrlen ( sDel );
-		int nStrLen = (int)wxStrlen ( sStr );
+	wxStringTokenizer toke( sStr, sDel, !bRemoveDelimiter );
 
-		wxString sOutStr = sStr;
-		sOutStr = sOutStr.Left( nDelLoc );
+	while( toke.HasMoreTokens() )
+		aReturn.Add( toke.GetNextToken() );
 
-		if ( !bRemoveDelimiter )
-			sOutStr += sDel;
-	
-		aReturn.Add( sOutStr );
-		sStr = sStr.Right( nStrLen - nDelLoc - nDelLen );
-	}
-	aReturn.Add( sStr );         
-	return aReturn;	
+	return aReturn;
 }
 
 size_t GetDelimitCount ( wxString sStr, wxString sDel )
