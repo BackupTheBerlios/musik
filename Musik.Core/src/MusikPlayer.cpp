@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "../include/MusikPlayer.h"
 
 CMusikPlayer::CMusikPlayer()

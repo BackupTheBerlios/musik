@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "../include/MusikLibrary.h"
 #include "time.h"
 
@@ -37,23 +38,23 @@ static int sqlite_GetSongInfoFromID( void *args, int numCols, char **results, ch
 {
 	CMusikSongInfo* p = (CMusikSongInfo*)args;
 
-	p->m_Filename		= CStdString	( results[0] );
-	p->m_Title			= CStdString	( results[1] );
-	p->m_TrackNum		= atoi			( results[2] );
-	p->m_Artist			= CStdString	( results[3] );
-	p->m_Album			= CStdString	( results[4] );
-	p->m_Genre			= CStdString	( results[5] );
-	p->m_Duration		= atoi			( results[6] );
-	p->m_Format			= atoi			( results[7] );
-	p->m_VBR			= atoi			( results[8] );
-	p->m_Year			= CStdString	( results[9] );
-	p->m_Rating			= atoi			( results[10] );
-	p->m_Bitrate		= atoi			( results[11] );
-	p->m_LastPlayed		= CStdString	( results[12] );
-	p->m_Notes			= CStdString	( results[13] );
-	p->m_TimesPlayed	= atoi			( results[14] );
-	p->m_TimeAdded		= CStdString	( results[15] );
-	p->m_Filesize		= atoi			( results[16] );
+	p->m_TrackNum		= atoi			( results[0] );
+	p->m_Artist			= CStdString	( results[1] );
+	p->m_Album			= CStdString	( results[2] );
+	p->m_Genre			= CStdString	( results[3] );
+	p->m_Title			= CStdString	( results[4] );
+	p->m_Duration		= atoi			( results[5] );
+	p->m_Format			= atoi			( results[6] );
+	p->m_VBR			= atoi			( results[7] );
+	p->m_Year			= CStdString	( results[8] );
+	p->m_Rating			= atoi			( results[9] );
+	p->m_Bitrate		= atoi			( results[10] );
+	p->m_LastPlayed		= CStdString	( results[11] );
+	p->m_Notes			= CStdString	( results[12] );
+	p->m_TimesPlayed	= atoi			( results[13] );
+	p->m_TimeAdded		= CStdString	( results[14] );
+	p->m_Filesize		= atoi			( results[15] );
+	p->m_Filename		= CStdString	( results[16] );
 
     return 0;
 }
@@ -96,12 +97,11 @@ void CMusikLibrary::InitTimeAdded()
 
 void CMusikLibrary::InitFields()
 {
-	m_Fields.push_back( _T( "Filename" ) );
-	m_Fields.push_back( _T( "Title" ) );
 	m_Fields.push_back( _T( "Artist" ) );
 	m_Fields.push_back( _T( "Album" ) );
 	m_Fields.push_back( _T( "Year" ) );
 	m_Fields.push_back( _T( "Genre" ) );
+	m_Fields.push_back( _T( "Title" ) );
 	m_Fields.push_back( _T( "Track Number" ) );
 	m_Fields.push_back( _T( "Time Added" ) );
 	m_Fields.push_back( _T( "Last Played" ) );
@@ -111,13 +111,13 @@ void CMusikLibrary::InitFields()
 	m_Fields.push_back( _T( "Rating" ) );
 	m_Fields.push_back( _T( "Times Played" ) );
 	m_Fields.push_back( _T( "Bitrate" ) );
+	m_Fields.push_back( _T( "Filename" ) );
 
-	m_FieldsDB.push_back( _T( "filename" ) );
-	m_FieldsDB.push_back( _T( "title" ) );
 	m_FieldsDB.push_back( _T( "artist" ) );
 	m_FieldsDB.push_back( _T( "album" ) );
 	m_FieldsDB.push_back( _T( "year" ) );
 	m_FieldsDB.push_back( _T( "genre" ) );
+	m_FieldsDB.push_back( _T( "title" ) );
 	m_FieldsDB.push_back( _T( "tracknum" ) );
 	m_FieldsDB.push_back( _T( "timeadded" ) );
 	m_FieldsDB.push_back( _T( "lastplayed" ) );
@@ -127,6 +127,7 @@ void CMusikLibrary::InitFields()
 	m_FieldsDB.push_back( _T( "rating" ) );
 	m_FieldsDB.push_back( _T( "timesplayed" ) );
 	m_FieldsDB.push_back( _T( "bitrate" ) );
+	m_FieldsDB.push_back( _T( "filename" ) );
 }
 
 bool CMusikLibrary::Startup()
@@ -182,7 +183,7 @@ bool CMusikLibrary::Startup()
 	}
 
 	if ( pErr )
-		free( pErr );
+		sqlite_freemem( pErr );
 
 	return ( m_pDB != NULL );   
 }
@@ -252,12 +253,6 @@ CStdString CMusikLibrary::GetOrder( int type, bool terminate )
 
 	switch( type )
 	{
-	case MUSIK_LIBRARY_TYPE_FILENAME:
-		break;
-	case MUSIK_LIBRARY_TYPE_TITLE:
-		sTerminate.Format( _T( "order by title,artist,album,tracknum%s" ), sTerminate.c_str() );
-		return sTerminate;
-		break;
 	case MUSIK_LIBRARY_TYPE_ARTIST:
 		sTerminate.Format( _T( "order by artist,album,tracknum,title%s" ), sTerminate.c_str() );
 		return sTerminate;
@@ -272,6 +267,10 @@ CStdString CMusikLibrary::GetOrder( int type, bool terminate )
 		break;
 	case MUSIK_LIBRARY_TYPE_GENRE:
 		sTerminate.Format( _T( "order by genre,artist,album,tracknum,title%s" ), sTerminate.c_str() );
+		return sTerminate;
+		break;
+	case MUSIK_LIBRARY_TYPE_TITLE:
+		sTerminate.Format( _T( "order by title,artist,album,tracknum%s" ), sTerminate.c_str() );
 		return sTerminate;
 		break;
 	case MUSIK_LIBRARY_TYPE_TRACKNUM:
@@ -309,6 +308,8 @@ CStdString CMusikLibrary::GetOrder( int type, bool terminate )
 	case MUSIK_LIBRARY_TYPE_BITRATE:
 		sTerminate.Format( _T( "order by bitrate,artist,album,tracknum,title%s" ), sTerminate.c_str() );
 		return sTerminate;
+		break;
+	case MUSIK_LIBRARY_TYPE_FILENAME:
 		break;
 	}
 
@@ -496,6 +497,8 @@ bool CMusikLibrary::SetSongInfo( int songid, CMusikSongInfo* info )
 			info->GetFilesize(),
 			info->GetDirtyFlag(),
 			songid );
+
+	MessageBox( NULL, query.c_str(), NULL, NULL );
 
 	//-----------------------------------------------------//
 	//--- lock it up and run the query					---//
