@@ -7,6 +7,7 @@ a2:
   - if musik is playing and a song is double clicked, the 
     playlist is no longer exchanged for the visible one. the
     new song is inserted as the next song in line and started.
+    holding ALT down changes to the visible playlist.
   - fixed a bug where maximizing, minimizing, then restoring
     would not restore to maximized.
   - crossfader presets and settings are now available to

@@ -154,6 +154,14 @@ CmusikPlaylistCtrl::CmusikPlaylistCtrl( CFrameWnd* mainwnd, CmusikLibrary* libra
 
 	// get rating extent
 	GetRatingExtent();
+
+	// image list contains the little speaker
+	// icon that appears when a visible song
+	// is playing...
+	m_ImageList = new CImageList();
+	m_ImageList->Create( 16, 16, TRUE, 2, 2 );
+	m_ImageList->Add( ( HICON )LoadImage( AfxGetApp()->m_hInstance, MAKEINTRESOURCE( IDI_SONG_NOTPLAYING ), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR ) );
+	m_ImageList->Add( ( HICON )LoadImage( AfxGetApp()->m_hInstance, MAKEINTRESOURCE( IDI_SONG_PLAYING ), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR ) );
 }
 
 ///////////////////////////////////////////////////
@@ -161,6 +169,7 @@ CmusikPlaylistCtrl::CmusikPlaylistCtrl( CFrameWnd* mainwnd, CmusikLibrary* libra
 CmusikPlaylistCtrl::~CmusikPlaylistCtrl()
 {
 	delete m_SongInfoCache;
+	delete m_ImageList;
 }
 
 ///////////////////////////////////////////////////
@@ -282,6 +291,7 @@ int CmusikPlaylistCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	ResetColumns();
+	SetImageList( m_ImageList, LVSIL_SMALL );
 
 	return 0;
 }
@@ -381,6 +391,13 @@ void CmusikPlaylistCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 		char* pStr = sValue.GetBuffer();
 		pItem->cchTextMax = sizeof( *pStr );
 		lstrcpy( pItem->pszText, pStr );
+	}
+	if ( pItem->mask & LVIF_IMAGE )
+	{
+		if ( m_Playlist->GetSongID( pItem->iItem ) == m_Player->GetCurrPlaying()->GetID() )
+			pItem->iImage = 1;
+		else
+			pItem->iImage = 0;
 	}
 
 	*pResult = 0;
@@ -759,9 +776,9 @@ bool CmusikPlaylistCtrl::PlayItem( int n )
 			SavePlaylist();
 
 
-		// if the player is playing, then just add
-		// it as the next song.
-		if ( m_Player->IsPlaying() && m_Playlist != m_Player->GetPlaylist() )
+		// if the player is playing and CTRL is not
+		// not, it as the next song.
+		if ( m_Player->IsPlaying() && m_Playlist != m_Player->GetPlaylist() && GetKeyState( VK_MENU ) >= 0 )
 		{
 			CmusikSong song;
 			song.SetID( m_Playlist->GetSongID( n ) );

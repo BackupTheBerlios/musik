@@ -33,6 +33,9 @@
 #define IDR_PLAYLIST_CONTEXT_MENU       155
 #define IDR_MENU1                       156
 #define IDR_PLAYLIST_COLUMNS_MENU       156
+#define IDI_SONG_PLAYING                157
+#define IDI_ICON3                       158
+#define IDI_SONG_NOTPLAYING             158
 #define IDC_CHECK_STARTUPSCAN           1007
 #define IDC_CHECK_STARTUPSCAN2          1008
 #define IDC_CHECK_PL_STRIPES            1009
@@ -241,7 +244,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        157
+#define _APS_NEXT_RESOURCE_VALUE        159
 #define _APS_NEXT_COMMAND_VALUE         32924
 #define _APS_NEXT_CONTROL_VALUE         1055
 #define _APS_NEXT_SYMED_VALUE           104

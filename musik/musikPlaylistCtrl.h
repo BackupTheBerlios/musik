@@ -245,6 +245,8 @@ private:
 	void DrawSortArrow( int col );
 	int m_LastCol;
 	bool m_Ascend;
+
+	CImageList* m_ImageList;
 };
 
 ///////////////////////////////////////////////////
