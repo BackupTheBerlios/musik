@@ -708,9 +708,14 @@ bool CmusikPlayer::Play( int index, int fade_type, int start_pos )
 	// out any old streams before we start up the next
 	if ( !IsCrossfaderEnabled() || ( m_Crossfader->GetDuration( fade_type ) <= 0 && fade_type == MUSIK_CROSSFADER_NONE ) )
 	{
-		// set new equalizer...
+		// set new equalizer and post to the
+		// functor... else do it when the
+		// crossfade completes
 		if ( IsEqualizerActive() )
+		{
 			m_EQ->GetSongEq( m_Playlist->GetSongID( index ) );
+			m_Functor->OnNewSong();
+		}
 
 		FSOUND_SetVolume( GetCurrChannel(), m_Volume );
 		CleanOldStreams();
@@ -721,18 +726,11 @@ bool CmusikPlayer::Play( int index, int fade_type, int start_pos )
 	else
 		FlagCrossfade();	
 
-	// call the functor. this is sort of like
-	// a callback, but a bit easier.
-	if ( m_Functor && fade_type != MUSIK_CROSSFADER_SEEK )
-		m_Functor->OnNewSong();
-
 	// set the new index
 	m_Index = index;
 
 	// and, we're done.
-	TRACE0( "Next song started, and functor called: " );
-	TRACE0( m_CurrSong.GetFilename().c_str() );
-	TRACE0( "\n" );
+	TRACE0( "New song started...\n" );
 	return true;
 }
 
@@ -1149,6 +1147,11 @@ void CmusikPlayer::FinalizeNewSong()
 	if ( IsEqualizerActive() && IsEqualizerEnabled() )
 		m_EQ->GetSongEq( m_Playlist->GetSongID( m_Index ) );
 	
+	// call the functor. this is sort of like
+	// a callback, but a bit easier.
+	if ( m_Functor )
+		m_Functor->OnNewSong();
+
 	SetVolume( m_Volume, true );
 	CleanOldStreams();
 }
