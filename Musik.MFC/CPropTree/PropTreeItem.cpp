@@ -390,9 +390,13 @@ LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 	// children have a light colored with a border
 	else
 	{
-		HGDIOBJ hOld = pDC->SelectObject( GetSysColorBrush(COLOR_BTNHILIGHT) );
+		HGDIOBJ hOld;
+
+		//the object
+		hOld = pDC->SelectObject( GetSysColorBrush(COLOR_BTNHILIGHT) );
 		pDC->PatBlt(rc.left + 14, drc.top, rc.right - rc.left + 1, drc.Height(), PATCOPY);
-		
+
+		//the gutter
 		hOld = pDC->SelectObject( GetSysColorBrush(COLOR_BTNFACE) );
 		pDC->PatBlt( 0, drc.top, 14, drc.Height(), PATCOPY);
 
@@ -419,9 +423,9 @@ LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 	// calc label position
 	ir = drc;
 	ir.left += PROPTREEITEM_SPACE;
-
+	
 	// draw label
-	if (!m_sLabel.IsEmpty())
+	if ( !m_sLabel.IsEmpty() )
 	{
 		if (IsRootLevel())
 		{
@@ -442,7 +446,11 @@ LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 		if (IsSelected())
 		{
 			HGDIOBJ oPen = pDC->SelectObject(GetStockObject(NULL_PEN));
-			HGDIOBJ oBrush = pDC->SelectObject(GetSysColorBrush(COLOR_HIGHLIGHT));
+			HGDIOBJ oBrush;
+			if ( !IsRootLevel() )
+				oBrush = pDC->SelectObject(GetSysColorBrush(COLOR_INFOBK));
+			else
+				oBrush = pDC->SelectObject(GetSysColorBrush(COLOR_ACTIVECAPTION));
 			
 			CRect dr;
 			dr = drc;
@@ -453,7 +461,10 @@ LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 			pDC->SelectObject(oPen);
 			pDC->SelectObject(oBrush);
 
-			pDC->SetTextColor(GetSysColor(COLOR_BTNHIGHLIGHT));
+			if ( !IsRootLevel() )
+				pDC->SetTextColor(GetSysColor(COLOR_INFOTEXT));
+			else
+				pDC->SetTextColor(GetSysColor(COLOR_BTNHIGHLIGHT));
 		}
 
 		// check if we need to draw the text as disabled
@@ -468,7 +479,7 @@ LONG CPropTreeItem::DrawItem( CDC* pDC, const RECT& rc, LONG x, LONG y )
 	{
 		SelectClipRgn(pDC->m_hDC, NULL);
 		DeleteObject(hRgn);
-	}
+	}	
 
 	// draw horzontal sep
 	if ( IsRootLevel() )

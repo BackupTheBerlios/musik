@@ -5,8 +5,7 @@
 #include "Musik.h"
 #include "MusikSelectionCtrl.h"
 
-#include "MusikLibrary.h"
-#include ".\musikselectionctrl.h"
+#include "../Musik.Core/include/MusikLibrary.h"
 
 // CMusikSelectionCtrl
 

@@ -64,6 +64,12 @@ int CMusikSourcesCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	pDynamicRoot = InsertItem( new CPropTreeItem() );
 	pDynamicRoot->SetLabelText( _T( "Dynamic Playlists" ) );
 	pDynamicRoot->SetInfoText(_T(""));
+	pDynamicRoot->Expand( true );
+
+	CPropTreeItem* pDynamicHighRated;
+	pDynamicHighRated = InsertItem( new CPropTreeItem(), pDynamicRoot );
+	pDynamicHighRated->SetLabelText( _T( "High Rated" ) );
+	pDynamicHighRated->SetInfoText( _T( "" ) );
 
 	return 0;
 }

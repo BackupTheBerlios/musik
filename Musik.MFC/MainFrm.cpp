@@ -4,8 +4,8 @@
 #include "stdafx.h"
 #include "Musik.h"
 
-#include "MusikLibrary.h"
-#include "StdString.h"
+#include "../Musik.Core/include/MusikLibrary.h"
+#include "../Musik.Core/include/StdString.h"
 
 #include "MainFrm.h"
 
@@ -28,7 +28,7 @@ END_MESSAGE_MAP()
 
 CMainFrame::CMainFrame()
 {
-	m_Library = new CMusikLibrary( _T( "c:\\documents and settings\\administrator\\.musik\\musiklib.db" ) );
+	m_Library = new CMusikLibrary( _T( "C:\\Documents and Settings\\avatar\\.Musik\\musiklib.db" ) );
 	//m_hIcon16 = ( HICON )LoadImage( AfxGetApp()->m_hInstance, MAKEINTRESOURCE( IDI_ICON16 ), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR );
 	//m_hIcon32 = ( HICON )LoadImage( AfxGetApp()->m_hInstance, MAKEINTRESOURCE( IDI_ICON32 ), IMAGE_ICON, 32, 32, LR_DEFAULTCOLOR );
 }

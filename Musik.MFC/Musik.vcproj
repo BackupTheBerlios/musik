@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="boost_threadd.lib fmodvc.lib sqlite.lib"
+				AdditionalDependencies="sqlite.lib boost_threadd.lib fmodvc.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"

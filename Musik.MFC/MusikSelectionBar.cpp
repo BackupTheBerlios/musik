@@ -2,7 +2,7 @@
 #include "Musik.h"
 #include "MusikSelectionBar.h"
 
-#include "MusikLibrary.h"
+#include "../Musik.Core/include/MusikLibrary.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
