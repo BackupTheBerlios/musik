@@ -206,6 +206,7 @@ CPlaylistCtrl::CPlaylistCtrl( wxWindow *parent, const wxWindowID id, const wxPoi
 	:	wxListCtrl		( parent, id, pos, size, wxLC_REPORT | wxLC_VIRTUAL | wxSIMPLE_BORDER | wxCLIP_CHILDREN & ~wxHSCROLL )
 {
 	//--- setup headers ---//
+	m_ColSaveNeeded = false;
 	ResetColumns();
 
 	//--- rating menu ---//
@@ -285,6 +286,7 @@ void CPlaylistCtrl::SaveColumns()
 	//--- this value will be used to calculate dynamic		---//
 	//--- columns.											---//
 	//---------------------------------------------------------//
+	m_ColSaveNeeded = false;
 	wxSize client_size = GetClientSize();
 
 	size_t nCurrCol;
@@ -479,10 +481,7 @@ void CPlaylistCtrl::BeginDrag( wxEvent& WXUNUSED(event) )
 
 void CPlaylistCtrl::EndDragCol( wxListEvent& event )
 {
-	SaveColumns();
-
-	//if ( g_Prefs.nPlaylistSmartColumns )
-		//RescaleColumns();
+	m_ColSaveNeeded = true;
 }
 
 void CPlaylistCtrl::PlaySel( wxListEvent& WXUNUSED(event) )
@@ -899,7 +898,7 @@ void CPlaylistCtrl::RescaleColumns( bool bFreeze, bool bSave )
 	if ( g_DisablePlacement )
 		return;
 
-	if ( bSave )
+	if ( m_ColSaveNeeded )
 		SaveColumns();
 
 	if ( bFreeze )

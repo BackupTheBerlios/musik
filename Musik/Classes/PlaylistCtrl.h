@@ -183,6 +183,8 @@ private:
 	//--------------------//
 	wxArrayInt m_ColumnOrder;
 	size_t m_Overflow;
+	bool m_ColSaveNeeded;
+
 
 	//--------------//
 	//--- thread ---//
