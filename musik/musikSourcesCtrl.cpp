@@ -290,8 +290,8 @@ void CmusikSourcesCtrl::OnDropFiles(HDROP hDropInfo)
 				// add song (if necessary)
 				m_Library->AddSong( files.at( i ) );
 
-				m_Library->GetSongFromFilename( files.at( i ), song );
-				m_Player->GetPlaylist()->Add( song );
+				if ( m_Library->GetSongFromFilename( files.at( i ), song ) )
+					m_Player->GetPlaylist()->Add( song );
 			}
 			m_Library->EndTransaction();
 		}

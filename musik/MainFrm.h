@@ -151,6 +151,7 @@ protected:
 	// utility functions
 	void DockBarLeftOf( CSizingControlBar* Bar, CSizingControlBar* LeftOf );
 	bool RecurseMkDir( char* pszDir );
+	void GetCrossfader( CmusikCrossfader* fader );
 
 	// custom message maps
 	afx_msg LRESULT OnUpdateSel( WPARAM wParam, LPARAM lParam );
@@ -187,6 +188,10 @@ protected:
 	afx_msg void OnUpdateViewSelectionboxes(CCmdUI *pCmdUI);
 	afx_msg void OnViewNowplaying();
 	afx_msg void OnUpdateViewNowplaying(CCmdUI *pCmdUI);
+	afx_msg void OnAudioEqualizerEnabled();
+	afx_msg void OnUpdateAudioEqualizerEnabled(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateAudioCrossfaderEnabled(CCmdUI *pCmdUI);
+	afx_msg void OnAudioCrossfaderEnabled();
 
 	// updating ui
 	void OnUpdateMainMenu( CCmdUI* pCmd );
@@ -200,9 +205,6 @@ protected:
 	// macros
 	DECLARE_DYNAMIC(CMainFrame)
 	DECLARE_MESSAGE_MAP()
-public:
-	afx_msg void OnAudioEqualizerEnabled();
-	afx_msg void OnUpdateAudioEqualizerEnabled(CCmdUI *pCmdUI);
 };
 
 ///////////////////////////////////////////////////

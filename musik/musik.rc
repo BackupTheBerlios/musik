@@ -109,8 +109,7 @@ BEGIN
             MENUITEM "Shuffle",                     ID_PLAYBACKMODE_SHUFFLE
         END
         MENUITEM SEPARATOR
-        MENUITEM "Crossfader Enabled",          ID_AUDIO_CROSSFADERENABLED32798
-
+        MENUITEM "Crossfader Enabled",          ID_AUDIO_CROSSFADER_ENABLED
         MENUITEM "Equalizer Enabled",           ID_AUDIO_EQUALIZER_ENABLED
     END
     POPUP "&Help"

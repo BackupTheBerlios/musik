@@ -123,6 +123,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_COMMAND(ID_VIEW_SOURCES, OnViewSources)
 	ON_COMMAND(ID_VIEW_SELECTIONBOXES, OnViewSelectionboxes)
 	ON_COMMAND(ID_VIEW_NOWPLAYING, OnViewNowplaying)
+	ON_COMMAND(ID_AUDIO_EQUALIZER_ENABLED, OnAudioEqualizerEnabled)
+	ON_COMMAND(ID_AUDIO_CROSSFADER_ENABLED, OnAudioCrossfaderEnabled)
 
 	// update ui
 	ON_UPDATE_COMMAND_UI(ID_FILE_SAVEPLAYLIST,OnUpdateMainMenu)
@@ -130,6 +132,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SOURCES, OnUpdateViewSources)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SELECTIONBOXES, OnUpdateViewSelectionboxes)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_NOWPLAYING, OnUpdateViewNowplaying)
+	ON_UPDATE_COMMAND_UI(ID_AUDIO_EQUALIZER_ENABLED, OnUpdateAudioEqualizerEnabled)
+	ON_UPDATE_COMMAND_UI(ID_AUDIO_CROSSFADER_ENABLED, OnUpdateAudioCrossfaderEnabled)
 
 	// custom message maps
 	ON_REGISTERED_MESSAGE( WM_SELBOXUPDATE, OnUpdateSel )
@@ -148,8 +152,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_BATCHADD_PROGRESS, OnBatchAddProgress )
 	ON_REGISTERED_MESSAGE( WM_BATCHADD_END, OnBatchAddEnd )
 	ON_REGISTERED_MESSAGE( WM_PLAYER_PLAYSEL, OnPlayerPlaySel )
-	ON_COMMAND(ID_AUDIO_EQUALIZER_ENABLED, OnAudioEqualizerEnabled)
-	ON_UPDATE_COMMAND_UI(ID_AUDIO_EQUALIZER_ENABLED, OnUpdateAudioEqualizerEnabled)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -201,6 +203,8 @@ void CMainFrame::InitPaths()
 	m_PrefsIni = m_UserDir + _T( "musikprefs.ini" );
 }
 
+///////////////////////////////////////////////////
+
 void CMainFrame::InitDragTypes()
 {
 	m_uPlaylistDrop = RegisterClipboardFormat ( _T("musikPlaylist_3BCFE9D1_6D61_4cb6_9D0B_3BB3F643CA82") );
@@ -222,28 +226,20 @@ void CMainFrame::Initmusik()
 	// setup the player...
 	m_Player		= new CmusikPlayer( m_NewSong, m_Library );
 	m_Player->SetMaxVolume( m_Prefs->GetPlayerVolume() );
-	
+	m_Player->InitSound( m_Prefs->GetPlayerDevice(), m_Prefs->GetPlayerDriver(), m_Prefs->GetPlayerRate(), m_Prefs->GetPlayerMaxChannels() );
+
 	// give player a crossfader, it will take
 	// care of loading equalizer settings itself...
 	if ( m_Prefs->IsCrossfaderEnabled() )
 	{
 		CmusikCrossfader fade;
-		bool gotfader = true;
-        
-		int nFader = m_Prefs->GetCrossfader();
+		GetCrossfader( &fade );
 
-		if ( nFader == -1 || !gotfader )
-		{
-			
-			fade.Set( 2.0f, 0.5f, 0.2f, 1.0f, 3.0f );
-
-			m_Player->EnableCrossfader();
-			m_Player->SetCrossfader( fade );
-		}
+		m_Player->EnableCrossfader();
+		m_Player->SetCrossfader( fade );
 	}
 
-	m_Player->InitSound( m_Prefs->GetPlayerDevice(), m_Prefs->GetPlayerDriver(), m_Prefs->GetPlayerRate(), m_Prefs->GetPlayerMaxChannels() );
-
+	// enable the equalizer...
 	if ( m_Prefs->IsEqualizerEnabled() )
 		m_Player->EnableEqualizer( true );
 }
@@ -1145,6 +1141,24 @@ void CMainFrame::OnOpenDirectory()
 
 ///////////////////////////////////////////////////
 
+void CMainFrame::GetCrossfader( CmusikCrossfader* fader )
+{
+	bool gotfader = true;
+    
+	int nFader = m_Prefs->GetCrossfader();
+
+	if ( nFader != -1 )
+	{
+		if ( m_Library->GetCrossfader( nFader, fader ) != SQLITE_OK )
+			gotfader = false;
+	}
+
+	if ( nFader == -1 || !gotfader )
+		fader->Set( 2.0f, 0.5f, 0.2f, 1.0f, 3.0f );
+}
+
+///////////////////////////////////////////////////
+
 void CMainFrame::OnFileSaveplaylist()
 {
 	if ( m_wndView->GetCtrl()->PlaylistNeedsSave() )
@@ -1306,6 +1320,34 @@ void CMainFrame::OnAudioEqualizerEnabled()
 void CMainFrame::OnUpdateAudioEqualizerEnabled(CCmdUI *pCmdUI)
 {
 	pCmdUI->SetCheck( m_Prefs->IsEqualizerEnabled() );
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnUpdateAudioCrossfaderEnabled(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck( m_Prefs->IsCrossfaderEnabled() );
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnAudioCrossfaderEnabled()
+{
+	if ( m_Prefs->IsCrossfaderEnabled() )
+	{
+		m_Prefs->SetCrossfaderEnabled( false );
+		m_Player->EnableCrossfader( false );
+	}
+	else
+	{
+		m_Prefs->SetCrossfaderEnabled( true );
+
+		CmusikCrossfader fade;
+		GetCrossfader( &fade );
+
+		m_Player->EnableCrossfader( true );
+		m_Player->SetCrossfader( fade );
+	}
 }
 
 ///////////////////////////////////////////////////
