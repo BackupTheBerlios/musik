@@ -595,3 +595,4 @@ void MusikLibraryFrame::OnThreadScanProg( wxCommandEvent& WXUNUSED(event) )
 {
 	SetTitle( _( "Scanning directory for audio files: " ) + IntTowxString( GetScanCount() ) );
 }
+

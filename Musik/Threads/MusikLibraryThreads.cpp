@@ -127,7 +127,7 @@ void *MusikScanNewThread::Entry()
 		return NULL;
 
 	wxArrayString aFiles;
-	wxString sTitle;
+	wxString sCurrPath;
 	
 	float fPos;
 	for ( size_t i = 0; i < g_Paths.GetCount(); i++ )
@@ -136,12 +136,14 @@ void *MusikScanNewThread::Entry()
 			break;
 		else 
 		{
+			sCurrPath = g_Paths.Item( i );
+
 			//--- get directory ---//
-			aFiles = GetMusicDir( &g_Paths.Item( i ) );
+			aFiles = GetMusicDir( &sCurrPath );
 
 			//--- do math ---//
 			int nCount		= aFiles.GetCount();
-			int nCompare	= g_Library.GetSongDirCount( g_Paths.Item( i ) );
+			int nCompare		= g_Library.GetSongDirCount( sCurrPath );
 			int nResult		= nCount - nCompare;
 
 			//--- post update progress event ---//
