@@ -144,10 +144,18 @@ wxArrayString GetMusicDir( wxString* sDir )
 wxArrayString DelimitStr( wxString sStr, wxString sDel, bool bRemoveDelimiter )
 {
 	wxArrayString aReturn;
-	wxStringTokenizer toke( sStr, sDel, bRemoveDelimiter );
+	wxStringTokenizer toke( sStr, sDel );
 
 	while( toke.HasMoreTokens() )
-		aReturn.Add( toke.GetNextToken() );
+	{
+		//--- if we remove the delimiter, do nothing ---//
+		if ( bRemoveDelimiter )
+			aReturn.Add( toke.GetNextToken() );
+		
+		//--- otherwise tack it to the end ---//
+		else
+			aReturn.Add( toke.GetNextToken() + sDel );
+	}
 
 	return aReturn;
 }
