@@ -1,4 +1,5 @@
 /* This code was copied from winamp mpc plugin v.98                 */
+/* http://www.saunalahti.fi/~cse/mpc/winamp/						*/
 /* copyright Andree Buschmann, Andree.Buschmann@web.de              */
 /* license of the code is LPGL						                */
 /* modified by gunnar roth (gunnar.roth@gmx.de) Nov 10. 2004		*/
