@@ -174,8 +174,36 @@ void CMusikPlaylistCtrl::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 
 	if ( pItem->mask & LVIF_TEXT )
 	{
-		
-		lstrcpy( pItem->pszText, m_Playlist->GetField( index, m_Prefs->GetPlaylistCol( pItem->iSubItem ) ) );
+		if ( m_Prefs->GetPlaylistCol( pItem->iSubItem ) == MUSIK_LIBRARY_TYPE_RATING )
+		{
+			int nRating = atoi( m_Library->GetSongField( MUSIK_LIBRARY_TYPE_RATING ) );
+			CString sRating;
+			switch ( nRating )
+			{
+			case 1:
+				sRating = _T( "hiiii" );
+				break;
+			case 2:
+				sRating = _T( "hhiii" );
+				break;
+			case 3:
+				sRating = _T( "hhhii" );
+				break;
+			case 4:
+				sRating = _T( "hhhhi" );
+				break;
+			case 5:
+                sRating = _T( "hhhhh" );
+				break;
+			case 0:
+			default:
+				sRating = _T( "iiiii" );
+				break;
+			}
+			lstrcpy( pItem->pszText, sRating );
+		}
+		else
+			lstrcpy( pItem->pszText, m_Playlist->GetField( index, m_Prefs->GetPlaylistCol( pItem->iSubItem ) ) );
 	}
 
 	*pResult = 0;
@@ -211,8 +239,7 @@ BOOL CMusikPlaylistCtrl::OnEraseBkgnd(CDC* pDC)
 void CMusikPlaylistCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	NMLVCUSTOMDRAW* pLVCD = reinterpret_cast<NMLVCUSTOMDRAW*>( pNMHDR );
-	static bool bHighlighted = false;
-	
+
     // Take the default processing unless we set this to something else below.
     *pResult = CDRF_DODEFAULT;
 	
@@ -225,40 +252,20 @@ void CMusikPlaylistCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 	{
         int iRow = (int)pLVCD->nmcd.dwItemSpec;
 		
-		bHighlighted = IsRowSelected( m_hWnd, iRow );
-		if ( bHighlighted )
-		{
-			/*
-			pLVCD->clrText   = GetSysColor( COLOR_HIGHLIGHT );
-			pLVCD->clrTextBk = GetSysColor( COLOR_HIGHLIGHTTEXT );
-			
-			// Turn off listview highlight otherwise it uses the system colors!
-			EnableHighlighting(m_hWnd, iRow, false);
-			*/
-		}
-		else if ( pLVCD->nmcd.dwItemSpec % 2 == 0 )
-		{
-			pLVCD->clrTextBk = m_Prefs->GetPlaylistStripeColor();
-		}
-		
-		
-		*pResult = CDRF_DODEFAULT | CDRF_NOTIFYPOSTPAINT;
+		COLORREF bgCol;
+
+		if ( iRow % 2 == 0 )
+			bgCol = m_Prefs->GetPlaylistStripeColor();
+		else
+			bgCol = GetSysColor( COLOR_BTNHILIGHT );
+
+
+		// 	
+		//	*pResult = CDRF_DODEFAULT | CDRF_NOTIFYPOSTPAINT | CDRF_NEWFONT;
 	}
 
-	else if(CDDS_ITEMPOSTPAINT == pLVCD->nmcd.dwDrawStage)
-	{
-		if ( bHighlighted )
-		{
-			int iRow = (int)pLVCD->nmcd.dwItemSpec;
-
-			// Turn listview control's highlighting back on now that we have
-			// drawn the row in the colors we want.
-			EnableHighlighting(m_hWnd, iRow, true);
-		}
-
+	else if( pLVCD->nmcd.dwDrawStage == CDDS_ITEMPOSTPAINT )
       *pResult = CDRF_DODEFAULT;
-
-	}
 }
 
 void CMusikPlaylistCtrl::EnableHighlighting( HWND hWnd, int row, bool bHighlight )

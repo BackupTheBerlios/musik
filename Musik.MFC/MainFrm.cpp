@@ -40,7 +40,7 @@ CMainFrame::CMainFrame()
 	m_Prefs = new CMusikPrefs( m_PrefsIni );
 
 	m_LibPlaylist = new CMusikPlaylist();
-	//m_Library->GetAllSongs( *m_LibPlaylist );
+	m_Library->GetAllSongs( *m_LibPlaylist );
 
 	m_DynPlaylist = NULL;
 	m_StdPlaylist = NULL;
