@@ -1020,7 +1020,7 @@ void CMusikLibrary::QuerySongsWhere( const wxString & queryWhere, CMusikSongArra
 	m_lastQueryWhere = queryWhere;
 	if( bSorted && !m_sSortAllSongsQuery.IsEmpty() )
 	{
-		query = wxString::Format(  m_sSortAllSongsQuery , myqueryWhere );
+		query = wxString::Format(  m_sSortAllSongsQuery , (const wxChar *)myqueryWhere );
 	}
 	else
 	{
@@ -1432,7 +1432,8 @@ void CMusikLibrary::GetAllYears(wxArrayString & years)
 
 void CMusikLibrary::GetAllSongs( CMusikSongArray & aReturn, bool bSorted )
 {
-	QuerySongsWhere( wxT(""), aReturn ,bSorted);
+	//QuerySongsWhere( wxT(""), aReturn ,bSorted); for some unknown reason linux (suse 8.2 with wxGTK2.5.1 segfaults
+	QuerySongsWhere( wxString(), aReturn ,bSorted);
 }
 
 void CMusikLibrary::GetAllArtists( wxArrayString & aReturn )
