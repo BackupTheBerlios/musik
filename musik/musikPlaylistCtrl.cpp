@@ -168,7 +168,7 @@ CmusikPlaylistCtrl::CmusikPlaylistCtrl( CFrameWnd* mainwnd, CmusikLibrary* libra
 
 CmusikPlaylistCtrl::~CmusikPlaylistCtrl()
 {
-	if ( m_Playlist )
+	if ( m_Playlist && m_Playlist->m_Type != MUSIK_PLAYLIST_TYPE_NOWPLAYING )
 		delete m_Playlist;
 
 	delete m_SongInfoCache;
@@ -757,10 +757,12 @@ void CmusikPlaylistCtrl::SetPlaylist( CmusikPlaylist* playlist )
 	// we may need to save it. so check...
 	SavePlaylist();
 
-	// set the playlist and cache it
-	if ( m_Playlist )
+	// delete any old playlist that is not a now
+	// playing type...
+	if ( m_Playlist && m_Playlist->m_Type != MUSIK_PLAYLIST_TYPE_NOWPLAYING )
 		delete m_Playlist;
 
+	// set the playlist and cache it
 	m_Playlist = playlist;
 
 	if ( m_SongInfoCache )

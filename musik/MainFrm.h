@@ -203,6 +203,7 @@ protected:
 
 	// current playlist, only a pointer
 	void SetPlaylist( bool update_view = true, bool hide_sort_arrow = true, bool select_none = false );
+	void SetNowPlaying();
 	CmusikPlaylist* m_Playlist;
 
 	// library, player, and prefs

@@ -712,6 +712,17 @@ void CMainFrame::SetPlaylist( bool update, bool hide_sort_arrow, bool select_non
 
 ///////////////////////////////////////////////////
 
+void CMainFrame::SetNowPlaying()
+{
+	m_wndView->GetCtrl()->SetPlaylist( m_Player->GetPlaylist() );
+
+	ShowSelectionBoxes( false );
+	m_wndView->GetCtrl()->UpdateV( true, true );
+	m_wndView->GetCtrl()->HideSortArrow();
+}
+
+///////////////////////////////////////////////////
+
 bool CMainFrame::PlayCmd( const CString& fn )
 {
 	if ( fn.IsEmpty() )
@@ -1408,7 +1419,7 @@ LRESULT CMainFrame::OnSourcesNowPlaying( WPARAM wParam, LPARAM lParam )
 	m_PlaylistSel = false;
 	ShowSelectionBoxes( false );
 
-	SetPlaylist();
+	SetNowPlaying();
 	m_wndView->GetCtrl()->ScrollToCurr();
 
 	return 0L;
