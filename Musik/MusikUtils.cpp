@@ -234,25 +234,26 @@ wxArrayString GetPlaylistDir()
 
 wxArrayString FileToStringArray( wxString sName )
 {
-	wxArrayString aReturn, aNULL;
-	wxTextFile In( sName );
-	if ( !In.Exists() )
-		return aNULL;
-	else
-		In.Open();
+	wxArrayString aReturn;
 
-	if ( !In.IsOpened() )
-		return aNULL;
+	wxTextFile In( sName );
+
+	if ( !wxFileExists( sName ) )
+		return aReturn;
+
 	else
 	{
-		for ( int i = 0; i < ( int )In.GetLineCount(); i++ )
+		if ( In.Open() )
 		{
-			wxString sCheck = In.GetLine( i );
-			sCheck.Replace( wxT(" "), wxT(""), TRUE );
-			if ( sCheck != wxT("") )
-				aReturn.Add( In.GetLine( i ) );
+			for ( int i = 0; i < ( int )In.GetLineCount(); i++ )
+			{
+				wxString sCheck = In.GetLine( i );
+				sCheck.Replace( wxT(" "), wxT(""), TRUE );
+				if ( sCheck != wxT("") )
+					aReturn.Add( In.GetLine( i ) );
+			}
+			In.Close();
 		}
-		In.Close();
 	}
 	return aReturn;
 }
