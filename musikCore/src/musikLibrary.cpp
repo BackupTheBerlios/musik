@@ -384,7 +384,7 @@ bool CmusikLibrary::InitStdTables()
 		"CREATE TABLE " STD_PLAYLIST_SONGS " ( "	
 		"std_playlist_songid INTEGER AUTO_INCREMENT PRIMARY KEY, "
 		"std_playlist_id INTEGER, "
-		"songid INTEGER"
+		"songfn varchar(1024)"
 		" );";
 
 	// put a lock on the library and open it up
@@ -915,12 +915,12 @@ int CmusikLibrary::CreateStdPlaylist( const CmusikString& name, const CmusikStri
 
 			ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 			{
-				nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %d, %d );",
+				nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %d, %Q );",
 					NULL, NULL, NULL, 
 					STD_PLAYLIST_SONGS,
 					NULL,
 					nID,
-					GetIDFromFilename( songids.at( i ) ) );
+					songids.at( i ).c_str() );
 			}
 
 			if ( nRet != SQLITE_OK )
@@ -980,12 +980,12 @@ int CmusikLibrary::CreateStdPlaylist( const CmusikString& name, CmusikPlaylist& 
 		{
 			ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 			{
-				nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %d, %d );",
+				nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %d, %Q );",
 					NULL, NULL, NULL, 
 					STD_PLAYLIST_SONGS,
 					NULL,
 					nID,
-					playlist.GetSongID( i ) );
+					playlist.GetField( i, MUSIK_LIBRARY_TYPE_FILENAME ).c_str() );
 			}
 
 			if ( nRet != SQLITE_OK )
@@ -1021,12 +1021,12 @@ int CmusikLibrary::AppendStdPlaylist( int id, const CmusikStringArray& files, bo
 				if ( add_to_library )
 					AddSong( files.at( i ) );
 
-				nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %d, %d );",
+				nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %d, %Q );",
 				NULL, NULL, NULL, 
 				STD_PLAYLIST_SONGS,
 				NULL,
 				id,
-				GetIDFromFilename( files.at( i ) ) );
+				files.at( i ).c_str() );
 			}
 
 			if ( nRet != SQLITE_OK )
@@ -1059,12 +1059,12 @@ int CmusikLibrary::AppendStdPlaylist( int id, CmusikPlaylist& playlist )
 		{
 			ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 			{
-				nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %d, %d );",
+				nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %d, %Q );",
 				NULL, NULL, NULL, 
 				STD_PLAYLIST_SONGS,
 				NULL,
 				id,
-				playlist.GetSongID( i ) );
+				playlist.GetField( i, MUSIK_LIBRARY_TYPE_FILENAME ).c_str() );
 			}
 
 			if ( nRet != SQLITE_OK )
@@ -1096,7 +1096,7 @@ int CmusikLibrary::RewriteDynPlaylist( int id, const CmusikStringArray& query )
 		{
 			ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 			{
-				nRet = sqlite_exec_printf( m_pDB, "DELETE FROM %Q WHERE std_playlist_id = %d;",
+				nRet = sqlite_exec_printf( m_pDB, "DELETE FROM %Q WHERE dyn_playlist_id = %d;",
 				NULL, NULL, NULL, 
 				DYN_PLAYLIST_QUERY,
 				id );
@@ -1110,7 +1110,7 @@ int CmusikLibrary::RewriteDynPlaylist( int id, const CmusikStringArray& query )
 			{
 				ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 				{
-					nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %d, %s );",
+					nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %d, %Q );",
 					NULL, NULL, NULL, 
 					DYN_PLAYLIST_QUERY,
 					NULL,
@@ -1164,7 +1164,7 @@ int CmusikLibrary::RewriteStdPlaylist( int id, CmusikPlaylist* playlist )
 				STD_PLAYLIST_SONGS,
 				NULL,
 				id,
-				playlist->GetSongID( i ) );
+				playlist->GetField( i, MUSIK_LIBRARY_TYPE_FILENAME ).c_str() );
 			}
 
 			if ( nRet != SQLITE_OK )
@@ -1217,16 +1217,27 @@ int CmusikLibrary::GetStdPlaylist( int id, CmusikPlaylist& target, bool clear_ta
 
 	if ( clear_target )
 		target.Clear();
+	
+	CmusikStringArray* items = new CmusikStringArray;
 
 	// do it
 	int nRet;
 	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 	{
-		nRet = sqlite_exec_printf( m_pDB, "SELECT songid FROM %Q WHERE std_playlist_id = %d;", 
-			&sqlite_AddSongToPlaylist, &target, NULL,
+		nRet = sqlite_exec_printf( m_pDB, "SELECT songfn FROM %Q WHERE std_playlist_id = %d;", 
+			&sqlite_AddSongToStringArray, items, NULL,
 			STD_PLAYLIST_SONGS,
 			id );
 	}	
+
+	CmusikSong song;
+	for ( size_t i = 0; i < items->size(); i++ )
+	{
+		song.SetID( GetIDFromFilename( items->at( i ) ) );
+		target.Add( song );
+	}
+
+	delete items;
 
 	return nRet;
 }
