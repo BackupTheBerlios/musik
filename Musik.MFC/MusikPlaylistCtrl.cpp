@@ -41,6 +41,7 @@ BEGIN_MESSAGE_MAP(CMusikPlaylistCtrl, CListCtrl)
 	ON_WM_PAINT()
 	ON_WM_ERASEBKGND()
 	ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, OnNMCustomdraw)
+	ON_NOTIFY_REFLECT(LVN_ITEMACTIVATE, OnLvnItemActivate)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -94,8 +95,8 @@ void CMusikPlaylistCtrl::ResetColumns()
 
 	for ( size_t i = 0; i < m_Prefs->GetPlaylistColCount(); i++ )
 	{
-		InsertColumn( i, m_Library->GetSongField( m_Prefs->GetPlaylistCol( i ) ) );
-		SetColumnWidth( i, m_Prefs->GetPlaylistColWidth( i ) );
+		InsertColumn( (int)i, m_Library->GetSongField( m_Prefs->GetPlaylistCol( i ) ) );
+		SetColumnWidth( (int)i, m_Prefs->GetPlaylistColWidth( i ) );
 	}
 }
 
@@ -296,3 +297,13 @@ void CMusikPlaylistCtrl::InitFonts()
 	m_Items.CreateStockObject( DEFAULT_GUI_FONT );
 	m_Bullets.CreatePointFont( 100, "Marlett" );
 }
+///////////////////////////////////////////////////
+
+void CMusikPlaylistCtrl::OnLvnItemActivate(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMITEMACTIVATE pNMIA = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+	// TODO: Add your control notification handler code here
+	*pResult = 0;
+}
+
+///////////////////////////////////////////////////

@@ -92,6 +92,14 @@ void CMainFrame::ResetDialogRect()
 	CPoint dlg_pos = m_Prefs->GetDlgPos();
 
 	MoveWindow( dlg_pos.x, dlg_pos.y, dlg_size.cx, dlg_size.cy );
+
+	if ( m_Prefs->IsMaximized() )
+	{
+		WINDOWPLACEMENT max;
+		max.showCmd = SW_SHOWMAXIMIZED;
+		SetWindowPlacement( &max );
+		return;
+	}
 }
 
 ///////////////////////////////////////////////////
@@ -285,8 +293,17 @@ void CMainFrame::OnDestroy()
 	CRect rc_dlg;
 	GetWindowRect( &rc_dlg );
 
-	m_Prefs->SetDlgSize( CSize( rc_dlg.right - rc_dlg.left, rc_dlg.bottom - rc_dlg.top ) );
+	bool maximized = false;
+	WINDOWPLACEMENT max;
+	GetWindowPlacement( &max );
+
+	if ( max.showCmd == SW_SHOWMAXIMIZED )
+		maximized = true;
+	else
+		m_Prefs->SetDlgSize( CSize( rc_dlg.right - rc_dlg.left, rc_dlg.bottom - rc_dlg.top ) );
+
 	m_Prefs->SetDlgPos( CPoint( rc_dlg.left, rc_dlg.top ) );
+	m_Prefs->SetMaximized( maximized );
 
 	CFrameWnd::OnDestroy();
 }

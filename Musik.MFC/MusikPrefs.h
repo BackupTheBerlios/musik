@@ -20,9 +20,11 @@ public:
 	//-----------------------------------------------------//
 	CSize	GetDlgSize	()						{ return m_Dlg_Size; }
 	CPoint	GetDlgPos	()						{ return m_Dlg_Pos; }
+	bool	IsMaximized ()						{ return m_Dlg_Maximized; }
 
 	void	SetDlgSize	( const CSize size )	{ m_Dlg_Size = size; }
 	void	SetDlgPos	( const CPoint pt )		{ m_Dlg_Pos = pt; }
+	void	SetMaximized( bool max )			{ m_Dlg_Maximized = max; }
 
 	//-----------------------------------------------------//
 	//--- selection area								---//
@@ -66,6 +68,7 @@ private:
 	//-----------------------------------------------------//
 	CSize	m_Dlg_Size;
 	CPoint	m_Dlg_Pos;
+	bool	m_Dlg_Maximized;
 
 	//-----------------------------------------------------//
 	//--- selection area								---//

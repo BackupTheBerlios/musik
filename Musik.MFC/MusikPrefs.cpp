@@ -146,6 +146,24 @@ inline string COLORREFToString( const COLORREF color )
 	return sRet;
 }
 
+inline bool StringToBool( const string str )
+{
+	if ( str.empty() )
+		return false;
+	if ( str == _T( "1" ) )
+		return true;
+
+	return false;
+}
+
+inline string BoolToString( const bool val )
+{
+	if ( val )
+		return _T( "1" );
+
+	return _T( "0" );
+}
+
 CMusikPrefs::CMusikPrefs( CString filename )
 {
 	config = new CIniFile( filename.GetBuffer() );
@@ -167,8 +185,9 @@ void CMusikPrefs::LoadPrefs()
 	//-----------------------------------------------------//
 	//--- whole dialog									---//
 	//-----------------------------------------------------//
-	m_Dlg_Size	= StringToCSize( config->GetValue( "Dialog", "Dialog Size", "800x600" ) );
-	m_Dlg_Pos	= StringToCPoint( config->GetValue( "Dialog", "Dialog Position", "50,50" ) );
+	m_Dlg_Size = StringToCSize( config->GetValue( "Dialog", "Dialog Size", "800x600" ) );
+	m_Dlg_Pos = StringToCPoint( config->GetValue( "Dialog", "Dialog Position", "50,50" ) );
+	m_Dlg_Maximized	= StringToBool( config->GetValue( "Dialog", "Maximized", "0" ) );
 
 	//-----------------------------------------------------//
 	//--- selection area								---//
@@ -199,6 +218,7 @@ void CMusikPrefs::SavePrefs()
 	//-----------------------------------------------------//
 	config->SetValue( "Dialog", "Dialog Size", CSizeToString( m_Dlg_Size ) );
 	config->SetValue( "Dialog", "Dialog Position", CPointToString( m_Dlg_Pos ) );
+	config->SetValue( "Dialog", "Maximized", BoolToString( m_Dlg_Maximized ) );
 
 	//-----------------------------------------------------//
 	//--- selection area								---//

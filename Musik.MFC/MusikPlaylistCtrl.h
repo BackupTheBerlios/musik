@@ -55,6 +55,7 @@ public:
 	afx_msg void OnPaint();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnLvnItemActivate(NMHDR *pNMHDR, LRESULT *pResult);
 };
 
 
