@@ -89,8 +89,9 @@ CmusikPlaylistView::~CmusikPlaylistView()
 {
 	m_DropTarget->Revoke();
 	delete m_DropTarget;
-	delete m_Playlist;
 	CleanPlaylistInfo();
+	delete m_Playlist;
+	
 }
 
 ///////////////////////////////////////////////////
