@@ -98,7 +98,9 @@ void CmusikPrefs::LoadPrefs()
 	m_Dlg_LibraryShowsAllSongs	= StringToBool( config->GetValue( "Dialog", "Library Shows All Songs", "1" ) );
 	m_Dlg_MinimizeToTray		= StringToBool( config->GetValue( "Dialog", "Minimize to Notification Tray", "0" ) );
 	m_Dlg_AddEntireToNP			= StringToBool( config->GetValue( "Dialog", "Add Entire Library Playlist to Now Playing", "1" ) );
-
+	m_Dlg_AlwaysOnTop			= StringToBool( config->GetValue( "Dialog", "Always on Top", "0" ) );
+	
+	config->SetValue( "Dialog", "Always on Top", BoolToString( m_Dlg_AlwaysOnTop ) );
 	// transparency
 	m_TransEnabled				= StringToBool( config->GetValue( "Transparency", "Enabled", "0" ) );
 	m_TransAdaptive				= StringToBool( config->GetValue( "Transparency", "Adaptive", "0" ) );
@@ -178,6 +180,7 @@ void CmusikPrefs::SavePrefs()
 	config->SetValue( "Dialog", "Library Shows All Songs", BoolToString( m_Dlg_LibraryShowsAllSongs ) );
 	config->SetValue( "Dialog", "Minimize to Notification Tray", BoolToString( m_Dlg_MinimizeToTray ) );
 	config->SetValue( "Dialog", "Add Entire Library Playlist to Now Playing", BoolToString( m_Dlg_AddEntireToNP ) );
+	config->SetValue( "Dialog", "Always on Top", BoolToString( m_Dlg_AlwaysOnTop ) );
 
 	// transparency
 	config->SetValue( "Transparency", "Enabled", BoolToString( m_TransEnabled ) );

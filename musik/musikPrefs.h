@@ -95,6 +95,7 @@ public:
 	bool LibraryShowsAllSongs(){ return m_Dlg_LibraryShowsAllSongs; }
 	bool MinimizeToTray(){ return m_Dlg_MinimizeToTray; }
 	bool AddEntireToNP(){ return m_Dlg_AddEntireToNP; }
+	bool IsAlwaysOnTop(){ return m_Dlg_AlwaysOnTop; }
 
 	void SetDlgSize( const CSize sz ){ m_Dlg_Size = sz; }
 	void SetDlgPos( const CPoint pt ){ m_Dlg_Pos = pt; }
@@ -109,6 +110,7 @@ public:
 	void SetLibraryShowsAllSongs( bool showall ){ m_Dlg_LibraryShowsAllSongs = showall; }
 	void SetMinimizeToTray( bool tray ){ m_Dlg_MinimizeToTray = tray; }
 	void SetAddEntireToNP( bool entire ){ m_Dlg_AddEntireToNP = entire; }
+	void SetAlwaysOnTop( bool on_top ){ m_Dlg_AlwaysOnTop = on_top; }
 
 	void AppendPlaylistColOrder( int col ){ m_Playlist_Order.push_back( col ); }
 	void AppendPlaylistColSize( int size ){ m_Playlist_Sizes.push_back( size ); }
@@ -257,6 +259,7 @@ private:
 	bool	m_Dlg_LibraryShowsAllSongs;
 	bool	m_Dlg_MinimizeToTray;
 	bool	m_Dlg_AddEntireToNP;
+	bool	m_Dlg_AlwaysOnTop;
 
 	// sources
 	bool	m_Sources_SubLibsVisible;

@@ -179,6 +179,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_COMMAND(ID_LIBRARY_SYNCHRONIZEDIRECTORIESNOW, OnLibrarySynchronizedirectoriesnow)
 	ON_COMMAND(ID_PLAYBACKMODE_SHUFFLECURRENTPLAYLIST, OnPlaybackmodeShufflecurrentplaylist)
 	ON_COMMAND(ID_VIEW_VISUALIZATION, OnViewVisualization)
+	ON_COMMAND(ID_VIEW_ALWAYSONTOP, OnViewAlwaysontop)
 
 	// update ui
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SOURCES, OnUpdateViewSources)
@@ -199,6 +200,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_UPDATE_COMMAND_UI(ID_NOTIFICATIONTRAY_PREV, OnUpdateNotificationtrayPrev)
 	ON_UPDATE_COMMAND_UI(ID_NOTIFICATIONTRAY_STOP, OnUpdateNotificationtrayStop)
 	ON_UPDATE_COMMAND_UI(ID_PLAYBACKMODE_SHUFFLECURRENTPLAYLIST, OnUpdatePlaybackmodeShufflecurrentplaylist)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_ALWAYSONTOP, OnUpdateViewAlwaysontop)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_VISUALIZATION, OnUpdateViewVisualization)
 
 	// custom message maps
 	ON_REGISTERED_MESSAGE( WM_SELBOXUPDATE, OnUpdateSel )
@@ -232,7 +235,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_INITTRANS, OnInitTrans )
 	ON_REGISTERED_MESSAGE( WM_DEINITTRANS, OnDeinitTrans )
 
-	ON_UPDATE_COMMAND_UI(ID_VIEW_VISUALIZATION, OnUpdateViewVisualization)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -862,6 +864,21 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if ( m_Prefs->IsTransEnabled() )
 		InitTrans();
 
+	// always on top?
+	if ( m_Prefs->IsAlwaysOnTop() )
+	{
+		CRect rcWnd;
+		GetWindowRect( rcWnd );
+
+		::SetWindowPos( m_hWnd, 
+			HWND_TOPMOST, 
+			rcWnd.TopLeft().x, 
+			rcWnd.TopLeft().y, 
+			rcWnd.Width(), 
+			rcWnd.Height(), 
+			NULL );
+	}
+
 	return 0;
 }
 
@@ -949,11 +966,9 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 	if( !CFrameWnd::PreCreateWindow(cs) )
 		return FALSE;
 
-	// TODO: Modify the Window class or styles here by modifying
-	//  the CREATESTRUCT cs
-
 	cs.dwExStyle &= ~WS_EX_CLIENTEDGE;
 	cs.lpszClass = AfxRegisterWndClass(0);
+
 	return TRUE;
 }
 
@@ -3004,6 +3019,54 @@ void CMainFrame::OnViewVisualization()
 void CMainFrame::OnUpdateViewVisualization(CCmdUI *pCmdUI)
 {
 	pCmdUI->SetCheck( m_Prefs->GetPlaylistInfoVizStyle() );
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnViewAlwaysontop()
+{
+	SetRedraw( FALSE );
+
+	CRect rcWnd;
+	GetWindowRect( rcWnd );
+
+	if ( m_Prefs->IsAlwaysOnTop() )
+	{
+		::SetWindowPos( m_hWnd, 
+			HWND_NOTOPMOST, 
+			rcWnd.TopLeft().x, 
+			rcWnd.TopLeft().y, 
+			rcWnd.Width(), 
+			rcWnd.Height(), 
+			NULL );
+
+		m_Prefs->SetAlwaysOnTop( false );
+	}
+
+	else
+	{
+		::SetWindowPos( m_hWnd, 
+			HWND_TOPMOST, 
+			rcWnd.TopLeft().x, 
+			rcWnd.TopLeft().y, 
+			rcWnd.Width(), 
+			rcWnd.Height(), 
+			NULL );
+
+		m_Prefs->SetAlwaysOnTop( true );
+	}
+
+	SetRedraw( TRUE );
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnUpdateViewAlwaysontop(CCmdUI *pCmdUI)
+{
+	if ( m_Prefs->IsAlwaysOnTop() )
+		pCmdUI->SetCheck( TRUE );
+	else
+		pCmdUI->SetCheck( FALSE );
 }
 
 ///////////////////////////////////////////////////

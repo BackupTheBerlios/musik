@@ -122,6 +122,8 @@ BEGIN
                                                 ID_VIEW_PLAYLISTINFORMATION
         MENUITEM "Visualization\tCtrl+Shift+G", ID_VIEW_VISUALIZATION
         MENUITEM "E&qualizer\tCtrl+Shift+F",    ID_VIEW_EQUALIZER
+        MENUITEM SEPARATOR
+        MENUITEM "Always on Top",               ID_VIEW_ALWAYSONTOP
     END
     POPUP "&Audio"
     BEGIN

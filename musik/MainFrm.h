@@ -354,6 +354,7 @@ protected:
 	afx_msg void OnUpdatePlaybackmodeShufflecurrentplaylist(CCmdUI *pCmdUI);
 	afx_msg void OnViewVisualization();
 	afx_msg void OnUpdateViewVisualization(CCmdUI *pCmdUI);
+	afx_msg void OnViewAlwaysontop();
 
 	// list of all taskss running
 	int FreeTask( CmusikTask* pTask );
@@ -390,6 +391,8 @@ protected:
 	int m_Trans;
 	void ImportTrans();
 
+public:
+	afx_msg void OnUpdateViewAlwaysontop(CCmdUI *pCmdUI);
 };
 
 ///////////////////////////////////////////////////
