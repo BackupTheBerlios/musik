@@ -67,7 +67,8 @@ CMusikPlayer::CMusikPlayer()
 
 	//--- initialize random playback ---//
 	m_RandomSeed = wxGetLocalTime();
-	m_RandomIndex = 0;
+	//--- clear history ---//
+	m_History[0] = m_History[1] = m_History[2] = m_History[3] = m_History[4] = ~0;
 }
 
 CMusikPlayer::~CMusikPlayer()
@@ -493,37 +494,38 @@ size_t CMusikPlayer::GetRandomSong()
 {
 	size_t r = 0;
 
-	if( !m_RandomIndex || !m_Playlist.GetCount() )
+	if( m_Playlist.GetCount() == 0 )
 		return 0;
-
-	//--- clear history ---//
-	m_History[0] = m_History[1] = m_History[2] = m_History[3] = m_History[4] = ~0;
 
 	//--- prevent stream from getting so long it might bog down the machine :) ---//
 	m_RandomIndex &= 65535;
 
 	//--- iterate random stream to current position ---//
 	SeedRandom( m_RandomSeed );
-	for ( size_t i = 0; i < m_RandomIndex; i++ )
-	{
 		bool repeat = false;
-		do {
-			r = GetRandomNumber() % m_Playlist.GetCount();
+	int nMaxRepeatCount = 10;
+	do {
+		repeat = false;
+		r = GetRandomNumber() % m_Playlist.GetCount();
 
+		if(nMaxRepeatCount--) // only check for repeats nMaxRepeatCount times, to prevent endless do loop
+		{
 			//--- check for repeats ---//
 			for ( size_t j = 0; j < m_Playlist.GetCount()-1 && j < WXSIZEOF(m_History); j++ )
+			{
 				if ( r == m_History[j] )
 				{
-					repeat = true;
+					repeat = true; 
 					break;
 				}
-		} while ( repeat );
+			}
+		}
+	} while ( repeat );
 
-		//--- rotate history ---//
-		for ( int j = WXSIZEOF(m_History) - 1; j > 0; j-- )
-			m_History[j] = m_History[j-1];
-		m_History[0] = r;
-	}
+	//--- rotate history ---//
+	for ( int j = WXSIZEOF(m_History) - 1; j > 0; j-- )
+		m_History[j] = m_History[j-1];
+	m_History[0] = r;
 
 	return r;
 }
@@ -594,7 +596,6 @@ void CMusikPlayer::PrevSong()
 			break;
 	
 		case MUSIK_PLAYMODE_RANDOM:
-			if ( m_RandomIndex > 0 ) m_RandomIndex--;
 			Play( GetRandomSong() );
 			break;
 		}
