@@ -1246,20 +1246,11 @@ int CMainFrame::GetSelPlaylistType()
 
 // author: Per-Erik Nordlund 
 // from: http://www.codeproject.com/w2k/win2k_transparent.asp
+// modified by Casey Langen
 
 void CMainFrame::SetTransparency( int trans )
 {
-	m_pSetLayeredWindowAttributes(m_hWnd, 0, trans, LWA_ALPHA);
-
-	/*
-	OSVERSIONINFO os = { sizeof(os) };
-	GetVersionEx(&os);
-
-	// use m_bWin2k before any call to the
-	// m_pSetLayeredWindowAttributes to make sure we are runninng Win2K
-	BOOL m_bWin2K = ( VER_PLATFORM_WIN32_NT == os.dwPlatformId && 
-					os.dwMajorVersion >= 5 ); 
-	*/
+	m_pSetLayeredWindowAttributes( GetSafeHwnd(), 0, trans, LWA_ALPHA );
 }
 
 ///////////////////////////////////////////////////
@@ -1272,14 +1263,13 @@ bool CMainFrame::InitTrans()
 						(lpfnSetLayeredWindowAttributes)GetProcAddress(hUser32, 
 						"SetLayeredWindowAttributes");
 
-	// If the import did not succeed, make sure your app can handle it!
-	if (NULL == m_pSetLayeredWindowAttributes)
-		return false; //Bail out!!!
+	// If the import did not succeed then bail
+	if ( m_pSetLayeredWindowAttributes == NULL )
+		return false;
 
-	// Check the current state of the dialog, and then add the 
-		// WS_EX_LAYERED attribute
-	SetWindowLong(m_hWnd, GWL_EXSTYLE, GetWindowLong(m_hWnd, GWL_EXSTYLE) 
-				| WS_EX_LAYERED);
+	// add the WS_EX_LAYERED attribute
+	SetWindowLong( GetSafeHwnd(), GWL_EXSTYLE, GetWindowLong( GetSafeHwnd(), GWL_EXSTYLE ) 
+			| WS_EX_LAYERED );
 
 	return true;
 }
