@@ -144,7 +144,6 @@ CmusikNowPlayingCtrl::~CmusikNowPlayingCtrl()
 	delete m_Track;
 
 	delete m_Play;
-	delete m_Stop;
 	delete m_Prev;
 	delete m_Next;
 }
@@ -159,7 +158,6 @@ BEGIN_MESSAGE_MAP(CmusikNowPlayingCtrl, CWnd)
 	ON_WM_ERASEBKGND()
 	ON_BN_CLICKED(MUSIK_NOWPLAYING_BTN_PREV, OnBtnPrev)
 	ON_BN_CLICKED(MUSIK_NOWPLAYING_BTN_PLAY, OnBtnPlay)
-	ON_BN_CLICKED(MUSIK_NOWPLAYING_BTN_STOP, OnBtnStop)
 	ON_BN_CLICKED(MUSIK_NOWPLAYING_BTN_NEXT, OnBtnNext)
 END_MESSAGE_MAP()
 
@@ -219,11 +217,6 @@ int CmusikNowPlayingCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if ( !m_Play->Create( "play", WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0 ), this, MUSIK_NOWPLAYING_BTN_PLAY ) )
 		return -1;
 	m_Play->SetFont( &m_Font );
-
-	m_Stop = new CButtonST();
-	if ( !m_Stop->Create( "stop", WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0 ), this, MUSIK_NOWPLAYING_BTN_STOP ) )
-		return -1;
-	m_Stop->SetFont( &m_Font );
 
 	m_Next = new CButtonST();
 	if ( !m_Next->Create( "next", WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0 ), this, MUSIK_NOWPLAYING_BTN_NEXT ) )
@@ -307,10 +300,9 @@ void CmusikNowPlayingCtrl::RescaleInfo()
 	CSize szTemp( 240, 16 );
 	m_Track->MoveWindow( CRect( ptTemp, szTemp ) );
 
-	const int nWidth = 240 / 4;
-	m_Prev->MoveWindow( rcClient.right - 16 - ( nWidth * 4 ) - 8, 0, nWidth, 20 );
-	m_Play->MoveWindow( rcClient.right - 16 - ( nWidth * 3 ) - 8, 0, nWidth, 20 );
-	m_Stop->MoveWindow( rcClient.right - 16 - ( nWidth * 2 ) - 8, 0, nWidth, 20 );
+	const int nWidth = 240 / 3;
+	m_Prev->MoveWindow( rcClient.right - 16 - ( nWidth * 3 ) - 8, 0, nWidth, 20 );
+	m_Play->MoveWindow( rcClient.right - 16 - ( nWidth * 2 ) - 8, 0, nWidth, 20 );
 	m_Next->MoveWindow( rcClient.right - 16 - ( nWidth * 1 ) - 8, 0, nWidth, 20 );
 }
 
@@ -357,13 +349,6 @@ void CmusikNowPlayingCtrl::OnBtnPrev()
 
 ///////////////////////////////////////////////////
 
-void CmusikNowPlayingCtrl::OnBtnStop()
-{
-	m_Player->Stop();
-}
-
-///////////////////////////////////////////////////
-
 void CmusikNowPlayingCtrl::OnBtnNext()
 {
 	m_Player->Next();
@@ -384,10 +369,6 @@ void CmusikNowPlayingCtrl::ResetBtnColors()
 	m_Next->SetColor( 0, m_Prefs->MUSIK_COLOR_ACTIVECAPTION, FALSE );
 	m_Next->SetColor( 1, m_Prefs->MUSIK_COLOR_CAPTIONTEXT, FALSE );
 	m_Next->DrawBorder( FALSE, FALSE );
-
-	m_Stop->SetColor( 0, m_Prefs->MUSIK_COLOR_ACTIVECAPTION, FALSE );
-	m_Stop->SetColor( 1, m_Prefs->MUSIK_COLOR_CAPTIONTEXT, FALSE );
-	m_Stop->DrawBorder( FALSE, FALSE );
 }
 
 ///////////////////////////////////////////////////

@@ -62,7 +62,6 @@ class CmusikNowPlayingCtrl;
 enum
 {
 	MUSIK_NOWPLAYING_BTN_PLAY = 4957,
-	MUSIK_NOWPLAYING_BTN_STOP,
 	MUSIK_NOWPLAYING_BTN_PREV,
 	MUSIK_NOWPLAYING_BTN_NEXT
 };
@@ -139,7 +138,6 @@ protected:
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnBtnPlay();
 	afx_msg void OnBtnPrev();
-	afx_msg void OnBtnStop();
 	afx_msg void OnBtnNext();
 
 	// info object (title/artist/album)
@@ -154,7 +152,6 @@ protected:
 
 	// buttons
 	CButtonST* m_Play;
-	CButtonST* m_Stop;
 	CButtonST* m_Prev;
 	CButtonST* m_Next;
 
