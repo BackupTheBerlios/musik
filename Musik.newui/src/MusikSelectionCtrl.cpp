@@ -6,12 +6,47 @@ CMusikSelectionCtrl::CMusikSelectionCtrl( wxWindow* parent, CMusikLibrary* libra
 {
 	m_MusikLibrary = library;
 
+	ResetStyles();
 	SetType( MUSIK_SELECTION_ARTISTS, false );	//--- this is where we will set the box type
 	Reset( true, true );
 }
 
 CMusikSelectionCtrl::~CMusikSelectionCtrl()
 {
+}
+
+
+wxString CMusikSelectionCtrl::OnGetItemText( long item, long column ) const
+{
+	switch ( column )
+	{
+	case 0:
+		return wxT( "" );
+		break;
+	case 1:
+		return m_Items.Item( item );
+		break;
+	}
+
+	return wxT( "" );
+}
+
+wxListItemAttr* CMusikSelectionCtrl::OnGetItemAttr( long item ) const
+{
+	return ( wxListItemAttr* )&m_LightAttr;
+}
+
+
+void CMusikSelectionCtrl::Update( bool refresh )
+{
+	Freeze();
+
+	SetItemCount( m_Items.GetCount() );
+	
+	if ( refresh )
+		Refresh( false );
+
+	Thaw();
 }
 
 void CMusikSelectionCtrl::RescaleColumns( bool refresh )
@@ -39,8 +74,21 @@ void CMusikSelectionCtrl::Reset( bool rescale, bool refresh )
 	//---------------------------------------------------------//
 	InsertColumn( 0, wxT( "" ) );
 	InsertColumn( 1, m_MusikLibrary->GetSongField( m_Type ) );
+	ResetContents( false );
+
 	if ( rescale )
 		RescaleColumns( refresh );
+}
+
+void CMusikSelectionCtrl::ResetContents( bool refresh )
+{
+	m_MusikLibrary->GetAllDistinct( m_Type, m_Items );
+	Update( false );
+}
+
+void CMusikSelectionCtrl::ResetStyles()
+{
+	m_LightAttr = wxListItemAttr( *wxBLACK, wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ), wxNullFont );
 }
 
 void CMusikSelectionCtrl::SetType( int type, bool reset )
@@ -48,12 +96,6 @@ void CMusikSelectionCtrl::SetType( int type, bool reset )
 	m_Type = type;
 	if ( reset )
 		Reset();
-}
-
-void CMusikSelectionCtrl::Update( bool refresh )
-{
-	if ( refresh )
-		Refresh( false );
 }
 
 void CMusikSelectionCtrl::OnResize( wxSizeEvent& event )

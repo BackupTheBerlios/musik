@@ -55,6 +55,10 @@ protected:
 	virtual void StartEditInPlace	( );
 	virtual void EndEditInPlace		( wxCommandEvent& event );
 
+	virtual wxString OnGetItemText( long item, long column ) const{ return wxEmptyString; }
+	virtual wxListItemAttr* OnGetItemAttr( long item ) const{ return NULL; }
+	virtual int	OnGetItemImage	(long item) const{ return -1; }
+
 	CMusikEditInPlaceCtrl* GetEditInPlaceCtrl(){ return m_EditInPlace; }
 
 	DECLARE_EVENT_TABLE();

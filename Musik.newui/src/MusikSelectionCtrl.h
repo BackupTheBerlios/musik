@@ -32,10 +32,24 @@ public:
 	int  GetType			( )	{ return m_Type; }
 	void SetType			( int type, bool reset = true );
 
-protected:
 	//---------------------------------------------------------//
-    //--- these are our virtual overrides. they control		---//
-	//--- dialog resizing, column dragging, and updating.	---//
+	//--- functions not having to do with getting or		---//
+	//--- setting anything...								---//
+	//---------------------------------------------------------//
+	void ResetContents( bool refresh = true );
+
+	//---------------------------------------------------------//
+	//--- wxListCtrl virtual overrides. stuff like updating ---//
+	//--- the virtual list control and adding stripes, etc.	---//
+	//---------------------------------------------------------//
+	virtual wxString OnGetItemText( long item, long column ) const;
+	virtual wxListItemAttr* OnGetItemAttr( long item ) const;
+
+protected:
+
+	//---------------------------------------------------------//
+	//--- CMusikListCtrl virtual overrides. these include	---//
+	//--- event handling and stuff. neato.					---//
 	//---------------------------------------------------------//
 	virtual void OnResize			( wxSizeEvent& event );
 	virtual void OnColBeginDrag		( wxListEvent& event );
@@ -46,8 +60,15 @@ protected:
 
 private:
 
+	//---------------------------------------------------------//
+	//--- styles used in the virtual list control			---//
+	//---------------------------------------------------------//
+	wxListItemAttr m_LightAttr;
+	void ResetStyles();
+
 	int m_Type;
 	CMusikLibrary* m_MusikLibrary;
+	wxArrayString m_Items;
 
 };
 

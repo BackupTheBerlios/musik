@@ -53,13 +53,12 @@ public:
 	const wxString	GetSongFieldDB	( int n )	{ return m_FieldsDB.Item( n ); }
 
 	//-----------------------------------------------------//
-	//--- for querying the database. if source_type is	---//
-	//--- -1, we will will get all the songs relating	---//
-	//--- to the out type.								---//
+	//--- for querying the database.					---//
 	//-----------------------------------------------------//
 	void GetAllSongs		( CMusikPlaylist & target );
 	void GetSongs			( int source_type, const wxArrayString & source_items, CMusikPlaylist & target );
-	void GetRelatedSongs	( int source_type, const wxArrayString & source_items, int target_type, wxArrayString & target );
+	void GetRelatedItems	( int source_type, const wxArrayString & source_items, int target_type, wxArrayString & target );
+	void GetAllDistinct		( int source_type, wxArrayString& target, bool clear_target = true );
 	int  GetSongCount		();
 	void QuerySongs			( const wxString & query, CMusikPlaylist & target );
 

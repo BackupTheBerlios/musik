@@ -6,7 +6,7 @@
 //--- this is a callback for sqlite to use when ---//
 //--- adding songs to a CMusikPlaylist.			---//
 //-------------------------------------------------//
-static int sqlite_AddSongCallback(void *args, int WXUNUSED(numCols), char **results, char ** WXUNUSED(columnNames))
+static int sqlite_AddSongToPlaylist(void *args, int WXUNUSED( numCols ), char **results, char ** WXUNUSED( columnNames ) )
 {
 	CMusikPlaylist* p = (CMusikPlaylist*)args;
 
@@ -34,6 +34,15 @@ static int sqlite_AddSongCallback(void *args, int WXUNUSED(numCols), char **resu
 
     return 0;
 }
+
+static int sqlite_AddSongToStringArray( void *args, int WXUNUSED(numCols), char **results, char ** WXUNUSED( columnNames ) )
+{
+	wxArrayString * p = (wxArrayString*)args;
+	p->Add( MBTowxString( results[0] ) ); 
+
+    return 0;
+}
+
 
 CMusikLibrary::CMusikLibrary( const wxString& filename )
 {
@@ -196,7 +205,7 @@ void CMusikLibrary::GetSongs( int source_type, const wxArrayString& source_items
 
 	{
 		wxCriticalSectionLocker lock( m_csDBAccess );
-		sqlite_exec(m_pDB, wxStringToMB( sQuery ), &sqlite_AddSongCallback, &target, NULL);
+		sqlite_exec(m_pDB, wxStringToMB( sQuery ), &sqlite_AddSongToPlaylist, &target, NULL);
 	}
 
 	target.Shrink();
@@ -273,13 +282,13 @@ void CMusikLibrary::QuerySongs( const wxString& query, CMusikPlaylist& target )
 		//--- lock as short as possible by using {}		---//
 		//-------------------------------------------------//
 		wxCriticalSectionLocker lock( m_csDBAccess );
-		sqlite_exec( m_pDB, pQuery, &sqlite_AddSongCallback, &target, NULL );
+		sqlite_exec( m_pDB, pQuery, &sqlite_AddSongToPlaylist, &target, NULL );
 	}
 
 	target.Shrink();
 }
 
-void CMusikLibrary::GetRelatedSongs( int source_type, const wxArrayString& source_items, int target_type, wxArrayString& target )
+void CMusikLibrary::GetRelatedItems( int source_type, const wxArrayString& source_items, int target_type, wxArrayString& target )
 {
 	target.Clear();
 
@@ -318,7 +327,7 @@ void CMusikLibrary::GetRelatedSongs( int source_type, const wxArrayString& sourc
 	//-----------------------------------------------------//
 	{
 		wxCriticalSectionLocker lock( m_csDBAccess );
-		sqlite_exec(m_pDB, wxStringToMB( query ), &sqlite_AddSongCallback, &target, NULL);
+		sqlite_exec(m_pDB, wxStringToMB( query ), &sqlite_AddSongToStringArray, &target, NULL);
 	}
 
 	//-----------------------------------------------------//
@@ -336,6 +345,22 @@ void CMusikLibrary::GetRelatedSongs( int source_type, const wxArrayString& sourc
 void CMusikLibrary::GetAllSongs( CMusikPlaylist& target )
 {
 	QuerySongs( wxT( "filename <> ''" ), target );
+}
+
+void CMusikLibrary::GetAllDistinct( int source_type, wxArrayString& target, bool clear_target )
+{
+	if ( clear_target )
+	{
+		target.Clear();
+		target.Alloc( GetSongCount() );
+	}
+
+	wxString sQuery;
+	wxString sField = GetSongFieldDB( source_type );
+	sQuery.sprintf( wxT( "select distinct %s,UPPER(%s) as UP from songs order by UP;" ), sField, sField );
+
+	wxCriticalSectionLocker lock( m_csDBAccess );
+	sqlite_exec( m_pDB, wxStringToMB( sQuery ), &sqlite_AddSongToStringArray, &target, NULL );
 }
 
 int CMusikLibrary::GetSongCount()

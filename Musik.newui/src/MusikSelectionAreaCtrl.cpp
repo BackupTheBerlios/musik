@@ -74,6 +74,12 @@ void CMusikSelectionAreaCtrl::Reset()
 	CreateControls();
 }
 
+void CMusikSelectionAreaCtrl::ResetContents()
+{
+	for ( size_t i = 0; i < MAX_SELECTION_CTRLS; i++ )
+		m_SelectionCtrls[i]->ResetContents();
+}
+
 CMusikSelectionCtrl* CMusikSelectionAreaCtrl::GetControl( size_t nCtrlID )
 {
 	if ( nCtrlID >= MAX_SELECTION_CTRLS )

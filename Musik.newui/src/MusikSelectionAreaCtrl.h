@@ -18,6 +18,7 @@ public:
 
 	CMusikSelectionCtrl* GetControl( size_t nCtrlID ); 
 	void Reset();
+	void ResetContents();
 
 private:
 	void CreateSashes();
