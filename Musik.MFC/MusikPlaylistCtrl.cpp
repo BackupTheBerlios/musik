@@ -82,17 +82,16 @@ void CMusikPlaylistCtrl::OnNcPaint()
 	pDC.Draw3dRect( 3, 3, rcClient.Width() + 2, rcClient.Height() + 2, GetSysColor( COLOR_BTNSHADOW ), GetSysColor( COLOR_BTNHILIGHT ) );
 
     // client area is not our bussiness :)
-    //dc.IntersectClipRect(rcBar);
-    //dc.ExcludeClipRect(rcClient);
-
-    //dc.BitBlt(0, 0, rcBar.Width(), rcBar.Height(), &pDC, 0, 0, SRCCOPY);
-
+	dc.IntersectClipRect(rcBar);
+    dc.ExcludeClipRect(rcClient);
 }
 
 ///////////////////////////////////////////////////
 
 void CMusikPlaylistCtrl::ResetColumns()
 {
+	while ( DeleteColumn( 0 ) );
+
 	for ( size_t i = 0; i < m_Prefs->GetPlaylistColCount(); i++ )
 	{
 		InsertColumn( i, m_Library->GetSongField( m_Prefs->GetPlaylistCol( i ) ) );
@@ -345,25 +344,8 @@ void CMusikPlaylistCtrl::DrawItem( CDC* pDC, int item, const CRect& rect )
 
 void CMusikPlaylistCtrl::InitFonts()
 {
-	NONCLIENTMETRICS info;
-	info.cbSize = sizeof( info );
-
-	::SystemParametersInfo( SPI_GETNONCLIENTMETRICS, sizeof( info ), &info, 0 );
-
-	LOGFONT lf;
-	memset(&lf, 0, sizeof (LOGFONT));
-
-	CWindowDC dc(NULL);
-	lf.lfCharSet = (BYTE)GetTextCharsetInfo(dc.GetSafeHdc(), NULL, 0);
-
-	lf.lfHeight = info.lfMenuFont.lfHeight;
-	lf.lfWeight = info.lfMenuFont.lfWeight;
-	lf.lfItalic = info.lfMenuFont.lfItalic;	
-
-	_tcscpy(lf.lfFaceName, info.lfMenuFont.lfFaceName);
-
 	m_Items = new CFont();
-	m_Items->CreateFontIndirect( &lf );
+	m_Items->CreateStockObject( DEFAULT_GUI_FONT );
 
     m_Bullets = new CFont();
 	m_Bullets->CreatePointFont( 96, "Marlett" );
