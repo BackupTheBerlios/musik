@@ -62,7 +62,6 @@ CMusikPlayer::CMusikPlayer()
 	m_StartingNext	= false;
 	m_Stopping		= false;
 	m_SongIndex		= 0;
-	m_LastSong		= 0;
 	m_Channels		= -1;
 	m_Playmode		= MUSIK_PLAYMODE_NORMAL;
 	m_CrossfadeType	= 0;
@@ -237,9 +236,6 @@ void CMusikPlayer::PlayPause()
 }
 void CMusikPlayer::PlayCurSel()
 {
-
-	m_LastSong	= m_SongIndex;
-	
 	if ( IsPaused() )
 	{
 		ClearOldStreams();
@@ -601,7 +597,7 @@ void CMusikPlayer::UpdateUI()
 	}
 	else
 	{
-		g_PlaylistBox->PlaylistCtrl().ResynchItem		( m_SongIndex, m_LastSong );
+		g_PlaylistBox->PlaylistCtrl().Update(false);
 		g_Library.UpdateItemLastPlayed	( m_CurrentFile );
 		g_Library.GetSongFromFilename( m_CurrentFile, &song );
 	}
@@ -824,8 +820,6 @@ size_t CMusikPlayer::GetRandomSong()
 
 void CMusikPlayer::NextSong()
 {
-	m_LastSong	= m_SongIndex;
-	
 	switch ( m_Playmode )
 	{
 	case MUSIK_PLAYMODE_NORMAL:
@@ -857,8 +851,6 @@ void CMusikPlayer::NextSong()
 
 void CMusikPlayer::PrevSong()
 {
-	m_LastSong = m_SongIndex;
-
 	//---------------------------------------------------------//
 	//--- 2  second grace period to go to previous track	---//
 	//---------------------------------------------------------//
@@ -989,7 +981,7 @@ int CMusikPlayer::GetTime( int nType )
 		}
 		return m_NETSTREAM_read_percent;
 	}
-
+	// critical section here, because crossfader thread is stopped before g_ActiveStreams array is changed(add/remove)
 	if(g_ActiveStreams.GetCount() == 0)
 		return 0;
 	if ( nType == FMOD_SEC )
@@ -1002,6 +994,7 @@ int CMusikPlayer::GetTime( int nType )
 
 int CMusikPlayer::GetTimeLeft( int nType )
 {
+	wxCriticalSectionLocker locker( m_critInternalData); // lock because this method is called from fader thread , protect m_Playlist
 	if(_CurrentSongIsNetStream())
 	{
 		return 10000000;

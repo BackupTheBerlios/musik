@@ -163,10 +163,9 @@ public:
 	void SetPlaymode		( );
 	void SetVolume			( );
 	void SetTime			( int nSec );
-	void SetPlaylist		(const  CMusikSongArray &playlist ) { m_Playlist = playlist; }
+	void SetPlaylist		(const  CMusikSongArray &playlist ) {wxCriticalSectionLocker locker( m_critInternalData) ; m_Playlist = playlist; }
 	void SetStartingNext	( bool bStart = true ){ m_StartingNext = bStart; }
 	void SetCrossfadeType	( int nType ){ m_CrossfadeType = nType; }
-	void SetCurSel			( size_t index ){ m_SongIndex = index; }
 
 	//------------//
 	//--- misc ---//
@@ -191,7 +190,6 @@ private:
 	CMusikSongArray m_Playlist;			//--- heart and soul.								---//
 	EMUSIK_PLAYMODE	m_Playmode;			//--- repeat, shuffle, etc							---//
 	size_t			m_SongIndex;		//--- current index in playlist						---//
-	size_t			m_LastSong;			//--- last song played, used for updating			---//
 	bool			m_Playing;			//--- currently playing?							---//
 	bool			m_Paused;			//--- currently paused?								---//
 	bool			m_BeginFade;		//--- should we begin fading?						---//
@@ -214,6 +212,7 @@ private:
 	FSOUND_STREAM * m_p_NETSTREAM_Connecting;
 	CMusikSong m_MetaDataSong;
 	wxCriticalSection m_critMetadata;
+	wxCriticalSection m_critInternalData;
 	wxStopWatch m_StreamIsWorkingStopWatch;
 	bool m_bStreamIsWorkingStopWatchIsRunning;
 
