@@ -49,8 +49,8 @@ private:
 class CMusikPlaylist
 {
 public:
-	CMusikPlaylist(){}
-	~CMusikPlaylist(){}
+	CMusikPlaylist();
+	~CMusikPlaylist();
 
 	//-----------------------------------------------------//
 	//--- gets											---//

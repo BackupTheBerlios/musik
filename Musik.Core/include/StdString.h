@@ -214,6 +214,8 @@
 	#pragma warning (disable : 4290) // C++ Exception Specification ignored
 	#pragma warning (disable : 4127) // Conditional expression is constant
 	#pragma warning (disable : 4097) // typedef name used as synonym for class name
+	#pragma warning (disable : 4267) // size_t to int
+	#pragma warning (disable : 4311) // pointer truncation from PCSTR to DWORD
 #endif
 
 #ifndef STDSTRING_H

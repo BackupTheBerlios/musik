@@ -44,6 +44,16 @@ CMusikSongInfo::~CMusikSongInfo()
 //-----------------------------------------------------//
 //--- CMusikPlaylist: a playlist object				---//
 //-----------------------------------------------------//
+CMusikPlaylist::CMusikPlaylist()
+{
+	
+}
+
+CMusikPlaylist::~CMusikPlaylist()
+{
+	m_Songs.clear();
+}
+
 CStdString CMusikPlaylist::GetField( int index, int field )
 {
 	return m_Songs.at( index ).GetField( field );

@@ -467,6 +467,24 @@ void CMusikLibrary::GetRelatedItems( CStdString sub_query, int dst_type, CStdStr
 		VerifyYearList( target );
 }
 
+void CMusikLibrary::GetRelatedSongs( CStdString sub_query, int source_type, CMusikPlaylist& target )
+{
+	target.clear();
+
+	CStdString order_by = GetOrder( source_type );
+
+	CStdString query;
+	query.Format( _T( "select distinct songid from songs where %s %s" ),
+		sub_query.c_str(),
+		order_by.c_str() );
+
+	//-----------------------------------------------------//
+	//--- lock it up and run the query					---//
+	//-----------------------------------------------------//
+	boost::mutex::scoped_lock scoped_lock( m_ProtectingLibrary );
+	sqlite_exec(m_pDB, query.c_str(), &sqlite_AddSongToPlaylist, &target, NULL);
+}
+
 void CMusikLibrary::GetAllDistinct( int source_type, CStdStringArray& target, bool clear_target )
 {
 	if ( clear_target )

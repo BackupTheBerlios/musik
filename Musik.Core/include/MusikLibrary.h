@@ -75,6 +75,7 @@ public:
 	void GetSongs			( int source_type, const CStdStringArray & source_items, CMusikPlaylist & target );
 	void GetRelatedItems	( int source_type, const CStdStringArray & source_items, int target_type, CStdStringArray & target );
 	void GetRelatedItems	( CStdString sub_query, int order_by, CStdStringArray& target );
+	void GetRelatedSongs	( CStdString sub_query, int order_by, CMusikPlaylist& target );
 	void GetAllDistinct		( int source_type, CStdStringArray& target, bool clear_target = true );
 	int	 GetSongCount		();
 	void GetFieldFromID		( int id, int field, CStdString& string );
