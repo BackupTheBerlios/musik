@@ -431,4 +431,3 @@ void MusikFrame::EnableProgress( bool enable )
 		return wxFrame::MSWWindowProc(message,wParam,lParam);
 	}	
 #endif
-	
