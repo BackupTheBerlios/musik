@@ -78,6 +78,8 @@ IDR_MAINFRAME MENU
 BEGIN
     POPUP "&File"
     BEGIN
+        MENUITEM "Preferences",                 ID_FILE_PREFERENCES
+        MENUITEM SEPARATOR
         MENUITEM "E&xit",                       ID_APP_EXIT
     END
     POPUP "&Edit"
@@ -130,6 +132,41 @@ BEGIN
     LTEXT           "Musik Version 1.0",IDC_STATIC,40,10,119,8,SS_NOPREFIX
     LTEXT           "Copyright (C) 2003",IDC_STATIC,40,25,119,8
     DEFPUSHBUTTON   "OK",IDOK,178,7,50,16,WS_GROUP
+END
+
+IDD_PROPPAGE_INTERFACE_GENERAL DIALOGEX 0, 0, 210, 154
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Interface::General"
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    CONTROL         "Automatically scan for new songs on startup",
+                    IDC_CHECK_STARTUPSCAN,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,7,7,158,10
+END
+
+IDD_PROPPAGE_INTERFACE_COLORS DIALOGEX 0, 0, 210, 154
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Interface::Colors"
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    CONTROL         "Show stripes in playlist",IDC_CHECK_PL_STRIPES,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,7,7,88,10
+END
+
+IDD_PROPPAGE_SOUND_DRIVER DIALOGEX 0, 0, 210, 154
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Sound::Driver"
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    LTEXT           "TODO: layout property page",IDC_STATIC,60,73,90,8
+END
+
+IDD_PROPPAGE_SOUND_CROSSFADER DIALOGEX 0, 0, 210, 154
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Sound::Crossfader"
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    LTEXT           "TODO: layout property page",IDC_STATIC,60,73,90,8
 END
 
 
@@ -187,6 +224,38 @@ BEGIN
         RIGHTMARGIN, 228
         TOPMARGIN, 7
         BOTTOMMARGIN, 48
+    END
+
+    IDD_PROPPAGE_INTERFACE_GENERAL, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 203
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 147
+    END
+
+    IDD_PROPPAGE_INTERFACE_COLORS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 203
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 147
+    END
+
+    IDD_PROPPAGE_SOUND_DRIVER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 203
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 147
+    END
+
+    IDD_PROPPAGE_SOUND_CROSSFADER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 203
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 147
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -265,6 +334,11 @@ STRINGTABLE
 BEGIN
     AFX_IDS_SCRESTORE       "Restore the window to normal size"
     AFX_IDS_SCTASKLIST      "Activate Task List"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_FILE_PREFERENCES     "Change your Musik preferences."
 END
 
 #endif    // English (U.S.) resources

@@ -49,6 +49,8 @@
 #include <io.h>
 #include <Direct.h>
 
+#include "3rdparty/TreePropSheet.h"
+
 ///////////////////////////////////////////////////
 
 #ifdef _DEBUG
@@ -77,10 +79,16 @@ int WM_SOURCESDYNPLAYLIST	= RegisterWindowMessage( "SOURCESDYNDPLAYLIST" );
 
 IMPLEMENT_DYNAMIC(CMainFrame, CFrameWnd)
 
+///////////////////////////////////////////////////
+
 BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	// mfc message maps
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
+	ON_WM_ERASEBKGND()
+	ON_WM_PAINT()
+	ON_WM_SYSCOLORCHANGE()
+	ON_COMMAND(ID_FILE_PREFERENCES, OnFilePreferences)
 
 	// custom message maps
 	ON_REGISTERED_MESSAGE( WM_SELBOXUPDATE, OnUpdateSel )
@@ -94,9 +102,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_DRAGEND, OnDragEnd )
 	ON_REGISTERED_MESSAGE( MW_NEWPLAYLISTOWNER, OnNewPlaylistOwner )
 	ON_REGISTERED_MESSAGE( WM_SELBOXRESET, OnSelBoxesReset )
-	ON_WM_ERASEBKGND()
-	ON_WM_PAINT()
-	ON_WM_SYSCOLORCHANGE()
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -719,4 +724,41 @@ void CMainFrame::OnSysColorChange()
 
 	m_Prefs->ThemeChanged();
 	Invalidate();
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnFilePreferences()
+{
+	// initialize the property pages
+	CPropertyPage wndPageInterfaceColors(	IDD_PROPPAGE_INTERFACE_COLORS);
+	CPropertyPage wndPageInterfaceGeneral(	IDD_PROPPAGE_INTERFACE_GENERAL);
+	CPropertyPage wndPageSoundCrossfader(	IDD_PROPPAGE_SOUND_CROSSFADER);
+	CPropertyPage wndPageSoundDriver(		IDD_PROPPAGE_SOUND_DRIVER);
+
+	// remove help icon from gripper
+	wndPageInterfaceColors.m_psp.dwFlags&=	~PSP_HASHELP;
+	wndPageInterfaceGeneral.m_psp.dwFlags&= ~PSP_HASHELP;
+	wndPageSoundCrossfader.m_psp.dwFlags&=	~PSP_HASHELP;
+	wndPageSoundDriver.m_psp.dwFlags&=		~PSP_HASHELP;
+
+	// initialize the CTreePropSheet class 
+	// and remove help icon from gripper
+	TreePropSheet::CTreePropSheet PrefSheet(_T("Musik Preferences"));
+	PrefSheet.m_psh.dwFlags&= ~PSH_HASHELP;
+
+	// physically add the preference sheets
+	PrefSheet.AddPage(&wndPageInterfaceGeneral);
+	PrefSheet.AddPage(&wndPageInterfaceColors);
+	PrefSheet.AddPage(&wndPageSoundDriver);
+	PrefSheet.AddPage(&wndPageSoundCrossfader);
+
+	PrefSheet.SetEmptyPageText(_T("Please select a child item of '%s'."));
+	
+	// set some miscellaneous tree view properties
+	PrefSheet.SetTreeViewMode(true, true, false);
+
+	PrefSheet.SetActivePage(&wndPageInterfaceGeneral);
+
+	PrefSheet.DoModal();
 }

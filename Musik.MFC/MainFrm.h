@@ -160,13 +160,16 @@ protected:
 	afx_msg LRESULT OnNewPlaylistOwner( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSelBoxesReset( WPARAM wParam, LPARAM lParam );
 
-	// macros
-	DECLARE_DYNAMIC(CMainFrame)
-	DECLARE_MESSAGE_MAP()
-public:
+	// mfc message maps
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
 	afx_msg void OnSysColorChange();
+	afx_msg void OnFilePreferences();
+
+	// macros
+	DECLARE_DYNAMIC(CMainFrame)
+	DECLARE_MESSAGE_MAP()
+	
 };
 
 ///////////////////////////////////////////////////

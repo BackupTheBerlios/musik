@@ -277,6 +277,28 @@
 						RelativePath=".\MusikDockBar.h">
 					</File>
 				</Filter>
+				<Filter
+					Name="MusikTreePrefs"
+					Filter="">
+					<File
+						RelativePath=".\3rdparty\PropPageFrame.cpp">
+					</File>
+					<File
+						RelativePath=".\3rdparty\PropPageFrame.h">
+					</File>
+					<File
+						RelativePath=".\3rdparty\PropPageFrameDefault.cpp">
+					</File>
+					<File
+						RelativePath=".\3rdparty\PropPageFrameDefault.h">
+					</File>
+					<File
+						RelativePath=".\3rdparty\TreePropSheet.cpp">
+					</File>
+					<File
+						RelativePath=".\3rdparty\TreePropSheet.h">
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="CSizingControlBar"
