@@ -254,8 +254,6 @@ MusikTagFrame::MusikTagFrame( wxFrame* pParent, CMusikSongArray aSongs, int nCur
 	//-------------------//	
 	for ( int i = 0; i < ID3_NR_OF_V1_GENRES; i++ )
 		cmbGenre->Append( ConvA2W( ID3_v1_genre_description[i] ) );
-
-	//LoadFirst();
 }
 
 void MusikTagFrame::SetCaption()
@@ -287,11 +285,6 @@ bool MusikTagFrame::Show( bool show )
 	}
 	
 	return bRet;	
-}
-
-void MusikTagFrame::LoadFirst()
-{
-
 }
 
 void MusikTagFrame::SetChecks( const int i )

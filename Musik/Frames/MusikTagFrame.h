@@ -124,7 +124,6 @@ public:
 	void SaveCurSong	();
 	void Next			();
 	void Prev			();
-	void LoadFirst		();
 	void SetCaption		();
 
 	void CheckChangesSingle	();
