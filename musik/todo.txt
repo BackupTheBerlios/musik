@@ -4,10 +4,12 @@ musik Todo list:
 2.  Edit Tag Dialog [dcarter]
 3.  Dynamic Playlist Dialog [dcarter]
 4.  Jukebox playlist type [dcarter/avatar]
-5.  Maybe optimize equalizer layout functions? [avatar]
 
 Stuff Added 
 
+21. Directory synchronization 
+20. Right click menus implemented
+19. Equalizer completed
 18. Dockable window positions saved on exit
 17. Playback buttons
 16. Selection box retagging
@@ -19,7 +21,7 @@ Stuff Added
 10. Playback buttons
 9.  Sources box "edit in place" for playlist
     renaming.
-8.  File -> Open and File -> Open Directory. fast
+8.  File -> Add and File -> Add Directory. fast
     and threaded...
 7.  DND append playlist by dragging files over
     existing "standard playlist"

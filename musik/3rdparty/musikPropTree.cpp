@@ -937,7 +937,7 @@ void CmusikPropTree::UpdateResize()
 	si.fMask = SIF_RANGE|SIF_PAGE;
 	si.nMin = 0;
 	si.nMax = GetRootItem()->GetTotalHeight();
-	si.nPage = nHeight;
+	si.nPage = nHeight + PROPTREEITEM_DEFHEIGHT;
 
 	if ((int)si.nPage>si.nMax)
 		SetOriginOffset(0);
