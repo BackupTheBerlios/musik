@@ -9,6 +9,7 @@ END_EVENT_TABLE()
 CMusikEditInPlaceCtrl::CMusikEditInPlaceCtrl( wxWindow* parent, wxWindowID id )
 	: wxTextCtrl( parent, id, wxT( "" ), wxPoint( 0, 0 ), wxSize( -1, -1 ), wxSIMPLE_BORDER | wxTE_PROCESS_ENTER )
 {
+	m_Parent = parent;
 }
 
 CMusikEditInPlaceCtrl::~CMusikEditInPlaceCtrl()
@@ -21,20 +22,31 @@ void CMusikEditInPlaceCtrl::OnChar( wxKeyEvent& event )
 
 	if ( nKey == WXK_ESCAPE )
 	{
-		Show( false );
-		Enable( false );
+		Hide();
 	}
 
 	else if ( nKey == WXK_RETURN )
 	{
-		wxMessageBox( wxT( "Committed Your Changes! [not really]" ) );
-		//--- post event to parent ---//
+		m_LastValue = GetValue();
+		Hide();
+		wxCommandEvent commit_done( wxEVT_COMMAND_MENU_SELECTED, MUSIK_EDIT_IN_PLACE_COMMIT );
+		wxPostEvent( m_Parent, commit_done );
 	}
 
 	event.Skip();
 }
 
+wxString CMusikEditInPlaceCtrl::GetStr()
+{
+	return m_LastValue;
+}
+
 void CMusikEditInPlaceCtrl::OnKillFocus( wxFocusEvent& event )
+{
+	Hide();
+}
+
+void CMusikEditInPlaceCtrl::Hide()
 {
 	Show( false );
 	Enable( false );
@@ -51,6 +63,7 @@ BEGIN_EVENT_TABLE( CMusikListCtrl, wxListCtrl )
 	EVT_LIST_KEY_DOWN				( -1,	CMusikListCtrl::OnKeyDown			)
 	EVT_CONTEXT_MENU				(		CMusikListCtrl::OnContextMenu		)
 	EVT_SIZE						(		CMusikListCtrl::OnResize			)
+	EVT_MENU						( MUSIK_EDIT_IN_PLACE_COMMIT, CMusikListCtrl::EndEditInPlace )
 END_EVENT_TABLE()
 
 CMusikListCtrl::CMusikListCtrl( wxWindow *parent, wxWindowID id, long flags )
@@ -75,4 +88,9 @@ void CMusikListCtrl::StartEditInPlace()
 	m_EditInPlace->Enable( true );
 	m_EditInPlace->Show( true );
 	m_EditInPlace->SetFocus();
+}
+
+void CMusikListCtrl::EndEditInPlace( wxCommandEvent& event )
+{
+	wxMessageBox( m_EditInPlace->GetStr() );
 }

@@ -4,6 +4,8 @@
 #include "wx/wxprec.h"
 #include "wx/listctrl.h"
 
+#define MUSIK_EDIT_IN_PLACE_COMMIT wxID_HIGHEST
+
 class CMusikEditInPlaceCtrl : public wxTextCtrl
 {
 public:
@@ -12,8 +14,15 @@ public:
 
 	void OnChar( wxKeyEvent& event );
 	void OnKillFocus( wxFocusEvent& event );
+	wxString GetStr();
 
 	DECLARE_EVENT_TABLE()
+private:
+
+	void Hide();
+
+	wxString m_LastValue;
+	wxWindow *m_Parent;
 };
 
 class CMusikListCtrl : public wxListCtrl
@@ -43,6 +52,7 @@ public:
 	virtual void Update				( bool refresh = false ){};
 
 	virtual void StartEditInPlace();
+	virtual void EndEditInPlace( wxCommandEvent& event );
 
 	DECLARE_EVENT_TABLE();
 
