@@ -1,7 +1,7 @@
 /*
  *  MusikEQGauge.h
  *
- *  Subclasses wxGauge used by equalizer. Has special nifty functions.
+ *  Subclassed wxGauge used by equalizer. Has special nifty functions.
  *
  *  Copyright (c) 2003 Casey Langen (casey@bak.rr.com)
  *	Contributors: Simon Windmill, Dustin Carter, Gunnar Roth, Wade Brainerd
