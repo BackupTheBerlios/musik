@@ -1,46 +1,43 @@
-// MusikSourcesView.cpp : implementation file
-//
-
 #include "stdafx.h"
 #include "Musik.h"
 #include "MusikSourcesView.h"
 
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
 
-// CMusikSourcesView
-
-IMPLEMENT_DYNCREATE(CMusikSourcesView, CFormView)
-
-CMusikSourcesView::CMusikSourcesView()
-	: CFormView(CMusikSourcesView::IDD)
+CMusikSourcesBar::CMusikSourcesBar()
 {
 }
 
-CMusikSourcesView::~CMusikSourcesView()
+CMusikSourcesBar::~CMusikSourcesBar()
 {
 }
 
-void CMusikSourcesView::DoDataExchange(CDataExchange* pDX)
-{
-	CFormView::DoDataExchange(pDX);
-}
 
-BEGIN_MESSAGE_MAP(CMusikSourcesView, CFormView)
+BEGIN_MESSAGE_MAP(CMusikSourcesBar, baseCMusikSourcesBar)
+	ON_WM_CREATE()
 END_MESSAGE_MAP()
 
 
-// CMusikSourcesView diagnostics
-
-#ifdef _DEBUG
-void CMusikSourcesView::AssertValid() const
+int CMusikSourcesBar::OnCreate( LPCREATESTRUCT lpCreateStruct ) 
 {
-	CFormView::AssertValid();
+	if ( baseCMusikSourcesBar::OnCreate(lpCreateStruct) == -1 )
+		return -1;
+
+	SetSCBStyle( GetSCBStyle() | SCBS_SHOWEDGES | SCBS_SIZECHILD );
+
+	if ( !m_wndChild.Create( WS_CHILD|WS_VISIBLE|LVS_REPORT, CRect(0,0,0,0), this, 123) )
+		return -1;
+
+	m_wndChild.ModifyStyleEx( 0, WS_EX_CLIENTEDGE );
+
+	if ( !m_Font.CreateStockObject(DEFAULT_GUI_FONT) )
+		return -1;
+
+	m_wndChild.SetFont( &m_Font );
+
+	return 0;
 }
-
-void CMusikSourcesView::Dump(CDumpContext& dc) const
-{
-	CFormView::Dump(dc);
-}
-#endif //_DEBUG
-
-
-// CMusikSourcesView message handlers

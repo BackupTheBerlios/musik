@@ -234,6 +234,28 @@
 				RelativePath=".\stdafx.h">
 			</File>
 		</Filter>
+		<Filter
+			Name="CSizingControlBar"
+			Filter="">
+			<File
+				RelativePath=".\CSizingControlBar\scbarcf.cpp">
+			</File>
+			<File
+				RelativePath=".\CSizingControlBar\scbarcf.h">
+			</File>
+			<File
+				RelativePath=".\CSizingControlBar\scbarg.cpp">
+			</File>
+			<File
+				RelativePath=".\CSizingControlBar\scbarg.h">
+			</File>
+			<File
+				RelativePath=".\CSizingControlBar\sizecbar.cpp">
+			</File>
+			<File
+				RelativePath=".\CSizingControlBar\sizecbar.h">
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\res\Musik.manifest">
 		</File>

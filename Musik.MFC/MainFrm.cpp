@@ -38,6 +38,12 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CFrameWnd::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
+	m_wndSourcesBar.Create( _T( "MusikSources" ), this, 123 );
+	m_wndSourcesBar.EnableDocking( CBRS_ALIGN_LEFT | CBRS_ALIGN_RIGHT );
+
+	EnableDocking(CBRS_ALIGN_ANY);
+	DockControlBar(&m_wndSourcesBar, AFX_IDW_DOCKBAR_LEFT);
+
 	return 0;
 }
 

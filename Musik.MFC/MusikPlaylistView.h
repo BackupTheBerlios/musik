@@ -1,28 +1,40 @@
 #pragma once
 
+#include "MusikPlaylistCtrl.h"
 
-
-// CMusikPlaylistView form view
-
-class CMusikPlaylistView : public CFormView
-{
-	DECLARE_DYNCREATE(CMusikPlaylistView)
-
-protected:
-	CMusikPlaylistView();           // protected constructor used by dynamic creation
-	virtual ~CMusikPlaylistView();
-
-public:
-	enum { IDD = IDD_PLAYLIST_VIEW };
-#ifdef _DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
+#ifndef baseCMusikPlaylistBar
+#define baseCMusikPlaylistBar CSizingControlBarG
 #endif
 
-protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+class CMusikPlaylistBar : public baseCMusikPlaylistBar
+{
+//-------------------------------------------------//
+//--- implementation							---//
+//-------------------------------------------------//
+public:
+	CMusikPlaylistBar();
+	virtual ~CMusikPlaylistBar();
 
+//-------------------------------------------------//
+//--- variables									---//
+//-------------------------------------------------//
+protected:
+	CMusikPlaylistCtrl m_wndChild;
+	CFont m_Font;
+
+//-------------------------------------------------//
+//--- operations								---//
+//-------------------------------------------------//
+
+//-------------------------------------------------//
+//--- overrides									---//
+//-------------------------------------------------//
+
+//-------------------------------------------------//
+//--- message maps								---//
+//-------------------------------------------------//
+protected:
+	afx_msg int OnCreate( LPCREATESTRUCT lpCreateStruct );
 	DECLARE_MESSAGE_MAP()
 };
-
 

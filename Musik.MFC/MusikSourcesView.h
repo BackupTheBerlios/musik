@@ -1,28 +1,40 @@
 #pragma once
 
+#include "MusikSourcesCtrl.h"
 
-
-// CMusikSourcesView form view
-
-class CMusikSourcesView : public CFormView
-{
-	DECLARE_DYNCREATE(CMusikSourcesView)
-
-protected:
-	CMusikSourcesView();           // protected constructor used by dynamic creation
-	virtual ~CMusikSourcesView();
-
-public:
-	enum { IDD = IDD_SOURCES_VIEW };
-#ifdef _DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
+#ifndef baseCMusikSourcesBar
+#define baseCMusikSourcesBar CSizingControlBarG
 #endif
 
-protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+class CMusikSourcesBar : public baseCMusikSourcesBar
+{
+//-------------------------------------------------//
+//--- implementation							---//
+//-------------------------------------------------//
+public:
+	CMusikSourcesBar();
+	virtual ~CMusikSourcesBar();
 
+//-------------------------------------------------//
+//--- variables									---//
+//-------------------------------------------------//
+protected:
+	CMusikSourcesCtrl m_wndChild;
+	CFont m_Font;
+
+//-------------------------------------------------//
+//--- operations								---//
+//-------------------------------------------------//
+
+//-------------------------------------------------//
+//--- overrides									---//
+//-------------------------------------------------//
+
+//-------------------------------------------------//
+//--- message maps								---//
+//-------------------------------------------------//
+protected:
+	afx_msg int OnCreate( LPCREATESTRUCT lpCreateStruct );
 	DECLARE_MESSAGE_MAP()
 };
-
 
