@@ -3376,17 +3376,14 @@ void CMainFrame::DeinitWinamp()
 
 void CMainFrame::OnUpdateWinampvisualizationsEnabled(CCmdUI *pCmdUI)
 {
-	if ( m_WinampVis )
+	if ( !m_WinampVis || !m_Prefs->IsWinampVisActive() )
 	{
-		if ( !m_Prefs->IsWinampVisActive() )
-		{
-			pCmdUI->Enable( FALSE );
-			pCmdUI->SetCheck( FALSE );
-			return;
-		}
-
-		pCmdUI->SetCheck( (BOOL)visGetVisHwnd() );
+		pCmdUI->Enable( FALSE );
+		pCmdUI->SetCheck( FALSE );
+		return;
 	}
+	else
+		pCmdUI->SetCheck( (BOOL)visGetVisHwnd() );
 }
 
 ///////////////////////////////////////////////////

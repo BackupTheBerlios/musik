@@ -1,18 +1,24 @@
 ----------------------------------------------------------------------------
+a5:
+
+  - ditched ACE for OpenThreads
+  - much improved selection box updating while threading.
+
+----------------------------------------------------------------------------
 a4:
- 
-  - fixed two sources panel crashes. not sure why no one ever 
+
+  - fixed two sources panel crashes. not sure why no one ever
     noticed them before.
-  - pressing ESC while creating a new playlist now cancels the 
+  - pressing ESC while creating a new playlist now cancels the
     operations.
   - "Create..." playlists or sub libraries must be double clicked
     now. people kept clicking it by accident
   - sqlite is now compiled in
   - added tunage.  The following tags can be used:
-    $ARTIST, $ALBUM, $TITLE, $NAME, $FILENAME, $FILESIZE, $BITRATE, 
+    $ARTIST, $ALBUM, $TITLE, $NAME, $FILENAME, $FILESIZE, $BITRATE,
     $TIMESPLAYED, $TRACKNUM
   - right click sources playlist -> delete -> from computer now prompts
-  - optimized threading routines. 
+  - optimized threading routines.
   - the caption bar now tells the user how many worker threads are active.
   - window start maximized bug came back, so its fixed again
   - fixed stupid selection bar defuault
@@ -21,7 +27,7 @@ a4:
   - added always on top mode. file -> view -> always on top
   - added playlist info bar
   - fixed a bug where not all changes to playlists were detected.
-  - shuffle right from right click menus is disabled unless the visible 
+  - shuffle right from right click menus is disabled unless the visible
     playlist is "now playing"
   - sources types can be toggled on and off. right click in sources ->
     show
@@ -30,14 +36,14 @@ a4:
 ----------------------------------------------------------------------------
 
 a3:
- 
+
   ***********************************************************************
   ****   READ THIS * READ THIS * READ THIS * READ THIS * READ THIS   ****
   ***********************************************************************
   ****                                                               ****
   **** IF YOU HAD A PREVIOUS ALPHA OR TESTING BUILD OF MUSIKCUBE,    ****
-  **** YOUR MUSIKCUBE LIBRARY, LOCATED:                              ****		
-  ****                                                               **** 
+  **** YOUR MUSIKCUBE LIBRARY, LOCATED:                              ****
+  ****                                                               ****
   **** c:\documents and settings\[username]\.musikCube\musiklib.db   ****
   ****                                                               ****
   **** IF YOU DO NOT DELETE THIS FILE, MUSIKCUBE WILL NOT FUNCTION   ****
@@ -54,8 +60,8 @@ a3:
   - "Sub Libraries" (name subject to change) now available. they
     are stored as standard playlists, but displayed differently.
     each "Sub Library" is a pseudo library created dynamically,
-    based on playlist content. 
-  - fixed the EXTREMELY annoying pause / resume bug thats been 
+    based on playlist content.
+  - fixed the EXTREMELY annoying pause / resume bug thats been
     plaguing me for ages.
   - optimized memory management of CmusikPlaylists in the UI
   - fixed a couple instances of the playlist and/or selection
@@ -72,17 +78,17 @@ a3:
 ----------------------------------------------------------------------------
 
 a2:
- 
+
   - much improved navigation. double clicking a song adds it
     to the now playing queue. it is played in the background
     until either another song is clicked or it expires. also
     dropping files onto now playing not only queues the songs
     but starts playback if not playing.
   - fixed a bug where clearing the now playing and clicking
-    a column to sort would crash 
+    a column to sort would crash
   - the playlist now has an icon to indicate if a song is
     playing or not.
-  - bug where hiding selection boxes and reshowing would 
+  - bug where hiding selection boxes and reshowing would
     scramble sizes
   - crossfader presets and settings are now available to
     the user. see file -> preferences -> sound -> crossfader
@@ -90,7 +96,7 @@ a2:
     no longer allowed. this keeps stuff a lot easier
     to maintain in the backend.
   - lots of internal cleaning for musikCore's CmusikLibrary
-  - redid the equalizer presets dialog. 
+  - redid the equalizer presets dialog.
   - fixed tab ordering in all dialogs
   - added "Shuffle Now Playing" to playlist context menu
   - "Shuffle Now Playing" menu option disabled if now playing
@@ -98,7 +104,7 @@ a2:
   - changed "Standard Playlists" to "Playlists" in the
     sources panel
   - fixes a bug where parenting a box, selecting nothing,
-    then selecting an item from another box would 
+    then selecting an item from another box would
     not reparent
   - playlists are now stored as filenames, not ids.
   - memory leak when prompting to save playlist.
@@ -106,7 +112,7 @@ a2:
   - disallow any undesirable drag and drop activity
   - playlist drag and dropping crash when not playing
   - from selection boxes -> playlist drag and drop bug fix
-  - CTRL + A / CTRL + D in playlist to select and deslect 
+  - CTRL + A / CTRL + D in playlist to select and deslect
     all the items
   - much better theme support
   - changed rollover button behavior for playback
@@ -120,11 +126,11 @@ a1: January 25, 2004, 2:15 AM
 
 don't expect another build for a few weeks. please
 stress test this build if at all possible. see if you
-can confuse it into crashing. 
+can confuse it into crashing.
 
 ----------------------------------------------------------------------------
 
-stuff that isn't implemented / doesn't work yet: 
+stuff that isn't implemented / doesn't work yet:
 
   - dynamic playlist creation
   - dialog to view tag properties
@@ -134,57 +140,57 @@ stuff that isn't implemented / doesn't work yet:
    what we've been up to since 0.2.1 CVS: a quick ramble
 
       musik, up to version 0.2.1, was not ment or developed
-      to be an extremely usable, stable product. it was a 
+      to be an extremely usable, stable product. it was a
       concept to test various aspects of creating an
-      extremely easy and powerful audio library and player.  
-          
+      extremely easy and powerful audio library and player.
+
       we came to one conclusion after almost a year of
       development and two, maybe three of planning:
-      the backend and the frontend must exist separate. 
-      
-      the backend would be completely independant 
+      the backend and the frontend must exist separate.
+
+      the backend would be completely independant
       of any gui. why?
 
-          - no cross platform gui toolkit offered 
-            quite the flexability we wanted. 
+          - no cross platform gui toolkit offered
+            quite the flexability we wanted.
 
-          - becuase the core contains no gui, it could be 
+          - becuase the core contains no gui, it could be
             nearly complete ANSI C++, as long as we chose
             the right libraries to use for helpers (threads,
             sql access, etc).
 
           - to limit overhead
 
-          - not only could we easily use the core to make 
+          - not only could we easily use the core to make
             our own mp3 player, but so could others
 
        platforms we support:
 
-          - supported: 
-           
-            windows nt 4.0, 
+          - supported:
+
+            windows nt 4.0,
             windows 2000
             windows xp
-            linux with oss and alsa 
+            linux with oss and alsa
 
-          - unsupported: 
+          - unsupported:
 
              windows 95
              windows 98
-             windows me. 
+             windows me.
 
-             from our personal experience dustin and i believe 
-             the preceding versions of windows to be inherently 
+             from our personal experience dustin and i believe
+             the preceding versions of windows to be inherently
              unstable.
 
              musik will probably run on these platforms, but is
              not officially supported, meaning we may help you,
              we may not. sorry. :(
-              
+
        whats new with the windows gui?
 
            - completely redesigned interface. moved from wxWindows to
-             mfc, using limited overhead while still sporting a lot 
+             mfc, using limited overhead while still sporting a lot
              of features. oh yeah -- and its fast. really fast.
 
            - minimal cpu and memory usage making it very lightweight.
@@ -198,7 +204,7 @@ stuff that isn't implemented / doesn't work yet:
              now has its own preset manager (dialog not
              implemented yet).
 
-           - gui workflow has been extremely optimized with the new 
+           - gui workflow has been extremely optimized with the new
              "Now Playing" sources entry.
 
        and whats new with the linux gui?
@@ -206,4 +212,3 @@ stuff that isn't implemented / doesn't work yet:
            - havn't even started it yet.
 
 ----------------------------------------------------------------------------
-
