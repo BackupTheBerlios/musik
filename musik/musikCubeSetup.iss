@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=musikCube
-AppVerName=musikCube a2
+AppVerName=musikCube a4
 AppPublisher=musik Development Team
 AppPublisherURL=http://www.musikcube.com
 AppSupportURL=http://www.musikcube.com
@@ -13,7 +13,7 @@ DefaultGroupName=musikCube
 AllowNoIcons=yes
 LicenseFile=license.txt
 WizardSmallImageFile=musikCubeSetup.bmp
-OutputBaseFilename=musikCubeSetup_a2
+OutputBaseFilename=musikCubeSetup_a4
 ChangesAssociations=yes
 
 [Tasks]
