@@ -148,7 +148,7 @@ public:
 	int	 GetTimeLeft			( int nType );
 	int	 GetCurrChannel			( );
 	wxString GetTimeStr			( );
-	wxString GetCurrentFile		() { return m_CurrentFile; }
+	wxString GetCurrentFile		() { return m_CurrentSong.Filename; }
 	int GetCrossfadeType		() { return m_CrossfadeType; }
 	size_t GetRandomSong		();
 	EMUSIK_PLAYMODE GetPlaymode () { return m_Playmode; }
@@ -161,10 +161,10 @@ public:
 	void SetFadeComplete	( );
 	void SetFadeBegin		( ){ m_Fading = true; }
 	void SetFadeStart		( );
-	void SetPlaymode		( );
+	void SetPlaymode		( EMUSIK_PLAYMODE pm );
 	void SetVolume			( );
 	void SetTime			( int nSec );
-	void SetPlaylist		(const  CMusikSongArray &playlist ) {wxCriticalSectionLocker locker( m_critInternalData) ; m_Playlist = playlist;m_arrHistory.Clear(); }
+	void SetPlaylist		(const  CMusikSongArray &playlist ) { m_Playlist = playlist;m_arrHistory.Clear(); }
 	void AddToPlaylist		( CMusikSongArray &songstoadd ,bool bPlayFirstAdded = true);	// NOTE this method, empties the songstoadd array.
 	void InsertToPlaylist(	 CMusikSongArray & songstoadd ,bool bPlayFirstInserted = true);  // NOTE this method, empties the songstoadd array.
 	void RemovePlaylistEntry( size_t index );
@@ -201,7 +201,7 @@ private:
 	bool			m_Fading;			//--- currently (cross)fading?						---//
 	bool			m_StartingNext;		//--- in the middle of starting up a next song?		---//
 	bool			m_Stopping;			//--- is the player currently stopping?				---//
-	wxString		m_CurrentFile;		//--- filename of current song						---//0
+	CMusikSong		m_CurrentSong;		//--- copy of current song						---//0
 	int				m_CrossfadeType;	
 	wxArrayInt		m_arrHistory;		//--- history of songs played, to avoid repeats		---//
 	size_t			m_nMaxHistory;

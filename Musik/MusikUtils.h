@@ -59,35 +59,42 @@ long			GetRandomNumber		();
 //-------------------------//
 inline wxString ConvA2W( const char *pChar )
 {
-	wxString s(wxConvLocal.cMB2WX( pChar ) );
+	wxString s(wxConvCurrent->cMB2WX( pChar ) );
 	return s;
 }
 inline wxCharBuffer ConvW2A( const wxString &s )
 {
-	return wxConvLocal.cWX2MB( s );
+	return wxConvCurrent->cWX2MB( s );
 }
 inline wxCharBuffer ConvQueryToMB( const wxString &s )
 {
-	return wxConvLocal.cWX2MB( s );
+	return wxConvCurrent->cWX2MB( s );
 }
 
 inline wxCharBuffer ConvDBFieldToMB( const wxString &s )
 {
-	return wxConvLocal.cWX2MB( s );
+	return wxConvCurrent->cWX2MB( s );
 }
 inline wxCharBuffer ConvFNToFieldMB( const wxString &s )
 {
-	return wxConvLocal.cWX2MB( s );
+	return wxConvCurrent->cWX2MB( s );
 }
 inline wxString ConvFNToFieldWX( const char *pchar )
 {
-	return wxConvLocal.cMB2WX( pchar );
+	return wxConvCurrent->cMB2WX( pchar );
 }
 inline wxString ConvDBFieldToWX( const char *pchar )
 {
-	return wxConvLocal.cMB2WX( pchar );
+	return wxConvCurrent->cMB2WX( pchar );
 }
-
+inline wxCharBuffer ConvToUTF8( const wxString &s )
+{
+	return wxConvUTF8.cWC2WX(wxConvCurrent->cMB2WC(s));
+}
+inline wxCharBuffer ConvFromUTF8( const char *s )
+{
+	return wxConvCurrent->cWC2WX(wxConvUTF8.cMB2WC(s));
+}
 inline int wxStringToInt( const wxString &str )
 {
 	long lRet;

@@ -183,7 +183,7 @@ wxString CActivityListBox::GetRowText( long row, bool bPure ) const
 			return _("Show all ") + m_pParent->GetActivityTypeStr() + wxT( "s" );
 		if(HasShowAllRow())
 			row--;
-		if(g_Prefs.nSortArtistWithoutPrefix && !bPure && m_pParent->GetActivityType() == MUSIK_LBTYPE_ARTISTS)
+		if(g_Prefs.bSortArtistWithoutPrefix && !bPure && m_pParent->GetActivityType() == MUSIK_LBTYPE_ARTISTS)
 			return MoveArtistPrefixToEnd(SanitizedString( m_Items.Item( row ) ));
 		else
 			return SanitizedString( m_Items.Item( row ) );
@@ -196,7 +196,7 @@ wxListItemAttr* CActivityListBox::OnGetItemAttr(long item) const
 	else if ( item == 0 && HasShowAllRow())
 		return ( wxListItemAttr* )&m_AllReset;
 
-	if ( g_Prefs.nActStripes == 1 )
+	if ( g_Prefs.bActStripes == 1 )
 		return item % 2 ? (wxListItemAttr *)&m_DarkAttr : (wxListItemAttr *)&m_LightAttr;
 
 	return ( wxListItemAttr* )&m_LightAttr;

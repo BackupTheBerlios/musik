@@ -54,10 +54,7 @@ private:
 	int m_ParentId;
 	CActivityBox *m_ParentBox;
 
-	CActivityBox *m_ActivityBox1;		
-	CActivityBox *m_ActivityBox2;	
-	CActivityBox *m_ActivityBox3;	
-	CActivityBox *m_ActivityBox4;
+	CActivityBox *m_ActivityBox[ActivityBoxesMaxCount];		
 	wxBoxSizer* pTopSizer;
 	wxPanel	  * m_pPanel;
 	bool m_bFocused; // this flags are used, to make instant selection working

@@ -95,19 +95,19 @@ void* MusikActivityRenameThread::Entry()
 			//--------------------------//
 			//--- write tags to file ---//
 			//--------------------------//
-			if ( g_Prefs.nActBoxWrite == 1 )
-				g_Library.WriteTag( m_Songs.Item( i ), (bool)g_Prefs.nActBoxClear );
+			if ( g_Prefs.bActBoxWrite == 1 )
+				g_Library.WriteTag( m_Songs.Item( i ), (bool)g_Prefs.bActBoxClear );
 
 			//-------------------//
 			//--- rename file ---//
 			//-------------------//
-			if ( g_Prefs.nActBoxRename == 1 )
+			if ( g_Prefs.bActBoxRename == 1 )
 				g_Library.RenameFile( &m_Songs.Item( i ) );
 
 			//----------------------------------//
 			//--- if not writing, flag dirty ---//
 			//----------------------------------//
-			g_Library.UpdateItem( m_Songs.Item( i ).Filename, m_Songs.Item( i ), g_Prefs.nActBoxWrite == 0 );
+			g_Library.UpdateItem(m_Songs.Item( i ), g_Prefs.bActBoxWrite == 0 );
 
 		}
 	}

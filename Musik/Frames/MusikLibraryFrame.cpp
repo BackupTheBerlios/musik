@@ -249,7 +249,7 @@ bool MusikLibraryFrame::Show( bool show )
 	//---------------------------//
 	//--- kill first run pref ---//
 	//---------------------------//
-	if ( g_Prefs.nFirstRun )
+	if ( g_Prefs.bFirstRun )
 	{
 		wxString sMessage = 	wxT( "This is the first time "MUSIKAPPNAME" has been run.\n\nTo begin, you must first add directories " 	)
 								wxT( "to the database. Select \"Add Directory\" from the \"Directories\" menu, then press the " 		)
@@ -258,8 +258,7 @@ bool MusikLibraryFrame::Show( bool show )
 							
 		wxMessageBox( sMessage, MUSIKAPPNAME_VERSION, wxICON_INFORMATION );
 	
-		g_Prefs.nFirstRun = 0;
-		g_Prefs.SavePrefs();
+		g_Prefs.bFirstRun = 0;
 	}
 	
 	//--- auto start ---//
@@ -649,7 +648,7 @@ void MusikLibraryFrame::OnThreadEnd( wxCommandEvent& WXUNUSED(event) )
 			g_SourcesCtrl->SelectNowPlaying();
 			g_PlaylistBox->Update();
 		}
-		else if ( g_Prefs.nShowAllSongs == 1 )
+		else if ( g_Prefs.bShowAllSongs == 1 )
 		{
 			g_Library.GetAllSongs( g_Playlist );
 			g_PlaylistBox->Update();
@@ -660,7 +659,7 @@ void MusikLibraryFrame::OnThreadEnd( wxCommandEvent& WXUNUSED(event) )
 	else if ( GetProgressType() == MUSIK_LIBRARY_PURGE_THREAD )
 	{
 		g_ActivityAreaCtrl->ResetAllContents();
-		if ( g_Prefs.nShowAllSongs == 1 )
+		if ( g_Prefs.bShowAllSongs == 1 )
 		{
 			g_Library.GetAllSongs( g_Playlist );
 			g_PlaylistBox->Update();

@@ -72,7 +72,7 @@ CPlaylistInfoCtrl::CPlaylistInfoCtrl( wxWindow *parent ,IPlaylistInfo *pIPlaylis
 void CPlaylistInfoCtrl::Update()
 {
 	//--- playlist info ---//
-	if ( g_Prefs.nShowPLInfo == 1 )
+	if ( g_Prefs.bShowPLInfo == 1 )
 	{
 		stTotalVal->SetLabel( wxString::Format( wxT( "%d" ), g_Library.GetSongCount() ) );
 		stPlaylistVal->SetLabel( wxString::Format( wxT( "%d" ), m_pIPlaylistInfo->GetCount() ) );

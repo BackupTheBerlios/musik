@@ -41,7 +41,7 @@ BEGIN_EVENT_TABLE(MusikPrefsFrame, wxFrame)
 END_EVENT_TABLE()
 
 MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, const wxPoint &pos, const wxSize &size ) 
-	: wxFrame( pParent, -1, sTitle, pos, size, wxCAPTION | wxTAB_TRAVERSAL | wxFRAME_FLOAT_ON_PARENT | wxFRAME_NO_TASKBAR )
+	: wxFrame( pParent, -1, sTitle, pos, size, wxDEFAULT_FRAME_STYLE|wxCAPTION | wxTAB_TRAVERSAL | wxFRAME_FLOAT_ON_PARENT | wxFRAME_NO_TASKBAR )
 {
 	//---------------//
 	//--- colours ---//
@@ -56,15 +56,11 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 		SetIcon( wxICON( musicbox ) );
 	#endif
 
-	//--------------------//
-	//--- Dummy Window ---//
-	//--------------------//
-	wxWindow *wndDummy = new wxWindow( this, -1, wxPoint( 0, 0 ), wxSize( 0, 0 ) );
 
 	//------------------------------//
 	//--- Selection Tree Control ---//
 	//------------------------------//
-	tcPreferencesTree	= new wxTreeCtrl( this, MUSIK_PREFERENCES_TREE, wxPoint( 0, 0 ), wxSize( 100, 300 ), wxTR_HAS_BUTTONS | wxSIMPLE_BORDER );
+	tcPreferencesTree	= new wxTreeCtrl( this, MUSIK_PREFERENCES_TREE, wxDefaultPosition, wxSize(140,-1), wxTR_HAS_BUTTONS | wxSIMPLE_BORDER );
 	//--- root nodes ---//
 	nRootID			=	tcPreferencesTree->AddRoot		( _( "Preferences" )		);
 	nOptionsRootID	=	tcPreferencesTree->AppendItem	( nRootID, _( "Options" )	);
@@ -93,16 +89,16 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//--------------------------//
 	//--- Sound -> Crossfader ---//
 	//---------------------------//
-	chkCrossfade			= new wxCheckBox( this, -1, _("Crossfade on new song (seconds)"), 			wxPoint( -1, -1 ), wxSize( -1, -1 ) );
-	chkCrossfadeSeek		= new wxCheckBox( this, -1, _("Crossfade on track seek (seconds)"), 		wxPoint( -1, -1 ), wxSize( -1, -1 ) );
-	chkCrossfadePauseResume	= new wxCheckBox( this, -1, _("Crossfade on pause or resume (seconds)"),	wxPoint( -1, -1 ), wxSize( -1, -1 ) );
-	chkCrossfadeStop		= new wxCheckBox( this, -1, _("Crossfade on stop (seconds)"),				wxPoint( -1, -1 ), wxSize( -1, -1 ) );
-	chkCrossfadeExit		= new wxCheckBox( this, -1, _("Crossfade on program exit (seconds)"),		wxPoint( -1, -1 ), wxSize( -1, -1 ) );
-	tcDuration 				= new wxTextCtrl( this, -1, _(""), 											wxPoint( -1, -1 ), wxSize( -1, -1 ) );
-	tcSeekDuration 			= new wxTextCtrl( this, -1, _(""), 											wxPoint( -1, -1 ), wxSize( -1, -1 ) );
-	tcPauseResumeDuration	= new wxTextCtrl( this, -1, _(""), 											wxPoint( -1, -1 ), wxSize( -1, -1 ) );
-	tcStopDuration			= new wxTextCtrl( this, -1, _(""), 											wxPoint( -1, -1 ), wxSize( -1, -1 ) );
-	tcExitDuration			= new wxTextCtrl( this, -1, _(""), 											wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+	chkCrossfade			= new wxCheckBox( this, -1, _("Crossfade on new song (seconds)"), 			wxDefaultPosition, wxDefaultSize );
+	chkCrossfadeSeek		= new wxCheckBox( this, -1, _("Crossfade on track seek (seconds)"), 		wxDefaultPosition, wxDefaultSize );
+	chkCrossfadePauseResume	= new wxCheckBox( this, -1, _("Crossfade on pause or resume (seconds)"),	wxDefaultPosition, wxDefaultSize );
+	chkCrossfadeStop		= new wxCheckBox( this, -1, _("Crossfade on stop (seconds)"),				wxDefaultPosition, wxDefaultSize );
+	chkCrossfadeExit		= new wxCheckBox( this, -1, _("Crossfade on program exit (seconds)"),		wxDefaultPosition, wxDefaultSize );
+	tcDuration 				= new wxTextCtrl( this, -1, _(""), 											wxDefaultPosition, wxDefaultSize );
+	tcSeekDuration 			= new wxTextCtrl( this, -1, _(""), 											wxDefaultPosition, wxDefaultSize );
+	tcPauseResumeDuration	= new wxTextCtrl( this, -1, _(""), 											wxDefaultPosition, wxDefaultSize );
+	tcStopDuration			= new wxTextCtrl( this, -1, _(""), 											wxDefaultPosition, wxDefaultSize );
+	tcExitDuration			= new wxTextCtrl( this, -1, _(""), 											wxDefaultPosition, wxDefaultSize );
 	//--- crossfader sizer ---//
 	fsCrossfader = new wxFlexGridSizer( 5, 2, 2, 2 );
 	fsCrossfader->Add( chkCrossfade				);
@@ -126,8 +122,8 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//--- Sound -> Driver ---//
 	//-----------------------//
 	//--- output driver ---//
-	wxStaticText *stOutputDrv = new wxStaticText	( this, -1, _("Ouput Driver:"), wxPoint( 0, 0 ), wxSize( -1, -1 ), wxALIGN_LEFT );
-	cmbOutputDrv = new wxComboBox ( this, MUSIK_PREFERENCES_OUTPUT_DRV, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
+	wxStaticText *stOutputDrv = new wxStaticText	( this, -1, _("Ouput Driver:"), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
+	cmbOutputDrv = new wxComboBox ( this, MUSIK_PREFERENCES_OUTPUT_DRV, wxT(""), wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY );
 	#if defined (__WXMSW__)
 		cmbOutputDrv->Append ( wxT("Direct Sound") );
 		cmbOutputDrv->Append ( wxT("Windows Multimedia") );
@@ -140,25 +136,25 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 		cmbOutputDrv->Append ( wxT("ALSA 0.9") );
 	#endif
 	//--- sound device ---//
-	wxStaticText *stSndDevice = new wxStaticText	( this, -1, _("Sound Device:"), wxPoint( 0, 0 ), wxSize( -1, -1 ), wxALIGN_LEFT );
-	cmbSndDevice	= new wxComboBox ( this, MUSIK_PREFERENCES_SND_DEVICE, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );	
+	wxStaticText *stSndDevice = new wxStaticText	( this, -1, _("Sound Device:"), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
+	cmbSndDevice	= new wxComboBox ( this, MUSIK_PREFERENCES_SND_DEVICE, wxT(""), wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY );	
 	//--- playrate ---//
-	wxStaticText *stPlayRate = new wxStaticText( this, -1, _("Playback Rate (hz):"), wxPoint( 0, 0 ), wxSize( -1, -1 ), wxALIGN_LEFT );
-	cmbPlayRate  = new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
+	wxStaticText *stPlayRate = new wxStaticText( this, -1, _("Playback Rate (hz):"), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
+	cmbPlayRate  = new wxComboBox( this, -1, wxT(""), wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY );
 	cmbPlayRate->Append ( wxT("48000") );
 	cmbPlayRate->Append ( wxT("44100") );
 	cmbPlayRate->Append ( wxT("22050") );
 	cmbPlayRate->Append ( wxT("11025") );
 	cmbPlayRate->Append ( wxT("8000") );
 	//--- buffer length ---//
-	tcBufferLength = new wxTextCtrl	( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( 32, -1 ) );
-	wxStaticText *stBufferLength = new wxStaticText	( this, -1, _(" second buffer length"), wxPoint( 0, 0 ), wxSize( -1, -1 ) );
+	tcBufferLength = new wxTextCtrl	( this, -1, wxT(""), wxDefaultPosition, wxDefaultSize );
+	wxStaticText *stBufferLength = new wxStaticText	( this, -1, _(" second buffer length"), wxDefaultPosition, wxDefaultSize );
 	//--- max channels ---//
-	tcMaxChannels = new wxTextCtrl	( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( 32, -1 ) );
-	wxStaticText *stMaxChannels = new wxStaticText( this, -1, _("Maximum sound channels:"), wxPoint( 0, 0 ), wxSize( -1, -1 ), wxALIGN_LEFT );
+	tcMaxChannels = new wxTextCtrl	( this, -1, wxT(""), wxDefaultPosition, wxDefaultSize );
+	wxStaticText *stMaxChannels = new wxStaticText( this, -1, _("Maximum sound channels:"), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
 	
 	//Use_MPEGACCURATE_ForMP3VBRFiles
-	chkUse_MPEGACCURATE_ForMP3VBRFiles = new wxCheckBox( this, -1, _("Use MPEGACCURATE for Mp3-VBR Files"),		wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+	chkUse_MPEGACCURATE_ForMP3VBRFiles = new wxCheckBox( this, -1, _("Use MPEGACCURATE for Mp3-VBR Files"),		wxDefaultPosition, wxDefaultSize );
 	
 	//-----------------------------//
 	//--- Sound -> Driver Sizer ---//
@@ -180,77 +176,55 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	vsSound_Driver->Add( fsSound_Driver,	0, wxALL, 4  );
 	vsSound_Driver->Add( chkUse_MPEGACCURATE_ForMP3VBRFiles );
 
-	//----------------------------//
-	//--- Options -> Selection ---//
-	//----------------------------//
-	//--- activity box 1 ---//
-	wxStaticText *stActivityBox1 = new wxStaticText( this, -1, _("Selection Box 1:"), wxPoint( 0, 0 ), wxSize( -1, -1 ), wxALIGN_LEFT );
-	cmbActivityBox1 = new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
-	cmbActivityBox1->Append ( _("None") );	
-	cmbActivityBox1->Append ( _("Artist") );
-	cmbActivityBox1->Append ( _("Album") );
-	cmbActivityBox1->Append ( _("Genre") );
-	cmbActivityBox1->Append ( _("Year") );
-	//--- activity box 2 ---//
-	wxStaticText *stActivityBox2 = new wxStaticText( this, -1, _("Selection Box 2:"), wxPoint( 0, 0 ), wxSize( -1, -1), wxALIGN_LEFT );
-	cmbActivityBox2 = new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
-	cmbActivityBox2->Append ( _("None") );	
-	cmbActivityBox2->Append ( _("Artist") );
-	cmbActivityBox2->Append ( _("Album") );
-	cmbActivityBox2->Append ( _("Genre") );
-	cmbActivityBox2->Append ( _("Year") );
-	//--- activity box 3 ---//
-	wxStaticText *stActivityBox3 = new wxStaticText( this, -1, _("Selection Box 3:"), wxPoint( 0, 0 ), wxSize( -1, -1), wxALIGN_LEFT );
-	cmbActivityBox3 = new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
-	cmbActivityBox3->Append ( _("None") );
-	cmbActivityBox3->Append ( _("Artist") );
-	cmbActivityBox3->Append ( _("Album") );
-	cmbActivityBox3->Append ( _("Genre") );
-	cmbActivityBox3->Append ( _("Year") );
-	//--- activity box 4 ---//
-	wxStaticText *stActivityBox4 = new wxStaticText( this, -1, _("Selection Box 4:"), wxPoint( 0, 0 ), wxSize( -1, -1), wxALIGN_LEFT );
-	cmbActivityBox4 = new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
-	cmbActivityBox4->Append ( _("None") );
-	cmbActivityBox4->Append ( _("Artist") );
-	cmbActivityBox4->Append ( _("Album") );
-	cmbActivityBox4->Append ( _("Genre") );
-	cmbActivityBox4->Append ( _("Year") );
-	//--- selection style ---//
-	wxStaticText *stSelStyle = new wxStaticText( this, -1, _("Selection Style:" ), wxPoint( 0, 0 ), wxSize( -1, -1 ), wxALIGN_LEFT );
-	cmbSelStyle = new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
-	cmbSelStyle->Append( _( "Standard" ) );
-	cmbSelStyle->Append( _( "Sloppy" ) );
-	cmbSelStyle->Append( _( "Highlight") );
-
 	//-----------------------------------//
 	//--- Options -> Selections Sizer ---//
 	//-----------------------------------//
 	vsOptions_Selections = new wxFlexGridSizer ( 4, 2, 2, 2 );
-	vsOptions_Selections->Add( stActivityBox1,	0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
-	vsOptions_Selections->Add( cmbActivityBox1,	1, wxCENTER, 0 );
-	vsOptions_Selections->Add( stActivityBox2,	0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
-	vsOptions_Selections->Add( cmbActivityBox2,	1, wxCENTER, 0 );
-	vsOptions_Selections->Add( stActivityBox3,	0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
-	vsOptions_Selections->Add( cmbActivityBox3,	1, wxCENTER, 0 );
-	vsOptions_Selections->Add( stActivityBox4,	0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
-	vsOptions_Selections->Add( cmbActivityBox4,	1, wxCENTER, 0 );
+
+	//----------------------------//
+	//--- Options -> Selection ---//
+	//----------------------------//
+	const wxString arrSelectionBoxes[] = 
+		{
+			_("None")  , 
+			_("Artist"),
+			_("Album") ,
+			_("Genre") ,
+			_("Year")  
+		};
+
+	//--- activity boxes ---//
+	for(size_t i = 0; i < WXSIZEOF(cmbActivityBoxes);i++)
+	{
+		wxStaticText *stActivityBox = new wxStaticText( this, -1, wxString::Format(_("Selection Box %d:"),i + 1), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
+		vsOptions_Selections->Add( stActivityBox,	0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
+		cmbActivityBoxes[i] = new wxComboBox( this, -1, wxEmptyString, wxDefaultPosition, wxDefaultSize, WXSIZEOF(arrSelectionBoxes), arrSelectionBoxes, wxCB_READONLY );
+		vsOptions_Selections->Add( cmbActivityBoxes[i],	1, wxCENTER, 0 );
+	}
+	//--- selection style ---//
+	wxStaticText *stSelStyle = new wxStaticText( this, -1, _("Selection Style:" ), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
+	cmbSelStyle = new wxComboBox( this, -1, wxT(""), wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY );
+	cmbSelStyle->Append( _( "Standard" ) );
+	cmbSelStyle->Append( _( "Sloppy" ) );
+	cmbSelStyle->Append( _( "Highlight") );
+
 	vsOptions_Selections->Add( stSelStyle,		0, wxCENTER | wxRIGHT | wxALIGN_CENTER_VERTICAL, 0 );
 	vsOptions_Selections->Add( cmbSelStyle,		1, wxCENTER, 0 );
 
 	//--------------------------//
 	//--- Options -> General ---//
 	//--------------------------//
-	chkAutoScan				=	new wxCheckBox( this, -1,	_("Automatically scan for new songs on startup"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
-	chkShowAllSongs			=	new wxCheckBox( this, -1,	_("Selecting library shows all songs in playlist"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
-	chkBlankSwears			=	new wxCheckBox( this, -1,	_("Censor common swearwords"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
-	chkSortArtistWithoutPrefix	=	new wxCheckBox( this, -1,	_("Sort Artist without prefix"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
-	chkPlaylistStripes		=	new wxCheckBox( this, -1,	_("Show \"stripes\" in playlist"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
-	chkActivityBoxStripes	=	new wxCheckBox( this, -1,	_("Show \"stripes\" in selection boxes"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
-	chkSourcesBoxStripes	=	new wxCheckBox( this, -1,	_("Show \"stripes\" in sources box"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+	chkAutoScan				=	new wxCheckBox( this, -1,	_("Automatically scan for new songs on startup"), wxDefaultPosition, wxDefaultSize );
+	chkShowAllSongs			=	new wxCheckBox( this, -1,	_("Selecting library shows all songs in playlist"), wxDefaultPosition, wxDefaultSize );
+	chkBlankSwears			=	new wxCheckBox( this, -1,	_("Censor common swearwords"), wxDefaultPosition, wxDefaultSize );
+	chkSortArtistWithoutPrefix	=	new wxCheckBox( this, -1,	_("Sort Artist without prefix"), wxDefaultPosition, wxDefaultSize );
+	chkPlaylistStripes		=	new wxCheckBox( this, -1,	_("Show \"stripes\" in playlist"), wxDefaultPosition, wxDefaultSize );
+	chkActivityBoxStripes	=	new wxCheckBox( this, -1,	_("Show \"stripes\" in selection boxes"), wxDefaultPosition, wxDefaultSize );
+	chkSourcesBoxStripes	=	new wxCheckBox( this, -1,	_("Show \"stripes\" in sources box"), wxDefaultPosition, wxDefaultSize );
 
-	btnPlaylistStripeColour	=	new wxButton( this, MUSIK_PREFERENCES_PLAYLIST_STRIPE_COLOUR,	_("Set Color"), wxPoint( 0, 0 ), wxSize( 64, 24 ) );
-	btnActivityStripeColour	=	new wxButton( this, MUSIK_PREFERENCES_ACTIVITY_STRIPE_COLOUR,	_("Set Color"), wxPoint( 0, 0 ), wxSize( 64, 24 ) );
-	btnSourcesStripeColour	=	new wxButton( this, MUSIK_PREFERENCES_SOURCES_STRIPE_COLOUR,	_("Set Color"), wxPoint( 0, 0 ), wxSize( 64, 24 ) );
+	btnPlaylistStripeColour	=	new wxButton( this, MUSIK_PREFERENCES_PLAYLIST_STRIPE_COLOUR,	_("Set Color"), wxDefaultPosition, wxDefaultSize );
+	btnActivityStripeColour	=	new wxButton( this, MUSIK_PREFERENCES_ACTIVITY_STRIPE_COLOUR,	_("Set Color"), wxDefaultPosition, wxDefaultSize );
+	btnSourcesStripeColour	=	new wxButton( this, MUSIK_PREFERENCES_SOURCES_STRIPE_COLOUR,	_("Set Color"), wxDefaultPosition, wxDefaultSize );
 
 	//--------------------------------//
 	//--- Options -> General Sizer ---//
@@ -267,132 +241,44 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	vsOptions_Interface->Add( chkSourcesBoxStripes,		0, wxALL, 4 );
 	vsOptions_Interface->Add( btnSourcesStripeColour,	0, wxALL, 4 );
 
-	//---------------------------//
-	//--- Options -> Playlist ---//
-	//---------------------------//
-
-	chkRatingEnable			= new wxCheckBox(	this, -1, _("Rating"),			wxPoint( 0, 0 ), wxSize( -1, -1 ) );
-	chkTrackEnable			= new wxCheckBox(	this, -1, _("Track Number:"),	wxPoint( 0, 0 ), wxSize( -1, -1 ) );
-	chkTitleEnable			= new wxCheckBox(	this, -1, _("Title:"),			wxPoint( 0, 0 ), wxSize( -1, -1 ) );
-	chkArtistEnable			= new wxCheckBox(	this, -1, _("Artist:"),			wxPoint( 0, 0 ), wxSize( -1, -1 ) );
-	chkAlbumEnable			= new wxCheckBox(	this, -1, _("Album:"),			wxPoint( 0, 0 ), wxSize( -1, -1 ) );
-	chkYearEnable			= new wxCheckBox(	this, -1, _("Year:"),			wxPoint( 0, 0 ), wxSize( -1, -1 ) );
-	chkGenreEnable			= new wxCheckBox(	this, -1, _("Genre:"),			wxPoint( 0, 0 ), wxSize( -1, -1 ) );
-	chkTimesPlayedEnable	= new wxCheckBox(	this, -1, _("Times Played:"),	wxPoint( 0, 0 ), wxSize( -1, -1 ) );
-	chkLastPlayedEnable		= new wxCheckBox(	this, -1, _("Last Played:"),	wxPoint( 0, 0 ), wxSize( -1, -1 ) );
-	chkTimeEnable			= new wxCheckBox(	this, -1, _("Time:"),			wxPoint( 0, 0 ), wxSize( -1, -1 ) );
-	chkBitrateEnable		= new wxCheckBox(	this, -1, _("Bitrate:"),		wxPoint( 0, 0 ), wxSize( -1, -1 ) );
-	chkFilenameEnable		= new wxCheckBox(	this, -1, _("Filename:"),		wxPoint( 0, 0 ), wxSize( -1, -1 ) );
-
-	//--- rating combo box ---//
-	cmbRatingStatic	= new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
-	cmbRatingStatic->Append( _("Static")  );
-	cmbRatingStatic->Append( _("Dynamic") );
-
-	//--- track num combo box ---//
-	cmbTrackStatic	= new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
-	cmbTrackStatic->Append( _("Static")  );
-	cmbTrackStatic->Append( _("Dynamic") );
-
-	//--- title combo box ---//
-	cmbTitleStatic = new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
-	cmbTitleStatic->Append( _("Static")  );
-	cmbTitleStatic->Append( _("Dynamic") );
-
-	//--- artist combo box ---//
-	cmbArtistStatic	= new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
-	cmbArtistStatic->Append	( _("Static")  );
-	cmbArtistStatic->Append	( _("Dynamic") );
-
-	//--- album combo box ---//
-	cmbAlbumStatic = new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
-	cmbAlbumStatic->Append( _("Static")  );
-	cmbAlbumStatic->Append( _("Dynamic") );
-
-	//--- year combo box ---//
-	cmbYearStatic = new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
-	cmbYearStatic->Append( _("Static")  );
-	cmbYearStatic->Append( _("Dynamic") );
-
-	//--- genre combo box ---//
-	cmbGenreStatic = new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
-	cmbGenreStatic->Append( _("Static")  );
-	cmbGenreStatic->Append( _("Dynamic") );
-
-	//--- times played combo box ---//
-	cmbTimesPlayedStatic = new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
-	cmbTimesPlayedStatic->Append( _("Static")  );
-	cmbTimesPlayedStatic->Append( _("Dynamic") );
-
-	//--- last played combo box ---//
-	cmbLastPlayedStatic	= new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
-	cmbLastPlayedStatic->Append( _("Static")  );
-	cmbLastPlayedStatic->Append( _("Dynamic") );
-
-	//--- time combo box ---//
-	cmbTimeStatic = new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
-	cmbTimeStatic->Append( _("Static")  );
-	cmbTimeStatic->Append( _("Dynamic") );
-
-	//--- bitrate combo box ---//
-	cmbBitrateStatic = new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
-	cmbBitrateStatic->Append( _("Static")  );
-	cmbBitrateStatic->Append( _("Dynamic") );
-
-	//--- filename ---//
-	cmbFilenameStatic = new wxComboBox( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ), 0, NULL, wxCB_READONLY );
-	cmbFilenameStatic->Append( _("Static")  );
-	cmbFilenameStatic->Append( _("Dynamic") );
-
 	//---------------------------------//
 	//--- Options -> Playlist Sizer ---//
 	//---------------------------------//
 	vsOptions_Playlist = new wxFlexGridSizer( 12, 2, 2, 2 );
-	vsOptions_Playlist->Add( chkRatingEnable,		0, wxALIGN_CENTER_VERTICAL | wxADJUST_MINSIZE );
-	vsOptions_Playlist->Add( cmbRatingStatic,		0 );
-	vsOptions_Playlist->Add( chkTrackEnable,		0, wxALIGN_CENTER_VERTICAL | wxADJUST_MINSIZE );
-	vsOptions_Playlist->Add( cmbTrackStatic,		0 );
-	vsOptions_Playlist->Add( chkTitleEnable,		0, wxALIGN_CENTER_VERTICAL | wxADJUST_MINSIZE );
-	vsOptions_Playlist->Add( cmbTitleStatic,		0 );
-	vsOptions_Playlist->Add( chkArtistEnable,		0, wxALIGN_CENTER_VERTICAL | wxADJUST_MINSIZE );
-	vsOptions_Playlist->Add( cmbArtistStatic,		0 );
-	vsOptions_Playlist->Add( chkAlbumEnable,		0, wxALIGN_CENTER_VERTICAL | wxADJUST_MINSIZE );
-	vsOptions_Playlist->Add( cmbAlbumStatic,		0 );
-	vsOptions_Playlist->Add( chkYearEnable,			0, wxALIGN_CENTER_VERTICAL | wxADJUST_MINSIZE );
-	vsOptions_Playlist->Add( cmbYearStatic,			0 );
-	vsOptions_Playlist->Add( chkGenreEnable,		0, wxALIGN_CENTER_VERTICAL | wxADJUST_MINSIZE );
-	vsOptions_Playlist->Add( cmbGenreStatic,		0 );
-	vsOptions_Playlist->Add( chkTimesPlayedEnable,	0, wxALIGN_CENTER_VERTICAL | wxADJUST_MINSIZE );
-	vsOptions_Playlist->Add( cmbTimesPlayedStatic,	0 );
-	vsOptions_Playlist->Add( chkLastPlayedEnable,	0, wxALIGN_CENTER_VERTICAL | wxADJUST_MINSIZE );
-	vsOptions_Playlist->Add( cmbLastPlayedStatic,	0 );
-	vsOptions_Playlist->Add( chkTimeEnable,			0, wxALIGN_CENTER_VERTICAL | wxADJUST_MINSIZE );
-	vsOptions_Playlist->Add( cmbTimeStatic,			0 );
-	vsOptions_Playlist->Add( chkBitrateEnable,		0, wxALIGN_CENTER_VERTICAL | wxADJUST_MINSIZE );
-	vsOptions_Playlist->Add( cmbBitrateStatic,		0 );
-	vsOptions_Playlist->Add( chkFilenameEnable,		0, wxALIGN_CENTER_VERTICAL | wxADJUST_MINSIZE );
-	vsOptions_Playlist->Add( cmbFilenameStatic,		0 );
+
+	//---------------------------//
+	//--- Options -> Playlist ---//
+	//---------------------------//
+	const wxString choicesCMBStatic[] = {  _("Static"),	 _("Dynamic") };
+
+	for(size_t i = 0; i < NPLAYLISTCOLUMNS; i++)
+	{
+		chkPLColumnEnable[i] = new  wxCheckBox(	this, -1, g_PlaylistColumnLabels[i]+wxT(":"));
+		vsOptions_Playlist->Add(chkPLColumnEnable[i],		0, wxALIGN_CENTER_VERTICAL | wxADJUST_MINSIZE );
+		cmbPLColumnStatic[i] = new wxComboBox( this, -1, wxT(""), wxDefaultPosition, wxDefaultSize, WXSIZEOF(choicesCMBStatic), choicesCMBStatic, wxCB_READONLY );
+		vsOptions_Playlist->Add( cmbPLColumnStatic[i],		0 );
+	}
 
 	//-------------------------//
 	//--- options -> tunage ---//
 	//-------------------------//
-	chkTunageWriteFile	= new wxCheckBox( this, -1, _("Enable"),			wxPoint(0,0), wxSize(-1,-1) );
-	chkTunageAppendFile = new wxCheckBox( this, -1, _("Append to file"),			wxPoint(0,0), wxSize(-1,-1) );
-	chkTunagePostURL	= new wxCheckBox( this, -1, _("Enable"),			wxPoint(0,0), wxSize(-1,-1) );
-	chkTunageRunApp		= new wxCheckBox( this, -1, _("Enable"),				wxPoint(0,0), wxSize(-1,-1) );
-	chkTunageRunOnStop	= new wxCheckBox( this, -1, _("Update when application stops"),	wxPoint(0,0), wxSize(-1,-1) );
+	chkTunageWriteFile	= new wxCheckBox( this, -1, _("Enable"),			wxDefaultPosition, wxDefaultSize );
+	chkTunageAppendFile = new wxCheckBox( this, -1, _("Append to file"),			wxDefaultPosition, wxDefaultSize );
+	chkTunagePostURL	= new wxCheckBox( this, -1, _("Enable"),			wxDefaultPosition, wxDefaultSize );
+	chkTunageRunApp		= new wxCheckBox( this, -1, _("Enable"),				wxDefaultPosition, wxDefaultSize );
+	chkTunageRunOnStop	= new wxCheckBox( this, -1, _("Update when application stops"),	wxDefaultPosition, wxDefaultSize );
 
-	wxStaticText *stTunageFilename	= new wxStaticText( this, -1, _("Filename:"),		wxPoint(0,0), wxSize( 75, -1 ), wxALIGN_LEFT );
-	wxStaticText *stTunageFileLine	= new wxStaticText( this, -1, _("Line to write:"),	wxPoint(0,0), wxSize( 75, -1 ), wxALIGN_LEFT );
-	wxStaticText *stTunageURL		= new wxStaticText( this, -1, _("URL:"),			wxPoint(0,0), wxSize( 75, -1 ), wxALIGN_LEFT );
-	wxStaticText *stTunageCmdLine	= new wxStaticText( this, -1, _("Command line:"),	wxPoint(0,0), wxSize( 75, -1 ), wxALIGN_LEFT );
-	wxStaticText *stTunageStoppedText = new wxStaticText( this, -1, _("Stopped Text:"),	wxPoint(0,0), wxSize( 75, -1 ), wxALIGN_LEFT );
+	wxStaticText *stTunageFilename	= new wxStaticText( this, -1, _("Filename:"),		wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
+	wxStaticText *stTunageFileLine	= new wxStaticText( this, -1, _("Line to write:"),	wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
+	wxStaticText *stTunageURL		= new wxStaticText( this, -1, _("URL:"),			wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
+	wxStaticText *stTunageCmdLine	= new wxStaticText( this, -1, _("Command line:"),	wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
+	wxStaticText *stTunageStoppedText = new wxStaticText( this, -1, _("Stopped Text:"),	wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
 
-	tcTunageFilename	= new wxTextCtrl( this, -1, _(""),	wxPoint(0,0), wxSize( -1, -1 ) );
-	tcTunageFileLine	= new wxTextCtrl( this, -1, _(""),	wxPoint(0,0), wxSize( -1, -1 ) );
-	tcTunageURL			= new wxTextCtrl( this, -1, _(""),	wxPoint(0,0), wxSize( -1, -1 ) );
-	tcTunageCmdLine		= new wxTextCtrl( this, -1, _(""),	wxPoint(0,0), wxSize( -1, -1 ) );
-	tcTunageStoppedText = new wxTextCtrl( this, -1, _(""),	wxPoint(0,0), wxSize( -1, -1 ) );
+	tcTunageFilename	= new wxTextCtrl( this, -1, _(""),	wxDefaultPosition, wxDefaultSize );
+	tcTunageFileLine	= new wxTextCtrl( this, -1, _(""),	wxDefaultPosition, wxDefaultSize );
+	tcTunageURL			= new wxTextCtrl( this, -1, _(""),	wxDefaultPosition, wxDefaultSize );
+	tcTunageCmdLine		= new wxTextCtrl( this, -1, _(""),	wxDefaultPosition, wxDefaultSize );
+	tcTunageStoppedText = new wxTextCtrl( this, -1, _(""),	wxDefaultPosition, wxDefaultSize );
 
 	wxBoxSizer *hsTunageFilename = new wxBoxSizer( wxHORIZONTAL );
 	hsTunageFilename->Add( stTunageFilename, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 2 );
@@ -444,13 +330,13 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//--- Streaming -> Buffer ---//
 	//---------------------------//
 
-	wxStaticText *stStreamingBufferSize			= new wxStaticText( this, -1, _("Buffer Size (bytes):"),		wxPoint(0,0), wxSize(-1, -1 ), wxALIGN_LEFT );
-	wxStaticText *stStreamingPreBufferPercent	= new wxStaticText( this, -1, _("Prebuffering (%):"),	wxPoint(0,0), wxSize( -1, -1 ), wxALIGN_LEFT );
-	wxStaticText *stStreamingReBufferPercent	= new wxStaticText( this, -1, _("Rebuffering (%):"),			wxPoint(0,0), wxSize( -1, -1 ), wxALIGN_LEFT );
+	wxStaticText *stStreamingBufferSize			= new wxStaticText( this, -1, _("Buffer Size (bytes):"),		wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
+	wxStaticText *stStreamingPreBufferPercent	= new wxStaticText( this, -1, _("Prebuffering (%):"),	wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
+	wxStaticText *stStreamingReBufferPercent	= new wxStaticText( this, -1, _("Rebuffering (%):"),			wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
 
-	tcStreamingBufferSize		= new wxTextCtrl( this, -1, _(""),	wxPoint(0,0), wxSize( -1, -1 ) );
-	tcStreamingPreBufferPercent	= new wxTextCtrl( this, -1, _(""),	wxPoint(0,0), wxSize( -1, -1 ) );
-	tcStreamingReBufferPercent	= new wxTextCtrl( this, -1, _(""),	wxPoint(0,0), wxSize( -1, -1 ) );
+	tcStreamingBufferSize		= new wxTextCtrl( this, -1, _(""),	wxDefaultPosition, wxDefaultSize );
+	tcStreamingPreBufferPercent	= new wxTextCtrl( this, -1, _(""),	wxDefaultPosition, wxDefaultSize );
+	tcStreamingReBufferPercent	= new wxTextCtrl( this, -1, _(""),	wxDefaultPosition, wxDefaultSize );
   
 	vsStreaming_Buffer = new wxFlexGridSizer( 3,2,2,2 );
 
@@ -464,16 +350,16 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
  	//--------------------------------//
 	//--- Streaming -> ProxyServer ---//
 	//--------------------------------//
-	chkUseProxyServer		= new wxCheckBox	( this, -1,	_("Use Proxy server"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
-	wxStaticText *stProxyServer			= new wxStaticText( this, -1, _("Proxy server adress:"),		wxPoint(0,0), wxSize(-1, -1 ), wxALIGN_LEFT );
-	wxStaticText *stProxyServerPort	= new wxStaticText( this, -1, _("Proxy server port:"),	wxPoint(0,0), wxSize( -1, -1 ), wxALIGN_LEFT );
-	wxStaticText *stProxyServerUser	= new wxStaticText( this, -1, _("Proxy server user:"),			wxPoint(0,0), wxSize( -1, -1 ), wxALIGN_LEFT );
-	wxStaticText *stProxyServerPassword	= new wxStaticText( this, -1, _("Proxy server password:"),			wxPoint(0,0), wxSize( -1, -1 ), wxALIGN_LEFT );
+	chkUseProxyServer		= new wxCheckBox	( this, -1,	_("Use Proxy server"), wxDefaultPosition, wxDefaultSize );
+	wxStaticText *stProxyServer			= new wxStaticText( this, -1, _("Proxy server adress:"),		wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
+	wxStaticText *stProxyServerPort	= new wxStaticText( this, -1, _("Proxy server port:"),	wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
+	wxStaticText *stProxyServerUser	= new wxStaticText( this, -1, _("Proxy server user:"),			wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
+	wxStaticText *stProxyServerPassword	= new wxStaticText( this, -1, _("Proxy server password:"),			wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
 
-	tcProxyServer			= new wxTextCtrl( this, -1, _(""),	wxPoint(0,0), wxSize( -1, -1 ) );
-	tcProxyServerPort		= new wxTextCtrl( this, -1, _(""),	wxPoint(0,0), wxSize( -1, -1 ) );
-	tcProxyServerUser		= new wxTextCtrl( this, -1, _(""),	wxPoint(0,0), wxSize( -1, -1 ) );
-	tcProxyServerPassword	= new wxTextCtrl( this, -1, _(""),	wxPoint(0,0), wxSize( -1, -1 ) );
+	tcProxyServer			= new wxTextCtrl( this, -1, _(""),	wxDefaultPosition, wxDefaultSize );
+	tcProxyServerPort		= new wxTextCtrl( this, -1, _(""),	wxDefaultPosition, wxDefaultSize );
+	tcProxyServerUser		= new wxTextCtrl( this, -1, _(""),	wxDefaultPosition, wxDefaultSize );
+	tcProxyServerPassword	= new wxTextCtrl( this, -1, _(""),	wxDefaultPosition, wxDefaultSize );
 	
 	wxFlexGridSizer * fsProxySizer		= new wxFlexGridSizer( 4,2,2,2 );
 
@@ -493,14 +379,14 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//--------------------------//
 	//--- Tagging -> General ---//
 	//--------------------------//
-	wxStaticText *stActivityTag =	new wxStaticText( this, -1, _("Selection Boxes (artist/album/etc):"), wxPoint( 0, 0 ), wxSize( 50, -1 ), wxALIGN_LEFT );
-	chkActivityWrite			=	new wxCheckBox	( this, -1,	_("Write tag to file"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
-	chkActivityClear			=	new wxCheckBox	( this, -1,	_("Clear old tag"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
-	chkActivityRename			=	new wxCheckBox	( this, -1,	_("Automatically rename file"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
-	wxStaticText *stTagDlgTag	=	new wxStaticText( this, -1, _("\nTag Dialog Box:"), wxPoint( 0, 0 ), wxSize( 50, -1 ), wxALIGN_LEFT );
-	chkTagDlgWrite				=	new wxCheckBox	( this, -1,	_("Write tag to file"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
-	chkTagDlgClear				=	new wxCheckBox	( this, -1,	_("Clear old tag"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
-	chkTagDlgRename				=	new wxCheckBox	( this, -1,	_("Automatically rename file"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
+	wxStaticText *stActivityTag =	new wxStaticText( this, -1, _("Selection Boxes (artist/album/etc):"), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
+	chkActivityWrite			=	new wxCheckBox	( this, -1,	_("Write tag to file"), wxDefaultPosition, wxDefaultSize );
+	chkActivityClear			=	new wxCheckBox	( this, -1,	_("Clear old tag"), wxDefaultPosition, wxDefaultSize );
+	chkActivityRename			=	new wxCheckBox	( this, -1,	_("Automatically rename file"), wxDefaultPosition, wxDefaultSize );
+	wxStaticText *stTagDlgTag	=	new wxStaticText( this, -1, _("\nTag Dialog Box:"), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
+	chkTagDlgWrite				=	new wxCheckBox	( this, -1,	_("Write tag to file"), wxDefaultPosition, wxDefaultSize );
+	chkTagDlgClear				=	new wxCheckBox	( this, -1,	_("Clear old tag"), wxDefaultPosition, wxDefaultSize );
+	chkTagDlgRename				=	new wxCheckBox	( this, -1,	_("Automatically rename file"), wxDefaultPosition, wxDefaultSize );
 
 	//--------------------------------//
 	//--- Tagging -> General Sizer ---//
@@ -519,8 +405,8 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//--- Tagging -> Auto Tag ---//
 	//---------------------------//
 	//--- rename options and sizer ---//
-	wxStaticText *stRename	= new wxStaticText	( this, -1, _("Rename:"), wxPoint( 0, 0 ), wxSize( 50, -1 ), wxALIGN_LEFT );
-	tcAutoRename			= new wxTextCtrl	( this, -1, wxT(""), wxPoint( 0, 0 ), wxSize( -1, -1 ) );
+	wxStaticText *stRename	= new wxStaticText	( this, -1, _("Rename:"), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
+	tcAutoRename			= new wxTextCtrl	( this, -1, wxT(""), wxDefaultPosition, wxDefaultSize );
 	wxBoxSizer *hsRename	= new wxBoxSizer	( wxHORIZONTAL );
 	hsRename->Add ( stRename, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, 2 );
 	hsRename->Add ( tcAutoRename, 1, wxEXPAND, 0 );
@@ -536,7 +422,7 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 		wxString( _("%6 - Track Number\n\n")			) +
 		wxString(MUSIKAPPNAME)							  +	
 		wxString( _(" will not delete empty directories!" ) );
-	wxStaticText *stInfo = new wxStaticText( this, -1, sInfo, wxPoint( 0, 0 ), wxSize( -1, -1), wxALIGN_LEFT );
+	wxStaticText *stInfo = new wxStaticText( this, -1, sInfo, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
 
 	//---------------------------------//
 	//--- Tagging -> Auto Tag Sizer ---//
@@ -548,16 +434,16 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//----------------------//
 	//--- System Buttons ---//
 	//----------------------//
-	btnCancel =	new wxButton( this, MUSIK_PREFERENCES_CANCEL,	_("Cancel"),	wxPoint( 0, 0 ), wxSize( 64, 24 ) );
-	btnApply =	new wxButton( this, MUSIK_PREFERENCES_APPLY,	_("Apply"),		wxPoint( 0, 0 ), wxSize( 64, 24 ) );
-	btnOK =		new wxButton( this, MUSIK_PREFERENCES_OK,		_("OK"),		wxPoint( 0, 0 ), wxSize( 64, 24 ) );
+	btnCancel =	new wxButton( this, MUSIK_PREFERENCES_CANCEL,	_("Cancel"),	wxDefaultPosition, wxDefaultSize );
+	btnApply =	new wxButton( this, MUSIK_PREFERENCES_APPLY,	_("Apply"),		wxDefaultPosition, wxDefaultSize );
+	btnOK =		new wxButton( this, MUSIK_PREFERENCES_OK,		_("OK"),		wxDefaultPosition, wxDefaultSize );
 
 	//----------------------------//
 	//--- System Buttons Sizer ---//
 	//----------------------------//
 	hsSysButtons = new wxBoxSizer( wxHORIZONTAL );
 	hsSysButtons->Add( btnCancel,	0, wxALIGN_LEFT		);
-	hsSysButtons->Add( wndDummy,	1, wxEXPAND			);
+	hsSysButtons->Add( -1,-1,	1, wxEXPAND			);
 	hsSysButtons->Add( btnApply,	0, wxALIGN_RIGHT	);
 	hsSysButtons->Add( btnOK,		0, wxALIGN_RIGHT | wxLEFT, 4);
 
@@ -565,17 +451,17 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//--- Hide / Show Sizer ---//
 	//-------------------------//
 	hsSplitter = new wxBoxSizer( wxHORIZONTAL );
-	hsSplitter->Add( tcPreferencesTree,		2, wxEXPAND | wxRIGHT, 8 );
-	hsSplitter->Add( vsOptions_Selections,	5 );
-	hsSplitter->Add( vsOptions_Interface,	5 );
-	hsSplitter->Add( vsOptions_Playlist,	5 );
-	hsSplitter->Add( vsOptions_Tunage,		5 );
-	hsSplitter->Add( vsSound_Crossfader,	5 );
-	hsSplitter->Add( vsSound_Driver,		5 );
-	hsSplitter->Add( vsTagging_General,		5 );
-	hsSplitter->Add( vsTagging_Auto,		5 );
-	hsSplitter->Add( vsStreaming_Buffer,	5 );
-	hsSplitter->Add( vsStreaming_ProxyServer,	5 );
+	hsSplitter->Add( tcPreferencesTree,		0, wxEXPAND | wxRIGHT, 8 );
+	hsSplitter->Add( vsOptions_Selections,	1 );
+	hsSplitter->Add( vsOptions_Interface,	1 );
+	hsSplitter->Add( vsOptions_Playlist,	1 );
+	hsSplitter->Add( vsOptions_Tunage,		1 );
+	hsSplitter->Add( vsSound_Crossfader,	1 );
+	hsSplitter->Add( vsSound_Driver,		1 );
+	hsSplitter->Add( vsTagging_General,		1 );
+	hsSplitter->Add( vsTagging_Auto,		1 );
+	hsSplitter->Add( vsStreaming_Buffer,	1 );
+	hsSplitter->Add( vsStreaming_ProxyServer,	1 );
 	
 	//-----------------//
 	//--- Top Sizer ---//
@@ -588,10 +474,10 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	//--------------//
 	//--- Layout ---//
 	//--------------//
-	Layout();
+	
 	Centre();
 	HidePanels();
-
+	Layout();
 	//--------------------//
 	//---  Load Prefs  ---//
 	//--- Set Defaults ---//
@@ -632,13 +518,13 @@ void MusikPrefsFrame::LoadPrefs()
 	//--------------------------//
 	//--- options -> general ---//
 	//--------------------------//
-	chkAutoScan->SetValue			( g_Prefs.nAutoAdd	);
-	chkShowAllSongs->SetValue		( g_Prefs.nShowAllSongs );
-	chkBlankSwears->SetValue		( g_Prefs.nBlankSwears );
-	chkSortArtistWithoutPrefix->SetValue( g_Prefs.nSortArtistWithoutPrefix );
-	chkPlaylistStripes->SetValue	( g_Prefs.nPLStripes );
-	chkActivityBoxStripes->SetValue	( g_Prefs.nActStripes );
-	chkSourcesBoxStripes->SetValue	( g_Prefs.nSourcesStripes );
+	chkAutoScan->SetValue			( g_Prefs.bAutoAdd	);
+	chkShowAllSongs->SetValue		( g_Prefs.bShowAllSongs );
+	chkBlankSwears->SetValue		( g_Prefs.bBlankSwears );
+	chkSortArtistWithoutPrefix->SetValue( g_Prefs.bSortArtistWithoutPrefix );
+	chkPlaylistStripes->SetValue	( g_Prefs.bPLStripes );
+	chkActivityBoxStripes->SetValue	( g_Prefs.bActStripes );
+	chkSourcesBoxStripes->SetValue	( g_Prefs.bSourcesStripes );
 
 	btnPlaylistStripeColour->SetBackgroundColour( StringToColour( g_Prefs.sPLStripeColour ) );
 	btnActivityStripeColour->SetBackgroundColour( StringToColour( g_Prefs.sActStripeColour ) );
@@ -648,48 +534,27 @@ void MusikPrefsFrame::LoadPrefs()
 	//--- options -> selections ---//
 	//-----------------------------//
 	cmbSelStyle->SetSelection		( g_Prefs.eSelStyle );
-	cmbActivityBox1->SetSelection	( g_Prefs.nActBox1 );
-	cmbActivityBox2->SetSelection	( g_Prefs.nActBox2 );
-	cmbActivityBox3->SetSelection	( g_Prefs.nActBox3 );
-	cmbActivityBox4->SetSelection	( g_Prefs.nActBox4 );
+	for(size_t i = 0; i < WXSIZEOF(cmbActivityBoxes);i++)
+		cmbActivityBoxes[i]->SetSelection	( g_Prefs.nActBoxType[i] );
 
 	//---------------------------//
 	//--- options -> playlist ---//
 	//---------------------------//
-	chkRatingEnable->SetValue			( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_RATING]			);
-	chkTrackEnable->SetValue			( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TRACK]			);
-	chkTitleEnable->SetValue			( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TITLE]			);
-	chkArtistEnable->SetValue			( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_ARTIST]			);
-	chkAlbumEnable->SetValue			( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_ALBUM]			);
-	chkYearEnable->SetValue				( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_YEAR]			);
-	chkGenreEnable->SetValue			( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_GENRE]			);
-	chkTimesPlayedEnable->SetValue		( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TIMES_PLAYED]	);
-	chkLastPlayedEnable->SetValue		( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_LAST_PLAYED]		);
-	chkTimeEnable->SetValue				( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TIME]			);
-	chkBitrateEnable->SetValue			( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_BITRATE]			);
-	chkFilenameEnable->SetValue			( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_FILENAME]		);		
+	for(size_t i = 0 ;i < NPLAYLISTCOLUMNS; i ++)
+	{
+		chkPLColumnEnable[i]->SetValue			( g_Prefs.bPlaylistColumnEnable[i]);
+		cmbPLColumnStatic[i]->SetSelection		( g_Prefs.bPlaylistColumnDynamic[PLAYLISTCOLUMN_RATING]			);
+	}
 
-	cmbRatingStatic->SetSelection		( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_RATING]			);
-	cmbTrackStatic->SetSelection		( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TRACK]			);
-	cmbTitleStatic->SetSelection		( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TITLE]			);
-	cmbArtistStatic->SetSelection		( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_ARTIST]			);
-	cmbAlbumStatic->SetSelection		( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_ALBUM]			);
-	cmbYearStatic->SetSelection			( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_YEAR]			);
-	cmbGenreStatic->SetSelection		( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_GENRE]			);
-	cmbTimesPlayedStatic->SetSelection	( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TIMES_PLAYED]	);
-	cmbLastPlayedStatic->SetSelection	( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_LAST_PLAYED]	);
-	cmbTimeStatic->SetSelection			( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TIME]			);
-	cmbBitrateStatic->SetSelection		( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_BITRATE]		);
-	cmbFilenameStatic->SetSelection		( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_FILENAME]		);
 
 	//-------------------------//
 	//--- options -> tunage ---//
 	//-------------------------//
-	chkTunageWriteFile->SetValue		( g_Prefs.nTunageWriteFile );
-	chkTunageAppendFile->SetValue		( g_Prefs.nTunageAppendFile );
-	chkTunagePostURL->SetValue			( g_Prefs.nTunagePostURL );
-	chkTunageRunApp->SetValue			( g_Prefs.nTunageRunApp );
-	chkTunageRunOnStop->SetValue		( g_Prefs.nTunageRunOnStop );
+	chkTunageWriteFile->SetValue		( g_Prefs.bTunageWriteFile );
+	chkTunageAppendFile->SetValue		( g_Prefs.bTunageAppendFile );
+	chkTunagePostURL->SetValue			( g_Prefs.bTunagePostURL );
+	chkTunageRunApp->SetValue			( g_Prefs.bTunageRunApp );
+	chkTunageRunOnStop->SetValue		( g_Prefs.bTunageRunOnStop );
 	tcTunageFilename->SetValue			( g_Prefs.sTunageFilename );
 	tcTunageFileLine->SetValue			( g_Prefs.sTunageFileLine );
 	tcTunageURL->SetValue				( g_Prefs.sTunageURL );
@@ -699,12 +564,12 @@ void MusikPrefsFrame::LoadPrefs()
 	//--------------------------//
 	//--- tagging -> general ---//
 	//--------------------------//
-	chkActivityWrite->SetValue		( g_Prefs.nActBoxWrite	);
-	chkActivityClear->SetValue		( g_Prefs.nActBoxClear	);
-	chkActivityRename->SetValue		( g_Prefs.nActBoxRename );
-	chkTagDlgWrite->SetValue		( g_Prefs.nTagDlgWrite	);
-	chkTagDlgClear->SetValue		( g_Prefs.nTagDlgClear	);
-	chkTagDlgRename->SetValue		( g_Prefs.nTagDlgRename );
+	chkActivityWrite->SetValue		( g_Prefs.bActBoxWrite	);
+	chkActivityClear->SetValue		( g_Prefs.bActBoxClear	);
+	chkActivityRename->SetValue		( g_Prefs.bActBoxRename );
+	chkTagDlgWrite->SetValue		( g_Prefs.bTagDlgWrite	);
+	chkTagDlgClear->SetValue		( g_Prefs.bTagDlgClear	);
+	chkTagDlgRename->SetValue		( g_Prefs.bTagDlgRename );
 
 	//---------------------------//
 	//--- tagging -> auto tag ---//
@@ -718,27 +583,27 @@ void MusikPrefsFrame::LoadPrefs()
 	float		fDuration;
 	wxString	sDuration;
 
-	chkCrossfade->SetValue				( g_Prefs.nFadeEnable );
+	chkCrossfade->SetValue				( g_Prefs.bFadeEnable );
 	fDuration =							(float)g_Prefs.nFadeDuration / 1000;
 	sDuration.sprintf					( wxT("%.1f"), fDuration );
 	tcDuration->SetValue				( sDuration );
 
-	chkCrossfadeSeek->SetValue			( g_Prefs.nFadeSeekEnable );
+	chkCrossfadeSeek->SetValue			( g_Prefs.bFadeSeekEnable );
 	fDuration =							(float)g_Prefs.nFadeSeekDuration / 1000;
 	sDuration.sprintf					( wxT("%.1f"), fDuration );
 	tcSeekDuration->SetValue			( sDuration );
 
-	chkCrossfadePauseResume->SetValue	( g_Prefs.nFadePauseResumeEnable );
+	chkCrossfadePauseResume->SetValue	( g_Prefs.bFadePauseResumeEnable );
 	fDuration =							(float)g_Prefs.nFadePauseResumeDuration / 1000;
 	sDuration.sprintf					( wxT("%.1f"), fDuration );
 	tcPauseResumeDuration->SetValue		( sDuration );
 
-	chkCrossfadeStop->SetValue			( g_Prefs.nFadeStopEnable );
+	chkCrossfadeStop->SetValue			( g_Prefs.bFadeStopEnable );
 	fDuration =							(float)g_Prefs.nFadeStopDuration / 1000;
 	sDuration.sprintf					( wxT("%.1f"), fDuration );
 	tcStopDuration->SetValue			( sDuration );
 
-	chkCrossfadeExit->SetValue			( g_Prefs.nFadeExitEnable );
+	chkCrossfadeExit->SetValue			( g_Prefs.bFadeExitEnable );
 	fDuration =							(float)g_Prefs.nFadeExitDuration / 1000;
 	sDuration.sprintf					( wxT("%.1f"), fDuration );
 	tcExitDuration->SetValue			( sDuration );
@@ -757,7 +622,7 @@ void MusikPrefsFrame::LoadPrefs()
 	tcBufferLength->SetValue		( sLength );
 	cmbPlayRate->SetSelection		( cmbPlayRate->FindString ( sSndRate ) );
 	tcMaxChannels->SetValue			( IntTowxString( g_Prefs.nSndMaxChan ) );
-	chkUse_MPEGACCURATE_ForMP3VBRFiles->SetValue(g_Prefs.nUse_MPEGACCURATE_ForMP3VBRFiles);
+	chkUse_MPEGACCURATE_ForMP3VBRFiles->SetValue(g_Prefs.bUse_MPEGACCURATE_ForMP3VBRFiles);
 	//---------------------------//
 	//--- streaming -> buffer ---//
 	//---------------------------//
@@ -884,19 +749,19 @@ void MusikPrefsFrame::SavePrefs()
 	//--------------------------//
 	//--- Options -> general ---//
 	//--------------------------//
-	g_Prefs.nAutoAdd		= chkAutoScan->GetValue();
-	g_Prefs.nShowAllSongs	= chkShowAllSongs->GetValue();
-	g_Prefs.nBlankSwears	= chkBlankSwears->GetValue();
+	g_Prefs.bAutoAdd		= chkAutoScan->GetValue();
+	g_Prefs.bShowAllSongs	= chkShowAllSongs->GetValue();
+	g_Prefs.bBlankSwears	= chkBlankSwears->GetValue();
 
-	if(g_Prefs.nSortArtistWithoutPrefix != chkSortArtistWithoutPrefix->GetValue())
+	if(g_Prefs.bSortArtistWithoutPrefix != chkSortArtistWithoutPrefix->GetValue())
 	{
 		bPlaylistUpdate = true;
 		bActivityUpdate = true;
-		g_Prefs.nSortArtistWithoutPrefix = chkSortArtistWithoutPrefix->GetValue();
+		g_Prefs.bSortArtistWithoutPrefix = chkSortArtistWithoutPrefix->GetValue();
 	}
-	if ( chkPlaylistStripes->GetValue() != g_Prefs.nPLStripes )
+	if ( chkPlaylistStripes->GetValue() != g_Prefs.bPLStripes )
 	{
-		g_Prefs.nPLStripes = chkPlaylistStripes->GetValue();
+		g_Prefs.bPLStripes = chkPlaylistStripes->GetValue();
 		bPlaylistUpdate = true;
 	}
 	if ( ColourToString( btnPlaylistStripeColour->GetBackgroundColour() ) != g_Prefs.sPLStripeColour )
@@ -907,9 +772,9 @@ void MusikPrefsFrame::SavePrefs()
 	if ( bPlaylistUpdate )
 		g_PlaylistBox->Update();
 
-	if ( chkActivityBoxStripes->GetValue() != g_Prefs.nActStripes )
+	if ( chkActivityBoxStripes->GetValue() != g_Prefs.bActStripes )
 	{
-		g_Prefs.nActStripes = chkActivityBoxStripes->GetValue();
+		g_Prefs.bActStripes = chkActivityBoxStripes->GetValue();
 		bActivityUpdate = true;
 	}
 	if ( ColourToString( btnActivityStripeColour->GetBackgroundColour() ) != g_Prefs.sActStripeColour )
@@ -921,9 +786,9 @@ void MusikPrefsFrame::SavePrefs()
 		g_ActivityAreaCtrl->ResetAllContents();
 
 	bool bSourcesUpdate = false;
-	if ( chkSourcesBoxStripes->GetValue() != g_Prefs.nSourcesStripes )
+	if ( chkSourcesBoxStripes->GetValue() != g_Prefs.bSourcesStripes )
 	{
-		g_Prefs.nSourcesStripes = chkSourcesBoxStripes->GetValue();
+		g_Prefs.bSourcesStripes = chkSourcesBoxStripes->GetValue();
 		bSourcesUpdate = true;
 	}
 	if ( ColourToString( btnSourcesStripeColour->GetBackgroundColour() ) != g_Prefs.sSourcesStripeColour )
@@ -937,172 +802,50 @@ void MusikPrefsFrame::SavePrefs()
 	//-----------------------------//
     //--- Options -> selections ---//
 	//-----------------------------//
-	if ( cmbSelStyle->GetSelection() != g_Prefs.eSelStyle )
+	if ( (EMUSIK_ACTIVITY_SELECTION_TYPE)cmbSelStyle->GetSelection() != g_Prefs.eSelStyle )
 	{
 		g_Prefs.eSelStyle = (EMUSIK_ACTIVITY_SELECTION_TYPE)cmbSelStyle->GetSelection();
 		bShowUnselChange = true;
 	}
-
-	if ( cmbActivityBox1->GetSelection() != g_Prefs.nActBox1 )
+	for(size_t i = 0; i < WXSIZEOF(cmbActivityBoxes);i++)
 	{
-		g_Prefs.nActBox1 = (EMUSIK_ACTIVITY_TYPE)cmbActivityBox1->GetSelection();
-		bActivityChange = true;
+		if ( cmbActivityBoxes[i]->GetSelection() != g_Prefs.nActBoxType[i] )
+		{
+			g_Prefs.nActBoxType[i] = (EMUSIK_ACTIVITY_TYPE)cmbActivityBoxes[i]->GetSelection();
+			bActivityChange = true;
+		}
 	}
 
-	if ( cmbActivityBox2->GetSelection() != g_Prefs.nActBox2 )
-	{
-		g_Prefs.nActBox2 = (EMUSIK_ACTIVITY_TYPE)cmbActivityBox2->GetSelection();
-		bActivityChange = true;
-	}
-
-	if ( cmbActivityBox3->GetSelection() != g_Prefs.nActBox3 )
-	{
-		g_Prefs.nActBox3 = (EMUSIK_ACTIVITY_TYPE)cmbActivityBox3->GetSelection();
-		bActivityChange = true;
-	}
-
-	if ( cmbActivityBox4->GetSelection() != g_Prefs.nActBox4 )
-	{
-		g_Prefs.nActBox4 = (EMUSIK_ACTIVITY_TYPE)cmbActivityBox4->GetSelection();
-		bActivityChange = true;
-	}
 
 	//---------------------------//
 	//--- options -> playlist ---//
 	//---------------------------//
 	bool bResetColumns = false;
-	//--- enable / disable ---//
-	if ( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_RATING] != chkRatingEnable->GetValue() )
+	for(size_t i = 0 ;i < NPLAYLISTCOLUMNS; i ++)
 	{
-		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_RATING] = chkRatingEnable->GetValue();
-		bResetColumns = true;
-	}
-	if ( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TRACK] != chkTrackEnable->GetValue() )
-	{
-		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TRACK]	= chkTrackEnable->GetValue();
-		bResetColumns = true;
-	}
-	if ( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TITLE] != chkTitleEnable->GetValue() )
-	{
-		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TITLE]	= chkTitleEnable->GetValue();
-		bResetColumns = true;
-	}
-	if ( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_ARTIST] != chkArtistEnable->GetValue() )
-	{
-		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_ARTIST] = chkArtistEnable->GetValue();
-		bResetColumns = true;
-	}
-	if ( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_ALBUM] != chkAlbumEnable->GetValue() )
-	{
-		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_ALBUM]	= chkAlbumEnable->GetValue();
-		bResetColumns = true;
-	}
-	if ( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_YEAR] != chkYearEnable->GetValue() )
-	{
-		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_YEAR] = chkYearEnable->GetValue();
-		bResetColumns = true;
-	}
-	if ( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_GENRE] != chkGenreEnable->GetValue() )
-	{
-		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_GENRE] = chkGenreEnable->GetValue();
-		bResetColumns = true;
-	}
-	if ( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TIMES_PLAYED] != chkTimesPlayedEnable->GetValue() )
-	{
-		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TIMES_PLAYED] = chkTimesPlayedEnable->GetValue();
-		bResetColumns = true;
-	}
-	if ( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_LAST_PLAYED] != chkLastPlayedEnable->GetValue() )
-	{
-		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_LAST_PLAYED] = chkLastPlayedEnable->GetValue();	
-		bResetColumns = true;
-	}
-	if ( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TIME] != chkTimeEnable->GetValue() )
-	{
-		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_TIME] = chkTimeEnable->GetValue();	
-		bResetColumns = true;
-	}
-	if ( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_BITRATE] != chkBitrateEnable->GetValue() )
-	{
-		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_BITRATE] = chkBitrateEnable->GetValue();	
-		bResetColumns = true;
-	}
-	if ( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_FILENAME] != chkFilenameEnable->GetValue() )
-	{
-		g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_FILENAME] = chkFilenameEnable->GetValue();
-		bResetColumns = true;
+		//--- enable / disable ---//
+		if ( g_Prefs.bPlaylistColumnEnable[i] != chkPLColumnEnable[i]->GetValue() )
+		{
+			g_Prefs.bPlaylistColumnEnable[i] = chkPLColumnEnable[i]->GetValue();
+			bResetColumns = true;
+		}
+		//--- standard / dynamic ---//
+		if ( g_Prefs.bPlaylistColumnDynamic[i] != cmbPLColumnStatic[i]->GetSelection() )
+		{
+			g_Prefs.bPlaylistColumnDynamic[i] = cmbPLColumnStatic[i]->GetSelection();
+			bResetColumns = true;
+		}
 	}
 
-	//--- standard / dynamic ---//
-	if ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_RATING] != cmbRatingStatic->GetSelection() )
-	{
-		g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_RATING] = cmbRatingStatic->GetSelection();
-		bResetColumns = true;
-	}
-	if ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TRACK] != cmbTrackStatic->GetSelection() )
-	{
-		g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TRACK] = cmbTrackStatic->GetSelection();
-		bResetColumns = true;
-	}
-	if ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TITLE] != cmbTitleStatic->GetSelection() )
-	{
-		g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TITLE] = cmbTitleStatic->GetSelection();
-		bResetColumns = true;
-	}
-	if ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_ARTIST] != cmbArtistStatic->GetSelection() )
-	{
-		g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_ARTIST] = cmbArtistStatic->GetSelection();
-		bResetColumns = true;
-	}
-	if ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_ALBUM] != cmbAlbumStatic->GetSelection() )
-	{
-		g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_ALBUM] = cmbAlbumStatic->GetSelection();
-		bResetColumns = true;
-	}
-	if ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_YEAR] != cmbYearStatic->GetSelection() )
-	{
-		g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_YEAR] = cmbYearStatic->GetSelection();
-		bResetColumns = true;
-	}
-	if ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_GENRE] != cmbGenreStatic->GetSelection() )
-	{
-		g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_GENRE] = cmbGenreStatic->GetSelection();
-		bResetColumns = true;
-	}
-	if ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TIMES_PLAYED] != cmbTimesPlayedStatic->GetSelection() )
-	{
-		g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TIMES_PLAYED] = cmbTimesPlayedStatic->GetSelection();
-		bResetColumns = true;
-	}
-	if ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_LAST_PLAYED] != cmbLastPlayedStatic->GetSelection() )
-	{
-		g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_LAST_PLAYED] = cmbLastPlayedStatic->GetSelection();
-		bResetColumns = true;
-	}
-	if ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TIME] != cmbTimeStatic->GetSelection() )
-	{
-		g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_TIME] = cmbTimeStatic->GetSelection();
-		bResetColumns = true;
-	}
-	if ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_BITRATE] != cmbBitrateStatic->GetSelection() )
-	{
-		g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_BITRATE] = cmbBitrateStatic->GetSelection();
-		bResetColumns = true;
-	}
-	if ( g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_FILENAME] != cmbFilenameStatic->GetSelection() )
-	{
-		g_Prefs.nPlaylistColumnDynamic[PLAYLISTCOLUMN_FILENAME] = cmbFilenameStatic->GetSelection();
-		bResetColumns = true;
-	}
 
 	//-------------------------//
 	//--- options -> tunage ---//
 	//-------------------------//
-	g_Prefs.nTunageWriteFile	= chkTunageWriteFile->GetValue();
-	g_Prefs.nTunageAppendFile	= chkTunageAppendFile->GetValue();
-	g_Prefs.nTunagePostURL		= chkTunagePostURL->GetValue();
-	g_Prefs.nTunageRunApp		= chkTunageRunApp->GetValue();
-	g_Prefs.nTunageRunOnStop	= chkTunageRunOnStop->GetValue();
+	g_Prefs.bTunageWriteFile	= chkTunageWriteFile->GetValue();
+	g_Prefs.bTunageAppendFile	= chkTunageAppendFile->GetValue();
+	g_Prefs.bTunagePostURL		= chkTunagePostURL->GetValue();
+	g_Prefs.bTunageRunApp		= chkTunageRunApp->GetValue();
+	g_Prefs.bTunageRunOnStop	= chkTunageRunOnStop->GetValue();
 	g_Prefs.sTunageFilename		= tcTunageFilename->GetValue();
 	g_Prefs.sTunageFileLine		= tcTunageFileLine->GetValue();
 	g_Prefs.sTunageURL			= tcTunageURL->GetValue();
@@ -1113,12 +856,12 @@ void MusikPrefsFrame::SavePrefs()
 	//--------------------------//
 	//--- tagging -> general ---//
 	//--------------------------//
-	g_Prefs.nActBoxWrite	= chkActivityWrite->GetValue();
-	g_Prefs.nActBoxClear	= chkActivityClear->GetValue();
-	g_Prefs.nActBoxRename	= chkActivityRename->GetValue();
-	g_Prefs.nTagDlgWrite	= chkTagDlgWrite->GetValue();
-	g_Prefs.nTagDlgClear	= chkTagDlgClear->GetValue();
-	g_Prefs.nTagDlgRename	= chkTagDlgRename->GetValue();
+	g_Prefs.bActBoxWrite	= chkActivityWrite->GetValue();
+	g_Prefs.bActBoxClear	= chkActivityClear->GetValue();
+	g_Prefs.bActBoxRename	= chkActivityRename->GetValue();
+	g_Prefs.bTagDlgWrite	= chkTagDlgWrite->GetValue();
+	g_Prefs.bTagDlgClear	= chkTagDlgClear->GetValue();
+	g_Prefs.bTagDlgRename	= chkTagDlgRename->GetValue();
 
 	//-----------------------//
 	//--- tagging -> auto ---//
@@ -1128,11 +871,11 @@ void MusikPrefsFrame::SavePrefs()
 	//---------------------------//
 	//--- sound -> crossfader ---//
 	//---------------------------//
-	g_Prefs.nFadeEnable = chkCrossfade->GetValue();
-	g_Prefs.nFadeSeekEnable = chkCrossfadeSeek->GetValue();
-	g_Prefs.nFadePauseResumeEnable = chkCrossfadePauseResume->GetValue();
-	g_Prefs.nFadeStopEnable = chkCrossfadeStop->GetValue();
-	g_Prefs.nFadeExitEnable = chkCrossfadeExit->GetValue();
+	g_Prefs.bFadeEnable = chkCrossfade->GetValue();
+	g_Prefs.bFadeSeekEnable = chkCrossfadeSeek->GetValue();
+	g_Prefs.bFadePauseResumeEnable = chkCrossfadePauseResume->GetValue();
+	g_Prefs.bFadeStopEnable = chkCrossfadeStop->GetValue();
+	g_Prefs.bFadeExitEnable = chkCrossfadeExit->GetValue();
 	
 	double fDuration;
 	int nDuration;
@@ -1185,7 +928,7 @@ void MusikPrefsFrame::SavePrefs()
 	int nLength = ( int )( fLength * 1000 );
 	g_Prefs.nSndBuffer = nLength;
 
-	g_Prefs.nUse_MPEGACCURATE_ForMP3VBRFiles = chkUse_MPEGACCURATE_ForMP3VBRFiles->GetValue();
+	g_Prefs.bUse_MPEGACCURATE_ForMP3VBRFiles = chkUse_MPEGACCURATE_ForMP3VBRFiles->GetValue();
 
 	//---------------------------//
 	//--- streaming -> buffer ---//
@@ -1217,9 +960,6 @@ void MusikPrefsFrame::SavePrefs()
 	g_Prefs.sProxyServerPassword = tcProxyServerPassword->GetValue(  );	
 
 
-	//--- save ---//
-	g_Prefs.SavePrefs();
-
 	//--- if we need to restart fmod ---//
 	if ( bRestartFMOD )
 		g_Player.InitializeFMOD( FMOD_INIT_RESTART );
@@ -1231,7 +971,7 @@ void MusikPrefsFrame::SavePrefs()
 	g_Player.InitFMOD_ProxyServer();
 	//--- if playmode ( repeat / etc ) ---//
 	if ( bPlaymodeChange )
-		g_Player.SetPlaymode();
+		g_Player.SetPlaymode(g_Prefs.ePlaymode);
 
 	if ( bActivityChange )
 	{

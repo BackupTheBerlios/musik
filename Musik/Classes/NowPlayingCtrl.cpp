@@ -155,12 +155,12 @@ CNowPlayingCtrl::CNowPlayingCtrl( wxWindow *parent )
 	const wxString playmode_choices[] ={_("Normal"),_("Loop"),_("Shuffle")};
 	
 	wxChoice *choicePlaymode = new wxChoice(this,MUSIK_NOWPLAYINGCTRL_PLAYMODE,wxDefaultPosition,wxDefaultSize,WXSIZEOF(playmode_choices),playmode_choices);
-	int playmode = g_Prefs.nShuffle ? 2 : (g_Prefs.nRepeat ? 1 : 0); 
+	int playmode = g_Prefs.ePlaymode;
 	choicePlaymode->SetSelection(playmode);
 	vsPlayModeCol->Add( choicePlaymode,0, wxRIGHT|wxLEFT|wxALIGN_CENTRE_VERTICAL, 5 ); //-- small top border --//
 	wxCheckBox * pCrossfade = new wxCheckBox( this, MUSIK_CHK_CROSSFADE, _("Crossfade"), wxPoint( -1, -1 ), wxSize( -1, -1 ) );
 	vsPlayModeCol->Add( pCrossfade,0, wxALIGN_CENTRE_VERTICAL|wxRIGHT, 2 ); //-- small top border --//
-	pCrossfade->SetValue( g_Prefs.nGlobalFadeEnable );
+	pCrossfade->SetValue( g_Prefs.bGlobalFadeEnable );
   	vsRightCol->Add( vsPlayModeCol, 0 ); //-- small top border --//
 	vsRightCol->Add( gSeek, 0, wxTOP|wxEXPAND, 2 ); //-- small top border --//
 
@@ -367,26 +367,10 @@ void CNowPlayingCtrl::PlayerVolume( wxCommandEvent& WXUNUSED(event) )
 void CNowPlayingCtrl::OnPlayMode( wxCommandEvent&	event )
 {
 	int modesel = event.GetSelection();
-	g_Prefs.nRepeat = 0;
-	g_Prefs.nShuffle = 0;
-	switch(modesel)
-	{
-	case 0:
-		break;
-	case 1:
-		g_Prefs.nRepeat = 1;
-		break;
-	case 2:
-		g_Prefs.nShuffle = 1;
-		break;
-
-	default:
-		break;
-	}
-	
-	g_Player.SetPlaymode();
+	g_Prefs.ePlaymode = (EMUSIK_PLAYMODE)modesel;
+	g_Player.SetPlaymode(g_Prefs.ePlaymode);
 }
 void CNowPlayingCtrl::OnCheckCrossfade	( wxCommandEvent&	event )
 {
-	g_Prefs.nGlobalFadeEnable = event.IsChecked();
+	g_Prefs.bGlobalFadeEnable = event.IsChecked();
 }

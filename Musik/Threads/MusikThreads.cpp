@@ -127,7 +127,7 @@ void *MusikFaderThread::Entry()
 				//--- time left, go ahead and start up the next	---//
 				//--- track										---//
 				//-------------------------------------------------//
-				if ( ( g_Prefs.nGlobalFadeEnable == 0 ) || ( ( g_Prefs.nFadeEnable == 0 ) && ( g_Player.GetTimeLeft( FMOD_MSEC ) <= 10 ) ) )
+				if ( ( g_Prefs.bGlobalFadeEnable == 0 ) || ( ( g_Prefs.bFadeEnable == 0 ) && ( g_Player.GetTimeLeft( FMOD_MSEC ) <= 10 ) ) )
 				{
 					g_Player.SetStartingNext( true );
 					wxPostEvent( &g_Player, NextSongEvt );
@@ -139,7 +139,7 @@ void *MusikFaderThread::Entry()
 				//--- the duration is such that we should		---//
 				//--- queue up the next song and start the fade	---//
 				//-------------------------------------------------//
-				else if ( ( g_Prefs.nFadeEnable == 1 ) && ( g_Player.GetTimeLeft( FMOD_MSEC ) <= g_Prefs.nFadeDuration ) )
+				else if ( ( g_Prefs.bFadeEnable == 1 ) && ( g_Player.GetTimeLeft( FMOD_MSEC ) <= g_Prefs.nFadeDuration ) )
 				{
 					g_Player.SetStartingNext( true );
 					wxPostEvent( &g_Player, NextSongEvt );
@@ -423,7 +423,7 @@ void *MusikWriteDirtyThread::Entry()
 			//--- write the tag to file	---//
 			//-----------------------------//
 			g_Library.WriteTag( aDirty.Item( i ), m_Clear ,false); // no db update
-			g_Library.UpdateItemResetDirty( aDirty.Item( i ).Filename ); // just clear dirty flag
+			g_Library.UpdateItemResetDirty( aDirty.Item( i )); // just clear dirty flag
 
 		}
 

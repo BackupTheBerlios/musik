@@ -36,18 +36,18 @@ CTunage::~CTunage()
 void CTunage::Execute( CMusikSong& song )
 {
 	// bail if nothing to do
-	if ( !g_Prefs.nTunageWriteFile && !g_Prefs.nTunagePostURL && !g_Prefs.nTunageRunApp )
+	if ( !g_Prefs.bTunageWriteFile && !g_Prefs.bTunagePostURL && !g_Prefs.bTunageRunApp )
 		return;
 
 	m_Song = song;
 
-	if ( g_Prefs.nTunageWriteFile )
+	if ( g_Prefs.bTunageWriteFile )
 		WriteFile();
 
-	if ( g_Prefs.nTunagePostURL )
+	if ( g_Prefs.bTunagePostURL )
 		PostURL();
 
-	if ( g_Prefs.nTunageRunApp )
+	if ( g_Prefs.bTunageRunApp )
 		RunApp();
 }
 
@@ -99,7 +99,7 @@ void CTunage::WriteFile()
 	if ( ( g_Prefs.sTunageFilename == wxT("") ) || ( g_Prefs.sTunageFileLine == wxT("") ) )
 		return;
 
-	if ( !g_Prefs.nTunageAppendFile )
+	if ( !g_Prefs.bTunageAppendFile )
 	{
 		if ( wxFileExists( g_Prefs.sTunageFilename ) )
 			wxRemoveFile( g_Prefs.sTunageFilename );

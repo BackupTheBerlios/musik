@@ -42,7 +42,6 @@ bool MusikApp::OnInit()
 	//--- if any core changes need to be	---//
 	//--- made.								---//
 	//-----------------------------------------//
-	g_Prefs.LoadPrefs();
 	CheckVersion();
 	
 	//--- assure playlists directory exists ---//
@@ -76,17 +75,17 @@ bool MusikApp::OnInit()
 	//--- view ---//
 	view_menu = new wxMenu;
 	view_menu->Append	( MUSIK_MENU_SOURCES_STATE,	_("Show Sources\tCtrl-1"), wxT(""), wxITEM_CHECK );
-	view_menu->Check	( MUSIK_MENU_SOURCES_STATE,	( bool )g_Prefs.nShowSources );
+	view_menu->Check	( MUSIK_MENU_SOURCES_STATE,	( bool )g_Prefs.bShowSources );
 	view_menu->Append	( MUSIK_MENU_ACTIVITIES_STATE, _("Show Selections\tCtrl-2"), wxT(""), wxITEM_CHECK );
-	view_menu->Check	( MUSIK_MENU_ACTIVITIES_STATE, ( bool )g_Prefs.nShowActivities );
+	view_menu->Check	( MUSIK_MENU_ACTIVITIES_STATE, ( bool )g_Prefs.bShowActivities );
 	view_menu->Append	( MUSIK_MENU_PLAYLISTINFO_STATE, _("Show Playlist Info\tCtrl-3"), wxT(""), wxITEM_CHECK );
-	view_menu->Check	( MUSIK_MENU_PLAYLISTINFO_STATE, ( bool )g_Prefs.nShowPLInfo );
+	view_menu->Check	( MUSIK_MENU_PLAYLISTINFO_STATE, ( bool )g_Prefs.bShowPLInfo );
 	view_menu->AppendSeparator();
 	view_menu->Append	( MUSIK_MENU_FX, _("FX\tCtrl-F") );
 	#ifdef __WXMSW__
 		view_menu->AppendSeparator();
 		view_menu->Append	( MUSIK_MENU_STAY_ON_TOP, _("Always On Top\tCtrl-T"), wxT(""), wxITEM_CHECK );
-//		view_menu->Check	( MUSIK_MENU_STAY_ON_TOP, ( bool )g_Prefs.nStayOnTop );
+//		view_menu->Check	( MUSIK_MENU_STAY_ON_TOP, ( bool )g_Prefs.bStayOnTop );
 	#endif
 
 	//--- library -> pending tags ---//
@@ -134,7 +133,7 @@ bool MusikApp::OnInit()
 	SetTopWindow( pMain );
 
 	//--- start webserver if necessary ---//
-	if ( g_Prefs.nWebServerEnable )
+	if ( g_Prefs.bWebServerEnable )
 		g_WebServer.Start();
 
 	return TRUE;
@@ -149,8 +148,7 @@ void MusikApp::CheckVersion()
 
 		if ( sVersion == wxT( "Musik 0.1.3" ) || sVersion == wxT( "Musik 0.1.3 CVS" ) )
 		{
-			wxMessageBox( wxT( MUSIKAPPNAME" has detected 0.1.3 was previously installed. Due to the changes in the playlist display preferences, your columns will be reset. We apologize for any inconvenience this may cause." ), MUSIKAPPNAME_VERSION, wxICON_INFORMATION );
-			g_Prefs.ResetColumns();
+//			wxMessageBox( wxT( MUSIKAPPNAME" has detected 0.1.3 was previously installed. Due to the changes in the playlist display preferences, your columns will be reset. We apologize for any inconvenience this may cause." ), MUSIKAPPNAME_VERSION, wxICON_INFORMATION );
 		}
 
 		WriteVersion();

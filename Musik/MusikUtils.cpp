@@ -80,7 +80,7 @@ void  DelimitStr( wxString sStr, wxString sDel, wxArrayString &aReturn, bool bRe
 
 	//--- strip last delimiter ---//
 	if(aReturn.GetCount() > 0)
-	aReturn.Item( aReturn.GetCount()-1 ).Replace( sDel, wxT( "" ), true );
+		aReturn.Item( aReturn.GetCount()-1 ).Replace( sDel, wxT( "" ), true );
 
 	return;
 }
@@ -253,7 +253,7 @@ wxString MoveArtistPrefixToEnd( const wxString & str )
 }
 wxString SanitizedString( const wxString & str )
 {
-	if ( !g_Prefs.nBlankSwears )
+	if ( !g_Prefs.bBlankSwears )
 		return str;
 
 	wxString outstr( str );

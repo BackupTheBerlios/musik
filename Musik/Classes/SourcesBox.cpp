@@ -259,7 +259,7 @@ CSourcesListBox::CSourcesListBox( wxWindow* parent )
 	sources_context_menu->Append( MUSIK_SOURCE_CONTEXT_DELETE, _( "&Delete" ) );
 	sources_context_menu->AppendSeparator();
 	sources_context_menu->Append( MUSIK_SOURCE_CONTEXT_SHOW_ICONS, _( "&Show Icons" ), wxT( "" ), wxITEM_CHECK );
-	sources_context_menu->Check( MUSIK_SOURCE_CONTEXT_SHOW_ICONS, ( bool )g_Prefs.nShowSourcesIcons );
+	sources_context_menu->Check( MUSIK_SOURCE_CONTEXT_SHOW_ICONS, ( bool )g_Prefs.bShowSourcesIcons );
 	sources_context_menu->AppendSeparator();
 	sources_context_menu->Append( MUSIK_SOURCE_CONTEXT_COPY_FILES, _("Copy files to directory") );
 	
@@ -476,11 +476,11 @@ void CSourcesListBox::UpdateSel( size_t index )
 	else if ( nSelType == MUSIK_SOURCES_LIBRARY )
 	{
 		//--- show old songs ---//
-		if ( g_Prefs.nShowAllSongs == 0 )
+		if ( g_Prefs.bShowAllSongs == 0 )
 			g_Playlist = g_LibPlaylist;
 
 		//--- show all songs ---//
-		else if ( g_Prefs.nShowAllSongs == 1 && !g_FirstRun )
+		else if ( g_Prefs.bShowAllSongs == 1 && !g_FirstRun )
 		{
 				if ( g_ActivityAreaCtrl->GetParentBox() != NULL )
 					g_ActivityAreaCtrl->UpdateSel( g_ActivityAreaCtrl->GetParentBox() );
@@ -489,7 +489,7 @@ void CSourcesListBox::UpdateSel( size_t index )
 		}
 		g_LibPlaylist.Clear();
 		g_PlaylistBox->Update();
-		g_MusikFrame->ShowActivityArea( g_Prefs.nShowActivities );
+		g_MusikFrame->ShowActivityArea( g_Prefs.bShowActivities );
 		
 	}
 
@@ -697,7 +697,7 @@ wxListItemAttr* CSourcesListBox::OnGetItemAttr(long item) const
 	type.MakeLower();
 
 	//--- stripes ---//
-	if ( g_Prefs.nSourcesStripes == 1 )
+	if ( g_Prefs.bSourcesStripes == 1 )
 	{
 		//--- even ---//
 		if ( item % 2 == 0 )
@@ -852,7 +852,7 @@ void CSourcesListBox::RescanPlaylistDir()
 
 void CSourcesListBox::ShowIcons()
 {
-	if ( g_Prefs.nShowSourcesIcons == 0 )
+	if ( g_Prefs.bShowSourcesIcons == 0 )
 		SetImageList( g_NullImageList, wxIMAGE_LIST_SMALL );
 	else
 		SetImageList( g_SourcesImages, wxIMAGE_LIST_SMALL );
@@ -861,16 +861,16 @@ void CSourcesListBox::ShowIcons()
 
 void CSourcesListBox::ToggleIcons()
 {
-	if ( g_Prefs.nShowSourcesIcons == 0 )
-		g_Prefs.nShowSourcesIcons = 1;
+	if ( g_Prefs.bShowSourcesIcons == 0 )
+		g_Prefs.bShowSourcesIcons = 1;
 	else
-		g_Prefs.nShowSourcesIcons = 0;
+		g_Prefs.bShowSourcesIcons = 0;
 
 	ShowIcons();
 
 	//--- check menu items accordingly ---//
-	view_menu->Check( MUSIK_MENU_SOURCES_STATE, ( bool )g_Prefs.nShowSources );
-	sources_context_menu->Check( MUSIK_SOURCE_CONTEXT_SHOW_ICONS, ( bool )g_Prefs.nShowSourcesIcons );
+	view_menu->Check( MUSIK_MENU_SOURCES_STATE, ( bool )g_Prefs.bShowSources );
+	sources_context_menu->Check( MUSIK_SOURCE_CONTEXT_SHOW_ICONS, ( bool )g_Prefs.bShowSourcesIcons );
 }
 
 void CSourcesListBox::NewPlaylist( wxString sName, wxString sVal, int nType )

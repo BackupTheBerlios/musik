@@ -35,10 +35,7 @@ END_EVENT_TABLE()
 CActivityAreaCtrl::CActivityAreaCtrl( wxWindow *pParent )
 	: wxSashLayoutWindow( pParent, MUSIK_ACTIVITYCTRL, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxTAB_TRAVERSAL|wxNO_BORDER|wxCLIP_CHILDREN | wxSW_3D )
 {
-	m_ActivityBox1	= NULL;
-	m_ActivityBox2	= NULL;
-	m_ActivityBox3	= NULL;
-	m_ActivityBox4	= NULL;
+	memset(m_ActivityBox,0,sizeof(m_ActivityBox));
 	SetBackgroundColour( *wxTheColourDatabase->FindColour(wxT("LIGHT STEEL BLUE")));
 	m_pPanel = new wxPanel( this, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxNO_BORDER|wxCLIP_CHILDREN|wxTAB_TRAVERSAL );
 	pTopSizer = new wxBoxSizer( wxHORIZONTAL );
@@ -56,80 +53,36 @@ CActivityAreaCtrl::~CActivityAreaCtrl()
 
 bool CActivityAreaCtrl::Create()
 {
-	if ( m_ActivityBox1 == NULL && m_ActivityBox2 == NULL && m_ActivityBox3 == NULL && m_ActivityBox4 == NULL )
+	Delete();
+	for(size_t i = 0; i < ActivityBoxesMaxCount;i++)
 	{
-		//--- box1 ---//
-		if ( g_Prefs.nActBox1 > 0 && m_ActivityBox1 == NULL )
+		if ( g_Prefs.nActBoxType[i] > 0 && m_ActivityBox[i] == NULL )
 		{
-			m_ActivityBox1 = new CActivityBox( m_pPanel, MUSIK_ACTIVITYBOX1, g_Prefs.nActBox1 );
-			m_ActivityBox1->ResetCaption();
-
-			pTopSizer->Add( m_ActivityBox1, 1, wxEXPAND | wxRIGHT, 1 );
+			m_ActivityBox[i] = new CActivityBox( m_pPanel, MUSIK_ACTIVITYBOX1 + i, g_Prefs.nActBoxType[i] );
+			m_ActivityBox[i]->ResetCaption();
+			pTopSizer->Add( m_ActivityBox[i], 1, wxEXPAND | wxRIGHT, 1 );
 		}
-
-		//--- box2 ---//
-		if ( g_Prefs.nActBox2 > 0 && m_ActivityBox2 == NULL )
-		{
-			m_ActivityBox2 = new CActivityBox( m_pPanel, MUSIK_ACTIVITYBOX2, g_Prefs.nActBox2 );
-			m_ActivityBox2->ResetCaption();
-
-			pTopSizer->Add( m_ActivityBox2, 1, wxEXPAND | wxRIGHT, 1 );
-		}
-
-		//--- box3 ---//
-		if ( g_Prefs.nActBox3 > 0 && m_ActivityBox3 == NULL )
-		{
-			m_ActivityBox3 = new CActivityBox( m_pPanel, MUSIK_ACTIVITYBOX3, g_Prefs.nActBox3 );
-			m_ActivityBox3->ResetCaption();
-
-			pTopSizer->Add( m_ActivityBox3, 1, wxEXPAND | wxRIGHT, 1 );
-		}
-
-		//--- box4 ---//
-		if ( g_Prefs.nActBox4 > 0 && m_ActivityBox4 == NULL )
-		{
-			m_ActivityBox4 = new CActivityBox( m_pPanel, MUSIK_ACTIVITYBOX4, g_Prefs.nActBox4 );
-			m_ActivityBox4->ResetCaption();
-
-			pTopSizer->Add( m_ActivityBox4, 1, wxEXPAND | wxRIGHT, 1 );
-		}
-
-		m_pPanel->Layout();
-	//	SetSize( pTopSizer->GetMinSize() );
-
-		SetParent( 0, false );
-
-		return true;
 	}
 
-	return false;
+	m_pPanel->Layout();
+	//	SetSize( pTopSizer->GetMinSize() );
+
+	SetParent( 0, false );
+
+	return true;
+
 }
 
 void CActivityAreaCtrl::Delete()
 {
-	if ( m_ActivityBox1 != NULL )
+	for(size_t i = 0; i < ActivityBoxesMaxCount;i++)
 	{
-		pTopSizer->Remove( m_ActivityBox1 );
-		delete m_ActivityBox1;
-		m_ActivityBox1 = NULL;
-	}
-	if ( m_ActivityBox2 != NULL )
-	{
-		pTopSizer->Remove( m_ActivityBox2 );
-		delete m_ActivityBox2;
-		m_ActivityBox2 = NULL;
-	}
-	if ( m_ActivityBox3 != NULL )
-	{
-		pTopSizer->Remove( m_ActivityBox3 );
-		delete m_ActivityBox3;
-		m_ActivityBox3 = NULL;
-	}
-	if ( m_ActivityBox4 != NULL )
-	{
-		pTopSizer->Remove( m_ActivityBox4 );
-		delete m_ActivityBox4;
-		m_ActivityBox4 = NULL;
+		if ( m_ActivityBox[i] != NULL )
+		{
+			pTopSizer->Remove( m_ActivityBox[i] );
+			delete m_ActivityBox[i];
+			m_ActivityBox[i] = NULL;
+		}
 	}
 }
 
@@ -141,11 +94,10 @@ void CActivityAreaCtrl::ResetAllContents( bool bUpdatePlaylist )
 		return;
 	}
 	m_UpdatePlaylist = bUpdatePlaylist;
-
-	if ( m_ActivityBox1 != NULL )	m_ActivityBox1->ResetContents();
-	if ( m_ActivityBox2 != NULL )	m_ActivityBox2->ResetContents();
-	if ( m_ActivityBox3 != NULL )	m_ActivityBox3->ResetContents();
-	if ( m_ActivityBox4 != NULL )	m_ActivityBox4->ResetContents();
+	for(size_t i = 0; i < ActivityBoxesMaxCount;i++)
+	{
+		if ( m_ActivityBox[i] != NULL )	m_ActivityBox[i]->ResetContents();
+	}
 	m_bContentInvalid = false;
 	m_UpdatePlaylist = true;
 }
@@ -167,21 +119,13 @@ void CActivityAreaCtrl::SetParent( int nID, bool bUpdate )
 		m_ParentBox = NULL;
 		return;
 	}
-	else if ( nID == MUSIK_ACTIVITYBOX1 )
+	else if ( nID >= MUSIK_ACTIVITYBOX1 && nID <= MUSIK_ACTIVITYBOX4)
 	{
-		m_ParentBox = m_ActivityBox1;
+		m_ParentBox = m_ActivityBox[nID - MUSIK_ACTIVITYBOX1];
 	}
-	else if ( nID == MUSIK_ACTIVITYBOX2 )
+	else
 	{
-		m_ParentBox = m_ActivityBox2;
-	}
-	else if ( nID == MUSIK_ACTIVITYBOX3 )
-	{
-		m_ParentBox = m_ActivityBox3;
-	}
-	else if ( nID == MUSIK_ACTIVITYBOX4 )
-	{
-		m_ParentBox = m_ActivityBox4;
+		wxASSERT(false);
 	}
 	if ( m_ParentBox != NULL && bUpdate )
 		UpdateSel( m_ParentBox );
@@ -189,29 +133,44 @@ void CActivityAreaCtrl::SetParent( int nID, bool bUpdate )
 
 }
 
-void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
+void CActivityAreaCtrl::UpdateSel( CActivityBox *pSelectedBox )
 {
 	//-- avoid updating playlists when dragging over activity area --//
 	if ( g_DragInProg )
 		return;
 
-	if ( !pSel )
+	if ( !pSelectedBox )
 		return;
 
 	//-------------------------------------//
 	//--- which box are we?             ---//
 	//--- and which are the other ones? ---//
 	//-------------------------------------//
-	CActivityBox *pBox1 = NULL, *pBox2 = NULL , *pBox3 = NULL;
-	if ( pSel == m_ActivityBox1 )
-	{	pBox1 = m_ActivityBox2;		pBox2 = m_ActivityBox3;		pBox3 = m_ActivityBox4;		}
-	else if ( pSel == m_ActivityBox2 )
-	{	pBox1 = m_ActivityBox1;		pBox2 = m_ActivityBox3;		pBox3 = m_ActivityBox4;		}
-	else if ( pSel == m_ActivityBox3 )
-	{	pBox1 = m_ActivityBox1;		pBox2 = m_ActivityBox2;		pBox3 = m_ActivityBox4;		}
-	else if ( pSel == m_ActivityBox4 )
-	{	pBox1 = m_ActivityBox1;		pBox2 = m_ActivityBox2;		pBox3 = m_ActivityBox3;		}
+	CActivityBox *pOtherBoxes[ActivityBoxesMaxCount-1];
+	memset(	pOtherBoxes ,0,sizeof(pOtherBoxes));
 
+	for(size_t i = 0 ; i < ActivityBoxesMaxCount;i++)
+	{
+		if ( pSelectedBox == m_ActivityBox[i] )
+		{	
+			size_t k = 0;
+			// assign not selected boxes to pOtherBoxes array
+			for(size_t j = 0 ; j < WXSIZEOF(pOtherBoxes);j++)
+			{
+ 				if(k == i)
+				{
+					k++;
+				}
+				if(k > ActivityBoxesMaxCount-1)
+					k = 0;
+				pOtherBoxes[j] = m_ActivityBox[k++];
+			}
+			break;
+		}
+	}
+			
+	
+	
 	//-------------------------------------------------//
 	//--- if we're showing unsel, find which is the	---//
 	//--- parent and which are children, if there	---//
@@ -220,7 +179,7 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 	if ( g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_STANDARD )
 	{
 		if ( GetParentId() == 0 )
-			SetParent( pSel->GetListId(), false );
+			SetParent( pSelectedBox->GetListId(), false );
 	}
  
 	//---------------------------------------------------//
@@ -228,16 +187,17 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 	//--- and reset is clicked or nothing is selected ---//
 	//--- reset all the boxes						  ---//
 	//---------------------------------------------------//
-	if ( ( g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_STANDARD || g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_SLOPPY ) && ( pSel->IsSelected( 0 ) || pSel->GetSelectedItemCount() < 1 ) )
+	if ( ( g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_STANDARD || g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_SLOPPY ) && ( pSelectedBox->IsSelected( 0 ) || pSelectedBox->GetSelectedItemCount() < 1 ) )
 	{
 		SetParent( 0, false );
-		pSel->ResetContents();	
+		pSelectedBox->ResetContents();	
 
-		if ( pBox1 != NULL )	pBox1->ResetContents();	
-		if ( pBox2 != NULL )	pBox2->ResetContents();
-		if ( pBox3 != NULL )	pBox3->ResetContents();
-
-		if ( g_Prefs.nShowAllSongs == 1 )
+		for(size_t j = 0 ; j < WXSIZEOF(pOtherBoxes);j++)
+		{
+			if ( pOtherBoxes[j] != NULL )	
+				pOtherBoxes[j]->ResetContents();	
+		}
+		if ( g_Prefs.bShowAllSongs == 1 )
 		{
 			if ( !g_FirstRun )
 			{
@@ -254,25 +214,18 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 	//--- and a valid item is clicked, update the ---//
 	//--- other controls with the right values    ---//
 	//-----------------------------------------------//
-	else if ( ( g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_STANDARD || g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_SLOPPY ) && ( !pSel->IsSelected( 0 ) && pSel->GetSelectedItemCount() > 0 ) )
+	else if ( ( g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_STANDARD || g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_SLOPPY ) && ( !pSelectedBox->IsSelected( 0 ) && pSelectedBox->GetSelectedItemCount() > 0 ) )
 	{
 		wxArrayString temp_list;
-		if ( ( g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_STANDARD && GetParentId() == pSel->GetListId() ) || g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_SLOPPY )
+		if ( ( g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_STANDARD && GetParentId() == pSelectedBox->GetListId() ) || g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_SLOPPY )
 		{
-			if ( pBox1 != NULL )
+			for(size_t j = 0 ; j < WXSIZEOF(pOtherBoxes);j++)
 			{
-				pSel->GetRelatedList( pBox1, temp_list );
-				pBox1->SetContents( temp_list );
-			}
-			if ( pBox2 != NULL )
-			{			
-				pSel->GetRelatedList( pBox2, temp_list );
-				pBox2->SetContents( temp_list );
-			}
-			if ( pBox3 != NULL )
-			{
-				pSel->GetRelatedList( pBox3, temp_list );
-				pBox3->SetContents( temp_list );
+				if ( pOtherBoxes[j] != NULL )
+				{
+					pSelectedBox->GetRelatedList( pOtherBoxes[j], temp_list );
+					pOtherBoxes[j]->SetContents( temp_list );
+				}
 			}
 		}
 	}      
@@ -282,14 +235,15 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 	//--- and no items are selected, unselect ---//
 	//--- all the corresponding items		  ---//
 	//-------------------------------------------//
-	else if ( g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_HIGHLIGHT && pSel->GetSelectedItemCount() < 1 )
+	else if ( g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_HIGHLIGHT && pSelectedBox->GetSelectedItemCount() < 1 )
 	{
-		pSel->DeselectAll();
-		if ( pBox1 != NULL )	pBox1->DeselectAll();
-		if ( pBox2 != NULL )	pBox2->DeselectAll();
-		if ( pBox3 != NULL )	pBox3->DeselectAll();
+		pSelectedBox->DeselectAll();
+		for(size_t j = 0 ; j < WXSIZEOF(pOtherBoxes);j++)
+		{
+			if ( pOtherBoxes[j] != NULL )	pOtherBoxes[j]->DeselectAll();
+		}
 
-		if ( g_Prefs.nShowAllSongs == 1 )
+		if ( g_Prefs.bShowAllSongs == 1 )
 		{
 			if ( !g_FirstRun )
 			{
@@ -306,93 +260,47 @@ void CActivityAreaCtrl::UpdateSel( CActivityBox *pSel )
 	//--- and 1+ items are selected, select   ---//
 	//--- all the corresponding items		  ---//
 	//-------------------------------------------//
-	else if ( g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_HIGHLIGHT && pSel->GetSelectedItemCount() > 0 )
+	else if ( g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_HIGHLIGHT && pSelectedBox->GetSelectedItemCount() > 0 )
 	{
 		wxArrayString rel;
 		wxArrayString all;
 		wxListItem item;
 		int n;
 
-		//--- box1 ---//
-		if ( pBox1 != NULL )
+		for(size_t j = 0 ; j < WXSIZEOF(pOtherBoxes);j++)
 		{
-			pSel->GetRelatedList( pBox1, rel );
-			pBox1->GetFullList( all );
-
-			if ( all.GetCount() > 0 )
+			if ( pOtherBoxes[j] != NULL )
 			{
-				for ( size_t i = 0; i < rel.GetCount(); i++ )
+				pSelectedBox->GetRelatedList( pOtherBoxes[j], rel );
+				pOtherBoxes[j]->GetFullList( all );
+
+				if ( all.GetCount() > 0 )
 				{
-					n = FindStrInArray( &all, rel.Item( i ) );
-					if ( n  > -1 )
+					for ( size_t i = 0; i < rel.GetCount(); i++ )
 					{
-						all.RemoveAt( n );
-						all.Insert( rel.Item( i ), i );
+						n = FindStrInArray( &all, rel.Item( i ) );
+						if ( n  > -1 )
+						{
+							all.RemoveAt( n );
+							all.Insert( rel.Item( i ), i );
+						}
 					}
+					pOtherBoxes[j]->SetRelated( rel.GetCount() );
+					pOtherBoxes[j]->SetContents( all );
+					pSelectedBox->SetRelated( -1 );
+					pSelectedBox->Update( false );
 				}
-				pBox1->SetRelated( rel.GetCount() );
-				pBox1->SetContents( all );
-				pSel->SetRelated( -1 );
-				pSel->Update( false );
-			}
-		}
-
-		//--- box2 ---//
-		if ( pBox2 != NULL )
-		{
-			pSel->GetRelatedList( pBox2, rel );
-			pBox2->GetFullList( all );
-
-			if ( all.GetCount() > 0 )
-			{
-				for ( size_t i = 0; i < rel.GetCount(); i++ )
-				{
-					n = FindStrInArray( &all, rel.Item( i ) );
-					if ( n  > -1 )
-					{
-						all.RemoveAt( n );
-						all.Insert( rel.Item( i ), i );
-					}
-				}
-				pBox2->SetRelated( rel.GetCount() );
-				pBox2->SetContents( all );
-				pSel->SetRelated( -1 );
-				pSel->Update( false );
-			}
-		}
-
-		//--- box3 ---//
-		if ( pBox3 != NULL )
-		{
-			pSel->GetRelatedList( pBox3, rel );
-			pBox2->GetFullList( all );
-
-			if ( all.GetCount() > 0 )
-			{
-				for ( size_t i = 0; i < rel.GetCount(); i++ )
-				{
-					n = FindStrInArray( &all, rel.Item( i ) );
-					if ( n  > -1 )
-					{
-						all.RemoveAt( n );
-						all.Insert( rel.Item( i ), i );
-					}
-				}
-				pBox3->SetRelated( rel.GetCount() );
-				pBox3->SetContents( all );
-				pSel->SetRelated( -1 );
-				pSel->Update( false );
 			}
 		}
 	}
 
-	if ( ( g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_STANDARD || g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_SLOPPY ) && ( pSel->IsSelected( 0 ) || pSel->GetSelectedItemCount() < 1 ) )
+	if ( ( g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_STANDARD || g_Prefs.eSelStyle == MUSIK_SELECTION_TYPE_SLOPPY ) && ( pSelectedBox->IsSelected( 0 ) || pSelectedBox->GetSelectedItemCount() < 1 ) )
 	{
 		g_Playlist.Clear();
 		g_PlaylistBox->Update();
 	}
 	else
-		pSel->SetPlaylist();
+		pSelectedBox->SetPlaylist();
 }
 
 
@@ -449,25 +357,7 @@ void CActivityAreaCtrl::OnActivityBoxActivated	( wxListEvent& event)
 	if ( !m_Selecting && m_UpdatePlaylist )
 	{
 		m_Selecting = true;
-
-		switch( event.GetId() )
-		{
-		case MUSIK_ACTIVITYBOX1:
-			UpdateSel( m_ActivityBox1 );
-			break;
-		case MUSIK_ACTIVITYBOX2:
-			UpdateSel( m_ActivityBox2 );
-			break;
-		case MUSIK_ACTIVITYBOX3:
-			UpdateSel( m_ActivityBox3 );
-			break;
-		case MUSIK_ACTIVITYBOX4:
-			UpdateSel( m_ActivityBox4 );
-			break;
-		default:
-			break;
-}
-
+		UpdateSel( m_ActivityBox[event.GetId() - MUSIK_ACTIVITYBOX1] );
 		m_Selected = m_bFocused = m_Selecting = false;
 	}
 }

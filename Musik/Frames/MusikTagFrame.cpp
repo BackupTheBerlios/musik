@@ -276,9 +276,9 @@ bool MusikTagFrame::Show( bool show )
 			hsNav->Show( btnNext, false );
 		}	
 
-		chkWriteTag->SetValue	( g_Prefs.nTagDlgWrite	);
-		chkClear->SetValue		( g_Prefs.nTagDlgClear	);
-		chkRename->SetValue		( g_Prefs.nTagDlgRename	);
+		chkWriteTag->SetValue	( g_Prefs.bTagDlgWrite	);
+		chkClear->SetValue		( g_Prefs.bTagDlgClear	);
+		chkRename->SetValue		( g_Prefs.bTagDlgRename	);
 
 		SetChecks( m_EditType );
 		PopulateTagDlg();
@@ -566,9 +566,9 @@ void MusikTagFrame::CheckChangesBatch()
 void MusikTagFrame::Apply( bool close )
 {
 	//--- save settings ---//
-	g_Prefs.nTagDlgWrite = chkWriteTag->IsChecked() ? 1:0;
-	g_Prefs.nTagDlgClear = chkClear->IsChecked() ? 1:0;
-	g_Prefs.nTagDlgRename = chkRename->IsChecked() ? 1:0;
+	g_Prefs.bTagDlgWrite = chkWriteTag->IsChecked() ? 1:0;
+	g_Prefs.bTagDlgClear = chkClear->IsChecked() ? 1:0;
+	g_Prefs.bTagDlgRename = chkRename->IsChecked() ? 1:0;
 
 	//--- do we close upon thread completion? ---//
 	m_Close = close;
@@ -680,7 +680,7 @@ void MusikTagFrame::OnTranslateKeys( wxKeyEvent& event )
 		}
 		return;
 	}
-  else
+	else
 		event.Skip();	
 }
 

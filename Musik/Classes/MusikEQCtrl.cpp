@@ -55,7 +55,7 @@ CMusikEQCtrl::CMusikEQCtrl( wxFrame* pParent )
 	//--- enableequalizer				---//
 	//-------------------------------------//
 	chkEQEnable = new wxCheckBox( this, CHK_EQENABLE, _("Enable EQ") );
-	chkEQEnable->SetValue( g_Prefs.nUseEQ );
+	chkEQEnable->SetValue( g_Prefs.bUseEQ );
 	pOptionsSizer->Add( chkEQEnable, 1, wxALIGN_CENTER | wxALIGN_CENTER_VERTICAL );
 
 	//-------------------------------------//
@@ -94,7 +94,7 @@ void CMusikEQCtrl::OnClickReset( wxCommandEvent& WXUNUSED(event) )
 
 void CMusikEQCtrl::OnToggleEQEnable( wxCommandEvent& WXUNUSED(event) )
 {
-	g_Prefs.nUseEQ = chkEQEnable->IsChecked();
+	g_Prefs.bUseEQ = chkEQEnable->IsChecked();
 	g_Player.ActivateDSP();
 }
 

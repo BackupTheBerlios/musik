@@ -100,12 +100,12 @@ void MusikTaskBarIcon::OnMenuStop(wxCommandEvent& )
 
 void MusikTaskBarIcon::OnMenuExit(wxCommandEvent& )
 {
-    m_pFrame->Close(TRUE);
 
-    // Nudge wxWindows into destroying the dialog, since
-    // with a hidden window no messages will get sent to put
-    // it into idle processing.
-    wxTheApp->ProcessIdle();
+	wxCloseEvent event(wxEVT_CLOSE_WINDOW, -1);
+	event.SetEventObject(m_pFrame);
+	event.SetCanVeto(true);
+	wxPostEvent(m_pFrame,event);
+ 
 }
 
 
@@ -241,13 +241,13 @@ MusikFrame::MusikFrame()
 	//--- taylor ui ---//
 	ShowPlaylistInfo();
 	ShowSources();
-	SetStayOnTop(( bool )g_Prefs.nStayOnTop);
+	SetStayOnTop(( bool )g_Prefs.bStayOnTop);
 
 
 	//--- restore placement or use defaults ---//
 	g_DisablePlacement = false;
 
-	g_Player.SetPlaymode();
+	g_Player.SetPlaymode(g_Prefs.ePlaymode);
 
 	//--- update database information, then set sound volume ---//
 	g_Player.SetVolume();
@@ -284,9 +284,9 @@ bool MusikFrame::Show( bool show )
 
 
 		//--- autostart stuff ---//
-		if ( g_Prefs.nFirstRun || g_Prefs.nAutoAdd )
+		if ( g_Prefs.bFirstRun || g_Prefs.bAutoAdd )
 		{
-			if(g_Prefs.nFirstRun)
+			if(g_Prefs.bFirstRun)
 			{
 				g_MusikLibraryFrame = new MusikLibraryFrame( ( wxFrame* )this, wxPoint( 0, 0 ), wxSize( 480, 240 ) );
 				this->Enable	( FALSE );
@@ -302,9 +302,9 @@ bool MusikFrame::Show( bool show )
 			g_PlaylistBox->Update();
 
 			/*
-			ShowActivityArea( g_Prefs.nShowActivities );
+			ShowActivityArea( g_Prefs.bShowActivities );
     		g_ActivityAreaCtrl->ResetAllContents();
-			if ( g_Prefs.nShowAllSongs == 1 )
+			if ( g_Prefs.bShowAllSongs == 1 )
 			{
 				g_Library.GetAllSongs( g_Playlist );
 				g_SourcesCtrl->SelectLibrary();
@@ -436,10 +436,10 @@ void MusikFrame::GetListCtrlFont()
 //--------------------------------------------//
 void MusikFrame::TogglePlaylistInfo()
 {
-	g_Prefs.nShowPLInfo = !g_Prefs.nShowPLInfo;
+	g_Prefs.bShowPLInfo = !g_Prefs.bShowPLInfo;
 	ShowPlaylistInfo();
 
-	view_menu->Check( MUSIK_MENU_PLAYLISTINFO_STATE, ( bool )g_Prefs.nShowPLInfo );
+	view_menu->Check( MUSIK_MENU_PLAYLISTINFO_STATE, ( bool )g_Prefs.bShowPLInfo );
 }
 
 void MusikFrame::ShowPlaylistInfo()
@@ -449,18 +449,18 @@ void MusikFrame::ShowPlaylistInfo()
 
 void MusikFrame::ShowSources()
 {
-	g_SourcesCtrl->Show(  ( bool )g_Prefs.nShowSources );
+	g_SourcesCtrl->Show(  ( bool )g_Prefs.bShowSources );
 	wxLayoutAlgorithm layout;
     layout.LayoutWindow(this,g_PlaylistBox);
 }
 
 void MusikFrame::ToggleSources()
 {
-	g_Prefs.nShowSources = !g_Prefs.nShowSources;
+	g_Prefs.bShowSources = !g_Prefs.bShowSources;
 
 	ShowSources();
 
-	view_menu->Check( MUSIK_MENU_SOURCES_STATE,	( bool )g_Prefs.nShowSources );
+	view_menu->Check( MUSIK_MENU_SOURCES_STATE,	( bool )g_Prefs.bShowSources );
 }
 void MusikFrame::SetStayOnTop( bool bStayOnTop )
 {
@@ -489,11 +489,11 @@ void MusikFrame::ShowActivityArea( bool bShow )
 void MusikFrame::ToggleActivities()
 {
 	
-	g_Prefs.nShowActivities = !g_Prefs.nShowActivities;
+	g_Prefs.bShowActivities = !g_Prefs.bShowActivities;
 
-	ShowActivityArea( (bool)g_Prefs.nShowActivities );
+	ShowActivityArea( (bool)g_Prefs.bShowActivities );
 
-	view_menu->Check( MUSIK_MENU_ACTIVITIES_STATE,	( bool )g_Prefs.nShowActivities );
+	view_menu->Check( MUSIK_MENU_ACTIVITIES_STATE,	( bool )g_Prefs.bShowActivities );
 }
 
 void MusikFrame::EnableProgress( bool enable )

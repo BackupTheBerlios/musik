@@ -37,10 +37,12 @@ bool loadOGGInfo( CSongMetaData & MetaData )
 	{
 		vorbis_comment *pComment = ov_comment( &vorbisfile, -1 );
 
-		MetaData.Artist = vorbis_comment_query( pComment, "artist",	0 );
-		MetaData.Album	= vorbis_comment_query( pComment, "album",		0 );
-		MetaData.Title	= vorbis_comment_query( pComment, "title",		0 );
-		MetaData.Genre	= vorbis_comment_query( pComment, "genre",		0 );
+		MetaData.Artist = ConvFromUTF8(vorbis_comment_query( pComment, "artist",	0 ));
+		MetaData.Album	= ConvFromUTF8(vorbis_comment_query( pComment, "album",		0 ));
+		MetaData.Title	= ConvFromUTF8(vorbis_comment_query( pComment, "title",		0 ));
+		MetaData.Genre	= ConvFromUTF8(vorbis_comment_query( pComment, "genre",		0 ));
+		MetaData.Notes	= ConvFromUTF8(vorbis_comment_query( pComment, "DESCRIPTION",0 ));
+
 		MetaData.Year	= vorbis_comment_query( pComment, "date", 		0 );
 		char *szTracknum = vorbis_comment_query( pComment, "tracknumber", 0 );
 		MetaData.nTracknum = atol( szTracknum ? szTracknum : "0" );

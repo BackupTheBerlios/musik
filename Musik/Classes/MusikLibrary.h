@@ -153,6 +153,7 @@ public:
 	StringData			Album;
 	StringData			Genre;
 	StringData			Year;
+	StringData			Notes;
 	int				    nTracknum;
 	EMUSIK_FORMAT_TYPE  eFormat;
 	int					nDuration_ms;
@@ -168,6 +169,7 @@ public:
 	CMusikSong();
 
 public:
+	int			songid;
 	wxString	Filename;
 	wxString	Title;
 	int			TrackNum;
@@ -215,10 +217,10 @@ public:
 	//----------------//
 	//--- updating ---//
 	//----------------//
-	void UpdateItem				( const wxString & filename, CMusikSong &newsonginfo, bool bDirty );
-	void UpdateItemLastPlayed	( const wxString & filename  );
-	void UpdateItemResetDirty	( const wxString & filename );
-	void SetRating				( const wxString & sFile, int nVal );
+	void UpdateItem				( CMusikSong &newsonginfo, bool bDirty );
+	void UpdateItemLastPlayed	( const CMusikSong & song  );
+	void UpdateItemResetDirty	( const CMusikSong & song );
+	void SetRating				( int songid, int nVal );
 	void InitTimeAdded			( );
 
 	//--------------------//
@@ -234,16 +236,16 @@ public:
 	//--- removing ---//
 	//----------------//
 	bool CheckAndPurge	( const wxString & sFilename	);
-	void DeleteItem		( const wxString & filename		);
 	void RemoveSongDir	( const wxString & sDir			);
 	void RemoveSong		( const wxString & sSong		);
+	void RemoveSong		( int songid					);
 	void RemoveAll		( );
 	
 	//---------------------//
 	//--- getting items ---//
 	//---------------------//
 	void GetFilelistSongs		( const wxArrayString & aFiles, CMusikSongArray & aReturn );
-	bool GetSongFromFilename	( const wxString& filename, CMusikSong *pSong );
+	bool GetSongFromSongid	( int songid, CMusikSong *pSong );
 
 	void SetSortOrderField( int nField, bool descending = false);
 	double GetTotalPlaylistSize();
@@ -251,7 +253,7 @@ public:
 	//--------------------//
 	//--- getting info ---//
 	//--------------------//
-	int	GetTimesPlayed	( const wxString & filename );
+	int	GetTimesPlayed	( const CMusikSong & song );
 	int	GetSongCount	();
 	int	GetSongDirCount ( wxString sDir );
 
@@ -260,6 +262,7 @@ public:
 	//------------//
 	bool FileInLibrary		( const wxString & filename, bool fullpath );
 
+	void RecordSongHistory( const CMusikSong & song ,int playedtime,bool bSelectedByUser);
 	//------------------------//
 	//--- generic querying ---//
 	//------------------------//

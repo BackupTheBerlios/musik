@@ -21,117 +21,418 @@
 #endif 
 #include "../MusikGlobals.h"
 #include "ActivityBox.h"
+#include <wx/config.h> 
+#include <wx/confbase.h>
+#include <wx/fileconf.h> 
 
-class CMusikPrefs
+template <class T>
+struct Value
+{
+	typedef T valuetyp;
+	T val;
+	Value(const T& v)
+		:val(v)
+	{
+	}
+	Value()
+	{
+	}
+	operator  const T&()	const
+	{
+		return val;
+	}
+	operator   T&()	
+	{
+		return val;
+	}
+	T* operator &()	
+	{
+		return &val;
+	}
+	void operator =(T & v)	
+	{
+		val = v;
+	}
+
+};
+template <class T>
+struct NullEncoder
+{
+	static void EncodeValue(T & v)
+	{
+		v;
+	}
+	static void DecodeValue(T & v)
+	{
+		v;
+	}
+};
+
+
+template <class T , int MYSIZE,int MYBASE = 0,class T1 =T,class V_ENC = NullEncoder<T> >
+class CConfigSettingArray 
 {
 public:
-	CMusikPrefs() {}
-	~CMusikPrefs() {}
+	CConfigSettingArray(wxConfigBase * pConfig,const wxString &sName, const T1 Default[])
+		:m_pConfig(pConfig)
+		,m_sName(sName)
+
+	{
+		for(size_t i = 0; i < MYSIZE;i++)
+		{
+			m_pConfig->Read(wxString::Format(m_sName, i + MYBASE),&m_Values[i], Default[i]);
+			V_ENC::DecodeValue(m_Values[i]);
+		}
+	}
+	~CConfigSettingArray()
+	{
+		for(size_t i = 0; i < MYSIZE;i++)
+		{
+			V_ENC::EncodeValue(m_Values[i]);
+			m_pConfig->Write(wxString::Format(m_sName, i + MYBASE),m_Values[i]);
+		}
+	}
+	const T1 &operator [](int i)	 const
+	{
+		return m_Values[i];
+	}
+
+	T1& operator [] (int i)
+	{
+		return *(T1*)(&static_cast<T&>(m_Values[i]));
+	}
+protected:
+private:
+	wxConfigBase * m_pConfig;
+	wxString m_sName;
+	T m_Values[MYSIZE];
+};
+
+
+
+
+template <class T , class T1 = T,class V_ENC = NullEncoder<T> >
+class CConfigSetting : public T
+{
+public:
+	CConfigSetting(wxConfigBase * pConfig,const wxString &sName, const T1 &Default)
+		:m_pConfig(pConfig)
+		,m_sName(sName)
+
+	{
+		m_pConfig->Read(m_sName,&static_cast<T&>(*this), Default);
+		V_ENC::DecodeValue(*this);
+	}
+	~CConfigSetting()
+	{
+		V_ENC::EncodeValue(*this);
+	   m_pConfig->Write(m_sName,static_cast<T&>(*this));
+	}
+	operator  T1&()	
+	{
+		return *(T1*)(&static_cast<T&>(*this));
+	}
+
+	void operator=(const T1 & v)
+	{
+		*(T1*)(&static_cast<T&>(*this)) = v;
+	}
+protected:
+private:
+	wxConfigBase * m_pConfig;
+	wxString m_sName;
+};
+
+
+typedef	 CConfigSetting<Value<bool> > CConfigSettingBool;
+typedef	 CConfigSetting<Value<int> > CConfigSettingInt;
+typedef	 CConfigSetting<wxString> CConfigSettingString;
+
+
+
+//-------------------------------------------------//
+//--- if we're in windows there is a problem	---//
+//--- writing a backslash "\" character to		---//
+//--- file, then later reading it. so it is		---//
+//--- stored as a forward slash "/"				---//
+//-------------------------------------------------//
+
+struct PathEncoder
+{
+	static void EncodeValue(wxString & v)
+	{
+	#ifdef __WXMSW__
+		v.Replace( wxT( "\\" ), wxT( "/" ), true );
+	#endif
+	}
+	static void DecodeValue(wxString & v)
+	{
+	#ifdef __WXMSW__
+		v.Replace( wxT("/"), wxT("\\"), true );;
+	#endif
+	}
+};
+
+typedef CConfigSetting<wxString,wxString,PathEncoder>  CConfigSettingPath;
+
+
+#if defined __WXMSW__
+#define CONFIG_NAME wxT( ".Musik\\Musik.ini" )
+#elif defined __WXGTK__
+#define CONFIG_NAME wxT( "MusikPrefs" )
+#endif
+
+
+static const bool DefaultPlaylistColumnEnable[NPLAYLISTCOLUMNS] = {
+	true,
+	true,
+	true,
+	true,
+	true,
+	false,
+	true,
+	false,
+	false,
+	true,
+	false,
+	false,
+	false
+};
+static const int DefaultPlaylistColumnSize[NPLAYLISTCOLUMNS]   ={
+		50,
+		50,
+		40,
+		20,
+		20,
+		50,
+		20,
+		50,
+		50,
+		50,
+		50,
+		40,
+		40
+};
+
+static const bool DefaultPlaylistColumnDynamic[NPLAYLISTCOLUMNS] = {
+		false,
+		false,
+		true,
+		true,
+		true,
+		false,
+		true,
+		false,
+		false,
+		false,
+		false,
+		true,
+		true
+};
+static const EMUSIK_ACTIVITY_TYPE DefaultActBoxType[ActivityBoxesMaxCount] = {MUSIK_LBTYPE_ARTISTS,MUSIK_LBTYPE_ALBUMS,MUSIK_LBTYPE_NULL,MUSIK_LBTYPE_NULL};
+#pragma warning(disable : 4355)	
+class CMusikPrefs  : public wxFileConfig
+{
+public:
+	CMusikPrefs()
+		:wxFileConfig( CONFIG_NAME )
+		,bFirstRun(this,wxT("FirstRun"),true)
+		,bAutoAdd(this,wxT( "AddFilesonStartup" ),true)
+		,eSelStyle(this,wxT( "SelectionStyle" ),MUSIK_SELECTION_TYPE_STANDARD)
+		,bShowAllSongs(this,wxT( "SelectingLibraryDisplaysSongs" ),true)
+		,nSndOutput(this,wxT( "OutputDriver" ),0)
+		,nSndDevice(this,wxT( "SoundDevice" ),0)
+		,nSndRate(this,wxT( "PlaybackRate" ),44100)
+		,nSndMaxChan(this,wxT( "MaximumChannels" ),4)
+		,nSndBuffer(this,wxT( "SoundBufferMilliseconds" ),1000)
+		,nSndVolume(this,wxT( "SoundVolume" ),200)
+
+		,bUseEQ(this,wxT( "UseEQ" ),false)
+		,bUsePitch(this,wxT( "UsePitch" ),false)
+		,bPLStripes(this,wxT( "PlaylistStripes" ),true)
+		,bActStripes(this,wxT( "ActivityStripes" ),false)
+		,bSourcesStripes(this,wxT( "SourcesStripes" ),false)
+		,sPLStripeColour(this,wxT( "PlaylistStripeColour" ),wxT("244, 244, 244"))
+		,sActStripeColour(this,wxT( "ActivityStripeColour" ),wxT("244, 244, 244"))
+		,sSourcesStripeColour(this,wxT( "SourcesStripeColour" ),wxT("244, 244, 244"))
+		,bShowPLInfo(this,wxT( "ShowPlaylistInfo" ),true)
+		,bShowSources(this,wxT( "ShowSources" ),true)
+		,bShowSourcesIcons(this,wxT( "ShowSourcesIcons" ),true)
+		,bShowActivities(this,wxT( "ShowActivities" ),true)
+		,bStayOnTop(this,wxT( "StayOnTop" ),false)
+		,bActBoxWrite(this,wxT( "ActivityBoxWrite" ),false)
+		,bActBoxClear(this,wxT( "ActivityBoxClear" ),false)
+		,bActBoxRename(this,wxT( "ActivityBoxRename" ),false)
+
+		,bTagDlgWrite(this,wxT( "TagDialogWrite" ),false)
+		,bTagDlgClear(this,wxT( "TagDialogClear" ),false)
+		,bTagDlgRename(this,wxT( "TagDialogRename" ),false)
+
+		,ePlaymode(this,wxT( "Playmode" ),MUSIK_PLAYMODE_NORMAL)
+		,nMaxRandomHistory(this,wxT( "MaxRandomHistory" ),500)
+
+		,bGlobalFadeEnable(this,wxT( "GlobalFaderEnabled" ),true)
+		,bFadeEnable(this,wxT( "CrossfaderEnabled" ),true)
+		,bFadeSeekEnable(this,wxT( "CrossfaderSeekEnabled" ),true)
+		,bFadePauseResumeEnable(this,wxT( "CrossfaderPauseResumeEnabled" ),true)
+		,bFadeStopEnable(this,wxT( "CrossfaderStopEnabled" ),true)
+		,bFadeExitEnable(this,wxT( "CrossfaderExitEnabled" ),true)
+		,nFadeDuration(this,wxT( "CrossfaderDuration" ),2000)
+		,nFadeSeekDuration(this,wxT( "CrossfaderSeekDuration" ),500)
+		,nFadePauseResumeDuration(this,wxT( "CrossfaderPauseResumeDuration" ),500)
+		,nFadeStopDuration(this,wxT( "CrossfaderStopDuration" ),1000)
+		,nFadeExitDuration(this,wxT( "CrossfaderExitDuration" ),2000)
+
+		,bUse_MPEGACCURATE_ForMP3VBRFiles(this,wxT( "Use_MPEGACCURATE_ForMP3VBRFiles" ),true)
+		,bBlankSwears(this,wxT( "BlankSwears" ),false)
+		,bSortArtistWithoutPrefix(this,wxT( "BlankSwears" ),false)
+
+		,sAutoRename(this,wxT( "AutoRenameMask" ),wxT( "%6 - %2 - %1" ))
+		,sAutoTag(this,wxT( "AutoTagMask" ),wxT( "%a/%b/%n - %t|%a/%b - %n - %t|%a - %b - %n - %t|0" ))
+		,bAutoTagConvertUnderscoresToSpaces(this,wxT( "AutoTagConvertUnderscoresToSpaces" ),false)
+		,bWebServerEnable(this,wxT( "EnableWebserver" ),false)
+		,nWebServerPort(this,wxT( "Webserverport" ),6395)
+		,sFramePlacement(this,wxT( "FramePlacement" ),wxT("0,0,800,600,0,0"))
+
+		,nSourceBoxWidth(this,wxT( "SourceBoxWidth" ),130)
+		,nActivityCtrlHeight(this,wxT( "ActivityCtrlHeight" ),120)
+		,bPlaylistSmartColumns(this,wxT( "SmartPlaylistColumns" ),true)
+
+		,bTunageWriteFile(this,wxT( "TunageWriteFile" ),false)
+		,sTunageFilename(this,wxT( "TunageFilename" ),wxT("") )
+		,sTunageFileLine(this,wxT( "TunageFileLine" ),wxT("") )
+		,bTunageAppendFile(this,wxT( "TunageAppendFile" ),false)
+		,bTunagePostURL(this,wxT( "TunagePostURL" ),false)
+		,sTunageURL(this,wxT( "TunageURL" ),wxT(""))
+		,bTunageRunApp(this,wxT( "TunageRunApp" ),false)
+		,sTunageCmdLine(this,wxT( "TunageCmdLine" ),wxT(""))
+		,bTunageRunOnStop(this,wxT( "TunageRunOnStop" ),false)
+		,sTunageStoppedText(this,wxT( "TunageStoppedText" ),wxString(MUSIKAPPNAME) + _(" is not running") )
+
+		,bUseProxyServer(this,wxT( "UseProxyServer" ),false	)			
+		,sProxyServer(this,wxT( "ProxyServer" ),wxT(""))			
+		,sProxyServerPort(this,wxT( "ProxyServerPort" ),wxT(""))		
+		,sProxyServerUser(this,wxT( "ProxyServerUser" ),wxT(""))		
+		,sProxyServerPassword(this,wxT( "ProxyServerPassword" ),wxT(""))	
+		,nStreamingBufferSize(this,wxT( "StreamingBufferSize" ),64000)		
+		,nStreamingPreBufferPercent(this,wxT( "StreamingPreBufferPercent" ),60)
+		,nStreamingReBufferPercent(this,wxT( "StreamingReBufferPercent" ),80)
+
+		,bPlaylistColumnEnable(this,wxT( "PlaylistColumn%dEnable"	),DefaultPlaylistColumnEnable)
+		,nPlaylistColumnSize(this,wxT( "PlaylistColumn%dSize"	),DefaultPlaylistColumnSize)
+		,bPlaylistColumnDynamic(this,wxT( "PlaylistColumn%dDynamic"	),DefaultPlaylistColumnDynamic)
+
+		,nActBoxType(this,	wxT( "ActivityBox%d" )   ,DefaultActBoxType)
+	{
+		LoadPrefs();
+	}
+	~CMusikPrefs() 
+	{
+		SavePrefs();
+	}
 
 	void LoadPrefs();
 	void SavePrefs();
-	void ResetColumns();
 
-	int nFirstRun;
-	int nAutoAdd;
-	int nShowAllSongs;
+	CConfigSettingBool bFirstRun;
+	CConfigSettingBool bAutoAdd;
+	CConfigSettingBool bShowAllSongs;
 
-	EMUSIK_ACTIVITY_SELECTION_TYPE eSelStyle;
+	CConfigSetting<Value<int>,EMUSIK_ACTIVITY_SELECTION_TYPE> eSelStyle;
 
-	int nSndOutput;
-	int nSndDevice;
-	int nSndRate;
-	int nSndBuffer;
-	int nSndMaxChan;
+	CConfigSettingInt nSndOutput;
+	CConfigSettingInt nSndDevice;
+	CConfigSettingInt nSndRate;
+	CConfigSettingInt nSndBuffer;
+	CConfigSettingInt nSndMaxChan;
+ 	CConfigSettingInt nSndVolume;
 
-	int nSndVolume;
-	int nUseEQ;
-	int nUsePitch;
+	CConfigSettingBool bUseEQ;
+	CConfigSettingBool bUsePitch;
 
-	EMUSIK_ACTIVITY_TYPE nActBox1;
-	EMUSIK_ACTIVITY_TYPE nActBox2;
-	EMUSIK_ACTIVITY_TYPE nActBox3;
-	EMUSIK_ACTIVITY_TYPE nActBox4;
+	CConfigSettingArray<int,ActivityBoxesMaxCount,1,EMUSIK_ACTIVITY_TYPE> nActBoxType;
 
-	int nPLStripes;
-	int nActStripes;
-	int nSourcesStripes;
+	CConfigSettingBool bPLStripes;
+	CConfigSettingBool bActStripes;
+	CConfigSettingBool bSourcesStripes;
 
-	wxString sPLStripeColour;
-	wxString sActStripeColour;
-	wxString sSourcesStripeColour;
+	CConfigSettingString sPLStripeColour;
+	CConfigSettingString sActStripeColour;
+	CConfigSettingString sSourcesStripeColour;
 
-	int nShowPLInfo;
-	int nShowSources;
-	int nShowSourcesIcons;
-	int nShowActivities;
-	int nStayOnTop;
+	CConfigSettingBool bShowPLInfo;
+	CConfigSettingBool bShowSources;
+	CConfigSettingBool bShowSourcesIcons;
+	CConfigSettingBool bShowActivities;
+	CConfigSettingBool bStayOnTop;
 
-	int nActBoxWrite;
-	int nActBoxClear;
-	int nActBoxRename;
+	CConfigSettingBool bActBoxWrite;
+	CConfigSettingBool bActBoxClear;
+	CConfigSettingBool bActBoxRename;
 
-	int nTagDlgWrite;
-	int nTagDlgClear;
-	int nTagDlgRename;
+	CConfigSettingBool bTagDlgWrite;
+	CConfigSettingBool bTagDlgClear;
+	CConfigSettingBool bTagDlgRename;
 
-	int nRepeat;
-	int nShuffle;
+	CConfigSetting<Value<int>,EMUSIK_PLAYMODE> ePlaymode;
+	CConfigSettingBool bGlobalFadeEnable;
+	CConfigSettingBool bFadeEnable;
+	CConfigSettingBool bFadeSeekEnable;
+	CConfigSettingBool bFadePauseResumeEnable;
+	CConfigSettingBool bFadeStopEnable;
+	CConfigSettingBool bFadeExitEnable;
 
-	int nGlobalFadeEnable;
-	int nFadeEnable;
-	int nFadeSeekEnable;
-	int nFadePauseResumeEnable;
-	int nFadeStopEnable;
-	int nFadeExitEnable;
-	int nFadeDuration;
-	int nFadeSeekDuration;
-	int nFadePauseResumeDuration;
-	int nFadeStopDuration;
-	int nFadeExitDuration;
+	CConfigSettingInt nFadeDuration;
+	CConfigSettingInt nFadeSeekDuration;
+	CConfigSettingInt nFadePauseResumeDuration;
+	CConfigSettingInt nFadeStopDuration;
+	CConfigSettingInt nFadeExitDuration;
 
-	int nUse_MPEGACCURATE_ForMP3VBRFiles;
-	int nAutoDelta;
+	CConfigSettingBool bUse_MPEGACCURATE_ForMP3VBRFiles;
 
-	int nBlankSwears;
-	int nSortArtistWithoutPrefix;
-	int nWebServerEnable;
-	int nWebServerPort;
+	CConfigSettingBool bBlankSwears;
+	CConfigSettingBool bSortArtistWithoutPrefix;
+	
+	CConfigSettingBool bWebServerEnable;
+	CConfigSettingInt nWebServerPort;
 
-	wxString sFramePlacement;
-	int nSourceBoxWidth;
-	int nActivityCtrlHeight;
-	wxString sAutoRename;
-	wxString sAutoTag;
-	int nAutoTagConvertUnderscoresToSpaces;
-	int nPlaylistSmartColumns;
-	int nPlaylistColumnEnable[NPLAYLISTCOLUMNS];
-	int nPlaylistColumnSize[NPLAYLISTCOLUMNS];
-	int nPlaylistColumnDynamic[NPLAYLISTCOLUMNS];
+	CConfigSettingString sFramePlacement;
+	CConfigSettingInt nSourceBoxWidth;
+	CConfigSettingInt nActivityCtrlHeight;
+	
+	CConfigSettingPath sAutoRename;
+	CConfigSettingPath sAutoTag;
+    CConfigSettingBool bAutoTagConvertUnderscoresToSpaces;
 
-	int nTunageWriteFile;
-	wxString sTunageFilename;
-	wxString sTunageFileLine;
-	int nTunageAppendFile;
-	int nTunagePostURL;
-	wxString sTunageURL;
-	int nTunageRunApp;
-	wxString sTunageCmdLine;
-	int nTunageRunOnStop;
-	wxString sTunageStoppedText;
+	CConfigSettingBool bPlaylistSmartColumns;
 
-	int bUseProxyServer;			
-	wxString sProxyServer;			
-	wxString sProxyServerPort;		
-	wxString sProxyServerUser;		
-	wxString sProxyServerPassword;	
-	int nStreamingBufferSize;		
-	int nStreamingPreBufferPercent;
-	int nStreamingReBufferPercent;
+	CConfigSettingArray<bool,NPLAYLISTCOLUMNS>  bPlaylistColumnEnable;
+	CConfigSettingArray<int,NPLAYLISTCOLUMNS> nPlaylistColumnSize;
+	CConfigSettingArray<bool,NPLAYLISTCOLUMNS> bPlaylistColumnDynamic;
+
+	CConfigSettingBool bTunageWriteFile;
+	CConfigSettingPath sTunageFilename;
+	CConfigSettingString sTunageFileLine;
+	CConfigSettingBool bTunageAppendFile;
+	CConfigSettingBool bTunagePostURL;
+	CConfigSettingString sTunageURL;
+	CConfigSettingBool bTunageRunApp;
+	CConfigSettingPath sTunageCmdLine;
+	CConfigSettingBool bTunageRunOnStop;
+	CConfigSettingString sTunageStoppedText;
+
+	CConfigSettingBool bUseProxyServer;			
+	CConfigSettingString sProxyServer;			
+	CConfigSettingString sProxyServerPort;		
+	CConfigSettingString sProxyServerUser;		
+	CConfigSettingString sProxyServerPassword;	
+	CConfigSettingInt nStreamingBufferSize;		
+	CConfigSettingInt nStreamingPreBufferPercent;
+	CConfigSettingInt nStreamingReBufferPercent;
 
 	wxString sDataPath;
 
-	int nMaxRandomHistory;
+	CConfigSettingInt nMaxRandomHistory;
 
 };
 
@@ -156,4 +457,5 @@ private:
 	wxArrayString m_Paths;
 };
 
+#pragma warning( default : 4355)
 #endif

@@ -85,7 +85,7 @@ MusikFXFrame::MusikFXFrame( wxFrame *pParent, const wxString &sTitle, const wxPo
 	slPitch->SetToolTip( _("Pitch control, right-click to reset") );
 	
 	chkPitchEnable = new wxCheckBox( this, CHK_PITCHENABLE, _("Enable Pitch control") );
-	chkPitchEnable->SetValue( g_Prefs.nUsePitch );
+	chkPitchEnable->SetValue( g_Prefs.bUsePitch );
 	hsPitch->Add( chkPitchEnable, 1, wxALIGN_CENTER | wxALIGN_CENTER_VERTICAL );
 	hsPitch->Add( slPitch, 0, wxALL, 4 );
 
@@ -132,5 +132,5 @@ void MusikFXFrame::OnRightClick( wxContextMenuEvent& event )
 
 void MusikFXFrame::OnTogglePitchEnable( wxCommandEvent& WXUNUSED(event) )
 {
-	g_Prefs.nUsePitch = chkPitchEnable->IsChecked();
+	g_Prefs.bUsePitch = chkPitchEnable->IsChecked();
 }

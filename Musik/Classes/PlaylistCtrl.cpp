@@ -104,15 +104,15 @@ CPlaylistBox::CPlaylistBox( wxWindow *parent )
 }
 void CPlaylistBox::ShowPlaylistInfo()
 {
-    if( g_Prefs.nShowPLInfo )
+    if( g_Prefs.bShowPLInfo )
        m_pPlaylistInfoCtrl->Update();
-	m_pHorzSizer->Show( m_pPlaylistInfoCtrl, ( bool )g_Prefs.nShowPLInfo );
+	m_pHorzSizer->Show( m_pPlaylistInfoCtrl, ( bool )g_Prefs.bShowPLInfo );
 	Layout();
 }
 void CPlaylistBox::Update( bool bSelFirstItem )
 {
 	m_pPlaylistCtrl->Update(bSelFirstItem);
-	if ( g_Prefs.nShowPLInfo )
+	if ( g_Prefs.bShowPLInfo )
 	{
 		m_pPlaylistInfoCtrl->Update();
 	}
@@ -344,18 +344,10 @@ wxMenu * CPlaylistCtrl::CreateContextMenu()
 
 	//--- columns context menu ---//
 	wxMenu *playlist_context_display_menu = new wxMenu;
-	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_RATING,			_( "Rating" ) );
-	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_TRACK,			_( "Track" ) );
-	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_TITLE,			_( "Title" ) );
-	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_ARTIST,			_( "Artist" ));
-	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_ALBUM,			_( "Album" ) );
-	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_YEAR,			_( "Year" ) );
-	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_GENRE,			_( "Genre" ) );
-	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_TIMES_PLAYED,	_( "Times Played" ) );
-	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_LAST_PLAYED,		_( "Last Played" ));
-	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_TIME,			_( "Time" ) );
-	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_BITRATE,			_( "Bitrate" ) );
-	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_FILENAME,		_( "Filename" ) );
+	for(size_t i = 0 ; i < NPLAYLISTCOLUMNS;i ++)
+	{
+		playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_FIRST + i,g_PlaylistColumnLabels[i] );
+	}
 	playlist_context_display_menu->AppendSeparator();
 	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_FIT,				_( "Fit Columns" ) );
 	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_SMART,			_( "No Horizontal Scroll" ) );
@@ -434,7 +426,7 @@ void CPlaylistCtrl::SaveColumns()
 	{
 		nCurrCol = m_ColumnOrder.Item( i );
 
-		if ( g_Prefs.nPlaylistColumnDynamic[nCurrCol] == 0 )
+		if ( g_Prefs.bPlaylistColumnDynamic[nCurrCol] == 0 )
 		{
 			g_Prefs.nPlaylistColumnSize[nCurrCol] = GetColumnWidth( i );
 			nStaticWidth += GetColumnWidth( i );
@@ -451,7 +443,7 @@ void CPlaylistCtrl::SaveColumns()
 	{
 		nCurrCol = m_ColumnOrder.Item( i );
 
-		if ( g_Prefs.nPlaylistColumnDynamic[nCurrCol] == 1 )
+		if ( g_Prefs.bPlaylistColumnDynamic[nCurrCol] == 1 )
 		{
 			f_Pos = (float)GetColumnWidth( i ) / (float)nRemaining * 100.0f;
 			n_Pos = MusikRound( f_Pos );
@@ -478,49 +470,8 @@ void CPlaylistCtrl::ShowMenu( wxContextMenuEvent& WXUNUSED(event) )
 }
 int CPlaylistCtrl::DisplayEventId2ColumnId( int evid)
 {
-	int nColumn = -1;
-	switch ( evid )
-	{
-	case MUSIK_PLAYLIST_DISPLAY_RATING:
-		nColumn = PLAYLISTCOLUMN_RATING;
-		break;
-	case MUSIK_PLAYLIST_DISPLAY_TRACK:
-		nColumn = PLAYLISTCOLUMN_TRACK;
-		break;
-	case MUSIK_PLAYLIST_DISPLAY_TITLE:
-		nColumn = PLAYLISTCOLUMN_TITLE;
-		break;
-	case MUSIK_PLAYLIST_DISPLAY_ARTIST:
-		nColumn = PLAYLISTCOLUMN_ARTIST;
-		break;
-	case MUSIK_PLAYLIST_DISPLAY_ALBUM:
-		nColumn = PLAYLISTCOLUMN_ALBUM;
-		break;
-	case MUSIK_PLAYLIST_DISPLAY_YEAR:
-		nColumn = PLAYLISTCOLUMN_YEAR;
-		break;
-	case MUSIK_PLAYLIST_DISPLAY_GENRE:
-		nColumn = PLAYLISTCOLUMN_GENRE;
-		break;
-	case MUSIK_PLAYLIST_DISPLAY_TIMES_PLAYED:
-		nColumn = PLAYLISTCOLUMN_TIMES_PLAYED;
-		break;
-	case MUSIK_PLAYLIST_DISPLAY_LAST_PLAYED:
-		nColumn = PLAYLISTCOLUMN_LAST_PLAYED;
-		break;
-	case MUSIK_PLAYLIST_DISPLAY_TIME:
-		nColumn = PLAYLISTCOLUMN_TIME;
-		break;
-	case MUSIK_PLAYLIST_DISPLAY_BITRATE:
-		nColumn = PLAYLISTCOLUMN_BITRATE;
-		break;
-	case MUSIK_PLAYLIST_DISPLAY_FILENAME:
-		nColumn = PLAYLISTCOLUMN_FILENAME;
-		break;
-	default:
-		wxASSERT(0);
-	}
-	return nColumn;
+	return  evid - MUSIK_PLAYLIST_DISPLAY_FIRST;
+
 }
 void CPlaylistCtrl::OnRateSel( wxCommandEvent& event )
 {
@@ -536,7 +487,7 @@ void CPlaylistCtrl::OnDisplayMenu( wxCommandEvent& event )
 	nColumn = DisplayEventId2ColumnId(event.GetId());
 	if( nColumn > -1)
 	{
-		g_Prefs.nPlaylistColumnEnable[nColumn] = !g_Prefs.nPlaylistColumnEnable[nColumn];
+		g_Prefs.bPlaylistColumnEnable[nColumn] = !g_Prefs.bPlaylistColumnEnable[nColumn];
 		ResetColumns( false, true );
 	}
 }
@@ -548,7 +499,7 @@ void CPlaylistCtrl::OnUpdateUIDisplayMenu ( wxUpdateUIEvent &event)
 {
 	int nColumn = DisplayEventId2ColumnId(event.GetId());
 	if(nColumn > -1)
-		event.Check(g_Prefs.nPlaylistColumnEnable[nColumn]);	
+		event.Check(g_Prefs.bPlaylistColumnEnable[nColumn]);	
 }
 
 void CPlaylistCtrl::OnUpdateUIDelete ( wxUpdateUIEvent &event)
@@ -583,7 +534,7 @@ void CPlaylistCtrl::OnUpdateUIRateSel ( wxUpdateUIEvent &event)
 
 void CPlaylistCtrl::OnDisplaySmart( wxCommandEvent& WXUNUSED(event) )
 {
-	g_Prefs.nPlaylistSmartColumns = !g_Prefs.nPlaylistSmartColumns;
+	g_Prefs.bPlaylistSmartColumns = !g_Prefs.bPlaylistSmartColumns;
 	RescaleColumns();
 }
 
@@ -787,6 +738,9 @@ wxString CPlaylistCtrl::OnGetItemText(long item, long column) const
 	case PLAYLISTCOLUMN_FILENAME:
 		return song.Filename;
 		break;
+	case PLAYLISTCOLUMN_NOTES:
+		return song.Notes;
+		break;
 	}
 
 	return wxT( "" );
@@ -798,7 +752,7 @@ void CPlaylistCtrl::FindColumnOrder()
 	m_aColumnSorting.Clear();
 	for ( int i = 0; i < NPLAYLISTCOLUMNS; i++ )
 	{
-		if ( g_Prefs.nPlaylistColumnEnable[i] == 1 )
+		if ( g_Prefs.bPlaylistColumnEnable[i] == 1 )
 		{
 			m_ColumnOrder.Add( i );
 		}
@@ -816,21 +770,21 @@ wxListItemAttr* CPlaylistCtrl::OnGetItemAttr(long item) const
 	const CMusikSong & song = g_Playlist.Item ( item );
 	if(g_Player.IsPlaying() && (g_SourcesCtrl->GetSelType() == MUSIK_SOURCES_NOW_PLAYING) && (g_Player.GetCurIndex() == item ))
 	{
-		if ( g_Prefs.nPLStripes == 1 )
+		if ( g_Prefs.bPLStripes == 1 )
 			return item % 2 ? (wxListItemAttr *)&m_SelectedDarkAttr : (wxListItemAttr *)&m_SelectedLightAttr;
 		else
 			return (wxListItemAttr *)&m_SelectedLightAttr;
 	}
 	else if ( g_Player.IsPlaying() && (g_SourcesCtrl->GetSelType() != MUSIK_SOURCES_NOW_PLAYING) && song.Filename == g_Player.GetCurrentFile() )
 	{
-		if ( g_Prefs.nPLStripes == 1 )
+		if ( g_Prefs.bPLStripes == 1 )
 			return item % 2 ? (wxListItemAttr *)&m_SelectedDarkAttr : (wxListItemAttr *)&m_SelectedLightAttr;
 		else
 			return (wxListItemAttr *)&m_SelectedLightAttr;
 	}
 	else
 	{
-		if ( g_Prefs.nPLStripes == 1 )
+		if ( g_Prefs.bPLStripes == 1 )
 			return item % 2 ? (wxListItemAttr *)&m_DarkAttr : (wxListItemAttr *)&m_LightAttr;
 		else
 			return (wxListItemAttr *)&m_LightAttr;
@@ -938,8 +892,6 @@ void CPlaylistCtrl::GetSelectedSongs(CMusikSongArray & aResult)
 			nIndex = GetNextItem( nIndex, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
 			if ( nIndex == -1 )
 				break;
-			//CMusikSong *pSong = new CMusikSong();
-			//g_Library.GetSongFromFilename( GetFilename( nIndex ), pSong );
 			aResult.Add( g_Playlist.Item ( nIndex ) ); 
 			
 		}
@@ -989,7 +941,7 @@ wxString  CPlaylistCtrl::GetFilename( int nItem )
 //----------------------------------------//
 void CPlaylistCtrl::ShowIcons()
 {
-	if ( g_Prefs.nPlaylistColumnEnable[PLAYLISTCOLUMN_RATING] == 0 )
+	if ( g_Prefs.bPlaylistColumnEnable[PLAYLISTCOLUMN_RATING] == 0 )
 		SetImageList( g_NullImageList, wxIMAGE_LIST_SMALL );
 	else
 		SetImageList( g_RatingImages, wxIMAGE_LIST_SMALL );
@@ -1005,13 +957,13 @@ void CPlaylistCtrl::ResynchItem( int item, int lastitem, bool refreshonly )
 {
 	if ( !refreshonly )
 	{
-		wxString sCurrFile = g_Playlist.Item( item ).Filename;
-		g_Library.GetSongFromFilename( sCurrFile, &g_Playlist.Item( item ) );
+		int songid = g_Playlist.Item( item ).songid;
+		g_Library.GetSongFromSongid( songid, &g_Playlist.Item( item ) );
 		
 		if ( lastitem > -1 && lastitem != item )
 		{
-			wxString sCurrFile = g_Playlist.Item( lastitem ).Filename;
-			g_Library.GetSongFromFilename( sCurrFile, &g_Playlist.Item(lastitem ) );		
+			int songid = g_Playlist.Item( lastitem ).songid;
+			g_Library.GetSongFromSongid( songid, &g_Playlist.Item(lastitem ) );		
 		}			
 	}
 
@@ -1091,7 +1043,7 @@ void CPlaylistCtrl::RescaleColumns( bool bFreeze, bool WXUNUSED(bSave), bool bAu
 	for ( size_t i = 0; i < m_ColumnOrder.GetCount(); i++ )
 	{
 		nCurrItem = m_ColumnOrder.Item( i );
-		if ( g_Prefs.nPlaylistColumnDynamic[nCurrItem] == 0 )
+		if ( g_Prefs.bPlaylistColumnDynamic[nCurrItem] == 0 )
 			nStaticWidth += g_Prefs.nPlaylistColumnSize[nCurrItem];
 	}
 
@@ -1099,12 +1051,12 @@ void CPlaylistCtrl::RescaleColumns( bool bFreeze, bool WXUNUSED(bSave), bool bAu
 	//--- if using smart columns, we need to find	---//
 	//--- what percentages mean.					---//
 	//-------------------------------------------------//
-	if ( g_Prefs.nPlaylistSmartColumns == 1 || bAutoFit )
+	if ( g_Prefs.bPlaylistSmartColumns == 1 || bAutoFit )
 	{
 		for ( size_t i = 0; i < m_ColumnOrder.GetCount(); i++ )
 		{
 			nCurrItem = m_ColumnOrder.Item( i );
-			if ( g_Prefs.nPlaylistColumnDynamic[nCurrItem] == 1 )
+			if ( g_Prefs.bPlaylistColumnDynamic[nCurrItem] == 1 )
 				nTotalPercent += g_Prefs.nPlaylistColumnSize[nCurrItem];
 		}
 
@@ -1132,7 +1084,7 @@ void CPlaylistCtrl::RescaleColumns( bool bFreeze, bool WXUNUSED(bSave), bool bAu
 		//-------------------------//
 		//--- set static size	---//
 		//-------------------------//
-		if ( g_Prefs.nPlaylistColumnDynamic[nCurrItem] == 0 )
+		if ( g_Prefs.bPlaylistColumnDynamic[nCurrItem] == 0 )
 			SetColumnWidth( i, g_Prefs.nPlaylistColumnSize[nCurrItem] );
 
 		//-------------------------//
@@ -1142,7 +1094,7 @@ void CPlaylistCtrl::RescaleColumns( bool bFreeze, bool WXUNUSED(bSave), bool bAu
 		{
 			n_LastDyn = i;
 
-			if ( g_Prefs.nPlaylistSmartColumns == 1 || bAutoFit )
+			if ( g_Prefs.bPlaylistSmartColumns == 1 || bAutoFit )
 			{
 				f_Per = ( (float)g_Prefs.nPlaylistColumnSize[nCurrItem] / (float)nTotalPercent ) * nRemainingWidth;
 				n_Per = (int)f_Per;
@@ -1163,7 +1115,7 @@ void CPlaylistCtrl::RescaleColumns( bool bFreeze, bool WXUNUSED(bSave), bool bAu
 	//--- remaining pixels, that may have been		---//
 	//--- lost by integer division.					---//
 	//-------------------------------------------------//
-	if ( ( g_Prefs.nPlaylistSmartColumns == 1 || bAutoFit ) && nTotalPercent && nDynamicWidth )
+	if ( ( g_Prefs.bPlaylistSmartColumns == 1 || bAutoFit ) && nTotalPercent && nDynamicWidth )
 	{
 		m_Overflow = client_size.GetWidth() - ( nStaticWidth + nDynamicWidth );
 		size_t nLastSize = GetColumnWidth( n_LastDyn ) + m_Overflow;
@@ -1227,7 +1179,7 @@ void CPlaylistCtrl::RateSel( int nVal )
 		if ( nIndex == -1 )
 			break;
 		//--- set db entry, then resync item(s) ---//
-		g_Library.SetRating( GetFilename( nIndex ), nVal );
+		g_Library.SetRating( g_Playlist.Item ( nIndex ).songid, nVal );
 		g_Playlist.Item( nIndex ).Rating = nVal;
 		RefreshItem( nIndex );
 		
@@ -1319,13 +1271,13 @@ void CPlaylistCtrl::DelSelSongs(bool bDeleteFromDB, bool bDeleteFromComputer)
 	   //--- if its valid, delete ---//
 		if( bDeleteFromDB )
 		{
-	    	sFile = g_Playlist.Item( nIndex - nDeletedSongs).Filename; // get the filename before song is deleted from the array
+	    	const CMusikSong &song = g_Playlist.Item( nIndex - nDeletedSongs); // get the filename before song is deleted from the array
 			if( bDeleteFromComputer )
 			{
-				if ( !wxRemoveFile( sFile ) )
-					sError +=  sFile + wxT( "\n" );
+				if ( !wxRemoveFile( song.Filename ) )
+					sError +=  song.Filename + wxT( "\n" );
 			}
-			g_Library.RemoveSong( sFile );
+			g_Library.RemoveSong( song.songid );
 		}
 		g_Playlist.RemoveAt( nIndex - nDeletedSongs, 1 );
 		if(bSourceNowPlayingSelected)
@@ -1373,10 +1325,10 @@ void CPlaylistCtrl::RetagSelFiles()
 	if ( m_ActiveThreadController.IsAlive() == false )
 	{
 		CMusikAutoTaggerFrame dlg(this);
-		dlg.SetConvertUnderscoresToSpaces((bool)g_Prefs.nAutoTagConvertUnderscoresToSpaces);
+		dlg.SetConvertUnderscoresToSpaces((bool)g_Prefs.bAutoTagConvertUnderscoresToSpaces);
 		if(dlg.ShowModal()==wxID_CANCEL)
 			return;
-		g_Prefs.nAutoTagConvertUnderscoresToSpaces = dlg.GetConvertUnderscoresToSpaces() ?1:0;
+		g_Prefs.bAutoTagConvertUnderscoresToSpaces = dlg.GetConvertUnderscoresToSpaces() ?1:0;
 		CMusikSongArray songs;
 		GetSelectedSongs( songs );
 		m_ActiveThreadController.AttachAndRun( new MusikPlaylistRetagThread(this, dlg.GetMask(), songs ) );

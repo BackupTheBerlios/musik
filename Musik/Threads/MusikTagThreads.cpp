@@ -66,7 +66,7 @@ void *MusikTagApplyThread::Entry()
 				//--- rename the file ---//
 				//-----------------------//
 				bRenameOK = true;
-				if ( g_Prefs.nTagDlgRename == 1 )
+				if ( g_Prefs.bTagDlgRename == 1 )
 				{
 					bRenameOK = g_Library.RenameFile( &m_Songs.Item( i ), true );
 				}
@@ -76,21 +76,21 @@ void *MusikTagApplyThread::Entry()
 				//--------------------------//
 				if ( bRenameOK )
 				{
-					if ( g_Prefs.nTagDlgWrite == 1 )
+					if ( g_Prefs.bTagDlgWrite == 1 )
 					{
 						//-----------------------------------------//
 						//--- rename will update the lib, so if	---//
-						//--- we're not renaming, update first	---//
+						//--- we're not renaming, update db too	---//
 						//-----------------------------------------//
-						g_Library.WriteTag( m_Songs.Item( i ),(bool)g_Prefs.nTagDlgClear ,g_Prefs.nTagDlgRename == 0 );
+						g_Library.WriteTag( m_Songs.Item( i ),(bool)g_Prefs.bTagDlgClear ,g_Prefs.bTagDlgRename == 0 );
 					}
 
 					//-----------------------------//
 					//--- write tag for db only ---//
 					//-----------------------------//
-					if ( g_Prefs.nTagDlgWrite == 0 && g_Prefs.nTagDlgRename == 0 )
+					if ( g_Prefs.bTagDlgWrite == 0 && g_Prefs.bTagDlgRename == 0 )
 					{
-						g_Library.UpdateItem( m_Songs.Item( i ).Filename, m_Songs.Item( i ), true );
+						g_Library.UpdateItem( m_Songs.Item( i ), true );
 					}
 				}
 			}

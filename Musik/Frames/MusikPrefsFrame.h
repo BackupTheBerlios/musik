@@ -20,6 +20,8 @@
 #endif 
 #include "wx/treectrl.h"
 
+#include "../MusikDefines.h"
+#include "../Classes/ActivityBox.h"
 enum EMUSIK_PREFERENCES_OBJECT_ID
 {
 	MUSIK_PREFERENCES_TREE = 0,
@@ -92,41 +94,17 @@ public:
 	//-----------------------------//
 	//--- options -> selections ---//
 	//-----------------------------//
-	wxComboBox	*cmbActivityBox1;
-	wxComboBox	*cmbActivityBox2;
-	wxComboBox	*cmbActivityBox3;
-	wxComboBox	*cmbActivityBox4;
+	wxComboBox	*cmbActivityBoxes[ActivityBoxesMaxCount];
 	wxComboBox	*cmbSelStyle;
 
 	//-----------------------------//
 	//--- options -> playlist	---//
 	//-----------------------------//
 
-	wxCheckBox* chkRatingEnable;
-	wxCheckBox* chkTrackEnable;
-	wxCheckBox* chkTitleEnable;
-	wxCheckBox* chkArtistEnable;
-	wxCheckBox* chkAlbumEnable;
-	wxCheckBox* chkYearEnable;
-	wxCheckBox* chkGenreEnable;
-	wxCheckBox* chkTimesPlayedEnable;
-	wxCheckBox* chkLastPlayedEnable;
-	wxCheckBox* chkTimeEnable;
-	wxCheckBox* chkBitrateEnable;
-	wxCheckBox* chkFilenameEnable;
+	wxCheckBox* chkPLColumnEnable[NPLAYLISTCOLUMNS];
 
-	wxComboBox*	cmbRatingStatic;
-	wxComboBox* cmbTrackStatic;
-	wxComboBox* cmbTitleStatic;
-	wxComboBox* cmbArtistStatic;
-	wxComboBox* cmbAlbumStatic;
-	wxComboBox* cmbYearStatic;
-	wxComboBox* cmbGenreStatic;
-	wxComboBox* cmbTimesPlayedStatic;
-	wxComboBox* cmbLastPlayedStatic;
-	wxComboBox* cmbTimeStatic;
-	wxComboBox* cmbBitrateStatic;
-	wxComboBox* cmbFilenameStatic;
+	wxComboBox*	cmbPLColumnStatic[NPLAYLISTCOLUMNS];
+
 
 	//-------------------------//
 	//--- options -> tunage ---//

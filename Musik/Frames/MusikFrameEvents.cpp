@@ -128,7 +128,7 @@ void MusikFrame::OnClose( wxCloseEvent& WXUNUSED(event) )
 	//--- event will be posted back when done.		---//
     //-------------------------------------------------//
 	Show( false );
-	if ( g_Prefs.nGlobalFadeEnable && g_Prefs.nFadeExitEnable && g_Player.IsPlaying() && !g_Player.IsPaused() )
+	if ( g_Prefs.bGlobalFadeEnable && g_Prefs.bFadeExitEnable && g_Player.IsPlaying() && !g_Player.IsPaused() )
 	{
 		g_Player.Stop( true, true );
 		return;
@@ -146,13 +146,12 @@ void MusikFrame::OnClose( wxCloseEvent& WXUNUSED(event) )
 	//-------------------------------------------------//
 	//--- save prefs and paths,						---//
 	//-------------------------------------------------//
-	g_Prefs.SavePrefs();
 	g_Paths.Save();
 
     //-------------------------------------------------//
     //--- stop webserver if necessary				---//
     //-------------------------------------------------//
-    if ( g_Prefs.nWebServerEnable )
+    if ( g_Prefs.bWebServerEnable )
 		g_WebServer.Stop();
 
     //-------------------------------------------------//
@@ -211,13 +210,13 @@ void MusikFrame::OnFX( wxCommandEvent &WXUNUSED(event) )
 void MusikFrame::OnStayOnTop( wxCommandEvent &WXUNUSED(event) )	
 { 
 	#ifdef __WXMSW__
-		g_Prefs.nStayOnTop = !g_Prefs.nStayOnTop;
-		SetStayOnTop(g_Prefs.nStayOnTop);
+		g_Prefs.bStayOnTop = !g_Prefs.bStayOnTop;
+		SetStayOnTop(g_Prefs.bStayOnTop);
 	#endif
 }
 void MusikFrame::OnUpdateStayOnTop( wxUpdateUIEvent& event)
 {
-	event.Check(g_Prefs.nStayOnTop);
+	event.Check(g_Prefs.bStayOnTop);
 }
 void MusikFrame::OnPlaylistInfoState( wxCommandEvent& WXUNUSED(event) )	
 { 
