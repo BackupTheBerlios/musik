@@ -1,4 +1,8 @@
+///////////////////////////////////////////////////
+
 #pragma once
+
+///////////////////////////////////////////////////
 
 #include "MusikSourcesCtrl.h"
 #include "MusikPlaylistCtrl.h"
@@ -9,21 +13,26 @@
 #include "MusikSelectionBar.h"
 #include "MusikNowPlayingBar.h"
 
-//-------------------------------------------------//
-//--- these need to remain constant, or 		---//
-//--- problems may arise.						---//
-//-------------------------------------------------//
+///////////////////////////////////////////////////
+
+// these need to remain constant, or
+// problems may arise.
+
 #define ID_NOWPLAYING 1344
 #define ID_SOURCESBOX 1345
 #define ID_SELECTIONBOX_START 1346
 
-//-------------------------------------------------//
-//--- forward declarations, the headers files	---//
-//--- are included in the implmentation			---//
-//-------------------------------------------------//
+///////////////////////////////////////////////////
+
+// forward declarations, the headers files
+// are included in the implmentation	
+
 class CMusikLibrary;
 class CMusikPlaylist;
 class CMusikPlayer;
+class CMusikFrameFunctor;
+
+///////////////////////////////////////////////////
 
 class CMainFrame : public CFrameWnd
 {
@@ -59,6 +68,8 @@ private:
 	HICON m_Tray_Stopped;
 
 protected:
+	CMusikFrameFunctor* m_NewSong;
+
 	CMusikPlaylist* m_LibPlaylist;
 	CMusikPlaylist* m_DynPlaylist;
 	CMusikPlaylist* m_StdPlaylist;
@@ -109,4 +120,5 @@ public:
 	afx_msg void OnDestroy();
 };
 
+///////////////////////////////////////////////////
 

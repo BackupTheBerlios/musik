@@ -1,8 +1,10 @@
-// MainFrm.cpp : implementation of the CMainFrame class
-//
+///////////////////////////////////////////////////
 
 #include "stdafx.h"
+
 #include "Musik.h"
+#include "MainFrm.h"
+#include "MainFrmFunctor.h"
 
 #include "../Musik.Core/include/StdString.h"
 
@@ -12,11 +14,13 @@
 #include <io.h>
 #include <Direct.h>
 
-#include "MainFrm.h"
+///////////////////////////////////////////////////
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+
+///////////////////////////////////////////////////
 
 int WM_SELBOXUPDATE = RegisterWindowMessage( "SELBOXUPDATE" );
 
@@ -78,9 +82,10 @@ void CMainFrame::InitPaths()
 
 void CMainFrame::InitMusik()
 {
+	m_NewSong		= new CMusikFrameFunctor( this );
 	m_LibPlaylist	= new CMusikPlaylist();	
 	m_Library		= new CMusikLibrary( ( CStdString )m_Database );
-	m_Player		= new CMusikPlayer();
+	m_Player		= new CMusikPlayer( m_NewSong );
 	m_Prefs			= new CMusikPrefs( m_PrefsIni );
 }
 
@@ -94,6 +99,8 @@ void CMainFrame::CleanMusik()
 		delete m_Prefs;
 	if ( m_Player )
 		delete m_Player;
+	if ( m_NewSong )
+		delete m_NewSong;
 	if ( m_LibPlaylist )
 		delete m_LibPlaylist;
 	if ( m_DynPlaylist )

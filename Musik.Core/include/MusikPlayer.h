@@ -35,13 +35,14 @@ enum
 class CMusikLibrary;
 class CMusikPlayerMain;
 class CMusikPlaylist;
+class CMusikFunctor;
 
 ///////////////////////////////////////////////////
 
 class CMusikPlayer	
 {
 public: 	
-	CMusikPlayer();
+	CMusikPlayer( CMusikFunctor* functor );
 	~CMusikPlayer();
 
 	int  InitSound( int mode = MUSIK_PLAYER_INIT_START );
@@ -61,15 +62,19 @@ private:
 	bool m_IsPlaying;
 	bool m_IsPaused;
 
+	CMusikFunctor* m_Functor;
+
 	CMusikStreamPtrArray* m_ActiveStreams;
 	CIntArray* m_ActiveChannels;
 
-	ACE_Thread_Mutex* main_mutex;
+	ACE_Thread_Mutex main_mutex;
 	ACE_Thread* main_thread;
 
 	CMusikLibrary* m_Library;
 	CMusikPlaylist* m_Playlist;
 
+	void* m_NewSong;
+	void CallNewSongPtr();
 };
 
 ///////////////////////////////////////////////////

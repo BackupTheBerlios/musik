@@ -137,6 +137,9 @@
 			<File
 				RelativePath=".\MainFrm.h">
 			</File>
+			<File
+				RelativePath=".\MainFrmFunctor.h">
+			</File>
 			<Filter
 				Name="CPropTree"
 				Filter="">
@@ -329,6 +332,9 @@
 			</File>
 			<File
 				RelativePath="..\Musik.Core\include\MusikDynDspInfo.h">
+			</File>
+			<File
+				RelativePath="..\Musik.Core\include\MusikFunctor.h">
 			</File>
 			<File
 				RelativePath="..\Musik.Core\src\MusikLibrary.cpp">

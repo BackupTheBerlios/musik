@@ -133,6 +133,9 @@
 			RelativePath=".\include\MusikArrays.h">
 		</File>
 		<File
+			RelativePath=".\include\MusikFunctor.h">
+		</File>
+		<File
 			RelativePath=".\include\MusikSongInfoCache.h">
 		</File>
 		<File

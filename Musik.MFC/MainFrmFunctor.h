@@ -1,0 +1,38 @@
+///////////////////////////////////////////////////
+
+#pragma once
+
+///////////////////////////////////////////////////
+
+#include "MainFrm.h"
+#include "../Musik.Core/include/MusikFunctor.h"
+
+///////////////////////////////////////////////////
+
+class CMainFrame;
+
+///////////////////////////////////////////////////
+
+class CMusikFrameFunctor : public CMusikFunctor
+{
+public:
+	CMusikFrameFunctor( CMainFrame* parent )
+	{ 
+		m_Parent = parent; 
+	}
+
+	~CMusikFrameFunctor()
+	{
+		
+	}
+
+	virtual void Call()
+	{
+
+	};
+
+private:
+	CMainFrame* m_Parent;
+};
+
+///////////////////////////////////////////////////
