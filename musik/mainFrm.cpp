@@ -246,6 +246,7 @@ static void MainFrameWorker( CmusikThread* thread )
 			if ( cnt == 6 )
 			{
 				parent->ResetSelBoxes();
+				parent->m_wndView->GetCtrl()->UpdateV();
 				cnt = 0;
 			}
 		}
@@ -753,6 +754,7 @@ BOOL CMainFrame::DestroyWindow()
 
 // This function is Copyright (c) 2000, Cristi Posea.
 // See www.datamekanix.com for more control bars tips&tricks.
+
 BOOL CMainFrame::VerifyBarState( LPCTSTR lpszProfileName )
 {
     CDockState state;
@@ -844,6 +846,7 @@ LRESULT CMainFrame::OnSelBoxEditCommit( WPARAM wParam, LPARAM lParam )
 		delete playlist;
 
 		CmusikBatchRetag* params = new CmusikBatchRetag( m_Library, m_RemoveOldFnct, pSongInfoArray );
+		params->m_WriteToFile = m_Prefs->WriteTagsToFile();
 		CmusikThread* thread = new CmusikThread();
 
 		m_Threads.push_back( thread );

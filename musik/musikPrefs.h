@@ -40,13 +40,14 @@ public:
 	// main dialog
 	//
 
-	CSize GetDlgSize( ){ return m_Dlg_Size; }
-	CPoint GetDlgPos( ){ return m_Dlg_Pos; }
-	bool IsMaximized( ){ return m_Dlg_Maximized; }
-	bool ResetUI( ){ return m_Dlg_ResetUI; }
-	int	GetStdPlaylistPrompt( ){ return m_Dlg_StdPlaylist_Prompt; }
-	bool PlaylistInfoVisible( ){ return m_Dlg_PlaylistInfoVisible; }
-	bool PurgeOnStartup( ){ return m_Dlg_PurgeOnStartup; }
+	CSize GetDlgSize(){ return m_Dlg_Size; }
+	CPoint GetDlgPos(){ return m_Dlg_Pos; }
+	bool IsMaximized(){ return m_Dlg_Maximized; }
+	bool ResetUI(){ return m_Dlg_ResetUI; }
+	int	GetStdPlaylistPrompt(){ return m_Dlg_StdPlaylist_Prompt; }
+	bool PlaylistInfoVisible(){ return m_Dlg_PlaylistInfoVisible; }
+	bool PurgeOnStartup(){ return m_Dlg_PurgeOnStartup; }
+	bool WriteTagsToFile(){ return m_Dlg_WriteTagsToFile; }
 
 	void SetDlgSize( const CSize sz ){ m_Dlg_Size = sz; }
 	void SetDlgPos( const CPoint pt ){ m_Dlg_Pos = pt; }
@@ -55,24 +56,24 @@ public:
 	void SetStdPlaylistPrompt( int prompt ){ m_Dlg_StdPlaylist_Prompt = prompt; }
 	void SetPlaylistInfoVisible( bool visible )	{ m_Dlg_PlaylistInfoVisible = visible; }
 	void SetPurgeOnStartup( bool purge ){ m_Dlg_PurgeOnStartup = purge; }
+	void SetWriteTagsToFile( bool write ){ m_Dlg_WriteTagsToFile = write; }
 
 	//
 	// selection box
 	//
 
-	size_t GetSelBoxCount ( ){ return m_SelectionBox_Count; }
-
-	void SetSelBoxCount ( size_t n ) { m_SelectionBox_Count = n; }
+	size_t GetSelBoxCount(){ return m_SelectionBox_Count; }
+	void SetSelBoxCount( size_t n ){ m_SelectionBox_Count = n; }
 
 	//
 	// playlist 
 	//
 
-	CIntArray GetPlaylistOrder( ){ return m_Playlist_Order; }
-	CIntArray GetPlaylistSizes( ){ return m_Playlist_Sizes; }
+	CIntArray GetPlaylistOrder(){ return m_Playlist_Order; }
+	CIntArray GetPlaylistSizes(){ return m_Playlist_Sizes; }
 	int GetPlaylistCol( int n ){ return m_Playlist_Order.at( n ); }
 	int	GetPlaylistColWidth( int n ){ return m_Playlist_Sizes.at( n ); }
-	size_t GetPlaylistColCount( ){ return m_Playlist_Order.size(); }
+	size_t GetPlaylistColCount(){ return m_Playlist_Order.size(); }
 	
 	void SetPlaylistOrder( CIntArray n ){ m_Playlist_Order = n; }	
 	void SetPlaylistSizes( CIntArray n ){ m_Playlist_Sizes = n; }
@@ -81,20 +82,19 @@ public:
 	// now playing
 	//
 
-	int	GetNowPlayingCaptionFontSize( ){ return m_NowPlaying_CaptionFont; }
-
+	int	GetNowPlayingCaptionFontSize(){ return m_NowPlaying_CaptionFont; }
 	void SetNowPlayingCaptionFontSize( int y ){ m_NowPlaying_CaptionFont = y; }
 
 	//
 	// player
 	//
 
-	int	GetPlayerDriver( ){ return m_Player_Driver; }					
-	int	GetPlayerDevice( ){ return m_Player_Device; }
-	int	GetPlayerRate( ){ return m_Player_Rate; }
-	int	GetPlayerMaxChannels( )	{ return m_Player_Max_Channels; }
-	int	GetPlayerVolume( ){ return m_Player_Volume; }
-	unsigned long GetPlayerPlaymode( ){ return m_Player_Playmode; }
+	int	GetPlayerDriver(){ return m_Player_Driver; }					
+	int	GetPlayerDevice(){ return m_Player_Device; }
+	int	GetPlayerRate(){ return m_Player_Rate; }
+	int	GetPlayerMaxChannels()	{ return m_Player_Max_Channels; }
+	int	GetPlayerVolume(){ return m_Player_Volume; }
+	unsigned long GetPlayerPlaymode(){ return m_Player_Playmode; }
 
 	void SetPlayerDrive( int n ){ m_Player_Driver = n; }
 	void SetPlayerDevice( int n ){ m_Player_Device = n; }
@@ -156,6 +156,7 @@ private:
 	int		m_Dlg_StdPlaylist_Prompt;
 	bool	m_Dlg_PlaylistInfoVisible;
 	bool	m_Dlg_PurgeOnStartup;
+	bool	m_Dlg_WriteTagsToFile;
 
 	// selection area
 	size_t	m_SelectionBox_Count;
