@@ -230,3 +230,46 @@ int CMusikPlaylist::GetSongID( int index )
 }
 
 ///////////////////////////////////////////////////
+
+// CMusikPlaylistInfo
+
+///////////////////////////////////////////////////
+
+CMusikPlaylistInfo::CMusikPlaylistInfo()
+{
+	m_Type = -1;
+	m_ID = -1;
+}
+
+///////////////////////////////////////////////////
+
+CMusikPlaylistInfo::CMusikPlaylistInfo( CStdString name, int type, int id )
+{
+	m_Name = name;
+	m_Type = type;
+	m_ID = id;
+}
+
+///////////////////////////////////////////////////
+
+CMusikPlaylistInfo::~CMusikPlaylistInfo()
+{
+}
+
+///////////////////////////////////////////////////
+
+void CMusikPlaylistInfo::Set( CStdString name, int type, int id )
+{
+	m_Name = name;
+	m_Type = type;
+	m_ID = id;
+}
+
+///////////////////////////////////////////////////
+
+void CMusikPlaylistInfo::SaveToLibrary( CMusikLibrary* lib )
+{
+	
+}
+
+///////////////////////////////////////////////////

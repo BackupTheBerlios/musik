@@ -98,9 +98,19 @@ enum
 
 ///////////////////////////////////////////////////
 
+enum
+{
+	MUSIK_PLAYLIST_TYPE_LIBRARY_OR_DEVICE = 0,
+	MUSIK_PLAYLIST_TYPE_STANDARD,
+	MUSIK_PLAYLIST_TYPE_DYNAMIC
+};
+
+///////////////////////////////////////////////////
+
 #define SONG_TABLE_NAME "songs"
 #define STD_PLAYLIST_TABLE_NAME "std_playlist"
 #define STD_PLAYLIST_SONGS "std_playlist_song"
+#define DYN_PLAYLIST_TABLE_NAME "dyn_playlist"
 #define CROSSFADER_PRESETS "crossfader_presets"
 
 ///////////////////////////////////////////////////
@@ -156,12 +166,15 @@ public:
 	bool SetLastPlayedToNow	( int songid );
 	bool SetSongRating		( int songid, int rating );
 
-	// querying playlists
-	void GetAllStdPlaylists ( CStdStringArray* target, bool clear_target = true );
-	void CreateStdPlaylist	( const CStdString& name, const CIntArray& songids );
+	// querying playlists [complete]
+	void GetAllStdPlaylists ( CMusikPlaylistInfoArray* target, bool clear_target = true );
+	void GetAllDynPlaylists	( CMusikPlaylistInfoArray* target, bool clear_target = true );
+	void CreateStdPlaylist	( const CStdString& name, const CStdStringArray& songids );
+	void CreateDynPlaylist	( const CStdString& name, const CStdString& query );
 	void DeleteStdPlaylist	( const CStdString& name );
-	void CreateDynPlaylist	( CStdString name, CStdString query );
-	void DeleteDynPlaylist	( CStdString name );
+	void DeleteStdPlaylist	( int id );
+	void DeleteDynPlaylist	( const CStdString& name );
+	void DeleteDynPlaylist	( int id );
 
 	// querying crossfaders
 	void GetCrossfader		( const CStdString& name, CMusikCrossfader* fader );

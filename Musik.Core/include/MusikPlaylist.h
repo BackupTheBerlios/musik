@@ -24,6 +24,7 @@
 // Class(s): 
 //
 //   CMusikPlaylist,
+//   CMusikPlaylistInfo,
 //   CMusikSong,
 //   CMusikSongInfo
 //
@@ -34,18 +35,21 @@
 // Information:
 //
 //   CMusikPlaylist:
-//     is a CMusikSongArray manager. It allows easy
+//     a CMusikSongArray manager. It allows easy
 //     adding, removing, and querying of songs.
 //
+//   CMusikPlaylistInfo:
+//     a class that contains info about a CMusikPlaylist
+//
 //   CMusikSong:
-//     is a small class that only contains the (unique)
+//     a small class that only contains the (unique)
 //     ID of the song as it exists in the loaded database, as
 //     well as a few utility functions to access it's respective
 //     information. The library must be setup using
 //     CMusikSong::SetLibrary(), which is a static function.
 //
 //   CMusikSongInfo:
-//     is a larger class than CMusikSong, as it actually
+//     a larger class than CMusikSong, as it actually
 //     stores all of the database information in memory,
 //     rather than querying the database to retrieve it.
 //
@@ -128,6 +132,35 @@ public:
 
 private:
 	CMusikSongArray m_Songs;
+};
+
+///////////////////////////////////////////////////
+
+class CMusikPlaylistInfo
+{
+public:
+
+	// construct and destruct
+	CMusikPlaylistInfo();
+	CMusikPlaylistInfo( CStdString name, int type, int id );
+	~CMusikPlaylistInfo();
+	
+	// gets
+	CStdString GetName(){ return m_Name; }
+	int GetType(){ return m_Type; }
+	int GetID(){ return m_ID; }
+
+	// sets
+	void Set( CStdString name, int type, int id );
+
+	// misc
+	void Rename( CStdString new_name );
+	void SaveToLibrary( CMusikLibrary* library );
+
+private:
+	CStdString m_Name;
+	int m_Type;
+	int m_ID;
 };
 
 ///////////////////////////////////////////////////

@@ -177,6 +177,36 @@ static int sqlite_AddRowToStringArray( void *args, int numCols, char **results, 
 
 ///////////////////////////////////////////////////
 
+static int sqlite_AddStdPlaylistInfoArray( void *args, int numCols, char **results, char ** columnNames )
+{
+	// this is a callback for sqlite to use when 
+	// adding std playlist info to an array	
+
+	CMusikPlaylistInfoArray* p = (CMusikPlaylistInfoArray*)args;
+	
+	CMusikPlaylistInfo info ( results[0], MUSIK_PLAYLIST_TYPE_STANDARD, atoi( results[1] ) );
+	p->push_back( info ); 
+
+    return 0;
+}
+
+///////////////////////////////////////////////////
+
+static int sqlite_AddDynPlaylistInfoArray( void *args, int numCols, char **results, char ** columnNames )
+{
+	// this is a callback for sqlite to use when 
+	// adding std playlist info to an array	
+
+	CMusikPlaylistInfoArray* p = (CMusikPlaylistInfoArray*)args;
+	
+	CMusikPlaylistInfo info ( results[0], MUSIK_PLAYLIST_TYPE_DYNAMIC, atoi( results[1] ) );
+	p->push_back( info ); 
+
+    return 0;
+}
+
+///////////////////////////////////////////////////
+
 CMusikLibrary::CMusikLibrary( const CStdString& filename )
 {
 	m_pDB = NULL;
@@ -319,6 +349,40 @@ bool CMusikLibrary::InitStdTables()
 
 ///////////////////////////////////////////////////
 
+bool CMusikLibrary::InitDynTable()
+{
+	bool error = false;
+
+	// construct the table that contains a list of
+	// all the standard playlist names
+	static const char *szCreateDBQuery  = 
+		"CREATE TABLE " DYN_PLAYLIST_TABLE_NAME " ( "	
+		"dyn_playlist_id INTEGER AUTO_INCREMENT PRIMARY KEY, "
+		"dyn_playlist_name varchar(255), "
+		"dyn_playlist_query varchar(1024) "
+		" );";
+
+	// put a lock on the library and open it up
+	m_ProtectingLibrary->acquire();
+
+	char *pErr = NULL;
+
+	if ( m_pDB )
+		sqlite_exec( m_pDB, szCreateDBQuery, NULL, NULL, NULL );
+
+	if ( pErr )
+	{
+		error = true;
+		sqlite_freemem( pErr );
+	}
+
+	m_ProtectingLibrary->release();
+
+	return error;
+}
+
+///////////////////////////////////////////////////
+
 bool CMusikLibrary::InitCrossfaderTable()
 {
 	bool error = false;
@@ -436,6 +500,9 @@ bool CMusikLibrary::Startup()
 
 		if ( !InitStdTables() )
 			error = true;  
+
+		if ( !InitDynTable() )
+			error = true;
    }
    else
 	   error = true;
@@ -528,7 +595,7 @@ void CMusikLibrary::DeleteCrossfader( CMusikCrossfader* fader )
 
 ///////////////////////////////////////////////////
 
-void CMusikLibrary::CreateStdPlaylist( const CStdString& name, const CIntArray& songids )
+void CMusikLibrary::CreateStdPlaylist( const CStdString& name, const CStdStringArray& songids )
 {
 	CStdString sQuery;
 	int nID;
@@ -563,13 +630,33 @@ void CMusikLibrary::CreateStdPlaylist( const CStdString& name, const CIntArray& 
 			sQuery.Format( "INSERT INTO %s VALUES ( %d, %d ); ",
 				STD_PLAYLIST_SONGS,
 				nID,
-				songids.at( i ) );
+				this->GetIDFromFilename( songids.at( i ) ) );
 
 			sqlite_exec_printf( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
 		}
 	}	
 
 	// release the mutex lock
+	m_ProtectingLibrary->release();
+}
+
+///////////////////////////////////////////////////
+
+void CMusikLibrary::CreateDynPlaylist( const CStdString& name, const CStdString& query )
+{
+	CStdString sQuery;
+
+	// create query to make new entry to 
+	// std_playlist table
+	sQuery.Format( "INSERT INTO %s VALUES ( %d,'%s', '%s' ); ",
+		DYN_PLAYLIST_TABLE_NAME,
+		0,
+		name.c_str(),
+		query.c_str() );
+
+	// do it
+	m_ProtectingLibrary->acquire();
+	sqlite_exec( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
 	m_ProtectingLibrary->release();
 }
 
@@ -613,21 +700,55 @@ void CMusikLibrary::DeleteStdPlaylist( const CStdString& name )
 
 ///////////////////////////////////////////////////
 
-void CMusikLibrary::CreateDynPlaylist( CStdString name, CStdString query )
+void CMusikLibrary::DeleteStdPlaylist( int id )
 {
-	// lock it up
-	m_ProtectingLibrary->acquire();
+	CStdString sQuery;
 
+	// remove entry from table containing
+	// the list of standard playlists
+	sQuery.Format( "DELETE FROM %s WHERE dyn_playlist_id = %d;",
+		DYN_PLAYLIST_TABLE_NAME,
+		id );
+
+	// do it
+	m_ProtectingLibrary->acquire();
+	sqlite_exec_printf( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
 	m_ProtectingLibrary->release();
 }
 
 ///////////////////////////////////////////////////
 
-void CMusikLibrary::DeleteDynPlaylist( CStdString name )
+void CMusikLibrary::DeleteDynPlaylist( const CStdString& name )
 {
-	// lock it up and close it down.
-	m_ProtectingLibrary->acquire();
+	CStdString sQuery;
 
+	// remove entry from table containing
+	// the list of standard playlists
+	sQuery.Format( "DELETE FROM %s WHERE dyn_playlist_name = '%s';",
+		DYN_PLAYLIST_TABLE_NAME,
+		name.c_str() );
+
+	// do it
+	m_ProtectingLibrary->acquire();
+	sqlite_exec_printf( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
+	m_ProtectingLibrary->release();
+}
+
+///////////////////////////////////////////////////
+
+void CMusikLibrary::DeleteDynPlaylist( int id )
+{
+	CStdString sQuery;
+
+	// remove entry from table containing
+	// the list of standard playlists
+	sQuery.Format( "DELETE FROM %s WHERE dyn_playlist_id = %d;",
+		DYN_PLAYLIST_TABLE_NAME,
+		id );
+
+	// do it
+	m_ProtectingLibrary->acquire();
+	sqlite_exec_printf( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
 	m_ProtectingLibrary->release();
 }
 
@@ -1009,15 +1130,29 @@ bool CMusikLibrary::SetSongRating( int songid, int rating )
 
 ///////////////////////////////////////////////////
 
-void CMusikLibrary::GetAllStdPlaylists( CStdStringArray* target, bool clear_target )
+void CMusikLibrary::GetAllStdPlaylists( CMusikPlaylistInfoArray* target, bool clear_target )
 {
 	if ( clear_target )
 		target->clear();
 
-	CStdString sQuery( "SELECT std_playlist_name FROM " STD_PLAYLIST_TABLE_NAME " WHERE std_playlist_name <> ''" );
+	CStdString sQuery( "SELECT std_playlist_name,std_playlist_id FROM " STD_PLAYLIST_TABLE_NAME " WHERE std_playlist_name <> ''" );
 
 	m_ProtectingLibrary->acquire();
-	sqlite_exec( m_pDB, sQuery.c_str(), &sqlite_AddRowToStringArray, target, NULL );
+	sqlite_exec( m_pDB, sQuery.c_str(), &sqlite_AddStdPlaylistInfoArray, target, NULL );
+	m_ProtectingLibrary->release();
+}
+
+///////////////////////////////////////////////////
+
+void CMusikLibrary::GetAllDynPlaylists( CMusikPlaylistInfoArray* target, bool clear_target )
+{
+	if ( clear_target )
+		target->clear();
+
+	CStdString sQuery( "SELECT dyn_playlist_name,dyn_playlist_id FROM " DYN_PLAYLIST_TABLE_NAME " WHERE dyn_playlist_name <> ''" );
+
+	m_ProtectingLibrary->acquire();
+	sqlite_exec( m_pDB, sQuery.c_str(), &sqlite_AddDynPlaylistInfoArray, target, NULL );
 	m_ProtectingLibrary->release();
 }
 

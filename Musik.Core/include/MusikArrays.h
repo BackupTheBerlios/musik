@@ -58,12 +58,16 @@
 
 class CMusikSong;
 class CMusikSongInfo;
+class CMusikPlaylist;
+class CMusikPlaylistInfo;
 
 ///////////////////////////////////////////////////
 
 typedef std::vector<CStdString> CStdStringArray;
 typedef std::vector<CMusikSong> CMusikSongArray;
 typedef std::vector<CMusikSongInfo> CMusikSongInfoArray;
+typedef std::vector<CMusikPlaylist> CMusikPlaylistArray;
+typedef std::vector<CMusikPlaylistInfo> CMusikPlaylistInfoArray;
 typedef std::vector<int> CIntArray;
 typedef std::vector<FSOUND_STREAM*> CMusikStreamPtrArray;
 
