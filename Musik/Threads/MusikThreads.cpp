@@ -190,9 +190,7 @@ void *MusikCrossfaderThread::Entry()
 	{
 		//--- check abort signal ---//
 		if ( TestDestroy() )
-		{
 			return NULL;
-		}
 
 		//--- fade down ---//
 		for ( size_t j = 0; j < g_ActiveStreams.GetCount() - 1; j++ )
