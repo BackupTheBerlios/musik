@@ -904,20 +904,18 @@ bool CmusikPlayer::Prev()
 	// to the previous track
 	if ( GetTimeNow( MUSIK_TIME_MS ) < 2000 || !IsPlaying() )
 	{
-		if ( m_Playmode & MUSIK_PLAYER_PLAYMODE_REPEAT_PLAYLIST )
-		{
-			if ( m_Index -1 < 0 )
-				m_Index = (int)m_Playlist->GetCount() - 1;	
-		}
+		m_Index--;
 
-		else
+		if ( m_Index < 0 )
 		{
-			if ( m_Index - 1 < 0 )
-				m_Index = 0;
+			if ( m_Playmode & MUSIK_PLAYER_PLAYMODE_REPEAT_PLAYLIST )
+				m_Index = (int)m_Playlist->GetCount() - 1;	
 			else
-				m_Index--;
+				m_Index = 0;
 		}
 	}
+	//  else
+	//      m_Index = m_Index;
 
 	// song time elapsted is greater than 2000 ms
 	// we want to start the song over
