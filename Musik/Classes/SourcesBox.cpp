@@ -408,15 +408,15 @@ void CSourcesListBox::TranslateKeys( wxListEvent& pEvent )
 
 void CSourcesListBox::Create()
 {
-	wxTextFile Out;
-	Out.Create( MUSIK_SOURCES_FILENAME );
-	Out.Open();
-	if ( Out.IsOpened() )
+	wxTextFile Out( MUSIK_SOURCES_FILENAME );
+
+	Out.Create();
+	if ( Out.Open() )
 	{
 		Out.AddLine( wxT( "[l] Musik Library" ) );
+		Out.Write();
+		Out.Close();
 	}
-	Out.Write();
-	Out.Close();
 }
 
 void CSourcesListBox::Load()
