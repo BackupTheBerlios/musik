@@ -109,6 +109,10 @@ void CmusikSelectionBar::ShowMenu()
 	main_menu.LoadMenu( IDR_SELECTION_BOX_MENU );
 	popup_menu = main_menu.GetSubMenu( 0 );
 
+	// check / enable / disable menu items
+	if ( m_Prefs->GetSelBoxCount() == 1 )
+		popup_menu->EnableMenuItem( ID_SELECTIONBOX_REMOVE, MF_DISABLED | MF_GRAYED );
+		
 	int type = GetCtrl()->GetType();
 	switch( type )
 	{

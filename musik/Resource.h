@@ -179,13 +179,15 @@
 #define ID_EQUALIZER_REMEMBERPERSONG    32876
 #define ID_EQUALIZER_AUTOMATICALLYSAVE  32878
 #define ID_EQUALIZER_ENABLED2           32880
+#define ID_SELECTIONBOX_ADDNEW          32881
+#define ID_SELECTIONBOX_REMOVE          32882
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        147
-#define _APS_NEXT_COMMAND_VALUE         32881
+#define _APS_NEXT_COMMAND_VALUE         32883
 #define _APS_NEXT_CONTROL_VALUE         1051
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

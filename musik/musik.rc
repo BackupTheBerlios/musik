@@ -184,6 +184,9 @@ BEGIN
             MENUITEM "Bitrate",                     ID_CHANGETYPE_BITRATE
         END
         MENUITEM SEPARATOR
+        MENUITEM "Add New",                     ID_SELECTIONBOX_ADDNEW
+        MENUITEM "Remove",                      ID_SELECTIONBOX_REMOVE
+        MENUITEM SEPARATOR
         MENUITEM "Rename\tF2",                  ID_SELECTIONBOX_RENAME
     END
 END
