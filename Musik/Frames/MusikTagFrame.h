@@ -130,6 +130,9 @@ public:
 	void CheckChangesSingle	();
 	void CheckChangesBatch	();
 
+	//--- virtual overrides ---//
+	virtual bool Show( bool show = true );
+
 	//--- thread related functions ---//
 	void SetProgress			( int n	)				{ m_Progress = n; }
 	void SetProgressType		( int n )				{ m_ProgressType = n;		}

@@ -1,4 +1,5 @@
 0.1.3 to 0.1.4
+ + Redesigned playlist popup menu
  - Fixed Bug: DND / retagging multipe artists with the same album, etc.
  - Fixed Bug: stop / pause / resume work with crossfade being disabled.
  + Optimized db querys (gunnar)

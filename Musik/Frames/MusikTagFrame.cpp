@@ -255,7 +255,7 @@ MusikTagFrame::MusikTagFrame( wxFrame* pParent, CMusikSongArray aSongs, int nCur
 	for ( int i = 0; i < ID3_NR_OF_V1_GENRES; i++ )
 		cmbGenre->Append( ConvA2W( ID3_v1_genre_description[i] ) );
 
-	LoadFirst();
+	//LoadFirst();
 }
 
 void MusikTagFrame::SetCaption()
@@ -266,20 +266,32 @@ void MusikTagFrame::SetCaption()
 		SetTitle( _("Tag information editing (batch)") );	
 }
 
+bool MusikTagFrame::Show( bool show )
+{
+	bool bRet = wxWindow::Show( show );
+	
+	if ( show )
+	{
+		if( ( nType == MUSIK_TAG_MULTIPLE ) || ( m_Songs.GetCount() < 2 ) )
+		{
+			hsNav->Show( btnPrev, false );
+			hsNav->Show( btnNext, false );
+		}	
+
+		chkWriteTag->SetValue	( g_Prefs.nTagDlgWrite	);
+		chkClear->SetValue		( g_Prefs.nTagDlgClear	);
+		chkRename->SetValue		( g_Prefs.nTagDlgRename	);
+
+		SetChecks( nType );
+		PopulateTagDlg();
+	}
+	
+	return bRet;	
+}
+
 void MusikTagFrame::LoadFirst()
 {
-	if( ( nType == MUSIK_TAG_MULTIPLE ) || ( m_Songs.GetCount() < 2 ) )
-	{
-		hsNav->Show( btnPrev, false );
-		hsNav->Show( btnNext, false );
-	}	
 
-	chkWriteTag->SetValue	( g_Prefs.nTagDlgWrite	);
-	chkClear->SetValue		( g_Prefs.nTagDlgClear	);
-	chkRename->SetValue		( g_Prefs.nTagDlgRename	);
-
-	SetChecks( nType );
-	PopulateTagDlg();
 }
 
 void MusikTagFrame::SetChecks( const int i )
