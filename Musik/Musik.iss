@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=Musik
-AppVerName=0.2.0
+AppVerName="Musik 0.2.0"
 AppPublisherURL=http://musik.berlios.de
 AppSupportURL=http://musik.berlios.de
 AppUpdatesURL=http://musik.berlios.de
