@@ -30,6 +30,8 @@ public:
 
 private:
 	CSplitterWnd m_MainSplit;
+	CSplitterWnd m_SourcesSplit;
+	CSplitterWnd m_PlaylistSplit;
 	bool m_Split;
 
 protected:

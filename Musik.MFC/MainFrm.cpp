@@ -89,26 +89,43 @@ BOOL CMainFrame::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* pContext )
 	CRect client_size;
 	GetClientRect( &client_size );
 
-	if ( !m_MainSplit.CreateStatic( this, 1, 2 ) )
-	{
-		MessageBox( "Error setting up views. Please report this to the Musik development team.", "Musik", MB_OK | MB_ICONERROR );
-		return FALSE;
-	}
+	//-------------------------------------------------//
+	//--- separates the top of the dialog with the	---//
+	//--- now playing portion.						---//
+	//--- +--------+								---//
+	//--- |        |								---//
+	//--- |        |								---//
+	//--- +--------+								---//
+	//--- +--------+								---//
+	//-------------------------------------------------//
+	m_MainSplit.CreateStatic( this, 2, 1 );
+	m_MainSplit.CreateView( 1, 0, RUNTIME_CLASS( CMusikSourcesView ), CSize( client_size.Width(), client_size.Height() / 2 ), pContext );
 
-	if ( !m_MainSplit.CreateView( 0, 0, RUNTIME_CLASS( CMusikSourcesView ), CSize( client_size.Width()/2, client_size.Height() ), pContext ) )
-	{
-		MessageBox( "Error setting up the sources view. Please report this error to the Musik development team.", "Musik", MB_OK | MB_ICONERROR );
-		return FALSE;
-	}
+	//-------------------------------------------------//
+	//--- separates the sources area and the right	---//
+	//--- half of the top							---//
+	//--- +-+------+								---//
+	//--- | |      |								---//
+	//--- | |      |								---//
+	//--- +-+------+								---//
+	//--- +--------+								---//
+	//-------------------------------------------------//
+	m_SourcesSplit.CreateStatic( &m_MainSplit, 1, 2, WS_CHILD | WS_VISIBLE, m_MainSplit.IdFromRowCol( 0, 0 ) );
+	m_SourcesSplit.CreateView( 0, 0, RUNTIME_CLASS( CMusikSourcesView ), CSize( 100, client_size.Height() ), pContext );
 
-	if ( !m_MainSplit.CreateView( 0, 1, RUNTIME_CLASS( CMusikPlaylistView ), CSize( client_size.Width()/2, client_size.Height() ), pContext ) )
-	{
-		MessageBox( "Error setting up the playlist view. Please report this error to the Musik development team.", "Musik", MB_OK | MB_ICONERROR );
-		return FALSE;
-	}
+	//-------------------------------------------------//
+	//--- separates the selection area and the		---//
+	//--- playlist									---//
+	//--- +-+------+								---//
+	//--- | +------|								---//
+	//--- | |      |								---//
+	//--- +-+------+								---//
+	//--- +--------+								---//
+	//-------------------------------------------------//
+	m_PlaylistSplit.CreateStatic( &m_SourcesSplit, 2, 1, WS_CHILD | WS_VISIBLE, m_SourcesSplit.IdFromRowCol( 0, 1 ) );
+	m_PlaylistSplit.CreateView( 0, 0, RUNTIME_CLASS( CMusikSourcesView ), CSize( 100, 100 ), pContext );
+	m_PlaylistSplit.CreateView( 1, 0, RUNTIME_CLASS( CMusikSourcesView ), CSize( 100, 100 ), pContext );
 
-	//m_SourcesCtrl = m_MainSplit.GetPane( 0, 0 );
-	//m_PlaylistCtrl = m_MainSplit.GetPane( 0, 1 );
 	m_Split = true;
 
 	return TRUE;
@@ -117,15 +134,5 @@ BOOL CMainFrame::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* pContext )
 void CMainFrame::OnSize( UINT nType, int cx, int cy )
 {
 	CFrameWnd::OnSize( nType, cx, cy );
-	CRect client_size;
-	GetWindowRect( &client_size );
 
-	if ( m_Split && nType != SIZE_MINIMIZED )
-	{
-		m_MainSplit.SetRowInfo( 0, cy, 0 );
-		m_MainSplit.SetColumnInfo( 0, client_size.Width() / 2, 50 );
-		m_MainSplit.SetColumnInfo( 0, client_size.Width() / 2, 50 );
-
-		m_MainSplit.RecalcLayout();
-	}
 }
