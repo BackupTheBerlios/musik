@@ -44,6 +44,7 @@ BEGIN_EVENT_TABLE( CMusikPlayer, wxEvtHandler )
 	//---------------------------------------------------------//
     EVT_MENU			( MUSIK_PLAYER_NEXT_SONG,		CMusikPlayer::OnNextSongEvt		)
     EVT_MENU			( MUSIK_PLAYER_FADE_COMPLETE,	CMusikPlayer::OnFadeCompleteEvt )
+	EVT_MENU			( MUSIK_PLAYER_STOP,			CMusikPlayer::OnPlayerStop		)
 END_EVENT_TABLE()
 
 CMusikPlayer::CMusikPlayer()
@@ -372,8 +373,8 @@ void CMusikPlayer::Resume( bool bCheckFade )
 
 void CMusikPlayer::Stop( bool bCheckFade, bool bExit )
 {
-	//if ( g_FaderThread->IsCrossfaderActive() )
-	//	g_FaderThread->CrossfaderAbort();
+	if ( g_FaderThread->IsCrossfaderActive() )
+		g_FaderThread->CrossfaderAbort( true );
 
 	//-------------------------------------------------//
 	//--- setup crossfader and return, if the prefs	---//

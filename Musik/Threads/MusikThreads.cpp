@@ -41,19 +41,35 @@ void MusikFaderThread::SetCrossfaderActive( bool active )
 	m_CrossfaderActive = active;
 }
 
-void MusikFaderThread::CrossfaderAbort()
+void MusikFaderThread::CrossfaderAbort( bool bStopPlayer )
 {
 	if ( IsCrossfaderActive() )
 	{
-		pCrossfader->Abort();		//--- will tell the fader not to clean up old streams ---//
+		//---------------------------------------------------------//
+		//--- tell the player to send a "stop playback" event	---//
+		//--- to the player when done. this is used when using	---//
+		//--- a STOP crossfade.									---//
+		//---------------------------------------------------------//
+		if ( bStopPlayer )
+			pCrossfader->SetStopPlayer();
+
+		//---------------------------------------------------------//
+		//--- Abort() tells fader NOT to clean up old streams	---//
+		//---------------------------------------------------------//
+		pCrossfader->Abort();		
 		pCrossfader->Delete();	
 	}
 }
 
-void MusikFaderThread::CrossfaderStop()
+void MusikFaderThread::CrossfaderStop( bool bStopPlayer )
 {
 	if ( IsCrossfaderActive() )
+	{
+		if ( bStopPlayer )
+			pCrossfader->SetStopPlayer();
+
 		pCrossfader->Delete();
+	}
 }
 
 void *MusikFaderThread::Entry()
@@ -132,8 +148,9 @@ void MusikFaderThread::OnExit()
 //---------------------------------------------------------//
 MusikCrossfaderThread::MusikCrossfaderThread( MusikFaderThread *pParent )
 {
-	m_Parent = pParent;
-	m_Aborted = false;
+	m_Parent		= pParent;
+	m_StopPlayer	= false;
+	m_Aborted		= false;
 }
 
 void MusikCrossfaderThread::Abort()
@@ -265,6 +282,8 @@ void MusikCrossfaderThread::OnExit()
 	//--- no other fading is going on, so it can	---//
 	//--- manage and clean up any orphan streams	---//
 	//-------------------------------------------------//
+	m_Parent->SetCrossfaderActive( false );
+
 	if ( !m_Aborted )
 	{
 		wxCommandEvent FadeCompleteEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYER_FADE_COMPLETE );	
@@ -272,7 +291,12 @@ void MusikCrossfaderThread::OnExit()
 		Yield();
 	}
 
-	m_Parent->SetCrossfaderActive( false );
+	if ( m_StopPlayer )
+	{
+		wxCommandEvent StopPlayerEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_PLAYER_STOP );	
+		wxPostEvent( &g_Player, StopPlayerEvt );
+		Yield();
+	}
 }
 
 //---------------------------------------------------------//
