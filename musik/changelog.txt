@@ -1,6 +1,7 @@
 ----------------------------------------------------------------------------
 a4:
 
+  - fixed a bug where not all changes to playlists were detected.
   - shuffle right from right click menus is disabled unless the visible 
     playlist is "now playing"
   - sources types can be toggled on and off. right click in sources ->

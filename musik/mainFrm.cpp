@@ -876,6 +876,7 @@ void CMainFrame::SetPlaylist( bool update, bool hide_sort_arrow, bool select_non
 	// CmusikPlaylistCtrl::SetPlaylist will take ownership
 	// of the old playlist to stay CPU and memory friendly
 	m_Playlist = new CmusikPlaylist();
+	m_Playlist->m_Type = m_wndView->GetCtrl()->GetPlaylist()->m_Type;
 }
 
 ///////////////////////////////////////////////////
