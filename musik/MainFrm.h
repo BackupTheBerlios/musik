@@ -202,6 +202,7 @@ protected:
 	CmusikFrameFunctor* m_NewSong;
 
 	// current playlist, only a pointer
+	void SetPlaylist( bool update_view = true, bool hide_sort_arrow = true );
 	CmusikPlaylist* m_LibPlaylist;
 
 	// library, player, and prefs

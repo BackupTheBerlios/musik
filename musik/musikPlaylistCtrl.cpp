@@ -117,7 +117,7 @@ END_MESSAGE_MAP()
 CmusikPlaylistCtrl::CmusikPlaylistCtrl( CFrameWnd* mainwnd, CmusikLibrary* library, CmusikPlayer* player, CmusikPrefs* prefs, UINT dropid_l, UINT dropid_r )
 {
 	// core
-	m_Playlist	= new CmusikPlaylist();
+	m_Playlist	= NULL;
 	m_Library	= library;
 	m_Prefs		= prefs;
 	m_Player	= player;
@@ -168,7 +168,9 @@ CmusikPlaylistCtrl::CmusikPlaylistCtrl( CFrameWnd* mainwnd, CmusikLibrary* libra
 
 CmusikPlaylistCtrl::~CmusikPlaylistCtrl()
 {
-	delete m_Playlist;
+	if ( m_Playlist )
+		delete m_Playlist;
+
 	delete m_SongInfoCache;
 	delete m_ImageList;
 }
@@ -755,9 +757,11 @@ void CmusikPlaylistCtrl::SetPlaylist( CmusikPlaylist* playlist )
 	// we may need to save it. so check...
 	SavePlaylist();
 
-	// clear the old playlist and set it again
-	m_Playlist->Clear();
-	*m_Playlist = *playlist;
+	// set the playlist and cache it
+	if ( m_Playlist )
+		delete m_Playlist;
+
+	m_Playlist = playlist;
 
 	if ( m_SongInfoCache )
 		m_SongInfoCache->SetPlaylist( playlist );
