@@ -129,8 +129,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 
 	// menu 
 	ON_COMMAND(ID_FILE_PREFERENCES, OnFilePreferences)
-	ON_COMMAND(ID_OPEN_FILES, OnOpenFiles)
-	ON_COMMAND(ID_OPEN_DIRECTORY, OnOpenDirectory)
+	ON_COMMAND(ID_ADD_FILES, OnAddFiles)
+	ON_COMMAND(ID_ADD_DIRECTORY, OnAddDirectory)
 	ON_COMMAND(ID_FILE_SAVEPLAYLIST, OnFileSaveplaylist)
 	ON_COMMAND(ID_VIEW_PLAYLISTINFORMATION, OnViewPlaylistinformation)
 	ON_COMMAND(ID_VIEW_SOURCES, OnViewSources)
@@ -189,7 +189,6 @@ static void MainFrameWorker( CmusikThread* thread )
 
 	size_t pos = 0;
 	size_t cnt = 0;
-	size_t thr_cnt = 0;
 	char turn;
 
 	// sleep if we go idle
@@ -214,8 +213,7 @@ static void MainFrameWorker( CmusikThread* thread )
 		if ( thread->m_Abort )
 			break;
 
-		thr_cnt = parent->m_Threads.size();
-		if ( thr_cnt )
+		if ( parent->m_Threads.size() )
 		{
 			switch ( pos )
 			{
@@ -238,13 +236,11 @@ static void MainFrameWorker( CmusikThread* thread )
 			}
 
 			sCaption = parent->m_Caption;
-			for ( size_t i = 0; i < thr_cnt; i++ )
+			for ( size_t i = 0; i < parent->m_Threads.size(); i++ )
 			{
 				sCaption += _T( "  " );
 				sCaption += turn;
 			}
-
-			parent->SetWindowText( sCaption );
 
 			// update ui every 3 seconds
 			++cnt;
@@ -1244,7 +1240,7 @@ void CMainFrame::OnFilePreferences()
 
 ///////////////////////////////////////////////////
 
-void CMainFrame::OnOpenFiles()
+void CMainFrame::OnAddFiles()
 {
 	// create the open dialog object
 	CmusikFileDialog opendlg( TRUE, "mp3", NULL, OFN_ALLOWMULTISELECT | OFN_EXPLORER, 
@@ -1354,7 +1350,7 @@ bool CMainFrame::FreeThread( CmusikThread* pThread )
 
 ///////////////////////////////////////////////////
 
-void CMainFrame::OnOpenDirectory()
+void CMainFrame::OnAddDirectory()
 {
 	TCHAR path[MAX_PATH];
 	BROWSEINFO bi = { 0 };

@@ -70,9 +70,6 @@ CmusikPlaylistCtrl::CmusikPlaylistCtrl( CFrameWnd* mainwnd, CmusikLibrary* libra
 	// main window
 	m_MainWnd = mainwnd;
 
-	// get rating extent
-	GetRatingExtent();
-
 	// misc
 	m_Changed = true;
 	m_DropArrange = false;
@@ -85,6 +82,9 @@ CmusikPlaylistCtrl::CmusikPlaylistCtrl( CFrameWnd* mainwnd, CmusikLibrary* libra
 	// fonts and colors
 	InitFonts();
 	InitColors();
+
+	// get rating extent
+	GetRatingExtent();
 }
 
 ///////////////////////////////////////////////////
@@ -463,15 +463,15 @@ void CmusikPlaylistCtrl::OnNMClick(NMHDR *pNMHDR, LRESULT *pResult)
 			// spaces in front of the item text -- so
 			// shift point that far in the X axis
 			int nOffset;
-			if ( hit_test.iSubItem != 0 )
+			if ( hit_test.iSubItem > 0 )
 				nOffset = m_TwoSpace;
 			else
 				nOffset = 2;
 
 			int nRating;
-			if ( ptCurr.x <= nOffset )
+			if ( ( ptCurr.x ) <= nOffset )
 				nRating = 0;
-			else if ( ptCurr.x >= m_RatingExtent + m_TwoSpace )
+			else if ( ( ptCurr.x - nOffset ) >= m_RatingExtent + nOffset )
 				nRating = 5;
 			else
 				nRating = ( ( ptCurr.x - nOffset ) / ( m_RatingExtent / 5 ) ) + 1;

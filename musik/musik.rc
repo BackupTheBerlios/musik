@@ -78,10 +78,10 @@ IDR_MAINFRAME MENU
 BEGIN
     POPUP "&File"
     BEGIN
-        POPUP "&Open"
+        POPUP "&Add"
         BEGIN
-            MENUITEM "F&iles\tCtrl+O",              ID_OPEN_FILES
-            MENUITEM "&Directory\tCtrl+D",          ID_OPEN_DIRECTORY
+            MENUITEM "F&iles\tCtrl+O",              ID_ADD_FILES
+            MENUITEM "&Directory\tCtrl+D",          ID_ADD_DIRECTORY
         END
         POPUP "&Unsynchronized Tags"
         BEGIN
@@ -154,8 +154,8 @@ BEGIN
     "P",            ID_FILE_PREFERENCES,    VIRTKEY, CONTROL, NOINVERT
     "S",            ID_FILE_SAVEPLAYLIST,   VIRTKEY, CONTROL, NOINVERT
     VK_F6,          ID_NEXT_PANE,           VIRTKEY, NOINVERT
-    "D",            ID_OPEN_DIRECTORY,      VIRTKEY, CONTROL, NOINVERT
-    "O",            ID_OPEN_FILES,          VIRTKEY, CONTROL, NOINVERT
+    "D",            ID_ADD_DIRECTORY,       VIRTKEY, CONTROL, NOINVERT
+    "O",            ID_ADD_FILES,           VIRTKEY, CONTROL, NOINVERT
     VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
     "N",            ID_VIEW_NOWPLAYING,     VIRTKEY, SHIFT, CONTROL, 
                                                     NOINVERT

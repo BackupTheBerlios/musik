@@ -61,8 +61,8 @@
 #define IDC_FIELDSTRING1                1036
 #define ID_FILE_PREFERENCES             32771
 #define ID_FILE_SEP                     32772
-#define ID_OPEN_FILES                   32774
-#define ID_OPEN_DIRECTORY               32775
+#define ID_ADD_FILES                    32774
+#define ID_ADD_DIRECTORY                32775
 #define ID_OPEN_MANAGEDIRECTORIES       32776
 #define ID_FILE_MANAGEDIRECTORIES       32777
 #define ID_FILE_SAVEPLAYLIST            32778

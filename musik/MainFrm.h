@@ -198,8 +198,8 @@ protected:
 	afx_msg void OnSysColorChange();
 	afx_msg void OnFilePreferences();
 	afx_msg void OnDestroy();
-	afx_msg void OnOpenFiles();
-	afx_msg void OnOpenDirectory();
+	afx_msg void OnAddFiles();
+	afx_msg void OnAddDirectory();
 	afx_msg void OnFileSaveplaylist();
 	afx_msg void OnViewPlaylistinformation();
 	afx_msg void OnUpdateViewSources(CCmdUI *pCmdUI);
