@@ -284,6 +284,12 @@
 					Name="musikListCtrl"
 					Filter="">
 					<File
+						RelativePath=".\musikHeaderCtrl.cpp">
+					</File>
+					<File
+						RelativePath=".\musikHeaderCtrl.h">
+					</File>
+					<File
 						RelativePath=".\musikListCtrl.cpp">
 					</File>
 					<File
@@ -364,13 +370,23 @@
 				</Filter>
 			</Filter>
 			<Filter
-				Name="SaveStdPlaylist"
+				Name="musikSaveStdPlaylist"
 				Filter="">
 				<File
 					RelativePath=".\musikSaveStdPlaylist.cpp">
 				</File>
 				<File
 					RelativePath=".\musikSaveStdPlaylist.h">
+				</File>
+			</Filter>
+			<Filter
+				Name="musikFileDrop"
+				Filter="">
+				<File
+					RelativePath=".\musikFileDrop.cpp">
+				</File>
+				<File
+					RelativePath=".\musikFileDrop.h">
 				</File>
 			</Filter>
 		</Filter>

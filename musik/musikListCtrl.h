@@ -46,6 +46,10 @@
 
 ///////////////////////////////////////////////////
 
+#include "musikHeaderCtrl.h"
+
+///////////////////////////////////////////////////
+
 #define LCSB_CLIENTDATA 1
 #define LCSB_NCOVERRIDE 2
 
@@ -64,11 +68,24 @@ public:
 	// hide scrollbars
 	void HideScrollBars( int Type, int Which=SB_BOTH );
 
+	// call this to subclass the header to our
+	// custom column arranging version. this should
+	// only be done once, and cannot be undone
+	void SubclassHeader();
+
 protected:
 
 	// message maps
 	afx_msg void OnNcCalcSize( BOOL bCalcValidRects, NCCALCSIZE_PARAMS FAR* lpncsp );
 	afx_msg int OnCreate( LPCREATESTRUCT lpCreateStruct );
+
+	// custom header
+	CmusikHeaderCtrl* m_HeaderCtrl;
+
+	// function the custom header control
+	// will use as a callback after a column
+	// has been moved
+	virtual void OnDragColumn( int source, int dest );
 
 	// macros
 	DECLARE_MESSAGE_MAP()

@@ -66,10 +66,12 @@ int CmusikPlaylistView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	// child
 	long dwStyle = WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_OWNERDATA | WS_VSCROLL | WS_HSCROLL | LVS_SHOWSELALWAYS;
-	long dwStyleEx = LVS_EX_FULLROWSELECT | LVS_EX_HEADERDRAGDROP;
+	long dwStyleEx = LVS_EX_FULLROWSELECT /*| LVS_EX_HEADERDRAGDROP*/;
 
 	m_Playlist->Create( dwStyle, CRect( 0, 0, 0, 0 ), this, 123 );
 	m_Playlist->SetExtendedStyle( dwStyleEx );
+
+	m_Playlist->SubclassHeader();
 
 	if ( m_Prefs->PlaylistInfoVisible() )
 		InitPlaylistInfo();

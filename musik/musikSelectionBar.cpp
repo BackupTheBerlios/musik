@@ -44,7 +44,6 @@ int CmusikSelectionBar::OnCreate( LPCREATESTRUCT lpCreateStruct )
 	m_wndChild->SetExtendedStyle( dwStyleEx );
 	m_wndChild->ModifyStyleEx( WS_EX_STATICEDGE, NULL );
 
-
 	if ( !m_Font.CreateStockObject(DEFAULT_GUI_FONT) )
 		return -1;
 

@@ -49,6 +49,7 @@
 #include <afxdisp.h>	// OLE stuff
 #include <shlwapi.h>	// Shell functions (PathFindExtension() in this case)
 #include <afxpriv.h>	// ANSI to/from Unicode conversion macros
+#include ".\musiklistctrl.h"
 
 ///////////////////////////////////////////////////
 
@@ -64,12 +65,16 @@ CmusikListCtrl::CmusikListCtrl()
 {
 	NCOverride = FALSE;	//False as default...
 	Who = SB_BOTH;		//Default remove both...
+
+	m_HeaderCtrl = NULL;
 }
 
 ///////////////////////////////////////////////////
 
 CmusikListCtrl::~CmusikListCtrl()
 {
+	if ( m_HeaderCtrl )
+		delete m_HeaderCtrl;
 }
 
 ///////////////////////////////////////////////////
@@ -86,7 +91,7 @@ int CmusikListCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CListCtrl::OnCreate(lpCreateStruct) == -1)
 		return -1;
-	
+
 	return 0;
 }
 
@@ -156,3 +161,27 @@ void CmusikListCtrl::HideScrollBars(int Type, int Which)
 		Who=Which;			//Selects which scrollbars to get hidden.
 	}
 }
+
+///////////////////////////////////////////////////
+
+void CmusikListCtrl::OnDragColumn( int source, int dest )
+{
+	// virtual
+}
+
+///////////////////////////////////////////////////
+
+void CmusikListCtrl::SubclassHeader()
+{
+	if ( !m_HeaderCtrl )
+	{
+		ASSERT( GetHeaderCtrl() );
+
+		// init custom header
+		m_HeaderCtrl = new CmusikHeaderCtrl();
+		m_HeaderCtrl->SetCallback( this, (void (CWnd::*)(int, int))OnDragColumn );
+		m_HeaderCtrl->SubclassWindow( GetHeaderCtrl()->m_hWnd );
+	}
+}
+
+///////////////////////////////////////////////////

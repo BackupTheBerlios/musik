@@ -63,6 +63,9 @@ protected:
 	// is dnd active
 	UINT m_DropID;
 
+	// is a column being arranged?
+	bool m_Arranging;
+
 	// for some reason creating a CmusikDir
 	// object during a drop operation causes
 	// it to fail. i can't imagine why, its 
@@ -85,6 +88,11 @@ protected:
 
 	CmusikPlaylist* m_Playlist;
 	int m_PlaylistType;
+
+	// function the custom header control
+	// will use as a callback after a column
+	// has been moved
+	virtual void OnDragColumn( int source, int dest );
 
 	// fonts
 	void InitFonts();

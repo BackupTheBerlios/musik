@@ -9,6 +9,7 @@
 #include "musikPlaylistCtrl.h"
 #include "musikSourcesCtrl.h"
 #include "musikBatchAddFunctor.h"
+#include "musikFileDrop.h"
 
 #include "musikSaveStdPlaylist.h"
 
@@ -61,6 +62,9 @@ CmusikPlaylistCtrl::CmusikPlaylistCtrl( CFrameWnd* mainwnd, CmusikLibrary* libra
 	m_Library	= library;
 	m_Prefs		= prefs;
 	m_Player	= player;
+
+	// is a column being rearranged?
+	m_Arranging = false;
 
 	// musik will always start up
 	// with library default selected
@@ -271,7 +275,7 @@ void CmusikPlaylistCtrl::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 	// draw the sub items
 	else if ( pLVCD->nmcd.dwDrawStage == ( CDDS_ITEMPREPAINT | CDDS_SUBITEM ) )
 	{
-		if ( m_Playlist && pLVCD->nmcd.dwItemSpec < m_Playlist->GetCount() )
+		if ( m_Playlist && pLVCD->nmcd.dwItemSpec < m_Playlist->GetCount() && !m_Arranging )
 		{
 			CDC *pDC = CDC::FromHandle(pLVCD->nmcd.hdc);
 			int nSubType = m_Prefs->GetPlaylistCol( pLVCD->iSubItem );
@@ -845,6 +849,11 @@ void CmusikPlaylistCtrl::OnDropFiles( HDROP hDropInfo )
 	else
 		files = new CStdStringArray();
 
+	// see if we need to prompt the user for
+	// which playlist to insert files to...
+	CmusikFileDrop* pDlg = new CmusikFileDrop( this );
+	pDlg->DoModal();
+
 	CStdString sTemp;
 	for ( size_t i = 0; i < nNumFiles; i++ )
 	{
@@ -1063,6 +1072,20 @@ bool CmusikPlaylistCtrl::SavePlaylist()
 	}
 
 	return false;
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlaylistCtrl::OnDragColumn( int source, int dest )
+{
+	if ( source == dest )
+		return;
+
+	m_Arranging = true;
+
+	m_Arranging = false;
+
+    ResetColumns();
 }
 
 ///////////////////////////////////////////////////
