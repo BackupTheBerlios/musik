@@ -71,10 +71,13 @@ BOOL CmusikApp::InitInstance()
 	pFrame->UpdateWindow();
 
 	// see if we opened a file
-	CCommandLineInfo cmd;
-	ParseCommandLine( cmd );
-	if ( !cmd.m_strFileName.IsEmpty() )
-		pFrame->PlayCmd( (CStdString)cmd.m_strFileName );
+	CString sCmdLine = m_lpCmdLine;
+	if ( !sCmdLine.IsEmpty() )
+	{
+		sCmdLine.Delete( 0 );
+		sCmdLine.Delete( sCmdLine.GetLength() - 1 );
+		pFrame->PlayCmd( sCmdLine );
+	}
 
 	// call DragAcceptFiles only if there's a suffix
 	//  In an SDI app, this should occur after ProcessShellCommand
@@ -98,19 +101,7 @@ BOOL CmusikApp::OnAnotherInstanceMessage( LPMSG pMsg )
 		// this case, the command line sent
 		// to the last instance of the program
 		::GlobalGetAtomName( (ATOM)pMsg->wParam, m_lpCmdLine, _MAX_FNAME );	
-
-		// delete the atom
-		int nChecker = 0;
-		::SetLastError( ERROR_SUCCESS );
-		while ( ::GetLastError() == ERROR_SUCCESS )
-		{
-			::GlobalDeleteAtom(  (ATOM)pMsg->wParam );	
-			nChecker++;
-			if ( nChecker > 100 )
-				break;
-		}
-		if ( nChecker > 100 )
-			TRACE0( "There appears to be a problem removing the global ATOM.\n" );
+		::GlobalDeleteAtom( (ATOM)pMsg->wParam );	
 	}
 
 	Play( m_lpCmdLine );
@@ -120,7 +111,7 @@ BOOL CmusikApp::OnAnotherInstanceMessage( LPMSG pMsg )
 
 ///////////////////////////////////////////////////
 
-void CmusikApp::Play( const CStdString& fn )
+void CmusikApp::Play( const CString& fn )
 {
 	if ( m_pMainWnd )
 	{

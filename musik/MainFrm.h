@@ -98,7 +98,7 @@ public:
 	#endif
 
 	// misc
-	bool PlayCmd( const CStdString& fn );
+	bool PlayCmd( const CString& fn );
 
 	UINT m_uSelectionDrop;
 	UINT m_uPlaylistDrop;

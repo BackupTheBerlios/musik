@@ -459,7 +459,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 ///////////////////////////////////////////////////
 
-bool CMainFrame::PlayCmd( const CStdString& fn )
+bool CMainFrame::PlayCmd( const CString& fn )
 {
 	if ( fn.IsEmpty() )
 		return false;
@@ -467,7 +467,7 @@ bool CMainFrame::PlayCmd( const CStdString& fn )
 	if ( m_Library )
 	{
 		// add song to library, if necessary
-		m_Library->AddSong( fn );
+		m_Library->AddSong( (CStdString)fn );
 
 		// get player's playlist
 		CmusikPlaylist* pPlaylist = m_Player->GetPlaylist();
@@ -475,7 +475,7 @@ bool CMainFrame::PlayCmd( const CStdString& fn )
 		{
 			// get the song we just added...
 			CmusikSong song;
-			m_Library->GetSongFromFilename( fn, song );
+			m_Library->GetSongFromFilename( (CStdString)fn, song );
 
 			// add to the control's playlist
 			if ( song.GetID() >= 0 )
@@ -486,9 +486,13 @@ bool CMainFrame::PlayCmd( const CStdString& fn )
 				// set the player's playlist, and play
 				if ( m_Player )
 				{
-					m_Player->SetPlaylist( pPlaylist );
 					if ( !m_Player->IsPlaying() )
 						m_Player->Play( pPlaylist->GetCount() - 1, MUSIK_CROSSFADER_NEW_SONG );
+
+					m_wndView->GetCtrl()->SetPlaylist( m_Player->GetPlaylist(), MUSIK_SOURCES_TYPE_NOWPLAYING );
+					m_wndView->GetCtrl()->UpdateV();
+
+					m_wndSources->GetCtrl()->FocusNowPlaying();
 				}
 
 				ResetSelBoxes();

@@ -34,7 +34,7 @@ public:
 
 private:
 
-	void Play( const CStdString& fn );
+	void Play( const CString& fn );
 };
 
 ///////////////////////////////////////////////////
