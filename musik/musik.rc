@@ -143,12 +143,13 @@ BEGIN
     BEGIN
         POPUP "Display"
         BEGIN
-            MENUITEM "16 Band",                     ID_EQUALIZER_STATE_16BAND
+            MENUITEM "18 Band",                     ID_EQUALIZER_STATE_18BAND
 
-            MENUITEM "8 Band",                      ID_EQUALIZER_STATE_8BAND
-            MENUITEM "4 Band",                      ID_EQUALIZER_STATE_4BAND
+            MENUITEM "6 Band",                      ID_EQUALIZER_STATE_6BAND
         END
         MENUITEM "Lock Channels",               ID_EQUALIZER_LOCKCHANNELS
+        MENUITEM SEPARATOR
+        MENUITEM "Set as Default",              ID_EQUALIZER_SET_AS_DEFAULT
         MENUITEM SEPARATOR
         MENUITEM "Presets",                     ID_EQUALIZER_PRESETS
     END

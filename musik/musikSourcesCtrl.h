@@ -71,7 +71,6 @@ protected:
 public:
 	afx_msg void OnSourcesRename();
 	afx_msg void OnSourcesDelete();
-	afx_msg void OnEqualizerState16band();
 };
 
 ///////////////////////////////////////////////////

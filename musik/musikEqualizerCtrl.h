@@ -62,6 +62,9 @@ protected:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnEqualizerPresets();
 	afx_msg void OnEqualizerLockchannels();
+	afx_msg void OnEqualizerState18band();
+	afx_msg void OnEqualizerState6band();
+	afx_msg void OnEqualizerSetAsDefault();
 
 	// custom message maps
 	afx_msg LRESULT OnClosePresets( WPARAM wParam, LPARAM lParam );
@@ -69,10 +72,6 @@ protected:
 	// macros
 	DECLARE_DYNAMIC(CmusikEqualizerBar)
 	DECLARE_MESSAGE_MAP()
-public:
-	afx_msg void OnEqualizerState16band();
-	afx_msg void OnEqualizerState8band();
-	afx_msg void OnEqualizerState4band();
 };
 
 ///////////////////////////////////////////////////
@@ -83,9 +82,8 @@ public:
 
 enum 
 {
-	MUSIK_EQUALIZER_CTRL_16BANDS = 16,
-	MUSIK_EQUALIZER_CTRL_8BANDS = 8,
-	MUSIK_EQUALIZER_CTRL_4BANDS = 4
+	MUSIK_EQUALIZER_CTRL_18BANDS = 18,
+	MUSIK_EQUALIZER_CTRL_6BANDS = 6
 };
 
 ///////////////////////////////////////////////////
@@ -112,6 +110,7 @@ public:
 	// actions
 	void LoadCurrSong();
 	void LoadDefault();
+	void SetAsDefault();
 
 	// message maps
 	afx_msg void OnPaint();
@@ -138,8 +137,8 @@ protected:
 	CmusikPrefs* m_Prefs;
 
 	// controls
-	CmusikTrackCtrl m_LeftBands[16];
-	CmusikTrackCtrl m_RightBands[16];
+	CmusikTrackCtrl m_LeftBands[18];
+	CmusikTrackCtrl m_RightBands[18];
 
 	// macros
 	DECLARE_DYNAMIC(CmusikEqualizerCtrl)

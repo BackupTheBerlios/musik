@@ -149,16 +149,18 @@
 #define ID_SOURCES_DELETE               32853
 #define ID_Menu32854                    32854
 #define ID_SOURCES_EDITQUERY            32855
-#define ID_EQUALIZER_STATE_16BAND       32856
-#define ID_EQUALIZER_STATE_8BAND        32857
-#define ID_EQUALIZER_STATE_4BAND        32858
+#define ID_Menu32860                    32860
+#define ID_EQUALIZER_SET_AS_DEFAULT     32861
+#define ID_EQUALIZER_STATE_18BAND       32862
+#define ID_EQUALIZER_STATE_9BAND        32863
+#define ID_EQUALIZER_STATE_6BAND        32864
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        145
-#define _APS_NEXT_COMMAND_VALUE         32859
+#define _APS_NEXT_COMMAND_VALUE         32865
 #define _APS_NEXT_CONTROL_VALUE         1048
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

@@ -205,19 +205,8 @@ void CmusikTrackCtrl::OnMouseMove(UINT nFlags, CPoint point)
 	if ( m_Player && m_LockIfNotPlaying && !m_Player->IsPlaying() )
 		return;
 
-    if ( nFlags & MK_LBUTTON )
-	{
-		if ( !m_IsCapturing )
-		{
-			m_LeftDown = true;
-			SetCapture();
-			SetCursor( NULL );
-
-			m_IsCapturing = true;
-		}
-
+    if ( nFlags & MK_LBUTTON && m_IsCapturing )
 		SetPosFromMouse();
-	}
 }
 
 ///////////////////////////////////////////////////
@@ -226,6 +215,15 @@ void CmusikTrackCtrl::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	if ( m_Player && m_LockIfNotPlaying && !m_Player->IsPlaying() )
 		return;
+
+	if ( !m_IsCapturing )
+	{
+		m_LeftDown = true;
+		SetCapture();
+		SetCursor( NULL );
+
+		m_IsCapturing = true;
+	}
 
 	GetCursorPos( &m_Cursor );
 	SetPosFromMouse();
