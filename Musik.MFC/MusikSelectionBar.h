@@ -18,6 +18,7 @@ public:
 	virtual ~CMusikSelectionBar();
 
 	int GetCtrlID(){ return m_wndChild->GetCtrlID(); }
+	void SetUpdating( bool updating = true ){ m_wndChild->SetUpdating( updating ); }
 
 //-------------------------------------------------//
 //--- variables									---//

@@ -271,7 +271,17 @@ void CMainFrame::OnDestroy()
 
 LRESULT CMainFrame::OnUpdateSel( WPARAM wParam, LPARAM lParam )
 {
-	MessageBox( "test", NULL, NULL );
+	int sender = wParam;
+	for( size_t i = 0; i < m_Prefs->GetSelBoxCount(); i++ )
+	{
+		if ( m_wndSelectionBars[i]->GetCtrlID() != sender )
+		{
+			m_wndSelectionBars[i]->SetUpdating( true );
+		
+			m_wndSelectionBars[i]->SetUpdating( false );
+		}
+	}
+
 
 	return 0L;
 }

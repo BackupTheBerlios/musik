@@ -16,6 +16,7 @@ public:
 	virtual ~CMusikSelectionCtrl();
 
 	int GetCtrlID(){ return m_ID; }
+	void SetUpdating( bool updating = true ){ m_Updating = updating; }
 
 protected:
 	CFrameWnd* m_Parent;
@@ -23,6 +24,7 @@ protected:
 	CStdStringArray m_Items;
 	int m_Type;
 	int m_ID;
+	bool m_Updating;
 
 	DECLARE_MESSAGE_MAP()
 

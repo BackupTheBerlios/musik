@@ -17,6 +17,7 @@ CMusikSelectionCtrl::CMusikSelectionCtrl( CFrameWnd* parent, CMusikLibrary* libr
 	m_Type = type;
 	m_Parent = parent;
 	m_ID = ctrl_id;
+	m_Updating = false;
 	HideScrollBars( LCSB_NCOVERRIDE, /*SB_HORZ*/ SB_BOTH );
 }
 
@@ -85,13 +86,16 @@ void CMusikSelectionCtrl::OnLvnItemchanged(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
 
-	// only interested in state changes
-	if ( pNMLV->uChanged & LVIF_STATE )
+	if ( !m_Updating )
 	{
-		if ( pNMLV->uNewState & LVIS_SELECTED )
+		// only interested in state changes
+		if ( pNMLV->uChanged & LVIF_STATE )
 		{
-			int WM_SELBOXUPDATE = RegisterWindowMessage( "SELBOXUPDATE" );
-			m_Parent->SendMessage( WM_SELBOXUPDATE );
+			if ( pNMLV->uNewState & LVIS_SELECTED )
+			{
+				int WM_SELBOXUPDATE = RegisterWindowMessage( "SELBOXUPDATE" );
+				m_Parent->SendMessage( WM_SELBOXUPDATE, GetCtrlID() );
+			}
 		}
 	}
 
