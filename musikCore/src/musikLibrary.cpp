@@ -743,6 +743,76 @@ bool CmusikLibrary::InitLibTable()
 
 ///////////////////////////////////////////////////
 
+bool CmusikLibrary::InitTempLibTable()
+{
+	if ( !m_DatabaseOpen )
+		return false;
+
+	bool error = false;
+
+	// construct the table
+	static const char *szCreateDBQuery  = 
+		"CREATE TABLE " 
+		TEMP_SONG_TABLE_NAME 
+		" ( "	
+		"songid INTEGER PRIMARY KEY, "
+		"format number(1), "		
+		"vbr number(1), "			
+		"filename varchar(255), "	
+		"artist varchar(255), "	
+		"title varchar(255), "	
+		"album varchar(255), "	
+		"tracknum number(3), "	
+		"year number(4), "		
+		"genre varchar(255), "	
+		"rating number(1), "		
+		"bitrate number(10), "	
+		"lastplayed timestamp, "	
+		"notes varchar(255), "	
+		"timesplayed number(5), "	
+		"duration number(10), "	
+		"timeadded timestamp, "	
+		"filesize number(10), "	
+		"dirty number(10), "
+		"equalizer number(10) "
+		" );";
+
+	// construct the index
+	const char* szCreateIdxQuery =
+		"CREATE INDEX songs_title_idx on " TEMP_SONG_TABLE_NAME " (title);"
+		"CREATE UNIQUE INDEX songs_filename_idx on " TEMP_SONG_TABLE_NAME " (filename);"
+		"CREATE INDEX songs_artist_idx on " TEMP_SONG_TABLE_NAME " (artist);"
+		"CREATE INDEX songs_album_idx on " TEMP_SONG_TABLE_NAME " (album);"
+		"CREATE INDEX songs_genre_idx on " TEMP_SONG_TABLE_NAME " (genre);"
+		"CREATE INDEX songs_artist_album_tracknum_idx on " TEMP_SONG_TABLE_NAME " (artist,album,tracknum);";
+
+	// put a lock on the library and open it up
+	char *pErr1 = NULL;
+	char* pErr2 = NULL;
+
+	ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
+	{
+		sqlite_exec( m_pDB, szCreateDBQuery, NULL, NULL, &pErr1 );
+		sqlite_exec( m_pDB, szCreateIdxQuery, NULL, NULL, &pErr2 );
+	}
+
+	if ( pErr1 )
+	{
+		error = true;
+		sqlite_freemem( pErr1 );
+	}
+
+	if ( pErr2 )
+	{
+		error = true;
+		sqlite_freemem( pErr2 );
+	}
+
+	return error;
+}
+
+///////////////////////////////////////////////////
+
 bool CmusikLibrary::Startup()
 {
 	bool error = false;
@@ -763,6 +833,7 @@ bool CmusikLibrary::Startup()
 	if ( m_DatabaseOpen && !pErr )	
 	{
 		InitLibTable();
+		InitTempLibTable();
 		InitStdTables();
 		InitDynTable();
 		InitEqTable();
@@ -1860,14 +1931,14 @@ void CmusikLibrary::VerifyYearList( CmusikStringArray & list )
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetAllSongs( CmusikPlaylist& target )
+int CmusikLibrary::GetAllSongs( CmusikPlaylist& target, bool use_temp_table )
 {
-	return QuerySongs( "filename <> ''", target );
+	return QuerySongs( "filename <> ''", target, use_temp_table );
 }
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::QuickQuery( CmusikString str, CmusikPlaylist& target )
+int CmusikLibrary::QuickQuery( CmusikString str, CmusikPlaylist& target, bool use_temp_table )
 {
 	if ( !m_DatabaseOpen )
 		return MUSIK_LIBRARY_NOT_OPEN;
@@ -1881,7 +1952,7 @@ int CmusikLibrary::QuickQuery( CmusikString str, CmusikPlaylist& target )
 	{
 		nRet = sqlite_exec_printf( m_pDB, "SELECT songid FROM %Q WHERE artist LIKE %Q OR album LIKE %Q OR title LIKE %Q OR filename LIKE %Q;", 
 			&sqlite_AddSongToPlaylist, &target, NULL,
-			SONG_TABLE_NAME, 
+			use_temp_table ? TEMP_SONG_TABLE_NAME : SONG_TABLE_NAME, 
 			str.c_str(),
 			str.c_str(),
 			str.c_str(),
@@ -1893,7 +1964,7 @@ int CmusikLibrary::QuickQuery( CmusikString str, CmusikPlaylist& target )
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::QuerySongs( const CmusikString& query, CmusikPlaylist& target )
+int CmusikLibrary::QuerySongs( const CmusikString& query, CmusikPlaylist& target, bool use_temp_table )
 {
 	if ( !m_DatabaseOpen )
 		return MUSIK_LIBRARY_NOT_OPEN;
@@ -1906,7 +1977,7 @@ int CmusikLibrary::QuerySongs( const CmusikString& query, CmusikPlaylist& target
 	{
 		nRet = sqlite_exec_printf( m_pDB, "SELECT songid FROM %Q WHERE %q;", 
 			&sqlite_AddSongToPlaylist, &target, NULL,
-			SONG_TABLE_NAME, 
+			use_temp_table ? TEMP_SONG_TABLE_NAME : SONG_TABLE_NAME, 
 			query.c_str() );
 	}
 
@@ -1935,7 +2006,7 @@ int CmusikLibrary::RawQuerySongs( const CmusikString& query, CmusikPlaylist& tar
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetRelatedItems( int source_type, const CmusikStringArray& source_items, int target_type, CmusikStringArray& target )
+int CmusikLibrary::GetRelatedItems( int source_type, const CmusikStringArray& source_items, int target_type, CmusikStringArray& target, bool use_temp_table )
 {
 	if ( !m_DatabaseOpen )
 		return MUSIK_LIBRARY_NOT_OPEN;
@@ -1953,7 +2024,7 @@ int CmusikLibrary::GetRelatedItems( int source_type, const CmusikStringArray& so
 	query.Format( "SELECT DISTINCT %s, UPPER( %s ) AS UP FROM %s where ", 
 		sOutType.c_str(), 
 		sOutType.c_str(), 
-		SONG_TABLE_NAME );
+		use_temp_table ? TEMP_SONG_TABLE_NAME : SONG_TABLE_NAME );
 
 	CmusikString sCurrentItem;
 	for ( size_t i = 0; i < source_items.size(); i++ )
@@ -1986,7 +2057,7 @@ int CmusikLibrary::GetRelatedItems( int source_type, const CmusikStringArray& so
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetRelatedItems( CmusikString partial_query, int dst_type, CmusikStringArray& target, bool sub_query )
+int CmusikLibrary::GetRelatedItems( CmusikString partial_query, int dst_type, CmusikStringArray& target, bool sub_query, bool use_temp_table )
 {
 	target.clear();
 
@@ -2002,7 +2073,7 @@ int CmusikLibrary::GetRelatedItems( CmusikString partial_query, int dst_type, Cm
 				&sqlite_AddSongToStringArray, &target, NULL,
 				sOutType.c_str(), 
 				sOutType.c_str(), 
-				SONG_TABLE_NAME,
+				use_temp_table ? TEMP_SONG_TABLE_NAME : SONG_TABLE_NAME,
 				partial_query.c_str(),
 				sOutType.c_str() );
 		}
@@ -2029,7 +2100,7 @@ int CmusikLibrary::GetRelatedItems( CmusikString partial_query, int dst_type, Cm
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetRelatedSongs( CmusikString partial_query, int source_type, CmusikPlaylist& target, bool sub_query )
+int CmusikLibrary::GetRelatedSongs( CmusikString partial_query, int source_type, CmusikPlaylist& target, bool sub_query, bool use_temp_table )
 {
 	if ( !m_DatabaseOpen )
 		return MUSIK_LIBRARY_NOT_OPEN;
@@ -2044,7 +2115,7 @@ int CmusikLibrary::GetRelatedSongs( CmusikString partial_query, int source_type,
 		{
 			nRet = sqlite_exec_printf(m_pDB, "SELECT DISTINCT songid FROM %Q %s %q;", 
 				&sqlite_AddSongToPlaylist, &target, NULL,
-				SONG_TABLE_NAME,
+				use_temp_table ? TEMP_SONG_TABLE_NAME : SONG_TABLE_NAME,
 				partial_query.c_str(),
 				GetOrder( source_type ).c_str() );
 		}
@@ -2064,7 +2135,7 @@ int CmusikLibrary::GetRelatedSongs( CmusikString partial_query, int source_type,
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetAllDistinct( int source_type, CmusikStringArray& target, bool clear_target )
+int CmusikLibrary::GetAllDistinct( int source_type, CmusikStringArray& target, bool clear_target, bool use_temp_table )
 {
 	if ( !m_DatabaseOpen )
 		return MUSIK_LIBRARY_NOT_OPEN;
@@ -2082,7 +2153,7 @@ int CmusikLibrary::GetAllDistinct( int source_type, CmusikStringArray& target, b
 			&sqlite_AddSongToStringArray, &target, NULL,
 			sField.c_str(), 
 			sField.c_str(),
-			SONG_TABLE_NAME );
+			use_temp_table ? TEMP_SONG_TABLE_NAME : SONG_TABLE_NAME );
 	}
 
 	if ( source_type == MUSIK_LIBRARY_TYPE_YEAR )
@@ -2093,14 +2164,16 @@ int CmusikLibrary::GetAllDistinct( int source_type, CmusikStringArray& target, b
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::GetSongCount()
+int CmusikLibrary::GetSongCount( bool use_temp_table )
 {
 	if ( !m_DatabaseOpen )
 		return MUSIK_LIBRARY_NOT_OPEN;
 
-	char *query = sqlite_mprintf( "SELECT COUNT(*) FROM " SONG_TABLE_NAME " ;" );
-	int result = QueryCount(query);
-	sqlite_freemem( query );
+	CmusikString query;
+	query.Format( "SELECT COUNT(*) FROM %s;", use_temp_table ? TEMP_SONG_TABLE_NAME : SONG_TABLE_NAME );
+
+	int result = QueryCount( query.c_str() );
+
 	return result;
 }
 
@@ -2471,27 +2544,27 @@ bool CmusikLibrary::AddOGG( const CmusikString& fn )
 		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 		{
 			nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %d, %d, %Q, %Q, %Q, %Q, %d, %d, %Q, %d, %d, %Q, %Q, %d, %d, %Q, %d, %d, %d );", NULL, NULL, NULL, 
-				SONG_TABLE_NAME,								// song table 		
-				NULL,											// id
-				MUSIK_LIBRARY_FORMAT_OGG,						// format
-				1,												// vbr
-				fn.c_str(),										// filename
-				info.Get()->GetArtist().c_str(),				// artist 
-				info.Get()->GetTitle().c_str(),					// title
-				info.Get()->GetAlbum().c_str(),					// album
-				atoi( info.Get()->GetTrackNum().c_str() ),		// tracknum
-				atoi( info.Get()->GetYear().c_str() ),			// year
-				info.Get()->GetGenre().c_str(),					// genre
-				0,												// rating
-				atoi( info.Get()->GetBitrate() ),				// bitrate
-				"",												// last played
-				"",												// notes
-				0,												// times played
-				atoi( info.Get()->GetDuration() ),				// duration
-				m_TimeAdded.c_str(),							// time added
-				GetFilesize( fn ),								// file size
-				0,												// dirty
-				-1 );											// default equalizer
+				SONG_TABLE_NAME,											// song table 		
+				NULL,														// id
+				MUSIK_LIBRARY_FORMAT_OGG,									// format
+				1,															// vbr
+				fn.c_str(),													// filename
+				info.Get()->GetArtist().c_str(),							// artist 
+				info.Get()->GetTitle().c_str(),								// title
+				info.Get()->GetAlbum().c_str(),								// album
+				atoi( info.Get()->GetTrackNum().c_str() ),					// tracknum
+				atoi( info.Get()->GetYear().c_str() ),						// year
+				info.Get()->GetGenre().c_str(),								// genre
+				0,															// rating
+				atoi( info.Get()->GetBitrate() ),							// bitrate
+				"",															// last played
+				"",															// notes
+				0,															// times played
+				atoi( info.Get()->GetDuration() ),							// duration
+				m_TimeAdded.c_str(),										// time added
+				GetFilesize( fn ),											// file size
+				0,															// dirty
+				-1 );														// default equalizer
 		}
 
 		if ( nRet == MUSIK_LIBRARY_OK )
@@ -2515,27 +2588,27 @@ bool CmusikLibrary::AddMP3( const CmusikString& fn )
 		ACE_Guard<ACE_Thread_Mutex> guard( m_ProtectingLibrary );
 		{
 			nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %q VALUES ( %Q, %d, %d, %Q, %Q, %Q, %Q, %d, %Q, %Q, %d, %d, %Q, %Q, %d, %d, %Q, %d, %d, %d );", NULL, NULL, NULL, 
-				SONG_TABLE_NAME,								// song table 		
-				NULL,											// id
-				MUSIK_LIBRARY_FORMAT_MP3,						// format
-				atoi( info.Get()->GetVBR() ),					// vbr
-				fn.c_str(),										// filename
-				info.Get()->GetArtist().c_str(),				// artist 
-				info.Get()->GetTitle().c_str(),					// title
-				info.Get()->GetAlbum().c_str(),					// album
-				atoi( info.Get()->GetTrackNum().c_str() ),		// tracknum
-				info.Get()->GetYear().c_str(),					// year
-				info.Get()->GetGenre().c_str(),					// genre
-				0,												// rating
-				atoi( info.Get()->GetBitrate() ),				// bitrate
-				"",												// last played
-				"",												// notes
-				0,												// times played
-				atoi( info.Get()->GetDuration() ),				// duration
-				m_TimeAdded.c_str(),							// time added
-				GetFilesize( fn ),								// file size
-				0,												// dirty
-				-1 );											// default equalizer
+				SONG_TABLE_NAME,											// song table 		
+				NULL,														// id
+				MUSIK_LIBRARY_FORMAT_MP3,									// format
+				atoi( info.Get()->GetVBR() ),								// vbr
+				fn.c_str(),													// filename
+				info.Get()->GetArtist().c_str(),							// artist 
+				info.Get()->GetTitle().c_str(),								// title
+				info.Get()->GetAlbum().c_str(),								// album
+				atoi( info.Get()->GetTrackNum().c_str() ),					// tracknum
+				info.Get()->GetYear().c_str(),								// year
+				info.Get()->GetGenre().c_str(),								// genre
+				0,															// rating
+				atoi( info.Get()->GetBitrate() ),							// bitrate
+				"",															// last played
+				"",															// notes
+				0,															// times played
+				atoi( info.Get()->GetDuration() ),							// duration
+				m_TimeAdded.c_str(),										// time added
+				GetFilesize( fn ),											// file size
+				0,															// dirty
+				-1 );														// default equalizer
 		}
 
 		if ( nRet == MUSIK_LIBRARY_OK )
@@ -3109,12 +3182,12 @@ int CmusikLibrary::GetDirtySongs( CmusikPlaylist* target, bool clear )
 	if ( clear )
 		target->Clear();
 
-	return QuerySongs( "dirty = 1", *target );
+	return QuerySongs( "dirty = 1", *target, false );
 }
 
 ///////////////////////////////////////////////////
 
-int CmusikLibrary::FinalizeDirtySongs()
+int CmusikLibrary::FinalizeDirtySongs( )
 {
 	if ( !m_DatabaseOpen )
 		return MUSIK_LIBRARY_NOT_OPEN;

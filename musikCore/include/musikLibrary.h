@@ -115,6 +115,7 @@ enum
 ///////////////////////////////////////////////////
 
 #define SONG_TABLE_NAME "songs"
+#define TEMP_SONG_TABLE_NAME "temp_songs"
 
 #define STD_PLAYLIST_TABLE_NAME "std_playlist"
 #define STD_PLAYLIST_SONGS "std_playlist_song"
@@ -182,12 +183,12 @@ public:
 	int					GetSongFieldDBID( CmusikString field );
 
 	// querying songs
-	int  GetAllSongs				( CmusikPlaylist & target );
-	int  GetRelatedItems			( int source_type, const CmusikStringArray & source_items, int target_type, CmusikStringArray & target );
-	int  GetRelatedItems			( CmusikString partial_query, int order_by, CmusikStringArray& target, bool sub_query = false );
-	int  GetRelatedSongs			( CmusikString partial_query, int order_by, CmusikPlaylist& target, bool sub_query = false );
-	int  GetAllDistinct				( int source_type, CmusikStringArray& target, bool clear_target = true );
-	int	 GetSongCount				();
+	int  GetAllSongs				( CmusikPlaylist & target, bool use_temp_table = false );
+	int  GetRelatedItems			( int source_type, const CmusikStringArray & source_items, int target_type, CmusikStringArray & target, bool use_temp_table = false );
+	int  GetRelatedItems			( CmusikString partial_query, int order_by, CmusikStringArray& target, bool sub_query = false, bool use_temp_table = false );
+	int  GetRelatedSongs			( CmusikString partial_query, int order_by, CmusikPlaylist& target, bool sub_query = false, bool use_temp_table = false );
+	int  GetAllDistinct				( int source_type, CmusikStringArray& target, bool clear_target = true, bool use_temp_table = false );
+	int	 GetSongCount				( bool use_temp_table = false );
 	int  GetFieldFromID				( int id, int field, CmusikString& string );
 	int  GetSongInfoFromID			( int id, CmusikSongInfo* info );
 	int  GetIDFromFilename			( CmusikString fn );
@@ -196,8 +197,8 @@ public:
 	int  GetSongFormatFromID		( int id, int* target );
 	void GetInfoArrayFromPlaylist	( CmusikPlaylist* playlist, CmusikSongInfoArray* info, int replace_field_type = -1, CmusikString new_field = "", bool clear = true );
 	int  GetDirtySongs				( CmusikPlaylist* target, bool clear = true );
-	int  FinalizeDirtySongs			();
-	int  QuickQuery					( CmusikString str, CmusikPlaylist& target );
+	int  FinalizeDirtySongs			( );
+	int  QuickQuery					( CmusikString str, CmusikPlaylist& target, bool use_temp_table = false );
 
 	// updating songs
 	bool SetSongInfo				( CmusikSongInfo* info, int songid = -1 );
@@ -292,6 +293,7 @@ private:
 
 	// table creation
 	bool InitLibTable();
+	bool InitTempLibTable();
 	bool InitStdTables();
 	bool InitDynTable();
 	bool InitEqTable();
@@ -305,7 +307,7 @@ private:
 	CmusikString m_TimeAdded;
 
 	// internal song query functions
-	int				QuerySongs		( const CmusikString & query, CmusikPlaylist & target );
+	int				QuerySongs		( const CmusikString & query, CmusikPlaylist & target, bool use_temp_table = false );
 	int				RawQuerySongs	( const CmusikString & query, CmusikPlaylist & target );
 	CmusikString	GetOrder		( int type, bool terminate = true, bool by_upper = false, bool descend = false );
 	int				QueryCount		( const char* pQueryResult );
