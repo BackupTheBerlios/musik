@@ -149,16 +149,14 @@ void *MusikCrossfaderThread::Entry()
 	else if ( g_Player.GetCrossfadeType() == CROSSFADE_SEEK )
 		nFadeDuration = g_Prefs.nFadeSeekDuration;
 
-	int nFadePerSec = 20;
-	float fFadeCount = (float)nFadePerSec * (float)( (float)g_Prefs.nFadeDuration / 1000.0f );
-	int nFadeCount = (int)fFadeCount;
-	if ( nFadeCount <= 0 )
+	float fFadeSecs 	= (float)g_Prefs.nFadeDuration / 1000.0f;		//--- number of seconds		---//
+	float fFadeCount 	= 10.0f * fFadeSecs;							//--- ten fades per sec	 	---//
+	int nFadeCount = (int)fFadeCount;									//--- total number of fades	---//
+	if ( nFadeCount < 1 )
 		nFadeCount = 1;
 
-	int nFadeStep = g_Prefs.nSndVolume / nFadeCount;
-	if ( nFadeStep <= 0 )
-		nFadeStep = 1;
-
+	int nFadeStep = g_Prefs.nSndVolume / nFadeCount;					//--- volume steps				----//
+	
 	//-----------------------------------------//
 	//--- array of steps for the secondary	---//
 	//--- audio streams.					---//
@@ -170,12 +168,6 @@ void *MusikCrossfaderThread::Entry()
 		nGetVol = FSOUND_GetVolume( g_ActiveChannels.Item( i ) );
 		aSecSteps.Add( nGetVol / nFadeCount );
 	}
-
-	//-----------------------------------------//
-	//--- how long the crossfade will sleep	---//
-	//-----------------------------------------//
-	float fSleepTime	= (float)nFadeDuration / nFadeCount; 
-	int nSleepTime		= MusikRound( fSleepTime );
 
 	//---------------------------------------------//
 	//--- generate an array of fade out steps	---//
@@ -206,7 +198,7 @@ void *MusikCrossfaderThread::Entry()
 
 		FSOUND_SetVolume( g_ActiveChannels.Item( g_ActiveChannels.GetCount() - 1 ), nCurrVol );
 
-		Sleep( nSleepTime );
+		Sleep( 100 );	//--- 0.1 ms (10 fades per sec) ---//
 	}
 	return NULL;
 }
