@@ -18,10 +18,38 @@
 	#include "wx/wx.h"
 #endif 
 
+#include "wx/taskbar.h"
+
+class MusikTaskBarIcon: public wxTaskBarIcon
+{
+public:
+	MusikTaskBarIcon() {};
+
+	void SetFrame(wxFrame * frame) {m_pFrame = frame;}
+	void RestoreFrame();
+    void OnRButtonUp(wxEvent&);
+    void OnLButtonDClick(wxEvent&);
+    void OnMenuRestore(wxCommandEvent&);
+    void OnMenuHide(wxCommandEvent&);
+    void OnMenuPlayPause(wxCommandEvent&);
+    void OnMenuPrev(wxCommandEvent&);
+    void OnMenuNext(wxCommandEvent&);
+    void OnMenuStop(wxCommandEvent&);
+    void OnMenuExit(wxCommandEvent&);
+    void OnMenuSetNewIcon(wxCommandEvent&);
+
+DECLARE_EVENT_TABLE()
+
+private:
+	wxFrame *m_pFrame;
+};
+
+
 class MusikApp : public wxApp
 {
 public:
 	virtual bool OnInit();
+	MusikTaskBarIcon   TaskBarIcon;
 private:
 	wxString ReadVersion();
 	void WriteVersion();

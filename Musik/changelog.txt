@@ -1,3 +1,11 @@
+0.2.2 to 0.3.0
+
+- clean up  vc.net project file (uses environment variables for additional libraries to make compiling easier for other people) (gunnar)
++ Renamed Musik to wxMusik (gunnar)
+- Some errors concerning renaming of sources remove ( gunnar)
++ Trayicon added (gunnar)
+- skip version 0.2.2 and go to version 0.3.0
+
 0.2.1 to 0.2.2
  - bug: should compile on linux with wxGTK 2.4.2 again
  - fixed bug: if you want to rename a playlist but then click somewhere else, the name was set to empty (gunnar)

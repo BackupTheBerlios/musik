@@ -59,8 +59,6 @@ public:
 	void OnWriteTags				( wxCommandEvent&	WXUNUSED(event) );
 	void OnWriteTagsClearDirty		( wxCommandEvent&	WXUNUSED(event) );
 
-	void OnRescanPlaylistDir		( wxCommandEvent&	WXUNUSED(event) );
-
 	void OnTranslateKeys			( wxKeyEvent&		event			);
 	void OnServerEvent				( wxSocketEvent&	event			);
 	
@@ -74,6 +72,8 @@ public:
 	//--- virtual overrides ---//
 	//-------------------------//
 	virtual bool Show( bool show = true );
+	virtual void SetTitle(const wxString& title);
+
 
 	//------------------------------//
 	//---     activity boxes     ---//
@@ -157,6 +157,7 @@ protected:
     	long MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam);
 #endif
 private:
+	
 	//--- threads and thread related ---//
 	int m_Progress;
 	int m_ProgressType;

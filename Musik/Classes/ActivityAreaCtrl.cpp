@@ -58,7 +58,7 @@ CActivityAreaCtrl::CActivityAreaCtrl( wxWindow *pParent )
 	m_ActivityBox2	= NULL;
 	m_ActivityBox3	= NULL;
 	m_ActivityBox4	= NULL;
-
+	SetBackgroundColour( *wxTheColourDatabase->FindColour(wxT("LIGHT STEEL BLUE")));
 	m_pPanel = new wxPanel( this, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxNO_BORDER|wxCLIP_CHILDREN );
 	pTopSizer = new wxBoxSizer( wxHORIZONTAL );
 	m_pPanel->SetSizer( pTopSizer );
@@ -82,7 +82,7 @@ bool CActivityAreaCtrl::Create()
 			m_ActivityBox1 = new CActivityBox( m_pPanel, MUSIK_ACTIVITYBOX1, g_Prefs.nActBox1 );
 			m_ActivityBox1->ResetCaption();
 
-			pTopSizer->Add( m_ActivityBox1, 1, wxEXPAND | wxLEFT|wxBOTTOM, 0 );
+			pTopSizer->Add( m_ActivityBox1, 1, wxEXPAND | wxRIGHT, 1 );
 		}
 
 		//--- box2 ---//
@@ -91,7 +91,7 @@ bool CActivityAreaCtrl::Create()
 			m_ActivityBox2 = new CActivityBox( m_pPanel, MUSIK_ACTIVITYBOX2, g_Prefs.nActBox2 );
 			m_ActivityBox2->ResetCaption();
 
-			pTopSizer->Add( m_ActivityBox2, 1, wxEXPAND | wxLEFT|wxBOTTOM, 0 );
+			pTopSizer->Add( m_ActivityBox2, 1, wxEXPAND | wxRIGHT, 1 );
 		}
 
 		//--- box3 ---//
@@ -100,7 +100,7 @@ bool CActivityAreaCtrl::Create()
 			m_ActivityBox3 = new CActivityBox( m_pPanel, MUSIK_ACTIVITYBOX3, g_Prefs.nActBox3 );
 			m_ActivityBox3->ResetCaption();
 
-			pTopSizer->Add( m_ActivityBox3, 1, wxEXPAND | wxLEFT|wxBOTTOM, 0 );
+			pTopSizer->Add( m_ActivityBox3, 1, wxEXPAND | wxRIGHT, 1 );
 		}
 
 		//--- box4 ---//
@@ -109,7 +109,7 @@ bool CActivityAreaCtrl::Create()
 			m_ActivityBox4 = new CActivityBox( m_pPanel, MUSIK_ACTIVITYBOX4, g_Prefs.nActBox4 );
 			m_ActivityBox4->ResetCaption();
 
-			pTopSizer->Add( m_ActivityBox4, 1, wxEXPAND | wxLEFT|wxBOTTOM, 0 );
+			pTopSizer->Add( m_ActivityBox4, 1, wxEXPAND | wxRIGHT, 1 );
 		}
 
 		m_pPanel->Layout();

@@ -190,7 +190,6 @@ void CMusikLibrary::CreateDBFuncs()
 }
 void CMusikLibrary::remprefixFunc(sqlite_func *context, int argc, const char **argv)
 {
-	char *z;
 	int i;
 	if( argc<1 || argv[0]==0 ) return;
 //	char * pPrefixArray[] = sqlite_user_data(context);
@@ -1179,7 +1178,7 @@ void CMusikLibrary::UpdateItem( const wxString & fn, CMusikSong & newsonginfo, b
 				( const char* )ConvDBFieldToMB( OldFilename ) );
 		}
 		if ( result != SQLITE_OK )
-			wxMessageBox( _( "An error occurred when attempting to update the database" ), MUSIK_VERSION, wxOK | wxICON_ERROR );
+			wxMessageBox( _( "An error occurred when attempting to update the database" ), MUSIKAPPNAME_VERSION, wxOK | wxICON_ERROR );
 	}
 	newsonginfo.Check1 = 0;
 }
@@ -1195,7 +1194,7 @@ void CMusikLibrary::DeleteItem( const wxString & fn )
 			result = sqlite_exec_printf( m_pDB, "delete from songs where filename=%Q;", NULL, NULL, NULL, ( const char* )ConvFNToFieldMB(filename) );
 		}
 		if ( result != SQLITE_OK )
-			wxMessageBox( _( "An error occurred when attempting to delete a song from the database" ), MUSIK_VERSION, wxOK | wxICON_ERROR );
+			wxMessageBox( _( "An error occurred when attempting to delete a song from the database" ), MUSIKAPPNAME_VERSION, wxOK | wxICON_ERROR );
 	}
 }
 

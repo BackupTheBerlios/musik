@@ -166,7 +166,7 @@ void CMusikPrefs::LoadPrefs()
 	config->Read( wxT("TunageRunApp"),			&nTunageRunApp,			0 );
 	config->Read( wxT("TunageCmdLine"),			&sTunageCmdLine,		wxT("") );
 	config->Read( wxT("TunageRunOnStop"),		&nTunageRunOnStop,		1 );
-	config->Read( wxT("TunageStoppedText"),		&sTunageStoppedText,	wxT("Musik is not running") );
+	config->Read( wxT("TunageStoppedText"),		&sTunageStoppedText,	wxString(MUSIKAPPNAME) + _(" is not running") );
 
 
 	g_FX.LoadBands( config );

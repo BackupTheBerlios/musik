@@ -55,7 +55,7 @@ CPlaylistBox::CPlaylistBox( wxWindow *parent )
 	//--- top sizer ---//
 	m_pMainSizer = new wxBoxSizer( wxVERTICAL );
 	m_pMainSizer->Add( m_pHorzSizer, 0, wxADJUST_MINSIZE|wxEXPAND|wxRIGHT|wxLEFT|wxBOTTOM|wxTOP  , 2 );
-	m_pMainSizer->Add(  m_pPlaylistCtrl, 1, wxEXPAND);
+	m_pMainSizer->Add(  m_pPlaylistCtrl, 1, wxEXPAND|wxRIGHT|wxLEFT|wxBOTTOM,5);
 	SetSizerAndFit( m_pMainSizer );
 
 	Layout();
@@ -184,7 +184,7 @@ bool PlaylistDropTarget::OnDropText( wxCoord x, wxCoord y, const wxString &text 
 					//--- error, couldn't locate our position ---//
 					if ( n == -2 )
 					{
-						wxMessageBox( _( "An internal error has occured.\nCould not find previous item's position.\n\nPlease contact the Musik development team with this error." ), MUSIK_VERSION, wxOK|wxICON_ERROR );
+						wxMessageBox( _( "An internal error has occured.\nCould not find previous item's position.\n\nPlease contact the "MUSIKAPPNAME" development team with this error." ), MUSIKAPPNAME_VERSION, wxOK|wxICON_ERROR );
 						g_DragInProg = false;
 						return FALSE;
 					}
@@ -210,7 +210,7 @@ bool PlaylistDropTarget::OnDropText( wxCoord x, wxCoord y, const wxString &text 
 	return TRUE;
 }
 
-wxDragResult PlaylistDropTarget::OnDragOver(wxCoord x, wxCoord y, wxDragResult def)
+wxDragResult PlaylistDropTarget::OnDragOver(wxCoord x, wxCoord y, wxDragResult WXUNUSED(def))
 {
 	//--- calls HighlightSel() to highlight the item the mouse is over ---//
 	m_pPlaylistCtrl->SetFocus();
@@ -533,11 +533,11 @@ void CPlaylistCtrl::BeginDrag( wxListEvent& WXUNUSED(event) )
 	//--- tell program we're done dragging ---//
 	g_DragInProg = false;
 }
-void CPlaylistCtrl::BeginDragCol(wxListEvent& event)
+void CPlaylistCtrl::BeginDragCol(wxListEvent& WXUNUSED(event))
 {
 	m_bColDragging = true;
 }
-void CPlaylistCtrl::EndDragCol( wxListEvent& event )
+void CPlaylistCtrl::EndDragCol( wxListEvent& WXUNUSED(event) )
 {
 	m_bColDragging = false;
 	m_ColSaveNeeded = true;
@@ -965,7 +965,7 @@ void CPlaylistCtrl::Update( bool bSelFirst)
 	
 }
 
-void CPlaylistCtrl::RescaleColumns( bool bFreeze, bool bSave, bool bAutoFit )
+void CPlaylistCtrl::RescaleColumns( bool bFreeze, bool WXUNUSED(bSave), bool bAutoFit )
 {
 	if ( g_DisablePlacement || m_bColDragging)
 		return;
@@ -1189,13 +1189,13 @@ void CPlaylistCtrl::DelSelSongs(bool bDeleteFromDB, bool bDeleteFromComputer)
 		return;
 	if( bDeleteFromComputer )
 	{
-		wxMessageDialog confirm( this, _( "Delete the selected songs from your computer?" ), MUSIK_VERSION, wxYES_NO | wxICON_STOP );
+		wxMessageDialog confirm( this, _( "Delete the selected songs from your computer?" ), MUSIKAPPNAME_VERSION, wxYES_NO | wxICON_STOP );
 		if ( confirm.ShowModal() == wxID_NO )
 			return;
 	}
 	else if( bDeleteFromDB )
 	{
-		wxMessageDialog confirm( this, _( "Delete the selected songs from Musik's internal database?" ), MUSIK_VERSION, wxYES_NO | wxICON_QUESTION );
+		wxMessageDialog confirm( this, _( "Delete the selected songs from Musik's internal database?" ), MUSIKAPPNAME_VERSION, wxYES_NO | wxICON_QUESTION );
 		if ( confirm.ShowModal() == wxID_NO )
 			return;
 	}
@@ -1245,7 +1245,7 @@ void CPlaylistCtrl::DelSelSongs(bool bDeleteFromDB, bool bDeleteFromComputer)
 
 	//--- if certain files couldn't be deleted ---//
 	if ( !sError.IsEmpty() )
-		wxMessageBox( _( "Failed to delete the following files from your computer:\n\n " ) + sError, MUSIK_VERSION, wxICON_STOP );
+		wxMessageBox( _( "Failed to delete the following files from your computer:\n\n " ) + sError, MUSIKAPPNAME_VERSION, wxICON_STOP );
 
 	Update( false );
 
@@ -1273,7 +1273,7 @@ void CPlaylistCtrl::RenameSelFiles()
 		pRenameThread->Run();
 	}
 	else
-		wxMessageBox( _( "An internal error has occured.\nPrevious thread not terminated correctly.\n\nPlease contact the Musik development team with this error." ), MUSIK_VERSION, wxICON_STOP );
+		wxMessageBox( _( "An internal error has occured.\nPrevious thread not terminated correctly.\n\nPlease contact the "MUSIKAPPNAME" development team with this error." ), MUSIKAPPNAME_VERSION, wxICON_STOP );
 
 }
 
@@ -1294,7 +1294,7 @@ void CPlaylistCtrl::RetagSelFiles()
 		pRetagThread->Run();
 	}
 	else
-		wxMessageBox( _( "An internal error has occured.\nPrevious thread not terminated correctly.\n\nPlease contact the Musik development team with this error." ), MUSIK_VERSION, wxICON_STOP );
+		wxMessageBox( _( "An internal error has occured.\nPrevious thread not terminated correctly.\n\nPlease contact the "MUSIKAPPNAME" development team with this error." ), MUSIKAPPNAME_VERSION, wxICON_STOP );
 }
 
 bool CPlaylistCtrl::ViewDirtyTags()
@@ -1310,7 +1310,7 @@ bool CPlaylistCtrl::ViewDirtyTags()
 		return true;
 	}
 	else
-		wxMessageBox( _( "There are no pending tags available to display." ), MUSIK_VERSION, wxICON_INFORMATION );
+		wxMessageBox( _( "There are no pending tags available to display." ), MUSIKAPPNAME_VERSION, wxICON_INFORMATION );
 
 	return false;
 }

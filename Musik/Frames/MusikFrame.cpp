@@ -18,7 +18,7 @@
 //--- globals ---//
 #include "../MusikGlobals.h"
 #include "../MusikUtils.h"
-
+#include "../MusikApp.h"
 //--- frames ---	//
 #include "MusikLibraryFrame.h"
 #include "MusikPrefsFrame.h"
@@ -41,9 +41,12 @@
 #include "../images/ratings/rating4.xpm"
 #include "../images/ratings/rating5.xpm"
 
+DECLARE_APP( MusikApp )
+
+
 // main dialog constructor
 MusikFrame::MusikFrame() 
-	: wxFrame( (wxFrame*)NULL, -1, MUSIK_VERSION, wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE | wxTAB_TRAVERSAL | wxCLIP_CHILDREN )
+	: wxFrame( (wxFrame*)NULL, -1, MUSIKAPPNAME_VERSION, wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE | wxTAB_TRAVERSAL | wxCLIP_CHILDREN )
 {
 	//--- no selection in progress / no dragging yet ---//
 	g_DragInProg		= false;
@@ -54,8 +57,6 @@ MusikFrame::MusikFrame()
 
 	//--- prevent destroying saved placement info while constructing the frame ---//
 	g_DisablePlacement = true;
-
-	wxImage::AddHandler( new wxXPMHandler );
 
 	//--- icon ---//
 	#ifdef __WXMSW__
@@ -80,6 +81,11 @@ MusikFrame::MusikFrame()
 	m_pBottomPanel->SetDefaultSize(wxSize(1000,70));
 	m_pBottomPanel->SetAlignment(wxLAYOUT_BOTTOM);
 	m_pBottomPanel->SetOrientation(wxLAYOUT_HORIZONTAL);
+	//----------------//
+	//--- playlist ---//
+	//----------------//
+	g_PlaylistBox  = new CPlaylistBox( this );
+	GetListCtrlFont();
 
 	//---------------//
 	//--- sources ---//
@@ -106,15 +112,6 @@ MusikFrame::MusikFrame()
 	g_ActivityAreaCtrl->SetDefaultBorderSize(3);
 	g_ActivityAreaCtrl->SetExtraBorderSize(1);
 	
-//	m_pMainPanel = new wxPanel(this,-1,wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxTRANSPARENT|wxCLIP_CHILDREN);
-
-	//----------------//
-	//--- playlist ---//
-	//----------------//
-	g_PlaylistBox  = new CPlaylistBox( this );
-
-
-	GetListCtrlFont();
 
 	//-------------------//
 	//--- now playing ---//
@@ -153,6 +150,7 @@ MusikFrame::MusikFrame()
 	g_Player.SetVolume();
 
 	SetActiveThread( NULL );
+
 
 	#ifdef __WXMSW__
 		SetMMShellHook((HWND)GetHWND());
@@ -395,6 +393,13 @@ void MusikFrame::EnableProgress( bool enable )
     layout.LayoutWindow(this,g_PlaylistBox);
 	m_pBottomPanel->Layout();
 }
+
+void MusikFrame::SetTitle(const wxString& title)
+{
+	wxGetApp().TaskBarIcon.SetIcon(wxIcon(library_xpm), title);
+	wxFrame::SetTitle(title);
+}
+
 
 //---------------------------------------------------------//
 //--- support for microsoft windows multimedia keyboard ---//

@@ -96,7 +96,7 @@ MusikLibraryFrame::MusikLibraryFrame( wxFrame* pParent )
 //--- or at program's first run ---//
 //---------------------------------//
 MusikLibraryFrame::MusikLibraryFrame( wxFrame* pParent, const wxPoint &pos, const wxSize &size ) 
-	: wxFrame( pParent, -1, _("Musik Library Setup"), pos, size, wxCAPTION | wxTAB_TRAVERSAL | wxRESIZE_BORDER | wxFRAME_FLOAT_ON_PARENT | wxFRAME_NO_TASKBAR | wxCLIP_CHILDREN )
+	: wxFrame( pParent, -1, wxString(MUSIKAPPNAME) + _(" Library Setup"), pos, size, wxCAPTION | wxTAB_TRAVERSAL | wxRESIZE_BORDER | wxFRAME_FLOAT_ON_PARENT | wxFRAME_NO_TASKBAR | wxCLIP_CHILDREN )
 {
 	//--------------------//
 	//--- "Songs" menu ---//
@@ -120,7 +120,7 @@ MusikLibraryFrame::MusikLibraryFrame( wxFrame* pParent, const wxPoint &pos, cons
 	//--- "Setup" menu ---//
 	//--------------------//	
 	wxMenuBar *menu_bar = new wxMenuBar;
-    menu_bar->Append( paths_setup_menu,_("So&ngs") );
+    menu_bar->Append( paths_setup_menu,_("&Directories") );
     menu_bar->Append( paths_update_menu,_("&Library") );
 
 	//--------------------//
@@ -224,7 +224,7 @@ void MusikLibraryFrame::CreateControls()
 
 void MusikLibraryFrame::OnRebuildAll( wxCommandEvent& WXUNUSED(event) )	
 { 
-	if ( wxMessageBox( _( "Would you like to clear Musik's library database?" ), MUSIK_VERSION, wxYES_NO | wxICON_QUESTION ) == wxYES )
+	if ( wxMessageBox( _( "Would you like to clear Musik's library database?" ), MUSIKAPPNAME_VERSION, wxYES_NO | wxICON_QUESTION ) == wxYES )
 		g_Library.RemoveAll();
 
 	PathsSave(); 
@@ -240,12 +240,12 @@ bool MusikLibraryFrame::Show( bool show )
 	//---------------------------//
 	if ( g_Prefs.nFirstRun )
 	{
-		wxString sMessage = 	wxT( "This is the first time Musik has been run.\n\nTo begin, you must first add directories " 	)
+		wxString sMessage = 	wxT( "This is the first time "MUSIKAPPNAME" has been run.\n\nTo begin, you must first add directories " 	)
 								wxT( "to the database. Select \"Add Directory\" from the \"Songs\" menu, then press the " 		)
 								wxT( "\"OK\" button to rebuild the library.\n\nTo display this window again, press " 			) 
 								wxT( "CTRL+L in the main window, or select \"Library Setup\" from the \"Library\" menu."		);
 							
-		wxMessageBox( sMessage, MUSIK_VERSION, wxICON_INFORMATION );
+		wxMessageBox( sMessage, MUSIKAPPNAME_VERSION, wxICON_INFORMATION );
 	
 		g_Prefs.nFirstRun = 0;
 		g_Prefs.SavePrefs();
@@ -471,7 +471,7 @@ bool MusikLibraryFrame::ValidatePath( wxString sPath )
 		//---------------------------------------------------------//
 		if ( sPath == sOldPath )
 		{
-			wxMessageBox( wxT( "The path entered already exists." ), MUSIK_VERSION, wxICON_INFORMATION );
+			wxMessageBox( wxT( "The path entered already exists." ), MUSIKAPPNAME_VERSION, wxICON_INFORMATION );
 			return false;
 		}
 
@@ -484,7 +484,7 @@ bool MusikLibraryFrame::ValidatePath( wxString sPath )
 		{
 			if ( sPath.Find( sOldPath ) > -1 )
 			{
-				wxMessageBox( wxT( "The path entered is already contained within the following path's scope:\n\n" ) + g_Paths.Item( i ), MUSIK_VERSION, wxICON_INFORMATION );
+				wxMessageBox( wxT( "The path entered is already contained within the following path's scope:\n\n" ) + g_Paths.Item( i ), MUSIKAPPNAME_VERSION, wxICON_INFORMATION );
 				return false;
 			}
 		}
@@ -509,7 +509,7 @@ bool MusikLibraryFrame::ValidatePath( wxString sPath )
 	//-----------------------------------------------------//
 	if ( sConflicts.Length() > 0 )
 	{
-		if ( wxMessageBox( wxT( "The path entered conflicts with the following paths:\n\n" ) + sConflicts + wxT( "\nWould you like Musik to fix this conflict for you?" ), MUSIK_VERSION, wxICON_INFORMATION | wxYES_NO ) == wxYES )
+		if ( wxMessageBox( wxT( "The path entered conflicts with the following paths:\n\n" ) + sConflicts + wxT( "\nDo you want me to fix this conflict for you?" ), MUSIKAPPNAME_VERSION, wxICON_INFORMATION | wxYES_NO ) == wxYES )
 		{
 			size_t nCount = g_Paths.GetCount();
 		
@@ -528,7 +528,7 @@ bool MusikLibraryFrame::ValidatePath( wxString sPath )
 
 void MusikLibraryFrame::ClearLibrary()
 {
-	if ( wxMessageBox( _("This will wipe the library clean. Are you ABSOLUTELY SURE you want to do this?"), MUSIK_VERSION, wxYES_NO|wxICON_QUESTION  ) == wxYES )
+	if ( wxMessageBox( _("This will wipe the library clean. Are you ABSOLUTELY SURE you want to do this?"), MUSIKAPPNAME_VERSION, wxYES_NO|wxICON_QUESTION  ) == wxYES )
 	{
 		g_Library.RemoveAll();
 		g_ActivityAreaCtrl->ResetAllContents();
@@ -552,14 +552,14 @@ void MusikLibraryFrame::ScanNew()
 		pScanNewThread->Run();
 	}
 	else
-		wxMessageBox( _("An internal error has occured.\nPrevious thread not terminated correctly.\n\nPlease contact the Musik development team with this error."), MUSIK_VERSION, wxICON_STOP );
+		wxMessageBox( _("An internal error has occured.\nPrevious thread not terminated correctly.\n\nPlease contact the "MUSIKAPPNAME" development team with this error."), MUSIKAPPNAME_VERSION, wxICON_STOP );
 }
 
 void MusikLibraryFrame::UpdateLibrary( bool bConfirm )
 {
 	if ( bConfirm )
 	{	
-		if ( wxMessageBox( _("Musik has detected that your library configuration has changed.\n\nIt is suggested that you update the internal library, which includes adding the new songs. Proceed?"), MUSIK_VERSION, wxYES_NO|wxICON_QUESTION  ) == wxNO )
+		if ( wxMessageBox( _(MUSIKAPPNAME" has detected that your library configuration has changed.\n\nIt is suggested that you update the internal library, which includes adding the new songs. Proceed?"), MUSIKAPPNAME_VERSION, wxYES_NO|wxICON_QUESTION  ) == wxNO )
 			return;
 	}
     
@@ -571,7 +571,7 @@ void MusikLibraryFrame::UpdateLibrary( bool bConfirm )
 		pUpdateLibThread->Run();
 	}
 	else
-		wxMessageBox( _("An internal error has occured.\nPrevious thread not terminated correctly.\n\nPlease contact the Musik development team with this error."), MUSIK_VERSION, wxICON_STOP );
+		wxMessageBox( _("An internal error has occured.\nPrevious thread not terminated correctly.\n\nPlease contact the "MUSIKAPPNAME" development team with this error."), MUSIKAPPNAME_VERSION, wxICON_STOP );
 }
 
 void MusikLibraryFrame::PurgeLibrary()
@@ -584,7 +584,7 @@ void MusikLibraryFrame::PurgeLibrary()
 		pPurgeLibThread->Run();
 	}
 	else
-		wxMessageBox( _("An internal error has occured.\nPrevious thread not terminated correctly.\n\nPlease contact the Musik development team with this error."), MUSIK_VERSION, wxICON_STOP );
+		wxMessageBox( _("An internal error has occured.\nPrevious thread not terminated correctly.\n\nPlease contact the "MUSIKAPPNAME" development team with this error."), MUSIKAPPNAME_VERSION, wxICON_STOP );
 
 }
 
@@ -661,7 +661,7 @@ void MusikLibraryFrame::OnThreadEnd( wxCommandEvent& WXUNUSED(event) )
 	SetProgressType	( 0 );
 
 
-	SetTitle( _( "Musik Library Setup" ) );
+	SetTitle(wxString(MUSIKAPPNAME) + _( " Library Setup" ) );
 }
 
 //---------------------------------------------------------//

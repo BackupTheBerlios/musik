@@ -58,10 +58,10 @@ public:
 	void ToggleIconsEvt			( wxCommandEvent& WXUNUSED(event) );
 	void CopyFiles				( wxCommandEvent& WXUNUSED(event) );
 	void BeginDrag				( wxListEvent& event );
-	void OnUpdateSel			( wxListEvent& pEvent );
-	void BeginEditLabel			( wxListEvent& pEvent );
-	void EndEditLabel			( wxListEvent& pEvent );
-	void TranslateKeys			( wxListEvent& pEvent );
+	void OnUpdateSel			( wxListEvent& event );
+	void BeginEditLabel			( wxListEvent& event );
+	void EndEditLabel			( wxListEvent& event );
+	void TranslateKeys			( wxListEvent& event );
 	void OnSourcesColSize		( wxListEvent& event ){ event.Veto(); }
 
 	//------------------------//
@@ -83,6 +83,7 @@ public:
 	void ShowIconsChecked		( bool bCheck );
 	int  GetSelType				( )						{ return  GetType( m_CurSel );	}
 	int  GetType				( long index ) const ;
+	bool GetTypeAsString		( int nType, wxString &sType ) const ;
 	int  GetItemImage			( long index );
 	
 	void RescanPlaylistDir		( );
@@ -140,8 +141,6 @@ private:
 	bool m_Deleting;
 
 	//--- some of these may go ---//
-	wxString	m_SourcesEditStr;
-	int			m_SourcesEditIndex;
 	int			m_CurSel;
 	int			m_DragIndex;
 };
@@ -157,7 +156,6 @@ public:
 	//--- only place needed functions here to reduce overhead	---//
 	//-------------------------------------------------------------//
 	int  GetSelType				( )	{ return pListBox->GetSelType();	}
-	void RescanPlaylistDir		( ) { pListBox->RescanPlaylistDir();	}
 	void Update					( ) { pListBox->Update();				}
 	void UpdateCurrent			( ) { pListBox->UpdateSel(pListBox->GetIndex()); }
 	void SelectLibrary			( ) { pListBox->UpdateSel((size_t) -2); }

@@ -54,10 +54,10 @@ class CMusikAutoTaggerFrame: public wxDialog
 public:
     /// Constructors
     CMusikAutoTaggerFrame( );
-    CMusikAutoTaggerFrame( wxWindow* parent, wxWindowID id = -1, const wxString& caption = _("Musik Autotagger"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxCAPTION|wxRESIZE_BORDER|wxSYSTEM_MENU );
+    CMusikAutoTaggerFrame( wxWindow* parent, wxWindowID id = -1, const wxString& caption = wxString(MUSIKAPPNAME) + _(" Autotagger"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxCAPTION|wxRESIZE_BORDER|wxSYSTEM_MENU );
 
     /// Creation
-    bool Create( wxWindow* parent, wxWindowID id = -1, const wxString& caption = _("Musik Autotagger"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxCAPTION|wxRESIZE_BORDER|wxSYSTEM_MENU );
+    bool Create( wxWindow* parent, wxWindowID id = -1, const wxString& caption = wxString(MUSIKAPPNAME) + _(" Autotagger"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxCAPTION|wxRESIZE_BORDER|wxSYSTEM_MENU );
 
     /// Creates the controls and sizers
     void CreateControls();

@@ -380,7 +380,7 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 	chkTunageAppendFile = new wxCheckBox( this, -1, _("Append to file"),			wxPoint(0,0), wxSize(-1,-1) );
 	chkTunagePostURL	= new wxCheckBox( this, -1, _("Enable"),			wxPoint(0,0), wxSize(-1,-1) );
 	chkTunageRunApp		= new wxCheckBox( this, -1, _("Enable"),				wxPoint(0,0), wxSize(-1,-1) );
-	chkTunageRunOnStop	= new wxCheckBox( this, -1, _("Update when Musik stops"),	wxPoint(0,0), wxSize(-1,-1) );
+	chkTunageRunOnStop	= new wxCheckBox( this, -1, _("Update when application stops"),	wxPoint(0,0), wxSize(-1,-1) );
 
 	wxStaticText *stTunageFilename	= new wxStaticText( this, -1, _("Filename:"),		wxPoint(0,0), wxSize( 75, -1 ), wxALIGN_LEFT );
 	wxStaticText *stTunageFileLine	= new wxStaticText( this, -1, _("Line to write:"),	wxPoint(0,0), wxSize( 75, -1 ), wxALIGN_LEFT );
@@ -534,7 +534,8 @@ MusikPrefsFrame::MusikPrefsFrame( wxFrame *pParent, const wxString &sTitle, cons
 		wxString( _("%4 - Genre\n")						) +
 		wxString( _("%5 - Year\n")						) +
 		wxString( _("%6 - Track Number\n\n")			) +
-		wxString( _("Musik will not delete empty directories!" ) );
+		wxString(MUSIKAPPNAME)							  +	
+		wxString( _(" will not delete empty directories!" ) );
 	wxStaticText *stInfo = new wxStaticText( this, -1, sInfo, wxPoint( 0, 0 ), wxSize( -1, -1), wxALIGN_LEFT );
 
 	//---------------------------------//

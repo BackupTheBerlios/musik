@@ -24,9 +24,9 @@
 #include "wx/wx.h"
 #include "wx/valgen.h"
 ////@end includes
-
-#include "MusikAutoTaggerFrame.h"
 #include "../MusikGlobals.h"
+#include "MusikAutoTaggerFrame.h"
+
 ////@begin XPM images
 ////@end XPM images
 

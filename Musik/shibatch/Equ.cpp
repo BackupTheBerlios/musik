@@ -307,6 +307,7 @@ void equ_quit(void)
 
 void equ_clearbuf(int bps,int srate)
 {
+	bps,srate;//unused
 	int i;
 
 	nbufsamples = 0;

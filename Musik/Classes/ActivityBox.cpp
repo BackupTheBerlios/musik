@@ -63,7 +63,7 @@ void CActivityEditEvt::TranslateKeys( wxKeyEvent& event )
 //--- CActivityListBox ---//
 //------------------------//
 CActivityListBox::CActivityListBox( CActivityBox *parent,  wxWindowID id )
-	: CMusikListCtrl( parent, id, wxPoint( -1, -1 ), wxSize( -1, -1 ),wxNO_BORDER)
+	: CMusikListCtrl( parent, id, wxPoint( -1, -1 ), wxSize( -1, -1 ),wxNO_BORDER|wxLC_NO_SORT_HEADER)
 {
 	m_Related = 0;
 	m_pParent = parent;
@@ -327,7 +327,7 @@ bool ActivityDropTarget::OnDropText( wxCoord x, wxCoord y, const wxString &text 
 	return TRUE;
 }
 
-wxDragResult ActivityDropTarget::OnDragOver(wxCoord x, wxCoord y, wxDragResult def)
+wxDragResult ActivityDropTarget::OnDragOver(wxCoord x, wxCoord y, wxDragResult WXUNUSED(def))
 {
 	// Disallow further drag and drop if a thread is happening.
 	if ( g_MusikFrame->GetActiveThread() )
@@ -723,7 +723,7 @@ wxString CActivityBox::DNDGetList()
 //-----------------------------//
 //--- rename thread control ---//
 //-----------------------------//
-void CActivityBox::StartRenameThread( int mode, const wxArrayString &sel, wxString newvalue )
+void CActivityBox::StartRenameThread( int mode, const wxArrayString &WXUNUSED(sel), wxString newvalue )
 {
 	
 	if ( g_MusikFrame->GetActiveThread() == NULL )
@@ -734,7 +734,7 @@ void CActivityBox::StartRenameThread( int mode, const wxArrayString &sel, wxStri
 		pRenameThread->Run();
     }
 	else
-		wxMessageBox( _( "An internal error has occured.\nPrevious thread not terminated correctly.\n\nPlease contact the Musik development team with this error." ), MUSIK_VERSION, wxICON_STOP );
+		wxMessageBox( _( "An internal error has occured.\nPrevious thread not terminated correctly.\n\nPlease contact the "MUSIKAPPNAME" development team with this error." ), MUSIKAPPNAME_VERSION, wxICON_STOP );
 }
 
 

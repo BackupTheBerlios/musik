@@ -77,7 +77,7 @@ public:
 		wxString ext = fn.GetExt();
 		ext.MakeLower();
 
-		if ( ext == wxT( "mpl" ) || ext == wxT( "mpd" ) )
+		if ( ext.Left(2) == wxT( "mp" ))
 		{
 			wxString add = fn.GetFullName();
 			m_files.Add( add );

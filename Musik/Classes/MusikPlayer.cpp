@@ -204,9 +204,40 @@ void CMusikPlayer::SetPlaymode( )
 	else
 		m_Playmode = MUSIK_PLAYMODE_NORMAL;
 }
+void CMusikPlayer::PlayPause()
+{
+	//--- paused, so play ---//
+	if ( IsPlaying() && !IsPaused() )
+		Pause();
 
+	//--- paused, so resume ---//
+	else if ( IsPlaying() && IsPaused() )
+		Resume();
+
+	//--- start playing ---//
+	else if ( !IsPlaying() )
+	{
+		if(GetPlaymode() == MUSIK_PLAYMODE_RANDOM)
+		{
+			// if playlist has changed set new playlist for the player
+			// in random mode
+			if ( g_PlaylistChanged )
+			{
+				SetPlaylist( g_Playlist );
+				g_PlaylistChanged = false;
+			}
+
+			NextSong();
+		}
+		else
+		{
+			PlayCurSel();
+		}
+	}
+}
 void CMusikPlayer::PlayCurSel()
 {
+
 	m_LastSong	= m_SongIndex;
 	
 	if ( IsPaused() )
@@ -310,7 +341,7 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 	{	// not a network stream
 		// and
 		// file does not exist
-			wxMessageBox( _( "Cannot find file.\n Filename:" ) + m_Playlist.Item( nItem ).Filename, MUSIK_VERSION, wxICON_STOP );
+			wxMessageBox( _( "Cannot find file.\n Filename:" ) + m_Playlist.Item( nItem ).Filename, MUSIKAPPNAME_VERSION, wxICON_STOP );
 			return false;
 	}
 
@@ -354,7 +385,7 @@ bool CMusikPlayer::Play( size_t nItem, int nStartPos, int nFadeType )
 #endif
 		if(pNewStream == NULL)
 		{
-			wxMessageBox( _( "Playback will be stopped, because loading failed.\n Filename:" ) + m_CurrentFile, MUSIK_VERSION, wxICON_STOP );
+			wxMessageBox( _( "Playback will be stopped, because loading failed.\n Filename:" ) + m_CurrentFile, MUSIKAPPNAME_VERSION, wxICON_STOP );
 			Stop(false);
 			return false;
 		}
@@ -691,7 +722,7 @@ void CMusikPlayer::Stop( bool bCheckFade, bool bExit )
 	//-------------------------------------------------//
 	//--- update the ui.							---//
 	//-------------------------------------------------//
-	g_MusikFrame->SetTitle( MUSIK_VERSION );
+	g_MusikFrame->SetTitle( MUSIKAPPNAME_VERSION );
 	g_NowPlayingCtrl->ResetInfo();
 	g_NowPlayingCtrl->PauseBtnToPlayBtn();
 

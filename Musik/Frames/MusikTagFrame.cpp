@@ -597,7 +597,7 @@ void MusikTagFrame::Apply( bool close )
 		}
 	}
 	else
-		wxMessageBox( _("An internal error has occured.\nPrevious thread not terminated correctly.\n\nPlease contact the Musik development team with this error."), MUSIK_VERSION, wxICON_STOP );
+		wxMessageBox( _("An internal error has occured.\nPrevious thread not terminated correctly.\n\nPlease contact the "MUSIKAPPNAME" development team with this error."), MUSIKAPPNAME_VERSION, wxICON_STOP );
 }
 void MusikTagFrame::Close()
 {

@@ -145,7 +145,7 @@ void CMusikWebServer::ProcessRequest(wxString reqstr)
 		wxString server_title;
 
 		server_version.sprintf( wxT( "Server: %s\r\n" ), MUSIKSERV_VERSION );
-		server_title.sprintf( wxT( "<HTML><HEAD><TITLE>%s</TITLE></HEAD>\r\n" ), MUSIK_VERSION );
+		server_title.sprintf( wxT( "<HTML><HEAD><TITLE>%s</TITLE></HEAD>\r\n" ), MUSIKAPPNAME_VERSION );
 
 		WriteLine( wxT("HTTP/1.1 200 OK\r\n") );
 		WriteLine( server_version );

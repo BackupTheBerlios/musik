@@ -47,9 +47,9 @@ CMusikEQGauge::~CMusikEQGauge()
 }
 #ifdef __WXMSW__
 #include "wx/dcbuffer.h"
-void CMusikEQGauge::OnPaint(wxPaintEvent& event)
+void CMusikEQGauge::OnPaint(wxPaintEvent& WXUNUSED(event))
 {
-
+	
 	wxBufferedPaintDC dc(this);
 	wxEraseEvent erase_event(GetId(), &dc);
 	wxGauge::OnEraseBackground(erase_event);
@@ -111,7 +111,7 @@ void CMusikEQGauge::OnMouseMove( wxMouseEvent& event )
 	}
 }
 
-void CMusikEQGauge::OnLeftUp( wxMouseEvent& event )
+void CMusikEQGauge::OnLeftUp( wxMouseEvent& WXUNUSED(event) )
 {
 	if ( m_Dragging )
 	{
@@ -123,6 +123,7 @@ void CMusikEQGauge::OnLeftUp( wxMouseEvent& event )
 
 void CMusikEQGauge::SetFromMousePos( wxMouseEvent& event )
 {
+	
 	//--- stuff we'll need for calculation ---//
 	m_MousePos	= event.GetPosition();
 	m_WndSize	= GetSize();	

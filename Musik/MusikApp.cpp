@@ -17,6 +17,8 @@
 #include "MusikApp.h"
 IMPLEMENT_APP( MusikApp )
 
+
+
 //--- related frames ---//
 #include "Frames/MusikFrame.h"
 #include "Frames/MusikLibraryFrame.h"
@@ -25,10 +27,110 @@ IMPLEMENT_APP( MusikApp )
 #include "MusikGlobals.h"
 #include "MusikUtils.h"
 
+enum {
+    PU_RESTORE = 11101,
+    PU_HIDE ,
+    PU_PLAYPAUSE,
+	PU_PREV,
+	PU_NEXT,
+	PU_STOP,
+    PU_EXIT,
+};
+
+
+BEGIN_EVENT_TABLE(MusikTaskBarIcon, wxTaskBarIcon)
+    EVT_MENU(PU_RESTORE,	MusikTaskBarIcon::OnMenuRestore)
+    EVT_MENU(PU_HIDE,		MusikTaskBarIcon::OnMenuHide)
+    EVT_MENU(PU_PLAYPAUSE,	MusikTaskBarIcon::OnMenuPlayPause)
+    EVT_MENU(PU_PREV,	MusikTaskBarIcon::OnMenuPrev)
+    EVT_MENU(PU_NEXT,	MusikTaskBarIcon::OnMenuNext)
+    EVT_MENU(PU_STOP,	MusikTaskBarIcon::OnMenuStop)
+
+    EVT_MENU(PU_EXIT,		MusikTaskBarIcon::OnMenuExit)
+    EVT_TASKBAR_RIGHT_UP     (MusikTaskBarIcon::OnRButtonUp)
+    EVT_TASKBAR_LEFT_DCLICK  (MusikTaskBarIcon::OnLButtonDClick)
+END_EVENT_TABLE()
+
+void MusikTaskBarIcon::RestoreFrame()
+{
+	m_pFrame->Show(TRUE);
+	//RemoveIcon();
+}
+void MusikTaskBarIcon::OnMenuRestore(wxCommandEvent& )
+{
+	RestoreFrame(); 
+}
+void MusikTaskBarIcon::OnMenuHide(wxCommandEvent& )
+{
+	m_pFrame->Show(FALSE);
+}
+void MusikTaskBarIcon::OnMenuPlayPause(wxCommandEvent& )
+{
+	g_Player.PlayPause();
+}
+void MusikTaskBarIcon::OnMenuPrev(wxCommandEvent& )
+{
+	g_Player.PrevSong();
+}
+void MusikTaskBarIcon::OnMenuNext(wxCommandEvent& )
+{
+	g_Player.NextSong();
+}
+void MusikTaskBarIcon::OnMenuStop(wxCommandEvent& )
+{
+	g_Player.Stop();
+}
+
+void MusikTaskBarIcon::OnMenuExit(wxCommandEvent& )
+{
+    m_pFrame->Close(TRUE);
+
+    // Nudge wxWindows into destroying the dialog, since
+    // with a hidden window no messages will get sent to put
+    // it into idle processing.
+    wxTheApp->ProcessIdle();
+}
+
+
+
+// Overridables
+void MusikTaskBarIcon::OnRButtonUp(wxEvent&)
+{
+    wxMenu      menu;
+
+	if(!m_pFrame->IsShown())
+	    menu.Append(PU_RESTORE, _("&Restore wxMusik"));
+	else
+		menu.Append(PU_HIDE, _("&Hide wxMusik"));
+	menu.AppendSeparator();
+
+	if ( g_Player.IsPlaying() && !g_Player.IsPaused() )
+		menu.Append(PU_PLAYPAUSE, _("&Pause"));
+	else if ( g_Player.IsPlaying() && g_Player.IsPaused() )
+		menu.Append(PU_PLAYPAUSE, _("&Resume"));
+	else if ( !g_Player.IsPlaying() )
+		menu.Append(PU_PLAYPAUSE, _("&Play"));
+	menu.Append(PU_PREV, _("&Previous"));
+	menu.Append(PU_NEXT, _("&Next"));
+	if ( g_Player.IsPlaying() )
+		menu.Append(PU_STOP, _("&Stop"));
+	menu.AppendSeparator();
+
+    menu.Append(PU_EXIT,    _("E&xit"));
+
+    PopupMenu(&menu);
+}
+
+void MusikTaskBarIcon::OnLButtonDClick(wxEvent&)
+{
+    RestoreFrame();
+}
+
+
 bool MusikApp::OnInit()
 {
 	g_FirstRun = true;
-
+	
 	//--- setup our home dir ---//
 	if ( !wxDirExists( MUSIK_HOME_DIR ) )
 		wxMkdir( MUSIK_HOME_DIR );
@@ -52,7 +154,10 @@ bool MusikApp::OnInit()
 
 	//--- initialize fmod ---//
 	if ( g_Player.InitializeFMOD( FMOD_INIT_START ) != FMOD_INIT_SUCCESS )
-		wxMessageBox( _("Initialization of FMOD sound system failed."), MUSIK_VERSION, wxOK | wxICON_ERROR );
+		wxMessageBox( _("Initialization of FMOD sound system failed."), MUSIKAPPNAME_VERSION, wxOK | wxICON_ERROR );
+
+
+	wxImage::AddHandler( new wxXPMHandler );
 
 	//------------------//
 	//--- menu stuff ---//
@@ -76,13 +181,14 @@ bool MusikApp::OnInit()
 	#ifdef __WXMSW__
 		view_menu->AppendSeparator();
 		view_menu->Append	( MUSIK_MENU_STAY_ON_TOP, _("Always On Top\tCtrl-T"), wxT(""), wxITEM_CHECK );
+//		view_menu->Check	( MUSIK_MENU_STAY_ON_TOP, ( bool )g_Prefs.nStayOnTop );
 	#endif
 
 	//--- library -> pending tags ---//
 	library_writetags_menu = new wxMenu;
 	library_writetags_menu->Append( MUSIK_MENU_VIEW_DIRTY_TAGS, _("Vie&w") );
     library_writetags_menu->AppendSeparator();
-	library_writetags_menu->Append( MUSIK_MENU_WRITE_TAGS, _("Write to &File") );
+	library_writetags_menu->Append( MUSIK_MENU_WRITE_TAGS, _("Write Changes to &File") );
 	library_writetags_menu->Append( MUSIK_MENU_WRITE_CLEAR_DIRTY, _("Finalize for Database &Only") );
 
 	//--- library ---//
@@ -93,7 +199,6 @@ bool MusikApp::OnInit()
 	library_menu->Append( MUSIK_MENU_CUSTOMQUERY, _("&Custom Query") );
 	library_menu->AppendSeparator();
 	library_menu->Append( MUSIK_MENU_WRITE, _("&Pending Tags"), library_writetags_menu );
-	library_menu->Append( MUSIK_MENU_RESCAN_PLAYLIST_DIR, _("R&escan Playlist Directory\tCtrl-R") );
 
 	//----------------//
 	//--- menu bar ---//
@@ -117,7 +222,8 @@ bool MusikApp::OnInit()
 		pMain->SetSize( Size );
 		pMain->Center();
 	}
-
+	TaskBarIcon.SetFrame(pMain);
+	pMain->SetTitle( MUSIKAPPNAME_VERSION );
 	pMain->SetMenuBar( menu_bar );
 	pMain->Show(TRUE);
 
@@ -139,7 +245,7 @@ void MusikApp::CheckVersion()
 
 		if ( sVersion == wxT( "Musik 0.1.3" ) || sVersion == wxT( "Musik 0.1.3 CVS" ) )
 		{
-			wxMessageBox( wxT( "Musik has detected 0.1.3 was previously installed. Due to the changes in the playlist display preferences, your columns will be reset. We apologize for any inconvenience this may cause." ), MUSIK_VERSION, wxICON_INFORMATION );
+			wxMessageBox( wxT( MUSIKAPPNAME" has detected 0.1.3 was previously installed. Due to the changes in the playlist display preferences, your columns will be reset. We apologize for any inconvenience this may cause." ), MUSIKAPPNAME_VERSION, wxICON_INFORMATION );
 			g_Prefs.ResetColumns();
 		}
 
@@ -155,7 +261,7 @@ void MusikApp::CheckVersion()
 		//-------------------------------------------------//
 		if ( wxFileExists( MUSIK_SOURCES_FILENAME ) || wxFileExists( MUSIK_DB_FILENAME ) )
 		{
-			wxMessageBox( wxT( "Musik has detected version 0.1.2 or earlier was previously installed.\n\nDue to the changes from 0.1.2 to the current version, your Sources list and Library must be reset. We apologize for any inconvenience this may cause." ), MUSIK_VERSION, wxICON_INFORMATION );
+			wxMessageBox( wxT( MUSIKAPPNAME" has detected version 0.1.2 or earlier was previously installed.\n\nDue to the changes from 0.1.2 to the current version, your Sources list and Library must be reset. We apologize for any inconvenience this may cause." ), MUSIKAPPNAME_VERSION, wxICON_INFORMATION );
 	
 			if ( wxFileExists( MUSIK_SOURCES_FILENAME ) )
 				wxRemoveFile( MUSIK_SOURCES_FILENAME );
@@ -189,11 +295,11 @@ void MusikApp::WriteVersion()
 	{
 		ver.Create( MUSIK_VERSION_FILENAME );
 	}
-
+    
 	if ( ver.IsOpened() )
 	{
     		ver.RemoveLine(0);
-		ver.AddLine( MUSIK_VERSION );
+		ver.AddLine( MUSIKAPPNAME_VERSION );
 		ver.Write();
 		ver.Close();
 	}

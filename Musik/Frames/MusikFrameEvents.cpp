@@ -23,11 +23,13 @@
 //--- globals ---//
 #include "../MusikGlobals.h"
 #include "../MusikUtils.h"
-
+#include "../MusikApp.h"
 #ifdef __WXMSW__
 	#include "../MMShellHook/MMShellHook.h"
 #endif
+#include "../images/sources/library.xpm"
 
+DECLARE_APP( MusikApp )
 //--- wx stuff we need ---//
 #include <wx/filedlg.h>
 
@@ -46,7 +48,6 @@ BEGIN_EVENT_TABLE(MusikFrame, wxFrame)
 	EVT_MENU					(MUSIK_MENU_VIEW_DIRTY_TAGS,		MusikFrame::OnViewDirtyTags			)	// Library->Write Tags->View
 	EVT_MENU					(MUSIK_MENU_WRITE_TAGS,				MusikFrame::OnWriteTags				)	// Library->Write Tags->Write
 	EVT_MENU					(MUSIK_MENU_WRITE_CLEAR_DIRTY,		MusikFrame::OnWriteTagsClearDirty	)	// Library->Write Tags->Finalize DB
-	EVT_MENU					(MUSIK_MENU_RESCAN_PLAYLIST_DIR,	MusikFrame::OnRescanPlaylistDir		)	// Library->Rescan Playlist Directory
 	EVT_TEXT					(MUSIK_SIMPLEQUERY,					MusikFrame::OnSimpleQueryEdit		)	// simple query box change
 	EVT_MOVE					(									MusikFrame::OnMove					)	// main dlg moved
 	EVT_MAXIMIZE				(									MusikFrame::OnMaximize				)	// main dlg maximized
@@ -90,10 +91,15 @@ void MusikFrame::OnIconize( wxIconizeEvent& event )
 {
 	if ( !g_DisablePlacement )
 		g_Prefs.sFramePlacement = GetFramePlacement( this );
-	event.Skip();
+	if(event.Iconized())
+	{
+		Show(FALSE);
+		wxGetApp().TaskBarIcon.SetIcon(wxIcon(library_xpm), GetTitle());
+	}
+	event.Skip(FALSE);
 }
 
-void MusikFrame::OnSize	( wxSizeEvent& event )	
+void MusikFrame::OnSize	( wxSizeEvent& WXUNUSED(event) )	
 {
 //	wxFrame::OnSize(event);
 	m_pBottomPanel->SetDefaultSize(vsTopBottom->GetMinSize());
@@ -176,7 +182,7 @@ void MusikFrame::OnSetupPaths( wxCommandEvent& WXUNUSED(event) )
 	g_MusikLibraryFrame->Show();
 }
 
-void MusikFrame::OnPreferences( wxCommandEvent &event )
+void MusikFrame::OnPreferences( wxCommandEvent &WXUNUSED(event) )
 {
 	
 	#ifdef __WXMSW__
@@ -186,21 +192,21 @@ void MusikFrame::OnPreferences( wxCommandEvent &event )
 	#endif
 	
 
-	wxFrame *pDlg = new MusikPrefsFrame( ( wxFrame* )this, _("Musik Preferences"), wxPoint( 0, 0 ), prefs_size );
+	wxFrame *pDlg = new MusikPrefsFrame( ( wxFrame* )this, wxString(MUSIKAPPNAME) + _(" Preferences"), wxPoint( 0, 0 ), prefs_size );
 	this->Enable( FALSE );
 	pDlg->Show();
 }
 
-void MusikFrame::OnFX( wxCommandEvent &event )
+void MusikFrame::OnFX( wxCommandEvent &WXUNUSED(event) )
 {
 	wxSize fx_size( 400, 450 );
 	
-	wxFrame *pDlg = new MusikFXFrame( ( wxFrame* )this, _("Musik FX"), wxPoint( 0, 0 ), fx_size );
+	wxFrame *pDlg = new MusikFXFrame( ( wxFrame* )this, wxString(MUSIKAPPNAME) + _(" FX"), wxPoint( 0, 0 ), fx_size );
 	//this->Enable( FALSE );
 	pDlg->Show();
 }
 
-void MusikFrame::OnStayOnTop( wxCommandEvent &event )	
+void MusikFrame::OnStayOnTop( wxCommandEvent &WXUNUSED(event) )	
 { 
 	#ifdef __WXMSW__
 		g_Prefs.nStayOnTop = !g_Prefs.nStayOnTop;
@@ -256,14 +262,9 @@ void MusikFrame::OnWriteTagsClearDirty( wxCommandEvent& WXUNUSED(event) )
 {
 	int nCleared = g_Library.ClearDirtyTags();
 	if ( !nCleared )
-		wxMessageBox( _( "There are no pending tags to finalize." ), MUSIK_VERSION, wxICON_INFORMATION );
+		wxMessageBox( _( "There are no pending tags to finalize." ), MUSIKAPPNAME_VERSION, wxICON_INFORMATION );
 	else
-		wxMessageBox( IntTowxString( nCleared ) + wxT( " tags pending to be written were finalized for the database only. These tags will not be written to file." ), MUSIK_VERSION, wxICON_INFORMATION );
-}
-
-void MusikFrame::OnRescanPlaylistDir( wxCommandEvent& WXUNUSED(event) )
-{ 
-	g_SourcesCtrl->RescanPlaylistDir();	
+		wxMessageBox( IntTowxString( nCleared ) + wxT( " tags pending to be written were finalized for the database only. These tags will not be written to file." ), MUSIKAPPNAME_VERSION, wxICON_INFORMATION );
 }
 
 void MusikFrame::OnTranslateKeys( wxKeyEvent& event )
@@ -272,7 +273,7 @@ void MusikFrame::OnTranslateKeys( wxKeyEvent& event )
 	{
 		if ( GetActiveThread() != NULL )
 		{
-			SetTitle( wxString( MUSIK_VERSION ) + _( ": Aborting process, please wait..." ) );
+			SetTitle( wxString( MUSIKAPPNAME_VERSION ) + _( ": Aborting process, please wait..." ) );
 			GetActiveThread()->Delete();
 		}
 	}
@@ -284,7 +285,7 @@ void MusikFrame::WriteTags()
         {
 			//--- ask user if he wants to clear tags first ---//
 			bool bClear = false;
-			if ( wxMessageBox( _( "Clear old tag information before writing?" ), MUSIK_VERSION, wxYES_NO | wxICON_QUESTION  ) == wxYES )
+			if ( wxMessageBox( _( "Clear old tag information before writing?" ), MUSIKAPPNAME_VERSION, wxYES_NO | wxICON_QUESTION  ) == wxYES )
 				bClear = true;
 			else
 				bClear = false;		
@@ -295,7 +296,7 @@ void MusikFrame::WriteTags()
 			pWriteDirtyThread->Run();
         }
 	else
-		wxMessageBox( _( "An internal error has occured.\nPrevious thread not terminated correctly.\n\nPlease contact the Musik development team with this error." ), MUSIK_VERSION, wxICON_STOP );
+		wxMessageBox( _( "An internal error has occured.\nPrevious thread not terminated correctly.\n\nPlease contact the "MUSIKAPPNAME" development team with this error." ), MUSIKAPPNAME_VERSION, wxICON_STOP );
 }
 
 //------------------------//
@@ -326,7 +327,7 @@ void MusikFrame::LibrarySimpleQueryEdit()
 
 void MusikFrame::LibrarySimpleQueryDlg()
 {
-	wxTextEntryDialog dlg( this, _("Enter Query:"), MUSIK_VERSION, m_customQuery );
+	wxTextEntryDialog dlg( this, _("Enter Query:"), MUSIKAPPNAME_VERSION, m_customQuery );
 	if ( dlg.ShowModal() == wxID_OK )
 	{
 		wxString sQuery = dlg.GetValue();
@@ -389,15 +390,15 @@ void MusikFrame::OnStartProgress( wxCommandEvent& WXUNUSED(event) )
 
 	if ( GetProgressType() == MUSIK_ACTIVITY_RENAME_THREAD )
 	{
-		SetTitle( wxString( MUSIK_VERSION ) + _( ": Updating tags from selection box (ESC to abort)" ) );
+		SetTitle( wxString( MUSIKAPPNAME_VERSION ) + _( ": Updating tags from selection box (ESC to abort)" ) );
 	}
 	else if ( GetProgressType() == MUSIK_PLAYLIST_RENAME_THREAD )
 	{
-		SetTitle( wxString( MUSIK_VERSION ) + _( ": Renaming selected playlist items (ESC to abort)" ) );
+		SetTitle( wxString( MUSIKAPPNAME_VERSION ) + _( ": Renaming selected playlist items (ESC to abort)" ) );
 	}
 	else if ( GetProgressType() == MUSIK_WRITE_DIRTY_THREAD )
 	{
-		SetTitle( wxString( MUSIK_VERSION ) + _( ": Writing dirty tags to file (ESC to abort)" ) );
+		SetTitle( wxString( MUSIKAPPNAME_VERSION ) + _( ": Writing dirty tags to file (ESC to abort)" ) );
 	}
 }
 
@@ -419,15 +420,15 @@ void MusikFrame::OnEndProgress( wxCommandEvent& WXUNUSED(event) )
 	SetProgressType	( 0 );
 	SetActiveThread	( NULL );
 
-	SetTitle( MUSIK_VERSION );
+	SetTitle( MUSIKAPPNAME_VERSION );
 }
 
-void MusikFrame::OnSashDraggedSourcesBox	(wxSashEvent & ev)
+void MusikFrame::OnSashDraggedSourcesBox	(wxSashEvent & WXUNUSED(ev))
 {
 	wxLayoutAlgorithm layout;
     layout.LayoutWindow(this,g_PlaylistBox);
 }
-void MusikFrame::OnSashDraggedActivityCtrl	(wxSashEvent & ev)
+void MusikFrame::OnSashDraggedActivityCtrl	(wxSashEvent & WXUNUSED(ev))
 {
 	wxLayoutAlgorithm layout;
     layout.LayoutWindow(this,g_PlaylistBox);

@@ -35,7 +35,7 @@ CGaugeSeekEvt::CGaugeSeekEvt( wxGauge *parent, long style )
 }
 #ifdef __WXMSW__
 #include "wx/dcbuffer.h"
-void CGaugeSeekEvt::OnPaint(wxPaintEvent& event)
+void CGaugeSeekEvt::OnPaint(wxPaintEvent& WXUNUSED(event))
 {
 	wxControl * pControl = (wxControl*)pParent;
 	wxBufferedPaintDC dc(pControl);

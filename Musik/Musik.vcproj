@@ -4,6 +4,7 @@
 	Version="7.10"
 	Name="Musik"
 	ProjectGUID="{C4650E41-AD5A-41D8-89D8-3ED472E4D10F}"
+	RootNamespace="Musik"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -15,32 +16,41 @@
 			OutputDirectory="_Debug"
 			IntermediateDirectory="_Debug"
 			ConfigurationType="1"
-			CharacterSet="1">
+			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/D ID3LIB_LINKOPTION=3"
+				AdditionalOptions="/D ID3LIB_LINKOPTION=1"
 				Optimization="0"
-				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;WINVER=0x400;_MT;wxUSE_GUI=1;__WXDEBUG__;WXDEBUG=1;wxUSE_UNICODE=1"
+				AdditionalIncludeDirectories="$(VORBISDIR)\include;$(FMODDIR)\api\inc;&quot;$(ID3LIBDIR)\include&quot;;$(OGGDIR)\include;$(SQLITEDIR);MMShellHook;&quot;$(WXDIR)\lib\vc_lib\mswd&quot;;&quot;$(WXDIR)\include&quot;"
+				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;WINVER=0x400;_MT"
+				StringPooling="TRUE"
 				MinimalRebuild="TRUE"
-				BasicRuntimeChecks="3"
+				ExceptionHandling="TRUE"
+				BasicRuntimeChecks="0"
+				SmallerTypeCheck="TRUE"
 				RuntimeLibrary="3"
-				UsePrecompiledHeader="2"
+				UsePrecompiledHeader="3"
 				PrecompiledHeaderThrough="wx/wxprec.h"
-				WarningLevel="3"
+				WarningLevel="4"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="3"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib zlibd.lib regexd.lib pngd.lib jpegd.lib tiffd.lib wxmswud.lib id3libd.lib fmodvc.lib sqlite.lib vorbisfile_static_d.lib ogg_static_d.lib vorbis_static_d.lib MMShellHook.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib id3libd.lib fmodvc.lib sqlite.lib vorbisfile_static_d.lib ogg_static_d.lib vorbis_static_d.lib MMShellHook.lib wxmsw25d_core.lib wxbase25d.lib wxbase25d_net.lib wxzlibd.lib wxregexd.lib wxmsw25d_adv.lib"
+				ShowProgress="2"
 				OutputFile="$(OutDir)/Musik.exe"
-				LinkIncremental="2"
-				AdditionalLibraryDirectories=""
+				LinkIncremental="1"
+				AdditionalLibraryDirectories="$(SQLITEDIR)\Debug;&quot;$(WXDIR)\lib\vc_lib&quot;;$(FMODDIR)\api\lib;$(VORBISDIR)\win32\Vorbis_Static_Debug;&quot;$(ID3LIBDIR)\libprj&quot;;$(VORBISDIR)\win32\VorbisFile_Static_Debug;$(VORBISDIR)\win32\VorbisEnc_Static_Debug;$(OGGDIR)\win32\Static_Debug;_Debug;..\MMShellHook\Debug"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/Musik.pdb"
+				GenerateMapFile="TRUE"
+				MapExports="TRUE"
+				MapLines="TRUE"
 				SubSystem="2"
-				TargetMachine="1"/>
+				TargetMachine="1"
+				FixedBaseAddress="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -50,7 +60,8 @@
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
-				Name="VCResourceCompilerTool"/>
+				Name="VCResourceCompilerTool"
+				AdditionalIncludeDirectories="$(WXDIR)\include"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
@@ -68,18 +79,159 @@
 			IntermediateDirectory="_Release"
 			ConfigurationType="1"
 			UseOfMFC="0"
+			CharacterSet="2"
+			WholeProgramOptimization="TRUE">
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalOptions="/D ID3LIB_LINKOPTION=1"
+				Optimization="3"
+				GlobalOptimizations="TRUE"
+				InlineFunctionExpansion="2"
+				EnableIntrinsicFunctions="TRUE"
+				FavorSizeOrSpeed="2"
+				OmitFramePointers="TRUE"
+				OptimizeForProcessor="0"
+				OptimizeForWindowsApplication="TRUE"
+				AdditionalIncludeDirectories="$(VORBISDIR)\include;$(FMODDIR)\api\inc;&quot;$(ID3LIBDIR)\include&quot;;$(OGGDIR)\include;&quot;$(WXDIR)\include&quot;;&quot;$(WXDIR)\lib\vc_lib\msw&quot;;$(SQLITEDIR);MMShellHook"
+				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;WINVER=0x400;_MT"
+				StringPooling="TRUE"
+				ExceptionHandling="TRUE"
+				RuntimeLibrary="2"
+				BufferSecurityCheck="FALSE"
+				EnableFunctionLevelLinking="FALSE"
+				UsePrecompiledHeader="3"
+				PrecompiledHeaderThrough="wx/wxprec.h"
+				WarningLevel="4"
+				Detect64BitPortabilityProblems="TRUE"
+				DebugInformationFormat="3"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalOptions="/NODEFAULTLIB:libcmt.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib wxzlib.lib wxregex.lib wxpng.lib wxjpeg.lib wxtiff.lib wxmsw25_core.lib wxbase25.lib wxbase25_net.lib wxmsw25_adv.lib id3lib.lib fmodvc.lib sqlite.lib vorbisfile_static.lib ogg_static.lib vorbis_static.lib MMShellHook.lib"
+				ShowProgress="2"
+				OutputFile="$(OutDir)/Musik.exe"
+				LinkIncremental="1"
+				AdditionalLibraryDirectories="$(SQLITEDIR)\Release;&quot;$(WXDIR)\lib\vc_lib&quot;;$(FMODDIR)\api\lib;$(VORBISDIR)\win32\Vorbis_Static_Release;&quot;$(ID3LIBDIR)\libprj&quot;;$(VORBISDIR)\win32\VorbisFile_Static_Release;$(VORBISDIR)\win32\VorbisEnc_Static_Release;$(OGGDIR)\win32\Static_Release;_Release;..\MMShellHook\Release"
+				IgnoreAllDefaultLibraries="FALSE"
+				GenerateDebugInformation="TRUE"
+				GenerateMapFile="TRUE"
+				MapExports="TRUE"
+				MapLines="TRUE"
+				SubSystem="2"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				OptimizeForWindows98="1"
+				TargetMachine="1"
+				FixedBaseAddress="1"/>
+			<Tool
+				Name="VCMIDLTool"/>
+			<Tool
+				Name="VCPostBuildEventTool"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				AdditionalIncludeDirectories="$(WXDIR)\include"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+		</Configuration>
+		<Configuration
+			Name="Debug Unicode|Win32"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="1"
 			CharacterSet="1">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/D ID3LIB_LINKOPTION=3"
-				Optimization="3"
-				InlineFunctionExpansion="1"
-				OmitFramePointers="TRUE"
-				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;WINVER=0x400;_MT;wxUSE_GUI=1"
+				AdditionalOptions="/D ID3LIB_LINKOPTION=1"
+				Optimization="0"
+				AdditionalIncludeDirectories="$(VORBISDIR)\include;..\fmodapi\api\inc;..\wx2\wxWindows\lib\mswud;&quot;$(ID3LIBDIR)\include&quot;;$(OGGDIR)\include;..\wx2\wxWindows\include;$(SQLITEDIR);MMShellHook"
+				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;WINVER=0x400;_MT;_UNICODE"
 				StringPooling="TRUE"
+				MinimalRebuild="TRUE"
+				ExceptionHandling="TRUE"
+				BasicRuntimeChecks="0"
+				SmallerTypeCheck="TRUE"
+				RuntimeLibrary="3"
+				UsePrecompiledHeader="3"
+				PrecompiledHeaderThrough="wx/wxprec.h"
+				WarningLevel="3"
+				Detect64BitPortabilityProblems="TRUE"
+				DebugInformationFormat="3"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib zlibd.lib regexd.lib pngd.lib jpegd.lib tiffd.lib wxmswud.lib id3libd.lib fmodvc.lib sqlite.lib vorbisfile_static_d.lib ogg_static_d.lib vorbis_static_d.lib MMShellHook.lib"
+				OutputFile="$(OutDir)/Musik.exe"
+				LinkIncremental="1"
+				AdditionalLibraryDirectories="$(SQLITEDIR)\Debug;..\wx2\wxWindows\lib\;..\fmodapi\api\lib;$(VORBISDIR)\win32\Vorbis_Static_Debug;&quot;$(ID3LIBDIR)\libprj&quot;;$(VORBISDIR)\win32\VorbisFile_Static_Debug;$(VORBISDIR)\win32\VorbisEnc_Static_Debug;$(OGGDIR)\win32\Static_Debug;_Debug"
+				GenerateDebugInformation="TRUE"
+				ProgramDatabaseFile="$(OutDir)/Musik.pdb"
+				SubSystem="2"
+				TargetMachine="1"
+				FixedBaseAddress="1"/>
+			<Tool
+				Name="VCMIDLTool"/>
+			<Tool
+				Name="VCPostBuildEventTool"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				AdditionalIncludeDirectories="$(WXDIR)\include"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+		</Configuration>
+		<Configuration
+			Name="Release Unicode|Win32"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="1"
+			UseOfMFC="0"
+			CharacterSet="1"
+			WholeProgramOptimization="TRUE">
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalOptions="/D ID3LIB_LINKOPTION=1"
+				Optimization="3"
+				GlobalOptimizations="TRUE"
+				InlineFunctionExpansion="2"
+				EnableIntrinsicFunctions="TRUE"
+				FavorSizeOrSpeed="1"
+				OmitFramePointers="TRUE"
+				OptimizeForProcessor="3"
+				OptimizeForWindowsApplication="TRUE"
+				AdditionalIncludeDirectories="$(VORBISDIR)\include;..\fmodapi\api\inc;..\wx2\wxWindows\lib\mswu;&quot;$(ID3LIBDIR)\include&quot;;$(OGGDIR)\include;..\wx2\wxWindows\include;$(SQLITEDIR);MMShellHook"
+				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;WINVER=0x400;_MT;_UNICODE"
+				StringPooling="TRUE"
+				ExceptionHandling="TRUE"
 				RuntimeLibrary="2"
+				BufferSecurityCheck="FALSE"
 				EnableFunctionLevelLinking="TRUE"
-				UsePrecompiledHeader="2"
+				UsePrecompiledHeader="3"
 				PrecompiledHeaderThrough="wx/wxprec.h"
 				WarningLevel="4"
 				Detect64BitPortabilityProblems="TRUE"
@@ -92,10 +244,11 @@
 				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib zlib.lib regex.lib png.lib jpeg.lib tiff.lib wxmswu.lib id3lib.lib fmodvc.lib sqlite.lib vorbisfile_static.lib ogg_static.lib vorbis_static.lib MMShellHook.lib"
 				OutputFile="$(OutDir)/Musik.exe"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="$(SQLITEDIR)\Release;..\wx2\wxWindows\lib\;..\fmodapi\api\lib;$(VORBISDIR)\win32\Vorbis_Static_Release;&quot;$(ID3LIBDIR)\libprj&quot;;$(VORBISDIR)\win32\VorbisFile_Static_Release;$(VORBISDIR)\win32\VorbisEnc_Static_Release;$(OGGDIR)\win32\Static_Release;_Release"
 				IgnoreAllDefaultLibraries="FALSE"
-				GenerateDebugInformation="FALSE"
+				GenerateDebugInformation="TRUE"
 				SubSystem="2"
-				OptimizeReferences="0"
+				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				OptimizeForWindows98="1"
 				TargetMachine="1"/>
@@ -108,7 +261,8 @@
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
-				Name="VCResourceCompilerTool"/>
+				Name="VCResourceCompilerTool"
+				AdditionalIncludeDirectories="$(WXDIR)\include"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
@@ -144,6 +298,33 @@
 			</File>
 			<File
 				RelativePath="MusikUtils.h">
+			</File>
+			<File
+				RelativePath=".\wxprec.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug Unicode|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release Unicode|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"/>
+				</FileConfiguration>
 			</File>
 		</Filter>
 		<Filter
@@ -326,9 +507,6 @@
 				Name="Playlist"
 				Filter="">
 				<File
-					RelativePath=".\Classes\MusikListCtrl.cpp">
-				</File>
-				<File
 					RelativePath=".\Classes\PlaylistCtrl.cpp">
 				</File>
 				<File
@@ -349,6 +527,16 @@
 				</File>
 				<File
 					RelativePath=".\Classes\MusikEQGauge.h">
+				</File>
+			</Filter>
+			<Filter
+				Name="Base"
+				Filter="">
+				<File
+					RelativePath=".\Classes\MusikListCtrl.cpp">
+				</File>
+				<File
+					RelativePath=".\Classes\MusikListCtrl.h">
 				</File>
 			</Filter>
 		</Filter>
@@ -397,6 +585,30 @@
 					</File>
 					<File
 						RelativePath=".\Classes\Library\vcedit.c">
+						<FileConfiguration
+							Name="Debug|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug Unicode|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Unicode|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath=".\Classes\Library\vcedit.h">
@@ -428,6 +640,12 @@
 				Filter="">
 				<File
 					RelativePath=".\Classes\MusikFX.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="3"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\Classes\MusikFX.h">
@@ -468,10 +686,31 @@
 			</Filter>
 		</Filter>
 		<File
-			RelativePath=".\changelog.txt">
-		</File>
-		<File
 			RelativePath=".\Musik.rc">
+			<FileConfiguration
+				Name="Debug|Win32">
+				<Tool
+					Name="VCResourceCompilerTool"
+					AdditionalIncludeDirectories="..\wx2\wxwindows\include"/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Release|Win32">
+				<Tool
+					Name="VCResourceCompilerTool"
+					AdditionalIncludeDirectories="..\wx2\wxwindows\include"/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Debug Unicode|Win32">
+				<Tool
+					Name="VCResourceCompilerTool"
+					AdditionalIncludeDirectories="..\wx2\wxwindows\include"/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Release Unicode|Win32">
+				<Tool
+					Name="VCResourceCompilerTool"
+					AdditionalIncludeDirectories="..\wx2\wxwindows\include"/>
+			</FileConfiguration>
 		</File>
 	</Files>
 	<Globals>

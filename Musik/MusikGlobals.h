@@ -35,6 +35,7 @@
 	#pragma warning(disable : 4996)		//--- declared deprecated												---//
 #endif
 
+
 //---------------//
 //--- defines ---//
 //---------------//
@@ -50,8 +51,10 @@
 #define	MUSIK_SIMPLEQUERY		9996
 #define MUSIK_NOWPLAYING_TIMER	9997
 #define MUSIK_ACTIVITYCTRL		9998
-#define MUSIK_VERSION			wxT( "Musik 0.2.2" )
-#define MUSIKSERV_VERSION		wxT( "MusikServ 0.2.2" )
+#define MUSIK_VERSION_STR		"0.3.0"
+#define MUSIKAPPNAME			"wxMusik"
+#define MUSIKAPPNAME_VERSION	wxT(MUSIKAPPNAME" "MUSIK_VERSION_STR)
+#define MUSIKSERV_VERSION		wxT( MUSIKAPPNAME"Serv "MUSIK_VERSION_STR )
 
 //-------------------------------------------------//
 //--- for some reason some versions of wx do	---//
@@ -170,7 +173,6 @@ enum EMUSIK_MENU_ITEMS
 	MUSIK_MENU_VIEW_DIRTY_TAGS,
 	MUSIK_MENU_WRITE_TAGS,
 	MUSIK_MENU_WRITE_CLEAR_DIRTY,
-	MUSIK_MENU_RESCAN_PLAYLIST_DIR,
 	MUSIK_MENU_PREFERENCES,
 	MUSIK_MENU_FX,
   	MUSIK_MENU_EXIT,

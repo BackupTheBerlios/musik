@@ -116,7 +116,7 @@ void MusikFXFrame::OnClose ( wxCloseEvent& WXUNUSED(event) )
 	Close();
 }
 
-void MusikFXFrame::OnSlidePitch( wxScrollEvent &event )
+void MusikFXFrame::OnSlidePitch( wxScrollEvent &WXUNUSED(event) )
 {
 	g_FX.SetFrequency( (( (float)slPitch->GetValue()) / 50.0f) * 44100.0f );
 }

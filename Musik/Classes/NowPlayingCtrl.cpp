@@ -302,7 +302,7 @@ void CNowPlayingCtrl::UpdateInfo( CMusikSong song )
 	m_sLastFile = song.Filename;
 
 	//--- caption bar title ---//
-	g_MusikFrame->SetTitle( wxString( MUSIK_VERSION ) + wxT( " [ " ) + song.Artist + wxT( " - " ) +  song.Title + wxT( " ]" ) );
+	g_MusikFrame->SetTitle( wxString( MUSIKAPPNAME_VERSION ) + wxT( " [ " ) + song.Artist + wxT( " - " ) +  song.Title + wxT( " ]" ) );
 
 	//--- title / artist / time -//
 	song.Title.Replace	( wxT( "&" ), wxT( "&&" ), TRUE );
@@ -324,34 +324,7 @@ void CNowPlayingCtrl::PlayerStop( wxCommandEvent& WXUNUSED(event) )
 
 void CNowPlayingCtrl::PlayerPlayPause( wxCommandEvent& WXUNUSED(event) )	
 {	
-	//--- paused, so play ---//
-	if ( g_Player.IsPlaying() && !g_Player.IsPaused() )
-		g_Player.Pause();
-
-	//--- paused, so resume ---//
-	else if ( g_Player.IsPlaying() && g_Player.IsPaused() )
-		g_Player.Resume();
-
-	//--- start playing ---//
-	else if ( !g_Player.IsPlaying() )
-	{
-		if(g_Player.GetPlaymode() == MUSIK_PLAYMODE_RANDOM)
-		{
-			// if playlist has changed set new playlist for the player
-			// in random mode
-			if ( g_PlaylistChanged )
-			{
-				g_Player.SetPlaylist( g_Playlist );
-				g_PlaylistChanged = false;
-			}
-
-			g_Player.NextSong();
-		}
-		else
-		{
-			g_Player.PlayCurSel();
-		}
-	}
+	g_Player.PlayPause();
 }
 
 void CNowPlayingCtrl::PlayerNext( wxCommandEvent& WXUNUSED(event) )	
