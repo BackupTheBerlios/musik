@@ -80,6 +80,7 @@ public:
 	CMusikPlayer();
 	~CMusikPlayer();
 
+	void Init();
 	//--------------------//
 	//--- sound system ---//
 	//--------------------//
@@ -164,8 +165,10 @@ public:
 	void SetVolume			( );
 	void SetTime			( int nSec );
 	void SetPlaylist		(const  CMusikSongArray &playlist ) {wxCriticalSectionLocker locker( m_critInternalData) ; m_Playlist = playlist;m_arrHistory.Clear(); }
-	void AddToPlaylist		( CMusikSongArray &songstoadd );	// NOTE this method, empties the songstoadd array.
+	void AddToPlaylist		( CMusikSongArray &songstoadd ,bool bPlayFirstAdded = true);	// NOTE this method, empties the songstoadd array.
+	void InsertToPlaylist(	 CMusikSongArray & songstoadd ,bool bPlayFirstInserted = true);  // NOTE this method, empties the songstoadd array.
 	void RemovePlaylistEntry( int index );
+	void MovePlaylistEntrys	(int nMoveTo ,const wxArrayInt &arrToMove);
 	void SetStartingNext	( bool bStart = true ){ m_StartingNext = bStart; }
 	void SetCrossfadeType	( int nType ){ m_CrossfadeType = nType; }
 

@@ -26,6 +26,7 @@
 //--- threads ---//
 #include "../Threads/ActivityBoxThreads.h"
 
+#include "../DNDHelper.h"
 //-----------------------//
 //--- CActivityBoxEvt ---//
 //-----------------------//
@@ -686,15 +687,15 @@ void CActivityBox::DNDBegin()
 {
 	g_DragInProg = true;
 
-	wxString sDrop = wxString( wxT("a\n") ) + DNDGetList();
+	wxString sDrop = DNDGetList();
 
 	//-------------------------------------------------------//
 	//--- initialize drag and drop                        ---//
 	//--- Playlist / Sources should take care of the rest ---//
 	//-------------------------------------------------------//
 	wxDropSource dragSource( this );
-	wxTextDataObject activity_data( sDrop );
-	dragSource.SetData( activity_data );
+	CMusikSonglistDataObject song_data( sDrop );
+	dragSource.SetData( song_data );
 	dragSource.DoDragDrop( TRUE );
 
 	g_DragInProg = false;

@@ -29,8 +29,50 @@
 //--- threads ---//
 #include "../Threads/PlaylistCtrlThreads.h"
 
+// other
+#include "../DataObjectCompositeEx.h"
+#include "../DNDHelper.h"
+
+
+class PlaylistDropTarget : public wxDropTarget
+{
+public:
+	//-------------------//
+	//--- constructor ---//
+	//-------------------//
+	PlaylistDropTarget( CPlaylistCtrl *pPList )	
+	{ 
+		m_pPlaylistCtrl = pPList;	
+
+		wxDataObjectCompositeEx * dobj = new wxDataObjectCompositeEx;
+		dobj->Add(m_pSonglistDObj = new CMusikSonglistDataObject(),true);
+		dobj->Add(m_pFileDObj = new wxFileDataObject());
+		SetDataObject(dobj);
+	}
+	virtual wxDragResult OnData(wxCoord x, wxCoord y, wxDragResult def);
+	//-------------------------//
+	//--- virtual functions ---//
+	//-------------------------//
+	virtual bool		 OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames);
+
+	virtual bool		 OnDropSonglist(wxCoord x, wxCoord y, const wxString& text);
+	virtual wxDragResult OnDragOver(wxCoord x, wxCoord y, wxDragResult def);
+
+	//-------------------------//
+	//--- utility functions ---//
+	//-------------------------//
+	bool  HighlightSel( const  wxPoint &pPos );
+private:
+	wxTextDataObject * m_pSonglistDObj;
+	wxFileDataObject * m_pFileDObj;
+
+	CPlaylistCtrl *m_pPlaylistCtrl;	//--- pointer to the playlist ---//
+	int nLastHit;					//--- last item hit           ---//
+	long n;							//--- new pos                 ---//
+};
+
 CPlaylistBox::CPlaylistBox( wxWindow *parent )
-	: wxPanel( parent, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ),  wxCLIP_CHILDREN|wxSUNKEN_BORDER )
+	: wxPanel( parent, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ),  wxTAB_TRAVERSAL|wxCLIP_CHILDREN|wxSUNKEN_BORDER )
 {
 	SetBackgroundColour( *wxTheColourDatabase->FindColour(wxT("LIGHT STEEL BLUE")));
 
@@ -89,9 +131,14 @@ BEGIN_EVENT_TABLE(CPlaylistCtrl, CMusikListCtrl)
 	EVT_LIST_ITEM_SELECTED		( MUSIK_PLAYLIST,														CPlaylistCtrl::UpdateSel			)
 	EVT_LIST_COL_BEGIN_DRAG		( MUSIK_PLAYLIST,														CPlaylistCtrl::BeginDragCol			)
 	EVT_LIST_COL_END_DRAG		( MUSIK_PLAYLIST,														CPlaylistCtrl::EndDragCol			)
+	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_PLAY_INSTANTLY,								CPlaylistCtrl::OnPlayInstantly		)
+	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_PLAY_ASNEXT,									CPlaylistCtrl::OnPlayAsNext			)
+	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_PLAY_ENQUEUED,									CPlaylistCtrl::OnPlayEnqueued		)
+	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_PLAY_REPLACE_PLAYERLIST,						CPlaylistCtrl::OnPlayReplace		)
 	EVT_MENU					( MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FROM_PLAYLIST,					CPlaylistCtrl::OnDelSel				)
 	EVT_MENU					( MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FILES,							CPlaylistCtrl::OnDelFiles			)
 	EVT_MENU					( MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FROM_DB,							CPlaylistCtrl::OnDelFilesDB			)
+	EVT_UPDATE_UI_RANGE			( MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FROM_PLAYLIST, MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FROM_DB,	CPlaylistCtrl::OnUpdateUIDelete	)
 	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_RENAME_FILES,									CPlaylistCtrl::OnRenameFiles		)
 	EVT_MENU					( MUSIK_PLAYLIST_CONTEXT_RETAG_FILES,									CPlaylistCtrl::OnRetagFiles			)
 	EVT_MENU_RANGE				( MUSIK_PLAYLIST_CONTEXT_UNRATED, MUSIK_PLAYLIST_CONTEXT_RATE5,			CPlaylistCtrl::OnRateSel			) 	
@@ -131,8 +178,8 @@ wxDragResult PlaylistDropTarget::OnData(wxCoord x, wxCoord y, wxDragResult def)
 			
 		wxDataObjectSimple *dobj = ((wxDataObjectCompositeEx *)GetDataObject())->GetActualDataObject();
 		
-		if( dobj == (wxDataObjectSimple *)m_pTextDObj )
-			bRes = OnDropText(x, y, m_pTextDObj->GetText());
+		if( dobj == (wxDataObjectSimple *)m_pSonglistDObj )
+			bRes = OnDropSonglist(x, y, m_pSonglistDObj->GetText());
 		else if( dobj == (wxDataObjectSimple *)m_pFileDObj )
 			bRes = OnDropFiles(x, y, m_pFileDObj->GetFilenames());
 	}
@@ -144,91 +191,51 @@ bool PlaylistDropTarget::OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& 
 {
 	return m_pPlaylistCtrl->OnDropFiles( x,  y,  filenames);
 }
-bool PlaylistDropTarget::OnDropText( wxCoord x, wxCoord y, const wxString &text )
+bool PlaylistDropTarget::OnDropSonglist( wxCoord x, wxCoord y, const wxString &sFiles )
 {
-	wxString sFiles = text;
 	//--- make sure we have something ---//
 	if ( sFiles != wxT( "" ) )
 	{
-		//--- seperate values. "s\n" for sources, "p\n" for playlist ---//
-		wxString sType = sFiles.Left( 2 );
-		sFiles = sFiles.Right( sFiles.Length() - 2 );
 
 		//--- where did we land? ---//
 		const wxPoint& pt = wxPoint( x, y );
 		int nFlags;
 		n = m_pPlaylistCtrl->HitTest( pt, nFlags );
 
-		//--- originated from sources box, so just populate ---//
-		if ( sType == wxT( "s\n" ) ){ 	g_DragInProg = false; }
 
-		//--- drag originated from playlist, rearrange ---//
-		else if ( sType == wxT( "p\n" ) )	
+		//--- make sure we havn't dragged on a selected item ---//
+		if ( m_pPlaylistCtrl->DNDIsSel( n ) )
 		{
-			//--- make sure we havn't dragged on a selected item ---//
-			for ( size_t i = 0; i < m_pPlaylistCtrl->aCurSel.GetCount(); i++ )
-			{
-				if ( m_pPlaylistCtrl->DNDIsSel( n ) )
-				{
-					m_pPlaylistCtrl->aCurSel.Clear();
-					m_pPlaylistCtrl->aCurSelSongs.Clear();
-					g_DragInProg = false;
-					return FALSE;
-				}
-			}
+			m_pPlaylistCtrl->aCurSel.Clear();
+			g_DragInProg = false;
+			return false;
+		}
 
-			//--- this is the name of the file we're gonna insert items at ---//
-			wxString sFile;
+		//--- first lets make sure user intended to drop files in the playlist ---//
+		//--- otherwise we may have songs removed that shouldn't be. that would be bad ---//
+		int nLastSelItem = m_pPlaylistCtrl->aCurSel.Last();
+		if ( n == -1 || n < nLastSelItem || n > nLastSelItem )
+		{
+			//--- not dragged over anything, push to bottom ---//
 			if ( n == -1 )
-				sFile = m_pPlaylistCtrl->GetFilename( m_pPlaylistCtrl->GetItemCount() - 1 );
-			else
-				sFile = m_pPlaylistCtrl->GetFilename( n );
-
-			//--- first lets make sure user intended to drop files in the playlist ---//
-			//--- otherwise we may have songs removed that shouldn't be. that would be bad ---//
-			int nLastSelItem = m_pPlaylistCtrl->aCurSel.Item( m_pPlaylistCtrl->aCurSel.GetCount()-1 );
-			if ( n == -1 || n < nLastSelItem || n > nLastSelItem )
 			{
-				//--- delete old songs ---//
-				m_pPlaylistCtrl->DNDDelSongs();
-
-				//--- not dragged over anything, push to bottom ---//
-				if ( n == -1 )
-				{
-					m_pPlaylistCtrl->DNDInsertItems( sFile, MUSIK_DND_BOTTOM );
-					n = m_pPlaylistCtrl->DNDGetItemPos( sFile ) + 1;
-				}
-
-				//--- else find where we need to drop ---//
-				else
-				{
-					//--- error, couldn't locate our position ---//
-					if ( n == -2 )
-					{
-						wxMessageBox( _( "An internal error has occured.\nCould not find previous item's position.\n\nPlease contact the "MUSIKAPPNAME" development team with this error." ), MUSIKAPPNAME_VERSION, wxOK|wxICON_ERROR );
-						g_DragInProg = false;
-						return FALSE;
-					}
-
-					//--- dragged above old pos ---//
-					else if ( n < nLastSelItem )		
-					{
-						m_pPlaylistCtrl->DNDInsertItems( sFile, MUSIK_DND_ABOVE );
-						n = n;
-					}
-
-					//--- dragged below old pos ---//
-					else if ( n > nLastSelItem )	
-					{
-						m_pPlaylistCtrl->DNDInsertItems( sFile, MUSIK_DND_BELOW );
-						n = m_pPlaylistCtrl->DNDGetItemPos( sFile ) + 1;
-					}
-				}
+				n = m_pPlaylistCtrl->GetItemCount() - 1;
 			}
+			//--- find where we need to drop ---//
+			if ( n == -2 )
+			{	//--- error, couldn't locate our position ---//
+				wxMessageBox( _( "An internal error has occured.\nCould not find previous item's position.\n\nPlease contact the "MUSIKAPPNAME" development team with this error." ), MUSIKAPPNAME_VERSION, wxOK|wxICON_ERROR );
+				g_DragInProg = false;
+				return false;
+			}
+			if(n >= nLastSelItem)
+				n++;
+			m_pPlaylistCtrl->MovePlaylistEntrys( n ,m_pPlaylistCtrl->aCurSel );
+			
 		}
 	}
-	m_pPlaylistCtrl->DNDDone( n );
-	return TRUE;
+	m_pPlaylistCtrl->DNDDone();
+	return true;
 }
 
 wxDragResult PlaylistDropTarget::OnDragOver(wxCoord x, wxCoord y, wxDragResult def)
@@ -239,17 +246,21 @@ wxDragResult PlaylistDropTarget::OnDragOver(wxCoord x, wxCoord y, wxDragResult d
 	//--- calls HighlightSel() to highlight the item the mouse is over ---//
 	//m_pPlaylistCtrl->SetFocus();
 	const wxPoint& pt = wxPoint( x, y );
-	HighlightSel( pt );
-	return wxDragMove;
+	return HighlightSel( pt ) ? def : wxDragNone;
 }
 
-void PlaylistDropTarget::HighlightSel( wxPoint pPos )
+bool PlaylistDropTarget::HighlightSel( const  wxPoint & pPos )
 {
 	//--- gotta set this so stuff doesn't keep updating ---//
 	g_DragInProg	= true;
 	int nFlags;
 	long n = m_pPlaylistCtrl->HitTest( pPos, nFlags );
-
+	long topitem = m_pPlaylistCtrl->GetTopItem();
+	long countperpage = m_pPlaylistCtrl->GetCountPerPage();
+	if( n == topitem && n > 0)
+		m_pPlaylistCtrl->EnsureVisible(n - 1);
+	else if((n == topitem + countperpage - 1) &&  (n < m_pPlaylistCtrl->GetItemCount() - 1))
+		m_pPlaylistCtrl->EnsureVisible(n + 1);
 	//--- highlight what we're over, deselect old ---//
 	if ( n != nLastHit && n!= -1 )
 	{
@@ -262,6 +273,7 @@ void PlaylistDropTarget::HighlightSel( wxPoint pPos )
 	//--- this is a quick way to check if we need to update ---//
 	nLastHit = n;
 	g_DragInProg	= false;
+	return true;
 }
 
 //----------------------------//
@@ -276,9 +288,15 @@ CPlaylistCtrl::CPlaylistCtrl( CPlaylistBox *parent, const wxWindowID id, const w
 	//--- setup headers ---//
 	m_ColSaveNeeded = false;
 	ResetColumns();
-
+	//Play menu
+	wxMenu * playlist_context_play_menu = new wxMenu;
+	playlist_context_play_menu->Append( MUSIK_PLAYLIST_CONTEXT_PLAY_ASNEXT , _( "Next" ), wxT( "" ), wxITEM_CHECK );
+	playlist_context_play_menu->Append( MUSIK_PLAYLIST_CONTEXT_PLAY_ENQUEUED, _( "Enqueue" ), wxT( "" ), wxITEM_CHECK );
+	playlist_context_play_menu->Append( MUSIK_PLAYLIST_CONTEXT_PLAY_INSTANTLY , _( "Instantly" ), wxT( "" ), wxITEM_CHECK );
+	playlist_context_play_menu->Append( MUSIK_PLAYLIST_CONTEXT_PLAY_REPLACE_PLAYERLIST, _( "Replace current playlist" ), wxT( "" ), wxITEM_CHECK );
+	
 	//--- rating menu ---//
-	playlist_context_rating_menu = new wxMenu;
+	wxMenu *playlist_context_rating_menu = new wxMenu;
 	playlist_context_rating_menu->Append( MUSIK_PLAYLIST_CONTEXT_UNRATED, _( "Unrated" ), wxT( "" ), wxITEM_CHECK );
 	playlist_context_rating_menu->Append( MUSIK_PLAYLIST_CONTEXT_RATE1, wxT( "1" ), wxT( "" ), wxITEM_CHECK );
 	playlist_context_rating_menu->Append( MUSIK_PLAYLIST_CONTEXT_RATE2, wxT( "2" ), wxT( "" ), wxITEM_CHECK );
@@ -287,7 +305,7 @@ CPlaylistCtrl::CPlaylistCtrl( CPlaylistBox *parent, const wxWindowID id, const w
 	playlist_context_rating_menu->Append( MUSIK_PLAYLIST_CONTEXT_RATE5, wxT( "5" ), wxT( "" ), wxITEM_CHECK );
 
 	//--- tag edit menu ---//
-	playlist_context_edit_tag_menu = new wxMenu;
+	wxMenu *playlist_context_edit_tag_menu = new wxMenu;
 	playlist_context_edit_tag_menu->Append( MUSIK_PLAYLIST_CONTEXT_TAG_TITLE,		_( "Edit Title\tF2" ) );
 	playlist_context_edit_tag_menu->Append( MUSIK_PLAYLIST_CONTEXT_TAG_TRACKNUM,	_( "Edit Track Number\tF3" ) );
 	playlist_context_edit_tag_menu->Append( MUSIK_PLAYLIST_CONTEXT_TAG_ARTIST,		_( "Edit Artist\tF4" ) );
@@ -299,13 +317,13 @@ CPlaylistCtrl::CPlaylistCtrl( CPlaylistBox *parent, const wxWindowID id, const w
 	playlist_context_edit_tag_menu->Append( MUSIK_PLAYLIST_CONTEXT_RETAG_FILES,		_( "A&uto Retag..." ) );
 
 	//--- delete menu ---//
-	playlist_context_delete_menu = new wxMenu;
+	wxMenu *playlist_context_delete_menu = new wxMenu;
 	playlist_context_delete_menu->Append( MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FROM_PLAYLIST,	_( "From Playlist\tDel" ) );
 	playlist_context_delete_menu->Append( MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FROM_DB,			_( "From Database\tAlt+Del" ) );
 	playlist_context_delete_menu->Append( MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FILES,			_( "From Computer\tCtrl+Del" ) );
 
 	//--- columns context menu ---//
-	playlist_context_display_menu = new wxMenu;
+	wxMenu *playlist_context_display_menu = new wxMenu;
 	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_RATING,			_( "Rating" ) );
 	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_TRACK,			_( "Track" ) );
 	playlist_context_display_menu->AppendCheckItem( MUSIK_PLAYLIST_DISPLAY_TITLE,			_( "Title" ) );
@@ -324,6 +342,7 @@ CPlaylistCtrl::CPlaylistCtrl( CPlaylistBox *parent, const wxWindowID id, const w
 
 	//--- main context menu ---//
 	playlist_context_menu = new wxMenu;
+	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_PLAYNODE,			_( "&Play" ),					playlist_context_play_menu );
 	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_RATENODE,			_( "&Rating" ),					playlist_context_rating_menu );
 	playlist_context_menu->Append( MUSIK_PLAYLIST_CONTEXT_DISPLAYNODE,		_( "Display" ),					playlist_context_display_menu );
 	playlist_context_menu->AppendSeparator();
@@ -442,7 +461,8 @@ void CPlaylistCtrl::ShowMenu( wxContextMenuEvent& WXUNUSED(event) )
 			bItemSel = true;
 		}
 	}
-	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_DELETENODE,	bItemSel );
+	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_PLAYNODE,		bItemSel );
+//	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_DELETENODE,	bItemSel );
 	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_RENAME_FILES, bItemSel );
 	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_RETAG_FILES,	bItemSel );
 	playlist_context_menu->Enable( MUSIK_PLAYLIST_CONTEXT_RATENODE,		bItemSel );
@@ -525,6 +545,23 @@ void CPlaylistCtrl::OnUpdateUIDisplayMenu ( wxUpdateUIEvent &event)
 		event.Check(g_Prefs.nPlaylistColumnEnable[nColumn]);	
 }
 
+void CPlaylistCtrl::OnUpdateUIDelete ( wxUpdateUIEvent &event)
+{
+	bool bEnable = true;
+			
+	int nFirstIndex = GetNextItem( -1, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
+	if(nFirstIndex >= 0 && g_Playlist.Item ( nFirstIndex ).Format == MUSIK_FORMAT_NETSTREAM)
+	{
+		if((event.GetId() == MUSIK_PLAYLIST_DELETE_CONTEXT_DELETE_FROM_PLAYLIST) 
+			&&(g_SourcesCtrl->GetSelType() == MUSIK_SOURCES_NOW_PLAYING))
+			bEnable = true;
+		else
+			bEnable = false;
+
+	}
+	event.Enable(bEnable);
+}
+
 void CPlaylistCtrl::OnUpdateUIRateSel ( wxUpdateUIEvent &event)
 {
 	//--- get rating for first sel ---//
@@ -553,12 +590,12 @@ void CPlaylistCtrl::BeginDrag( wxListEvent& WXUNUSED(event) )
 	wxString sValidSelFiles = GetSelFiles();
 	if(!sValidSelFiles.IsEmpty())
 	{
-		wxString sDrop = wxT( "p\n" ) + sValidSelFiles;
+		wxString sDrop (sValidSelFiles);
 		DNDSetCurSel();
-
+		  
 		//--- initialize drag and drop... SourcesDropTarget / PlaylistDropTarget should take care of the rest ---//
 		wxDropSource dragSource( this );
-		wxTextDataObject song_data( sDrop );
+		CMusikSonglistDataObject song_data( sDrop );
 		dragSource.SetData( song_data );
 		dragSource.DoDragDrop( TRUE );
 	}
@@ -576,9 +613,12 @@ void CPlaylistCtrl::EndDragCol( wxListEvent& WXUNUSED(event) )
 }
 
 
-void CPlaylistCtrl::PlaySel( wxListEvent& WXUNUSED(event) )
+void CPlaylistCtrl::PlaySel( wxListEvent& (event) )
 {
-	g_Player.PlayCurSel();
+	if(g_SourcesCtrl->GetSelType() == MUSIK_SOURCES_NOW_PLAYING)
+		g_Player.Play(event.GetIndex());
+	else
+	OnPlayInstantly(event);
 }
 
 void CPlaylistCtrl::TranslateKeys( wxKeyEvent& event )
@@ -762,7 +802,14 @@ int CPlaylistCtrl::OnGetItemImage(long item) const
 wxListItemAttr* CPlaylistCtrl::OnGetItemAttr(long item) const
 {
 	const CMusikSong & song = g_Playlist.Item ( item );
-	if ( g_Player.IsPlaying() && song.Filename == g_Player.GetCurrentFile() )
+	if(g_Player.IsPlaying() && (g_SourcesCtrl->GetSelType() == MUSIK_SOURCES_NOW_PLAYING) && (g_Player.GetCurIndex() == item ))
+	{
+		if ( g_Prefs.nPLStripes == 1 )
+			return item % 2 ? (wxListItemAttr *)&m_SelectedDarkAttr : (wxListItemAttr *)&m_SelectedLightAttr;
+		else
+			return (wxListItemAttr *)&m_SelectedLightAttr;
+	}
+	else if ( g_Player.IsPlaying() && (g_SourcesCtrl->GetSelType() != MUSIK_SOURCES_NOW_PLAYING) && song.Filename == g_Player.GetCurrentFile() )
 	{
 		if ( g_Prefs.nPLStripes == 1 )
 			return item % 2 ? (wxListItemAttr *)&m_SelectedDarkAttr : (wxListItemAttr *)&m_SelectedLightAttr;
@@ -809,7 +856,7 @@ wxString CPlaylistCtrl::GetSelFiles()
 	wxString sResult;
 	int nIndex = -1;
 	int itemcount = GetSelectedItemCount();
-	sResult.Alloc(itemcount * 50); // 50 is just a for the avarege file name length
+	sResult.Alloc(itemcount * 50); // 50 is just a for the average file name length
 	for ( int i = 0; i < itemcount; i++ )
 	{
 		nIndex = GetNextItem( nIndex, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
@@ -879,9 +926,9 @@ void CPlaylistCtrl::GetSelSongs(CMusikSongArray & aResult)
 			nIndex = GetNextItem( nIndex, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
 			if ( nIndex == -1 )
 				break;
-			CMusikSong *pSong = new CMusikSong();
-			g_Library.GetSongFromFilename( GetFilename( nIndex ), pSong );
-			aResult.Add( pSong ); // array takes ownership of the pointer
+			//CMusikSong *pSong = new CMusikSong();
+			//g_Library.GetSongFromFilename( GetFilename( nIndex ), pSong );
+			aResult.Add( g_Playlist.Item ( nIndex ) ); 
 			
 		}
 	}
@@ -911,7 +958,7 @@ int CPlaylistCtrl::GetTotalPlayingTimeInSeconds()
 	return Duration;
 }
 
-wxString CPlaylistCtrl::GetFilename( int nItem )
+wxString  CPlaylistCtrl::GetFilename( int nItem )
 {
 	if ( nItem > -1 )
 	{
@@ -920,7 +967,7 @@ wxString CPlaylistCtrl::GetFilename( int nItem )
 	}
 
 	//--- not found? return a null string ---//
-	return wxT( "" );
+	return wxString();
 }
 
 
@@ -960,7 +1007,6 @@ void CPlaylistCtrl::ResynchItem( int item, int lastitem, bool refreshonly )
 }
 void CPlaylistCtrl::ResynchItem( int item, const CMusikSong & song)
 {
-	wxASSERT(g_Playlist.GetCount() &&(item < g_Playlist.GetCount()));
 	if(g_Playlist.GetCount() && (item < g_Playlist.GetCount()) && (g_SourcesCtrl->GetSelType() == MUSIK_SOURCES_NOW_PLAYING))
 	{
 		g_Playlist.Item( item ) = song;
@@ -1242,6 +1288,7 @@ void CPlaylistCtrl::DelSelSongs(bool bDeleteFromDB, bool bDeleteFromComputer)
 	nIndex = -1;
 	int nFirstSel = GetNextItem( nIndex, wxLIST_NEXT_ALL , wxLIST_STATE_SELECTED );
 	int nDeletedSongs = 0;
+	bool bSourceNowPlayingSelected = (g_SourcesCtrl->GetSelType() == MUSIK_SOURCES_NOW_PLAYING);
 	for ( int i = 0; i < nSelCount; i++ )
 	{
 		//--- find next item to delete ---//
@@ -1269,7 +1316,7 @@ void CPlaylistCtrl::DelSelSongs(bool bDeleteFromDB, bool bDeleteFromComputer)
 			g_Library.RemoveSong( sFile );
 		}
 		g_Playlist.RemoveAt( nIndex - nDeletedSongs, 1 );
-		if(g_SourcesCtrl->GetSelType() == MUSIK_SOURCES_NOW_PLAYING)
+		if(bSourceNowPlayingSelected)
 		{
 			// active playlist is "now playing" list => delete songs from players playlist too
 			g_Player.RemovePlaylistEntry(nIndex - nDeletedSongs);
@@ -1291,7 +1338,7 @@ void CPlaylistCtrl::DelSelSongs(bool bDeleteFromDB, bool bDeleteFromComputer)
 
 	Thaw();
 	if(bDeleteFromDB)
-	g_ActivityAreaCtrl->ResetAllContents();
+		g_ActivityAreaCtrl->ResetAllContents();
 
 	
 }
@@ -1299,11 +1346,11 @@ void CPlaylistCtrl::DelSelSongs(bool bDeleteFromDB, bool bDeleteFromComputer)
 void CPlaylistCtrl::RenameSelFiles()
 {
 	if ( m_ActiveThreadController.IsAlive() == false )
-	{
+    {
 		CMusikSongArray songs;
 		GetSelSongs( songs );
 		m_ActiveThreadController.AttachAndRun( new MusikPlaylistRenameThread(this, songs ) );
-	}
+    }
 	else
 		wxMessageBox( _( "An internal error has occured.\nPrevious thread not terminated correctly.\n\nPlease contact the "MUSIKAPPNAME" development team with this error." ), MUSIKAPPNAME_VERSION, wxICON_STOP );
 
@@ -1351,7 +1398,6 @@ void CPlaylistCtrl::DNDSetCurSel()
 {
 	//--- find whats currently selected for dnd ---//
 	aCurSel.Clear();
-	aCurSelSongs.Clear();
 	int nIndex = -1;
 	if( GetSelectedItemCount() > 0 )
 	{
@@ -1363,9 +1409,7 @@ void CPlaylistCtrl::DNDSetCurSel()
 			if(g_Playlist.Item( nIndex ).Format != MUSIK_FORMAT_NETSTREAM)
 			{
 				aCurSel.Add( nIndex );
-				aCurSelSongs.Add( g_Playlist.Item( nIndex ) );
 			}
-			
 		}
 	}
 }
@@ -1380,70 +1424,57 @@ bool CPlaylistCtrl::DNDIsSel( int nVal )
 	return false;
 }
 
-void CPlaylistCtrl::DNDDelSongs()
+size_t CPlaylistCtrl::DNDDelSongs()
 {
 	//--- delete songs we're moving around ---//
 	for ( size_t i = 0; i < aCurSel.GetCount(); i++ )
 		g_Playlist.RemoveAt( aCurSel.Item( i ) - i, 1 );
+	return aCurSel.GetCount();
 }
-
-void CPlaylistCtrl::DNDInsertItems( wxString sFile, int nType )
+void  CPlaylistCtrl::MovePlaylistEntrys(int nMoveTo ,const wxArrayInt &arrToMove,bool bSelectItems)
 {
-	CMusikSongArray *pPlaylist = &g_Playlist;
-	if ( nType == MUSIK_DND_BOTTOM )
+	// assumes that arrToMove is sorted in ascending order
+
+	wxASSERT(nMoveTo >= -1 && nMoveTo <= g_Playlist.GetCount()); 
+	int i = arrToMove.GetCount() - 1;
+	// first move all entrys which are behind nMoveTo position
+	for(;i >= 0 ; i--)
 	{
-		//--- just push to back of stack ---//
-		for ( size_t i = 0; i < aCurSelSongs.GetCount(); i++ )
-			pPlaylist->Add( aCurSelSongs.Item( i ) );
+		if(nMoveTo > arrToMove[i])
+			break;
+		g_Playlist.Insert(g_Playlist.Detach(arrToMove[i] + ( arrToMove.GetCount() - 1 - i)),nMoveTo);
 	}
-
-	else
-	{ 
-		//--- this is where the final drop is going to     ---//
-		//--- take place. a crucial step.				   ---//
-		int nIndex = DNDGetItemPos( sFile );
-
-		for ( size_t i = 0; i < aCurSelSongs.GetCount(); i++ )
-		{
-			//--- push items to nIndex + 1, will force them to appear below the target drop ---//
-			if ( nType == MUSIK_DND_BELOW )
-				pPlaylist->Insert( aCurSelSongs.Item( i ), nIndex + 1 );
-
-			//--- push items to nIndex, will force them to appear above the target drop ---//
-			else if ( nType == MUSIK_DND_ABOVE )
-				pPlaylist->Insert( aCurSelSongs.Item( i ), nIndex );
-
-			nIndex++;  
-		}
-	}
-}
-
-int CPlaylistCtrl::DNDGetItemPos( wxString sFile )
-{
-	//--- get the position of a specified file in the playlist ---//
-	CMusikSongArray *pPlaylist = &g_Playlist;
-	for ( size_t i = 0; i < pPlaylist->GetCount(); i++ )
+	// now move all entry which are before
+	for(int j = i; j >= 0; j--)
 	{
-		if ( pPlaylist->Item( i ).Filename == sFile )
-			return i;
+		g_Playlist.Insert(g_Playlist.Detach(arrToMove[j]),nMoveTo - (i - j)-1);
 	}
-	return -2;
+	if(g_SourcesCtrl->GetSelType() == MUSIK_SOURCES_NOW_PLAYING)
+	{
+		g_Player.MovePlaylistEntrys(	nMoveTo , arrToMove );
+	}
+	if(bSelectItems)
+	{
+		//--- select new songs ---//
+		wxListCtrlSelNone( this );
+		for ( size_t i = 0; i < arrToMove.GetCount(); i++ )
+			SetItemState( nMoveTo + i, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
+
+	}
+
 }
 
-void CPlaylistCtrl::DNDDone( int nNewPos )
+
+
+void CPlaylistCtrl::DNDDone()
 {
-	//--- finalize dragging, set selection ---//
-	Update();
+	//--- finalize dragging ---//
+	Update(false);
 	g_DragInProg = false;
 	
-	//--- select new songs ---//
-	wxListCtrlSelNone( this );
-	for ( size_t i = 0; i < aCurSelSongs.GetCount(); i++ )
-		SetItemState( nNewPos + i, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
 
 	//--- clean up ---//
 	aCurSel.Clear();
-	aCurSelSongs.Clear();
 }
 
 
@@ -1483,10 +1514,9 @@ void CPlaylistCtrl::OnThreadEnd( wxCommandEvent& WXUNUSED(event) )
 
 	if( GetProgressType() == MUSIK_PLAYLIST_RETAG_THREAD )
 	{
-		//g_Playlist = pRetagThread->GetReTaggedSongs();
   		g_ActivityAreaCtrl->ResetAllContents();
-		g_SourcesCtrl->UpdateCurrent();
 	}
+	g_SourcesCtrl->UpdateCurrent();
 	Update();
 
 	//--- update locally ---//
@@ -1497,8 +1527,33 @@ void CPlaylistCtrl::OnThreadEnd( wxCommandEvent& WXUNUSED(event) )
 	wxCommandEvent MusikEndProgEvt( wxEVT_COMMAND_MENU_SELECTED, MUSIK_FRAME_THREAD_END );
 	wxPostEvent( g_MusikFrame, MusikEndProgEvt );
 }
-		
+
 CMusikSongArray * CPlaylistCtrl::GetPlaylist()
-	{
+{
 	return &g_Playlist;
+}
+
+void CPlaylistCtrl::OnPlayInstantly( wxCommandEvent& WXUNUSED(event) )
+{
+	CMusikSongArray aResult;
+	GetSelSongs(aResult);
+	g_Player.InsertToPlaylist(aResult);
+
+}
+void CPlaylistCtrl::OnPlayAsNext ( wxCommandEvent& WXUNUSED(event) )
+{
+	CMusikSongArray aResult;
+	GetSelSongs(aResult);
+	g_Player.InsertToPlaylist(aResult,g_Player.IsPlaying() ? false : true);
+
+}
+void CPlaylistCtrl::OnPlayEnqueued	( wxCommandEvent& WXUNUSED(event) )
+{
+	CMusikSongArray aResult;
+	GetSelSongs(aResult);
+	g_Player.AddToPlaylist(aResult,g_Player.IsPlaying() ? false : true);
+}
+void CPlaylistCtrl::OnPlayReplace	( wxCommandEvent& WXUNUSED(event) )
+{
+	g_Player.PlayCurSel();
 }

@@ -54,10 +54,17 @@ public:
 	//--------------//
 	//--- events ---//
 	//--------------//
+	//--- playing ---//
+	void OnPlayInstantly( wxCommandEvent& event );	
+	void OnPlayAsNext	( wxCommandEvent& event );
+	void OnPlayEnqueued	( wxCommandEvent& event );
+	void OnPlayReplace	( wxCommandEvent& event );
+
 	//--- deleting ---//
 	void OnDelSel		( wxCommandEvent& WXUNUSED(event) )	{ DelSelSongs();	}
 	void OnDelFiles		( wxCommandEvent& WXUNUSED(event) )	{ DelSelSongs(true,true);	}
 	void OnDelFilesDB	( wxCommandEvent& WXUNUSED(event) )	{ DelSelSongs(true);	}
+	void OnUpdateUIDelete( wxUpdateUIEvent &event);
 	void OnRenameFiles	( wxCommandEvent& WXUNUSED(event) )	{ RenameSelFiles();	}
 	void OnRetagFiles	( wxCommandEvent& WXUNUSED(event) ) { RetagSelFiles();	}
 	//--- rating ---//
@@ -99,7 +106,7 @@ public:
 	void			GetSelFilesList	( wxArrayString & aResult );
 	void			GetAllFilesList ( wxArrayString & aResult );
 	void			GetSelSongs		( CMusikSongArray & aResult );
-	wxString		GetFilename		( int nItem );
+	wxString 		GetFilename		( int nItem );
 	CMusikSongArray * GetPlaylist	();
 //IPlaylistInfo
 	int				GetTotalPlayingTimeInSeconds();
@@ -135,11 +142,10 @@ public:
 	//---------------------------------------------//
 	//--- functions ---//
 	void DNDSetCurSel	();
-	void DNDDelSongs	();
-	void DNDInsertItems	( wxString sFilename, int nType );
-	int	 DNDGetItemPos	( wxString sFilename );
+	size_t DNDDelSongs	();
+	void MovePlaylistEntrys(int nMoveTo ,const wxArrayInt &arrToMove,bool bSelectItems = true);
 	bool DNDIsSel		( int nVal );
-	void DNDDone		( int nNewPos );
+	void DNDDone		();
 
 	//-----------------//
 	//--- threading ---//
@@ -152,7 +158,6 @@ public:
 
 	//--- vars ---//
 	wxArrayInt		aCurSel;
-	CMusikSongArray aCurSelSongs;
 
 	//------------------------------------//
 	//--- selection index. gets called ---//
@@ -190,10 +195,6 @@ private:
 	//--- menu objects ---//
 	//--------------------//
 	wxMenu *playlist_context_menu;
-	wxMenu *playlist_context_rating_menu;
-	wxMenu *playlist_context_edit_tag_menu;
-	wxMenu *playlist_context_delete_menu;
-	wxMenu *playlist_context_display_menu;
 
 	//--------------------//
 	//--- column order ---//
@@ -212,75 +213,11 @@ private:
 	CThreadController m_ActiveThreadController;
 	int m_Progress;
 	int m_ProgressType;
+	
 
 };
 
-class wxDataObjectCompositeEx : public wxDataObjectComposite
-{
-public:
-	wxDataObjectCompositeEx()
-	{
-		m_dataObjectLast = NULL;
-	}
 
-	bool SetData(const wxDataFormat& format,
-								size_t len,
-							const void *buf)
-	{
-		m_dataObjectLast = GetObject(format);
-
-		wxCHECK_MSG( m_dataObjectLast, FALSE,
-                 wxT("unsupported format in wxDataObjectCompositeEx"));
-
-		return m_dataObjectLast->SetData(len, buf);
-	}
-
-	wxDataObjectSimple *GetActualDataObject()
-	{
-		return m_dataObjectLast;
-	}
-	private:
-		wxDataObjectSimple *m_dataObjectLast;
-};
-
-
-
-class PlaylistDropTarget : public wxDropTarget
-{
-public:
-	//-------------------//
-	//--- constructor ---//
-	//-------------------//
-	PlaylistDropTarget( CPlaylistCtrl *pPList )	
-	{ 
-		m_pPlaylistCtrl = pPList;	
-
-		wxDataObjectCompositeEx * dobj = new wxDataObjectCompositeEx;
-		dobj->Add(m_pTextDObj = new wxTextDataObject(),true);
-		dobj->Add(m_pFileDObj = new wxFileDataObject());
-		SetDataObject(dobj);
-    }
-	wxDragResult OnData(wxCoord x, wxCoord y, wxDragResult def);
-	//-------------------------//
-	//--- virtual functions ---//
-	//-------------------------//
-    virtual bool OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames);
-
-    virtual bool		 OnDropText(wxCoord x, wxCoord y, const wxString& text);
-	virtual wxDragResult OnDragOver(wxCoord x, wxCoord y, wxDragResult def);
-
-	//-------------------------//
-	//--- utility functions ---//
-	//-------------------------//
-	void HighlightSel( wxPoint );
-private:
-	wxTextDataObject * m_pTextDObj;
-	wxFileDataObject * m_pFileDObj;
-
-	CPlaylistCtrl *m_pPlaylistCtrl;	//--- pointer to the playlist ---//
-	int nLastHit;					//--- last item hit           ---//
-	long n;							//--- new pos                 ---//
-};
 
 class CPlaylistBox : public wxPanel
 {

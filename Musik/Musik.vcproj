@@ -337,6 +337,12 @@
 			Name="Frames"
 			Filter="">
 			<File
+				RelativePath=".\DataObjectCompositeEx.h">
+			</File>
+			<File
+				RelativePath=".\DNDHelper.h">
+			</File>
+			<File
 				RelativePath=".\resource.h">
 			</File>
 			<Filter

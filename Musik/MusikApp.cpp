@@ -56,7 +56,7 @@ bool MusikApp::OnInit()
 		return FALSE;
 	}
 	g_Paths.Load();
-
+	g_Player.Init();
 	//--- initialize fmod ---//
 	if ( g_Player.InitializeFMOD( FMOD_INIT_START ) != FMOD_INIT_SUCCESS )
 		wxMessageBox( _("Initialization of FMOD sound system failed."), MUSIKAPPNAME_VERSION, wxOK | wxICON_ERROR );
@@ -127,13 +127,11 @@ bool MusikApp::OnInit()
 		pMain->SetSize( Size );
 		pMain->Center();
 	}
-
 	pMain->SetTitle( MUSIKAPPNAME_VERSION );
 	pMain->SetMenuBar( menu_bar );
 	pMain->Show(TRUE);
 
 	SetTopWindow( pMain );
-
 
 	//--- start webserver if necessary ---//
 	if ( g_Prefs.nWebServerEnable )

@@ -79,10 +79,54 @@ CMusikPlayer::CMusikPlayer()
 	//set stop watch into pause mode.
 	m_bStreamIsWorkingStopWatchIsRunning = false ;
 	m_NETSTREAM_last_read_percent = 0;
-}
 
+
+}
+void CMusikPlayer::Init()
+{
+// load old playlist
+	if(wxFileExists(MUSIK_PLAYERLIST_FILENAME))
+	{
+		wxTextFile In;
+		In.Open(MUSIK_PLAYERLIST_FILENAME);
+		if (In.IsOpened() )
+		{
+			wxArrayString aFilelist;
+			for ( size_t i = 0; i < In.GetLineCount(); i++ )
+			{
+				aFilelist.Add( In.GetLine( i ) );	
+			}
+			In.Close();
+			g_Library.GetFilelistSongs( aFilelist, m_Playlist );
+		}
+	}
+}
 CMusikPlayer::~CMusikPlayer()
 {
+	if(m_Playlist.GetCount() == 0)
+	{
+		wxRemoveFile( MUSIK_PLAYERLIST_FILENAME );
+	}
+	else
+	{
+		wxTextFile Out;	
+		if ( !Out.Create( MUSIK_PLAYERLIST_FILENAME ) )
+		{
+			Out.Open( MUSIK_PLAYERLIST_FILENAME );
+		}
+		if ( Out.IsOpened() )
+		{
+			for ( size_t i = 0; i < m_Playlist.GetCount(); i++ )
+			{
+				Out.AddLine( m_Playlist[i].Filename );
+			}
+			
+			Out.Write( Out.GuessType() );
+			Out.Close();
+		}
+	}    
+
+
 	//---------------------------------------------------------//
 	//--- this will only get called when the program exits	---//
 	//--- so nothing needs to be done. FMOD will always		---//
@@ -217,6 +261,7 @@ void CMusikPlayer::PlayPause()
 	{
 		if(GetPlaymode() == MUSIK_PLAYMODE_RANDOM)
 		{
+/*
 			// if playlist has changed set new playlist for the player
 			// in random mode
 			if ( g_PlaylistChanged )
@@ -224,12 +269,12 @@ void CMusikPlayer::PlayPause()
 				SetPlaylist( g_Playlist );
 				g_PlaylistChanged = false;
 			}
-
+*/
 			NextSong();
 		}
 		else
 		{
-			PlayCurSel();
+			Play( m_SongIndex );
 		}
 	}
 }
@@ -244,10 +289,13 @@ void CMusikPlayer::PlayCurSel()
 	int nCurSel = g_PlaylistBox->PlaylistCtrl().GetNextItem( -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED );
 	if ( nCurSel > -1 )
 	{
-		if ( g_PlaylistChanged )
+		if(g_SourcesCtrl->GetSelType() != MUSIK_SOURCES_NOW_PLAYING)
 		{
-			SetPlaylist( g_Playlist );
-			g_PlaylistChanged = false;
+			if ( g_PlaylistChanged )
+			{
+				SetPlaylist( g_Playlist );
+				g_PlaylistChanged = false;
+			}
 		}
 		Play( nCurSel );
 	}	
@@ -1121,13 +1169,52 @@ int CMusikPlayer::GetCurrChannel()
 	return m_Channels;
 }
 
-void CMusikPlayer::AddToPlaylist( CMusikSongArray & songstoadd )
+void CMusikPlayer::AddToPlaylist( CMusikSongArray & songstoadd ,bool bPlayFirstAdded )
 {
 	wxCriticalSectionLocker locker( m_critInternalData);
 	size_t size = songstoadd.GetCount();
+	int plsize = m_Playlist.GetCount();
 	for(int i = 0; i < size ; i++)
 	{
 		m_Playlist.Add(songstoadd.Detach(0));
+	}
+	if(bPlayFirstAdded && size)
+	{
+		Stop();
+		m_SongIndex = plsize;
+		Play(m_SongIndex);
+	}
+}
+void CMusikPlayer::InsertToPlaylist( CMusikSongArray & songstoadd ,bool bPlayFirstInserted)
+{
+	wxCriticalSectionLocker locker( m_critInternalData);
+	size_t size = songstoadd.GetCount();
+	size_t plsize = m_Playlist.GetCount();
+	if(plsize == 0 || !IsPlaying())
+	{// list empty, add
+		for(int i = 0; i < size ; i++)
+			m_Playlist.Add(songstoadd.Detach(0));
+		if(bPlayFirstInserted)
+		{
+			Stop();
+			m_SongIndex = plsize;
+			Play(m_SongIndex);
+		}
+		else
+			m_SongIndex = plsize;
+		return;
+
+	}
+// list not empty ,insert
+	for(int i = 0; i < size ; i++)
+	{
+		m_Playlist.Insert(songstoadd.Detach(0), m_SongIndex + 1 + i );
+	}
+	if(bPlayFirstInserted)
+	{
+		Stop();
+		m_SongIndex++;
+		Play(m_SongIndex);
 	}
 }
 void CMusikPlayer::RemovePlaylistEntry( int index )
@@ -1144,4 +1231,38 @@ void CMusikPlayer::RemovePlaylistEntry( int index )
 		Stop();
 	}
 	m_Playlist.RemoveAt(index);
+}
+
+void  CMusikPlayer::MovePlaylistEntrys(int nMoveTo ,const wxArrayInt &arrToMove)
+{
+	wxCriticalSectionLocker locker( m_critInternalData);
+	wxASSERT(nMoveTo >= -1 && nMoveTo <= m_Playlist.GetCount()); 
+	int i = arrToMove.GetCount() - 1;
+	// first move all entrys which are behind nMoveTo;
+	for(;i >= 0 ; i--)
+	{
+
+		if(nMoveTo > arrToMove[i])
+			break;
+		int ToMoveIdx = arrToMove[i] + ( arrToMove.GetCount() - 1 - i);
+		m_Playlist.Insert(m_Playlist.Detach(ToMoveIdx),nMoveTo);
+
+		if(ToMoveIdx > m_SongIndex && nMoveTo <= m_SongIndex)
+			m_SongIndex++;
+		else if(ToMoveIdx == m_SongIndex)
+			m_SongIndex = nMoveTo;
+	}
+	// now move all entry which are before
+	for(int j = i; j >= 0; j--)
+	{
+		int MoveToIdx = nMoveTo - (i - j) - 1;
+		m_Playlist.Insert(m_Playlist.Detach(arrToMove[j]),MoveToIdx);
+		if(arrToMove[j] < m_SongIndex && MoveToIdx  > m_SongIndex)
+			m_SongIndex--;
+		else if( m_SongIndex  == MoveToIdx)
+			m_SongIndex++;
+		else if(arrToMove[j] == m_SongIndex)
+			m_SongIndex = MoveToIdx;
+
+	}
 }

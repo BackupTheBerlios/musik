@@ -82,9 +82,9 @@ extern const wxString g_PlaylistColumnDBNames[NPLAYLISTCOLUMNS] =
 //------------------------//
 //--- internal objects ---//
 //------------------------//
+CMusikPrefs			g_Prefs;
 CMusikLibrary		g_Library;
 CMusikPlayer		g_Player;
-CMusikPrefs			g_Prefs;
 CMusikPaths			g_Paths;
 CMusikSongArray		g_Playlist;	
 CMusikSongArray		g_LibPlaylist;

@@ -45,7 +45,7 @@ BEGIN_EVENT_TABLE(CNowPlayingCtrl, wxPanel)
 END_EVENT_TABLE()
 
 CNowPlayingCtrl::CNowPlayingCtrl( wxWindow *parent )
-	: wxPanel( parent, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxTRANSPARENT_WINDOW  )
+	: wxPanel( parent, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxTRANSPARENT_WINDOW | wxTAB_TRAVERSAL )
 {
 	wxColour bg = wxSystemSettings::GetColour( wxSYS_COLOUR_3DFACE );
 

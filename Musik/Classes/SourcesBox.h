@@ -117,7 +117,7 @@ public:
 	wxString PromptDynamicPlaylist	( wxString sQuery );
 	wxString PromptNetStreamAddress	( wxString sAddress );
 	wxString GetPlaylistName		( int nIndex );
-
+	bool AddSourceContentToNowPlaying(int nIndex);
 	DECLARE_EVENT_TABLE()
 protected:
 	void RescaleColumns			( );
@@ -176,18 +176,5 @@ private:
 	wxBoxSizer		*pSizer;
 };
 
-class SourcesDropTarget : public wxTextDropTarget
-{
-public:
-	SourcesDropTarget( CSourcesListBox *pBox )	{ m_SourcesListBox = pBox; }
-
-    virtual bool			OnDropText(wxCoord x, wxCoord y, const wxString& text);
-	virtual wxDragResult	OnDragOver(wxCoord x, wxCoord y, wxDragResult def);
-	void HighlightSel( wxPoint );
-
-private:
-	CSourcesListBox* m_SourcesListBox;
-	int nLastHit;
-};
 
 #endif

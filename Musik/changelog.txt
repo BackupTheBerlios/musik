@@ -1,6 +1,10 @@
 
 0.3.0.2 to 0.3.1 CVS
-
++ Now Playing list is now automatically saved on program exit and restored on next program start
++ New submenu "Play", offers enqueuing instant playing etc. of selected songs.
++ change of operation: double click in Playlist no longer makes the whole list active ( this can achived by a new submenu), but inserts the clicked song into the "now playing playlist" and plays it instantly
+- bug fix:DnD in Now Playing playlist now really works
++ rewritten most of dnd code for playlistctrl, should be faster and more logical
 + Genre comboxbox in Tag dialog offers standard id3v1 genres plus all used genres, and you can enter your own genre name.
 + Drag and Drop of files from a Filemanager is supported now. New songs will automaticvally be added to the library. The dropped songs are appended to the "Now Playing" source playlist
 + songs can be deleted from  "Now Playing" playlist, and you can reorder songs by drag on drop there. 

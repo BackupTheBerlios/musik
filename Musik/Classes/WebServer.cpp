@@ -133,7 +133,7 @@ void CMusikWebServer::ProcessRequest(wxString reqstr)
 
 		if ( reqstr.Find( wxT("play.mkc") ) > -1 )
 		{
-			g_Player.PlayCurSel();
+			g_Player.PlayPause();
 		}
 		
 		if ( reqstr.Find( wxT("resume.mkc" ) ) > -1 )

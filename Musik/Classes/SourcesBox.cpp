@@ -27,110 +27,164 @@
 //--- file ops ---//
 #include <wx/textfile.h>
 
+//other
+#include "../DataObjectCompositeEx.h"
+#include "../DNDHelper.h"
+
+
 //-------------------------//
 //--- SourcesDropTarget ---//
 //-------------------------//
-bool SourcesDropTarget::OnDropText( wxCoord x, wxCoord y, const wxString &text )
+class SourcesDropTarget : public wxDropTarget
 {
-	wxString sFiles = text;
-	long n = -1;
-	if ( sFiles != wxT( "" ) )
-	{
-		//--- seperate values. "s\n" for sources, "p\n" for playlist, "a\n" for activity box ---//
-		wxString sType = sFiles.Left( 2 );
-		sFiles = sFiles.Right( sFiles.Length() - 2 );
+public:
+	SourcesDropTarget( CSourcesListBox *pBox )	
+	{ 
+		m_SourcesListBox = pBox; 
+		wxDataObjectCompositeEx * dobj = new wxDataObjectCompositeEx;
+		dobj->Add(m_pSourcesDObj = new CMusikSourcesDataObject(),true);
+		dobj->Add(m_pSonglistDObj = new CMusikSonglistDataObject());
+		SetDataObject(dobj);
+	}
+	virtual wxDragResult OnData(wxCoord x, wxCoord y, wxDragResult def);
 
+	virtual bool			OnDropSources(wxCoord x, wxCoord y, const wxString& text);
+	virtual bool			OnDropSonglist(wxCoord x, wxCoord y, const wxString& text);
+	virtual wxDragResult	OnDragOver(wxCoord x, wxCoord y, wxDragResult def);
+	bool HighlightSel( const  wxPoint & pPos );
+
+private:
+	CSourcesListBox* m_SourcesListBox;
+	int nLastHit;
+	CMusikSourcesDataObject * m_pSourcesDObj;
+	CMusikSonglistDataObject * m_pSonglistDObj;
+
+};
+
+wxDragResult SourcesDropTarget::OnData(wxCoord x, wxCoord y, wxDragResult def)
+{
+	bool bRes = false;
+	if (GetData() )
+	{
+
+		wxDataObjectSimple *dobj = ((wxDataObjectCompositeEx *)GetDataObject())->GetActualDataObject();
+
+		if( dobj == (wxDataObjectSimple *)m_pSourcesDObj )
+		{
+			bRes = OnDropSources(x, y, m_pSourcesDObj->GetText());
+		}
+		else if( dobj == (wxDataObjectSimple *)m_pSonglistDObj )
+		{
+			bRes = OnDropSonglist(x, y, m_pSonglistDObj->GetText());
+		}
+	}
+	g_DragInProg = false;
+	return bRes ? def : wxDragNone;
+}
+
+bool SourcesDropTarget::OnDropSources( wxCoord x, wxCoord y, const wxString &sSource )
+{	
+	long n = -1;
+	//--- where did we land? ---//
+	const wxPoint& pt = wxPoint( x, y );
+	int nHitFlags = 0;
+	n = m_SourcesListBox->HitTest( pt, nHitFlags );
+	if ( n == m_SourcesListBox->GetDragIndex() )
+		return false;
+	
+	if ( m_SourcesListBox->GetType( n ) == MUSIK_SOURCES_NOW_PLAYING ) 
+	{
+		return m_SourcesListBox->AddSourceContentToNowPlaying(m_SourcesListBox->GetDragIndex());
+	}
+	m_SourcesListBox->Freeze();
+	// remove from old position
+	m_SourcesListBox->m_SourcesList.RemoveAt	( m_SourcesListBox->GetDragIndex() );
+
+	//--- if its -1, we will just push it to the bottom ---//
+	if ( nHitFlags == wxLIST_HITTEST_NOWHERE )
+		m_SourcesListBox->m_SourcesList.Add( sSource );
+
+	//--- dragged above old pos, insert, push down... old item is + 1 ---//
+	else if ( n < m_SourcesListBox->GetDragIndex() )		
+		m_SourcesListBox->m_SourcesList.Insert	( sSource, n );
+
+	//--- dragged below old pos, insert there, then push all others down ---//
+	else if ( n > m_SourcesListBox->GetDragIndex() )	
+		m_SourcesListBox->m_SourcesList.Insert	( sSource, n - 1);
+	//--- update ---//
+	m_SourcesListBox->Thaw();
+
+	return true;
+
+}
+bool SourcesDropTarget::OnDropSonglist( wxCoord x, wxCoord y, const wxString &sFiles )
+{
+	size_t n = -1;
+	if ( !sFiles.IsEmpty() )
+	{
 		//--- where did we land? ---//
 		const wxPoint& pt = wxPoint( x, y );
 		int nFlags;
-		n = m_SourcesListBox->HitTest( pt, nFlags );
+		size_t n = m_SourcesListBox->HitTest( pt, nFlags );
 
-		//--- originated from sources box, so rearrange ---//
-		if ( sType == wxT( "s\n" ) )		
-		{
-			m_SourcesListBox->Freeze();
-
-			
-			if ( n == m_SourcesListBox->GetDragIndex() )
-				return TRUE;
-			else
-			{
-				m_SourcesListBox->m_SourcesList.RemoveAt	( m_SourcesListBox->GetDragIndex() );
-
-			//--- if its -1, we will just push it to the bottom ---//
-			if ( n == -1 )
-				m_SourcesListBox->m_SourcesList.Insert	( sFiles, m_SourcesListBox->m_SourcesList.GetCount() );
 	
-			//--- dragged above old pos, insert, push down... old item is + 1 ---//
-			else if ( n < m_SourcesListBox->GetDragIndex() )		
-				m_SourcesListBox->m_SourcesList.Insert	( sFiles, n );
-
-			//--- dragged below old pos, insert there, then push all others down ---//
-			else if ( n > m_SourcesListBox->GetDragIndex() )	
-					m_SourcesListBox->m_SourcesList.Insert	( sFiles, n );
-			}
-			
-			//--- update ---//
-			m_SourcesListBox->Thaw();
-		}
-
-		//--- drag originated from playlist or activity box, create new playlist ---//
-		else if ( sType == wxT( "p\n" ) || sType == wxT( "a\n" ) )	
+		//--- drag not over an object, create new list ---//
+		if ( n == -1 )
 		{
-			//--- drag not over an object, create new list ---//
-			if ( n == -1 )
+			wxTextEntryDialog dlg( g_MusikFrame, _( "Enter name for new playlist:" ), MUSIKAPPNAME_VERSION, wxT( "" ) );
+			if ( dlg.ShowModal() == wxID_OK )
 			{
-				wxTextEntryDialog dlg( g_MusikFrame, _( "Enter name for new playlist:" ), MUSIKAPPNAME_VERSION, wxT( "" ) );
-				if ( dlg.ShowModal() == wxID_OK )
-				{
-					wxString sName = dlg.GetValue();
-					m_SourcesListBox->NewPlaylist( sName, sFiles, MUSIK_SOURCES_PLAYLIST_STANDARD );		
-				}
-				n = 0;
+				wxString sName = dlg.GetValue();
+				m_SourcesListBox->NewPlaylist( sName, sFiles, MUSIK_SOURCES_PLAYLIST_STANDARD );		
 			}
-
-			//--- drag over library, can't do that ---//
-			else if ( m_SourcesListBox->GetType( n ) == MUSIK_SOURCES_LIBRARY )
-			{
-				wxMessageBox( _( "Cannot drag songs into the library, they already exist here." ), MUSIKAPPNAME_VERSION, wxOK | wxICON_INFORMATION );
-			}
-			else if ( m_SourcesListBox->GetType( n ) == MUSIK_SOURCES_NOW_PLAYING )
-			{
-			//	wxMessageBox( _( "Cannot drag songs into Now Playing." ), MUSIKAPPNAME_VERSION, wxOK | wxICON_INFORMATION );
-
-				wxArrayString aFilelist;
-				DelimitStr(sFiles,wxString("\n"),aFilelist);
-				CMusikSongArray arrSongs;
-				g_Library.GetFilelistSongs( aFilelist, arrSongs );
-				g_Player.AddToPlaylist(arrSongs);
-				
-			}
-			else if ( m_SourcesListBox->GetType( n ) == MUSIK_SOURCES_NETSTREAM )
-			{
-				wxMessageBox( _( "Cannot drag songs into a net stream." ), MUSIKAPPNAME_VERSION, wxOK | wxICON_INFORMATION );
-			}
-
-			//--- drag over an existing item, append ---//
-			else if ( n > 0 )
-			{
-				wxString sName = m_SourcesListBox->GetItemText( n );
-				m_SourcesListBox->AppendStdPlaylist( sName, sFiles );
-			}
+			n = 0;
 		}
-	}
 
-	//--- select nothing, return ---//
-	if ( n == -1 )
-	{
-		n = m_SourcesListBox->GetItemCount()-1;
+		//--- drag over library, can't do that ---//
+		else if ( m_SourcesListBox->GetType( n ) == MUSIK_SOURCES_LIBRARY )
+		{
+			wxMessageBox( _( "Cannot drag songs into the library, they already exist here." ), MUSIKAPPNAME_VERSION, wxOK | wxICON_INFORMATION );
+			return false;
+		}
+		else if ( m_SourcesListBox->GetType( n ) == MUSIK_SOURCES_NOW_PLAYING )
+		{
+			wxArrayString aFilelist;
+			DelimitStr(sFiles,wxString("\n"),aFilelist);
+			CMusikSongArray arrSongs;
+			g_Library.GetFilelistSongs( aFilelist, arrSongs );
+			g_Player.AddToPlaylist(arrSongs,false);
+			
+		}
+		else if ( m_SourcesListBox->GetType( n ) == MUSIK_SOURCES_NETSTREAM )
+		{
+			wxMessageBox( _( "Cannot drag songs into a net stream." ), MUSIKAPPNAME_VERSION, wxOK | wxICON_INFORMATION );
+			return false;
+		}
+		else if ( m_SourcesListBox->GetType( n ) == MUSIK_SOURCES_PLAYLIST_DYNAMIC)
+		{
+			wxMessageBox( _( "Cannot drag songs into a dynamic playlist." ), MUSIKAPPNAME_VERSION, wxOK | wxICON_INFORMATION );
+			return false;
+		}
+
+		//--- drag over an existing item, append ---//
+		else if ( n > 0 )
+		{
+			wxString sName = m_SourcesListBox->GetItemText( n );
+			m_SourcesListBox->AppendStdPlaylist( sName, sFiles );
+		}
+		
 	}
-	else
+/*
+ 	if ( n >= 0 )
 	{
+		g_DragInProg = true;
 		wxListCtrlSelNone( m_SourcesListBox );
 		m_SourcesListBox->SetItemState( n, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
+		g_DragInProg = false;
 	}
+*/
 
-	return TRUE;
+	return true;
 }
 
 wxDragResult SourcesDropTarget::OnDragOver(wxCoord x, wxCoord y, wxDragResult def)
@@ -143,10 +197,15 @@ wxDragResult SourcesDropTarget::OnDragOver(wxCoord x, wxCoord y, wxDragResult de
 	return wxDragMove;
 }
 
-void SourcesDropTarget::HighlightSel( wxPoint pPos )
+bool SourcesDropTarget::HighlightSel( const wxPoint &pPos )
 {
 	int nFlags;
 	long n = m_SourcesListBox->HitTest( pPos, nFlags );
+	if(n == m_SourcesListBox->FindInSources(wxT( "Musik Library" ),MUSIK_SOURCES_LIBRARY))
+	{
+		return false;
+	}
+	
 	if ( n != nLastHit )
 	{
 		g_DragInProg = true;
@@ -155,6 +214,7 @@ void SourcesDropTarget::HighlightSel( wxPoint pPos )
 		g_DragInProg = false;
 	}
 	nLastHit = n;
+	return true;
 }
 
 //-----------------------//
@@ -349,15 +409,15 @@ void CSourcesListBox::BeginDrag( wxListEvent &event )
 		//--- get selected item	---//
 		//-------------------------//
 		m_DragIndex		= event.GetIndex();
-		wxString sDrop	= wxT( "s\n" ) + m_SourcesList.Item( m_DragIndex );
+		const wxString & sDrop	= m_SourcesList.Item( m_DragIndex );
 
 		//------------------------------------------------------//
 		//--- initialize drag and drop                       ---//
 		//--- SourcesDropTarget should take care of the rest ---//
 		//------------------------------------------------------//
 		wxDropSource dragSource( this );
-		wxTextDataObject playlist_data( sDrop );
-		dragSource.SetData( playlist_data );
+		CMusikSourcesDataObject sources_data( sDrop );
+		dragSource.SetData( sources_data );
 		dragSource.DoDragDrop( TRUE );
 
 		Update();
@@ -1281,12 +1341,47 @@ void CSourcesListBox::ShowIconsChecked( bool bCheck )
 	sources_context_menu->Check( MUSIK_SOURCE_CONTEXT_SHOW_ICONS, bCheck );
 }
 
+bool CSourcesListBox::AddSourceContentToNowPlaying(int nIndex)
+{
+	int nType = GetType(nIndex);
+	CMusikSongArray songs;
+	if (nType == MUSIK_SOURCES_PLAYLIST_STANDARD )
+	{
+		wxArrayString aFilelist;
+		LoadStdPlaylist( GetItemText( nIndex ), aFilelist );
+		g_Library.GetFilelistSongs( aFilelist, songs );
+	}
+
+	//--- dynamic playlist selected ---//
+	else if ( nType == MUSIK_SOURCES_PLAYLIST_DYNAMIC )
+	{
+		wxString sQuery = LoadDynPlaylist( GetItemText( nIndex ) );
+		g_Library.QuerySongsWhere( sQuery, songs );
+	}
+	else if ( nType == MUSIK_SOURCES_NOW_PLAYING )
+	{
+		return false;
+	}
+	else if ( nType == MUSIK_SOURCES_NETSTREAM )
+	{
+		CMusikSong song;
+		LoadNetStream(GetItemText( nIndex ), song);
+		songs.Add(song);
+	}
+	else
+	{
+		return false;
+	}
+	g_Player.AddToPlaylist(songs,false);
+	return true;
+}
+
 BEGIN_EVENT_TABLE(CSourcesBox, wxSashLayoutWindow)
 	EVT_SASH_DRAGGED			( MUSIK_SOURCES,				CSourcesBox::OnSashDragged			)	
 END_EVENT_TABLE()
 
 CSourcesBox::CSourcesBox( wxWindow *parent )
-	: wxSashLayoutWindow( parent, MUSIK_SOURCES, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxNO_BORDER | wxCLIP_CHILDREN |wxSW_3D )
+	: wxSashLayoutWindow( parent, MUSIK_SOURCES, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxNO_BORDER | wxCLIP_CHILDREN |wxSW_3D|wxTAB_TRAVERSAL )
 {
 	//--- CSourcesListBox ---//
 	pListBox	= new CSourcesListBox( this );

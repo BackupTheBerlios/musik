@@ -645,7 +645,7 @@ void MusikLibraryFrame::OnThreadEnd( wxCommandEvent& WXUNUSED(event) )
 		{
 			CMusikSongArray songs;
 			g_Library.GetFilelistSongs( m_arrScannedFiles, songs );
-			g_Player.AddToPlaylist(songs);
+			g_Player.AddToPlaylist(songs,true);
 			g_SourcesCtrl->SelectNowPlaying();
 			g_PlaylistBox->Update();
 		}

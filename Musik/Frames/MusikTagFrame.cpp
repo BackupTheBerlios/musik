@@ -505,7 +505,7 @@ void MusikTagFrame::SaveCurSong()
 		m_Songs.Item( nIndex ).Year = tcYear->GetValue();
 		m_Songs.Item( nIndex ).Check1 = 1;
 	}
-	m_bDirty = m_Songs.Item( nIndex ).Check1 == 1;
+	m_bDirty = m_bDirty || m_Songs.Item( nIndex ).Check1 == 1;
 }
 
 

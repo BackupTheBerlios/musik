@@ -18,7 +18,6 @@
 //---------------//
 #define MUSIK_DND_ABOVE			0
 #define MUSIK_DND_BELOW			1
-#define MUSIK_DND_BOTTOM		2
 #define MUSIK_SOURCES			9990
 #define MUSIK_PLAYLIST			9991
 #define MUSIK_ACTIVITYBOX1		9992
@@ -43,6 +42,8 @@
 #define MUSIK_SOURCES_FILENAME	g_Prefs.sDataPath + wxT( "musiksources.dat" )
 #define MUSIK_PATHS_FILENAME	g_Prefs.sDataPath + wxT( "musikpaths.dat" )
 #define MUSIK_VERSION_FILENAME	g_Prefs.sDataPath + wxT( "musikversion.dat" )
+#define MUSIK_PLAYERLIST_FILENAME	g_Prefs.sDataPath + wxT( "musikplayerlist.dat" )
+
 #define MUSIK_PATH_SEPARATOR	wxFileName::GetPathSeparator()
 //-------------------------------------------------//
 //--- for some reason some versions of wx do	---//
@@ -163,6 +164,11 @@ enum EMUSIK_MENU_ITEMS
 	MUSIK_MENU_CUSTOMQUERY,
 
 	//--- playlist popup menu ---//
+	MUSIK_PLAYLIST_CONTEXT_PLAYNODE,
+	MUSIK_PLAYLIST_CONTEXT_PLAY_INSTANTLY,
+	MUSIK_PLAYLIST_CONTEXT_PLAY_ASNEXT,
+	MUSIK_PLAYLIST_CONTEXT_PLAY_ENQUEUED,
+	MUSIK_PLAYLIST_CONTEXT_PLAY_REPLACE_PLAYERLIST,
 	MUSIK_PLAYLIST_CONTEXT_RATENODE,
 	MUSIK_PLAYLIST_CONTEXT_UNRATED,
 	MUSIK_PLAYLIST_CONTEXT_RATE1,

@@ -52,14 +52,14 @@ BEGIN_EVENT_TABLE(CActivityAreaCtrl, wxSashLayoutWindow)
 END_EVENT_TABLE()
 
 CActivityAreaCtrl::CActivityAreaCtrl( wxWindow *pParent )
-	: wxSashLayoutWindow( pParent, MUSIK_ACTIVITYCTRL, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxNO_BORDER|wxCLIP_CHILDREN | wxSW_3D )
+	: wxSashLayoutWindow( pParent, MUSIK_ACTIVITYCTRL, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxTAB_TRAVERSAL|wxNO_BORDER|wxCLIP_CHILDREN | wxSW_3D )
 {
 	m_ActivityBox1	= NULL;
 	m_ActivityBox2	= NULL;
 	m_ActivityBox3	= NULL;
 	m_ActivityBox4	= NULL;
 	SetBackgroundColour( *wxTheColourDatabase->FindColour(wxT("LIGHT STEEL BLUE")));
-	m_pPanel = new wxPanel( this, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxNO_BORDER|wxCLIP_CHILDREN );
+	m_pPanel = new wxPanel( this, -1, wxPoint( -1, -1 ), wxSize( -1, -1 ), wxNO_BORDER|wxCLIP_CHILDREN|wxTAB_TRAVERSAL );
 	pTopSizer = new wxBoxSizer( wxHORIZONTAL );
 	m_pPanel->SetSizer( pTopSizer );
 	m_Selected = m_bFocused = m_Selecting = false;
@@ -519,4 +519,3 @@ void CActivityAreaCtrl::OnSize( wxSizeEvent& event )
 	m_pPanel->Layout();
 	
 }
-
