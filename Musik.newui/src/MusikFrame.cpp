@@ -24,12 +24,20 @@ MusikFrame::MusikFrame()
 	SetIcon( wxICON( musicbox ) );
 	SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNFACE ) );
 
-	wxBoxSizer *p = new wxBoxSizer( wxHORIZONTAL );
+	wxBoxSizer *p1 = new wxBoxSizer( wxVERTICAL );
+	wxBoxSizer *p2 = new wxBoxSizer( wxHORIZONTAL );
+
 	m_SourcesCtrl = new CMusikSourcesCtrl( this, -1 );
 	m_SelectionCtrl = new CMusikSelectionAreaCtrl( this, -1 );
-	p->Add( m_SourcesCtrl, 1, wxEXPAND | wxALL, 1 );
-	p->Add( m_SelectionCtrl, 3, wxEXPAND | wxALL, 1 );
-	SetSizer( p );
+	m_PlaylistCtrl = new CMusikPlaylistCtrl( this, -1 );
+
+	p1->Add( m_SelectionCtrl, 1, wxEXPAND | wxALL, 1 );
+	p1->Add( m_PlaylistCtrl, 3, wxEXPAND | wxALL, 1 );
+
+	p2->Add( m_SourcesCtrl, 1, wxEXPAND | wxALL, 1 );
+	p2->Add( p1, 5, wxEXPAND | wxALL, 1 );
+
+	SetSizer( p2 );
 	Layout();
 	Centre();
 }

@@ -4,6 +4,7 @@
 #include <wx/socket.h>
 #include "MusikSourcesCtrl.h"
 #include "MusikSelectionAreaCtrl.h"
+#include "MusikPlaylistCtrl.h"
 
 class MusikFrame : public wxFrame
 {
@@ -13,6 +14,7 @@ public:
 
 	CMusikSourcesCtrl *m_SourcesCtrl;
 	CMusikSelectionAreaCtrl *m_SelectionCtrl;
+	CMusikPlaylistCtrl *m_PlaylistCtrl;
 	
 };
 
