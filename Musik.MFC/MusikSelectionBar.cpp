@@ -30,14 +30,20 @@ int CMusikSelectionBar::OnCreate( LPCREATESTRUCT lpCreateStruct )
 	if ( baseCMusikSelectionBar::OnCreate(lpCreateStruct) == -1 )
 		return -1;
 
+	// dock bar
+	SetBarStyle( GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC );
+	EnableDocking( CBRS_ALIGN_ANY );
+
+	// child
 	long dwStyle = WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_OWNERDATA | LVS_NOCOLUMNHEADER;
 	long dwStyleEx =  LVS_EX_FULLROWSELECT;
 
 	if ( !m_wndChild->Create( dwStyle, CRect( 0, 0, 0, 0), this, 123 ) )
 		return -1;
 
-    m_wndChild->SetExtendedStyle( dwStyleEx );
+	m_wndChild->SetExtendedStyle( dwStyleEx );
 	m_wndChild->ModifyStyleEx( WS_EX_STATICEDGE, NULL );
+
 
 	if ( !m_Font.CreateStockObject(DEFAULT_GUI_FONT) )
 		return -1;

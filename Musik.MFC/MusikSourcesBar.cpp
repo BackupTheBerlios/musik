@@ -47,6 +47,11 @@ int CMusikSourcesBar::OnCreate( LPCREATESTRUCT lpCreateStruct )
 	if ( baseCMusikSourcesBar::OnCreate(lpCreateStruct) == -1 )
 		return -1;
 
+	// dock bar
+    SetBarStyle( GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC );
+	EnableDocking( CBRS_ALIGN_LEFT | CBRS_ALIGN_RIGHT );
+
+	// child
 	if ( !m_wndChild->Create( WS_CHILD | WS_VISIBLE | PTS_NOTIFY, CRect( 0, 0, 0, 0 ), this, IDC_SOURCES ) )
 		return -1;
 

@@ -1,14 +1,14 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// CSizingControlBar            Version 2.43
+// CSizingControlBar            Version 2.44
 //
-// Created: Jan 24, 1998        Last Modified: August 03, 2000
+// Created: Jan 24, 1998        Last Modified: March 31, 2002
 //
 // See the official site at www.datamekanix.com for documentation and
 // the latest news.
 //
 /////////////////////////////////////////////////////////////////////////
-// Copyright (C) 1998-2000 by Cristi Posea. All rights reserved.
+// Copyright (C) 1998-2002 by Cristi Posea. All rights reserved.
 //
 // This code is free for personal and commercial use, providing this 
 // notice remains intact in the source files and all eventual changes are
@@ -30,7 +30,7 @@
 // the version to be sure you get the latest one ;)
 //
 // Hint: These classes are intended to be used as base classes. Do not
-// simply add your code to these file - instead create a new class
+// simply add your code to these files - instead create a new class
 // derived from one of CSizingControlBarXX classes and put there what
 // you need. See CMyBar classes in the demo projects for examples.
 // Modify this file only to fix bugs, and don't forget to send me a copy.
@@ -46,14 +46,10 @@
 //      dialgonal resizing is based.
 //  o   Thanks to the following people for various bug fixes and/or
 //      enhancements: Chris Maunder, Jakawan Ratiwanich, Udo Schaefer,
-//      Anatoly Ivasyuk, Peter Hauptmann.
+//      Anatoly Ivasyuk, Peter Hauptmann, DJ(?), Pat Kusbel, Aleksey
+//      Malyshev.
 //  o   And, of course, many thanks to all of you who used this code,
 //      for the invaluable feedback I received.
-/////////////////////////////////////////////////////////////////////////
-// The Musik Team attempted to gain permission to distribute these files
-// with the source, but no response was ever recieved. The code is 
-// somewhat modified, and if the author wishes us to remove it, he
-// should contact Casey Langen at casey@bak.rr.com
 /////////////////////////////////////////////////////////////////////////
 
 // sizecbar.cpp : implementation file
@@ -156,6 +152,15 @@ BOOL CSizingControlBar::Create(LPCTSTR lpszWindowName,
     return TRUE;
 }
 
+void CSizingControlBar::SetSize( const CSize& size, bool layout )
+{
+	m_szHorz = size;
+	m_szVert = size;
+
+	if ( layout )
+		CalcDynamicLayout( NULL, LM_VERTDOCK | LM_HORZDOCK );
+}
+
 /////////////////////////////////////////////////////////////////////////
 // CSizingControlBar operations
 #if defined(_SCB_REPLACE_MINIFRAME) && !defined(_SCB_MINIFRAME_CAPTION)
@@ -201,7 +206,6 @@ int CSizingControlBar::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 LRESULT CSizingControlBar::OnSetText(WPARAM wParam, LPARAM lParam)
 {
-
     UNUSED_ALWAYS(wParam);
 
     LRESULT lResult = CWnd::Default();
@@ -259,8 +263,8 @@ CSize CSizingControlBar::CalcFixedLayout(BOOL bStretch, BOOL bHorz)
     GetRowSizingBars(arrSCBars);
     AFX_SIZEPARENTPARAMS layout;
     layout.hDWP = pDockBar->m_bLayoutQuery ?
-        NULL : ::BeginDeferWindowPos((int)arrSCBars.GetSize());
-    for (int i = 0; i < (int)arrSCBars.GetSize(); i++)
+        NULL : ::BeginDeferWindowPos(arrSCBars.GetSize());
+    for (int i = 0; i < arrSCBars.GetSize(); i++)
         if (arrSCBars[i]->m_nStateFlags & (delayHide|delayShow))
             arrSCBars[i]->RecalcDelayShow(&layout);
     if (layout.hDWP != NULL)
@@ -285,15 +289,6 @@ CSize CSizingControlBar::CalcFixedLayout(BOOL bStretch, BOOL bHorz)
 
     return CSize(max(m_szMinVert.cx, m_szVert.cx),
                  max(m_szMinVert.cy, m_szVert.cy));
-}
-
-void CSizingControlBar::SetSize( const CSize& size, bool layout )
-{
-	m_szHorz = size;
-	m_szVert = size;
-
-	if ( layout )
-		CalcDynamicLayout( NULL, LM_VERTDOCK | LM_HORZDOCK );
 }
 
 CSize CSizingControlBar::CalcDynamicLayout(int nLength, DWORD dwMode)
@@ -526,7 +521,7 @@ void CSizingControlBar::NcCalcClient(LPRECT pRc, UINT nDockBarID)
 void CSizingControlBar::OnNcPaint()
 {
     // get window DC that is clipped to the non-client area
-    CWindowDC dc(this);
+    CWindowDC dc(this); // the HDC will be released by the destructor
 
     CRect rcClient, rcBar;
     GetClientRect(rcClient);
@@ -544,10 +539,20 @@ void CSizingControlBar::OnNcPaint()
 
     // draw borders in non-client area
     CRect rcDraw = rcBar;
+    //DrawBorders(&mdc, rcDraw);
 
     // erase the NC background
     mdc.FillRect(rcDraw, CBrush::FromHandle(
         (HBRUSH) GetClassLong(m_hWnd, GCL_HBRBACKGROUND)));
+
+    if (m_dwSCBStyle & SCBS_SHOWEDGES)
+    {
+        CRect rcEdge; // paint the sizing edges
+        for (int i = 0; i < 4; i++)
+            if (GetEdgeRect(rcBar, GetEdgeHTCode(i), rcEdge))
+                mdc.Draw3dRect(rcEdge, ::GetSysColor(COLOR_BTNHIGHLIGHT),
+                    ::GetSysColor(COLOR_BTNSHADOW));
+    }
 
     NcPaintGripper(&mdc, rcClient);
 
@@ -556,8 +561,6 @@ void CSizingControlBar::OnNcPaint()
     dc.ExcludeClipRect(rcClient);
 
     dc.BitBlt(0, 0, rcBar.Width(), rcBar.Height(), &mdc, 0, 0, SRCCOPY);
-
-    ReleaseDC(&dc);
 
     mdc.SelectObject(pOldBm);
     bm.DeleteObject();
@@ -768,7 +771,7 @@ void CSizingControlBar::OnTrackUpdateSize(CPoint& point)
 
         // the others are shrinking
         int nFirst = bBefore ? nGrowingBar - 1 : nGrowingBar + 1;
-        int nLimit = bBefore ? -1 : (int)arrSCBars.GetSize();
+        int nLimit = bBefore ? -1 : arrSCBars.GetSize();
 
         for (int i = nFirst; nDelta != 0 && i != nLimit; i += (bBefore ? -1 : 1))
         {
@@ -877,7 +880,7 @@ void CSizingControlBar::GetRowInfo(int& nFirst, int& nLast, int& nThis)
     nThis = m_pDockBar->FindBar(this);
     ASSERT(nThis != -1);
 
-    int i, nBars = (int)m_pDockBar->m_arrBars.GetSize();
+    int i, nBars = m_pDockBar->m_arrBars.GetSize();
 
     // find the first and the last bar in row
     for (nFirst = -1, i = nThis - 1; i >= 0 && nFirst == -1; i--)
@@ -913,7 +916,7 @@ void CSizingControlBar::GetRowSizingBars(CSCBArray& arrSCBars, int& nThis)
         if (pBar->IsKindOf(RUNTIME_CLASS(CSizingControlBar)))
         {
             if (pBar == this)
-                nThis = (int)arrSCBars.GetSize();
+                nThis = arrSCBars.GetSize();
 
             arrSCBars.Add(pBar);
         }
@@ -922,7 +925,7 @@ void CSizingControlBar::GetRowSizingBars(CSCBArray& arrSCBars, int& nThis)
 
 BOOL CSizingControlBar::NegotiateSpace(int nLengthTotal, BOOL bHorz)
 {
-    //ASSERT(bHorz == IsHorzDocked());
+    ASSERT(bHorz == IsHorzDocked());
 
     int nFirst, nLast, nThis;
     GetRowInfo(nFirst, nLast, nThis);
@@ -993,7 +996,7 @@ BOOL CSizingControlBar::NegotiateSpace(int nLengthTotal, BOOL bHorz)
 
     CSCBArray arrSCBars;
     GetRowSizingBars(arrSCBars);
-    int nNumBars = (int)arrSCBars.GetSize();
+    int nNumBars = arrSCBars.GetSize();
     int nDelta = nLengthAvail - nLengthActual;
 
     // return faster when there is only one sizing bar per row (this one)
@@ -1299,7 +1302,7 @@ BOOL CSCBMiniDockFrameWnd::Create(CWnd* pParent, DWORD dwBarStyle)
 #endif
 
     if (!CMiniFrameWnd::CreateEx(dwExStyle,
-        NULL, &afxChNil, dwStyle, rectDefault, pParent))
+        NULL, NULL, dwStyle, rectDefault, pParent))
     {
         m_bInRecalcLayout = FALSE;
         return FALSE;
@@ -1333,7 +1336,7 @@ BOOL CSCBMiniDockFrameWnd::Create(CWnd* pParent, DWORD dwBarStyle)
 
 void CSCBMiniDockFrameWnd::OnNcLButtonDown(UINT nHitTest, CPoint point)
 {
-    if (nHitTest == HTCAPTION || nHitTest == HTCLOSE || nHitTest == HTOPTIONS)
+    if (nHitTest == HTCAPTION || nHitTest == HTCLOSE)
     {
         baseCSCBMiniDockFrameWnd::OnNcLButtonDown(nHitTest, point);
         return;
@@ -1365,7 +1368,9 @@ void CSCBMiniDockFrameWnd::OnSize(UINT nType, int cx, int cy)
 {
     CSizingControlBar* pBar = GetSizingControlBar();
     if ((pBar != NULL) && (GetStyle() & MFS_4THICKFRAME) == 0
-        && pBar->IsVisible())
+        && pBar->IsVisible() &&
+        cx + 4 >= pBar->m_szMinFloat.cx &&
+        cy + 4 >= pBar->m_szMinFloat.cy)
         pBar->m_szFloat = CSize(cx + 4, cy + 4);
 
     baseCSCBMiniDockFrameWnd::OnSize(nType, cx, cy);
@@ -1399,12 +1404,15 @@ void CSCBMiniDockFrameWnd::OnWindowPosChanging(WINDOWPOS FAR* lpwndpos)
             lpwndpos->flags |= SWP_NOSIZE; // don't size this time
             // prevents flicker
             pBar->m_pDockBar->ModifyStyle(0, WS_CLIPCHILDREN);
+
             // enable diagonal resizing
-            ModifyStyle(MFS_4THICKFRAME, 0);
+            DWORD dwStyleRemove = MFS_4THICKFRAME;
 #ifndef _SCB_MINIFRAME_CAPTION
             // remove caption
-            ModifyStyle(WS_SYSMENU|WS_CAPTION, 0);
+            dwStyleRemove |= WS_SYSMENU|WS_CAPTION;
 #endif
+            ModifyStyle(dwStyleRemove, 0);
+
             DelayRecalcLayout();
             pBar->PostMessage(WM_NCPAINT);
         }

@@ -39,6 +39,7 @@
 #include <afxcmn.h>			// MFC support for Windows Common Controls
 #endif // _AFX_NO_AFXCMN_SUPPORT
 
+#define _SCB_REPLACE_MINIFRAME
 #include "3rdparty/sizecbar.h"
 
 #ifndef MUSIK_VERSION_STR

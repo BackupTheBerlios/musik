@@ -66,15 +66,18 @@ int CMusikPlaylistView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if ( CWnd::OnCreate(lpCreateStruct) == -1 )
 		return -1;
 
+	// view
+	ModifyStyleEx( WS_EX_STATICEDGE, NULL );
+	ModifyStyle( WS_BORDER, 0 );
+
 	DragAcceptFiles( true );
 
+	// child
 	long dwStyle = WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_OWNERDATA | WS_VSCROLL | WS_HSCROLL;
 	long dwStyleEx = LVS_EX_FULLROWSELECT | LVS_EX_HEADERDRAGDROP;
 
 	m_Playlist->Create( dwStyle, CRect( 0, 0, 0, 0 ), this, 123 );
 	m_Playlist->SetExtendedStyle( dwStyleEx );
-
-	m_Playlist->ModifyStyleEx( dwStyleEx | WS_EX_STATICEDGE, 0 );
 
 	return 0;
 }
@@ -85,7 +88,7 @@ void CMusikPlaylistView::OnSize(UINT nType, int cx, int cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 
-	m_Playlist->MoveWindow( 4, 4, cx - 8, cy - 10 );
+	m_Playlist->MoveWindow( 3, 3, cx - 6, cy - 8 );
 }
 
 ///////////////////////////////////////////////////
@@ -114,10 +117,10 @@ void CMusikPlaylistView::OnNcPaint()
 
 	// draw a simple border
 	CRect rcBorder = rcWindow;
-	rcBorder.left += 3;
-	rcBorder.top += 3;
-	rcBorder.right -= 3;
-	rcBorder.bottom -= 5;
+	rcBorder.left += 2;
+	rcBorder.top += 2;
+	rcBorder.right -= 2;
+	rcBorder.bottom -= 4;
 	pDC.Draw3dRect( rcBorder, m_Prefs->MUSIK_COLOR_BTNSHADOW, m_Prefs->MUSIK_COLOR_BTNHILIGHT );
 
 	// line at bottom

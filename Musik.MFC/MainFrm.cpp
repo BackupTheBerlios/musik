@@ -298,23 +298,24 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	SetIcon( m_hIcon32, true );
 	SetIcon( m_hIcon16, false );
 
+	// set default dock order
+	EnableDocking( CBRS_ALIGN_BOTTOM );
+	EnableDocking( CBRS_ALIGN_LEFT );
+	EnableDocking( CBRS_ALIGN_RIGHT );
+	EnableDocking( CBRS_ALIGN_TOP );
+
+	#ifdef _SCB_REPLACE_MINIFRAME
+		m_pFloatingFrameClass = RUNTIME_CLASS(CSCBMiniDockFrameWnd);
+	#endif
+
 	// create the background window, which is the playlist
 	m_wndView = new CMusikPlaylistView( this, m_Library, m_Player, m_Prefs );
 	m_wndView->Create( NULL, NULL, AFX_WS_DEFAULT_VIEW, CRect(0, 0, 0, 0), this, AFX_IDW_PANE_FIRST, NULL );
-	m_wndView->ModifyStyleEx( WS_EX_STATICEDGE, NULL );
-	m_wndView->ModifyStyle( WS_BORDER, 0 );
 	m_wndView->GetCtrl()->UpdateV();
-    EnableDocking( CBRS_ALIGN_BOTTOM );
-	EnableDocking( CBRS_ALIGN_LEFT );
-    EnableDocking( CBRS_ALIGN_RIGHT );
-	EnableDocking( CBRS_ALIGN_TOP );
 
 	// now playing control
 	m_wndNowPlaying = new CMusikNowPlayingBar( m_Player, m_Prefs );
 	m_wndNowPlaying->Create( _T( "Musik Now Playing" ), this, ID_NOWPLAYING );
-	m_wndNowPlaying->SetBarStyle( m_wndNowPlaying->GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC );
-	m_wndNowPlaying->EnableDocking( CBRS_ALIGN_BOTTOM );
-	m_wndNowPlaying->ShowGripper( false );
 	DockControlBar( m_wndNowPlaying, AFX_IDW_DOCKBAR_BOTTOM );
 
 	// selection controls
@@ -322,12 +323,8 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	{
 		m_wndSelectionBars[i] = new CMusikSelectionBar( this, m_Library, m_Prefs, i, i );
 		m_wndSelectionBars[i]->Create( _T( "Musik Selection Box" ), this, ID_SELECTIONBOX_START + i );
-		m_wndSelectionBars[i]->SetBarStyle( m_wndSelectionBars[i]->GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC );
-		m_wndSelectionBars[i]->EnableDocking( CBRS_ALIGN_ANY );
 		if ( i == 0 )
-		{
 			DockControlBar( m_wndSelectionBars[i] );
-		}
 		else
 			DockBarLeftOf( m_wndSelectionBars[i], m_wndSelectionBars[i-1] );
 	}
@@ -335,8 +332,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// sources control
 	m_wndSources = new CMusikSourcesBar( this, m_Library, m_Prefs );
 	m_wndSources->Create( _T( "Sources" ), this, ID_SOURCESBOX );
-	m_wndSources->EnableDocking( CBRS_ALIGN_LEFT | CBRS_ALIGN_RIGHT );
-    m_wndSources->SetBarStyle( m_wndSources->GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC );
 	DockControlBar( m_wndSources, AFX_IDW_DOCKBAR_LEFT );
 
 	// load dockbar sizes and positions

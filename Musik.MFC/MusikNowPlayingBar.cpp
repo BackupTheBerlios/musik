@@ -45,6 +45,13 @@ int CMusikNowPlayingBar::OnCreate( LPCREATESTRUCT lpCreateStruct )
 	if ( baseCMusikNowPlayingBar::OnCreate(lpCreateStruct) == -1 )
 		return -1;
 
+	// dock bar
+	SetBarStyle( GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC );
+	EnableDocking( CBRS_ALIGN_BOTTOM );
+
+	ShowGripper( false );
+
+	// child
 	if ( !m_wndChild->Create( NULL, NULL, WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0), this, 123) )
 		return -1;
 

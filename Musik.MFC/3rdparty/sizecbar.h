@@ -1,14 +1,14 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// CSizingControlBar            Version 2.43
+// CSizingControlBar            Version 2.44
 //
-// Created: Jan 24, 1998        Last Modified: August 03, 2000
+// Created: Jan 24, 1998        Last Modified: March 31, 2002
 //
 // See the official site at www.datamekanix.com for documentation and
 // the latest news.
 //
 /////////////////////////////////////////////////////////////////////////
-// Copyright (C) 1998-2000 by Cristi Posea. All rights reserved.
+// Copyright (C) 1998-2002 by Cristi Posea. All rights reserved.
 //
 // This code is free for personal and commercial use, providing this 
 // notice remains intact in the source files and all eventual changes are
@@ -25,11 +25,6 @@
 // Send bug reports, bug fixes, enhancements, requests, flames, etc. to
 // cristi@datamekanix.com or post them at the message board at the site.
 /////////////////////////////////////////////////////////////////////////
-// The Musik Team attempted to gain permission to distribute these files
-// with the source, but no response was ever recieved. The code is 
-// somewhat modified, and if the author wishes us to remove it, he
-// should contact Casey Langen at casey@bak.rr.com
-/////////////////////////////////////////////////////////////////////////
 
 #if !defined(__SIZECBAR_H__)
 #define __SIZECBAR_H__
@@ -45,13 +40,6 @@
 #if defined(_SCB_MINIFRAME_CAPTION) && !defined(_SCB_REPLACE_MINIFRAME)
     #error "_SCB_MINIFRAME_CAPTION requires _SCB_REPLACE_MINIFRAME"
 #endif
-
-#ifndef HTOPTIONS
-	#define HTOPTIONS 666
-#endif
-
-/////////////////////////////////////////////////////////////////////////
-// forward dec
 
 /////////////////////////////////////////////////////////////////////////
 // CSCBDockBar dummy class for access to protected members
@@ -96,6 +84,8 @@ public:
     virtual BOOL Create(LPCTSTR lpszWindowName, CWnd* pParentWnd,
         UINT nID, DWORD dwStyle = WS_CHILD | WS_VISIBLE | CBRS_TOP);
 
+	void SetSize( const CSize& size, bool layout = true );
+
 // Attributes
 public:
     const BOOL IsFloating() const;
@@ -121,15 +111,16 @@ public:
 
 // Overrides
 public:
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(CSizingControlBar)
     public:
     virtual CSize CalcFixedLayout(BOOL bStretch, BOOL bHorz);
     virtual CSize CalcDynamicLayout(int nLength, DWORD dwMode);
+    //}}AFX_VIRTUAL
 
 // Implementation
 public:
     virtual ~CSizingControlBar();
-
-	void SetSize( const CSize& size, bool layout = true );
     
 protected:
     // implementation helpers
@@ -141,6 +132,7 @@ protected:
     virtual void OnTrackInvertTracker();
     virtual void NcPaintGripper(CDC* pDC, CRect rcClient);
     virtual void NcCalcClient(LPRECT pRc, UINT nDockBarID);
+	virtual void DrawBorders(CDC* pDC, CRect& rcRect){}
 
     virtual void AlignControlBars();
     void GetRowInfo(int& nFirst, int& nLast, int& nThis);
@@ -171,6 +163,7 @@ protected:
 
 // Generated message map functions
 protected:
+    //{{AFX_MSG(CSizingControlBar)
     afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
     afx_msg void OnNcPaint();
     afx_msg void OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS FAR* lpncsp);
@@ -187,13 +180,14 @@ protected:
     afx_msg void OnPaint();
     afx_msg void OnClose();
     afx_msg void OnSize(UINT nType, int cx, int cy);
+    //}}AFX_MSG
     afx_msg LRESULT OnSetText(WPARAM wParam, LPARAM lParam);
 
     DECLARE_MESSAGE_MAP()
 
 #ifdef _SCB_REPLACE_MINIFRAME
     friend class CSCBMiniDockFrameWnd;
-#endif
+#endif //_SCB_REPLACE_MINIFRAME
 };
 
 #ifdef _SCB_REPLACE_MINIFRAME
@@ -222,21 +216,27 @@ public:
 class CSCBMiniDockFrameWnd : public baseCSCBMiniDockFrameWnd
 {
     DECLARE_DYNCREATE(CSCBMiniDockFrameWnd)
-public:
+
+// Overrides
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(CSCBMiniDockFrameWnd)
+    public:
     virtual BOOL Create(CWnd* pParent, DWORD dwBarStyle);
+    //}}AFX_VIRTUAL
 
 // Implementation
 public:
     CSizingControlBar* GetSizingControlBar();
 
+    //{{AFX_MSG(CSCBMiniDockFrameWnd)
     afx_msg void OnNcLButtonDown(UINT nHitTest, CPoint point);
     afx_msg void OnGetMinMaxInfo(MINMAXINFO FAR* lpMMI);
     afx_msg void OnWindowPosChanging(WINDOWPOS FAR* lpwndpos);
     afx_msg void OnSize(UINT nType, int cx, int cy);
-
-	DECLARE_MESSAGE_MAP()
+    //}}AFX_MSG
+    DECLARE_MESSAGE_MAP()
 };
-#endif
+#endif //_SCB_REPLACE_MINIFRAME
 
-#endif 
+#endif // !defined(__SIZECBAR_H__)
 
