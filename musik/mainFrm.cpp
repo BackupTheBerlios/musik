@@ -31,7 +31,7 @@
 //
 // Information:
 //
-//   musik.MFC's main SDI window.
+//   musikCube's main SDI window.
 //
 ///////////////////////////////////////////////////
 
