@@ -1,10 +1,12 @@
 ----------------------------------------------------------------------------
+
 a5:
 
   - ditched ACE for OpenThreads
   - much improved selection box updating while threading.
 
 ----------------------------------------------------------------------------
+
 a4:
 
   - fixed two sources panel crashes. not sure why no one ever

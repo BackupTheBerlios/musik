@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="bin"
-			IntermediateDirectory="bin"
+			OutputDirectory="Debug"
+			IntermediateDirectory="Debug"
 			ConfigurationType="4"
 			UseOfMFC="2"
 			CharacterSet="2">
@@ -35,7 +35,7 @@
 			<Tool
 				Name="VCLibrarianTool"
 				AdditionalDependencies="fmodvc.lib vorbis_static_d.lib vorbisfile_static_d.lib ogg_static_d.lib id3libD.lib OpenThreadsD.lib"
-				OutputFile="$(OutDir)/$(ProjectName)D.lib"
+				OutputFile="../_lib/$(ProjectName)D.lib"
 				AdditionalLibraryDirectories="../_lib/"
 				IgnoreAllDefaultLibraries="TRUE"/>
 			<Tool
@@ -59,8 +59,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="bin"
-			IntermediateDirectory="bin"
+			OutputDirectory="Release"
+			IntermediateDirectory="Release"
 			ConfigurationType="4"
 			UseOfMFC="2"
 			CharacterSet="2">
@@ -79,6 +79,7 @@
 			<Tool
 				Name="VCLibrarianTool"
 				AdditionalDependencies="fmodvc.lib vorbis_static.lib vorbisfile_static.lib ogg_static.lib id3lib.lib OpenThreads.lib"
+				OutputFile="../_lib/$(ProjectName).lib"
 				AdditionalLibraryDirectories="../_lib/"
 				IgnoreAllDefaultLibraries="TRUE"/>
 			<Tool

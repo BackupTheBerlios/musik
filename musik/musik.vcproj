@@ -35,7 +35,8 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="atlsd.lib ../musikCore/bin/musikCoreD.lib"
+				AdditionalDependencies="atlsd.lib ../_lib/musikCoreD.lib"
+				OutputFile="bin/$(ProjectName)D.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
@@ -95,7 +96,8 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="atls.lib ../musikCore/bin/musikCore.lib"
+				AdditionalDependencies="atls.lib ../_lib/musikCore.lib"
+				OutputFile="bin/$(ProjectName).exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="FALSE"
 				SubSystem="2"
