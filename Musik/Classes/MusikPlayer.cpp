@@ -961,7 +961,8 @@ void CMusikPlayer::_AddRandomSongs()
 {
 
 	CMusikSongArray  arrSongs;
-	int nSongsToAdd = (wxGetApp().Prefs.nAutoDJChooseSongsToPlayInAdvance - (m_Playlist.GetCount() - m_SongIndex) + 1);
+	m_SongIndex = wxMin(m_SongIndex,m_Playlist.GetCount() - 1);
+	int nSongsToAdd = (wxGetApp().Prefs.nAutoDJChooseSongsToPlayInAdvance - (m_Playlist.GetCount() - 1 - m_SongIndex));
 	if(nSongsToAdd <= 0)
 		return;
 	_ChooseRandomSongs(nSongsToAdd,arrSongs);
