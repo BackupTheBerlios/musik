@@ -164,8 +164,6 @@ protected:
 	afx_msg LRESULT OnBatchAddProgress( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnBatchAddEnd( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnPlayerPlaySel( WPARAM wParam, LPARAM lParam );
-	afx_msg LRESULT OnPlayerPause( WPARAM wParam, LPARAM lParam );
-	afx_msg LRESULT OnPlayerResume( WPARAM wParam, LPARAM lParam );
 
 	// mfc message maps
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -176,6 +174,8 @@ protected:
 	afx_msg void OnDestroy();
 	afx_msg void OnOpenFiles();
 	afx_msg void OnOpenDirectory();
+	afx_msg void OnFileSaveplaylist();
+	afx_msg void OnViewPlaylistinformation();
 
 	// updating ui
 	void OnUpdateMainMenu( CCmdUI* pCmd );
@@ -187,9 +187,6 @@ protected:
 	// macros
 	DECLARE_DYNAMIC(CMainFrame)
 	DECLARE_MESSAGE_MAP()
-public:
-	afx_msg void OnFileSaveplaylist();
-	afx_msg void OnViewPlaylistinformation();
 };
 
 ///////////////////////////////////////////////////

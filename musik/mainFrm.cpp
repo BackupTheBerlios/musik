@@ -98,8 +98,6 @@ int WM_PLAYER_PLAYSEL		= RegisterWindowMessage( "PLAYER_PLAYSEL" );
 int WM_PLAYER_NEXT			= RegisterWindowMessage( "PLAYER_NEXT" );
 int WM_PLAYER_PREV			= RegisterWindowMessage( "PLAYER_PREV" );
 int WM_PLAYER_STOP			= RegisterWindowMessage( "PLAYER_STOP" );
-int WM_PLAYER_PAUSE			= RegisterWindowMessage( "PLAYER_PAUSE" );
-int WM_PLAYER_RESUME		= RegisterWindowMessage( "PLAYER_RESUME" );
 
 ///////////////////////////////////////////////////
 
@@ -140,8 +138,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_REGISTERED_MESSAGE( WM_BATCHADD_PROGRESS, OnBatchAddProgress )
 	ON_REGISTERED_MESSAGE( WM_BATCHADD_END, OnBatchAddEnd )
 	ON_REGISTERED_MESSAGE( WM_PLAYER_PLAYSEL, OnPlayerPlaySel )
-	ON_REGISTERED_MESSAGE( WM_PLAYER_PAUSE, OnPlayerPause )
-	ON_REGISTERED_MESSAGE( WM_PLAYER_RESUME, OnPlayerResume )
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////
@@ -1107,24 +1103,6 @@ LRESULT CMainFrame::OnPlayerPlaySel( WPARAM wParam, LPARAM lParam )
 	// start playback...
 	else
 		m_wndView->GetCtrl()->PlayItem();
-
-	return 0L;
-}
-
-///////////////////////////////////////////////////
-
-LRESULT CMainFrame::OnPlayerPause( WPARAM wParam, LPARAM lParam )
-{
-	m_Player->Pause();
-
-	return 0L;
-}
-
-///////////////////////////////////////////////////
-
-LRESULT CMainFrame::OnPlayerResume( WPARAM wParam, LPARAM lParam )
-{
-	m_Player->Resume();
 
 	return 0L;
 }

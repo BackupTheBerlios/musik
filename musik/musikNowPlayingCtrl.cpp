@@ -33,6 +33,11 @@ CmusikNowPlayingCtrl::~CmusikNowPlayingCtrl()
 {
 	delete m_Volume;
 	delete m_Track;
+
+	delete m_Play;
+	delete m_Stop;
+	delete m_Prev;
+	delete m_Next;
 }
 
 ///////////////////////////////////////////////////
@@ -172,10 +177,10 @@ void CmusikNowPlayingCtrl::RescaleInfo()
 	CSize szTemp( 240, 16 );
 	m_Track->MoveWindow( CRect( ptTemp, szTemp ) );
 
-	m_Prev->MoveWindow( 0, 50, 24, 24 );
-	m_Play->MoveWindow( 24, 50, 24, 24 );
-	m_Stop->MoveWindow( 48, 50, 24, 24 );
-	m_Next->MoveWindow( 72, 50, 24, 24 );
+	m_Prev->MoveWindow( rcClient.right - 16 - ( 24 * 4 ) - ( 240 / 24 ), 0, 24, 24 );
+	m_Play->MoveWindow( rcClient.right - 16 - ( 24 * 3 ) - ( 240 / 24 ), 0, 24, 24 );
+	m_Stop->MoveWindow( rcClient.right - 16 - ( 24 * 2 ) - ( 240 / 24 ), 0, 24, 24 );
+	m_Next->MoveWindow( rcClient.right - 16 - ( 24 * 1 ) - ( 240 / 24 ), 0, 24, 24 );
 }
 
 ///////////////////////////////////////////////////
@@ -204,17 +209,11 @@ void CmusikNowPlayingCtrl::OnBtnPlay()
 	{
 		// if it is playing, pause...
 		if ( !m_Player->IsPaused() )
-		{
-			int WM_PLAYER_PAUSE	= RegisterWindowMessage( "PLAYER_PAUSE" );
-			m_MainWnd->SendMessage( WM_PLAYER_PAUSE );
-		}
+			m_Player->Pause();
 
 		// is paused, resume
 		else
-		{
-			int WM_PLAYER_RESUME = RegisterWindowMessage( "PLAYER_RESUME" );
-			m_MainWnd->SendMessage( WM_PLAYER_RESUME );
-		}
+			m_Player->Resume();
 	}
 }
 
@@ -222,21 +221,24 @@ void CmusikNowPlayingCtrl::OnBtnPlay()
 
 void CmusikNowPlayingCtrl::OnBtnPrev()
 {
-
+	if ( m_Player->IsPlaying() )
+		m_Player->Prev();
 }
 
 ///////////////////////////////////////////////////
 
 void CmusikNowPlayingCtrl::OnBtnStop()
 {
-	MessageBox( "Stop" );
+	if ( m_Player->IsPlaying() )
+		m_Player->Stop();
 }
 
 ///////////////////////////////////////////////////
 
 void CmusikNowPlayingCtrl::OnBtnNext()
 {
-	MessageBox( "Next" );
+	if ( m_Player->IsPlaying() )
+		m_Player->Next();
 }
 
 ///////////////////////////////////////////////////
