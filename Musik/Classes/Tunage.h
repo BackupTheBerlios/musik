@@ -29,6 +29,7 @@ public:
 	~CTunage();
 
 	void Execute( CMusikSong& song );
+	void Stopped();
 
 private:
 	CMusikSong m_Song;

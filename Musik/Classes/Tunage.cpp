@@ -18,6 +18,7 @@
 #include "../MusikUtils.h"
 #include "wx/url.h"
 #include "wx/wfstream.h"
+#include "wx/utils.h"
 
 CTunage::CTunage()
 {
@@ -46,6 +47,13 @@ void CTunage::Execute( CMusikSong& song )
 
 	if ( g_Prefs.nTunageRunApp )
 		RunApp();
+}
+
+void CTunage::Stopped()
+{
+	CMusikSong stopsong;
+	stopsong.Filesize = -1;
+	Execute( stopsong );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -86,12 +94,41 @@ void CTunage::PostURL()
 
 void CTunage::WriteFile()
 {
+	if ( ( g_Prefs.sTunageFilename == wxT("") ) || ( g_Prefs.sTunageFileLine == wxT("") ) )
+		return;
+
+	if ( !g_Prefs.nTunageAppendFile )
+	{
+		if ( wxFileExists( g_Prefs.sTunageFilename ) )
+			wxRemoveFile( g_Prefs.sTunageFilename );
+	}
+
+	wxTextFile Out;	
+	Out.Create( g_Prefs.sTunageFilename );
+	Out.Open();
+
+	if ( !Out.IsOpened() )
+		return;
+
+	wxString line( g_Prefs.sTunageFileLine );
+	ParseTags( line );
+
+	Out.AddLine( line );
+	Out.Write( Out.GuessType() );
+	Out.Close();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
 void CTunage::RunApp()
 {
+	if ( g_Prefs.sTunageCmdLine == wxT("") )
+		return;
+
+	wxString cmd( g_Prefs.sTunageCmdLine );
+	ParseTags( cmd );
+
+	wxExecute( cmd );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -107,13 +144,16 @@ void CTunage::ParseTags( wxString& str )
 	str.Replace( wxT("$ALBUM"), m_Song.Album );
 	str.Replace( wxT("$TITLE"), m_Song.Title );
 
-	str.Replace( wxT("$NAME"), wxString::Format( wxT("%s - %s"), m_Song.Artist, m_Song.Title ) );
+	if ( m_Song.Filesize == -1 )
+		str.Replace( wxT("$NAME"), g_Prefs.sTunageStoppedText );
+	else
+		str.Replace( wxT("$NAME"), wxString::Format( wxT("%s - %s"), m_Song.Artist, m_Song.Title ) );
+
 	str.Replace( wxT("$FILENAME"), m_Song.Filename );
 	str.Replace( wxT("$FILESIZE"), sFilesize );
 	str.Replace( wxT("$BITRATE"), wxString::Format( wxT("%d"), m_Song.Bitrate ) );
 
 	str.Replace( wxT("$TIMESPLAYED"), wxString::Format( wxT("%d"), m_Song.TimesPlayed ) );
 	str.Replace( wxT("$TRACKNUM"), wxString::Format( wxT("%d"), m_Song.TrackNum ) );
-
-	
 }
+

@@ -285,6 +285,8 @@ void CNowPlayingCtrl::ResetInfo()
 		gSeek->SetValue( 1 );
 	#endif
 
+	g_Tunage.Stopped();
+
 	Layout();
 }
 

@@ -814,7 +814,7 @@ void CMusikLibrary::SortPlaylist( const wxString& sortstr, bool descending )
 	wxString sQuery;
 	
 	bool numeric = false;
-	if ( ( sortstr == wxT("Duration") ) || ( sortstr == wxT("TrackNum") ) || ( sortstr == wxT("TimesPlayed") ) || ( sortstr == wxT("Bitrate") ) )
+	if ( ( sortstr == wxT("duration") ) || ( sortstr == wxT("tracknum") ) || ( sortstr == wxT("timesplayed") ) || ( sortstr == wxT("bitrate") ) || ( sortstr == wxT("lastplayed") ) )
 		numeric = true;
 
 	if ( !numeric )
