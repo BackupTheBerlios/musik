@@ -128,22 +128,26 @@ public:
 	void OnRenameThreadEnd		( wxCommandEvent& WXUNUSED(event) );
 	void OnRenameThreadProg		( wxCommandEvent& WXUNUSED(event) );
 
-	//--- gets / sets ---//
+	//--- sets ---//
 	void		SetCaption				( wxString sCaption )										{ pHeader->SetCaption( sCaption );						}
 	void		SetActivityType			( enum EMUSIK_ACTIVITY_TYPE  nType )						{ m_ActivityType = nType;								}
 	void		DeselectAll				()															{ pListBox->DeselectAll();								}
 	void		SetSel					( const wxString & sel, bool bDeselectAllFirst = true )		{ pListBox->SetSel( sel , bDeselectAllFirst );			}
 	void		SetSel					(const  wxArrayString & aList )								{ pListBox->SetSel( aList );							}	
-	bool		IsSelected				( int n )													{ return pListBox->IsSelected( n );						}
+	
+	//--- gets ---//
+	int			GetListId				()															{ return pListBox->GetId();								}
 	wxString	GetFirstSel				()															{ return pListBox->GetFirstSel( ); 						}
 	void		GetSelected				( wxArrayString & aReturn )									{ pListBox->GetSelected( aReturn );return; 				}
 	int			GetSelectedItemCount	()															{ return pListBox->GetSelectedItemCount();				}
 	void		SetDropTarget			(wxDropTarget* target)										{ pListBox->SetDropTarget( target );					}
-	enum EMUSIK_ACTIVITY_TYPE	GetActivityType()													{ return m_ActivityType;								}
 	void		GetRelatedList			( CActivityBox *pDst, wxArrayString & aReturn );
 	wxString	GetActivityTypeStr		();
 
-	//--- right click editing ---//
+	CActivityListBox*			GetListBox		()													{ return pListBox;										}
+	enum EMUSIK_ACTIVITY_TYPE	GetActivityType	()													{ return m_ActivityType;								}
+
+	//--- tag editing ---//
 	void EditBegin			();
 	void EditCommit			();
 	void EditCancel			();
@@ -155,17 +159,16 @@ public:
 	wxString	DNDGetList			();
 
 	//---misc ---//
-	void			Update				( bool selectnone = true )			{ pListBox->Update( selectnone );		}	
-	void			RescaleColumns		()									{ pListBox->RescaleColumns();			}
-	void			ResetCaption		();
-	void			ResetContents		();
-	void			SetContents			( const wxArrayString &list ); 
-	void			GetFullList			( wxArrayString & aReturn );
-	void			SetPlaylist			();
-	void			EnableProgress		( bool enable = true );
-	void			SetRelated			( int n ){ pListBox->SetRelated( n ); }
-	int				GetListId			(){ return pListBox->GetId(); }
-	CActivityListBox*	GetListBox		(){ return pListBox; }
+	bool IsSelected			( int n )							{ return pListBox->IsSelected( n );		}
+	void Update				( bool selectnone = true )			{ pListBox->Update( selectnone );		}	
+	void RescaleColumns		()									{ pListBox->RescaleColumns();			}
+	void ResetCaption		();
+	void ResetContents		();
+	void SetContents		( const wxArrayString &list ); 
+	void GetFullList		( wxArrayString & aReturn );
+	void SetPlaylist		();
+	void EnableProgress		( bool enable = true );
+	void SetRelated			( int n ){ pListBox->SetRelated( n ); }
 
 	//--- custom, thread event handlers ---//
 	void SetProgress			( int n )				{ m_Progress = n; }
@@ -181,7 +184,7 @@ public:
 private:
 
 	static enum EMUSIK_LIB_TYPE ACTIVITY_TYPE2LIB_TYPE(enum EMUSIK_ACTIVITY_TYPE lbtype);
-	enum EMUSIK_ACTIVITY_TYPE   m_ActivityType;
+	EMUSIK_ACTIVITY_TYPE   m_ActivityType;
 	bool m_EditVisible;
 
 	wxBoxSizer			*pSizer;
