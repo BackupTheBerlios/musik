@@ -162,9 +162,7 @@ CNowPlayingCtrl::CNowPlayingCtrl( wxWindow *parent )
 	StartTimer();
 	g_TimeSeeking = false;
 
-	stSong->SetLabel	( _( "Playback Stopped" )	);
-	stArtist->SetLabel	( _( "Playback Stopped" )	);
-	stCurtime->SetLabel	( _( " - 0:00" )			);
+	ResetInfo();
 }
 
 CNowPlayingCtrl::~CNowPlayingCtrl()
@@ -269,6 +267,20 @@ void CNowPlayingCtrl::SetTime( wxString sTimeStr )
 	stCurtime->SetLabel( wxT( " - " ) + sTimeStr );
 }
 
+void CNowPlayingCtrl::ResetInfo()
+{
+	stSong->SetLabel	( _( "Playback Stopped" )	);
+	stArtist->SetLabel	( _( "Playback Stopped" )	);
+	stCurtime->SetLabel	( _( " - 0:00" )			);
+	#ifdef __WXMSW__
+		gSeek->SetValue( 0 );
+	#elif defined __WXGTK__
+		gSeek->SetValue( 1 );
+	#endif
+
+	Layout();
+}
+
 void CNowPlayingCtrl::UpdateInfo( wxString sFilename )
 {
 	//--- first things first, verify data in song ---//
@@ -298,7 +310,7 @@ void CNowPlayingCtrl::UpdateInfo( wxString sFilename )
 void CNowPlayingCtrl::PlayerStop( wxCommandEvent& WXUNUSED(event) )
 {	
 	g_Player.Stop();
-	gSeek->SetValue( 1 );
+	ResetInfo();
 }
 
 void CNowPlayingCtrl::PlayerPlayPause( wxCommandEvent& WXUNUSED(event) )	

@@ -99,6 +99,7 @@ public:
 	void PauseBtnToPlayBtn();
 	void UpdateInfo( wxString filename );
 	void SetTime( wxString sTimeStr );
+	void ResetInfo();
 
 	DECLARE_EVENT_TABLE()
 private:
