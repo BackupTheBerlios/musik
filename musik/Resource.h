@@ -32,6 +32,7 @@
 #define IDC_RADIO1                      1020
 #define IDC_RADIO2                      1021
 #define IDC_RADIO3                      1022
+#define IDC_BUTTON3                     1023
 #define ID_FILE_PREFERENCES             32771
 #define ID_FILE_SEP                     32772
 #define ID_OPEN_FILES                   32774
@@ -47,7 +48,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        139
 #define _APS_NEXT_COMMAND_VALUE         32780
-#define _APS_NEXT_CONTROL_VALUE         1022
+#define _APS_NEXT_CONTROL_VALUE         1023
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
