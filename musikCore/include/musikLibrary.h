@@ -155,16 +155,16 @@ public:
 	int					GetSongFieldDBID( CStdString field );
 
 	// querying songs
-	void GetAllSongs				( CmusikPlaylist & target );
-	void GetRelatedItems			( int source_type, const CStdStringArray & source_items, int target_type, CStdStringArray & target );
-	void GetRelatedItems			( CStdString sub_query, int order_by, CStdStringArray& target );
-	void GetRelatedSongs			( CStdString sub_query, int order_by, CmusikPlaylist& target );
-	void GetAllDistinct				( int source_type, CStdStringArray& target, bool clear_target = true );
+	int  GetAllSongs				( CmusikPlaylist & target );
+	int  GetRelatedItems			( int source_type, const CStdStringArray & source_items, int target_type, CStdStringArray & target );
+	int  GetRelatedItems			( CStdString sub_query, int order_by, CStdStringArray& target );
+	int  GetRelatedSongs			( CStdString sub_query, int order_by, CmusikPlaylist& target );
+	int  GetAllDistinct				( int source_type, CStdStringArray& target, bool clear_target = true );
 	int	 GetSongCount				();
-	void GetFieldFromID				( int id, int field, CStdString& string );
-	void GetSongInfoFromID			( int id, CmusikSongInfo* info );
+	int  GetFieldFromID				( int id, int field, CStdString& string );
+	int  GetSongInfoFromID			( int id, CmusikSongInfo* info );
 	int  GetIDFromFilename			( CStdString fn );
-	void GetSongFromFilename		( CStdString fn, CmusikSong& song );
+	int  GetSongFromFilename		( CStdString fn, CmusikSong& song );
 	bool IsSongInLibrary			( CStdString fn );
 
 	// updating songs
@@ -244,7 +244,7 @@ private:
 	CStdString m_TimeAdded;
 
 	// internal song query functions
-	void		QuerySongs		( const CStdString & query, CmusikPlaylist & target );	
+	int			QuerySongs		( const CStdString & query, CmusikPlaylist & target );	
 	CStdString	GetOrder		( int type, bool terminate = true );
 	int			QueryCount		( const char* pQueryResult );
 	void		VerifyYearList	( CStdStringArray & list );

@@ -831,7 +831,7 @@ int CmusikLibrary::CreateStdPlaylist( const CStdString& name, const CStdStringAr
 	m_ProtectingLibrary->acquire();
 
 	// insert the new playlist name
-	nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %q VALUES ( %Q, %Q );", 
+	nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %Q );", 
 		NULL, NULL, NULL, 
 		STD_PLAYLIST_TABLE_NAME,
 		NULL,
@@ -844,7 +844,7 @@ int CmusikLibrary::CreateStdPlaylist( const CStdString& name, const CStdStringAr
 	}
 
 	// get the ID of the newly created entry
-	nRet = sqlite_exec_printf( m_pDB, "SELECT std_playlist_id FROM %q WHERE std_playlist_name = %Q;", 
+	nRet = sqlite_exec_printf( m_pDB, "SELECT std_playlist_id FROM %Q WHERE std_playlist_name = %Q;", 
 		&sqlite_GetPlaylistID, &nID, NULL,
 		STD_PLAYLIST_TABLE_NAME,
 		name.c_str() );
@@ -863,7 +863,7 @@ int CmusikLibrary::CreateStdPlaylist( const CStdString& name, const CStdStringAr
 		{
 			AddSong( songids.at( i ) );
 
-			nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %q VALUES ( %Q, %d, %d );",
+			nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %d, %d );",
 				NULL, NULL, NULL, 
 				STD_PLAYLIST_SONGS,
 				NULL,
@@ -904,7 +904,7 @@ int CmusikLibrary::AppendStdPlaylist( int id, const CStdStringArray& files )
 		{
 			AddSong( files.at( i ) );
 
-			nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %q VALUES ( %Q, %d, %d );",
+			nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %d, %d );",
 			NULL, NULL, NULL, 
 			STD_PLAYLIST_SONGS,
 			NULL,
@@ -941,7 +941,7 @@ int CmusikLibrary::RewriteStdPlaylist( int id, CmusikPlaylist* playlist )
 	{
 		m_ProtectingLibrary->acquire();
 
-		nRet = sqlite_exec_printf( m_pDB, "DELETE FROM %q WHERE std_playlist_id=%d;",
+		nRet = sqlite_exec_printf( m_pDB, "DELETE FROM %Q WHERE std_playlist_id = %d;",
 		NULL, NULL, NULL, 
 		STD_PLAYLIST_SONGS,
 		id );
@@ -950,7 +950,7 @@ int CmusikLibrary::RewriteStdPlaylist( int id, CmusikPlaylist* playlist )
 		
 		for ( size_t i = 0; i < playlist->GetCount(); i++ )
 		{
-			nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %q VALUES ( %Q, %d, %d );",
+			nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %d, %d );",
 			NULL, NULL, NULL, 
 			STD_PLAYLIST_SONGS,
 			NULL,
@@ -988,7 +988,7 @@ int CmusikLibrary::RenameStdPlaylist( int id, const CStdString& str )
 	{
 		m_ProtectingLibrary->acquire();
 
-		nRet = sqlite_exec_printf( m_pDB, "UPDATE %q SET std_playlist_name=%Q WHERE std_playlist_id=%d;",
+		nRet = sqlite_exec_printf( m_pDB, "UPDATE %Q SET std_playlist_name = %Q WHERE std_playlist_id = %d;",
 		NULL, NULL, NULL, 
 		STD_PLAYLIST_TABLE_NAME,
 		str.c_str(),
@@ -1014,7 +1014,7 @@ int CmusikLibrary::GetStdPlaylist( int id, CmusikPlaylist& target, bool clear_ta
 
 	// do it
 	m_ProtectingLibrary->acquire();
-	int nRet = sqlite_exec_printf( m_pDB, "SELECT songid FROM %q WHERE std_playlist_id = %d;", 
+	int nRet = sqlite_exec_printf( m_pDB, "SELECT songid FROM %Q WHERE std_playlist_id = %d;", 
 		&sqlite_AddSongToPlaylist, &target, NULL,
 		STD_PLAYLIST_SONGS,
 		id );
@@ -1079,19 +1079,16 @@ int CmusikLibrary::CreateDynPlaylist( const CStdString& name, const CStdString& 
 	if ( !m_pDB )
 		return -1;
 
-	CStdString sQuery;
+	// do it
+	m_ProtectingLibrary->acquire();
 
-	// create query to make new entry to 
-	// std_playlist table
-	sQuery.Format( "INSERT INTO %s VALUES ( %d,'%s', '%s' ); ",
+	int nRet = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %q, %q ); ", 
+		NULL, NULL, NULL,
 		DYN_PLAYLIST_TABLE_NAME,
-		0,
+		NULL,
 		name.c_str(),
 		query.c_str() );
 
-	// do it
-	m_ProtectingLibrary->acquire();
-	int nRet = sqlite_exec( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
 	m_ProtectingLibrary->release();
 
 	return nRet;
@@ -1104,19 +1101,16 @@ int CmusikLibrary::DeleteStdPlaylist( const CStdString& name )
 	if ( !m_pDB )
 		return -1;
 
-	CStdString sQuery;
 	int nID, nRet;
 
 	// lock it up	
 	m_ProtectingLibrary->acquire();
 
 	// get ID of the currently named playlist
-	sQuery.Format( "SELECT %s FROM %s WHERE std_playlist_name = '%s';", 
-		"std_playlist_id", 
+	nRet = sqlite_exec_printf( m_pDB, "SELECT std_playlist_id FROM %Q WHERE std_playlist_name = %Q;", 
+		&sqlite_GetPlaylistID, &nID, NULL,
 		STD_PLAYLIST_TABLE_NAME, 
 		name.c_str() );
-
-	nRet = sqlite_exec( m_pDB, sQuery.c_str(), &sqlite_GetPlaylistID, &nID, NULL );
 	
 	if ( nRet != SQLITE_OK )
 	{
@@ -1126,11 +1120,10 @@ int CmusikLibrary::DeleteStdPlaylist( const CStdString& name )
 
 	// remove entry from table containing
 	// the list of standard playlists
-	sQuery.Format( "DELETE FROM %s WHERE std_playlist_name = '%s';",
+	nRet = sqlite_exec_printf( m_pDB, "DELETE FROM %Q WHERE std_playlist_name = %Q;", 
+		NULL, NULL, NULL,
 		STD_PLAYLIST_TABLE_NAME,
 		name.c_str() );
-
-	nRet = sqlite_exec( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
 
 	if ( nRet != SQLITE_OK )
 	{
@@ -1140,11 +1133,10 @@ int CmusikLibrary::DeleteStdPlaylist( const CStdString& name )
 
 	// delete corresponding songs from the
 	// other table
-	sQuery.Format( "DELETE FROM %s WHERE std_playlist_id = %d",
+	nRet = sqlite_exec_printf( m_pDB, "DELETE FROM %Q WHERE std_playlist_id = %d", 
+		NULL, NULL, NULL,
 		STD_PLAYLIST_SONGS,
 		nID );
-
-	nRet = sqlite_exec( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
 
 	// release mutex lock
 	m_ProtectingLibrary->release();
@@ -1160,17 +1152,15 @@ int CmusikLibrary::DeleteStdPlaylist( int id )
 		return -1;
 
 	int nRet;
-	CStdString sQuery;
 
 	m_ProtectingLibrary->acquire();
 
 	// remove entry from table containing
 	// the list of standard playlists
-	sQuery.Format( "DELETE FROM %s WHERE std_playlist_id = %d;",
+	nRet = sqlite_exec_printf( m_pDB, "DELETE FROM %Q WHERE std_playlist_id = %d;", 
+		NULL, NULL, NULL,
 		STD_PLAYLIST_TABLE_NAME,
 		id );
-
-	nRet = sqlite_exec( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
 
 	if ( nRet != SQLITE_OK )
 	{
@@ -1180,11 +1170,10 @@ int CmusikLibrary::DeleteStdPlaylist( int id )
 
 	// now remove corresponding entries in
 	// the table that contains the songs
-	sQuery.Format( "DELETE FROM %s WHERE std_playlist_id = %d;",
+	nRet = sqlite_exec_printf( m_pDB, "DELETE FROM %Q WHERE std_playlist_id = %d;", 
+		NULL, NULL, NULL,
 		STD_PLAYLIST_SONGS,
 		id );
-
-	nRet = sqlite_exec( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
 
 	m_ProtectingLibrary->release();
 
@@ -1199,17 +1188,15 @@ int CmusikLibrary::DeleteDynPlaylist( const CStdString& name )
 		return -1;
 
 	int nRet;
-	CStdString sQuery;
-
-	// remove entry from table containing
-	// the list of standard playlists
-	sQuery.Format( "DELETE FROM %s WHERE dyn_playlist_name = '%s';",
-		DYN_PLAYLIST_TABLE_NAME,
-		name.c_str() );
 
 	// do it
 	m_ProtectingLibrary->acquire();
-	nRet = sqlite_exec_printf( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
+
+	nRet = sqlite_exec_printf( m_pDB, "DELETE FROM %Q WHERE dyn_playlist_name = %Q;", 
+		NULL, NULL, NULL,
+		DYN_PLAYLIST_TABLE_NAME,
+		name.c_str() );
+
 	m_ProtectingLibrary->release();
 
 	return nRet;
@@ -1222,17 +1209,14 @@ int CmusikLibrary::DeleteDynPlaylist( int id )
 	if ( !m_pDB )
 		return -1;
 
-	CStdString sQuery;
+	// do it
+	m_ProtectingLibrary->acquire();
 
-	// remove entry from table containing
-	// the list of standard playlists
-	sQuery.Format( "DELETE FROM %s WHERE dyn_playlist_id = %d;",
+	int nRet = sqlite_exec_printf( m_pDB, "DELETE FROM %Q WHERE dyn_playlist_id = %d;", 
+		NULL, NULL, NULL,
 		DYN_PLAYLIST_TABLE_NAME,
 		id );
 
-	// do it
-	m_ProtectingLibrary->acquire();
-	int nRet = sqlite_exec_printf( m_pDB, sQuery.c_str(), NULL, NULL, NULL );
 	m_ProtectingLibrary->release();
 
 	return nRet;
@@ -1359,38 +1343,44 @@ void CmusikLibrary::VerifyYearList( CStdStringArray & list )
 
 ///////////////////////////////////////////////////
 
-void CmusikLibrary::GetAllSongs( CmusikPlaylist& target )
+int CmusikLibrary::GetAllSongs( CmusikPlaylist& target )
 {
-	QuerySongs( "filename <> ''", target );
+	return QuerySongs( "filename <> ''", target );
 }
 
 ///////////////////////////////////////////////////
 
-void CmusikLibrary::QuerySongs( const CStdString& query, CmusikPlaylist& target )
+int CmusikLibrary::QuerySongs( const CStdString& query, CmusikPlaylist& target )
 {
 	if ( !m_pDB )
-		return;
+		return -1;
 
 	target.Clear();
 
-	CStdString queryWhere( "SELECT songid FROM " SONG_TABLE_NAME " where " );
-	queryWhere += query;
-	queryWhere += ";";
-
 	// lock it up and query it
 	m_ProtectingLibrary->acquire();
-	sqlite_exec( m_pDB, queryWhere.c_str(), &sqlite_AddSongToPlaylist, &target, NULL );
+
+	int nRet = sqlite_exec_printf( m_pDB, "SELECT songid FROM %Q where %q;", 
+		&sqlite_AddSongToPlaylist, &target, NULL,
+		SONG_TABLE_NAME, 
+		query.c_str() );
+
 	m_ProtectingLibrary->release();
+
+	return nRet;
 }
 
 ///////////////////////////////////////////////////
 
-void CmusikLibrary::GetRelatedItems( int source_type, const CStdStringArray& source_items, int target_type, CStdStringArray& target )
+int CmusikLibrary::GetRelatedItems( int source_type, const CStdStringArray& source_items, int target_type, CStdStringArray& target )
 {
+	if ( !m_pDB )
+		return -1;
+
 	target.clear();
 
 	if ( source_type == -1 || target_type == -1 )
-		return;
+		return -1;
 
 	const CStdString sInType = GetSongFieldDB( source_type );
 	const CStdString sOutType = GetSongFieldDB( target_type );
@@ -1416,89 +1406,104 @@ void CmusikLibrary::GetRelatedItems( int source_type, const CStdStringArray& sou
 	// get sorting order
 	query += GetOrder( target_type );
 
-	// lock it up and run the query
+	// do it
 	m_ProtectingLibrary->acquire();
-
-	sqlite_exec(m_pDB, query.c_str(), &sqlite_AddSongToStringArray, &target, NULL);
-
+	int nRet = sqlite_exec(m_pDB, query.c_str(), &sqlite_AddSongToStringArray, &target, NULL);
 	m_ProtectingLibrary->release();
 
 	// if target is years, verify only years
 	//get displayed.
 	if ( target_type == MUSIK_LIBRARY_TYPE_YEAR )
 		VerifyYearList( target );
+
+	return nRet;
 }
 
 ///////////////////////////////////////////////////
 
-void CmusikLibrary::GetRelatedItems( CStdString sub_query, int dst_type, CStdStringArray& target )
+int CmusikLibrary::GetRelatedItems( CStdString sub_query, int dst_type, CStdStringArray& target )
 {
 	target.clear();
+
 	CStdString sOutType = GetSongFieldDB( dst_type );
 
-	CStdString query;
-	query.Format( "SELECT DISTINCT %s, UPPER( %s ) AS UP FROM %s WHERE %s order by %s;", 
+	// do it
+	m_ProtectingLibrary->acquire();
+
+	int nRet = sqlite_exec_printf(m_pDB, "SELECT DISTINCT %q, UPPER( %q ) AS UP FROM %Q WHERE %s order by %q;", 
+		&sqlite_AddSongToStringArray, &target, NULL,
 		sOutType.c_str(), 
 		sOutType.c_str(), 
 		SONG_TABLE_NAME,
 		sub_query.c_str(),
 		sOutType.c_str() );
 
-	// do it
-	m_ProtectingLibrary->acquire();
-	sqlite_exec(m_pDB, query.c_str(), &sqlite_AddSongToStringArray, &target, NULL);
 	m_ProtectingLibrary->release();
 
 	// if target is years, verify only years
 	// get displayed.
 	if ( dst_type == MUSIK_LIBRARY_TYPE_YEAR )
 		VerifyYearList( target );
+
+	return nRet;
 }
 
 ///////////////////////////////////////////////////
 
-void CmusikLibrary::GetRelatedSongs( CStdString sub_query, int source_type, CmusikPlaylist& target )
+int CmusikLibrary::GetRelatedSongs( CStdString sub_query, int source_type, CmusikPlaylist& target )
 {
+	if ( !m_pDB )
+		return -1;
+
 	target.Clear();
-
-	CStdString order_by = GetOrder( source_type );
-
-	CStdString query;
-	query.Format( "SELECT DISTINCT songid FROM %s WHERE %s %s",
-		SONG_TABLE_NAME,
-		sub_query.c_str(),
-		order_by.c_str() );
 
 	// do it
 	m_ProtectingLibrary->acquire();
-	sqlite_exec(m_pDB, query.c_str(), &sqlite_AddSongToPlaylist, &target, NULL);
+
+	int nRet = sqlite_exec_printf(m_pDB, "SELECT DISTINCT songid FROM %Q WHERE %s %q", 
+		&sqlite_AddSongToPlaylist, &target, NULL,
+		SONG_TABLE_NAME,
+		sub_query.c_str(),
+		GetOrder( source_type ).c_str() );
+
 	m_ProtectingLibrary->release();
+
+	return nRet;
 }
 
 ///////////////////////////////////////////////////
 
-void CmusikLibrary::GetAllDistinct( int source_type, CStdStringArray& target, bool clear_target )
+int CmusikLibrary::GetAllDistinct( int source_type, CStdStringArray& target, bool clear_target )
 {
+	if ( !m_pDB )
+		return -1;
+
 	if ( clear_target )
 		target.clear();
 
-	CStdString query;
 	CStdString sField = GetSongFieldDB( source_type );
-	query.Format( "SELECT DISTINCT %s, UPPER( %s ) AS UP FROM %s ORDER BY UP;", 
+
+	// do it
+	m_ProtectingLibrary->acquire();
+
+	int nRet = sqlite_exec_printf( m_pDB, "SELECT DISTINCT %q, UPPER( %q ) AS UP FROM %Q ORDER BY UP;", 
+		&sqlite_AddSongToStringArray, &target, NULL,
 		sField.c_str(), 
 		sField.c_str(),
 		SONG_TABLE_NAME );
 
-	// do it
-	m_ProtectingLibrary->acquire();
-	sqlite_exec( m_pDB, query.c_str(), &sqlite_AddSongToStringArray, &target, NULL );
 	m_ProtectingLibrary->release();
+
+	return nRet;
 }
 
 ///////////////////////////////////////////////////
 
 int CmusikLibrary::GetSongCount()
 {
+	if ( !m_pDB )
+		return -1;
+
 	char *query = sqlite_mprintf( "SELECT COUNT(*) FROM " SONG_TABLE_NAME " ;" );
 	int result = QueryCount(query);
 	sqlite_freemem( query );
@@ -1507,44 +1512,56 @@ int CmusikLibrary::GetSongCount()
 
 ///////////////////////////////////////////////////
 
-void CmusikLibrary::GetFieldFromID( int id, int field, CStdString& string )
+int CmusikLibrary::GetFieldFromID( int id, int field, CStdString& string )
 {
-	CStdString query;
-	CStdString type = GetSongFieldDB( field );
+	if ( !m_pDB )
+		return -1;
 
-	query.Format( "SELECT %s FROM %s WHERE songid = %d;", 
-		type.c_str(), 
-		SONG_TABLE_NAME, 
-		id );
+	CStdString type = GetSongFieldDB( field );
 
 	// do it
 	m_ProtectingLibrary->acquire();
-	sqlite_exec( m_pDB, query.c_str(), &sqlite_GetSongFieldFromID, &string, NULL );
+
+	int nRet = sqlite_exec_printf( m_pDB, "SELECT %q FROM %Q WHERE songid = %d;", 
+		&sqlite_GetSongFieldFromID, &string, NULL,
+		type.c_str(),
+		SONG_TABLE_NAME, 
+		id );
+
 	m_ProtectingLibrary->release();
+
+	return nRet;
 }
 
 ///////////////////////////////////////////////////
 
-void CmusikLibrary::GetSongInfoFromID( int id, CmusikSongInfo* info )
+int CmusikLibrary::GetSongInfoFromID( int id, CmusikSongInfo* info )
 {
-	CStdString query;
+	if ( !m_pDB )
+		return -1;
 
-	query.Format( "SELECT tracknum,artist,album,genre,title,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize,filename,equalizer FROM %s WHERE songid = %d;", 
-		SONG_TABLE_NAME,
-		id );
-	
 	info->SetID( id );
 
-	// lock it up and run the query
+	// do it
 	m_ProtectingLibrary->acquire();
-	sqlite_exec( m_pDB, query.c_str(), &sqlite_GetSongInfoFromID, info, NULL );
+
+	int nRet = sqlite_exec_printf( m_pDB, "SELECT tracknum,artist,album,genre,title,duration,format,vbr,year,rating,bitrate,lastplayed,notes,timesplayed,timeadded,filesize,filename,equalizer FROM %Q WHERE songid = %d;", 
+		&sqlite_GetSongInfoFromID, info, NULL,
+		SONG_TABLE_NAME,
+		id );
+
 	m_ProtectingLibrary->release();
+
+	return nRet;
 }
 
 ///////////////////////////////////////////////////
 
 bool CmusikLibrary::SetSongInfo( int songid, CmusikSongInfo* info )
 {
+	if ( !m_pDB )
+		return false;
+
 	int result = 0;
 
 	CStdString query;
@@ -1588,6 +1605,9 @@ bool CmusikLibrary::SetSongInfo( int songid, CmusikSongInfo* info )
 
 bool CmusikLibrary::SetSongRating( int songid, int rating )
 {
+	if ( !m_pDB )
+		return false;
+
 	int result = 0;
 
 	CStdString query;
@@ -1613,13 +1633,19 @@ bool CmusikLibrary::SetSongRating( int songid, int rating )
 
 int CmusikLibrary::GetAllStdPlaylists( CmusikPlaylistInfoArray* target, bool clear_target )
 {
+	if ( !m_pDB )
+		return -1;
+
 	if ( clear_target )
 		target->clear();
 
-	CStdString sQuery( "SELECT std_playlist_name,std_playlist_id FROM " STD_PLAYLIST_TABLE_NAME " WHERE std_playlist_name <> ''" );
-
+	// do it
 	m_ProtectingLibrary->acquire();
-	int nRet = sqlite_exec( m_pDB, sQuery.c_str(), &sqlite_AddStdPlaylistInfoArray, target, NULL );
+
+	int nRet = sqlite_exec_printf( m_pDB, "SELECT std_playlist_name,std_playlist_id FROM %Q WHERE std_playlist_name <> '';", 
+		&sqlite_AddStdPlaylistInfoArray, target, NULL,
+		STD_PLAYLIST_TABLE_NAME );
+
 	m_ProtectingLibrary->release();
 
 	return nRet;
@@ -1629,13 +1655,19 @@ int CmusikLibrary::GetAllStdPlaylists( CmusikPlaylistInfoArray* target, bool cle
 
 int CmusikLibrary::GetAllDynPlaylists( CmusikPlaylistInfoArray* target, bool clear_target )
 {
+	if ( !m_pDB )
+		return -1;
+
 	if ( clear_target )
 		target->clear();
 
-	CStdString sQuery( "SELECT dyn_playlist_name,dyn_playlist_id FROM " DYN_PLAYLIST_TABLE_NAME " WHERE dyn_playlist_name <> ''" );
-
+	// do it
 	m_ProtectingLibrary->acquire();
-	int nRet = sqlite_exec( m_pDB, sQuery.c_str(), &sqlite_AddDynPlaylistInfoArray, target, NULL );
+
+	int nRet = sqlite_exec_printf( m_pDB, "SELECT dyn_playlist_name,dyn_playlist_id FROM %Q WHERE dyn_playlist_name <> '';",
+		&sqlite_AddDynPlaylistInfoArray, target, NULL,
+		DYN_PLAYLIST_TABLE_NAME );
+	
 	m_ProtectingLibrary->release();
 
 	return nRet;
@@ -1645,13 +1677,19 @@ int CmusikLibrary::GetAllDynPlaylists( CmusikPlaylistInfoArray* target, bool cle
 
 int CmusikLibrary::GetAllCrossfaders( CStdStringArray* target, bool clear_target )
 {
+	if ( !m_pDB )
+		return -1;
+
 	if ( clear_target )
 		target->clear();
 
-	CStdString sQuery( "SELECT crossfader_name FROM " CROSSFADER_PRESET " WHERE crossfader_name <> '';" );
-
+	// do it
 	m_ProtectingLibrary->acquire();
-	int nRet = sqlite_exec( m_pDB, sQuery.c_str(), &sqlite_AddRowToStringArray, target, NULL );
+	
+	int nRet = sqlite_exec_printf( m_pDB, "SELECT crossfader_name FROM %Q WHERE crossfader_name <> '';", 
+		&sqlite_AddRowToStringArray, target, NULL,
+		CROSSFADER_PRESET );
+	
 	m_ProtectingLibrary->release();
 
 	return nRet;
@@ -1661,13 +1699,19 @@ int CmusikLibrary::GetAllCrossfaders( CStdStringArray* target, bool clear_target
 
 int CmusikLibrary::GetAllCrossfaders( CIntArray* target, bool clear_target )
 {
+	if ( !m_pDB )
+		return -1;
+
 	if ( clear_target )
 		target->clear();
 
-	CStdString sQuery( "SELECT crossfader_id FROM " CROSSFADER_PRESET " WHERE crossfader_id > -1;" );
-
+	// do it
 	m_ProtectingLibrary->acquire();
-	int nRet = sqlite_exec( m_pDB, sQuery.c_str(), &sqlite_AddRowToIntArray, target, NULL );
+	
+	int nRet = sqlite_exec_printf( m_pDB, "SELECT crossfader_id FROM %Q WHERE crossfader_id > -1;", 
+		&sqlite_AddRowToIntArray, target, NULL,
+		CROSSFADER_PRESET );
+
 	m_ProtectingLibrary->release();
 
 	return nRet;
@@ -1703,11 +1747,14 @@ int CmusikLibrary::GetIDFromFilename( CStdString fn )
 
 	fn.Replace( "'", "''" );
 
-	CStdString sQuery;
-	sQuery.Format( "SELECT songid FROM " SONG_TABLE_NAME " WHERE filename = '%s';", fn.c_str() );
-
+	// do it
 	m_ProtectingLibrary->acquire();
-	sqlite_exec( m_pDB, sQuery.c_str(), &sqlite_GetIDFromFilename, &target, NULL );
+
+	int nRet = sqlite_exec_printf( m_pDB, "SELECT songid FROM %Q WHERE filename = %Q;", 
+		&sqlite_GetIDFromFilename, &target, NULL,
+		SONG_TABLE_NAME,
+		fn.c_str() );
+
 	m_ProtectingLibrary->release();
 
 	return target;
@@ -1715,9 +1762,12 @@ int CmusikLibrary::GetIDFromFilename( CStdString fn )
 
 ///////////////////////////////////////////////////
 
-void CmusikLibrary::GetSongFromFilename( CStdString fn, CmusikSong& song )
+int CmusikLibrary::GetSongFromFilename( CStdString fn, CmusikSong& song )
 {
-	song.SetID( GetIDFromFilename( fn ) );	
+	int nRet = GetIDFromFilename( fn );
+	song.SetID( nRet );
+
+	return nRet;
 }
 
 ///////////////////////////////////////////////////
@@ -1739,6 +1789,9 @@ int CmusikLibrary::GetFilesize( const CStdString& fn )
 
 bool CmusikLibrary::RemoveSong( int songid )
 {
+	if ( !m_pDB )
+		return false;
+
 	m_ProtectingLibrary->acquire();
 
 	int result = sqlite_exec_printf( m_pDB, "DELETE FROM %Q WHERE songid=%d;", NULL, NULL, NULL,
@@ -1757,9 +1810,12 @@ bool CmusikLibrary::RemoveSong( int songid )
 
 bool CmusikLibrary::RemoveSong( const CStdString& fn )
 {
+	if ( !m_pDB )
+		return false;
+
 	m_ProtectingLibrary->acquire();
 
-	int result = sqlite_exec_printf( m_pDB, "DELETE FROM %Q WHERE filename=%Q;", NULL, NULL, NULL,
+	int result = sqlite_exec_printf( m_pDB, "DELETE FROM %Q WHERE filename = %Q;", NULL, NULL, NULL,
 		SONG_TABLE_NAME,
 		fn.c_str() );
 
@@ -1889,7 +1945,7 @@ bool CmusikLibrary::IsSongInLibrary( CStdString fn )
 
 	bool result = false;
 
-	char *query = sqlite_mprintf( "SELECT filename FROM %q WHERE filename = %Q;", 
+	char *query = sqlite_mprintf( "SELECT filename FROM %Q WHERE filename = %Q;", 
 		SONG_TABLE_NAME,
 		fn.c_str() );
 	
@@ -1928,11 +1984,14 @@ int CmusikLibrary::GetEqualizerIDFromSongID( int id )
 
 	int target;
 
-	CStdString sQuery;
-	sQuery.Format( "SELECT equalizer FROM " SONG_TABLE_NAME " WHERE songid = %d;", id );
-
+	// do it
 	m_ProtectingLibrary->acquire();
-	sqlite_exec( m_pDB, sQuery.c_str(), &sqlite_GetEqualizerIDFromID, &target, NULL );
+
+	sqlite_exec_printf( m_pDB, "SELECT equalizer FROM %Q WHERE songid = %d;", 
+		&sqlite_GetEqualizerIDFromID, &target, NULL,
+		SONG_TABLE_NAME,
+		id );
+
 	m_ProtectingLibrary->release();
 
 	return target;
@@ -1947,7 +2006,7 @@ int CmusikLibrary::CreateEqualizer( const CmusikEQSettings& eq, const CStdString
 
 	m_ProtectingLibrary->acquire();
 
-	int nRes = sqlite_exec_printf( m_pDB, "INSERT INTO %q VALUES ( %Q, %Q, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, );", NULL, NULL, NULL, 
+	int nRes = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %Q, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, );", NULL, NULL, NULL, 
 		CROSSFADER_PRESET,								// song table 		
 		NULL,											// id
 		name.c_str(),									// name
@@ -2002,7 +2061,7 @@ int CmusikLibrary::DeleteEqualizer( int id )
 
 	m_ProtectingLibrary->acquire();
 
-	int nRes = sqlite_exec_printf( m_pDB, "DELETE FROM %q WHERE equalizer_id = %d;",
+	int nRes = sqlite_exec_printf( m_pDB, "DELETE FROM %Q WHERE equalizer_id = %d;",
 		NULL, NULL, NULL, 
 		CROSSFADER_PRESET,	
 		id );
@@ -2021,7 +2080,7 @@ int CmusikLibrary::UpdateEqualizer( int id, const CmusikEQSettings& eq )
 
 	m_ProtectingLibrary->acquire();
 
-	int nRes = sqlite_exec_printf( m_pDB, "UPDATE %q set equalizer_name = %Q, hz55_left = %d, hz77_left = %d, hz110_left = %d, hz156_left = %d, hz220_left = %d, hz311_left = %d, hz440_left = %d, hz622_left = %d, hz880_left = %d, hz1244_left = %d, hz1760_left = %d, hz2489_left = %d, hz3520_left = %d, hz4978_left = %d, hz7040_left = %d, hz9956_left = %d, hz14080_left = %d, hz19912_left = %d,"
+	int nRes = sqlite_exec_printf( m_pDB, "UPDATE %Q set equalizer_name = %Q, hz55_left = %d, hz77_left = %d, hz110_left = %d, hz156_left = %d, hz220_left = %d, hz311_left = %d, hz440_left = %d, hz622_left = %d, hz880_left = %d, hz1244_left = %d, hz1760_left = %d, hz2489_left = %d, hz3520_left = %d, hz4978_left = %d, hz7040_left = %d, hz9956_left = %d, hz14080_left = %d, hz19912_left = %d,"
 						" hz55_right = %d, hz77_right = %d, hz110_right = %d, hz156_right = %d, hz220_right = %d, hz311_right = %d, hz440_right = %d, hz622_right = %d, hz880_right = %d, hz1244_right = %d, hz1760_right = %d, hz2489_right = %d, hz3520_right = %d, hz4978_right = %d, hz7040_right = %d, hz9956_right = %d, hz14080_right = %d, hz19912_right = %d WHERE equalizer_id = %d;",
 			NULL, NULL, NULL,
 			CROSSFADER_PRESET,
