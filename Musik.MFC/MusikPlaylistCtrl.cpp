@@ -98,13 +98,15 @@ void CMusikPlaylistCtrl::ResetColumns()
 
 ///////////////////////////////////////////////////
 
-void CMusikPlaylistCtrl::SaveColumnOrder()
+void CMusikPlaylistCtrl::SaveColumns()
 {
 	CIntArray last_order;
+	CIntArray last_sizes;
+
 	char sCol[256];
 
 	LVCOLUMN pColumn;
-	pColumn.mask = LVCF_TEXT;
+	pColumn.mask = LVCF_TEXT | LVCF_WIDTH;
 	pColumn.pszText = sCol;
 	pColumn.cchTextMax = sizeof( sCol );
 
@@ -112,9 +114,11 @@ void CMusikPlaylistCtrl::SaveColumnOrder()
 	{
 		GetColumn( i, &pColumn );
 		last_order.push_back( m_Library->GetSongFieldID( pColumn.pszText ) );
+		last_sizes.push_back( pColumn.cx );
 	}
 
 	m_Prefs->SetPlaylistOrder( last_order );
+	m_Prefs->SetPlaylistSizes( last_sizes );
 }
 
 ///////////////////////////////////////////////////
@@ -133,7 +137,7 @@ int CMusikPlaylistCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CMusikPlaylistCtrl::OnDestroy()
 {
-	SaveColumnOrder();
+	SaveColumns();
 
 	CListCtrl::OnDestroy();
 }

@@ -31,7 +31,7 @@ protected:
 //-------------------------------------------------//
 private:
 	void ResetColumns();
-	void SaveColumnOrder();
+	void SaveColumns();
 	
 //-------------------------------------------------//
 //--- message maps								---//
