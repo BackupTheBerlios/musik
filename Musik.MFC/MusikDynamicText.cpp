@@ -119,10 +119,7 @@ void CMusikDynamicText::SetDynFont( int size, int bold, int italic )
 	LOGFONT pLogFont;
 	pFont->GetLogFont( &pLogFont );
 
-	if ( size > 0 )
-		pLogFont.lfHeight = size;
-	else
-		pLogFont.lfHeight = abs( pLogFont.lfHeight );
+	pLogFont.lfHeight = size;
 
 	if ( bold )
 		pLogFont.lfWeight = FW_BOLD;
@@ -136,7 +133,7 @@ void CMusikDynamicText::SetDynFont( int size, int bold, int italic )
 	pFont->CreateFontIndirect( &pLogFont );	
 
 	SetFont( pFont, true );
-	m_FontSize = pLogFont.lfHeight;
+	m_FontSize = abs( pLogFont.lfHeight );
 }
 
 ///////////////////////////////////////////////////

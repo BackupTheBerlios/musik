@@ -60,17 +60,10 @@ public:
 	void		SetPlaylistStripColor				( COLORREF c )		{ m_Playlist_Stripe_Color = c; }
 	
 	// now playing gets
-	int			GetNowPlayingHeight					( )					{ return m_NowPlaying_Height; }
-	int			GetNowPlayingTitleFontSize			( )					{ return m_NowPlaying_TitleFont; }
-	int			GetNowPlayingAlbumArtistFontSize	( )					{ return m_NowPlaying_AlbumArtistFont; }
-	bool		IsNowPlayingTitleFontBold			( )					{ return m_NowPlaying_IsTitleFontBold; }
-	bool		IsNowPlayingAlbumArtistFontBold		( )					{ return m_NowPlaying_IsAlbumArtistFontBold; }
+	int			GetNowPlayingCaptionFontSize		( )					{ return m_NowPlaying_CaptionFont; }
 
 	// now playing sets
-	void		SetNowPlayingTitleFontSize			( int y )			{ m_NowPlaying_TitleFont = y; }
-	void		SetNowPlayingAlbumArtistFontSize	( int y )			{ m_NowPlaying_AlbumArtistFont = y; }
-	void		SetNowPlayingTitleFontBold			( bool b )			{ m_NowPlaying_IsTitleFontBold = b; }
-	void		SetNowPlayingAlbumArtistFontBold	( bool b )			{ m_NowPlaying_IsAlbumArtistFontBold = b; }
+	void		SetNowPlayingCaptionFontSize		( int y )			{ m_NowPlaying_CaptionFont = y; }
 
 	// player gets
 	int			GetPlayerDriver						( )					{ return m_Player_Driver; }					
@@ -107,11 +100,7 @@ private:
 	COLORREF m_Playlist_Stripe_Color;
 
 	// now playing
-	int	m_NowPlaying_Height;
-	int m_NowPlaying_TitleFont;
-	int m_NowPlaying_AlbumArtistFont;
-	bool m_NowPlaying_IsTitleFontBold;
-	bool m_NowPlaying_IsAlbumArtistFontBold;
+	int m_NowPlaying_CaptionFont;
 
 	// player
 	int m_Player_Device;

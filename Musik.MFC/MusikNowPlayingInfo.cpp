@@ -237,7 +237,7 @@ void CMusikNowPlayingInfo::InitObjects()
 			pTemp->Create( NULL, WS_CHILD | WS_VISIBLE, CRect( 0, 0, 0, 0 ), this );
 
 			// set it to the right values
-			pTemp->SetDynFont( -1 );
+			pTemp->SetDynFont( m_Prefs->GetNowPlayingCaptionFontSize() );
 			pTemp->SetDynText( sCurr );
 			pTemp->SetType( -1 );
 

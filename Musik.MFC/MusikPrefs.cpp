@@ -231,11 +231,8 @@ void CMusikPrefs::LoadPrefs()
 	m_Playlist_Stripe_Color	= StringToCOLORREF( config->GetValue( "Playlist", "Stripe Color", GetDefPlaylistStripeColor() ) );
 
 	// now playing
-	m_NowPlaying_TitleFont				= StringToInt( config->GetValue( "Now Playing", "Title Font Size", "20" ) );
-	m_NowPlaying_AlbumArtistFont		= StringToInt( config->GetValue( "Now Playing", "Album Artist Font Size", "16" ) );
-	m_NowPlaying_IsTitleFontBold		= StringToBool( config->GetValue( "Now Playing", "Title Font Bold", "1" ) );
-	m_NowPlaying_IsAlbumArtistFontBold	= StringToBool( config->GetValue( "Now Playing", "Album Artist Bold", "1" ) );
-
+	m_NowPlaying_CaptionFont = StringToInt( config->GetValue( "Now Playing", "Caption Font Size", "11" ) );
+	
 	// player
 	m_Player_Driver			= StringToInt( config->GetValue( "Player", "Driver", "0" ) );
 	m_Player_Device			= StringToInt( config->GetValue( "Player", "Device", "0" ) );
@@ -262,11 +259,7 @@ void CMusikPrefs::SavePrefs()
 	config->SetValue( "Playlist", "Stripe Color", COLORREFToString( m_Playlist_Stripe_Color ) );
 
 	// now playing
-	config->SetValue( "Now Playing", "Height", IntToString( m_NowPlaying_Height ) );
-	config->SetValue( "Now Playing", "Title Font Size", IntToString( m_NowPlaying_TitleFont ) );
-	config->SetValue( "Now Playing", "Album Artist Font Size", IntToString( m_NowPlaying_AlbumArtistFont ) );
-	config->SetValue( "Now Playing", "Title Font Bold", BoolToString( m_NowPlaying_IsTitleFontBold ) );
-	config->SetValue( "Now Playing", "Album Artist Bold", BoolToString( m_NowPlaying_IsAlbumArtistFontBold ) );
+	config->SetValue( "Now Playing", "Caption Font Size", IntToString( m_NowPlaying_CaptionFont ) );
 
 	// player
 	config->SetValue( "Player", "Driver", IntToString( m_Player_Driver ) );
