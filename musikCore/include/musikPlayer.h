@@ -110,7 +110,7 @@ class CmusikCrossfader;
 
 ///////////////////////////////////////////////////
 
-static void musikPlayerWorker( CmusikThread* player );
+static void musikPlayerWorker( CmusikThread* thread );
 
 ///////////////////////////////////////////////////
 
