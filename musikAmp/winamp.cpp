@@ -259,7 +259,7 @@ void CALLBACK vis_time_event(UINT uId, UINT uMsg, DWORD dwUser, DWORD dw1, DWORD
 	
 	if ( Vis_Enable_Rendering && gs_vWinAmpProps[vis_index].hDll != NULL )
 	{
-		protect.Lock();
+		//protect.Lock();
 
 		// the next pcmblock (iBufferOffset + 1) is the one that is audible.
 		offset = (iBufferOffset + 1) * FSOUND_DSP_GetBufferLength();
@@ -279,7 +279,7 @@ void CALLBACK vis_time_event(UINT uId, UINT uMsg, DWORD dwUser, DWORD dw1, DWORD
 		WaitForSingleObject( gs_vWinAmpProps[vis_index].pModule->getModule( module ), INFINITE );
 		rendered = gs_vWinAmpProps[vis_index].pModule->getModule(module)->Render(gs_vWinAmpProps[vis_index].pModule->getModule(module));
 		
-		protect.Unlock();
+		//protect.Unlock();
 	}
 }
 
@@ -368,11 +368,11 @@ DWORD WINAPI Vis_New_Thread(LPVOID lpParam)
 		// up...
 		if ( message.message == WM_QUIT )
 		{
-			protect.Lock();
+			//protect.Lock();
 			Vis_Enable_Rendering = 0;
 			if ( gs_vWinAmpProps[vis_index].hDll )
 				gs_vWinAmpProps[vis_index].pModule->getModule(module)->Quit(gs_vWinAmpProps[vis_index].pModule->getModule(module));
-			protect.Unlock();
+			//protect.Unlock();
 		}
 
 		// deactivate dsp
@@ -435,9 +435,9 @@ void WINEXPORT SetLength(int length)
 
 void WINEXPORT IsPlaying(int playing)
 {
-	protect.Lock();
+	//protect.Lock();
 	Vis_Enable_Rendering = playing;
-	protect.Unlock();
+	//protect.Unlock();
 }
 
 void WINEXPORT SetVisModule(int the_module)
