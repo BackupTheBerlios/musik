@@ -16,10 +16,13 @@ a3:
   ****                                                               ****
   ***********************************************************************
 
-  - playlists are now treated like separate libraries. this makes
-    organizing a LOT easier.
-  - optimized memory management of playlists owned by the main
-    frame.
+  - "Sub Libraries" (name subject to change) now available. they
+    are stored as standard playlists, but displayed differently.
+    each "Sub Library" is a pseudo library created dynamically,
+    based on playlist content. 
+  - fixed the EXTREMELY annoying pause / resume bug thats been 
+    plaguing me for ages.
+  - optimized memory management of CmusikPlaylists in the UI
   - fixed a couple instances of the playlist and/or selection
     boxes being updated twice. the ui should be faster now.
   - fixed some unnecessary and potentially dangerous pointer
