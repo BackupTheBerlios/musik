@@ -99,8 +99,7 @@ void CmusikPrefs::LoadPrefs()
 	m_Dlg_MinimizeToTray		= StringToBool( config->GetValue( "Dialog", "Minimize to Notification Tray", "0" ) );
 	m_Dlg_AddEntireToNP			= StringToBool( config->GetValue( "Dialog", "Add Entire Library Playlist to Now Playing", "1" ) );
 	m_Dlg_AlwaysOnTop			= StringToBool( config->GetValue( "Dialog", "Always on Top", "0" ) );
-	
-	config->SetValue( "Dialog", "Always on Top", BoolToString( m_Dlg_AlwaysOnTop ) );
+
 	// transparency
 	m_TransEnabled				= StringToBool( config->GetValue( "Transparency", "Enabled", "0" ) );
 	m_TransAdaptive				= StringToBool( config->GetValue( "Transparency", "Adaptive", "0" ) );
@@ -109,7 +108,7 @@ void CmusikPrefs::LoadPrefs()
 	m_TransUnfocus				= StringToInt( config->GetValue( "Transparency", "Unfocused", "100" ) );
 
 	// selection area
-	m_SelectionBox_Types = StringToCIntArray( config->GetValue( "Selection Area", "Types", "1,2" ) );
+	m_SelectionBox_Types = StringToCIntArray( config->GetValue( "Selection Area", "Types", "0,1" ) );
 
 	// sources
 	m_Sources_SubLibsVisible		= StringToBool( config->GetValue( "Sources", "Show SubLibs", "0" ) );

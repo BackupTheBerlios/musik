@@ -124,6 +124,7 @@ BEGIN
         MENUITEM "E&qualizer\tCtrl+Shift+F",    ID_VIEW_EQUALIZER
         MENUITEM SEPARATOR
         MENUITEM "Always on Top",               ID_VIEW_ALWAYSONTOP
+        MENUITEM "Full Screen\tAlt+Enter",      ID_VIEW_FULLSCREEN
     END
     POPUP "&Audio"
     BEGIN
@@ -335,6 +336,7 @@ BEGIN
                                                     NOINVERT
     "G",            ID_VIEW_VISUALIZATION,  VIRTKEY, SHIFT, CONTROL, 
                                                     NOINVERT
+    VK_RETURN,      ID_VIEW_FULLSCREEN,     VIRTKEY, ALT, NOINVERT
 END
 
 

@@ -180,6 +180,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_COMMAND(ID_PLAYBACKMODE_SHUFFLECURRENTPLAYLIST, OnPlaybackmodeShufflecurrentplaylist)
 	ON_COMMAND(ID_VIEW_VISUALIZATION, OnViewVisualization)
 	ON_COMMAND(ID_VIEW_ALWAYSONTOP, OnViewAlwaysontop)
+	ON_COMMAND(ID_VIEW_FULLSCREEN, OnViewFullscreen)
 
 	// update ui
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SOURCES, OnUpdateViewSources)
@@ -202,6 +203,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_UPDATE_COMMAND_UI(ID_PLAYBACKMODE_SHUFFLECURRENTPLAYLIST, OnUpdatePlaybackmodeShufflecurrentplaylist)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_ALWAYSONTOP, OnUpdateViewAlwaysontop)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_VISUALIZATION, OnUpdateViewVisualization)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_FULLSCREEN, OnUpdateViewFullscreen)
 
 	// custom message maps
 	ON_REGISTERED_MESSAGE( WM_SELBOXUPDATE, OnUpdateSel )
@@ -461,9 +463,11 @@ CMainFrameFader::svc()
 
 CMainFrame::CMainFrame( bool autostart )
 {
-	m_AutoStart = autostart;
-	m_SelBoxesVisible = false;
-	m_TransEnb = false;
+	m_AutoStart			= autostart;
+	m_SelBoxesVisible	= false;
+	m_TransEnb			= false;
+	m_FullScreen		= false;
+	m_GoingFullScreen	= false;
 
 	m_hIcon16 = ( HICON )LoadImage( AfxGetApp()->m_hInstance, MAKEINTRESOURCE( IDI_MUSIK_16 ), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR );
 	m_hIcon32 = ( HICON )LoadImage( AfxGetApp()->m_hInstance, MAKEINTRESOURCE( IDI_MUSIK_32 ), IMAGE_ICON, 32, 32, LR_DEFAULTCOLOR );
@@ -647,7 +651,7 @@ void CMainFrame::LoadDlgSize()
 
 ///////////////////////////////////////////////////
 
-void CMainFrame::ResetUI()
+void CMainFrame::ResetUI( bool coordinates_only )
 {
 	MoveWindow( 0, 0, 800, 600 );
 
@@ -830,11 +834,10 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	{
 		LoadDlgSize();
 
-		CString sProfile = _T( "musikProfile" );
-		if ( VerifyBarState( sProfile ) )
+		if ( VerifyBarState( _T( "musikProfile" ) ) )
 		{
-			CSizingControlBar::GlobalLoadState( this, sProfile );
-			LoadBarState( sProfile );
+			CSizingControlBar::GlobalLoadState( this, _T( "musikProfile" ) );
+			LoadBarState( _T( "musikProfile" ) );
 		}
 
 		ShowSelectionBoxes( true, true );
@@ -1014,9 +1017,8 @@ BOOL CMainFrame::DestroyWindow()
 	// before destroying the window...
 	KillTasks( true, true, true, false );
 
-	CString sProfile = _T( "musikProfile" );
-	CSizingControlBar::GlobalSaveState( this, sProfile );
-	SaveBarState( sProfile );
+	CSizingControlBar::GlobalSaveState( this, "musikProfile" );
+	SaveBarState( "musikProfile" );
 
 	HideTrayIcon();
 
@@ -1078,11 +1080,15 @@ void CMainFrame::SaveWindowState()
 	WINDOWPLACEMENT max;
 	GetWindowPlacement( &max );
 
-
-	if ( max.showCmd & SW_SHOWMAXIMIZED )
-		m_Prefs->SetMaximized( true );
-	else
-		m_Prefs->SetMaximized( false );
+	// let full screen do its own thing, other wise set
+	// the maximize flag.
+	if ( !m_GoingFullScreen && !m_FullScreen )
+	{
+	 	if ( max.showCmd & SW_SHOWMAXIMIZED || max.showCmd & SW_MAXIMIZE )
+			m_Prefs->SetMaximized( true );
+		else
+			m_Prefs->SetMaximized( false );
+	}
 
 	if ( !( max.showCmd & SW_SHOWMINIMIZED ) && !( max.showCmd & SW_HIDE ) )
 	{
@@ -2390,15 +2396,21 @@ void CMainFrame::OnSysCommand(UINT nID, LPARAM lParam)
 	// bar to restore...
 	else if ( nID == SC_RESTORE || nID == 61730 )
 	{
+		if ( m_FullScreen )
+		{
+			RetFullScreen();
+			return;
+		}
+
 		ShowWindow( SW_RESTORE );
 
 		CRect rcNormal = CRect( m_Prefs->GetDlgPos(), m_Prefs->GetDlgSize() );
 
-		WINDOWPLACEMENT max;
-		GetWindowPlacement( &max );
-
-		if ( max.showCmd &~ SW_MAXIMIZE )
+		if ( m_Prefs->IsMaximized() )
+		{
 			MoveWindow( rcNormal );
+			m_Prefs->SetMaximized( false );
+		}
 
 		if ( m_Prefs->MinimizeToTray() )
 			HideTrayIcon();
@@ -2406,7 +2418,7 @@ void CMainFrame::OnSysCommand(UINT nID, LPARAM lParam)
 		return;
 	}
 
-	else if ( nID == SC_MAXIMIZE || nID == 61458 )
+	else if ( nID == SC_MAXIMIZE /*|| nID == 61458*/ )
 		SaveWindowState();
 
 	CFrameWnd::OnSysCommand(nID, lParam);
@@ -3064,6 +3076,110 @@ void CMainFrame::OnViewAlwaysontop()
 void CMainFrame::OnUpdateViewAlwaysontop(CCmdUI *pCmdUI)
 {
 	if ( m_Prefs->IsAlwaysOnTop() )
+		pCmdUI->SetCheck( TRUE );
+	else
+		pCmdUI->SetCheck( FALSE );
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::GoFullScreen()
+{
+	m_GoingFullScreen = true;
+
+	// backup original size and state
+	CSizingControlBar::GlobalSaveState( this, "musikProfile" );
+	SaveBarState( "musikProfile" );
+	SaveWindowState();
+
+	// maximize and grab window size
+	CRect rcWnd( m_Prefs->GetDlgPos(), m_Prefs->GetDlgSize() );
+
+	WINDOWPLACEMENT max;
+	max.showCmd = SW_MAXIMIZE;
+	max.rcNormalPosition = rcWnd;
+	SetWindowPlacement( &max );
+
+	GetWindowRect( rcWnd );
+
+	// grab desktop size
+	int cx, cy; 
+	HDC dc = ::GetDC( NULL ); 
+	cx = GetDeviceCaps( dc,HORZRES ) + 
+		GetSystemMetrics( SM_CXBORDER ); 
+	cy = GetDeviceCaps( dc,VERTRES ) +
+		GetSystemMetrics( SM_CYBORDER ); 
+	::ReleaseDC( 0, dc ); 
+
+	// remove caption and border
+	SetWindowLong( m_hWnd, 
+		GWL_STYLE, 
+		GetWindowLong( m_hWnd, GWL_STYLE ) & ( ~( WS_CAPTION | WS_BORDER ) ) ); 
+
+	// Put window on top and expand it to fill screen
+	::SetWindowPos( m_hWnd, 
+		HWND_TOPMOST, 
+		rcWnd.TopLeft().x + GetSystemMetrics( SM_CXBORDER ) + 1, 
+		rcWnd.TopLeft().y + GetSystemMetrics( SM_CYBORDER ) + 1,
+		cx + 1,
+		cy + 1, 
+		SWP_NOZORDER ); 
+
+	m_FullScreen = true;
+	m_GoingFullScreen = false;
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::RetFullScreen()
+{
+	// restore
+	WINDOWPLACEMENT max;
+	max.showCmd = SW_RESTORE;
+	SetWindowPlacement( &max );
+
+	// add caption bar and border
+	SetWindowLong( m_hWnd, GWL_STYLE, 
+		GetWindowLong( m_hWnd, GWL_STYLE ) | ( WS_CAPTION | WS_BORDER ) );
+
+	// restore window "always on top" status...
+	::SetWindowPos( m_hWnd, m_Prefs->IsAlwaysOnTop() ? HWND_TOPMOST : HWND_NOTOPMOST, 
+		m_Prefs->GetDlgPos().x, 
+		m_Prefs->GetDlgPos().y, 
+		m_Prefs->GetDlgSize().cx,
+		m_Prefs->GetDlgSize().cy, 
+		SWP_NOZORDER ); 
+
+	// set position
+	MoveWindow( CRect( m_Prefs->GetDlgPos(), m_Prefs->GetDlgSize() ) );
+
+	// restore prior window state
+	if ( VerifyBarState( _T( "musikProfile" ) ) )
+	{
+		CSizingControlBar::GlobalLoadState( this, _T( "musikProfile" ) );
+		LoadBarState( _T( "musikProfile" ) );
+	}
+
+	m_FullScreen = false;
+}
+
+///////////////////////////////////////////////////
+
+// www.codeproject.com/dialog/dlgboxtricks.asp
+
+void CMainFrame::OnViewFullscreen()
+{
+	if ( !m_FullScreen )
+		GoFullScreen();
+	else
+		RetFullScreen();
+}
+
+///////////////////////////////////////////////////
+
+void CMainFrame::OnUpdateViewFullscreen(CCmdUI *pCmdUI)
+{
+	if ( m_FullScreen )
 		pCmdUI->SetCheck( TRUE );
 	else
 		pCmdUI->SetCheck( FALSE );

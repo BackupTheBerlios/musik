@@ -164,7 +164,7 @@ public:
 	virtual ~CMainFrame();
 
 	// ui related functions
-	void ResetUI();
+	void ResetUI( bool coordinates_only = false );
 	void ResetSelBoxes();
 
 	// overrides
@@ -355,6 +355,9 @@ protected:
 	afx_msg void OnViewVisualization();
 	afx_msg void OnUpdateViewVisualization(CCmdUI *pCmdUI);
 	afx_msg void OnViewAlwaysontop();
+	afx_msg void OnUpdateViewAlwaysontop(CCmdUI *pCmdUI);
+	afx_msg void OnViewFullscreen();
+	afx_msg void OnUpdateViewFullscreen(CCmdUI *pCmdUI);
 
 	// list of all taskss running
 	int FreeTask( CmusikTask* pTask );
@@ -384,6 +387,12 @@ protected:
 	bool m_SelBoxesVisible;
 	void InitTrayIcon();
 
+	// full screen
+	bool m_FullScreen;
+	bool m_GoingFullScreen;
+	void GoFullScreen();
+	void RetFullScreen(); 
+
 	// various
 	bool m_PlaylistSel;
 	bool m_AutoStart;
@@ -391,8 +400,6 @@ protected:
 	int m_Trans;
 	void ImportTrans();
 
-public:
-	afx_msg void OnUpdateViewAlwaysontop(CCmdUI *pCmdUI);
 };
 
 ///////////////////////////////////////////////////
