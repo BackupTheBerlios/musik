@@ -267,7 +267,6 @@ CPlaylistCtrl::CPlaylistCtrl( wxWindow *parent, const wxWindowID id, const wxPoi
 
 	//--- not dragging, no selections ---//
 	g_DragInProg = false;
-	m_ColsChanged = false;
 	nCurSel = -1;
 	m_Overflow = 0;
 
@@ -327,8 +326,6 @@ void CPlaylistCtrl::SaveColumns()
 			g_Prefs.nPlaylistColumnSize[nCurrCol] = n_Pos;
 		}
 	}
-
-	m_ColsChanged = false;
 }
 
 //--------------//
@@ -479,7 +476,7 @@ void CPlaylistCtrl::BeginDrag( wxEvent& WXUNUSED(event) )
 
 void CPlaylistCtrl::EndDragCol( wxListEvent& event )
 {
-	m_ColsChanged = true;
+	SaveColumns();
 	Refresh();
 }
 
@@ -899,9 +896,6 @@ void CPlaylistCtrl::RescaleColumns( bool bFreeze )
 
 	if ( g_DisablePlacement )
 		return;
-
-	if ( m_ColsChanged )
-		SaveColumns();
 
 	//-------------------------------------------------//
 	//--- size of the client area.					---//
