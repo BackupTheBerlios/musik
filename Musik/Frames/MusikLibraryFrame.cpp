@@ -99,15 +99,6 @@ MusikLibraryFrame::MusikLibraryFrame( wxFrame* pParent )
 MusikLibraryFrame::MusikLibraryFrame( wxFrame* pParent, const wxPoint &pos, const wxSize &size ) 
 	: wxFrame( pParent, -1, _("Musik Library Setup"), pos, size, wxCAPTION | wxTAB_TRAVERSAL | wxRESIZE_BORDER | wxFRAME_FLOAT_ON_PARENT | wxFRAME_NO_TASKBAR | wxCLIP_CHILDREN )
 {
-	//---------------------------//
-	//--- kill first run pref ---//
-	//---------------------------//
-	if ( g_Prefs.nFirstRun )
-	{
-		g_Prefs.nFirstRun = 0;
-		g_Prefs.SavePrefs();
-	}
-
 	//--------------------//
 	//--- "Songs" menu ---//
 	//--------------------//
@@ -247,6 +238,22 @@ bool MusikLibraryFrame::Show( bool show )
 {
 	bool bRet = wxWindow::Show( show );
 
+	//---------------------------//
+	//--- kill first run pref ---//
+	//---------------------------//
+	if ( g_Prefs.nFirstRun )
+	{
+		wxString sMessage = 	wxT( "This is the first time Musik has been run.\n\nTo begin, you must first add directories " 	)
+								wxT( "to the database. Select \"Add Directory\" from the \"Songs\" menu, then press the " 			)
+								wxT( "\"OK\" button to rebuild the library.\n\nTo display this window again, press " 				) 
+								wxT( "CTRL+L in the main window, or select \"Library Setup\" from the \"Library\" menu."			);
+							
+		wxMessageBox( sMessage, MUSIK_VERSION, wxICON_INFORMATION );
+	
+		g_Prefs.nFirstRun = 0;
+		g_Prefs.SavePrefs();
+	}
+	
 	//--- auto start ---//
 	if ( m_AutoStart )
 	{
@@ -602,4 +609,3 @@ void MusikLibraryFrame::OnThreadScanProg( wxCommandEvent& WXUNUSED(event) )
 	m_Title.sprintf( _( "Scanning directory for audio files: %d files scanned" ), GetScanCount() );
 	SetTitle( m_Title );
 }
-
