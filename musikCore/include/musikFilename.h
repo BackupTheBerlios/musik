@@ -91,7 +91,7 @@ public:
 
 private:
 
-	static void DelimitStr( CmusikString path, CmusikString delimiter, CmusikStringArray& array, bool reverse, int count = -1 );
+	static void DelimitStr( CmusikString path, CmusikString delimiter, CmusikStringArray& array, bool reverse, bool trim_l = false, bool trim_r = false, int count = -1 );
 	void SortBySize( CmusikStringArray& array );
 	
 	CmusikString m_Filename;

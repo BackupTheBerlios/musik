@@ -210,7 +210,7 @@ void CmusikFilename::GetDelimitedPath( CmusikStringArray& target, bool reverse, 
 
 ///////////////////////////////////////////////////
 
-void CmusikFilename::DelimitStr( CmusikString path, CmusikString delimiter, CmusikStringArray& target, bool reverse, int count )
+void CmusikFilename::DelimitStr( CmusikString path, CmusikString delimiter, CmusikStringArray& target, bool reverse, bool trim_l, bool trim_r, int count )
 {
 	target.clear();
 
@@ -227,10 +227,23 @@ void CmusikFilename::DelimitStr( CmusikString path, CmusikString delimiter, Cmus
 		if ( reverse )
 		{
 			std::reverse( tokrev.begin(), tokrev.end() );
+
+			if ( trim_l )
+				tokrev.TrimLeft();
+			if ( trim_r )
+				tokrev.TrimRight();
+
 			target.insert( target.begin(), tokrev );
 		}
 		else
+		{
+			if ( trim_l )
+				tokrev.TrimLeft();
+			if ( trim_r )
+				tokrev.TrimRight();
+
 			target.push_back( tokrev );
+		}
 
 		if ( count != -1 && ( cnt == count ) )
 			break;
@@ -258,7 +271,7 @@ bool CmusikFilename::GetSongInfo( CmusikStringArray mask, CmusikStringArray& fn_
 		return false;
 
 	CmusikStringArray values;
-	DelimitStr( path, MUSIK_PATH_SEPARATOR, values, true, mask.size() );
+	DelimitStr( path, MUSIK_PATH_SEPARATOR, values, true, true, true, mask.size() );
 
 	if ( !partial && values.size() < mask.size() )
 		return false;
