@@ -123,9 +123,11 @@ public:
 	// misc stuff
 	static int GetFilesize( const CStdString& fn );
 
-	// adding files
+	// adding and removing files
 	bool AddOGG		( const CStdString& fn );
 	bool AddMP3		( const CStdString& fn );
+	bool RemoveSong	( int songid );
+	bool RemoveSong	( const CStdString& fn );
 
 private:
 

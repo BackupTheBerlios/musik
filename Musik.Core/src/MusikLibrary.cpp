@@ -1020,13 +1020,51 @@ int CMusikLibrary::GetFilesize( const CStdString& fn )
 
 ///////////////////////////////////////////////////
 
+bool CMusikLibrary::RemoveSong( int songid )
+{
+	m_ProtectingLibrary->acquire();
+
+	int result = sqlite_exec_printf( m_pDB, "DELETE FROM %Q WHERE songid=%d;", NULL, NULL, NULL,
+		SONG_TABLE_NAME,
+		songid );
+
+	m_ProtectingLibrary->release();
+
+	if ( result == SQLITE_OK )
+		return true;
+
+	return false;
+}	
+
+///////////////////////////////////////////////////
+
+bool CMusikLibrary::RemoveSong( const CStdString& fn )
+{
+	m_ProtectingLibrary->acquire();
+
+	int result = sqlite_exec_printf( m_pDB, "DELETE FROM %Q WHERE filename=%Q;", NULL, NULL, NULL,
+		SONG_TABLE_NAME,
+		fn.c_str() );
+
+	m_ProtectingLibrary->release();
+
+	if ( result == SQLITE_OK )
+		return true;
+
+	return false;
+}	
+
+///////////////////////////////////////////////////
+
 bool CMusikLibrary::AddOGG( const CStdString& fn )
 {
 	CMusikOggInfo m_Info;
 	if ( m_Info.LoadInfo( fn ) )
 	{
+		m_ProtectingLibrary->acquire();
 
-		sqlite_exec_printf( m_pDB, "insert into songs values ( %Q, %d, %d, %Q, %Q, %Q, %Q, %d, %Q, %Q, %d, %d, %Q, %Q, %d, %d, %Q, %d, %d );", NULL, NULL, NULL, 
+		int result = sqlite_exec_printf( m_pDB, "INSERT INTO %Q VALUES ( %Q, %d, %d, %Q, %Q, %Q, %Q, %d, %Q, %Q, %d, %d, %Q, %Q, %d, %d, %Q, %d, %d );", NULL, NULL, NULL, 
+			SONG_TABLE_NAME,								// song table 		
 			NULL,											// id
 			MUSIK_LIBRARY_FORMAT_OGG,						// format
 			1,												// vbr
@@ -1047,7 +1085,10 @@ bool CMusikLibrary::AddOGG( const CStdString& fn )
 			GetFilesize( fn ),								// file size
 			0 );											// dirty
 
-		return true;
+		m_ProtectingLibrary->release();
+
+		if ( result == SQLITE_OK )
+			return true;
 	}
 
 	return false;
