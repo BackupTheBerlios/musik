@@ -4,13 +4,8 @@
 #include "wx/wxprec.h"
 #include "MusikSelectionCtrl.h"
 
-#define MAX_SELECTION_CTRLS 6
+#define MAX_SELECTION_CTRLS 2
 #define HORIZONTAL 1
-
-//-------------------------------------------------//
-//--- gotta do our standard forward declaration	---//
-//-------------------------------------------------//
-class CMusikSelectionCtrl;
 
 class CMusikSelectionAreaCtrl : public wxPanel
 {

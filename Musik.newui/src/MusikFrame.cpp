@@ -30,6 +30,7 @@ MusikFrame::MusikFrame()
 	p->Add( m_SelectionCtrl, 3, wxEXPAND | wxALL, 2 );
 	SetSizer( p );
 	Layout();
+	Centre();
 }
 
 MusikFrame::~MusikFrame()

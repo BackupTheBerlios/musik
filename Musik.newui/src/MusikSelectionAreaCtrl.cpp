@@ -7,11 +7,15 @@ CMusikSelectionAreaCtrl::CMusikSelectionAreaCtrl( wxWindow *parent, wxWindowID i
 	//-----------------------------------------------------//
 	//--- intialize all of the needed variables			---//
 	//-----------------------------------------------------//
+	m_SelectionSizer = NULL;
 	for ( size_t i = 0; i < MAX_SELECTION_CTRLS; i++ )
 		m_SelectionCtrls[i] = NULL;
-	m_SelectionSizer = NULL;
 
+	//-----------------------------------------------------//
+	//--- create the controls and set the sizer.		---//
+	//-----------------------------------------------------//
 	Create();
+
 	SetSizer( m_SelectionSizer );
 }
 
