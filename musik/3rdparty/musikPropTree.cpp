@@ -1028,7 +1028,6 @@ void CmusikPropTree::OnLButtonDblClk(UINT, CPoint point)
 
 	if ( (pItem = FindItem(point))!=NULL )
 	{
-
 		CmusikPropTreeItem* pOldFocus = GetFocusedItem();
 
 		if ( pItem->IsRootLevel() )
@@ -1046,10 +1045,6 @@ void CmusikPropTree::OnLButtonDblClk(UINT, CPoint point)
 	}
 
 }
-
-///////////////////////////////////////////////////
-
-
 
 ///////////////////////////////////////////////////
 

@@ -81,6 +81,7 @@ protected:
 
 	// visible?
 	bool m_IsVisible;
+	bool m_Commited;
 
 	// macros
 	DECLARE_DYNAMIC(CmusikEditInPlace)

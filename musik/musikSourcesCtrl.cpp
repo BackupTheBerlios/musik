@@ -790,6 +790,8 @@ CmusikPropTreeItem* CmusikSourcesCtrl::CreateNewStdPlaylist( int type, CmusikStr
 	if ( ptrItems->size() > 1 )
 	{
 		pItem = ptrItems->at( ptrItems->size() - 2 );
+
+		SetFocusedItem( pItem );
 		RenameItem( pItem, editinplace_type );
 	}
 
@@ -1148,17 +1150,35 @@ void CmusikSourcesCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 LRESULT CmusikSourcesCtrl::OnEditCancel( WPARAM wParam, LPARAM lParam )
 {
+	m_EditInPlace.EnableWindow( FALSE );
 	SetFocus();
 
 	int cmd = (int)lParam;
 
 	CmusikEditInPlace* sender = (CmusikEditInPlace*)wParam;
-
+	
+	CmusikPropTreeItem* pItem = GetFocusedItem();
 	if ( cmd == MUSIK_SOURCES_EDITINPLACE_NEWSUBLIBRARYRARY )
+	{
 		m_SubLibs.at( m_SubLibs.size() - 1 )->SetLabelText( _T( "Create..." ) );
 
+		if ( pItem )
+		{
+			m_Library->DeleteStdPlaylist( pItem->GetPlaylistID() );
+			StdPlaylistsLoad( MUSIK_PLAYLIST_TYPE_SUBLIBRARY  );
+		}
+	}
+
 	else if ( cmd == MUSIK_SOURCES_EDITINPLACE_NEWSTDPLAYLIST )
+	{
 		m_StdPlaylists.at( m_StdPlaylists.size() - 1 )->SetLabelText( _T( "Create..." ) );
+
+		if ( pItem )
+		{
+			m_Library->DeleteStdPlaylist( pItem->GetPlaylistID() );
+			StdPlaylistsLoad( MUSIK_PLAYLIST_TYPE_STANDARD  );
+		}
+	}
 
 	else if ( cmd == MUSIK_SOURCES_EDITINPLACE_QUICKSEARCH )
 	{
@@ -1166,7 +1186,6 @@ LRESULT CmusikSourcesCtrl::OnEditCancel( WPARAM wParam, LPARAM lParam )
 		m_Src.at( 0 )->SetLabelText( "Enter Search..." );
 	}
 	
-	m_EditInPlace.EnableWindow( FALSE );
 	return 0L;
 }
 
@@ -1202,7 +1221,8 @@ LRESULT CmusikSourcesCtrl::OnEditCommit( WPARAM wParam, LPARAM lParam )
 		}
 	}
 
-	else if ( cmd == MUSIK_SOURCES_EDITINPLACE_NEWSUBLIBRARYRARY || cmd == MUSIK_SOURCES_EDITINPLACE_NEWSTDPLAYLIST )
+	else if ( cmd == MUSIK_SOURCES_EDITINPLACE_NEWSUBLIBRARYRARY || 
+		      cmd == MUSIK_SOURCES_EDITINPLACE_NEWSTDPLAYLIST )
 	{
 		CmusikSourcesItemPtrArray* ptrItems;
 		if ( cmd == MUSIK_SOURCES_EDITINPLACE_NEWSUBLIBRARYRARY )

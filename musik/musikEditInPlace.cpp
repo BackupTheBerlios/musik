@@ -80,6 +80,8 @@ END_MESSAGE_MAP()
 
 void CmusikEditInPlace::Commit()
 {
+	m_Commited = true;
+
 	GetWindowText( m_Str );
 	ShowWindow( SW_HIDE );
 	m_IsVisible = false;
@@ -104,7 +106,8 @@ void CmusikEditInPlace::Cancel()
 
 void CmusikEditInPlace::OnEnKillfocus()
 {
-	Cancel();	
+	if ( !m_Commited )
+		Cancel();	
 }
 
 ///////////////////////////////////////////////////
@@ -134,6 +137,8 @@ void CmusikEditInPlace::OnShowWindow(BOOL bShow, UINT nStatus)
 
 	if ( bShow )
 	{
+		m_Commited = false;
+
 		SetWindowText( m_Str );
 		SetSel( 0, m_Str.GetLength() );
 		m_IsVisible = true;

@@ -1,6 +1,11 @@
 ----------------------------------------------------------------------------
 a4:
-
+ 
+  - pressing ESC while creating a new playlist now cancels the 
+    operations.
+  - "Create..." playlists or sub libraries must be double clicked
+    now. people kept clicking it by accident
+  - sqlite is now compiled in
   - added tunage.  The following tags can be used:
     $ARTIST, $ALBUM, $TITLE, $NAME, $FILENAME, $FILESIZE, $BITRATE, 
     $TIMESPLAYED, $TRACKNUM
