@@ -324,6 +324,7 @@ CmusikPlayer::CmusikPlayer( CmusikFunctor* functor, CmusikLibrary* library )
 	m_Volume			= 128;
 
 	m_PlayMode			= MUSIK_PLAYER_PLAYMODE_NORMAL;
+	m_State				= MUSIK_PLAYER_INIT_UNINITIALIZED;
 
 	InitThread();
 }
@@ -436,7 +437,9 @@ int CmusikPlayer::InitSound( int device, int driver, int rate, int channels, int
 
 	if ( mode == MUSIK_PLAYER_INIT_START || mode == MUSIK_PLAYER_INIT_RESTART )
 	{
-		if ( StartSound( device, driver, rate, channels ) != MUSIK_PLAYER_INIT_SUCCESS )
+		m_State = StartSound( device, driver, rate, channels );
+
+		if ( m_State != MUSIK_PLAYER_INIT_SUCCESS )
 		{
 			TRACE0( "FMOD failed to initialize.\n" );
 			return StartSound( device, driver, rate, channels );
@@ -461,6 +464,8 @@ void CmusikPlayer::CleanSound()
 
 	if ( m_ActiveStreams ) delete m_ActiveStreams;
 	if ( m_ActiveChannels ) delete m_ActiveChannels;
+
+	m_State = MUSIK_PLAYER_INIT_UNINITIALIZED;
 }
 
 ///////////////////////////////////////////////////

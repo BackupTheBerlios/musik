@@ -80,14 +80,15 @@ enum
 
 enum
 {
-	// initialization values
-	MUSIK_PLAYER_INIT_START = 0,
-	MUSIK_PLAYER_INIT_STOP,
-	MUSIK_PLAYER_INIT_RESTART,
-
-	// return values
+	// init states
+	MUSIK_PLAYER_INIT_ERROR = -1,
+	MUSIK_PLAYER_INIT_UNINITIALIZED = 0,
 	MUSIK_PLAYER_INIT_SUCCESS,
-	MUSIK_PLAYER_INIT_ERROR
+
+	// initialization values
+	MUSIK_PLAYER_INIT_START,
+	MUSIK_PLAYER_INIT_STOP,
+	MUSIK_PLAYER_INIT_RESTART
 };
 
 ///////////////////////////////////////////////////
@@ -128,6 +129,8 @@ public:
 	// sound system initialization and
 	// deinitialization stuff
 	int  InitSound( int device, int driver, int rate, int channels, int mode = MUSIK_PLAYER_INIT_START );
+	bool IsSoundInitialized(){ return ( m_State == MUSIK_PLAYER_INIT_SUCCESS ? true : false ); }
+	int  GetInitState(){ return m_State; }
 	void CleanSound();
 	void CleanPlaylist();
 
@@ -228,6 +231,9 @@ private:
 	// tell if it should abort what its currently
 	// doing
 	int m_Handle;
+
+	// state of the player
+	int m_State;
 
 	// start and stop sound. InitSound() will
 	// relay to these helper functions
