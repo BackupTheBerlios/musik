@@ -10,12 +10,12 @@
 
 #include "resource.h"       // main symbols
 
-#include "3rdparty/singleinstance.h"
+#include "3rdparty/WinAppEx.h"
 #include "../Musik.Core/include/stdstring.h"
 
 ///////////////////////////////////////////////////
 
-class CMusikApp : public CWinApp, CSingleInstance
+class CMusikApp : public CWinAppEx
 {
 public:
 
@@ -24,7 +24,7 @@ public:
 
 	// overrides
 	virtual BOOL InitInstance();
-	virtual void WakeUp( LPCSTR aCommandLine ) const;
+	virtual BOOL OnAnotherInstanceMessage( LPMSG pMsg );
 
 	// message maps
 	afx_msg void OnAppAbout();

@@ -6,6 +6,7 @@
 #include "MusikSourcesBar.h"
 
 #include "../Musik.Core/include/MusikLibrary.h"
+#include ".\musiksourcesbar.h"
 
 ///////////////////////////////////////////////////
 

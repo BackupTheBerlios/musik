@@ -58,8 +58,9 @@ public:
 	#endif
 
 	// misc
-	bool PlayCmd( const CStdString& cmd );
-	CStdString ParseCmd( CStdString sStr );
+	bool PlayCmd( const CStdString& fn );
+
+	UINT m_uMsgCheckInst;
 
 protected: 
 
@@ -110,6 +111,7 @@ protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg LRESULT OnUpdateSel( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSongChange( WPARAM wParam, LPARAM lParam );
+	afx_msg LRESULT OnSongStop( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSourcesLibrary( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSourcesStdPlaylist( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnSourcesDynPlaylist( WPARAM wParam, LPARAM lParam );

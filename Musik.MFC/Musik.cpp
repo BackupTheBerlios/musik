@@ -6,6 +6,7 @@
 #include "../Musik.Core/include/MusikFilename.h"
 
 #include "MainFrm.h"
+#include ".\musik.h"
 
 ///////////////////////////////////////////////////
 
@@ -35,11 +36,11 @@ CMusikApp theApp;
 
 BOOL CMusikApp::InitInstance()
 {
-	CStdString sCmd = GetCommandLine();
-	
-	// only allow a single instance of Musik to run
-	if ( !CSingleInstance::Create( _T( "7f1832d0-f3be-4a1c-be03-a4b0f70998e2" ) ) )
-		return FALSE;	
+	// only allow a single instance to run
+	if ( !CWinAppEx::InitInstance( _T( "{340277AE-C62B-41de-89DF-90191D8950CF}" ) ) )
+		return FALSE;
+
+	AfxEnableControlContainer();
 
 	// InitCommonControls() is required on Windows XP if an application
 	// manifest specifies use of ComCtl32.dll version 6 or later to enable
@@ -56,18 +57,25 @@ BOOL CMusikApp::InitInstance()
 	CMainFrame* pFrame = new CMainFrame;
 	if (!pFrame)
 		return FALSE;
+
 	m_pMainWnd = pFrame;
+
 	// create and load the frame with its resources
 	pFrame->LoadFrame( IDR_MAINFRAME,
 		WS_OVERLAPPEDWINDOW | FWS_ADDTOTITLE, NULL,
 		NULL);
+
+	pFrame->m_uMsgCheckInst = m_uMsgCheckInst;
 
 	// The one and only window has been initialized, so show and update it
 	pFrame->ShowWindow(SW_SHOW);
 	pFrame->UpdateWindow();
 
 	// see if we opened a file
-	pFrame->PlayCmd( sCmd );
+	CCommandLineInfo cmd;
+	ParseCommandLine( cmd );
+	if ( !cmd.m_strFileName.IsEmpty() )
+		pFrame->PlayCmd( (CStdString)cmd.m_strFileName );
 
 	// call DragAcceptFiles only if there's a suffix
 	//  In an SDI app, this should occur after ProcessShellCommand
@@ -76,10 +84,24 @@ BOOL CMusikApp::InitInstance()
 
 ///////////////////////////////////////////////////
 
-void CMusikApp::WakeUp( LPCSTR aCommandLine ) const
+BOOL CMusikApp::OnAnotherInstanceMessage( LPMSG pMsg )
 {
-	CMainFrame* pMain = (CMainFrame*) m_pMainWnd;
-	pMain->PlayCmd( aCommandLine );
+	// make sure the sender is the sender...
+	if ( m_pMainWnd )
+	{
+		if ( pMsg->hwnd != m_pMainWnd->GetSafeHwnd() )
+			return false;
+	}
+
+	if( pMsg->wParam != NULL ) 
+	{
+		::GlobalGetAtomName( (ATOM)pMsg->wParam, m_lpCmdLine, _MAX_FNAME );			
+		::GlobalDeleteAtom(  (ATOM)pMsg->wParam );		
+	}
+
+	Play( m_lpCmdLine );
+
+	return TRUE;
 }
 
 ///////////////////////////////////////////////////

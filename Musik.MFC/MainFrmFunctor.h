@@ -31,7 +31,13 @@ public:
 	{
 		int WM_SONGCHANGE = RegisterWindowMessage( "SONGCHANGE" );
 		m_Parent->PostMessage( WM_SONGCHANGE, NULL );
-	};
+	}
+
+	virtual void OnStop()
+	{
+		int WM_SONGSTOP = RegisterWindowMessage( "SONGSTOP" );
+		m_Parent->PostMessage( WM_SONGSTOP, NULL );
+	}
 
 private:
 	CMainFrame* m_Parent;

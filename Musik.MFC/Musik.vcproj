@@ -347,10 +347,10 @@
 				Name="CSingleInstance"
 				Filter="">
 				<File
-					RelativePath=".\3rdparty\singleinstance.cpp">
+					RelativePath=".\3rdparty\WinAppEx.cpp">
 				</File>
 				<File
-					RelativePath=".\3rdparty\singleinstance.h">
+					RelativePath=".\3rdparty\WinAppEx.h">
 				</File>
 			</Filter>
 		</Filter>

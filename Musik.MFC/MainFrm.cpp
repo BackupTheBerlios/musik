@@ -23,7 +23,9 @@
 ///////////////////////////////////////////////////
 
 int WM_SELBOXUPDATE = RegisterWindowMessage( "SELBOXUPDATE" );
+
 int WM_SONGCHANGE = RegisterWindowMessage( "SONGCHANGE" );
+int WM_SONGSTOP = RegisterWindowMessage( "SONGSTOP" );
 
 int WM_SOURCESLIBRARY = RegisterWindowMessage( "SOURCESLIBRARY" );
 int WM_SOURCESSTDPLAYLIST = RegisterWindowMessage( "SOURCESSTDPLAYLIST" );
@@ -38,6 +40,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_WM_DESTROY()
 	ON_REGISTERED_MESSAGE( WM_SELBOXUPDATE, OnUpdateSel )
 	ON_REGISTERED_MESSAGE( WM_SONGCHANGE, OnSongChange )
+	ON_REGISTERED_MESSAGE( WM_SONGSTOP, OnSongStop )
 	ON_REGISTERED_MESSAGE( WM_SOURCESLIBRARY, OnSourcesLibrary )
 	ON_REGISTERED_MESSAGE( WM_SOURCESSTDPLAYLIST, OnSourcesStdPlaylist )
 	ON_REGISTERED_MESSAGE( WM_SOURCESDYNPLAYLIST, OnSourcesDynPlaylist )
@@ -109,11 +112,17 @@ void CMainFrame::CleanMusik()
 {
 	if ( m_Library )		delete m_Library;
 	if ( m_Prefs )			delete m_Prefs;
-	if ( m_Player )			delete m_Player;
-	if ( m_NewSong )		delete m_NewSong;
 	if ( m_LibPlaylist )	delete m_LibPlaylist;
 	if ( m_DynPlaylist )	delete m_DynPlaylist;
 	if ( m_StdPlaylist )	delete m_StdPlaylist;
+
+	if ( m_Player )
+	{
+		m_Player->Shutdown();
+		delete m_Player;
+	}
+
+	if ( m_NewSong )		delete m_NewSong;
 }
 
 ///////////////////////////////////////////////////
@@ -293,35 +302,8 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 ///////////////////////////////////////////////////
 
-CStdString CMainFrame::ParseCmd( CStdString sStr )
+bool CMainFrame::PlayCmd( const CStdString& fn )
 {
-	if ( sStr.IsEmpty() )
-		sStr = GetCommandLine();
-
-	int nLastQ = sStr.ReverseFind( "\"", sStr.GetLength() - 1 );
-	int nFirstQ = sStr.ReverseFind( "\"", nLastQ - 1 );
-
-	sStr = sStr.Left( nLastQ );
-	sStr = sStr.Right( nLastQ - ( nFirstQ + 1 ) );
-
-	if ( !sStr.IsEmpty() )
-	{
-		CMusikFilename MFN ( sStr );
-		CStdString sExt = MFN.GetExtension();
-
-		if ( sExt != "mp3" && sExt != "ogg" )
-			return _T( "" );
-	}
-
-	return sStr;
-}
-
-///////////////////////////////////////////////////
-
-bool CMainFrame::PlayCmd( const CStdString& cmd )
-{
-	CStdString fn = ParseCmd( cmd );
-
 	if ( fn.IsEmpty() )
 		return false;
 
@@ -552,8 +534,18 @@ LRESULT CMainFrame::OnSongChange( WPARAM wParam, LPARAM lParam )
 
 ///////////////////////////////////////////////////
 
+LRESULT CMainFrame::OnSongStop( WPARAM wParam, LPARAM lParam )
+{
+	TRACE0( "Song stop signal caught\n" );
+
+	return 0L;
+}
+
+///////////////////////////////////////////////////
+
 LRESULT CMainFrame::OnSourcesLibrary( WPARAM wParam, LPARAM lParam )
 {
+	TRACE0( "A library or device was clicked\n" );
 
 	return 0L;
 }
@@ -562,6 +554,7 @@ LRESULT CMainFrame::OnSourcesLibrary( WPARAM wParam, LPARAM lParam )
 
 LRESULT CMainFrame::OnSourcesStdPlaylist( WPARAM wParam, LPARAM lParam )
 {
+	TRACE0( "A standard playlist was clicked\n" );
 
 	return 0L;
 }
@@ -570,6 +563,7 @@ LRESULT CMainFrame::OnSourcesStdPlaylist( WPARAM wParam, LPARAM lParam )
 
 LRESULT CMainFrame::OnSourcesDynPlaylist( WPARAM wParam, LPARAM lParam )
 {
+	TRACE0( "A dynamic playlist was clicked\n" );
 
 	return 0L;
 }
