@@ -79,6 +79,11 @@ public:
 		// pure virtual
 	}
 
+	virtual void OnStop()
+	{
+		// pure virtual
+	}
+
 	virtual void OnThreadStart()
 	{
 		// pure virtual

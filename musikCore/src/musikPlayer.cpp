@@ -215,31 +215,35 @@ static void musikPlayerWorker( CmusikPlayer* player )
 
 					m_ProtectingStreams.release();
 
-					// on exit we need to toggle this var so we
-					// don't get stuck in a dead lock. it basically
-					// lets the player shut down.
-					if ( player->GetFadeType() == MUSIK_CROSSFADER_EXIT )
-						player->SetSafeShutdown();
-
-					// if the last fade type was a Pause / Resume, we need
-					// to tell the player to finish the operation
-					else if ( player->GetFadeType() == MUSIK_CROSSFADER_PAUSE_RESUME )
+					// if there was a successful fade, then some
+					// clean up is in order...
+					if ( fade_success )
 					{
-						if ( !player->IsPaused() )
-							player->FinalizePause();
-						else
-							player->FinalizeResume();
-					}
+						if ( player->GetFadeType() == MUSIK_CROSSFADER_PAUSE_RESUME )
+						{
+							if ( !player->IsPaused() )
+								player->FinalizePause();
+							else
+								player->FinalizeResume();
+						}
 
+						else if ( player->GetFadeType() == MUSIK_CROSSFADER_STOP )
+							player->FinalizeStop();
+
+						else if ( player->GetFadeType() == MUSIK_CROSSFADER_EXIT )
+						{
+							player->FinalizeExit();
+							player->SetSafeShutdown();
+							return;
+						}
+
+						else if ( player->GetFadeType() != MUSIK_CROSSFADER_NEW_SONG  )
+							player->FinalizeNewSong();
+
+						TRACE0( "Crossfade finished successfully\n" );
+					}					
 				}
-
-				if ( fade_success && player->GetFadeType() != MUSIK_CROSSFADER_PAUSE_RESUME  )
-					player->FinalizeNewSong();
-
-				TRACE0( "Crossfade finished successfully\n" );
-
-			}
-			
+			}			
 		}
 
 		else if ( !player->IsPlaying() && player->IsShuttingDown() )
@@ -655,14 +659,37 @@ bool CmusikPlayer::Prev()
 
 void CmusikPlayer::Stop()
 {
-	if ( !IsCrossfaderActive() )
-		CleanOldStreams( true );
-	else
+	if ( IsCrossfaderActive() )
 	{
 		m_Handle++;
 		m_FadeType = MUSIK_CROSSFADER_STOP;
 		FlagCrossfade();
 	}
+	else
+		FinalizeStop();
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlayer::FinalizeStop()
+{
+	CleanOldStreams( true );
+
+	m_IsPlaying = false;
+	m_IsPaused = false;
+
+	if ( m_Functor )
+		m_Functor->OnStop();
+}
+
+///////////////////////////////////////////////////
+
+void CmusikPlayer::FinalizeExit()
+{
+	CleanOldStreams( true );
+
+	m_IsPlaying = false;
+	m_IsPaused = false;
 }
 
 ///////////////////////////////////////////////////
@@ -876,7 +903,7 @@ int CmusikPlayer::GetTimeRemain( int mode )
 
 void CmusikPlayer::FinalizeNewSong()
 {
-	if ( IsEqualizerActive() && m_FadeType != MUSIK_CROSSFADER_EXIT && m_EQ )
+	if ( IsEqualizerActive() && m_EQ )
 		m_EQ->GetSongEq( m_Playlist->GetSongID( m_Index ) );
 	
 	SetVolume( m_Volume, true );

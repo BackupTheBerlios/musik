@@ -134,7 +134,6 @@ public:
 	// crossfader stuff
 	int GetFadeType(){ return m_FadeType; }
 	CmusikCrossfader* GetCrossfader(){ return m_Crossfader; }
-	void FinalizeNewSong();
 	void SetCrossfader( CmusikCrossfader fader );
 
 	// equalizer stuff
@@ -176,9 +175,12 @@ public:
 	void Stop();
 	void Exit();
 
-	// only the thread should touch me
+	// only the thread should touch these
 	void FinalizePause();
 	void FinalizeResume();
+	void FinalizeNewSong();
+	void FinalizeStop();
+	void FinalizeExit();
 		
 	// status
 	bool IsPlaying()			{ return m_IsPlaying; }
