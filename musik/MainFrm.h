@@ -125,6 +125,7 @@ public:
 
 	// misc
 	bool PlayCmd( const CString& fn );
+	void SynchronizeDirs();
 
 	// to save window state
 	virtual BOOL DestroyWindow();

@@ -31,6 +31,9 @@ protected:
 	// misc
 	virtual void DoDataExchange(CDataExchange* pDX);
 
+	// vars
+	bool m_Changed;
+
 	// controls
 	CListBox m_wndPaths;
 

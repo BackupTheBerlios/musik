@@ -17,6 +17,7 @@ CmusikDirSync::CmusikDirSync( CWnd* pParent, CmusikLibrary* library )
 	: CDialog(CmusikDirSync::IDD, pParent)
 {
 	m_Library = library;
+	m_Changed = false;
 }
 
 ///////////////////////////////////////////////////
@@ -46,8 +47,14 @@ END_MESSAGE_MAP()
 
 void CmusikDirSync::OnBnClickedClose()
 {
+	if ( m_Changed )
+	{
+		if ( MessageBox( _T( "Your path synchronization configuration has changed. Resynchronize now?" ), MUSIK_VERSION_STR, MB_ICONINFORMATION | MB_YESNO ) == IDNO )
+			m_Changed = false;
+	}
+
 	int WM_CLOSEDIRSYNC	= RegisterWindowMessage( "CLOSEDIRSYNC" );
-	GetParent()->PostMessage( WM_CLOSEDIRSYNC, NULL, NULL );
+	GetParent()->PostMessage( WM_CLOSEDIRSYNC, (WPARAM)m_Changed, NULL );
 }
 
 ///////////////////////////////////////////////////
@@ -108,6 +115,8 @@ void CmusikDirSync::OnBnClickedAdd()
 		{
 			m_Library->AddPath( path );
 			m_wndPaths.AddString( path );
+
+			m_Changed = true;
 		}
 	}
 }

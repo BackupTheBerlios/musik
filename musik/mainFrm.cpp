@@ -627,7 +627,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if ( CFrameWnd::OnCreate(lpCreateStruct) == -1 )
 		return -1;
 
-
 	SetIcon( m_hIcon32, true );
 	SetIcon( m_hIcon16, false );
 
@@ -712,24 +711,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_ProtectingThreads->release();
 
 	// start all necessary synchronization threads
-	CStdStringArray synchs;
-	m_Library->GetAllPaths( &synchs, false );
-	for ( size_t i = 0; i < synchs.size(); i++ )
-	{
-		CStdStringArray* files = new CStdStringArray();
-		CmusikDir scan( synchs.at( i ) + _T( "\\*.*" ), files, NULL );
-		scan.Run();
-
-		CmusikBatchAdd* params = new CmusikBatchAdd( files, NULL, m_Library, NULL, m_BatchAddFnct, 0, 0, 1 );
-		CmusikThread* thread = new CmusikThread();
-
-		m_ProtectingThreads->acquire();
-		m_Threads.push_back( thread );
-		m_ThreadCount++;
-		m_ProtectingThreads->release();
-
-		thread->Start( (ACE_THR_FUNC)musikBatchAddWorker, (void*)params );	
-	}	
+	SynchronizeDirs();
 
 	// startup a thread in the background
 	// to remove old files...
@@ -1975,6 +1957,9 @@ LRESULT CMainFrame::OnCloseDirSync( WPARAM wParam, LPARAM lParam )
 		m_DirSyncDlg->DestroyWindow();
 		delete m_DirSyncDlg;
 		m_DirSyncDlg = NULL;
+
+		if ( wParam )
+			SynchronizeDirs();
 	}
 
 	return 0L;
@@ -2046,3 +2031,27 @@ LRESULT CMainFrame::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 
 ///////////////////////////////////////////////////
 
+void CMainFrame::SynchronizeDirs()
+{
+	CStdStringArray synchs;
+	m_Library->GetAllPaths( &synchs, false );
+	for ( size_t i = 0; i < synchs.size(); i++ )
+	{
+		CStdStringArray* files = new CStdStringArray();
+		CmusikDir scan( synchs.at( i ) + _T( "\\*.*" ), files, NULL );
+		scan.Run();
+
+		CmusikBatchAdd* params = new CmusikBatchAdd( files, NULL, m_Library, NULL, m_BatchAddFnct, 0, 0, 1 );
+		CmusikThread* thread = new CmusikThread();
+
+		m_ProtectingThreads->acquire();
+		m_Threads.push_back( thread );
+		m_ThreadCount++;
+		m_ProtectingThreads->release();
+
+		thread->Start( (ACE_THR_FUNC)musikBatchAddWorker, (void*)params );	
+	}	
+
+}
+
+///////////////////////////////////////////////////
